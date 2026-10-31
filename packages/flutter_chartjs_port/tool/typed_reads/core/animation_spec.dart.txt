@@ -1,3 +1,0 @@
-# The Map scaffolding of Chart.js ADR 0054 §5: the specs read the animation
-# options as a Map (Animations.properties). The close step removes it.
-extendsMapBase 1

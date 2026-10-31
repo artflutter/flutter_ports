@@ -57,7 +57,7 @@ Map<String, Object?> fixture() => <String, Object?>{
                       as List<Object?>;
 
               for (final item in items) {
-                (item! as Map<String, Object?>)['borderRadius'] = 5;
+                (item! as JsObjectFace)['borderRadius'] = 5;
               }
 
               return items;

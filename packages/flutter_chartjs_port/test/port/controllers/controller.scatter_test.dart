@@ -66,7 +66,7 @@ final Map<String, Object?> _functions = {
   // }
   'radiusWrite': (Object? ctx) {
     if (jsGet(ctx, 'dataIndex') == 1) {
-      (jsGet(ctx, 'parsed')! as AnyObject)['x'] = 10.0;
+      (jsGet(ctx, 'parsed')! as JsObjectFace)['x'] = 10.0;
     }
     return 3.0;
   },

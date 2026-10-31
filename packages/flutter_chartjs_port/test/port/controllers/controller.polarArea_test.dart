@@ -127,7 +127,7 @@ Object? _realLegend(Chart chart) {
   return <String, Object?>{
     'items': legend.legendItems,
     'keys': [
-      for (final item in legend.legendItems!) jsObjectKeys(item! as AnyObject),
+      for (final item in legend.legendItems!) jsObjectKeys(item),
     ],
     'hitBoxes': (legend as Legend).legendHitBoxes,
   };
@@ -578,7 +578,7 @@ void main() {
       final arc = meta.data[1] as Element;
       expect([arc.x, arc.y], [256.0, 272.0]);
 
-      (chart.options['scales']! as AnyObject)['r2'] = <String, Object?>{
+      (chart.options['scales']! as JsObjectFace)['r2'] = <String, Object?>{
         'type': 'radialLinear',
         'position': 'left',
       };
@@ -613,7 +613,8 @@ void main() {
       final arc = meta.data[1] as Element;
       final dataset =
           jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
-      (jsGet(chart.options, 'scales')! as AnyObject)['r2'] = <String, Object?>{
+      (jsGet(chart.options, 'scales')!
+          as JsObjectFace)['r2'] = <String, Object?>{
         'type': 'radialLinear',
         'position': 'left',
       };

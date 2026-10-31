@@ -6,7 +6,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show Registry;
 import 'package:flutter_chartjs_port/src/index.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_test/flutter_test.dart';
 
 // The namespaces and `registerables` of src/index.ts:8-25 (Chart.js ADR
@@ -235,7 +235,7 @@ void main() {
     expect(jsObjectKeys(registry.plugins.items), pluginIds);
     expect(jsObjectKeys(defaults.get('plugins')), pluginIds);
     for (final name in jsObjectKeys(plugins)) {
-      final plugin = plugins[name]! as AnyObject;
+      final plugin = plugins[name]! as JsObjectFace;
       expect(
         registry.plugins.items[plugin['id']! as String],
         same(plugin),

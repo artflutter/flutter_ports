@@ -13,13 +13,11 @@
 ///
 /// The results of [toTRBL], [toTRBLCorners], [toPadding] and [toFont] are
 /// typed objects (differences.md row `adapt-options-typed-results`). The
-/// result of [createContext] is a [ContextObject]: a Map with a prototype
+/// result of [createContext] is a [ContextObject]: an object with a prototype
 /// (differences.md row `adapt-create-context-prototype`), of the typed
 /// class of its `type` (Chart.js ADR 0054 §11, differences.md row
 /// `adapt-typed-contexts`).
 library;
-
-import 'dart:collection';
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
@@ -515,32 +513,30 @@ Object? resolve(
 /// own key is an extra. A [ContextObject] of another type keeps each own
 /// key as an extra (differences.md row `adapt-typed-contexts`).
 ///
-/// A Map has no prototype. A [ContextObject] keeps its own properties and
-/// reads the [prototype] for the other keys
-/// (differences.md row `adapt-create-context-prototype`). It implements
-/// [JsObjectFace], the face by name. During the migration it is also a
-/// `MapBase` (the scaffolding of Chart.js ADR 0054 §5):
-/// - `operator []` is `[[Get]]`: the own value, also the [undefined]
-///   sentinel, else the value of the [prototype], else Dart `null` as for an
-///   absent key of a Map.
-/// - [containsKey] is the `in` operator (`[[HasProperty]]`): an own key or
-///   a key of the [prototype] chain. Thus a read that gives [undefined] for
-///   an absent key (`containsKey(key) ? map[key] : undefined`) also finds
-///   the inherited values.
-/// - [hasOwnProperty] is `Object.prototype.hasOwnProperty`.
-/// - [keys], [length] and the iteration are the own keys only, in their
-///   insertion order. [jsKeys] is `Object.keys`.
-/// - `operator []=`, [remove] and [clear] change the own properties only,
-///   as a property assignment and `delete` do.
-// DIVERGES(chartjs): adapt-create-context-prototype, a Map with a prototype.
-base class ContextObject extends MapBase<String, Object?>
-    implements JsObjectFace {
+/// A [ContextObject] keeps its own properties and reads the [prototype] for
+/// the other keys (differences.md row `adapt-create-context-prototype`). It
+/// implements [JsObjectFace], the face by name, with the JS rules (Chart.js
+/// ADR 0054 §5). It is not a `Map`:
+/// - [jsRead] and `operator []` are `[[Get]]`: the own value, also the
+///   [undefined] sentinel, else the value of the [prototype], else
+///   [undefined].
+/// - [hasProperty] is the `in` operator (`[[HasProperty]]`): an own key or
+///   a key of the [prototype] chain.
+/// - [jsHas] and [hasOwnProperty] are `Object.prototype.hasOwnProperty`.
+/// - [jsKeys] is `Object.keys`: the own keys only, in their insertion order,
+///   with the array-index keys first.
+/// - [jsWrite], `operator []=` and [jsDelete] change the own properties
+///   only, as a property assignment and `delete` do.
+// DIVERGES(chartjs): adapt-create-context-prototype, a prototype chain.
+base class ContextObject implements JsObjectFace {
   /// `Object.create(prototype)`: an object without own properties. Dart
   /// `null` is the `null` prototype.
   ContextObject(this.prototype);
 
-  /// `Object.getPrototypeOf(this)`: the parent context, or Dart `null`.
-  final AnyObject? prototype;
+  /// `Object.getPrototypeOf(this)`: the parent context, or Dart `null`. A
+  /// parent is a [ContextObject] or a `Map` (a context object of user
+  /// code).
+  final Object? prototype;
 
   /// The own keys, in insertion order.
   final List<String> _names = <String>[];
@@ -561,7 +557,7 @@ base class ContextObject extends MapBase<String, Object?>
   bool fieldSet(String name, Object? value) => false;
 
   /// Makes [name] an own key: a new name goes to the end of the own-key
-  /// order, as `operator []=` does. A typed setter of a subclass calls it
+  /// order, as [jsWrite] does. A typed setter of a subclass calls it
   /// before it sets its field.
   void _claim(String name) {
     if (!_names.contains(name)) _names.add(name);
@@ -584,58 +580,23 @@ base class ContextObject extends MapBase<String, Object?>
     return index < 0 ? _unset : _extraValues![index];
   }
 
-  @override
-  Object? operator [](Object? key) {
-    if (key is! String) return null;
-    final own = _own(key);
-    if (!identical(own, _unset)) return own;
-    return prototype?[key];
+  /// `name in this` (`[[HasProperty]]`): an own key or a key of the
+  /// [prototype] chain.
+  bool hasProperty(String name) {
+    if (_names.contains(name)) return true;
+    return switch (prototype) {
+      final ContextObject parent => parent.hasProperty(name),
+      final JsObjectFace parent => parent.jsHas(name),
+      final Map<dynamic, dynamic> parent => parent.containsKey(name),
+      _ => false,
+    };
   }
-
-  @override
-  void operator []=(String key, Object? value) {
-    if (!_names.contains(key)) _names.add(key);
-    if (fieldSet(key, value)) return;
-    final names = _extraNames ??= <String>[];
-    final values = _extraValues ??= <Object?>[];
-    final index = names.indexOf(key);
-    if (index < 0) {
-      names.add(key);
-      values.add(value);
-    } else {
-      values[index] = value;
-    }
-  }
-
-  @override
-  bool containsKey(Object? key) =>
-      (key is String && _names.contains(key)) ||
-      (prototype?.containsKey(key) ?? false);
 
   /// `Object.prototype.hasOwnProperty.call(this, key)`.
   bool hasOwnProperty(Object? key) => key is String && _names.contains(key);
 
-  @override
-  Iterable<String> get keys => List<String>.of(_names);
-
-  @override
-  int get length => _names.length;
-
-  @override
-  Object? remove(Object? key) {
-    if (key is! String || !_names.contains(key)) return null;
-    final value = _own(key);
-    _names.remove(key);
-    if (!fieldSet(key, _unset)) {
-      final index = _extraNames!.indexOf(key);
-      _extraNames!.removeAt(index);
-      _extraValues!.removeAt(index);
-    }
-    return value;
-  }
-
-  @override
-  void clear() => List<String>.of(_names).forEach(remove);
+  /// The count of the own keys.
+  int get ownKeyCount => _names.length;
 
   // The face of Chart.js ADR 0054 §5.
 
@@ -643,14 +604,35 @@ base class ContextObject extends MapBase<String, Object?>
   Object? jsRead(String name) {
     final own = _own(name);
     if (!identical(own, _unset)) return own;
-    final parent = prototype;
-    if (parent == null) return undefined;
-    if (parent case final JsObjectFace face) return face.jsRead(name);
-    return parent.containsKey(name) ? parent[name] : undefined;
+    return switch (prototype) {
+      null => undefined,
+      final JsObjectFace face => face.jsRead(name),
+      final Map<dynamic, dynamic> map =>
+        map.containsKey(name) ? map[name] : undefined,
+      _ => undefined,
+    };
   }
 
   @override
-  void jsWrite(String name, Object? value) => this[name] = value;
+  void jsWrite(String name, Object? value) {
+    if (!_names.contains(name)) _names.add(name);
+    if (fieldSet(name, value)) return;
+    final names = _extraNames ??= <String>[];
+    final values = _extraValues ??= <Object?>[];
+    final index = names.indexOf(name);
+    if (index < 0) {
+      names.add(name);
+      values.add(value);
+    } else {
+      values[index] = value;
+    }
+  }
+
+  @override
+  Object? operator [](String name) => jsRead(name);
+
+  @override
+  void operator []=(String name, Object? value) => jsWrite(name, value);
 
   @override
   List<String> jsKeys() {
@@ -678,7 +660,12 @@ base class ContextObject extends MapBase<String, Object?>
   @override
   bool jsDelete(String name) {
     if (!_names.contains(name)) return false;
-    remove(name);
+    _names.remove(name);
+    if (!fieldSet(name, _unset)) {
+      final index = _extraNames!.indexOf(name);
+      _extraNames!.removeAt(index);
+      _extraValues!.removeAt(index);
+    }
     return true;
   }
 }
@@ -1095,14 +1082,15 @@ final class ScriptableLineSegmentContext extends ContextObject {
 /// @returns
 ///
 /// `Object.assign(Object.create(parentContext), context)`. Dart `null` is
-/// the JS `null` of the overload at helpers.options.ts:202. `Object.assign`
-/// copies the own keys of [context] in the order of `Object.keys`
-/// ([jsObjectKeys]), and reads each value with `[[Get]]`. The context is
+/// the JS `null` of the overload at helpers.options.ts:202. The parent is a
+/// [ContextObject] or a `Map`. `Object.assign` copies the own keys of
+/// [context] in the order of `Object.keys` ([jsObjectKeys]), and reads each
+/// value with `[[Get]]`. The context is
 /// the typed class of its `type` (Chart.js ADR 0054 §11): `chart`,
 /// `dataset` and `data`, `scale` and `tick`, `pointLabel`, `tooltip` and
 /// `segment`. Another type gives a [ContextObject].
 // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
-ContextObject createContext(AnyObject? parentContext, AnyObject context) {
+ContextObject createContext(Object? parentContext, AnyObject context) {
   final target = switch (context['type']) {
     'chart' => ScriptableChartContext(parentContext),
     'dataset' || 'data' => ScriptableContext(parentContext),
@@ -1113,7 +1101,7 @@ ContextObject createContext(AnyObject? parentContext, AnyObject context) {
     _ => ContextObject(parentContext),
   };
   for (final key in jsObjectKeys(context)) {
-    target[key] = context[key];
+    target.jsWrite(key, context[key]);
   }
   return target;
 }

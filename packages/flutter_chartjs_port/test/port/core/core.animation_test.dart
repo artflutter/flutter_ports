@@ -52,10 +52,17 @@ String _errorName(Object error) =>
     error is TypeError ? 'TypeError' : error.runtimeType.toString();
 
 /// The plain Map form of the cfg of one replay.
-AnyObject _plain(Map<String, Object?> cfg) => cfg;
+Object _plain(Map<String, Object?> cfg) => cfg;
 
-/// An [AnimationSpec] with the entries of [cfg], in its key order.
-AnyObject _spec(Map<String, Object?> cfg) => AnimationSpec()..addAll(cfg);
+/// An [AnimationSpec] with the entries of [cfg], in its key order, written
+/// through its face.
+Object _spec(Map<String, Object?> cfg) {
+  final spec = AnimationSpec();
+  for (final MapEntry(:key, :value) in cfg.entries) {
+    spec[key] = value;
+  }
+  return spec;
+}
 
 /// [cfg] with a user `fn` that gives the result of the `number`
 /// interpolator. The animation then takes the generic path.
@@ -72,7 +79,7 @@ void _replay(
   AnimationScenario scenario, {
   required Object target,
   required String prop,
-  required AnyObject Function(Map<String, Object?> cfg) cfgOf,
+  required Object Function(Map<String, Object?> cfg) cfgOf,
   required String label,
 }) {
   if (!identical(scenario.current, animationAbsent)) {

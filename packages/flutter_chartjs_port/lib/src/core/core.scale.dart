@@ -311,7 +311,7 @@ double _getTitleHeight(ScaleTitleOptions options, Object? fallback) {
 ///
 /// `createContext` gives the typed context of the type `'scale'`, a
 /// [ScriptableScaleContext] (Chart.js ADR 0054 §11).
-ScriptableScaleContext _createScaleContext(AnyObject parent, Scale scale) {
+ScriptableScaleContext _createScaleContext(Object parent, Scale scale) {
   return createContext(parent, <String, Object?>{
     'scale': scale,
     'type': 'scale',
@@ -324,7 +324,7 @@ ScriptableScaleContext _createScaleContext(AnyObject parent, Scale scale) {
 /// The context of the type `'tick'` is a [ScriptableScaleContext] (Chart.js ADR
 /// 0054 §11).
 ScriptableScaleContext _createTickContext(
-  AnyObject parent,
+  Object parent,
   int index,
   Tick tick,
 ) {
@@ -416,7 +416,7 @@ String? _titleAlign(Object? align, Object? position, Object? reverse) {
 /// The key is the id of a scale that the user names, not a key of the
 /// schema. Thus the object reads it by name.
 ({String? positionAxisID, Object? value}) _positionAxis(Object? position) {
-  final keys = jsObjectKeys(position! as AnyObject);
+  final keys = jsObjectKeys(position);
   final positionAxisID = keys.isEmpty ? null : keys[0];
   return (
     positionAxisID: positionAxisID,
@@ -647,7 +647,7 @@ final class _ScaleLayer implements types.LayoutLayer {
 /// The option objects of a scale are `ContextProxy` resolvers. Another value
 /// has no `setContext`. JavaScript then throws a `TypeError` at the call.
 /// Here the cast throws it.
-ContextProxy _setContext(Object? options, AnyObject context) =>
+ContextProxy _setContext(Object? options, Object context) =>
     (options! as ContextProxy).setContext(context);
 
 /// The holder of `Scale.prototype.draw` (core.scale.js:1623), for the test
@@ -914,7 +914,7 @@ class Scale extends _ScalePrototype
   /// and write it.
   @internal
   @override
-  AnyObject cache = {};
+  types.ScaleCache cache = types.ScaleCache();
 
   /// core.scale.js:248 `_dataLimitsCached`.
   bool _dataLimitsCached = false;
@@ -993,7 +993,7 @@ class Scale extends _ScalePrototype
   /// [options] is an [OptionView]: the reads after `setContext` read the
   /// view of the parameter, as upstream does, through the facade
   /// [CoreScaleOptions].
-  void init(AnyObject options, [AnyObject? opts]) {
+  void init(Object options, [Object? opts]) {
     this.options = _setContext(options, getContext());
     final view = CoreScaleOptions(options as OptionView);
 
@@ -1127,10 +1127,12 @@ class Scale extends _ScalePrototype
     final labels = options.labels;
     // DIVERGES(chartjs): adapt-scale-option-types, a List of labels only.
     if (jsTruthy(labels)) return labels! as List<Object?>;
-    final axisLabels = isHorizontal() ? data['xLabels'] : data['yLabels'];
+    final axisLabels = isHorizontal()
+        ? jsGet(data, 'xLabels')
+        : jsGet(data, 'yLabels');
     // DIVERGES(chartjs): adapt-scale-option-types, a List of labels only.
     if (jsTruthy(axisLabels)) return axisLabels! as List<Object?>;
-    final dataLabels = data['labels'];
+    final dataLabels = jsGet(data, 'labels');
     // DIVERGES(chartjs): adapt-scale-option-types, a List of labels only.
     if (jsTruthy(dataLabels)) return dataLabels! as List<Object?>;
     return [];
@@ -1153,7 +1155,7 @@ class Scale extends _ScalePrototype
   /// When a new layout is created, reset the data limits cache
   @override
   void beforeLayout() {
-    cache = {};
+    cache = types.ScaleCache();
     _dataLimitsCached = false;
   }
 

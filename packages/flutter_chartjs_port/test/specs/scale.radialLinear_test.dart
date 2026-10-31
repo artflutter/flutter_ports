@@ -88,9 +88,9 @@ AnyObject _dataset(Chart chart, int index) =>
 
 /// `chart.options.scales.r`, or `chart.options.scales.r[key]` for a [key]:
 /// a resolver of the chart options.
-AnyObject _optionsR(Chart chart, [String? key]) {
+JsObjectFace _optionsR(Chart chart, [String? key]) {
   final r = jsGet(jsGet(chart.options, 'scales'), 'r');
-  return (key == null ? r : jsGet(r, key))! as AnyObject;
+  return (key == null ? r : jsGet(r, key))! as JsObjectFace;
 }
 
 void main() {
@@ -111,7 +111,7 @@ void main() {
       );
       expect(
         defaultConfig,
-        equals(<String, Object?>{
+        jasmineEquals(<String, Object?>{
           'display': true,
           'animate': true,
           'position': 'chartArea',

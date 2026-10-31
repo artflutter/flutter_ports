@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -59,9 +60,9 @@ import '../support/jasmine.dart';
 // - `parseFloat(value.toFixed(2))` is
 //   `jsParseFloat(value.toStringAsFixed(2))`.
 
-/// The member read `object.key` of the option object [object].
-Object? _member(Object? object, String key) =>
-    (object! as Map<String, Object?>)[key];
+/// The member read `object.key` of the option object [object]: a resolver,
+/// read through its face (Chart.js ADR 0054 §5).
+Object? _member(Object? object, String key) => (object! as JsObjectFace)[key];
 
 /// core.scale.tests.js:1-3 `getLabels(scale)`: the labels of the ticks of
 /// [scale].
@@ -209,7 +210,7 @@ void main() {
       final scale = _member(defaults, 'scale');
       expect(
         _member(scale, 'title'),
-        equals(<String, Object?>{
+        jasmineEquals(<String, Object?>{
           'color': defaults['color'],
           'display': false,
           'text': '',

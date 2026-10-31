@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
@@ -31,6 +32,7 @@ extension on Object? {
   /// `this[key]`: the `get` trap of a resolver, or the value of a Map key.
   /// The [undefined] sentinel for a key that a Map does not contain.
   Object? operator [](String key) {
+    if (this case final JsObjectFace face) return face[key];
     final object = this! as Map<String, Object?>;
     if (object is Resolver || object is ContextResolver) return object[key];
     return object.containsKey(key) ? object[key] : undefined;
@@ -168,12 +170,12 @@ void main() {
         expect(resolver.hasOwnProperty('nonexistent'), isFalse);
 
         expect(jsObjectKeys(resolver), ['option2']);
-        expect(resolver.keys, ['option2', 'option1']);
+        expect(resolver.ownKeys(), ['option2', 'option1']);
 
-        expect(resolver.containsKey('option2'), isTrue);
-        expect(resolver.containsKey('option1'), isTrue);
-        expect(resolver.containsKey('getter'), isFalse);
-        expect(resolver.containsKey('nonexistent'), isFalse);
+        expect(resolver.hasProperty('option2'), isTrue);
+        expect(resolver.hasProperty('option1'), isTrue);
+        expect(resolver.hasProperty('getter'), isFalse);
+        expect(resolver.hasProperty('nonexistent'), isFalse);
 
         // `expect(resolver instanceof Options).toBeTrue()` has no Dart form.
         // DIVERGES(chartjs): js-semantics-resolver-objects, no instanceof.
@@ -552,7 +554,7 @@ void main() {
             }),
           );
           expect(
-            (show['animations']! as Map<String, Object?>).keys.where(
+            (show['animations']! as JsProxyObject).ownKeys().where(
               (k) => isObject(show['animations'][k]),
             ),
             ['colors', 'duration', 'numbers'],
@@ -589,7 +591,7 @@ void main() {
           // Upstream filters the keys of `def.animations` with
           // `show.animations`.
           expect(
-            (def['animations']! as Map<String, Object?>).keys.where(
+            (def['animations']! as JsProxyObject).ownKeys().where(
               (k) => isObject(show['animations'][k]),
             ),
             ['colors', 'duration', 'numbers'],
@@ -614,7 +616,7 @@ void main() {
           };
           final options = <String, Object?>{};
           final resolver = createResolver([options, defaults]);
-          (resolver['sub']! as Map<String, Object?>)['value'] = false;
+          (resolver['sub']! as JsObjectFace)['value'] = false;
           expect(options['sub']['value'], isFalse);
           expect(defaults['sub']['value'], isTrue);
           expect(resolver['sub']['value'], isFalse);
@@ -873,35 +875,35 @@ void main() {
         expect(opts.hasOwnProperty('nonexistent'), isFalse);
 
         expect(jsObjectKeys(opts), ['option2']);
-        expect(opts.keys, ['option2', 'option1']);
+        expect(opts.ownKeys(), ['option2', 'option1']);
 
-        expect(opts.containsKey('option2'), isTrue);
-        expect(opts.containsKey('option1'), isTrue);
-        expect(opts.containsKey('getter'), isFalse);
-        expect(opts.containsKey('nonexistent'), isFalse);
+        expect(opts.hasProperty('option2'), isTrue);
+        expect(opts.hasProperty('option1'), isTrue);
+        expect(opts.hasProperty('getter'), isFalse);
+        expect(opts.hasProperty('nonexistent'), isFalse);
 
         // `expect(opts instanceof Options).toBeTrue()` has no Dart form.
         // DIVERGES(chartjs): js-semantics-resolver-objects, no instanceof.
 
         expect(opts['getter'], 'options getter');
 
-        expect(opts.containsKey('test'), isFalse);
+        expect(opts.hasProperty('test'), isFalse);
         expect(opts['test'], same(undefined));
 
         opts['test'] = true;
-        expect(opts.containsKey('test'), isTrue);
+        expect(opts.hasProperty('test'), isTrue);
         expect(opts['test'], isTrue);
 
-        opts.remove('test');
-        expect(opts.containsKey('test'), isFalse);
+        opts.jsDelete('test');
+        expect(opts.hasProperty('test'), isFalse);
 
         Object? test(Object? ctx) => ctx['index'];
         opts['test'] = test;
-        expect(opts.containsKey('test'), isTrue);
+        expect(opts.hasProperty('test'), isTrue);
         expect(opts['test'], 1);
 
-        opts.remove('test');
-        expect(opts.containsKey('test'), isFalse);
+        opts.jsDelete('test');
+        expect(opts.hasProperty('test'), isFalse);
       });
 
       test('should not create proxy for adapters', () {
@@ -954,7 +956,7 @@ void main() {
         expect((resolver['annotations']! as List<Object?>)[0]['value'], 10);
 
         ((resolver['annotations']! as List<Object?>)[0]!
-                as Map<String, Object?>)['value'] =
+                as JsObjectFace)['value'] =
             15;
         expect((options['annotations']! as List<Object?>)[0]['value'], 15);
         expect((options['annotations']! as List<Object?>)[1]['value'], 20);

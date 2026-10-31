@@ -38,13 +38,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont, toPadding;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show jsGet, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, FontSpecScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show TitleOptions;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -62,7 +62,7 @@ class Title extends Element implements LayoutItem {
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
   Title(
-    ({Object? chart, AnyObject? options, CanvasRenderingContext2D? ctx}) config,
+    ({Object? chart, Object? options, CanvasRenderingContext2D? ctx}) config,
   ) : chart = config.chart,
       ctx = config.ctx {
     options = config.options;
@@ -328,15 +328,17 @@ final class _TitleTextOpts implements types.RenderTextOpts {
 /// An absent argument, [undefined] and JS `null` throw the [TypeError] of
 /// the read `config.chart`, as upstream. A member with the value
 /// [undefined] gives Dart `null`. The `chart` keeps any value, because
-/// `Title` never reads it. An `options` that is not a Map and a `ctx` that
-/// is not a context throw a [TypeError]. Upstream stores such a value.
-// DIVERGES(chartjs): adapt-component-class-role, a non-Map options throws.
-({Object? chart, AnyObject? options, CanvasRenderingContext2D? ctx})
-_titleConfig(List<Object?> args) {
+/// `Title` never reads it. An `options` that is not an object (a Map or a
+/// typed object) and a `ctx` that is not a context throw a [TypeError].
+/// Upstream stores such a value.
+// DIVERGES(chartjs): adapt-component-class-role, a non-object options throws.
+({Object? chart, Object? options, CanvasRenderingContext2D? ctx}) _titleConfig(
+  List<Object?> args,
+) {
   final config = args.isEmpty ? undefined : args[0];
   return (
     chart: _orNull(jsGet(config, 'chart')),
-    options: _orNull(jsGet(config, 'options')) as AnyObject?,
+    options: jsObjectOrNull(jsGet(config, 'options')),
     ctx: _orNull(jsGet(config, 'ctx')) as CanvasRenderingContext2D?,
   );
 }
@@ -345,7 +347,7 @@ _titleConfig(List<Object?> args) {
 Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 
 /// plugin.title.js:108 `createTitle(chart, titleOpts)`.
-void _createTitle(types.Chart chart, AnyObject titleOpts) {
+void _createTitle(types.Chart chart, Object titleOpts) {
   final title = Title((ctx: chart.ctx, options: titleOpts, chart: chart));
 
   layouts
@@ -355,7 +357,7 @@ void _createTitle(types.Chart chart, AnyObject titleOpts) {
 }
 
 /// plugin.title.js:129 `start(chart, _args, options)`.
-void _start(types.Chart chart, AnyObject _, AnyObject options) {
+void _start(types.Chart chart, Object _, Object options) {
   _createTitle(chart, options);
 }
 
@@ -363,7 +365,7 @@ void _start(types.Chart chart, AnyObject _, AnyObject options) {
 /// `undefined` of a chart without a title block: `removeBox` then changes
 /// nothing (core.layouts.js:318-323). `delete chart.titleBlock` is the write
 /// of Dart `null`.
-void _stop(types.Chart chart, AnyObject _, AnyObject _) {
+void _stop(types.Chart chart, Object _, Object _) {
   final titleBlock = chart.titleBlock;
   layouts.removeBox(chart, titleBlock);
   chart.titleBlock = null;
@@ -372,7 +374,7 @@ void _stop(types.Chart chart, AnyObject _, AnyObject _) {
 /// plugin.title.js:139 `beforeUpdate(chart, _args, options)`. Without a
 /// title block, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-void _beforeUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+void _beforeUpdate(types.Chart chart, Object _, Object options) {
   final title = chart.titleBlock! as Title;
   layouts.configure(chart, title, options);
   title.options = options;

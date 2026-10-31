@@ -125,7 +125,7 @@ final Map<String, Object?> _functions = {
       (self! as types.TooltipModel).chart,
       'external ${jsToString(jsGet(context, 'replay'))} '
       '${identical(jsGet(context, 'tooltip'), self)} '
-      '${jsObjectKeys(context! as AnyObject).join(',')}',
+      '${jsObjectKeys(context).join(',')}',
     );
   }),
   // (item) => ({borderColor: item.datasetIndex === 0 ? 'red' : 'green',
@@ -720,12 +720,9 @@ void main() {
 
     test('the keys of the plugin object are the upstream keys', () {
       expect(jsObjectKeys(tooltip), _upstreamKeys);
-      final defaults = tooltip['defaults']! as AnyObject;
+      final defaults = tooltip['defaults']! as JsObjectFace;
       expect(jsObjectKeys(defaults), _upstreamDefaultsKeys);
-      expect(
-        jsObjectKeys(defaults['callbacks']! as AnyObject),
-        _callbackNames,
-      );
+      expect(jsObjectKeys(defaults['callbacks']), _callbackNames);
     });
   });
 
@@ -1090,12 +1087,12 @@ void main() {
           for (final x in xs) <String, Object?>{'element': _FakeElement(x)},
         ],
       ]);
-      final nan = run([double.nan, double.nan, 2])! as AnyObject;
+      final nan = run([double.nan, double.nan, 2])! as JsObjectFace;
       expect(nan['x'], isNaN);
       expect(nan['y'], 1);
-      final zeros = run([0, -0.0, 4])! as AnyObject;
+      final zeros = run([0, -0.0, 4])! as JsObjectFace;
       expect(zeros['x'], 2);
-      final minusZero = run([-0.0])! as AnyObject;
+      final minusZero = run([-0.0])! as JsObjectFace;
       expect(minusZero['x'], 0);
       expect((minusZero['x']! as double).isNegative, isFalse);
       expect(minusZero['y'], 1);
@@ -1148,7 +1145,7 @@ void main() {
     test('labelTextColor without this throws a TypeError', () {
       // The probe output `labelTextColorNoThis`: TypeError.
       final callbacks =
-          (tooltip['defaults']! as AnyObject)['callbacks']! as AnyObject;
+          (tooltip['defaults']! as JsObjectFace)['callbacks']! as JsObjectFace;
       expect(
         () => jsCall(callbacks['labelTextColor'], const []),
         throwsA(isA<TypeError>()),
@@ -1296,10 +1293,10 @@ void main() {
       final t = _tooltipOf(chart);
       final items = t.dataPoints!;
       final defaults =
-          (tooltip['defaults']! as AnyObject)['callbacks']! as AnyObject;
+          (tooltip['defaults']! as JsObjectFace)['callbacks']! as JsObjectFace;
       var userCalls = 0;
-      Object? twoCalls(AnyObject callbacks, String name, Object? arg) {
-        final result = jsCall1(callbacks[name], arg, thisArg: t);
+      Object? twoCalls(Object callbacks, String name, Object? arg) {
+        final result = jsCall1(jsGet(callbacks, name), arg, thisArg: t);
         return identical(result, undefined)
             ? jsCall1(defaults[name], arg, thisArg: t)
             : result;
@@ -1385,7 +1382,7 @@ void main() {
                 [t.getContext()],
                 thisArg: t.options,
               )!
-              as AnyObject;
+              as JsObjectFace;
       expect(jsGet(options, '_cacheable'), false);
       expect(jsGet(jsGet(options, 'animations'), '_cacheable'), false);
 
@@ -1456,14 +1453,14 @@ void main() {
             'beforeTooltipDraw': (Object? c, Object? args) {
               order.add(
                 'beforeTooltipDraw '
-                '${jsObjectKeys(args! as AnyObject).join(',')}',
+                '${jsObjectKeys(args).join(',')}',
               );
               return cancel ? false : undefined;
             },
             'afterTooltipDraw': (Object? c, Object? args) {
               order.add(
                 'afterTooltipDraw '
-                '${jsObjectKeys(args! as AnyObject).join(',')}',
+                '${jsObjectKeys(args).join(',')}',
               );
             },
             'afterDraw': (Object? c) {
@@ -1511,7 +1508,7 @@ void main() {
       // and update(): only afterInit writes chart.tooltip.
       final chart = acquireChart(_probeChart(false));
       expect(chart.tooltip, isNull);
-      (jsGet(chart.options, 'plugins')! as AnyObject)['tooltip'] =
+      (jsGet(chart.options, 'plugins')! as JsObjectFace)['tooltip'] =
           <String, Object?>{};
       chart.update();
       expect(chart.tooltip, isNull);
@@ -1552,7 +1549,7 @@ void main() {
             entries.add(
               '${jsToString(jsGet(context, 'replay'))} '
               '${identical(jsGet(context, 'tooltip'), self)} '
-              '${jsObjectKeys(context! as AnyObject).join(',')}',
+              '${jsObjectKeys(context).join(',')}',
             );
           }),
         }),

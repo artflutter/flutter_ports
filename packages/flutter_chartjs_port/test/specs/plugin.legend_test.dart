@@ -37,24 +37,24 @@ import '../support/jasmine.dart';
 // (Chart.js ADR 0022, section 6).
 
 /// `chart.legend.legendHitBoxes`.
-List<AnyObject> _hitBoxes(Chart chart) =>
+List<JsObjectFace> _hitBoxes(Chart chart) =>
     (chart.legend! as Legend).legendHitBoxes;
 
 /// `chart.options.plugins`, the option resolver of the plugins.
-AnyObject _pluginOptions(Chart chart) =>
-    jsGet(chart.options, 'plugins')! as AnyObject;
+JsObjectFace _pluginOptions(Chart chart) =>
+    jsGet(chart.options, 'plugins')! as JsObjectFace;
 
 /// `chart.options.plugins.legend`, the option resolver of the legend.
-AnyObject _legendOptions(Chart chart) =>
-    jsGet(_pluginOptions(chart), 'legend')! as AnyObject;
+JsObjectFace _legendOptions(Chart chart) =>
+    jsGet(_pluginOptions(chart), 'legend')! as JsObjectFace;
 
 /// `Chart.defaults.plugins.legend`.
-AnyObject _legendDefaults() =>
-    jsGet(jsGet(Chart.defaults, 'plugins'), 'legend')! as AnyObject;
+JsObjectFace _legendDefaults() =>
+    jsGet(jsGet(Chart.defaults, 'plugins'), 'legend')! as JsObjectFace;
 
 /// The point `{x, y}` at the center of the hit box [hb] (:1094-1097,
 /// :1136-1139, :1176-1179).
-AnyObject _center(AnyObject hb) => <String, Object?>{
+AnyObject _center(JsObjectFace hb) => <String, Object?>{
   'x': (hb['left']! as double) + ((hb['width']! as double) / 2),
   'y': (hb['top']! as double) + ((hb['height']! as double) / 2),
 };
@@ -209,8 +209,8 @@ void main() {
 
     test('should have the correct default config', () {
       final actual = _legendDefaults();
-      final labels = jsGet(actual, 'labels')! as AnyObject;
-      final title = jsGet(actual, 'title')! as AnyObject;
+      final labels = jsGet(actual, 'labels')! as JsObjectFace;
+      final title = jsGet(actual, 'title')! as JsObjectFace;
       // jasmine.any(Function): each function value of the expected object.
       expect(jsGet(actual, 'onClick'), anyFunction);
       expect(jsGet(labels, 'color'), anyFunction);

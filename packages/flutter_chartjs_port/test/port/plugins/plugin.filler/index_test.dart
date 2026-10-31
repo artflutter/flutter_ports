@@ -227,7 +227,7 @@ void main() {
     });
 
     test('the defaults are the upstream defaults (index.js:93-96)', () {
-      final defaults = filler['defaults']! as Map<String, Object?>;
+      final defaults = filler['defaults']! as JsObjectFace;
       expect(jsObjectKeys(defaults), ['propagate', 'drawTime']);
       expect(defaults['propagate'], isTrue);
       expect(defaults['drawTime'], 'beforeDatasetDraw');

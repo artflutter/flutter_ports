@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
+import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
@@ -202,7 +203,7 @@ void main() {
           expect(chart.getDatasetMeta(0).controller, isA<LineController>());
           expect(chart.getDatasetMeta(0).dataset, isA<LineElement>());
           final dataset =
-              (chart.data['datasets']! as List<Object?>).single!
+              (readByName(chart.data, 'datasets')! as List<Object?>).single!
                   as Map<String, Object?>;
           expect(dataset['showLine'], false);
           // `_clip` of the meta is internal (Chart.js ADR 0048, section 6).
@@ -262,7 +263,7 @@ void main() {
           final item = _item(tester, 7);
           expect(points[7].x, scaleX.getPixelForValue(item['x'], 7));
           expect(points[7].y, scaleY.getPixelForValue(item['y'], 7));
-          expect(points[7].options!['radius'], 3);
+          expect((points[7].options! as JsObjectFace)['radius'], 3);
 
           // Stopping publishes the figures with the x ticks.
           await _tap(tester, 'stress.start');

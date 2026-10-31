@@ -94,7 +94,9 @@ Object? _or(Object? a, Object? b) => jsTruthy(a) ? a : b;
 ///   - `useShadowDOM`: use shadowDom.
 ///   - `persistent`: If true, the chart will not be released after the spec.
 ///
-/// Both are JS objects: Maps (Chart.js ADR 0043). As upstream, the function
+/// Both are JS objects: Maps, or for [config] also the typed root scope of
+/// a typed config (Chart.js ADR 0054 §7, `acquireChartRoot` of
+/// `index.dart`). As upstream, the function
 /// writes `canvas` and `wrapper` into [options], and `options` into
 /// [config]. It writes `animation`, `responsive` and `locale` into the
 /// options of [config]. A nested Map literal of a spec thus needs the type
@@ -119,7 +121,7 @@ Object? _or(Object? a, Object? b) => jsTruthy(a) ? a : b;
 ///   `pending()` of a browser without the shadow DOM (:64-68).
 /// - `spriteText` (:90-92) has no port: the port compares no image.
 Chart acquireChart([
-  Map<String, Object?>? config,
+  Object? config,
   Map<String, Object?>? options,
 ]) {
   // DIVERGES(chartjs): harness-acquire-chart, only in a testWidgets body.
@@ -158,17 +160,23 @@ Chart acquireChart([
   }
 
   // by default, remove chart animation and auto resize
-  config['options'] = _or(config['options'], <String, Object?>{});
-  final chartOptions = config['options']! as Map<String, Object?>;
+  // The config is a Map of the spec, or the typed root scope of a typed
+  // config (Chart.js ADR 0054 §7): its options read and write by name.
+  jsSet(config, 'options', _or(jsGet(config, 'options'), <String, Object?>{}));
+  final chartOptions = jsGet(config, 'options')!;
   final animation = jsGet(chartOptions, 'animation');
-  chartOptions['animation'] = identical(animation, undefined)
-      ? false
-      : animation;
+  jsSet(
+    chartOptions,
+    'animation',
+    identical(animation, undefined) ? false : animation,
+  );
   final responsive = jsGet(chartOptions, 'responsive');
-  chartOptions['responsive'] = identical(responsive, undefined)
-      ? false
-      : responsive;
-  chartOptions['locale'] = _or(chartOptions['locale'], 'en-US');
+  jsSet(
+    chartOptions,
+    'responsive',
+    identical(responsive, undefined) ? false : responsive,
+  );
+  jsSet(chartOptions, 'locale', _or(jsGet(chartOptions, 'locale'), 'en-US'));
 
   if (jsTruthy(options['useShadowDOM'])) {
     // If shadowDOM is not supported by the browsers, mark test as 'pending'.

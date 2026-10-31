@@ -1,7 +1,7 @@
 # The by-name reads that stay (lane L1, Chart.js ADR 0054).
 # jsGet: `_dataset.data`, the dataset object of the user (the `raw` of a
 #   point with segments).
-jsGet 1
 # jsGetKey: `_dataset._decimated`, the property that the decimation plugin
 #   writes into the dataset object of the user.
+jsGet 1
 jsGetKey 1

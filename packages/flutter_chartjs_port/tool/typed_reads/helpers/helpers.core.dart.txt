@@ -1,4 +1,11 @@
-jsGet 5
+# The allowlist of the close step (Chart.js ADR 0054 §5): the generic
+# helpers of helpers.core.ts over any JS object (a Map of the user or a
+# typed object through its face).
+# - jsCall 4: callback and each call a function value of the user.
+# - jsGet 1, jsObjectKeys 4: each, clone, merge and the copy into a typed
+#   scope (_cloneToScope) walk the own keys of an object.
+# - jsGet 3: resolveObjectKey (the default resolvers x and y and the path
+#   walk) reads the user data and parsing keys by name.
+jsGet 4
 jsCall 4
 jsObjectKeys 4
-extendsMapBase 1

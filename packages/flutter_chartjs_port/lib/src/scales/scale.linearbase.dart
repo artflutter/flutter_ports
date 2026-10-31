@@ -49,6 +49,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsIsObjectLike;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:meta/meta.dart';
@@ -554,7 +555,7 @@ class LinearScaleBase extends Scale {
     return formatNumber(
       jsToNumber(value),
       readOption(chart.options, OptionKey.locale),
-      format is Map<String, Object?> ? format : null,
+      jsIsObjectLike(format) ? format : null,
     );
   }
 }

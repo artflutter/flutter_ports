@@ -544,9 +544,9 @@ void put(OptionScope scope, OptionKey key, Object? value) {
 /// shape of the key is foreign, and the audit of the oracle O2 sees it
 /// (`OptionScope.classifyName`).
 void _store(OptionScope scope, String name, Object? value) {
-  // A typed scope is a Map during the migration (Chart.js ADR 0054 §5): it
-  // goes by reference.
-  final cell = value is Map<Object?, Object?> && value is! OptionScope
+  // A typed scope is not a Map (Chart.js ADR 0054 §5): it goes by
+  // reference.
+  final cell = value is Map<Object?, Object?>
       ? scope.classifyName(name, _objectFor(scope, name, value))
       : scope.classifyName(name, value);
   scope.store(name, cell);
@@ -592,7 +592,7 @@ T mergeExtra<T extends OptionScope>(T scope, Map<String, Object?>? extra) {
 void _mergeInto(OptionScope target, Map<Object?, Object?> source) {
   for (final MapEntry(:key, :value) in source.entries) {
     final name = _key(key);
-    if (value is Map<Object?, Object?> && value is! OptionScope) {
+    if (value is Map<Object?, Object?>) {
       final current = target.ownCell(name)?.raw;
       if (current is OptionScope) {
         _mergeInto(current, value);

@@ -8,10 +8,10 @@
 /// `String?` or `Object?`), a bit of `_present` and, for a value
 /// outside the type of the field, a bit of `_foreign` and the raw value
 /// in `_foreignRaw` (§6). The typed getter gives the JS conversion of
-/// the Map read (Dart `null` for an absent key); `<key>Value` gives the
-/// raw value, or `undefined` for an absent key. `ElementOptions` keeps
-/// `$shared`, `$animations`, the extras, the frozen state and the
-/// Map protocol.
+/// the value (0, false or Dart `null` for an absent key); `<key>Value`
+/// gives the raw value, or `undefined` for an absent key.
+/// `ElementOptions` keeps `$shared`, `$animations`, the extras, the
+/// frozen state and the face (Chart.js ADR 0054 §5).
 ///
 /// This library is a pure layer.
 library;
@@ -82,7 +82,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   List<Object?>? _foreignRaw;
 
   /// The bits of the `double` keys whose raw value is a Dart `int`:
-  /// the Map read gives the `int` back.
+  /// the read by name gives the `int` back.
   int _int = 0;
 
   void _setForeign(int slot, int bit, Object? raw) {
@@ -99,7 +99,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   double _borderWidth = 0;
 
-  /// `borderWidth`: the JS conversion of the Map read of the key.
+  /// `borderWidth`: the JS conversion of the value of the key.
   double get borderWidth => _borderWidth;
 
   /// `borderWidth`: the raw value, or [undefined] for an absent key.
@@ -139,7 +139,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   double _hitRadius = 0;
 
-  /// `hitRadius`: the JS conversion of the Map read of the key.
+  /// `hitRadius`: the JS conversion of the value of the key.
   double get hitRadius => _hitRadius;
 
   /// `hitRadius`: the raw value, or [undefined] for an absent key.
@@ -179,7 +179,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   double _hoverBorderWidth = 0;
 
-  /// `hoverBorderWidth`: the JS conversion of the Map read of the key.
+  /// `hoverBorderWidth`: the JS conversion of the value of the key.
   double get hoverBorderWidth => _hoverBorderWidth;
 
   /// `hoverBorderWidth`: the raw value, or [undefined] for an absent key.
@@ -219,7 +219,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   double _hoverRadius = 0;
 
-  /// `hoverRadius`: the JS conversion of the Map read of the key.
+  /// `hoverRadius`: the JS conversion of the value of the key.
   double get hoverRadius => _hoverRadius;
 
   /// `hoverRadius`: the raw value, or [undefined] for an absent key.
@@ -259,7 +259,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   Object? _pointStyle = null;
 
-  /// `pointStyle`: the JS conversion of the Map read of the key.
+  /// `pointStyle`: the JS conversion of the value of the key.
   Object? get pointStyle => _pointStyle;
 
   /// `pointStyle`: the raw value, or [undefined] for an absent key.
@@ -284,7 +284,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   double _radius = 0;
 
-  /// `radius`: the JS conversion of the Map read of the key.
+  /// `radius`: the JS conversion of the value of the key.
   double get radius => _radius;
 
   /// `radius`: the raw value, or [undefined] for an absent key.
@@ -324,7 +324,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   double _rotation = 0;
 
-  /// `rotation`: the JS conversion of the Map read of the key.
+  /// `rotation`: the JS conversion of the value of the key.
   double get rotation => _rotation;
 
   /// `rotation`: the raw value, or [undefined] for an absent key.
@@ -364,7 +364,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   Object? _backgroundColor = null;
 
-  /// `backgroundColor`: the JS conversion of the Map read of the key.
+  /// `backgroundColor`: the JS conversion of the value of the key.
   Object? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
@@ -389,7 +389,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   Object? _borderColor = null;
 
-  /// `borderColor`: the JS conversion of the Map read of the key.
+  /// `borderColor`: the JS conversion of the value of the key.
   Object? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
@@ -614,7 +614,7 @@ final class LineOptions extends ElementOptions {
   List<Object?>? _foreignRaw;
 
   /// The bits of the `double` keys whose raw value is a Dart `int`:
-  /// the Map read gives the `int` back.
+  /// the read by name gives the `int` back.
   int _int = 0;
 
   void _setForeign(int slot, int bit, Object? raw) {
@@ -631,7 +631,7 @@ final class LineOptions extends ElementOptions {
 
   String? _borderCapStyle = null;
 
-  /// `borderCapStyle`: the JS conversion of the Map read of the key.
+  /// `borderCapStyle`: the JS conversion of the value of the key.
   String? get borderCapStyle => _borderCapStyle;
 
   /// `borderCapStyle`: the raw value, or [undefined] for an absent key.
@@ -663,7 +663,7 @@ final class LineOptions extends ElementOptions {
 
   Object? _borderDash = null;
 
-  /// `borderDash`: the JS conversion of the Map read of the key.
+  /// `borderDash`: the JS conversion of the value of the key.
   Object? get borderDash => _borderDash;
 
   /// `borderDash`: the raw value, or [undefined] for an absent key.
@@ -688,7 +688,7 @@ final class LineOptions extends ElementOptions {
 
   double _borderDashOffset = 0;
 
-  /// `borderDashOffset`: the JS conversion of the Map read of the key.
+  /// `borderDashOffset`: the JS conversion of the value of the key.
   double get borderDashOffset => _borderDashOffset;
 
   /// `borderDashOffset`: the raw value, or [undefined] for an absent key.
@@ -728,7 +728,7 @@ final class LineOptions extends ElementOptions {
 
   String? _borderJoinStyle = null;
 
-  /// `borderJoinStyle`: the JS conversion of the Map read of the key.
+  /// `borderJoinStyle`: the JS conversion of the value of the key.
   String? get borderJoinStyle => _borderJoinStyle;
 
   /// `borderJoinStyle`: the raw value, or [undefined] for an absent key.
@@ -760,7 +760,7 @@ final class LineOptions extends ElementOptions {
 
   double _borderWidth = 0;
 
-  /// `borderWidth`: the JS conversion of the Map read of the key.
+  /// `borderWidth`: the JS conversion of the value of the key.
   double get borderWidth => _borderWidth;
 
   /// `borderWidth`: the raw value, or [undefined] for an absent key.
@@ -800,7 +800,7 @@ final class LineOptions extends ElementOptions {
 
   bool _capBezierPoints = false;
 
-  /// `capBezierPoints`: the JS conversion of the Map read of the key.
+  /// `capBezierPoints`: the JS conversion of the value of the key.
   bool get capBezierPoints => _capBezierPoints;
 
   /// `capBezierPoints`: the raw value, or [undefined] for an absent key.
@@ -832,7 +832,7 @@ final class LineOptions extends ElementOptions {
 
   String? _cubicInterpolationMode = null;
 
-  /// `cubicInterpolationMode`: the JS conversion of the Map read of the key.
+  /// `cubicInterpolationMode`: the JS conversion of the value of the key.
   String? get cubicInterpolationMode => _cubicInterpolationMode;
 
   /// `cubicInterpolationMode`: the raw value, or [undefined] for an absent key.
@@ -865,7 +865,7 @@ final class LineOptions extends ElementOptions {
 
   Object? _fill = null;
 
-  /// `fill`: the JS conversion of the Map read of the key.
+  /// `fill`: the JS conversion of the value of the key.
   Object? get fill => _fill;
 
   /// `fill`: the raw value, or [undefined] for an absent key.
@@ -890,7 +890,7 @@ final class LineOptions extends ElementOptions {
 
   Object? _spanGaps = null;
 
-  /// `spanGaps`: the JS conversion of the Map read of the key.
+  /// `spanGaps`: the JS conversion of the value of the key.
   Object? get spanGaps => _spanGaps;
 
   /// `spanGaps`: the raw value, or [undefined] for an absent key.
@@ -915,7 +915,7 @@ final class LineOptions extends ElementOptions {
 
   Object? _stepped = null;
 
-  /// `stepped`: the JS conversion of the Map read of the key.
+  /// `stepped`: the JS conversion of the value of the key.
   Object? get stepped => _stepped;
 
   /// `stepped`: the raw value, or [undefined] for an absent key.
@@ -940,7 +940,7 @@ final class LineOptions extends ElementOptions {
 
   double _tension = 0;
 
-  /// `tension`: the JS conversion of the Map read of the key.
+  /// `tension`: the JS conversion of the value of the key.
   double get tension => _tension;
 
   /// `tension`: the raw value, or [undefined] for an absent key.
@@ -980,7 +980,7 @@ final class LineOptions extends ElementOptions {
 
   Object? _backgroundColor = null;
 
-  /// `backgroundColor`: the JS conversion of the Map read of the key.
+  /// `backgroundColor`: the JS conversion of the value of the key.
   Object? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
@@ -1006,7 +1006,7 @@ final class LineOptions extends ElementOptions {
 
   Object? _borderColor = null;
 
-  /// `borderColor`: the JS conversion of the Map read of the key.
+  /// `borderColor`: the JS conversion of the value of the key.
   Object? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
@@ -1031,7 +1031,7 @@ final class LineOptions extends ElementOptions {
 
   Object? _segment = null;
 
-  /// `segment`: the JS conversion of the Map read of the key.
+  /// `segment`: the JS conversion of the value of the key.
   Object? get segment => _segment;
 
   /// `segment`: the raw value, or [undefined] for an absent key.
@@ -1293,7 +1293,7 @@ final class BarOptions extends ElementOptions {
   List<Object?>? _foreignRaw;
 
   /// The bits of the `double` keys whose raw value is a Dart `int`:
-  /// the Map read gives the `int` back.
+  /// the read by name gives the `int` back.
   int _int = 0;
 
   void _setForeign(int slot, int bit, Object? raw) {
@@ -1310,7 +1310,7 @@ final class BarOptions extends ElementOptions {
 
   Object? _borderSkipped = null;
 
-  /// `borderSkipped`: the JS conversion of the Map read of the key.
+  /// `borderSkipped`: the JS conversion of the value of the key.
   Object? get borderSkipped => _borderSkipped;
 
   /// `borderSkipped`: the raw value, or [undefined] for an absent key.
@@ -1335,7 +1335,7 @@ final class BarOptions extends ElementOptions {
 
   Object? _borderWidth = null;
 
-  /// `borderWidth`: the JS conversion of the Map read of the key.
+  /// `borderWidth`: the JS conversion of the value of the key.
   Object? get borderWidth => _borderWidth;
 
   /// `borderWidth`: the raw value, or [undefined] for an absent key.
@@ -1360,7 +1360,7 @@ final class BarOptions extends ElementOptions {
 
   Object? _borderRadius = null;
 
-  /// `borderRadius`: the JS conversion of the Map read of the key.
+  /// `borderRadius`: the JS conversion of the value of the key.
   Object? get borderRadius => _borderRadius;
 
   /// `borderRadius`: the raw value, or [undefined] for an absent key.
@@ -1385,7 +1385,7 @@ final class BarOptions extends ElementOptions {
 
   Object? _inflateAmount = null;
 
-  /// `inflateAmount`: the JS conversion of the Map read of the key.
+  /// `inflateAmount`: the JS conversion of the value of the key.
   Object? get inflateAmount => _inflateAmount;
 
   /// `inflateAmount`: the raw value, or [undefined] for an absent key.
@@ -1410,7 +1410,7 @@ final class BarOptions extends ElementOptions {
 
   Object? _pointStyle = null;
 
-  /// `pointStyle`: the JS conversion of the Map read of the key.
+  /// `pointStyle`: the JS conversion of the value of the key.
   Object? get pointStyle => _pointStyle;
 
   /// `pointStyle`: the raw value, or [undefined] for an absent key.
@@ -1435,7 +1435,7 @@ final class BarOptions extends ElementOptions {
 
   Object? _backgroundColor = null;
 
-  /// `backgroundColor`: the JS conversion of the Map read of the key.
+  /// `backgroundColor`: the JS conversion of the value of the key.
   Object? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
@@ -1460,7 +1460,7 @@ final class BarOptions extends ElementOptions {
 
   Object? _borderColor = null;
 
-  /// `borderColor`: the JS conversion of the Map read of the key.
+  /// `borderColor`: the JS conversion of the value of the key.
   Object? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
@@ -1665,7 +1665,7 @@ final class ArcOptions extends ElementOptions {
   List<Object?>? _foreignRaw;
 
   /// The bits of the `double` keys whose raw value is a Dart `int`:
-  /// the Map read gives the `int` back.
+  /// the read by name gives the `int` back.
   int _int = 0;
 
   void _setForeign(int slot, int bit, Object? raw) {
@@ -1682,7 +1682,7 @@ final class ArcOptions extends ElementOptions {
 
   String? _borderAlign = null;
 
-  /// `borderAlign`: the JS conversion of the Map read of the key.
+  /// `borderAlign`: the JS conversion of the value of the key.
   String? get borderAlign => _borderAlign;
 
   /// `borderAlign`: the raw value, or [undefined] for an absent key.
@@ -1714,7 +1714,7 @@ final class ArcOptions extends ElementOptions {
 
   Object? _borderColor = null;
 
-  /// `borderColor`: the JS conversion of the Map read of the key.
+  /// `borderColor`: the JS conversion of the value of the key.
   Object? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
@@ -1739,7 +1739,7 @@ final class ArcOptions extends ElementOptions {
 
   Object? _borderDash = null;
 
-  /// `borderDash`: the JS conversion of the Map read of the key.
+  /// `borderDash`: the JS conversion of the value of the key.
   Object? get borderDash => _borderDash;
 
   /// `borderDash`: the raw value, or [undefined] for an absent key.
@@ -1764,7 +1764,7 @@ final class ArcOptions extends ElementOptions {
 
   double _borderDashOffset = 0;
 
-  /// `borderDashOffset`: the JS conversion of the Map read of the key.
+  /// `borderDashOffset`: the JS conversion of the value of the key.
   double get borderDashOffset => _borderDashOffset;
 
   /// `borderDashOffset`: the raw value, or [undefined] for an absent key.
@@ -1804,7 +1804,7 @@ final class ArcOptions extends ElementOptions {
 
   String? _borderJoinStyle = null;
 
-  /// `borderJoinStyle`: the JS conversion of the Map read of the key.
+  /// `borderJoinStyle`: the JS conversion of the value of the key.
   String? get borderJoinStyle => _borderJoinStyle;
 
   /// `borderJoinStyle`: the raw value, or [undefined] for an absent key.
@@ -1836,7 +1836,7 @@ final class ArcOptions extends ElementOptions {
 
   Object? _borderRadius = null;
 
-  /// `borderRadius`: the JS conversion of the Map read of the key.
+  /// `borderRadius`: the JS conversion of the value of the key.
   Object? get borderRadius => _borderRadius;
 
   /// `borderRadius`: the raw value, or [undefined] for an absent key.
@@ -1861,7 +1861,7 @@ final class ArcOptions extends ElementOptions {
 
   double _borderWidth = 0;
 
-  /// `borderWidth`: the JS conversion of the Map read of the key.
+  /// `borderWidth`: the JS conversion of the value of the key.
   double get borderWidth => _borderWidth;
 
   /// `borderWidth`: the raw value, or [undefined] for an absent key.
@@ -1901,7 +1901,7 @@ final class ArcOptions extends ElementOptions {
 
   double _offset = 0;
 
-  /// `offset`: the JS conversion of the Map read of the key.
+  /// `offset`: the JS conversion of the value of the key.
   double get offset => _offset;
 
   /// `offset`: the raw value, or [undefined] for an absent key.
@@ -1941,7 +1941,7 @@ final class ArcOptions extends ElementOptions {
 
   double _spacing = 0;
 
-  /// `spacing`: the JS conversion of the Map read of the key.
+  /// `spacing`: the JS conversion of the value of the key.
   double get spacing => _spacing;
 
   /// `spacing`: the raw value, or [undefined] for an absent key.
@@ -1981,7 +1981,7 @@ final class ArcOptions extends ElementOptions {
 
   String? _spacingMode = null;
 
-  /// `spacingMode`: the JS conversion of the Map read of the key.
+  /// `spacingMode`: the JS conversion of the value of the key.
   String? get spacingMode => _spacingMode;
 
   /// `spacingMode`: the raw value, or [undefined] for an absent key.
@@ -2013,7 +2013,7 @@ final class ArcOptions extends ElementOptions {
 
   double _angle = 0;
 
-  /// `angle`: the JS conversion of the Map read of the key.
+  /// `angle`: the JS conversion of the value of the key.
   double get angle => _angle;
 
   /// `angle`: the raw value, or [undefined] for an absent key.
@@ -2053,7 +2053,7 @@ final class ArcOptions extends ElementOptions {
 
   bool _circular = false;
 
-  /// `circular`: the JS conversion of the Map read of the key.
+  /// `circular`: the JS conversion of the value of the key.
   bool get circular => _circular;
 
   /// `circular`: the raw value, or [undefined] for an absent key.
@@ -2085,7 +2085,7 @@ final class ArcOptions extends ElementOptions {
 
   bool _selfJoin = false;
 
-  /// `selfJoin`: the JS conversion of the Map read of the key.
+  /// `selfJoin`: the JS conversion of the value of the key.
   bool get selfJoin => _selfJoin;
 
   /// `selfJoin`: the raw value, or [undefined] for an absent key.
@@ -2117,7 +2117,7 @@ final class ArcOptions extends ElementOptions {
 
   Object? _backgroundColor = null;
 
-  /// `backgroundColor`: the JS conversion of the Map read of the key.
+  /// `backgroundColor`: the JS conversion of the value of the key.
   Object? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.

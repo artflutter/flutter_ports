@@ -75,7 +75,7 @@ class ChartTypePageState extends State<ChartTypePage> {
   String get datasetsLabel {
     final chart = _chart;
     if (chart == null) return 'none';
-    final datasets = chart.data['datasets']! as List<Object?>;
+    final datasets = readByName(chart.data, 'datasets')! as List<Object?>;
     return [
       for (var i = 0; i < datasets.length; i++)
         _datasetLabel(chart.getDatasetMeta(i)),
@@ -132,8 +132,9 @@ class ChartTypePageState extends State<ChartTypePage> {
   late final Map<String, Object?> _mouseoutPlugin = {
     'id': 'typeReadout',
     'afterEvent': (Object? chart, Object? args, Object? options) {
-      // The hook arguments are a Map (core.controller.js:1164-1169).
-      final event = (args! as Map<String, Object?>)['event']! as ChartEvent;
+      // The hook arguments are a typed object, read by name through its
+      // face (core.controller.js:1164-1169, Chart.js ADR 0054 §12).
+      final event = (args! as JsObjectFace)['event']! as ChartEvent;
       if (event.type == 'mouseout') _readout.value++;
     },
   };

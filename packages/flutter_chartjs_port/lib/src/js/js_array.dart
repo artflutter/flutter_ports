@@ -6,14 +6,16 @@
 /// `list[index] = value` ([jsSetIndex], Chart.js ADR 0036) and a string as
 /// an array-like value ([JsStringList]).
 ///
-/// A JavaScript array is a `List<Object?>` and a plain object is a
-/// `Map<String, Object?>` (Chart.js ADR 0043).
+/// A JavaScript array is a `List<Object?>`. A plain object is a
+/// `Map<String, Object?>` or a typed object with a face (Chart.js ADR 0054
+/// §5).
 library;
 
 import 'dart:collection' show ListBase;
 
 import 'package:collection/collection.dart' show mergeSort;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// `array.sort(compare)`: sorts [list] in place with a stable sort and
 /// returns it, as `Array.prototype.sort` does.
@@ -50,20 +52,27 @@ int _sign(num result) {
   return 0;
 }
 
-/// A JavaScript `Proxy` object as a `Map<String, Object?>`: the resolvers of
-/// `helpers.config` (Chart.js ADR 0043).
+/// A JavaScript `Proxy` object: the resolvers of `helpers.config`
+/// (Chart.js ADR 0054 §4).
 ///
-/// `operator []` is the `get` trap, [Map.containsKey] is the `has` trap and
-/// [Map.keys] is the `ownKeys` trap (`Object.getOwnPropertyNames`). The other
-/// members of [Map] that enumerate, for example [Map.forEach] and
-/// [Map.length], also use the `ownKeys` trap.
-abstract interface class JsProxyObject implements Map<String, Object?> {
+/// [operator []] and [jsRead] are the `get` trap, [operator []=] and
+/// [jsWrite] the `set` trap, [jsDelete] the `deleteProperty` trap and
+/// [jsHas] the `getOwnPropertyDescriptor` trap (`hasOwnProperty`).
+/// [hasProperty] is the `has` trap (the `in` operator) and [ownKeys] the
+/// `ownKeys` trap (`Object.getOwnPropertyNames`).
+abstract interface class JsProxyObject implements JsObjectFace {
   /// `Object.keys(proxy)`: the `ownKeys` trap result without the keys that
   /// the `getOwnPropertyDescriptor` trap rejects.
   ///
   /// The keys keep the order of the `ownKeys` trap. The engine does not move
   /// the array-index keys of a proxy to the front.
   List<String> objectKeys();
+
+  /// The `ownKeys` trap: `Object.getOwnPropertyNames(proxy)`.
+  List<String> ownKeys();
+
+  /// The `has` trap: `name in proxy`.
+  bool hasProperty(String name);
 }
 
 /// The JS write `list[index] = value` (Chart.js ADR 0036): a write at the
@@ -89,26 +98,50 @@ void jsSetIndex<T>(List<T> list, int index, T value) {
 /// `OrdinaryOwnPropertyKeys` order.
 ///
 /// For a [JsProxyObject], the result is [JsProxyObject.objectKeys], as the
-/// engine gives for a `Proxy`. Ported code calls this function also for
-/// `for-in`, `Object.assign` and the object spread over a JavaScript object.
+/// engine gives for a `Proxy`. For another [JsObjectFace] (a typed object of
+/// Chart.js ADR 0054), it is [JsObjectFace.jsKeys]. Ported code calls this
+/// function also for `for-in`, `Object.assign` and the object spread over a
+/// JavaScript object.
 ///
-/// The array-index keys come first, in ascending numeric order. An
-/// array-index key is the canonical string of an integer from 0 to
-/// 2^32 - 2: `'0'`, `'7'` or `'4294967294'`, but not `'01'`, `'-1'`, `'1.0'`
-/// or `'4294967295'`. The other keys follow in the iteration order of
-/// [object]. For a `LinkedHashMap`, the default `Map`, that order is the
+/// For a Map, the array-index keys come first, in ascending numeric order.
+/// An array-index key is the canonical string of an integer from 0 to
+/// 2^32 - 2: `'0'`, `'7'` or `'4294967294'`, but not `'01'`, `'-1'`,
+/// `'1.0'` or `'4294967295'`. The other keys follow in the iteration order
+/// of [object]. For a `LinkedHashMap`, the default `Map`, that order is the
 /// insertion order, as in JavaScript.
 ///
 /// `Map.keys` gives the insertion order for every key. Ported code that
 /// enumerates a JavaScript object calls this function instead: for the keys
 /// `'a'` and `'10'`, in that insertion order, it gives `'10'` first, as
 /// JavaScript does.
-List<String> jsObjectKeys(Map<String, Object?> object) {
-  if (object is JsProxyObject) return object.objectKeys();
-  if (object case final JsObjectFace face) return face.jsKeys();
+///
+/// A List gives its indices and a String the indices of its code units, as
+/// `Object.keys` of an array or a string. Throws a [TypeError] for `null`
+/// and [undefined], as `ToObject` does. Any other value gives no key.
+List<String> jsObjectKeys(Object? object) {
+  switch (object) {
+    case final JsObjectFace face:
+      return face.jsKeys();
+    case final Map<dynamic, dynamic> map:
+      return _mapKeys(map);
+    case final List<dynamic> list:
+      return [for (var i = 0; i < list.length; i++) '$i'];
+    case final String string:
+      return [for (var i = 0; i < string.length; i++) '$i'];
+    case null || Undefined():
+      // A JavaScript TypeError: ToObject of null or undefined.
+      throw TypeError();
+  }
+  return <String>[];
+}
+
+/// The keys of [object] in the `Object.keys` order: the array-index keys
+/// first, in ascending order, then the other keys in their order.
+List<String> _mapKeys(Map<dynamic, dynamic> object) {
   final indices = <(int, String)>[];
   final others = <String>[];
   for (final key in object.keys) {
+    if (key is! String) continue;
     final index = jsArrayIndex(key);
     if (index == null) {
       others.add(key);
@@ -125,18 +158,19 @@ List<String> jsObjectKeys(Map<String, Object?> object) {
 /// `Object.getOwnPropertyNames(object)`: the own string keys of [object]
 /// (Chart.js ADR 0019, section 1).
 ///
-/// - A [JsProxyObject] gives its [Map.keys], the `ownKeys` trap. For a
-///   resolver of `helpers.config`, these are the keys of all its scopes
-///   (`helpers.config.ts:94-96`). [jsObjectKeys] gives fewer keys there: the
-///   `getOwnPropertyDescriptor` trap reads only the first scope
+/// - A [JsProxyObject] gives its `ownKeys` trap ([JsProxyObject.ownKeys]).
+///   For a resolver of `helpers.config`, these are the keys of all its
+///   scopes (`helpers.config.ts:94-96`). [jsObjectKeys] gives fewer keys
+///   there: the `getOwnPropertyDescriptor` trap reads only the first scope
 ///   (`helpers.config.ts:73-75`).
-/// - Another Map gives [jsObjectKeys]. Each key of a Map is an own
-///   enumerable property, so the two functions agree on it.
+/// - Another object gives [jsObjectKeys]. Each key of a Map or of a typed
+///   object is an own enumerable property, so the two functions agree on
+///   it.
 ///
 /// `Animations.configure` (core.animations.js:21) and `hasFunction`
 /// (core.config.js:402-403) call it.
-List<String> jsOwnPropertyNames(Map<String, Object?> object) =>
-    object is JsProxyObject ? object.keys.toList() : jsObjectKeys(object);
+List<String> jsOwnPropertyNames(Object? object) =>
+    object is JsProxyObject ? object.ownKeys() : jsObjectKeys(object);
 
 /// The largest array index, 2^32 - 2 (ECMAScript 6.1.7).
 const int _maxArrayIndex = 4294967294;

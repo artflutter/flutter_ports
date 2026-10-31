@@ -43,7 +43,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:meta/meta.dart';
@@ -54,7 +53,7 @@ import 'package:meta/meta.dart';
 /// A record, as Chart.js ADR 0003 gives for an inline object type that
 /// ported code only reads. `plugin` is a Map, a class value or another
 /// registered value.
-typedef PluginDescriptor = ({Object plugin, AnyObject options});
+typedef PluginDescriptor = ({Object plugin, Object options});
 
 /// core.plugins.js:11 `filterCallback`: the filter of [PluginService.notify].
 ///
@@ -112,7 +111,7 @@ final class PluginService {
   bool? notify(
     types.Chart chart,
     String hook, [
-    AnyObject? args,
+    Object? args,
     FilterCallback? filter,
   ]) {
     final pluginHook = PluginHook.of(hook);
@@ -159,7 +158,7 @@ final class PluginService {
     List<PluginDescriptor> descriptors,
     types.Chart chart,
     PluginHook? hook, [
-    AnyObject? args,
+    Object? args,
     String? name,
   ]) {
     final hookName = name ?? hook!.jsName;
@@ -366,11 +365,11 @@ List<PluginDescriptor> createDescriptors(
 ///
 /// `scopes.push` changes the scope list of `getOptionScopes`, which the
 /// config keeps in its cache, as upstream does.
-AnyObject _pluginOpts(
+Object _pluginOpts(
   Config config,
   ({Object plugin, bool local}) pluginAndLocal,
   Object? opts,
-  AnyObject context,
+  Object context,
 ) {
   final (:plugin, :local) = pluginAndLocal;
   final keys = config.pluginScopeKeys(plugin);
@@ -407,7 +406,7 @@ Object? _defaultsOf(Object? plugin) =>
 /// `args.cancelable` with ToBoolean (core.plugins.js:66): the typed field of
 /// a hook argument class, else the read by name of an args object of user
 /// code (the public `notifyPlugins`).
-bool _cancelable(AnyObject args) => switch (args) {
+bool _cancelable(Object args) => switch (args) {
   final CancelableHookArgs typed => typed.cancelable,
   final UpdateHookArgs typed => typed.cancelable,
   final DatasetUpdateHookArgs typed => typed.cancelable,

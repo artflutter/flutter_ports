@@ -99,13 +99,13 @@ AnyObject _plainOptions(AnyObject options) => options;
 /// The two forms of the options of an arc (Chart.js ADR 0018, section 6):
 /// the plain Map, and an [ArcOptions] with the same entries in the same key
 /// order.
-const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+const Map<String, Object Function(AnyObject options)> _optionsForms = {
   'Map options': _plainOptions,
   'ArcOptions': ArcOptions.new,
 };
 
 /// [cfg] with its `options` Map in the form [form].
-AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
+AnyObject _withOptions(AnyObject cfg, Object Function(AnyObject) form) => {
   for (final MapEntry(:key, :value) in cfg.entries)
     key: key == 'options' && value is AnyObject ? form(value) : value,
 };
@@ -115,7 +115,7 @@ AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
 ArcElement _arc(
   Map<String, Object?> cfg, [
   Map<String, ArcReferenceAnimation> animations = const {},
-  AnyObject Function(AnyObject) form = _plainOptions,
+  Object Function(AnyObject) form = _plainOptions,
 ]) {
   final arc = ArcElement(_withOptions(cfg, form));
   if (animations.isNotEmpty) {
@@ -376,7 +376,7 @@ void main() {
     });
 
     test('defaults have the upstream keys, values and order', () {
-      expect(ArcElement.defaults.keys, [
+      expect(ArcElement.defaults.jsKeys(), [
         'borderAlign',
         'borderColor',
         'borderDash',
@@ -391,21 +391,27 @@ void main() {
         'circular',
         'selfJoin',
       ]);
-      expect(ArcElement.defaults, {
-        'borderAlign': 'center',
-        'borderColor': '#fff',
-        'borderDash': isEmpty,
-        'borderDashOffset': 0.0,
-        'borderJoinStyle': _isUndefined,
-        'borderRadius': 0.0,
-        'borderWidth': 2.0,
-        'offset': 0.0,
-        'spacing': 0.0,
-        'spacingMode': 'angular',
-        'angle': _isUndefined,
-        'circular': true,
-        'selfJoin': false,
-      });
+      expect(
+        <String, Object?>{
+          for (final key in ArcElement.defaults.jsKeys())
+            key: ArcElement.defaults[key],
+        },
+        {
+          'borderAlign': 'center',
+          'borderColor': '#fff',
+          'borderDash': isEmpty,
+          'borderDashOffset': 0.0,
+          'borderJoinStyle': _isUndefined,
+          'borderRadius': 0.0,
+          'borderWidth': 2.0,
+          'offset': 0.0,
+          'spacing': 0.0,
+          'spacingMode': 'angular',
+          'angle': _isUndefined,
+          'circular': true,
+          'selfJoin': false,
+        },
+      );
     });
 
     test('defaultRoutes', () {
@@ -413,7 +419,7 @@ void main() {
     });
 
     test('descriptors', () {
-      expect(ArcElement.descriptors.keys, ['_scriptable', '_indexable']);
+      expect(ArcElement.descriptors.jsKeys(), ['_scriptable', '_indexable']);
       expect(ArcElement.descriptors['_scriptable'], isTrue);
       final indexable =
           ArcElement.descriptors['_indexable']! as bool Function(String);

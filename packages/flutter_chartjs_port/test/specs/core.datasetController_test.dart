@@ -1282,8 +1282,14 @@ void main() {
       });
 
       final meta = chart.getDatasetMeta(0);
-      expect((meta.dataset! as Element).options!['borderColor'], 'red');
-      expect(_element(meta, 0).options!['borderColor'], 'red');
+      expect(
+        ((meta.dataset! as Element).options! as JsObjectFace)['borderColor'],
+        'red',
+      );
+      expect(
+        (_element(meta, 0).options! as JsObjectFace)['borderColor'],
+        'red',
+      );
 
       // Reset old shared state
       Chart.defaults['borderColor'] = oldColor;
@@ -1465,7 +1471,7 @@ void main() {
 
       testWidgets('should support nested scriptable defaults', (tester) async {
         final line =
-            jsGet(jsGet(Chart.defaults, 'datasets'), 'line')! as AnyObject;
+            jsGet(jsGet(Chart.defaults, 'datasets'), 'line')! as JsObjectFace;
         line['fill'] = <String, Object?>{
           'value': (Object? ctx) => jsGet(ctx, 'type') == 'dataset' ? 75 : 0,
         };
@@ -1488,7 +1494,7 @@ void main() {
             'fill': <String, Object?>{'value': 75},
           }),
         );
-        line.remove('fill');
+        line.jsDelete('fill');
       });
     });
 
@@ -1678,7 +1684,7 @@ void main() {
           }),
         );
 
-        chart.data['datasets'] = <Object?>[
+        (chart.data as AnyObject)['datasets'] = <Object?>[
           <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': 0, 'y': 0},

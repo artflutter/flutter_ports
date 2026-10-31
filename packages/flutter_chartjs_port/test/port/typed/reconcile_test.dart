@@ -76,16 +76,16 @@ Chart _chart(WidgetTester tester) {
 }
 
 /// The dataset Maps of [chart].
-List<Object?> _datasets(Chart chart) => chart.data['datasets']! as List;
+List<Object?> _datasets(Chart chart) =>
+    _byName(chart.data, 'datasets')! as List;
 
 /// The dataset Map [i] of [chart].
-Map<String, Object?> _dataset(Chart chart, int i) =>
-    _datasets(chart)[i]! as Map<String, Object?>;
+JsObjectFace _dataset(Chart chart, int i) =>
+    _datasets(chart)[i]! as JsObjectFace;
 
 /// The labels of the dataset Maps of [chart].
 List<Object?> _labelsOf(Chart chart) => [
-  for (final dataset in _datasets(chart))
-    (dataset! as Map<String, Object?>)['label'],
+  for (final dataset in _datasets(chart)) _byName(dataset, 'label'),
 ];
 
 /// A registered plugin whose `beforeUpdate` records the mode of each update
@@ -94,7 +94,7 @@ List<Object?> _spyOnUpdates([void Function(Chart chart)? onBeforeUpdate]) {
   final modes = <Object?>[];
   final plugin = <String, Object?>{
     'id': r'$updateSpy',
-    'beforeUpdate': (Chart chart, Map<String, Object?> args, Object? options) {
+    'beforeUpdate': (Chart chart, JsObjectFace args, Object? options) {
       modes.add(args['mode']);
       onBeforeUpdate?.call(chart);
     },
@@ -337,16 +337,24 @@ void main() {
         ),
       );
       expect(_dataset(chart, 0), same(map));
-      expect(map.containsKey('label'), isFalse);
+      expect(map.jsHas('label'), isFalse);
       expect(map['borderWidth'], 2);
       expect(map['clip'], 4);
       expect(map['data'], same(data));
       expect(
-        chart.getDatasetMeta(0).data.first.options!['borderWidth'],
+        (chart.getDatasetMeta(0).data.first.options!
+            as JsObjectFace)['borderWidth'],
         2,
       );
       expect(_dataset(chart, 1), same(other));
-      expect(other, {'label': 'B', 'data': data, 'clip': 5});
+      expect(
+        {for (final key in other.jsKeys()) key: other[key]},
+        {
+          'label': 'B',
+          'data': data,
+          'clip': 5,
+        },
+      );
     });
 
     testWidgets('a key that the colors plugin wrote stays in the Map', (
@@ -371,8 +379,9 @@ void main() {
       );
       expect(_dataset(chart, 0)['label'], 'B');
       // The reconcile kept the key: `beforeUpdate` runs before the colors
-      // plugin writes again (`beforeLayout`).
-      expect(atUpdate, [null, written]);
+      // plugin writes again (`beforeLayout`). The key is absent at the first
+      // update: the face reads `undefined` (Chart.js ADR 0054 §5).
+      expect(atUpdate, [undefined, written]);
       expect(_dataset(chart, 0)['borderColor'], written);
     });
 
@@ -514,7 +523,7 @@ void main() {
         ),
       );
       expect(chart.data, isNot(same(before)));
-      expect(chart.data['labels'], same(labels));
+      expect(_byName(chart.data, 'labels'), same(labels));
     });
 
     testWidgets('a new type gives a new options Map: the axes of the new '
@@ -539,7 +548,7 @@ void main() {
 
       await tester.pumpWidget(_view(config(ChartKind.line)));
       expect(_dataset(chart, 0), same(map));
-      expect(map.containsKey('type'), isFalse);
+      expect(map.jsHas('type'), isFalse);
       expect(chart.config.type, 'line');
       expect(chart.scales['x']!.options['offset'], isFalse);
     });
@@ -623,3 +632,11 @@ void main() {
     });
   });
 }
+
+/// The read by name `object[key]` of an object of a chart: a Map of a raw
+/// config, or a typed object through its face (Chart.js ADR 0054 §5).
+Object? _byName(Object? object, String key) => switch (object) {
+  final Map<Object?, Object?> map => map[key],
+  final JsObjectFace face => face[key],
+  _ => null,
+};

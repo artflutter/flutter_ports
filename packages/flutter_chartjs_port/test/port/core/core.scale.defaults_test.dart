@@ -4,6 +4,7 @@ import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show createResolver;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
@@ -24,8 +25,7 @@ void main() {
     });
 
     /// The values argument of the call at [index].
-    Map<String, Object?> values(int index) =>
-        defaults.calls[index][2]! as Map<String, Object?>;
+    JsObjectFace values(int index) => defaults.calls[index][2]! as JsObjectFace;
 
     test('sets, routes and describes the scale defaults', () {
       const setScale =
@@ -62,12 +62,12 @@ void main() {
     });
 
     test('ticks.callback is Ticks.formatters.values', () {
-      final ticks = values(0)['ticks']! as Map<String, Object?>;
+      final ticks = values(0)['ticks']! as JsObjectFace;
       expect(identical(ticks['callback'], formatters['values']), isTrue);
     });
 
     test('grid.tickWidth and grid.tickColor read the grid options', () {
-      final grid = values(0)['grid']! as Map<String, Object?>;
+      final grid = values(0)['grid']! as JsObjectFace;
       final context = <String, Object?>{};
       expect(
         jsCall(grid['tickWidth'], [
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('grid.tickWidth and grid.tickColor read a property', () {
-      final grid = values(0)['grid']! as Map<String, Object?>;
+      final grid = values(0)['grid']! as JsObjectFace;
       final context = <String, Object?>{};
       // options.lineWidth of {} is undefined, not null.
       expect(
@@ -112,7 +112,7 @@ void main() {
     });
 
     test('grid.tickWidth and grid.tickColor read a resolver', () {
-      final grid = values(0)['grid']! as Map<String, Object?>;
+      final grid = values(0)['grid']! as JsObjectFace;
       // The has trap of a prefixed resolver does not know 'lineWidth' and
       // 'color'. The get trap gives the null of the prefixed keys.
       final options = createResolver(

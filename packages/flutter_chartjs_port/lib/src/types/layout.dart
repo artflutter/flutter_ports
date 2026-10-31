@@ -115,8 +115,9 @@ abstract interface class LayoutItem {
   ///
   /// `wrapBoxes` reads its `stack` and `stackWeight` (core.layouts.js:34). A
   /// destructuring of JS `undefined` throws a `TypeError`. Dart `null` stands
-  /// for JS `undefined`, and `jsGet` throws the `TypeError`.
-  Map<String, Object?>? get options;
+  /// for JS `undefined`, and `jsGet` throws the `TypeError`. The options
+  /// are a view of the resolver or a typed object (Chart.js ADR 0054 §5).
+  Object? get options;
 
   /// core.layouts.js:15 `box.axis`, the axis of a scale. layout.d.ts does not
   /// declare it. Dart `null` stands for JS `undefined`, for example the axis

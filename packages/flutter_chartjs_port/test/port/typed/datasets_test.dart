@@ -54,9 +54,12 @@ Map<String, Object?> _chartOf(String type, List<Object?> datasets) =>
 List<Object?> _sharing(Chart chart) {
   final elements = chart.getDatasetMeta(0).data.cast<chartjs.Element>();
   return [
-    elements[0].options?[r'$shared'],
+    _byName(elements[0].options, r'$shared'),
     identical(elements[0].options, elements[1].options),
-    [for (final element in elements) element.options?['backgroundColor']],
+    [
+      for (final element in elements)
+        _byName(element.options, 'backgroundColor'),
+    ],
   ];
 }
 
@@ -88,7 +91,12 @@ Map<String, Object?> _config(
 /// dataset 0 of [chart].
 List<List<Object?>> _elements(Chart chart) => [
   for (final element in chart.getDatasetMeta(0).data.cast<chartjs.Element>())
-    [element.x, element.y, element['skip'], element.options?['radius']],
+    [
+      element.x,
+      element.y,
+      element['skip'],
+      _byName(element.options, 'radius'),
+    ],
 ];
 
 void main() {
@@ -140,9 +148,8 @@ void main() {
 
       // The chart keeps the List of the app and writes into no data point.
       final dataset =
-          (typed.data['datasets']! as List<Object?>).single!
-              as Map<String, Object?>;
-      expect(dataset['data'], same(points));
+          (_byName(typed.data, 'datasets')! as List<Object?>).single;
+      expect(_byName(dataset, 'data'), same(points));
       typed.update();
       expect(
         [for (final point in points) _map(point).keys.toList()],
@@ -183,7 +190,8 @@ void main() {
           },
         ),
       );
-      final parsed = chart.getDatasetMeta(0).controller!.getParsed(0)! as Map;
+      final parsed =
+          chart.getDatasetMeta(0).controller!.getParsed(0)! as JsObjectFace;
       expect(parsed['x'], DateTime.utc(2020).millisecondsSinceEpoch);
     });
 
@@ -204,7 +212,7 @@ void main() {
         ),
       ).lower();
       expect(
-        () => acquireChart(config),
+        () => acquireChartRoot(config),
         throwsA(
           isA<UnsupportedError>().having(
             (error) => error.message,
@@ -301,7 +309,7 @@ void main() {
           <String, Object?>{
             'data': <Object?>[1, 2, 3],
             'backgroundColor': (Object? context) =>
-                (context! as Map<String, Object?>)['dataIndex'] == 1
+                (context! as JsObjectFace)['dataIndex'] == 1
                 ? _blueValue
                 : _redValue,
           },
@@ -360,3 +368,11 @@ void main() {
     });
   });
 }
+
+/// The read by name `object[key]` of an object of a chart: a Map of a raw
+/// config, or a typed object through its face (Chart.js ADR 0054 §5).
+Object? _byName(Object? object, String key) => switch (object) {
+  final Map<Object?, Object?> map => map[key],
+  final JsObjectFace face => face[key],
+  _ => null,
+};

@@ -23,12 +23,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsNumberToString, jsToString, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+    show jsToString, jsTruthy;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show jsDeleteKey, jsGet, jsHasOwn, jsIsObjectLike;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// core.typedRegistry.js:8 `TypedRegistry`, the default export.
 final class TypedRegistry {
@@ -142,8 +142,8 @@ final class TypedRegistry {
   ///
   /// Throws a [TypeError] for Dart `null` and [undefined], as the read
   /// `item.id` does. Also throws a [TypeError] when `defaults[scope]` is not
-  /// a Map, as the `in` operator does for a value that is not an object
-  /// (core.typedRegistry.js:75).
+  /// an object (a typed scope or a Map), as the `in` operator does for a
+  /// value that is not an object (core.typedRegistry.js:75).
   void unregister(Object? item) {
     final items = this.items;
     final id = jsGet(item, 'id');
@@ -155,16 +155,14 @@ final class TypedRegistry {
     }
 
     if (scope.isNotEmpty) {
-      // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is a Map.
-      final scopeObject = switch (defaults[scope]) {
-        final Map<dynamic, dynamic> map => map,
-        // A JavaScript TypeError: `in` of a value that is not an object.
-        _ => throw TypeError(),
-      };
-      if (scopeObject.containsKey(key)) {
-        scopeObject.remove(key);
+      // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is an object.
+      final scopeObject = defaults[scope];
+      // A JavaScript TypeError: `in` of a value that is not an object.
+      if (!jsIsObjectLike(scopeObject)) throw TypeError();
+      if (jsHasOwn(scopeObject, key)) {
+        jsDeleteKey(scopeObject, key);
         if (override) {
-          overrides.remove(key);
+          overrides.jsDelete(key);
         }
       }
     }
@@ -255,17 +253,7 @@ JsClass? _getPrototypeOf(Object? item) => switch (item) {
 /// `ToString` ([jsToString]).
 String _propertyKey(Object? id) => id is String ? id : jsToString(id);
 
-/// `Object.keys(value)` for the truthy `defaultRoutes` value [value]: a Map
-/// gives [jsObjectKeys], a List or a String gives its indices, and another
-/// value gives no key.
-List<String> _objectKeys(Object? value) {
-  switch (value) {
-    case final AnyObject object:
-      return jsObjectKeys(object);
-    case final List<Object?> list:
-      return [for (var i = 0; i < list.length; i++) jsNumberToString(i)];
-    case final String string:
-      return [for (var i = 0; i < string.length; i++) jsNumberToString(i)];
-  }
-  return const [];
-}
+/// `Object.keys(value)` for the truthy `defaultRoutes` value [value]: an
+/// object (a Map or a typed object) gives [jsObjectKeys], a List or a String
+/// gives its indices, and another value gives no key.
+List<String> _objectKeys(Object? value) => jsObjectKeys(value);

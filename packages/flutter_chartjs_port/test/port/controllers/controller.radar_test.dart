@@ -240,7 +240,7 @@ void main() {
         chart.update();
         _expectLinePoints(chart, 3);
         final meta = chart.getDatasetMeta(0);
-        expect(meta.parsed, [
+        expect(plainValue(meta.parsed), [
           {'r': 10.0},
           {'r': 7.0},
           {'r': 8.0},
@@ -390,7 +390,8 @@ void main() {
       final point = meta.data[1] as Element;
       final dataset =
           jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
-      (jsGet(chart.options, 'scales')! as AnyObject)['r2'] = <String, Object?>{
+      (jsGet(chart.options, 'scales')!
+          as JsObjectFace)['r2'] = <String, Object?>{
         'type': 'radialLinear',
         'position': 'left',
       };

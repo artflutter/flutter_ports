@@ -5,13 +5,15 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart' show jsAssign;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
-// The Map protocol of AnimationSpec against a plain Map with the same
-// entries (Chart.js ADR 0019, section 4, the row adapt-animation-spec).
+// The face of AnimationSpec (Chart.js ADR 0054 §5: the reads and writes by
+// name with the JS rules) against a plain Map with the same entries
+// (Chart.js ADR 0019, section 4, the row adapt-animation-spec).
 
 /// The getters of the known keys, by key.
 final Map<String, Object? Function(AnimationSpec spec)> _getters = {
@@ -34,25 +36,24 @@ List<String> _order(AnyObject plain) => [
     if (!AnimationSpec.knownKeys.contains(key)) key,
 ];
 
-/// Expects that [spec] gives the Map results of [plain].
+/// Expects that the face of [spec] gives the JS results of [plain]: the keys
+/// in the order of `Object.keys`, [undefined] for an absent key.
 void _expectSame(AnimationSpec spec, AnyObject plain, String reason) {
-  expect(spec.length, plain.length, reason: '$reason: length');
-  expect(spec.isEmpty, plain.isEmpty, reason: '$reason: isEmpty');
-  expect(spec.keys.toList(), _order(plain), reason: '$reason: keys');
-  expect(spec.keys.length, plain.length, reason: '$reason: keys.length');
+  final order = _order(plain);
+  expect(
+    spec.jsKeys(),
+    jsObjectKeys({for (final key in order) key: plain[key]}),
+    reason: '$reason: jsKeys',
+  );
+  expect(spec.jsKeys().length, plain.length, reason: '$reason: count');
   for (final key in [...AnimationSpec.knownKeys, 'extra', 'other', '0']) {
-    expect(spec.containsKey(key), plain.containsKey(key), reason: key);
-    expect(spec.keys.contains(key), plain.containsKey(key), reason: key);
-    expect(spec[key], same(plain[key]), reason: '$reason: [$key]');
+    expect(spec.jsHas(key), plain.containsKey(key), reason: key);
+    expect(spec[key], same(jsGet(plain, key)), reason: '$reason: [$key]');
     expect(jsGet(spec, key), same(jsGet(plain, key)), reason: '$reason: $key');
   }
   for (final MapEntry(:key, value: getter) in _getters.entries) {
     expect(getter(spec), same(jsGet(plain, key)), reason: '$reason: $key');
   }
-  final AnyObject map = spec;
-  const Object key = 5;
-  expect(map[key], isNull);
-  expect(map.containsKey(key), isFalse);
 }
 
 void main() {
@@ -60,10 +61,7 @@ void main() {
 
   group('adapt-animation-spec', () {
     test('the known keys are the keys of defaults.animation', () {
-      expect(
-        jsObjectKeys(defaults['animation']! as AnyObject),
-        AnimationSpec.knownKeys,
-      );
+      expect(jsObjectKeys(defaults['animation']), AnimationSpec.knownKeys);
     });
 
     test('a new spec has no key, and each getter gives undefined', () {
@@ -89,7 +87,7 @@ void main() {
       expect(spec.easingValue, isNull);
     });
 
-    test('the Map protocol against a plain Map over random operations', () {
+    test('the face against a plain Map over random operations', () {
       final random = math.Random(19);
       const keys = [...AnimationSpec.knownKeys, 'extra', 'other', '0'];
       final values = <Object?>[
@@ -112,46 +110,44 @@ void main() {
           spec[key] = value;
           plain[key] = value;
         } else if (r < 18) {
-          expect(spec.remove(key), same(plain.remove(key)), reason: 'remove');
+          expect(spec.jsDelete(key), plain.containsKey(key), reason: 'delete');
+          plain.remove(key);
         } else if (r < 19) {
-          spec.clear();
+          spec.jsKeys().forEach(spec.jsDelete);
           plain.clear();
         } else {
-          spec.addAll({'extra': i.toDouble(), 'loop': true});
+          jsAssign(spec, <String, Object?>{
+            'extra': i.toDouble(),
+            'loop': true,
+          });
           plain.addAll({'extra': i.toDouble(), 'loop': true});
         }
         _expectSame(spec, plain, 'operation $i');
       }
     });
 
-    test('keys is a view, and a change during an iteration does not throw', () {
+    test('jsKeys is a copy: a delete of each key does not throw', () {
       final spec = AnimationSpec()..['duration'] = 1;
-      final keys = spec.keys;
       spec['easing'] = 'linear';
-      expect(keys.toList(), ['duration', 'easing']);
-      spec.keys.forEach(spec.remove);
-      expect(spec, isEmpty);
+      expect(spec.jsKeys(), ['duration', 'easing']);
+      spec.jsKeys().forEach(spec.jsDelete);
+      expect(spec.jsKeys(), isEmpty);
     });
 
-    test('the members of MapBase give the results of a plain Map', () {
+    test('the face gives the known keys in their order, then the extras', () {
       final spec = AnimationSpec()
         ..['to'] = 5
         ..['extra'] = 'x'
         ..['delay'] = 0;
-      expect(Map<String, Object?>.of(spec), {
-        'delay': 0,
-        'to': 5,
-        'extra': 'x',
-      });
-      expect(spec.entries.map((e) => e.key), ['delay', 'to', 'extra']);
-      expect(spec.values, [0, 5, 'x']);
-      expect(spec.putIfAbsent('to', () => 6), 5);
-      expect(spec.putIfAbsent('from', () => 7), 7);
-      expect(spec.update('delay', (v) => 9), 9);
+      expect(spec.jsKeys(), ['delay', 'to', 'extra']);
+      expect([for (final key in spec.jsKeys()) spec[key]], [0, 5, 'x']);
+      spec
+        ..['from'] = 7
+        ..['delay'] = 9;
       expect(spec.fromValue, 7);
       expect(spec.delayValue, 9);
-      spec.removeWhere((key, value) => key == 'extra');
-      expect(spec.keys, ['delay', 'from', 'to']);
+      expect(spec.jsDelete('extra'), isTrue);
+      expect(spec.jsKeys(), ['delay', 'from', 'to']);
     });
   });
 }

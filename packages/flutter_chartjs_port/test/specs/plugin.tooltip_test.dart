@@ -58,7 +58,7 @@ AnyObject _positioners() =>
     jsGet(_tooltipPlugin(), 'positioners')! as AnyObject;
 
 /// `Chart.defaults`.
-AnyObject _defaults() => Chart.defaults as AnyObject;
+JsObjectFace _defaults() => Chart.defaults;
 
 /// `Chart.defaults.font`.
 Object? _font(String key) => jsGet(jsGet(_defaults(), 'font'), key);
@@ -303,7 +303,7 @@ void main() {
 
         final options = tooltip.options!;
         expect(
-          jsGet(options, 'padding')! as AnyObject,
+          jsGet(options, 'padding')! as JsObjectFace,
           toEqualOptions(<String, Object?>{
             'left': 6,
             'top': 6,
@@ -316,7 +316,7 @@ void main() {
         expect(jsGet(options, 'bodyColor'), '#fff');
 
         expect(
-          jsGet(options, 'bodyFont')! as AnyObject,
+          jsGet(options, 'bodyFont')! as JsObjectFace,
           toEqualOptions(<String, Object?>{
             'family': _font('family'),
             'style': _font('style'),
@@ -334,7 +334,7 @@ void main() {
 
         expect(jsGet(options, 'titleColor'), '#fff');
         expect(
-          jsGet(options, 'titleFont')! as AnyObject,
+          jsGet(options, 'titleFont')! as JsObjectFace,
           toEqualOptions(<String, Object?>{
             'family': _font('family'),
             'weight': 'bold',
@@ -353,7 +353,7 @@ void main() {
 
         expect(jsGet(options, 'footerColor'), '#fff');
         expect(
-          jsGet(options, 'footerFont')! as AnyObject,
+          jsGet(options, 'footerFont')! as JsObjectFace,
           toEqualOptions(<String, Object?>{
             'family': _font('family'),
             'weight': 'bold',
@@ -458,7 +458,7 @@ void main() {
       expect(tooltip.yAlign, 'center');
 
       expect(
-        JasmineOptions(jsGet(options, 'bodyFont')! as AnyObject),
+        JasmineOptions(jsGet(options, 'bodyFont')! as JsObjectFace),
         objectContaining(<String, Object?>{
           'family': _font('family'),
           'style': _font('style'),
@@ -475,7 +475,7 @@ void main() {
       );
 
       expect(
-        JasmineOptions(jsGet(options, 'titleFont')! as AnyObject),
+        JasmineOptions(jsGet(options, 'titleFont')! as JsObjectFace),
         objectContaining(<String, Object?>{
           'family': _font('family'),
           'weight': 'bold',
@@ -493,7 +493,7 @@ void main() {
       );
 
       expect(
-        jsGet(options, 'footerFont')! as AnyObject,
+        jsGet(options, 'footerFont')! as JsObjectFace,
         toEqualOptions(<String, Object?>{
           'family': _font('family'),
           'weight': 'bold',
@@ -587,7 +587,7 @@ void main() {
       expect(tooltip.yAlign, 'center');
 
       expect(
-        JasmineOptions(jsGet(options, 'bodyFont')! as AnyObject),
+        JasmineOptions(jsGet(options, 'bodyFont')! as JsObjectFace),
         objectContaining(<String, Object?>{
           'family': _font('family'),
           'style': _font('style'),
@@ -604,7 +604,7 @@ void main() {
       );
 
       expect(
-        JasmineOptions(jsGet(options, 'titleFont')! as AnyObject),
+        JasmineOptions(jsGet(options, 'titleFont')! as JsObjectFace),
         objectContaining(<String, Object?>{
           'family': _font('family'),
           'weight': 'bold',
@@ -621,7 +621,7 @@ void main() {
       );
 
       expect(
-        JasmineOptions(jsGet(options, 'footerFont')! as AnyObject),
+        JasmineOptions(jsGet(options, 'footerFont')! as JsObjectFace),
         objectContaining(<String, Object?>{
           'family': _font('family'),
           'weight': 'bold',
@@ -974,7 +974,7 @@ void main() {
         expect(jsGet(tooltipItem, 'label'), isA<String>());
         expect(
           jsGet(tooltipItem, 'label'),
-          (chart.data['labels']! as List<Object?>)[pointIndex],
+          ((chart.data as AnyObject)['labels']! as List<Object?>)[pointIndex],
         );
         expect(jsGet(tooltipItem, 'formattedValue'), isA<String>());
         expect(
@@ -983,7 +983,8 @@ void main() {
             '',
             jsGet(
               jsGet(
-                (chart.data['datasets']! as List<Object?>)[datasetIndex],
+                ((chart.data as AnyObject)['datasets']!
+                    as List<Object?>)[datasetIndex],
                 'data',
               ),
               pointIndex,
@@ -1253,7 +1254,8 @@ void main() {
               .tooltipPosition();
 
           Future<void> recursive(int left) async {
-            final labels = chart.data['labels']! as List<Object?>;
+            final labels =
+                (chart.data as AnyObject)['labels']! as List<Object?>;
             labels[slice] = '${labels[slice]}XX';
             chart.update();
 
@@ -1329,7 +1331,7 @@ void main() {
       expect(tooltip.yAlign, 'top');
 
       expect(
-        jsGet(options, 'bodyFont')! as AnyObject,
+        jsGet(options, 'bodyFont')! as JsObjectFace,
         toEqualOptions(<String, Object?>{
           'family': _font('family'),
           'style': _font('style'),
@@ -1346,7 +1348,7 @@ void main() {
       );
 
       expect(
-        jsGet(options, 'titleFont')! as AnyObject,
+        jsGet(options, 'titleFont')! as JsObjectFace,
         toEqualOptions(<String, Object?>{
           'family': _font('family'),
           'weight': 'bold',
@@ -1364,7 +1366,7 @@ void main() {
       );
 
       expect(
-        jsGet(options, 'footerFont')! as AnyObject,
+        jsGet(options, 'footerFont')! as JsObjectFace,
         toEqualOptions(<String, Object?>{
           'family': _font('family'),
           'weight': 'bold',
@@ -1894,7 +1896,7 @@ void main() {
             expectedPoint,
           ]);
 
-          chart.data['datasets'] = <Object?>[];
+          (chart.data as AnyObject)['datasets'] = <Object?>[];
           chart.update();
 
           expect(
@@ -1902,7 +1904,7 @@ void main() {
             jasmineEquals(<Object?>[]),
           );
 
-          chart.data['datasets'] = <Object?>[dataset];
+          (chart.data as AnyObject)['datasets'] = <Object?>[dataset];
           chart.update();
 
           expect(_activeItems(chart.tooltip!.getActiveElements()), [
@@ -1957,7 +1959,7 @@ void main() {
           expectedPoints,
         );
 
-        chart.data['datasets'] = <Object?>[dataset1];
+        (chart.data as AnyObject)['datasets'] = <Object?>[dataset1];
         chart.update();
 
         await triggerMouseEvent(chart, 'mousemove', _point(2, 1));
@@ -2014,7 +2016,7 @@ void main() {
         );
 
         dataset1['data'] = (dataset1['data']! as List<Object?>).sublist(0, 1);
-        chart.data['datasets'] = <Object?>[dataset1];
+        (chart.data as AnyObject)['datasets'] = <Object?>[dataset1];
         chart.update();
 
         await triggerMouseEvent(chart, 'mousemove', _point(2, 1));

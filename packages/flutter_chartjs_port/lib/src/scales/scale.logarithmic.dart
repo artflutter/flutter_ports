@@ -62,6 +62,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsMax, jsMin, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsIsObjectLike;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -386,7 +387,7 @@ class LogarithmicScale extends Scale {
     return formatNumber(
       jsToNumber(value),
       readOption(chart.options, OptionKey.locale),
-      format is Map<String, Object?> ? format : null,
+      jsIsObjectLike(format) ? format : null,
     );
   }
 

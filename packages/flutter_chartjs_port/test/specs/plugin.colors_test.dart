@@ -7,7 +7,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -28,7 +28,8 @@ import '../fixtures/index.dart' as fixture;
 //   element. `toBe` of a string is `expect` with the string.
 
 /// `element.options` of [element].
-AnyObject? _options(Object element) => (element as Element).options;
+JsObjectFace? _options(Object element) =>
+    (element as Element).options as JsObjectFace?;
 
 void main() {
   group('Plugin.colors', () {

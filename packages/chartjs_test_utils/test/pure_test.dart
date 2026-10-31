@@ -18,22 +18,22 @@ import 'package:test/test.dart';
 
 /// The keys of `defaults.elements`.
 Iterable<String> _elementDefaults() =>
-    (defaults['elements']! as Map<String, Object?>).keys;
+    (defaults['elements']! as JsObjectFace).jsKeys();
 
 void main() {
   setUpSpecs();
 
   test('removeBuiltins does nothing without setUpBuiltins', () {
-    final keys = defaults.keys.toList();
+    final keys = defaults.jsKeys();
     removeBuiltins();
-    expect(defaults.keys, keys);
+    expect(defaults.jsKeys(), keys);
     expect(_elementDefaults(), isEmpty);
   });
 
   test('setUpBuiltins registers, and removeBuiltins puts back the scopes of '
       'the modules', () {
     final builtins = TypedRegistry(Element.jsClass, 'elements');
-    final descriptorKeys = descriptors.keys.toList();
+    final descriptorKeys = descriptors.jsKeys();
     final log = <String>[];
 
     setUpBuiltins(
@@ -52,13 +52,13 @@ void main() {
     );
     expect(log, ['register']);
     expect(_elementDefaults(), ['arc', 'point']);
-    expect(descriptors.containsKey('elements'), isTrue);
+    expect(descriptors.jsHas('elements'), isTrue);
 
     removeBuiltins();
     expect(log, ['register', 'unregister']);
     expect(builtins.items, isEmpty);
     expect(_elementDefaults(), isEmpty);
-    expect(descriptors.keys, descriptorKeys);
+    expect(descriptors.jsKeys(), descriptorKeys);
 
     // A registration of the test file through a new TypedRegistry routes
     // the element defaults again without a throw.
@@ -73,7 +73,7 @@ void main() {
 
   test('the next test finds the scopes of the modules', () {
     expect(_elementDefaults(), isEmpty);
-    expect(descriptors.containsKey('elements'), isFalse);
+    expect(descriptors.jsHas('elements'), isFalse);
   });
 
   // Chart.js ADR 0041, section 6 item 3. flutter_test_config.dart of
@@ -94,17 +94,14 @@ void main() {
       () => plugins.unregister(colors),
     );
     // The colors line of flutter_test_config.dart.
-    ((defaults['plugins']! as Map<String, Object?>)['colors']!
-            as Map<String, Object?>)['enabled'] =
+    ((defaults['plugins']! as JsObjectFace)['colors']!
+            as JsObjectFace)['enabled'] =
         false;
     expect(jsGet(jsGet(defaults['plugins'], 'colors'), 'enabled'), isFalse);
 
     removeBuiltins();
     expect(plugins.items, isEmpty);
-    expect(defaults['plugins'], isEmpty);
-    expect(
-      (defaults['plugins']! as Map<String, Object?>).containsKey('colors'),
-      isFalse,
-    );
+    expect((defaults['plugins']! as JsObjectFace).jsKeys(), isEmpty);
+    expect((defaults['plugins']! as JsObjectFace).jsHas('colors'), isFalse);
   });
 }

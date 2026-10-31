@@ -24,6 +24,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show jsGet, jsIsObjectLike;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -195,14 +197,16 @@ final Map<String, Object?> ticks = {'formatters': formatters};
 
 /// `Object.assign(target, source)` with one source, at core.ticks.js:57.
 ///
-/// A Map source copies its keys in the [jsObjectKeys] order, also a key with
-/// the value [undefined]. `null` and [undefined] copy nothing, as in
-/// JavaScript. A String or a List source copies its indices in JavaScript.
-/// [formatNumber] ignores such keys. Thus the port copies nothing for them.
+/// An object source (a Map, or a resolver or another typed object with a
+/// face) copies its keys in the [jsObjectKeys] order, also a key with the
+/// value [undefined], each value read by name ([jsGet]). `null` and
+/// [undefined] copy nothing, as in JavaScript. A String or a List source
+/// copies its indices in JavaScript. [formatNumber] ignores such keys. Thus
+/// the port copies nothing for them.
 void _assign(Map<String, Object?> target, Object? source) {
-  if (source is Map<String, Object?>) {
+  if (jsIsObjectLike(source)) {
     for (final key in jsObjectKeys(source)) {
-      target[key] = source[key];
+      target[key] = jsGet(source, key);
     }
   }
 }

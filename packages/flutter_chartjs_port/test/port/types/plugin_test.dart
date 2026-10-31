@@ -37,10 +37,11 @@ void main() {
       expect(jsObjectKeys(plugin), ['id', 'afterDraw', 'defaults', 'custom']);
       expect(jsGet(plugin, 'id'), 'p');
       expect(jsGet(plugin, 'beforeDraw'), same(undefined));
-      expect(plugin['beforeDraw'], isNull);
+      expect(plugin['beforeDraw'], same(undefined));
       expect(plugin.hookValue(PluginHook.beforeDraw), same(undefined));
       expect(plugin.hookValue(PluginHook.afterDraw), isA<Function>());
-      expect(plugin.remove('afterDraw'), isA<Function>());
+      expect(plugin['afterDraw'], isA<Function>());
+      expect(plugin.jsDelete('afterDraw'), isTrue);
       expect(plugin.afterDraw, isNull);
       expect(jsObjectKeys(plugin), ['id', 'defaults', 'custom']);
     });

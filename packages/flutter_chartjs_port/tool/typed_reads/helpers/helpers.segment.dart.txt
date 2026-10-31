@@ -1,9 +1,9 @@
 # The face: _setContextOf reads setContext of segment options that are not a
 # resolver view (an object of user code, helpers.segment.js:271, :300).
-jsGet 1
 # A setContext function of user code, called with JS arity
 # (helpers.segment.js:300).
-jsCall 1
 # The face: JSON.stringify of a plain object in a value of a style
 # (styleChanged, helpers.segment.js:349-360).
+jsGet 1
+jsCall 1
 jsObjectKeys 1

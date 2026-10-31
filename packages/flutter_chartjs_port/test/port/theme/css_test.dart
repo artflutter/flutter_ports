@@ -5,6 +5,8 @@ library;
 import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 
 import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/css.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -19,11 +21,25 @@ import 'package:flutter_test/flutter_test.dart';
 //
 // VM only: css.dart imports dart:ui and the painting library.
 
+/// Whether [value] is an object of a compiled theme: a Map, or a typed scope
+/// with its face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
+
+/// [value] as plain Dart values for a compare with a Map literal: an object
+/// gives a new Map of its own keys in the `Object.keys` order, each value
+/// read through its face; another value is itself.
+Object? _plain(Object? value) => _isObject(value)
+    ? <String, Object?>{
+        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
+      }
+    : value;
+
 /// The value at the dotted [path] of the Maps under [root].
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = (node! as Map<String, Object?>)[key];
+    node = jsGet(node, key);
   }
   return node;
 }
@@ -120,7 +136,7 @@ void main() {
         expect(rawFont, actual);
         expect(rawFont.keys, actual.keys);
         final compiled = compileThemeData(ChartThemeData(font: font));
-        expect(_at(compiled, 'scale.ticks.font'), actual);
+        expect(_plain(_at(compiled, 'scale.ticks.font')), actual);
       });
     }
 

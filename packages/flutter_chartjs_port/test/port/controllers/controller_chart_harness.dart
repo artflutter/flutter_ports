@@ -192,8 +192,9 @@ const int _maxDepth = 64;
 /// A plain copy of [value] for the compare: `plain` of
 /// controller_chart_common.mjs.
 ///
-/// - A Map (also a resolver or typed options) becomes a Map with the keys
-///   of `jsObjectKeys` and the plain copies of the `jsGet` values.
+/// - A Map or a typed object with a face (a resolver, typed options, a
+///   typed scope) becomes a Map with the keys of `jsObjectKeys` and the
+///   plain copies of the `jsGet` values.
 /// - A List becomes a List of the plain copies.
 /// - A function and a class value become `'<fn>'`.
 /// - A `types.ChartMetaClip` becomes the object `{top, right, bottom, left,
@@ -215,13 +216,18 @@ Object? plainValue(Object? value, [int depth = 0]) {
     final List<Object?> list => [
       for (final item in list) plainValue(item, depth + 1),
     ],
-    final Map<String, Object?> map => <String, Object?>{
+    final Object map when isJsObject(map) => <String, Object?>{
       for (final key in jsObjectKeys(map))
         key: plainValue(jsGet(map, key), depth + 1),
     },
     _ => value,
   };
 }
+
+/// Whether [value] is a JS object of the observations: a Map with `String`
+/// keys or a typed object with a face (Chart.js ADR 0054 §5).
+bool isJsObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
 
 /// The `options` of [scale] for `scaleOptions`: the plain copy of `grid`,
 /// `border`, `ticks` without `callback` and `title`, and for `radialLinear`
@@ -269,10 +275,10 @@ List<Object?> _xy(types.Point point) => [point.x, point.y];
 
 /// The plain copy of a parsed item: `_stacks` as its keys only.
 Object? _parsedItem(Object? item) => switch (item) {
-  final Map<String, Object?> map => <String, Object?>{
+  final Object map when isJsObject(map) => <String, Object?>{
     for (final key in jsObjectKeys(map))
       key: key == '_stacks'
-          ? jsObjectKeys(jsGet(map, key)! as Map<String, Object?>)
+          ? jsObjectKeys(jsGet(map, key))
           : plainValue(jsGet(map, key)),
   },
   _ => plainValue(item),
@@ -810,7 +816,7 @@ Future<void> runStep(
       for (final key in keys.take(keys.length - 1)) {
         target = jsGet(target, key);
       }
-      (target! as Map<String, Object?>)[keys.last] = copyReference(value);
+      jsSet(target, keys.last, copyReference(value));
       chart.update();
     default:
       throw ArgumentError.value(step, 'step', 'Not a reference step');
@@ -866,7 +872,7 @@ Object? _snapshot(Object? value, [int depth = 0]) {
     final List<Object?> list => [
       for (final item in list) _snapshot(item, depth + 1),
     ],
-    final Map<String, Object?> map => <String, Object?>{
+    final Object map when isJsObject(map) => <String, Object?>{
       for (final key in jsObjectKeys(map))
         key: _snapshot(jsGet(map, key), depth + 1),
     },
@@ -895,7 +901,7 @@ void testControllerChartCases(
   List<ScaleChartCase> cases, {
   Map<String, Object?> functions = const {},
   Map<String, Object? Function(Chart chart)> extras = const {},
-  AnyObject? theme,
+  Object? theme,
   double? now,
   Map<String, Matcher> errorTypes = const {},
   bool hits = true,
@@ -935,7 +941,7 @@ Future<void> _runControllerCase(
   ScaleChartCase c, {
   required Map<String, Object?> functions,
   required Map<String, Object? Function(Chart chart)> extras,
-  required AnyObject? theme,
+  required Object? theme,
   required Map<String, Matcher> errorTypes,
   required bool hits,
   required Map<String, Object?> Function(Chart chart)? observeExtra,
@@ -968,7 +974,7 @@ Future<void> _runCaseSteps(
   ScaleChartCase c, {
   required Map<String, Object?> functions,
   required Map<String, Object? Function(Chart chart)> extras,
-  required AnyObject? theme,
+  required Object? theme,
   required Map<String, Matcher> errorTypes,
   required bool hits,
   required Map<String, Object?> Function(Chart chart)? observeExtra,

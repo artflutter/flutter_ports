@@ -429,9 +429,11 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
       // An object position is a resolver. `JSON.stringify` of the generator
       // writes its own keys, so the observation is a plain Map of them.
       'position': switch (s.position) {
-        final Map<String, Object?> position => <String, Object?>{
-          for (final k in jsObjectKeys(position)) k: jsGet(position, k),
-        },
+        final Object position
+            when position is Map<String, Object?> || position is JsObjectFace =>
+          <String, Object?>{
+            for (final k in jsObjectKeys(position)) k: jsGet(position, k),
+          },
         final position => position,
       },
       'min': s.min,
@@ -673,6 +675,21 @@ Object? copyReference(
   final List<Object?> list => <Object?>[
     for (final item in list) copyReference(item, functions),
   ],
+  _ => value,
+};
+
+/// A plain copy of [value] for an `equals` compare with a Map literal: a
+/// typed object with a face (Chart.js ADR 0054 §5) or a Map becomes a Map
+/// with the keys of `jsObjectKeys` and the plain copies of the `jsGet`
+/// values, a List a List of the plain copies; any other value stays.
+Object? plainObject(Object? value) => switch (value) {
+  final List<Object?> list => [for (final item in list) plainObject(item)],
+  final Object object
+      when object is Map<String, Object?> || object is JsObjectFace =>
+    <String, Object?>{
+      for (final key in jsObjectKeys(object))
+        key: plainObject(jsGet(object, key)),
+    },
   _ => value,
 };
 

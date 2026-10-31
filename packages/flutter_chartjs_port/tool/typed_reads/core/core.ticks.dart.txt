@@ -5,6 +5,7 @@
 #   replaced `numeric` formats too.
 # - jsObjectKeys 1: _assign, `Object.assign(options, format)`
 #   (core.ticks.js:57) of the number format object of the user.
+jsGet 1
 stringIndex 1
 jsCall 1
 jsObjectKeys 1

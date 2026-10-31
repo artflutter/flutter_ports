@@ -11,6 +11,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsSet;
 import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -59,6 +60,6 @@ class BasicPlatform extends BasePlatform {
   /// platform.basic.js:20 `updateConfig(config)`.
   @override
   void updateConfig(types.ChartConfiguration config) {
-    config.options['animation'] = false;
+    jsSet(config.options, 'animation', false);
   }
 }

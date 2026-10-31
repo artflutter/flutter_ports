@@ -179,7 +179,7 @@ class Animation implements types.Animation {
   /// value. [prop] is the property name: [Animation.typed] with its
   /// [AnimatedProp].
   Animation(
-    AnyObject cfg,
+    Object cfg,
     Object target,
     String prop, [
     Object? to = undefined,
@@ -198,7 +198,7 @@ class Animation implements types.Animation {
   /// 154 without a context and an index).
   @internal
   Animation.typed(
-    AnyObject cfg,
+    Object cfg,
     Object target,
     AnimatedProp prop, [
     Object? to = undefined,
@@ -378,7 +378,7 @@ class Animation implements types.Animation {
 
   /// core.animation.js:51 `update(cfg, to, date)`: gives an active animation
   /// the new target value [to] from the time [date].
-  void update(AnyObject cfg, Object? to, double date) {
+  void update(Object cfg, Object? to, double date) {
     if (_active) {
       _notify(false);
 
@@ -576,52 +576,54 @@ Object? _firstDefined(
 /// `cfg[name]` of a `cfg` that is not an [AnimationSpec]: the read by name
 /// of a plain object, the `cfg` of `new Chart.Animation(cfg, ...)` of user
 /// code and of the specs. It gives [undefined] for an absent key.
-Object? _cfgRead(AnyObject cfg, String name) => jsGet(cfg, name);
+Object? _cfgRead(Object cfg, String name) => jsGet(cfg, name);
 
 /// `cfg.delay` (core.animation.js:37): the field of an [AnimationSpec], else
 /// [_cfgRead]. Both give [undefined] for an absent key.
-Object? _cfgDelay(AnyObject cfg) =>
+Object? _cfgDelay(Object cfg) =>
     cfg is AnimationSpec ? cfg.delayValue : _cfgRead(cfg, 'delay');
 
 /// `cfg.duration` (core.animation.js:38, :59).
-Object? _cfgDuration(AnyObject cfg) =>
+Object? _cfgDuration(Object cfg) =>
     cfg is AnimationSpec ? cfg.durationValue : _cfgRead(cfg, 'duration');
 
 /// `cfg.easing` (core.animation.js:36).
-Object? _cfgEasing(AnyObject cfg) =>
+Object? _cfgEasing(Object cfg) =>
     cfg is AnimationSpec ? cfg.easingValue : _cfgRead(cfg, 'easing');
 
 /// `cfg.fn` (core.animation.js:35).
-Object? _cfgFn(AnyObject cfg) =>
+Object? _cfgFn(Object cfg) =>
     cfg is AnimationSpec ? cfg.fnValue : _cfgRead(cfg, 'fn');
 
 /// `cfg.from` (core.animation.js:31-32, :62-63).
-Object? _cfgFrom(AnyObject cfg) =>
+Object? _cfgFrom(Object cfg) =>
     cfg is AnimationSpec ? cfg.fromValue : _cfgRead(cfg, 'from');
 
 /// `cfg.loop` (core.animation.js:39, :61).
-Object? _cfgLoop(AnyObject cfg) =>
+Object? _cfgLoop(Object cfg) =>
     cfg is AnimationSpec ? cfg.loopValue : _cfgRead(cfg, 'loop');
 
 /// `cfg.to` (core.animation.js:31, :62).
-Object? _cfgTo(AnyObject cfg) =>
+Object? _cfgTo(Object cfg) =>
     cfg is AnimationSpec ? cfg.toValue : _cfgRead(cfg, 'to');
 
 /// `cfg.type` (core.animation.js:35).
-Object? _cfgType(AnyObject cfg) =>
+Object? _cfgType(Object cfg) =>
     cfg is AnimationSpec ? cfg.typeValue : _cfgRead(cfg, 'type');
 
 /// The JS property read `target[prop]` of an animation target (Chart.js ADR
 /// 0019, section 2).
 ///
 /// A `types.PropertyAccess`, for example an `Element`, gives its
-/// `operator []`. A Map gives `jsGet(target, prop)`. Thus an absent key gives
+/// `operator []`. A typed object gives its face (Chart.js ADR 0054 §5), and a
+/// Map gives `jsGet(target, prop)`. Thus an absent key gives
 /// [undefined]. Another target throws an [ArgumentError]: upstream declares
 /// `target: AnyObject` (animation.d.ts:5). `core.animation.js` and
 /// `core.animations.js` read their targets through this function.
 @internal
 Object? readProperty(Object target, String prop) => switch (target) {
   final types.PropertyAccess access => access[prop],
+  final JsObjectFace face => face.jsRead(prop),
   // `<dynamic, dynamic>` matches every Map, as in `jsGet`.
   final Map<dynamic, dynamic> map => jsGet(map, prop),
   _ => throw ArgumentError.value(target, 'target', 'is not an object'),
@@ -631,7 +633,8 @@ Object? readProperty(Object target, String prop) => switch (target) {
 /// (Chart.js ADR 0019, section 2).
 ///
 /// A `types.PropertyAccess`, for example an `Element`, uses its
-/// `operator []=`. A Map stores [value] under [prop]. Another target throws
+/// `operator []=`. A typed object writes through its face, and a Map stores
+/// [value] under [prop]. Another target throws
 /// an [ArgumentError]. `core.animation.js` and `core.animations.js` write
 /// their targets through this function.
 @internal
@@ -639,6 +642,8 @@ void writeProperty(Object target, String prop, Object? value) {
   switch (target) {
     case final types.PropertyAccess access:
       access[prop] = value;
+    case final JsObjectFace face:
+      face.jsWrite(prop, value);
     case final Map<dynamic, dynamic> map:
       map[prop] = value;
     default:

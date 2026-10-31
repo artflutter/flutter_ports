@@ -124,8 +124,7 @@ final class _Point implements PointElement {
   Object? get hidden => undefined;
 
   @override
-  double size([Map<String, Object?>? options]) =>
-      throw UnsupportedError('size');
+  double size([Object? options]) => throw UnsupportedError('size');
 }
 
 /// A dataset meta object literal, passed as a [ChartMeta].

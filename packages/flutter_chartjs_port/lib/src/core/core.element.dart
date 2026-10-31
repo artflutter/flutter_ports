@@ -39,6 +39,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
@@ -280,9 +282,10 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// (Chart.js ADR 0043, ADR 0017 section 8).
   ///
   /// Dart `null` stands for JS `undefined`, the start value. JS `null` never
-  /// reaches it.
+  /// reaches it. The value is an object: resolved options or a view of a
+  /// resolver (a typed object with a face, Chart.js ADR 0054 §5), or a Map.
   @override
-  Map<String, Object?>? options;
+  Object? options;
 
   /// core.element.ts:15 `$animations: Record<keyof T, Animation>`, the
   /// running animation of each property name.
@@ -462,7 +465,8 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// - `x` and `y` accept a `num` or [undefined] ([toNumberProp]).
   /// - `active` accepts a `bool`. It is not optional, so [undefined] is
   ///   outside its type.
-  /// - `options` accepts a `Map<String, Object?>` or [undefined].
+  /// - `options` accepts an object (a `Map<String, Object?>` or a typed
+  ///   object with a face) or [undefined].
   /// - `$animations` accepts a `Map<String, types.Animation>` or
   ///   [undefined].
   /// - `hidden` and `$context` accept any value, as an extra property does
@@ -493,7 +497,12 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
       case 'active':
         active = toDefinedBoolProp(prop, value);
       case 'options':
-        options = toObjectProp<Map<String, Object?>>(prop, value);
+        options = switch (value) {
+          Undefined() => null,
+          final Map<String, Object?> map => map,
+          final JsObjectFace face => face,
+          _ => throw ArgumentError.value(value, prop, 'Not an object'),
+        };
       case r'$animations':
         $animations = toObjectProp<Map<String, types.Animation>>(prop, value);
       case 'hidden':
@@ -517,9 +526,9 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// Thus an `int` becomes a `double`, and a value outside the type of a
   /// declared property throws an [ArgumentError] after the writes of the
   /// keys before it.
-  void assign(AnyObject source) {
+  void assign(Object source) {
     if (source is TypedRecord && takesProperties(source)) {
-      for (var i = 0, n = source.length; i < n; i++) {
+      for (var i = 0, n = source.ownKeyCount; i < n; i++) {
         writePropertyAt(source, i);
       }
       return;
@@ -527,7 +536,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
     // The face: `Object.assign` of a plain object reads each own key by
     // name, in the `Object.keys` order.
     for (final key in jsObjectKeys(source)) {
-      this[key] = source[key];
+      this[key] = jsGet(source, key);
     }
   }
 

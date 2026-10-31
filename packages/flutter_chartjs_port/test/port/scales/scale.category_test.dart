@@ -226,7 +226,7 @@ final Map<String, ScaleObservations> _extras = {
 /// `dateLabels` of the generator: puts a DateTime for each time of the
 /// labels of [chart] in the labels, and returns the labels.
 List<Object?> _dateLabels(Chart chart) {
-  final labels = chart.data['labels']! as List<Object?>;
+  final labels = (chart.data as AnyObject)['labels']! as List<Object?>;
   for (var i = 0; i < labels.length; i++) {
     labels[i] = DateTime.fromMillisecondsSinceEpoch(
       (labels[i]! as double).toInt(),
@@ -238,7 +238,8 @@ List<Object?> _dateLabels(Chart chart) {
 
 /// The dataset [index] of [chart], as a Map.
 Map<String, Object?> _dataset(Chart chart, int index) =>
-    (chart.data['datasets']! as List<Object?>)[index]! as Map<String, Object?>;
+    ((chart.data as AnyObject)['datasets']! as List<Object?>)[index]!
+        as Map<String, Object?>;
 
 /// The actions of the action cases of the generator (`runActionCase`), by
 /// the case name. Each one changes the chart and calls `chart.update()`.
@@ -251,12 +252,13 @@ final Map<String, void Function(Chart chart)> _actions = {
     chart.update();
   },
   'the next update keeps the added labels at other indexes': (chart) {
-    (chart.data['labels']! as List<Object?>).insert(0, 'z');
+    ((chart.data as AnyObject)['labels']! as List<Object?>).insert(0, 'z');
     chart.update();
   },
   'the next update removes a string min': (chart) {
-    final scales = chart.config.options['scales']! as Map<String, Object?>;
-    (scales['x']! as Map<String, Object?>)['min'] = 'b';
+    final scales =
+        (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+    (scales['x']! as JsObjectFace)['min'] = 'b';
     chart.update();
   },
   'the next update removes the label of getPixelForValue': (chart) {
@@ -264,8 +266,9 @@ final Map<String, void Function(Chart chart)> _actions = {
     chart.update();
   },
   'bounds data, then bounds ticks': (chart) {
-    final scales = chart.config.options['scales']! as Map<String, Object?>;
-    (scales['x']! as Map<String, Object?>)['bounds'] = 'ticks';
+    final scales =
+        (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+    (scales['x']! as JsObjectFace)['bounds'] = 'ticks';
     chart.update();
   },
   'a later update keeps a label that the user adds': (chart) {
@@ -274,7 +277,7 @@ final Map<String, void Function(Chart chart)> _actions = {
       <String, Object?>{'x': 'b', 'y': 2.0},
     ];
     chart.update();
-    (chart.data['labels']! as List<Object?>).add('d');
+    ((chart.data as AnyObject)['labels']! as List<Object?>).add('d');
     chart.update();
   },
   'the next update keeps a label that parse adds to options.labels': (chart) {
@@ -291,8 +294,9 @@ final Map<String, void Function(Chart chart)> _actions = {
   },
   'Date labels and a copy of a label as min': (chart) {
     final labels = _dateLabels(chart);
-    final scales = chart.config.options['scales']! as Map<String, Object?>;
-    (scales['x']! as Map<String, Object?>)['min'] = _copyOf(labels[1]);
+    final scales =
+        (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+    (scales['x']! as JsObjectFace)['min'] = _copyOf(labels[1]);
     chart.update();
   },
 };
@@ -349,11 +353,11 @@ void main() {
     });
 
     test('defaults.scales.category has the tick callback only', () {
-      final scales = defaults['scales']! as Map<String, Object?>;
-      final category = scales['category']! as Map<String, Object?>;
-      expect(category.keys, ['ticks']);
-      final ticks = category['ticks']! as Map<String, Object?>;
-      expect(ticks.keys, ['callback']);
+      final scales = defaults['scales']! as JsObjectFace;
+      final category = scales['category']! as JsObjectFace;
+      expect(category.jsKeys(), ['ticks']);
+      final ticks = category['ticks']! as JsObjectFace;
+      expect(ticks.jsKeys(), ['callback']);
       expect(
         ticks['callback'],
         same(jsGet(CategoryScale.defaults['ticks'], 'callback')),

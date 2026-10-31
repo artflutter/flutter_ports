@@ -4,6 +4,7 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as chart
     show defaults;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:test/test.dart';
@@ -51,6 +52,14 @@ Map<String, Object?> _font(ParsedFont o) => {
 /// The JavaScript property read `context.v` of a scriptable option.
 double _v(Object? context) =>
     (context! as Map<String, Object?>)['v']! as double;
+
+/// `Object.assign(target, source)` into the typed scope [target], through
+/// its face (Chart.js ADR 0054 §5).
+void _assign(JsObjectFace target, Map<String, Object?> source) {
+  for (final MapEntry(:key, :value) in source.entries) {
+    target[key] = value;
+  }
+}
 
 void main() {
   setUpSpecs();
@@ -389,12 +398,12 @@ void main() {
 
     group('toFont', () {
       test('should return a font with default values', () {
-        final font = chart.defaults['font']! as Map<String, Object?>;
+        final font = chart.defaults['font']! as JsObjectFace;
         // Object.assign({}, Chart.defaults.font)
-        final defaultFont = Map<String, Object?>.of(font);
+        final defaultFont = {for (final key in font.jsKeys()) key: font[key]};
 
         // Object.assign(Chart.defaults.font, {...})
-        font.addAll({
+        _assign(font, {
           'family': 'foobar',
           'size': 42.0,
           'style': 'oblique 9deg',
@@ -413,7 +422,7 @@ void main() {
           }),
         );
 
-        font.addAll(defaultFont);
+        _assign(font, defaultFont);
       });
       test('should return a font with given values', () {
         expect(
@@ -458,12 +467,12 @@ void main() {
       test(
         'should return null as a font string if size or family are missing',
         () {
-          final font = chart.defaults['font']! as Map<String, Object?>;
+          final font = chart.defaults['font']! as JsObjectFace;
           final fontFamily = font['family'];
           final fontSize = font['size'];
           font
-            ..remove('family')
-            ..remove('size');
+            ..jsDelete('family')
+            ..jsDelete('size');
 
           expect(
             toFont(<String, Object?>{'style': 'italic', 'size': 12.0}).string,
@@ -482,9 +491,9 @@ void main() {
         },
       );
       test('font.style should be optional for font strings', () {
-        final font = chart.defaults['font']! as Map<String, Object?>;
+        final font = chart.defaults['font']! as JsObjectFace;
         final fontStyle = font['style'];
-        font.remove('style');
+        font.jsDelete('style');
 
         expect(
           toFont(<String, Object?>{'size': 12.0, 'family': 'serif'}).string,

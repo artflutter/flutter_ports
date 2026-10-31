@@ -18,22 +18,21 @@
 /// `OptionScope.lookup` and any other scope with [jsGet].
 ///
 /// [Resolver] and [ContextResolver] are the names of the two classes for the
-/// code of today. Both classes are a [JsProxyObject] and, during the
-/// migration, a `Map<String, Object?>` (the scaffolding of Chart.js ADR 0054
-/// §5), so that `Element.options`, `Scale.options` and `Chart.options` can
-/// hold them. They map the traps to the members of [Map]:
+/// code of today. Both classes are a [JsProxyObject], the face by name of
+/// Chart.js ADR 0054 §5; neither is a `Map`. They map the traps to these
+/// members:
 ///
 /// | Trap | Dart member |
 /// |---|---|
-/// | `get` | `operator []`, and the typed read `readKey` |
-/// | `set` | `operator []=` |
-/// | `deleteProperty` | [Map.remove] |
-/// | `has` (`in`) | [Map.containsKey] |
-/// | `ownKeys` (`Object.getOwnPropertyNames`) | [Map.keys] |
-/// | `getOwnPropertyDescriptor` (`hasOwnProperty`) | `hasOwnProperty` |
-/// | `getPrototypeOf` | none: a Map has no prototype |
+/// | `get` | `operator []` and `jsRead`, and the typed read `readKey` |
+/// | `set` | `operator []=` and `jsWrite` |
+/// | `deleteProperty` | `jsDelete` |
+/// | `has` (`in`) | `hasProperty` |
+/// | `ownKeys` (`Object.getOwnPropertyNames`) | `ownKeys` |
+/// | `getOwnPropertyDescriptor` | `hasOwnProperty`, `jsHas` |
+/// | `getPrototypeOf` | none |
 ///
-/// `Object.keys` of a resolver is its `objectKeys()`: [Map.keys] without
+/// `Object.keys` of a resolver is its `objectKeys()`: `ownKeys` without
 /// the keys that `hasOwnProperty` rejects, as the JavaScript engine filters
 /// the `ownKeys` result through the `getOwnPropertyDescriptor` trap.
 /// [jsObjectKeys] gives that result.
@@ -58,13 +57,14 @@
 /// sub-resolver.
 library;
 
-import 'dart:collection';
 import 'dart:core';
 import 'dart:core' as core;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show capitalize, isArray, isFunction, isObject, resolveObjectKey;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ContextObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -74,7 +74,6 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
@@ -188,10 +187,8 @@ OptionResolver createResolver(
 /// `deleteProperty` trap of a slot name changes the own property of that
 /// name, as upstream does on its cache object. A [OptionResolver] gives the
 /// [undefined] sentinel for a key that it does not resolve, and Dart `null`
-/// for a JS `null` value. It is a `MapBase` during the migration (the
-/// scaffolding of Chart.js ADR 0054 §5).
-final class OptionResolver extends MapBase<String, Object?>
-    implements ResolverProxy, JsProxyObject, JsObjectFace {
+/// for a JS `null` value.
+final class OptionResolver implements ResolverProxy {
   OptionResolver._(
     this._scopes,
     this._prefixes,
@@ -220,7 +217,7 @@ final class OptionResolver extends MapBase<String, Object?>
   // One function value for each target, as the upstream cache object
   // holds one.
   // ignore: prefer_function_declarations_over_variables
-  late final OptionResolver Function(AnyObject scope) _override = (scope) =>
+  late final OptionResolver Function(Object scope) _override = (scope) =>
       createResolver(
         [scope, ..._scopes],
         _prefixes,
@@ -318,17 +315,12 @@ final class OptionResolver extends MapBase<String, Object?>
   /// helpers.config.ts:54 the `deleteProperty` trap.
   ///
   /// A trap for the delete operator.
-  ///
-  /// It returns Dart `null`. The trap returns `true`.
-  @core.override
-  Object? remove(Object? key) {
-    if (key is! String) return null;
+  void _deleteTrap(String key) {
     // remove from cache
     _removeOwn(key);
     // remove cached keys
     _removeOwn('_keys');
     _deleteProperty(_first(_scopes), key); // remove from top level scope
-    return null;
   }
 
   /// `delete target[name]` of the cache object.
@@ -354,10 +346,7 @@ final class OptionResolver extends MapBase<String, Object?>
   ///
   /// A trap for getting property values.
   @core.override
-  Object? operator [](Object? key) {
-    if (key is! String) return undefined;
-    return _get(key);
-  }
+  Object? operator [](String name) => _get(name);
 
   /// helpers.config.ts:73 the `getOwnPropertyDescriptor` trap: whether the
   /// first scope owns [key].
@@ -379,21 +368,21 @@ final class OptionResolver extends MapBase<String, Object?>
   ///
   /// A trap for the in operator.
   @core.override
-  bool containsKey(Object? key) {
-    return key is String && _getKeysFromAllScopes(this).contains(key);
+  bool hasProperty(String name) {
+    return _getKeysFromAllScopes(this).contains(name);
   }
 
   /// helpers.config.ts:94 the `ownKeys` trap.
   ///
   /// A trap for Object.getOwnPropertyNames and Object.getOwnPropertySymbols.
   @core.override
-  Iterable<String> get keys => _getKeysFromAllScopes(this);
+  List<String> ownKeys() => _getKeysFromAllScopes(this);
 
   /// `Object.keys(resolver)`: the `ownKeys` result filtered through the
   /// `getOwnPropertyDescriptor` trap ([hasOwnProperty]), in the trap order.
   @core.override
   List<String> objectKeys() => [
-    for (final key in keys)
+    for (final key in ownKeys())
       if (hasOwnProperty(key)) key,
   ];
 
@@ -401,7 +390,7 @@ final class OptionResolver extends MapBase<String, Object?>
 
   /// `resolver[name]`: the `get` trap ([operator []]).
   @core.override
-  Object? jsRead(String name) => this[name];
+  Object? jsRead(String name) => _get(name);
 
   /// `resolver[name] = value`: the `set` trap ([operator []=]).
   @core.override
@@ -416,12 +405,12 @@ final class OptionResolver extends MapBase<String, Object?>
   @core.override
   bool jsHas(String name) => hasOwnProperty(name);
 
-  /// `delete resolver[name]`: the `deleteProperty` trap ([remove]). It
-  /// returns whether the resolver owned [name] before.
+  /// `delete resolver[name]`: the `deleteProperty` trap. It returns
+  /// whether the resolver owned [name] before.
   @core.override
   bool jsDelete(String name) {
     final owned = hasOwnProperty(name);
-    remove(name);
+    _deleteTrap(name);
     return owned;
   }
 
@@ -446,13 +435,6 @@ final class OptionResolver extends MapBase<String, Object?>
       _slotsTouched = true;
     }
     _removeOwn('_keys'); // remove cached keys
-  }
-
-  /// [Map.clear]. Upstream has no counterpart. It deletes each key of
-  /// [keys] through the `deleteProperty` trap ([remove]).
-  @core.override
-  void clear() {
-    keys.toList().forEach(remove);
   }
 
   /// helpers.config.types.ts:11 `_cacheable`: `true`.
@@ -484,8 +466,8 @@ final class OptionResolver extends MapBase<String, Object?>
   /// helpers.config.ts:48 `override(scope)`: a resolver with [scope] in
   /// front of the scopes.
   @core.override
-  OptionResolver override(AnyObject scope) {
-    return (this['override']! as OptionResolver Function(AnyObject))(scope);
+  OptionResolver override(Object scope) {
+    return (this['override']! as OptionResolver Function(Object))(scope);
   }
 
   /// The names of the own properties of the cache object, in their order.
@@ -541,7 +523,7 @@ Object? readOption(Object? options, OptionKey key) => switch (options) {
 /// [descriptorDefaults] is an absent argument: JS `null` never reaches it.
 OptionView attachContext(
   Object? proxy,
-  AnyObject context, [
+  Object context, [
   Object? subProxy = undefined,
   DescriptorDefaults? descriptorDefaults,
 ]) {
@@ -560,8 +542,7 @@ OptionView attachContext(
 ///
 /// The slots of the cache object are fields. The cached option values are a
 /// typed table. The library documentation lists the trap of each member.
-final class OptionView extends MapBase<String, Object?>
-    implements ContextProxy, JsProxyObject, JsObjectFace {
+final class OptionView implements ContextProxy {
   OptionView._(
     this._proxy,
     this._context,
@@ -574,7 +555,7 @@ final class OptionView extends MapBase<String, Object?>
   final Object? _proxy;
 
   /// `_context` of the target.
-  final AnyObject _context;
+  final Object _context;
 
   /// `_subProxy` of the target.
   final Object? _subProxy;
@@ -592,14 +573,14 @@ final class OptionView extends MapBase<String, Object?>
   // One function value for each target, as the upstream cache object
   // holds one.
   // ignore: prefer_function_declarations_over_variables
-  late final OptionView Function(AnyObject ctx) _setContext = (ctx) =>
+  late final OptionView Function(Object ctx) _setContext = (ctx) =>
       attachContext(_proxy, ctx, _subProxy, _descriptorDefaults);
 
   /// `override` of the target (helpers.config.ts:135).
   // One function value for each target, as the upstream cache object
   // holds one.
   // ignore: prefer_function_declarations_over_variables
-  late final OptionView Function(AnyObject scope) _override = (scope) =>
+  late final OptionView Function(Object scope) _override = (scope) =>
       attachContext(
         jsCall(jsGet(_proxy, 'override'), [scope], thisArg: _proxy),
         _context,
@@ -678,14 +659,9 @@ final class OptionView extends MapBase<String, Object?>
   /// helpers.config.ts:141 the `deleteProperty` trap.
   ///
   /// A trap for the delete operator.
-  ///
-  /// It returns Dart `null`. The trap returns `true`.
-  @core.override
-  Object? remove(Object? key) {
-    if (key is! String) return null;
+  void _deleteTrap(String key) {
     _removeOwn(key); // remove from cache
     _deleteProperty(_proxy, key); // remove from proxy
-    return null;
   }
 
   /// `delete target[name]` of the cache object.
@@ -708,10 +684,7 @@ final class OptionView extends MapBase<String, Object?>
   ///
   /// A trap for getting property values.
   @core.override
-  Object? operator [](Object? key) {
-    if (key is! String) return undefined;
-    return _get(key);
-  }
+  Object? operator [](String name) => _get(name);
 
   /// helpers.config.ts:159 the `getOwnPropertyDescriptor` trap: whether a
   /// descriptor exists for [key].
@@ -732,21 +705,21 @@ final class OptionView extends MapBase<String, Object?>
   ///
   /// A trap for the in operator.
   @core.override
-  bool containsKey(Object? key) {
-    return key is String && _has(_proxy, key);
+  bool hasProperty(String name) {
+    return _has(_proxy, name);
   }
 
   /// helpers.config.ts:182 the `ownKeys` trap.
   ///
   /// A trap for Object.getOwnPropertyNames and Object.getOwnPropertySymbols.
   @core.override
-  Iterable<String> get keys => _reflectOwnKeys(_proxy);
+  List<String> ownKeys() => _reflectOwnKeys(_proxy);
 
   /// `Object.keys(resolver)`: the `ownKeys` result filtered through the
   /// `getOwnPropertyDescriptor` trap ([hasOwnProperty]), in the trap order.
   @core.override
   List<String> objectKeys() => [
-    for (final key in keys)
+    for (final key in ownKeys())
       if (hasOwnProperty(key)) key,
   ];
 
@@ -754,7 +727,7 @@ final class OptionView extends MapBase<String, Object?>
 
   /// `resolver[name]`: the `get` trap ([operator []]).
   @core.override
-  Object? jsRead(String name) => this[name];
+  Object? jsRead(String name) => _get(name);
 
   /// `resolver[name] = value`: the `set` trap ([operator []=]).
   @core.override
@@ -769,12 +742,12 @@ final class OptionView extends MapBase<String, Object?>
   @core.override
   bool jsHas(String name) => hasOwnProperty(name);
 
-  /// `delete resolver[name]`: the `deleteProperty` trap ([remove]). It
-  /// returns whether the resolver owned [name] before.
+  /// `delete resolver[name]`: the `deleteProperty` trap. It returns
+  /// whether the resolver owned [name] before.
   @core.override
   bool jsDelete(String name) {
     final owned = hasOwnProperty(name);
-    remove(name);
+    _deleteTrap(name);
     return owned;
   }
 
@@ -785,13 +758,6 @@ final class OptionView extends MapBase<String, Object?>
   void operator []=(String key, Object? value) {
     _set(_proxy, key, value); // set to proxy
     _removeOwn(key); // remove from cache
-  }
-
-  /// [Map.clear]. Upstream has no counterpart. It deletes each key of
-  /// [keys] through the `deleteProperty` trap ([remove]).
-  @core.override
-  void clear() {
-    keys.toList().forEach(remove);
   }
 
   /// helpers.config.types.ts:47 `_cacheable`: `false`.
@@ -807,7 +773,7 @@ final class OptionView extends MapBase<String, Object?>
   /// helpers.config.types.ts:49 `_context`.
   @internal
   @core.override
-  AnyObject get context => this['_context']! as AnyObject;
+  Object get context => this['_context']!;
 
   /// helpers.config.types.ts:50 `_subProxy`.
   @internal
@@ -827,15 +793,15 @@ final class OptionView extends MapBase<String, Object?>
   /// helpers.config.ts:134 `setContext(ctx)`: a resolver over the same
   /// proxy with the context [ctx].
   @core.override
-  OptionView setContext(AnyObject ctx) {
-    return (this['setContext']! as OptionView Function(AnyObject))(ctx);
+  OptionView setContext(Object ctx) {
+    return (this['setContext']! as OptionView Function(Object))(ctx);
   }
 
   /// helpers.config.ts:135 `override(scope)`: a resolver with [scope] in
   /// front of the scopes.
   @core.override
-  OptionView override(AnyObject scope) {
-    return (this['override']! as OptionView Function(AnyObject))(scope);
+  OptionView override(Object scope) {
+    return (this['override']! as OptionView Function(Object))(scope);
   }
 
   /// The names of the own properties of the cache object, in their order.
@@ -971,7 +937,7 @@ Object? _resolveWithContext(OptionView view, String prop, OptionKey? key) {
     // if the resolved value is an object, create a sub resolver for it
     value = attachContext(
       value,
-      context! as AnyObject,
+      context!,
       jsTruthy(subProxy) ? jsGet(subProxy, prop) : subProxy,
       descriptors,
     );
@@ -1061,7 +1027,7 @@ Object? _resolveArray(
       resolvers.add(
         attachContext(
           resolver,
-          context! as AnyObject,
+          context!,
           jsTruthy(subProxy) ? jsGet(subProxy, prop) : subProxy,
           descriptors,
         ),
@@ -1347,24 +1313,27 @@ List<ParsedItem> parseObjectDataRadialScaleOf(
 }
 
 // The JavaScript object operations of the traps, for the Dart values of
-// Chart.js ADR 0043. Upstream has no counterpart: the JavaScript engine
-// does them.
+// Chart.js ADR 0054 §5: a raw Map, a typed object with a face, a List, a
+// function value. Upstream has no counterpart: the JavaScript engine does
+// them.
 
 /// The first scope, `scopes[0]`: the [undefined] sentinel for an empty
 /// list.
 Object? _first(List<Object?> scopes) => scopes.isEmpty ? undefined : scopes[0];
 
-/// Whether [object] is a JS `Proxy`: a resolver of this library.
-bool _isProxy(Object? object) => object is JsProxyObject;
-
 /// The property write `object[key] = value` (`[[Set]]`) in strict mode.
 ///
-/// Only a Map takes a property. Every other value throws a [TypeError].
-/// JavaScript also adds a property to an array or a function. A Map whose
-/// value type does not allow [value] also throws a [TypeError] (see the
-/// library documentation).
-// DIVERGES(chartjs): js-semantics-resolver-objects, set on a Map only.
+/// Only an object takes a property: a typed object through its face (a
+/// resolver through its `set` trap) and a Map. Every other value throws a
+/// [TypeError]. JavaScript also adds a property to an array or a function. A
+/// Map whose value type does not allow [value] also throws a [TypeError]
+/// (see the library documentation).
+// DIVERGES(chartjs): js-semantics-resolver-objects, set on an object only.
 void _set(Object? object, String key, Object? value) {
+  if (object is JsObjectFace) {
+    object.jsWrite(key, value);
+    return;
+  }
   if (object is Map) {
     object[key] = value;
     return;
@@ -1375,9 +1344,10 @@ void _set(Object? object, String key, Object? value) {
 
 /// The property delete `delete object[key]`.
 ///
-/// It calls the `deleteProperty` trap of a resolver. It removes an own [key]
-/// from another Map. It does nothing for other values. Throws a [TypeError]
-/// for `null` and [undefined], as JavaScript does.
+/// It calls the `deleteProperty` trap of a resolver, and the face of
+/// another typed object. It removes an own [key] from a Map. It does nothing
+/// for other values. Throws a [TypeError] for `null` and [undefined], as
+/// JavaScript does.
 ///
 /// A delete of an absent key succeeds also on a frozen object, as in strict
 /// mode. Thus an unmodifiable Map (`Object.freeze`) throws only for a key
@@ -1386,8 +1356,8 @@ void _deleteProperty(Object? object, String key) {
   if (object == null || identical(object, undefined)) {
     throw TypeError();
   }
-  if (object is JsProxyObject) {
-    object.remove(key);
+  if (object is JsObjectFace) {
+    object.jsDelete(key);
   } else if (object is Map && object.containsKey(key)) {
     object.remove(key);
   }
@@ -1395,10 +1365,20 @@ void _deleteProperty(Object? object, String key) {
 
 /// The `in` operator and `Reflect.has` (`[[HasProperty]]`).
 ///
-/// A resolver gives its `has` trap. A List has its array indices and
-/// `length`. A function value has no property here. Throws a [TypeError] for
-/// a value that is not an object, as JavaScript does.
+/// A resolver gives its `has` trap, and a context its prototype chain. Another
+/// typed object and a Map give their own keys. A List has its array indices
+/// and `length`. A function value has no property here. Throws a [TypeError]
+/// for a value that is not an object, as JavaScript does.
 bool _has(Object? object, String key) {
+  if (object is JsProxyObject) {
+    return object.hasProperty(key);
+  }
+  if (object is ContextObject) {
+    return object.hasProperty(key);
+  }
+  if (object is JsObjectFace) {
+    return object.jsHas(key);
+  }
   if (object is Map) {
     return object.containsKey(key);
   }
@@ -1430,15 +1410,15 @@ bool _getOwnProperty(Object? object, String key) {
 
 /// `Reflect.ownKeys(object)` (`[[OwnPropertyKeys]]`).
 ///
-/// A resolver gives its `ownKeys` trap. A Map gives its keys in the
-/// [jsObjectKeys] order. A List gives its indices and `length`. A function
-/// value has no key here. Throws a [TypeError] for a value that is not an
-/// object, as JavaScript does.
+/// A resolver gives its `ownKeys` trap. Another typed object and a Map give
+/// their keys in the [jsObjectKeys] order. A List gives its indices and
+/// `length`. A function value has no key here. Throws a [TypeError] for a
+/// value that is not an object, as JavaScript does.
 List<String> _reflectOwnKeys(Object? object) {
-  if (_isProxy(object)) {
-    return (object! as Map<String, Object?>).keys.toList();
+  if (object is JsProxyObject) {
+    return object.ownKeys();
   }
-  if (object is Map<String, Object?>) {
+  if (object is JsObjectFace || object is Map<String, Object?>) {
     return jsObjectKeys(object);
   }
   if (object is List) {
@@ -1452,14 +1432,14 @@ List<String> _reflectOwnKeys(Object? object) {
 
 /// `Object.keys(object)`.
 ///
-/// A Map gives [jsObjectKeys]: `objectKeys()` for a resolver. A List or a
-/// String gives its indices. Any other value gives no key. Throws a
-/// [TypeError] for `null` and [undefined], as JavaScript does.
+/// A typed object and a Map give [jsObjectKeys]: `objectKeys()` for a
+/// resolver. A List or a String gives its indices. Any other value gives no
+/// key. Throws a [TypeError] for `null` and [undefined], as JavaScript does.
 List<String> _objectKeys(Object? object) {
   if (object == null || identical(object, undefined)) {
     throw TypeError();
   }
-  if (object is Map<String, Object?>) {
+  if (object is JsObjectFace || object is Map<String, Object?>) {
     return jsObjectKeys(object);
   }
   if (object is List || object is String) {

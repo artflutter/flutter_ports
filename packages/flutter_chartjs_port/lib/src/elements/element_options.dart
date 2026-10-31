@@ -8,8 +8,8 @@
 /// [PointOptions], [LineOptions], [BarOptions] and [ArcOptions]
 /// (`resolved.g.dart`, from the kinds of `tool/options_schema.yaml`). Each
 /// known key is a typed field with a foreign slot (Chart.js ADR 0054 §6);
-/// the Map protocol of the scaffolding (§5) gives the raw value of each key
-/// in the key order of Chart.js ADR 0018 §3.
+/// the face (§5) gives the raw value of each key in the key order of
+/// Chart.js ADR 0021 §4.
 ///
 /// The producers of the resolver use the classes (Chart.js ADR 0021):
 /// - [createElementOptions] gives the new, empty options object of an
@@ -25,11 +25,11 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/options/element_options_base.dart'
@@ -101,11 +101,14 @@ Object? rawOption(ElementOptions options, OptionKey key, Object? field) {
 /// and the bubble controller (controller.bubble.js:157).
 ///
 /// An [ElementOptions] gives its [ElementOptions.clone], of the same class.
-/// Another Map gives a new plain Map with the keys of [jsObjectKeys], in that
-/// order, and the values of `options[key]`. Thus a resolver gives the values
-/// of its `get` trap. The copy is not frozen.
+/// Another object (a Map or a typed object with a face) gives a new plain
+/// Map with the keys of [jsObjectKeys], in that order, and the values of
+/// `options[key]`. Thus a resolver gives the values of its `get` trap. The
+/// copy is not frozen.
 // DIVERGES(chartjs): adapt-typed-element-options, the copy keeps the class.
-AnyObject copyOptions(AnyObject options) => options is ElementOptions
+Object copyOptions(Object options) => options is ElementOptions
     ? options.clone()
     // The face: `Object.assign` of a plain options object of user code.
-    : {for (final key in jsObjectKeys(options)) key: options[key]};
+    : <String, Object?>{
+        for (final key in jsObjectKeys(options)) key: jsGet(options, key),
+      };

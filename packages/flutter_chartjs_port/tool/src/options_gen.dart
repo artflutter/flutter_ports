@@ -271,7 +271,7 @@ String keyIdentifier(String name) {
 }
 
 /// The names that a typed setter of a scope class must not take: the
-/// members of `OptionScope`, of `Object` and of `MapBase`.
+/// members of `OptionScope` and of `Object`.
 const Set<String> _memberNames = {
   'kind', 'cellOf', 'setCell', 'hasField', 'classify', 'keyOf', 'lookup', //
   'owns', 'store', 'delete', 'ownKeys', 'ownKeyCount', 'jsKeys',
@@ -338,7 +338,7 @@ String _fieldType(Shape shape) {
 }
 
 /// The value of a typed field of [type] for an absent key: the JS
-/// conversion of the Map read (Dart `null`).
+/// conversion of Dart `null`.
 String _absentValue(String type) => switch (type) {
   'double' => '0',
   'bool' => 'false',
@@ -357,10 +357,10 @@ String _resolved(Schema schema) {
       '/// `String?` or `Object?`), a bit of `_present` and, for a value\n'
       '/// outside the type of the field, a bit of `_foreign` and the raw value\n'
       '/// in `_foreignRaw` (§6). The typed getter gives the JS conversion of\n'
-      '/// the Map read (Dart `null` for an absent key); `<key>Value` gives the\n'
-      '/// raw value, or `undefined` for an absent key. `ElementOptions` keeps\n'
-      '/// `\$shared`, `\$animations`, the extras, the frozen state and the\n'
-      '/// Map protocol.\n'
+      '/// the value (0, false or Dart `null` for an absent key); `<key>Value`\n'
+      '/// gives the raw value, or `undefined` for an absent key.\n'
+      '/// `ElementOptions` keeps `\$shared`, `\$animations`, the extras, the\n'
+      '/// frozen state and the face (Chart.js ADR 0054 §5).\n'
       '///\n'
       '/// This library is a pure layer.\n'
       'library;\n\n'
@@ -428,7 +428,7 @@ String _resolved(Schema schema) {
       ..write('  List<Object?>? _foreignRaw;\n\n')
       ..write(
         '  /// The bits of the `double` keys whose raw value is a Dart `int`:\n'
-        '  /// the Map read gives the `int` back.\n',
+        '  /// the read by name gives the `int` back.\n',
       )
       ..write('  int _int = 0;\n\n')
       ..write(
@@ -451,7 +451,7 @@ String _resolved(Schema schema) {
       out
         ..write('\n  $type _$id = ${_absentValue(type)};\n\n')
         ..write(
-          '  /// `$key`: the JS conversion of the Map read of the key.\n',
+          '  /// `$key`: the JS conversion of the value of the key.\n',
         )
         ..write('  $type get $id => _$id;\n\n')
         ..write(

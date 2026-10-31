@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
@@ -277,7 +278,7 @@ void main() {
           for (final element in c.getDatasetMeta(0).data)
             element as PointElement,
         ];
-        final datasets = c.data['datasets']! as List<Object?>;
+        final datasets = readByName(c.data, 'datasets')! as List<Object?>;
         final dataset = datasets.first! as Map<String, Object?>;
         final data = dataset['data']! as List<Object?>;
         final first = data.first! as Map<String, Object?>;
@@ -289,8 +290,14 @@ void main() {
           points.first.x,
           closeTo(area.left + (first['x']! as double) * area.width, 1e-9),
         );
-        expect(points[0].options!['backgroundColor'], stressChartBackground);
-        expect(points[1].options!['backgroundColor'], stressChartBackgroundOdd);
+        expect(
+          (points[0].options! as JsObjectFace)['backgroundColor'],
+          stressChartBackground,
+        );
+        expect(
+          (points[1].options! as JsObjectFace)['backgroundColor'],
+          stressChartBackgroundOdd,
+        );
       },
     );
   });
@@ -315,11 +322,11 @@ void main() {
         expect(x, isA<CategoryScale>());
         expect(y, isA<LinearScale>());
         expect(x.getLabels(), hasLength(30));
-        expect(x.options['ticks'], containsPair('autoSkip', true));
+        expect((x.options['ticks']! as JsObjectFace)['autoSkip'], true);
         final meta = c.getDatasetMeta(0);
         expect(identical(meta.iScale, x), isTrue);
         expect(identical(meta.vScale, y), isTrue);
-        final datasets = c.data['datasets']! as List<Object?>;
+        final datasets = readByName(c.data, 'datasets')! as List<Object?>;
         final dataset = datasets.first! as Map<String, Object?>;
         final data = (dataset['data']! as List<Object?>)
             .cast<Map<String, Object?>>();
@@ -746,7 +753,7 @@ void main() {
             4,
             _settings,
             onChart: (chart) {
-              expect(chart.data['datasets'], hasLength(datasets));
+              expect(readByName(chart.data, 'datasets'), hasLength(datasets));
               expect(chart.options['events'], isEmpty, reason: reason);
               expect(chart.options['animation'], false, reason: reason);
               for (final id in [
@@ -983,7 +990,8 @@ void main() {
           onChart: (chart) {
             expect(chart.config.type, name == 'radar' ? 'radar' : 'line');
             expect(chart.legend, isNull, reason: reason);
-            final datasets = chart.data['datasets']! as List<Object?>;
+            final datasets =
+                readByName(chart.data, 'datasets')! as List<Object?>;
             expect(datasets, hasLength(3));
             for (var k = 0; k < 3; k++) {
               final dataset = datasets[k]! as Map<String, Object?>;
@@ -1071,12 +1079,16 @@ void main() {
           12,
           _settings,
           onChart: (chart) {
-            expect(chart.data['datasets'], hasLength(3));
+            expect(readByName(chart.data, 'datasets'), hasLength(3));
             expect(chart.options['events'], isEmpty);
             if (legend) {
               final box = chart.legend! as Legend;
-              expect(box.options['display'], true, reason: reason);
-              expect(box.options['position'], 'top', reason: reason);
+              expect(readByName(box.options, 'display'), true, reason: reason);
+              expect(
+                readByName(box.options, 'position'),
+                'top',
+                reason: reason,
+              );
               expect(box.legendItems, hasLength(3), reason: reason);
               expect(chart.boxes, contains(box));
             } else {
@@ -1212,7 +1224,7 @@ void main() {
       scene.prepare!(chart);
       expect(animator.has(chart), isFalse, reason: type);
       final dataset =
-          (chart.data['datasets']! as List<Object?>).first!
+          (readByName(chart.data, 'datasets')! as List<Object?>).first!
               as Map<String, Object?>;
       // The colors plugin colors the datasets from the palette of the theme
       // (plugin.colors.ts:102-125).
@@ -1232,7 +1244,7 @@ void main() {
         expect(dataset['backgroundColor'], isNotNull, reason: type);
         if (type == 'doughnut') {
           // The arc border is the surface (element.arc.ts:379).
-          expect(element.options!['borderColor'], surface);
+          expect((element.options! as JsObjectFace)['borderColor'], surface);
         }
       }
     }
@@ -1270,11 +1282,11 @@ void main() {
     final element = chart.getDatasetMeta(0).data.first;
     const black = 'rgba(0, 0, 0, 1)';
     const white = 'rgba(255, 255, 255, 1)';
-    expect(element.options!['borderColor'], white);
+    expect((element.options! as JsObjectFace)['borderColor'], white);
     final borders = <Object?>[];
     for (var i = 0; i < 2 * chartBenchFadeFrames; i++) {
       scene.frame!(chart);
-      borders.add(element.options!['borderColor']);
+      borders.add((element.options! as JsObjectFace)['borderColor']);
     }
     const f = chartBenchFadeFrames;
     // The arc border animates from the light surface to the dark surface in
@@ -1486,9 +1498,18 @@ void main() {
             element as PointElement,
         ];
         // The indexable color gives the color of the index modulo 2.
-        expect(points[0].options!['backgroundColor'], stressChartBackground);
-        expect(points[1].options!['backgroundColor'], stressChartBackgroundOdd);
-        expect(points[2].options!['backgroundColor'], stressChartBackground);
+        expect(
+          (points[0].options! as JsObjectFace)['backgroundColor'],
+          stressChartBackground,
+        );
+        expect(
+          (points[1].options! as JsObjectFace)['backgroundColor'],
+          stressChartBackgroundOdd,
+        );
+        expect(
+          (points[2].options! as JsObjectFace)['backgroundColor'],
+          stressChartBackground,
+        );
       },
     );
     expect(indexable, isTrue);
@@ -1520,7 +1541,7 @@ void main() {
         // The parse gives new parsed items: x is the index, y the number.
         // The parsed items of the meta (core.datasetController.js:353).
         // ignore: invalid_use_of_internal_member
-        final parsed = meta.parsed.first! as Map<String, Object?>;
+        final parsed = meta.parsed.first! as JsObjectFace;
         expect(parsed['x'], 0);
         expect(parsed['y'], isA<double>());
       },

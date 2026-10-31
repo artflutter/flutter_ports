@@ -230,7 +230,7 @@ class TimeSeriesScale extends TimeScale {
   ///
   /// Returns all timestamps
   List<double?> _getTimestampsForTable() {
-    var timestamps = cache['all'] as List<double?>? ?? <double?>[];
+    var timestamps = cache.all ?? <double?>[];
 
     if (timestamps.isNotEmpty) {
       return timestamps;
@@ -246,7 +246,7 @@ class TimeSeriesScale extends TimeScale {
       timestamps = data.isNotEmpty ? data : label;
     }
     // timestamps = this._cache.all = timestamps;
-    return cache['all'] = timestamps;
+    return cache.all = timestamps;
   }
 
   /// scale.timeseries.js:162 `getDecimalForValue(value)`.

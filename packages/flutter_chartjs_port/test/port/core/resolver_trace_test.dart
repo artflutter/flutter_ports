@@ -58,13 +58,13 @@ Object? _valueOf(Object? v, int depth) => switch (v) {
   final List<Object?> list => [
     for (final item in list) _valueOf(item, depth + 1),
   ],
-  final Map<String, Object?> map =>
+  final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     depth >= 2 ? '<object>' : _nestedOf(map, depth),
   _ => v,
 };
 
 /// `nestedOf` of the generator.
-Map<String, Object?> _nestedOf(Map<String, Object?> v, int depth) => {
+Map<String, Object?> _nestedOf(Object v, int depth) => {
   for (final key in jsObjectKeys(v))
     key: _nestedKeys.contains(key)
         ? _valueOf(jsGet(v, key), depth + 1)
@@ -74,7 +74,7 @@ Map<String, Object?> _nestedOf(Map<String, Object?> v, int depth) => {
 /// `optionsOf` of the generator.
 Map<String, Object?>? _optionsOf(Object? o) {
   if (o == null || identical(o, undefined)) return null;
-  final map = o as Map<String, Object?>;
+  final map = o;
   return {
     for (final key in jsObjectKeys(map))
       key: key == r'$animations'
@@ -196,14 +196,14 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       return _valueOf(jsGet(chart.options, key), 0);
     case ['setOption', final String path, final Object? value]:
       final (object, key) = _parentOf(chart.options, path);
-      (object! as AnyObject)[key] = value;
+      jsSet(object, key, value);
     case ['setDefault', final String path, final Object? value]:
       // The defaults restore of the harness puts the old value back.
       final (object, key) = _parentOf(defaults, path);
-      (object! as AnyObject)[key] = value;
+      jsSet(object, key, value);
     case ['deleteDefault', final String path]:
       final (object, key) = _parentOf(defaults, path);
-      (object! as AnyObject).remove(key);
+      jsDeleteKey(object, key);
     case ['readScale', final String id, final String path]:
       return _valueOf(_readPath(chart.scales[id]!.options, path), 0);
     case ['readLegend', final String path]:

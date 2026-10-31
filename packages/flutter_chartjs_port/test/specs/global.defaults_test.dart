@@ -34,7 +34,7 @@ List<Object?> _spyOnUpdate(Chart chart) {
   final calls = <Object?>[];
   final plugin = <String, Object?>{
     'id': r'$updateSpy',
-    'beforeUpdate': (types.Chart c, AnyObject args, AnyObject options) {
+    'beforeUpdate': (types.Chart c, Object args, Object options) {
       if (identical(c, chart)) calls.add(jsGet(args, 'mode'));
     },
   };

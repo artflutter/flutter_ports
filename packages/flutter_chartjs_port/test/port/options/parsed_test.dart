@@ -18,8 +18,8 @@ void main() {
         ..['foo'] = 'bar'
         ..stacks = ItemStacks();
       expect(jsObjectKeys(item), ['y', 'x', '_custom', 'foo', '_stacks']);
-      expect(item.keys, ['y', 'x', '_custom', 'foo', '_stacks']);
-      expect(item.length, 5);
+      expect(item.jsKeys(), ['y', 'x', '_custom', 'foo', '_stacks']);
+      expect(item.ownKeyCount, 5);
     });
 
     test('reads by axis key and by name', () {
@@ -33,15 +33,15 @@ void main() {
       expect(item.valueOf(AxisKey.y), same(undefined));
       expect(jsGet(item, 'u'), 2.0);
       expect(jsGet(item, 'y'), same(undefined));
-      expect(item['y'], isNull);
-      expect(item.containsKey('y'), isFalse);
+      expect(item['y'], same(undefined));
+      expect(item.jsHas('y'), isFalse);
     });
 
     test('stores undefined and null as values', () {
       final item = ParsedItem()
         ..x = undefined
         ..y = null;
-      expect(item.containsKey('x'), isTrue);
+      expect(item.jsHas('x'), isTrue);
       expect(item['x'], same(undefined));
       expect(item.x, same(undefined));
       expect(item['y'], isNull);
@@ -67,15 +67,17 @@ void main() {
         ..['a'] = 'a'
         ..y = 2.0
         ..['b'] = 'b';
-      expect(item.remove('a'), 'a');
+      expect(item['a'], 'a');
+      expect(item.jsDelete('a'), isTrue);
       expect(jsObjectKeys(item), ['x', 'y', 'b']);
-      expect(item.remove('x'), 1.0);
+      expect(item['x'], 1.0);
+      expect(item.jsDelete('x'), isTrue);
       expect(jsObjectKeys(item), ['y', 'b']);
       item.x = 3.0;
       expect(jsObjectKeys(item), ['y', 'b', 'x']);
       expect(item.jsDelete('nothing'), isFalse);
-      item.clear();
-      expect(item, isEmpty);
+      item.jsKeys().forEach(item.jsDelete);
+      expect(item.ownKeyCount, 0);
       expect(item.x, same(undefined));
     });
 
@@ -84,7 +86,7 @@ void main() {
       for (final name in ['x', 'k1', 'k2', 'y', 'k3', 'k4', 'r', 'k5', '7']) {
         item[name] = name;
       }
-      expect(item.keys, ['x', 'k1', 'k2', 'y', 'k3', 'k4', 'r', 'k5', '7']);
+      expect(item.ownKeyCount, 9);
       expect(jsObjectKeys(item), [
         '7',
         'x',
@@ -96,8 +98,8 @@ void main() {
         'r',
         'k5',
       ]);
-      item.remove('k2');
-      expect(item.keys, ['x', 'k1', 'y', 'k3', 'k4', 'r', 'k5', '7']);
+      expect(item.jsDelete('k2'), isTrue);
+      expect(item.jsKeys(), ['7', 'x', 'k1', 'y', 'k3', 'k4', 'r', 'k5']);
       expect(item.r, 'r');
     });
   });
@@ -136,10 +138,11 @@ void main() {
       expect(jsGet(entry, '1'), same(undefined));
       expect([entry.top, entry.bottom], [2.0, isNull]);
       expect(entry['_bottom'], isNull);
-      expect(entry.containsKey('_bottom'), isTrue);
-      expect(entry.remove('2'), 5.0);
+      expect(entry.jsHas('_bottom'), isTrue);
+      expect(entry['2'], 5.0);
+      expect(entry.jsDelete('2'), isTrue);
       expect(entry.datasetValues.indices, [0]);
-      expect(entry.length, 4);
+      expect(entry.jsKeys(), hasLength(4));
     });
 
     test('a _top that is not a number is foreign', () {
@@ -158,7 +161,7 @@ void main() {
       expect(values.removeAt(10), isTrue);
       expect(values.removeAt(10), isFalse);
       expect(values.jsRead('10'), same(undefined));
-      expect(values.length, 2);
+      expect(values.ownKeyCount, 2);
     });
   });
 
@@ -184,9 +187,10 @@ void main() {
       bar['min'] = 'x';
       expect(bar.min, isNaN);
       expect(bar['min'], 'x');
-      expect(bar.remove('end'), -3.0);
+      expect(bar['end'], -3.0);
+      expect(bar.jsDelete('end'), isTrue);
       expect(bar.end, same(undefined));
-      expect(bar['end'], isNull);
+      expect(bar['end'], same(undefined));
     });
   });
 }

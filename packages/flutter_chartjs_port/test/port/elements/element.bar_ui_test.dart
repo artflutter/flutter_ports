@@ -41,13 +41,15 @@ Map<String, Object?> _plainOptions(Map<String, Object?> options) => options;
 /// The two forms of the options of a bar (Chart.js ADR 0018, section 6): the
 /// plain Map, and a [BarOptions] with the same entries in the same key
 /// order.
-const Map<String, Map<String, Object?> Function(Map<String, Object?>)>
-_optionsForms = {'Map options': _plainOptions, 'BarOptions': BarOptions.new};
+const Map<String, Object Function(Map<String, Object?>)> _optionsForms = {
+  'Map options': _plainOptions,
+  'BarOptions': BarOptions.new,
+};
 
 /// [cfg] with its `options` Map in the form [form].
 Map<String, Object?> _withOptions(
   Map<String, Object?> cfg,
-  Map<String, Object?> Function(Map<String, Object?>) form,
+  Object Function(Map<String, Object?>) form,
 ) => {
   for (final MapEntry(:key, :value) in cfg.entries)
     key: key == 'options' && value is Map<String, Object?>

@@ -656,10 +656,10 @@ Map<String, Object?> _areaRaw(Object fill) => <String, Object?>{
 /// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
 /// (`line-boundaries.md:106`), as in the gallery.
 Object _areaTitleText(Object? ctx) {
-  final chart = (ctx! as Map<String, Object?>)['chart']! as Chart;
-  final datasets = chart.data['datasets']! as List<Object?>;
-  final dataset = datasets.first! as Map<String, Object?>;
-  return 'Fill: ${dataset['fill']}';
+  final chart = _byName(ctx, 'chart')! as Chart;
+  final datasets = _byName(chart.data, 'datasets')! as List<Object?>;
+  final dataset = datasets.first;
+  return 'Fill: ${_byName(dataset, 'fill')}';
 }
 
 /// The typed Area config at the fill [fill], with the constant title
@@ -779,9 +779,9 @@ String? _barLabel(ChartTooltipItem item) =>
 
 /// The raw tooltip label callback of `_barLabel`.
 Object? _rawBarLabel(Object? item) {
-  final map = item! as Map<String, Object?>;
-  final dataset = map['dataset']! as Map<String, Object?>;
-  return '${dataset['label']}: ${map['formattedValue']} units';
+  final dataset = _byName(item, 'dataset');
+  return '${_byName(dataset, 'label')}: ${_byName(item, 'formattedValue')} '
+      'units';
 }
 
 /// The typed bar chart: stacked bars with the bar keys, a category and a
@@ -1606,8 +1606,8 @@ String? _radarTitle(List<ChartTooltipItem> items) =>
 
 /// The raw tooltip title callback of `_radarTitle`.
 Object? _rawRadarTitle(Object? items) {
-  final first = (items! as List<Object?>).first! as Map<String, Object?>;
-  return 'Axis ${first['label']}';
+  final first = (items! as List<Object?>).first;
+  return 'Axis ${_byName(first, 'label')}';
 }
 
 /// The typed radar chart: a filled line with a point style, a line that
@@ -1806,3 +1806,11 @@ void main() {
     });
   }
 }
+
+/// The read by name `object[key]` of an object of a chart: a Map of a raw
+/// config, or a typed object through its face (Chart.js ADR 0054 §5).
+Object? _byName(Object? object, String key) => switch (object) {
+  final Map<Object?, Object?> map => map[key],
+  final JsObjectFace face => face[key],
+  _ => null,
+};

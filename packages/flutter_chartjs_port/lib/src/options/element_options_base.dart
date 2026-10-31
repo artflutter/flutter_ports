@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: the base of the element options.
 
 /// The base of the resolved options of an element (Chart.js ADR 0054 §9):
-/// [ElementOptions], the Map protocol over the fields of a subclass, and
+/// [ElementOptions], the face by name over the fields of a subclass, and
 /// [GenericElementOptions], the options of an element type without a
 /// generated class (a custom element type).
 ///
@@ -9,17 +9,17 @@
 /// `LineOptions`, `BarOptions` and `ArcOptions`) keep each declared key in a
 /// typed field (a `double`, a `bool`, a `String?` or an `Object?`), with a
 /// bit for a present key and a foreign slot for a value outside the type of
-/// the field (Chart.js ADR 0054 §6). The Map protocol of [ElementOptions]
-/// (the scaffolding of Chart.js ADR 0054 §5) gives the raw value of each key
-/// and keeps the key order of Chart.js ADR 0018 §3: the known keys in the
-/// order of `knownKeys`, then the extras in insertion order.
+/// the field (Chart.js ADR 0054 §6). The face of [ElementOptions] (Chart.js
+/// ADR 0054 §5) gives the raw value of each key and keeps the key order of
+/// Chart.js ADR 0021 §4: the known keys in the order of `knownKeys`, then
+/// the extras in insertion order. The options are not a `Map`.
 ///
 /// This library is a pure layer.
 library;
 
-import 'dart:collection';
-
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsFreezable;
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsFreezable, JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -32,7 +32,7 @@ final class _Absent {
 /// The value of the field of a known key that the options do not contain.
 ///
 /// No member gives this value to other code. A read of the field gives
-/// [undefined] ([readElementOption]) or Dart `null` (the Map read) for it.
+/// [undefined] for it ([readElementOption]).
 const Object elementOptionAbsent = _Absent();
 
 const Object _absent = elementOptionAbsent;
@@ -47,8 +47,8 @@ Object? readElementOption(Object? raw) =>
 
 Object? _read(Object? raw) => readElementOption(raw);
 
-/// The resolved options of an element: a Map with a field for each known key
-/// (Chart.js ADR 0018).
+/// The resolved options of an element: a JS object with a field for each
+/// known key (Chart.js ADR 0054 §9).
 ///
 /// ## Keys
 ///
@@ -67,29 +67,28 @@ Object? _read(Object? raw) => readElementOption(raw);
 /// Every other key goes to a Map of extra keys. The options create this Map
 /// at the first write of such a key.
 ///
-/// ## Map protocol
+/// ## The face
 ///
-/// [operator []], [operator []=], [containsKey], [remove], [keys], [length]
-/// and [clear] give the same results as the same operations on a
-/// `Map<String, Object?>` with the same entries. A read of an absent key
-/// gives Dart `null`. Thus `jsGet` gives [undefined] for it. The other
-/// members of `Map` come from [MapBase], which uses these members.
+/// The options implement [JsObjectFace] with the JS rules (Chart.js ADR 0054
+/// §5): [jsRead] and [operator []] give the raw value of a key, or
+/// [undefined] for an absent key; [jsWrite] and [operator []=] write a key;
+/// [jsDelete] deletes it; [jsKeys] gives the own keys in the order of
+/// `Object.keys`. The options are not a `Map`.
 ///
-/// [keys] gives the present known keys in the order of the list, and then
-/// the extra keys in their insertion order. `resolveNamedOptions` writes
-/// `$shared` first and then the names of `defaults.elements[type]` in their
-/// order (core.config.js:352-366). Thus the key order of the options that
-/// the resolver makes is the upstream insertion order. A write of the known
-/// keys in another order gives another key order than JavaScript (Chart.js
-/// ADR 0018, section 3).
+/// [jsKeys] gives the present known keys in the order of the list, and then
+/// the extra keys in their insertion order (an extra key that is an array
+/// index comes first, as `Object.keys` orders it). `resolveNamedOptions`
+/// writes `$shared` first and then the names of `defaults.elements[type]` in
+/// their order (core.config.js:352-366). Thus the key order of the options
+/// that the resolver makes is the upstream insertion order. A write of the
+/// known keys in another order gives another key order than JavaScript
+/// (Chart.js ADR 0021, section 4).
 ///
 /// ## Typed reads
 ///
-/// Each known key has a getter `<key>Value`, for example
-/// `PointOptions.radiusValue`. It gives the raw value, or [undefined] for an
-/// absent key, as `jsGet(options, key)` gives. The element code reads each
-/// option through one small function that also takes a plain Map (Chart.js
-/// ADR 0018, section 4).
+/// Each known key has a typed getter and a getter `<key>Value`, for example
+/// `PointOptions.radiusValue`. `<key>Value` gives the raw value, or
+/// [undefined] for an absent key, as `jsGet(options, key)` gives.
 ///
 /// ## Copies and the frozen state
 ///
@@ -97,27 +96,23 @@ Object? _read(Object? raw) => readElementOption(raw);
 /// (Chart.js ADR 0021, section 3). [freeze] is `Object.freeze(options)`
 /// (core.datasetController.js:831). In the frozen state, the options behave
 /// as a frozen object in strict mode (Chart.js ADR 0021, section 5):
-/// - [operator []=] throws a [TypeError] for each key, also for a write of
-///   the same value.
-/// - [remove] throws a [TypeError] for a present key. It returns Dart `null`
-///   for an absent key, as a `delete` of an absent property succeeds.
-/// - [clear] throws a [TypeError] when the options contain a key.
-/// - The members of [MapBase] that write, for example `addAll` and `update`,
-///   write through these three members. Thus they throw too.
+/// - [jsWrite] throws a [TypeError] for each key, also for a write of the
+///   same value.
+/// - [jsDelete] throws a [TypeError] for a present key. It returns false for
+///   an absent key, as a `delete` of an absent property succeeds.
 /// - The reads do not change.
 ///
-/// The freeze is shallow, as `Object.freeze` is. A Map value of frozen
+/// The freeze is shallow, as `Object.freeze` is. An object value of frozen
 /// options stays writable, for example `$animations`.
-abstract class ElementOptions extends MapBase<String, Object?>
-    implements JsFreezable {
+abstract class ElementOptions implements JsFreezable, JsObjectFace {
   /// Options with the entries of [source], in the key order of [source].
   ///
-  /// Each entry goes through [operator []=]. Dart `null` for [source] gives
+  /// Each entry goes through [jsWrite]. Dart `null` for [source] gives
   /// options with no key.
   ElementOptions([AnyObject? source]) {
     if (source != null) {
       for (final MapEntry(:key, :value) in source.entries) {
-        this[key] = value;
+        jsWrite(key, value);
       }
     }
   }
@@ -201,79 +196,80 @@ abstract class ElementOptions extends MapBase<String, Object?>
     return true;
   }
 
-  /// The value of [key], or Dart `null` for an absent key, as the read of a
-  /// `Map<String, Object?>` gives.
+  /// `options[name]`: the value of [name], or [undefined] for an absent key.
   @override
-  Object? operator [](Object? key) {
-    if (key is! String) return null;
-    final raw = rawOf(key);
+  Object? jsRead(String name) {
+    final raw = rawOf(name);
     if (!identical(raw, _absent)) return raw;
-    // A known key is never an extra key, so the extra Map gives null for an
-    // absent known key.
-    return _extra?[key];
+    // A known key is never an extra key.
+    final extra = _extra;
+    return extra != null && extra.containsKey(name) ? extra[name] : undefined;
   }
 
-  /// Writes [value] for [key]: to the field of a known key, else to the Map
+  /// `options[name] = value`: writes the field of a known key, else the Map
   /// of extra keys.
   ///
   /// Throws a [TypeError] in the frozen state, as a write into a frozen
   /// object in strict mode does.
   @override
-  void operator []=(String key, Object? value) {
+  void jsWrite(String name, Object? value) {
     // A JavaScript TypeError: a write into a frozen object.
     if (_frozen) throw TypeError();
-    if (!storeRaw(key, value)) {
-      (_extra ??= <String, Object?>{})[key] = value;
+    if (!storeRaw(name, value)) {
+      (_extra ??= <String, Object?>{})[name] = value;
     }
   }
 
+  /// `options[name]`: [jsRead].
   @override
-  bool containsKey(Object? key) {
-    if (key is! String) return false;
-    return !identical(rawOf(key), _absent) ||
-        (_extra?.containsKey(key) ?? false);
-  }
+  Object? operator [](String name) => jsRead(name);
 
-  /// Removes [key] and returns its value, or Dart `null` for an absent key.
+  /// `options[name] = value`: [jsWrite].
+  @override
+  void operator []=(String name, Object? value) => jsWrite(name, value);
+
+  /// `Object.prototype.hasOwnProperty.call(options, name)`.
+  @override
+  bool jsHas(String name) =>
+      !identical(rawOf(name), _absent) || (_extra?.containsKey(name) ?? false);
+
+  /// `delete options[name]`: returns whether the options owned [name].
   ///
   /// Throws a [TypeError] for a present key in the frozen state, as a
   /// `delete` of a property of a frozen object in strict mode does.
   @override
-  Object? remove(Object? key) {
-    if (key is! String) return null;
-    final raw = rawOf(key);
+  bool jsDelete(String name) {
+    final raw = rawOf(name);
     if (identical(raw, _absent)) {
       final extra = _extra;
-      if (extra == null || !extra.containsKey(key)) return null;
+      if (extra == null || !extra.containsKey(name)) return false;
       // A JavaScript TypeError: a delete of a property of a frozen object.
       if (_frozen) throw TypeError();
-      return extra.remove(key);
+      extra.remove(name);
+      return true;
     }
     // A JavaScript TypeError: a delete of a property of a frozen object.
     if (_frozen) throw TypeError();
-    storeRaw(key, _absent);
-    return raw;
+    storeRaw(name, _absent);
+    return true;
   }
 
-  /// The present known keys in the order of the list, then the extra keys in
-  /// their insertion order.
-  ///
-  /// The result is a view, as the keys of a Map are: its length and its
-  /// items follow the later changes of the options. Each iteration reads the
-  /// keys when it starts. Thus a change during an iteration does not throw a
-  /// `ConcurrentModificationError`, as it does for a Map.
+  /// `Object.keys(options)`: the present known keys in the order of the
+  /// list, then the extra keys in their insertion order, with the extra
+  /// keys that are array indices first.
   @override
-  Iterable<String> get keys => _ElementOptionsKeys(this);
+  List<String> jsKeys() => _orderKeys(_keyList());
 
-  /// The present keys at this time, in the order of [keys].
+  /// The present keys at this time: the known keys in the order of the
+  /// list, then the extra keys.
   List<String> _keyList() => [
     for (final key in knownKeyList)
       if (!identical(rawOf(key), _absent)) key,
     ...?_extra?.keys,
   ];
 
-  @override
-  int get length {
+  /// The count of the own keys.
+  int get ownKeyCount {
     var count = _extra?.length ?? 0;
     for (final key in knownKeyList) {
       if (!identical(rawOf(key), _absent)) count++;
@@ -281,32 +277,12 @@ abstract class ElementOptions extends MapBase<String, Object?>
     return count;
   }
 
-  @override
-  bool get isEmpty => length == 0;
-
-  @override
-  bool get isNotEmpty => length != 0;
-
-  /// Removes each key.
-  ///
-  /// Throws a [TypeError] in the frozen state when the options contain a key,
-  /// as the `delete` of each property does.
-  @override
-  void clear() {
-    // A JavaScript TypeError: a delete of a property of a frozen object.
-    if (_frozen && isNotEmpty) throw TypeError();
-    for (final key in knownKeyList) {
-      storeRaw(key, _absent);
-    }
-    _extra = null;
-  }
-
   /// Stores the resolved raw value [raw] of [key], an `OptionKey` or a
   /// name: the typed store of the element step (Chart.js ADR 0054 §4). A
   /// generated subclass stores a declared key in its typed field. Throws a
   /// [TypeError] in the frozen state.
   void storeKey(Object key, Object? raw) {
-    this[key is OptionKey ? key.jsName : key as String] = raw;
+    jsWrite(key is OptionKey ? key.jsName : key as String, raw);
   }
 
   /// Whether the options own the declared key [key]. A typed field gives
@@ -324,13 +300,8 @@ abstract class ElementOptions extends MapBase<String, Object?>
   /// The raw resolved value of [key]: the foreign value when the foreign bit
   /// is set, and [undefined] when the options do not own the key. It is the
   /// result of `jsGet(options, key.jsName)`. A generated subclass reads its
-  /// fields; this base, and thus [GenericElementOptions], reads the Map
-  /// protocol.
-  Object? valueOf(OptionKey key) {
-    final name = key.jsName;
-    final value = this[name];
-    return value == null && !containsKey(name) ? undefined : value;
-  }
+  /// fields; this base, and thus [GenericElementOptions], reads the face.
+  Object? valueOf(OptionKey key) => jsRead(key.jsName);
 
   /// Whether the value of the declared key [key] is outside the type of its
   /// field (Chart.js ADR 0054 §6): the field holds the JS conversion, and
@@ -341,26 +312,23 @@ abstract class ElementOptions extends MapBase<String, Object?>
   Object? foreignOf(OptionKey key) => null;
 }
 
-/// The view of [ElementOptions.keys].
-final class _ElementOptionsKeys extends Iterable<String> {
-  _ElementOptionsKeys(this._options);
-
-  final ElementOptions _options;
-
-  @override
-  Iterator<String> get iterator => _options._keyList().iterator;
-
-  @override
-  int get length => _options.length;
-
-  @override
-  bool get isEmpty => _options.isEmpty;
-
-  @override
-  bool get isNotEmpty => _options.isNotEmpty;
-
-  @override
-  bool contains(Object? element) => _options.containsKey(element);
+/// [keys] in the order of `Object.keys`: the keys that are array indices
+/// first, in ascending order, then the other keys in their order.
+List<String> _orderKeys(List<String> keys) {
+  if (!keys.any((key) => jsArrayIndex(key) != null)) return keys;
+  // The indices are distinct integers: an unstable sort gives one order.
+  final indices =
+      [
+          for (final key in keys)
+            if (jsArrayIndex(key) case final int index) (index, key),
+        ]
+        // js-ok: distinct keys, as jsObjectKeys sorts them
+        ..sort((a, b) => a.$1.compareTo(b.$1));
+  return [
+    for (final (_, key) in indices) key,
+    for (final key in keys)
+      if (jsArrayIndex(key) == null) key,
+  ];
 }
 
 /// The resolved options of an element type without a typed class (Chart.js
@@ -412,48 +380,40 @@ final class GenericElementOptions extends ElementOptions {
   }
 
   @override
-  Object? operator [](Object? key) => _map[key];
+  Object? jsRead(String name) => _mapValue(name);
 
-  /// Writes [value] for [key].
+  /// Writes [value] for [name].
   ///
   /// Throws a [TypeError] in the frozen state, as a write into a frozen
   /// object in strict mode does.
   @override
-  void operator []=(String key, Object? value) {
+  void jsWrite(String name, Object? value) {
     // A JavaScript TypeError: a write into a frozen object.
     if (_frozen) throw TypeError();
-    _map[key] = value;
+    _map[name] = value;
   }
 
   @override
-  bool containsKey(Object? key) => _map.containsKey(key);
+  bool jsHas(String name) => _map.containsKey(name);
 
-  /// Removes [key] and returns its value, or Dart `null` for an absent key.
+  /// Deletes [name] and returns whether the options owned it.
   ///
   /// Throws a [TypeError] for a present key in the frozen state, as a
   /// `delete` of a property of a frozen object in strict mode does.
   @override
-  Object? remove(Object? key) {
+  bool jsDelete(String name) {
+    if (!_map.containsKey(name)) return false;
     // A JavaScript TypeError: a delete of a property of a frozen object.
-    if (_frozen && _map.containsKey(key)) throw TypeError();
-    return _map.remove(key);
+    if (_frozen) throw TypeError();
+    _map.remove(name);
+    return true;
   }
 
-  /// The keys in insertion order: the keys of a `LinkedHashMap`.
+  /// The keys in the order of `Object.keys`: the keys of a `LinkedHashMap`,
+  /// with the array-index keys first.
   @override
-  Iterable<String> get keys => _map.keys;
+  List<String> jsKeys() => _orderKeys(_map.keys.toList());
 
   @override
-  int get length => _map.length;
-
-  /// Removes each key.
-  ///
-  /// Throws a [TypeError] in the frozen state when the options contain a key,
-  /// as the `delete` of each property does.
-  @override
-  void clear() {
-    // A JavaScript TypeError: a delete of a property of a frozen object.
-    if (_frozen && _map.isNotEmpty) throw TypeError();
-    _map.clear();
-  }
+  int get ownKeyCount => _map.length;
 }

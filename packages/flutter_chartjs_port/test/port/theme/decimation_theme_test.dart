@@ -57,7 +57,7 @@ AnyObject _localTheme() => <String, Object?>{
 
 /// The three runs: the name and the compiled theme (Dart `null` for no
 /// theme).
-final List<(String, AnyObject? Function())> _runs = [
+final List<(String, Object? Function())> _runs = [
   ('no theme', () => null),
   ('the light preset', () => compileChartTheme(ChartThemes.light)),
   ('a local theme', () => compileChartTheme(_localTheme())),
@@ -99,7 +99,7 @@ _State _state(Chart chart, List<Object?> input) {
 Future<(_State, _State)> _run(
   WidgetTester tester,
   AnyObject algorithm,
-  AnyObject? theme,
+  Object? theme,
 ) async {
   final input = _input();
   final chart = acquireChart(<String, Object?>{

@@ -9,6 +9,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -535,26 +536,27 @@ void main() {
       expect(t.y, 2.0);
     });
 
-    test('a custom merger that lists the target keys throws', () {
-      // Upstream gives the own keys of the element. The view has no keys.
+    test('a custom merger finds no own keys of an element target', () {
+      // Upstream gives the own keys of the element. The merger gets the
+      // element itself, which has no list of own keys: `Object.keys` gives
+      // none, and the own-key test of mergerIf throws.
       final element = elements.PointElement({'x': 1});
+      final listed = <List<String>>[];
       void keysMerger(
         String key,
-        Map<String, Object?> target,
-        Map<String, Object?> source,
+        Object target,
+        Object source,
         helpers.MergeOptions options,
       ) {
-        target.keys.toList();
+        listed.add(jsObjectKeys(target));
       }
 
-      expect(
-        () => helpers.merge(
-          element,
-          <String, Object?>{'q': 1},
-          helpers.MergeOptions(merger: keysMerger),
-        ),
-        throwsUnsupportedError,
+      helpers.merge(
+        element,
+        <String, Object?>{'q': 1},
+        helpers.MergeOptions(merger: keysMerger),
       );
+      expect(listed, [<String>[]]);
       expect(
         () => helpers.merge(
           element,
@@ -572,7 +574,9 @@ void main() {
         <String, Object?>{'x': 2},
         helpers.MergeOptions(
           merger: (key, target, source, options) {
-            target[key] = jsToNumber(target[key]) + jsToNumber(source[key]);
+            final element = target as PropertyAccess;
+            element[key] =
+                jsToNumber(element[key]) + jsToNumber(jsGet(source, key));
           },
         ),
       );

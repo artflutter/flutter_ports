@@ -533,14 +533,14 @@ void _observeElement(String label, types.Element element, StringBuffer out) {
   out
     ..writeln('    options ${_guarded(() => _canon(options))}')
     ..writeln(
-      '    \$shared ${_guarded(() => _canon(options is Map<String, Object?> ? jsGet(options, r'$shared') : undefined))}',
+      '    \$shared ${_guarded(() => _canon(_isObject(options) ? jsGet(options, r'$shared') : undefined))}',
     );
   for (final name in _properties) {
     out.writeln('    $name ${_guarded(() => _canon(read[name]))}');
   }
   out.writeln('    getProps ${_guarded(() => _props(element))}');
   final context = read[r'$context'];
-  if (context is Map<String, Object?>) {
+  if (_isObject(context)) {
     out.writeln(
       '    \$context keys ${_canon(jsObjectKeys(context))} '
       '${[for (final key in _contextKeys) '$key=${_guarded(() => _canon(jsGet(context, key), 0, 1))}'].join(' ')}',
@@ -641,6 +641,7 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
     return switch (value) {
       List<Object?>() => '<list>',
       Map<String, Object?>() => '<object>',
+      JsObjectFace() => '<object>',
       Map<Object?, Object?>() => '<map>',
       _ => '<object>',
     };
@@ -648,7 +649,7 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
   switch (value) {
     case final List<Object?> list:
       return '[${[for (final item in list) _canon(item, depth + 1, maxDepth)].join(', ')}]';
-    case final Map<String, Object?> map:
+    case final Object map when _isObject(map):
       return '{${[for (final key in jsObjectKeys(map)) '${jsonEncode(key)}: ${_guarded(() => _canon(jsGet(map, key), depth + 1, maxDepth))}'].join(', ')}}';
     case final Map<Object?, Object?> map:
       return '{${[for (final MapEntry(:key, :value) in map.entries) '${_canon(key, depth + 1, maxDepth)}: ${_canon(value, depth + 1, maxDepth)}'].join(', ')}}';
@@ -776,7 +777,7 @@ Function _recorder(
 String _traceLine(String path, List<Object?> args) {
   final first = args.isEmpty ? undefined : args[0];
   final String head;
-  if (first is Map<String, Object?>) {
+  if (_isObject(first)) {
     head = [
       for (final key in _contextKeys)
         switch (jsGet(first, key)) {
@@ -799,9 +800,14 @@ String _argKind(Object? value) => identical(value, undefined)
     ? 'absent'
     : value is JsProxyObject
     ? 'resolver'
-    : value is Map
+    : value is Map || value is JsObjectFace
     ? 'object'
     : jsTypeof(value);
+
+/// Whether [value] is a JS object of the observation: a Map with `String`
+/// keys or a typed object with a face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
 
 // ---------------------------------------------------------------------------
 // The bench-like configs of D1 (stressChartConfig of the gallery at N 50).
@@ -1018,7 +1024,7 @@ Map<String, Object?> _hazardConfig() => _line(
       'data': _values(8),
       'pointBorderWidth': (Object? ctx, Object? options) {
         if (jsGet(ctx, 'dataIndex') == 2.0) {
-          (options! as Map<String, Object?>)['radius'] = 9.0;
+          (options! as JsObjectFace)['radius'] = 9.0;
         }
         return 1.0;
       },
@@ -1033,28 +1039,27 @@ Map<String, Object?> _hazardConfig() => _line(
 Object? _dataIndex(Object? ctx) => jsGet(ctx, 'dataIndex');
 
 /// `Chart.defaults.elements.point`.
-Map<String, Object?> _pointDefaults() =>
-    jsGet(jsGet(defaults, 'elements'), 'point')! as Map<String, Object?>;
+JsObjectFace _pointDefaults() =>
+    jsGet(jsGet(defaults, 'elements'), 'point')! as JsObjectFace;
 
 /// A case whose scriptable data option deletes
 /// `Chart.defaults.animation.easing` in the middle of an animated update
 /// (the guard G5 of judge-r.md §2.3). The cleanup puts back the entries of
 /// `Chart.defaults.animation` in their order.
 _Case _animationDefaultsCase() {
-  late List<MapEntry<String, Object?>> saved;
-  Map<String, Object?> animation() =>
-      jsGet(defaults, 'animation')! as Map<String, Object?>;
+  late List<(String, Object?)> saved;
+  JsObjectFace animation() => jsGet(defaults, 'animation')! as JsObjectFace;
   return _configCase(
     'a scriptable option deletes defaults.animation.easing',
     () {
-      saved = animation().entries.toList();
+      saved = [for (final key in animation().jsKeys()) (key, animation()[key])];
       return _line(
         [
           <String, Object?>{
             'data': _values(6),
             'pointRadius': (Object? ctx) {
               if (jsGet(ctx, 'dataIndex') == 3.0) {
-                animation().remove('easing');
+                animation().jsDelete('easing');
               }
               return 3.0;
             },
@@ -1065,9 +1070,13 @@ _Case _animationDefaultsCase() {
         },
       );
     },
-    cleanup: () => animation()
-      ..clear()
-      ..addEntries(saved),
+    cleanup: () {
+      final object = animation();
+      object.jsKeys().forEach(object.jsDelete);
+      for (final (key, value) in saved) {
+        object[key] = value;
+      }
+    },
   );
 }
 
@@ -1230,7 +1239,7 @@ final List<_Case> _focusedCases = [
         'data': _values(6),
         'pointRadius': (Object? ctx) {
           if (jsGet(ctx, 'dataIndex') == 1.0) {
-            (jsGet(ctx, 'parsed')! as Map<String, Object?>)['x'] = 10.0;
+            (jsGet(ctx, 'parsed')! as JsObjectFace)['x'] = 10.0;
           }
           return 3.0;
         },
@@ -1342,7 +1351,7 @@ final List<_Case> _focusedCases = [
         },
       },
     ]),
-    cleanup: () => _pointDefaults().remove('d1Extra'),
+    cleanup: () => _pointDefaults().jsDelete('d1Extra'),
   ),
   _animationDefaultsCase(),
   _configCase(

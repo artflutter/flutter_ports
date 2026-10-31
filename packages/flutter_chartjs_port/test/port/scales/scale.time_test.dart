@@ -16,7 +16,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
@@ -176,8 +177,8 @@ List<Object?> _getLabels(Scale scale) => [
 
 /// `chart.options.scales.x` of scale.time.tests.js. A write goes into the
 /// config of the scale x.
-Map<String, Object?> _scaleOptions(Chart chart) =>
-    jsGet(chart.options['scales'], 'x')! as Map<String, Object?>;
+JsObjectFace _scaleOptions(Chart chart) =>
+    jsGet(chart.options['scales'], 'x')! as JsObjectFace;
 
 /// `options.time.displayFormats` of scale.time.tests.js, as Jasmine
 /// `toEqual` reads it: the keys of `Object.keys` (`jsObjectKeys`) and their
@@ -189,7 +190,7 @@ Map<String, Object?> _scaleOptions(Chart chart) =>
 /// its mismatch reads the nested resolvers without end.
 Map<String, Object?> _displayFormats(Object? options) {
   final formats =
-      jsGet(jsGet(options, 'time'), 'displayFormats')! as Map<String, Object?>;
+      jsGet(jsGet(options, 'time'), 'displayFormats')! as JsObjectFace;
   return {for (final key in jsObjectKeys(formats)) key: formats[key]};
 }
 
@@ -224,11 +225,11 @@ void main() {
     });
 
     test('defaults.scales.time has the static defaults', () {
-      final scales = defaults['scales']! as Map<String, Object?>;
-      final time = scales['time']! as Map<String, Object?>;
-      expect(time.keys, ['bounds', 'adapters', 'time', 'ticks']);
+      final scales = defaults['scales']! as JsObjectFace;
+      final time = scales['time']! as JsObjectFace;
+      expect(time.jsKeys(), ['bounds', 'adapters', 'time', 'ticks']);
       expect(time['bounds'], 'data');
-      expect(time['time'], {
+      expect(plainObject(time['time']), {
         'parser': false,
         'unit': false,
         'round': false,
@@ -236,7 +237,7 @@ void main() {
         'minUnit': 'millisecond',
         'displayFormats': <String, Object?>{},
       });
-      expect(time['ticks'], {
+      expect(plainObject(time['ticks']), {
         'source': 'auto',
         'callback': false,
         'major': {'enabled': false},
@@ -568,16 +569,17 @@ void main() {
       final data = x.getDataTimestamps();
       expect(data, [_t0, _t0 + _day]);
       expect(x.getDataTimestamps(), same(data));
-      expect(x.cache['data'], same(data));
+      expect(x.cache.data, same(data));
     });
 
     testWidgets('beforeLayout clears the caches', (tester) async {
       final x = _x(_chart(_xy([_t0, _t0 + _day])))..beforeLayout();
-      expect(x.cache, {
-        'data': <double>[],
-        'labels': <double?>[],
-        'all': <double?>[],
-      });
+      // The typed cache of the time scale (Chart.js ADR 0054 §4): the three
+      // lists of scale.time.js:304-308, empty.
+      expect(x.cache.data, isEmpty);
+      expect(x.cache.labels, isEmpty);
+      expect(x.cache.all, isEmpty);
+      expect(x.cache.bar, isNull);
     });
   });
 
@@ -613,8 +615,8 @@ void main() {
           },
         }),
       );
-      final time = x.options['time']! as Map<String, Object?>;
-      final formats = time['displayFormats']! as Map<String, Object?>;
+      final time = x.options['time']! as JsObjectFace;
+      final formats = time['displayFormats']! as JsObjectFace;
       expect(formats['day'], 'MMM');
       expect(formats['hour'], 'ha');
       expect(formats['datetime'], 'MMM d, yyyy, h:mm:ss a');
@@ -627,11 +629,12 @@ void main() {
       // `defaults.scales.time.time.displayFormats` stays `{}`
       // (scale.time.js:277, helpers.config.ts:101-106, :373-386).
       final chart = _chart(_xy([_t0, _t0 + _day]));
-      final scales = chart.config.options['scales']! as Map<String, Object?>;
-      final x = scales['x']! as Map<String, Object?>;
-      final time = x['time']! as Map<String, Object?>;
-      final formats = time['displayFormats']! as Map<String, Object?>;
-      expect(formats.keys, [
+      final scales =
+          (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+      final x = scales['x']! as JsObjectFace;
+      final time = x['time']! as JsObjectFace;
+      final formats = time['displayFormats']! as JsObjectFace;
+      expect(formats.jsKeys(), [
         'datetime',
         'millisecond',
         'second',
@@ -643,11 +646,10 @@ void main() {
         'quarter',
         'year',
       ]);
-      final defaultScales = defaults['scales']! as Map<String, Object?>;
+      final defaultScales = defaults['scales']! as JsObjectFace;
       final defaultTime =
-          (defaultScales['time']! as Map<String, Object?>)['time']!
-              as Map<String, Object?>;
-      expect(defaultTime['displayFormats'], isEmpty);
+          (defaultScales['time']! as JsObjectFace)['time']! as JsObjectFace;
+      expect(jsObjectKeys(defaultTime['displayFormats']), isEmpty);
     });
   });
 
@@ -705,7 +707,7 @@ void main() {
       });
 
       final xScale = _x(chart);
-      final labels = chart.data['labels']! as List<Object?>;
+      final labels = (chart.data as AnyObject)['labels']! as List<Object?>;
       for (final lbl in labels) {
         final dd = xScale.adapter.parse(lbl);
         final parsed = (lbl! as String).split('T');
@@ -940,7 +942,7 @@ void main() {
             final chart = dataChart();
             final scale = chart.scales['x']!;
 
-            chart.data['labels'] = <Object?>[];
+            (chart.data as AnyObject)['labels'] = <Object?>[];
             chart.update();
 
             expect(scale.min, _ms('2018', 'yyyy'));

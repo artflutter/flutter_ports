@@ -30,10 +30,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
 /// The dataset kinds: a census path under `data.datasets[]` maps when one
@@ -161,12 +161,11 @@ Object? _read(Object? root, String path) {
 
 /// The keys of the object [value], or Dart `null` for another value.
 List<String>? _keysOf(Object? value) =>
-    isObject(value) ? jsObjectKeys(value! as AnyObject) : null;
+    isObject(value) ? jsObjectKeys(value) : null;
 
 /// Whether [key] of the object [object] is routed (`Defaults.route`).
 bool _routed(Object? object, String key) => switch (object) {
   final OptionScope scope => scope.routeOf(key) != null,
-  final RoutedScope scope => scope.routes.containsKey(key),
   _ => false,
 };
 
@@ -312,7 +311,7 @@ void main() {
     // the inventory has the upstream value. The defaults restore of the
     // harness puts the test value back after each test.
     void upstreamColors() {
-      final colors = _read(defaults, 'plugins.colors')! as AnyObject;
+      final colors = _read(defaults, 'plugins.colors')! as JsObjectFace;
       final enabled = colors['enabled'];
       colors['enabled'] = true;
       addTearDown(() => colors['enabled'] = enabled);

@@ -141,13 +141,13 @@ AnyObject _plainOptions(AnyObject options) => options;
 /// The two forms of the options of a point (Chart.js ADR 0018, section 6):
 /// the plain Map, and a [PointOptions] with the same entries in the same key
 /// order.
-const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+const Map<String, Object Function(AnyObject options)> _optionsForms = {
   'Map options': _plainOptions,
   'PointOptions': PointOptions.new,
 };
 
 /// [cfg] with its `options` Map in the form [form].
-AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
+AnyObject _withOptions(AnyObject cfg, Object Function(AnyObject) form) => {
   for (final MapEntry(:key, :value) in cfg.entries)
     key: key == 'options' && value is AnyObject ? form(value) : value,
 };
@@ -156,7 +156,7 @@ AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
 /// options in the form [form].
 PointElement _inRangePoint(
   PointInRangeCase c,
-  AnyObject Function(AnyObject) form,
+  Object Function(AnyObject) form,
 ) {
   final point = PointElement(_withOptions(c.cfg, form));
   final animations = c.animations;
@@ -204,7 +204,7 @@ void main() {
     });
 
     test('defaults has the upstream keys and values in order', () {
-      expect(PointElement.defaults.keys, [
+      expect(PointElement.defaults.jsKeys(), [
         'borderWidth',
         'hitRadius',
         'hoverBorderWidth',
@@ -213,7 +213,13 @@ void main() {
         'radius',
         'rotation',
       ]);
-      expect(PointElement.defaults.values, [1, 1, 1, 4, 'circle', 3, 0]);
+      expect(
+        [
+          for (final key in PointElement.defaults.jsKeys())
+            PointElement.defaults[key],
+        ],
+        [1, 1, 1, 4, 'circle', 3, 0],
+      );
     });
 
     test('defaultRoutes routes the two colors', () {
@@ -224,7 +230,7 @@ void main() {
     });
 
     test('the statics of Element do not change', () {
-      expect(Element.defaults, isEmpty);
+      expect(Element.defaults.jsKeys(), isEmpty);
       expect(Element.defaultRoutes, _isUndefined);
     });
 

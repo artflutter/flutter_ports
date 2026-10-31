@@ -292,9 +292,9 @@ void main() {
     test(
       'defaults.scales.radialLinear has the keys of the static defaults',
       () {
-        final scales = defaults['scales']! as Map<String, Object?>;
-        final radial = scales['radialLinear']! as Map<String, Object?>;
-        expect(radial.keys, [
+        final scales = defaults['scales']! as JsObjectFace;
+        final radial = scales['radialLinear']! as JsObjectFace;
+        expect(radial.jsKeys(), [
           'display',
           'animate',
           'position',
@@ -306,19 +306,19 @@ void main() {
         ]);
         // The key order of the dist (Node.js v24.12.0 on x64). The routes of
         // defaultRoutes add the key color last (core.defaults.js:130-157).
-        final ticks = radial['ticks']! as Map<String, Object?>;
-        expect(ticks.keys, ['showLabelBackdrop', 'callback', 'color']);
+        final ticks = radial['ticks']! as JsObjectFace;
+        expect(ticks.jsKeys(), ['showLabelBackdrop', 'callback', 'color']);
         expect(ticks['callback'], same(formatters['numeric']));
-        final angleLines = radial['angleLines']! as Map<String, Object?>;
-        expect(angleLines.keys, [
+        final angleLines = radial['angleLines']! as JsObjectFace;
+        expect(angleLines.jsKeys(), [
           'display',
           'lineWidth',
           'borderDash',
           'borderDashOffset',
           'color',
         ]);
-        final pointLabels = radial['pointLabels']! as Map<String, Object?>;
-        expect(pointLabels.keys, [
+        final pointLabels = radial['pointLabels']! as JsObjectFace;
+        expect(pointLabels.jsKeys(), [
           'backdropColor',
           'backdropPadding',
           'display',

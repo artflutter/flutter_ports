@@ -39,7 +39,7 @@ List<Object?> _spyOnUpdates() {
   final modes = <Object?>[];
   final plugin = <String, Object?>{
     'id': r'$updateSpy',
-    'beforeUpdate': (Object? chart, Map<String, Object?> args, Object? o) {
+    'beforeUpdate': (Object? chart, JsObjectFace args, Object? o) {
       modes.add(args['mode']);
     },
   };
@@ -182,7 +182,9 @@ void main() {
       await tester.pump();
       expect(modes, [undefined, undefined]);
       expect(_chart(tester), same(chart));
-      final dataset = (chart.data['datasets']! as List).first! as Map;
+      final dataset =
+          ((chart.data as JsObjectFace)['datasets']! as List).first!
+              as JsObjectFace;
       expect(dataset['data'], same(data));
 
       parent.show(title: 'T');
@@ -207,7 +209,8 @@ void main() {
       await tester.pump();
       expect(modes, hasLength(2));
       expect(
-        chart.getDatasetMeta(0).data.first.options!['backgroundColor'],
+        (chart.getDatasetMeta(0).data.first.options!
+            as JsObjectFace)['backgroundColor'],
         'rgba(0, 0, 255, 1)',
       );
       parent.show(colorFor: _blueFor);
@@ -218,7 +221,8 @@ void main() {
       await tester.pump();
       expect(modes, hasLength(3));
       expect(
-        chart.getDatasetMeta(0).data.first.options!['backgroundColor'],
+        (chart.getDatasetMeta(0).data.first.options!
+            as JsObjectFace)['backgroundColor'],
         'rgba(255, 0, 0, 1)',
       );
     });
@@ -313,7 +317,8 @@ void main() {
       expect(_chart(tester), same(chart));
       expect(chart.config.type, 'line');
       expect(
-        ((chart.data['datasets']! as List).first! as Map)['label'],
+        (((chart.data as JsObjectFace)['datasets']! as List).first!
+            as JsObjectFace)['label'],
         'typed',
       );
       // The same typed config: no update.
@@ -365,8 +370,8 @@ void main() {
       expect(first.data, isNot(same(second.data)));
       expect(first.config.options, isNot(same(second.config.options)));
       expect(
-        (first.data['datasets']! as List).first,
-        isNot(same((second.data['datasets']! as List).first)),
+        ((first.data as JsObjectFace)['datasets']! as List).first,
+        isNot(same(((second.data as JsObjectFace)['datasets']! as List).first)),
       );
     });
 
@@ -450,8 +455,8 @@ void main() {
       final center =
           tester.getTopLeft(find.byType(ChartView)) +
           Offset(
-            (box['left']! as num) + (box['width']! as num) / 2,
-            (box['top']! as num) + (box['height']! as num) / 2,
+            box.left + box.width / 2,
+            box.top + box.height / 2,
           );
       await tester.tapAt(center);
       await tester.pump();
@@ -482,7 +487,7 @@ void main() {
       final point = _barPoint(tester, chart, 1);
       List<Object?> lines() => [
         for (final item in chart.tooltip!.body!)
-          ...(item! as Map<String, Object?>)['lines']! as List<Object?>,
+          ...(item! as JsObjectFace)['lines']! as List<Object?>,
       ];
 
       text = 'typed';

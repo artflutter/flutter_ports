@@ -9,11 +9,11 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show attachContext, createResolver;
+    show ContextResolver, attachContext, createResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show setMinAndMaxByKey;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext;
+    show ContextObject, createContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -184,16 +184,16 @@ final class _Chart implements types.Chart {
 
   final List<types.ChartMeta> _metas;
 
-  AnyObject? _context;
+  ContextObject? _context;
 
   @override
-  bool notifyPlugins(String hook, [AnyObject? args]) {
+  bool notifyPlugins(String hook, [Object? args]) {
     _log.add('notify:$hook:${jsGet(args, 'type')}');
     return true;
   }
 
   @override
-  AnyObject getContext() => _context ??= createContext(null, {
+  ContextObject getContext() => _context ??= createContext(null, {
     'chart': this,
     'type': 'chart',
   });
@@ -396,7 +396,7 @@ List<Object?> _ticksOf(Scale scale) => [
 
 /// The resolver of the scale options of a case: the user options,
 /// `defaults.scale` and `descriptors.scale`, with the chart context.
-AnyObject _scaleOptions(AnyObject options, _Chart chart) => attachContext(
+ContextResolver _scaleOptions(AnyObject options, _Chart chart) => attachContext(
   createResolver([options, defaults['scale'], descriptors['scale']]),
   chart.getContext(),
 );
@@ -598,7 +598,7 @@ void main() {
 
   group('_layers', () {
     /// The options of a horizontal scale with the given user options.
-    AnyObject options(_Chart chart, [AnyObject? user]) => _scaleOptions({
+    ContextResolver options(_Chart chart, [AnyObject? user]) => _scaleOptions({
       'axis': 'x',
       'position': 'bottom',
       ...?user,
@@ -734,7 +734,11 @@ void main() {
       expect(scale.maxLength, 0);
       expect(scale.reversePixels, isFalse);
       expect(scale.range, isNull);
-      expect(scale.cache, isEmpty);
+      // The typed cache of Chart.js ADR 0054 §4: each key absent.
+      expect(scale.cache.data, isNull);
+      expect(scale.cache.labels, isNull);
+      expect(scale.cache.all, isNull);
+      expect(scale.cache.bar, isNull);
       expect(scale.userMin, same(undefined));
       expect(scale.userMax, same(undefined));
       expect(scale.suggestedMin, same(undefined));
@@ -773,12 +777,13 @@ void main() {
       _log = [];
       scale.update(100, 100);
       expect(_log.where((e) => e == 'determineDataLimits'), hasLength(1));
-      scale.cache['a'] = 1;
+      final cache = scale.cache..bar = [1];
       _log = [];
       scale.update(100, 100);
       expect(_log, isNot(contains('determineDataLimits')));
       scale.beforeLayout();
-      expect(scale.cache, isEmpty);
+      expect(scale.cache, isNot(same(cache)));
+      expect(scale.cache.bar, isNull);
       _log = [];
       scale.update(100, 100);
       expect(_log, contains('determineDataLimits'));

@@ -200,8 +200,9 @@ class CoreDemoState extends State<CoreDemo> {
     // when this hook runs. A replayed event of `update` is not new
     // input (core.controller.js:528-534).
     'afterEvent': (Object? chart, Object? args, Object? options) {
-      // The hook arguments are a Map (core.controller.js:1164-1169).
-      final replay = (args! as Map<String, Object?>)['replay'];
+      // The hook arguments are a typed object, read by name through its
+      // face (core.controller.js:1164-1169, Chart.js ADR 0054 §12).
+      final replay = (args! as JsObjectFace)['replay'];
       if (replay != true) _readout.value++;
     },
   };
@@ -348,10 +349,10 @@ class CoreDemoState extends State<CoreDemo> {
   // Readout.
 
   /// The options of the first active element, or `null`.
-  Map<String, Object?>? get _activeOptions {
+  JsObjectFace? get _activeOptions {
     final active = _chart?.getActiveElements() ?? const [];
     if (active.isEmpty) return null;
-    return (active.first.element as PointElement?)?.options;
+    return (active.first.element as PointElement?)?.options as JsObjectFace?;
   }
 
   Widget _buildReadout() {

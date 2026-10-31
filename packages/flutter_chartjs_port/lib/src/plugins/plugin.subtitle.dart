@@ -26,7 +26,6 @@ import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, FontSpecScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
@@ -37,7 +36,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 final Expando<Title> _map = Expando<Title>('subtitle');
 
 /// plugin.subtitle.js:9 `start(chart, _args, options)`.
-void _start(types.Chart chart, AnyObject _, AnyObject options) {
+void _start(types.Chart chart, Object _, Object options) {
   final title = Title((ctx: chart.ctx, options: options, chart: chart));
 
   layouts
@@ -50,7 +49,7 @@ void _start(types.Chart chart, AnyObject _, AnyObject options) {
 /// `undefined` of `map.get` on a chart without a subtitle: `removeBox` then
 /// changes nothing (core.layouts.js:318-323). `map.delete(chart)` is the
 /// write of Dart `null`.
-void _stop(types.Chart chart, AnyObject _, AnyObject _) {
+void _stop(types.Chart chart, Object _, Object _) {
   layouts.removeBox(chart, _map[chart]);
   _map[chart] = null;
 }
@@ -58,7 +57,7 @@ void _stop(types.Chart chart, AnyObject _, AnyObject _) {
 /// plugin.subtitle.js:26 `beforeUpdate(chart, _args, options)`. Without a
 /// subtitle, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-void _beforeUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+void _beforeUpdate(types.Chart chart, Object _, Object options) {
   final title = _map[chart]!;
   layouts.configure(chart, title, options);
   title.options = options;

@@ -41,9 +41,9 @@ import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
 // components. flutter_chartjs_port does not export lib/src/index.dart yet.
 import 'package:flutter_chartjs_port/src/index.dart'
     show Chart, controllers, defaults, elements, plugins, scales;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
     show foreignAudit;
-import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'port/options/foreign_audit.dart';
@@ -118,7 +118,8 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // the snapshot of `harness-defaults-restore`, so the restore keeps it.
   // A file that calls `removeBuiltins()` puts back the scopes of before the
   // registration, without the colors plugin.
-  ((defaults['plugins']! as AnyObject)['colors']! as AnyObject)['enabled'] =
+  ((defaults['plugins']! as JsObjectFace)['colors']!
+          as JsObjectFace)['enabled'] =
       false;
 
   // DIVERGES(chartjs): harness-defaults-restore, restore defaults after tests.

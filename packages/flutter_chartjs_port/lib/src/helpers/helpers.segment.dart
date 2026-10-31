@@ -42,7 +42,6 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// helpers.segment.js:8 `@typedef Segment`: the plain object
@@ -574,7 +573,7 @@ Object? _setContextOf(Object? segmentOptions) => switch (segmentOptions) {
 /// `segmentOptions.setContext(ctx)` (helpers.segment.js:300): the typed call
 /// of a resolver view, else [jsCall] of the function by name with
 /// `segmentOptions` as `this`.
-Object? _setContext(Object? segmentOptions, AnyObject ctx) =>
+Object? _setContext(Object? segmentOptions, Object ctx) =>
     switch (segmentOptions) {
       final OptionView view => view.setContext(ctx),
       _ => jsCall(_setContextOf(segmentOptions), [
@@ -834,7 +833,7 @@ String _serializeJsonStyle(
   Object? Function(String key, Object? value) replacer,
 ) {
   final partial = <String>[];
-  for (var i = 0, n = style.length; i < n; i++) {
+  for (var i = 0, n = style.ownKeyCount; i < n; i++) {
     final key = style.keyAt(i);
     final slot = style.slotAt(i);
     final value = slot < 0 ? style.jsRead(key) : style.valueOf(slot);

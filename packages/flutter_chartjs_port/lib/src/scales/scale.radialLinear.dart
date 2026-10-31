@@ -694,7 +694,7 @@ void _drawRadiusLine(
 /// The context of the type `'pointLabel'` is a
 /// [ScriptableScalePointLabelContext] (Chart.js ADR 0054 §11).
 ScriptableScalePointLabelContext _createPointLabelContext(
-  AnyObject parent,
+  Object parent,
   int index,
   Object? label,
 ) {

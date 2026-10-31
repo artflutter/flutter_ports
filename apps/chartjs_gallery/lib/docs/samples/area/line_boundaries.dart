@@ -1,6 +1,7 @@
 // Ported from Chart.js v4.6.1 docs/samples/area/line-boundaries.md (MIT, Chart.js Contributors).
 
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show Chart, JsObjectFace;
 
 /// The area chart of `docs/samples/area/line-boundaries.md:3-120` at the
 /// fill `'origin'`: the action `Fill: origin` of `:48-56`.
@@ -84,12 +85,19 @@ Map<String, Object?> _config(Object fill) => <String, Object?>{
 };
 
 /// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
-/// (`line-boundaries.md:106`). The context is a Map, and the fill of each
-/// variant is a string or `false`: the interpolation gives the text of the
-/// JS `+`.
+/// (`line-boundaries.md:106`). The context is a typed object, read by name
+/// through its face (`JsObjectFace`), and the fill of each variant is a
+/// string or `false`: the interpolation gives the text of the JS `+`.
 Object _titleText(Object? ctx) {
-  final chart = (ctx! as Map<String, Object?>)['chart']! as Chart;
-  final datasets = chart.data['datasets']! as List<Object?>;
-  final dataset = datasets.first! as Map<String, Object?>;
-  return 'Fill: ${dataset['fill']}';
+  final chart = (ctx! as JsObjectFace)['chart']! as Chart;
+  final datasets = _byName(chart.data, 'datasets')! as List<Object?>;
+  return 'Fill: ${_byName(datasets.first, 'fill')}';
 }
+
+/// `object[key]` of an object of the chart: a Map of the app, or a typed
+/// object through its face.
+Object? _byName(Object? object, String key) => switch (object) {
+  final Map<Object?, Object?> map => map[key],
+  final JsObjectFace face => face[key],
+  _ => null,
+};

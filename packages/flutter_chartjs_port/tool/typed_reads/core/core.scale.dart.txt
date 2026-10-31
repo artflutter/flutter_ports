@@ -8,6 +8,6 @@
 # - stringIndex 3: getLabels reads `data.xLabels`, `data.yLabels` and
 #   `data.labels` of the data object of the user (core.scale.js:359-362), a
 #   raw object of the user (Chart.js ADR 0054 §5).
-jsGet 1
-stringIndex 7
+jsGet 4
+stringIndex 4
 jsObjectKeys 1

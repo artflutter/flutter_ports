@@ -10,8 +10,9 @@
 # values of a borderWidth object of user code, the items of
 # setActiveElements (2), chart.data.datasets, the config argument of
 # new Tooltip(config) (2) and the items, body items and label styles of user
-# code (_readByName). stringIndex 2: $animations by property name: L3 keeps
-# $animations a Map<String, Animation> until the close step. jsCall 8: the
+# code (_readByName). stringIndex 2: $animations by property name: the
+# running animations stay a Map<String, Animation> (Element.$animations is
+# public; the typed table is an open point of the close step). jsCall 8: the
 # callbacks (2), the filter, itemSort and external callbacks, the
 # positioners, setContext and override of objects of user code, with JS
 # arity. jsObjectKeys 1: the values of a borderWidth object of user code.

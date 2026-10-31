@@ -1,3 +1,4 @@
 # L4: jsGet 1: the bounds of the opts object of pathSegment, a Map of the
-# interface types.LineElement.pathSegment (base types).
+# interface types.LineElement.pathSegment (public; a typed params record is
+# an open point of the close step).
 jsGet 1

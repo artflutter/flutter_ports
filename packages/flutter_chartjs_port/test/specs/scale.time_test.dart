@@ -86,15 +86,15 @@ import '../support/jasmine.dart';
 /// scale.time.tests.js:5-25 `createScale(data, options, dimensions)`.
 Scale _createScale(
   Map<String, Object?> data, [
-  Map<String, Object?>? options,
+  Object? options,
   Map<String, Object?>? dimensions,
 ]) {
   final width = jsTruthy(dimensions?['width']) ? dimensions!['width'] : 400;
   final height = jsTruthy(dimensions?['height']) ? dimensions!['height'] : 50;
 
   options ??= <String, Object?>{};
-  options['type'] = 'time';
-  options['id'] = 'xScale0';
+  jsSet(options, 'type', 'time');
+  jsSet(options, 'id', 'xScale0');
 
   final chart = acquireChart(
     <String, Object?>{
@@ -151,8 +151,8 @@ List<Object?> _labels(Chart chart) =>
 
 /// `chart.options.scales.x`: a resolver of the chart options. A write goes
 /// through it.
-AnyObject _scaleOptionsX(Chart chart) =>
-    jsGet(jsGet(chart.options, 'scales'), 'x')! as AnyObject;
+JsObjectFace _scaleOptionsX(Chart chart) =>
+    jsGet(jsGet(chart.options, 'scales'), 'x')! as JsObjectFace;
 
 /// scale.time.tests.js:31-48 the matcher `toBeCloseToTime`:
 /// `Math.abs(moment(time).diff(value, unit, true)) < threshold`, with the
@@ -176,9 +176,8 @@ Matcher _toBeCloseToTime(double value, String unit, [double threshold = 0.01]) {
 
 /// `Chart.helpers.clone(Chart.defaults.scales.time)` (scale.time.tests.js:
 /// 125): a deep copy of the defaults of the time scale.
-Map<String, Object?> _cloneTimeDefaults() =>
-    clone(jsGet(jsGet(Chart.defaults, 'scales'), 'time'))!
-        as Map<String, Object?>;
+JsObjectFace _cloneTimeDefaults() =>
+    clone(jsGet(jsGet(Chart.defaults, 'scales'), 'time'))! as JsObjectFace;
 
 void main() {
   group('Time scale tests', () {
@@ -204,7 +203,7 @@ void main() {
       final defaultConfig = jsGet(jsGet(Chart.defaults, 'scales'), 'time');
       expect(
         defaultConfig,
-        equals(<String, Object?>{
+        jasmineEquals(<String, Object?>{
           'bounds': 'data',
           'adapters': <String, Object?>{},
           'time': <String, Object?>{
@@ -268,11 +267,11 @@ void main() {
         ],
       };
 
-      late Map<String, Object?> config;
+      late JsObjectFace config;
       setUp(() {
         config = _cloneTimeDefaults();
-        (config['ticks']! as Map<String, Object?>)['source'] = 'labels';
-        (config['time']! as Map<String, Object?>)['unit'] = 'day';
+        (config['ticks']! as JsObjectFace)['source'] = 'labels';
+        (config['time']! as JsObjectFace)['unit'] = 'day';
       });
 
       testWidgets(
@@ -636,7 +635,7 @@ void main() {
       testWidgets('should update ticks.callback correctly', (tester) async {
         beforeEach();
         String callback(Object? _, Object? i) => '{${jsToString(i)}}';
-        (jsGet(_scaleOptionsX(chart), 'ticks')! as AnyObject)['callback'] =
+        (jsGet(_scaleOptionsX(chart), 'ticks')! as JsObjectFace)['callback'] =
             callback;
         chart.update();
 
@@ -854,7 +853,7 @@ void main() {
             beforeEach();
             final scale = chart.scales['x']!;
 
-            chart.data['labels'] = <Object?>[];
+            (chart.data as AnyObject)['labels'] = <Object?>[];
             chart.update();
 
             expect(
@@ -876,8 +875,8 @@ void main() {
             final scale = chart.scales['x']!;
             final options = _scaleOptionsX(chart);
 
-            (jsGet(options, 'time')! as AnyObject)['unit'] = 'year';
-            chart.data['labels'] = <Object?>[];
+            (jsGet(options, 'time')! as JsObjectFace)['unit'] = 'year';
+            (chart.data as AnyObject)['labels'] = <Object?>[];
             chart.update();
 
             expect(
@@ -962,8 +961,8 @@ void main() {
             final scale = chart.scales['x']!;
             final options = _scaleOptionsX(chart);
 
-            (jsGet(options, 'time')! as AnyObject)['unit'] = 'year';
-            chart.data['labels'] = <Object?>[];
+            (jsGet(options, 'time')! as JsObjectFace)['unit'] = 'year';
+            (chart.data as AnyObject)['labels'] = <Object?>[];
             chart.getDatasetMeta(1).hidden = true;
             chart.update();
 

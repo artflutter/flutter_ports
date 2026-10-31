@@ -1003,13 +1003,19 @@ class StressDemoState extends State<StressDemo> {
     _stressChart = null;
   }
 
+  /// The defaults of an element class as a plain Map: the own keys of the
+  /// typed scope [defaults] in their order, read through its face.
+  static Map<String, Object?> _plainDefaults(JsObjectFace defaults) => {
+    for (final key in defaults.jsKeys()) key: defaults[key],
+  };
+
   /// The resolved options of each point element: the defaults of
   /// element.point.ts and the colors of the [StressMode.primitives] points,
   /// as typed options (Chart.js ADR 0018). All points share the object, as
   /// the shared options of a dataset are.
   static final element_options.PointOptions _pointElementOptions =
       element_options.PointOptions({
-        ...PointElement.defaults,
+        ..._plainDefaults(PointElement.defaults),
         'backgroundColor': 'rgba(54, 162, 235, 0.45)',
         'borderColor': '#36A2EB',
         'borderWidth': 1.0,
@@ -1023,7 +1029,7 @@ class StressDemoState extends State<StressDemo> {
   /// `setLineDash` without a copy.
   static final element_options.LineOptions _lineElementOptions =
       element_options.LineOptions({
-        ...LineElement.defaults,
+        ..._plainDefaults(LineElement.defaults),
         'borderColor': '#FF6384',
         'borderDash': const <double>[],
         'borderWidth': 1.5,
@@ -1035,7 +1041,7 @@ class StressDemoState extends State<StressDemo> {
   /// bars share the object, as the shared options of a dataset are.
   static final element_options.BarOptions _barOptions =
       element_options.BarOptions({
-        ...BarElement.defaults,
+        ..._plainDefaults(BarElement.defaults),
         'backgroundColor': 'rgba(54, 162, 235, 0.45)',
         'borderColor': '#36A2EB',
         'borderWidth': 1.0,
@@ -1066,7 +1072,7 @@ class StressDemoState extends State<StressDemo> {
       'rgba(75, 192, 192, 0.5)',
     ])
       element_options.ArcOptions({
-        ...ArcElement.defaults,
+        ..._plainDefaults(ArcElement.defaults),
         'backgroundColor': color,
         'borderDash': const <double>[],
         'borderRadius': 4.0,

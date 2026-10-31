@@ -1012,8 +1012,11 @@ void main() {
     });
 
     testWidgets('defaults.animation stays unchanged', (tester) async {
-      final animation = defaults['animation']! as AnyObject;
-      final before = Map<String, Object?>.of(animation);
+      final animation = defaults['animation']! as JsObjectFace;
+      Map<String, Object?> entries() => {
+        for (final key in animation.jsKeys()) key: animation[key],
+      };
+      final before = entries();
       final config = _config(
         options: <String, Object?>{'animation': <String, Object?>{}},
       );
@@ -1023,7 +1026,7 @@ void main() {
       await tester.pumpWidget(build(Map.of(config), reduced: true));
       await tester.pump();
       expect(defaults['animation'], same(animation));
-      expect(animation, before);
+      expect(entries(), before);
       // The widget writes no animation option into the app config.
       expect(jsGet(config['options'], 'animation'), <String, Object?>{});
     });

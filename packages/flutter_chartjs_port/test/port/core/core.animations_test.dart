@@ -147,7 +147,7 @@ void main() {
         isTrue,
       );
       // The animations change a copy of the shared options.
-      final copy = point.options!;
+      final copy = point.options! as JsObjectFace;
       expect(copy, isA<PointOptions>());
       expect(copy, isNot(same(shared)));
       expect(copy[r'$shared'], isFalse);
@@ -155,7 +155,7 @@ void main() {
 
       for (var k = 1; k <= 25; k++) {
         await tester.pump(const Duration(milliseconds: 16));
-        final options = point.options!;
+        final options = point.options! as JsObjectFace;
         if (k < 25) {
           expect(options, same(copy), reason: 'frame $k');
           expect(options['radius'], _radius(16.0 * k), reason: 'frame $k');
@@ -188,7 +188,7 @@ void main() {
         _resolveAnimations(chart, 'active').update(point, {'options': shared}),
         isTrue,
       );
-      final back = point.options!;
+      final back = point.options! as JsObjectFace;
       expect(back, isNot(same(hover)));
       expect(back, isA<PointOptions>());
       animator.start(chart);
@@ -217,7 +217,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 16));
       }
       await tester.pump(const Duration(milliseconds: 8));
-      final options = point.options!;
+      final options = point.options! as JsObjectFace;
       expect(effects['easeOutQuart']!(0.5), 0.9375);
       expect(options['radius'], 3.9375);
       expect(options['backgroundColor'], animationHoverAt200);
@@ -295,7 +295,7 @@ void main() {
         }),
         isTrue,
       );
-      final copy = point.options!;
+      final copy = point.options! as JsObjectFace;
       expect(copy, isA<PointOptions>());
       expect(copy, isNot(same(shared)));
       expect(jsObjectIsFrozen(copy), isFalse);
@@ -307,7 +307,7 @@ void main() {
       expect(animations['radius'], isA<Animation>());
       // The source does not change.
       expect(shared[r'$shared'], isTrue);
-      expect(shared.containsKey(r'$animations'), isFalse);
+      expect(shared.jsHas(r'$animations'), isFalse);
     });
 
     test('the copy of plain shared options is a plain Map', () {

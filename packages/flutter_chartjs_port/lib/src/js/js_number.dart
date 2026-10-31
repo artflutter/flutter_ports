@@ -17,6 +17,7 @@
 /// also removes U+0085.
 library;
 
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// ECMAScript `ToNumber(value)`, the coercion of unary `+` and `Number()`.
@@ -138,7 +139,7 @@ String jsToString(Object? value) => switch (value) {
   final num n => jsNumberToString(n),
   final List<Object?> list =>
     list.map((e) => e == null || e is Undefined ? '' : jsToString(e)).join(','),
-  Map<Object?, Object?>() => '[object Object]',
+  Map<Object?, Object?>() || JsObjectFace() => '[object Object]',
   final DateTime date => _dateToString(date),
   // DIVERGES(chartjs): js-semantics-function-source, the Dart toString().
   _ => value.toString(),

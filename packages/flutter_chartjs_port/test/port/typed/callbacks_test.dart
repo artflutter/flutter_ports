@@ -57,10 +57,10 @@ Map<String, Object?> _bar(Map<String, Object?> options) => <String, Object?>{
 /// The center of the legend hit box [index] of [chart].
 Map<String, Object?> _legendBox(Chart chart, int index) {
   final box = chart.legend!.legendHitBoxes[index];
-  final left = box['left']! as num;
-  final top = box['top']! as num;
-  final width = box['width']! as num;
-  final height = box['height']! as num;
+  final left = box.left;
+  final top = box.top;
+  final width = box.width;
+  final height = box.height;
   return <String, Object?>{'x': left + width / 2, 'y': top + height / 2};
 }
 
@@ -206,7 +206,7 @@ void main() {
         ],
         [0, 1, false, 7],
       );
-      expect((dataContext.parsed! as Map<String, Object?>)['y'], 7);
+      expect((dataContext.parsed! as JsObjectFace)['y'], 7);
 
       activeAtCall.clear();
       await triggerMouseEvent(
@@ -297,7 +297,7 @@ void main() {
         ],
         ['c', '7', 1, 2, 7, 'B'],
       );
-      expect((item.parsed! as Map<String, Object?>)['y'], 7);
+      expect((item.parsed! as JsObjectFace)['y'], 7);
     });
 
     test('a dataset without a String label gives no datasetLabel', () {
@@ -471,7 +471,7 @@ void main() {
       final lowering = ChartConfigLowering(
         typedBar(onClick: (details) => calls.add(('first', details))),
       );
-      final chart = acquireChart(lowering.lower());
+      final chart = acquireChartRoot(lowering.lower());
       final element = chart.getDatasetMeta(1).data[2];
       await triggerMouseEvent(chart, 'click', element);
 
@@ -495,7 +495,7 @@ void main() {
 
     testWidgets('onHover gets the hits of a move', (tester) async {
       final hits = <List<ChartHit>>[];
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         ChartConfigLowering(
           typedBar(onHover: (details) => hits.add(details.hits)),
         ).lower(),
@@ -515,7 +515,7 @@ void main() {
       tester,
     ) async {
       final items = <ChartLegendItem>[];
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         ChartConfigLowering(
           typedBar(
             legend: ChartLegend(onClick: (details) => items.add(details.item)),
@@ -532,8 +532,8 @@ void main() {
     ) async {
       /// The title, the label lines and the footer of the tooltip of a
       /// hover on bar 2 of dataset 1 of [config].
-      Future<List<Object?>> tooltipOf(Map<String, Object?> config) async {
-        final chart = acquireChart(config);
+      Future<List<Object?>> tooltipOf(Object config) async {
+        final chart = acquireChartRoot(config);
         await triggerMouseEvent(
           chart,
           'mousemove',
@@ -543,8 +543,7 @@ void main() {
         return [
           tooltip.title,
           [
-            for (final item in tooltip.body!)
-              (item! as Map<String, Object?>)['lines'],
+            for (final item in tooltip.body!) (item! as JsObjectFace)['lines'],
           ],
           tooltip.footer,
         ];
@@ -596,7 +595,7 @@ void main() {
       tester,
     ) async {
       final infos = <AxisTickInfo>[];
-      final typed = acquireChart(
+      final typed = acquireChartRoot(
         ChartConfigLowering(
           typedBar(
             scales: {
@@ -654,9 +653,8 @@ void main() {
           animation: ChartAnimation(onComplete: details.add),
         ),
       );
-      final options = lowering.lower()['options']! as Map<String, Object?>;
-      final onComplete =
-          (options['animation']! as Map<String, Object?>)['onComplete'];
+      final options = lowering.lower()['options']! as JsObjectFace;
+      final onComplete = (options['animation']! as JsObjectFace)['onComplete'];
       final chart = acquireChart(_bar(const <String, Object?>{}));
       jsCall(onComplete, [
         AnimationEvent(

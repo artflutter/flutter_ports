@@ -34,7 +34,7 @@ void main() {
       expect(p.options, same(options));
       expect(p.angle, isNaN);
       expect(jsGet(p, 'angle'), same(undefined));
-      expect(p['angle'], isNull);
+      expect(p['angle'], same(undefined));
     });
 
     test('BarProperties has the literal of controller.bar.js', () {

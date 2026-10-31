@@ -32,7 +32,6 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show dispatchCanvasEvent, hasCanvasEventListener;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The group of the legend targets. A data group has its dataset index.
@@ -50,31 +49,15 @@ typedef _Rect = ({double left, double top, double width, double height});
 /// and calls no `onLeave` (`plugin.legend.js:537-544`).
 const _Point _outside = (x: -1.0, y: -1.0);
 
-/// The number value of a hit box key, else NaN.
-double _num(Object? value) => value is num ? value.toDouble() : double.nan;
-
 /// The `left`, `top`, `width` and `height` of a legend hit box: the typed
 /// fields of a hit box of the legend plugin ([types.TypedLegendHitBox],
-/// Chart.js ADR 0054 §12), else the number values of the reads by name of
-/// an object of another class.
-_Rect _hitBox(AnyObject box) => switch (box) {
-  final types.TypedLegendHitBox box => (
-    left: box.left,
-    top: box.top,
-    width: box.width,
-    height: box.height,
-  ),
-  _ => (
-    left: _num(_byName(box, 'left')),
-    top: _num(_byName(box, 'top')),
-    width: _num(_byName(box, 'width')),
-    height: _num(_byName(box, 'height')),
-  ),
-};
-
-/// The read by name `box[key]` of a hit box that is not a
-/// [types.TypedLegendHitBox].
-Object? _byName(AnyObject box, String key) => box[key];
+/// Chart.js ADR 0054 §12).
+_Rect _hitBox(types.TypedLegendHitBox box) => (
+  left: box.left,
+  top: box.top,
+  width: box.width,
+  height: box.height,
+);
 
 /// The keyboard state of the chart of one `ChartView` (Chart.js ADR 0051,
 /// sections 2 to 6): the target, the virtual mouse, the key events of
@@ -344,7 +327,7 @@ final class ChartKeyboard {
   /// The hit boxes of the legend (plugin.legend.js:52), or Dart `null`
   /// when the chart has no legend, the legend does not show, or it has no
   /// hit box. A hidden legend keeps the hit boxes of its last fit.
-  static List<AnyObject>? _legendBoxes(types.Chart chart) {
+  static List<types.TypedLegendHitBox>? _legendBoxes(types.Chart chart) {
     final legend = chart.legend;
     if (legend == null ||
         !jsTruthy(readOption(legend.options, OptionKey.display))) {

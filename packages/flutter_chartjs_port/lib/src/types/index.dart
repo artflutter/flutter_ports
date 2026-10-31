@@ -16,9 +16,11 @@
 /// A file that also needs the concrete class of the same name imports this
 /// library with the prefix `types`.
 ///
-/// Option objects (`options`, `getContext()`) are `Map<String, Object?>`:
-/// Chart.js ADR 0043 makes a JS plain object a Map, and the option resolvers
-/// of `helpers.config` take the place of the upstream `Proxy` objects.
+/// Option objects (`options`, `getContext()`) are `Object`: a JS object of
+/// the user is a `Map<String, Object?>`, and a typed object of Chart.js ADR
+/// 0054 (a resolver view of `helpers.config` in the place of an upstream
+/// `Proxy`, a context, resolved options) reads by name through its face
+/// (`JsObjectFace`, §5).
 ///
 /// Upstream `_`-prefixed members that other modules read drop the underscore
 /// (Chart.js ADR 0012), and the `///` line keeps the upstream name. A type
@@ -402,12 +404,13 @@ abstract interface class Chart {
   Map<String, Scale> get scales;
 
   /// index.d.ts:546 `data: ChartData`, the data object of the
-  /// configuration. A Map (Chart.js ADR 0043). `Scale.getLabels` reads its
+  /// configuration: a Map of the user, or the typed `ChartDataScope` of a
+  /// typed config (Chart.js ADR 0054 §5). `Scale.getLabels` reads its
   /// `labels`, `xLabels` and `yLabels` (core.scale.js:359-361).
-  Map<String, Object?> get data;
+  Object get data;
 
   /// index.d.ts:547 `options: ChartOptions<TType>`.
-  Map<String, Object?> get options;
+  Object get options;
 
   /// index.d.ts:561 `draw(): void`: draws the chart.
   ///
@@ -465,7 +468,7 @@ abstract interface class Chart {
   /// result of `notify`: false when a plugin cancels the hook. Dart `null`
   /// stands for the `void` result, the `undefined` of a notify before the
   /// hook `install` or after the hook `uninstall` (core.plugins.js:41-43).
-  bool? notifyPlugins(String hook, [Map<String, Object?>? args]);
+  bool? notifyPlugins(String hook, [Object? args]);
 
   /// index.d.ts:587 `isPluginEnabled(pluginId: string): boolean`. The
   /// dataset controller calls it for the filler
@@ -477,7 +480,7 @@ abstract interface class Chart {
   /// The context is the parent of `createContext` (helpers.options.ts:204),
   /// so it is an object, not a record. `core.controller` returns
   /// `createContext(null, {...})`, a `ContextObject` of `helpers.options`.
-  Map<String, Object?> getContext();
+  Object getContext();
 
   /// index.d.ts:543 `readonly legend?: LegendElement`. Dart `null` stands
   /// for JS `undefined`. The legend plugin writes it (plugin.legend.js:602)
@@ -546,7 +549,7 @@ abstract interface class DatasetController {
   ///
   /// Dart `null` stands for JS `undefined`, the start value. JS `null` never
   /// reaches it. An object is always truthy.
-  Map<String, Object?>? get sharedOptions;
+  Object? get sharedOptions;
 
   /// core.datasetController.js:443 `_parsing`, the `parsing` option.
   /// `index.d.ts` does not declare it. `_parseObjectDataRadialScale`
@@ -588,14 +591,14 @@ abstract interface class DatasetController {
 
   /// core.datasetController.js:262 `options`, the resolver of the dataset
   /// options. index.d.ts does not declare it. controller.bar.js:437 reads it.
-  Map<String, Object?> get options;
+  Object get options;
 
   /// index.d.ts:688 `getParsed(index)`. controller.bar.js:440 calls it.
   Object? getParsed(double index);
 
   /// index.d.ts:656 `getStyle(index, active)`. controller.doughnut.js:101
   /// calls it.
-  Map<String, Object?> getStyle(
+  Object getStyle(
     double? index, [
     // The upstream signature has a positional `active`.
     // ignore: avoid_positional_boolean_parameters
@@ -604,7 +607,7 @@ abstract interface class DatasetController {
 
   /// index.d.ts:658 `resolveDataElementOptions(index, mode)`.
   /// controller.doughnut.js:354 calls it.
-  Map<String, Object?> resolveDataElementOptions(double index, [String? mode]);
+  Object resolveDataElementOptions(double index, [String? mode]);
 }
 
 /// index.d.ts:706 `Defaults`, the type of the `defaults` object of
@@ -622,7 +625,7 @@ abstract interface class Defaults {
   /// The overload `set(values)` (index.d.ts:713) has the same name. The
   /// concrete `Defaults` of `core.defaults.dart` takes both forms as
   /// `set(Object? scope, [Object? values = undefined])`.
-  Map<String, Object?> set(String scope, Map<String, Object?> values);
+  Object set(String scope, Object values);
 
   /// index.d.ts:717 `describe(scope: string, values: AnyObject): AnyObject`.
   ///
@@ -632,7 +635,7 @@ abstract interface class Defaults {
   /// :27. index.d.ts declares only the two-argument form. The concrete
   /// `Defaults` of `core.defaults.dart` takes both forms as
   /// `describe(Object? scope, [Object? values = undefined])`.
-  Map<String, Object?> describe(String scope, Map<String, Object?> values);
+  Object describe(String scope, Object values);
 
   /// index.d.ts:737 `route(scope, name, targetScope, targetName): void`.
   ///
@@ -698,7 +701,7 @@ abstract interface class Scale implements Element, LayoutItem {
   /// core.element.ts:14 `options: O`, through `Element<unknown, O>`
   /// (index.d.ts:1303).
   @override
-  Map<String, Object?> get options;
+  Object get options;
 
   /// index.d.ts:1352 `getLabelForValue(value: number): string`.
   ///
@@ -735,7 +738,7 @@ abstract interface class Scale implements Element, LayoutItem {
   double tickSize();
 
   /// core.scale.js:247 `_cache`. controller.bar.js:8 reads it.
-  Map<String, Object?> get cache;
+  ScaleCache get cache;
 
   /// index.d.ts:1321 `ticks`. controller.bar.js:47 reads it.
   List<Tick>? get ticks;
@@ -1090,7 +1093,7 @@ abstract interface class LineElement implements Element {
   /// JavaScript property read of `undefined` does. JS `null` never reaches
   /// it.
   @override
-  Map<String, Object?>? get options;
+  Object? get options;
 
   /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`,
   /// the start value. `controller.line.js:57` sets it. JS `null` never
@@ -1197,9 +1200,9 @@ abstract interface class PointElementWrites {
   set parsed(Object value);
 
   /// core.element.ts:14 `options`. Dart `null` stands for JS `undefined`.
-  Map<String, Object?>? get options;
+  Object? get options;
 
-  set options(Map<String, Object?>? value);
+  set options(Object? value);
 }
 
 /// The typed writes of a controller into a line element, a port-only
@@ -1260,6 +1263,30 @@ abstract interface class SimpleArc {
   Point interpolate(PointElement point);
 }
 
+/// core.scale.js:247 `_cache`, the data caches of a scale, as a typed
+/// object (Chart.js ADR 0054 §4: the caches of upstream as typed fields). It
+/// is not a declaration of `index.d.ts`.
+///
+/// Each field is a key of the upstream object; Dart `null` is an absent
+/// key. `beforeLayout` gives the scale a new empty cache
+/// (core.scale.js:375).
+final class ScaleCache {
+  /// scale.time.js:627-648 `_cache.data`: the sorted unique parsed values
+  /// of the visible datasets.
+  List<double>? data;
+
+  /// scale.time.js:651-668 `_cache.labels`: the timestamps of the labels.
+  List<double?>? labels;
+
+  /// scale.timeseries.js:137-157 `_cache.all`: the timestamps of the
+  /// lookup table.
+  List<double?>? all;
+
+  /// controller.bar.js:7-20 `_cache.$bar`: the sorted unique values of the
+  /// bar datasets of the scale.
+  List<double>? bar;
+}
+
 /// index.d.ts:2414 `LegendElement`, with the members that the option
 /// functions of the controllers (controller.doughnut.js:97, :126) and the
 /// legend specs (global.defaults.tests.js:46) read.
@@ -1279,7 +1306,7 @@ abstract interface class LegendElement {
   List<Object?>? get legendItems;
 
   /// index.d.ts:2418 `options`, the resolver of the legend options.
-  Map<String, Object?> get options;
+  Object get options;
 
   /// plugin.legend.js:52 `legendHitBoxes`: the hit box of each legend item,
   /// a plain object with the keys `left`, `top`, `width` and `height`.
@@ -1287,7 +1314,7 @@ abstract interface class LegendElement {
   /// so that no file of `lib/src/widgets/` imports a plugin (Chart.js ADR
   /// 0051, section 2). The hit boxes of the legend plugin are
   /// [TypedLegendHitBox] objects.
-  List<AnyObject> get legendHitBoxes;
+  List<TypedLegendHitBox> get legendHitBoxes;
 }
 
 /// The typed hit box of a legend item, a port-only interface (Chart.js ADR
@@ -1506,10 +1533,10 @@ abstract interface class BasePlatform {
 abstract interface class ChartConfiguration {
   /// index.d.ts:3921 `options?: ChartOptions<TType>`. A Map
   /// (Chart.js ADR 0043).
-  Map<String, Object?> get options;
+  Object get options;
 
   /// core.config.js:177 `get data()`. plugin.colors.ts:107-110 reads it.
-  Map<String, Object?> get data;
+  Object get data;
 }
 
 /// core.element.ts:6 `Element`, which index.d.ts:10 imports.
@@ -1539,7 +1566,7 @@ abstract interface class Element implements Point {
   /// (element.point.ts:52), and helpers.extras.ts:96 tests it. Dart `null`
   /// stands for JS `undefined` (Chart.js ADR 0043). JS `null` never reaches
   /// it.
-  Map<String, Object?>? get options;
+  Object? get options;
 
   /// core.element.ts:13 `active = false`. controller.bar.js:418 reads it.
   bool get active;
@@ -1573,7 +1600,7 @@ abstract interface class PointElement implements Element, SplinePoint {
   bool? get stop;
 
   /// element.point.ts:81 `size(options)`. controller.line.js:133 calls it.
-  double size([Map<String, Object?>? options]);
+  double size([Object? options]);
 }
 
 /// controller.radar.js:96 the property `angle` of a radar [PointElement].
@@ -1651,7 +1678,8 @@ abstract interface class ElementPropertyRead {
 ///
 /// The animations read and write their targets by name
 /// (core.animation.js:29, :88, :94, :102; core.animations.js:71, :101,
-/// :121). A target is a Map or a [PropertyAccess]. The concrete `Element` of
+/// :121). A target is a Map, a typed object with a face or a
+/// [PropertyAccess]. The concrete `Element` of
 /// `core.element.dart` implements it with its access by name (Chart.js ADR
 /// 0017, section 5).
 abstract interface class PropertyAccess implements ElementPropertyRead {

@@ -6,6 +6,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show createResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:test/test.dart';
@@ -409,7 +410,7 @@ void main() {
           "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
         );
       }
-      expect(defaults['font'], isA<Map<String, Object?>>());
+      expect(defaults['font'], isA<JsObjectFace>());
     });
     test('converts a lineHeight string', () {
       expect(
@@ -536,16 +537,16 @@ void main() {
       expect(context['index'], 1);
       expect(context['n'], isNull);
       expect(context['u'], same(undefined));
-      expect(context['missing'], isNull);
+      expect(context['missing'], same(undefined));
       expect(context.prototype, same(parent));
     });
     test('gives the own keys in the order of Object.keys', () {
       expect(jsObjectKeys(context), ['2', 'type', 'index', 'u']);
-      expect(context.length, 4);
+      expect(context.ownKeyCount, 4);
     });
     test('containsKey is the in operator', () {
       expect(
-        ['chart', 'n', 'u', 'missing'].map(context.containsKey),
+        ['chart', 'n', 'u', 'missing'].map(context.hasProperty),
         [true, true, true, false],
       );
       expect(
@@ -579,7 +580,7 @@ void main() {
         'chart': undefined,
       });
       expect(shadow['chart'], same(undefined));
-      expect(shadow.containsKey('chart'), isTrue);
+      expect(shadow.hasProperty('chart'), isTrue);
     });
     test('has a null prototype for a null parent', () {
       final root = createContext(null, <String, Object?>{'chart': 1.0});
@@ -588,9 +589,13 @@ void main() {
     });
     test('copies only the own keys of the context', () {
       final source = createContext(parent, <String, Object?>{'a': 1.0});
-      final copy = createContext(null, source);
+      // `Object.assign` reads the own keys of the context object: the plain
+      // object of its face (Chart.js ADR 0054 §5).
+      final copy = createContext(null, <String, Object?>{
+        for (final key in jsObjectKeys(source)) key: source[key],
+      });
       expect(jsObjectKeys(copy), ['a']);
-      expect(copy.containsKey('chart'), isFalse);
+      expect(copy.hasProperty('chart'), isFalse);
     });
   });
 
@@ -671,7 +676,7 @@ void main() {
         'type': 'tick',
       }) as ScriptableScaleContext;
       expect([tick.index, tick.tick, tick.type], [2.0, 't', 'tick']);
-      expect(tick.remove('index'), 2.0);
+      expect(tick.jsDelete('index'), isTrue);
       expect(tick.index, 1.0);
       expect(jsObjectKeys(tick), ['tick', 'type']);
       tick['index'] = 3.0;

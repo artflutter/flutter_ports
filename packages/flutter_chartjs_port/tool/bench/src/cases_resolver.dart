@@ -47,7 +47,7 @@ AnyObject _resolveNamedOptions(
   Resolver resolver,
   Resolver subResolverBase,
   List<String> names,
-  AnyObject context,
+  Object context,
 ) {
   final result = <String, Object?>{r'$shared': true};
   Object options = resolver;

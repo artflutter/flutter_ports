@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: core.animations.defaults tests.
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
@@ -21,8 +22,7 @@ void main() {
     });
 
     /// The values argument of the call at [index].
-    Map<String, Object?> values(int index) =>
-        defaults.calls[index][2]! as Map<String, Object?>;
+    JsObjectFace values(int index) => defaults.calls[index][2]! as JsObjectFace;
 
     test('sets and describes the animation defaults', () {
       const setAnimation =
@@ -56,7 +56,7 @@ void main() {
     test('stores undefined as own keys of animation', () {
       final animation = values(0);
       for (final key in ['delay', 'fn', 'from', 'loop', 'to', 'type']) {
-        expect(animation.containsKey(key), isTrue, reason: key);
+        expect(animation.jsHas(key), isTrue, reason: key);
         expect(animation[key], same(undefined), reason: key);
       }
     });
@@ -71,9 +71,9 @@ void main() {
 
     test('the hide transition fn is v | 0', () {
       final transitions = values(4);
-      final hide = transitions['hide']! as Map<String, Object?>;
-      final animations = hide['animations']! as Map<String, Object?>;
-      final visible = animations['visible']! as Map<String, Object?>;
+      final hide = transitions['hide']! as JsObjectFace;
+      final animations = hide['animations']! as JsObjectFace;
+      final visible = animations['visible']! as JsObjectFace;
       final fn = visible['fn'];
       Object? call(List<Object?> args) => jsCall(fn, args);
       expect(call([true]), 1);

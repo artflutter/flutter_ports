@@ -135,12 +135,18 @@ void main() {
     }
 
     // The options are the class defaults plus the colors and the controls.
-    expect(state.bars.first.options!['borderSkipped'], 'start');
+    expect(
+      (state.bars.first.options! as JsObjectFace)['borderSkipped'],
+      'start',
+    );
     expect(state.bars.first.borderSkipped, {'bottom': true});
-    expect(state.points.first.options!['hitRadius'], 1);
-    expect(state.points.first.options!['pointStyle'], 'triangle');
-    expect(line.options!['capBezierPoints'], isTrue);
-    expect(state.arcs.first.options!['borderColor'], '#fff');
+    expect((state.points.first.options! as JsObjectFace)['hitRadius'], 1);
+    expect(
+      (state.points.first.options! as JsObjectFace)['pointStyle'],
+      'triangle',
+    );
+    expect((line.options! as JsObjectFace)['capBezierPoints'], isTrue);
+    expect((state.arcs.first.options! as JsObjectFace)['borderColor'], '#fff');
     // Each element has typed options (Chart.js ADR 0018).
     expect(state.bars.first.options, isA<BarOptions>());
     expect(state.points.first.options, isA<PointOptions>());
@@ -193,13 +199,16 @@ void main() {
     }
 
     await expectDraw(() => _slide(tester, 'elements.borderWidth', 5));
-    expect(state.bars.first.options!['borderWidth'], 5);
-    expect(state.points.first.options!['borderWidth'], 5);
-    expect(state.points.first.options!['hoverBorderWidth'], 6);
-    expect(state.line!.options!['borderWidth'], 5);
-    expect(state.arcs.first.options!['borderWidth'], 5);
+    expect((state.bars.first.options! as JsObjectFace)['borderWidth'], 5);
+    expect((state.points.first.options! as JsObjectFace)['borderWidth'], 5);
+    expect(
+      (state.points.first.options! as JsObjectFace)['hoverBorderWidth'],
+      6,
+    );
+    expect((state.line!.options! as JsObjectFace)['borderWidth'], 5);
+    expect((state.arcs.first.options! as JsObjectFace)['borderWidth'], 5);
 
-    final sliders = <(String, double, Map<String, Object?>? Function())>[
+    final sliders = <(String, double, Object? Function())>[
       ('radius', 10, () => state.points.first.options),
       ('hoverRadius', 14, () => state.points.last.options),
       ('rotation', 45, () => state.points.first.options),
@@ -210,11 +219,11 @@ void main() {
     ];
     for (final (name, value, options) in sliders) {
       await expectDraw(() => _slide(tester, 'elements.$name', value));
-      expect(options()![name], value, reason: name);
+      expect((options()! as JsObjectFace)[name], value, reason: name);
     }
-    expect(state.arcs.first.options!['hoverOffset'], 26);
+    expect((state.arcs.first.options! as JsObjectFace)['hoverOffset'], 26);
 
-    final choices = <(String, Object, Map<String, Object?>? Function())>[
+    final choices = <(String, Object, Object? Function())>[
       ('pointStyle', 'star', () => state.points.first.options),
       ('stepped', 'middle', () => state.line!.options),
       ('stepped', false, () => state.line!.options),
@@ -227,7 +236,7 @@ void main() {
       final text = value is Undefined ? 'undefined' : '$value';
       final key = 'elements.$name.$text';
       await expectDraw(() => _tapKey(tester, key));
-      expect(options()![name], value, reason: key);
+      expect((options()! as JsObjectFace)[name], value, reason: key);
       expect(
         tester.widget<ChoiceChip>(find.byKey(ValueKey(key))).selected,
         isTrue,
@@ -255,11 +264,11 @@ void main() {
     final bar = state.bars[1];
     expect(bar.active, isTrue);
     expect(
-      bar.options!['borderColor'],
-      bar.options!['hoverBorderColor'],
+      (bar.options! as JsObjectFace)['borderColor'],
+      (bar.options! as JsObjectFace)['hoverBorderColor'],
     );
-    expect(bar.options!['borderColor'], isNot('#36A2EB'));
-    expect(state.bars[0].options!['borderColor'], '#36A2EB');
+    expect((bar.options! as JsObjectFace)['borderColor'], isNot('#36A2EB'));
+    expect((state.bars[0].options! as JsObjectFace)['borderColor'], '#36A2EB');
 
     // A move inside the same bar does not draw again.
     final renders = chart.renders;
@@ -275,23 +284,26 @@ void main() {
     expect(_testRow(tester), startsWith('test PointElement.inRange'));
     expect(chart.renders, greaterThan(renders));
     expect(bar.active, isFalse);
-    expect(bar.options!['borderColor'], '#36A2EB');
+    expect((bar.options! as JsObjectFace)['borderColor'], '#36A2EB');
     final point = state.points[2];
     expect(point.active, isTrue);
-    expect(point.options!['radius'], point.options!['hoverRadius']);
     expect(
-      point.options!['borderWidth'],
-      point.options!['hoverBorderWidth'],
+      (point.options! as JsObjectFace)['radius'],
+      (point.options! as JsObjectFace)['hoverRadius'],
     );
-    expect(state.points[1].options!['radius'], 6);
+    expect(
+      (point.options! as JsObjectFace)['borderWidth'],
+      (point.options! as JsObjectFace)['hoverBorderWidth'],
+    );
+    expect((state.points[1].options! as JsObjectFace)['radius'], 6);
 
     // An arc: it draws with its hover offset.
     await mouse.moveTo(_global(tester, _center(state.arcs[3])));
     await _frames(tester, 3);
     _expectHit(tester, 'arc 3');
     expect(_testRow(tester), startsWith('test ArcElement.inRange'));
-    expect(state.arcs[3].options!['offset'], 16);
-    expect(state.arcs[2].options!['offset'], 0);
+    expect((state.arcs[3].options! as JsObjectFace)['offset'], 16);
+    expect((state.arcs[2].options! as JsObjectFace)['offset'], 0);
 
     // An empty place of the chart: the top right corner.
     final size = tester.getSize(_host);
@@ -345,7 +357,7 @@ void main() {
     _expectHit(tester, 'point 4');
     expect(state.bars[4].active, isFalse);
     expect(state.points[4].active, isTrue);
-    expect(state.points[4].options!['radius'], 20);
+    expect((state.points[4].options! as JsObjectFace)['radius'], 20);
     expect(tester.takeException(), isNull);
   });
 
@@ -375,7 +387,7 @@ void main() {
     // doughnut area keeps it in the canvas: the circle of its outer border
     // edge, moved by the offset, is inside the chart.
     final arc = state.arcs[4];
-    final options = arc.options!;
+    final options = arc.options! as JsObjectFace;
     expect(options['offset'], 16);
     final reach =
         arc.outerRadius +

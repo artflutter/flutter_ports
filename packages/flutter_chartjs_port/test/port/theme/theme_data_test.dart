@@ -11,6 +11,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
@@ -137,23 +139,37 @@ ChartThemeData _only(String name, ChartThemeData from) =>
 /// `transitions` keys are left out.
 Map<String, Object?> _slots(Object? value, [String prefix = '']) {
   if (value == null && prefix.isEmpty) return const {};
-  if (value is! Map<String, Object?> ||
+  if (!_isObject(value) ||
       prefix.endsWith('.font') ||
       prefix.endsWith('Font')) {
     return {prefix: value};
   }
   return {
-    for (final key in value.keys)
+    for (final key in jsObjectKeys(value))
       if (prefix.isNotEmpty || key != 'transitions')
-        ..._slots(value[key], prefix.isEmpty ? key : '$prefix.$key'),
+        ..._slots(jsGet(value, key), prefix.isEmpty ? key : '$prefix.$key'),
   };
 }
+
+/// Whether [value] is an object of a compiled theme: a Map, or a typed scope
+/// with its face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
+
+/// [value] as plain Dart values for a compare with a Map literal: an object
+/// gives a new Map of its own keys in the `Object.keys` order, each value
+/// read through its face; another value is itself.
+Object? _plain(Object? value) => _isObject(value)
+    ? <String, Object?>{
+        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
+      }
+    : value;
 
 /// The value of the dot path [path] in [root].
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = (node! as Map<String, Object?>)[key];
+    node = jsGet(node, key);
   }
   return node;
 }
@@ -255,7 +271,7 @@ final class _Event implements types.ChartEvent {
 
 /// The scatter chart of the probe F-P1b of Chart.js ADR 0050: 3 points,
 /// with the compiled [theme] under `themeConfigKey`.
-AnyObject _scatter(AnyObject? theme) => <String, Object?>{
+AnyObject _scatter(Object? theme) => <String, Object?>{
   'type': 'scatter',
   'data': <String, Object?>{
     'datasets': <Object?>[
@@ -602,8 +618,10 @@ void main() {
           font: TextStyle(color: _red, letterSpacing: 2, fontSize: 13),
         ),
       );
-      expect(_at(compiled, 'scale.ticks.font'), {'size': 13.0});
-      expect(_at(compiled, 'plugins.legend.labels.font'), {'size': 13.0});
+      expect(_plain(_at(compiled, 'scale.ticks.font')), {'size': 13.0});
+      expect(_plain(_at(compiled, 'plugins.legend.labels.font')), {
+        'size': 13.0,
+      });
     });
 
     test('the palette', () {
@@ -645,9 +663,9 @@ void main() {
     test('the light preset compiles to the compiled ChartThemes.light', () {
       final compiled = compileThemeData(const ChartThemeData.light());
       final oracle = compileChartTheme(ChartThemes.light);
-      expect(compiled, oracle);
-      // The key order too: the compiled Maps keep the insertion order.
-      expect(jsonEncode(compiled), jsonEncode(oracle));
+      expect(_plain(compiled), _plain(oracle));
+      // The key order too: the compiled objects keep the insertion order.
+      expect(jsonEncode(_plain(compiled)), jsonEncode(_plain(oracle)));
     });
 
     test('each call compiles again (no memo, Chart.js ADR 0054 §4)', () {
@@ -659,8 +677,8 @@ void main() {
         isFalse,
       );
       expect(
-        compileThemeData(const ChartThemeData.light()),
-        compileThemeData(const ChartThemeData.light()),
+        _plain(compileThemeData(const ChartThemeData.light())),
+        _plain(compileThemeData(const ChartThemeData.light())),
       );
       final theme = ChartThemeData(color: _copy(_red));
       expect(
@@ -673,7 +691,7 @@ void main() {
         identical(compileThemeData(equal), compileThemeData(theme)),
         isFalse,
       );
-      expect(compileThemeData(equal), compileThemeData(theme));
+      expect(_plain(compileThemeData(equal)), _plain(compileThemeData(theme)));
       expect(compileThemeData(null), isNull);
       expect(compileThemeData(const ChartThemeData()), isNull);
       expect(compileThemeData(const ChartThemeData()), isNull);
@@ -763,7 +781,7 @@ void main() {
       final compiled = compileThemeData(
         const ChartThemeData(color: _red, palette: []),
       )!;
-      expect((compiled['plugins']! as AnyObject).containsKey('colors'), false);
+      expect((compiled['plugins']! as JsObjectFace).jsHas('colors'), false);
       expect(themeDataToRaw(const ChartThemeData(palette: [])), isEmpty);
     });
 

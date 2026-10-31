@@ -23,7 +23,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show MinMax;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext;
+    show ContextObject, createContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -543,7 +543,7 @@ final class _FakeChart implements types.Chart {
   HTMLCanvasElement? get canvas => null;
 
   @override
-  AnyObject get data => config.data;
+  Object get data => config.data;
 
   @override
   final Map<String, types.Scale> scales = {};
@@ -565,15 +565,15 @@ final class _FakeChart implements types.Chart {
   final List<Object?> _plugins;
 
   @override
-  late final AnyObject options = config.createResolver(
+  late final JsProxyObject options = config.createResolver(
     config.chartOptionScopes(),
     getContext(),
   );
 
-  AnyObject? _context;
+  ContextObject? _context;
 
   @override
-  AnyObject getContext() =>
+  ContextObject getContext() =>
       _context ??= createContext(null, {'chart': this, 'type': 'chart'});
 
   // core.controller.js:829-853.
@@ -667,19 +667,22 @@ String _enc(Object? v) => switch (v) {
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
   final Map<String, Object?> m => _encMap(m),
+  final JsObjectFace m => _encMap(m),
   _ => throw ArgumentError.value(v, 'v', 'No text'),
 };
 
-/// The text of the object [m]: the keys of `Object.keys` with their values.
-String _encMap(Map<String, Object?> m) {
+/// The text of the object [m] (a Map or a typed object with a face): the
+/// keys of `Object.keys` with their values.
+String _encMap(Object m) {
   final entries = [
-    for (final key in jsObjectKeys(m)) '${jsonEncode(key)}:${_enc(m[key])}',
+    for (final key in jsObjectKeys(m))
+      '${jsonEncode(key)}:${_enc(jsGet(m, key))}',
   ];
   return '{${entries.join(',')}}';
 }
 
 /// The text of an options object: its id, frozen state and value.
-String _encOptions(AnyObject? options) => options == null
+String _encOptions(Object? options) => options == null
     ? 'undefined'
     : '${_idOf('opt', options)} frozen=${jsObjectIsFrozen(options)} '
           '${_enc(options)}';
@@ -840,7 +843,9 @@ final class _Run {
       case 'writeOptions':
         _options(args[0], args[1], args[2])[args[3]! as String] = args[4];
       case 'writeElementOptions':
-        _element(args[0], args[1])!.options![args[2]! as String] = args[3];
+        (_element(args[0], args[1])!.options! as JsObjectFace)[args[2]!
+                as String] =
+            args[3];
       // Observations.
       case 'throws':
         final inner = args[0]! as List<Object?>;
@@ -1006,7 +1011,8 @@ final class _Run {
 
   /// The options of the element type of the dataset [ds] at [index]: the
   /// dataset element options for a null [index].
-  AnyObject _options(Object? ds, Object? index, Object? mode) => index == null
+  JsObjectFace _options(Object? ds, Object? index, Object? mode) =>
+      index == null
       ? controller(ds).resolveDatasetElementOptions(mode as String?)
       : controller(
           ds,
@@ -1113,7 +1119,7 @@ void main() {
       expect(value.name, 'DatasetController');
       expect(value.superclass, isNull);
       expect(value['defaults'], same(DatasetController.defaults));
-      expect(value['defaults'], isEmpty);
+      expect(jsObjectKeys(value['defaults']), isEmpty);
       expect(value.has('datasetElementType'), isTrue);
       expect(value['datasetElementType'], isNull);
       expect(value.has('dataElementType'), isTrue);
@@ -1355,7 +1361,7 @@ void main() {
       run.step(<Object?>['elements', false]);
       expect(
         (items[0]! as Map<String, Object?>)['_stacks'],
-        isA<Map<String, Object?>>(),
+        isA<JsObjectFace>(),
       );
     });
 
@@ -1387,8 +1393,8 @@ void main() {
       run.step(<Object?>['elements', false]);
       for (final item in items) {
         final itemStacks = stacksOf(item);
-        expect(itemStacks, isA<Map<String, Object?>>());
-        expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+        expect(itemStacks, isA<JsObjectFace>());
+        expect(jsObjectKeys(itemStacks), ['y']);
         // The same entry at each read.
         expect(stacksOf(item), same(itemStacks));
       }
@@ -1396,7 +1402,7 @@ void main() {
       // 'undefined', so both items share one stack, as upstream.
       final stack = jsGetKey(stacksOf(items[0]), 'y');
       expect(jsGetKey(stacksOf(items[1]), 'y'), same(stack));
-      expect(jsObjectKeys(stack! as Map<String, Object?>), [
+      expect(jsObjectKeys(stack), [
         '0',
         '_top',
         '_bottom',
@@ -1419,20 +1425,20 @@ void main() {
       final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
       run._dataset(0)['data'] = items;
       run.step(<Object?>['elements', false]);
-      final itemStacks = stacksOf(items[0])! as AnyObject;
-      final oldStack = itemStacks['y']! as AnyObject;
-      expect(oldStack.containsKey('0'), isTrue);
+      final itemStacks = stacksOf(items[0])! as JsObjectFace;
+      final oldStack = itemStacks['y']! as JsObjectFace;
+      expect(oldStack.jsHas('0'), isTrue);
       run
         ..step(<Object?>['setDataset', 0, 'stack', 'other'])
         ..step(<Object?>['elements', false]);
-      expect(jsObjectKeys(run.chart.stacks!), ['x.y.test', 'x.y.other']);
+      expect(jsObjectKeys(run.chart.stacks), ['x.y.test', 'x.y.other']);
       // The same `_stacks` object, with the stack of the new key.
       expect(stacksOf(items[0]), same(itemStacks));
-      final newStack = itemStacks['y']! as AnyObject;
+      final newStack = itemStacks['y']! as JsObjectFace;
       expect(identical(newStack, oldStack), isFalse);
       expect(jsGetKey(newStack, '0'), same(undefined));
       // clearStacks skips the undefined value: the key stays.
-      expect(oldStack.containsKey('0'), isTrue);
+      expect(oldStack.jsHas('0'), isTrue);
     });
 
     // applyStack (core.datasetController.js:599) and updateRangeFromParsed
@@ -1476,8 +1482,8 @@ void main() {
         run.step(<Object?>['elements', false]);
         for (final item in items) {
           final itemStacks = stacksOf(item);
-          expect(itemStacks, isA<Map<String, Object?>>());
-          expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+          expect(itemStacks, isA<JsObjectFace>());
+          expect(jsObjectKeys(itemStacks), ['y']);
           expect(stacksOf(item), same(itemStacks));
         }
         // The applyStack of the Node.js probe gives undefined.
@@ -1503,8 +1509,8 @@ void main() {
       run.step(<Object?>['elements', false]);
       expect(a.has('_stacks'), isTrue);
       final itemStacks = a['_stacks'];
-      expect(itemStacks, isA<Map<String, Object?>>());
-      expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+      expect(itemStacks, isA<JsObjectFace>());
+      expect(jsObjectKeys(itemStacks), ['y']);
       expect(stacksOf(a), same(itemStacks));
       expect(stacksOf(b), same(itemStacks));
       expect(jsObjectKeys(run.chart.stacks!['x.y.test']! as AnyObject), [
@@ -1588,7 +1594,7 @@ void main() {
       run.step(<Object?>['update', 'reset']);
       final line = run.meta(0).dataset!;
       expect(line.options, isA<LineOptions>());
-      expect(jsObjectKeys(line.options!).first, r'$shared');
+      expect(jsObjectKeys(line.options).first, r'$shared');
     });
 
     test('getSharedOptions keeps the class and the key order', () {
@@ -1608,7 +1614,7 @@ void main() {
       // A write into the frozen cache entry throws. A write into the options
       // of a point does not throw.
       expect(() => source['radius'] = 9.0, throwsA(isA<TypeError>()));
-      run.meta(0).data[0].options!['radius'] = 9.0;
+      (run.meta(0).data[0].options! as JsObjectFace)['radius'] = 9.0;
       expect(shared['radius'], 9.0);
     });
 
@@ -1618,7 +1624,7 @@ void main() {
         ..step(<Object?>['hover', 0.0, 0.0]);
       final options = run.meta(0).data[0].options;
       expect(options, isA<PointOptions>());
-      expect(options![r'$shared'], isFalse);
+      expect((options! as JsObjectFace)[r'$shared'], isFalse);
       expect(jsObjectIsFrozen(options), isFalse);
       expect(options, isNot(same(run.controller(0).sharedOptions)));
     });
@@ -1645,7 +1651,7 @@ void main() {
       final options = run.meta(0).data[0].options;
       expect(options, isA<PointOptions>());
       expect(jsObjectIsFrozen(options), isTrue);
-      expect(options![r'$shared'], isFalse);
+      expect((options! as JsObjectFace)[r'$shared'], isFalse);
       expect(
         () => run.step(<Object?>['update', 'default']),
         throwsA(isA<TypeError>()),
@@ -1698,7 +1704,7 @@ void main() {
         'index', () {
       final run = _runTo('parsePrimitiveData with labels', 2);
       final controller = run.controller(0);
-      expect(controller.getParsed(0), isA<Map<String, Object?>>());
+      expect(controller.getParsed(0), isA<JsObjectFace>());
       // A parsed item can be JS null. Thus a missing index gives the
       // undefined sentinel.
       expect(controller.getParsed(9), same(undefined));

@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:chartjs_gallery/charts/chart_type_page.dart';
 import 'package:chartjs_gallery/charts/chart_types.dart';
+import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
@@ -232,7 +233,7 @@ void _expectChart(WidgetTester tester, ChartTypePageState state, String id) {
   final chart = state.chart!;
   final stem = id.split('.').first;
   expect(chart.config.type, expected.type, reason: id);
-  final datasets = chart.data['datasets']! as List<Object?>;
+  final datasets = readByName(chart.data, 'datasets')! as List<Object?>;
   expect(datasets, hasLength(expected.controllers.length), reason: id);
   for (var i = 0; i < datasets.length; i++) {
     final meta = chart.getDatasetMeta(i);
@@ -429,7 +430,7 @@ void main() {
     });
     final chart = state.chart!;
     final dataset =
-        (chart.data['datasets']! as List<Object?>).single!
+        (readByName(chart.data, 'datasets')! as List<Object?>).single!
             as Map<Object?, Object?>;
     expect(dataset['fill'], 'origin');
     expect(dataset['data'], [
@@ -477,7 +478,7 @@ void main() {
         final fill = fills[variant.key]!;
         final chart = state.chart!;
         final dataset =
-            (chart.data['datasets']! as List<Object?>).single!
+            (readByName(chart.data, 'datasets')! as List<Object?>).single!
                 as Map<Object?, Object?>;
         expect(dataset['fill'], fill, reason: variant.key);
         // line-boundaries.md:106: `'Fill: ' + ctx.chart.data.datasets[0]
@@ -632,7 +633,7 @@ void main() {
         // The default label callback (plugin.tooltip.js:388-403).
         final datasetLabel =
             jsGet(
-                  (chart.data['datasets']! as List<Object?>).first,
+                  (readByName(chart.data, 'datasets')! as List<Object?>).first,
                   'label',
                 )!
                 as String;

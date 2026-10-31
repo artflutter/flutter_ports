@@ -118,7 +118,7 @@ Map<String, Object?> _eventLog(List<String> log) => <String, Object?>{
       'afterEvent ${event.type} ${event.native!.type} '
       '${jsToString(event.x)},${jsToString(event.y)}',
     );
-    (args! as Map<String, Object?>)['changed'] = true;
+    (args! as JsObjectFace)['changed'] = true;
   },
   'afterRender': (Object? chart, Object? args, Object? options) {
     log.add('afterRender');

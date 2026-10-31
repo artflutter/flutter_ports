@@ -1,4 +1,12 @@
+# The allowlist of the close step (Chart.js ADR 0054 §3).
+# - jsGet 2, jsObjectKeys 1: getScope and route over a scope path of the
+#   user (a typed scope or a Map), the replacement of a routed Map node in
+#   its owner (_typedScope).
+# - jsGet 2, jsObjectKeys 1, stringIndex 1: the routed getter and its
+#   Object.assign of the local and the target object (core.defaults.js:148).
+# - jsGet 4: the function defaults of core.defaults.js (devicePixelRatio,
+#   hoverBackgroundColor, hoverBorderColor, hoverColor) read their context
+#   and options arguments, which user code can give.
 jsGet 8
 stringIndex 1
-jsObjectKeys 1
-extendsMapBase 1
+jsObjectKeys 2

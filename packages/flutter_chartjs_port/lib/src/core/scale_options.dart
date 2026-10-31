@@ -49,7 +49,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// `options.setContext(context)` of a nested option object: a view of the
 /// same resolver with the context [context].
@@ -57,7 +56,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// The option objects of a scale are `ContextProxy` resolvers. Another value
 /// has no `setContext`. JavaScript then throws a `TypeError` at the call.
 /// Here the cast throws it.
-ContextProxy _setContext(Object? options, AnyObject context) =>
+ContextProxy _setContext(Object? options, Object context) =>
     (options! as ContextProxy).setContext(context);
 
 /// index.d.ts:1200 `CoreScaleOptions`: the options of a scale, the view
@@ -267,7 +266,7 @@ extension type const RadialLinearScaleOptions(OptionView _view)
 /// `RadialTickOptions` (index.d.ts:3535): the keys of `TickOptionsScope`.
 extension type const TickOptions(Object? raw) {
   /// `ticks.setContext(context)`.
-  TickOptions setContext(AnyObject context) =>
+  TickOptions setContext(Object context) =>
       TickOptions(_setContext(raw, context));
 
   /// index.d.ts:3120 `backdropColor`.
@@ -377,7 +376,7 @@ extension type const MajorTickOptions(Object? raw) {
 /// index.d.ts:3060 `GridLineOptions`.
 extension type const GridLineOptions(Object? raw) {
   /// `grid.setContext(context)`.
-  GridLineOptions setContext(AnyObject context) =>
+  GridLineOptions setContext(Object context) =>
       GridLineOptions(_setContext(raw, context));
 
   /// index.d.ts:3064 `display: boolean`.
@@ -425,7 +424,7 @@ extension type const GridLineOptions(Object? raw) {
 /// index.d.ts:3042 `BorderOptions`.
 extension type const BorderOptions(Object? raw) {
   /// `border.setContext(context)`.
-  BorderOptions setContext(AnyObject context) =>
+  BorderOptions setContext(Object context) =>
       BorderOptions(_setContext(raw, context));
 
   /// index.d.ts:3046 `display: boolean`.
@@ -526,7 +525,7 @@ extension type const DisplayFormats(Object? raw) {
 /// index.d.ts:3568 the `angleLines` object of `RadialLinearScaleOptions`.
 extension type const AngleLineOptions(Object? raw) {
   /// `angleLines.setContext(context)`.
-  AngleLineOptions setContext(AnyObject context) =>
+  AngleLineOptions setContext(Object context) =>
       AngleLineOptions(_setContext(raw, context));
 
   /// index.d.ts:3573 `display: boolean`.
@@ -548,7 +547,7 @@ extension type const AngleLineOptions(Object? raw) {
 /// index.d.ts:3613 the `pointLabels` object of `RadialLinearScaleOptions`.
 extension type const PointLabelOptions(Object? raw) {
   /// `pointLabels.setContext(context)`.
-  PointLabelOptions setContext(AnyObject context) =>
+  PointLabelOptions setContext(Object context) =>
       PointLabelOptions(_setContext(raw, context));
 
   /// index.d.ts:3618 `backdropColor`.

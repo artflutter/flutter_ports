@@ -1567,7 +1567,7 @@ final class _BenchChart extends Chart {
   @override
   bool? notifyPlugins(
     String hook, [
-    Map<String, Object?>? args,
+    Object? args,
     FilterCallback? filter,
   ]) {
     notifies++;

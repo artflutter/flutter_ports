@@ -36,25 +36,36 @@ final class _Inheriting extends MapBase<String, Object?> {
 
 /// A proxy whose `get` trap gives Dart `null` for every key and whose `has`
 /// trap knows no key.
-final class _NullProxy extends MapBase<String, Object?>
-    implements JsProxyObject {
+final class _NullProxy implements JsProxyObject {
   @override
-  Object? operator [](Object? key) => null;
+  Object? operator [](String name) => null;
 
   @override
-  void operator []=(String key, Object? value) {}
+  void operator []=(String name, Object? value) {}
 
   @override
-  Iterable<String> get keys => const [];
+  Object? jsRead(String name) => null;
+
+  @override
+  void jsWrite(String name, Object? value) {}
+
+  @override
+  List<String> jsKeys() => const [];
+
+  @override
+  bool jsHas(String name) => false;
+
+  @override
+  bool jsDelete(String name) => false;
 
   @override
   List<String> objectKeys() => const [];
 
   @override
-  Object? remove(Object? key) => null;
+  List<String> ownKeys() => const [];
 
   @override
-  void clear() {}
+  bool hasProperty(String name) => false;
 }
 
 /// An object with the frozen state of Chart.js ADR 0021.

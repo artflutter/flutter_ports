@@ -111,7 +111,7 @@ Object? _realLegend(Chart chart) {
   return <String, Object?>{
     'items': legend.legendItems,
     'keys': [
-      for (final item in legend.legendItems!) jsObjectKeys(item! as AnyObject),
+      for (final item in legend.legendItems!) jsObjectKeys(item),
     ],
     'hitBoxes': (legend as Legend).legendHitBoxes,
   };

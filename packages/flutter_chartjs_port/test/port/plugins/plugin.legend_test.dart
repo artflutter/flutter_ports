@@ -409,7 +409,7 @@ void main() {
     test('the keys of the plugin object are the upstream keys', () {
       expect(jsObjectKeys(legend), _upstreamKeys);
       expect(
-        jsObjectKeys(legend['defaults']! as AnyObject),
+        jsObjectKeys(legend['defaults']),
         _upstreamDefaultsKeys,
       );
     });
@@ -972,7 +972,7 @@ void main() {
       );
       final onClick = jsGet(chart.legend!.options, 'onClick');
       final item = <String, Object?>{
-        ...chart.legend!.legendItems![1]! as Map<String, Object?>,
+        ..._plainItem(chart.legend!.legendItems![1]!),
         'datasetIndex': datasetIndex,
       };
       seen.clear();
@@ -1076,7 +1076,7 @@ void main() {
         final chart = acquireChart(_line(<String, Object?>{}));
         final onClick = jsGet(chart.legend!.options, 'onClick');
         final item = <String, Object?>{
-          ...chart.legend!.legendItems![1]! as Map<String, Object?>,
+          ..._plainItem(chart.legend!.legendItems![1]!),
           'datasetIndex': index,
         };
         expect(
@@ -1258,3 +1258,10 @@ final class _Margins implements TRBL {
   @override
   final double bottom;
 }
+
+/// The own keys and values of the legend item [item] (a typed item of the
+/// plugin, Chart.js ADR 0054 §12) as a new plain Map, as the object spread
+/// `{...item}` gives them.
+Map<String, Object?> _plainItem(Object item) => <String, Object?>{
+  for (final key in jsObjectKeys(item)) key: jsGet(item, key),
+};

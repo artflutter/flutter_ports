@@ -282,14 +282,19 @@ String _json(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   final List<Object?> list => '[${list.map(_json).join(',')}]',
-  final Map<String, Object?> map =>
+  final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
   _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
 };
 
+/// Whether [value] is an object: a Map, or a typed object with its face
+/// (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
+
 /// The JSON member `"key":value` of [key] in [map].
-String _entry(Map<String, Object?> map, String key) =>
-    '${jsonEncode(key)}:${_json(map[key])}';
+String _entry(Object map, String key) =>
+    '${jsonEncode(key)}:${_json(jsGet(map, key))}';
 
 /// The text of the observed [value]: a string is the string, another value
 /// is its JSON.
@@ -330,20 +335,20 @@ List<Object?> _points() => <Object?>[
 /// Writes [value] at the dot path [path] of the global scope [root], and
 /// creates the missing objects. The restore of the harness removes the write
 /// after the test.
-void _put(Map<String, Object?> root, String path, Object? value) {
+void _put(Object root, String path, Object? value) {
   final keys = path.split('.');
   var node = root;
   for (final key in keys.sublist(0, keys.length - 1)) {
-    final next = node[key];
-    if (next is Map<String, Object?>) {
-      node = next;
+    final next = jsGet(node, key);
+    if (_isObject(next)) {
+      node = next!;
     } else {
       final created = <String, Object?>{};
-      node[key] = created;
+      jsSet(node, key, created);
       node = created;
     }
   }
-  node[keys.last] = value;
+  jsSet(node, keys.last, value);
 }
 
 /// The value at the dot path [path] of [root].
@@ -475,7 +480,7 @@ List<String> _snapshot(Object? theme, {bool user = false}) {
     identical(_point(chart).options, _point(chart, 1).options),
   );
   observe('active', meta.controller!.resolveDataElementOptions(0, 'active'));
-  observe('scales', chart.config.options['scales']);
+  observe('scales', jsGet(chart.config.options, 'scales'));
   final x = chart.scales['x']!;
   observe('scale x', [
     _at(x.options, 'ticks.color'),
@@ -521,7 +526,7 @@ String Function(Object?) _labeller(List<(Object?, String)> named) {
   return (scope) {
     final name = names[scope] ?? seen[scope];
     if (name != null) return name;
-    final label = scope is Map<String, Object?> && jsObjectKeys(scope).isEmpty
+    final label = _isObject(scope) && jsObjectKeys(scope).isEmpty
         ? '{}#${fresh++}'
         : '?${_json(scope)}';
     seen[scope] = label;
@@ -713,9 +718,9 @@ List<String> _axes(String type, Object? theme) {
   observe('scales', jsObjectKeys(chart.scales).join(','));
   observe(
     'option scales',
-    jsObjectKeys(chart.options['scales']! as AnyObject).join(','),
+    jsObjectKeys(chart.options['scales']).join(','),
   );
-  observe('config scales', chart.config.options['scales']);
+  observe('config scales', jsGet(chart.config.options, 'scales'));
   return lines;
 }
 
@@ -1251,7 +1256,7 @@ void main() {
             'options': options,
             if (levels.contains('theme')) themeConfigKey: theme,
           });
-          return _point(chart).options!['backgroundColor'];
+          return jsGet(_point(chart).options, 'backgroundColor');
         },
       );
 
@@ -1280,7 +1285,7 @@ void main() {
             0,
             'active',
           )['backgroundColor'],
-          _point(chart).options!['backgroundColor'],
+          jsGet(_point(chart).options, 'backgroundColor'),
         ];
       }
 
@@ -2006,7 +2011,7 @@ void main() {
         'the palette keys of plugin.colors equal the keys of the compiler',
         () {
           final compiled = compileChartTheme(ChartThemes.light);
-          final colorsOptions = _at(compiled, 'plugins.colors')! as AnyObject;
+          final colorsOptions = _at(compiled, 'plugins.colors')!;
           expect(
             jsObjectKeys(colorsOptions).where((key) => key.startsWith(r'$')),
             [themeBorderColorsKey, themeBackgroundColorsKey],

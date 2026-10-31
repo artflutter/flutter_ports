@@ -35,10 +35,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show ArrayListener, listenArrayEvents, unlistenArrayEvents;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextResolver, Resolver;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ContextObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show JsFunction, jsCall, jsIsFunction;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -62,7 +65,7 @@ final class JasmineOptions {
   const JasmineOptions(this.resolver);
 
   /// The resolver.
-  final Map<String, Object?> resolver;
+  final Object resolver;
 
   @override
   String toString() => 'resolver {${jsObjectKeys(resolver).join(', ')}}';
@@ -73,13 +76,22 @@ final class JasmineOptions {
 Object? _actual(Object? item) => item is JasmineOptions ? item.resolver : item;
 
 /// `Object.prototype.hasOwnProperty.call(object, key)`: for a resolver, its
-/// `getOwnPropertyDescriptor` trap.
-bool _hasOwnProperty(Map<String, Object?> object, String key) =>
-    switch (object) {
-      final Resolver resolver => resolver.hasOwnProperty(key),
-      final ContextResolver resolver => resolver.hasOwnProperty(key),
-      _ => object.containsKey(key),
-    };
+/// `getOwnPropertyDescriptor` trap; for another typed object, its face
+/// (Chart.js ADR 0054 §5).
+bool _hasOwnProperty(Object object, String key) => switch (object) {
+  final Resolver resolver => resolver.hasOwnProperty(key),
+  final ContextResolver resolver => resolver.hasOwnProperty(key),
+  // Jasmine `hasProperty` also reads the prototype chain of a context.
+  final ContextObject context => context.hasProperty(key),
+  final JsObjectFace face => face.jsHas(key),
+  final Map<String, Object?> map => map.containsKey(key),
+  _ => false,
+};
+
+/// Whether [value] is an object for Jasmine: a Map or a typed object with a
+/// face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
 
 /// Jasmine `toEqual(expected)`: the deep equality `MatchersUtil.eq` of
 /// jasmine-core 3.99.1, for the values of the specs.
@@ -91,8 +103,9 @@ bool _hasOwnProperty(Map<String, Object?> object, String key) =>
 ///   [undefined].
 /// - Two arrays are equal when they have the same length and equal items.
 /// - Two objects are equal when they have the same `Object.keys`
-///   ([jsObjectKeys]) and equal values. An object is a Map, also a resolver
-///   of helpers.config. A value is the property read `object[key]`
+///   ([jsObjectKeys]) and equal values. An object is a Map or a typed object
+///   with a face, also a resolver of helpers.config. A value is the property
+///   read `object[key]`
 ///   ([jsGet]), the `get` trap of a resolver. Thus two resolvers that are
 ///   not identical can be equal.
 /// - Jasmine keeps a stack of the objects that it compares, for cyclic
@@ -145,10 +158,8 @@ final class _JasmineEquals extends Matcher {
       case (final List<Object?> aList, final List<Object?> bList):
         if (aList.length != bList.length) return false;
         keys = [for (var i = 0; i < aList.length; i++) '$i'];
-      case (
-        final Map<String, Object?> aMap,
-        final Map<String, Object?> bMap,
-      ):
+      case (final Object aMap, final Object bMap)
+          when _isObject(aMap) && _isObject(bMap):
         keys = jsObjectKeys(aMap);
         final bKeys = jsObjectKeys(bMap);
         if (keys.length != bKeys.length) return false;
@@ -207,13 +218,13 @@ final class _JasmineObjectContaining extends Matcher {
   @override
   bool matches(Object? item, Map<Object?, Object?> matchState) {
     final object = _actual(item);
-    if (object is! Map<String, Object?> && object is! ElementProps) {
+    if (!_isObject(object) && object is! ElementProps) {
       return false;
     }
     for (final MapEntry(:key, :value) in expected.entries) {
       final path = <String>[key];
       final (has, actual) = switch (object) {
-        final Map<String, Object?> map => (
+        final Object map when _isObject(map) => (
           _hasOwnProperty(map, key),
           jsGet(map, key),
         ),

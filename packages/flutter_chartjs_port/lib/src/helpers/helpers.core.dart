@@ -2,15 +2,17 @@
 
 /// Port of `src/helpers/helpers.core.ts`.
 ///
-/// The JavaScript values map to Dart values as Chart.js ADR 0043 decides: a
-/// plain object is a `Map<String, Object?>` ([AnyObject]), an array is a
+/// The JavaScript values map to Dart values as Chart.js ADR 0054 §5 decides:
+/// a plain object is a `Map<String, Object?>` ([AnyObject]) or a typed
+/// object with a face ([JsObjectFace]: a typed option scope, resolved
+/// options, a resolver, a context, a parsed item, ...), an array is a
 /// [List], `undefined` is the [undefined] sentinel and `null` is Dart `null`.
 /// A function value is a Dart [Function] or a [JsFunction], and ported code
 /// calls it through [jsCall] (`lib/src/js/js_function.dart`).
 ///
-/// A Map has no prototype. Thus [isObject] is true only for a
-/// `Map<String, Object?>`. In JavaScript it is also true for an instance of a
-/// class (helpers.core.ts:53-55). Here a class instance in an options tree is
+/// [isObject] is true for a `Map<String, Object?>` and a typed object with a
+/// face. In JavaScript it is also true for an instance of another class
+/// (helpers.core.ts:53-55). Here such a class instance in an options tree is
 /// a leaf: [clone] and [mergeIf] copy its reference and do not enter it.
 /// [merge] skips a class instance as a source, and it copies the reference of
 /// a class instance as a source value, also over an element target value.
@@ -20,7 +22,6 @@
 /// @namespace Chart.helpers
 library;
 
-import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -85,10 +86,10 @@ bool isArray(Object? value) {
 /// @param value - The value to test.
 /// @since 2.7.0
 ///
-/// A JavaScript plain object is a `Map<String, Object?>` (Chart.js ADR 0043),
-/// so only such a Map is an object here. Each consequence is a difference
-/// from JavaScript:
-/// - An instance of a Dart class is not an object, although
+/// A JavaScript plain object is a `Map<String, Object?>` or a typed object
+/// with a face ([JsObjectFace], Chart.js ADR 0054 §5), so only these are
+/// objects here. Each consequence is a difference from JavaScript:
+/// - An instance of another Dart class is not an object, although
 ///   `Object.prototype.toString` gives `'[object Object]'` for an instance of
 ///   a JavaScript class. [clone] and [mergeIf] treat it as a leaf. [merge]
 ///   and [merger] treat a `types.PropertyAccess` target as an object (the
@@ -101,7 +102,8 @@ bool isArray(Object? value) {
 ///   another type.
 ///
 /// A typed option scope of Chart.js ADR 0054 (`OptionScope`) is an object
-/// too (§5, the leaf rule).
+/// (§5, the leaf rule), and so are the resolved options, the resolvers, the
+/// contexts and the other typed objects with a face.
 ///
 /// A data item of the typed API (`TypedDataItem`, Chart.js ADR 0054 §7) is
 /// an object too: it stands for the plain object {x, y} of the docs. The
@@ -109,16 +111,52 @@ bool isArray(Object? value) {
 /// and their mergers keep it as a leaf, as an element: no copy into a Map,
 /// no merge into it.
 bool isObject(Object? value) {
-  return _isMapObject(value) || value is TypedDataItem;
+  return value is Map<String, Object?> || value is JsObjectFace;
 }
 
 /// The objects that [clone], [merge] and [mergeIf] copy and merge: a Map
-/// with `String` keys or a typed option scope. A [TypedDataItem] is a leaf
-/// there.
+/// with `String` keys or a typed object with a face (a typed option scope,
+/// resolved options, a resolver, a context, ...). A [TypedDataItem] is a
+/// leaf there.
 bool _isMapObject(Object? value) {
-  return value != null &&
-      (value is Map<String, Object?> || value is OptionScope);
+  return value is Map<String, Object?> ||
+      (value is JsObjectFace && value is! TypedDataItem);
 }
+
+/// `object[key]` of a source or a target of [clone], [merge] and
+/// [mergeIf]: the Map read (Dart `null` for an absent key), the face of a
+/// typed object, or the read by name of a [PropertyAccess] target. The
+/// mergers test the result with [_isMapObject] only, so Dart `null` and
+/// [undefined] give the same result.
+Object? _getProp(Object object, String key) => switch (object) {
+  final Map<String, Object?> map => map[key],
+  final JsObjectFace face => face.jsRead(key),
+  final PropertyAccess access => access[key],
+  _ => undefined,
+};
+
+/// `object[key] = value` of a target of [merge] and [mergeIf]: the Map
+/// write, the face of a typed object, or the write by name of a
+/// [PropertyAccess] target.
+void _setProp(Object object, String key, Object? value) {
+  switch (object) {
+    case final Map<String, Object?> map:
+      map[key] = value;
+    case final JsObjectFace face:
+      face.jsWrite(key, value);
+    case final PropertyAccess access:
+      access[key] = value;
+  }
+}
+
+/// `Object.prototype.hasOwnProperty.call(object, key)` of a target of
+/// [mergeIf]. A [PropertyAccess] target has no list of own keys: it throws
+/// an [UnsupportedError] (the row `adapt-merge-element-target`).
+bool _hasOwn(Object object, String key) => switch (object) {
+  final Map<String, Object?> map => map.containsKey(key),
+  final JsObjectFace face => face.jsHas(key),
+  _ => throw UnsupportedError('The own keys of a merge target'),
+};
 
 /// helpers.core.ts:61 `isNumberFinite`: whether [value] is a finite number.
 ///
@@ -239,19 +277,13 @@ void each(
       }
     }
   } else if (isObject(loopable)) {
-    // A typed data item is an object: its own keys through its face.
-    final Object? Function(String key) read;
-    if (loopable is TypedDataItem) {
-      keys = loopable.jsKeys();
-      read = loopable.jsRead;
-    } else {
-      final object = loopable! as AnyObject;
-      keys = jsObjectKeys(object);
-      read = (key) => jsGet(object, key);
-    }
+    // A Map or a typed object with a face (also a typed data item): its own
+    // keys in the `Object.keys` order, each value read by name.
+    final object = loopable!;
+    keys = jsObjectKeys(object);
     len = keys.length;
     for (i = 0; i < len; i++) {
-      jsCall(fn, [read(keys[i]), keys[i]], thisArg: thisArg);
+      jsCall(fn, [jsGet(object, keys[i]), keys[i]], thisArg: thisArg);
     }
   }
 }
@@ -289,8 +321,10 @@ bool elementsEqual(List<ActiveDataPoint>? a0, List<ActiveDataPoint>? a1) {
 /// @param source - The value to clone.
 ///
 /// A List gives a new `List<Object?>`. A typed list gives a new typed list of
-/// the same type, as `TypedArray.prototype.map` does. An object gives a new
-/// `Map<String, Object?>` with its keys in the [jsObjectKeys] order. The
+/// the same type, as `TypedArray.prototype.map` does. A typed option scope
+/// gives a typed copy (Chart.js ADR 0054 §3). Another object (a Map or a
+/// typed object with a face) gives a new `Map<String, Object?>` with its
+/// keys in the [jsObjectKeys] order. The
 /// upstream target has no prototype (`Object.create(null)`), so a
 /// `'__proto__'` key becomes an own key, as here. Any other value is the
 /// result.
@@ -307,14 +341,14 @@ Object? clone(Object? source) {
 
   // A typed data item is a leaf ([isObject]).
   if (_isMapObject(source)) {
-    final object = source! as AnyObject;
+    final object = source!;
     final target = <String, Object?>{};
     final keys = jsObjectKeys(object);
     final klen = keys.length;
     var k = 0;
 
     for (; k < klen; ++k) {
-      target[keys[k]] = clone(object[keys[k]]);
+      target[keys[k]] = clone(_getProp(object, keys[k]));
     }
 
     return target;
@@ -343,18 +377,13 @@ bool _isValidKey(String key) {
 /// interface test. A class instance as a source value is not an object here.
 /// Thus its reference replaces the target value, also an element, where
 /// upstream merges its own keys into an element target value.
-void merger(
-  String key,
-  AnyObject target,
-  AnyObject source,
-  MergeOptions options,
-) {
+void merger(String key, Object target, Object source, MergeOptions options) {
   if (!_isValidKey(key)) {
     return;
   }
 
-  final tval = target[key];
-  final sval = source[key];
+  final tval = _getProp(target, key);
+  final sval = _getProp(source, key);
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     merge(tval, sval, options);
@@ -362,7 +391,7 @@ void merger(
     // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
     merge(tval, sval, options);
   } else {
-    target[key] = _cloneFor(target, key, sval);
+    _setProp(target, key, _cloneFor(target, key, sval));
   }
 }
 
@@ -370,7 +399,7 @@ void merger(
 /// object under a key of a nested kind gives a typed copy of that kind
 /// (Chart.js ADR 0054 §3): the same keys and values in the same order as
 /// the plain copy of [clone].
-Object? _cloneFor(AnyObject target, String key, Object? sval) {
+Object? _cloneFor(Object target, String key, Object? sval) {
   if (target is OptionScope && _isMapObject(sval)) {
     final kind = target.childKindFor(key);
     if (kind != null) return _cloneToScope(kind, sval!);
@@ -384,9 +413,8 @@ Object? _cloneFor(AnyObject target, String key, Object? sval) {
 /// gives it (Chart.js ADR 0054 §3).
 OptionScope _cloneToScope(ScopeKind kind, Object source) {
   final scope = kind.create();
-  final object = source as AnyObject;
-  for (final key in jsObjectKeys(object)) {
-    final value = jsGet(object, key);
+  for (final key in jsObjectKeys(source)) {
+    final value = _getProp(source, key);
     final child = scope.childKindFor(key);
     scope.jsWrite(
       key,
@@ -400,10 +428,14 @@ OptionScope _cloneToScope(ScopeKind kind, Object source) {
 
 /// helpers.core.ts:237 the type of `MergeOptions.merger`: merges `source[key]`
 /// into `target`.
+///
+/// A target or a source is an object: a `Map<String, Object?>` or a typed
+/// object with a face ([JsObjectFace]); a target of [merge] can also be a
+/// [PropertyAccess] value, for example an element.
 typedef Merger = void Function(
   String key,
-  AnyObject target,
-  AnyObject source,
+  Object target,
+  Object source,
   MergeOptions options,
 );
 
@@ -434,13 +466,11 @@ final class MergeOptions {
 /// element (helpers.core.ts:53-55, :264). Thus upstream merges into an
 /// element target, for example `Chart.helpers.merge(tooltip, view)`
 /// (`plugin.tooltip.tests.js:1501`). Here a [PropertyAccess] target is an
-/// object target too: the merger reads and writes it through a Map view with
-/// the read and the write by name ([PropertyAccess.operator []] and
-/// [PropertyAccess.operator []=]). The result is the target, not the view
-/// (the row `adapt-merge-element-target`, Chart.js ADR 0039, section 10).
-/// The view has no keys. Thus a custom merger that lists the keys of its
-/// target, or tests a key with `containsKey`, throws an
-/// [UnsupportedError]. The default [merger] does neither.
+/// object target too: the merger reads and writes it with the read and the
+/// write by name ([PropertyAccess.operator []] and
+/// [PropertyAccess.operator []=]) (the row `adapt-merge-element-target`,
+/// Chart.js ADR 0039, section 10). Such a target has no list of own keys.
+/// The default [merger] does not ask for one.
 Object? merge(
   Object? target, [
   Object? source = undefined,
@@ -449,12 +479,12 @@ Object? merge(
   final sources = isArray(source) ? source! as List : [source];
   final ilen = sources.length;
 
-  final AnyObject object;
+  final Object object;
   if (_isMapObject(target)) {
-    object = target! as AnyObject;
+    object = target!;
   } else if (target is PropertyAccess) {
     // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
-    object = _PropertyAccessView(target);
+    object = target;
   } else {
     return target;
   }
@@ -470,7 +500,7 @@ Object? merge(
       continue;
     }
 
-    final currentObject = current! as AnyObject;
+    final currentObject = current!;
     final keys = jsObjectKeys(currentObject);
     for (var k = 0, klen = keys.length; k < klen; ++k) {
       keyMerger(keys[k], object, currentObject, mergeOptions);
@@ -518,57 +548,22 @@ Object? mergeIf(Object? target, [Object? source = undefined]) {
 /// [Merger]. It is not read.
 void mergerIf(
   String key,
-  AnyObject target,
-  AnyObject source, [
+  Object target,
+  Object source, [
   MergeOptions? options,
 ]) {
   if (!_isValidKey(key)) {
     return;
   }
 
-  final tval = target[key];
-  final sval = source[key];
+  final tval = _getProp(target, key);
+  final sval = _getProp(source, key);
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     mergeIf(tval, sval);
-  } else if (!target.containsKey(key)) {
-    target[key] = _cloneFor(target, key, sval);
+  } else if (!_hasOwn(target, key)) {
+    _setProp(target, key, _cloneFor(target, key, sval));
   }
-}
-
-/// The Map view of a [PropertyAccess] target of [merge] (the row
-/// `adapt-merge-element-target`).
-///
-/// [operator []] is the read by name of the target: the [undefined] sentinel
-/// for an absent name. [operator []=] is the write by name. An element has no
-/// list of its own keys. Thus [keys], [remove] and [clear] throw an
-/// [UnsupportedError], and so do the other Map members that use them, for
-/// example `containsKey` and `length`.
-final class _PropertyAccessView extends MapBase<String, Object?> {
-  _PropertyAccessView(this._target);
-
-  final PropertyAccess _target;
-
-  @override
-  Object? operator [](Object? key) => _target[key! as String];
-
-  @override
-  void operator []=(String key, Object? value) => _target[key] = value;
-
-  @override
-  Iterable<String> get keys => throw UnsupportedError(
-    'The keys of a merge target that is not a Map',
-  );
-
-  @override
-  Object? remove(Object? key) => throw UnsupportedError(
-    'A remove from a merge target that is not a Map',
-  );
-
-  @override
-  void clear() => throw UnsupportedError(
-    'A clear of a merge target that is not a Map',
-  );
 }
 
 /// helpers.core.ts:328 `_deprecated`.

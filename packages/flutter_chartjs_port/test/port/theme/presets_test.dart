@@ -60,12 +60,26 @@ Object? _at(Object? root, String path) {
 
 /// The leaves of [value] by dot path. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
-  if (value is! Map<String, Object?>) return {prefix: value};
+  if (!_isObject(value)) return {prefix: value};
   return {
-    for (final key in value.keys)
-      ..._leaves(value[key], prefix.isEmpty ? key : '$prefix.$key'),
+    for (final key in jsObjectKeys(value))
+      ..._leaves(jsGet(value, key), prefix.isEmpty ? key : '$prefix.$key'),
   };
 }
+
+/// Whether [value] is an object of a compiled theme: a Map, or a typed scope
+/// with its face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
+
+/// [value] as plain Dart values for a compare with a Map literal: an object
+/// gives a new Map of its own keys in the `Object.keys` order, each value
+/// read through its face; another value is itself.
+Object? _plain(Object? value) => _isObject(value)
+    ? <String, Object?>{
+        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
+      }
+    : value;
 
 /// The fields of the `toFont` result [font], as the generator writes them.
 Map<String, Object?> _fontFields(ParsedFont font) => {
@@ -98,7 +112,7 @@ Map<String, Object?> _resolveElement(
   Object? theme,
 ) {
   final config = _config(theme);
-  final dataset = (config.data['datasets']! as List<Object?>).first;
+  final dataset = (jsGet(config.data, 'datasets')! as List<Object?>).first;
   final scopes = config.getOptionScopes(
     dataset,
     config.datasetElementScopeKeys('tthm', elementCase.type),
@@ -109,7 +123,7 @@ Map<String, Object?> _resolveElement(
     elementCase.names,
     () => <String, Object?>{'active': active, 'mode': elementCase.mode},
     elementCase.prefixes,
-  );
+  ) as Map<String, Object?>;
 }
 
 /// The options of the scale `x` of the type `tlin`, by the keys of
@@ -157,7 +171,7 @@ void main() {
       // theming.md §9: the values that the preset restates.
       final compiled = compileChartTheme(ChartThemes.light)!;
       final emitted = {
-        for (final path in compiled.keys)
+        for (final path in compiled.jsKeys())
           if (path != 'transitions') path,
       };
       final keys = <String>{};
@@ -167,7 +181,7 @@ void main() {
         final upstream = themeLightRestated[path];
         if (upstream is Map<String, Object?>) {
           // A font: the fields that are not null.
-          expect(value, {
+          expect(_plain(value), {
             for (final MapEntry(key: field, value: fieldValue)
                 in upstream.entries)
               field: ?fieldValue,

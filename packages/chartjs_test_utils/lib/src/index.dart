@@ -63,10 +63,21 @@ final Map<Object, Chart> charts = {};
 /// It is synchronous, and it works only in the body of a `testWidgets` test
 /// (Chart.js ADR 0022, section 4). The chart is attached at its
 /// construction.
+///
+/// [config] is a JS object literal of a spec: a Map. A nested Map literal
+/// gets the type `<String, Object?>` from the parameter type.
 Chart acquireChart([
   Map<String, Object?>? config,
   Map<String, Object?>? options,
 ]) {
+  final chart = utils.acquireChart(config, options);
+  charts[chart.id] = chart;
+  return chart;
+}
+
+/// [acquireChart] for a config that is not a Map: the typed root scope of a
+/// typed config (`ChartConfigLowering`, Chart.js ADR 0054 §7). Port-only.
+Chart acquireChartRoot(Object config, [Map<String, Object?>? options]) {
   final chart = utils.acquireChart(config, options);
   charts[chart.id] = chart;
   return chart;

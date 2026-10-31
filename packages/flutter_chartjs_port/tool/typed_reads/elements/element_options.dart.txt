@@ -1,3 +1,4 @@
 # The face: copyOptions of a plain options object, Object.assign({},
 # options) (Chart.js ADR 0021, section 3).
+jsGet 1
 jsObjectKeys 1

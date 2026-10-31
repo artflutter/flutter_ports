@@ -4,6 +4,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart'
     as elements;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsProxyObject;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -334,7 +335,7 @@ void main() {
         <String, Object?>{'a': 1},
         <String, Object?>{'a': 2, 'b': 3},
       ]);
-      expect(resolver.keys, ['a', 'b']);
+      expect(resolver.ownKeys(), ['a', 'b']);
       expect(<String, Object?>{'a': 1}, toEqualOptions(resolver));
       expect(
         _mismatch(toEqualOptions(resolver), <String, Object?>{'a': 2}),
@@ -358,12 +359,9 @@ void main() {
         },
       ];
       final resolver = createResolver(scopes());
-      final scales = resolver['scales']! as Map<String, Object?>;
-      expect(scales.keys, ['grid']);
-      expect(
-        (scales['grid']! as Map<String, Object?>)['grid'],
-        isA<Map<String, Object?>>(),
-      );
+      final scales = resolver['scales']! as JsProxyObject;
+      expect(scales.ownKeys(), ['grid']);
+      expect((scales['grid']! as JsProxyObject)['grid'], isA<JsProxyObject>());
       expect(
         <String, Object?>{'scales': <String, Object?>{}},
         toEqualOptions(resolver),

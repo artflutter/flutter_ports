@@ -100,7 +100,7 @@ AnyObject _plainOptions(AnyObject options) => options;
 /// The two forms of the options of a line (Chart.js ADR 0018, section 6): the
 /// plain Map, and a [LineOptions] with the same entries in the same key
 /// order.
-const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+const Map<String, Object Function(AnyObject options)> _optionsForms = {
   'Map options': _plainOptions,
   'LineOptions': LineOptions.new,
 };
@@ -111,7 +111,7 @@ const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
 LineElement _line(
   LineReferenceCase c,
   List<types.PointElement> points,
-  AnyObject Function(AnyObject) form,
+  Object Function(AnyObject) form,
 ) {
   final options = c.options;
   final segment = c.segment;
@@ -181,7 +181,7 @@ Matcher _expectedPoint(LineReferencePoint point) => isA<LineReferencePoint>()
 
 /// Runs the steps of the reference case [c], with the options in the form
 /// [form], and compares each record.
-void _run(LineReferenceCase c, AnyObject Function(AnyObject) form) {
+void _run(LineReferenceCase c, Object Function(AnyObject) form) {
   final points = <types.PointElement>[for (final p in c.points) _point(p)];
   final line = _line(c, points, form);
   final ids = PathIds();
@@ -310,9 +310,15 @@ LineElement _simpleLine([AnyObject? options]) => LineElement({
   'options': ?options,
 });
 
+/// The own keys and values of the typed scope [scope] as a plain Map, read
+/// through its face (Chart.js ADR 0054 §5).
+AnyObject _plain(JsObjectFace scope) => {
+  for (final key in scope.jsKeys()) key: scope[key],
+};
+
 /// The resolved options of a line: the defaults and a border color.
 AnyObject _options([AnyObject extra = const {}]) => {
-  ...LineElement.defaults,
+  ..._plain(LineElement.defaults),
   'borderColor': 'black',
   ...extra,
 };
@@ -337,7 +343,7 @@ void main() {
   group('statics', () {
     test('has the id, defaults, defaultRoutes and descriptors', () {
       expect(LineElement.id, 'line');
-      expect(LineElement.defaults, {
+      expect(_plain(LineElement.defaults), {
         'borderCapStyle': 'butt',
         'borderDash': <Object?>[],
         'borderDashOffset': 0,
@@ -350,7 +356,7 @@ void main() {
         'stepped': false,
         'tension': 0,
       });
-      expect(LineElement.defaults.keys, [
+      expect(LineElement.defaults.jsKeys(), [
         'borderCapStyle',
         'borderDash',
         'borderDashOffset',
@@ -367,7 +373,7 @@ void main() {
         'backgroundColor': 'backgroundColor',
         'borderColor': 'borderColor',
       });
-      expect(LineElement.descriptors.keys, ['_scriptable', '_indexable']);
+      expect(LineElement.descriptors.jsKeys(), ['_scriptable', '_indexable']);
       expect(LineElement.descriptors['_scriptable'], isTrue);
     });
 
@@ -712,7 +718,7 @@ void main() {
     ) {
       final line = LineElement({
         'points': points,
-        'options': <String, Object?>{...LineElement.defaults},
+        'options': _plain(LineElement.defaults),
       });
       final ctx = createMockContext();
       expect(line.pathSegment(ctx, line.segments[0]), isNull);

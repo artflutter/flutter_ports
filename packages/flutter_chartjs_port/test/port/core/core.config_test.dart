@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -53,14 +54,15 @@ String _json(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   final List<Object?> list => '[${list.map(_json).join(',')}]',
-  final Map<String, Object?> map =>
+  final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
   _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
 };
 
-/// The JSON member `"key":value` of [key] in [map].
-String _entry(Map<String, Object?> map, String key) =>
-    '${jsonEncode(key)}:${_json(map[key])}';
+/// The JSON member `"key":value` of [key] in [map], a Map or a typed object
+/// with a face.
+String _entry(Object map, String key) =>
+    '${jsonEncode(key)}:${_json(jsGet(map, key))}';
 
 /// The labels of the scope objects of a probe: the name of a known object,
 /// `{}#n` for the n-th new empty object, or `?<json>` for another value.
@@ -85,16 +87,17 @@ String Function(Object?) _labeller(List<(Object?, String)> named) {
 /// The summary of a merged scale of the probe: each own key, with `"{...}"`
 /// for a value that is an object.
 Map<String, Object?> _scaleSummary(Object? scale) {
-  final map = scale! as Map<String, Object?>;
+  final map = scale! as JsObjectFace;
   return {
     for (final key in jsObjectKeys(map))
-      key: map[key] is Map ? '{...}' : map[key],
+      key: map[key] is Map || map[key] is JsObjectFace ? '{...}' : map[key],
   };
 }
 
 /// The summaries of the merged scales of [config].
 String _scales(Object? config) {
-  final scales = Config(config).options['scales']! as Map<String, Object?>;
+  final scales =
+      (Config(config).options as AnyObject)['scales']! as JsObjectFace;
   return _json({
     for (final id in jsObjectKeys(scales)) id: _scaleSummary(scales[id]),
   });
@@ -480,7 +483,7 @@ void main() {
 
     test('the keys of defaults.scale', () {
       expect(
-        jsObjectKeys(defaults['scale']! as Map<String, Object?>),
+        jsObjectKeys(defaults['scale']! as JsObjectFace),
         [
           'display',
           'offset',
@@ -881,10 +884,10 @@ void main() {
         },
       };
       final config = Config(raw);
-      final first = config.options['scales']! as Map<String, Object?>;
-      (first['x']! as Map<String, Object?>)['max'] = 9.0;
+      final first = (config.options as AnyObject)['scales']! as JsObjectFace;
+      (first['x']! as JsObjectFace)['max'] = 9.0;
       config.update();
-      final scales = config.options['scales']! as Map<String, Object?>;
+      final scales = (config.options as AnyObject)['scales']! as JsObjectFace;
       expect(identical(first, scales), isFalse);
       expect(identical(first['x'], scales['x']), isFalse);
       expect(
@@ -909,9 +912,11 @@ void main() {
             }
             ..update();
       expect(jsObjectKeys(config.options), ['plugins', 'scales']);
-      expect(_json(config.options['plugins']), '{"a":1}');
+      expect(_json((config.options as AnyObject)['plugins']), '{"a":1}');
       expect(
-        jsObjectKeys(config.options['scales']! as Map<String, Object?>),
+        jsObjectKeys(
+          (config.options as AnyObject)['scales']! as JsObjectFace,
+        ),
         ['x', 'y'],
       );
       config
@@ -922,7 +927,9 @@ void main() {
         }
         ..update();
       expect(
-        jsObjectKeys(config.options['scales']! as Map<String, Object?>),
+        jsObjectKeys(
+          (config.options as AnyObject)['scales']! as JsObjectFace,
+        ),
         ['x', 'y', 'xx'],
       );
       config
@@ -930,7 +937,9 @@ void main() {
         ..update();
       expect(jsObjectKeys(config.options), ['plugins', 'scales']);
       expect(
-        jsObjectKeys(config.options['scales']! as Map<String, Object?>),
+        jsObjectKeys(
+          (config.options as AnyObject)['scales']! as JsObjectFace,
+        ),
         ['xx', 'y'],
       );
     });
@@ -1505,7 +1514,7 @@ void main() {
       );
       expect(_json(font), r'{"$shared":false,"font":{"size":12}}');
       expect(
-        config.resolveNamedOptions(
+        (config.resolveNamedOptions(
           [
             <String, Object?>{
               'font': <String, Object?>{
@@ -1516,7 +1525,7 @@ void main() {
           ],
           ['font'],
           context,
-        )[r'$shared'],
+        ) as AnyObject)[r'$shared'],
         isTrue,
       );
     });
@@ -1529,7 +1538,7 @@ void main() {
         ['radius'],
         <String, Object?>{},
       );
-      expect(notScriptable[r'$shared'], isTrue);
+      expect((notScriptable as AnyObject)[r'$shared'], isTrue);
       expect(jsIsFunction(notScriptable['radius']), isTrue);
       expect(
         _json(
@@ -1547,7 +1556,7 @@ void main() {
         r'{"$shared":true,"radius":[1,2]}',
       );
       expect(
-        config.resolveNamedOptions(
+        (config.resolveNamedOptions(
           [
             <String, Object?>{
               '_scriptable': (String n) => n != 'radius',
@@ -1557,11 +1566,11 @@ void main() {
           ],
           ['radius', 'width'],
           <String, Object?>{},
-        )[r'$shared'],
+        ) as AnyObject)[r'$shared'],
         isFalse,
       );
       expect(
-        config.resolveNamedOptions(
+        (config.resolveNamedOptions(
           [
             <String, Object?>{
               'onClick': () => 1.0,
@@ -1572,7 +1581,7 @@ void main() {
           ],
           ['onClick', 'events'],
           <String, Object?>{'index': 1.0},
-        )[r'$shared'],
+        ) as AnyObject)[r'$shared'],
         isTrue,
       );
     });
@@ -1871,8 +1880,8 @@ void main() {
     final ids = [PointElement.id, LineElement.id, BarElement.id, ArcElement.id];
 
     /// `defaults.elements.<id>`.
-    Map<String, Object?> elementDefaultsOf(String id) =>
-        jsGet(defaults['elements'], id)! as Map<String, Object?>;
+    JsObjectFace elementDefaultsOf(String id) =>
+        jsGet(defaults['elements'], id)! as JsObjectFace;
 
     /// `descriptors.elements.<id>`, or Dart null for an element type
     /// without descriptors.
@@ -1898,13 +1907,13 @@ void main() {
     /// under `elements.<id>` (core.typedRegistry.js:68-70).
     List<Object?> scopesOf(
       Map<String, Object?> first,
-      Map<String, Object?> elementDefaults,
+      Object elementDefaults,
       Object? elementDescriptors,
     ) => [first, elementDefaults, defaults, ?elementDescriptors, descriptors];
 
     /// The two runs of resolveNamedOptions for [id], [scopes] and [names],
     /// typed and plain, and the `into` object of the typed run.
-    (Map<String, Object?>, Map<String, Object?>, Map<String, Object?>) runs(
+    (ElementOptions, AnyObject, ElementOptions) runs(
       String id,
       List<Object?> scopes,
       List<String> names,
@@ -1919,13 +1928,13 @@ void main() {
         context,
         prefixes,
         into,
-      );
+      ) as ElementOptions;
       final plain = config.resolveNamedOptions(
         scopes,
         names,
         context,
         prefixes,
-      );
+      ) as AnyObject;
       return (typed, plain, into);
     }
 
@@ -2020,7 +2029,7 @@ void main() {
       // run gives the order of the known keys. The restore puts back
       // `defaults` after the test.
       final names = namesOf(PointElement.id);
-      (defaults['elements']! as Map<String, Object?>).remove(PointElement.id);
+      (defaults['elements']! as JsObjectFace).jsDelete(PointElement.id);
       defaults.set('elements.point', <String, Object?>{'radius': 9.0});
       TypedRegistry(Element.jsClass, 'elements').register(PointElement.jsClass);
       final moved = namesOf(PointElement.id);
@@ -2276,9 +2285,9 @@ void main() {
       // theming.md §8 test 2, the element rows. The plain value is the
       // value without a theme.
       String run(List<String> levels, {bool themeRoot = false}) {
-        overrides.remove('tthm');
+        overrides.jsDelete('tthm');
         defaults.set('elements.tbar', <String, Object?>{});
-        (_at(defaults, 'elements')! as Map<String, Object?>)['tbar'] =
+        (_at(defaults, 'elements')! as JsObjectFace)['tbar'] =
             <String, Object?>{};
         final dataset = <String, Object?>{'data': <Object?>[]};
         final options = <String, Object?>{};
@@ -2305,8 +2314,7 @@ void main() {
         }
         if (themeRoot) theme['backgroundColor'] = 'T-root';
         if (levels.contains('defaults')) {
-          (_at(defaults, 'elements.tbar')!
-                  as Map<String, Object?>)['backgroundColor'] =
+          (_at(defaults, 'elements.tbar')! as AnyObject)['backgroundColor'] =
               'L5-defaults';
         }
         final c = Config(<String, Object?>{
@@ -2321,12 +2329,12 @@ void main() {
           dataset,
           c.datasetElementScopeKeys('tthm', 'tbar'),
         );
-        return c.resolveNamedOptions(
+        return (c.resolveNamedOptions(
               scopes,
               ['backgroundColor'],
               <String, Object?>{},
               ['tbar', ''],
-            )['backgroundColor']!
+            ) as AnyObject)['backgroundColor']!
             as String;
       }
 
@@ -2347,7 +2355,7 @@ void main() {
     });
 
     test('the lookup is prefix-major', () {
-      overrides.remove('tthm');
+      overrides.jsDelete('tthm');
       final dataset = <String, Object?>{'data': <Object?>[]};
       final c = Config(<String, Object?>{
         'type': 'tthm',
@@ -2362,19 +2370,19 @@ void main() {
         c.datasetElementScopeKeys('tthm', 'tbar'),
       );
       expect(
-        c.resolveNamedOptions(
+        (c.resolveNamedOptions(
           scopes,
           ['backgroundColor'],
           <String, Object?>{},
           ['tbar', ''],
-        )['backgroundColor'],
+        ) as AnyObject)['backgroundColor'],
         'theme',
       );
     });
 
     test('the defaults derive the hover color from the theme color', () {
-      overrides.remove('tthm');
-      (_at(defaults, 'elements')! as Map<String, Object?>)['tbar'] =
+      overrides.jsDelete('tthm');
+      (_at(defaults, 'elements')! as JsObjectFace)['tbar'] =
           <String, Object?>{};
       final dataset = <String, Object?>{'data': <Object?>[]};
       final c = Config(<String, Object?>{
@@ -2410,8 +2418,8 @@ void main() {
     test('the plugin precedence of theming.md §3.2', () {
       // theming.md §8 test 2, the plugin rows.
       Object? run(List<String> levels) {
-        overrides.remove('tthm');
-        (defaults['plugins']! as Map<String, Object?>).remove('tp');
+        overrides.jsDelete('tthm');
+        (defaults['plugins']! as JsObjectFace).jsDelete('tp');
         final options = <String, Object?>{'plugins': <String, Object?>{}};
         final theme = <String, Object?>{};
         if (levels.contains('user')) {
@@ -2513,8 +2521,8 @@ void main() {
     test('the chart-level precedence of theming.md §3.2', () {
       // theming.md §8 test 2, the chart-level rows.
       Object? run(List<String> levels) {
-        overrides.remove('tthm');
-        (defaults['datasets']! as Map<String, Object?>).remove('tthm');
+        overrides.jsDelete('tthm');
+        (defaults['datasets']! as JsObjectFace).jsDelete('tthm');
         final options = <String, Object?>{};
         final theme = <String, Object?>{};
         if (levels.contains('user')) options['k'] = 'C1-user';
@@ -2537,7 +2545,7 @@ void main() {
           config.chartOptionScopes(),
           <String, Object?>{},
         )['k'];
-        defaults.remove('k');
+        defaults.jsDelete('k');
         return value;
       }
 
@@ -2560,11 +2568,12 @@ void main() {
       // theming.md §8 test 2, the scale rows.
       Object? run(List<String> levels) {
         overrides
-          ..remove('tthm')
-          ..remove('tthm2');
-        (defaults['scales']! as Map<String, Object?>)['tlin'] =
-            <String, Object?>{'axis': 'y'};
-        final scale = defaults['scale']! as Map<String, Object?>;
+          ..jsDelete('tthm')
+          ..jsDelete('tthm2');
+        (defaults['scales']! as JsObjectFace)['tlin'] = <String, Object?>{
+          'axis': 'y',
+        };
+        final scale = defaults['scale']! as JsObjectFace;
         defaults
           ..override('tthm', <String, Object?>{
             'scales': <String, Object?>{
@@ -2582,13 +2591,11 @@ void main() {
         final themeScale = <String, Object?>{};
         if (levels.contains('user')) x['tc'] = 'S1-user';
         if (levels.contains('chartOverride')) {
-          (_at(overrides, 'tthm.scales._index_')!
-                  as Map<String, Object?>)['tc'] =
+          (_at(overrides, 'tthm.scales._index_')! as JsObjectFace)['tc'] =
               'S2-chart-override';
         }
         if (levels.contains('datasetOverride')) {
-          (_at(overrides, 'tthm2.scales._index_')!
-                  as Map<String, Object?>)['tc'] =
+          (_at(overrides, 'tthm2.scales._index_')! as JsObjectFace)['tc'] =
               'S3-dataset-override';
         }
         if (levels.contains('themeType')) {
@@ -2596,7 +2603,7 @@ void main() {
         }
         if (levels.contains('themeScale')) themeScale['tc'] = 'S5-theme-scale';
         if (levels.contains('defaultsType')) {
-          (_at(defaults, 'scales.tlin')! as Map<String, Object?>)['tc'] =
+          (_at(defaults, 'scales.tlin')! as AnyObject)['tc'] =
               'S6-defaults-type';
         }
         if (levels.contains('defaultsScale')) scale['tc'] = 'S7-defaults-scale';
@@ -2615,7 +2622,7 @@ void main() {
             'scale': themeScale,
           },
         });
-        scale.remove('tc');
+        scale.jsDelete('tc');
         return _at(config.options, 'scales.x.tc');
       }
 
@@ -2681,7 +2688,7 @@ void main() {
       );
       expect(_at(themed.options, 'scales.x.ticks.color'), 'theme-ticks');
       expect(
-        jsObjectKeys(_at(themed.options, 'scales.x')! as Map<String, Object?>),
+        jsObjectKeys(_at(themed.options, 'scales.x')! as JsObjectFace),
         [
           'axis',
           'grid',
@@ -2707,7 +2714,7 @@ void main() {
         '"tickColor":"<fn>","offset":false,"color":"rgba(0,0,0,0.1)"}',
       );
       expect(
-        jsObjectKeys(_at(plain.options, 'scales.x')! as Map<String, Object?>),
+        jsObjectKeys(_at(plain.options, 'scales.x')! as JsObjectFace),
         [
           'axis',
           'grid',
@@ -2772,7 +2779,7 @@ void main() {
           },
         },
       });
-      expect(config.options['scales'], <String, Object?>{});
+      expect(jsObjectKeys((config.options as AnyObject)['scales']), isEmpty);
     });
   });
 }

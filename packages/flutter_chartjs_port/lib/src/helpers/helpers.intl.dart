@@ -10,7 +10,9 @@
 /// the affixes of the pattern for NaN and the infinities.
 library;
 
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsProxyObject;
 import 'package:flutter_chartjs_port/src/js/js_intl.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 
 /// helpers.intl.ts:2 `intlCache`.
 final Map<String, JsNumberFormat> _intlCache = <String, JsNumberFormat>{};
@@ -70,7 +72,22 @@ String _cacheKey(Object? locale, Map<String, Object?> options) => [
 String formatNumber(
   double number,
   Object? locale, [
-  Map<String, Object?>? options,
+  Object? options,
 ]) {
-  return _getNumberFormat(locale, options).format(number);
+  return _getNumberFormat(locale, _entriesOf(options)).format(number);
 }
+
+/// The options [options] as a Map of their entries: a Map itself; a
+/// resolver of `helpers.config` the keys of its `ownKeys` trap with the
+/// values of its `get` trap; another typed object its own keys with their
+/// values; any other value Dart `null` (no options).
+Map<String, Object?>? _entriesOf(Object? options) => switch (options) {
+  final Map<String, Object?> map => map,
+  final JsProxyObject proxy => {
+    for (final key in proxy.ownKeys()) key: proxy.jsRead(key),
+  },
+  final JsObjectFace face => {
+    for (final key in face.jsKeys()) key: face.jsRead(key),
+  },
+  _ => null,
+};

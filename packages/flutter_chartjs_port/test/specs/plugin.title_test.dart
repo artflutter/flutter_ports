@@ -46,16 +46,16 @@ Title _newTitle(AnyObject config) =>
     jsConstruct(_titleClass(), [config]) as Title;
 
 /// `Chart.helpers.clone(Chart.defaults.plugins.title)`.
-AnyObject _cloneTitleDefaults() =>
-    clone(jsGet(jsGet(Chart.defaults, 'plugins'), 'title'))! as AnyObject;
+JsObjectFace _cloneTitleDefaults() =>
+    clone(jsGet(jsGet(Chart.defaults, 'plugins'), 'title'))! as JsObjectFace;
 
 /// `chart.options.plugins.title`, the option resolver of the title.
-AnyObject _titleOptions(Chart chart) =>
-    jsGet(jsGet(chart.options, 'plugins'), 'title')! as AnyObject;
+JsObjectFace _titleOptions(Chart chart) =>
+    jsGet(jsGet(chart.options, 'plugins'), 'title')! as JsObjectFace;
 
 /// `chart.options.plugins`, the option resolver of the plugins.
-AnyObject _pluginOptions(Chart chart) =>
-    jsGet(chart.options, 'plugins')! as AnyObject;
+JsObjectFace _pluginOptions(Chart chart) =>
+    jsGet(chart.options, 'plugins')! as JsObjectFace;
 
 /// The draw calls of the title text with the translation [translate] and the
 /// rotation [rotate] (:131-158, :192-219, :234-261).
@@ -129,7 +129,7 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      title.options!['display'] = true;
+      (title.options! as JsObjectFace)['display'] = true;
 
       title.update(400, 200);
 
@@ -153,7 +153,7 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      title.options!['display'] = true;
+      (title.options! as JsObjectFace)['display'] = true;
 
       title.update(200, 400);
 
@@ -170,7 +170,7 @@ void main() {
         options['text'] = <Object?>['line1', 'line2'];
         options['position'] = 'left';
         options['display'] = true;
-        (options['font']! as AnyObject)['lineHeight'] = 1.5;
+        (options['font']! as JsObjectFace)['lineHeight'] = 1.5;
 
         final title = _newTitle(<String, Object?>{
           'chart': chart,
@@ -201,7 +201,7 @@ void main() {
       expect(context.getCalls(), jasmineEquals(<Object?>[]));
 
       // Now we have a height since we display
-      title.options!['display'] = true;
+      (title.options! as JsObjectFace)['display'] = true;
 
       title
         ..update(400, 200)
@@ -238,7 +238,7 @@ void main() {
       expect(context.getCalls(), jasmineEquals(<Object?>[]));
 
       // Now we have a height since we display
-      title.options!['display'] = true;
+      (title.options! as JsObjectFace)['display'] = true;
 
       title
         ..update(200, 400)
@@ -255,7 +255,7 @@ void main() {
       );
 
       // Rotation is other way on right side
-      title.options!['position'] = 'right';
+      (title.options! as JsObjectFace)['position'] = 'right';
 
       // Reset call tracker
       context.resetCalls();
@@ -375,9 +375,11 @@ void main() {
           expect(chart.titleBlock, isNotNull);
           expect(
             chart.titleBlock!.options,
+            // `toEqualOptions` of the harness takes a Map: the copy of the
+            // own keys of the typed defaults (`Object.keys`) with their
+            // values, the keys and values that the matcher reads.
             toEqualOptions(
-              jsGet(jsGet(Chart.defaults, 'plugins'), 'title')!
-                  as Map<String, Object?>,
+              jsGet(jsGet(Chart.defaults, 'plugins'), 'title')!,
             ),
           );
         },

@@ -1,5 +1,16 @@
+# The allowlist of the close step (Chart.js ADR 0054 §5).
+# - jsGet 10, stringIndex 1: toFont reads a font object of any kind (a raw
+#   Map of the user, a typed FontSpecScope, a view) and its fallback
+#   defaults.font by name (helpers.options.ts:151-176).
+# - jsGet 3, jsObjectKeys 1, stringIndex 8: readValueToProps (the shorthand
+#   props table) and the plain result objects of toTRBL and toTRBLCorners
+#   (helpers.options.ts:41-80).
+# - jsCall 1, stringIndex 1: resolve calls a scriptable option of the user
+#   and writes the cacheable flag of the info object (helpers.options.ts:
+#   185-199).
+# - stringIndex 1, jsObjectKeys 1: createContext reads the type and the own
+#   keys of the object literal of its caller (helpers.options.ts:204).
 jsGet 13
 stringIndex 11
 jsCall 1
 jsObjectKeys 2
-extendsMapBase 1

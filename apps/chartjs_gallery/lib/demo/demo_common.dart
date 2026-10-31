@@ -2,7 +2,8 @@
 // ignore_for_file: implementation_imports
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Undefined;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show JsObjectFace, Undefined;
 // Not public: jsNumberToString, the JS text of a number in the readouts.
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
@@ -23,8 +24,19 @@ String showJs(Object? value) => switch (value) {
   final num n => jsNumberToString(n.toDouble()),
   final bool b => '$b',
   final Map<Object?, Object?> _ => '{…}',
+  final JsObjectFace _ => '{…}',
   final List<Object?> _ => '[…]',
   _ => value.toString(),
+};
+
+/// The read by name `object[key]` of an object of the chart: a Map of the
+/// app (the raw config of `ChartView.raw`), or a typed object of the chart
+/// (an options view, a context, a typed scope of a typed config) through
+/// its face [JsObjectFace]. Another value gives Dart `null`.
+Object? readByName(Object? object, String key) => switch (object) {
+  final Map<Object?, Object?> map => map[key],
+  final JsObjectFace face => face[key],
+  _ => null,
 };
 
 /// The Flutter color of a parsed `@kurkle/color` [kc.Color], or `null` when

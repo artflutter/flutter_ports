@@ -159,8 +159,8 @@ void _hook(String hook, Chart chart, [AnyObject? options]) {
 }
 
 /// `chart.options.plugins` of [chart], the option resolver of the plugins.
-AnyObject _pluginOptions(Chart chart) =>
-    jsGet(chart.options, 'plugins')! as AnyObject;
+JsObjectFace _pluginOptions(Chart chart) =>
+    jsGet(chart.options, 'plugins')! as JsObjectFace;
 
 void main() {
   testReferenceOrigin(
@@ -209,7 +209,7 @@ void main() {
   group('plugin object', () {
     test('the keys are the upstream keys, with no _element', () {
       expect(jsObjectKeys(subTitle), _upstreamKeys);
-      expect(subTitle.containsKey('_element'), isFalse);
+      expect(subTitle.jsHas('_element'), isFalse);
     });
 
     test('the registry gives the plugin object', () {
@@ -240,7 +240,7 @@ void main() {
 
     test('the defaults have the upstream keys and values', () {
       // The probe output `defaults`, `defaultRoutes` and `descriptors`.
-      final defaults = subTitle['defaults']! as AnyObject;
+      final defaults = subTitle['defaults']! as JsObjectFace;
       expect(jsObjectKeys(defaults), [
         'align',
         'display',
@@ -253,14 +253,16 @@ void main() {
       ]);
       expect(defaults['align'], 'center');
       expect(defaults['display'], isFalse);
-      expect(defaults['font'], <String, Object?>{'weight': 'normal'});
+      expect(_plain(defaults['font']), <String, Object?>{'weight': 'normal'});
       expect(defaults['fullSize'], isTrue);
       expect(defaults['padding'], 0);
       expect(defaults['position'], 'top');
       expect(defaults['text'], '');
       expect(defaults['weight'], 1500);
-      expect(subTitle['defaultRoutes'], <String, Object?>{'color': 'color'});
-      expect(subTitle['descriptors'], <String, Object?>{
+      expect(_plain(subTitle['defaultRoutes']), <String, Object?>{
+        'color': 'color',
+      });
+      expect(_plain(subTitle['descriptors']), <String, Object?>{
         '_scriptable': true,
         '_indexable': false,
       });
@@ -385,3 +387,14 @@ void main() {
     });
   });
 }
+
+/// [value] as plain Dart values for a compare with a Map literal: an object
+/// (a Map or a typed object with a face, Chart.js ADR 0054 §5) gives a new
+/// Map of its own keys in the `Object.keys` order, each value read by name;
+/// another value is itself.
+Object? _plain(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace
+    ? <String, Object?>{
+        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
+      }
+    : value;

@@ -55,7 +55,7 @@ const List<String> _chartTypes = [
 /// types, borders on bars and arcs, the title, the subtitle, the legend
 /// title, a tooltip `footer` callback and `plugins.colors.enabled` from
 /// [colors]. With [theme], the configuration has `themeConfigKey: theme`.
-AnyObject _config(String type, {required bool colors, AnyObject? theme}) {
+AnyObject _config(String type, {required bool colors, Object? theme}) {
   final cartesian = const {'bar', 'bubble', 'line', 'scatter'}.contains(type);
   final radial = type == 'polarArea' || type == 'radar';
   final bordered = const {'bar', 'doughnut', 'pie', 'polarArea'}.contains(

@@ -6,6 +6,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/color.dart';
@@ -57,8 +58,7 @@ final class _Point implements PointElement {
   Object? get hidden => undefined;
 
   @override
-  double size([Map<String, Object?>? options]) =>
-      throw UnsupportedError('size');
+  double size([Object? options]) => throw UnsupportedError('size');
 }
 
 /// A radar point element `{x: 0, y: 0, angle}`. The control points are NaN,
@@ -104,8 +104,7 @@ final class _RadialPoint implements RadialPointElement {
   Object? get hidden => undefined;
 
   @override
-  double size([Map<String, Object?>? options]) =>
-      throw UnsupportedError('size');
+  double size([Object? options]) => throw UnsupportedError('size');
 }
 
 /// The points of a pattern: `o` is a point, `s` a skipped point and `t` a
@@ -212,7 +211,14 @@ Matcher _segment(double start, double end, bool loop, [Object? style]) =>
         .having((s) => s.start, 'start', _sameValue(start))
         .having((s) => s.end, 'end', _sameValue(end))
         .having((s) => s.loop, 'loop', loop)
-        .having((s) => s.style, 'style', style ?? isNull);
+        .having((s) => _plainStyle(s.style), 'style', style ?? isNull);
+
+/// The style of a segment as a plain Map: the own keys of the typed style
+/// (a typed object with a face, Chart.js ADR 0054 §5) and their values, for
+/// the compare with [_style].
+Object? _plainStyle(Object? style) => style is JsObjectFace
+    ? <String, Object?>{for (final key in style.jsKeys()) key: style[key]}
+    : style;
 
 /// The base options of the style cases.
 const AnyObject _base = {'borderColor': 'blue', 'borderWidth': 3.0};
@@ -235,10 +241,10 @@ Matcher _style({
 });
 
 /// The point of a segment context: `ctx.p0`.
-PointElement _p0(Object? ctx) => (ctx! as AnyObject)['p0']! as PointElement;
+PointElement _p0(Object? ctx) => (ctx! as JsObjectFace)['p0']! as PointElement;
 
 /// The data index of a segment context: `ctx.p0DataIndex`.
-Object? _p0DataIndex(Object? ctx) => (ctx! as AnyObject)['p0DataIndex'];
+Object? _p0DataIndex(Object? ctx) => (ctx! as JsObjectFace)['p0DataIndex'];
 
 void main() {
   group('computeSegments', () {
@@ -545,9 +551,9 @@ void main() {
     final chart = _Chart();
 
     test('splits the line where the style changes', () {
-      final contexts = <AnyObject>[];
+      final contexts = <JsObjectFace>[];
       final segmentOptions = <String, Object?>{
-        'setContext': (AnyObject ctx) {
+        'setContext': (JsObjectFace ctx) {
           contexts.add(ctx);
           return {
             ..._base,
@@ -584,9 +590,9 @@ void main() {
     });
 
     test('gives undefined as the datasetIndex of a line without one', () {
-      final contexts = <AnyObject>[];
+      final contexts = <JsObjectFace>[];
       final segmentOptions = <String, Object?>{
-        'setContext': (AnyObject ctx) {
+        'setContext': (JsObjectFace ctx) {
           contexts.add(ctx);
           return _base;
         },
@@ -595,7 +601,7 @@ void main() {
         _Line(_points('ooo'), options: _base, chart: chart),
         segmentOptions,
       );
-      expect(contexts[0].containsKey('datasetIndex'), isTrue);
+      expect(jsObjectKeys(contexts[0]), contains('datasetIndex'));
       expect(contexts[0]['datasetIndex'], same(undefined));
     });
 
@@ -647,7 +653,7 @@ void main() {
       final redTo3 = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,
-          'borderColor': (ctx! as AnyObject)['p1DataIndex'] == 3
+          'borderColor': (ctx! as JsObjectFace)['p1DataIndex'] == 3
               ? 'red'
               : 'blue',
         },

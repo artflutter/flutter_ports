@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'light_reference.dart';
@@ -86,7 +85,7 @@ Map<String, Object?> _resolve(Chart chart) => {
 };
 
 /// A bar chart with the compiled theme [theme].
-Chart _chart(AnyObject? theme) => acquireChart(<String, Object?>{
+Chart _chart(Object? theme) => acquireChart(<String, Object?>{
   'type': 'bar',
   'data': <String, Object?>{
     'labels': <Object?>['a', 'b'],

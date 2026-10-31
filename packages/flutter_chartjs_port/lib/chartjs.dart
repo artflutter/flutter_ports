@@ -47,6 +47,7 @@ export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
 export 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 export 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
+export 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart'
     show Undefined, undefined;
 export 'package:flutter_chartjs_port/src/types.dart'
@@ -61,6 +62,7 @@ export 'package:flutter_chartjs_port/src/types.dart'
         PointElementWrites,
         PropertyAccess,
         RadialPointElement,
+        ScaleCache,
         ScaleRanges,
         SimpleArc,
         TypedLegendHitBox,

@@ -9,8 +9,10 @@ import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show createContext;
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show JsFunction, jsCall;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
@@ -51,8 +53,8 @@ const Map<ChartKind, Dataset> _empty = {
   ChartKind.radar: RadarDataset(),
 };
 
-/// The dataset Map of [dataset] in a chart of its own type.
-Map<String, Object?> _lower(Dataset dataset) => lowerDataset(
+/// The dataset scope of [dataset] in a chart of its own type.
+JsObjectFace _lower(Dataset dataset) => lowerDataset(
   dataset,
   _empty.entries
       .firstWhere((entry) => entry.value.runtimeType == dataset.runtimeType)
@@ -396,9 +398,9 @@ void _onAnimation(ChartAnimationDetails details) {}
 /// A chart callback.
 void _onEvent(ChartEventDetails details) {}
 
-/// The options Map of the root Map of [config].
-Map<String, Object?> _options(ChartConfig config) =>
-    ChartConfigLowering(config).lower()['options']! as Map<String, Object?>;
+/// The options scope of the root scope of [config].
+JsObjectFace _options(ChartConfig config) =>
+    ChartConfigLowering(config).lower()['options']! as JsObjectFace;
 
 /// The 6 axis classes, each without a parameter, with its scale type.
 const List<(ChartAxis, String)> _axes = [
@@ -1221,7 +1223,7 @@ void main() {
       ];
       for (final dataset in datasets) {
         final lowered = _lower(dataset);
-        expect(lowered.keys, ['data']);
+        expect(lowered.jsKeys(), ['data']);
         expect(lowered['data'], same(points));
       }
     });
@@ -1370,9 +1372,9 @@ void main() {
           LineDataset(extra: {'segment': segment, 'tags': list}),
         );
         expect(lowered['tags'], same(list));
-        final copy = lowered['segment']! as Map<String, Object?>;
+        final copy = lowered['segment']!;
         expect(copy, isNot(same(segment)));
-        expect(copy['borderColor'], same(segment['borderColor']));
+        expect(jsGet(copy, 'borderColor'), same(segment['borderColor']));
       });
 
       test('an entry with the value null gives the JS null', () {
@@ -1810,9 +1812,9 @@ void main() {
         final lowered = lowerAxis(
           const LinearAxis(ticks: AxisTicks(format: _format)),
         );
-        final ticks = lowered['ticks']! as Map<String, Object?>;
-        expect(ticks.keys, ['callback']);
-        expect(ticks['callback'], isA<JsFunction>());
+        final ticks = lowered['ticks']!;
+        expect(jsObjectKeys(ticks), ['callback']);
+        expect(jsGet(ticks, 'callback'), isA<JsFunction>());
       });
     });
 
@@ -2353,10 +2355,7 @@ void main() {
         },
         'options': <String, Object?>{},
       });
-      expect(
-        (lowered['data']! as Map<String, Object?>)['labels'],
-        same(labels),
-      );
+      expect(jsGet(lowered['data'], 'labels'), same(labels));
     });
 
     test('the inline plugins go by reference', () {
@@ -2365,7 +2364,7 @@ void main() {
       final lowered = ChartConfigLowering(
         ChartConfig(type: .line, datasets: const [], plugins: plugins),
       ).lower();
-      expect(lowered.keys, ['type', 'data', 'options', 'plugins']);
+      expect(lowered.jsKeys(), ['type', 'data', 'options', 'plugins']);
       expect(lowered['plugins'], same(plugins));
     });
 
@@ -2381,7 +2380,7 @@ void main() {
           },
         ),
       );
-      expect((options['scales']! as Map<String, Object?>).keys, [
+      expect(jsObjectKeys(options['scales']), [
         'y2',
         'x',
         'y',
@@ -2452,13 +2451,13 @@ void main() {
           ),
         ),
       );
-      final options = lowering.lower()['options']! as Map<String, Object?>;
-      final label =
-          ((options['plugins']! as Map<String, Object?>)['tooltip']!
-                  as Map<String, Object?>)['callbacks']!
-              as Map<String, Object?>;
+      final options = lowering.lower()['options'];
+      final label = jsGet(
+        jsGet(jsGet(options, 'plugins'), 'tooltip'),
+        'callbacks',
+      );
       final item = <String, Object?>{'label': 'a'};
-      expect(jsCall(label['label'], [item]), 'first');
+      expect(jsCall(jsGet(label, 'label'), [item]), 'first');
       lowering.config = ChartConfig(
         type: .bar,
         datasets: const [],
@@ -2469,9 +2468,15 @@ void main() {
           },
         ),
       );
-      expect(identical(jsCall(label['label'], [item]), undefined), isTrue);
+      expect(
+        identical(jsCall(jsGet(label, 'label'), [item]), undefined),
+        isTrue,
+      );
       lowering.config = const ChartConfig(type: .bar, datasets: []);
-      expect(identical(jsCall(label['label'], [item]), undefined), isTrue);
+      expect(
+        identical(jsCall(jsGet(label, 'label'), [item]), undefined),
+        isTrue,
+      );
       expect(calls, ['first', 'second']);
     });
   });

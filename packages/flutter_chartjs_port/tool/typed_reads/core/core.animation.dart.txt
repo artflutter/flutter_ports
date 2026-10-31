@@ -1,10 +1,10 @@
 # The face: _cfgRead reads the cfg of new Chart.Animation(cfg, ...) of user
 # code and of the specs when it is not an AnimationSpec; readProperty reads
 # an animation target that is a Map (core.animation.js:29).
-jsGet 2
 # The mutable effects object of user easings: effects.linear
 # (core.animation.js:36).
-stringIndex 1
 # A user fn of the animation options, called with JS arity
 # (core.animation.js:35).
+jsGet 2
+stringIndex 1
 jsCall 1

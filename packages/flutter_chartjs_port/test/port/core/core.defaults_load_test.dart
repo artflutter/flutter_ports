@@ -17,7 +17,7 @@ void main() {
   removeBuiltins();
 
   test('descriptors and overrides read before defaults are filled', () {
-    expect(descriptors.keys, [
+    expect(descriptors.jsKeys(), [
       '_scriptable',
       '_indexable',
       'hover',
@@ -27,6 +27,6 @@ void main() {
       'scale',
       'scales',
     ]);
-    expect(overrides, isEmpty);
+    expect(overrides.jsKeys(), isEmpty);
   });
 }

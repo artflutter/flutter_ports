@@ -1,6 +1,0 @@
-# Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
-# - stringIndex 2: `this._cache.all` (scale.timeseries.js:119-130): `_cache`
-#   is the plain object of core.scale.js:247 that core.scale resets and that
-#   controller.bar.js:8 writes by name (`$bar`); `types.Scale.cache` is a
-#   Map.
-stringIndex 2

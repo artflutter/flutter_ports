@@ -8,7 +8,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionScope;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -33,25 +36,38 @@ String _json(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   final List<Object?> list => '[${list.map(_json).join(',')}]',
-  final Map<String, Object?> map =>
+  final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
   _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
 };
 
-/// The JSON member `"key":value` of [key] in [map].
-String _entry(Map<String, Object?> map, String key) =>
-    '${jsonEncode(key)}:${_json(map[key])}';
+/// Whether [value] is an object: a Map or a typed scope with a face
+/// (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
 
-/// The JavaScript property read `object[key]` on an object (a Map): an
-/// absent key gives [undefined].
+/// The JSON member `"key":value` of [key] in [map].
+String _entry(Object map, String key) =>
+    '${jsonEncode(key)}:${_json(jsGet(map, key))}';
+
+/// The JavaScript property read `object[key]` on an object (a Map or a typed
+/// scope): an absent key gives [undefined].
 Object? _get(Object? object, String key) {
-  final map = object! as Map<String, Object?>;
-  return map.containsKey(key) ? map[key] : undefined;
+  if (!_isObject(object)) throw ArgumentError.value(object, 'object');
+  return jsGet(object, key);
 }
 
 /// `Object.keys(object)`.
-List<String> _keys(Object? object) =>
-    jsObjectKeys(object! as Map<String, Object?>);
+List<String> _keys(Object? object) {
+  if (!_isObject(object)) throw ArgumentError.value(object, 'object');
+  return jsObjectKeys(object);
+}
+
+/// The local value of the routed key [name] of the typed scope [scope]: its
+/// own cell, without the route (the hidden `_<name>` of
+/// core.defaults.js:136-140).
+Object? _local(Object? scope, String name) =>
+    (scope! as OptionScope).ownCell(name)?.raw;
 
 /// `new Defaults({}, [])`.
 Defaults _defaults() => Defaults(<String, Object?>{}, const []);
@@ -182,7 +198,7 @@ void main() {
     });
 
     test('routes the colors of the scale', () {
-      final scale = defaults['scale']! as Map<String, Object?>;
+      final scale = defaults['scale']! as JsObjectFace;
       expect(_keys(scale['ticks']), [
         'minRotation',
         'maxRotation',
@@ -287,7 +303,7 @@ void main() {
         ['bar', ''],
       );
       final context = attachContext(resolver, <String, Object?>{});
-      expect(resolver.containsKey('backgroundColor'), false);
+      expect(resolver.hasProperty('backgroundColor'), false);
       expect(
         jsCall(defaults['hoverBackgroundColor'], [
           <String, Object?>{},
@@ -347,11 +363,11 @@ void main() {
     test('set stores the undefined sentinel and null', () {
       final d = _defaults()
         ..set('u', <String, Object?>{'a': undefined, 'b': null});
-      final u = d['u']! as Map<String, Object?>;
+      final u = d['u'];
       expect(_keys(u), ['a', 'b']);
       expect(_get(u, 'a'), same(undefined));
       expect(_get(u, 'b'), isNull);
-      expect(u.containsKey('a'), true);
+      expect(jsHasOwn(u, 'a'), true);
     });
 
     test('getScope replaces a falsy value with a new object', () {
@@ -372,9 +388,9 @@ void main() {
       final d = _defaults()
         ..set('c', <String, Object?>{'x': null})
         ..route('c', 'x', '', 'color');
-      final c = d['c']! as Map<String, Object?>;
+      final c = d['c'];
       expect(_get(c, 'x'), isNull);
-      c['x'] = undefined;
+      jsSet(c, 'x', undefined);
       expect(_get(c, 'x'), '#666');
       expect(_keys(c), ['x']);
       d['color'] = 'red';
@@ -418,9 +434,9 @@ void main() {
 
     test('merges a local object over the target object', () {
       final d = routedFont();
-      final a = d['a']! as Map<String, Object?>;
-      expect(_json(a['font']), '{"size":10,"style":"bold"}');
-      expect(identical(a['font'], a['font']), false);
+      final a = d['a'];
+      expect(_json(_get(a, 'font')), '{"size":10,"style":"bold"}');
+      expect(identical(_get(a, 'font'), _get(a, 'font')), false);
       expect(_keys(a), ['font']);
     });
 
@@ -429,9 +445,9 @@ void main() {
         ..set('a', <String, Object?>{
           'font': <String, Object?>{'weight': 'bold'},
         });
-      final a = d['a']! as RoutedScope;
-      expect(_json(a.ownValues['font']), '{"size":10}');
-      expect(_json(a['font']), '{"size":10,"style":"bold"}');
+      final a = d['a'];
+      expect(_json(_local(a, 'font')), '{"size":10}');
+      expect(_json(_get(a, 'font')), '{"size":10,"style":"bold"}');
     });
 
     test('a route on the root', () {
@@ -447,7 +463,7 @@ void main() {
         ..route('f', 'z', '', 'color');
       expect(_keys(d['e']), ['p', 'q', 'z']);
       expect(_get(d['e'], 'z'), '#666');
-      expect((d['e']! as Map<String, Object?>).containsKey('z'), true);
+      expect(jsHasOwn(d['e'], 'z'), true);
       expect(_keys(d['f']), ['p', 'z', 'q']);
       expect(_get(d['f'], 'z'), 5.0);
     });
@@ -522,7 +538,7 @@ void main() {
       d['color'] = 'green';
       expect(_get(d['e'], 'z'), '#666');
       expect(
-        () => (d['e']! as Map<String, Object?>).remove('z'),
+        () => jsDeleteKey(d['e'], 'z'),
         _throwsTypeError,
       );
       expect(_keys(d['e']), ['p', 'z']);
@@ -534,15 +550,15 @@ void main() {
         ..route('f', 'z', '', 'color');
       d['color'] = 'green';
       d.route('f', 'z', '', 'backgroundColor');
-      final f = d['f']! as RoutedScope;
-      expect(f.ownValues['z'], 'green');
+      final f = d['f']! as JsObjectFace;
+      expect(_local(f, 'z'), 'green');
       expect(f['z'], 'green');
-      f.remove('z');
+      f.jsDelete('z');
       f['z'] = 9.0;
       expect(_keys(f), ['z']);
       expect(f['z'], 9.0);
       d.route('f', 'z', '', 'borderColor');
-      expect(f.ownValues['z'], 9.0);
+      expect(_local(f, 'z'), 9.0);
       expect(f['z'], 9.0);
       expect(_keys(f), ['z']);
     });
@@ -553,7 +569,7 @@ void main() {
         ..route('f', 'z', '', 'color')
         ..route('f', 'z', '', 'backgroundColor');
       expect(_get(d['f'], 'z'), 5.0);
-      (d['f']! as Map<String, Object?>).remove('z');
+      jsDeleteKey(d['f'], 'z');
       expect(_keys(d['f']), ['p', 'q']);
       expect(_keys(d.get('f')), ['p', 'q']);
     });
@@ -580,10 +596,10 @@ void main() {
         ..route('p.font', 'size', '', 'color');
       expect(_get(_get(d['t'], 'font'), 'size'), '#666');
       expect(_json(_get(d['p'], 'font')), '{"size":"#666"}');
-      expect((d['p']! as RoutedScope).ownValues['font'], same(undefined));
-      (d['t']! as Map<String, Object?>)['font'] = <String, Object?>{
+      expect(_local(d['p'], 'font'), same(undefined));
+      jsSet(d['t'], 'font', <String, Object?>{
         'size': 7.0,
-      };
+      });
       expect(_json(_get(d['p'], 'font')), '{"size":7}');
       expect(_json(_get(d['t'], 'font')), '{"size":7}');
     });
@@ -597,31 +613,33 @@ void main() {
         ..route('a', 'font', 'b', 'font')
         ..route('a.font', 'x', '', 'color');
       expect(_get(_get(d['b'], 'font'), 'x'), '#666');
-      expect((d['a']! as RoutedScope).ownValues['font'], same(undefined));
+      expect(_local(d['a'], 'font'), same(undefined));
       expect(_json(_get(d['a'], 'font')), '{"size":20,"x":"#666"}');
       expect(_keys(_get(d['b'], 'font')), ['size', 'x']);
-      (d['b']! as Map<String, Object?>)['font'] = <String, Object?>{
+      jsSet(d['b'], 'font', <String, Object?>{
         'size': 30.0,
-      };
+      });
       expect(_json(_get(d['a'], 'font')), '{"size":30}');
     });
   });
 
   group('adapt-defaults-route', () {
-    // Pins the difference of the port: a routed scope is a RoutedScope in
-    // the place of the plain Map, and the hidden `_<name>` is not a key.
-    test('the scope becomes a RoutedScope over the same entries', () {
+    // Pins the difference of the port: a route on a raw Map scope puts a
+    // typed scope with the same keys, values and order in the place of the
+    // Map, and the hidden `_<name>` is not a key.
+    test('the scope becomes a typed scope over the same entries', () {
       final d = _defaults()..set('s', <String, Object?>{'p': 1.0, 'q': 2.0});
       final plain = d['s']! as Map<String, Object?>;
-      expect(plain, isNot(isA<RoutedScope>()));
       d.route('s', 'q', '', 'color');
-      final routed = d['s']! as RoutedScope;
-      expect(identical(routed.ownValues, plain), true);
+      final routed = d['s']! as OptionScope;
+      expect(identical(routed, plain), false);
       expect(_keys(routed), ['p', 'q']);
-      expect(routed.containsKey('_q'), false);
-      // The Map that the routed scope replaced holds the local values.
+      expect(routed.jsHas('_q'), false);
+      // The typed scope holds the local values; the Map that it replaced
+      // keeps its entries and has no route.
       routed['q'] = undefined;
-      expect(_get(plain, 'q'), same(undefined));
+      expect(_get(plain, 'q'), 2.0);
+      expect(_local(routed, 'q'), same(undefined));
       expect(routed['q'], '#666');
       expect(identical(d.get('s'), routed), true);
     });
@@ -632,12 +650,12 @@ void main() {
         ..route('c', 'x', '', 'color');
       // Upstream gives {"_x":2,"x":2}.
       expect(_json(d['c']), '{"_x":1,"x":2}');
-      (d['c']! as Map<String, Object?>)['_x'] = undefined;
+      jsSet(d['c'], '_x', undefined);
       // Upstream gives '#666'.
       expect(_get(d['c'], 'x'), 2.0);
     });
 
-    test('a route reads the RoutedScope that replaced its target', () {
+    test('a route reads the typed scope that replaced its target', () {
       final d = _defaults()
         ..set('t', <String, Object?>{'v': undefined})
         ..set('u', <String, Object?>{})
@@ -689,7 +707,7 @@ void main() {
     setUpAll(() {
       defaultsJson = _json(defaults);
       descriptorsJson = _json(descriptors);
-      ticks = (defaults['scale']! as Map<String, Object?>)['ticks'];
+      ticks = (defaults['scale']! as JsObjectFace)['ticks'];
       events = defaults['events'];
       animation = defaults['animation'];
     });
@@ -698,23 +716,23 @@ void main() {
       expect(_json(defaults), defaultsJson);
       expect(_json(descriptors), descriptorsJson);
       expect(_json(overrides), '{}');
-      final scale = defaults['scale']! as Map<String, Object?>;
+      final scale = defaults['scale']! as JsObjectFace;
       expect(identical(scale['ticks'], ticks), true);
       expect(identical(defaults['events'], events), true);
       expect(_get(defaults, 'leak'), same(undefined));
       expect(identical(defaults['animation'], animation), true);
       expect(_get(defaults, 'onHover'), isNull);
-      expect(defaults.containsKey('onHover'), true);
+      expect(defaults.jsHas('onHover'), true);
       expect(_get(scale['ticks'], 'mirror'), false);
       expect(_keys(defaults['font']), isNot(contains('fallbackFamily')));
-      expect(defaults['font'], isNot(isA<RoutedScope>()));
+      expect(defaults['font'], isA<OptionScope>());
       // The routes of the snapshot still read the root.
       defaults['color'] = 'blue';
       expect(_get(scale['ticks'], 'color'), 'blue');
     }
 
     void changeScopes() {
-      final scale = defaults['scale']! as Map<String, Object?>;
+      final scale = defaults['scale']! as JsObjectFace;
       defaults
         ..set('leak', <String, Object?>{'a': 1.0})
         ..set('font', <String, Object?>{'size': 99.0})
@@ -724,8 +742,8 @@ void main() {
         ..override('leak', <String, Object?>{'b': 2.0});
       defaults['color'] = 'red';
       defaults['animation'] = null;
-      defaults.remove('onHover');
-      (scale['ticks']! as Map<String, Object?>)['mirror'] = undefined;
+      defaults.jsDelete('onHover');
+      (scale['ticks']! as JsObjectFace)['mirror'] = undefined;
       (defaults['events']! as List<Object?>).add('wheel');
       scale['grid'] = <String, Object?>{};
       expect(_get(defaults['font'], 'fallbackFamily'), 'red');

@@ -76,7 +76,7 @@ List<Object?> _series(int n, int Function(int i) f) => <Object?>[
 /// The `beforeUpdate` hook `writeData` of the inline plugin `writer` of the
 /// generator: when its option `write` is true, it writes 80 new items into
 /// `data` of the dataset 0.
-void _writeData(types.Chart chart, AnyObject args, AnyObject options) {
+void _writeData(types.Chart chart, Object? args, Object? options) {
   if (jsTruthy(jsGet(options, 'write'))) {
     final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
     (datasets[0]! as AnyObject)['data'] = _series(80, (i) => (i * 11) % 19);
@@ -94,7 +94,7 @@ final Map<String, Object?> _functions = {'writeData': _writeData};
 ({Chart chart, AnyObject dataset, List<Object?> data}) _accessorChart({
   AnyObject decimation = const {},
   AnyObject dataset = const {},
-  AnyObject? theme,
+  Object? theme,
 }) {
   final data = _series(2000, (i) => (i * 37) % 101);
   final ds = <String, Object?>{
@@ -135,12 +135,12 @@ final Map<String, Object?> _functions = {'writeData': _writeData};
 }
 
 /// `chart.options.plugins`, the option resolver of the plugins.
-AnyObject _plugins(Chart chart) =>
-    jsGet(chart.options, 'plugins')! as AnyObject;
+JsObjectFace _plugins(Chart chart) =>
+    jsGet(chart.options, 'plugins')! as JsObjectFace;
 
 /// `chart.options.plugins.decimation`.
-AnyObject _decimationOptions(Chart chart) =>
-    jsGet(_plugins(chart), 'decimation')! as AnyObject;
+JsObjectFace _decimationOptions(Chart chart) =>
+    jsGet(_plugins(chart), 'decimation')! as JsObjectFace;
 
 /// `chart.getDatasetMeta(0).data.length`.
 int _metaCount(Chart chart) => chart.getDatasetMeta(0).data.length;
@@ -191,7 +191,7 @@ void main() {
         'destroy',
       ]);
       expect(decimation['id'], 'decimation');
-      expect(decimation['defaults'], <String, Object?>{
+      expect(_plain(decimation['defaults']), <String, Object?>{
         'algorithm': 'min-max',
         'enabled': false,
       });
@@ -734,3 +734,14 @@ void main() {
     });
   });
 }
+
+/// [value] as plain Dart values for a compare with a Map literal: an object
+/// (a Map or a typed object with a face, Chart.js ADR 0054 §5) gives a new
+/// Map of its own keys in the `Object.keys` order, each value read by name;
+/// another value is itself.
+Object? _plain(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace
+    ? <String, Object?>{
+        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
+      }
+    : value;

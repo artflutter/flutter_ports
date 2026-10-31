@@ -4,6 +4,8 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
+import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,12 +25,17 @@ Map<String, Object?> _copy(Map<String, Object?> theme) => {
 
 /// The leaves of [value] by dot path. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
-  if (value is! Map<String, Object?>) return {prefix: value};
+  if (!_isObject(value)) return {prefix: value};
   return {
-    for (final key in value.keys)
-      ..._leaves(value[key], prefix.isEmpty ? key : '$prefix.$key'),
+    for (final key in jsObjectKeys(value))
+      ..._leaves(jsGet(value, key), prefix.isEmpty ? key : '$prefix.$key'),
   };
 }
+
+/// Whether [value] is an object of a compiled theme: a Map, or a typed scope
+/// with its face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
 
 void main() {
   test('the compiled light preset is the same on each target platform', () {

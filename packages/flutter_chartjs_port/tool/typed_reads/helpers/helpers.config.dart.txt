@@ -1,5 +1,19 @@
+# The allowlist of the close step (Chart.js ADR 0054 §4): the resolvers.
+# - stringIndex 14: the members of ResolverCache and ContextCache read the
+#   slots of the cache object through the get trap, because the set and
+#   deleteProperty traps can replace a slot by name (helpers.config.ts:41-49,
+#   :127-136).
+# - jsGet 18: the generic walk over a scope list of any kind (a typed scope
+#   reads its typed lookup; a raw Map, an array or another value of the user
+#   reads by name: _resolve, subGetTarget, the _fallback and the descriptors
+#   of a scope, the override and _scopes of a proxy value), the index of an
+#   indexable option, readOption for an options object that is not a view
+#   (a Map of the user) and the parsing key of _parseObjectDataRadialScale.
+# - jsCall 6: the scriptable options, the user predicates of _scriptable and
+#   _indexable, a user _fallback function and the override of a proxy value
+#   of the user, with JS arity.
+# - jsObjectKeys 2: Reflect.ownKeys and Object.keys of a scope of any kind.
 jsGet 18
 stringIndex 14
 jsCall 6
 jsObjectKeys 2
-extendsMapBase 2

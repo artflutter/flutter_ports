@@ -27,7 +27,10 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/data_item.dart'
+    show TypedDataItem;
 
 /// One option value of a typed scope (Chart.js ADR 0054 §1).
 sealed class Opt<T> {
@@ -176,7 +179,9 @@ Opt<T>? _special<T>(Object? raw) {
   if (raw is Undefined) return optUndefined;
   if (jsIsFunction(raw)) return OptFunction<T>(raw);
   if (raw is List<Object?>) return OptList<T>(raw);
-  if (raw is Map<String, Object?> || raw is OptionObject) {
+  if (raw is Map<String, Object?> ||
+      raw is OptionObject ||
+      (raw is JsObjectFace && raw is! TypedDataItem)) {
     return OptScope<T>(raw);
   }
   return null;

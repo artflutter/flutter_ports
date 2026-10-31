@@ -2,7 +2,7 @@
 # jsGet: the data object and the dataset object of the user:
 #   chart.data.labels (getLabelAndValue) and `_dataset.data` (the `raw` of a
 #   point with segments).
-jsGet 2
 # jsGetKey: `_dataset._decimated`, the property that the decimation plugin
 #   writes into the dataset object of the user.
+jsGet 2
 jsGetKey 1

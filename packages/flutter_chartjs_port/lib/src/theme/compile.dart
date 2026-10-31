@@ -38,14 +38,14 @@
 /// Ported files never import this file (Chart.js ADR 0050, invariant 4).
 library;
 
-import 'dart:collection';
+import 'dart:collection' show ListBase;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsFreezable, jsObjectFreeze;
+    show JsFreezable, JsFrozenMap, jsObjectFreeze;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
@@ -858,12 +858,12 @@ void _mergeOver(AnyObject target, AnyObject source) {
   }
 }
 
-/// The frozen copy of [value]: a frozen [_FrozenMap] for a Map, a frozen
+/// The frozen copy of [value]: a frozen [JsFrozenMap] for a Map, a frozen
 /// [_FrozenList] for a List, the [themeColorToRgba] string for a
 /// [RawThemeColor], else [value].
 Object? _freeze(Object? value) => switch (value) {
   final AnyObject map => jsObjectFreeze(
-    _FrozenMap({for (final key in jsObjectKeys(map)) key: _freeze(map[key])}),
+    JsFrozenMap({for (final key in jsObjectKeys(map)) key: _freeze(map[key])}),
   ),
   final List<Object?> list => jsObjectFreeze(
     _FrozenList([for (final item in list) _freeze(item)]),
@@ -871,61 +871,6 @@ Object? _freeze(Object? value) => switch (value) {
   final RawThemeColor color => themeColorToRgba(color),
   _ => value,
 };
-
-/// A Map of the compiled theme with the frozen state of `Object.freeze`
-/// (Chart.js ADR 0021, section 5).
-///
-/// In the frozen state, a write throws a [TypeError], as a write into a
-/// frozen object in strict mode does. The reads do not change.
-final class _FrozenMap extends MapBase<String, Object?> implements JsFreezable {
-  _FrozenMap(this._map);
-
-  /// The entries, in insertion order.
-  final AnyObject _map;
-
-  bool _frozen = false;
-
-  @override
-  bool get isFrozen => _frozen;
-
-  @override
-  void freeze() {
-    _frozen = true;
-  }
-
-  @override
-  Object? operator [](Object? key) => _map[key];
-
-  @override
-  void operator []=(String key, Object? value) {
-    // A JavaScript TypeError: a write into a frozen object.
-    if (_frozen) throw TypeError();
-    _map[key] = value;
-  }
-
-  @override
-  bool containsKey(Object? key) => _map.containsKey(key);
-
-  @override
-  Object? remove(Object? key) {
-    // A JavaScript TypeError: a delete of a property of a frozen object.
-    if (_frozen && _map.containsKey(key)) throw TypeError();
-    return _map.remove(key);
-  }
-
-  @override
-  Iterable<String> get keys => _map.keys;
-
-  @override
-  int get length => _map.length;
-
-  @override
-  void clear() {
-    // A JavaScript TypeError: a delete of a property of a frozen object.
-    if (_frozen && _map.isNotEmpty) throw TypeError();
-    _map.clear();
-  }
-}
 
 /// A List of the compiled theme with the frozen state of `Object.freeze`
 /// (Chart.js ADR 0021, section 5).

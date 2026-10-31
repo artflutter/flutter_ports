@@ -34,6 +34,7 @@ FontSpec
 HTMLCanvasElement
 Interaction
 JsClass
+JsObjectFace
 LabelItem
 LegendElement
 LineController
@@ -159,6 +160,7 @@ HTMLCanvasElement
 IndexAxis
 Interaction
 JsClass
+JsObjectFace
 LabelItem
 LegendElement
 LineController

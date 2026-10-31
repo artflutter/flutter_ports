@@ -7,8 +7,7 @@
 /// most 30) and keeps each value in a Dart field of its type. The base
 /// keeps:
 /// - the present bit of each field: a field that the object does not own is
-///   absent, and a read by name gives [undefined] (the face) or Dart `null`
-///   (the Map read);
+///   absent, and a read by name gives [undefined];
 /// - the foreign slot of each field: a write by name of a value outside the
 ///   type of the field keeps the raw value (Chart.js ADR 0054 §6), and the
 ///   subclass keeps the JS conversion in its field;
@@ -18,15 +17,11 @@
 ///   order is a sequence of 4-bit groups in two `int`s of 7 groups each (28
 ///   bits each, also on the web). More keys, or more fields, make a list.
 ///
-/// The face ([JsObjectFace]) has the JS rules. During the migration a
-/// record is also a `MapBase` (the scaffolding of Chart.js ADR 0054 §5):
-/// the Map read gives Dart `null` for an absent key, and `keys` gives the
-/// own keys in their insertion order.
+/// The face ([JsObjectFace]) has the JS rules. A record is not a `Map`
+/// (Chart.js ADR 0054 §5).
 ///
 /// This library is a pure layer.
 library;
-
-import 'dart:collection';
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
@@ -35,8 +30,7 @@ import 'package:meta/meta.dart';
 
 /// A JS object with typed fields (Chart.js ADR 0054). See the library
 /// documentation.
-abstract base class TypedRecord extends MapBase<String, Object?>
-    implements JsObjectFace {
+abstract base class TypedRecord implements JsObjectFace {
   /// The JS names of the fields, by slot. At most 30 names.
   @protected
   List<String> get fieldNames;
@@ -267,17 +261,9 @@ abstract base class TypedRecord extends MapBase<String, Object?>
     return index < 0 ? undefined : _extraValues![index];
   }
 
-  // The Map protocol (the scaffolding of Chart.js ADR 0054 §5).
-
-  @override
-  Object? operator [](Object? key) {
-    if (key is! String) return null;
-    final value = _own(key);
-    return identical(value, undefined) && !containsKey(key) ? null : value;
-  }
-
-  @override
-  void operator []=(String key, Object? value) {
+  /// Writes [value] for the own key [key]: the field of a name of a field,
+  /// else an extra.
+  void _write(String key, Object? value) {
     final slot = slotOf(key);
     if (slot >= 0) {
       _storeSlot(slot, value);
@@ -296,44 +282,34 @@ abstract base class TypedRecord extends MapBase<String, Object?>
     _append(_extraGroup, key);
   }
 
-  @override
-  bool containsKey(Object? key) {
-    if (key is! String) return false;
+  /// Whether the record owns [key].
+  bool _owns(String key) {
     final slot = slotOf(key);
     if (slot >= 0) return _present & (1 << slot) != 0;
     return _extraNames?.contains(key) ?? false;
   }
 
-  @override
-  Iterable<String> get keys => _decode();
-
-  @override
-  int get length => _orderList?.length ?? _count;
-
-  @override
-  Object? remove(Object? key) {
-    if (key is! String) return null;
+  /// Removes the own key [key]. Returns whether the record owned it.
+  bool _remove(String key) {
     final slot = slotOf(key);
     if (slot >= 0) {
-      if (!hasSlot(slot)) return null;
-      final value = _own(key);
+      if (!hasSlot(slot)) return false;
       clearSlot(slot);
       untouchSlot(slot);
-      return value;
+      return true;
     }
     final names = _extraNames;
-    if (names == null) return null;
+    if (names == null) return false;
     final index = names.indexOf(key);
-    if (index < 0) return null;
-    final value = _extraValues![index];
+    if (index < 0) return false;
     _removeFromOrder(key, _extraGroup, index);
     names.removeAt(index);
     _extraValues!.removeAt(index);
-    return value;
+    return true;
   }
 
-  @override
-  void clear() => _decode().forEach(remove);
+  /// The count of the own keys.
+  int get ownKeyCount => _orderList?.length ?? _count;
 
   // The face of Chart.js ADR 0054 §5.
 
@@ -341,7 +317,13 @@ abstract base class TypedRecord extends MapBase<String, Object?>
   Object? jsRead(String name) => _own(name);
 
   @override
-  void jsWrite(String name, Object? value) => this[name] = value;
+  void jsWrite(String name, Object? value) => _write(name, value);
+
+  @override
+  Object? operator [](String name) => _own(name);
+
+  @override
+  void operator []=(String name, Object? value) => _write(name, value);
 
   @override
   List<String> jsKeys() {
@@ -365,12 +347,8 @@ abstract base class TypedRecord extends MapBase<String, Object?>
   }
 
   @override
-  bool jsHas(String name) => containsKey(name);
+  bool jsHas(String name) => _owns(name);
 
   @override
-  bool jsDelete(String name) {
-    if (!containsKey(name)) return false;
-    remove(name);
-    return true;
-  }
+  bool jsDelete(String name) => _remove(name);
 }

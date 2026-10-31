@@ -193,7 +193,7 @@ final class DemoChart implements types.Chart {
 
   /// No plugins: no plugin cancels the hook.
   @override
-  bool notifyPlugins(String hook, [Map<String, Object?>? args]) => true;
+  bool notifyPlugins(String hook, [Object? args]) => true;
 
   /// No plugins.
   @override

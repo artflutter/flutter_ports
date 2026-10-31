@@ -34,17 +34,17 @@ AnyObject createChartViewPlugin(ChartThemeSwitch theme, ChartKeyboard keys) =>
       'id': chartViewPluginId,
 
       /// core.controller.js:490 `notifyPlugins('beforeUpdate', ...)`.
-      'beforeUpdate': (types.Chart chart, AnyObject args, AnyObject options) {
+      'beforeUpdate': (types.Chart chart, Object? args, Object? options) {
         theme.beforeUpdate(chart);
       },
 
       /// core.controller.js:612 `notifyPlugins('beforeLayout', ...)`.
-      'beforeLayout': (types.Chart chart, AnyObject args, AnyObject options) {
+      'beforeLayout': (types.Chart chart, Object? args, Object? options) {
         theme.afterColorize(chart);
       },
 
       /// core.controller.js:731 `notifyPlugins('afterDraw')`.
-      'afterDraw': (types.Chart chart, AnyObject args, AnyObject options) {
+      'afterDraw': (types.Chart chart, Object? args, Object? options) {
         keys.paintRing(chart);
       },
     };

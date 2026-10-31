@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -91,8 +92,7 @@ import '../support/jasmine.dart';
 //   Map `chart.options['plugins']`.
 
 /// :3 `const overrides = Chart.overrides`: `overrides.line`.
-Map<String, Object?> get _line =>
-    jsGet(Chart.overrides, 'line')! as Map<String, Object?>;
+JsObjectFace get _line => jsGet(Chart.overrides, 'line')! as JsObjectFace;
 
 /// `chart.data.datasets`.
 List<Object?> _datasets(Chart chart) =>
@@ -226,6 +226,7 @@ void main() {
         final data = chart.data;
 
         expect(data, isA<Map<String, Object?>>());
+        data as AnyObject;
         expect(data['labels'], isA<List<Object?>>());
         expect(jsGet(data['labels'], 'length'), 0);
         expect(data['datasets'], isA<List<Object?>>());
@@ -249,16 +250,16 @@ void main() {
         });
 
         expect(chart.data, same(data));
-        expect(chart.data['labels'], same(labels));
-        expect(chart.data['datasets'], same(datasets));
-        expect(jsGet(chart.data['datasets'], 0), same(ds0));
-        expect(jsGet(chart.data['datasets'], 1), same(ds1));
+        expect((chart.data as AnyObject)['labels'], same(labels));
+        expect((chart.data as AnyObject)['datasets'], same(datasets));
+        expect(jsGet((chart.data as AnyObject)['datasets'], 0), same(ds0));
+        expect(jsGet((chart.data as AnyObject)['datasets'], 1), same(ds1));
         expect(
-          jsGet(jsGet(chart.data['datasets'], 0), 'data'),
+          jsGet(jsGet((chart.data as AnyObject)['datasets'], 0), 'data'),
           same(ds0['data']),
         );
         expect(
-          jsGet(jsGet(chart.data['datasets'], 1), 'data'),
+          jsGet(jsGet((chart.data as AnyObject)['datasets'], 1), 'data'),
           same(ds1['data']),
         );
       });
@@ -329,7 +330,7 @@ void main() {
         expect(jsGet(options['hover'], 'mode'), 'test');
 
         defaults['onHover'] = null;
-        _line.remove('interaction');
+        _line.jsDelete('interaction');
       });
 
       testWidgets('should initialize config with default hover options', (
@@ -352,14 +353,14 @@ void main() {
         expect(jsGet(options['hover'], 'mode'), 'test');
 
         defaults['onHover'] = null;
-        _line.remove('hover');
+        _line.jsDelete('hover');
       });
 
       testWidgets('should override default options', (tester) async {
         void callback() {}
         final defaults = Chart.defaults;
         final lineDefaults =
-            jsGet(defaults['datasets'], 'line')! as Map<String, Object?>;
+            jsGet(defaults['datasets'], 'line')! as JsObjectFace;
         final defaultSpanGaps = jsGet(lineDefaults, 'spanGaps');
 
         defaults['onHover'] = callback;
@@ -386,7 +387,7 @@ void main() {
         );
 
         defaults['onHover'] = null;
-        _line.remove('hover');
+        _line.jsDelete('hover');
         lineDefaults['spanGaps'] = defaultSpanGaps;
       });
 
@@ -742,13 +743,13 @@ void main() {
       });
 
       tearDown(() {
-        (defaults['scale']! as Map<String, Object?>)
-          ..remove('_jasmineCheckA')
-          ..remove('_jasmineCheckB')
-          ..remove('_jasmineCheckC');
-        (jsGet(defaults['scales'], 'logarithmic')! as Map<String, Object?>)
-          ..remove('_jasmineCheckB')
-          ..remove('_jasmineCheckC');
+        (defaults['scale']! as JsObjectFace)
+          ..jsDelete('_jasmineCheckA')
+          ..jsDelete('_jasmineCheckB')
+          ..jsDelete('_jasmineCheckC');
+        (jsGet(defaults['scales'], 'logarithmic')! as JsObjectFace)
+          ..jsDelete('_jasmineCheckB')
+          ..jsDelete('_jasmineCheckC');
       });
 
       testWidgets(
@@ -2129,7 +2130,7 @@ void main() {
           'options': <String, Object?>{'responsive': true},
         });
 
-        final y = jsGet(chart.options['scales'], 'y')! as Map<String, Object?>;
+        final y = jsGet(chart.options['scales'], 'y')! as JsObjectFace;
         y['min'] = 0;
         y['max'] = 10;
         chart.update();
@@ -2218,7 +2219,7 @@ void main() {
           'mode': 'dataset',
           'intersect': false,
         };
-        (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+        (chart.options['plugins']! as JsObjectFace)['tooltip'] =
             newTooltipConfig;
 
         chart.update();
@@ -2421,7 +2422,7 @@ void main() {
         expect(sequence, jasmineEquals(<Object?>[...hooks['install']!]));
 
         sequence = [];
-        (chart.options['plugins']! as Map<String, Object?>)['plugin'] = true;
+        (chart.options['plugins']! as JsObjectFace)['plugin'] = true;
         chart.update();
 
         expect(
@@ -2434,7 +2435,7 @@ void main() {
         );
 
         sequence = [];
-        (chart.options['plugins']! as Map<String, Object?>)['plugin'] = false;
+        (chart.options['plugins']! as JsObjectFace)['plugin'] = false;
         chart.update();
 
         expect(sequence, jasmineEquals(hooks['stop']));
@@ -2505,7 +2506,8 @@ void main() {
           void iterateOptions() {
             for (final plugin in chart.plugins.cache!) {
               // triggering bug https://github.com/chartjs/Chart.js/issues/9368
-              expect(plugin.options, isA<Map<String, Object?>>());
+              // The options are a resolver, an object with no prototype.
+              expect(plugin.options, isA<JsProxyObject>());
             }
           }
 
@@ -2625,7 +2627,12 @@ void main() {
       ) async {
         beforeEach();
         final orig = _datasets(chart);
-        chart.data['datasets'] = <Object?>[orig[0], orig[2], orig[1], orig[3]];
+        (chart.data as AnyObject)['datasets'] = <Object?>[
+          orig[0],
+          orig[2],
+          orig[1],
+          orig[3],
+        ];
         chart.update();
         var metasets = chart.metasets;
         expect(metasets[0]!.label, jasmineEquals('1'));
@@ -2633,7 +2640,7 @@ void main() {
         expect(metasets[2]!.label, jasmineEquals('2'));
         expect(metasets[3]!.label, jasmineEquals('4'));
 
-        chart.data['datasets'] = <Object?>[
+        (chart.data as AnyObject)['datasets'] = <Object?>[
           <String, Object?>{'label': 'new', 'order': 10},
           orig[3],
           orig[2],
@@ -2648,7 +2655,7 @@ void main() {
         expect(metasets[3]!.label, jasmineEquals('2'));
         expect(metasets[4]!.label, jasmineEquals('1'));
 
-        chart.data['datasets'] = <Object?>[
+        (chart.data as AnyObject)['datasets'] = <Object?>[
           orig[3],
           orig[2],
           orig[1],
@@ -2978,8 +2985,14 @@ void main() {
             },
           ]),
         );
-        expect(point0.options!['borderColor'], jasmineEquals('blue'));
-        expect(point1.options!['borderColor'], jasmineEquals('red'));
+        expect(
+          (point0.options! as JsObjectFace)['borderColor'],
+          jasmineEquals('blue'),
+        );
+        expect(
+          (point1.options! as JsObjectFace)['borderColor'],
+          jasmineEquals('red'),
+        );
 
         chart.setActiveElements(<Object?>[
           <String, Object?>{'datasetIndex': 0, 'index': 1},
@@ -2994,8 +3007,14 @@ void main() {
             },
           ]),
         );
-        expect(point0.options!['borderColor'], jasmineEquals('red'));
-        expect(point1.options!['borderColor'], jasmineEquals('blue'));
+        expect(
+          (point0.options! as JsObjectFace)['borderColor'],
+          jasmineEquals('red'),
+        );
+        expect(
+          (point1.options! as JsObjectFace)['borderColor'],
+          jasmineEquals('blue'),
+        );
 
         chart.update();
         expect(
@@ -3008,8 +3027,14 @@ void main() {
             },
           ]),
         );
-        expect(point0.options!['borderColor'], jasmineEquals('red'));
-        expect(point1.options!['borderColor'], jasmineEquals('blue'));
+        expect(
+          (point0.options! as JsObjectFace)['borderColor'],
+          jasmineEquals('red'),
+        );
+        expect(
+          (point1.options! as JsObjectFace)['borderColor'],
+          jasmineEquals('blue'),
+        );
       },
     );
 

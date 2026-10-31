@@ -7,6 +7,8 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
@@ -179,12 +181,17 @@ Directory? _repositoryRoot() {
 
 /// The leaves of [value] by dot path, in key order. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
-  if (value is! Map<String, Object?>) return {prefix: value};
+  if (!_isObject(value)) return {prefix: value};
   return {
-    for (final key in value.keys)
-      ..._leaves(value[key], prefix.isEmpty ? key : '$prefix.$key'),
+    for (final key in jsObjectKeys(value))
+      ..._leaves(jsGet(value, key), prefix.isEmpty ? key : '$prefix.$key'),
   };
 }
+
+/// Whether [value] is an object of a compiled theme: a Map, or a typed scope
+/// with its face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
 
 /// The leaves of the compiled light preset without the `transitions` keys:
 /// the content of the snapshot.

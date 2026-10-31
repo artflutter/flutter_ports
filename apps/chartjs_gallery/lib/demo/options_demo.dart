@@ -152,7 +152,7 @@ class OptionsDemo extends StatelessWidget {
       'font': <String, Object?>{'size': 20.0, 'weight': 'bold'},
     };
     final resolver = createResolver([dataset, defaults]);
-    final font = resolver['font']! as Map<String, Object?>;
+    final font = resolver['font']! as JsObjectFace;
     final context0 = attachContext(resolver, <String, Object?>{});
     final hover = context0['hoverBackgroundColor'];
     return Column(

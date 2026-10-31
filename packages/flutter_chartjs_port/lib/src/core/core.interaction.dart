@@ -118,12 +118,13 @@ final class InteractionItem implements types.ActiveElement {
 /// [e] is the event: a `types.ChartEvent`, or a `NativeEvent` of
 /// `lib/src/platform/native_event.dart`, as `getRelativePosition` takes
 /// (helpers.dom.ts:105). [options] are the `InteractionOptions` of
-/// core.interaction.js:9, a plain object (Chart.js ADR 0043). Dart `null`
+/// core.interaction.js:9: a view of the options or a plain object (Chart.js
+/// ADR 0054 §5). Dart `null`
 /// for [useFinalPosition] stands for an absent argument, JS `undefined`.
 typedef InteractionModeFunction = List<InteractionItem> Function(
   types.Chart chart,
   Object e,
-  Map<String, Object?> options, [
+  Object options, [
   // The upstream signature has a positional `useFinalPosition`.
   // ignore: avoid_positional_boolean_parameters
   bool? useFinalPosition,
@@ -629,19 +630,19 @@ bool _inAxisRange(
 /// take the value as it is, as upstream does: a value that is not a string
 /// or a `List` throws a `TypeError` where upstream calls `axis.indexOf`
 /// (core.interaction.js:95).
-Object? _axisOption(Map<String, Object?> options, String fallback) {
+Object? _axisOption(Object options, String fallback) {
   final axis = readOption(options, OptionKey.axis);
   return jsTruthy(axis) ? axis : fallback;
 }
 
 /// The option `options.includeInvisible || false` of core.interaction.js:273,
 /// :309, :339 and :355. The readers test only its truthiness.
-bool _includeInvisibleOption(Map<String, Object?> options) =>
+bool _includeInvisibleOption(Object options) =>
     jsTruthy(readOption(options, OptionKey.includeInvisible));
 
 /// The option `options.intersect`. The readers test only its truthiness
 /// (core.interaction.js:274, :310, :175, :214, :242).
-bool _intersectOption(Map<String, Object?> options) =>
+bool _intersectOption(Object options) =>
     jsTruthy(readOption(options, OptionKey.intersect));
 
 /// `meta.data[index]` of core.interaction.js:285: the element at the number
@@ -668,7 +669,7 @@ Element? _dataAt(List<types.Element> data, double index) =>
 List<InteractionItem> _index(
   types.Chart chart,
   Object e,
-  Map<String, Object?> options, [
+  Object options, [
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
@@ -732,7 +733,7 @@ List<InteractionItem> _index(
 List<InteractionItem> _dataset(
   types.Chart chart,
   Object e,
-  Map<String, Object?> options, [
+  Object options, [
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
@@ -787,7 +788,7 @@ List<InteractionItem> _dataset(
 List<InteractionItem> _point(
   types.Chart chart,
   Object e,
-  Map<String, Object?> options, [
+  Object options, [
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
@@ -815,7 +816,7 @@ List<InteractionItem> _point(
 List<InteractionItem> _nearest(
   types.Chart chart,
   Object e,
-  Map<String, Object?> options, [
+  Object options, [
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
@@ -844,7 +845,7 @@ List<InteractionItem> _nearest(
 List<InteractionItem> _x(
   types.Chart chart,
   Object e,
-  Map<String, Object?> options, [
+  Object options, [
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
@@ -870,7 +871,7 @@ List<InteractionItem> _x(
 List<InteractionItem> _y(
   types.Chart chart,
   Object e,
-  Map<String, Object?> options, [
+  Object options, [
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);

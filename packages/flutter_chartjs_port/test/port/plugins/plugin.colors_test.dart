@@ -209,7 +209,7 @@ void main() {
     test('has the keys of plugin.colors.ts:94-126 in order', () {
       expect(jsObjectKeys(colors), ['id', 'defaults', 'beforeLayout']);
       expect(colors['id'], 'colors');
-      expect(colors['defaults'], <String, Object?>{
+      expect(_plain(colors['defaults']), <String, Object?>{
         'enabled': true,
         'forceOverride': false,
       });
@@ -368,7 +368,8 @@ void main() {
       final chart = acquireChart(_config('bar'));
       expect(jsGet(_dataset(chart, 1), 'borderColor'), same(undefined));
       expect(jsGet(_dataset(chart, 1), 'backgroundColor'), same(undefined));
-      final options = (chart.getDatasetMeta(1).data[0] as Element).options!;
+      final options =
+          (chart.getDatasetMeta(1).data[0] as Element).options! as JsObjectFace;
       expect(options['borderColor'], 'red');
       expect(options['backgroundColor'], 'rgba(0,0,0,0.1)');
     });
@@ -386,3 +387,14 @@ void main() {
     });
   });
 }
+
+/// [value] as plain Dart values for a compare with a Map literal: an object
+/// (a Map or a typed object with a face, Chart.js ADR 0054 §5) gives a new
+/// Map of its own keys in the `Object.keys` order, each value read by name;
+/// another value is itself.
+Object? _plain(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace
+    ? <String, Object?>{
+        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
+      }
+    : value;

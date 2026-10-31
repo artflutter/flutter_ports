@@ -2,4 +2,5 @@
 # Map of a constructor, a Map of user code or of a spec) writes its own keys
 # in the Object.keys order (core.element.ts:57-59). A property object of a
 # controller takes the typed writes.
+jsGet 1
 jsObjectKeys 1

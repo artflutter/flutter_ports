@@ -41,14 +41,14 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show jsGet, jsIsObjectLike, jsSet;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ColorsOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show ColorsPluginOptions, optionOf;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
@@ -97,10 +97,11 @@ List<Object?>? _themeBackgroundColors;
 /// List with at least one item, else Dart `null`. An empty List would give
 /// `i % 0` (a throw in Dart), and a String would give one character for
 /// each dataset in JavaScript.
-List<Object?>? _themePalette(AnyObject? theme, String key) {
-  final plugins = theme?['plugins'];
-  final colors = plugins is AnyObject ? plugins['colors'] : null;
-  final value = colors is AnyObject ? colors[key] : null;
+List<Object?>? _themePalette(Object? theme, String key) {
+  if (theme == null) return null;
+  final plugins = jsGet(theme, 'plugins');
+  final colors = jsIsObjectLike(plugins) ? jsGet(plugins, 'colors') : null;
+  final value = jsIsObjectLike(colors) ? jsGet(colors, key) : null;
   return value is List<Object?> && value.isNotEmpty ? value : null;
 }
 
@@ -128,8 +129,8 @@ Object? _getBackgroundColor(int i) {
 /// The write `dataset[key] = value` of a colorizer into the dataset
 /// [dataset] of `chart.config.data.datasets`: the typed field of a typed
 /// dataset scope (Chart.js ADR 0054 §5), else the write by name into the
-/// Map of the user. A dataset that is not a Map throws a [TypeError], as
-/// the property write into `null` or `undefined` does upstream.
+/// Map of the user ([jsSet]). A dataset of `null` or `undefined` throws a
+/// [TypeError], as the property write does upstream.
 ///
 /// A Map with a narrow value type, for example `Map<String, List<int>>` for
 /// `{'data': [1, 2, 3]}`, throws a [TypeError] at the write of a color
@@ -143,7 +144,7 @@ void _writeColor(Object? dataset, OptionKey key, Object? value) {
       scope.store(key, scope.classify(key, value));
     default:
       // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
-      (dataset! as AnyObject)[key.jsName] = value;
+      jsSet(dataset, key.jsName, value);
   }
 }
 
@@ -257,9 +258,9 @@ Iterable<Object?> _forInValues(Object? descriptors) sync* {
       for (var k = 0; k < string.length; k++) {
         yield string[k];
       }
-    case final AnyObject map:
-      for (final k in jsObjectKeys(map)) {
-        yield jsGet(map, k);
+    case final Object object when jsIsObjectLike(object):
+      for (final k in jsObjectKeys(object)) {
+        yield jsGet(object, k);
       }
   }
 }
@@ -302,7 +303,7 @@ bool _containsDefaultColorsDefenitions() {
 /// `chart.config.data.datasets` is a read of the data of the user, by name.
 /// The options of the config are read through their typed keys
 /// ([optionOf]), by name for a Map of the user.
-void _beforeLayout(types.Chart chart, AnyObject _, AnyObject options) {
+void _beforeLayout(types.Chart chart, Object _, Object options) {
   final opts = ColorsPluginOptions(options);
   if (!jsTruthy(opts.enabled)) {
     return;

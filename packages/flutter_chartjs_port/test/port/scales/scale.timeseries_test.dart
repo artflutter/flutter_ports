@@ -231,7 +231,7 @@ void main() {
         },
       );
       final data = x.getDataTimestamps();
-      expect(data, same(x.cache['data']));
+      expect(data, same(x.cache.data));
       expect((x.min, x.max), (_t0, _t0 + 5 * _day));
       expect(data, [_t0, _t0 + _day, _t0 + 3 * _day, _t0 + 5 * _day]);
     });

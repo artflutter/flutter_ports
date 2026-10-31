@@ -834,7 +834,7 @@ void _removeBox(types.Chart chart, LayoutItem? layoutItem) {
 void _configure(
   types.Chart chart,
   LayoutItem item,
-  Map<String, Object?> options,
+  Object options,
 ) {
   item
     // DIVERGES(chartjs): adapt-layout-configure-types, a bool, not the value.
@@ -1022,7 +1022,7 @@ const ({
   void Function(
     types.Chart chart,
     LayoutItem item,
-    Map<String, Object?> options,
+    Object options,
   )
   configure,
   void Function(

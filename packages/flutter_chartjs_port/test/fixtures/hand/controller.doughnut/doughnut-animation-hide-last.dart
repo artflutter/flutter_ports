@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -58,8 +59,7 @@ Map<String, Object?> fixture() {
         'width': 512,
       },
       'run': (Chart chart) {
-        (chart.options['animation']! as Map<String, Object?>)['duration'] =
-            8000;
+        (chart.options['animation']! as JsObjectFace)['duration'] = 8000;
         chart
           ..toggleDataVisibility(0)
           ..update();

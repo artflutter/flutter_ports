@@ -31,6 +31,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The type of [_absent].
@@ -208,35 +210,41 @@ Object jsConstruct(Object? target, List<Object?> args) {
   return <String, Object?>{};
 }
 
-/// `Object.assign(target, source)` for a class value or a Map [target].
+/// `Object.assign(target, source)` for a class value, a typed object or a
+/// Map [target].
 ///
 /// It writes each key of `Object.keys(source)` ([jsObjectKeys]) with the
-/// value `source[key]`, in that order: through [JsClass.operator []=] for a
-/// class value, and with a Map write for a Map. A write of a present key
+/// value `source[key]` ([jsGet]), in that order: through
+/// [JsClass.operator []=] for a class value, the face for a typed object
+/// ([JsObjectFace]) and a Map write for a Map. A write of a present key
 /// keeps the position of the key. It returns [target].
 ///
 /// Throws a [TypeError] for Dart `null` and [undefined], as `Object.assign`
 /// does. Throws an [ArgumentError] for another target. No ported code passes
 /// one: `Object.assign` on an element is `Element.assign` (Chart.js ADR 0017,
 /// section 6).
-Object jsAssign(Object? target, Map<String, Object?> source) {
+Object jsAssign(Object? target, Object source) {
   switch (target) {
     case null || Undefined():
       // A JavaScript TypeError: ToObject of null or undefined.
       throw TypeError();
     case final JsClass value:
       for (final key in jsObjectKeys(source)) {
-        value[key] = source[key];
+        value[key] = jsGet(source, key);
+      }
+    case final JsObjectFace face:
+      for (final key in jsObjectKeys(source)) {
+        face.jsWrite(key, jsGet(source, key));
       }
     case final Map<dynamic, dynamic> map:
       for (final key in jsObjectKeys(source)) {
-        map[key] = source[key];
+        map[key] = jsGet(source, key);
       }
     default:
       throw ArgumentError.value(
         target,
         'target',
-        'is not a class value or a Map',
+        'is not a class value, a typed object or a Map',
       );
   }
   return target;

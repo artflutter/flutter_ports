@@ -99,7 +99,7 @@ Object? _realLegend(Chart chart) {
   return <String, Object?>{
     'items': legend.legendItems,
     'keys': [
-      for (final item in legend.legendItems!) jsObjectKeys(item! as AnyObject),
+      for (final item in legend.legendItems!) jsObjectKeys(item),
     ],
     'hitBoxes': (legend as Legend).legendHitBoxes,
   };
@@ -255,8 +255,8 @@ void main() {
       for (final key in jsObjectKeys(doughnut)) {
         // The plain Maps of the merge: `equals` compares them deeply.
         expect(
-          jsGet(pie, key),
-          key == 'cutout' ? 0.0 : jsGet(doughnut, key),
+          plainValue(jsGet(pie, key)),
+          key == 'cutout' ? 0.0 : plainValue(jsGet(doughnut, key)),
           reason: key,
         );
       }

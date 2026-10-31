@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.plugins.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext;
+    show ContextObject, createContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -43,10 +43,10 @@ final class _Chart implements types.Chart {
   final Config config;
 
   /// core.controller.js:1084 `$context`.
-  AnyObject? _context;
+  ContextObject? _context;
 
   @override
-  AnyObject getContext() => _context ??= createContext(null, {
+  ContextObject getContext() => _context ??= createContext(null, {
     'chart': this,
     'type': 'chart',
   });
@@ -308,7 +308,9 @@ void main() {
       'cache',
       () => o.json([for (final d in service.cache!) jsGet(d.plugin, 'id')]),
     );
-    chart.config.options['plugins'] = <String, Object?>{'a': false};
+    (chart.config.options as AnyObject)['plugins'] = <String, Object?>{
+      'a': false,
+    };
     service.invalidate();
     step('hook after a change', () => service.notify(chart, 'hook'));
     service

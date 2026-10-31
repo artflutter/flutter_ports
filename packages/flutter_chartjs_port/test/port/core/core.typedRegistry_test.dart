@@ -243,7 +243,7 @@ void main() {
       },
     );
     reg.register(tRouted);
-    final scope = at(defaults, 'elements.trouted')! as Map<String, Object?>;
+    final scope = at(defaults, 'elements.trouted')! as JsObjectFace;
     o
       ..observe('keys', o.json(jsObjectKeys(scope)))
       ..observe('defaults.elements.trouted', o.json(scope))
@@ -285,8 +285,7 @@ void main() {
           '$name keys',
           o.json(
             jsObjectKeys(
-              jsGet(defaults['elements'], 'troutes-$name')!
-                  as Map<String, Object?>,
+              jsGet(defaults['elements'], 'troutes-$name'),
             ),
           ),
         );
@@ -464,7 +463,7 @@ void main() {
       ..observe(
         'keys',
         o.json(
-          jsObjectKeys(at(defaults, 'tplugins2.tmap')! as Map<String, Object?>),
+          jsObjectKeys(at(defaults, 'tplugins2.tmap')),
         ),
       )
       ..observe(

@@ -46,7 +46,11 @@ const List<(int, int, int)> _rainbow = [
 /// The position, the size and the colors of each element of each dataset
 /// of [chart].
 List<List<Object?>> _elements(Chart chart) => [
-  for (var i = 0; i < (chart.data['datasets']! as List<Object?>).length; i++)
+  for (
+    var i = 0;
+    i < (_byName(chart.data, 'datasets')! as List<Object?>).length;
+    i++
+  )
     for (final element in chart.getDatasetMeta(i).data.cast<chartjs.Element>())
       [
         i,
@@ -54,14 +58,14 @@ List<List<Object?>> _elements(Chart chart) => [
         element.y,
         element['width'],
         element['height'],
-        element.options?['backgroundColor'],
-        element.options?['borderColor'],
+        _byName(element.options, 'backgroundColor'),
+        _byName(element.options, 'borderColor'),
       ],
 ];
 
 /// The label line of a scatter point: `(x, y)`.
 String? _pointLabel(ChartTooltipItem item) {
-  final parsed = item.parsed! as Map<String, Object?>;
+  final parsed = item.parsed! as JsObjectFace;
   return '(${(parsed['x']! as num).toInt()}, ${(parsed['y']! as num).toInt()})';
 }
 
@@ -167,7 +171,7 @@ void main() {
         },
       };
       expectTwin(typed, twin);
-      expect(_elements(acquireChart(typed)), _elements(acquireChart(twin)));
+      expect(_elements(acquireChartRoot(typed)), _elements(acquireChart(twin)));
     });
 
     testWidgets('a mixed chart, the docs config of docs/charts/mixed.md', (
@@ -224,7 +228,7 @@ void main() {
         },
       };
       expectTwin(typed, twin);
-      final typedChart = acquireChart(typed);
+      final typedChart = acquireChartRoot(typed);
       final twinChart = acquireChart(twin);
       expect(_elements(typedChart), _elements(twinChart));
       expect(
@@ -274,8 +278,7 @@ void main() {
               'callbacks': <String, Object?>{
                 'label': (Object? item) {
                   final parsed =
-                      (item! as Map<String, Object?>)['parsed']!
-                          as Map<String, Object?>;
+                      (item! as JsObjectFace)['parsed']! as JsObjectFace;
                   return '(${(parsed['x']! as num).toInt()}, '
                       '${(parsed['y']! as num).toInt()})';
                 },
@@ -288,8 +291,8 @@ void main() {
       expectTwin(typed, twin);
 
       /// The label lines of the tooltip of a hover on point 1 of [config].
-      Future<List<Object?>> labelsOf(Map<String, Object?> config) async {
-        final chart = acquireChart(config);
+      Future<List<Object?>> labelsOf(Object config) async {
+        final chart = acquireChartRoot(config);
         await triggerMouseEvent(
           chart,
           'mousemove',
@@ -297,7 +300,7 @@ void main() {
         );
         return [
           for (final item in chart.tooltip!.body!)
-            (item! as Map<String, Object?>)['lines'],
+            (item! as JsObjectFace)['lines'],
         ];
       }
 
@@ -309,3 +312,11 @@ void main() {
     });
   });
 }
+
+/// The read by name `object[key]` of an object of a chart: a Map of a raw
+/// config, or a typed object through its face (Chart.js ADR 0054 §5).
+Object? _byName(Object? object, String key) => switch (object) {
+  final Map<Object?, Object?> map => map[key],
+  final JsObjectFace face => face[key],
+  _ => null,
+};

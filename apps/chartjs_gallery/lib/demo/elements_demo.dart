@@ -89,10 +89,7 @@ typedef _Hit = ({_Kind kind, int index});
 
 /// The options of an element in its two states: `base` for the normal
 /// state and `active` for the hover state.
-typedef _Options = ({
-  Map<String, Object?> base,
-  Map<String, Object?> active,
-});
+typedef _Options = ({JsObjectFace base, JsObjectFace active});
 
 /// The ported elements of phase 4: bars, a line through points, and a
 /// doughnut of arcs.
@@ -240,11 +237,18 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// The options of an element in the normal state and in the hover state.
   ///
   /// [form] gives the options object of each state from its Map: a typed
-  /// class of Chart.js ADR 0018, for example `PointOptions.new`.
+  /// class of the resolved options (Chart.js ADR 0054 §9), for example
+  /// `PointOptions.new`.
   static _Options _pair(
     Map<String, Object?> base,
-    Map<String, Object?> Function(Map<String, Object?>) form,
+    JsObjectFace Function(Map<String, Object?>) form,
   ) => (base: form(base), active: form(_resolveActive(base)));
+
+  /// The defaults of an element class as a plain Map: the own keys of the
+  /// typed scope [defaults] in their order, read through its face.
+  static Map<String, Object?> _plain(JsObjectFace defaults) => {
+    for (final key in defaults.jsKeys()) key: defaults[key],
+  };
 
   /// The options of an active element: [options] with the value of each
   /// `hover` key over its base key, for example `hoverRadius` over
@@ -260,7 +264,7 @@ class ElementsDemoState extends State<ElementsDemo> {
 
   /// The options of a bar.
   Map<String, Object?> _barBase() => {
-    ...BarElement.defaults,
+    ..._plain(BarElement.defaults),
     'backgroundColor': _barBackground,
     'borderColor': _barColor,
     'hoverBackgroundColor': getHoverColor(_barBackground),
@@ -271,7 +275,7 @@ class ElementsDemoState extends State<ElementsDemo> {
 
   /// The options of a point.
   Map<String, Object?> _pointBase() => {
-    ...PointElement.defaults,
+    ..._plain(PointElement.defaults),
     'backgroundColor': _lineBackground,
     'borderColor': _lineColor,
     'hoverBackgroundColor': getHoverColor(_lineBackground),
@@ -286,7 +290,7 @@ class ElementsDemoState extends State<ElementsDemo> {
 
   /// The options of the line.
   Map<String, Object?> _lineBase() => {
-    ...LineElement.defaults,
+    ..._plain(LineElement.defaults),
     'backgroundColor': _lineBackground,
     'borderColor': _lineColor,
     'borderWidth': _borderWidth,
@@ -298,7 +302,7 @@ class ElementsDemoState extends State<ElementsDemo> {
   Map<String, Object?> _arcBase(int index) {
     final color = chartColors[index % chartColors.length];
     return {
-      ...ArcElement.defaults,
+      ..._plain(ArcElement.defaults),
       'backgroundColor': color,
       'hoverBackgroundColor': getHoverColor(color),
       'hoverBorderColor': getHoverColor(ArcElement.defaults['borderColor']),
@@ -660,7 +664,7 @@ class ElementsDemoState extends State<ElementsDemo> {
     switch (hit.kind) {
       case _Kind.point:
         final point = _points[hit.index];
-        final options = point.options!;
+        final options = point.options! as JsObjectFace;
         final distance = math.sqrt(
           math.pow(x - point.x, 2) + math.pow(y - point.y, 2),
         );
@@ -675,7 +679,7 @@ class ElementsDemoState extends State<ElementsDemo> {
             '${_f(math.max(bar.y, bar.base))}]';
       case _Kind.arc:
         final arc = _arcs[hit.index];
-        final options = arc.options!;
+        final options = arc.options! as JsObjectFace;
         final adjust =
             ((options['spacing']! as double) +
                 (options['borderWidth']! as double)) /
@@ -697,8 +701,9 @@ class ElementsDemoState extends State<ElementsDemo> {
     final options = hit == null ? null : _optionsOf(hit);
     if (options == null) return '-';
     final changed = [
-      for (final MapEntry(:key, :value) in options.active.entries)
-        if (value != options.base[key]) '$key ${showJs(value)}',
+      for (final key in options.active.jsKeys())
+        if (options.active[key] != options.base[key])
+          '$key ${showJs(options.active[key])}',
     ];
     return changed.isEmpty ? 'none' : changed.join(' · ');
   }

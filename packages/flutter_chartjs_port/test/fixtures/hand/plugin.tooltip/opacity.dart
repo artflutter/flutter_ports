@@ -100,7 +100,8 @@ Map<String, Object?> fixture() {
                 ..addColorStop(0, '#ff0000')
                 ..addColorStop(1, '#0000ff');
             }
-            final datasets = chart.config.data['datasets']! as List<Object?>;
+            final datasets =
+                (chart.config.data as AnyObject)['datasets']! as List<Object?>;
             (datasets[2]! as AnyObject)
               ..['pointBorderColor'] = gradient
               ..['pointBackgroundColor'] = gradient;

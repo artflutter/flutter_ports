@@ -60,7 +60,7 @@ AnyObject _dataset(Chart chart, int index) =>
 ArcElement _arc(ChartMeta meta, int index) => meta.data[index] as ArcElement;
 
 /// `element.options` of [element].
-AnyObject? _options(Object element) => (element as Element).options;
+Object? _options(Object element) => (element as Element).options;
 
 /// `element.options[key]` of [element].
 Object? _option(Object element, String key) => jsGet(_options(element), key);
@@ -384,7 +384,7 @@ void main() {
       expect(meta.data.length, 4);
 
       // remove 2 items
-      chart.data['labels'] = <Object?>['label1', 'label2'];
+      (chart.data as AnyObject)['labels'] = <Object?>['label1', 'label2'];
       _dataset(chart, 0)['data'] = <Object?>[1, 2];
       chart.update();
 
@@ -393,7 +393,7 @@ void main() {
       expect(meta.data[1], isA<ArcElement>());
 
       // add 3 items
-      chart.data['labels'] = <Object?>[
+      (chart.data as AnyObject)['labels'] = <Object?>[
         'label1',
         'label2',
         'label3',
@@ -549,7 +549,7 @@ void main() {
         ]),
       );
 
-      (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+      (chart.options['plugins']! as JsObjectFace)['tooltip'] =
           <String, Object?>{'mode': 'dataset'};
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);

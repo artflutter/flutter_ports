@@ -138,7 +138,10 @@ void main() {
     final chart = await _openChart(tester, 'doughnut');
     final arc = chart.getDatasetMeta(0).data.first;
     // The arc border is the surface of the theme (element.arc.ts:379).
-    expect(arc.options!['borderColor'], 'rgba(255, 255, 255, 1)');
+    expect(
+      (arc.options! as JsObjectFace)['borderColor'],
+      'rgba(255, 255, 255, 1)',
+    );
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
     await tester.pumpAndSettle();
     // The same chart, with the dark preset after its transition (Chart.js ADR
@@ -148,7 +151,7 @@ void main() {
     expect(chart.options['color'], 'rgba(153, 153, 153, 1)');
     final surface = galleryDarkTheme.colorScheme.surface;
     expect(
-      arc.options!['borderColor'],
+      (arc.options! as JsObjectFace)['borderColor'],
       'rgba(${(surface.r * 255).round()}, ${(surface.g * 255).round()}, '
       '${(surface.b * 255).round()}, 1)',
     );

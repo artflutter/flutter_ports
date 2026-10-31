@@ -48,8 +48,7 @@ final class _Point implements PointElement {
   Object? get hidden => undefined;
 
   @override
-  double size([Map<String, Object?>? options]) =>
-      throw UnsupportedError('size');
+  double size([Object? options]) => throw UnsupportedError('size');
 }
 
 /// A JavaScript object literal `{start, end, loop}`, passed as a [Segment].

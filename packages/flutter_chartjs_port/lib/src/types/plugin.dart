@@ -12,13 +12,10 @@
 ///
 /// The argument classes are [TypedRecord]s: typed fields in the key order of
 /// the upstream literals, extras for a key that a plugin writes, and the
-/// face. During the migration they are also Maps, so that the hooks of
-/// today read them by name. `args` passes through each hook by identity.
+/// face (Chart.js ADR 0054 §5). `args` passes through each hook by identity.
 ///
 /// This library is a pure layer.
 library;
-
-import 'dart:collection';
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
@@ -188,10 +185,16 @@ enum PluginHook {
 /// The function of a hook: `hook(chart, args, options)`, with the argument
 /// class [A] of the hook. The result is `false` to cancel a cancelable hook,
 /// else any value.
-typedef PluginHookFunction<A extends AnyObject> = Object? Function(
+///
+/// [A] is the argument class of the hook (a typed record of this library),
+/// or `AnyObject` for the hooks whose upstream arguments are an object
+/// literal that the caller makes (`{scale}` of the scale hooks). The
+/// options are the plugin options view (`OptionView`, Chart.js ADR 0054
+/// §12).
+typedef PluginHookFunction<A extends Object> = Object? Function(
   types.Chart chart,
   A args,
-  AnyObject options,
+  Object options,
 );
 
 /// The arguments `{}` of a hook without arguments (`EmptyObject` of
@@ -848,9 +851,8 @@ final class TooltipDrawHookArgs extends PluginHookArgs {
 /// by name keeps any value: the plugin service reads it with [hookValue]
 /// and calls a function of another type with JS arity, `this` the plugin.
 /// The own-key order is the insertion order; another key is an extra. The
-/// face reads and writes the fields by name. During the migration a plugin
-/// is also a Map.
-final class Plugin extends MapBase<String, Object?> implements JsObjectFace {
+/// face reads and writes the fields by name. A plugin is not a `Map`.
+final class Plugin implements JsObjectFace {
   /// A plugin without own keys.
   Plugin();
 
@@ -1012,11 +1014,11 @@ final class Plugin extends MapBase<String, Object?> implements JsObjectFace {
     PluginHook hook,
     Object function,
     types.Chart chart,
-    AnyObject args,
-    AnyObject options,
+    Object args,
+    Object options,
   ) {
     switch (function) {
-      case final PluginHookFunction<AnyObject> f:
+      case final PluginHookFunction<AnyObject> f when args is AnyObject:
         return f(chart, args, options);
       case final PluginHookFunction<CancelableHookArgs> f
           when args is CancelableHookArgs:
@@ -1364,69 +1366,42 @@ final class Plugin extends MapBase<String, Object?> implements JsObjectFace {
   set afterTooltipDraw(PluginHookFunction<TooltipDrawHookArgs>? value) =>
       _store(40, value);
 
-  // The Map protocol (the scaffolding of Chart.js ADR 0054 §5).
+  /// Whether the plugin owns [name].
+  bool _owns(String name) {
+    final slot = _slotOf(name);
+    if (slot >= 0) return !identical(_slots[slot], _absent);
+    return _extras?.containsKey(name) ?? false;
+  }
+
+  // The face of Chart.js ADR 0054 §5.
 
   @override
-  Object? operator [](Object? key) {
-    if (key is! String) return null;
-    final slot = _slotOf(key);
-    if (slot >= 0) {
-      final value = _slots[slot];
-      return identical(value, _absent) ? null : value;
-    }
-    return _extras?[key];
+  Object? jsRead(String name) {
+    final slot = _slotOf(name);
+    if (slot >= 0) return _member(slot);
+    final extras = _extras;
+    return extras != null && extras.containsKey(name)
+        ? extras[name]
+        : undefined;
   }
 
   @override
-  void operator []=(String key, Object? value) {
-    final slot = _slotOf(key);
+  void jsWrite(String name, Object? value) {
+    final slot = _slotOf(name);
     if (slot >= 0) {
       _store(slot, value);
       return;
     }
     final extras = _extras ??= <String, Object?>{};
-    if (!extras.containsKey(key)) _order.add(key);
-    extras[key] = value;
+    if (!extras.containsKey(name)) _order.add(name);
+    extras[name] = value;
   }
 
   @override
-  bool containsKey(Object? key) {
-    if (key is! String) return false;
-    final slot = _slotOf(key);
-    if (slot >= 0) return !identical(_slots[slot], _absent);
-    return _extras?.containsKey(key) ?? false;
-  }
+  Object? operator [](String name) => jsRead(name);
 
   @override
-  Iterable<String> get keys => List<String>.of(_order);
-
-  @override
-  int get length => _order.length;
-
-  @override
-  Object? remove(Object? key) {
-    if (key is! String || !containsKey(key)) return null;
-    final value = this[key];
-    final slot = _slotOf(key);
-    if (slot >= 0) {
-      _slots[slot] = _absent;
-    } else {
-      _extras!.remove(key);
-    }
-    _order.remove(key);
-    return value;
-  }
-
-  @override
-  void clear() => List<String>.of(_order).forEach(remove);
-
-  // The face of Chart.js ADR 0054 §5.
-
-  @override
-  Object? jsRead(String name) => containsKey(name) ? this[name] : undefined;
-
-  @override
-  void jsWrite(String name, Object? value) => this[name] = value;
+  void operator []=(String name, Object? value) => jsWrite(name, value);
 
   @override
   List<String> jsKeys() {
@@ -1449,12 +1424,18 @@ final class Plugin extends MapBase<String, Object?> implements JsObjectFace {
   }
 
   @override
-  bool jsHas(String name) => containsKey(name);
+  bool jsHas(String name) => _owns(name);
 
   @override
   bool jsDelete(String name) {
-    if (!containsKey(name)) return false;
-    remove(name);
+    if (!_owns(name)) return false;
+    final slot = _slotOf(name);
+    if (slot >= 0) {
+      _slots[slot] = _absent;
+    } else {
+      _extras!.remove(name);
+    }
+    _order.remove(name);
     return true;
   }
 }
@@ -1481,8 +1462,8 @@ extension type const MapPlugin(Map<dynamic, dynamic> map) {
   Object? invokeHook(
     Object function,
     types.Chart chart,
-    AnyObject args,
-    AnyObject options,
+    Object args,
+    Object options,
   ) => jsCall(function, [chart, args, options], thisArg: map);
 }
 

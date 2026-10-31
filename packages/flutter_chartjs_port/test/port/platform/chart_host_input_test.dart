@@ -145,7 +145,7 @@ List<Object?> _activeItems(List<types.ActiveElement> elements) => [
 Map<String, Object?> _observe(Chart chart, _Logs logs) {
   final tooltip = chart.tooltip!;
   final lastEvent = chart.lastEvent;
-  final datasets = chart.data['datasets']! as List<Object?>;
+  final datasets = (chart.data as AnyObject)['datasets']! as List<Object?>;
   return {
     'dom': [
       for (final native in logs.dom)

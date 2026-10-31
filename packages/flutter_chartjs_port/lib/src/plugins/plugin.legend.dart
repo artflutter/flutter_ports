@@ -66,7 +66,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex;
+    show jsGet, jsGetIndex, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
     show canvasKeyword, canvasLineDash, canvasNumber, canvasStyle;
@@ -81,7 +81,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show LegendLabelOptions, LegendOptions, optionOf;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -182,7 +181,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
   Legend(
-    ({types.Chart chart, AnyObject? options, CanvasRenderingContext2D? ctx})
+    ({types.Chart chart, Object? options, CanvasRenderingContext2D? ctx})
     config,
   ) : chart = config.chart,
       ctx = config.ctx {
@@ -317,7 +316,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// legend without options throws a [TypeError], as the first member read
   /// of `this.options` throws upstream (Chart.js ADR 0038, section 7).
   @override
-  Map<String, Object?> get options => super.options!;
+  Object get options => super.options!;
 
   /// plugin.legend.js:82 `update(maxWidth, maxHeight, margins)`.
   @override
@@ -1275,15 +1274,16 @@ final class _LegendTextOpts implements types.RenderTextOpts {
 /// An absent argument, [undefined] and JS `null` throw the [TypeError] of
 /// the read `config.chart`, as upstream. A member with the value
 /// [undefined] gives Dart `null`. A `chart` that is not a `types.Chart`, an
-/// `options` that is not a Map and a `ctx` that is not a context throw a
-/// [TypeError]. Upstream stores such a value and reads its members later.
+/// `options` that is not an object (a Map or a typed object) and a `ctx`
+/// that is not a context throw a [TypeError]. Upstream stores such a value
+/// and reads its members later.
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({types.Chart chart, AnyObject? options, CanvasRenderingContext2D? ctx})
+({types.Chart chart, Object? options, CanvasRenderingContext2D? ctx})
 _legendConfig(List<Object?> args) {
   final config = args.isEmpty ? undefined : args[0];
   return (
     chart: _orNull(jsGet(config, 'chart'))! as types.Chart,
-    options: _orNull(jsGet(config, 'options')) as AnyObject?,
+    options: jsObjectOrNull(jsGet(config, 'options')),
     ctx: _orNull(jsGet(config, 'ctx')) as CanvasRenderingContext2D?,
   );
 }
@@ -1393,7 +1393,7 @@ List<Object?> _generateLabels(types.Chart chart) {
 LegendItem _datasetItem(
   Object? datasets,
   types.ChartMeta meta,
-  Map<String, Object?> style,
+  Object style,
   Object? pointStyle,
   Object? textAlign,
   Object? color,
@@ -1429,7 +1429,7 @@ LegendItem _datasetItem(
 }
 
 /// plugin.legend.js:601 `start(chart, _args, options)`.
-void _start(types.Chart chart, AnyObject _, AnyObject options) {
+void _start(types.Chart chart, Object _, Object options) {
   final legend = Legend((ctx: chart.ctx, options: options, chart: chart));
   chart.legend = legend;
   layouts
@@ -1440,7 +1440,7 @@ void _start(types.Chart chart, AnyObject _, AnyObject options) {
 /// plugin.legend.js:607 `stop(chart)`. core.layouts.js:318-323 compares
 /// identities only. A value that is not a LayoutItem is never in
 /// chart.boxes. `delete chart.legend` is the write of Dart `null`.
-void _stop(types.Chart chart, AnyObject _, AnyObject _) {
+void _stop(types.Chart chart, Object _, Object _) {
   final legend = chart.legend;
   layouts.removeBox(chart, switch (legend) {
     final LayoutItem item => item,
@@ -1458,7 +1458,7 @@ void _stop(types.Chart chart, AnyObject _, AnyObject _) {
 /// A legend that is not a Legend throws the TypeError of the cast. Upstream
 /// throws a TypeError in the same update, at `buildLabels` of afterUpdate
 /// (Chart.js ADR 0038, section 6).
-void _beforeUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+void _beforeUpdate(types.Chart chart, Object _, Object options) {
   final legend = chart.legend! as Legend;
   layouts.configure(chart, legend, options);
   legend.options = options;
@@ -1467,7 +1467,7 @@ void _beforeUpdate(types.Chart chart, AnyObject _, AnyObject options) {
 /// plugin.legend.js:623 `afterUpdate(chart)`. The labels need to be built
 /// after datasets are updated to ensure that colors and other styling are
 /// correct. See https://github.com/chartjs/Chart.js/issues/6968
-void _afterUpdate(types.Chart chart, AnyObject _, AnyObject _) {
+void _afterUpdate(types.Chart chart, Object _, Object _) {
   (chart.legend! as Legend)
     ..buildLabels()
     ..adjustHitBoxes();
@@ -1477,7 +1477,7 @@ void _afterUpdate(types.Chart chart, AnyObject _, AnyObject _) {
 /// `event` of [EventHookArgs]. An event of Dart `null` throws the
 /// [TypeError] of the null check, as `handleEvent` throws at `e.type` of
 /// `undefined` upstream.
-void _afterEvent(types.Chart chart, EventHookArgs args, AnyObject _) {
+void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
   if (!jsTruthy(args.replay)) {
     (chart.legend! as Legend).handleEvent(args.event!);
   }

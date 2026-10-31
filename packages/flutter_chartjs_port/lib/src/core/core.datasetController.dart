@@ -61,7 +61,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, sign;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
+    show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsObjectKeys, jsSetIndex, jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -69,7 +69,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze;
+    show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -593,7 +593,7 @@ String? _getFirstScaleId(types.Chart chart, String axis) {
 /// type})` is the typed context of the type `dataset`, with the keys of the
 /// literal in their order (Chart.js ADR 0054 §11).
 // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
-ScriptableContext _createDatasetContext(AnyObject parent, double index) {
+ScriptableContext _createDatasetContext(Object parent, double index) {
   return ScriptableContext.dataset(parent, index);
 }
 
@@ -604,7 +604,7 @@ ScriptableContext _createDatasetContext(AnyObject parent, double index) {
 /// the literal in their order (Chart.js ADR 0054 §11).
 // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
 ScriptableContext _createDataContext(
-  AnyObject parent,
+  Object parent,
   double index,
   Element element,
 ) {
@@ -1166,7 +1166,7 @@ class DatasetController
     final dataset = getDataset();
     var data = jsGet(dataset, 'data');
     if (!jsTruthy(data)) {
-      (dataset! as AnyObject)['data'] = data = <Object?>[];
+      jsSet(dataset, 'data', data = <Object?>[]);
     }
     final oldData = _data;
 
@@ -1785,7 +1785,7 @@ class DatasetController
   /// not a context, or for a built-in element class a context that is not a
   /// [ScriptableContext]) reads as Dart `null`, and a new data context takes
   /// its place (row `adapt-typed-contexts`).
-  AnyObject getContext([
+  ContextObject getContext([
     double? index,
     // The upstream signature has a positional `active`.
     // ignore: avoid_positional_boolean_parameters
@@ -1893,10 +1893,10 @@ class DatasetController
     final keys = elementDefaults is OptionScope
         ? elementDefaults.jsOwnKeys()
         // A user object in the defaults gives its keys.
-        : <Object>[...jsObjectKeys(elementDefaults! as AnyObject)];
+        : <Object>[...jsObjectKeys(elementDefaults)];
     // context is provided as a function, and is called only if needed,
     // so we don't create a context for each element if not needed.
-    AnyObject context() => getContext(index, active, resolvedMode);
+    ContextObject context() => getContext(index, active, resolvedMode);
     // DIVERGES(chartjs): adapt-typed-element-options, a typed result object.
     final values = config.resolveElementNamedOptions(
       scopes,
@@ -2037,7 +2037,7 @@ class DatasetController
   void updateElement(
     types.Element element,
     double? index,
-    AnyObject properties,
+    Object properties,
     String mode,
   ) {
     if (_isDirectUpdateMode(mode)) {

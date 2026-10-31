@@ -11,6 +11,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/jasmine.dart';
+
 // `Chart.Animations` is the class Animations of core.animations.dart, and
 // `Chart.animator` is `animator` of core.animator.dart. The spec reads
 // `_properties`: the member `properties` (Chart.js ADR 0019, section 1).
@@ -55,11 +57,11 @@ void main() {
       });
       expect(
         anims.properties['property1'],
-        containsPair('duration', 1000),
+        objectContaining({'duration': 1000}),
       );
       expect(
         anims.properties['property2'],
-        containsPair('duration', 2000),
+        objectContaining({'duration': 2000}),
       );
     });
 
@@ -77,11 +79,11 @@ void main() {
       });
       expect(
         anims.properties['property1'],
-        containsPair('duration', 1000),
+        objectContaining({'duration': 1000}),
       );
       expect(
         anims.properties['property2'],
-        containsPair('duration', 2000),
+        objectContaining({'duration': 2000}),
       );
     });
 

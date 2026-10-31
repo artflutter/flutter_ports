@@ -77,7 +77,9 @@ List<Object?> _edges(types.ElementPropertyRead bar) => [
 Object? _stackKeys(Chart chart) => [
   for (final item in chart.getDatasetMeta(0).parsed)
     switch (stacksOf(item)) {
-      final Map<String, Object?> stacks => jsObjectKeys(stacks),
+      final Object stacks
+          when stacks is Map<String, Object?> || stacks is JsObjectFace =>
+        jsObjectKeys(stacks),
       _ => const <String>[],
     },
 ];
@@ -314,7 +316,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       for (final item in meta.parsed) {
         expect(item, isA<List<Object?>>());
-        expect(jsObjectKeys(stacksOf(item)! as AnyObject), ['y']);
+        expect(jsObjectKeys(stacksOf(item)), ['y']);
       }
       for (final bar in meta.data) {
         final edges = _edges(bar as types.ElementPropertyRead);

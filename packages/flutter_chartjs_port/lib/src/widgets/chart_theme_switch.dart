@@ -35,24 +35,30 @@ const OptionKey _borderColor = OptionKey.borderColor;
 /// See [_borderColor].
 const OptionKey _backgroundColor = OptionKey.backgroundColor;
 
+/// Whether [value] is an object of the config: a typed scope (the lowering
+/// of a typed config, Chart.js ADR 0054 §7) or a Map of the app (the raw
+/// boundary, §5).
+bool _isObject(Object? value) => value is OptionScope || value is AnyObject;
+
 /// The value of [key] in [object], or [_absent]: the cell of a typed scope
 /// (the lowering of a typed config, Chart.js ADR 0054 §7), or the value of
 /// a Map of the app (the raw boundary, §5).
-Object? _read(AnyObject object, OptionKey key) {
+Object? _read(Object object, OptionKey key) {
   if (object is OptionScope) {
     final cell = object.ownCell(key);
     return cell == null ? _absent : cell.raw;
   }
+  final map = object as AnyObject;
   final name = key.jsName;
-  final value = object[name];
-  if (value != null || object.containsKey(name)) return value;
+  final value = map[name];
+  if (value != null || map.containsKey(name)) return value;
   return _absent;
 }
 
 /// Writes [value] under [key] of [object], or deletes [key] for [_absent]:
 /// the cell of a typed scope, or a write into a Map of the app (a write into
 /// a user object, judge-c §3.3).
-void _write(AnyObject object, OptionKey key, Object? value) {
+void _write(Object object, OptionKey key, Object? value) {
   if (object is OptionScope) {
     if (identical(value, _absent)) {
       object.delete(key);
@@ -61,11 +67,12 @@ void _write(AnyObject object, OptionKey key, Object? value) {
     }
     return;
   }
+  final map = object as AnyObject;
   final name = key.jsName;
   if (identical(value, _absent)) {
-    object.remove(name);
+    map.remove(name);
   } else {
-    object[name] = value;
+    map[name] = value;
   }
 }
 
@@ -119,7 +126,7 @@ final class ChartThemeSwitch {
   /// `null`. A new chart of the same theme keeps the compiled theme of the
   /// state: it compiles only a new theme. [root] is the typed root of the
   /// widget or a root Map, the root of the frameless benchmark.
-  void start(AnyObject root, ChartThemeData? theme) {
+  void start(Object root, ChartThemeData? theme) {
     if (theme != _applied || _compiled == null) {
       _compiled = compileThemeData(theme);
     }
@@ -132,7 +139,7 @@ final class ChartThemeSwitch {
   /// options object (step 3). `initOptions` then replaces the object in the
   /// options with its merged copy (core.config.js:115-120).
   void recordUserScales(Object? options) {
-    _scales = options is AnyObject ? _read(options, OptionKey.scales) : _absent;
+    _scales = _isObject(options) ? _read(options!, OptionKey.scales) : _absent;
   }
 
   /// Steps 1 to 4 of the switch to [theme] on [chart], whose raw config is
@@ -154,7 +161,7 @@ final class ChartThemeSwitch {
   ///    `'none'` or `'resize'`.
   String? apply(
     types.Chart chart,
-    AnyObject root,
+    Object root,
     ChartThemeData? theme, {
     required bool reducedMotion,
   }) {
@@ -166,7 +173,7 @@ final class ChartThemeSwitch {
     if (compiled == null && oldCompiled == null) return null;
     _writeTheme(root, compiled);
     final options = _read(root, OptionKey.options);
-    if (options is AnyObject) _write(options, OptionKey.scales, _scales);
+    if (_isObject(options)) _write(options!, OptionKey.scales, _scales);
     _restorePalette(chart);
     if (compiled == null) return 'default';
     return reducedMotion ? 'themeFrame' : 'theme';
@@ -178,8 +185,8 @@ final class ChartThemeSwitch {
     final before = _before..clear();
     final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List) return;
-    for (final dataset in datasets) {
-      if (dataset is! AnyObject) continue;
+    for (final Object? dataset in datasets) {
+      if (dataset == null || !_isObject(dataset)) continue;
       before
         ..add(dataset)
         ..add(_read(dataset, _borderColor))
@@ -195,7 +202,7 @@ final class ChartThemeSwitch {
   void afterColorize(types.Chart chart) {
     final before = _before;
     for (var i = 0; i < before.length; i += 3) {
-      final dataset = before[i]! as AnyObject;
+      final dataset = before[i]!;
       _record(dataset, _borderColor, before[i + 1]);
       _record(dataset, _backgroundColor, before[i + 2]);
     }
@@ -204,7 +211,7 @@ final class ChartThemeSwitch {
 
   /// Records the write of [key] into [dataset] when its value is not
   /// [previous], the value at `beforeUpdate`.
-  void _record(AnyObject dataset, OptionKey key, Object? previous) {
+  void _record(Object dataset, OptionKey key, Object? previous) {
     final current = _read(dataset, key);
     if (identical(current, previous)) return;
     final written = _written[dataset] ??= <OptionKey, _Write>{};
@@ -221,9 +228,9 @@ final class ChartThemeSwitch {
   void _restorePalette(types.Chart chart) {
     final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List) return;
-    for (final dataset in datasets) {
-      if (dataset is! AnyObject) continue;
-      final written = _written[dataset];
+    for (final Object? dataset in datasets) {
+      if (!_isObject(dataset)) continue;
+      final written = _written[dataset!];
       if (written == null) continue;
       _written[dataset] = null;
       for (final MapEntry(:key, :value) in written.entries) {
@@ -235,7 +242,7 @@ final class ChartThemeSwitch {
 
   /// Writes [compiled] under `$theme` of [root], or removes the key: the
   /// typed cell of a [ChartConfigurationScope], else the key of a root Map.
-  static void _writeTheme(AnyObject root, ChartOptionsScope? compiled) {
+  static void _writeTheme(Object root, ChartOptionsScope? compiled) {
     if (root is! ChartConfigurationScope) {
       _write(root, OptionKey.dollarTheme, compiled ?? _absent);
     } else if (compiled == null) {

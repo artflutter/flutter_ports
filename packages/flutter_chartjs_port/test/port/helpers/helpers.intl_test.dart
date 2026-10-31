@@ -384,6 +384,9 @@ void main() {
       final zero = createResolver([
         <String, Object?>{'maximumFractionDigits': 0},
       ]);
+      // The options parameter of formatNumber takes a resolver, a typed
+      // object with a face (Chart.js ADR 0054 §5): its entries are the keys
+      // of its ownKeys trap with the values of its get trap.
       expect(formatNumber(1234.5678, 'en-US', two), '1,234.57');
       expect(formatNumber(1234.5678, 'en-US', zero), '1,235');
     });

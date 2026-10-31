@@ -164,7 +164,7 @@ List<Object?> _spyOnUpdates() {
   final calls = <Object?>[];
   final plugin = <String, Object?>{
     'id': r'$updateSpy',
-    'beforeUpdate': (types.Chart chart, AnyObject args, AnyObject options) {
+    'beforeUpdate': (types.Chart chart, Object args, Object options) {
       calls.add(jsGet(args, 'mode'));
     },
   };
@@ -227,9 +227,10 @@ const String _formEdited =
 /// the title text and `x.min` of [options] imperatively.
 void _formEdits(Chart chart, AnyObject options) {
   chart.hide(1);
-  ((options['plugins']! as AnyObject)['title']! as AnyObject)['text'] =
-      'edited';
-  ((options['scales']! as AnyObject)['x']! as AnyObject)['min'] = 'b';
+  jsSet(jsGet(jsGet(options, 'plugins'), 'title'), 'text', 'edited');
+  // After `initOptions`, `scales` is the typed scale scope of the chart
+  // (Chart.js ADR 0054 §5): the edit goes through its face.
+  jsSet(jsGet(jsGet(options, 'scales'), 'x'), 'min', 'b');
   chart.update();
 }
 
@@ -239,6 +240,19 @@ Object? _copy(Object? v) => switch (v) {
     for (final e in m.entries) e.key: _copy(e.value),
   },
   final List<Object?> l => [for (final i in l) _copy(i)],
+  _ => v,
+};
+
+/// A deep copy of the typed objects (the faces, Chart.js ADR 0054 §5), the
+/// Maps and the Lists of [v] as plain Maps and Lists; other values stay.
+Object? _plain(Object? v) => switch (v) {
+  final JsObjectFace f => <String, Object?>{
+    for (final key in f.jsKeys()) key: _plain(f[key]),
+  },
+  final Map<String, Object?> m => <String, Object?>{
+    for (final e in m.entries) e.key: _plain(e.value),
+  },
+  final List<Object?> l => [for (final i in l) _plain(i)],
   _ => v,
 };
 
@@ -789,7 +803,7 @@ void main() {
       // No memo (Chart.js ADR 0054 §4): the switch compiles each new theme
       // once and keeps it.
       final compiledA = root.dollarThemeCell?.raw;
-      expect(compiledA, compileThemeData(_themeA));
+      expect(_plain(compiledA), _plain(compileThemeData(_themeA)));
       expect(compiledA, isNot(same(compileThemeData(_themeA))));
       expect(
         switcher.apply(chart, root, _themeB, reducedMotion: false),

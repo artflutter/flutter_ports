@@ -63,9 +63,9 @@ AnyObject _dataset(Chart chart, int index) =>
 
 /// `chart.options.scales.y`, or `chart.options.scales.y[key]` for a [key]:
 /// a resolver of the chart options.
-AnyObject _optionsY(Chart chart, [String? key]) {
+JsObjectFace _optionsY(Chart chart, [String? key]) {
   final y = jsGet(jsGet(chart.options, 'scales'), 'y');
-  return (key == null ? y : jsGet(y, key))! as AnyObject;
+  return (key == null ? y : jsGet(y, key))! as JsObjectFace;
 }
 
 /// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:
@@ -1361,8 +1361,8 @@ void main() {
       expect(yScale.height, toBeCloseToPixel(450));
 
       // Extra size when scale label showing
-      (jsGet(xScale.options, 'title')! as AnyObject)['display'] = true;
-      (jsGet(yScale.options, 'title')! as AnyObject)['display'] = true;
+      (jsGet(xScale.options, 'title')! as JsObjectFace)['display'] = true;
+      (jsGet(yScale.options, 'title')! as JsObjectFace)['display'] = true;
       chart.update();
 
       expect(xScale.paddingTop, toBeCloseToPixel(0));

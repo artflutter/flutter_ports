@@ -7,6 +7,7 @@ import 'package:chartjs_gallery/bench/chart_bench.dart'
     show chartBenchHeight, chartBenchOptions, chartBenchWidth;
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_chart.dart' show DemoCanvasState;
+import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
@@ -248,8 +249,11 @@ void main() {
           expect(options, isA<PointOptions>());
           expect(jsObjectIsFrozen(options), isFalse);
           expect(identical(points[1].options, options), type.sharing);
-          expect(options!['radius'], 3);
-          expect(options['backgroundColor'], 'rgba(54, 162, 235, 0.45)');
+          expect((options! as JsObjectFace)['radius'], 3);
+          expect(
+            (options as JsObjectFace)['backgroundColor'],
+            'rgba(54, 162, 235, 0.45)',
+          );
 
           // Stopping publishes the figures.
           await _tap(tester, 'stress.start');
@@ -293,7 +297,7 @@ void main() {
       }
       // Bar, doughnut, pie, polarArea and radar have the labels `Point <i>`.
       expect(
-        chart.data['labels'],
+        readByName(chart.data, 'labels'),
         hasLength(
           type.points || type == StressChartType.bubble ? 0 : type.counts.first,
         ),
@@ -573,10 +577,16 @@ void main() {
     // A scriptable option needs the context: no sharing (core.config.js:
     // 355-356), and no cache entry.
     expect(options, isA<PointOptions>());
-    expect(options![r'$shared'], false);
+    expect((options! as JsObjectFace)[r'$shared'], false);
     expect(identical(points[2].options, options), isFalse);
-    expect(options['backgroundColor'], 'rgba(54, 162, 235, 0.45)');
-    expect(points[1].options!['backgroundColor'], 'rgba(255, 99, 132, 0.45)');
+    expect(
+      (options as JsObjectFace)['backgroundColor'],
+      'rgba(54, 162, 235, 0.45)',
+    );
+    expect(
+      (points[1].options! as JsObjectFace)['backgroundColor'],
+      'rgba(255, 99, 132, 0.45)',
+    );
     final before = points[1].options;
     await _frames(tester, 3);
     // Each update resolves the options again.
@@ -633,7 +643,7 @@ void main() {
     expect(first.canvas, isNull);
     expect(await _selected(tester, 'stress.chart.showLine'), isTrue);
     final line = second.getDatasetMeta(0).dataset! as LineElement;
-    expect(line.options!['borderWidth'], 1);
+    expect((line.options! as JsObjectFace)['borderWidth'], 1);
 
     // N makes a new chart of N points.
     await _tap(tester, 'stress.n.1000');
@@ -645,7 +655,7 @@ void main() {
     await _tap(tester, 'stress.chart.scriptable');
     expect(identical(_chart(tester), third), isFalse);
     expect(
-      _points(tester)[1].options!['backgroundColor'],
+      (_points(tester)[1].options! as JsObjectFace)['backgroundColor'],
       'rgba(255, 99, 132, 0.45)',
     );
     expect(tester.takeException(), isNull);

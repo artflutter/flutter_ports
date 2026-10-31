@@ -69,13 +69,14 @@ AnyObject _dataset(Chart chart, int index) =>
     (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
 
 /// `element.options` of [element].
-AnyObject? _options(Object element) => (element as Element).options;
+Object? _options(Object element) => (element as Element).options;
 
 /// `element.options[key]` of [element].
 Object? _option(Object element, String key) => jsGet(_options(element), key);
 
 /// `Chart.defaults.datasets`.
-AnyObject _datasetDefaults() => jsGet(Chart.defaults, 'datasets')! as AnyObject;
+JsObjectFace _datasetDefaults() =>
+    jsGet(Chart.defaults, 'datasets')! as JsObjectFace;
 
 /// The `{min, max}` of `getMinMax` as an object for `toEqual`.
 AnyObject _minMax(({double min, double max}) range) => <String, Object?>{
@@ -367,7 +368,7 @@ void main() {
       expect(point.x, toBeCloseToPixel(5));
 
       // 2 points
-      chart.data['labels'] = <Object?>['One', 'Two'];
+      (chart.data as AnyObject)['labels'] = <Object?>['One', 'Two'];
       _dataset(chart, 0)['data'] = <Object?>[1, 2];
       chart.update();
 
@@ -377,7 +378,7 @@ void main() {
       expect(points[1].x, toBeCloseToPixel(507));
 
       // 3 points
-      chart.data['labels'] = <Object?>['One', 'Two', 'Three'];
+      (chart.data as AnyObject)['labels'] = <Object?>['One', 'Two', 'Three'];
       _dataset(chart, 0)['data'] = <Object?>[1, 2, 3];
       chart.update();
 
@@ -388,7 +389,12 @@ void main() {
       expect(points[2].x, toBeCloseToPixel(507));
 
       // 4 points
-      chart.data['labels'] = <Object?>['One', 'Two', 'Three', 'Four'];
+      (chart.data as AnyObject)['labels'] = <Object?>[
+        'One',
+        'Two',
+        'Three',
+        'Four',
+      ];
       _dataset(chart, 0)['data'] = <Object?>[1, 2, 3, 4];
       chart.update();
 
@@ -718,7 +724,7 @@ void main() {
     };
 
     /// The expectations of :675-685 and :713-723.
-    void expectLineOptions(AnyObject? options) {
+    void expectLineOptions(Object? options) {
       expect(jsGet(options, 'spanGaps'), true);
       expect(jsGet(options, 'tension'), 0.231);
       expect(jsGet(options, 'backgroundColor'), '#add');
@@ -1287,7 +1293,7 @@ void main() {
         ]),
       );
 
-      (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+      (chart.options['plugins']! as JsObjectFace)['tooltip'] =
           <String, Object?>{'mode': 'dataset'};
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);

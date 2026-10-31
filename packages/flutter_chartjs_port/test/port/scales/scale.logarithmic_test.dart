@@ -169,12 +169,13 @@ final Map<String, Object?> _functions = {
 
 /// The dataset [index] of [chart].
 Map<String, Object?> _dataset(Chart chart, int index) =>
-    (chart.data['datasets']! as List<Object?>)[index]! as Map<String, Object?>;
+    ((chart.data as AnyObject)['datasets']! as List<Object?>)[index]!
+        as Map<String, Object?>;
 
 /// The options of the scale [id] in the config of [chart].
-Map<String, Object?> _scaleConfig(Chart chart, String id) {
-  final scales = chart.config.options['scales']! as Map<String, Object?>;
-  return scales[id]! as Map<String, Object?>;
+JsObjectFace _scaleConfig(Chart chart, String id) {
+  final scales = (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+  return scales[id]! as JsObjectFace;
 }
 
 /// The actions of the action cases of the generator (`runAction`), by the
@@ -237,14 +238,14 @@ void main() {
 
     test('defaults.scales.logarithmic has the callback and major ticks', () {
       // scale.logarithmic.tests.js:14-27.
-      final scales = defaults['scales']! as Map<String, Object?>;
-      final logarithmic = scales['logarithmic']! as Map<String, Object?>;
-      expect(logarithmic.keys, ['ticks']);
-      final ticks = logarithmic['ticks']! as Map<String, Object?>;
-      expect(ticks.keys, ['callback', 'major']);
+      final scales = defaults['scales']! as JsObjectFace;
+      final logarithmic = scales['logarithmic']! as JsObjectFace;
+      expect(logarithmic.jsKeys(), ['ticks']);
+      final ticks = logarithmic['ticks']! as JsObjectFace;
+      expect(ticks.jsKeys(), ['callback', 'major']);
       expect(ticks['callback'], same(formatters['logarithmic']));
       expect(jsIsFunction(ticks['callback']), isTrue);
-      expect(ticks['major'], {'enabled': true});
+      expect(plainObject(ticks['major']), {'enabled': true});
     });
 
     testWidgets('jsConstruct makes a LogarithmicScale with the start values', (

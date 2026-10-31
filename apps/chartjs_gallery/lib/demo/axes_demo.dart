@@ -210,8 +210,9 @@ class AxesDemoState extends State<AxesDemo> {
   late final Map<String, Object?> _pointerPlugin = {
     'id': 'axesPointer',
     'afterEvent': (Object? chart, Object? args, Object? options) {
-      // The hook arguments are a Map (core.controller.js:1164-1169).
-      final event = (args! as Map<String, Object?>)['event']! as ChartEvent;
+      // The hook arguments are a typed object, read by name through its
+      // face (core.controller.js:1164-1169, Chart.js ADR 0054 §12).
+      final event = (args! as JsObjectFace)['event']! as ChartEvent;
       final x = event.x;
       final y = event.y;
       _pointer = event.type == 'mouseout' || x == null || y == null

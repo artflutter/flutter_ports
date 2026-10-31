@@ -5,8 +5,8 @@
 /// properties, mode)` in place of an object literal. Each class has a typed
 /// field for each key of the literals of upstream, in the key order of the
 /// writes (a [TypedRecord]: the insertion order of JS), extras for another
-/// key and the face. During the migration each class is also a `MapBase`,
-/// so that `Animations.update` reads it by name.
+/// key and the face (Chart.js ADR 0054 §5). `Animations.update` reads it by
+/// its typed keys.
 ///
 /// The names end in `Properties`, the name of the upstream variable:
 /// `PointProps` (element.point.ts:18) and `ArcProps` (element.arc.ts:365)
@@ -14,8 +14,9 @@
 /// `borderSkipped` object of a bar (`setBorderSkipped`).
 ///
 /// A `double` field is NaN when absent, a `bool` field false; a getter of
-/// an `Object?` field gives [undefined] when absent, and a getter of a Map
-/// field gives Dart `null`. A write by name of a value outside the type of
+/// an `Object?` field gives [undefined] when absent, and the getter of the
+/// `options` field (an object: resolved options, a typed object with a face
+/// or a Map) gives Dart `null`. A write by name of a value outside the type of
 /// a field keeps it in the foreign slot (Chart.js ADR 0054 §6).
 ///
 /// This library is a pure layer.
@@ -23,8 +24,14 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToNumber, jsTruthy;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
+
+/// Whether [value] is an options object for the `options` field: a typed
+/// object with a face (resolved options, a view) or a Map.
+bool _isOptionsObject(Object? value) =>
+    value is JsObjectFace || value is Map<String, Object?>;
 
 /// The properties of a point element that the line, scatter, bubble and
 /// radar controllers give to `updateElement` (U `controller.line.js:91-111`,
@@ -73,7 +80,7 @@ final class PointProperties extends TypedRecord {
 
   Object? _raw;
 
-  Map<String, Object?>? _options;
+  Object? _options;
 
   double _angle = double.nan;
 
@@ -126,10 +133,9 @@ final class PointProperties extends TypedRecord {
   }
 
   /// `options`.
-  Map<String, Object?>? get options =>
-      hasSlot(6) && !isForeignSlot(6) ? _options : null;
+  Object? get options => hasSlot(6) && !isForeignSlot(6) ? _options : null;
 
-  set options(Map<String, Object?>? value) {
+  set options(Object? value) {
     _options = value;
     touchSlot(6);
   }
@@ -176,8 +182,9 @@ final class PointProperties extends TypedRecord {
         _raw = value;
         return true;
       case 6:
-        _options = value is Map<String, Object?> ? value : null;
-        return value is Map<String, Object?>?;
+        final object = _isOptionsObject(value);
+        _options = object ? value : null;
+        return object || value == null;
       default:
         _angle = value is num ? value.toDouble() : jsToNumber(value);
         return value is num;
@@ -258,7 +265,7 @@ final class BarProperties extends TypedRecord {
 
   double _width = double.nan;
 
-  Map<String, Object?>? _options;
+  Object? _options;
 
   Object? _borderSkipped;
 
@@ -321,10 +328,9 @@ final class BarProperties extends TypedRecord {
   }
 
   /// `options`.
-  Map<String, Object?>? get options =>
-      hasSlot(7) && !isForeignSlot(7) ? _options : null;
+  Object? get options => hasSlot(7) && !isForeignSlot(7) ? _options : null;
 
-  set options(Map<String, Object?>? value) {
+  set options(Object? value) {
     _options = value;
     touchSlot(7);
   }
@@ -384,8 +390,9 @@ final class BarProperties extends TypedRecord {
         _width = value is num ? value.toDouble() : jsToNumber(value);
         return value is num;
       case 7:
-        _options = value is Map<String, Object?> ? value : null;
-        return value is Map<String, Object?>?;
+        final object = _isOptionsObject(value);
+        _options = object ? value : null;
+        return object || value == null;
       case 8:
         _borderSkipped = value;
         return true;
@@ -470,7 +477,7 @@ final class ArcProperties extends TypedRecord {
 
   double _innerRadius = double.nan;
 
-  Map<String, Object?>? _options;
+  Object? _options;
 
   /// `x`.
   double get x => _x;
@@ -529,10 +536,9 @@ final class ArcProperties extends TypedRecord {
   }
 
   /// `options`.
-  Map<String, Object?>? get options =>
-      hasSlot(7) && !isForeignSlot(7) ? _options : null;
+  Object? get options => hasSlot(7) && !isForeignSlot(7) ? _options : null;
 
-  set options(Map<String, Object?>? value) {
+  set options(Object? value) {
     _options = value;
     touchSlot(7);
   }
@@ -574,8 +580,9 @@ final class ArcProperties extends TypedRecord {
         _innerRadius = value is num ? value.toDouble() : jsToNumber(value);
         return value is num;
       default:
-        _options = value is Map<String, Object?> ? value : null;
-        return value is Map<String, Object?>?;
+        final object = _isOptionsObject(value);
+        _options = object ? value : null;
+        return object || value == null;
     }
   }
 
@@ -630,7 +637,7 @@ final class LineProperties extends TypedRecord {
 
   bool _animated = false;
 
-  Map<String, Object?>? _options;
+  Object? _options;
 
   bool _loop = false;
 
@@ -645,10 +652,9 @@ final class LineProperties extends TypedRecord {
   }
 
   /// `options`.
-  Map<String, Object?>? get options =>
-      hasSlot(1) && !isForeignSlot(1) ? _options : null;
+  Object? get options => hasSlot(1) && !isForeignSlot(1) ? _options : null;
 
-  set options(Map<String, Object?>? value) {
+  set options(Object? value) {
     _options = value;
     touchSlot(1);
   }
@@ -684,8 +690,9 @@ final class LineProperties extends TypedRecord {
         _animated = value is bool ? value : jsTruthy(value);
         return value is bool;
       case 1:
-        _options = value is Map<String, Object?> ? value : null;
-        return value is Map<String, Object?>?;
+        final object = _isOptionsObject(value);
+        _options = object ? value : null;
+        return object || value == null;
       case 2:
         _loop = value is bool ? value : jsTruthy(value);
         return value is bool;

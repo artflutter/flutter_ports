@@ -115,9 +115,9 @@ Map<String, Object?> _linearObservations(Scale scale, Chart chart) {
 }
 
 /// The options of the scale [id] in the config of [chart], as a Map.
-Map<String, Object?> _scaleConfig(Chart chart, String id) {
-  final scales = chart.config.options['scales']! as Map<String, Object?>;
-  return scales[id]! as Map<String, Object?>;
+JsObjectFace _scaleConfig(Chart chart, String id) {
+  final scales = (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+  return scales[id]! as JsObjectFace;
 }
 
 /// The actions of the action cases of the generator (`runActionCase`), by
@@ -215,11 +215,11 @@ void main() {
     test('defaults.scales.linear has the numeric tick callback', () {
       // scale.linear.tests.js:14-18: the callback is the function object of
       // Ticks.formatters.numeric.
-      final scales = defaults['scales']! as Map<String, Object?>;
-      final linear = scales['linear']! as Map<String, Object?>;
-      expect(linear.keys, ['ticks']);
-      final ticks = linear['ticks']! as Map<String, Object?>;
-      expect(ticks.keys, ['callback']);
+      final scales = defaults['scales']! as JsObjectFace;
+      final linear = scales['linear']! as JsObjectFace;
+      expect(linear.jsKeys(), ['ticks']);
+      final ticks = linear['ticks']! as JsObjectFace;
+      expect(ticks.jsKeys(), ['callback']);
       expect(ticks['callback'], same(formatters['numeric']));
       expect(jsTypeof(ticks['callback']), 'function');
     });

@@ -39,7 +39,7 @@ String traceArgKind(Object? b) => identical(b, undefined)
 Map<String, Object?> traceEntry(String name, Object? a, Object? b) =>
     <String, Object?>{
       'fn': name,
-      if (a is Map<String, Object?>)
+      if (a is Map<String, Object?> || a is JsObjectFace)
         'ctx': <String, Object?>{
           for (final key in const [
             'type',
@@ -57,8 +57,8 @@ Map<String, Object?> traceEntry(String name, Object? a, Object? b) =>
     };
 
 /// `defaults.elements.point`.
-AnyObject tracePointDefaults() =>
-    jsGet(jsGet(defaults, 'elements'), 'point')! as AnyObject;
+JsObjectFace tracePointDefaults() =>
+    jsGet(jsGet(defaults, 'elements'), 'point')! as JsObjectFace;
 
 /// The user functions of the generator, by name. Each call adds its entry
 /// to [trace].
@@ -91,7 +91,7 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     'radiusFn': fn('radiusFn', (_, _) => 5.0),
     'selfRadius': fn('selfRadius', (_, options) => jsGet(options, 'radius')),
     'writeParsed': fn('writeParsed', (ctx, _) {
-      (ctx! as AnyObject)['parsed'] = <String, Object?>{
+      (ctx! as JsObjectFace)['parsed'] = <String, Object?>{
         'x': jsGet(jsGet(ctx, 'parsed'), 'x'),
         'y': 99.0,
       };
@@ -103,7 +103,7 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     ),
     'writeRadius': fn('writeRadius', (ctx, options) {
       if (jsGet(ctx, 'dataIndex') == 2.0) {
-        (options! as AnyObject)['radius'] = 9.0;
+        (options! as JsObjectFace)['radius'] = 9.0;
       }
       return 1.0;
     }),
@@ -126,7 +126,7 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     'animationFallback': fn('animationFallback', (_, _) => false),
     'deleteEasing': fn('deleteEasing', (ctx, _) {
       if (jsGet(ctx, 'dataIndex') == 1.0) {
-        (jsGet(defaults, 'animation')! as AnyObject).remove('easing');
+        (jsGet(defaults, 'animation')! as JsObjectFace).jsDelete('easing');
       }
       return 'red';
     }),
@@ -145,7 +145,7 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     'legendColor': fn('legendColor', (_, _) => '#00ff00'),
     'writeRadiusActive': fn('writeRadiusActive', (ctx, options) {
       if (jsTruthy(jsGet(ctx, 'active')) && jsGet(ctx, 'dataIndex') == 2.0) {
-        (options! as AnyObject)['radius'] = 9.0;
+        (options! as JsObjectFace)['radius'] = 9.0;
       }
       return 2.0;
     }),
@@ -218,7 +218,7 @@ resolverTraceSetups = {
     );
     Chart.register([myBar]);
     (jsGet(jsGet(defaults, 'datasets'), 'bar')!
-            as AnyObject)['dataElementType'] =
+            as JsObjectFace)['dataElementType'] =
         'myBar';
     addTearDown(() => Chart.unregister([myBar]));
   },

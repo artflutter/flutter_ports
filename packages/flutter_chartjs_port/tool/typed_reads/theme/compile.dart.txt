@@ -1,13 +1,11 @@
 # The output is a frozen typed ChartOptionsScope tree (Chart.js ADR 0054 §3,
-# ADR 0050). The by-name forms that stay read the input, a raw Map theme
-# (the format of themeDataToRaw and of the theme tests, Chart.js ADR 0050):
+# §18). The by-name forms that stay read the input, a raw Map theme (the
+# format of themeDataToRaw and of the theme tests, Chart.js ADR 0050):
 # - stringIndex 4: typography['font'], typography['pointLabels'],
 #   palette['colors'] and palette['backgroundAlpha'] of the raw Map theme.
 # - stringIndex 2: keys['transitions'] of the build Map of the emitted keys.
 # - jsObjectKeys 4: the Object.keys order of a raw Map theme (_font,
 #   _mergeRaw, _listItem) and of a Map under a key that no scope kind
-#   declares (_freeze).
-# - extendsMapBase 1: _FrozenMap, the frozen copy of such a Map.
+#   declares (_freeze, a JsFrozenMap of the JS runtime).
 stringIndex 6
 jsObjectKeys 4
-extendsMapBase 1

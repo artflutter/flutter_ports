@@ -140,10 +140,9 @@ Widget _pair(Widget keys, Widget mouse) => _top(
   final (group, item) = target;
   if (group == _legend) {
     final box = chart.legend!.legendHitBoxes[item];
-    double read(String key) => (box[key]! as num).toDouble();
     return (
-      x: read('left') + read('width') / 2,
-      y: read('top') + read('height') / 2,
+      x: box.left + box.width / 2,
+      y: box.top + box.height / 2,
     );
   }
   final element = chart.getDatasetMeta(group).data[item] as types.VisualElement;
@@ -955,8 +954,16 @@ void main() {
       expect(renders, ['render']);
       expect(_ring(chart), _ringCalls(1, 1, 398, 278));
 
-      Object? box(int item, String key) =>
-          chart.legend!.legendHitBoxes[item][key];
+      Object? box(int item, String key) {
+        final box = chart.legend!.legendHitBoxes[item];
+        return switch (key) {
+          'left' => box.left,
+          'top' => box.top,
+          'width' => box.width,
+          _ => box.height,
+        };
+      }
+
       double ring(int item, String key, double add) =>
           (box(item, key)! as num).toDouble() + add;
       List<Object?> legendRing(int item) => _ringCalls(

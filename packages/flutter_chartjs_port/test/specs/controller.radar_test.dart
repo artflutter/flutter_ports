@@ -63,7 +63,7 @@ AnyObject _dataset(Chart chart, int index) =>
     (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
 
 /// `element.options` of [element].
-AnyObject? _options(Object element) => (element as Element).options;
+Object? _options(Object element) => (element as Element).options;
 
 /// `element.options[key]` of [element].
 Object? _option(Object element, String key) => jsGet(_options(element), key);
@@ -580,7 +580,7 @@ void main() {
         ]),
       );
 
-      (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+      (chart.options['plugins']! as JsObjectFace)['tooltip'] =
           <String, Object?>{'mode': 'dataset'};
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);

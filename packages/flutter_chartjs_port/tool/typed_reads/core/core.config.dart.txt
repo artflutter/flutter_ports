@@ -1,4 +1,16 @@
-jsGet 55
-stringIndex 20
+# The allowlist of the close step (Chart.js ADR 0054 §5, the raw boundary).
+# - jsGet 62, stringIndex 2, jsObjectKeys 3: the config of the user is a Map
+#   or the typed root of ChartView, read by name as upstream reads it:
+#   type, data, data.datasets and each dataset (axis ids, type, indexAxis),
+#   options and its scales by user scale id, plugins, platform, the theme
+#   under $theme; the dictionaries by user id of Chart.overrides and
+#   defaults.datasets and defaults.scales (by chart type and scale type);
+#   the id and additionalOptionScopes of a plugin object of user code;
+#   getIndexAxis and determineAxis over the scale options of the user;
+#   resolveNamedOptions for any names (Object.assign into a plain result)
+#   and hasFunction (Object.getOwnPropertyNames of a value of any kind).
+# - jsCall 1: the context function of resolveNamedOptions.
+jsGet 62
+stringIndex 2
 jsCall 1
-jsObjectKeys 2
+jsObjectKeys 3

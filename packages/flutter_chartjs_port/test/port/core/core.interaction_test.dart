@@ -415,7 +415,7 @@ void main() {
       List<InteractionItem> custom(
         types.Chart chart,
         Object e,
-        Map<String, Object?> options, [
+        Object options, [
         // The mode signature has a positional `useFinalPosition`.
         // ignore: avoid_positional_boolean_parameters
         bool? useFinalPosition,

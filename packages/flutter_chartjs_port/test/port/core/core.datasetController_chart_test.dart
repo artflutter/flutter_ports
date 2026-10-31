@@ -359,8 +359,8 @@ void main() {
       // A write into the frozen cache entry throws. A write into the options
       // of a point does not throw.
       expect(() => source['radius'] = 9.0, throwsA(isA<TypeError>()));
-      points[0].options!['radius'] = 9.0;
-      expect(points[0].options!['radius'], 9.0);
+      (points[0].options! as JsObjectFace)['radius'] = 9.0;
+      expect((points[0].options! as JsObjectFace)['radius'], 9.0);
     });
 
     testWidgets('after the hover animation, the point holds a copy with '
@@ -381,7 +381,7 @@ void main() {
       final controller = _controllerOf(chart);
       final point = chart.getDatasetMeta(0).data[0] as Element;
       final shared = point.options;
-      expect(shared![r'$shared'], isTrue);
+      expect((shared! as JsObjectFace)[r'$shared'], isTrue);
       controller.setHoverStyle(point, 0, 0);
       final copy = point.options;
       expect(copy, isA<PointOptions>());
@@ -393,10 +393,13 @@ void main() {
       final active = controller.resolveDataElementOptions(0, 'active');
       expect(active[r'$shared'], isFalse);
       expect(point.options, same(copy));
-      expect(copy![r'$shared'], isFalse);
+      expect((copy! as JsObjectFace)[r'$shared'], isFalse);
       expect(jsObjectIsFrozen(copy), isFalse);
-      expect(copy['radius'], active['radius']);
-      expect(copy['backgroundColor'], active['backgroundColor']);
+      expect((copy as JsObjectFace)['radius'], active['radius']);
+      expect(
+        copy['backgroundColor'],
+        active['backgroundColor'],
+      );
     });
 
     testWidgets('bar, arc and custom element types', (tester) async {
@@ -443,7 +446,7 @@ void main() {
       final options = chart.getDatasetMeta(0).data[0].options;
       expect(options, isA<PointOptions>());
       expect(jsObjectIsFrozen(options), isTrue);
-      expect(options![r'$shared'], isFalse);
+      expect((options! as JsObjectFace)[r'$shared'], isFalse);
     });
   });
 
@@ -496,15 +499,13 @@ void main() {
       expect(identical(meta.parsed, items), isTrue);
       for (final item in items) {
         final itemStacks = stacksOf(item);
-        expect(itemStacks, isA<Map<String, Object?>>());
-        expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+        expect(itemStacks, isA<JsObjectFace>());
+        expect(jsObjectKeys(itemStacks), ['y']);
       }
       expect(chart.stacks, isNotNull);
       // A second update reads the stacks of the items again.
       chart.update();
-      expect(jsObjectKeys(stacksOf(items[0])! as Map<String, Object?>), [
-        'y',
-      ]);
+      expect(jsObjectKeys(stacksOf(items[0])), ['y']);
     });
 
     testWidgets('DateTime data items take the stacks', (tester) async {
@@ -516,8 +517,8 @@ void main() {
       expect(jsTruthy(chart.getDatasetMeta(0).stacked), isTrue);
       for (final item in items) {
         final itemStacks = stacksOf(item);
-        expect(itemStacks, isA<Map<String, Object?>>());
-        expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+        expect(itemStacks, isA<JsObjectFace>());
+        expect(jsObjectKeys(itemStacks), ['y']);
       }
     });
 

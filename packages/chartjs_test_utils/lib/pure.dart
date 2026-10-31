@@ -141,10 +141,10 @@ void removeBuiltins() {
 /// The restore puts back the entries of each one in place, in key order. It
 /// keeps the `undefined` sentinel, Dart `null` and absent keys apart. It
 /// puts back the key order, the cells and the routes of each typed scope of
-/// Chart.js ADR 0054 (`OptionScope.saveState`), the routes of each
-/// [RoutedScope] and the [RoutedScope] that took the place of each plain
-/// object (`Defaults.route`). An object that a test adds leaves the scopes.
-/// An object that a test removes or replaces comes back.
+/// Chart.js ADR 0054 (`OptionScope.saveState`). A typed scope that a route
+/// put in the place of a plain object (`Defaults.route`) leaves with the
+/// restore of its owner. An object that a test adds leaves the scopes. An
+/// object that a test removes or replaces comes back.
 void setUpDefaultsRestore() {
   late _Snapshot snapshot;
   setUpAll(() {
@@ -174,20 +174,10 @@ final class _Snapshot {
           queue
             ..addAll(state.values)
             ..addAll(state.routeTargets);
-        case final RoutedScope scope:
-          final entries = scope.ownValues.entries.toList();
-          final routes = Map.of(scope.routes);
-          saved.add(_SavedRoutedScope(scope, entries, routes));
-          queue
-            ..addAll(entries.map((entry) => entry.value))
-            ..addAll(routes.values.map((route) => route.targetScope));
         case final LinkedHashMap<String, Object?> map:
           final entries = map.entries.toList();
-          final replacement = RoutedScope.replacementOf(map);
-          saved.add(_SavedMap(map, entries, replacement));
-          queue
-            ..addAll(entries.map((entry) => entry.value))
-            ..add(replacement);
+          saved.add(_SavedMap(map, entries));
+          queue.addAll(entries.map((entry) => entry.value));
         case final List<Object?> list:
           final items = List.of(list);
           saved.add(_SavedList(list, items));
@@ -227,44 +217,16 @@ final class _SavedScope implements _Saved {
   }
 }
 
-/// The own values and routes of a [RoutedScope].
-final class _SavedRoutedScope implements _Saved {
-  _SavedRoutedScope(this.scope, this.entries, this.routes);
-
-  final RoutedScope scope;
-  final List<MapEntry<String, Object?>> entries;
-  final Map<String, DefaultsRoute> routes;
-
-  @override
-  void restore() {
-    if (!_sameEntries(scope.ownValues, entries)) {
-      scope.ownValues
-        ..clear()
-        ..addEntries(entries);
-    }
-    if (!_sameRoutes(scope.routes, routes)) {
-      scope.routes
-        ..clear()
-        ..addAll(routes);
-    }
-  }
-}
-
-/// The entries of a plain object (a [LinkedHashMap] with `String` keys), and
-/// the [RoutedScope] that took its place ([RoutedScope.replacementOf]). A
+/// The entries of a plain object (a [LinkedHashMap] with `String` keys). A
 /// Map with other key types is not an object (Chart.js ADR 0043).
 final class _SavedMap implements _Saved {
-  _SavedMap(this.map, this.entries, this.replacement);
+  _SavedMap(this.map, this.entries);
 
   final LinkedHashMap<String, Object?> map;
   final List<MapEntry<String, Object?>> entries;
-  final RoutedScope? replacement;
 
   @override
   void restore() {
-    if (!identical(RoutedScope.replacementOf(map), replacement)) {
-      RoutedScope.setReplacement(map, replacement);
-    }
     if (_sameEntries(map, entries)) return;
     map
       ..clear()
@@ -300,27 +262,6 @@ bool _sameEntries<K, V>(Map<K, V> map, List<MapEntry<K, V>> entries) {
   for (final entry in map.entries) {
     final saved = entries[i++];
     if (entry.key != saved.key || !identical(entry.value, saved.value)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/// Whether [routes] equal [saved], in key order.
-bool _sameRoutes(
-  Map<String, DefaultsRoute> routes,
-  Map<String, DefaultsRoute> saved,
-) {
-  if (routes.length != saved.length) return false;
-  final keys = saved.keys.iterator;
-  for (final MapEntry(:key, :value) in routes.entries) {
-    keys.moveNext();
-    final route = saved[keys.current];
-    if (key != keys.current ||
-        route == null ||
-        !identical(route.targetScope, value.targetScope) ||
-        route.targetName != value.targetName ||
-        route.configurable != value.configurable) {
       return false;
     }
   }

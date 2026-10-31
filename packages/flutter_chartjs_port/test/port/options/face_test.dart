@@ -76,26 +76,29 @@ void main() {
     });
   });
 
-  group('the Map scaffolding', () {
-    test('the Map protocol of the scope', () {
+  group('the operators of the face', () {
+    // The close step of Chart.js ADR 0054 removed the Map scaffolding:
+    // `operator []` and `operator []=` are `jsRead` and `jsWrite`, with the
+    // JS rules.
+    test('the reads and writes by name of the scope', () {
       final scope = _point();
       expect(scope['radius'], 3.0);
-      expect(scope['rotation'], isNull);
-      expect(scope.containsKey('rotation'), isFalse);
-      expect(scope.containsKey('pointStyle'), isTrue);
-      expect(scope.length, 4);
-      expect(scope.keys, [
+      expect(scope['rotation'], same(undefined));
+      expect(scope.jsHas('rotation'), isFalse);
+      expect(scope.jsHas('pointStyle'), isTrue);
+      expect(scope.ownKeyCount, 4);
+      expect(scope.jsKeys(), [
         'radius',
         'extraKey',
         'pointStyle',
         'backgroundColor',
       ]);
-      expect(scope.remove('radius'), 3.0);
-      expect(scope.keys, ['extraKey', 'pointStyle', 'backgroundColor']);
+      expect(scope.jsDelete('radius'), isTrue);
+      expect(scope.jsKeys(), ['extraKey', 'pointStyle', 'backgroundColor']);
       scope['hitRadius'] = 2;
       expect(scope.hitRadiusCell!.raw, 2.0);
-      scope.clear();
-      expect(scope.isEmpty, isTrue);
+      scope.jsKeys().forEach(scope.jsDelete);
+      expect(scope.ownKeyCount, 0);
     });
   });
 

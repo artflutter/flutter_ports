@@ -1,5 +1,6 @@
 # The face: _byName reads the options of a line that are not a LineOptions
 # (a plain Map of user code or of a spec), the params object of the caller
-# of pathSegment (the filler; its typed form waits for the close step), and
-# the length of a borderDash that is not a List.
+# of pathSegment (the filler; a typed params record is an open point of the
+# close step: types.LineElement.pathSegment is public), and the length of a
+# borderDash that is not a List.
 jsGet 1

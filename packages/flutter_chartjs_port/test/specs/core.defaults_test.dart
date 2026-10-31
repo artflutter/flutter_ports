@@ -1,14 +1,17 @@
 // Ported from Chart.js v4.6.1 test/specs/core.defaults.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
 // `Chart.defaults` is the default export of core.defaults.js, [defaults].
 
-/// The JavaScript property read `object[key]` on an object (a Map): an
-/// absent key gives [undefined].
+/// The JavaScript property read `object[key]` on an object: a typed scope
+/// through its face (Chart.js ADR 0054 §5) or a Map. An absent key gives
+/// [undefined].
 Object? _get(Object? object, String key) {
+  if (object case final JsObjectFace face) return face[key];
   final map = object! as Map<String, Object?>;
   return map.containsKey(key) ? map[key] : undefined;
 }
@@ -23,7 +26,7 @@ void main() {
           expect(_get(defaults, 'test'), same(undefined));
           defaults.set(<String, Object?>{'test': true});
           expect(_get(defaults, 'test'), true);
-          defaults.remove('test');
+          defaults.jsDelete('test');
         },
       );
 
@@ -31,7 +34,7 @@ void main() {
         expect(_get(defaults, 'test'), same(undefined));
         defaults.set('test', <String, Object?>{'value': true});
         expect(_get(_get(defaults, 'test'), 'value'), true);
-        defaults.remove('test');
+        defaults.jsDelete('test');
       });
     });
 
@@ -53,7 +56,7 @@ void main() {
         defaults.set('testscope', <String, Object?>{'test2': undefined});
         expect(_get(_get(defaults, 'testscope'), 'test2'), true);
 
-        defaults.remove('testscope');
+        defaults.jsDelete('testscope');
       });
     });
   });

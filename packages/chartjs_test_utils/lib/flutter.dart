@@ -53,6 +53,7 @@ export 'src/index.dart'
         FixtureSource,
         HandFixture,
         acquireChart,
+        acquireChartRoot,
         afterEvent,
         fixturesRequiredVariable,
         fixturesTag,

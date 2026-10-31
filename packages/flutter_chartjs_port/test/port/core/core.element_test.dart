@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: core.element cases with no spec.
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isObject;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext, ScriptableScaleContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -636,8 +638,8 @@ void main() {
 
   group('statics', () {
     test('defaults is an empty object and defaultRoutes is undefined', () {
-      expect(Element.defaults, isA<AnyObject>());
-      expect(Element.defaults, isEmpty);
+      expect(isObject(Element.defaults), isTrue);
+      expect(Element.defaults.jsKeys(), isEmpty);
       expect(Element.defaultRoutes, _isUndefined);
     });
 

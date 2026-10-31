@@ -1,9 +1,9 @@
 # The face: _readName reads by name a config object, an options object or
 # the running animations of an object that is not typed (a Map of user code
 # or of a spec). A resolver reads through readOption.
-jsGet 1
 # The face: Object.keys of a plain object of the caller. The values of
 # _createAnimations and of update for an object that is not a property
 # object (core.animations.js:73, :121), the keys of the new options of
 # awaitAll (:136), and defaults.animation replaced by a plain object (:18).
-jsObjectKeys 4
+jsGet 1
+jsObjectKeys 5

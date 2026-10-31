@@ -72,7 +72,7 @@ final Map<String, Object?> _functions = {
   // }
   'radiusWrite': (Object? ctx) {
     if (jsGet(ctx, 'dataIndex') == 1) {
-      (jsGet(ctx, 'parsed')! as AnyObject)['x'] = 10.0;
+      (jsGet(ctx, 'parsed')! as JsObjectFace)['x'] = 10.0;
     }
     return 3.0;
   },
@@ -96,7 +96,9 @@ Object? _pointParsed(Chart chart) => [
 Object? _stackKeys(Chart chart) => [
   for (final item in chart.getDatasetMeta(0).parsed)
     switch (stacksOf(item)) {
-      final Map<String, Object?> stacks => jsObjectKeys(stacks),
+      final Object stacks
+          when stacks is Map<String, Object?> || stacks is JsObjectFace =>
+        jsObjectKeys(stacks),
       _ => const <String>[],
     },
 ];
@@ -186,7 +188,7 @@ void main() {
       Chart.register([_otherLine]);
       addTearDown(() => Chart.unregister([_otherLine]));
       (jsGet(jsGet(Chart.defaults, 'datasets'), 'line')!
-              as AnyObject)['datasetElementType'] =
+              as JsObjectFace)['datasetElementType'] =
           'otherLine';
     });
 
@@ -317,7 +319,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       for (final item in meta.parsed) {
         expect(item, isA<List<Object?>>());
-        expect(jsObjectKeys(stacksOf(item)! as AnyObject), ['y']);
+        expect(jsObjectKeys(stacksOf(item)), ['y']);
       }
       for (final point in meta.data) {
         final read = point as types.ElementPropertyRead;

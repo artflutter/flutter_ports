@@ -63,6 +63,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show Debounced, debounce;
 import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show
+        ContextObject,
         clearCanvas,
         clipArea,
         createContext,
@@ -83,6 +84,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show OverridesByTypeScope;
 import 'package:flutter_chartjs_port/src/platform/index.dart'
     show BasePlatform, detectPlatform;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -721,7 +724,7 @@ class Chart implements types.Chart {
   static final Map<String, Chart> instances = _instances;
 
   /// core.controller.js:107 `static overrides = overrides`.
-  static AnyObject get overrides => core_defaults.overrides;
+  static OverridesByTypeScope get overrides => core_defaults.overrides;
 
   /// core.controller.js:108 `static registry = registry`.
   static final core_registry.Registry registry = core_registry.registry;
@@ -904,7 +907,7 @@ class Chart implements types.Chart {
 
   /// core.controller.js:172 `$context = undefined`: the chart context of
   /// [getContext]. Dart `null` stands for JS `undefined`.
-  AnyObject? $context;
+  ContextObject? $context;
 
   /// core.controller.js:173 `_doResize`: the debounced update of a resize.
   late Debounced<Object?> _doResize;
@@ -971,7 +974,7 @@ class Chart implements types.Chart {
 
   /// core.controller.js:213 `get data()`.
   @override
-  AnyObject get data {
+  Object get data {
     return config.data;
   }
 
@@ -982,7 +985,7 @@ class Chart implements types.Chart {
 
   /// core.controller.js:221 `get options()`.
   @override
-  AnyObject get options {
+  OptionView get options {
     return _options;
   }
 
@@ -1817,7 +1820,7 @@ class Chart implements types.Chart {
   ]) {
     final method = Interaction.modes[mode is String ? mode : jsToString(mode)];
     if (method != null) {
-      return method(this, e, options! as AnyObject, useFinalPosition);
+      return method(this, e, options!, useFinalPosition);
     }
 
     return [];
@@ -1859,7 +1862,7 @@ class Chart implements types.Chart {
 
   /// core.controller.js:855 `getContext()`.
   @override
-  AnyObject getContext() {
+  ContextObject getContext() {
     return $context ??= createContext(null, {'chart': this, 'type': 'chart'});
   }
 
@@ -2275,7 +2278,7 @@ class Chart implements types.Chart {
   /// identity: the call sites of this file give the typed argument classes
   /// of `lib/src/types/plugin.dart` (Chart.js ADR 0054 §12).
   @override
-  bool? notifyPlugins(String hook, [AnyObject? args, FilterCallback? filter]) {
+  bool? notifyPlugins(String hook, [Object? args, FilterCallback? filter]) {
     return plugins.notify(this, hook, args, filter);
   }
 

@@ -1,1 +1,3 @@
+# Not an option read: the r, g, b and a of a color object of the user
+# (@kurkle/color 0.3.2 color.js:46-52).
 stringIndex 4

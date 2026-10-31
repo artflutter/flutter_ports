@@ -41,7 +41,6 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.da
     show decodeFill, resolveTarget;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show FillerOptions, optionOf;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show DatasetDrawHookArgs, Plugin;
@@ -101,7 +100,7 @@ String? _axisArgument(Object? axis) => switch (axis) {
 /// index.js:15 `afterDatasetsUpdate(chart, _args, options)`.
 ///
 /// `chart.data.datasets` is the data of the user, read by name.
-void _afterDatasetsUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
   final datasets = jsGet(chart.data, 'datasets');
   final count = jsTruthy(datasets)
       ? jsToNumber(jsGet(datasets, 'length'))
@@ -147,7 +146,7 @@ void _afterDatasetsUpdate(types.Chart chart, AnyObject _, AnyObject options) {
 /// index.js:51 `beforeDraw(chart, _args, options)`. `if (!source)` is the
 /// type test: the port writes only Dart `null` and a [FillerSource], and an
 /// absent property reads `undefined` (Chart.js ADR 0040, section 6).
-void _beforeDraw(types.Chart chart, AnyObject _, AnyObject options) {
+void _beforeDraw(types.Chart chart, Object _, Object options) {
   final draw = FillerOptions(options).drawTime == 'beforeDraw';
   final metasets = chart.getSortedVisibleDatasetMetas();
   final area = chart.chartArea;
@@ -165,7 +164,7 @@ void _beforeDraw(types.Chart chart, AnyObject _, AnyObject options) {
 }
 
 /// index.js:68 `beforeDatasetsDraw(chart, _args, options)`.
-void _beforeDatasetsDraw(types.Chart chart, AnyObject _, AnyObject options) {
+void _beforeDatasetsDraw(types.Chart chart, Object _, Object options) {
   if (FillerOptions(options).drawTime != 'beforeDatasetsDraw') {
     return;
   }
@@ -187,7 +186,7 @@ void _beforeDatasetsDraw(types.Chart chart, AnyObject _, AnyObject options) {
 void _beforeDatasetDraw(
   types.Chart chart,
   DatasetDrawHookArgs args,
-  AnyObject options,
+  Object options,
 ) {
   final source = (args.meta! as types.ChartMetaFiller).$filler;
 

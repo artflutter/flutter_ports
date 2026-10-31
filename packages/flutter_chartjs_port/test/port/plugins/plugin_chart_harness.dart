@@ -34,7 +34,6 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -104,7 +103,7 @@ void testPluginChartCases(
   Map<String, Object? Function(Chart chart)> observers = const {},
   Map<String, Object?> functions = const {},
   Map<String, Object? Function(Chart chart)> extras = const {},
-  AnyObject? theme,
+  Object? theme,
   Map<String, Matcher> errorTypes = const {},
 }) => testControllerChartCases(
   cases,

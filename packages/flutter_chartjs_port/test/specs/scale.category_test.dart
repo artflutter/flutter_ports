@@ -10,7 +10,6 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -69,7 +68,7 @@ void main() {
       final defaultConfig = jsGet(jsGet(Chart.defaults, 'scales'), 'category');
       expect(
         defaultConfig,
-        equals(<String, Object?>{
+        jasmineEquals(<String, Object?>{
           'ticks': <String, Object?>{
             'callback': jsGet(
               jsGet(
@@ -664,7 +663,7 @@ void main() {
       expect(chart.scales['x']!.min, jasmineEquals(1));
       expect(chart.scales['x']!.max, jasmineEquals(2));
 
-      (jsGet(jsGet(chart.options, 'scales'), 'x')! as AnyObject)['bounds'] =
+      (jsGet(jsGet(chart.options, 'scales'), 'x')! as JsObjectFace)['bounds'] =
           'ticks';
       chart.update();
 

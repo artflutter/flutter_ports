@@ -8,21 +8,21 @@
 /// `lib/src/options/` (the kinds `ChartOptions`, `OverridesByType` and
 /// `Descriptors` of `tool/options_schema.yaml`). Each nested object of the
 /// built-in defaults is a typed scope of its kind. A key that the kind does
-/// not declare is an extra. The typed scopes are also Maps by the
-/// scaffolding of Chart.js ADR 0054 §5, so the readers by name of today
-/// read them. `undefined` is the [undefined] sentinel and `null` is Dart
-/// `null`. Numbers are `double` (Chart.js ADR 0045). A function value is a
-/// Dart closure (`lib/src/js/js_function.dart`).
+/// not declare is an extra. The readers by name read the typed scopes
+/// through their face (Chart.js ADR 0054 §5). `undefined` is the
+/// [undefined] sentinel and `null` is Dart `null`. Numbers are `double`
+/// (Chart.js ADR 0045). A function value is a Dart closure
+/// (`lib/src/js/js_function.dart`).
 ///
 /// `Object.defineProperties` has no Dart form. [Defaults.route] gives a typed
 /// scope a route of the key (`OptionScope.addRoute`): its read gives the
 /// local value, the target value or a merge of both objects at each access.
-/// A scope object that is a raw Map (a user object of the defaults) becomes
-/// a [RoutedScope], a `MapBase` that reads the route target when the local
-/// value is `undefined` (differences.md row `adapt-defaults-route`).
+/// A scope object or a target scope object that is a raw Map (a user object
+/// of the defaults) becomes a typed scope with the same keys in the same
+/// order, in the place of the Map in the object that owns it
+/// (differences.md row `adapt-defaults-route`).
 library;
 
-import 'dart:collection';
 import 'dart:core';
 import 'dart:core' as core show override;
 
@@ -68,7 +68,7 @@ final DescriptorsScope _descriptors = DescriptorsScope();
 
 /// Initializes [defaults], as the import of the JavaScript module does.
 void _loadModule() {
-  defaults.length;
+  defaults.ownKeyCount;
 }
 
 /// core.defaults.js:15 `getScope`.
@@ -77,8 +77,9 @@ void _loadModule() {
 /// @param {string} key
 /// @return {object}
 ///
-/// Each node on the path must be a Map. A node of another type throws a
-/// [TypeError] (differences.md row `adapt-defaults-scope-object`).
+/// Each node on the path must be an object: a typed scope or a Map. A node
+/// of another type throws a [TypeError] (differences.md row
+/// `adapt-defaults-scope-object`).
 ///
 /// A new node of a typed scope is a typed scope of the kind of its key
 /// (`OptionScope.childKindFor`, Chart.js ADR 0054 §3); another new node is
@@ -91,10 +92,14 @@ Object? _getScope(Object? root, String key) {
   final keys = key.split('.');
   for (var i = 0, n = keys.length; i < n; ++i) {
     final k = keys[i];
-    // DIVERGES(chartjs): adapt-defaults-scope-object, a node is a Map.
-    final object = node is AnyObject ? node : throw TypeError();
+    // DIVERGES(chartjs): adapt-defaults-scope-object, a node is an object.
+    final object = _isScopeObject(node) ? node! : throw TypeError();
     final value = jsGet(object, k);
-    node = jsTruthy(value) ? value : (object[k] = _newScope(object, k));
+    if (jsTruthy(value)) {
+      node = value;
+    } else {
+      jsSet(object, k, node = _newScope(object, k));
+    }
   }
   return node;
 }
@@ -102,157 +107,31 @@ Object? _getScope(Object? root, String key) {
 /// The new empty node [key] of [parent] for [_getScope]: a typed scope of
 /// the kind of [key] when [parent] is a typed scope with one, else a raw
 /// Map.
-Object _newScope(AnyObject parent, String key) =>
+Object _newScope(Object parent, String key) =>
     (parent is OptionScope ? parent.childKindFor(key)?.create() : null) ??
     <String, Object?>{};
 
 /// core.defaults.js:27 `set`.
 ///
 /// The result is the scope object. A scope path that ends at a value that is
-/// not a Map throws a [TypeError] (differences.md row
+/// not an object throws a [TypeError] (differences.md row
 /// `adapt-defaults-scope-object`).
-AnyObject _set(AnyObject root, Object? scope, Object? values) {
+Object _set(Object root, Object? scope, Object? values) {
   if (scope is String) {
-    // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is a Map.
-    return merge(_getScope(root, scope), values)! as AnyObject;
+    // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is an object.
+    return _scopeObject(merge(_getScope(root, scope), values));
   }
-  return merge(_getScope(root, ''), scope)! as AnyObject;
+  return _scopeObject(merge(_getScope(root, ''), scope));
 }
 
-/// core.defaults.js:130-157 the scope object of [Defaults.route]: an object
-/// with properties that `Object.defineProperties` made.
-///
-/// Upstream defines two properties on the scope object for each routed name:
-/// a hidden `_<name>` that holds the local value, and an enumerable accessor
-/// `<name>` that reads it. Dart has no accessor properties on a Map. Thus a
-/// [RoutedScope] keeps the local value in [ownValues] under `<name>` and
-/// reads the route of [routes] in `operator []`. The hidden `_<name>` is not
-/// a key (differences.md row `adapt-defaults-route`).
-///
-/// A scope without routes behaves as a plain `Map<String, Object?>`.
-// DIVERGES(chartjs): adapt-defaults-route, a MapBase for defineProperties.
-base class RoutedScope extends MapBase<String, Object?> {
-  /// A routed scope over [ownValues]. Without an argument, the scope is
-  /// empty.
-  ///
-  /// [Defaults.route] passes the Map that it replaces. The routed scope then
-  /// keeps the keys, the values and the key order of that Map.
-  RoutedScope([AnyObject? ownValues])
-    : ownValues = ownValues ?? <String, Object?>{};
+/// Whether [node] is a scope object: a typed scope (a typed object with a
+/// face) or a Map.
+bool _isScopeObject(Object? node) => node is JsObjectFace || node is AnyObject;
 
-  /// The own properties of the scope, in key order. For a routed name, the
-  /// value is the local value: the upstream hidden property `_<name>`.
-  ///
-  /// Read the scope through the Map interface. The test harness reads and
-  /// restores [ownValues] and [routes] directly
-  /// (`package:chartjs_test_utils/pure.dart`).
-  final AnyObject ownValues;
-
-  /// The routes of the scope, by routed name.
-  final Map<String, DefaultsRoute> routes = <String, DefaultsRoute>{};
-
-  /// The [RoutedScope] that took the place of each plain Map in
-  /// [Defaults.route].
-  ///
-  /// Upstream defines the routed properties on the scope object itself. The
-  /// port puts a new [RoutedScope] in the place of a plain Map. A route that
-  /// already keeps that Map as its target scope reads the [RoutedScope]
-  /// through this table. Thus the two Dart objects stand for one JavaScript
-  /// object.
-  static final Expando<RoutedScope> _replacements = Expando<RoutedScope>(
-    'RoutedScope',
-  );
-
-  /// The [RoutedScope] that took the place of [map], or null.
-  ///
-  /// The test harness saves it and restores it with [setReplacement]
-  /// (`package:chartjs_test_utils/pure.dart`).
-  static RoutedScope? replacementOf(AnyObject map) => _replacements[map];
-
-  /// Sets the [RoutedScope] that took the place of [map]. Null removes it.
-  /// For the test harness only.
-  static void setReplacement(AnyObject map, RoutedScope? scope) {
-    _replacements[map] = scope;
-  }
-
-  /// core.defaults.js:144-151 the getter of a routed property. Any other key
-  /// reads [ownValues].
-  @override
-  Object? operator [](Object? key) {
-    final route = routes[key];
-    if (route == null) {
-      return ownValues[key];
-    }
-    final local = ownValues[key];
-    final target = jsGet(
-      _resolveScope(route.targetScope),
-      route.targetName,
-    );
-    if (isObject(local)) {
-      return _assign(<String, Object?>{}, [target, local]);
-    }
-    return valueOrDefault(local, target);
-  }
-
-  /// core.defaults.js:152-154 the setter of a routed property. Any other key
-  /// sets [ownValues].
-  @override
-  void operator []=(String key, Object? value) {
-    ownValues[key] = value;
-  }
-
-  /// `Object.keys`: the own keys, routed names included. The hidden
-  /// `_<name>` properties are not keys.
-  @override
-  Iterable<String> get keys => ownValues.keys;
-
-  @override
-  int get length => ownValues.length;
-
-  @override
-  bool containsKey(Object? key) => ownValues.containsKey(key);
-
-  /// `delete scope[key]` in strict mode.
-  ///
-  /// A routed name that the scope did not own before its first route is not
-  /// configurable: its delete throws a [TypeError]. The delete of a
-  /// configurable routed name removes the route. The result is the value
-  /// that the scope gave for [key] before the delete.
-  @override
-  Object? remove(Object? key) {
-    final route = routes[key];
-    if (route == null) {
-      return ownValues.remove(key);
-    }
-    if (!route.configurable) {
-      // A JavaScript TypeError: "Cannot delete property".
-      throw TypeError();
-    }
-    final value = this[key];
-    routes.remove(key);
-    ownValues.remove(key);
-    return value;
-  }
-
-  @override
-  void clear() {
-    keys.toList().forEach(remove);
-  }
-}
-
-/// The route of a routed name of a [RoutedScope] (core.defaults.js:130).
-///
-/// - `targetScope`: the target scope object, `targetScopeObject`. A route
-///   keeps the object, not the path, as upstream does.
-/// - `targetName`: the property of `targetScope` that the route reads.
-/// - `configurable`: whether the scope owned the name before its first route.
-///   `Object.defineProperties` keeps the `configurable` attribute of an own
-///   property. A new property is not configurable.
-typedef DefaultsRoute = ({
-  Object? targetScope,
-  String targetName,
-  bool configurable,
-});
+/// [node] as a scope object. A value that is not an object throws a
+/// [TypeError] (differences.md row `adapt-defaults-scope-object`).
+Object _scopeObject(Object? node) =>
+    _isScopeObject(node) ? node! : throw TypeError();
 
 /// core.defaults.js:38 `Defaults`.
 ///
@@ -334,7 +213,7 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   ///
   /// A [scope] that is not a `String` is the values object of the root.
   @core.override
-  AnyObject set(Object? scope, [Object? values = undefined]) {
+  Object set(Object? scope, [Object? values = undefined]) {
     return _set(this, scope, values);
   }
 
@@ -342,11 +221,11 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   ///
   /// @param {string} scope
   ///
-  /// A scope path that ends at a value that is not a Map throws a
+  /// A scope path that ends at a value that is not an object throws a
   /// [TypeError] (differences.md row `adapt-defaults-scope-object`).
-  AnyObject get(String scope) {
-    // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is a Map.
-    return _getScope(this, scope)! as AnyObject;
+  Object get(String scope) {
+    // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is an object.
+    return _scopeObject(_getScope(this, scope));
   }
 
   /// core.defaults.js:105 `describe`.
@@ -354,12 +233,12 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   /// @param {string|object} scope
   /// @param {object} [values]
   @core.override
-  AnyObject describe(Object? scope, [Object? values = undefined]) {
+  Object describe(Object? scope, [Object? values = undefined]) {
     return _set(_descriptors, scope, values);
   }
 
   /// core.defaults.js:109 `override`.
-  AnyObject override(Object? scope, [Object? values = undefined]) {
+  Object override(Object? scope, [Object? values = undefined]) {
     return _set(_overrides, scope, values);
   }
 
@@ -387,109 +266,92 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   /// property should be routed to.
   ///
   /// A typed scope object gets a typed route of [name]
-  /// (`OptionScope.addRoute`, Chart.js ADR 0054 §3). A scope object that is
-  /// a raw Map (a user object) becomes a [RoutedScope] over the same
-  /// entries, in the object that owns it. The route of a name that the
-  /// scope already routes throws a [TypeError] unless that name is
-  /// configurable, as
-  /// `Object.defineProperties` does. A scope object that is not a Map, for
-  /// example an array, throws a [TypeError] after the target scope exists
-  /// (differences.md row `adapt-defaults-scope-object`).
+  /// (`OptionScope.addRoute`, Chart.js ADR 0054 §3). A scope object or a
+  /// target scope object that is a raw Map (a user object) becomes a typed
+  /// scope with the same keys, values and key order, in the place of the Map
+  /// in the object that owns it ([_typedScope]). The route of a name that
+  /// the scope already routes throws a [TypeError] unless that name is
+  /// configurable, as `Object.defineProperties` does. A scope object that is
+  /// not an object, for example an array, throws a [TypeError] after the
+  /// target scope exists (differences.md row `adapt-defaults-scope-object`).
   @core.override
   void route(String scope, String name, String targetScope, String targetName) {
     final node = _getScope(this, scope);
-    final targetScopeObject = _getScope(this, targetScope);
-    if (node is OptionScope) {
-      // The getter of core.defaults.js:144-151, read at each access.
-      Object? read(Object? local) {
-        final target = jsGet(_resolveScope(targetScopeObject), targetName);
-        if (isObject(local)) {
-          return _assign(<String, Object?>{}, [target, local]);
-        }
-        return valueOrDefault(local, target);
-      }
-
-      node.addRoute(
-        name,
-        ScopeRoute(
-          read,
-          targetScope: targetScopeObject,
-          targetName: targetName,
-        ),
-      );
-      return;
-    }
-    // DIVERGES(chartjs): adapt-defaults-route, a RoutedScope for the scope.
-    final scopeObject = _routedScope(scope, node);
-    // The private property `'_' + name` is the local value in
-    // [RoutedScope.ownValues].
-    final owned = scopeObject.containsKey(name);
-    final local = owned ? scopeObject[name] : undefined;
-    final previous = scopeObject.routes[name];
-
-    // A private property is defined to hold the actual value, when this
-    // property is set in its scope (set in the setter)
-    scopeObject.ownValues[name] = local;
-    if (previous != null && !previous.configurable) {
-      // A JavaScript TypeError: "Cannot redefine property".
+    var targetScopeObject = _getScope(this, targetScope);
+    if (node is! OptionScope && node is! AnyObject) {
+      // A JavaScript TypeError: "Object.defineProperties called on
+      // non-object". Upstream also routes an array or a function scope.
+      // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is an object.
       throw TypeError();
     }
-    // The actual property is defined as getter/setter so we can do the
-    // routing when value is not locally set.
-    scopeObject.routes[name] = (
-      targetScope: targetScopeObject,
-      targetName: targetName,
-      configurable: previous?.configurable ?? owned,
+    // DIVERGES(chartjs): adapt-defaults-route, a typed scope for a raw Map.
+    final scopeObject = _typedScope(scope, node);
+    if (identical(targetScopeObject, node)) {
+      targetScopeObject = scopeObject;
+    } else if (targetScopeObject is AnyObject) {
+      targetScopeObject = _typedScope(targetScope, targetScopeObject);
+    }
+    final target = targetScopeObject;
+
+    // The getter of core.defaults.js:144-151, read at each access.
+    Object? read(Object? local) {
+      final value = jsGet(target, targetName);
+      if (isObject(local)) {
+        return _assign(<String, Object?>{}, [value, local]);
+      }
+      return valueOrDefault(local, value);
+    }
+
+    scopeObject.addRoute(
+      name,
+      ScopeRoute(read, targetScope: target, targetName: targetName),
     );
   }
 
-  /// The scope object [node] of [route] as a [RoutedScope].
+  /// The scope object [node] at the path [scope] as a typed scope.
   ///
-  /// A plain Map becomes a [RoutedScope] over the same Map. The object that
-  /// owns the Map as an own value gets the [RoutedScope] in its place, with
-  /// the same key order. When the parent scope reaches [node] through a
-  /// route, the owner is the target scope of that route, as upstream
-  /// defines the properties on [node] itself. The local value of the parent
-  /// does not change. A Map that a [RoutedScope] replaced before gets that
-  /// [RoutedScope] back. When the parent gives a new object for each read (a
-  /// routed object value), the route goes to that object only, as upstream.
+  /// A typed scope is the result. A raw Map becomes a typed scope with the
+  /// same keys and values in the same order: the kind of its name in a typed
+  /// owner, else a kind with no declared key, a plain object
+  /// (`GenericElementOptions`). The object that owns the Map as an own value
+  /// gets the typed scope in its place, with the same key order. When the
+  /// parent scope reaches [node] through a route, the owner is the target
+  /// scope of that route, as upstream defines the properties on [node]
+  /// itself. When the parent gives a new object for each read (a routed
+  /// object value), the route goes to that object only, as upstream.
   ///
-  /// A [node] that is not a Map throws a [TypeError] (differences.md row
-  /// `adapt-defaults-scope-object`).
-  RoutedScope _routedScope(String scope, Object? node) {
-    if (node is RoutedScope) {
-      return node;
-    }
-    if (node is! AnyObject) {
-      // A JavaScript TypeError: "Object.defineProperties called on
-      // non-object". Upstream also routes an array or a function scope.
-      // DIVERGES(chartjs): adapt-defaults-scope-object, the scope is a Map.
-      throw TypeError();
-    }
-    final routed = RoutedScope._replacements[node] ?? RoutedScope(node);
-    RoutedScope._replacements[node] = routed;
+  /// Upstream defines the properties on the object itself. A route thus
+  /// keeps the identity of the object; here a Map of user code that the
+  /// defaults hold and a route reaches is no longer the object of the
+  /// defaults (differences.md row `adapt-defaults-route`).
+  OptionScope _typedScope(String scope, Object? node) {
+    if (node is OptionScope) return node;
+    final map = node! as AnyObject;
     final keys = scope.split('.');
     var name = keys.removeLast();
     var owner = _getScope(this, keys.join('.'));
     // Follow the routes that give [node] to the parent scope.
-    while (owner is RoutedScope) {
-      final route = owner.routes[name];
-      if (route == null || identical(owner.ownValues[name], node)) {
+    while (owner is OptionScope) {
+      final route = owner.routeOf(name);
+      if (route == null || identical(owner.ownCell(name)?.raw, map)) {
         break;
       }
-      owner = _resolveScope(route.targetScope);
+      owner = route.targetScope;
       name = route.targetName;
     }
-    if (owner is RoutedScope) {
-      if (identical(owner.ownValues[name], node)) {
-        owner.ownValues[name] = routed;
-      }
-    } else if (owner is AnyObject && owner is! JsProxyObject) {
-      if (identical(jsGet(owner, name), node)) {
-        owner[name] = routed;
-      }
+    final kind =
+        (owner is OptionScope ? owner.childKindFor(name) : null) ??
+        ScopeKind.genericElementOptions;
+    final typed = kind.create();
+    for (final key in jsObjectKeys(map)) {
+      typed.jsWrite(key, map[key]);
     }
-    return routed;
+    if (owner is OptionScope) {
+      if (identical(owner.ownCell(name)?.raw, map)) owner.jsWrite(name, typed);
+    } else if (owner is AnyObject) {
+      if (identical(jsGet(owner, name), map)) owner[name] = typed;
+    }
+    return typed;
   }
 
   /// core.defaults.js:159 `apply`.
@@ -521,13 +383,6 @@ bool _scriptableDefault(String name) => !name.startsWith('on');
 /// core.defaults.js:167 the `_indexable` descriptor of the root.
 bool _indexableDefault(String name) => name != 'events';
 
-/// The target scope object of a route: the [RoutedScope] that took the
-/// place of a plain Map, else [scope].
-Object? _resolveScope(Object? scope) =>
-    scope is AnyObject && scope is! RoutedScope
-    ? RoutedScope._replacements[scope] ?? scope
-    : scope;
-
 /// A function value of one parameter. It gives the closure of a field its
 /// parameter type.
 Object? Function(Object? a) _fn1(Object? Function(Object? a) function) =>
@@ -542,14 +397,14 @@ Object? Function(Object? a, Object? b) _fn2(
 /// `Object.assign(target, ...sources)` for the sources of a routed getter
 /// (core.defaults.js:148).
 ///
-/// A Map source gives its own keys in [jsObjectKeys] order. A List or a
-/// String source gives its indices. `null`, [undefined] and other values
-/// give nothing.
+/// An object source (a Map or a typed scope) gives its own keys in
+/// [jsObjectKeys] order. A List or a String source gives its indices.
+/// `null`, [undefined] and other values give nothing.
 AnyObject _assign(AnyObject target, List<Object?> sources) {
   for (final source in sources) {
-    if (source is AnyObject) {
+    if (source is AnyObject || source is JsObjectFace) {
       for (final key in jsObjectKeys(source)) {
-        target[key] = source[key];
+        target[key] = jsGet(source, key);
       }
     } else if (source is List || source is String) {
       final length = source is List

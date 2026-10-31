@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/jasmine.dart';
+
 // The registry spec has no chart: each case calls `Chart.register`,
 // `Chart.unregister` and the registry of `Chart.registry`. It runs on the
 // VM, because core.controller.dart reaches the platform layer (Chart.js ADR
@@ -56,8 +58,14 @@ void main() {
       Chart.register([customController]);
 
       expect(Chart.registry.getController('custom'), customController);
-      expect(_defaults('datasets', 'custom'), customController['defaults']);
-      expect(_overrides('custom'), customController['overrides']);
+      expect(
+        _defaults('datasets', 'custom'),
+        jasmineEquals(customController['defaults']),
+      );
+      expect(
+        _overrides('custom'),
+        jasmineEquals(customController['overrides']),
+      );
 
       Chart.unregister([customController]);
 
@@ -75,7 +83,10 @@ void main() {
       Chart.register([customScale]);
 
       expect(Chart.registry.getScale('es6Scale'), customScale);
-      expect(_defaults('scales', 'es6Scale'), customScale['defaults']);
+      expect(
+        _defaults('scales', 'es6Scale'),
+        jasmineEquals(customScale['defaults']),
+      );
 
       Chart.unregister([customScale]);
 
@@ -95,7 +106,10 @@ void main() {
       Chart.register([customElement]);
 
       expect(Chart.registry.getElement('es6element'), customElement);
-      expect(_defaults('elements', 'es6element'), customElement['defaults']);
+      expect(
+        _defaults('elements', 'es6element'),
+        jasmineEquals(customElement['defaults']),
+      );
 
       Chart.unregister([customElement]);
 
@@ -112,7 +126,10 @@ void main() {
       Chart.register([customPlugin]);
 
       expect(Chart.registry.getPlugin('es6plugin'), customPlugin);
-      expect(_defaults('plugins', 'es6plugin'), customPlugin['defaults']);
+      expect(
+        _defaults('plugins', 'es6plugin'),
+        jasmineEquals(customPlugin['defaults']),
+      );
 
       Chart.unregister([customPlugin]);
 
@@ -156,7 +173,10 @@ void main() {
         Chart.registry.addControllers([customExtension]);
 
         expect(Chart.registry.getController('custom'), customExtension);
-        expect(_defaults('datasets', 'custom'), customExtension['defaults']);
+        expect(
+          _defaults('datasets', 'custom'),
+          jasmineEquals(customExtension['defaults']),
+        );
 
         Chart.registry.removeControllers([customExtension]);
 
@@ -170,7 +190,10 @@ void main() {
         Chart.registry.addScales([customExtension]);
 
         expect(Chart.registry.getScale('custom'), customExtension);
-        expect(_defaults('scales', 'custom'), customExtension['defaults']);
+        expect(
+          _defaults('scales', 'custom'),
+          jasmineEquals(customExtension['defaults']),
+        );
 
         Chart.registry.removeScales([customExtension]);
 
@@ -184,7 +207,10 @@ void main() {
         Chart.registry.addElements([customExtension]);
 
         expect(Chart.registry.getElement('custom'), customExtension);
-        expect(_defaults('elements', 'custom'), customExtension['defaults']);
+        expect(
+          _defaults('elements', 'custom'),
+          jasmineEquals(customExtension['defaults']),
+        );
 
         Chart.registry.removeElements([customExtension]);
 
@@ -198,7 +224,10 @@ void main() {
         Chart.registry.addPlugins([customExtension]);
 
         expect(Chart.registry.getPlugin('custom'), customExtension);
-        expect(_defaults('plugins', 'custom'), customExtension['defaults']);
+        expect(
+          _defaults('plugins', 'custom'),
+          jasmineEquals(customExtension['defaults']),
+        );
 
         Chart.registry.removePlugins([customExtension]);
 
@@ -251,8 +280,10 @@ void main() {
     });
 
     test('should preserve existing defaults', () {
-      (Chart.defaults['datasets']! as Map<String, Object?>)['test'] =
-          <String, Object?>{'test1': true, 'test3': false};
+      (Chart.defaults['datasets']! as JsObjectFace)['test'] = <String, Object?>{
+        'test1': true,
+        'test3': false,
+      };
       Chart.overrides['test'] = <String, Object?>{
         'testA': true,
         'testC': false,
@@ -273,16 +304,22 @@ void main() {
       };
 
       Chart.register([testController]);
-      expect(_defaults('datasets', 'test'), {
-        'test1': false,
-        'test2': true,
-        'test3': false,
-      });
-      expect(_overrides('test'), {
-        'testA': false,
-        'testB': true,
-        'testC': false,
-      });
+      expect(
+        _defaults('datasets', 'test'),
+        jasmineEquals(<String, Object?>{
+          'test1': false,
+          'test2': true,
+          'test3': false,
+        }),
+      );
+      expect(
+        _overrides('test'),
+        jasmineEquals(<String, Object?>{
+          'testA': false,
+          'testB': true,
+          'testC': false,
+        }),
+      );
 
       Chart.unregister([testController]);
       expect(_defaults('datasets', 'test'), same(undefined));

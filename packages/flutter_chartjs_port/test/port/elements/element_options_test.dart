@@ -1,5 +1,4 @@
 // Original code, not ported from Chart.js: the typed element options.
-import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';
@@ -12,17 +11,19 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show DrawPointOptions;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_class.dart' show jsAssign;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsObjectFreeze, jsObjectIsFrozen;
+    show JsObjectFace, jsGet, jsObjectFreeze, jsObjectIsFrozen, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
-// The typed element options of Chart.js ADR 0018 have no upstream source and
-// no spec. These tests check:
-// - the Map protocol of each class against a plain Map<String, Object?> over
-//   the same operations (section 3);
+// The typed element options of Chart.js ADR 0054 §9 have no upstream source
+// and no spec. These tests check:
+// - the face of each class (Chart.js ADR 0054 §5: the reads and writes by
+//   name with the JS rules) against a plain Map<String, Object?> over the
+//   same operations;
 // - the known keys of each class against the defaults and the defaultRoutes
 //   of its element class (section 2);
 // - the typed getters against jsGet, also for an absent key (section 4);
@@ -90,8 +91,8 @@ final class _Kind<T extends ElementOptions> {
   /// The static `knownKeys` of the class.
   final List<String> knownKeys;
 
-  /// The `defaults` of the element class.
-  final AnyObject defaults;
+  /// The `defaults` of the element class: a typed scope.
+  final JsObjectFace defaults;
 
   /// The `defaultRoutes` of the element class.
   final AnyObject defaultRoutes;
@@ -231,8 +232,8 @@ List<String> _expectedKeys(List<String> knownKeys, AnyObject model) => [
 ];
 
 /// Expects that [options] holds the entries of [model], read through each
-/// member of the Map protocol, through `jsGet` and through the getters of
-/// [kind].
+/// member of the face (with the JS rules: [undefined] for an absent key),
+/// through `jsGet` and through the getters of [kind].
 void _expectSame(
   _Kind kind,
   ElementOptions options,
@@ -240,41 +241,37 @@ void _expectSame(
   String reason,
 ) {
   final keys = _expectedKeys(kind.knownKeys, model);
-  expect(options.keys.toList(), keys, reason: '$reason: keys');
-  expect(options.length, model.length, reason: '$reason: length');
-  expect(options.isEmpty, model.isEmpty, reason: '$reason: isEmpty');
-  expect(options.isNotEmpty, model.isNotEmpty, reason: '$reason: isNotEmpty');
+  expect(
+    options.jsKeys(),
+    jsObjectKeys({for (final key in keys) key: model[key]}),
+    reason: '$reason: jsKeys',
+  );
   expect(
     jsObjectKeys(options),
-    jsObjectKeys({for (final key in keys) key: model[key]}),
+    options.jsKeys(),
     reason: '$reason: jsObjectKeys',
   );
+  expect(options.ownKeyCount, model.length, reason: '$reason: ownKeyCount');
   for (final key in [...kind.knownKeys, ..._extraKeys]) {
     final why = '$reason: $key';
-    expect(options[key], _value(model[key]), reason: '$why: []');
-    expect(
-      options.containsKey(key),
-      model.containsKey(key),
-      reason: '$why: containsKey',
-    );
     final value = jsGet(model, key);
+    expect(options[key], _value(value), reason: '$why: []');
+    expect(options.jsRead(key), _value(value), reason: '$why: jsRead');
+    expect(options.jsHas(key), model.containsKey(key), reason: '$why: jsHas');
     expect(jsGet(options, key), _value(value), reason: '$why: jsGet');
     if (kind.hasGetter(key)) {
       expect(kind.read(options, key), _value(value), reason: '$why: getter');
     }
   }
-  // A Map<String, Object?> gives null and false for a key that is not a
-  // String.
-  expect(options[_notAString], isNull, reason: '$reason: [1]');
-  expect(
-    options.containsKey(_notAString),
-    isFalse,
-    reason: '$reason: containsKey(1)',
-  );
+}
+
+/// Deletes each own key of [options] through its face.
+void _deleteAll(ElementOptions options) {
+  options.jsKeys().forEach(options.jsDelete);
 }
 
 /// The drawPoint calls of a point at (50, 40) with [options].
-List<ContextCall> _drawCalls(AnyObject options) {
+List<ContextCall> _drawCalls(Object options) {
   final ctx = createMockContext();
   PointElement({'options': options, 'x': 50, 'y': 40}).draw(ctx);
   return ctx.getCalls();
@@ -316,10 +313,10 @@ void main() {
             expect(kind.read(options, key), _value(value), reason: key);
             expect(jsGet(options, key), _value(value), reason: key);
           }
-          options.remove(key);
+          expect(options.jsDelete(key), isTrue, reason: key);
           expect(kind.read(options, key), _isUndefined, reason: key);
           expect(jsGet(options, key), _isUndefined, reason: key);
-          expect(options[key], isNull, reason: key);
+          expect(options[key], _isUndefined, reason: key);
         }
       });
 
@@ -327,9 +324,9 @@ void main() {
         final options = kind.create();
         final key = kind.knownKeys[1];
         options[key] = undefined;
-        expect(options.containsKey(key), isTrue);
+        expect(options.jsHas(key), isTrue);
         expect(options[key], _isUndefined);
-        expect(options.keys, [key]);
+        expect(options.jsKeys(), [key]);
         expect(kind.read(options, key), _isUndefined);
       });
 
@@ -337,32 +334,31 @@ void main() {
         final options = kind.create();
         final key = kind.knownKeys[1];
         options[key] = null;
-        expect(options.containsKey(key), isTrue);
+        expect(options.jsHas(key), isTrue);
         expect(options[key], isNull);
         expect(kind.read(options, key), isNull);
         expect(jsGet(options, key), isNull);
       });
 
-      test('keys is a view, as the keys of a Map are', () {
+      test('jsKeys follows the writes and the deletes', () {
         final model = <String, Object?>{};
         final options = kind.create();
-        final modelKeys = model.keys;
-        final keys = options.keys;
         for (final key in [kind.knownKeys[2], 'foo', kind.knownKeys[1]]) {
           model[key] = 1;
           options[key] = 1;
-          expect(keys.length, modelKeys.length, reason: key);
-          expect(keys.contains(key), isTrue, reason: key);
-          expect(keys, _expectedKeys(kind.knownKeys, model), reason: key);
+          expect(options.ownKeyCount, model.length, reason: key);
+          expect(options.jsHas(key), isTrue, reason: key);
+          expect(
+            options.jsKeys(),
+            _expectedKeys(kind.knownKeys, model),
+            reason: key,
+          );
         }
         model.remove('foo');
-        options.remove('foo');
-        expect(keys.contains('foo'), isFalse);
-        expect(keys.length, modelKeys.length);
-        model.clear();
-        options.clear();
-        expect(keys.isEmpty, isTrue);
-        expect(keys, isEmpty);
+        expect(options.jsDelete('foo'), isTrue);
+        expect(options.jsHas('foo'), isFalse);
+        expect(options.ownKeyCount, model.length);
+        expect(options.jsKeys(), _expectedKeys(kind.knownKeys, model));
       });
 
       test('the writes in the order of the list give the order of a Map', () {
@@ -372,9 +368,11 @@ void main() {
           model[key] = key.length;
           options[key] = key.length;
         }
-        expect(options.keys.toList(), model.keys.toList());
-        expect(options.values.toList(), model.values.toList());
-        expect(options.toString(), model.toString());
+        expect(options.jsKeys(), jsObjectKeys(model));
+        expect(
+          [for (final key in options.jsKeys()) options[key]],
+          [for (final key in jsObjectKeys(model)) model[key]],
+        );
       });
 
       test('the constructor copies a Map in its key order', () {
@@ -387,15 +385,15 @@ void main() {
         };
         final options = kind.create(source);
         _expectSame(kind, options, source, 'copy');
-        expect(options.keys, [
+        expect(options.jsKeys(), [
           r'$shared',
           kind.knownKeys[1],
           kind.knownKeys[2],
           'foo',
           'bar',
         ]);
-        final copy = kind.create(options);
-        _expectSame(kind, copy, source, 'copy of the copy');
+        final copy = options.clone();
+        _expectSame(kind, copy, source, 'clone of the copy');
         expect(identical(copy, options), isFalse);
       });
 
@@ -415,48 +413,19 @@ void main() {
               options[key] = value;
             case < 9:
               expect(
-                options.remove(key),
-                _value(model.remove(key)),
-                reason: '$reason: remove($key)',
+                options.jsDelete(key),
+                model.containsKey(key),
+                reason: '$reason: jsDelete($key)',
               );
+              model.remove(key);
             default:
               if (random.nextInt(4) == 0) {
                 model.clear();
-                options.clear();
+                _deleteAll(options);
               }
           }
           _expectSame(kind, options, model, reason);
         }
-      });
-
-      test('the members of MapBase give the results of a Map', () {
-        final model = <String, Object?>{};
-        final options = kind.create();
-        void both(void Function(AnyObject map) op) {
-          op(model);
-          op(options);
-        }
-
-        both((m) => m.addAll({kind.knownKeys[3]: 3, 'foo': 'x'}));
-        both((m) => m.putIfAbsent(kind.knownKeys[1], () => 1));
-        both((m) => m.putIfAbsent(kind.knownKeys[1], () => 9));
-        both((m) => m.update(kind.knownKeys[3], (v) => '$v!'));
-        both((m) => m.update('bar', (v) => v, ifAbsent: () => 'y'));
-        _expectSame(kind, options, model, 'after the updates');
-        expect(
-          [for (final e in options.entries) (e.key, e.value)],
-          [for (final key in options.keys) (key, model[key])],
-        );
-        final visited = <String>[];
-        options.forEach((key, value) {
-          visited.add(key);
-          expect(value, model[key]);
-        });
-        expect(visited, options.keys);
-        both((m) => m.removeWhere((key, value) => key == 'foo'));
-        _expectSame(kind, options, model, 'after removeWhere');
-        expect(options.remove(_notAString), isNull);
-        expect(Map.of(options), model);
       });
     });
   }
@@ -612,31 +581,43 @@ const List<_Class> _classes = [
 /// The TypeError of a write into a frozen object in strict mode.
 final Matcher _throwsTypeError = throwsA(isA<TypeError>());
 
-/// A resolver as a Map: its `get` trap gives the value of [_values] with a
-/// `!` suffix, and [objectKeys] gives the keys in the order of [_order].
-final class _Proxy extends MapBase<String, Object?> implements JsProxyObject {
+/// A resolver: its `get` trap gives the value of [_values] with a `!`
+/// suffix, and [objectKeys] gives the keys in the order of [_order].
+final class _Proxy implements JsProxyObject {
   _Proxy(this._values, this._order);
 
   final Map<String, Object?> _values;
   final List<String> _order;
 
   @override
-  Object? operator [](Object? key) => '${_values[key]}!';
+  Object? jsRead(String name) => '${_values[name]}!';
 
   @override
-  void operator []=(String key, Object? value) {}
+  Object? operator [](String name) => jsRead(name);
 
   @override
-  Iterable<String> get keys => _values.keys;
+  void jsWrite(String name, Object? value) {}
+
+  @override
+  void operator []=(String name, Object? value) {}
+
+  @override
+  List<String> jsKeys() => objectKeys();
+
+  @override
+  bool jsHas(String name) => _order.contains(name);
+
+  @override
+  bool jsDelete(String name) => false;
 
   @override
   List<String> objectKeys() => _order;
 
   @override
-  Object? remove(Object? key) => null;
+  List<String> ownKeys() => _values.keys.toList();
 
   @override
-  void clear() {}
+  bool hasProperty(String name) => _values.containsKey(name);
 }
 
 void _adr0021Tests() {
@@ -672,7 +653,7 @@ void _adr0021Tests() {
         final first = createElementOptions(id);
         final second = createElementOptions(id);
         expect(identical(first, second), isFalse, reason: id);
-        expect(first, isEmpty, reason: id);
+        expect(first.ownKeyCount, 0, reason: id);
         expect(first.isFrozen, isFalse, reason: id);
         expect(jsObjectIsFrozen(first), isFalse, reason: id);
       }
@@ -696,11 +677,11 @@ void _adr0021Tests() {
         final copy = options.clone();
         expect(copy.runtimeType, options.runtimeType);
         expect(identical(copy, options), isFalse);
-        expect(copy.keys.toList(), options.keys.toList());
+        expect(copy.jsKeys(), options.jsKeys());
         expect(jsObjectKeys(copy), jsObjectKeys(options));
-        expect(copy.length, options.length);
-        for (final key in options.keys) {
-          expect(copy.containsKey(key), isTrue, reason: key);
+        expect(copy.ownKeyCount, options.ownKeyCount);
+        for (final key in options.jsKeys()) {
+          expect(copy.jsHas(key), isTrue, reason: key);
           // The copy is shallow, as Object.assign is: the same objects.
           expect(copy[key], same(options[key]), reason: key);
           expect(jsGet(copy, key), same(jsGet(options, key)), reason: key);
@@ -710,19 +691,19 @@ void _adr0021Tests() {
 
       test('a write into the copy does not change the source', () {
         final options = source();
-        final keys = options.keys.toList();
+        final keys = options.jsKeys();
         options.clone()
           ..[c.keyA] = 7.0
           ..['foo'] = 'changed'
           ..['baz'] = 2.0
           ..[r'$animations'] = <String, Object?>{}
-          ..remove(c.keyB)
-          ..remove('bar');
-        expect(options.keys.toList(), keys);
+          ..jsDelete(c.keyB)
+          ..jsDelete('bar');
+        expect(options.jsKeys(), keys);
         expect(options[c.keyA], isNull);
         expect(options['foo'], 1.0);
-        expect(options.containsKey('baz'), isFalse);
-        expect(options.containsKey(r'$animations'), isFalse);
+        expect(options.jsHas('baz'), isFalse);
+        expect(options.jsHas(r'$animations'), isFalse);
         expect(options[c.keyB], _isUndefined);
         expect(options['bar'], _isUndefined);
       });
@@ -730,14 +711,14 @@ void _adr0021Tests() {
       test('a write into the source does not change the copy', () {
         final options = source();
         final copy = options.clone();
-        final keys = copy.keys.toList();
+        final keys = copy.jsKeys();
         options
           ..['foo'] = 'changed'
-          ..['qux'] = 3.0
-          ..clear();
-        expect(copy.keys.toList(), keys);
+          ..['qux'] = 3.0;
+        _deleteAll(options);
+        expect(copy.jsKeys(), keys);
         expect(copy['foo'], 1.0);
-        expect(copy.containsKey('qux'), isFalse);
+        expect(copy.jsHas('qux'), isFalse);
       });
 
       test('the copy of frozen options is not frozen', () {
@@ -753,7 +734,7 @@ void _adr0021Tests() {
 
       test('the copy of empty options is empty', () {
         final copy = c.create().clone();
-        expect(copy, isEmpty);
+        expect(copy.ownKeyCount, 0);
         expect(copy.runtimeType, c.create().runtimeType);
       });
 
@@ -762,8 +743,8 @@ void _adr0021Tests() {
         final copy = copyOptions(options);
         expect(copy.runtimeType, options.runtimeType);
         expect(identical(copy, options), isFalse);
-        expect(copy.keys.toList(), options.keys.toList());
-        expect((copy as ElementOptions).isFrozen, isFalse);
+        expect((copy as ElementOptions).jsKeys(), options.jsKeys());
+        expect(copy.isFrozen, isFalse);
       });
     });
 
@@ -774,8 +755,8 @@ void _adr0021Tests() {
         final value = <String, Object?>{'key': key};
         final copy = (c.create()..[key] = value).clone();
         expect(copy[key], same(value));
-        expect(copy.keys, [key]);
-        expect(copy.length, 1);
+        expect(copy.jsKeys(), [key]);
+        expect(copy.ownKeyCount, 1);
       });
     }
   }
@@ -783,7 +764,7 @@ void _adr0021Tests() {
   group('copyOptions', () {
     test('a plain Map gives a plain Map in the Object.keys order', () {
       // Object.keys(Object.assign({}, {b: 1, '10': 2})) is ['10', 'b'].
-      final copy = copyOptions({'b': 1.0, '10': 2.0});
+      final copy = copyOptions({'b': 1.0, '10': 2.0}) as Map<String, Object?>;
       expect(copy, isNot(isA<ElementOptions>()));
       expect(copy.keys, ['10', 'b']);
       expect(copy, {'10': 2.0, 'b': 1.0});
@@ -802,7 +783,7 @@ void _adr0021Tests() {
         'extra': 'x',
         '7': 'seven',
       };
-      final copy = copyOptions(source);
+      final copy = copyOptions(source) as Map<String, Object?>;
       expect(copy.keys, ['7', r'$shared', 'radius', 'n', 'u', 'extra']);
       expect(copy['n'], isNull);
       expect(copy.containsKey('n'), isTrue);
@@ -812,7 +793,9 @@ void _adr0021Tests() {
 
     test('a resolver gives the values of its get trap in the order of '
         'objectKeys', () {
-      final copy = copyOptions(_Proxy({'a': 1, 'b': 2, 'c': 3}, ['c', 'a']));
+      final copy = copyOptions(
+        _Proxy({'a': 1, 'b': 2, 'c': 3}, ['c', 'a']),
+      ) as Map<String, Object?>;
       expect(copy, isNot(isA<JsProxyObject>()));
       expect(copy.keys, ['c', 'a']);
       expect(copy.values, ['3!', '1!']);
@@ -856,27 +839,21 @@ void _adr0021Tests() {
       test('a removal of a present key throws a TypeError', () {
         // `delete o.radius` of a frozen object throws a TypeError.
         final o = options()..freeze();
-        expect(() => o.remove(c.keyA), _throwsTypeError);
-        expect(() => o.remove('foo'), _throwsTypeError);
-        expect(() => o.remove(r'$shared'), _throwsTypeError);
-        expect(o.clear, _throwsTypeError);
+        expect(() => o.jsDelete(c.keyA), _throwsTypeError);
+        expect(() => o.jsDelete('foo'), _throwsTypeError);
+        expect(() => o.jsDelete(r'$shared'), _throwsTypeError);
       });
 
-      test('the members of MapBase that write throw a TypeError', () {
+      test('Object.assign into frozen options throws a TypeError', () {
         // Object.assign(o, {radius: 3}) of a frozen object throws a
         // TypeError.
         final o = options()..freeze();
-        expect(() => o.addAll({c.keyA: 3.0}), _throwsTypeError);
-        expect(() => o.update(c.keyA, (v) => v), _throwsTypeError);
         expect(
-          () => o.update('absent', (v) => v, ifAbsent: () => 1.0),
+          () => jsAssign(o, <String, Object?>{c.keyA: 3.0}),
           _throwsTypeError,
         );
-        expect(() => o.updateAll((k, v) => v), _throwsTypeError);
-        expect(() => o.putIfAbsent('absent', () => 1.0), _throwsTypeError);
-        expect(() => o.removeWhere((k, v) => k == 'foo'), _throwsTypeError);
         expect(
-          () => o.addEntries([MapEntry(c.keyB, 1.0)]),
+          () => jsAssign(o, <String, Object?>{'absent': 1.0}),
           _throwsTypeError,
         );
       });
@@ -885,35 +862,29 @@ void _adr0021Tests() {
         // `delete o.absentKey` of a frozen object returns true, and
         // Object.assign(o, {}) returns o.
         final o = options()..freeze();
-        final keys = o.keys.toList();
-        expect(o.remove('absentKey'), isNull);
-        expect(o.remove(c.keyB), isNull);
-        expect(o.remove(_notAString), isNull);
-        expect(o.putIfAbsent(c.keyA, () => 9.0), 3.0);
-        o
-          ..addAll(const {})
-          ..removeWhere((k, v) => false);
-        expect(o.keys.toList(), keys);
-        final empty = c.create()
-          ..freeze()
-          ..clear()
-          ..addAll(const {});
-        expect(empty, isEmpty);
+        final keys = o.jsKeys();
+        expect(o.jsDelete('absentKey'), isFalse);
+        expect(o.jsDelete(c.keyB), isFalse);
+        expect(jsAssign(o, const <String, Object?>{}), same(o));
+        expect(o.jsKeys(), keys);
+        final empty = c.create()..freeze();
+        expect(jsAssign(empty, const <String, Object?>{}), same(empty));
+        expect(empty.ownKeyCount, 0);
       });
 
       test('the reads give the values from before the freeze', () {
         final o = options();
         final animations = o[r'$animations'];
-        final keys = o.keys.toList();
+        final keys = o.jsKeys();
         o.freeze();
-        expect(o.keys.toList(), keys);
-        expect(o.length, 4);
+        expect(o.jsKeys(), keys);
+        expect(o.ownKeyCount, 4);
         expect(o[r'$shared'], isTrue);
         expect(o[c.keyA], 3.0);
         expect(o['foo'], 'x');
         expect(o[r'$animations'], same(animations));
-        expect(o.containsKey(c.keyA), isTrue);
-        expect(o.containsKey(c.keyB), isFalse);
+        expect(o.jsHas(c.keyA), isTrue);
+        expect(o.jsHas(c.keyB), isFalse);
         expect(jsGet(o, c.keyA), 3.0);
         expect(jsGet(o, c.keyB), _isUndefined);
         expect(o.$sharedValue, isTrue);
@@ -964,14 +935,17 @@ void _adr0021Tests() {
       'myKey': 1.0,
     };
 
-    AnyObject targetCopy(AnyObject options) => copyOptions(options)
-      ..[r'$shared'] = false
-      ..[r'$animations'] = <String, Object?>{};
+    Object targetCopy(Object options) {
+      final copy = copyOptions(options);
+      jsSet(copy, r'$shared', false);
+      jsSet(copy, r'$animations', <String, Object?>{});
+      return copy;
+    }
 
     test(r'a typed copy puts $animations before the extra keys', () {
       final copy = targetCopy(PointOptions(source));
       expect(copy, isA<PointOptions>());
-      expect(copy.keys, [
+      expect(jsObjectKeys(copy), [
         r'$shared',
         'borderWidth',
         'radius',
@@ -980,22 +954,25 @@ void _adr0021Tests() {
         'myKey',
       ]);
       // The entries are the entries of JavaScript.
-      expect(copy.keys.toSet(), jsOrder.toSet());
-      expect(copy[r'$shared'], isFalse);
+      expect(jsObjectKeys(copy).toSet(), jsOrder.toSet());
+      expect(jsGet(copy, r'$shared'), isFalse);
     });
 
     test(
       'GenericElementOptions and a plain Map give the JavaScript order',
       () {
-        expect(targetCopy(GenericElementOptions(source)).keys, jsOrder);
-        expect(targetCopy(source).keys, jsOrder);
+        expect(
+          jsObjectKeys(targetCopy(GenericElementOptions(source))),
+          jsOrder,
+        );
+        expect(jsObjectKeys(targetCopy(source)), jsOrder);
       },
     );
 
     test('a typed copy without extra keys gives the JavaScript order', () {
       final noExtra = {...source}..remove('myKey');
       expect(
-        targetCopy(PointOptions(noExtra)).keys,
+        jsObjectKeys(targetCopy(PointOptions(noExtra))),
         [...jsOrder]..remove('myKey'),
       );
     });
@@ -1010,22 +987,26 @@ void _adr0021Tests() {
       ..._extraKeys,
     ];
 
-    /// Expects that [options] holds the entries of [model] in its order.
+    /// Expects that [options] holds the entries of [model] in its order,
+    /// read through its face with the JS rules.
     void expectSame(
       GenericElementOptions options,
       AnyObject model,
       String reason,
     ) {
-      expect(options.keys.toList(), model.keys.toList(), reason: reason);
-      expect(options.length, model.length, reason: reason);
-      expect(options.isEmpty, model.isEmpty, reason: reason);
+      expect(options.jsKeys(), jsObjectKeys(model), reason: reason);
+      expect(options.ownKeyCount, model.length, reason: reason);
       expect(jsObjectKeys(options), jsObjectKeys(model), reason: reason);
       for (final key in keys) {
-        expect(options[key], _value(model[key]), reason: '$reason: $key');
         expect(
-          options.containsKey(key),
+          options[key],
+          _value(jsGet(model, key)),
+          reason: '$reason: $key',
+        );
+        expect(
+          options.jsHas(key),
           model.containsKey(key),
-          reason: '$reason: containsKey($key)',
+          reason: '$reason: jsHas($key)',
         );
         expect(
           jsGet(options, key),
@@ -1043,8 +1024,6 @@ void _adr0021Tests() {
         _value(jsGet(model, r'$animations')),
         reason: reason,
       );
-      expect(options[_notAString], isNull, reason: reason);
-      expect(options.containsKey(_notAString), isFalse, reason: reason);
     }
 
     test('a random sequence of operations gives the results of a Map', () {
@@ -1062,14 +1041,15 @@ void _adr0021Tests() {
             options[key] = value;
           case < 9:
             expect(
-              options.remove(key),
-              _value(model.remove(key)),
-              reason: '$reason: remove($key)',
+              options.jsDelete(key),
+              model.containsKey(key),
+              reason: '$reason: jsDelete($key)',
             );
+            model.remove(key);
           default:
             if (random.nextInt(4) == 0) {
               model.clear();
-              options.clear();
+              _deleteAll(options);
             }
         }
         expectSame(options, model, reason);
@@ -1089,7 +1069,7 @@ void _adr0021Tests() {
       };
       final options = GenericElementOptions(source);
       expectSame(options, source, 'copy');
-      expect(options.keys, [
+      expect(options.jsKeys(), [
         'foo',
         'radius',
         r'$animations',
@@ -1097,40 +1077,8 @@ void _adr0021Tests() {
         'bar',
       ]);
     });
-
-    test('the members of MapBase give the results of a Map', () {
-      final model = <String, Object?>{};
-      final options = GenericElementOptions();
-      void both(void Function(AnyObject map) op) {
-        op(model);
-        op(options);
-      }
-
-      both((m) => m.addAll({'radius': 3.0, 'foo': 'x'}));
-      both((m) => m.putIfAbsent(r'$shared', () => true));
-      both((m) => m.putIfAbsent(r'$shared', () => false));
-      both((m) => m.update('radius', (v) => '$v!'));
-      both((m) => m.update('bar', (v) => v, ifAbsent: () => 'y'));
-      expectSame(options, model, 'after the updates');
-      both((m) => m.removeWhere((key, value) => key == 'foo'));
-      expectSame(options, model, 'after removeWhere');
-      expect(Map.of(options), model);
-      expect(options.toString(), model.toString());
-    });
-
-    test('a view of keys follows the changes, as the keys of a Map do', () {
-      final options = GenericElementOptions();
-      final keys = options.keys;
-      options['a'] = 1.0;
-      expect(keys, ['a']);
-      options[r'$shared'] = true;
-      expect(keys, ['a', r'$shared']);
-    });
   });
 }
 
 /// The marker of an absent key in the cases of the DrawPointOptions group.
 const Object _absentMarker = #absent;
-
-/// A key that is not a `String`.
-const Object _notAString = 1;

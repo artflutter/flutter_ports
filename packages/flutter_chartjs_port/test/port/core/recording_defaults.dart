@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
@@ -19,13 +21,13 @@ final class RecordingDefaults implements Defaults {
   final List<List<Object?>> calls = [];
 
   @override
-  Map<String, Object?> set(String scope, Map<String, Object?> values) {
+  Object set(String scope, Object values) {
     calls.add(['set', scope, values]);
     return values;
   }
 
   @override
-  Map<String, Object?> describe(String scope, Map<String, Object?> values) {
+  Object describe(String scope, Object values) {
     calls.add(['describe', scope, values]);
     return values;
   }
@@ -52,11 +54,12 @@ String probeJson(Object? value) => switch (value) {
   _ when identical(value, formatters['values']) => '"<values>"',
   Function() => '"<fn>"',
   final List<Object?> list => '[${list.map(probeJson).join(',')}]',
-  final Map<String, Object?> map =>
+  final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((key) => _entry(map, key)).join(',')}}',
   _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
 };
 
-/// The JSON member `"key":value` of [key] in [map].
-String _entry(Map<String, Object?> map, String key) =>
-    '${jsonEncode(key)}:${probeJson(map[key])}';
+/// The JSON member `"key":value` of [key] in [map], a Map or a typed scope
+/// with a face (Chart.js ADR 0054 §5).
+String _entry(Object map, String key) =>
+    '${jsonEncode(key)}:${probeJson(jsGet(map, key))}';

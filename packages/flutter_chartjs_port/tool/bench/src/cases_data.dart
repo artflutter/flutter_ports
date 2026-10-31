@@ -106,8 +106,7 @@ final class _PointElement implements PointElement {
   Object? get hidden => undefined;
 
   @override
-  double size([Map<String, Object?>? options]) =>
-      throw UnsupportedError('size');
+  double size([Object? options]) => throw UnsupportedError('size');
 }
 
 /// A chart `{getContext}`.

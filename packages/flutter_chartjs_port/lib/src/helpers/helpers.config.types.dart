@@ -6,8 +6,8 @@
 /// The upstream module declares types only. Its Dart form follows Chart.js
 /// ADR 0003: each interface is an `abstract interface class`, and a
 /// TypeScript property is an abstract getter. The library imports only
-/// `basic.dart`, `js_undefined.dart` and `package:meta`, so it is a pure
-/// layer.
+/// `basic.dart`, `js_array.dart`, `js_undefined.dart` and `package:meta`,
+/// so it is a pure layer.
 /// `helpers.config.dart` exports it, as `helpers.config.ts:15` does.
 ///
 /// - The generic parameters `T` and `R` (the scope list types) have no Dart
@@ -16,8 +16,10 @@
 ///   adds the arrays and other truthy values that a key gives.
 /// - The proxy types `ResolverProxy` and `ContextProxy` are `Merge<...>` with
 ///   the cache type. The `Resolver` and `ContextResolver` classes of
-///   `helpers.config.dart` implement them, and they are
-///   `Map<String, Object?>` (Chart.js ADR 0043).
+///   `helpers.config.dart` implement them. They are a [JsProxyObject], the
+///   face by name of a `Proxy` (Chart.js ADR 0054 §5).
+/// - A context object and a scope are `Object`: a `Map` of user code or a
+///   typed object of Chart.js ADR 0054 (a context, a typed scope).
 /// - The members of the caches are underscore members that other modules
 ///   read (`_cacheable`, `_scopes`, ...). They drop the underscore and carry
 ///   `@internal` (Chart.js ADR 0012). The concrete classes carry it too.
@@ -26,10 +28,11 @@
 ///   getter. Only `helpers.config.ts` reads them, through the cache Map or
 ///   the `get` trap. A `keys` getter would also clash with `Map.keys`.
 /// - `[Symbol.toStringTag]: 'Object'` (helpers.config.types.ts:10) makes
-///   `isObject` true for a resolver. A resolver is a Map here, so `isObject`
-///   is true without it.
+///   `isObject` true for a resolver. `isObject` is true for each typed
+///   object with a face, so it is true without it.
 library;
 
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsProxyObject;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
@@ -66,13 +69,13 @@ abstract interface class ResolverCache {
   Object? Function() get getTarget;
 
   /// helpers.config.types.ts:21 `override(scope)`.
-  ResolverProxy override(AnyObject scope);
+  ResolverProxy override(Object scope);
 }
 
 /// helpers.config.types.ts:24 `ResolverProxy`: `Merge<T[number]>` and
-/// [ResolverCache]. The `Map` gives the merged options.
+/// [ResolverCache]. The face ([JsProxyObject]) gives the merged options.
 abstract interface class ResolverProxy
-    implements ResolverCache, Map<String, Object?> {}
+    implements ResolverCache, JsProxyObject {}
 
 /// helpers.config.types.ts:29 `DescriptorDefaults`.
 ///
@@ -123,9 +126,10 @@ abstract interface class ContextCache {
   @internal
   Object? get proxy;
 
-  /// helpers.config.types.ts:49 `_context: AnyObject`.
+  /// helpers.config.types.ts:49 `_context: AnyObject`: a `Map` or a typed
+  /// context.
   @internal
-  AnyObject get context;
+  Object get context;
 
   /// helpers.config.types.ts:50 `_subProxy: ResolverProxy<T, R>`. The
   /// `undefined` sentinel when the caller gives none.
@@ -141,16 +145,15 @@ abstract interface class ContextCache {
   Descriptor get descriptors;
 
   /// helpers.config.types.ts:53 `setContext(ctx)`.
-  ContextProxy setContext(AnyObject ctx);
+  ContextProxy setContext(Object ctx);
 
   /// helpers.config.types.ts:54 `override(scope)`.
-  ContextProxy override(AnyObject scope);
+  ContextProxy override(Object scope);
 }
 
 /// helpers.config.types.ts:57 `ContextProxy`: `Merge<T[number]>` and
-/// [ContextCache]. The `Map` gives the merged options.
-abstract interface class ContextProxy
-    implements ContextCache, Map<String, Object?> {}
+/// [ContextCache]. The face ([JsProxyObject]) gives the merged options.
+abstract interface class ContextProxy implements ContextCache, JsProxyObject {}
 
 /// The object literal of [DescriptorDefaults].
 final class _DescriptorDefaults implements DescriptorDefaults {

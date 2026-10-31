@@ -52,7 +52,7 @@ Chart _chart(String type, List<Object?> labels, List<Object?> data) =>
 /// Whether the option objects [a] and [b] have the same keys in the same
 /// order and the same values (`jsObjectKeys` and `jsGet`, so that no
 /// resolver goes into a failure message).
-bool _sameOptions(Map<String, Object?> a, Map<String, Object?> b) {
+bool _sameOptions(Object a, Object b) {
   final keys = jsObjectKeys(a);
   final other = jsObjectKeys(b);
   if (keys.length != other.length) return false;
@@ -110,10 +110,10 @@ void main() {
       // update() through the interface builds the element of a new item.
       final meta = chart.getDatasetMeta(0);
       expect(meta.data, hasLength(3));
-      (jsGet(jsGet(chart.data['datasets'], 0.0), 'data')! as List<Object?>).add(
-        4.0,
-      );
-      (chart.data['labels']! as List<Object?>).add('d');
+      (jsGet(jsGet(jsGet(chart.data, 'datasets'), 0.0), 'data')!
+              as List<Object?>)
+          .add(4.0);
+      (jsGet(chart.data, 'labels')! as List<Object?>).add('d');
       t.update();
       expect(meta.data, hasLength(4));
     });
@@ -124,7 +124,7 @@ void main() {
       final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
       final meta = chart.getDatasetMeta(0);
       final types.ChartMeta t = meta;
-      final dataset = jsGet(chart.data['datasets'], 0.0);
+      final dataset = jsGet(jsGet(chart.data, 'datasets'), 0.0);
       expect(identical(t.dataset_, dataset), isTrue);
       expect(identical(t.dataset_, meta.dataset_), isTrue);
       // No doughnut update wrote the total.

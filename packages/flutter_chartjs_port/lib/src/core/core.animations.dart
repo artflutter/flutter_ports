@@ -150,7 +150,7 @@ class Animations {
       defaults.lookup(OptionKey.animation)?.raw ?? undefined,
     );
 
-    for (final key in jsOwnPropertyNames(configObject as AnyObject)) {
+    for (final key in jsOwnPropertyNames(configObject)) {
       final cfg = _read(configObject, key);
       if (!isObject(cfg)) {
         continue;
@@ -186,7 +186,7 @@ class Animations {
       return [];
     }
 
-    final newOptionsObject = newOptions! as AnyObject;
+    final newOptionsObject = newOptions!;
     final animations = _createAnimations(options, newOptionsObject);
     if (jsTruthy(_shared(newOptionsObject))) {
       // Going to shared options:
@@ -220,7 +220,7 @@ class Animations {
   /// A property object of a controller goes through
   /// [_createTypedAnimations]: its typed keys in the `Object.keys` order
   /// (Chart.js ADR 0054 §10).
-  List<Animation> _createAnimations(Object target, AnyObject values) {
+  List<Animation> _createAnimations(Object target, Object values) {
     final running = _runningOf(target);
     final date = jsDateNow();
     // DIVERGES(chartjs): platform-reduced-motion, no animation config.
@@ -241,10 +241,10 @@ class Animations {
       }
 
       if (prop == 'options') {
-        animations.addAll(_animateOptions(target, values[prop]));
+        animations.addAll(_animateOptions(target, _readName(values, prop)));
         continue;
       }
-      final value = values[prop];
+      final value = _readName(values, prop);
       var animation = running[prop] as Animation?;
       final key = AnimatedProp.of(prop);
       final cfg = reduced ? null : _get(key);
@@ -291,7 +291,7 @@ class Animations {
         ? target
         : null;
 
-    for (var i = values.length - 1; i >= 0; --i) {
+    for (var i = values.ownKeyCount - 1; i >= 0; --i) {
       final key = animatedPropOf(values, i);
       final prop = key.name;
       if (prop.startsWith(r'$')) {
@@ -347,7 +347,7 @@ class Animations {
   /// writes of a property object (Chart.js ADR 0054 §9). For another target
   /// it writes each key of `Object.keys(values)` through [writeProperty], in
   /// that order.
-  bool? update(Object target, AnyObject values) {
+  bool? update(Object target, Object values) {
     if (_keys.isEmpty) {
       // Nothing is animated, just apply the new values.
       if (target is Element) {
@@ -355,7 +355,7 @@ class Animations {
       } else {
         // The face: `Object.assign` of a plain object.
         for (final key in jsObjectKeys(values)) {
-          writeProperty(target, key, values[key]);
+          writeProperty(target, key, _readName(values, key));
         }
       }
       return null;
@@ -468,7 +468,7 @@ Map<String, Object?> _runningOf(Object target) {
 
 /// `options.$shared` of the options object [options]: the field of
 /// [ElementOptions], else the read by name.
-Object? _shared(AnyObject options) => options is ElementOptions
+Object? _shared(Object options) => options is ElementOptions
     ? options.$sharedValue
     : _readName(options, r'$shared');
 
@@ -497,7 +497,7 @@ Object? _read(Object object, Object key) => key is OptionKey
 ///
 /// `animations[key]` is a read by name. Thus `undefined` animations throw a
 /// [TypeError], as in JavaScript. `Promise.all` is [jsPromiseAll].
-Future<List<void>> _awaitAll(Object? animations, AnyObject properties) {
+Future<List<void>> _awaitAll(Object? animations, Object properties) {
   final running = <Future<void>>[];
   // The face: `Object.keys` of the options object.
   final keys = jsObjectKeys(properties);
@@ -516,7 +516,7 @@ Future<List<void>> _awaitAll(Object? animations, AnyObject properties) {
 /// Dart `null` stands for the `undefined` result. Shared options get a copy
 /// with `$shared: false` and a new `$animations` Map. The copy keeps the
 /// class of the options ([copyOptions], Chart.js ADR 0021, section 3).
-AnyObject? _resolveTargetOptions(Object target, Object? newOptions) {
+Object? _resolveTargetOptions(Object target, Object? newOptions) {
   if (!jsTruthy(newOptions)) {
     return null;
   }
@@ -525,12 +525,12 @@ AnyObject? _resolveTargetOptions(Object target, Object? newOptions) {
     writeProperty(target, 'options', newOptions);
     return null;
   }
-  if (jsTruthy(_shared(options! as AnyObject))) {
+  if (jsTruthy(_shared(options!))) {
     // Going from shared options to distinct one:
     // Create new options object containing the old shared values and start
     // updating that.
     // DIVERGES(chartjs): adapt-typed-element-options, the copy keeps the class.
-    final copy = copyOptions(options as AnyObject);
+    final copy = copyOptions(options);
     if (copy is ElementOptions) {
       copy
         ..storeKey(OptionKey.dollarShared, false)
@@ -543,7 +543,7 @@ AnyObject? _resolveTargetOptions(Object target, Object? newOptions) {
     options = copy;
     writeProperty(target, 'options', options);
   }
-  return options as AnyObject;
+  return options;
 }
 
 /// `Object.keys(value)` for `defaults.animation` (core.animations.js:18):
@@ -561,6 +561,9 @@ List<Object> _objectKeys(Object? value) {
       return scope.jsOwnKeys();
     case final AnyObject object:
       // The face: the keys of a plain object of user code.
+      return jsObjectKeys(object);
+    case final JsObjectFace object:
+      // The face: the keys of a typed object.
       return jsObjectKeys(object);
     case final List<Object?> list:
       return [for (var i = 0; i < list.length; i++) jsNumberToString(i)];

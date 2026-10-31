@@ -23,7 +23,8 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableChartContext, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionScope;
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show
         ActiveElement,
@@ -177,7 +178,7 @@ extension type ChartContext._(ContextObject _context) {
   /// prototype chain of each context (`createContext`).
   Chart get chart {
     for (
-      AnyObject? context = _context;
+      Object? context = _context;
       context is ContextObject;
       context = context.prototype
     ) {
@@ -223,7 +224,7 @@ extension type ChartContext._(ContextObject _context) {
 /// A view of the item object of the tooltip: the typed tooltip item of the
 /// plugin ([TypedTooltipItem], Chart.js ADR 0054 §12), or an object of user
 /// code, read by name.
-extension type ChartTooltipItem._(Map<String, Object?> _item) {
+extension type ChartTooltipItem._(Object _item) {
   /// The chart.
   Chart get chart => _key(_TooltipKey.chart)! as Chart;
 
@@ -248,11 +249,12 @@ extension type ChartTooltipItem._(Map<String, Object?> _item) {
   int get dataIndex => _int(_key(_TooltipKey.dataIndex))!;
 
   /// The `label` of the dataset, or `null` for a dataset without a String
-  /// label. The dataset is the dataset object of the app: a Map, read by
+  /// label. The dataset is the dataset object of the app: a Map, or the
+  /// typed dataset scope of a typed config (Chart.js ADR 0054 §7), read by
   /// name.
   String? get datasetLabel {
     final dataset = _key(_TooltipKey.dataset);
-    return dataset is Map ? _string(_byName(dataset, 'label')) : null;
+    return dataset == null ? null : _string(_byName(dataset, 'label'));
   }
 
   /// The value of [key]: the typed field of a [TypedTooltipItem], else the
@@ -290,7 +292,7 @@ enum _TooltipKey {
 /// A view of the item object of the legend: the typed legend item of the
 /// plugin ([TypedLegendItem], Chart.js ADR 0054 §12), or an item that a
 /// user `generateLabels` gives, read by name.
-extension type ChartLegendItem._(Map<Object?, Object?> _item) {
+extension type ChartLegendItem._(Object _item) {
   /// The text of the item, or `null` for a text that is not a `String`.
   String? get text => _string(
     switch (_item) {
@@ -327,8 +329,14 @@ extension type ChartLegendItem._(Map<Object?, Object?> _item) {
 }
 
 /// The read by name `object[key]` of an object of user code in the place
-/// of a typed item, and of the dataset object of the app.
-Object? _byName(Map<Object?, Object?> object, String key) => object[key];
+/// of a typed item, and of the dataset object of the app: the Map read, the
+/// face of a typed dataset scope of a typed config (Chart.js ADR 0054 §5),
+/// else Dart `null`.
+Object? _byName(Object object, String key) => switch (object) {
+  final Map<Object?, Object?> map => map[key],
+  final OptionScope scope => scope.jsRead(key),
+  _ => null,
+};
 
 /// [value] as an `int`, or `null` for a value that is not a finite number.
 int? _int(Object? value) =>

@@ -268,9 +268,9 @@ String _argText(Object? value, Observations o) {
 
 /// The text `hook(key=value,...)` of one hook call.
 String _hookText(String hook, Object? args, Observations o) {
-  final map = args! as AnyObject;
-  final keys = jsObjectKeys(map);
-  return '$hook(${keys.map((k) => '$k=${_argText(map[k], o)}').join(',')})';
+  final keys = jsObjectKeys(args);
+  final texts = keys.map((k) => '$k=${_argText(jsGet(args, k), o)}');
+  return '$hook(${texts.join(',')})';
 }
 
 /// The plugin `{id}` of the generator that logs each hook into [log].
@@ -663,7 +663,8 @@ void main() {
         ]),
       );
       charts.add(chart);
-      List<Object?> datasets() => chart.data['datasets']! as List<Object?>;
+      List<Object?> datasets() =>
+          (chart.data as AnyObject)['datasets']! as List<Object?>;
       o
         ..observe('metasets', _metas(chart.metasets))
         ..observe('sorted', _metas(chart.sortedMetasets))
@@ -939,7 +940,7 @@ void main() {
         ..active = []
         ..setActiveElements([]);
       o.observe('cleared', _activeText(chart.getActiveElements(), o));
-      (chart.options['hover']! as AnyObject)['mode'] = 'dataset';
+      (chart.options['hover']! as JsObjectFace)['mode'] = 'dataset';
       run('dataset mode', _Event('mousemove', p1.x, p1.y));
     });
 
@@ -1407,7 +1408,10 @@ void main() {
       (config['data']! as AnyObject)['labels'] = labels;
       final chart = acquireChart(config);
       List<Object?> dataOf(int i) =>
-          jsGet(jsGet(chart.data['datasets'], i.toDouble()), 'data')!
+          jsGet(
+                jsGet((chart.data as AnyObject)['datasets'], i.toDouble()),
+                'data',
+              )!
               as List<Object?>;
       // The hooked array methods: the change, then the listeners.
       void change(
@@ -1640,10 +1644,12 @@ void main() {
         _testConfig([], plugins: [_spy('spy', log, Observations())]),
       );
       addTearDown(chart.destroy);
-      (chart.data['datasets']! as List<Object?>).add(<String, Object?>{
-        'type': 'plainController',
-        'data': <Object?>[],
-      });
+      ((chart.data as AnyObject)['datasets']! as List<Object?>).add(
+        <String, Object?>{
+          'type': 'plainController',
+          'data': <Object?>[],
+        },
+      );
       log.clear();
       expect(chart.update, throwsA(isA<TypeError>()));
       expect(log, isNot(contains('beforeElementsUpdate()')));
@@ -1923,7 +1929,8 @@ void main() {
       // The test controller places a point at the same pixel in the reset
       // and in the update. A new value gives a looping animation of y.
       final dataset =
-          (chart.data['datasets']! as List<Object?>)[0]! as AnyObject;
+          ((chart.data as AnyObject)['datasets']! as List<Object?>)[0]!
+              as AnyObject;
       ((dataset['data']! as List<Object?>)[0]! as AnyObject)['y'] = 9;
       chart.update();
       expect(animator.running(chart), isTrue);
@@ -1962,8 +1969,8 @@ void main() {
         'data': array,
       });
       expect(chart.data, isNot(same(array)));
-      expect(chart.data['datasets'], isEmpty);
-      expect(chart.data['labels'], isEmpty);
+      expect((chart.data as AnyObject)['datasets'], isEmpty);
+      expect((chart.data as AnyObject)['labels'], isEmpty);
       chart.destroy();
     });
 
@@ -1987,7 +1994,13 @@ void main() {
         }
         ..update();
       expect(chart.options, isNot(same(options)));
-      expect(chart.options, toEqualOptions(options));
+      // `for (key in options)`: the own keys of the old view.
+      expect(
+        chart.options,
+        toEqualOptions({
+          for (final key in jsObjectKeys(options)) key: options[key],
+        }),
+      );
     });
   });
 

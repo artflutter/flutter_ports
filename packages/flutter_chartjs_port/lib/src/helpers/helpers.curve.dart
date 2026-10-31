@@ -298,7 +298,7 @@ void _capBezierPoints(List<SplinePoint> points, ChartArea? area) {
 /// Dart `null` for [area] is JS `undefined` (see [_capBezierPoints]).
 void updateBezierControlPoints(
   List<SplinePoint> points,
-  Map<String, Object?> options,
+  Object options,
   ChartArea? area,
   // The upstream signature.
   // ignore: avoid_positional_boolean_parameters

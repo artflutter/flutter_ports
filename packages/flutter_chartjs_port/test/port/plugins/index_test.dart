@@ -10,7 +10,8 @@ import 'package:flutter_chartjs_port/src/index.dart' show plugins;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
@@ -154,7 +155,7 @@ List<int> _counts(Function f) => [
 /// more than one count gives the counts with `|`, and fails the comparison.
 /// A hook of the `Plugin` interface gives `<key>(hook)` for a typed hook
 /// function ([_hookText]).
-String _keyText(AnyObject plugin, String key) => switch (plugin[key]) {
+String _keyText(JsObjectFace plugin, String key) => switch (plugin[key]) {
   final JsClass _ => '$key: class',
   final Function f when PluginHook.of(key) != null => _hookText(key, f),
   final Function f => '$key(${_counts(f).join('|')})',
@@ -246,7 +247,7 @@ Function _recording(
 void _recordHooks(List<String> calls) {
   final upstream = _upstreamCounts();
   for (final name in jsObjectKeys(plugins)) {
-    final plugin = plugins[name]! as AnyObject;
+    final plugin = plugins[name]! as JsObjectFace;
     final id = plugin['id']! as String;
     for (final key in jsObjectKeys(plugin)) {
       final value = plugin[key];
@@ -296,10 +297,10 @@ void main() {
       final keys = [
         for (final name in jsObjectKeys(plugins))
           <String, Object?>{
-            'id': (plugins[name]! as AnyObject)['id'],
+            'id': (plugins[name]! as JsObjectFace)['id'],
             'keys': [
-              for (final key in jsObjectKeys(plugins[name]! as AnyObject))
-                _keyText(plugins[name]! as AnyObject, key),
+              for (final key in jsObjectKeys(plugins[name]))
+                _keyText(plugins[name]! as JsObjectFace, key),
             ],
           },
       ];
@@ -332,7 +333,7 @@ void main() {
         );
       }
       for (final name in jsObjectKeys(plugins)) {
-        final plugin = plugins[name]! as AnyObject;
+        final plugin = plugins[name]! as JsObjectFace;
         expect(
           registry.getPlugin(plugin['id']! as String),
           same(plugin),

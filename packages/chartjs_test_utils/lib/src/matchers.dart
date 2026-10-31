@@ -231,7 +231,7 @@ final class _ToBeChartOfSize extends Matcher {
     final canvas = chart.ctx!.canvas;
     // DIVERGES(chartjs): harness-chart-matchers, the display size rule.
     final style = computedCanvasSize(canvas);
-    final devicePixelRatio = chart.options['devicePixelRatio'];
+    final devicePixelRatio = jsGet(chart.options, 'devicePixelRatio');
     // DIVERGES(chartjs): harness-chart-matchers, the ratio of the platform.
     final pixelRatio = jsTruthy(devicePixelRatio)
         ? jsToNumber(devicePixelRatio)

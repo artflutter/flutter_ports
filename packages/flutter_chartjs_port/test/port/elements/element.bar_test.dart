@@ -62,13 +62,13 @@ AnyObject _plainOptions(AnyObject options) => options;
 /// The two forms of the options of a bar (Chart.js ADR 0018, section 6): the
 /// plain Map, and a [BarOptions] with the same entries in the same key
 /// order.
-const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+const Map<String, Object Function(AnyObject options)> _optionsForms = {
   'Map options': _plainOptions,
   'BarOptions': BarOptions.new,
 };
 
 /// [cfg] with its `options` Map in the form [form].
-AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
+AnyObject _withOptions(AnyObject cfg, Object Function(AnyObject) form) => {
   for (final MapEntry(:key, :value) in cfg.entries)
     key: key == 'options' && value is AnyObject ? form(value) : value,
 };
@@ -445,11 +445,15 @@ void main() {
         _bar(
           _drawCfg({
             'borderSkipped': <String, Object?>{
-              for (final key in skipped.keys) key: skipped[key],
+              for (final key in skipped.jsKeys()) key: skipped[key],
             },
           }),
         ).draw(plain);
-        expect(typed.getCalls(), plain.getCalls(), reason: '${skipped.keys}');
+        expect(
+          typed.getCalls(),
+          plain.getCalls(),
+          reason: '${skipped.jsKeys()}',
+        );
       }
     });
 
@@ -633,7 +637,7 @@ void main() {
     });
 
     test('defaults in the upstream key order', () {
-      expect(BarElement.defaults.keys, [
+      expect(BarElement.defaults.jsKeys(), [
         'borderSkipped',
         'borderWidth',
         'borderRadius',

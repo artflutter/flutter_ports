@@ -26,8 +26,6 @@
 /// This library is a pure layer.
 library;
 
-import 'dart:collection' show MapBase;
-
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsFreezable, JsObjectFace;
@@ -36,6 +34,8 @@ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
+import 'package:flutter_chartjs_port/src/types/data_item.dart'
+    show TypedDataItem;
 
 export 'package:flutter_chartjs_port/src/options/opt.dart';
 export 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -44,13 +44,10 @@ export 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 /// A typed option scope: the fields of its kind, the own-key order and the
 /// extras (Chart.js ADR 0054 §3).
 ///
-/// It implements [JsObjectFace], the face by name. During the migration it
-/// also extends `MapBase<String, Object?>` (the scaffolding of Chart.js ADR
-/// 0054 §5), so that the readers by name of today read it as a Map: the
-/// Map members follow the Map rules (`operator []` gives Dart `null` for an
-/// absent key, as a Map read) over the same own keys. The close step of the
-/// migration removes the scaffolding.
-abstract base class OptionScope extends MapBase<String, Object?>
+/// It implements [JsObjectFace], the face by name, with the JS rules:
+/// `operator []` gives [undefined] for a key that the scope does not own
+/// (Chart.js ADR 0054 §5). It is not a `Map`.
+abstract base class OptionScope
     implements OptionObject, JsObjectFace, JsFreezable {
   /// An empty scope.
   OptionScope();
@@ -66,8 +63,8 @@ abstract base class OptionScope extends MapBase<String, Object?>
   /// write throws a [TypeError] (a write into a frozen object in strict
   /// mode, helpers.config.ts:101-106): [store], [delete] of an own key,
   /// [addRoute], and through them the cell setters and the typed setters of
-  /// the generated scopes, [jsWrite], [jsDelete], `operator []=`, [remove]
-  /// and [clear]. The delete of a key that the scope does not own succeeds,
+  /// the generated scopes, [jsWrite], [jsDelete] and `operator []=`. The
+  /// delete of a key that the scope does not own succeeds,
   /// as in JavaScript. The reads do not change. No member clears the frozen
   /// state, except the harness restore ([restoreState]).
   @override
@@ -132,7 +129,10 @@ abstract base class OptionScope extends MapBase<String, Object?>
     final name = k is OptionKey ? k.jsName : k as String;
     final index = names.indexOf(name);
     if (index < 0) return own;
-    return classifyName(name, _routes![index].read(own?.raw ?? undefined));
+    return classifyName(
+      name,
+      _routes![index].read(own == null ? undefined : own.raw),
+    );
   }
 
   /// The own cell of the normalized key [k], without its route.
@@ -351,45 +351,13 @@ abstract base class OptionScope extends MapBase<String, Object?>
   @override
   bool jsDelete(String name) => delete(name);
 
-  // The Map scaffolding of Chart.js ADR 0054 §5.
-
-  /// The Map read: the JS value of an own key ([undefined] for an own key
-  /// with the value `undefined`), else Dart `null`.
+  /// `object[name]`: [jsRead].
   @override
-  Object? operator [](Object? key) => key is String ? lookup(key)?.raw : null;
+  Object? operator [](String name) => jsRead(name);
 
-  /// The Map write: [jsWrite].
+  /// `object[name] = value`: [jsWrite].
   @override
-  void operator []=(String key, Object? value) => jsWrite(key, value);
-
-  /// The own keys ([jsKeys]).
-  @override
-  Iterable<String> get keys => jsKeys();
-
-  @override
-  int get length => _order.length;
-
-  @override
-  bool get isEmpty => _order.isEmpty;
-
-  @override
-  bool get isNotEmpty => _order.isNotEmpty;
-
-  @override
-  bool containsKey(Object? key) => key is String && owns(key);
-
-  /// Deletes [key] and returns its value, or Dart `null` for an absent key.
-  @override
-  Object? remove(Object? key) {
-    if (key is! String) return null;
-    final value = this[key];
-    delete(key);
-    return value;
-  }
-
-  /// Deletes each own key.
-  @override
-  void clear() => ownKeys.forEach(delete);
+  void operator []=(String name, Object? value) => jsWrite(name, value);
 
   /// A new scope of the same kind with each own key in the same order. A
   /// nested typed scope is cloned, a nested raw Map and an array are copied
@@ -548,7 +516,9 @@ Opt<T> cloneCell<T>(Opt<T> cell) => switch (cell) {
 /// `helpers.clone` (helpers.core.ts:159) for the values of a scope: a typed
 /// scope gives its [OptionScope.cloneScope], an array a new array of the
 /// clones of its items, a raw Map a new Map of the clones of its values in
-/// key order, and any other value itself.
+/// key order, another typed object with a face (not a data item) a new Map
+/// of the clones of its values in the `Object.keys` order, and any other
+/// value itself.
 Object? cloneValue(Object? value) => switch (value) {
   final OptionScope scope => scope.cloneScope(),
   final List<Object?> list => <Object?>[
@@ -556,6 +526,9 @@ Object? cloneValue(Object? value) => switch (value) {
   ],
   final Map<String, Object?> map => <String, Object?>{
     for (final MapEntry(:key, :value) in map.entries) key: cloneValue(value),
+  },
+  final JsObjectFace face when face is! TypedDataItem => <String, Object?>{
+    for (final key in face.jsKeys()) key: cloneValue(face.jsRead(key)),
   },
   _ => value,
 };

@@ -112,8 +112,8 @@ void main() {
 
     void checkAndChange() {
       expect(defaults['color'], same(color));
-      expect(defaults.containsKey('harnessKey'), isFalse);
-      expect(overrides.containsKey('harnessType'), isFalse);
+      expect(defaults.jsHas('harnessKey'), isFalse);
+      expect(overrides.jsHas('harnessType'), isFalse);
       defaults['color'] = 'changed';
       defaults['harnessKey'] = 1;
       overrides['harnessType'] = <String, Object?>{};
@@ -218,7 +218,7 @@ void main() {
       expect(jsGet(_elementDefaults('arc'), 'borderWidth'), 2);
       expect(jsGet(descriptors['elements'], 'arc'), isNotNull);
 
-      (_elementDefaults('point')! as Map<String, Object?>)['radius'] = 99;
+      (_elementDefaults('point')! as JsObjectFace)['radius'] = 99;
       expect(jsGet(_elementDefaults('point'), 'radius'), 99);
     }
 
@@ -273,7 +273,7 @@ void main() {
         'title',
         'tooltip',
       ]);
-      final colors = _pluginDefaults('colors')! as Map<String, Object?>;
+      final colors = _pluginDefaults('colors')! as JsObjectFace;
       expect(colors['enabled'], isFalse);
       if (_colorsWritten) _colorsRestored = true;
       colors['enabled'] = true;

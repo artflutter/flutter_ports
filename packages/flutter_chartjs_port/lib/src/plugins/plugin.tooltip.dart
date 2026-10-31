@@ -52,7 +52,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show distanceBetweenPoints, limitValue;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext, toFont, toPadding, toTRBLCorners;
+    show ContextObject, createContext, toFont, toPadding, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show RTLAdapter, getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
@@ -62,7 +62,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsObjectFreeze;
+    show jsGet, jsGetIndex, jsIsObjectLike, jsObjectFreeze, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
     show canvasKeyword, canvasLineDash, canvasNumber, canvasStyle;
@@ -625,8 +625,8 @@ List<Object?> _getBeforeAfterBodyLines(Object? callback) {
 
 /// plugin.tooltip.js:348 `createTooltipContext(parent, tooltip,
 /// tooltipItems)`.
-AnyObject _createTooltipContext(
-  AnyObject? parent,
+ContextObject _createTooltipContext(
+  Object? parent,
   Tooltip tooltip,
   List<Object?> tooltipItems,
 ) {
@@ -654,8 +654,8 @@ Object? _overrideCallbacks(Object? callbacks, Object? context) {
   }
   if (!jsTruthy(override)) return callbacks;
   return switch (callbacks) {
-    final OptionView view => view.override(override! as AnyObject),
-    final OptionResolver resolver => resolver.override(override! as AnyObject),
+    final OptionView view => view.override(override!),
+    final OptionResolver resolver => resolver.override(override!),
     _ => jsCall(jsGet(callbacks, 'override'), [override], thisArg: callbacks),
   };
 }
@@ -755,7 +755,7 @@ Object? _defaultLabel(Object? self, Object? tooltipItem) {
 /// `tooltipItem.chart.getDatasetMeta(tooltipItem.datasetIndex)` and
 /// `meta.controller.getStyle(tooltipItem.dataIndex)` of
 /// plugin.tooltip.js:405-406 and :420-421.
-AnyObject _styleOf(Object? tooltipItem) {
+Object _styleOf(Object? tooltipItem) {
   final item = _TooltipItemView(tooltipItem);
   final meta = _chartOf(
     tooltipItem,
@@ -990,7 +990,7 @@ class Tooltip extends Element implements types.TooltipModel {
   /// 4). The `construct` closure of [jsClass] reads it from a JS value. The
   /// start values follow the upstream order (:467-495). The other
   /// properties start in the `undefined` state.
-  Tooltip(({types.Chart chart, AnyObject? options}) config)
+  Tooltip(({types.Chart chart, Object? options}) config)
     : chart = config.chart {
     _opacity = 0;
     _active = [];
@@ -1057,8 +1057,9 @@ class Tooltip extends Element implements types.TooltipModel {
   List<Object?> _tooltipItems = const [];
 
   /// plugin.tooltip.js:474 `$context`. Dart `null` stands for JS
-  /// `undefined`.
-  AnyObject? _context;
+  /// `undefined`. The value is an object: the tooltip context, or an object
+  /// that user code writes by name.
+  Object? _context;
 
   /// plugin.tooltip.js:1127 `_ignoreReplayEvents`. Dart `null` stands for
   /// JS `undefined`, the value before the first event.
@@ -1164,7 +1165,7 @@ class Tooltip extends Element implements types.TooltipModel {
   set labelTextColors(List<Object?> value) => _labelTextColors = value;
 
   /// plugin.tooltip.js:498 `initialize(options)`.
-  void initialize(AnyObject? options) {
+  void initialize(Object? options) {
     this.options = options;
     _cachedAnimations = null;
     _context = null;
@@ -1185,8 +1186,7 @@ class Tooltip extends Element implements types.TooltipModel {
     }
     // Options of a spec or of user code: the call by name.
     return TooltipOptions(
-      jsCall(jsGet(options, 'setContext'), [getContext()], thisArg: options)!
-          as AnyObject,
+      jsCall(jsGet(options, 'setContext'), [getContext()], thisArg: options),
     );
   }
 
@@ -1231,7 +1231,7 @@ class Tooltip extends Element implements types.TooltipModel {
   /// plugin.tooltip.js:528 `getContext()`. @protected
   ///
   /// The context is cached until the next [update].
-  AnyObject getContext() {
+  Object getContext() {
     return _context ??= _createTooltipContext(
       chart.getContext(),
       this,
@@ -1746,7 +1746,7 @@ class Tooltip extends Element implements types.TooltipModel {
       ctx
         ..lineWidth = canvasNumber(
           isObject(borderWidth)
-              ? _maxOfValues(borderWidth! as AnyObject)
+              ? _maxOfValues(borderWidth!)
               // TODO(chartjs): v4 remove fallback
               : (jsTruthy(borderWidth) ? borderWidth : 1.0),
         )
@@ -1825,7 +1825,7 @@ class Tooltip extends Element implements types.TooltipModel {
   /// values in the [jsObjectKeys] order, each through `ToNumber`. No value
   /// gives `-Infinity`. The object is the `borderWidth` of a label color of
   /// user code, read by name.
-  static double _maxOfValues(AnyObject object) {
+  static double _maxOfValues(Object object) {
     var max = double.negativeInfinity;
     for (final key in jsObjectKeys(object)) {
       max = jsMax(max, jsToNumber(jsGet(object, key)));
@@ -2402,7 +2402,11 @@ class Tooltip extends Element implements types.TooltipModel {
           _ => throw ArgumentError.value(value, prop, 'Not a List'),
         };
       case r'$context':
-        _context = toObjectProp<AnyObject>(prop, value);
+        _context = switch (value) {
+          Undefined() => null,
+          _ when jsIsObjectLike(value) => value,
+          _ => throw ArgumentError.value(value, prop, 'Not an object'),
+        };
       case '_ignoreReplayEvents':
         _ignoreReplayEvents = toBoolProp(prop, value);
       default:
@@ -2418,14 +2422,14 @@ class Tooltip extends Element implements types.TooltipModel {
 /// An absent argument, [undefined] and JS `null` throw the [TypeError] of
 /// the read `config.chart`, as upstream. A member with the value
 /// [undefined] gives Dart `null`. A `chart` that is not a `types.Chart` and
-/// an `options` that is not a Map throw a [TypeError]. Upstream stores such
-/// a value and reads its members later.
+/// an `options` that is not an object (a Map or a typed object) throw a
+/// [TypeError]. Upstream stores such a value and reads its members later.
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({types.Chart chart, AnyObject? options}) _tooltipConfig(List<Object?> args) {
+({types.Chart chart, Object? options}) _tooltipConfig(List<Object?> args) {
   final config = args.isEmpty ? undefined : args[0];
   return (
     chart: _orNull(jsGet(config, 'chart'))! as types.Chart,
-    options: _orNull(jsGet(config, 'options')) as AnyObject?,
+    options: jsObjectOrNull(jsGet(config, 'options')),
   );
 }
 
@@ -2442,21 +2446,21 @@ bool _scriptableDescriptor(String name) =>
     name != 'filter' && name != 'itemSort' && name != 'external';
 
 /// plugin.tooltip.js:1228 `afterInit(chart, _args, options)`.
-void _afterInit(types.Chart chart, AnyObject _, AnyObject options) {
+void _afterInit(types.Chart chart, Object _, Object options) {
   if (jsTruthy(options)) {
     chart.tooltip = Tooltip((chart: chart, options: options));
   }
 }
 
 /// plugin.tooltip.js:1234 `beforeUpdate(chart, _args, options)`.
-void _beforeUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+void _beforeUpdate(types.Chart chart, Object _, Object options) {
   if (chart.tooltip != null) {
     (chart.tooltip! as Tooltip).initialize(options);
   }
 }
 
 /// plugin.tooltip.js:1240 `reset(chart, _args, options)`.
-void _reset(types.Chart chart, AnyObject _, AnyObject options) {
+void _reset(types.Chart chart, Object _, Object options) {
   if (chart.tooltip != null) {
     (chart.tooltip! as Tooltip).initialize(options);
   }
@@ -2467,7 +2471,7 @@ void _reset(types.Chart chart, AnyObject _, AnyObject options) {
 /// are [TooltipDrawHookArgs]: `{...args, cancelable: true}` is a new object
 /// with the keys of `args` and `cancelable`, and `afterTooltipDraw` gets
 /// `args` itself.
-void _afterDraw(types.Chart chart, AnyObject _, AnyObject _) {
+void _afterDraw(types.Chart chart, Object _, Object _) {
   final tooltip = chart.tooltip as Tooltip?;
 
   if (tooltip != null && tooltip._willRender()) {
@@ -2491,7 +2495,7 @@ void _afterDraw(types.Chart chart, AnyObject _, AnyObject _) {
 /// `event` and `inChartArea` of [EventHookArgs], and the typed write of
 /// `changed`. An event of Dart `null` throws the [TypeError] of the null
 /// check, as `handleEvent` throws at `e.type` of `undefined` upstream.
-void _afterEvent(types.Chart chart, EventHookArgs args, AnyObject _) {
+void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
   if (chart.tooltip != null) {
     // If the event is replayed from `update`, we should evaluate with the
     // final positions.

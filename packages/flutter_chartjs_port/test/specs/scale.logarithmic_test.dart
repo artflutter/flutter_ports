@@ -71,8 +71,8 @@ AnyObject _dataset(Chart chart, int index) =>
     (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
 
 /// `chart.options.scales[id]`: a resolver of the chart options.
-AnyObject _chartScaleOptions(Chart chart, String id) =>
-    jsGet(jsGet(chart.options, 'scales'), id)! as AnyObject;
+JsObjectFace _chartScaleOptions(Chart chart, String id) =>
+    jsGet(jsGet(chart.options, 'scales'), id)! as JsObjectFace;
 
 /// `chartArea[side]` for the four sides of a chart area.
 double _side(ChartArea area, String side) => switch (side) {
@@ -160,7 +160,7 @@ void main() {
       final defaultConfig = jsGet(Chart.defaults['scales'], 'logarithmic');
       expect(
         defaultConfig,
-        equals(<String, Object?>{
+        jasmineEquals(<String, Object?>{
           'ticks': <String, Object?>{
             'callback': jsGet(ticks['formatters'], 'logarithmic'),
             'major': <String, Object?>{'enabled': true},

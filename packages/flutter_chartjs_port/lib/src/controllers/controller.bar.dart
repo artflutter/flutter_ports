@@ -118,14 +118,13 @@ typedef _BarPixels = ({double size, double base, double head, double center});
 
 /// controller.bar.js:7 `getAllScaleValues(scale, type)`.
 ///
-/// `scale._cache.$bar` holds the sorted unique values. Only this function
-/// writes the key, and it writes a `List<double>`. An array is truthy in
-/// JavaScript, thus `!scale._cache.$bar` is true only for an absent entry.
-/// The port tests for the `List<double>` of the write and needs no cast
-/// (IV §4.8). A truthy entry of another type cannot occur.
+/// `scale._cache.$bar` holds the sorted unique values: the typed field
+/// `ScaleCache.bar` (Chart.js ADR 0054 §4). Only this function writes it. An
+/// array is truthy in JavaScript, thus `!scale._cache.$bar` is true only for
+/// an absent entry, Dart `null`.
 List<double> _getAllScaleValues(types.Scale scale, String type) {
-  final cached = scale.cache[r'$bar'];
-  if (cached is List<double>) {
+  final cached = scale.cache.bar;
+  if (cached != null) {
     return cached;
   }
   final visibleMetas = scale.getMatchingVisibleMetas(type);
@@ -136,7 +135,7 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
     values = values + visibleMetas[i].controller!.getAllParsedValues(scale);
   }
   final unique = arrayUnique(jsSort(values, (a, b) => a - b));
-  scale.cache[r'$bar'] = unique;
+  scale.cache.bar = unique;
   return unique;
 }
 

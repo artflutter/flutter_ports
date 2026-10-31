@@ -565,7 +565,7 @@ class PointElement extends Element
   /// for JS `null` (Chart.js ADR 0017, section 8). A string `borderWidth`
   /// joins in the JS `+` of element.point.ts:86.
   @override
-  double size([AnyObject? options]) {
+  double size([Object? options]) {
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     options = options ?? this.options ?? const <String, Object?>{};
@@ -682,7 +682,7 @@ class PointElement extends Element
   /// The [DrawPointOptions] of [options]: [options] itself for a
   /// [PointOptions]. For a plain Map, the adapter of the last [draw] when
   /// its Map is [options], else a new adapter that [draw] keeps.
-  DrawPointOptions _drawPointOptionsOf(AnyObject options) {
+  DrawPointOptions _drawPointOptionsOf(Object options) {
     if (options is PointOptions) return options;
     final cached = _drawPointOptions;
     if (cached != null && identical(cached.options, options)) return cached;
@@ -702,8 +702,9 @@ class PointElement extends Element
 final class _MapPointOptions implements DrawPointOptions {
   _MapPointOptions(this.options);
 
-  /// The options Map of the point.
-  final AnyObject options;
+  /// The options object of the point: a Map, or a typed object with a face
+  /// that is not a [PointOptions].
+  final Object options;
 
   /// helpers.canvas.ts:150 `pointStyle`, the value as it is.
   @override

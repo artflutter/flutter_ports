@@ -38,7 +38,6 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope, TickOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
 /// An item of `_addedLabels`: the object literal `{index, label}` of
@@ -259,7 +258,7 @@ class CategoryScale extends Scale {
   /// it calls `super.init` with [options] only, as upstream does: [opts]
   /// has no effect.
   @override
-  void init(AnyObject options, [AnyObject? opts]) {
+  void init(Object options, [Object? opts]) {
     final added = _addedLabels;
     if (added.isNotEmpty) {
       final labels = getLabels();

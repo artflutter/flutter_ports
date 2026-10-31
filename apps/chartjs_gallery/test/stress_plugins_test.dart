@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:chartjs_gallery/canvas_host_demo.dart';
+import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart' hide Tooltip;
@@ -250,7 +251,7 @@ void main() {
         chart.config.type,
         pluginCase.scene == StressPluginScene.radar ? 'radar' : 'line',
       );
-      final datasets = chart.data['datasets']! as List<Object?>;
+      final datasets = readByName(chart.data, 'datasets')! as List<Object?>;
       expect(datasets, hasLength(pluginCase.benchKeys['datasets']));
       for (final dataset in datasets) {
         expect(jsGet(dataset, 'data'), hasLength(_n));
@@ -338,7 +339,8 @@ void main() {
     await _frames(tester, 10);
     final data =
         jsGet(
-              (_chart(tester).data['datasets']! as List<Object?>).first,
+              (readByName(_chart(tester).data, 'datasets')! as List<Object?>)
+                  .first,
               'data',
             )!
             as List<Object?>;
@@ -535,10 +537,10 @@ void main() {
     expect(await stressControlExists(tester, 'stress.plugins.legend'), isFalse);
     expect(await stressSelected(tester, 'stress.plugins.tooltip'), isTrue);
     expect(await stressSelected(tester, 'stress.plugins.datasets.10'), isTrue);
-    expect(_chart(tester).data['datasets'], hasLength(10));
+    expect(readByName(_chart(tester).data, 'datasets'), hasLength(10));
     await stressTap(tester, 'stress.plugins.datasets.3');
     await _frames(tester);
-    expect(_chart(tester).data['datasets'], hasLength(3));
+    expect(readByName(_chart(tester).data, 'datasets'), hasLength(3));
     await stressTap(tester, 'stress.plugins.tooltip');
     await _frames(tester);
     expect(_chart(tester).tooltip, isNull);
@@ -549,7 +551,10 @@ void main() {
     await _frames(tester);
     expect(_chart(tester), isNot(same(chart)));
     expect(
-      jsGet((_chart(tester).data['datasets']! as List<Object?>).first, 'data'),
+      jsGet(
+        (readByName(_chart(tester).data, 'datasets')! as List<Object?>).first,
+        'data',
+      ),
       hasLength(100),
     );
 

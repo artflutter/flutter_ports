@@ -6,6 +6,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -34,8 +35,7 @@ final List<_State> _states = [
 ];
 
 /// `proxy.key` for a value whose static type is `Object?`.
-Object? _read(Object? object, String key) =>
-    (object! as Map<String, Object?>)[key];
+Object? _read(Object? object, String key) => jsGet(object, key);
 
 /// `context.index * 10` of a scriptable option.
 Object? _tenTimesIndex(Object? ctx) => jsToNumber(_read(ctx, 'index')) * 10;
@@ -396,9 +396,9 @@ void main() {
             state.scope(),
             <String, Object?>{'y': 1},
           ]);
-          expect(resolver.keys, want.names);
+          expect(resolver.ownKeys(), want.names);
           expect(jsObjectKeys(resolver), want.keys);
-          expect(resolver.containsKey('x'), want.has);
+          expect(resolver.hasProperty('x'), want.has);
           expect(resolver.hasOwnProperty('x'), want.has);
 
           final opts = attachContext(
@@ -408,9 +408,9 @@ void main() {
             ]),
             {},
           );
-          expect(opts.keys, want.names);
+          expect(opts.ownKeys(), want.names);
           expect(jsObjectKeys(opts), want.keys);
-          expect(opts.containsKey('x'), want.has);
+          expect(opts.hasProperty('x'), want.has);
           expect(opts.hasOwnProperty('x'), want.has);
         });
 
@@ -429,9 +429,9 @@ void main() {
               allKeys: true,
             ),
           );
-          expect(opts.keys, want.names);
+          expect(opts.ownKeys(), want.names);
           expect(jsObjectKeys(opts), want.keys);
-          expect(opts.containsKey('x'), want.has);
+          expect(opts.hasProperty('x'), want.has);
           expect(opts.hasOwnProperty('x'), want.has);
         });
       }
@@ -462,7 +462,7 @@ void main() {
           expect(options.containsKey('x'), isTrue);
           expect(options['x'], same(value));
           expect(resolver['x'], same(value));
-          expect(resolver.keys, ['x']);
+          expect(resolver.ownKeys(), ['x']);
         });
       }
     });
@@ -519,7 +519,7 @@ void main() {
         {'d': 1},
       );
       final item0 = (opts['items']! as List<Object?>)[0]! as ContextResolver;
-      expect(item0.keys, ['test', '0', '1']);
+      expect(item0.ownKeys(), ['test', '0', '1']);
       expect(jsObjectKeys(item0), ['test']);
       expect(item0['length'], 2);
     });
@@ -554,7 +554,7 @@ void main() {
         <String, Object?>{'a': 1},
         <String, Object?>{'b': 2, '1': 3},
       ]);
-      expect(resolver.keys, ['a', '1', 'b']);
+      expect(resolver.ownKeys(), ['a', '1', 'b']);
       expect(jsObjectKeys(resolver), ['a']);
       expect(eachKeys(resolver), ['a']);
       expect(clone(resolver), {'a': 1});
@@ -571,7 +571,7 @@ void main() {
         <String, Object?>{'b': 1, '2': 1},
         <String, Object?>{'a': 1, '1': 1},
       ]);
-      expect(allKeys.keys, ['2', 'b', '1', 'a']);
+      expect(allKeys.ownKeys(), ['2', 'b', '1', 'a']);
       expect(jsObjectKeys(allKeys), ['2', 'b']);
       final opts = attachContext(
         allKeys,
@@ -594,7 +594,7 @@ void main() {
         ]),
         {},
       );
-      expect(opts.keys, ['a', 'b']);
+      expect(opts.ownKeys(), ['a', 'b']);
       expect(jsObjectKeys(opts), ['a']);
       expect(eachKeys(opts), ['a']);
     });
@@ -615,7 +615,7 @@ void main() {
         },
       ]);
       final scales = resolver['scales'];
-      expect(jsObjectKeys(scales! as Map<String, Object?>), ['x']);
+      expect(jsObjectKeys(scales), ['x']);
       expect(eachKeys(scales), ['x']);
       expect(clone(scales), {
         'x': {'a': 1},
@@ -625,7 +625,7 @@ void main() {
       });
 
       final contextScales = attachContext(resolver, {})['scales'];
-      expect(jsObjectKeys(contextScales! as Map<String, Object?>), ['x']);
+      expect(jsObjectKeys(contextScales), ['x']);
       expect(clone(contextScales), {
         'x': {'a': 1},
       });
@@ -667,21 +667,21 @@ void main() {
       final resolver = createResolver([
         Map<String, Object?>.unmodifiable({'a': 1}),
       ]);
-      expect(() => resolver.remove('zzz'), returnsNormally);
+      expect(() => resolver.jsDelete('zzz'), returnsNormally);
       final opts = attachContext(
         createResolver([
           Map<String, Object?>.unmodifiable({'a': 1}),
         ]),
         {},
       );
-      expect(() => opts.remove('zzz'), returnsNormally);
+      expect(() => opts.jsDelete('zzz'), returnsNormally);
     });
 
     test('an own key throws', () {
       final resolver = createResolver([
         Map<String, Object?>.unmodifiable({'a': 1}),
       ]);
-      expect(() => resolver.remove('a'), throwsUnsupportedError);
+      expect(() => resolver.jsDelete('a'), throwsUnsupportedError);
     });
   });
 
@@ -782,7 +782,7 @@ void main() {
       expect(resolver['x'], 2);
       resolver['x'] = null;
       expect(resolver['x'], isNull);
-      resolver.remove('x');
+      resolver.jsDelete('x');
       expect(resolver['x'], same(undefined));
     });
   });
@@ -818,7 +818,7 @@ void main() {
       ]);
       expect(resolver['id'], 'a');
       expect(resolver['y'], 2);
-      expect(resolver.containsKey('id'), isFalse);
+      expect(resolver.hasProperty('id'), isFalse);
       expect(resolver.hasOwnProperty('id'), isFalse);
       expect(resolver.objectKeys(), isEmpty);
     });
@@ -882,8 +882,8 @@ void main() {
                 start,
                 count,
               ], thisArg: _Controller(parsing))!
-              as List<Map<String, Object?>>;
-      return [for (final item in parsed) item['r']];
+              as List<Object?>;
+      return [for (final item in parsed) jsGet(item, 'r')];
     }
 
     test('the default key r', () {

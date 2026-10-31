@@ -1917,6 +1917,16 @@ final class DataPoint implements TypedDataItem {
   @override
   void jsWrite(String name, Object? value) => throw TypeError();
 
+  /// `point[name]`: [jsRead].
+  @internal
+  @override
+  Object? operator [](String name) => jsRead(name);
+
+  /// `point[name] = value`: [jsWrite], a `TypeError`.
+  @internal
+  @override
+  void operator []=(String name, Object? value) => jsWrite(name, value);
+
   /// `Object.keys(point)`: `x`, `y` and, for a bubble, `r`.
   @internal
   @override

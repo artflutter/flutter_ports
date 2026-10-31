@@ -8,13 +8,13 @@
 /// The types replace the plain objects of the parse functions of
 /// `core.datasetController.js` and the controllers (lane L1). Each one is a
 /// [TypedRecord]: typed fields, extras for the keys that user code writes,
-/// the own-key order of JS and the face. During the migration each one is
-/// also a `MapBase`, so that the by-name readers of today read it.
+/// the own-key order of JS and the face. None is a `Map` (Chart.js ADR
+/// 0054 §5).
 ///
 /// This library is a pure layer.
 library;
 
-import 'dart:collection';
+import 'dart:collection' show SplayTreeMap;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
@@ -364,43 +364,34 @@ final class StackEntry extends TypedRecord {
   }
 
   @override
-  Object? operator [](Object? key) {
-    if (key is String) {
-      final index = jsArrayIndex(key);
-      if (index != null) return datasetValues[key];
-    }
-    return super[key];
-  }
-
-  @override
-  void operator []=(String key, Object? value) {
-    if (jsArrayIndex(key) != null) {
-      datasetValues[key] = value;
-    } else {
-      super[key] = value;
-    }
-  }
-
-  @override
-  bool containsKey(Object? key) => key is String && jsArrayIndex(key) != null
-      ? datasetValues.containsKey(key)
-      : super.containsKey(key);
-
-  @override
-  Iterable<String> get keys => jsKeys();
-
-  @override
-  int get length => datasetValues.length + super.length;
-
-  @override
-  Object? remove(Object? key) => key is String && jsArrayIndex(key) != null
-      ? datasetValues.remove(key)
-      : super.remove(key);
-
-  @override
   Object? jsRead(String name) => jsArrayIndex(name) != null
       ? datasetValues.jsRead(name)
       : super.jsRead(name);
+
+  @override
+  void jsWrite(String name, Object? value) {
+    if (jsArrayIndex(name) != null) {
+      datasetValues.jsWrite(name, value);
+    } else {
+      super.jsWrite(name, value);
+    }
+  }
+
+  @override
+  Object? operator [](String name) => jsRead(name);
+
+  @override
+  void operator []=(String name, Object? value) => jsWrite(name, value);
+
+  @override
+  bool jsHas(String name) => jsArrayIndex(name) != null
+      ? datasetValues.jsHas(name)
+      : super.jsHas(name);
+
+  @override
+  bool jsDelete(String name) => jsArrayIndex(name) != null
+      ? datasetValues.jsDelete(name)
+      : super.jsDelete(name);
 
   @override
   List<String> jsKeys() => [...datasetValues.jsKeys(), ...super.jsKeys()];
@@ -417,8 +408,7 @@ final class StackEntry extends TypedRecord {
 /// `_visualValues`). The values are by `int` index. `Object.keys` gives the
 /// indices in ascending order. A key that is not an index is an extra
 /// after them.
-final class IndexValues extends MapBase<String, Object?>
-    implements JsObjectFace {
+final class IndexValues implements JsObjectFace {
   /// An object without own keys.
   IndexValues();
 
@@ -446,56 +436,32 @@ final class IndexValues extends MapBase<String, Object?>
   /// The owned indices in ascending order.
   Iterable<int> get indices => _values.keys;
 
+  /// The count of the own keys.
+  int get ownKeyCount => _values.length + (_named?.length ?? 0);
+
   @override
-  Object? operator [](Object? key) {
-    if (key is! String) return null;
-    final index = jsArrayIndex(key);
-    return index != null ? _values[index] : _named?[key];
+  Object? jsRead(String name) {
+    final index = jsArrayIndex(name);
+    if (index != null) return valueAt(index);
+    final named = _named;
+    return named != null && named.containsKey(name) ? named[name] : undefined;
   }
 
   @override
-  void operator []=(String key, Object? value) {
-    final index = jsArrayIndex(key);
+  void jsWrite(String name, Object? value) {
+    final index = jsArrayIndex(name);
     if (index != null) {
       _values[index] = value;
     } else {
-      (_named ??= <String, Object?>{})[key] = value;
+      (_named ??= <String, Object?>{})[name] = value;
     }
   }
 
   @override
-  bool containsKey(Object? key) {
-    if (key is! String) return false;
-    final index = jsArrayIndex(key);
-    return index != null
-        ? _values.containsKey(index)
-        : (_named?.containsKey(key) ?? false);
-  }
+  Object? operator [](String name) => jsRead(name);
 
   @override
-  Iterable<String> get keys => jsKeys();
-
-  @override
-  int get length => _values.length + (_named?.length ?? 0);
-
-  @override
-  Object? remove(Object? key) {
-    if (key is! String) return null;
-    final index = jsArrayIndex(key);
-    return index != null ? _values.remove(index) : _named?.remove(key);
-  }
-
-  @override
-  void clear() {
-    _values.clear();
-    _named?.clear();
-  }
-
-  @override
-  Object? jsRead(String name) => containsKey(name) ? this[name] : undefined;
-
-  @override
-  void jsWrite(String name, Object? value) => this[name] = value;
+  void operator []=(String name, Object? value) => jsWrite(name, value);
 
   @override
   List<String> jsKeys() => [
@@ -504,12 +470,22 @@ final class IndexValues extends MapBase<String, Object?>
   ];
 
   @override
-  bool jsHas(String name) => containsKey(name);
+  bool jsHas(String name) {
+    final index = jsArrayIndex(name);
+    return index != null
+        ? _values.containsKey(index)
+        : (_named?.containsKey(name) ?? false);
+  }
 
   @override
   bool jsDelete(String name) {
-    if (!containsKey(name)) return false;
-    remove(name);
+    if (!jsHas(name)) return false;
+    final index = jsArrayIndex(name);
+    if (index != null) {
+      _values.remove(index);
+    } else {
+      _named!.remove(name);
+    }
     return true;
   }
 }

@@ -35,12 +35,14 @@ import 'package:test/test.dart';
 ///
 /// Upstream it is true for a plain object and for an instance of a class,
 /// for example an element or a tooltip (`plugin.tooltip.tests.js:1350`).
-/// Here a JS object is a `Map<String, Object?>` (Chart.js ADR 0043) or a
-/// [types.ElementPropertyRead], the read by name of a class instance. A Dart
-/// object of another class has no properties that the matcher can read.
-/// Thus it is not an object here.
+/// Here a JS object is a `Map<String, Object?>`, a typed object with a face
+/// ([JsObjectFace], Chart.js ADR 0054 §5) or a [types.ElementPropertyRead],
+/// the read by name of a class instance. A Dart object of another class has
+/// no properties that the matcher can read. Thus it is not an object here.
 bool _isObject(Object? value) {
-  return value is Map<String, Object?> || value is types.ElementPropertyRead;
+  return value is Map<String, Object?> ||
+      value is JsObjectFace ||
+      value is types.ElementPropertyRead;
 }
 
 /// matchers.options.js:6 `isArray`.
@@ -121,7 +123,7 @@ _Comparison _compareArray(Object? actual, List<Object?> expected, String path) {
 /// matchers.options.js:54 `compareObject`.
 _Comparison _compareObject(
   Object? actual,
-  Map<String, Object?> expected, [
+  Object expected, [
   String path = '',
 ]) {
   var ret = true;
@@ -152,7 +154,7 @@ _Comparison _compareObject(
     final act = object is types.ElementPropertyRead
         ? object[key]
         : jsGet(object, key);
-    final exp = expected[key];
+    final exp = jsGet(expected, key);
     final cmp = _compareOption(act, exp, '$prefix$key');
     if (cmp.message != null) {
       if (!cmp.pass) {
@@ -181,8 +183,8 @@ _Comparison _compareObject(
   String path,
 ) {
   // DIVERGES(chartjs): harness-expected-element, === for an element.
-  if (expected is Map<String, Object?>) {
-    return _compareObject(actual, expected, path);
+  if (expected is Map<String, Object?> || expected is JsObjectFace) {
+    return _compareObject(actual, expected!, path);
   } else if (_isArray(expected)) {
     return _compareArray(actual, expected! as List<Object?>, path);
   }
@@ -196,13 +198,15 @@ _Comparison _compareObject(
 /// compares its length and its elements, and any other value compares with
 /// `===` ([strictEquals]). Keys of the actual value that [expected] does not
 /// name do not count.
-Matcher toEqualOptions(Map<String, Object?> expected) =>
-    _ToEqualOptions(expected);
+///
+/// [expected] is an object: a Map, or a typed object with a face (a
+/// resolver of the options, a typed scope of the defaults).
+Matcher toEqualOptions(Object expected) => _ToEqualOptions(expected);
 
 final class _ToEqualOptions extends Matcher {
   const _ToEqualOptions(this.expected);
 
-  final Map<String, Object?> expected;
+  final Object expected;
 
   @override
   bool matches(Object? item, Map<Object?, Object?> matchState) {

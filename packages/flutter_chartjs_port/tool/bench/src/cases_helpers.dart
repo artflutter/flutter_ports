@@ -167,7 +167,7 @@ List<BenchCase> helperCases() => [
             'mode': 'default',
             'type': 'data',
           });
-          acc += data.length;
+          acc += data.ownKeyCount;
         }
         return acc;
       };

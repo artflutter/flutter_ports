@@ -5,21 +5,21 @@
 #   (2), the `_stacks` of a class value or a primitive data item
 #   (stacksOf), the id of an element type value that is not a class value
 #   (_idOf), and a user object in `defaults.elements` (the element step).
-jsGet 12
 # jsGetKey: the user data items of `parsing: false` and their `_stacks`
 #   objects: parsedValueOf, axisStackOf, _stackValueOf and visualValuesOf.
-jsGetKey 4
 # stringIndex: the write `dataset.data = []` into the dataset of the user,
 #   `item._stacks = {}` into a Map item and a class value item, the read
 #   `item._stacks` of a Map item (stacksOf), and the statics
 #   datasetElementType and dataElementType of a class value (Chart.js ADR
 #   0020). getContext reads the typed `Element.$context` (Chart.js ADR 0054
 #   §9).
-stringIndex 6
 # jsCall: the draw of the dataset element with JS arity: a line takes
 #   start and count, another element class ignores them.
-jsCall 1
 # jsObjectKeys: Object.keys of the object data of the user, of
 #   chart.scales (user scale ids, getFirstScaleId), and of a user object in
 #   `defaults.elements`.
+jsGet 12
+jsGetKey 4
+stringIndex 5
+jsCall 1
 jsObjectKeys 3

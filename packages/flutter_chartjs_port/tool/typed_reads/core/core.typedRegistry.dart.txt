@@ -1,2 +1,7 @@
+# The allowlist of the close step (Chart.js ADR 0020, ADR 0054 §3): a
+# component of user code (a class value or a plugin Map) by name: id,
+# overrides, defaults, defaultRoutes and descriptors, and a route target of
+# its defaultRoutes (core.typedRegistry.js:41-118). jsObjectKeys 1: the
+# keys of defaultRoutes in the Object.keys order.
 jsGet 8
 jsObjectKeys 1

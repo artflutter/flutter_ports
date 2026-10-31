@@ -500,8 +500,8 @@ List<Object?> _datasets(types.Chart chart) =>
 /// datasets of the user are reads by name ([_Dataset]).
 void _beforeElementsUpdate(
   types.Chart chart,
-  AnyObject args,
-  AnyObject options,
+  Object args,
+  Object options,
 ) {
   final opts = DecimationOptions(options);
   if (!jsTruthy(opts.enabled)) {

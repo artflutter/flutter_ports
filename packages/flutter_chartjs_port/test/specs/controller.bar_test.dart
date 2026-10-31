@@ -74,7 +74,7 @@ AnyObject _dataset(Chart chart, int index) =>
 BarElement _bar(ChartMeta meta, int index) => meta.data[index] as BarElement;
 
 /// `element.options` of [element].
-AnyObject? _options(Object element) => (element as Element).options;
+Object? _options(Object element) => (element as Element).options;
 
 /// The mock context of :1677-1678: `ctx.resetTransform = function() {}`.
 final class _ResetTransformContext extends MockContext {
@@ -1400,7 +1400,7 @@ void main() {
 
       // Change default
       final barOptions =
-          jsGet(jsGet(chart.options, 'elements'), 'bar')! as AnyObject;
+          jsGet(jsGet(chart.options, 'elements'), 'bar')! as JsObjectFace;
       barOptions['backgroundColor'] = 'rgb(128, 128, 128)';
       barOptions['borderColor'] = 'rgb(15, 15, 15)';
       barOptions['borderWidth'] = 3.14;
@@ -2061,7 +2061,7 @@ void main() {
         ]),
       );
 
-      (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+      (chart.options['plugins']! as JsObjectFace)['tooltip'] =
           <String, Object?>{'mode': 'dataset'};
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);

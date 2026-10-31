@@ -44,30 +44,47 @@ String _json(Object? value) => switch (value) {
   _ when jsIsFunction(value) => '"<fn>"',
   final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
   final List<Object?> list => '[${list.map(_json).join(',')}]',
-  final Map<String, Object?> map =>
+  final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
   _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
 };
 
+/// Whether [value] is an object of a compiled theme: a Map, or a typed
+/// scope with its face (Chart.js ADR 0054 §5).
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
+
+/// The own keys of the object [value] in the `Object.keys` order.
+List<String> _keys(Object? value) => jsObjectKeys(value);
+
+/// [value] as plain Dart values for a compare with a Map literal: an
+/// object gives a new Map of its own keys in the `Object.keys` order, each
+/// value read through its face; another value is itself.
+Object? _plain(Object? value) => _isObject(value)
+    ? <String, Object?>{
+        for (final key in _keys(value)) key: _plain(jsGet(value, key)),
+      }
+    : value;
+
 /// The JSON member `"key":value` of [key] in [map].
-String _entry(Map<String, Object?> map, String key) =>
-    '${jsonEncode(key)}:${_json(map[key])}';
+String _entry(Object map, String key) =>
+    '${jsonEncode(key)}:${_json(jsGet(map, key))}';
 
 /// The leaves of [value] by dot path, in key order. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
-  if (value is! Map<String, Object?>) return {prefix: value};
+  if (!_isObject(value)) return {prefix: value};
   return {
-    for (final key in value.keys)
-      ..._leaves(value[key], prefix.isEmpty ? key : '$prefix.$key'),
+    for (final key in _keys(value))
+      ..._leaves(jsGet(value, key), prefix.isEmpty ? key : '$prefix.$key'),
   };
 }
 
-/// Every Map and List node of [value] with its dot path, the root first.
+/// Every object and List node of [value] with its dot path, the root first.
 Iterable<(String, Object)> _nodes(Object? value, [String path = '']) sync* {
-  if (value is Map<String, Object?>) {
-    yield (path, value);
-    for (final key in value.keys) {
-      yield* _nodes(value[key], path.isEmpty ? key : '$path.$key');
+  if (_isObject(value)) {
+    yield (path, value!);
+    for (final key in _keys(value)) {
+      yield* _nodes(jsGet(value, key), path.isEmpty ? key : '$path.$key');
     }
   } else if (value is List<Object?>) {
     yield (path, value);
@@ -129,7 +146,7 @@ String Function(Object?) _labeller(List<(Object?, String)> named) {
   return (scope) {
     final name = names[scope] ?? seen[scope];
     if (name != null) return name;
-    final label = scope is Map<String, Object?> && scope.isEmpty
+    final label = _isObject(scope) && _keys(scope).isEmpty
         ? '{}#${fresh++}'
         : '?${_json(scope)}';
     seen[scope] = label;
@@ -515,7 +532,7 @@ void main() {
         ..._transitionLeaves,
       });
       // No root font (theming.md §3.4), and one Map for each slot.
-      expect(compiled!.containsKey('font'), isFalse);
+      expect(compiled!.jsHas('font'), isFalse);
       expect(
         _at(compiled, 'scale.ticks.font'),
         isNot(same(_at(compiled, 'scale.title.font'))),
@@ -526,9 +543,11 @@ void main() {
         'token', () {
       // theming.md §3.4 and §4, the last row: upstream sets the point-label
       // size 10 locally (scale.radialLinear.js:383-385).
-      Object? pointLabels(Map<String, Object?> typography) => _at(
-        compileChartTheme({'typography': typography}),
-        'scales.radialLinear.pointLabels.font',
+      Object? pointLabels(Map<String, Object?> typography) => _plain(
+        _at(
+          compileChartTheme({'typography': typography}),
+          'scales.radialLinear.pointLabels.font',
+        ),
       );
 
       // The token wins field by field. The base size never reaches it.
@@ -607,11 +626,9 @@ void main() {
           'pointLabels': <String, Object?>{'weight': 'bold', 'family': 'mono'},
         },
       });
-      final font =
-          _at(compiled, 'scales.radialLinear.pointLabels.font')!
-              as Map<String, Object?>;
-      expect(font.keys, ['lineHeight', 'family', 'weight']);
-      expect(font['family'], 'mono');
+      final font = _at(compiled, 'scales.radialLinear.pointLabels.font')!;
+      expect(_keys(font), ['lineHeight', 'family', 'weight']);
+      expect(jsGet(font, 'family'), 'mono');
       // One Map for each slot.
       expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
     });
@@ -724,13 +741,13 @@ void main() {
           },
         },
       });
-      expect((compiled!['elements']! as Map<String, Object?>).keys, [
+      expect(_keys(compiled!['elements']), [
         '1',
         '2',
         'b',
         'a',
       ]);
-      expect(compiled.keys, ['elements', 'transitions']);
+      expect(_keys(compiled), ['elements', 'transitions']);
     });
 
     test('the transitions come only beside other keys', () {
@@ -863,8 +880,8 @@ void main() {
           'colors': <Object?>[_blue, _red, _blue],
         }),
       )!;
-      expect(compiled.keys, ['plugins', 'transitions']);
-      expect((_at(compiled, 'plugins.colors')! as Map<String, Object?>).keys, [
+      expect(_keys(compiled), ['plugins', 'transitions']);
+      expect(_keys(_at(compiled, 'plugins.colors')), [
         r'$borderColors',
         r'$backgroundColors',
       ]);
@@ -876,7 +893,7 @@ void main() {
       // With the other tokens, the palette comes after the title, subtitle,
       // legend and tooltip keys of plugins.
       final light = compileChartTheme(ChartThemes.light)!;
-      expect(light.keys, [
+      expect(_keys(light), [
         'color',
         'scale',
         'scales',
@@ -884,7 +901,7 @@ void main() {
         'elements',
         'transitions',
       ]);
-      expect((light['plugins']! as Map<String, Object?>).keys, [
+      expect(_keys(light['plugins']), [
         'title',
         'subtitle',
         'legend',
@@ -967,7 +984,7 @@ void main() {
         'rgba(200, 0, 0, 0.5)',
         'rgba(0, 0, 255, 0.5)',
       ]);
-      expect((_at(compiled, 'plugins.colors')! as Map<String, Object?>).keys, [
+      expect(_keys(_at(compiled, 'plugins.colors')), [
         r'$borderColors',
         r'$backgroundColors',
       ]);
@@ -1071,8 +1088,8 @@ void main() {
         },
       });
       expect(_at(compiled, 'scale.ticks.font.weight'), 'bold');
-      final font = _at(compiled, 'plugins.title.font')! as Map<String, Object?>;
-      expect(font.keys, ['family', 'size']);
+      final font = _at(compiled, 'plugins.title.font')!;
+      expect(_keys(font), ['family', 'size']);
       // One Map for each slot.
       expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
       // A font with a weight only gives no title font. The legend fonts and
@@ -1085,7 +1102,7 @@ void main() {
       });
       expect(_at(weightOnly, 'scale.ticks.font.weight'), 'bold');
       expect(_at(weightOnly, 'plugins.title'), same(undefined));
-      expect((_at(weightOnly, 'plugins')! as Map<String, Object?>).keys, [
+      expect(_keys(_at(weightOnly, 'plugins')), [
         'legend',
         'tooltip',
       ]);
@@ -1096,12 +1113,12 @@ void main() {
       final compiled = compileChartTheme(_colorTheme('color', _blue));
       expect(_at(compiled, 'plugins.title.color'), 'rgba(0, 0, 255, 0.8)');
       expect(
-        (_at(compiled, 'plugins.title')! as Map<String, Object?>).keys,
+        _keys(_at(compiled, 'plugins.title')),
         ['color'],
       );
       // The legend reads the root color (plugin.legend.js:661, 707).
       expect(_at(compiled, 'plugins.legend'), same(undefined));
-      expect((_at(compiled, 'plugins')! as Map<String, Object?>).keys, [
+      expect(_keys(_at(compiled, 'plugins')), [
         'title',
         'subtitle',
       ]);
@@ -1153,7 +1170,7 @@ void main() {
       final compiled = compileChartTheme(_colorTheme('color', _blue));
       expect(_at(compiled, 'plugins.subtitle.color'), 'rgba(0, 0, 255, 0.8)');
       expect(
-        (_at(compiled, 'plugins.subtitle')! as Map<String, Object?>).keys,
+        _keys(_at(compiled, 'plugins.subtitle')),
         ['color'],
       );
       // The other color tokens give no subtitle key.
@@ -1170,14 +1187,13 @@ void main() {
       // theming.md §3.4: the subtitle keeps its local weight 'normal'
       // (plugin.subtitle.js:35-37).
       final compiled = compileChartTheme(serifBold);
-      final font =
-          _at(compiled, 'plugins.subtitle.font')! as Map<String, Object?>;
-      expect(font, <String, Object?>{
+      final font = _at(compiled, 'plugins.subtitle.font')!;
+      expect(_plain(font), <String, Object?>{
         'family': 'serif',
         'size': 14.0,
         'lineHeight': 1.5,
       });
-      expect(font.keys, ['family', 'size', 'lineHeight']);
+      expect(_keys(font), ['family', 'size', 'lineHeight']);
       // One Map for each slot.
       expect(font, isNot(same(_at(compiled, 'plugins.title.font'))));
       // A font with a weight only gives no subtitle font.
@@ -1201,14 +1217,12 @@ void main() {
         'size': 14.0,
         'lineHeight': 1.5,
       };
-      final labels =
-          _at(compiled, 'plugins.legend.labels.font')! as Map<String, Object?>;
-      final title =
-          _at(compiled, 'plugins.legend.title.font')! as Map<String, Object?>;
-      expect(labels, whole);
-      expect(title, whole);
-      expect(labels.keys, ['family', 'weight', 'size', 'lineHeight']);
-      expect(title.keys, ['family', 'weight', 'size', 'lineHeight']);
+      final labels = _at(compiled, 'plugins.legend.labels.font')!;
+      final title = _at(compiled, 'plugins.legend.title.font')!;
+      expect(_plain(labels), whole);
+      expect(_plain(title), whole);
+      expect(_keys(labels), ['family', 'weight', 'size', 'lineHeight']);
+      expect(_keys(title), ['family', 'weight', 'size', 'lineHeight']);
       // The legend gets no other key: no color (plugin.legend.js:661, 707
       // read the root color) and no point-label size rule.
       expect(_leaves(_at(compiled, 'plugins.legend')).keys, [
@@ -1232,8 +1246,8 @@ void main() {
     test('the plugins keys come after scales, in one order', () {
       // A font-only theme also puts the root key plugins after scales.
       final font = compileChartTheme(serifBold)!;
-      expect(font.keys, ['scale', 'scales', 'plugins', 'transitions']);
-      expect((font['plugins']! as Map<String, Object?>).keys, [
+      expect(_keys(font), ['scale', 'scales', 'plugins', 'transitions']);
+      expect(_keys(jsGet(font, 'plugins')), [
         'title',
         'subtitle',
         'legend',
@@ -1243,14 +1257,20 @@ void main() {
         'colors': <String, Object?>{'color': _red},
         ...serifBold,
       })!;
-      expect(both.keys, ['color', 'scale', 'scales', 'plugins', 'transitions']);
-      expect((both['plugins']! as Map<String, Object?>).keys, [
+      expect(_keys(both), [
+        'color',
+        'scale',
+        'scales',
+        'plugins',
+        'transitions',
+      ]);
+      expect(_keys(both['plugins']), [
         'title',
         'subtitle',
         'legend',
         'tooltip',
       ]);
-      expect((_at(both, 'plugins.subtitle')! as Map<String, Object?>).keys, [
+      expect(_keys(_at(both, 'plugins.subtitle')), [
         'color',
         'font',
       ]);
@@ -1359,7 +1379,7 @@ void main() {
         'plugins.tooltip.backgroundColor': 'rgba(0, 0, 255, 0.8)',
         ..._transitionLeaves,
       });
-      expect(compiled!.keys, ['plugins', 'transitions']);
+      expect(_keys(compiled), ['plugins', 'transitions']);
     });
 
     test('onInverseSurface is the tooltip text and key color', () {
@@ -1417,15 +1437,14 @@ void main() {
     test('the body font is the whole font token', () {
       // plugin.tooltip.js:1289-1290: no local field.
       final compiled = compileChartTheme(serifBold);
-      final font =
-          _at(compiled, 'plugins.tooltip.bodyFont')! as Map<String, Object?>;
-      expect(font, <String, Object?>{
+      final font = _at(compiled, 'plugins.tooltip.bodyFont')!;
+      expect(_plain(font), <String, Object?>{
         'family': 'serif',
         'weight': 'bold',
         'size': 14.0,
         'lineHeight': 1.5,
       });
-      expect(font.keys, ['family', 'weight', 'size', 'lineHeight']);
+      expect(_keys(font), ['family', 'weight', 'size', 'lineHeight']);
       expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
       expect(jsObjectIsFrozen(font), isTrue);
     });
@@ -1435,14 +1454,13 @@ void main() {
       // weight 'bold' (plugin.tooltip.js:1281-1283, 1295-1297).
       final compiled = compileChartTheme(serifBold);
       for (final key in ['titleFont', 'footerFont']) {
-        final font =
-            _at(compiled, 'plugins.tooltip.$key')! as Map<String, Object?>;
-        expect(font, <String, Object?>{
+        final font = _at(compiled, 'plugins.tooltip.$key')!;
+        expect(_plain(font), <String, Object?>{
           'family': 'serif',
           'size': 14.0,
           'lineHeight': 1.5,
         }, reason: key);
-        expect(font.keys, ['family', 'size', 'lineHeight'], reason: key);
+        expect(_keys(font), ['family', 'size', 'lineHeight'], reason: key);
         expect(jsObjectIsFrozen(font), isTrue, reason: key);
       }
       // One Map for each slot.
@@ -1478,14 +1496,14 @@ void main() {
           'colors': <Object?>[_red],
         },
       })!;
-      expect((compiled['plugins']! as Map<String, Object?>).keys, [
+      expect(_keys(compiled['plugins']), [
         'title',
         'subtitle',
         'legend',
         'tooltip',
         'colors',
       ]);
-      expect((_at(compiled, 'plugins.tooltip')! as Map<String, Object?>).keys, [
+      expect(_keys(_at(compiled, 'plugins.tooltip')), [
         ...tooltipColors,
         'titleFont',
         'bodyFont',
@@ -1496,14 +1514,14 @@ void main() {
         'colors': <String, Object?>{'onInverseSurface': _red},
         ...serifBold,
       })!;
-      expect((tooltipOnly['plugins']! as Map<String, Object?>).keys, [
+      expect(_keys(tooltipOnly['plugins']), [
         'title',
         'subtitle',
         'legend',
         'tooltip',
       ]);
       expect(
-        (_at(tooltipOnly, 'plugins.tooltip')! as Map<String, Object?>).keys,
+        _keys(_at(tooltipOnly, 'plugins.tooltip')),
         [...tooltipColors.skip(1), 'titleFont', 'bodyFont', 'footerFont'],
       );
     });
@@ -2077,18 +2095,12 @@ void main() {
 
     test('a write throws a TypeError', () {
       final compiled = compileChartTheme(ChartThemes.light)!;
-      final ticks = _at(compiled, 'scale.ticks')! as Map<String, Object?>;
+      final ticks = _at(compiled, 'scale.ticks')! as JsObjectFace;
       expect(() => compiled['color'] = 'x', throwsA(isA<TypeError>()));
       expect(() => compiled['other'] = 'x', throwsA(isA<TypeError>()));
       expect(() => ticks['color'] = 'x', throwsA(isA<TypeError>()));
-      expect(() => ticks.remove('color'), throwsA(isA<TypeError>()));
-      expect(ticks.remove('absent'), isNull);
-      expect(ticks.clear, throwsA(isA<TypeError>()));
-      expect(
-        () => ticks.addAll(<String, Object?>{'a': 1.0}),
-        throwsA(isA<TypeError>()),
-      );
-      expect(ticks.putIfAbsent('color', () => 'x'), 'rgba(102, 102, 102, 1)');
+      expect(() => ticks.jsDelete('color'), throwsA(isA<TypeError>()));
+      expect(ticks.jsDelete('absent'), isFalse);
       expect(_at(compiled, 'scale.ticks.color'), 'rgba(102, 102, 102, 1)');
 
       final dash =
@@ -2386,10 +2398,10 @@ void main() {
         },
         'options': <String, Object?>{},
         themeConfigKey: theme,
-      }).options['scales'];
+      }).options;
 
-      expect(jsObjectKeys(scales('tbar')! as Map<String, Object?>), ['x', 'y']);
-      expect(scales('tdough'), <String, Object?>{});
+      expect(jsObjectKeys(jsGet(scales('tbar'), 'scales')), ['x', 'y']);
+      expect(_plain(jsGet(scales('tdough'), 'scales')), <String, Object?>{});
     });
   });
 }

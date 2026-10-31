@@ -1,2 +1,8 @@
+# The allowlist of the close step.
+# - stringIndex 2: `Ticks.formatters.values` of the static defaults
+#   (core.scale.defaults.js:84): `formatters` is the mutable object of
+#   core.ticks.js:9 that user code can change.
+# - jsGet 2: the scriptable defaults tickWidth and tickColor read the
+#   options argument (a resolver view, or any object of user code).
 jsGet 2
 stringIndex 2

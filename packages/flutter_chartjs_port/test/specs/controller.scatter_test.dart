@@ -211,7 +211,7 @@ void main() {
         ]),
       );
 
-      (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+      (chart.options['plugins']! as JsObjectFace)['tooltip'] =
           <String, Object?>{'mode': 'dataset'};
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);

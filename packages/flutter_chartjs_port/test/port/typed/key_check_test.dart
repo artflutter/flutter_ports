@@ -8,6 +8,9 @@ import 'dart:ui' show Color;
 
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
@@ -543,8 +546,8 @@ void _check(
     return;
   }
   final key = lowered.substring(lowered.lastIndexOf('.') + 1);
-  if (value is Map<String, Object?> && !_valueMaps.contains(key)) {
-    for (final MapEntry(key: child, value: childValue) in value.entries) {
+  if (_isObject(value) && !_valueMaps.contains(key)) {
+    for (final (child, childValue) in _entries(value)) {
       _check(childValue, '$lowered.$child', [
         for (final group in groups) '$group.$child',
       ], check);
@@ -559,22 +562,32 @@ void _check(
   ]);
 }
 
-/// Checks the root Map [root] of a lowered config.
-void _checkRoot(Map<String, Object?> root, _Check check) {
-  final chartType = root['type']! as String;
-  for (final MapEntry(:key, :value) in root.entries) {
+/// Whether [value] is an object of a lowered config: a typed scope (a typed
+/// object with a face, Chart.js ADR 0054 §7) or a Map.
+bool _isObject(Object? value) =>
+    value is Map<String, Object?> || value is JsObjectFace;
+
+/// The own keys of the object [object] with their values, in the order of
+/// `Object.keys`, read by name.
+List<(String, Object?)> _entries(Object? object) => [
+  for (final key in jsObjectKeys(object)) (key, jsGet(object, key)),
+];
+
+/// Checks the root scope [root] of a lowered config.
+void _checkRoot(Object root, _Check check) {
+  final chartType = jsGet(root, 'type')! as String;
+  for (final (key, value) in _entries(root)) {
     switch (key) {
       case 'data':
-        for (final MapEntry(key: dataKey, value: dataValue)
-            in (value! as Map<String, Object?>).entries) {
+        for (final (dataKey, dataValue) in _entries(value)) {
           if (dataKey != 'datasets') {
             _check(dataValue, 'data.$dataKey', const [], check);
             continue;
           }
           for (final dataset in dataValue! as List<Object?>) {
-            final map = dataset! as Map<String, Object?>;
-            final type = map['type'] as String? ?? chartType;
-            for (final MapEntry(key: name, value: option) in map.entries) {
+            final datasetType = jsGet(dataset, 'type');
+            final type = datasetType is String ? datasetType : chartType;
+            for (final (name, option) in _entries(dataset)) {
               _check(
                 option,
                 'data.datasets.*.$name',
@@ -585,18 +598,14 @@ void _checkRoot(Map<String, Object?> root, _Check check) {
           }
         }
       case 'options':
-        for (final MapEntry(key: name, value: option)
-            in (value! as Map<String, Object?>).entries) {
+        for (final (name, option) in _entries(value)) {
           if (name != 'scales') {
             _check(option, 'options.$name', [name], check);
             continue;
           }
-          for (final MapEntry(key: id, value: axis)
-              in (option! as Map<String, Object?>).entries) {
-            final map = axis! as Map<String, Object?>;
-            final scaleType = map['type']! as String;
-            for (final MapEntry(key: axisKey, value: axisValue)
-                in map.entries) {
+          for (final (id, axis) in _entries(option)) {
+            final scaleType = jsGet(axis, 'type')! as String;
+            for (final (axisKey, axisValue) in _entries(axis)) {
               _check(axisValue, 'options.scales.*.$axisKey', [
                 for (final scope in [
                   'scale',

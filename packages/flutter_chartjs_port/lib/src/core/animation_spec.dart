@@ -6,17 +6,17 @@
 /// `Animations.configure` copies the keys of `defaults.animation` of each
 /// config entry into a new object (core.animations.js:26-29). All the
 /// properties of the entry share that object (:31-35). Each `new Animation`
-/// reads eight of its values (core.animation.js:31-39). A Map read with a
-/// `String` key is a hash lookup. [AnimationSpec] is a Map with one field for
-/// each key of `defaults.animation`. Thus the constructor of `Animation`
-/// reads a value with a field read, and every reader of a Map still works.
+/// reads eight of its values (core.animation.js:31-39). [AnimationSpec] is a
+/// typed object with one field for each key of `defaults.animation` and the
+/// face by name of Chart.js ADR 0054 §5. Thus the constructor of `Animation`
+/// reads a value with a field read.
 ///
 /// This library is a pure layer. It imports neither `dart:ui` nor
 /// `package:flutter`.
 library;
 
-import 'dart:collection';
-
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -29,8 +29,7 @@ final class _Absent {
 /// The value of the field of a known key that the spec does not contain.
 ///
 /// No member gives this value to other code. A read of the field gives
-/// [undefined] ([_read]) or Dart `null` ([AnimationSpec.operator []]) for
-/// it.
+/// [undefined] for it ([_read]).
 const Object _absent = _Absent();
 
 /// The getter result for the field value [raw]: [undefined] for [_absent],
@@ -40,8 +39,8 @@ const Object _absent = _Absent();
 @pragma('wasm:prefer-inline')
 Object? _read(Object? raw) => identical(raw, _absent) ? undefined : raw;
 
-/// The resolved animation options of one config entry: a Map with a field
-/// for each key of `defaults.animation` (Chart.js ADR 0019, section 4).
+/// The resolved animation options of one config entry: a typed object with a
+/// field for each key of `defaults.animation` (Chart.js ADR 0019, section 4).
 ///
 /// `configure` makes it where upstream makes the object literal `{}`
 /// (core.animations.js:26). It writes the keys of
@@ -55,17 +54,14 @@ Object? _read(Object? raw) => identical(raw, _absent) ? undefined : raw;
 /// `defaults.animation`. The spec creates this Map at the first write of
 /// such a key.
 ///
-/// ## Map protocol
+/// ## The face
 ///
-/// [operator []], [operator []=], [containsKey], [remove], [keys], [length]
-/// and [clear] give the same results as the same operations on a
-/// `Map<String, Object?>` with the same entries, as the Map protocol of the
-/// element options (Chart.js ADR 0018, section 3). A read of an absent key
-/// gives Dart `null`. Thus `jsGet` gives [undefined] for it. The other
-/// members of `Map` come from [MapBase], which uses these members.
+/// The spec implements [JsObjectFace] with the JS rules (Chart.js ADR 0054
+/// §5), as the element options do: [jsRead] and [operator []] give
+/// [undefined] for an absent key. It is not a `Map`.
 ///
-/// [keys] gives the present known keys in the order of [knownKeys], and then
-/// the extra keys in their insertion order. `configure` writes the keys in
+/// [jsKeys] gives the present known keys in the order of [knownKeys], and
+/// then the extra keys in their insertion order. `configure` writes the keys in
 /// the order of `defaults.animation`. Thus the key order is the upstream
 /// insertion order while `defaults.animation` keeps the known keys in their
 /// order.
@@ -76,7 +72,7 @@ Object? _read(Object? raw) => identical(raw, _absent) ? undefined : raw;
 /// It gives the raw value, or [undefined] for an absent key, as
 /// `jsGet(spec, key)` gives. It does no Map lookup.
 // DIVERGES(chartjs): adapt-animation-spec, a typed copy of the options.
-final class AnimationSpec extends MapBase<String, Object?> {
+final class AnimationSpec implements JsObjectFace {
   /// A spec with no key.
   AnimationSpec();
 
@@ -182,7 +178,7 @@ final class AnimationSpec extends MapBase<String, Object?> {
   /// `Animations.configure` (core.animations.js:28, Chart.js ADR 0054 §10).
   ///
   /// The [OptionKey] of a known key writes its field with no name lookup.
-  /// Another key writes through [operator []=]: an extra key.
+  /// Another key writes through [jsWrite]: an extra key.
   void storeKey(Object key, Object? value) {
     switch (key) {
       case OptionKey.delay:
@@ -202,110 +198,70 @@ final class AnimationSpec extends MapBase<String, Object?> {
       case OptionKey.type:
         _type = value;
       case final OptionKey other:
-        this[other.jsName] = value;
+        jsWrite(other.jsName, value);
       default:
-        this[key as String] = value;
+        jsWrite(key as String, value);
     }
   }
 
-  /// The value of [key], or Dart `null` for an absent key, as the read of a
-  /// `Map<String, Object?>` gives.
   @override
-  Object? operator [](Object? key) {
-    if (key is! String) return null;
-    final raw = _rawOf(key);
+  Object? jsRead(String name) {
+    final raw = _rawOf(name);
     if (!identical(raw, _absent)) return raw;
-    // A known key is never an extra key, so the extra Map gives null for an
-    // absent known key.
-    return _extra?[key];
+    // A known key is never an extra key.
+    final extra = _extra;
+    return extra != null && extra.containsKey(name) ? extra[name] : undefined;
   }
 
-  /// Writes [value] for [key]: to the field of a known key, else to the Map
+  /// Writes [value] for [name]: to the field of a known key, else to the Map
   /// of extra keys.
   @override
-  void operator []=(String key, Object? value) {
-    if (!_store(key, value)) {
-      (_extra ??= <String, Object?>{})[key] = value;
+  void jsWrite(String name, Object? value) {
+    if (!_store(name, value)) {
+      (_extra ??= <String, Object?>{})[name] = value;
     }
   }
 
   @override
-  bool containsKey(Object? key) {
-    if (key is! String) return false;
-    return !identical(_rawOf(key), _absent) ||
-        (_extra?.containsKey(key) ?? false);
-  }
+  Object? operator [](String name) => jsRead(name);
 
-  /// Removes [key] and returns its value, or Dart `null` for an absent key.
   @override
-  Object? remove(Object? key) {
-    if (key is! String) return null;
-    final raw = _rawOf(key);
-    if (identical(raw, _absent)) return _extra?.remove(key);
-    _store(key, _absent);
-    return raw;
+  void operator []=(String name, Object? value) => jsWrite(name, value);
+
+  @override
+  bool jsHas(String name) =>
+      !identical(_rawOf(name), _absent) || (_extra?.containsKey(name) ?? false);
+
+  @override
+  bool jsDelete(String name) {
+    if (!jsHas(name)) return false;
+    if (!_store(name, _absent)) _extra!.remove(name);
+    return true;
   }
 
   /// The present known keys in the order of [knownKeys], then the extra keys
-  /// in their insertion order.
-  ///
-  /// The result is a view, as the keys of a Map are: its length and its
-  /// items follow the later changes of the spec. Each iteration reads the
-  /// keys when it starts. Thus a change during an iteration does not throw a
-  /// `ConcurrentModificationError`, as it does for a Map.
+  /// in their insertion order (the extra keys that are array indices first,
+  /// as `Object.keys` orders them).
   @override
-  Iterable<String> get keys => _AnimationSpecKeys(this);
-
-  /// The present keys at this time, in the order of [keys].
-  List<String> _keyList() => [
-    for (final key in knownKeys)
-      if (!identical(_rawOf(key), _absent)) key,
-    ...?_extra?.keys,
-  ];
-
-  @override
-  int get length {
-    var count = _extra?.length ?? 0;
-    for (final key in knownKeys) {
-      if (!identical(_rawOf(key), _absent)) count++;
-    }
-    return count;
+  List<String> jsKeys() {
+    final keys = [
+      for (final key in knownKeys)
+        if (!identical(_rawOf(key), _absent)) key,
+      ...?_extra?.keys,
+    ];
+    if (!keys.any((key) => jsArrayIndex(key) != null)) return keys;
+    // The indices are distinct integers: an unstable sort gives one order.
+    final indices =
+        [
+            for (final key in keys)
+              if (jsArrayIndex(key) case final int index) (index, key),
+          ]
+          // js-ok: distinct keys, as jsObjectKeys sorts them
+          ..sort((a, b) => a.$1.compareTo(b.$1));
+    return [
+      for (final (_, key) in indices) key,
+      for (final key in keys)
+        if (jsArrayIndex(key) == null) key,
+    ];
   }
-
-  @override
-  bool get isEmpty => length == 0;
-
-  @override
-  bool get isNotEmpty => length != 0;
-
-  /// Removes each key.
-  @override
-  void clear() {
-    for (final key in knownKeys) {
-      _store(key, _absent);
-    }
-    _extra = null;
-  }
-}
-
-/// The view of [AnimationSpec.keys].
-final class _AnimationSpecKeys extends Iterable<String> {
-  _AnimationSpecKeys(this._spec);
-
-  final AnimationSpec _spec;
-
-  @override
-  Iterator<String> get iterator => _spec._keyList().iterator;
-
-  @override
-  int get length => _spec.length;
-
-  @override
-  bool get isEmpty => _spec.isEmpty;
-
-  @override
-  bool get isNotEmpty => _spec.isNotEmpty;
-
-  @override
-  bool contains(Object? element) => _spec.containsKey(element);
 }

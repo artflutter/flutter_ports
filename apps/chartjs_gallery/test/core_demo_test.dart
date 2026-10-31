@@ -89,7 +89,8 @@ PointElement _point(Chart chart, int datasetIndex, int index) =>
     chart.getDatasetMeta(datasetIndex).data[index] as PointElement;
 
 /// The radius of the resolved options of [point].
-double _radius(PointElement point) => point.options!['radius']! as double;
+double _radius(PointElement point) =>
+    (point.options! as JsObjectFace)['radius']! as double;
 
 /// A mouse that hovers the chart.
 Future<TestGesture> _mouse(WidgetTester tester) async {
@@ -191,7 +192,7 @@ void main() {
       // The cache holds the frozen options (core.datasetController.js:831).
       // The points get the copy of getSharedOptions, which is not frozen
       // (core.datasetController.js:871).
-      expect(options![r'$shared'], isTrue);
+      expect((options! as JsObjectFace)[r'$shared'], isTrue);
       expect(jsObjectIsFrozen(options), isFalse);
       // The hidden unit scales: each point is at the pixels of
       // getPixelForValue of the scales, and x and y are fractions of the
@@ -406,7 +407,7 @@ void main() {
     final chart = state.chart!;
     final point = _point(chart, 0, 3);
     final shared = _point(chart, 0, 4).options;
-    final base = point.options!['backgroundColor'];
+    final base = (point.options! as JsObjectFace)['backgroundColor'];
     final mouse = await _mouse(tester);
 
     await _moveTo(tester, mouse, point.x, point.y);
@@ -431,8 +432,8 @@ void main() {
     await _frames(tester, 20);
     // The end of the transition: the hover options.
     expect(_radius(point), 12);
-    expect(point.options!['backgroundColor'], isNot(base));
-    expect(point.options!['borderWidth'], 3);
+    expect((point.options! as JsObjectFace)['backgroundColor'], isNot(base));
+    expect((point.options! as JsObjectFace)['borderWidth'], 3);
     expect(animator.running(chart), isFalse);
     // The hover options are not shared (the hover colors are scriptable).
     expect(
@@ -466,7 +467,7 @@ void main() {
     expect(
       jsGet(
         jsGet(
-          jsGet(chart.config.options['transitions'], 'active'),
+          jsGet(readByName(chart.config.options, 'transitions'), 'active'),
           'animation',
         ),
         'duration',
@@ -594,7 +595,10 @@ void main() {
     final chart = state.chart!;
     await _tap(tester, 'core.animation.duration.3000');
     expect(_selected(tester, 'core.animation.duration.3000'), isTrue);
-    expect(jsGet(chart.config.options['animation'], 'duration'), 3000);
+    expect(
+      jsGet(readByName(chart.config.options, 'animation'), 'duration'),
+      3000,
+    );
     expect(jsGet(chart.options['animation'], 'duration'), 3000);
     await _settle(tester, chart);
 

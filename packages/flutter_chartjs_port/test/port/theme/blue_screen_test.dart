@@ -391,14 +391,16 @@ Iterable<(String, Object?)> _themeColors(
   Object? node, [
   String path = '',
 ]) => switch (node) {
-  final Map<String, Object?> map => [
-    for (final MapEntry(:key, :value) in map.entries)
+  final Object map when map is Map<String, Object?> || map is JsObjectFace => [
+    for (final key in jsObjectKeys(map))
       if (key == 'color' || key.endsWith('Color') || key.endsWith('Background'))
-        ('$path$key', value)
-      else if (_palettePaths.contains('$path$key') && value is List<Object?>)
-        for (var i = 0; i < value.length; i++) ('$path$key[$i]', value[i])
+        ('$path$key', jsGet(map, key))
+      else if (_palettePaths.contains('$path$key') &&
+          jsGet(map, key) is List<Object?>)
+        for (var i = 0; i < (jsGet(map, key)! as List<Object?>).length; i++)
+          ('$path$key[$i]', (jsGet(map, key)! as List<Object?>)[i])
       else
-        ..._themeColors(value, '$path$key.'),
+        ..._themeColors(jsGet(map, key), '$path$key.'),
   ],
   _ => const [],
 };

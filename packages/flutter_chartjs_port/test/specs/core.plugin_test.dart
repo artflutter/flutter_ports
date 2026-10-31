@@ -9,7 +9,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -386,12 +387,15 @@ void main() {
           expect(plugin['hook'], toHaveBeenCalled());
           expect(
             jsObjectKeys(
-              plugin['hook'].calls.first().args[2]! as Map<String, Object?>,
+              plugin['hook'].calls.first().args[2],
             ),
             ['a'],
           );
           // jasmine.objectContaining({a: 42})
-          expect(plugin['hook'].calls.first().args[2], containsPair('a', 42));
+          expect(
+            plugin['hook'].calls.first().args[2],
+            objectContaining({'a': 42}),
+          );
 
           Chart.unregister([plugin]);
         },
@@ -472,8 +476,9 @@ void main() {
           toEqualOptions(<String, Object?>{'foo': 'foo'}),
         );
 
-        (chart.options['plugins']! as Map<String, Object?>)['a'] =
-            <String, Object?>{'bar': 'bar'};
+        (chart.options['plugins']! as JsObjectFace)['a'] = <String, Object?>{
+          'bar': 'bar',
+        };
         chart.update();
 
         plugin['hook'].calls.reset();
@@ -495,7 +500,7 @@ void main() {
             'id': 'a',
             'afterUpdate': (Object? chart, Object? args, Object? options) {
               (jsGet(jsGet(jsGet(options, 'l1'), 'l2'), 'l3')!
-                      as Map<String, Object?>)['display'] =
+                      as JsObjectFace)['display'] =
                   true;
               runtimeOptions = options;
             },

@@ -69,7 +69,9 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope,
         TickOptionsScope,
         TimeScaleTimeOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart'
+    as types
+    show ScaleCache;
 import 'package:meta/meta.dart';
 
 /// scale.time.js:9 `Interval`: `{common: boolean, size: number, steps?:
@@ -377,11 +379,10 @@ void _reverse<T>(List<T> list) {
 /// timestamps, the label timestamps and the timestamps of the lookup table
 /// of the timeseries scale. A label timestamp can be Dart `null` (JS
 /// `null`).
-AnyObject _newCache() => <String, Object?>{
-  'data': <double>[],
-  'labels': <double?>[],
-  'all': <double?>[],
-};
+types.ScaleCache _newCache() => types.ScaleCache()
+  ..data = <double>[]
+  ..labels = <double?>[]
+  ..all = <double?>[];
 
 /// scale.time.js:199 `TimeScale extends Scale`.
 class TimeScale extends Scale {
@@ -500,7 +501,7 @@ class TimeScale extends Scale {
   /// display formats of the adapter fill the formats that the options do
   /// not give.
   @override
-  void init(AnyObject options, [AnyObject? opts]) {
+  void init(Object options, [Object? opts]) {
     final chartOptions = opts ?? <String, Object?>{};
     final scaleOpts = TimeScaleOptions(options as OptionView);
     final currentTime = scaleOpts.time.raw;
@@ -1014,7 +1015,7 @@ class TimeScale extends Scale {
   /// changes it in place (scale.timeseries.js:119-130).
   @protected
   List<double> getDataTimestamps() {
-    var timestamps = cache['data'] as List<double>? ?? <double>[];
+    var timestamps = cache.data ?? <double>[];
 
     if (timestamps.isNotEmpty) {
       return timestamps;
@@ -1023,7 +1024,7 @@ class TimeScale extends Scale {
     final metas = getMatchingVisibleMetas();
 
     if (_normalized && metas.isNotEmpty) {
-      return cache['data'] = metas[0].controller!.getAllParsedValues(this);
+      return cache.data = metas[0].controller!.getAllParsedValues(this);
     }
 
     for (var i = 0, ilen = metas.length; i < ilen; ++i) {
@@ -1033,7 +1034,7 @@ class TimeScale extends Scale {
       ];
     }
 
-    return cache['data'] = normalize(timestamps);
+    return cache.data = normalize(timestamps);
   }
 
   /// scale.time.js:651 `getLabelTimestamps()`.
@@ -1043,7 +1044,7 @@ class TimeScale extends Scale {
   /// label that the adapter cannot parse.
   @protected
   List<double?> getLabelTimestamps() {
-    final timestamps = cache['labels'] as List<double?>? ?? <double?>[];
+    final timestamps = cache.labels ?? <double?>[];
 
     if (timestamps.isNotEmpty) {
       return timestamps;
@@ -1054,7 +1055,7 @@ class TimeScale extends Scale {
       timestamps.add(_parse(this, labels[i]));
     }
 
-    return cache['labels'] = _normalized ? timestamps : normalize(timestamps);
+    return cache.labels = _normalized ? timestamps : normalize(timestamps);
   }
 
   /// scale.time.js:671 `normalize(values)`.

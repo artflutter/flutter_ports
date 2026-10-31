@@ -40,11 +40,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     as core
     show valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show jsObjectKeys, jsOwnPropertyNames;
+    show JsProxyObject, jsObjectKeys, jsOwnPropertyNames;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
@@ -170,7 +171,7 @@ Object? _getAxisFromDataset(String id, String axis, Object? dataset) {
 /// core.config.js:61 `retrieveAxisFromDatasets`.
 ///
 /// The result is `{axis}`, [undefined] or `{}`.
-Object? _retrieveAxisFromDatasets(String id, AnyObject config) {
+Object? _retrieveAxisFromDatasets(String id, Object config) {
   if (jsTruthy(jsGet(config, 'data')) &&
       jsTruthy(jsGet(jsGet(config, 'data'), 'datasets'))) {
     final boundDs = (jsGet(jsGet(config, 'data'), 'datasets')! as List)
@@ -196,7 +197,7 @@ Object? _retrieveAxisFromDatasets(String id, AnyObject config) {
 /// into a typed scope makes typed children of the kinds of their keys. The
 /// keys, the values and their order are the ones of the plain objects.
 // DIVERGES(chartjs): adapt-typed-options, typed scale scopes.
-AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
+ScaleOptionsByIdScope _mergeScaleConfig(Object config, Object options) {
   final overridesOfType = jsGet(overrides, jsGet(config, 'type'));
   final chartDefaults = jsTruthy(overridesOfType)
       ? overridesOfType
@@ -219,7 +220,7 @@ AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
     final axis = determineAxis(id, [
       scaleConf,
       _retrieveAxisFromDatasets(id, config),
-      jsGet(defaults['scales'], jsGet(scaleConf, 'type')),
+      jsGet(defaults.lookup(OptionKey.scales)?.raw, jsGet(scaleConf, 'type')),
     ]);
     final defaultId = _getDefaultScaleIDFromAxis(axis, chartIndexAxis);
     final defaultScaleOptions = _orObject(jsGet(chartDefaults, 'scales'));
@@ -263,15 +264,15 @@ AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
     // DIVERGES(chartjs): theme-H1, theme scale styles fill first.
     final theme = _themeOf(config);
     if (theme != null) {
-      final themeScales = theme['scales'];
+      final themeScales = jsGet(theme, 'scales');
       mergeIf(scale, [
-        if (themeScales is AnyObject) jsGet(themeScales, jsGet(scale, 'type')),
-        theme['scale'],
+        if (isObject(themeScales)) jsGet(themeScales, jsGet(scale, 'type')),
+        jsGet(theme, 'scale'),
       ]);
     }
     mergeIf(scale, [
-      jsGet(defaults['scales'], jsGet(scale, 'type')),
-      defaults['scale'],
+      jsGet(defaults.lookup(OptionKey.scales)?.raw, jsGet(scale, 'type')),
+      defaults.lookup(OptionKey.scale)?.raw ?? undefined,
     ]);
   }
 
@@ -280,23 +281,34 @@ AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
 
 /// core.config.js:115 `initOptions`.
 ///
-/// An options object that is not a Map throws a [TypeError] (row
-/// `adapt-config-objects`). Upstream throws a `TypeError` for a primitive
-/// and writes the properties of an array or a function.
-void _initOptions(AnyObject config) {
+/// An options object that is not an object (a Map or a typed scope) throws
+/// a [TypeError] (row `adapt-config-objects`). Upstream throws a
+/// `TypeError` for a primitive and writes the properties of an array or a
+/// function.
+void _initOptions(Object config) {
   final current = jsGet(config, 'options');
-  final options = jsTruthy(current)
-      ? current
-      : (config['options'] = <String, Object?>{});
-  // DIVERGES(chartjs): adapt-config-objects, the options object is a Map.
-  if (options is! AnyObject) throw TypeError();
+  final Object? options;
+  if (jsTruthy(current)) {
+    options = current;
+  } else {
+    jsSet(config, 'options', options = <String, Object?>{});
+  }
+  // DIVERGES(chartjs): adapt-config-objects, the options object is an object.
+  if (!_isConfigObject(options)) throw TypeError();
 
-  options['plugins'] = core.valueOrDefault(
-    jsGet(options, 'plugins'),
-    <String, Object?>{},
+  jsSet(
+    options,
+    'plugins',
+    core.valueOrDefault(jsGet(options, 'plugins'), <String, Object?>{}),
   );
-  options['scales'] = _mergeScaleConfig(config, options);
+  jsSet(options, 'scales', _mergeScaleConfig(config, options!));
 }
+
+/// Whether [value] is an object of the config: a Map of the user or a typed
+/// scope of the lowering of Chart.js ADR 0054 §7 (a typed object with a
+/// face).
+bool _isConfigObject(Object? value) =>
+    value is AnyObject || value is JsObjectFace;
 
 /// core.config.js:122 `initData`.
 ///
@@ -304,33 +316,36 @@ void _initOptions(AnyObject config) {
 /// writes the properties `datasets` and `labels` into the array, and no
 /// Chart.js code reads its items. Thus the Map gives the same results, and
 /// only the identity of `chart.data` differs. Another truthy [data] that is
-/// not a Map throws a [TypeError]. Upstream throws a `TypeError` for a
-/// primitive and writes the properties of a function.
-AnyObject _initData(Object? data) {
+/// not an object (a Map or a typed scope) throws a [TypeError]. Upstream
+/// throws a `TypeError` for a primitive and writes the properties of a
+/// function.
+Object _initData(Object? data) {
   // Upstream reassigns its parameter.
   // DIVERGES(chartjs): adapt-config-objects, an array gives a new Map.
   final object = jsTruthy(data) && data is! List ? data : <String, Object?>{};
-  // DIVERGES(chartjs): adapt-config-objects, the data object is a Map.
-  if (object is! AnyObject) throw TypeError();
-  object['datasets'] = _or(jsGet(object, 'datasets'), <Object?>[]);
-  object['labels'] = _or(jsGet(object, 'labels'), <Object?>[]);
-  return object;
+  // DIVERGES(chartjs): adapt-config-objects, the data object is an object.
+  if (!_isConfigObject(object)) throw TypeError();
+  jsSet(object, 'datasets', _or(jsGet(object, 'datasets'), <Object?>[]));
+  jsSet(object, 'labels', _or(jsGet(object, 'labels'), <Object?>[]));
+  return object!;
 }
 
 /// core.config.js:129 `initConfig`.
 ///
 /// It returns the same object: the theme map under [themeConfigKey] stays in
-/// it (theming.md §3.1). A truthy [config] that is not a Map throws a
-/// [TypeError] (row `adapt-config-objects`). Upstream throws a `TypeError`
-/// for a primitive and writes the properties of an array or a function.
-AnyObject _initConfig(Object? config) {
+/// it (theming.md §3.1). The config is a Map of the user or the typed root
+/// of `ChartView` (a `ChartConfigurationScope`, Chart.js ADR 0054 §5). A
+/// truthy [config] that is not an object throws a [TypeError] (row
+/// `adapt-config-objects`). Upstream throws a `TypeError` for a primitive
+/// and writes the properties of an array or a function.
+Object _initConfig(Object? config) {
   // Upstream reassigns its parameter.
   final object = jsTruthy(config) ? config : <String, Object?>{};
-  // DIVERGES(chartjs): adapt-config-objects, the config is a Map.
-  if (object is! AnyObject) throw TypeError();
-  object['data'] = _initData(jsGet(object, 'data'));
+  // DIVERGES(chartjs): adapt-config-objects, the config is an object.
+  if (!_isConfigObject(object)) throw TypeError();
+  jsSet(object, 'data', _initData(jsGet(object, 'data')));
 
-  _initOptions(object);
+  _initOptions(object!);
 
   return object;
 }
@@ -376,19 +391,20 @@ void _addIfFound(Set<Object?> set, Object? obj, String key) {
 // DIVERGES(chartjs): theme-H0, the theme key and its readers.
 const String themeConfigKey = r'$theme';
 
-/// The theme map of the raw configuration [config]: the value under
-/// [themeConfigKey] when it is a Map, else Dart `null` (hunk H0).
-AnyObject? _themeOf(AnyObject config) {
-  final theme = config[themeConfigKey];
-  return theme is AnyObject ? theme : null;
+/// The theme of the raw configuration [config]: the value under
+/// [themeConfigKey] when it is an object (the frozen typed scope of the
+/// compiled theme, or a Map), else Dart `null` (hunk H0).
+Object? _themeOf(Object config) {
+  final theme = jsGet(config, themeConfigKey);
+  return _isConfigObject(theme) ? theme : null;
 }
 
-/// The theme map of the chart configuration [config]: the value under
-/// [themeConfigKey] of its raw configuration when it is a Map, else Dart
-/// `null` (hunk H0, Chart.js ADR 0050). Hunk H5 of `plugin.colors` reads
+/// The theme of the chart configuration [config]: the value under
+/// [themeConfigKey] of its raw configuration when it is an object, else
+/// Dart `null` (hunk H0, Chart.js ADR 0050). Hunk H5 of `plugin.colors` reads
 /// the palette from it. A configuration that is not a [Config] has no
 /// theme.
-AnyObject? chartThemeOf(types.ChartConfiguration config) =>
+Object? chartThemeOf(types.ChartConfiguration config) =>
     config is Config ? _themeOf(config._config) : null;
 
 /// core.config.js:158 `class Config`, the default export.
@@ -398,13 +414,13 @@ AnyObject? chartThemeOf(types.ChartConfiguration config) =>
 class Config implements types.ChartConfiguration {
   /// core.config.js:159 `constructor(config)`.
   ///
-  /// [config] is the raw configuration. A falsy value gives a new Map. A
-  /// truthy value that is not a Map throws a [TypeError] (row
-  /// `adapt-config-objects`).
+  /// [config] is the raw configuration: a Map of the user or a typed root
+  /// scope. A falsy value gives a new Map. A truthy value that is not an
+  /// object throws a [TypeError] (row `adapt-config-objects`).
   Config([Object? config]) : _config = _initConfig(config);
 
   /// core.config.js:160 `_config`: the raw configuration.
-  final AnyObject _config;
+  final Object _config;
 
   /// core.config.js:161 `_scopeCache`: the scope lists of
   /// [getOptionScopes], by main scope and by key lists.
@@ -427,42 +443,46 @@ class Config implements types.ChartConfiguration {
 
   /// core.config.js:173 `set type(type)`.
   set type(Object? type) {
-    _config['type'] = type;
+    jsSet(_config, 'type', type);
   }
 
   /// core.config.js:177 `get data()`.
   ///
-  /// `initData` makes it a Map. Only a write into the raw configuration
-  /// gives it another value. Then the getter throws a [TypeError] (row
-  /// `adapt-config-objects`). Upstream returns the value.
+  /// `initData` makes it an object (a Map or a typed scope). Only a write
+  /// into the raw configuration gives it another value. Then the getter
+  /// throws a [TypeError] (row `adapt-config-objects`). Upstream returns the
+  /// value.
   @override
-  AnyObject get data {
-    // DIVERGES(chartjs): adapt-config-objects, the data object is a Map.
-    return _config['data']! as AnyObject;
+  Object get data {
+    // DIVERGES(chartjs): adapt-config-objects, the data object is an object.
+    final data = jsGet(_config, 'data');
+    return _isConfigObject(data) ? data! : throw TypeError();
   }
 
   /// core.config.js:181 `set data(data)`.
   ///
   /// A falsy [data] or an array gives a new Map. Another truthy value that
-  /// is not a Map throws a [TypeError] (row `adapt-config-objects`).
+  /// is not an object throws a [TypeError] (row `adapt-config-objects`).
   set data(Object? data) {
-    _config['data'] = _initData(data);
+    jsSet(_config, 'data', _initData(data));
   }
 
   /// core.config.js:185 `get options()`.
   ///
-  /// `initOptions` makes it a Map. After a set of a value that is not a Map,
-  /// the getter throws a [TypeError] until [update] (row
-  /// `adapt-config-objects`). Upstream returns the value.
+  /// `initOptions` makes it an object (a Map or a typed scope). After a set
+  /// of a value that is not an object, the getter throws a [TypeError] until
+  /// [update] (row `adapt-config-objects`). Upstream returns the value.
   @override
-  AnyObject get options {
-    // DIVERGES(chartjs): adapt-config-objects, the options object is a Map.
-    return _config['options']! as AnyObject;
+  Object get options {
+    // DIVERGES(chartjs): adapt-config-objects, the options object is an
+    // object.
+    final options = jsGet(_config, 'options');
+    return _isConfigObject(options) ? options! : throw TypeError();
   }
 
   /// core.config.js:189 `set options(options)`.
   set options(Object? options) {
-    _config['options'] = options;
+    jsSet(_config, 'options', options);
   }
 
   /// core.config.js:193 `get plugins()`: the inline plugins of the raw
@@ -703,48 +723,44 @@ class Config implements types.ChartConfiguration {
   /// @return {object}
   ///
   /// [into] is the empty object that receives the options (Chart.js ADR
-  /// 0021, section 1). Dart `null` gives a new plain Map, as the object
-  /// literal of upstream gives. The dataset controller gives the typed
-  /// options class of the element type (`createElementOptions` of
-  /// `element_options.dart`).
+  /// 0021, section 1): a Map or a typed object with a face. Dart `null`
+  /// gives a new plain Map, as the object literal of upstream gives.
   ///
   /// [context] is a function value or an object. The context that it gives
-  /// must be a Map when an option needs it (row `adapt-config-objects`).
+  /// must be an object when an option needs it (row `adapt-config-objects`).
   /// Upstream also attaches another value.
-  AnyObject resolveNamedOptions(
+  Object resolveNamedOptions(
     List<Object?> scopes,
     List<String> names,
     Object? context, [
     List<String> prefixes = const [''],
-    AnyObject? into,
+    Object? into,
   ]) {
-    assert(into == null || into.isEmpty, 'into must be empty');
+    assert(into == null || jsObjectKeys(into).isEmpty, 'into must be empty');
     // DIVERGES(chartjs): adapt-typed-element-options, the caller gives result.
-    final result = (into ?? <String, Object?>{})..[r'$shared'] = true;
+    final result = into ?? <String, Object?>{};
+    jsSet(result, r'$shared', true);
     final (:resolver, :subPrefixes) = _getResolver(
       _resolverCache,
       scopes,
       prefixes,
     );
-    AnyObject options = resolver;
+    Object options = resolver;
     if (_needContext(resolver, names)) {
-      result[r'$shared'] = false;
+      jsSet(result, r'$shared', false);
       // Upstream reassigns its parameter.
       // ignore: parameter_assignments
       context = isFunction(context) ? jsCall(context, const []) : context;
       // subResolver is passed to scriptable options. It should not resolve to
       // hover options.
       final subResolver = createResolver(scopes, context, subPrefixes);
-      // DIVERGES(chartjs): adapt-config-objects, the context is a Map.
-      options = helpers.attachContext(
-        resolver,
-        context! as AnyObject,
-        subResolver,
-      );
+      // DIVERGES(chartjs): adapt-config-objects, the context is an object.
+      if (!isObject(context)) throw TypeError();
+      options = helpers.attachContext(resolver, context!, subResolver);
     }
 
     for (final prop in names) {
-      result[prop] = options[prop];
+      jsSet(result, prop, jsGet(options, prop));
     }
     return result;
   }
@@ -762,7 +778,7 @@ class Config implements types.ChartConfiguration {
   ElementOptions resolveElementNamedOptions(
     List<Object?> scopes,
     List<Object> keys,
-    AnyObject Function() context,
+    Object Function() context,
     List<String> prefixes,
     ElementOptions into,
   ) {
@@ -806,7 +822,7 @@ class Config implements types.ChartConfiguration {
   /// The result is the cached resolver of [scopes] and [prefixes]. A
   /// [context] that is an object gives a new context resolver over it. A
   /// null [descriptorDefaults] is an absent argument.
-  AnyObject createResolver(
+  JsProxyObject createResolver(
     List<Object?> scopes, [
     Object? context,
     List<String> prefixes = const [''],
@@ -820,7 +836,7 @@ class Config implements types.ChartConfiguration {
     return isObject(context)
         ? helpers.attachContext(
             resolver,
-            context! as AnyObject,
+            context!,
             undefined,
             descriptorDefaults,
           )
@@ -871,8 +887,7 @@ _CachedResolver _getResolver(
 /// `ownKeys` trap of a resolver, and the keys of a Map.
 bool _hasFunction(Object? value) {
   if (!isObject(value)) return false;
-  final object = value! as AnyObject;
-  return jsOwnPropertyNames(object).any((key) => isFunction(object[key]));
+  return jsOwnPropertyNames(value).any((key) => isFunction(jsGet(value, key)));
 }
 
 /// core.config.js:405 `needContext`.
@@ -923,24 +938,10 @@ Object? _orObject(Object? value) =>
 Object? _or(Object? value, Object? other) => jsTruthy(value) ? value : other;
 
 /// `Object.keys(value)` for the `scales` objects of the options and of the
-/// overrides.
-///
-/// A Map gives [jsObjectKeys]. A List or a String gives its indices. Any
-/// other value gives no key. Throws a [TypeError] for `null` and
-/// [undefined], as JavaScript does.
-List<String> _objectKeys(Object? value) {
-  if (value == null || identical(value, undefined)) {
-    throw TypeError();
-  }
-  if (value is AnyObject) {
-    return jsObjectKeys(value);
-  }
-  if (value is List || value is String) {
-    final length = value is List ? value.length : (value as String).length;
-    return [for (var i = 0; i < length; i++) '$i'];
-  }
-  return const [];
-}
+/// overrides: [jsObjectKeys]. A Map or a typed object gives its keys, a List
+/// or a String its indices, any other value no key. Throws a [TypeError]
+/// for `null` and [undefined], as JavaScript does.
+List<String> _objectKeys(Object? value) => jsObjectKeys(value);
 
 /// `console.error(message)`.
 void _consoleError(String message) {

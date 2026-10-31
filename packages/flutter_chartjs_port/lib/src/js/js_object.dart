@@ -7,6 +7,8 @@
 /// operator (Chart.js ADR 0019, section 1).
 library;
 
+import 'dart:collection' show MapBase;
+
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
@@ -14,17 +16,31 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The face by name of a typed object of the typed internal model
-/// (Chart.js ADR 0054 §5): the typed option scopes, and later the resolved
-/// options, the views, the contexts, the props, the parsed items, the
-/// plugins and the hook arguments.
+/// (Chart.js ADR 0054 §5): the typed option scopes, the resolved options,
+/// the resolvers and views, the contexts, the props, the parsed items, the
+/// plugins, the hook arguments and the other typed objects of `lib/src`.
 ///
 /// The face is the cold API for user code, the raw boundary and the tests.
 /// It is never in a hot path. The JS runtime reads a face by name: [jsGet],
-/// [jsGetKey], `jsObjectKeys` and `jsOwnPropertyNames` take it.
+/// [jsGetKey], [jsSet], [jsHasOwn], [jsDeleteKey], `jsObjectKeys` and
+/// `jsOwnPropertyNames` take it.
 ///
-/// The members have JS semantics. During the migration the typed objects
-/// also extend `MapBase` (the scaffolding of Chart.js ADR 0054 §5), whose
-/// `operator []` keeps the Map semantics (Dart `null` for an absent key).
+/// The members have the JS rules:
+/// - [jsRead] and [operator []] give the value of a property, or [undefined]
+///   for a property that the object does not have (never Dart `null` for an
+///   absent key: Dart `null` is the JS `null`).
+/// - [jsWrite] and [operator []=] set a property; a frozen object throws a
+///   [TypeError].
+/// - [jsKeys] gives the own enumerable keys in the order of `Object.keys`:
+///   the array-index keys first, in ascending order, then the other keys in
+///   their insertion order.
+/// - [jsHas] is `hasOwnProperty`, and [jsDelete] is the `delete` operator.
+///
+/// A typed object of the chart (a resolver view, a context, resolved
+/// options, a typed scope, a hook argument object, a legend or tooltip item)
+/// is not a `Map`: read it by name through this interface, for example
+/// `(context as JsObjectFace)['dataIndex']`. A `Map` of the port is a JS
+/// object of the user (a raw config) or a plain object that the port makes.
 abstract interface class JsObjectFace {
   /// `object[name]` (`[[Get]]`): the value of [name], or [undefined] when
   /// the object has no such property.
@@ -32,6 +48,12 @@ abstract interface class JsObjectFace {
 
   /// `object[name] = value` (`[[Set]]`).
   void jsWrite(String name, Object? value);
+
+  /// `object[name]`: [jsRead].
+  Object? operator [](String name);
+
+  /// `object[name] = value`: [jsWrite].
+  void operator []=(String name, Object? value);
 
   /// `Object.keys(object)`: the own enumerable keys in their order.
   List<String> jsKeys();
@@ -43,15 +65,81 @@ abstract interface class JsObjectFace {
   bool jsDelete(String name);
 }
 
+/// Whether [value] is a JS object with properties by name: a `Map` (an
+/// object of the user, or a plain object that the port makes) or a
+/// [JsObjectFace] (a typed object of Chart.js ADR 0054).
+bool jsIsObjectLike(Object? value) =>
+    value is Map<dynamic, dynamic> || value is JsObjectFace;
+
+/// [value] as an object argument: Dart `null` for `null` and [undefined],
+/// the value for an object ([jsIsObjectLike]), else a [TypeError] (the cast
+/// of a member of a config object that the port reads as an object).
+Object? jsObjectOrNull(Object? value) => switch (value) {
+  null || Undefined() => null,
+  _ when jsIsObjectLike(value) => value,
+  _ => throw TypeError(),
+};
+
+/// `object[key] = value` (`[[Set]]`) for a property name [key].
+///
+/// - A [JsObjectFace]: [JsObjectFace.jsWrite].
+/// - A `Map`: the Map write. A Map with a narrow value type throws a
+///   [TypeError] for a value of another type.
+/// - A [JsClass]: the static property ([JsClass.operator []=]).
+///
+/// Throws a [TypeError] for `null` and [undefined], as JavaScript does, and
+/// an [ArgumentError] for another value: no ported code writes a property
+/// of a primitive.
+void jsSet(Object? object, String key, Object? value) {
+  switch (object) {
+    case null || Undefined():
+      // A JavaScript TypeError: a property write of null or undefined.
+      throw TypeError();
+    case final JsObjectFace face:
+      face.jsWrite(key, value);
+    case final Map<dynamic, dynamic> map:
+      map[key] = value;
+    case final JsClass cls:
+      cls[key] = value;
+    default:
+      throw ArgumentError.value(object, 'object', 'is not a JS object');
+  }
+}
+
+/// `Object.prototype.hasOwnProperty.call(object, key)`: whether [object]
+/// owns [key]. A `Map` owns its keys; a [JsObjectFace] gives
+/// [JsObjectFace.jsHas]. Any other value gives false.
+bool jsHasOwn(Object? object, String key) => switch (object) {
+  final JsObjectFace face => face.jsHas(key),
+  final Map<dynamic, dynamic> map => map.containsKey(key),
+  _ => false,
+};
+
+/// `delete object[key]`: removes the own property [key] of [object] and
+/// returns whether [object] owned it. A `Map` removes the key; a
+/// [JsObjectFace] gives [JsObjectFace.jsDelete]. Any other value gives
+/// false.
+bool jsDeleteKey(Object? object, String key) {
+  switch (object) {
+    case final JsObjectFace face:
+      return face.jsDelete(key);
+    case final Map<dynamic, dynamic> map:
+      if (!map.containsKey(key)) return false;
+      map.remove(key);
+      return true;
+  }
+  return false;
+}
+
 /// `object[key]`: the value of the property [key] of [object].
 ///
 /// A key that is not a `String` is its `ToString` ([jsToString]), as the
 /// `ToPropertyKey` of a number or a boolean gives.
 ///
-/// - A [JsProxyObject] (a resolver of `helpers.config`): its `get` trap,
-///   `operator []`. Its `has` trap does not know the prefixed keys.
 /// - A [JsObjectFace] (a typed object of Chart.js ADR 0054):
-///   [JsObjectFace.jsRead].
+///   [JsObjectFace.jsRead]. A resolver of `helpers.config`
+///   ([JsProxyObject]) gives its `get` trap; its `has` trap does not know
+///   the prefixed keys.
 /// - Another `Map`: the value of [key], or [undefined] for a key that the
 ///   Map does not contain. A Map that answers `operator []` for a key that
 ///   it does not contain models an inherited property.
@@ -72,8 +160,6 @@ Object? jsGet(Object? object, Object? key) {
     case null || Undefined():
       // A JavaScript TypeError: a property read of null or undefined.
       throw TypeError();
-    case final JsProxyObject proxy:
-      return proxy[name];
     case final JsObjectFace face:
       return face.jsRead(name);
     // `<dynamic, dynamic>` matches the same values as `<Object?, Object?>`,
@@ -106,16 +192,16 @@ int? _index(String key, int length) {
 /// `object[key]` for a property name [key]: the result of [jsGet] for every
 /// value (Chart.js ADR 0036).
 ///
-/// A Map that is not a [JsProxyObject] is read inline: the value of [key],
-/// or [undefined] for a key that the Map does not contain. Every other value
-/// goes to [jsGet]: a resolver gives its `get` trap, a List or a String its
-/// index or `length`, and `null` and [undefined] throw a [TypeError].
+/// A Map is read inline: the value of [key], or [undefined] for a key that
+/// the Map does not contain. Every other value goes to [jsGet]: a typed
+/// object gives its face, a List or a String its index or `length`, and
+/// `null` and [undefined] throw a [TypeError].
 ///
 /// Use it for the reads of parsed items, data items and stack objects. A
 /// read of a resolver stays [jsGet] (Chart.js ADR 0017, section 8).
 Object? jsGetKey(Object? object, String key) {
   // `<dynamic, dynamic>`: see the comment of jsGet.
-  if (object is Map<dynamic, dynamic> && object is! JsProxyObject) {
+  if (object is Map<dynamic, dynamic>) {
     final Object? value = object[key];
     return value == null && !object.containsKey(key) ? undefined : value;
   }
@@ -153,6 +239,67 @@ abstract interface class JsFreezable {
   /// `Object.freeze(this)`. A later write throws a [TypeError]. No member
   /// clears the frozen state.
   void freeze();
+}
+
+/// A plain object with the frozen state of `Object.freeze` (Chart.js ADR
+/// 0021, section 5): a `Map<String, Object?>`, the plain object of the
+/// runtime.
+///
+/// The compiled theme keeps an object under a key with no option kind in
+/// it (Chart.js ADR 0054 §18). In the frozen state, a write throws a
+/// [TypeError], as a write into a frozen object in strict mode does. The
+/// reads do not change.
+final class JsFrozenMap extends MapBase<String, Object?>
+    implements JsFreezable {
+  /// A plain object with the entries of [map], in its key order. The object
+  /// keeps [map] and is not frozen yet.
+  JsFrozenMap(this._map);
+
+  /// The entries, in insertion order.
+  final Map<String, Object?> _map;
+
+  bool _frozen = false;
+
+  @override
+  bool get isFrozen => _frozen;
+
+  @override
+  void freeze() {
+    _frozen = true;
+  }
+
+  @override
+  Object? operator [](Object? key) => _map[key];
+
+  @override
+  void operator []=(String key, Object? value) {
+    // A JavaScript TypeError: a write into a frozen object.
+    if (_frozen) throw TypeError();
+    _map[key] = value;
+  }
+
+  @override
+  bool containsKey(Object? key) => _map.containsKey(key);
+
+  @override
+  Object? remove(Object? key) {
+    // A JavaScript TypeError: a delete of a property of a frozen object.
+    if (_frozen && _map.containsKey(key)) throw TypeError();
+    return _map.remove(key);
+  }
+
+  @override
+  Iterable<String> get keys => _map.keys;
+
+  @override
+  int get length => _map.length;
+
+  @override
+  void clear() {
+    // A JavaScript TypeError: a delete of a property of a frozen object.
+    if (_frozen && _map.isNotEmpty) throw TypeError();
+    _map.clear();
+  }
 }
 
 /// `Object.freeze(value)`: freezes a [JsFreezable], then returns [value].

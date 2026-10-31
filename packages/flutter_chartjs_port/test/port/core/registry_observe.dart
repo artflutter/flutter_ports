@@ -56,15 +56,17 @@ final class Observations {
       final String s => jsonEncode(s),
       _ when jsIsFunction(value) => '"<fn>"',
       final List<Object?> list => '[${list.map(json).join(',')}]',
-      final Map<String, Object?> map =>
+      final Object map
+          when map is Map<String, Object?> || map is JsObjectFace =>
         '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
       _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
     };
   }
 
-  /// The JSON member `"key":value` of [key] in [map].
-  String _entry(Map<String, Object?> map, String key) =>
-      '${jsonEncode(key)}:${json(map[key])}';
+  /// The JSON member `"key":value` of [key] in [map], a Map or a typed
+  /// object with a face (Chart.js ADR 0054 §5).
+  String _entry(Object map, String key) =>
+      '${jsonEncode(key)}:${json(jsGet(map, key))}';
 }
 
 /// The observation of the call [body], as the generator writes it: `ok`,
@@ -84,10 +86,11 @@ String error(void Function() body) {
   }
 }
 
-/// `key in object` as an observation, for a Map [object]: `'true'` or
-/// `'false'`. A value that is not a Map gives `'false'`.
+/// `key in object` as an observation, for a Map or a typed object with a
+/// face [object]: `'true'` or `'false'`. Another value gives `'false'`.
 String has(Object? object, Object? key) =>
-    object is Map && object.containsKey(key is String ? key : jsToString(key))
+    (object is Map || object is JsObjectFace) &&
+        jsHasOwn(object, key is String ? key : jsToString(key))
     ? 'true'
     : 'false';
 

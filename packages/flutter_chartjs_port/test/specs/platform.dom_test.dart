@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/src/index.umd.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -156,7 +155,7 @@ void main() {
       testWidgets(
         'should use default "chart" aspect ratio for render and display sizes',
         (tester) async {
-          final doughnut = jsGet(Chart.overrides, 'doughnut')! as AnyObject;
+          final doughnut = jsGet(Chart.overrides, 'doughnut')! as JsObjectFace;
           final ratio = jsGet(doughnut, 'aspectRatio');
           doughnut['aspectRatio'] = 1;
 
