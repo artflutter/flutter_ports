@@ -24,34 +24,49 @@ double lim(double v, double l, double h) => jsMax(jsMin(v, h), l);
 /// byte.js:20 `p2b`.
 ///
 /// convert percent to byte 0..255
+@pragma('vm:prefer-inline')
 double p2b(double v) {
+  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  if (v >= 0 && v <= 100) return (v * 2.55 + 0.5).truncateToDouble();
   return lim(round(v * 2.55), 0, 255);
 }
 
 /// byte.js:28 `b2p`.
 ///
 /// convert byte to percet 0..100
+@pragma('vm:prefer-inline')
 double b2p(double v) {
+  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  if (v >= 0 && v <= 255) return (v / 2.55 + 0.5).truncateToDouble();
   return lim(round(v / 2.55), 0, 100);
 }
 
 /// byte.js:36 `n2b`.
 ///
 /// convert normalized to byte 0..255
+@pragma('vm:prefer-inline')
 double n2b(double v) {
+  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  if (v >= 0 && v <= 1) return (v * 255 + 0.5).truncateToDouble();
   return lim(round(v * 255), 0, 255);
 }
 
 /// byte.js:44 `b2n`.
 ///
 /// convert byte to normalized 0..1
+@pragma('vm:prefer-inline')
 double b2n(double v) {
+  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  if (v >= 0 && v <= 255) return (v / 2.55 + 0.5).truncateToDouble() / 100;
   return lim(round(v / 2.55) / 100, 0, 1);
 }
 
 /// byte.js:52 `n2p`.
 ///
 /// convert normalized to percent 0..100
+@pragma('vm:prefer-inline')
 double n2p(double v) {
+  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  if (v >= 0 && v <= 1) return (v * 100 + 0.5).truncateToDouble();
   return lim(round(v * 100), 0, 100);
 }

@@ -131,6 +131,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     and 0050)
   - [Chart.js ADR 0055: The native draw path of the canvas layer](adr/0055-native-draw-path.md)
     (accepted; it supersedes Chart.js ADR 0013)
+  - [Chart.js ADR 0056: Profile-guided color implementation](adr/0056-color-performance.md)
+    (proposed; requires its local policy change and durable comparison evidence)
 
 ## What gets ported
 

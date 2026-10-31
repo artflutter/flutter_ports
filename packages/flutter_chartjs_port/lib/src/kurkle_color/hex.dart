@@ -3,66 +3,47 @@
 /// Port of `src/hex.js` of @kurkle/color 0.3.2: the hex notation `#rgb`,
 /// `#rgba`, `#rrggbb` and `#rrggbbaa`.
 ///
-/// The JS bitwise operators convert their operands with ToInt32. Thus each
-/// operand goes through `jsToInt32` before the Dart `int` operator. All the
-/// results are small and not negative, so they are the same on the VM,
-/// dart2js and dart2wasm.
+/// Parsing keeps the small hex digits as integers. Invalid digits become 0
+/// in bitwise channels, and NaN in short alpha. Formatting still converts
+/// arbitrary channel values with ToInt32 before selecting their low bits.
 ///
 /// @packageDocumentation
 /// @module utils
 library;
 
+import 'dart:typed_data';
+
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
 
-/// hex.js:13 `map`.
-const Map<String, double> _map = {
-  '0': 0,
-  '1': 1,
-  '2': 2,
-  '3': 3,
-  '4': 4,
-  '5': 5,
-  '6': 6,
-  '7': 7,
-  '8': 8,
-  '9': 9,
-  'A': 10,
-  'B': 11,
-  'C': 12,
-  'D': 13,
-  'E': 14,
-  'F': 15,
-  'a': 10,
-  'b': 11,
-  'c': 12,
-  'd': 13,
-  'e': 14,
-  'f': 15,
-};
+/// The upstream digit map as an integer; -1 marks an absent map entry.
+int _digit(String str, int i) {
+  // DIVERGES(chartjs): adapt-kurkle-hex-code-units, performance optimisations.
+  final c = str.codeUnitAt(i);
+  if (c >= 48 && c <= 57) return c - 48;
+  final lower = c | 32;
+  return lower >= 97 && lower <= 102 ? lower - 87 : -1;
+}
 
-/// `map[str[i]]` as a number: `undefined` for a character that is not a hex
-/// digit, which ToNumber makes NaN.
-double _digit(String str, int i) => _map[str[i]] ?? double.nan;
+/// ToInt32 of a map entry: an absent digit becomes 0.
+int _nibble(String str, int i) {
+  final digit = _digit(str, i);
+  return digit < 0 ? 0 : digit;
+}
+
+/// Short alpha multiplies the map entry without ToInt32, retaining NaN.
+double _shortAlpha(String str) {
+  final digit = _digit(str, 4);
+  return digit < 0 ? double.nan : (digit * 17).toDouble();
+}
 
 /// The ToInt32 value of [x] as an `int`, the operand of a JS bitwise
 /// operator.
-int _int32(double x) => jsToInt32(x).toInt();
-
-/// hex.js:18 `hex`.
-final List<String> _hex = '0123456789ABCDEF'.split('');
-
-/// hex.js:24 `h1`.
-String _h1(double b) => _hex[_int32(b) & 0xF];
-
-/// hex.js:30 `h2`.
-String _h2(double b) => _hex[(_int32(b) & 0xF0) >> 4] + _hex[_int32(b) & 0xF];
-
-/// hex.js:36 `eq`.
-bool _eq(double b) => ((_int32(b) & 0xF0) >> 4) == (_int32(b) & 0xF);
-
-/// hex.js:42 `isShort`.
-bool _isShort(RGBA v) => _eq(v.r) && _eq(v.g) && _eq(v.b) && _eq(v.a);
+int _int32(double x) {
+  // DIVERGES(chartjs): adapt-kurkle-color-strings, performance optimisations.
+  if (x > -2147483649.0 && x < 2147483648.0) return x.toInt();
+  return jsToInt32(x).toInt();
+}
 
 /// hex.js:48 `hexParse`.
 ///
@@ -71,38 +52,76 @@ RGBA? hexParse(String str) {
   final len = str.length;
   RGBA? ret;
   // str[0] of '' is undefined.
-  if (len > 0 && str[0] == '#') {
+  if (len > 0 && str.codeUnitAt(0) == 35) {
     if (len == 4 || len == 5) {
       ret = RGBA(
-        r: (255 & _int32(_digit(str, 1) * 17)).toDouble(),
-        g: (255 & _int32(_digit(str, 2) * 17)).toDouble(),
-        b: (255 & _int32(_digit(str, 3) * 17)).toDouble(),
-        a: len == 5 ? _digit(str, 4) * 17 : 255,
+        r: (_nibble(str, 1) * 17).toDouble(),
+        g: (_nibble(str, 2) * 17).toDouble(),
+        b: (_nibble(str, 3) * 17).toDouble(),
+        a: len == 5 ? _shortAlpha(str) : 255,
       );
     } else if (len == 7 || len == 9) {
       ret = RGBA(
-        r: (_int32(_digit(str, 1)) << 4 | _int32(_digit(str, 2))).toDouble(),
-        g: (_int32(_digit(str, 3)) << 4 | _int32(_digit(str, 4))).toDouble(),
-        b: (_int32(_digit(str, 5)) << 4 | _int32(_digit(str, 6))).toDouble(),
-        a: len == 9
-            ? (_int32(_digit(str, 7)) << 4 | _int32(_digit(str, 8))).toDouble()
-            : 255,
+        r: (_nibble(str, 1) << 4 | _nibble(str, 2)).toDouble(),
+        g: (_nibble(str, 3) << 4 | _nibble(str, 4)).toDouble(),
+        b: (_nibble(str, 5) << 4 | _nibble(str, 6)).toDouble(),
+        a: len == 9 ? (_nibble(str, 7) << 4 | _nibble(str, 8)).toDouble() : 255,
       );
     }
   }
   return ret;
 }
 
-/// hex.js:71 `alpha`.
-String _alpha(double a, String Function(double) f) => a < 255 ? f(a) : '';
+/// Hex digits use uppercase ASCII, as the upstream table does.
+int _hexCode(int digit) => digit < 10 ? digit + 48 : digit + 55;
+
+const bool _javascript =
+    bool.fromEnvironment('dart.library.js_interop') &&
+    !bool.fromEnvironment('dart.tool.dart2wasm');
+const String _hexDigits = '0123456789ABCDEF';
 
 /// hex.js:78 `hexString`.
-///
-/// Return HEX string from color. As upstream, `isShort(v)` reads `v` before
-/// the test of `v`. Thus a missing color throws, as the JS `TypeError` does,
-/// and the result is never `undefined`.
 String hexString(RGBA? v) {
-  final f = _isShort(v!) ? _h1 : _h2;
-  // v ? '#' + ... : undefined. v is an object here, so the test is true.
-  return '#${f(v.r)}${f(v.g)}${f(v.b)}${_alpha(v.a, f)}';
+  // DIVERGES(chartjs): adapt-kurkle-color-strings, performance optimisations.
+  final r = _int32(v!.r) & 255;
+  final g = _int32(v.g) & 255;
+  final b = _int32(v.b) & 255;
+  final a = _int32(v.a) & 255;
+  final short =
+      (r >> 4) == (r & 15) &&
+      (g >> 4) == (g & 15) &&
+      (b >> 4) == (b & 15) &&
+      (a >> 4) == (a & 15);
+  final alpha = v.a < 255;
+  if (_javascript) {
+    // dart2js benefits from native string concatenation rather than a buffer.
+    if (short) {
+      return '#${_hexDigits[r & 15]}${_hexDigits[g & 15]}'
+          '${_hexDigits[b & 15]}${alpha ? _hexDigits[a & 15] : ''}';
+    }
+    return '#${_hexDigits[r >> 4]}${_hexDigits[r & 15]}'
+        '${_hexDigits[g >> 4]}${_hexDigits[g & 15]}'
+        '${_hexDigits[b >> 4]}${_hexDigits[b & 15]}'
+        '${alpha ? '${_hexDigits[a >> 4]}${_hexDigits[a & 15]}' : ''}';
+  }
+  final codes = Uint8List(short ? (alpha ? 5 : 4) : (alpha ? 9 : 7));
+  codes[0] = 35;
+  if (short) {
+    codes[1] = _hexCode(r & 15);
+    codes[2] = _hexCode(g & 15);
+    codes[3] = _hexCode(b & 15);
+    if (alpha) codes[4] = _hexCode(a & 15);
+  } else {
+    codes[1] = _hexCode(r >> 4);
+    codes[2] = _hexCode(r & 15);
+    codes[3] = _hexCode(g >> 4);
+    codes[4] = _hexCode(g & 15);
+    codes[5] = _hexCode(b >> 4);
+    codes[6] = _hexCode(b & 15);
+    if (alpha) {
+      codes[7] = _hexCode(a >> 4);
+      codes[8] = _hexCode(a & 15);
+    }
+  }
+  return String.fromCharCodes(codes);
 }

@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+import 'package:flutter_chartjs_port/src/kurkle_color/simple_parse.dart';
 
 /// hue.js:15 `HUE_RE`.
 final RegExp _hueRe = RegExp(
@@ -107,7 +108,10 @@ List<double> rgb2hsl(RGBA v) {
     h = h * 60 + 0.5;
   }
   // `h | 0` and `s || 0`: an undefined h is NaN for ToInt32, which gives 0.
-  return [jsToInt32(h ?? double.nan), if (jsTruthy(s)) s! else 0, l];
+  // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
+  // An if-element grows a list; the expression keeps a three-element literal.
+  // ignore: prefer_if_elements_to_conditional_expressions
+  return [jsToInt32(h ?? double.nan), jsTruthy(s) ? s! : 0, l];
 }
 
 /// hue.js:116 `calln`.
@@ -116,21 +120,25 @@ List<double> rgb2hsl(RGBA v) {
 /// [c], or a missing list element, is JS `undefined`, which arithmetic makes
 /// NaN. Each argument of [f] goes through ToNumber, as the JS arithmetic in
 /// [f] does: thus an `int`, a `List<num>` or a `List<Object?>` also works.
+@pragma('vm:prefer-inline')
 List<double> _calln(
   List<double> Function(double, double, double) f,
   Object a,
   num? b,
   num? c,
 ) {
-  return (a is List
-          ? f(_at(a, 0), _at(a, 1), _at(a, 2))
-          : f(
-              jsToNumber(a),
-              jsToNumber(b ?? undefined),
-              jsToNumber(c ?? undefined),
-            ))
-      .map(n2b)
-      .toList();
+  final rgb = a is List
+      ? f(_at(a, 0), _at(a, 1), _at(a, 2))
+      : f(
+          jsToNumber(a),
+          jsToNumber(b ?? undefined),
+          jsToNumber(c ?? undefined),
+        );
+  // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
+  for (var i = 0; i < 3; i++) {
+    rgb[i] = n2b(rgb[i]);
+  }
+  return rgb;
 }
 
 /// The JS read `a[i]` of an array, through ToNumber. An index past the end
@@ -141,6 +149,7 @@ double _at(List<Object?> a, int i) =>
 /// hue.js:131 `hsl2rgb`.
 ///
 /// Convert hsl to rgb. [h] is the hue, or the list `[h, s, l]`.
+@pragma('vm:prefer-inline')
 List<double> hsl2rgb(Object h, [num? s, num? l]) {
   return _calln(_hsl2rgbn, h, s, l);
 }
@@ -148,6 +157,7 @@ List<double> hsl2rgb(Object h, [num? s, num? l]) {
 /// hue.js:142 `hwb2rgb`.
 ///
 /// Convert hwb to rgb. [h] is the hue, or the list `[h, w, b]`.
+@pragma('vm:prefer-inline')
 List<double> hwb2rgb(Object h, [num? w, num? b]) {
   return _calln(_hwb2rgbn, h, w, b);
 }
@@ -155,6 +165,7 @@ List<double> hwb2rgb(Object h, [num? w, num? b]) {
 /// hue.js:153 `hsv2rgb`.
 ///
 /// Convert hsv to rgb. [h] is the hue, or the list `[h, s, v]`.
+@pragma('vm:prefer-inline')
 List<double> hsv2rgb(Object h, [num? s, num? v]) {
   return _calln(_hsv2rgbn, h, s, v);
 }
@@ -169,6 +180,27 @@ double _hue(double h) {
 /// Parse hsl/hsv/hwb color string. Dart `null` stands for the JS
 /// `undefined` result.
 RGBA? hueParse(String str) {
+  // DIVERGES(chartjs): adapt-kurkle-simple-colors, performance optimisations.
+  final start = _hueStart(str);
+  if (start != 0) {
+    final simple = simpleColor(str, start, percentages: true);
+    if (simple != null) {
+      final h = _hue(simple.r);
+      final p1 = simple.g / 100;
+      final p2 = simple.b / 100;
+      final rgb = str.codeUnitAt(1) == 119
+          ? hwb2rgb(h, p1, p2)
+          : str.codeUnitAt(2) == 118
+          ? hsv2rgb(h, p1, p2)
+          : hsl2rgb(h, p1, p2);
+      simple
+        ..r = rgb[0]
+        ..g = rgb[1]
+        ..b = rgb[2]
+        ..a = n2b(simple.a);
+      return simple;
+    }
+  }
   final m = _hueRe.firstMatch(str);
   var a = 255.0;
   List<double> v;
@@ -176,12 +208,15 @@ RGBA? hueParse(String str) {
     return null;
   }
   // v is undefined
+  // DIVERGES(chartjs): adapt-kurkle-decimal-groups, performance optimisations.
   if (m[5] != null) {
-    a = m[6] != null ? p2b(jsToNumber(m[5])) : n2b(jsToNumber(m[5]));
+    a = m[6] != null
+        ? p2b(double.tryParse(m[5]!) ?? double.nan)
+        : n2b(double.tryParse(m[5]!) ?? double.nan);
   }
-  final h = _hue(jsToNumber(m[2]));
-  final p1 = jsToNumber(m[3]) / 100;
-  final p2 = jsToNumber(m[4]) / 100;
+  final h = _hue(double.tryParse(m[2]!) ?? double.nan);
+  final p1 = (double.tryParse(m[3]!) ?? double.nan) / 100;
+  final p2 = (double.tryParse(m[4]!) ?? double.nan) / 100;
   if (m[1] == 'hwb') {
     v = hwb2rgb(h, p1, p2);
   } else if (m[1] == 'hsv') {
@@ -222,4 +257,19 @@ String? hslString(RGBA? v) {
             '${jsNumberToString(l)}%, ${jsNumberToString(b2n(v.a))})'
       : 'hsl(${jsNumberToString(h)}, ${jsNumberToString(s)}%, '
             '${jsNumberToString(l)}%)';
+}
+
+int _hueStart(String s) {
+  if (s.length < 4 || s.codeUnitAt(0) != 104) return 0;
+  final c1 = s.codeUnitAt(1);
+  final c2 = s.codeUnitAt(2);
+  final c3 = s.codeUnitAt(3);
+  if (c1 == 115 && c2 == 108) {
+    if (c3 == 40) return 4;
+    if (s.length >= 5 && c3 == 97 && s.codeUnitAt(4) == 40) return 5;
+  } else if (((c1 == 115 && c2 == 118) || (c1 == 119 && c2 == 98)) &&
+      c3 == 40) {
+    return 4;
+  }
+  return 0;
 }

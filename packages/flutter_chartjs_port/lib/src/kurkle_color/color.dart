@@ -53,7 +53,8 @@ void _modHSL(RGBA? v, int i, double ratio) {
       0,
       jsMin(tmp[i] + tmp[i] * ratio, i == 0 ? 360 : 1),
     );
-    tmp = hsl2rgb(tmp);
+    // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
+    tmp = hsl2rgb(tmp[0], tmp[1], tmp[2]);
     v
       ..r = tmp[0]
       ..g = tmp[1]
@@ -120,7 +121,7 @@ RGBA _fromObject(Object? input) {
 /// color.js:69 `functionParse`.
 RGBA? _functionParse(String str) {
   // str.charAt(0) of '' is ''.
-  if (str.startsWith('r')) {
+  if (str.isNotEmpty && str.codeUnitAt(0) == 114) {
     return rgbParse(str);
   }
   return hueParse(str);
@@ -158,12 +159,19 @@ class Color {
     if (input is Color) {
       return input;
     }
-    final type = _typeOf(input);
     RGBA? v;
-    if (type == 'object') {
+    // DIVERGES(chartjs): adapt-kurkle-color-dispatch, performance
+    // optimisations.
+    if (input is String) {
+      if (input.isNotEmpty && input.codeUnitAt(0) == 35) {
+        v = hexParse(input);
+      } else if (input.isNotEmpty && input.codeUnitAt(input.length - 1) == 41) {
+        v = _functionParse(input);
+      } else {
+        v = nameParse(input) ?? _functionParse(input);
+      }
+    } else if (_typeOf(input) == 'object') {
       v = _fromObject(input);
-    } else if (input is String) {
-      v = hexParse(input) ?? nameParse(input) ?? _functionParse(input);
     }
     return Color._(v);
   }
@@ -189,11 +197,9 @@ class Color {
   /// A copy of the color with `a` as alpha [0..1]. Dart `null` stands for JS
   /// `undefined`, the color of an input that did not parse.
   RGBA? get rgb {
-    final v = _clone(_rgb);
-    if (v != null) {
-      v.a = b2n(v.a);
-    }
-    return v;
+    // DIVERGES(chartjs): adapt-kurkle-color-copies, performance optimisations.
+    final v = _rgb;
+    return v == null ? null : RGBA(r: v.r, g: v.g, b: v.b, a: b2n(v.a));
   }
 
   /// color.js:123 `set rgb`.
@@ -241,11 +247,13 @@ class Color {
       final w2 = 1 - w1;
       // 0xFF & x: 255 & ToInt32(x).
       c1
-        ..r = (0xFF & jsToInt32(w1 * c1.r + w2 * c2.r + 0.5).toInt()).toDouble()
-        ..g = (0xFF & jsToInt32(w1 * c1.g + w2 * c2.g + 0.5).toInt()).toDouble()
-        ..b = (0xFF & jsToInt32(w1 * c1.b + w2 * c2.b + 0.5).toInt()).toDouble()
+        ..r = _mixByte(w1 * c1.r + w2 * c2.r + 0.5)
+        ..g = _mixByte(w1 * c1.g + w2 * c2.g + 0.5)
+        ..b = _mixByte(w1 * c1.b + w2 * c2.b + 0.5)
         ..a = p * c1.a + (1 - p) * c2.a;
-      rgb = c1;
+      // DIVERGES(chartjs): adapt-kurkle-color-copies, performance
+      // optimisations.
+      _rgb = c1..a = n2b(c1.a);
     }
     return this;
   }
@@ -262,9 +270,13 @@ class Color {
 
   /// color.js:193 `clone`.
   Color clone() {
-    // `new Color(this.rgb)`: rgb is undefined for a color that did not
-    // parse. The constructor takes Dart null as JS null, so pass the sentinel.
-    return Color(rgb ?? undefined);
+    // DIVERGES(chartjs): adapt-kurkle-color-copies, performance optimisations.
+    final v = _rgb;
+    return v == null
+        ? Color(undefined)
+        : Color._(
+            RGBA(r: v.r, g: v.g, b: v.b, a: n2b(b2n(v.a))),
+          );
   }
 
   /// color.js:202 `alpha`.
@@ -358,4 +370,14 @@ class Color {
     hue_js.rotate(_rgb!, deg);
     return this;
   }
+}
+
+/// ToInt32 followed by a byte mask, retaining the full fallback for overflow.
+@pragma('vm:prefer-inline')
+double _mixByte(double value) {
+  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  final integer = value > -2147483649.0 && value < 2147483648.0
+      ? value.toInt()
+      : jsToInt32(value).toInt();
+  return (integer & 255).toDouble();
 }

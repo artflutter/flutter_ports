@@ -678,7 +678,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0055. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0056. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -720,7 +720,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       form of the compiled theme and its memo, its §18), as its §17 states. It decides the
       artifacts of Chart.js ADR 0053: the fast-path switch, D1 and `test:nofast` are gone; D2, the
       bench cells and the P3 page stay. Chart.js ADR 0055 (the native draw path of the canvas
-      layer) is accepted (2026-10-31) and supersedes Chart.js ADR 0013. The other ADRs are accepted. Docs name them
+      layer) is accepted (2026-10-31) and supersedes Chart.js ADR 0013. Chart.js ADR 0056
+      (profile-guided color implementation) is proposed: its code is implemented and measured,
+      but its gates are its local policy change and durable comparison evidence. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

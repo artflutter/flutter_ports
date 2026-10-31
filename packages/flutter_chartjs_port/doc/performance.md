@@ -4636,3 +4636,402 @@ on macOS or in Chrome can still reject a form.
    speed series measures the forms together with the typed model. The Pixel 8a bench has no class.
 5. **The accessibility path.** The maintainer took the accessibility measurement out of phase 10
    on 2026-10-30. No figure exists for the semantics path.
+
+## 17. Color parsing across Flutter 3.44 and 3.47
+
+Investigation of 2026-10-31, at repository commit `b752133`. This concerns the ported
+`kurkle_color`, not the colors plugin or the Flutter renderer. The initial investigation
+changed no production code; section 17.5 records the subsequent implementation.
+
+### 17.1 Scope and measurements
+
+The same current `lib/src/kurkle_color/` and `lib/src/js/` sources were copied to a scratch
+package and compiled with Dart 3.12.2 (Flutter 3.44.9), 3.13.5 (Flutter 3.47.7) and 3.13.7
+(Flutter 3.47.8). The scratch package used language version 3.12 on every side, so the
+comparison changes the SDK, not the source or language version. It does not lower the
+workspace's published SDK floor. The benchmark copies the seven color cases and the harness
+from `tool/bench/`. Its hover case calls the same parse/saturate/darken/hex-string sequence
+directly, without the canvas pattern/gradient type checks.
+
+Machine: Apple M3 Max, arm64, macOS 27.0.1. Runtime: Node.js 24.22.1, V8 13.6.233.17-node.58.
+Compilation: `dart compile wasm -O2`; the control is `dart compile js -O4`. Each Wasm process
+warms a case for 400-500 ms, then measures 15 batches of 30-50 ms. Runs are sequential, in
+alternating SDK order. These are web-target CPU measurements in Node, not Chrome frame or
+rendering measurements. Browser automation was unavailable in this session. Absolute times
+and the size of the regression still need confirmation in the affected browser/build.
+
+The table uses the median of the first three complete runs per SDK (two for 3.13.5), in ns
+per operation. The JavaScript control uses two runs per SDK with the harness defaults.
+
+| Case | Dart 3.12.2 Wasm | Dart 3.13.5 Wasm | Dart 3.13.7 Wasm |
+|---|---:|---:|---:|
+| Parse `#ff6384` | 147.434 | 168.864 | 175.783 |
+| Parse RGBA string | 828.146 | 812.128 | 824.424 |
+| Parse HSL string | 738.800 | 750.920 | 740.306 |
+| Parse named color | 139.587 | 148.347 | 143.990 |
+| `rgbString` | 115.919 | 114.180 | 114.414 |
+| `clone().mix(...)` | 60.756 | 60.944 | 60.462 |
+| RGBA hover sequence | 1179.596 | 1180.759 | 1183.160 |
+
+The repeatable regression is hex parsing: **19.2% more time** on 3.13.7. The dart2js hex
+control is 98.420 ns on 3.12.2 and 96.894 ns on 3.13.7. The measurements do not support a
+general slowdown of every color operation. An isolated six-digit map-lookup case also slows
+from 109.410 to 133.566 ns, while string indexing, string hashing and `jsToInt32` do not slow
+in that probe. Timings vary with the surrounding compiled program and input distribution.
+
+### 17.2 Cause and causal check
+
+`lib/src/kurkle_color/hex.dart` decodes each digit with `_map[str[i]]`. A six-digit color
+does six string-keyed map lookups. Dart commit
+[`ab3c67ff886`](https://github.com/dart-lang/sdk/commit/ab3c67ff8865c7569b0ead686f0f5eef941e2ec7)
+(2026-06-30, present in 3.13.5 and 3.13.7) changes the VM/Wasm hash table's equality order
+from `_equals(key, _data[d])` to `_equals(_data[d], key)`. This is a correctness fix for
+[Dart issue 63681](https://github.com/dart-lang/sdk/issues/63681): equality belongs to the
+stored key. It also changes the hot path of this color parser.
+
+The generated Wasm map lookup has this operand-order difference. To test its effect without
+changing the compiler, optimization settings, module layout or parser, a diagnostic script
+changes exactly five operand bytes in the compiled `_OperatorEqualsAndHashCode._equals`
+function. It swaps the two parameter reads; module size and every other byte stay unchanged.
+This reverses the map equality order for this probe. It is **not a production SDK patch**:
+reversing equality globally would undo the correctness fix for asymmetric user equality.
+
+| Diagnostic binary | Hex parse, ns/op |
+|---|---:|
+| Dart 3.13.7, unchanged, A/B/B/A baseline runs | 172.084, 172.874 |
+| Same binary, equality order reversed | 144.594, 145.156 |
+| Dart 3.12.2, unchanged | 139.014 |
+| Same old binary, changed to the new equality order | 179.979 |
+
+Thus the SDK equality-order change causes the measured regression on this Wasm/V8 path.
+The reverse experiment also makes the old binary slower. This identifies the triggering SDK
+change; it does not establish which lower-level V8 optimization or string representation
+accounts for the asymmetric cost. No claim of a measured browser frame-rate loss follows
+from these nanosecond figures.
+
+### 17.3 Fix options
+
+1. **Decode hex digits from character codes (recommended).** Replace the private `_digit`
+   string/map lookup with `codeUnitAt` and ASCII range checks for `0-9`, `A-F`, and `a-f`.
+   Keep `double.nan` for every other code unit, and keep the remaining parser arithmetic.
+   A scratch candidate measures 23.29 ns per hex parse on Dart 3.13.7 (median of two runs),
+   about 7.5 times faster than the present implementation and faster than the old SDK.
+   A direct comparison of the original and candidate parsers passes **1,426,256 cases**:
+   every UTF-16 code unit in each digit position of lengths 3, 4, 6 and 8, plus 50,000
+   deterministic strings. It compares raw RGBA channels, including NaN and signed zero.
+   A separate varied-input run, which consumes channel values instead of just `valid`,
+   measures 34.389 ns for `hexParse` and 31.809 ns for `Color(...).rgb.r`. This supports a
+   gain beyond the constant-input benchmark, though it is only one run.
+   Invalid-hex behavior must stay: this parser does not simply reject all invalid digits.
+   Section 17.5 records the implementation, the VM and web tests, and the structural
+   adaptation. A varied-input performance measurement in the affected browser remains
+   useful; the recorded speed measurements here use Node/V8.
+2. **Report the minimal map-lookup regression upstream.** Preserve the stored-key equality
+   semantics and ask for a Wasm/compiler/runtime optimization. The same-binary experiments
+   provide a useful reproducer. No issue was submitted during this investigation, and no
+   fixed SDK version has been verified.
+3. **Use dart2js as a deployment workaround if application measurements support it.** This
+   probe shows no corresponding dart2js regression. It is a whole-application build choice;
+   measure chart update and rendering performance before selecting it.
+
+Downgrading Flutter is not the preferred fix: this workspace requires Dart `^3.13.0` and
+Flutter `>=3.47.0`. Caching can avoid repeated parsing, but the animation path already caches
+its endpoint colors (Chart.js ADR 0019), and `Color` is mutable, so returning a shared cached
+instance would change behavior. Do not replace the parser with `int.parse` without preserving
+its invalid-digit semantics, or replace the mixing algorithm with Flutter `Color.lerp`.
+
+### 17.4 Evidence and earlier notes
+
+The working evidence is `.handover/kurkle-web-regression/` at the repository root: source
+snapshots, benchmark and equivalence probes, JSON timing logs, the five-byte diagnostic
+patcher, and a reproduction script. `.handover/` is local working evidence, not a committed
+artifact. The initial SDK checkout and builds are under `/private/tmp/flutter-web-regression/`.
+
+No previous note specifically identifying a 3.44-to-3.47 `kurkle_color` regression was found
+in the committed docs, saved handovers or project memory. Chart.js ADR 0019 §5 and its
+Evidence section do record an earlier color cost: on Dart 3.12.2, caching parsed endpoints
+reduces an animation color tick from 1460-1732 ns to 250-310 ns in Wasm. That is a different
+comparison and predates this SDK regression.
+
+### 17.5 Implementation and verification
+
+Implemented on 2026-10-31: `_digit` reads the UTF-16 code unit, checks the three ASCII
+ranges and returns NaN for every other value. The string-keyed `_map` is removed. All
+remaining hex parsing and serialization arithmetic stays unchanged. The adaptation is
+`adapt-kurkle-hex-code-units` in `differences.md`; `status.yaml` and generated `parity.md`
+record it.
+
+The added `index.esm_test.dart` group checks all 65,536 UTF-16 code units in short alpha
+against the upstream digit alphabet, all four supported hex lengths with mixed-case
+digits, invalid high and low nibbles, and a surrogate pair in a short RGB string. The
+explicit examples were also checked against the pinned JavaScript source in Node.
+
+Verification on Flutter 3.47.8 / Dart 3.13.7:
+- The focused kurkle and color-helper tests: 130 passed on the VM and 260 passed across
+  headless Chrome with dart2js and dart2wasm.
+- The spec suite passed with its existing 78 skips, excluding fixtures. Its JSON results
+  regenerated `parity.md`; the generator's check mode passed with the same results.
+- Workspace analysis with fatal infos, formatting of both changed Dart files, and
+  `git diff --check` passed.
+- All seven port checks passed: imports, headers, JS semantics, port order, parity,
+  typed reads and generated options.
+
+The applied production source was recompiled with `dart compile wasm -O2`. Its comparison
+uses the saved original source, the same Dart 3.13.7 compiler and language version 3.13
+on both sides, the same harness, and Node/V8 as in section 17.1. Four sequential runs in
+before/after/after/before order, each with 500 ms warm-up and 15 batches of 50 ms, gave:
+
+| Hex parse | Run medians, ns/op | Median, ns/op |
+|---|---|---:|
+| Original map decoder | 158.827, 164.030 | 161.429 |
+| Applied character-code decoder | 23.269, 23.272 | 23.271 |
+
+The applied decoder takes 85.6% less time (about 6.9 times faster) in this isolated check.
+The raw results are `raw/implementation-*.jsonl` in the working evidence directory. This
+does not measure whole-chart frame time or browser performance.
+
+## 18. Color decoder gain across platforms
+
+Measured on 2026-10-31 after implementing section 17. This compares the original string-keyed
+map decoder with the applied character-code decoder, on the **same Dart 3.13.7 SDK** on each
+side. It measures the fix, not another SDK upgrade. The two source sets differ only in
+`kurkle_color/hex.dart`; the scratch package rewrites the package import prefix equally on
+both sides. The library and gallery in the working tree were not changed for this series.
+
+### 18.1 Protocol and scope
+
+The scratch suite has 13 cases. Its main parsing cases select among several input strings
+and consume all four channels from `Color(input).rgb`. Thus they include construction,
+parsing, the RGBA copy and alpha conversion; they are not the constant-input `valid` check
+of section 17. The constant-input check is also kept as a separate microbenchmark. All
+inputs are valid colors. The suite also measures RGBA/HSL/name parsing, `rgbString`, mixing
+cached parsed colors, parsing and mixing two hex colors followed by `hexString`, and the
+hover sequence (parse, saturate, darken, hexString) for hex and RGBA inputs.
+
+- Four fresh processes per target: before, after, after, before. Each case warms for 400 ms
+  and then runs 15 batches targeting 30 ms each. A process reports the median batch time;
+  the tables use the median of the process medians for each side. Each operation returns
+  a checksum consumed by the harness. Builds and measured processes do not run together.
+- Chrome and Firefox Wasm received one additional before/after pair after one process on
+  each browser showed a slowdown in unchanged controls. Those results are included, not
+  substituted for the noisy runs: three process medians per side on these two targets.
+  Other targets have two. This is a small repeated measurement, not a confidence-interval
+  study; small differences in the controls are not established regressions or gains.
+- macOS: Apple M3 Max, macOS 27.0.1, standalone `dart compile exe` AOT. The windowed Flutter
+  attempt paused while awaiting a frame when its window became hidden; that incomplete
+  series is excluded. The CLI runs have no dependency on window visibility.
+- Android: Pixel 8a, Android 17, Flutter 3.47.8 **release AOT**, foreground benchmark app.
+  Battery temperature was 28.0-28.1 °C across the four runs, with USB power. No CPU-frequency
+  gate was applied. Only this separate benchmark app was installed and launched.
+- iOS: iPhone 17 Pro, iOS 26.6.2, Flutter 3.47.8 **release AOT**, unlocked before and after
+  each run. Every case records `AppLifecycleState.resumed`. Results are written outside the
+  timed loop to the benchmark app's own temporary file and copied back with `devicectl`;
+  release console capture did not deliver the Dart records. No thermal telemetry is available.
+- Linux: official `dart:3.13.7-sdk` arm64 image, LinuxKit 7.0.14 in Docker Desktop on the same
+  Mac, standalone AOT. This is a **virtualized Linux result**, not a separate physical Linux
+  machine. Both sides use the same container environment and collection 1.19.1.
+- Web: Chrome 156.0.8078.79 and Firefox 158.0.1 on the Mac. Explicitly precompiled test
+  wrappers use `dart compile js -O4` and `dart compile wasm -O2`, without assertions.
+  `package:test` only launches browsers and transports results. Its default Wasm test
+  compiler uses `-O0` with assertions and is not used for these measurements. One initial
+  Firefox JS launch exited before connecting; the successful complete retry is measured.
+
+### 18.2 Main operation timings
+
+Times are ns per operation. Speedup is before / after; greater than 1 is faster. Compare
+before and after within a row, not absolute speed across different machines or runtimes.
+
+| Target | Varied six-digit hex + RGBA, before → after (ns) | Speedup | Parse + mix hex speedup | Hex hover speedup |
+|---|---:|---:|---:|---:|
+| macOS arm64 AOT | 100.8 → 59.6 | 1.69x | 1.20x | 1.07x |
+| Pixel 8a / Android 17 | 182.2 → 95.6 | 1.91x | 1.25x | 1.08x |
+| iPhone 17 Pro / iOS 26.6.2 | 99.6 → 55.1 | 1.81x | 1.33x | 1.12x |
+| Linux arm64 AOT / Docker VM | 104.9 → 59.8 | 1.75x | 1.25x | 1.11x |
+| Chrome 156 / dart2js | 156.9 → 81.5 | 1.93x | 1.47x | 1.12x |
+| Chrome 156 / dart2wasm | 134.1 → 42.0 | 3.20x | 1.99x | 1.25x |
+| Firefox 158 / dart2js | 132.2 → 98.7 | 1.34x | 1.34x | 1.04x |
+| Firefox 158 / dart2wasm | 366.2 → 97.7 | 3.75x | 2.42x | 1.37x |
+
+### 18.3 All 13 cases
+
+Percent of time saved, `100 × (before - after) / before`. Negative values mean an observed
+slowdown. The unaffected operations are controls; there is no reason to expect the hex
+change to speed up cached mixing, RGB formatting or non-hex parsing. The earlier roughly
+7x result is a different, constant-input `valid`-only microbenchmark, not a whole-library
+speedup. No figure here measures chart frame rate, GPU work, or a warm color-cache hit.
+
+| Case | macOS AOT | Android | iOS | Linux VM | Chrome JS | Chrome Wasm | Firefox JS | Firefox Wasm |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `hex6_constant_valid` | +44.2% | +52.1% | +50.2% | +46.4% | +45.6% | +75.9% | +16.9% | +76.0% |
+| `hex3` | +27.3% | +37.3% | +32.7% | +30.5% | +34.0% | +52.4% | +27.0% | +62.0% |
+| `hex4` | +31.3% | +39.5% | +34.6% | +35.8% | +42.9% | +57.6% | +24.7% | +68.8% |
+| `hex6` | +40.9% | +47.5% | +44.7% | +43.0% | +48.1% | +68.7% | +25.4% | +73.3% |
+| `hex8` | +44.2% | +49.0% | +45.4% | +46.3% | +46.0% | +70.2% | +32.7% | +74.1% |
+| `parse_mix_hex` | +16.9% | +19.9% | +24.6% | +19.7% | +31.8% | +49.7% | +25.3% | +58.8% |
+| `hover_hex` | +7.0% | +7.3% | +10.8% | +9.6% | +10.9% | +20.0% | +4.3% | +27.1% |
+| `rgba` | +0.6% | -1.6% | -0.1% | +0.7% | -0.2% | -1.0% | +0.0% | +0.0% |
+| `hsl` | -0.6% | -2.2% | -2.0% | +1.2% | +1.1% | +0.1% | -0.6% | +1.4% |
+| `name` | -0.0% | -0.9% | -1.6% | +2.3% | +2.1% | -1.4% | +0.8% | +0.0% |
+| `rgbString` | -2.7% | -2.3% | +1.9% | +0.2% | -2.0% | +0.1% | +4.1% | -0.7% |
+| `clone_mix_cached` | +1.7% | +0.1% | +1.6% | -0.3% | +1.3% | +0.0% | +0.0% | +0.0% |
+| `hover_rgba` | +0.5% | -0.9% | +5.3% | +1.4% | +2.5% | +0.1% | +0.7% | +1.7% |
+
+### 18.4 Coverage limits and evidence
+
+Windows native was not measured: no Windows host or configured Parallels VM was available.
+Safari 27.0.1 was attempted, but `package:test` timed out waiting for it to connect; it has
+no valid result. The web results are desktop-browser measurements, not iPhone Safari or
+Android Chrome measurements. JIT/debug builds and x64 native targets were not benchmarked.
+
+The local evidence is `.handover/kurkle-platform-bench/`: the 13-case source and harness,
+frozen before/after hex files, build/run scripts, metadata, complete raw timing logs,
+`summary.json` and `summary.csv` (all before/after ns values and individual process medians).
+Failed or incomplete attempts are retained separately and contribute no timing results.
+The executable builds remain under `/private/tmp/kurkle-platform-bench/artifacts/`.
+The temporary benchmark app is separate from the gallery; the gallery was not replaced.
+
+## 19. Android profiling and further color optimization
+
+Decision record: [Chart.js ADR 0056](adr/0056-color-performance.md) (proposed).
+"Accepted" below means the selected benchmark candidate; ADR acceptance still needs the
+explicit policy change and durable reproduction evidence described in that record.
+
+Measured and implemented on 2026-10-31. The baseline is the implementation **after** the
+character-code hex fix of section 17, not the older string-map decoder. The source snapshots
+and every experimental variant are working evidence under `.handover/kurkle-android-tuning/`.
+The shipped changes remain pure Dart and keep the pinned @kurkle/color behavior.
+
+### 19.1 What the profiles found
+
+A separate Flutter profile app on the Pixel 8a exposes a VM service extension that runs one
+color workload for 3 s after a 400 ms warm-up. The sampler is enabled at a requested period
+of 100 µs. Each capture has roughly 9,700-12,200 samples. Eight workloads were captured
+before the changes, and again after the first combined candidate. These profiles locate
+work; the timing comparisons below use release AOT with the profiler off.
+
+The initial profile found:
+- Hex parsing spent substantial time converting bounded digits through `_int32`,
+  `jsToInt32` and double/integer conversions. These conversions are unnecessary once a
+  character is known to represent a hex nibble.
+- In RGBA parsing, 52.3% of samples carry the `RegExp_ExecuteMatch` VM tag and another
+  15.2% carry `RegExp_getGroupCount`. Captures also allocate substrings and repeat general
+  numeric validation.
+- `hexString` accounts for 59.1% of inclusive samples in parse-and-mix; the `String_concat`
+  VM tag alone accounts for 31.8% of that workload's samples.
+- Cached cloning/mixing spends 36.2% of self samples in `jsToInt32`, with further work in
+  `_clone`, `_fromObject`, the RGB getter and setter.
+- Hue conversion allocates mapped iterables, another result list, and a list grown by a
+  collection-if. The follow-up profile also exposed the generic array-input adapter used
+  by the private HSL modifier.
+
+### 19.2 Accepted implementation
+
+1. Hex decoding keeps bounded digits as integers. Invalid bitwise digits still produce 0;
+   invalid short alpha still produces NaN. Formatting converts arbitrary channel values
+   with the original ToInt32 fallback outside the safe range.
+2. `simple_parse.dart` handles only a guarded subset: comma notation, ASCII spaces, unsigned
+   one-to-three-digit channels, the required hue percentages, and optional unsigned decimal
+   alpha. Every other form goes to the original regex. Short alpha fractions use one
+   correctly rounded division of exact integers; long decimals still use `double.tryParse`.
+   RGB and hue keep their different alpha rules, including overflow/wrapping behavior.
+3. Regex captures already have a decimal-only alphabet, so their conversion uses
+   `double.tryParse` with NaN on malformed captures, without repeating general JS number
+   syntax validation. Dispatch skips irrelevant name lookups for clear hex/function forms.
+   Name parsing only performs the U+0130 replacement when the character is present.
+4. The RGB getter and clone copy their known private fields directly. Clone preserves the
+   b2n/n2b alpha round trip. Mix reuses its own fresh copy instead of copying again through
+   the setter, and converts weighted channels to an integer directly inside the int32
+   range before applying the byte mask. `RGBA` is a final class; there is no external getter
+   override that these direct field reads could bypass.
+5. Byte conversions have bounded fast paths, with the original full arithmetic retained for
+   negative/out-of-range inputs, NaN and infinities. Hue conversion reuses its private result
+   list and constructs a fixed three-element literal. The private HSL modifier passes its
+   own known components directly. Local inlining improves that hover path.
+6. Native and Wasm RGB/hex formatting use one ASCII buffer. Non-byte RGB channels retain
+   `jsNumberToString`. **dart2js uses string concatenation**: the unconditional buffer form
+   was about 5x slower for RGB formatting in Chrome JS, despite being faster on Android.
+   The compiler environment selects the form at compile time, without a platform import.
+
+The final code is accounted for by the `adapt-kurkle-*` rows of `differences.md`. No global
+parsed-color cache, approximation table, change to the public API, or JS-runtime change was
+needed. The tested remainder-arithmetic replacement did not improve the screening runs,
+and the broad `jsToInt32` inlining experiment was not retained. The late mix-channel
+conversion saved roughly another 6 ns per cached mix on Android and passed web guards.
+
+### 19.3 Pixel 8a release results
+
+Flutter 3.47.8, Dart 3.13.7, Android 17, arm64, USB power. The final accepted series runs
+baseline/final/final/baseline in fresh processes with 16 cases each. Battery temperature is
+31.3 °C before and after every run. No CPU-frequency gate is applied. Each case warms for
+400 ms, then measures 15 batches targeting 30 ms each. The value below is the median of
+its two process medians. This is a small repeated benchmark, not a confidence-interval study.
+
+The same cases and data are used on both sides. Parsing cases vary the input and consume
+all RGBA channels. The guards add long decimal alpha, fractional/percentage/exponent RGB
+notation, and non-canonical hue notation. Timed loops contain no result logging or file I/O.
+
+| Operation | Before (ns/op) | After (ns/op) | Speedup | Time saved |
+|---|---:|---:|---:|---:|
+| Constant hex / valid only | 70.9 | 30.8 | 2.31x | 56.7% |
+| Short RGB hex + RGBA | 79.5 | 42.1 | 1.89x | 47.1% |
+| Short RGBA hex + RGBA | 84.1 | 46.3 | 1.82x | 44.9% |
+| Six-digit hex + RGBA | 100.2 | 46.0 | 2.18x | 54.0% |
+| Eight-digit hex + RGBA | 120.7 | 53.6 | 2.25x | 55.6% |
+| Common RGBA parsing | 1239.8 | 89.8 | 13.80x | 92.8% |
+| Common HSL parsing | 1348.5 | 190.0 | 7.10x | 85.9% |
+| Named color parsing | 101.0 | 62.4 | 1.62x | 38.2% |
+| RGBA with long alpha | 1718.1 | 191.4 | 8.98x | 88.9% |
+| RGB fallback syntax | 1246.5 | 1157.4 | 1.08x | 7.1% |
+| Hue fallback syntax | 1423.4 | 1143.8 | 1.24x | 19.6% |
+| RGB string formatting | 198.7 | 45.9 | 4.33x | 76.9% |
+| Clone and mix parsed colors | 183.2 | 84.2 | 2.17x | 54.0% |
+| Parse and mix hex colors | 848.9 | 164.7 | 5.15x | 80.6% |
+| Hex hover color | 1156.2 | 280.3 | 4.12x | 75.8% |
+| RGBA hover color | 2489.3 | 339.2 | 7.34x | 86.4% |
+
+These are additional gains over the earlier hex fix. They are color-operation CPU costs,
+not whole-chart frame-rate gains. Existing caller caches avoid parsing on a cache hit;
+that hit cannot receive the parsing speedup. Gamma-correct `interpolate`, cold-start costs,
+allocation byte counts and other native devices were not profiled in this series.
+
+### 19.4 Web guard and correctness
+
+Optimized Chrome 156.0.8078.79 runs use dart2js `-O4` and dart2wasm `-O2`, assertions off,
+through precompiled package:test wrappers. Baseline/final/final/baseline runs cover the
+16 Android cases plus standalone hex formatting. The main web comparison precedes only
+the last mix-channel conversion; that conversion has its own two-case A/B/B/A guard.
+
+| Operation | Chrome JS speedup | Chrome Wasm speedup |
+|---|---:|---:|
+| Six-digit hex + RGBA | 2.58x | 2.61x |
+| Common RGBA parsing | 4.90x | 11.19x |
+| Common HSL parsing | 3.66x | 6.23x |
+| RGBA with long alpha | 2.73x | 5.59x |
+| RGB string formatting | 1.18x | 1.44x |
+| Standalone hex formatting | 2.01x | 3.06x |
+| Hex hover color | 2.69x | 2.53x |
+| RGBA hover color | 3.09x | 5.26x |
+
+The final mix-channel guard improves cached mixing by another 1.33x in Chrome JS and 1.11x
+in Chrome Wasm, and parse-and-mix by 1.12x and 1.02x respectively, relative to the preceding
+candidate in that guard. Small differences are not treated as established gains.
+
+The differential oracle compares the frozen baseline and final candidate in **1,234,644
+comparisons on each of VM AOT, dart2js and dart2wasm**. It covers all UTF-16 code units in
+hex positions, malformed and valid function syntax, short/long alpha, wide and non-finite
+channels, byte conversion bounds, clone quantization, hue manipulation and wide-channel
+mixing with exceptional weights. It reports zero differences on all three targets.
+The permanent regression tests additionally pin the fast-path contracts and fallback
+behavior, including the upstream rejection of a trailing newline after `)`.
+
+Final verification: the focused color/helper/animation suite passes 163 tests on the VM
+and 326 across Chrome JS/Wasm; the spec suite passes with its existing skips. Workspace
+analysis, formatting and the seven port checks pass. `status.yaml` and generated `parity.md`
+record the adaptations. No golden image was rewritten.
+
+The working evidence contains both raw CPU profiles, the profiling service and collector,
+all screening variants and raw timings, the final paired APK hashes/temperature records,
+the differential oracle, correctness logs, and `accepted-summary.csv`. A small retained
+Dart/js/bootstrap copy permits rebuilding the comparison. APKs remain in
+`/private/tmp/kurkle-android-tuning/artifacts/`. The temporary Android benchmark app is removed
+after collection; the gallery is not replaced.

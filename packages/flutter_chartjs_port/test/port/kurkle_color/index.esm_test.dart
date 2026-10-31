@@ -92,6 +92,61 @@ void main() {
   });
 
   group('hex.js', () {
+    group('adapt-kurkle-hex-code-units', () {
+      test(
+        'short alpha matches the upstream map for every UTF-16 code unit',
+        () {
+          // The keys of src/hex.js:13, independent of the ASCII range decoder.
+          const digits = '0123456789ABCDEFabcdef';
+          for (var codeUnit = 0; codeUnit <= 0xffff; codeUnit++) {
+            final char = String.fromCharCode(codeUnit);
+            final index = digits.indexOf(char);
+            final alpha = hexParse('#000$char')!.a;
+            if (index < 0) {
+              expect(alpha, isNaN, reason: 'code unit $codeUnit');
+            } else {
+              final digit = index < 16 ? index : index - 6;
+              expect(alpha, digit * 17, reason: 'code unit $codeUnit');
+            }
+          }
+        },
+      );
+
+      test('mixed-case digits keep every supported hex length', () {
+        expect(
+          _members(hexParse('#0Af')),
+          (r: 0.0, g: 170.0, b: 255.0, a: 255.0),
+        );
+        expect(
+          _members(hexParse('#9aF0')),
+          (r: 153.0, g: 170.0, b: 255.0, a: 0.0),
+        );
+        expect(
+          _members(hexParse('#09AfF0')),
+          (r: 9.0, g: 175.0, b: 240.0, a: 255.0),
+        );
+        expect(
+          _members(hexParse('#09AfF0bE')),
+          (r: 9.0, g: 175.0, b: 240.0, a: 190.0),
+        );
+      });
+
+      test('invalid nibbles retain the upstream bitwise conversions', () {
+        expect(
+          _members(hexParse('#g1g2g3g4')),
+          (r: 1.0, g: 2.0, b: 3.0, a: 4.0),
+        );
+        expect(
+          _members(hexParse('#1g2g3g4g')),
+          (r: 16.0, g: 32.0, b: 48.0, a: 64.0),
+        );
+        expect(
+          _members(hexParse('#\u{1f600}f')),
+          (r: 0.0, g: 0.0, b: 255.0, a: 255.0),
+        );
+      });
+    });
+
     test('hexParse', () {
       expect(
         _members(hexParse('#abc')),

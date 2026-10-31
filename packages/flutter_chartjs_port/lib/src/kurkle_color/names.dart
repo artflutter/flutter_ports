@@ -33,7 +33,11 @@ RGBA? nameParse(String str) {
   // unconditional one-to-many lowercase mapping, so the port maps it first
   // and gives the JS result on every target.
   // DIVERGES(chartjs): adapt-kurkle-names-proto, a Map lookup has no prototype.
-  final a = _names![str.replaceAll('\u0130', 'i\u0307').toLowerCase()];
+  // DIVERGES(chartjs): adapt-kurkle-color-dispatch, performance optimisations.
+  final normalized = str.contains('\u0130')
+      ? str.replaceAll('\u0130', 'i\u0307')
+      : str;
+  final a = _names![normalized.toLowerCase()];
   return a == null
       ? null
       : RGBA(r: a[0], g: a[1], b: a[2], a: a.length == 4 ? a[3] : 255);

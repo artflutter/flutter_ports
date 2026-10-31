@@ -122,11 +122,18 @@ package.
     [Chart.js ADR 0050: The public theme API](../packages/flutter_chartjs_port/doc/adr/0050-public-theme-api.md)
     (it supersedes Chart.js ADR 0042),
     [Chart.js ADR 0051: Input events and interaction state](../packages/flutter_chartjs_port/doc/adr/0051-input-events-and-interaction-state.md)
-    (proposed),
+    (accepted),
     [Chart.js ADR 0052: The typed public API](../packages/flutter_chartjs_port/doc/adr/0052-typed-public-api.md)
-    (proposed; on acceptance, it supersedes parts of Chart.js ADRs 0043, 0048 and 0049).
+    (accepted; it supersedes parts of Chart.js ADRs 0043, 0048 and 0049),
     [Chart.js ADR 0053: The resolver fast paths](../packages/flutter_chartjs_port/doc/adr/0053-resolver-fast-paths.md)
-    (rejected).
+    (rejected),
+    [Chart.js ADR 0054: The typed internal model](../packages/flutter_chartjs_port/doc/adr/0054-typed-internal-model.md)
+    (accepted; it supersedes Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs
+    0017, 0036, 0038 and 0050),
+    [Chart.js ADR 0055: The native draw path of the canvas layer](../packages/flutter_chartjs_port/doc/adr/0055-native-draw-path.md)
+    (accepted; it supersedes Chart.js ADR 0013),
+    [Chart.js ADR 0056: Profile-guided color implementation](../packages/flutter_chartjs_port/doc/adr/0056-color-performance.md)
+    (proposed; requires its local policy change and durable comparison evidence).
   - Prior art: [overview](../packages/flutter_chartjs_port/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs_port/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs_port/doc/prior-art/js-runtimes.md),
