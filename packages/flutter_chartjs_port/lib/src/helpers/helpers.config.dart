@@ -99,18 +99,39 @@ Object _keyOf(String name) => optionKeyOf(name) ?? name;
 
 /// The cached option values of a target, by key (an [OptionKey] or a
 /// `String`), in the order of their first write: the typed form of the own
-/// properties of the upstream cache object. A small table: a target caches
-/// few keys, and a key compares by identity.
+/// properties of the upstream cache object.
+///
+/// A table of a few keys is scanned: an [OptionKey] compares by identity.
+/// The resolver of a scale or of the chart options caches dozens of keys,
+/// and a scale reads some of them for each point (`startAngle` and
+/// `reverse` of the radial scale in the filler of a radar). Thus a table of
+/// more than [_scanMax] keys also has a hashed index of the positions, as
+/// the properties of the upstream cache object have.
 final class _Cache {
   List<Object>? _keys;
   List<Object?>? _values;
 
+  /// The position of each key in [_keys], once the table has more than
+  /// [_scanMax] keys. Dart `null` before.
+  Map<Object, int>? _positions;
+
+  /// The most keys that [_index] scans.
+  static const int _scanMax = 8;
+
   int _index(Object key) {
+    final positions = _positions;
+    if (positions != null) return positions[key] ?? -1;
     final keys = _keys;
     if (keys == null) return -1;
+    if (key is OptionKey) {
+      for (var i = 0; i < keys.length; i++) {
+        if (identical(keys[i], key)) return i;
+      }
+      return -1;
+    }
     for (var i = 0; i < keys.length; i++) {
       final k = keys[i];
-      if (identical(k, key) || (key is String && k == key)) return i;
+      if (identical(k, key) || k == key) return i;
     }
     return -1;
   }
@@ -125,9 +146,15 @@ final class _Cache {
     final index = _index(key);
     if (index >= 0) {
       _values![index] = value;
-    } else {
-      (_keys ??= <Object>[]).add(key);
-      (_values ??= <Object?>[]).add(value);
+      return;
+    }
+    final keys = (_keys ??= <Object>[])..add(key);
+    (_values ??= <Object?>[]).add(value);
+    final positions = _positions;
+    if (positions != null) {
+      positions[key] = keys.length - 1;
+    } else if (keys.length > _scanMax) {
+      _buildPositions();
     }
   }
 
@@ -136,6 +163,13 @@ final class _Cache {
     if (index < 0) return;
     _keys!.removeAt(index);
     _values!.removeAt(index);
+    if (_positions != null) _buildPositions();
+  }
+
+  /// Builds [_positions] from [_keys].
+  void _buildPositions() {
+    final keys = _keys!;
+    _positions = {for (var i = 0; i < keys.length; i++) keys[i]: i};
   }
 
   /// The names of the cached keys, in their order.
