@@ -482,7 +482,8 @@ imports neither forui nor Material.
 ### 2.12 ADR: Toolchain pin and library floor (gate: the change that moves `.fvmrc` to 3.47.7)
 
 **Decision** (the porting lead, on the request of the maintainer, 2026-10-21).
-- Pin `.fvmrc` at Flutter 3.47.7 (Dart 3.13.5). CI reads the same file.
+- Pin `.fvmrc` at Flutter 3.47.8 (Dart 3.13.7). CI reads the same file. The maintainer moved the
+  pin from 3.47.7 on 2026-10-31.
 - All packages of the workspace and the gallery have the floor `sdk: ^3.13.0` and
   `flutter: ">=3.47.0"`. The root `pubspec.yaml` has `sdk: ^3.13.0`. Phase 9 sets the published
   floor.

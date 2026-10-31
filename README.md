@@ -51,7 +51,7 @@ docs/                      prior art, ADRs, per-port roadmap and parity tracker
 
 ## Getting started
 
-Requires Flutter 3.47.7 with Dart 3.13.5 (`.fvmrc`).
+Requires Flutter 3.47.8 with Dart 3.13.7 (`.fvmrc`).
 
 ```sh
 git clone https://github.com/artflutter/flutter_ports.git

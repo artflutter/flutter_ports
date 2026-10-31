@@ -1497,6 +1497,6 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `port-checks`, `upstream-manifest`, `gallery-web`,
   `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
-- Toolchain: Flutter 3.47.7 (Dart 3.13.5), pinned in `.fvmrc`; CI reads the same file. All
+- Toolchain: Flutter 3.47.8 (Dart 3.13.7), pinned in `.fvmrc`; CI reads the same file. All
   packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`
   (`packages/flutter_chartjs_port/doc/porting-flow.md` §2.12).

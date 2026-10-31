@@ -3,7 +3,7 @@
 Thanks for helping. The porting rules live in [AGENTS.md](AGENTS.md#porting-rules). They apply
 to people as much as to agents.
 
-- **Setup:** Flutter 3.47.7 with Dart 3.13.5 (`.fvmrc`), then `flutter pub get` and
+- **Setup:** Flutter 3.47.8 with Dart 3.13.7 (`.fvmrc`), then `flutter pub get` and
   `dart run melos run upstream` at the repository root. `upstream` checks out every `third_party/`
   submodule. Install the git hooks with [lefthook](https://lefthook.dev) 1.0 or newer:
   `lefthook install`. The `test:web` script needs Google Chrome. To generate reference data, use
