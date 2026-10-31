@@ -169,9 +169,13 @@ Object? _spanGaps(Object? options) => options is LineOptions
 
 /// The option `stepped` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _stepped(Object? options) => options is LineOptions
-    ? rawOption(options, OptionKey.stepped, options.stepped)
-    : _byName(options, 'stepped');
+///
+/// `_pathSegment` reads it for each point (element.line.js:89). Thus a
+/// [LineOptions] gives the raw value of its own getter
+/// ([LineOptions.steppedValue], the result of [rawOption] with no dispatch
+/// on the key).
+Object? _stepped(Object? options) =>
+    options is LineOptions ? options.steppedValue : _byName(options, 'stepped');
 
 /// The `ToBoolean` of the option `tension` of [options]: a typed field with
 /// its value tests the number with no box.
