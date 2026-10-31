@@ -952,6 +952,13 @@ Changes to the cited files:
   Chart.js ADRs 0013 and 0014 do not change. `lib/src/canvas/` reads no chart option, so the forms
   of §7 need no change. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No other trigger occurred.
+- 2026-10-31, the figures of phase 10. `doc/performance.md` gets section 16 at its end and one
+  sentence in its scope list: no cited section number changes. Section 16.4 records the night A/B
+  of §7.6 on the Pixel 8a and the iPhone 17 Pro, with the lean rules of the maintainer (2 pairs, no
+  confirmation series, the raster check with 2 runs of each side). macOS and Chrome did not run the
+  A/B of the forms alone. The rule text of §7.6 does not change. No library file, test or gallery
+  file changes, and `doc/parity.md` does not change. The references, the inventory (§1.1), the
+  tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

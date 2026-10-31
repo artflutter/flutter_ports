@@ -18,7 +18,10 @@
   ([Chart.js ADR 0042](adr/0042-theming.md)), section 14.7 the figures of step 8 and section 14.9
   the night series after the step 8 record (Chart.js ADR 0044, P3, P5 and P6). Section 15 has the
   widget figures of phase 9: night 1, with the series A-N1 and A-N3 of
-  [Chart.js ADR 0049](adr/0049-chart-view-widget.md).
+  [Chart.js ADR 0049](adr/0049-chart-view-widget.md). Section 16 has the figures of phase 10: the
+  typed internal model ([Chart.js ADR 0054](adr/0054-typed-internal-model.md)) and the native draw
+  path ([Chart.js ADR 0055](adr/0055-native-draw-path.md)) against the code before them, and the
+  five speed fixes.
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -4373,3 +4376,263 @@ These facts do not change a decision.
 | A-N1, the overhead of `ChartView` (Chart.js ADR 0049 gate) | macOS, Pixel 8a, VS Code browser | PASS on each; the largest lower end is +0.0744 ms (Pixel 8a, `line-1000`, raster) | the gate figure of A-N1 is recorded; the caveats of section 15.2 stay, and a record run of the Pixel 8a without the accessibility service is open |
 | A-N3, the read of the reduced-motion flag (Chart.js ADR 0049 §7) | macOS, Pixel 8a, VS Code browser | side B does not land on any platform (upper ends above 0.1 ms; h = 4 on macOS); side C not built; no primary interval wholly above 0 | the porting lead opened A11 again and kept side B (2026-10-30) |
 | The added platform | iPhone 17 Pro | A-N1 PASS; A-N3 side B does not land (upper ends above 0.1 ms; h = 2) | figures only; no decision changes |
+
+## 16. The typed internal model and the native draw path (phase 10)
+
+Phase 10 changed two layers. The typed internal model
+([Chart.js ADR 0054](adr/0054-typed-internal-model.md)) replaced the Map model with Dart classes:
+the options, the parsed data, the element properties and the contexts. The native draw path
+([Chart.js ADR 0055](adr/0055-native-draw-path.md)) added five forms to the canvas layer. Section
+16.1 gives the method, and section 16.2 the new code against the old code. Sections 16.3 to 16.6
+give the five speed fixes, the canvas A/B on the phones, the decisions and the open items. The raw
+data, the scripts and the driver logs are working files of phase 10, not committed.
+
+### 16.1 The method
+
+The maintainer set lean rules for the measurements of phase 10 on 2026-10-31. Each series of this
+section has two pairs for each cell: pair 1 runs A, then B, and pair 2 runs B, then A. No gate of
+the quiet Mac applies, because the alternating order gives the load of the Mac to both sides. No
+stage 2, no confirmation series and no independent recompute ran. A figure over 2 pairs shows a
+direction only. The porting lead accepts a design record when its code passes the tests, and a
+later measurement can still reject a change. Thus Chart.js ADRs 0054 and 0055 were accepted before
+these figures.
+
+**The speed series (sections 16.2 and 16.3).**
+- Sides. A is `62b5477`, the `main` before phase 10. B is `0165c25`, the `main` with the typed
+  internal model, the native draw path and the close step of Chart.js ADR 0054. The benchmark files
+  differ in one line: the parameter type of the `notifyPlugins` override of the bench chart.
+- Builds. Profile builds of the frameless benchmark (`apps/chartjs_gallery/lib/main_bench.dart`,
+  section 6) with Flutter 3.47.8 (Dart 3.13.7), one at a time. The selector is
+  `CASES=chart,chart.c.indexable,motion,plugins,tooltip,fill,legend,title`, with `BATCHES=15`,
+  `BATCH_MS=200` and `WARMUP_MS=1000`: 107 cells. The driver compared the SHA-256 of each binary
+  before each run.
+- macOS: Apple M3 Max, macOS 27.0.1, AOT, a fresh process for each run with its window in front.
+- Chrome: a dedicated Google Chrome 156.0.8078.79 with its own profile and the dart2wasm build. The
+  page is 800 x 600 CSS px at DPR 2, cross-origin isolated, with `about:blank` before each run.
+- Metric. As in section 14.9: `draw+end` for a draw cell, `update+draw+end` for an update or a
+  frame cell, and `update` for a motion cell. The run value is the median of 15 batches.
+- Valid pairs. On macOS, pair 1 is not usable. In its A run, the app window was in front in 9 of
+  1180 checks. The median ratio of these A values to the A values of pair 2 is 5.6. Thus the macOS
+  figures come from pair 2 only, whose two runs had the window in front in each check. In Chrome,
+  both pairs are valid. Other processes loaded the Mac during the Chrome runs (a 1-minute load of
+  10.5 to 27.4 after the runs).
+
+**The fix checks (section 16.3).** macOS profile builds with Flutter 3.47.8. A scratch profiling
+entry calls `runChartBenchCase` of the same benchmark file with the same batch settings. Each check
+runs the old code, the build before the fix and the build with the fix in turn, 2 or 3 times. After
+the fifth fix, one pair ran all 107 cells: the old code, then the new code.
+
+**The canvas A/B (section 16.4).** A is `62b5477`. B is `f3a79e7`, the tip of the canvas branch.
+The trees differ only in `packages/flutter_chartjs_port/lib/src/canvas/` (3 files, +718/-124). The
+rule is §7.6 of [canvas-cuts-plan.md](canvas-cuts-plan.md) with the lean rules above. Its selector
+has 103 cells: 18 primary cells, 9 guard cells and 76 control cells. A cell is GAIN when the upper
+end of its 95 % interval lies below 0. It is REGRESSION when the lower end lies above the larger of
+0.1 ms and 2 % of A. Else it is NEUTRAL. The interval is the percentile bootstrap of section 14.9
+over the 2 pair differences. A cell whose interval lies wholly above 0 is a possible regression,
+not confirmed. The raster check runs the stress entry 2 times for each side, A B A B, 7 s each. It
+fails when the median `rasterMs` of B is above A by more than the larger of 0.1 ms and 2 %. It also
+fails when the median FPS of B is more than 1 FPS below A.
+- Pixel 8a: Android 17 (`CP3A.260905.009`), profile APKs with Flutter 3.47.7 on both sides, a 3 A
+  charger, the temperature gate of section 15.1 for at most 60 s, the window rule of section 13.6.
+- iPhone 17 Pro: iOS 26.6.2, on the cable, profile builds with Flutter 3.47.8 on both sides. It has
+  no gate, because `devicectl` gives no thermal state.
+
+### 16.2 The new code against the old code (before the speed fixes)
+
+On macOS (pair 2), 47 of the 107 cells are faster by more than 5 %, and 37 are slower by more than
+5 %. In Chrome, with more than 5 % in both pairs, 44 cells are faster and 27 cells are slower. The
+table gives the main cells in ms. The macOS columns give the A run and the B run of pair 2. The
+Chrome columns give the mean of the two runs of each side, and the change of each pair in brackets.
+
+| Cell | macOS A | macOS B | macOS | Chrome A | Chrome B | Chrome (pair 1, pair 2) |
+|---|---:|---:|---:|---:|---:|---|
+| `chart.a` line draw, N 20000 | 4.414 | 3.918 | -11.2 % | 4.5680 | 4.1830 | -8.4 % (-9.0, -7.9) |
+| `chart.bar` draw, N 5000 | 9.748 | 7.992 | -18.0 % | 5.2370 | 2.8810 | -45.0 % (-44.4, -45.5) |
+| `chart.doughnut` draw, N 1000 | 2.860 | 2.446 | -14.5 % | 2.8510 | 2.1090 | -26.0 % (-25.6, -26.4) |
+| `chart.pie` draw, N 5000 | 19.534 | 12.763 | -34.7 % | 12.6105 | 8.9800 | -27.6 % (-14.6, -40.6) |
+| `chart.c` line update, N 20000 | 101.367 | 80.787 | -20.3 % | 104.4520 | 73.5600 | -29.6 % (-29.1, -30.1) |
+| `chart.b` line update, N 1000 | 0.609 | 1.161 | +90.6 % | 0.6090 | 0.8995 | +47.7 % (+46.7, +48.7) |
+| `chart.polarArea` update, N 100 | 0.476 | 0.854 | +79.4 % | 0.4945 | 0.6535 | +32.6 % (+40.3, +24.9) |
+| `chart.radar` draw, N 1000 | 0.430 | 0.545 | +26.7 % | 0.4870 | 0.5435 | +11.8 % (+16.0, +7.5) |
+| `plugins.line` update, config A, 100 datasets, N 100 | 13.447 | 32.358 | +140.6 % | 14.4225 | 24.5980 | +70.9 % (+63.9, +77.8) |
+| `legend.line` update, legend on, N 100 | 1.240 | 3.015 | +143.1 % | 1.2615 | 2.4080 | +90.8 % (+88.2, +93.5) |
+| `legend.line` update, legend on, N 1000 | 4.990 | 8.970 | +79.8 % | 5.6155 | 7.8335 | +39.5 % (+44.1, +34.9) |
+| `fill.gaps` update, N 100 | 0.670 | 1.708 | +154.9 % | 0.8275 | 1.4875 | +79.7 % (+72.2, +87.3) |
+| `fill.radar` draw, N 1000 | 0.439 | 0.623 | +41.9 % | 0.5490 | 0.7370 | +34.2 % (+34.7, +33.8) |
+| `motion.line`, N 1000 | 8.182 | 17.308 | +111.5 % | 9.0595 | 12.7195 | +40.4 % (+49.8, +30.9) |
+| `motion.bar`, N 20000 | 249.081 | 409.656 | +64.5 % | 251.5250 | 307.8535 | +22.4 % (+31.2, +13.6) |
+
+The observations:
+- The draws of the bar, the doughnut, the pie, the polar area and the line points are faster. They
+  gain 9 to 35 % on macOS and 7 to 47 % in Chrome. The `chart.c` updates and the large bar and
+  bubble updates are faster too.
+- The regressions are in the update path. They hit the line charts with real scales, a legend, a
+  title or a fill. They also hit the animated updates (`motion`), the radar and the small `chart.b`
+  and polar area updates.
+- The small cells regress most in %. The added time grows much less than N. On macOS,
+  `legend.line` update with the legend adds 1.775 ms at N 100 and 3.980 ms at N 1000. This points
+  to a cost for each update or each option read, not for each data item.
+- The speed series measures both changes together. Section 16.4 separates the canvas forms.
+
+### 16.3 The causes and the five speed fixes
+
+A CPU profile of the slow cells on macOS found five causes. Each fix is one commit on `main` after
+`0165c25` (`0165c25..8a4b461`, pushed on 2026-10-31). AOT micro-benchmarks gave the unit costs.
+
+| Commit | The cause | The fix |
+|---|---|---|
+| `fae9c8a` | `optionKeyOf` was a switch over 339 string constants. The VM compares the names one by one: about 285 ns for each lookup. Each read by name of a typed scope paid it. In `legend.line` update at N 100, these comparisons took 31 % of the samples. | A hashed `Map` from the JS name to the key: about 6.5 ns for each lookup. |
+| `b4bd7d2` | The resolver cache scanned its key list at each read. The cache of a scale has dozens of keys, and the radial scale reads `startAngle` and `reverse` for each point. In `chart.radar` draw at N 1000, the scan took 22 % of the samples. | A cache of more than 8 keys also keeps a `Map` of the key positions. |
+| `8caf131` | The generator wrote the dispatches on an `OptionKey` or a `ScopeKind` as switch expressions. The VM compiles them to one comparison for each case, in order. In `fill.radar` draw at N 1000, `rawOption` took 22 % of the samples. | Switch statements, which the VM compiles to a jump table: `isPresent` 5.4 to 2.0 ns, `rawOption` 7.1 to 4.1 ns. |
+| `663c96a` | `_pathSegment` read `stepped` of each point through `rawOption`, with a dispatch on the key. In `fill.radar` draw at N 1000, `rawOption` had 16 % of the self time. | The getter `LineOptions.steppedValue` gives the same raw value with no dispatch. |
+| `8a4b461` | The position `Map` of the cache hashes the enum constant: about 6 ns for each read. | A `Uint16List` at `OptionKey.index`: about 1 ns. A `Map` keeps the names that are not keys. |
+
+Chart.js ADR 0054 calls `optionKeyOf` a switch. The accepted ADR does not change, because the form
+of the lookup is an implementation detail.
+
+The check of each fix, in ms (`update+draw+end`), one value for each pass of the three builds:
+
+| Fix | Cell | Old code | Before the fix | With the fix |
+|---|---|---|---|---|
+| `fae9c8a` | `legend.line` update, legend on, N 100 | 1.418, 1.275 | 2.809, 2.837 | 1.245, 1.229 |
+| `fae9c8a` | `motion.line`, N 1000 | 8.311, 7.714 | 15.351, 14.679 | 6.448, 6.027 |
+| `b4bd7d2` | `chart.radar` draw, N 1000 | 0.432, 0.418 | 0.590, 0.540 | 0.453, 0.450 |
+| `b4bd7d2` | `fill.radar` update, N 1000 | 3.063, 2.924 | 2.351, 2.335 | 2.050, 1.996 |
+| `8caf131` | `fill.radar` draw, N 1000 | 0.443, 0.441, 0.458 | 0.526, 0.526, 0.524 | 0.502, 0.507, 0.506 |
+| `663c96a` | `fill.radar` draw, N 1000 | 0.468, 0.473 | 0.526, 0.539 | 0.514, 0.521 |
+| `8a4b461` | `chart.radar` update, N 1000 | 1.388, 1.454 | 1.052, 1.051 | 0.992, 0.950 |
+| `8a4b461` | `legend.line` update, legend on, N 1000 | 5.059, 5.237 | 4.731, 4.261 | 4.464, 4.372 |
+
+After the fifth fix, one pair ran all 107 cells on macOS: the old code `62b5477`, then the new code
+`8a4b461`. 103 cells are faster than the old code, and 4 cells are slower. The column "Before the
+fixes" gives the macOS change of pair 2 of section 16.2. The other columns are in ms.
+
+| Cell | Before the fixes | Old code | New code | Change |
+|---|---:|---:|---:|---:|
+| `chart.b` line update, N 1000 | +90.6 % | 0.614 | 0.480 | -21.8 % |
+| `chart.radar` update, N 1000 | +25.3 % | 1.454 | 0.997 | -31.4 % |
+| `plugins.line` update, config A, 100 datasets, N 100 | +140.6 % | 13.699 | 11.231 | -18.0 % |
+| `legend.line` update, legend on, N 100 | +143.1 % | 1.416 | 1.217 | -14.1 % |
+| `fill.gaps` update, N 100 | +154.9 % | 0.753 | 0.749 | -0.5 % |
+| `motion.line`, N 1000 | +111.5 % | 9.333 | 6.362 | -31.8 % |
+| `motion.bar`, N 20000 | +64.5 % | 325.008 | 249.906 | -23.1 % |
+| `chart.c` line update, N 20000 | -20.3 % | 99.899 | 58.044 | -41.9 % |
+| `fill.radar` draw, N 100 | +26.9 % | 0.077 | 0.079 | +2.6 % |
+| `fill.radar` draw, N 1000 | +41.9 % | 0.560 | 0.601 | +7.3 % |
+| `fill.gaps` draw, N 100 | +3.1 % | 0.262 | 0.270 | +3.1 % |
+| `fill.stack` update, N 100 | +101.7 % | 1.214 | 1.378 | +13.5 % |
+
+The tooltip cells are 4.5 to 17.2 % faster, and the draw gains of section 16.2 stay. The last four
+rows are the slower cells. In the check of `8a4b461`, `fill.radar` draw at N 1000 gives +12.9 % and
++5.9 % against the old code. Thus `fill.radar` draw stays 3 to 13 % slower. `fill.stack` update at
+N 100 has one pair after the fixes.
+
+### 16.4 The native draw path on the phones (Chart.js ADR 0055)
+
+Chart.js ADR 0055 has five forms. The recording canvas saves its state only for a clip, and a fill
+of a shape with no area makes no draw call. The path builder defers the native path. A circular
+sector gets `drawArc`, and a short circle run takes a color for each circle.
+
+**The iPhone 17 Pro.** The bench pairs ran back to back, from 04:47 to 05:16 CET. All 4 bench runs
+and all 20 raster runs are valid. Primary cells: 11 GAIN, 7 NEUTRAL, no REGRESSION. Guard cells: 9
+NEUTRAL. Control cells: 8 GAIN, 68 NEUTRAL, no REGRESSION. The intervals of h = 10 control cells
+lie wholly above 0 (h* = 5). No control cell has a lower end of 0.1 ms and 5 % of A. B - A, ms:
+
+| Cell | Role | A | B - A | Rel. | 95 % interval | Class |
+|---|---|---:|---:|---:|---|---|
+| `chart.pie` draw, N 5000 | primary | 18.4610 | -4.1900 | -22.7 % | -4.9770 .. -3.4030 | GAIN |
+| `chart.polarArea` draw, N 5000 | primary | 16.9105 | -1.6190 | -9.6 % | -2.5290 .. -0.7090 | GAIN |
+| `chart.bar` draw, N 5000 | primary | 8.8625 | -0.7935 | -9.0 % | -1.5170 .. -0.0700 | GAIN |
+| `chart.c.indexable` update, N 20000 | primary | 100.4830 | -16.6280 | -16.5 % | -17.8640 .. -15.3920 | GAIN |
+| `chart.a` draw, N 20000 | guard | 3.9290 | +0.1570 | +4.0 % | -0.0200 .. +0.3340 | NEUTRAL |
+| `chart.doughnut` draw, N 1000 | primary | 2.6140 | +0.1610 | +6.2 % | +0.0810 .. +0.2410 | NEUTRAL |
+| `chart.doughnut` update, N 1000 | control | 3.6175 | +0.1175 | +3.2 % | +0.0500 .. +0.1850 | NEUTRAL |
+| `chart.radar` draw, N 1000 | guard | 0.4310 | +0.0115 | +2.7 % | +0.0010 .. +0.0220 | NEUTRAL |
+| `chart.radar` draw, N 5000 | control | 2.1185 | +0.0980 | +4.6 % | +0.0060 .. +0.1900 | NEUTRAL |
+| `chart.radar` update, N 1000 | control | 1.3425 | +0.0365 | +2.7 % | +0.0030 .. +0.0700 | NEUTRAL |
+| `chart.radar` update, N 5000 | control | 6.5820 | +0.2700 | +4.1 % | +0.1170 .. +0.4230 | NEUTRAL |
+| `fill.radar` draw, N 100 | control | 0.0675 | +0.0035 | +5.2 % | +0.0010 .. +0.0060 | NEUTRAL |
+| `fill.radar` draw, N 1000 | control | 0.4565 | +0.0255 | +5.6 % | +0.0210 .. +0.0300 | NEUTRAL |
+| `fill.radar` update, N 1000 | control | 2.9260 | +0.0590 | +2.0 % | +0.0110 .. +0.1070 | NEUTRAL |
+| `fill.gaps` draw, N 100 | control | 0.2270 | +0.0075 | +3.3 % | +0.0030 .. +0.0120 | NEUTRAL |
+| `fill.gaps` draw, N 1000 | control | 6.0215 | +0.1400 | +2.3 % | +0.1190 .. +0.1610 | NEUTRAL |
+| `tooltip.fade`, 3 datasets, N 1000 | control | 1.0970 | +0.0270 | +2.5 % | +0.0180 .. +0.0360 | NEUTRAL |
+
+The last 12 rows are the possible regressions: their intervals lie wholly above 0, and 2 pairs do
+not confirm them. Most of them draw long filled paths: the radar, the fills and the doughnut ring.
+The plain line (`chart.a`, points only) is NEUTRAL at +3.7 to +4.0 %, and each interval includes 0.
+
+The raster check on the iPhone passes in each cell (medians of the 2 runs of each side). At N 1000
+both sides run at 120 FPS, the display limit, and `rasterMs` changes by +3.7 % (bar) to -28.2 %
+(polar area). At N 5000:
+
+| Type | FPS A | FPS B | UI build B - A | `rasterMs` A | `rasterMs` B |
+|---|---:|---:|---:|---:|---:|
+| bar | 63.39 | 74.52 | -2.1 % | 1.61 | 1.69 |
+| doughnut | 59.52 | 60.11 | -5.7 % | 8.45 | 4.76 |
+| pie | 46.95 | 60.07 | -19.4 % | 7.02 | 4.52 |
+| polar area | 54.01 | 59.97 | -12.0 % | 7.75 | 4.71 |
+| line, scriptable colors, update | 39.95 | 45.85 | -19.6 % | 5.83 | 0.48 |
+
+**The Pixel 8a.** The bench ran from 00:57 to 02:32 CET, with a pause of the maintainer from 01:21
+to 02:23. The phone throttled while it charged. The battery was at 34.1 to 38.2 °C, and the median
+clock of a case window was 1.16 to 2.91 GHz. The window rule left 2 cells with a valid pair, so
+the bench has no class. Single pairs whose two sides have median clocks within 10 % give a
+direction only. Doughnut draw at N 1000 is -30.8 %, and pie draw is -16.4 % at N 100 and -23.2 %
+at N 5000. `chart.c.indexable` update at N 20000 is -27.4 %, and radar update at N 5000 is
+-20.8 %. Bar draw at N 1000 is +0.1 %. `chart.a` draw in pair 2 is +6.0 to +11.8 %.
+
+The `chart.a` figure has a confound. The B run of pair 2 started at 01:13 at 38.2 °C, and the A
+run at 02:24 at 34.1 °C. A code reading found less work for each point in B: no
+`ui.Path.reset()` call and no cos or sin. On the iPhone, whose pairs ran back to back, `chart.a`
+is NEUTRAL.
+
+The raster check on the Pixel 8a, medians of the 2 runs of each side:
+
+| Type | N | FPS A | FPS B | UI build B - A | `rasterMs` A | `rasterMs` B | Check |
+|---|---:|---:|---:|---:|---:|---:|---|
+| bar | 1000 | 45.03 | 50.88 | -18.2 % | 9.67 | 8.37 | pass |
+| bar | 5000 | 29.39 | 29.51 | -7.6 % | 19.68 | 20.45 | FAIL (`rasterMs` +4.0 %) |
+| doughnut | 1000 | 48.23 | 51.98 | -1.5 % | 15.04 | 12.77 | pass |
+| doughnut | 5000 | 15.84 | 16.75 | -18.6 % | 45.39 | 50.39 | FAIL (`rasterMs` +11.0 %) |
+| pie | 1000 | 53.83 | 55.47 | -4.2 % | 13.74 | 12.00 | pass |
+| pie | 5000 | 14.04 | 18.40 | -23.2 % | 58.48 | 45.48 | pass |
+| polar area | 1000 | 54.42 | 55.31 | -0.8 % | 13.46 | 12.12 | pass |
+| polar area | 5000 | 15.36 | 17.95 | -22.4 % | 46.61 | 47.41 | pass |
+| line, scriptable colors, update | 5000 | 15.82 | 19.45 | -19.7 % | 36.16 | 8.16 | pass |
+
+The FPS rose in each cell, and the UI build time fell in each cell. At N 5000, the raster time rose
+for the doughnut (+5.0 ms), the polar area (+0.80 ms) and the bar (+0.78 ms). The doughnut and the
+bar fail the check by its rule, and the polar area stays below its limit of 2 %. At N 5000, the
+raster time of the doughnut (50.39 ms) is now above its UI build time (39.56 ms).
+
+The decision of the porting lead after the Pixel 8a run (2026-10-31): the five forms stay. Chart.js
+ADR 0055 was accepted when the merged code passed the tests, by the lean rule. A later measurement
+on macOS or in Chrome can still reject a form.
+
+### 16.5 The decisions
+
+| Series | Platforms | Result | Consequence |
+|---|---|---|---|
+| The new code against the old code, before the fixes | macOS (pair 2), Chrome | The draws are faster: -9 to -35 % on macOS, -7 to -47 % in Chrome. Many updates are slower: up to +154.9 % on macOS and +103.2 % in Chrome. | A CPU profile and the five speed fixes of section 16.3 |
+| The five speed fixes | macOS | 103 of 107 cells are faster than the old code in one pair. `fill.radar` draw stays 3 to 13 % slower. | The fixes are on `main` (`0165c25..8a4b461`). Chrome was not measured again. |
+| The native draw path | iPhone 17 Pro | 11 GAIN and 7 NEUTRAL of 18 primary cells, no REGRESSION, h = 10 (h* = 5). The raster check passes. | Figures only. The 12 possible regressions stay open. |
+| The native draw path | Pixel 8a | No bench class (the window rule). The FPS rose in each raster cell. The raster check fails at doughnut and bar, N 5000. | The five forms stay. Chart.js ADR 0055 is accepted. |
+
+### 16.6 Open
+
+1. **Chrome after the speed fixes.** Chrome ran only the code before the fixes (section 16.2). A
+   2-pair run of the old code against the current `main` waits for a free Mac.
+2. **The fill draws on macOS.** `fill.radar` draw stays 3 to 13 % slower than the old code.
+   `fill.gaps` draw at N 100 is +3.1 %. `fill.stack` update at N 100 is +13.5 % in one pair and
+   needs a check.
+3. **The possible regressions of the canvas forms on the iPhone** (the radar, the fills, the
+   doughnut at N 1000 and the tooltip fade). The canvas work proposed three cleanups of the path
+   builder. They are a test of `_built` before `_circle` in `_direct()`, plain fields for the
+   current point and a narrower copy in `closePath`. Then a 2-pair check of the radar, the fills
+   and the doughnut at N 1000 follows. On the iPhone, the canvas forms alone give `fill.radar` draw
+   +5.6 % at N 1000. Thus it is possible that item 2 has the same cause.
+4. **The canvas forms alone on macOS and in Chrome.** The canvas A/B ran on the phones only. The
+   speed series measures the forms together with the typed model. The Pixel 8a bench has no class.
+5. **The accessibility path.** The maintainer took the accessibility measurement out of phase 10
+   on 2026-10-30. No figure exists for the semantics path.
