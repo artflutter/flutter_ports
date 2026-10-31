@@ -1273,6 +1273,29 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     super.writeNumber(prop, value);
   }
 
+  /// [Element.numberOf] for the properties of [ArcProps]: the typed getters
+  /// for the class [ArcElement] itself, NaN in the `undefined` state. The
+  /// other ids, and an element of a user subclass, go to [Element].
+  @internal
+  @override
+  double numberOf(AnimatedProp prop) {
+    if (_builtIn) {
+      switch (prop.id) {
+        case animatedPropCircumference:
+          return circumference;
+        case animatedPropEndAngle:
+          return endAngle;
+        case animatedPropInnerRadius:
+          return innerRadius;
+        case animatedPropOuterRadius:
+          return outerRadius;
+        case animatedPropStartAngle:
+          return startAngle;
+      }
+    }
+    return super.numberOf(prop);
+  }
+
   /// The JS property read `element[prop]` (Chart.js ADR 0017, section 5),
   /// for the properties of element.arc.ts:402-409. Other names go to
   /// `Element`.

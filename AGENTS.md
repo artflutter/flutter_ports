@@ -465,7 +465,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       built-in `generateLabels`, the hit boxes (`legendHitBoxes`, also a port-only member of
       `types.LegendElement`, which the keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the
       column sizes are `LegendItem`, `LegendHitBox` and `LegendColumnSize`: typed records with the
-      upstream keys and the face. An item of user code is read by name. The label options
+      upstream keys and the face. An item of user code is read by name. `LegendItem` and
+      `LegendHitBox` implement the port-only interfaces `types.TypedLegendItem` and
+      `types.TypedLegendHitBox`, and `TooltipItem` of `plugin.tooltip.dart` implements
+      `types.TypedTooltipItem`: the views `ChartLegendItem` and `ChartTooltipItem` of the typed API
+      and the keyboard of `ChartView` read them with no import of a plugin. The label options
       `boxWidth`, `boxHeight`, `pointStyleWidth` and `padding` are numbers (row
       `adapt-legend-number-options`). The default `onClick` gives the number of the property key
       of the raw `datasetIndex` to `hide` and `show` (row `adapt-legend-dataset-index`).

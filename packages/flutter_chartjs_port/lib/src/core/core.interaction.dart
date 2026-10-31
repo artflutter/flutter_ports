@@ -49,6 +49,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSquare;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+    show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/parsed.dart'
@@ -394,6 +396,12 @@ List<InteractionItem> _getIntersectItems(
 /// The literal `{x: position.x, y: position.y}` of :147 copies the two
 /// coordinates. `getAngleFromPoint` reads only them. Thus the port passes
 /// [position].
+///
+/// `getProps(['startAngle', 'endAngle'], useFinalPosition)` of :146 is the
+/// typed form [Element.finalNumber] of each angle, with the current value of
+/// [Element.numberOf] (Chart.js ADR 0054 §9): the `ToNumber` that the
+/// arithmetic of `_angleBetween` applies. An element without angles (a
+/// point of a radar) gives NaN, as the read of `undefined` does.
 List<InteractionItem> _getNearestRadialItems(
   types.Chart chart,
   Point position,
@@ -403,12 +411,16 @@ List<InteractionItem> _getNearestRadialItems(
   final items = <InteractionItem>[];
 
   void evaluationFunc(Element element, double datasetIndex, double index) {
-    final props = element.getProps(const [
-      'startAngle',
-      'endAngle',
-    ], useFinalPosition);
-    final startAngle = jsToNumber(props['startAngle']);
-    final endAngle = jsToNumber(props['endAngle']);
+    final startAngle = element.finalNumber(
+      AnimatedProp.startAngle,
+      element.numberOf(AnimatedProp.startAngle),
+      useFinalPosition,
+    );
+    final endAngle = element.finalNumber(
+      AnimatedProp.endAngle,
+      element.numberOf(AnimatedProp.endAngle),
+      useFinalPosition,
+    );
     final (:angle, distance: _) = getAngleFromPoint(element, position);
 
     if (angleBetween(angle, startAngle, endAngle)) {

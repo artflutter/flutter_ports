@@ -1,5 +1,0 @@
-# - stringIndex 8: the left, top, width and height of a legend hit box
-#   (legendHitBoxes of types.LegendElement), a Map of the legend plugin of
-#   lane L4 today. Open: they go with the typed hit boxes of L4 (Chart.js ADR
-#   0054 §12, the legend items and hit boxes as typed classes).
-stringIndex 8

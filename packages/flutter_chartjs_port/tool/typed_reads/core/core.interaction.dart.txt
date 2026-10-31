@@ -3,8 +3,8 @@
 #   that is neither a ParsedItem nor a Map (Chart.js ADR 0054 §8).
 # - stringIndex 1: _skipped reads `skip` of an element of a class that is not
 #   a point element, through the face of the element (Chart.js ADR 0017 §5).
-# - stringIndex 2: the result of getProps(['startAngle', 'endAngle']) of an
-#   arc (core.interaction.js:121-123). Open: the typed form of getProps is the
-#   work of lane L3 (Chart.js ADR 0054 §9); the two reads go with it.
+# The angles of getProps(['startAngle', 'endAngle']) of an arc
+# (core.interaction.js:146) are the typed forms Element.finalNumber and
+# Element.numberOf (Chart.js ADR 0054 §9).
 jsGet 1
-stringIndex 3
+stringIndex 1

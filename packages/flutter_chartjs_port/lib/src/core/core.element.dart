@@ -590,6 +590,22 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
     }
   }
 
+  /// The `ToNumber` of the read `this[prop]` of the property [prop]: the
+  /// current value of [prop] that [finalNumber] takes, for a caller that
+  /// reads a property of an element of any class (`getProps` of
+  /// core.interaction.js:121, Chart.js ADR 0054 §9).
+  ///
+  /// [x] and [y] give their getters. An element class gives the typed
+  /// getters of its own numeric properties and passes the other ids to
+  /// `super`. Another property is the read by name: NaN for an absent
+  /// property, the `ToNumber` of `undefined`.
+  @internal
+  double numberOf(AnimatedProp prop) => switch (prop.id) {
+    animatedPropX => x,
+    animatedPropY => y,
+    _ => jsToNumber(this[prop.name]),
+  };
+
   /// The value that a write by name of [value] stores in the numeric
   /// property [prop] (Chart.js ADR 0017, section 5).
   ///

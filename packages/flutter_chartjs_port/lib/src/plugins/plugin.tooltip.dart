@@ -2722,7 +2722,7 @@ Object? _readByName(Object? object, String name) => jsGet(object, name);
 /// in the upstream key order. Each field holds any JS value: a user callback
 /// reads and writes the item by name through the face, and a key that user
 /// code adds is an extra (Chart.js ADR 0054 §12).
-final class TooltipItem extends TypedRecord {
+final class TooltipItem extends TypedRecord implements types.TypedTooltipItem {
   /// An object without own keys.
   TooltipItem();
 
@@ -2774,6 +2774,7 @@ final class TooltipItem extends TypedRecord {
   Object? _element;
 
   /// `chart`, or [undefined] when absent.
+  @override
   Object? get chart => hasSlot(0) ? _chart : undefined;
 
   set chart(Object? value) {
@@ -2782,6 +2783,7 @@ final class TooltipItem extends TypedRecord {
   }
 
   /// `label`, or [undefined] when absent.
+  @override
   Object? get label => hasSlot(1) ? _label : undefined;
 
   set label(Object? value) {
@@ -2790,6 +2792,7 @@ final class TooltipItem extends TypedRecord {
   }
 
   /// `parsed`, or [undefined] when absent.
+  @override
   Object? get parsed => hasSlot(2) ? _parsed : undefined;
 
   set parsed(Object? value) {
@@ -2798,6 +2801,7 @@ final class TooltipItem extends TypedRecord {
   }
 
   /// `raw`, or [undefined] when absent.
+  @override
   Object? get raw => hasSlot(3) ? _raw : undefined;
 
   set raw(Object? value) {
@@ -2806,6 +2810,7 @@ final class TooltipItem extends TypedRecord {
   }
 
   /// `formattedValue`, or [undefined] when absent.
+  @override
   Object? get formattedValue => hasSlot(4) ? _formattedValue : undefined;
 
   set formattedValue(Object? value) {
@@ -2814,6 +2819,7 @@ final class TooltipItem extends TypedRecord {
   }
 
   /// `dataset`, or [undefined] when absent.
+  @override
   Object? get dataset => hasSlot(5) ? _dataset : undefined;
 
   set dataset(Object? value) {
@@ -2822,6 +2828,7 @@ final class TooltipItem extends TypedRecord {
   }
 
   /// `dataIndex`, or [undefined] when absent.
+  @override
   Object? get dataIndex => hasSlot(6) ? _dataIndex : undefined;
 
   set dataIndex(Object? value) {
@@ -2830,6 +2837,7 @@ final class TooltipItem extends TypedRecord {
   }
 
   /// `datasetIndex`, or [undefined] when absent.
+  @override
   Object? get datasetIndex => hasSlot(7) ? _datasetIndex : undefined;
 
   set datasetIndex(Object? value) {

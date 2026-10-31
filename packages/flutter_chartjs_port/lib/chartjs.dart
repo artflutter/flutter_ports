@@ -63,6 +63,9 @@ export 'package:flutter_chartjs_port/src/types.dart'
         RadialPointElement,
         ScaleRanges,
         SimpleArc,
+        TypedLegendHitBox,
+        TypedLegendItem,
+        TypedTooltipItem,
         VisualElementRange,
         adapters,
         detectPlatform;

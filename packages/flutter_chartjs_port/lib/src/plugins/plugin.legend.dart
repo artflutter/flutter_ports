@@ -1678,7 +1678,7 @@ void _writeItem(Object? item, String name, Object? value) {
 /// Each field holds any JS value: a user callback (`filter`, `sort`,
 /// `onClick`) reads and writes the item by name through the face, and a key
 /// that user code adds is an extra (Chart.js ADR 0054 §12).
-final class LegendItem extends TypedRecord {
+final class LegendItem extends TypedRecord implements types.TypedLegendItem {
   /// An object without own keys.
   LegendItem();
 
@@ -1758,6 +1758,7 @@ final class LegendItem extends TypedRecord {
   Object? _index;
 
   /// `text`, or [undefined] when absent.
+  @override
   Object? get text => hasSlot(0) ? _text : undefined;
 
   set text(Object? value) {
@@ -1782,6 +1783,7 @@ final class LegendItem extends TypedRecord {
   }
 
   /// `hidden`, or [undefined] when absent.
+  @override
   Object? get hidden => hasSlot(3) ? _hidden : undefined;
 
   set hidden(Object? value) {
@@ -1870,6 +1872,7 @@ final class LegendItem extends TypedRecord {
   }
 
   /// `datasetIndex`, or [undefined] when absent.
+  @override
   Object? get datasetIndex => hasSlot(14) ? _datasetIndex : undefined;
 
   set datasetIndex(Object? value) {
@@ -1878,6 +1881,7 @@ final class LegendItem extends TypedRecord {
   }
 
   /// `index`, or [undefined] when absent.
+  @override
   Object? get index => hasSlot(15) ? _index : undefined;
 
   set index(Object? value) {
@@ -1991,7 +1995,8 @@ final class LegendItem extends TypedRecord {
 /// The fields are numbers. A write by name of another value keeps the raw
 /// value for the face and its `ToNumber` in the field, the number that each
 /// arithmetic read of upstream gives (Chart.js ADR 0054 §6).
-final class LegendHitBox extends TypedRecord {
+final class LegendHitBox extends TypedRecord
+    implements types.TypedLegendHitBox {
   /// The hit box `{left, top, row, width, height}` of a horizontal legend
   /// (:183).
   LegendHitBox.row({
@@ -2063,6 +2068,7 @@ final class LegendHitBox extends TypedRecord {
 
   /// `left`: NaN when absent, the `ToNumber` of a value that is not a
   /// number.
+  @override
   double get left => _left;
 
   set left(double value) {
@@ -2072,6 +2078,7 @@ final class LegendHitBox extends TypedRecord {
 
   /// `top`: NaN when absent, the `ToNumber` of a value that is not a
   /// number.
+  @override
   double get top => _top;
 
   set top(double value) {
@@ -2099,6 +2106,7 @@ final class LegendHitBox extends TypedRecord {
 
   /// `width`: NaN when absent, the `ToNumber` of a value that is not a
   /// number.
+  @override
   double get width => _width;
 
   set width(double value) {
@@ -2108,6 +2116,7 @@ final class LegendHitBox extends TypedRecord {
 
   /// `height`: NaN when absent, the `ToNumber` of a value that is not a
   /// number.
+  @override
   double get height => _height;
 
   set height(double value) {

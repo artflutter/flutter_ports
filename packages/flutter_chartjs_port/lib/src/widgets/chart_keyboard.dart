@@ -53,6 +53,29 @@ const _Point _outside = (x: -1.0, y: -1.0);
 /// The number value of a hit box key, else NaN.
 double _num(Object? value) => value is num ? value.toDouble() : double.nan;
 
+/// The `left`, `top`, `width` and `height` of a legend hit box: the typed
+/// fields of a hit box of the legend plugin ([types.TypedLegendHitBox],
+/// Chart.js ADR 0054 §12), else the number values of the reads by name of
+/// an object of another class.
+_Rect _hitBox(AnyObject box) => switch (box) {
+  final types.TypedLegendHitBox box => (
+    left: box.left,
+    top: box.top,
+    width: box.width,
+    height: box.height,
+  ),
+  _ => (
+    left: _num(_byName(box, 'left')),
+    top: _num(_byName(box, 'top')),
+    width: _num(_byName(box, 'width')),
+    height: _num(_byName(box, 'height')),
+  ),
+};
+
+/// The read by name `box[key]` of a hit box that is not a
+/// [types.TypedLegendHitBox].
+Object? _byName(AnyObject box, String key) => box[key];
+
 /// The keyboard state of the chart of one `ChartView` (Chart.js ADR 0051,
 /// sections 2 to 6): the target, the virtual mouse, the key events of
 /// `options.events` and the focus ring.
@@ -292,11 +315,8 @@ final class ChartKeyboard {
       final boxes = _legendBoxes(chart);
       if (boxes == null) return null;
       return [
-        for (final box in boxes)
-          (
-            x: _num(box['left']) + _num(box['width']) / 2,
-            y: _num(box['top']) + _num(box['height']) / 2,
-          ),
+        for (final box in boxes.map(_hitBox))
+          (x: box.left + box.width / 2, y: box.top + box.height / 2),
       ];
     }
     final datasets = readOption(chart.data, OptionKey.datasets);
@@ -357,12 +377,12 @@ final class ChartKeyboard {
     if (group != _legendGroup) return null;
     final boxes = _legendBoxes(chart);
     if (boxes == null) return null;
-    final box = boxes[math.min(_item, boxes.length - 1)];
+    final box = _hitBox(boxes[math.min(_item, boxes.length - 1)]);
     return (
-      left: _num(box['left']) - 3,
-      top: _num(box['top']) - 3,
-      width: _num(box['width']) + 6,
-      height: _num(box['height']) + 6,
+      left: box.left - 3,
+      top: box.top - 3,
+      width: box.width + 6,
+      height: box.height + 6,
     );
   }
 

@@ -1285,8 +1285,85 @@ abstract interface class LegendElement {
   /// a plain object with the keys `left`, `top`, `width` and `height`.
   /// `index.d.ts` does not declare it. The keyboard of `ChartView` reads it,
   /// so that no file of `lib/src/widgets/` imports a plugin (Chart.js ADR
-  /// 0051, section 2).
+  /// 0051, section 2). The hit boxes of the legend plugin are
+  /// [TypedLegendHitBox] objects.
   List<AnyObject> get legendHitBoxes;
+}
+
+/// The typed hit box of a legend item, a port-only interface (Chart.js ADR
+/// 0054 §12): `{left, top, row, width, height}` or `{left, top, col, width,
+/// height}` (plugin.legend.js:183, :217). The class `LegendHitBox` of
+/// `plugin.legend.dart` implements it. Thus the keyboard of `ChartView`
+/// reads a hit box with no import of a plugin (Chart.js ADR 0051 §2). Each
+/// getter gives the number of the key: NaN when absent, the `ToNumber` of a
+/// value that is not a number.
+abstract interface class TypedLegendHitBox {
+  /// `left`.
+  double get left;
+
+  /// `top`.
+  double get top;
+
+  /// `width`.
+  double get width;
+
+  /// `height`.
+  double get height;
+}
+
+/// The typed legend item of the legend plugin, a port-only interface
+/// (Chart.js ADR 0054 §12): an item of the built-in `generateLabels`
+/// (plugin.legend.js:675-701), `LegendItem` of index.d.ts:2326. The class
+/// `LegendItem` of `plugin.legend.dart` implements it. Thus the view
+/// `ChartLegendItem` of the typed API reads its keys with no import of a
+/// plugin (Chart.js ADR 0052 §8). Each getter gives the JS value of the key,
+/// the `undefined` sentinel for an absent key. An item that a user
+/// `generateLabels` gives is a Map: the readers read it by name.
+abstract interface class TypedLegendItem {
+  /// index.d.ts:2330 `text`.
+  Object? get text;
+
+  /// index.d.ts:2341 `datasetIndex`.
+  Object? get datasetIndex;
+
+  /// index.d.ts:2346 `index`.
+  Object? get index;
+
+  /// index.d.ts:2362 `hidden`.
+  Object? get hidden;
+}
+
+/// The typed tooltip item of the tooltip plugin, a port-only interface
+/// (Chart.js ADR 0054 §12): the object of `createTooltipItem`
+/// (plugin.tooltip.js:127-146), `TooltipItem` of index.d.ts:2978. The class
+/// `TooltipItem` of `plugin.tooltip.dart` implements it. Thus the view
+/// `ChartTooltipItem` of the typed API reads its keys with no import of a
+/// plugin (Chart.js ADR 0052 §8). Each getter gives the JS value of the key,
+/// the `undefined` sentinel for an absent key.
+abstract interface class TypedTooltipItem {
+  /// index.d.ts:2982 `chart`.
+  Object? get chart;
+
+  /// index.d.ts:2987 `label`.
+  Object? get label;
+
+  /// index.d.ts:2992 `parsed`.
+  Object? get parsed;
+
+  /// index.d.ts:2997 `raw`.
+  Object? get raw;
+
+  /// index.d.ts:3002 `formattedValue`.
+  Object? get formattedValue;
+
+  /// index.d.ts:3007 `dataset`.
+  Object? get dataset;
+
+  /// index.d.ts:3012 `datasetIndex`.
+  Object? get datasetIndex;
+
+  /// index.d.ts:3017 `dataIndex`.
+  Object? get dataIndex;
 }
 
 /// index.d.ts:2648 `TooltipModel`, with the members of Chart.js ADR 0039,
