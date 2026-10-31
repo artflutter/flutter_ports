@@ -468,5 +468,92 @@ void main() {
         startsWith('lib/src/core/a.dart: jsGet 1 > baseline 0\n'),
       );
     });
+
+    test('--update keeps the reasons of a baseline', () {
+      expect(run(['--update', package]), 0);
+      final baseline = File('$package/tool/typed_reads/core/a.dart.txt');
+      baseline.writeAsStringSync(
+        '# a reason\n#   with two lines\n${baseline.readAsStringSync()}',
+      );
+      tree.write('packages/p/lib/src/core/a.dart', [
+        "final x = jsGet(o, 'k');",
+      ]);
+      expect(run(['--update', package]), 0);
+      expect(
+        baseline.readAsStringSync(),
+        '# a reason\n#   with two lines\njsGet 1\n',
+      );
+      expect(run([package]), 0);
+    });
+
+    test('the structural rule fails on a Map supertype outside lib/src/js', () {
+      expect(run(['--update', package]), 0);
+      tree
+        ..write('packages/p/lib/src/options/o.dart', [
+          'final class O extends MapBase<String, Object?> {}',
+        ])
+        ..write('packages/p/lib/src/js/r.dart', [
+          'final class R extends MapBase<String, Object?> {}',
+        ]);
+      expect(run([package]), 1);
+      expect(
+        out.toString(),
+        'packages/p/lib/src/options/o.dart:1: O has the Map supertype MapBase: '
+        'only a class of lib/src/js/ may be a Map (the structural rule of '
+        'Chart.js ADR 0054 §15)\n'
+        'check:typed-reads: failed, 2 files, 1 errors, 0 below the baseline; '
+        'jsGet 1, jsGetKey 0, stringIndex 1, jsCall 0, jsObjectKeys 0, '
+        'extendsMapBase 0, withMapMixin 0, implementsMap 0.\n',
+      );
+      tree.delete('packages/p/lib/src/options/o.dart');
+      expect(run([package]), 0);
+    });
+  });
+
+  group('findMapSupertypes', () {
+    List<String> found(List<String> lines) => [
+      for (final site in findMapSupertypes(lines.join('\n'))) '$site',
+    ];
+
+    test('finds each Map supertype of a declaration', () {
+      expect(
+        found([
+          'final class A extends MapBase<String, Object?> {}',
+          'class B with MapMixin<String, int> implements Comparable<B> {}',
+          'abstract interface class C implements Map<String, Object?> {}',
+          'mixin D on Map<String, Object?> {}',
+          'final class E extends JsFrozenMap {}',
+          'final class F extends UnmodifiableMapView<String, int> {}',
+          'extension type const G(Map<String, Object?> m) implements Map {}',
+          'class H = Object with MapMixin<String, int>;',
+        ]),
+        [
+          '1 A MapBase',
+          '2 B MapMixin',
+          '3 C Map',
+          '4 D Map',
+          '5 E JsFrozenMap',
+          '6 F UnmodifiableMapView',
+          '7 G Map',
+          '8 H MapMixin',
+        ],
+      );
+    });
+
+    test('ignores other types, comments, strings and representations', () {
+      expect(
+        found([
+          '// class A extends MapBase {}',
+          "const s = 'class B extends MapBase {}';",
+          'final class C implements JsObjectFace {}',
+          'extension type const D(Map<String, Object?> map) {}',
+          'final class E extends Mapper implements MapLike {}',
+          'final class F { final Map<String, Object?> m = {}; }',
+        ]),
+        isEmpty,
+      );
+      expect(isMapTypeName('HashMap'), isTrue);
+      expect(isMapTypeName('Mapping'), isFalse);
+    });
   });
 }

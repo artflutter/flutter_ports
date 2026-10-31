@@ -22,6 +22,11 @@ with 1 when a count is above its baseline, or when a baseline does not parse
 or names no counted file. A count below its baseline passes with a line that
 asks for --update. The default package is the package of this tool.
 
+The structural rule: a class, a mixin or an extension type of lib/src/ outside
+lib/src/js/ (also of lib/src/options/) with a Map supertype (Map, or a name
+that ends with Map, MapBase, MapMixin or MapView) is an error. It has no
+baseline.
+
 Through melos, put the options after "--":
 dart run melos run check:typed-reads -- --update
 
@@ -87,17 +92,23 @@ int run(List<String> args, {required StringSink out, String? base}) {
     sourcePrefix: '$display$sourceDirectory/',
     baselinePrefix: '$display$baselineDirectory/',
   );
-  for (final finding in report.findings) {
+  final structural = mapSupertypeFindings(
+    scanMapSupertypes(package),
+    sourcePrefix: '$display$sourceDirectory/',
+  );
+  for (final finding in [...report.findings, ...structural]) {
     final location = finding.line == null
         ? finding.path
         : '${finding.path}:${finding.line}';
     out.writeln('$location: ${finding.message}');
   }
   final below = report.findings.length - report.errors;
+  final errors = report.errors + structural.length;
+  final passed = errors == 0;
   out.writeln(
-    '$typedReadsName: ${report.passed ? 'passed' : 'failed'}, '
-    '${report.files} files, ${report.errors} errors, $below below the '
+    '$typedReadsName: ${passed ? 'passed' : 'failed'}, '
+    '${report.files} files, $errors errors, $below below the '
     'baseline; ${report.totals.describeAll()}.',
   );
-  return report.passed ? 0 : 1;
+  return passed ? 0 : 1;
 }

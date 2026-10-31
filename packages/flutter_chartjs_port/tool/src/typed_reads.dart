@@ -50,15 +50,28 @@
 ///   contains `Map` (`HashMap`, `MapBase`) do not count. The clause ends at
 ///   `{` or `;`.
 ///
+/// The structural rule ([findMapSupertypes], [scanMapSupertypes]): no class,
+/// mixin or extension type of a file under `lib/src/` outside `lib/src/js/`
+/// has a Map supertype, also in `lib/src/options/` (Chart.js ADR 0054 §15).
+/// A Map supertype is an entry of an `extends`, `with`, `implements` or `on`
+/// clause whose type name is `Map` or ends with `Map`, `MapBase`, `MapMixin`
+/// or `MapView`. The typed objects of the port are not Maps: they read and
+/// write by name through their face (`JsObjectFace`). A Map of the port is
+/// a JS object of the user or a plain object of the JS runtime. The rule has
+/// no baseline: each such class is an error.
+///
 /// Baselines ([formatBaseline], [parseBaseline]). The baseline of the file
 /// `lib/src/<path>` is `tool/typed_reads/<path>.txt`, for example
 /// `tool/typed_reads/core/core.config.dart.txt`. It has one line
 /// `<form> <count>` for each form with a count above 0, in the order of
 /// [ByNameForm], and a line end after each line. A missing baseline means
 /// that each count is 0. The check ignores empty lines and lines that start
-/// with `#`; `--update` writes neither. The update mode owns the folder: it
-/// writes each baseline of a file with a count above 0 and deletes every
-/// other file of the folder.
+/// with `#`. A `#` line is the reason of the allowlist entry of its file
+/// (Chart.js ADR 0054 §15: each by-name site that stays after the close
+/// step has a reason): `--update` keeps the `#` lines of a baseline that it
+/// rewrites, before the counts. The update mode owns the folder: it writes
+/// each baseline of a file with a count above 0 and deletes every other
+/// file of the folder.
 library;
 
 import 'dart:io';
@@ -77,6 +90,10 @@ const String baselineDirectory = 'tool/typed_reads';
 
 /// The folders under [sourceDirectory] whose files do not count.
 const List<String> excludedDirectories = ['js/', 'options/'];
+
+/// The folder under [sourceDirectory] whose classes may have a Map
+/// supertype (the structural rule): the JS runtime.
+const String mapRuntimeDirectory = 'js/';
 
 /// The extension that a baseline adds to the path of its source file.
 const String baselineExtension = '.txt';
@@ -354,6 +371,124 @@ int _skipSpace(String code, int from) {
   return i;
 }
 
+/// A class, a mixin or an extension type of a Dart file with a Map
+/// supertype (the structural rule).
+final class MapSupertype {
+  /// The supertype [type] of the declaration [name] on the 1-based [line].
+  const MapSupertype(this.line, this.name, this.type);
+
+  /// The 1-based line of the declaration.
+  final int line;
+
+  /// The name of the class, the mixin or the extension type.
+  final String name;
+
+  /// The name of the Map supertype.
+  final String type;
+
+  @override
+  String toString() => '$line $name $type';
+}
+
+final RegExp _declaration = RegExp(
+  r'(?<![\w$])(?:class|mixin|extension\s+type)\s+(?:const\s+)?([A-Za-z_$][\w$]*)',
+);
+
+final RegExp _supertypeKeyword = RegExp(
+  r'(?<![\w$])(extends|with|implements|on)(?![\w$])',
+);
+
+/// Whether [name] is the name of a Map type: `Map`, or a name that ends
+/// with `Map`, `MapBase`, `MapMixin` or `MapView`.
+bool isMapTypeName(String name) =>
+    name == 'Map' ||
+    name.endsWith('Map') ||
+    name.endsWith('MapBase') ||
+    name.endsWith('MapMixin') ||
+    name.endsWith('MapView');
+
+/// The declarations of the Dart [text] with a Map supertype, in source
+/// order: the entries of the `extends`, `with`, `implements` and `on`
+/// clauses of each class, mixin and extension type. The code without
+/// comments and string contents counts ([DartSource]).
+List<MapSupertype> findMapSupertypes(String text) {
+  final source = DartSource(text);
+  final code = source.code;
+  final found = <MapSupertype>[];
+  for (final match in _declaration.allMatches(code)) {
+    // The header runs from the name to the `{` of the body, or to the `;`
+    // of a mixin application. The representation `(...)` of an extension
+    // type and the type parameters `<...>` are skipped.
+    var i = match.end;
+    var depth = 0;
+    final header = StringBuffer();
+    while (i < code.length) {
+      final c = code[i];
+      if (c == '(' || c == '<') {
+        depth++;
+      } else if (c == ')' || c == '>') {
+        depth--;
+      } else if (depth == 0 && (c == '{' || c == ';' || c == '=')) {
+        if (c != '=') break;
+      }
+      header.write(depth > 0 || c == ')' || c == '>' ? ' ' : c);
+      i++;
+    }
+    final text = header.toString();
+    final keywords = _supertypeKeyword.allMatches(text).toList();
+    for (var k = 0; k < keywords.length; k++) {
+      final end = k + 1 < keywords.length ? keywords[k + 1].start : text.length;
+      for (final entry in text.substring(keywords[k].end, end).split(',')) {
+        final words = RegExp(r'[A-Za-z_$][\w$]*').allMatches(entry).toList();
+        if (words.isEmpty) continue;
+        final type = words.last.group(0)!;
+        if (isMapTypeName(type)) {
+          found.add(
+            MapSupertype(source.lineOf(match.start), match.group(1)!, type),
+          );
+        }
+      }
+    }
+  }
+  return found;
+}
+
+/// The declarations with a Map supertype in each Dart file under `lib/src/`
+/// of [package] outside `lib/src/js/`, by the path relative to `lib/src/`,
+/// sorted. A file without one has no entry.
+Map<String, List<MapSupertype>> scanMapSupertypes(String package) {
+  final root = '$package/$sourceDirectory';
+  final result = <String, List<MapSupertype>>{};
+  for (final file in dartFilesUnder(root)) {
+    final path = relativePath(root, file);
+    if (!path.endsWith('.dart') || path.startsWith(mapRuntimeDirectory)) {
+      continue;
+    }
+    final found = findMapSupertypes(File(file).readAsStringSync());
+    if (found.isNotEmpty) result[path] = found;
+  }
+  return Map.fromEntries(
+    result.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
+  );
+}
+
+/// The errors of the structural rule for [supertypes] ([scanMapSupertypes]):
+/// one for each declaration with a Map supertype.
+List<Finding> mapSupertypeFindings(
+  Map<String, List<MapSupertype>> supertypes, {
+  String sourcePrefix = '$sourceDirectory/',
+}) => [
+  for (final MapEntry(key: path, value: found) in supertypes.entries)
+    for (final site in found)
+      Finding(
+        '$sourcePrefix$path',
+        site.line,
+        '${site.name} has the Map supertype ${site.type}: only a class of '
+            '$sourceDirectory/$mapRuntimeDirectory may be a Map (the structural '
+            'rule of Chart.js ADR 0054 §15)',
+      ),
+];
+
 /// The baseline text of [counts]: one `<form> <count>` line for each form
 /// with a count above 0, in the order of [ByNameForm], each with a line end.
 String formatBaseline(FormCounts counts) => [
@@ -592,9 +727,11 @@ BaselineUpdate writeBaselines(String package, Map<String, FormCounts> counts) {
       deleted++;
     }
   }
-  for (final MapEntry(key: path, value: text) in wanted.entries) {
+  for (final MapEntry(key: path, value: counts) in wanted.entries) {
     final file = File('$root/$path');
-    if (file.existsSync() && file.readAsStringSync() == text) {
+    final old = file.existsSync() ? file.readAsStringSync() : null;
+    final text = '${old == null ? '' : baselineComments(old)}$counts';
+    if (old == text) {
       unchanged++;
     } else {
       file
@@ -606,6 +743,15 @@ BaselineUpdate writeBaselines(String package, Map<String, FormCounts> counts) {
   _deleteEmptyFolders(Directory(root));
   return (written: written, deleted: deleted, unchanged: unchanged);
 }
+
+/// The `#` lines of the baseline [text], each with a line end, in their
+/// order: the reasons of the allowlist entry that `--update` keeps.
+String baselineComments(String text) => [
+  for (final raw in text.split('\n'))
+    if ((raw.endsWith('\r') ? raw.substring(0, raw.length - 1) : raw)
+        .startsWith('#'))
+      '${raw.endsWith('\r') ? raw.substring(0, raw.length - 1) : raw}\n',
+].join();
 
 /// The files under [directory], sorted, as absolute `/` paths.
 List<String> _filesUnder(String directory) {
