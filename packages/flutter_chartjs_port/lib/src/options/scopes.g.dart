@@ -134,15 +134,24 @@ base class ChartConfigurationScope extends OptionScope {
       store(OptionKey.dollarTheme, classify(OptionKey.dollarTheme, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.options => _options,
-    OptionKey.plugins => _plugins,
-    OptionKey.platform => _platform,
-    OptionKey.dollarTheme => _dollarTheme,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.options:
+        return _options;
+      case OptionKey.plugins:
+        return _plugins;
+      case OptionKey.platform:
+        return _platform;
+      case OptionKey.dollarTheme:
+        return _dollarTheme;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -169,26 +178,39 @@ base class ChartConfigurationScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.options ||
-    OptionKey.plugins ||
-    OptionKey.platform ||
-    OptionKey.dollarTheme => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.options:
+      case OptionKey.plugins:
+      case OptionKey.platform:
+      case OptionKey.dollarTheme:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyScope<ChartDataScope>(raw),
-    OptionKey.options => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.plugins => classifyUnion(raw, 16),
-    OptionKey.platform => classifyUnion(raw, 64),
-    OptionKey.dollarTheme => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyScope<ChartDataScope>(raw);
+      case OptionKey.options:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.plugins:
+        return classifyUnion(raw, 16);
+      case OptionKey.platform:
+        return classifyUnion(raw, 64);
+      case OptionKey.dollarTheme:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:3892 ChartData, the `data` object of the config.
@@ -272,13 +294,20 @@ base class ChartDataScope extends OptionScope {
       store(OptionKey.datasets, classify(OptionKey.datasets, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.labels => _labels,
-    OptionKey.xLabels => _xLabels,
-    OptionKey.yLabels => _yLabels,
-    OptionKey.datasets => _datasets,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.labels:
+        return _labels;
+      case OptionKey.xLabels:
+        return _xLabels;
+      case OptionKey.yLabels:
+        return _yLabels;
+      case OptionKey.datasets:
+        return _datasets;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -297,22 +326,33 @@ base class ChartDataScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.labels ||
-    OptionKey.xLabels ||
-    OptionKey.yLabels ||
-    OptionKey.datasets => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.labels:
+      case OptionKey.xLabels:
+      case OptionKey.yLabels:
+      case OptionKey.datasets:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.labels => classifyUnion(raw, 16),
-    OptionKey.xLabels => classifyUnion(raw, 16),
-    OptionKey.yLabels => classifyUnion(raw, 16),
-    OptionKey.datasets => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.labels:
+        return classifyUnion(raw, 16);
+      case OptionKey.xLabels:
+        return classifyUnion(raw, 16);
+      case OptionKey.yLabels:
+        return classifyUnion(raw, 16);
+      case OptionKey.datasets:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:3843 ChartOptions (index.d.ts:1629 CoreChartOptions with
@@ -2189,112 +2229,218 @@ base class ChartOptionsScope extends OptionScope {
       store(OptionKey.cutoutPercentage, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.datasets => _datasets,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.color => _color,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.font => _font,
-    OptionKey.responsive => _responsive,
-    OptionKey.maintainAspectRatio => _maintainAspectRatio,
-    OptionKey.resizeDelay => _resizeDelay,
-    OptionKey.aspectRatio => _aspectRatio,
-    OptionKey.locale => _locale,
-    OptionKey.onResize => _onResize,
-    OptionKey.devicePixelRatio => _devicePixelRatio,
-    OptionKey.interaction => _interaction,
-    OptionKey.hover => _hover,
-    OptionKey.events => _events,
-    OptionKey.onHover => _onHover,
-    OptionKey.onClick => _onClick,
-    OptionKey.layout => _layout,
-    OptionKey.elements => _elements,
-    OptionKey.plugins => _plugins,
-    OptionKey.scales => _scales,
-    OptionKey.skipNull => _skipNull,
-    OptionKey.spanGaps => _spanGaps,
-    OptionKey.showLine => _showLine,
-    OptionKey.circumference => _circumference,
-    OptionKey.cutout => _cutout,
-    OptionKey.offset => _offset,
-    OptionKey.radius => _radius,
-    OptionKey.rotation => _rotation,
-    OptionKey.spacing => _spacing,
-    OptionKey.spacingMode => _spacingMode,
-    OptionKey.startAngle => _startAngle,
-    OptionKey.scale => _scale,
-    OptionKey.hoverColor => _hoverColor,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.base => _base,
-    OptionKey.borderSkipped => _borderSkipped,
-    OptionKey.borderRadius => _borderRadius,
-    OptionKey.inflateAmount => _inflateAmount,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.barPercentage => _barPercentage,
-    OptionKey.categoryPercentage => _categoryPercentage,
-    OptionKey.barThickness => _barThickness,
-    OptionKey.maxBarThickness => _maxBarThickness,
-    OptionKey.minBarLength => _minBarLength,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.grouped => _grouped,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.hoverBorderRadius => _hoverBorderRadius,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.fill => _fill,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.pointBackgroundColor => _pointBackgroundColor,
-    OptionKey.pointBorderColor => _pointBorderColor,
-    OptionKey.pointBorderWidth => _pointBorderWidth,
-    OptionKey.pointHitRadius => _pointHitRadius,
-    OptionKey.pointRadius => _pointRadius,
-    OptionKey.pointRotation => _pointRotation,
-    OptionKey.pointHoverBackgroundColor => _pointHoverBackgroundColor,
-    OptionKey.pointHoverBorderColor => _pointHoverBorderColor,
-    OptionKey.pointHoverBorderWidth => _pointHoverBorderWidth,
-    OptionKey.pointHoverRadius => _pointHoverRadius,
-    OptionKey.borderCapStyle => _borderCapStyle,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.capBezierPoints => _capBezierPoints,
-    OptionKey.cubicInterpolationMode => _cubicInterpolationMode,
-    OptionKey.tension => _tension,
-    OptionKey.stepped => _stepped,
-    OptionKey.segment => _segment,
-    OptionKey.hoverBorderCapStyle => _hoverBorderCapStyle,
-    OptionKey.hoverBorderDash => _hoverBorderDash,
-    OptionKey.hoverBorderDashOffset => _hoverBorderDashOffset,
-    OptionKey.hoverBorderJoinStyle => _hoverBorderJoinStyle,
-    OptionKey.hitRadius => _hitRadius,
-    OptionKey.hoverRadius => _hoverRadius,
-    OptionKey.selfJoin => _selfJoin,
-    OptionKey.borderAlign => _borderAlign,
-    OptionKey.circular => _circular,
-    OptionKey.hoverOffset => _hoverOffset,
-    OptionKey.weight => _weight,
-    OptionKey.angle => _angle,
-    OptionKey.cutoutPercentage => _cutoutPercentage,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.datasets:
+        return _datasets;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.font:
+        return _font;
+      case OptionKey.responsive:
+        return _responsive;
+      case OptionKey.maintainAspectRatio:
+        return _maintainAspectRatio;
+      case OptionKey.resizeDelay:
+        return _resizeDelay;
+      case OptionKey.aspectRatio:
+        return _aspectRatio;
+      case OptionKey.locale:
+        return _locale;
+      case OptionKey.onResize:
+        return _onResize;
+      case OptionKey.devicePixelRatio:
+        return _devicePixelRatio;
+      case OptionKey.interaction:
+        return _interaction;
+      case OptionKey.hover:
+        return _hover;
+      case OptionKey.events:
+        return _events;
+      case OptionKey.onHover:
+        return _onHover;
+      case OptionKey.onClick:
+        return _onClick;
+      case OptionKey.layout:
+        return _layout;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.plugins:
+        return _plugins;
+      case OptionKey.scales:
+        return _scales;
+      case OptionKey.skipNull:
+        return _skipNull;
+      case OptionKey.spanGaps:
+        return _spanGaps;
+      case OptionKey.showLine:
+        return _showLine;
+      case OptionKey.circumference:
+        return _circumference;
+      case OptionKey.cutout:
+        return _cutout;
+      case OptionKey.offset:
+        return _offset;
+      case OptionKey.radius:
+        return _radius;
+      case OptionKey.rotation:
+        return _rotation;
+      case OptionKey.spacing:
+        return _spacing;
+      case OptionKey.spacingMode:
+        return _spacingMode;
+      case OptionKey.startAngle:
+        return _startAngle;
+      case OptionKey.scale:
+        return _scale;
+      case OptionKey.hoverColor:
+        return _hoverColor;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.base:
+        return _base;
+      case OptionKey.borderSkipped:
+        return _borderSkipped;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      case OptionKey.inflateAmount:
+        return _inflateAmount;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.barPercentage:
+        return _barPercentage;
+      case OptionKey.categoryPercentage:
+        return _categoryPercentage;
+      case OptionKey.barThickness:
+        return _barThickness;
+      case OptionKey.maxBarThickness:
+        return _maxBarThickness;
+      case OptionKey.minBarLength:
+        return _minBarLength;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.grouped:
+        return _grouped;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.hoverBorderRadius:
+        return _hoverBorderRadius;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.pointBackgroundColor:
+        return _pointBackgroundColor;
+      case OptionKey.pointBorderColor:
+        return _pointBorderColor;
+      case OptionKey.pointBorderWidth:
+        return _pointBorderWidth;
+      case OptionKey.pointHitRadius:
+        return _pointHitRadius;
+      case OptionKey.pointRadius:
+        return _pointRadius;
+      case OptionKey.pointRotation:
+        return _pointRotation;
+      case OptionKey.pointHoverBackgroundColor:
+        return _pointHoverBackgroundColor;
+      case OptionKey.pointHoverBorderColor:
+        return _pointHoverBorderColor;
+      case OptionKey.pointHoverBorderWidth:
+        return _pointHoverBorderWidth;
+      case OptionKey.pointHoverRadius:
+        return _pointHoverRadius;
+      case OptionKey.borderCapStyle:
+        return _borderCapStyle;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.capBezierPoints:
+        return _capBezierPoints;
+      case OptionKey.cubicInterpolationMode:
+        return _cubicInterpolationMode;
+      case OptionKey.tension:
+        return _tension;
+      case OptionKey.stepped:
+        return _stepped;
+      case OptionKey.segment:
+        return _segment;
+      case OptionKey.hoverBorderCapStyle:
+        return _hoverBorderCapStyle;
+      case OptionKey.hoverBorderDash:
+        return _hoverBorderDash;
+      case OptionKey.hoverBorderDashOffset:
+        return _hoverBorderDashOffset;
+      case OptionKey.hoverBorderJoinStyle:
+        return _hoverBorderJoinStyle;
+      case OptionKey.hitRadius:
+        return _hitRadius;
+      case OptionKey.hoverRadius:
+        return _hoverRadius;
+      case OptionKey.selfJoin:
+        return _selfJoin;
+      case OptionKey.borderAlign:
+        return _borderAlign;
+      case OptionKey.circular:
+        return _circular;
+      case OptionKey.hoverOffset:
+        return _hoverOffset;
+      case OptionKey.weight:
+        return _weight;
+      case OptionKey.angle:
+        return _angle;
+      case OptionKey.cutoutPercentage:
+        return _cutoutPercentage;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -2514,220 +2660,330 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.datasets ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.color ||
-    OptionKey.backgroundColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.borderColor ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.font ||
-    OptionKey.responsive ||
-    OptionKey.maintainAspectRatio ||
-    OptionKey.resizeDelay ||
-    OptionKey.aspectRatio ||
-    OptionKey.locale ||
-    OptionKey.onResize ||
-    OptionKey.devicePixelRatio ||
-    OptionKey.interaction ||
-    OptionKey.hover ||
-    OptionKey.events ||
-    OptionKey.onHover ||
-    OptionKey.onClick ||
-    OptionKey.layout ||
-    OptionKey.elements ||
-    OptionKey.plugins ||
-    OptionKey.scales ||
-    OptionKey.skipNull ||
-    OptionKey.spanGaps ||
-    OptionKey.showLine ||
-    OptionKey.circumference ||
-    OptionKey.cutout ||
-    OptionKey.offset ||
-    OptionKey.radius ||
-    OptionKey.rotation ||
-    OptionKey.spacing ||
-    OptionKey.spacingMode ||
-    OptionKey.startAngle ||
-    OptionKey.scale ||
-    OptionKey.hoverColor ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.base ||
-    OptionKey.borderSkipped ||
-    OptionKey.borderRadius ||
-    OptionKey.inflateAmount ||
-    OptionKey.borderWidth ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.barPercentage ||
-    OptionKey.categoryPercentage ||
-    OptionKey.barThickness ||
-    OptionKey.maxBarThickness ||
-    OptionKey.minBarLength ||
-    OptionKey.pointStyle ||
-    OptionKey.grouped ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.hoverBorderRadius ||
-    OptionKey.rAxisID ||
-    OptionKey.fill ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.pointBackgroundColor ||
-    OptionKey.pointBorderColor ||
-    OptionKey.pointBorderWidth ||
-    OptionKey.pointHitRadius ||
-    OptionKey.pointRadius ||
-    OptionKey.pointRotation ||
-    OptionKey.pointHoverBackgroundColor ||
-    OptionKey.pointHoverBorderColor ||
-    OptionKey.pointHoverBorderWidth ||
-    OptionKey.pointHoverRadius ||
-    OptionKey.borderCapStyle ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.capBezierPoints ||
-    OptionKey.cubicInterpolationMode ||
-    OptionKey.tension ||
-    OptionKey.stepped ||
-    OptionKey.segment ||
-    OptionKey.hoverBorderCapStyle ||
-    OptionKey.hoverBorderDash ||
-    OptionKey.hoverBorderDashOffset ||
-    OptionKey.hoverBorderJoinStyle ||
-    OptionKey.hitRadius ||
-    OptionKey.hoverRadius ||
-    OptionKey.selfJoin ||
-    OptionKey.borderAlign ||
-    OptionKey.circular ||
-    OptionKey.hoverOffset ||
-    OptionKey.weight ||
-    OptionKey.angle ||
-    OptionKey.cutoutPercentage => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.datasets:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.color:
+      case OptionKey.backgroundColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.borderColor:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.font:
+      case OptionKey.responsive:
+      case OptionKey.maintainAspectRatio:
+      case OptionKey.resizeDelay:
+      case OptionKey.aspectRatio:
+      case OptionKey.locale:
+      case OptionKey.onResize:
+      case OptionKey.devicePixelRatio:
+      case OptionKey.interaction:
+      case OptionKey.hover:
+      case OptionKey.events:
+      case OptionKey.onHover:
+      case OptionKey.onClick:
+      case OptionKey.layout:
+      case OptionKey.elements:
+      case OptionKey.plugins:
+      case OptionKey.scales:
+      case OptionKey.skipNull:
+      case OptionKey.spanGaps:
+      case OptionKey.showLine:
+      case OptionKey.circumference:
+      case OptionKey.cutout:
+      case OptionKey.offset:
+      case OptionKey.radius:
+      case OptionKey.rotation:
+      case OptionKey.spacing:
+      case OptionKey.spacingMode:
+      case OptionKey.startAngle:
+      case OptionKey.scale:
+      case OptionKey.hoverColor:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.base:
+      case OptionKey.borderSkipped:
+      case OptionKey.borderRadius:
+      case OptionKey.inflateAmount:
+      case OptionKey.borderWidth:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.barPercentage:
+      case OptionKey.categoryPercentage:
+      case OptionKey.barThickness:
+      case OptionKey.maxBarThickness:
+      case OptionKey.minBarLength:
+      case OptionKey.pointStyle:
+      case OptionKey.grouped:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.hoverBorderRadius:
+      case OptionKey.rAxisID:
+      case OptionKey.fill:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.pointBackgroundColor:
+      case OptionKey.pointBorderColor:
+      case OptionKey.pointBorderWidth:
+      case OptionKey.pointHitRadius:
+      case OptionKey.pointRadius:
+      case OptionKey.pointRotation:
+      case OptionKey.pointHoverBackgroundColor:
+      case OptionKey.pointHoverBorderColor:
+      case OptionKey.pointHoverBorderWidth:
+      case OptionKey.pointHoverRadius:
+      case OptionKey.borderCapStyle:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.capBezierPoints:
+      case OptionKey.cubicInterpolationMode:
+      case OptionKey.tension:
+      case OptionKey.stepped:
+      case OptionKey.segment:
+      case OptionKey.hoverBorderCapStyle:
+      case OptionKey.hoverBorderDash:
+      case OptionKey.hoverBorderDashOffset:
+      case OptionKey.hoverBorderJoinStyle:
+      case OptionKey.hitRadius:
+      case OptionKey.hoverRadius:
+      case OptionKey.selfJoin:
+      case OptionKey.borderAlign:
+      case OptionKey.circular:
+      case OptionKey.hoverOffset:
+      case OptionKey.weight:
+      case OptionKey.angle:
+      case OptionKey.cutoutPercentage:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.datasets => classifyScope<DatasetOptionsByTypeScope>(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.font => classifyScope<FontSpecScope>(raw),
-    OptionKey.responsive => classifyBool(raw),
-    OptionKey.maintainAspectRatio => classifyBool(raw),
-    OptionKey.resizeDelay => classifyNumber(raw),
-    OptionKey.aspectRatio => classifyNumber(raw),
-    OptionKey.locale => classifyString(raw),
-    OptionKey.onResize => classifyUnion(raw, 8),
-    OptionKey.devicePixelRatio => classifyNumber(raw),
-    OptionKey.interaction => classifyScope<InteractionOptionsScope>(raw),
-    OptionKey.hover => classifyScope<InteractionOptionsScope>(raw),
-    OptionKey.events => classifyUnion(raw, 16),
-    OptionKey.onHover => classifyUnion(raw, 8),
-    OptionKey.onClick => classifyUnion(raw, 8),
-    OptionKey.layout => classifyScope<LayoutOptionsScope>(raw),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.plugins => classifyScope<PluginOptionsByTypeScope>(raw),
-    OptionKey.scales => classifyScope<ScaleOptionsByIdScope>(raw),
-    OptionKey.skipNull => classifyBool(raw),
-    OptionKey.spanGaps => classifyUnion(raw, 3),
-    OptionKey.showLine => classifyBool(raw),
-    OptionKey.circumference => classifyNumber(raw),
-    OptionKey.cutout => classifyUnion(raw, 5),
-    OptionKey.offset => classifyNumber(raw),
-    OptionKey.radius => classifyUnion(raw, 5),
-    OptionKey.rotation => classifyNumber(raw),
-    OptionKey.spacing => classifyNumber(raw),
-    OptionKey.spacingMode => classifyString(raw),
-    OptionKey.startAngle => classifyNumber(raw),
-    OptionKey.scale => classifyScope<ScaleOptionsScope>(raw),
-    OptionKey.hoverColor => classifyUnion(raw, 64),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.base => classifyNumber(raw),
-    OptionKey.borderSkipped => classifyUnion(raw, 6),
-    OptionKey.borderRadius => classifyUnion(raw, 33),
-    OptionKey.inflateAmount => classifyUnion(raw, 5),
-    OptionKey.borderWidth => classifyUnion(raw, 33),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.barPercentage => classifyNumber(raw),
-    OptionKey.categoryPercentage => classifyNumber(raw),
-    OptionKey.barThickness => classifyUnion(raw, 5),
-    OptionKey.maxBarThickness => classifyNumber(raw),
-    OptionKey.minBarLength => classifyNumber(raw),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.grouped => classifyBool(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.hoverBorderRadius => classifyUnion(raw, 33),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.pointBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.pointBorderColor => classifyUnion(raw, 64),
-    OptionKey.pointBorderWidth => classifyNumber(raw),
-    OptionKey.pointHitRadius => classifyNumber(raw),
-    OptionKey.pointRadius => classifyNumber(raw),
-    OptionKey.pointRotation => classifyNumber(raw),
-    OptionKey.pointHoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.pointHoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.pointHoverBorderWidth => classifyNumber(raw),
-    OptionKey.pointHoverRadius => classifyNumber(raw),
-    OptionKey.borderCapStyle => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.capBezierPoints => classifyBool(raw),
-    OptionKey.cubicInterpolationMode => classifyString(raw),
-    OptionKey.tension => classifyNumber(raw),
-    OptionKey.stepped => classifyUnion(raw, 6),
-    OptionKey.segment => classifyScope<SegmentOptionsScope>(raw),
-    OptionKey.hoverBorderCapStyle => classifyString(raw),
-    OptionKey.hoverBorderDash => classifyUnion(raw, 16),
-    OptionKey.hoverBorderDashOffset => classifyNumber(raw),
-    OptionKey.hoverBorderJoinStyle => classifyString(raw),
-    OptionKey.hitRadius => classifyNumber(raw),
-    OptionKey.hoverRadius => classifyNumber(raw),
-    OptionKey.selfJoin => classifyBool(raw),
-    OptionKey.borderAlign => classifyString(raw),
-    OptionKey.circular => classifyBool(raw),
-    OptionKey.hoverOffset => classifyNumber(raw),
-    OptionKey.weight => classifyNumber(raw),
-    OptionKey.angle => classifyNumber(raw),
-    OptionKey.cutoutPercentage => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.datasets:
+        return classifyScope<DatasetOptionsByTypeScope>(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.font:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.responsive:
+        return classifyBool(raw);
+      case OptionKey.maintainAspectRatio:
+        return classifyBool(raw);
+      case OptionKey.resizeDelay:
+        return classifyNumber(raw);
+      case OptionKey.aspectRatio:
+        return classifyNumber(raw);
+      case OptionKey.locale:
+        return classifyString(raw);
+      case OptionKey.onResize:
+        return classifyUnion(raw, 8);
+      case OptionKey.devicePixelRatio:
+        return classifyNumber(raw);
+      case OptionKey.interaction:
+        return classifyScope<InteractionOptionsScope>(raw);
+      case OptionKey.hover:
+        return classifyScope<InteractionOptionsScope>(raw);
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      case OptionKey.onHover:
+        return classifyUnion(raw, 8);
+      case OptionKey.onClick:
+        return classifyUnion(raw, 8);
+      case OptionKey.layout:
+        return classifyScope<LayoutOptionsScope>(raw);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.plugins:
+        return classifyScope<PluginOptionsByTypeScope>(raw);
+      case OptionKey.scales:
+        return classifyScope<ScaleOptionsByIdScope>(raw);
+      case OptionKey.skipNull:
+        return classifyBool(raw);
+      case OptionKey.spanGaps:
+        return classifyUnion(raw, 3);
+      case OptionKey.showLine:
+        return classifyBool(raw);
+      case OptionKey.circumference:
+        return classifyNumber(raw);
+      case OptionKey.cutout:
+        return classifyUnion(raw, 5);
+      case OptionKey.offset:
+        return classifyNumber(raw);
+      case OptionKey.radius:
+        return classifyUnion(raw, 5);
+      case OptionKey.rotation:
+        return classifyNumber(raw);
+      case OptionKey.spacing:
+        return classifyNumber(raw);
+      case OptionKey.spacingMode:
+        return classifyString(raw);
+      case OptionKey.startAngle:
+        return classifyNumber(raw);
+      case OptionKey.scale:
+        return classifyScope<ScaleOptionsScope>(raw);
+      case OptionKey.hoverColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.base:
+        return classifyNumber(raw);
+      case OptionKey.borderSkipped:
+        return classifyUnion(raw, 6);
+      case OptionKey.borderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.inflateAmount:
+        return classifyUnion(raw, 5);
+      case OptionKey.borderWidth:
+        return classifyUnion(raw, 33);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.barPercentage:
+        return classifyNumber(raw);
+      case OptionKey.categoryPercentage:
+        return classifyNumber(raw);
+      case OptionKey.barThickness:
+        return classifyUnion(raw, 5);
+      case OptionKey.maxBarThickness:
+        return classifyNumber(raw);
+      case OptionKey.minBarLength:
+        return classifyNumber(raw);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.grouped:
+        return classifyBool(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.pointBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.pointHitRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointRotation:
+        return classifyNumber(raw);
+      case OptionKey.pointHoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointHoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointHoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.pointHoverRadius:
+        return classifyNumber(raw);
+      case OptionKey.borderCapStyle:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.capBezierPoints:
+        return classifyBool(raw);
+      case OptionKey.cubicInterpolationMode:
+        return classifyString(raw);
+      case OptionKey.tension:
+        return classifyNumber(raw);
+      case OptionKey.stepped:
+        return classifyUnion(raw, 6);
+      case OptionKey.segment:
+        return classifyScope<SegmentOptionsScope>(raw);
+      case OptionKey.hoverBorderCapStyle:
+        return classifyString(raw);
+      case OptionKey.hoverBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.hitRadius:
+        return classifyNumber(raw);
+      case OptionKey.hoverRadius:
+        return classifyNumber(raw);
+      case OptionKey.selfJoin:
+        return classifyBool(raw);
+      case OptionKey.borderAlign:
+        return classifyString(raw);
+      case OptionKey.circular:
+        return classifyBool(raw);
+      case OptionKey.hoverOffset:
+        return classifyNumber(raw);
+      case OptionKey.weight:
+        return classifyNumber(raw);
+      case OptionKey.angle:
+        return classifyNumber(raw);
+      case OptionKey.cutoutPercentage:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:3029 PluginOptionsByType, the scope `plugins` (by plugin id). A
@@ -2866,16 +3122,26 @@ base class PluginOptionsByTypeScope extends OptionScope {
       store(OptionKey.tooltip, classify(OptionKey.tooltip, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.colors => _colors,
-    OptionKey.decimation => _decimation,
-    OptionKey.filler => _filler,
-    OptionKey.legend => _legend,
-    OptionKey.subtitle => _subtitle,
-    OptionKey.title => _title,
-    OptionKey.tooltip => _tooltip,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.colors:
+        return _colors;
+      case OptionKey.decimation:
+        return _decimation;
+      case OptionKey.filler:
+        return _filler;
+      case OptionKey.legend:
+        return _legend;
+      case OptionKey.subtitle:
+        return _subtitle;
+      case OptionKey.title:
+        return _title;
+      case OptionKey.tooltip:
+        return _tooltip;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -2904,28 +3170,42 @@ base class PluginOptionsByTypeScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.colors ||
-    OptionKey.decimation ||
-    OptionKey.filler ||
-    OptionKey.legend ||
-    OptionKey.subtitle ||
-    OptionKey.title ||
-    OptionKey.tooltip => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.colors:
+      case OptionKey.decimation:
+      case OptionKey.filler:
+      case OptionKey.legend:
+      case OptionKey.subtitle:
+      case OptionKey.title:
+      case OptionKey.tooltip:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.colors => classifyUnion(raw, 34),
-    OptionKey.decimation => classifyUnion(raw, 34),
-    OptionKey.filler => classifyUnion(raw, 34),
-    OptionKey.legend => classifyUnion(raw, 34),
-    OptionKey.subtitle => classifyUnion(raw, 34),
-    OptionKey.title => classifyUnion(raw, 34),
-    OptionKey.tooltip => classifyUnion(raw, 34),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.colors:
+        return classifyUnion(raw, 34);
+      case OptionKey.decimation:
+        return classifyUnion(raw, 34);
+      case OptionKey.filler:
+        return classifyUnion(raw, 34);
+      case OptionKey.legend:
+        return classifyUnion(raw, 34);
+      case OptionKey.subtitle:
+        return classifyUnion(raw, 34);
+      case OptionKey.title:
+        return classifyUnion(raw, 34);
+      case OptionKey.tooltip:
+        return classifyUnion(raw, 34);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2201 ElementOptionsByType, the scope `elements` (by element type
@@ -3010,13 +3290,20 @@ base class ElementOptionsByTypeScope extends OptionScope {
       store(OptionKey.point, OptScope<PointOptionsScope>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.arc => _arc,
-    OptionKey.bar => _bar,
-    OptionKey.line => _line,
-    OptionKey.point => _point,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.arc:
+        return _arc;
+      case OptionKey.bar:
+        return _bar;
+      case OptionKey.line:
+        return _line;
+      case OptionKey.point:
+        return _point;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -3039,19 +3326,33 @@ base class ElementOptionsByTypeScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.arc || OptionKey.bar || OptionKey.line || OptionKey.point => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.arc:
+      case OptionKey.bar:
+      case OptionKey.line:
+      case OptionKey.point:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.arc => classifyScope<ArcOptionsScope>(raw),
-    OptionKey.bar => classifyScope<BarOptionsScope>(raw),
-    OptionKey.line => classifyScope<LineOptionsScope>(raw),
-    OptionKey.point => classifyScope<PointOptionsScope>(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.arc:
+        return classifyScope<ArcOptionsScope>(raw);
+      case OptionKey.bar:
+        return classifyScope<BarOptionsScope>(raw);
+      case OptionKey.line:
+        return classifyScope<LineOptionsScope>(raw);
+      case OptionKey.point:
+        return classifyScope<PointOptionsScope>(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind for index.d.ts:1631 CoreChartOptions `datasets` and
@@ -3221,17 +3522,28 @@ base class DatasetOptionsByTypeScope extends OptionScope {
   );
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.bar => _bar,
-    OptionKey.line => _line,
-    OptionKey.scatter => _scatter,
-    OptionKey.bubble => _bubble,
-    OptionKey.pie => _pie,
-    OptionKey.doughnut => _doughnut,
-    OptionKey.polarArea => _polarArea,
-    OptionKey.radar => _radar,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.bar:
+        return _bar;
+      case OptionKey.line:
+        return _line;
+      case OptionKey.scatter:
+        return _scatter;
+      case OptionKey.bubble:
+        return _bubble;
+      case OptionKey.pie:
+        return _pie;
+      case OptionKey.doughnut:
+        return _doughnut;
+      case OptionKey.polarArea:
+        return _polarArea;
+      case OptionKey.radar:
+        return _radar;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -3280,33 +3592,45 @@ base class DatasetOptionsByTypeScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.bar ||
-    OptionKey.line ||
-    OptionKey.scatter ||
-    OptionKey.bubble ||
-    OptionKey.pie ||
-    OptionKey.doughnut ||
-    OptionKey.polarArea ||
-    OptionKey.radar => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.bar:
+      case OptionKey.line:
+      case OptionKey.scatter:
+      case OptionKey.bubble:
+      case OptionKey.pie:
+      case OptionKey.doughnut:
+      case OptionKey.polarArea:
+      case OptionKey.radar:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.bar => classifyScope<BarControllerDatasetOptionsScope>(raw),
-    OptionKey.line => classifyScope<LineControllerDatasetOptionsScope>(raw),
-    OptionKey.scatter => classifyScope<LineControllerDatasetOptionsScope>(raw),
-    OptionKey.bubble => classifyScope<BubbleControllerDatasetOptionsScope>(raw),
-    OptionKey.pie => classifyScope<DoughnutControllerDatasetOptionsScope>(raw),
-    OptionKey.doughnut => classifyScope<DoughnutControllerDatasetOptionsScope>(
-      raw,
-    ),
-    OptionKey.polarArea =>
-      classifyScope<PolarAreaControllerDatasetOptionsScope>(raw),
-    OptionKey.radar => classifyScope<RadarControllerDatasetOptionsScope>(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.bar:
+        return classifyScope<BarControllerDatasetOptionsScope>(raw);
+      case OptionKey.line:
+        return classifyScope<LineControllerDatasetOptionsScope>(raw);
+      case OptionKey.scatter:
+        return classifyScope<LineControllerDatasetOptionsScope>(raw);
+      case OptionKey.bubble:
+        return classifyScope<BubbleControllerDatasetOptionsScope>(raw);
+      case OptionKey.pie:
+        return classifyScope<DoughnutControllerDatasetOptionsScope>(raw);
+      case OptionKey.doughnut:
+        return classifyScope<DoughnutControllerDatasetOptionsScope>(raw);
+      case OptionKey.polarArea:
+        return classifyScope<PolarAreaControllerDatasetOptionsScope>(raw);
+      case OptionKey.radar:
+        return classifyScope<RadarControllerDatasetOptionsScope>(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind for index.d.ts:740 Overrides, Chart.overrides
@@ -3463,17 +3787,28 @@ base class OverridesByTypeScope extends OptionScope {
       store(OptionKey.radar, OptScope<ChartOptionsScope>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.bar => _bar,
-    OptionKey.line => _line,
-    OptionKey.scatter => _scatter,
-    OptionKey.bubble => _bubble,
-    OptionKey.pie => _pie,
-    OptionKey.doughnut => _doughnut,
-    OptionKey.polarArea => _polarArea,
-    OptionKey.radar => _radar,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.bar:
+        return _bar;
+      case OptionKey.line:
+        return _line;
+      case OptionKey.scatter:
+        return _scatter;
+      case OptionKey.bubble:
+        return _bubble;
+      case OptionKey.pie:
+        return _pie;
+      case OptionKey.doughnut:
+        return _doughnut;
+      case OptionKey.polarArea:
+        return _polarArea;
+      case OptionKey.radar:
+        return _radar;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -3500,30 +3835,45 @@ base class OverridesByTypeScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.bar ||
-    OptionKey.line ||
-    OptionKey.scatter ||
-    OptionKey.bubble ||
-    OptionKey.pie ||
-    OptionKey.doughnut ||
-    OptionKey.polarArea ||
-    OptionKey.radar => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.bar:
+      case OptionKey.line:
+      case OptionKey.scatter:
+      case OptionKey.bubble:
+      case OptionKey.pie:
+      case OptionKey.doughnut:
+      case OptionKey.polarArea:
+      case OptionKey.radar:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.bar => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.line => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.scatter => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.bubble => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.pie => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.doughnut => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.polarArea => classifyScope<ChartOptionsScope>(raw),
-    OptionKey.radar => classifyScope<ChartOptionsScope>(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.bar:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.line:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.scatter:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.bubble:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.pie:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.doughnut:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.polarArea:
+        return classifyScope<ChartOptionsScope>(raw);
+      case OptionKey.radar:
+        return classifyScope<ChartOptionsScope>(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind for index.d.ts:3837 ScaleChartOptions `scales`, the scope
@@ -3633,13 +3983,20 @@ base class AnimationsSpecScope extends OptionScope {
       store(OptionKey.opacity, classify(OptionKey.opacity, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.colors => _colors,
-    OptionKey.numbers => _numbers,
-    OptionKey.visible => _visible,
-    OptionKey.opacity => _opacity,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.colors:
+        return _colors;
+      case OptionKey.numbers:
+        return _numbers;
+      case OptionKey.visible:
+        return _visible;
+      case OptionKey.opacity:
+        return _opacity;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -3658,22 +4015,33 @@ base class AnimationsSpecScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.colors ||
-    OptionKey.numbers ||
-    OptionKey.visible ||
-    OptionKey.opacity => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.colors:
+      case OptionKey.numbers:
+      case OptionKey.visible:
+      case OptionKey.opacity:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.colors => classifyUnion(raw, 34),
-    OptionKey.numbers => classifyUnion(raw, 34),
-    OptionKey.visible => classifyUnion(raw, 34),
-    OptionKey.opacity => classifyUnion(raw, 34),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.colors:
+        return classifyUnion(raw, 34);
+      case OptionKey.numbers:
+        return classifyUnion(raw, 34);
+      case OptionKey.visible:
+        return classifyUnion(raw, 34);
+      case OptionKey.opacity:
+        return classifyUnion(raw, 34);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:1793 TransitionsSpec, the scope `transitions` (by update mode).
@@ -3775,14 +4143,22 @@ base class TransitionsSpecScope extends OptionScope {
       store(OptionKey.reset, OptScope<TransitionOptionsScope>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.active => _active,
-    OptionKey.resize => _resize,
-    OptionKey.show => _show,
-    OptionKey.hide => _hide,
-    OptionKey.reset => _reset,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.active:
+        return _active;
+      case OptionKey.resize:
+        return _resize;
+      case OptionKey.show:
+        return _show;
+      case OptionKey.hide:
+        return _hide;
+      case OptionKey.reset:
+        return _reset;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -3803,24 +4179,36 @@ base class TransitionsSpecScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.active ||
-    OptionKey.resize ||
-    OptionKey.show ||
-    OptionKey.hide ||
-    OptionKey.reset => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.active:
+      case OptionKey.resize:
+      case OptionKey.show:
+      case OptionKey.hide:
+      case OptionKey.reset:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.active => classifyScope<TransitionOptionsScope>(raw),
-    OptionKey.resize => classifyScope<TransitionOptionsScope>(raw),
-    OptionKey.show => classifyScope<TransitionOptionsScope>(raw),
-    OptionKey.hide => classifyScope<TransitionOptionsScope>(raw),
-    OptionKey.reset => classifyScope<TransitionOptionsScope>(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.active:
+        return classifyScope<TransitionOptionsScope>(raw);
+      case OptionKey.resize:
+        return classifyScope<TransitionOptionsScope>(raw);
+      case OptionKey.show:
+        return classifyScope<TransitionOptionsScope>(raw);
+      case OptionKey.hide:
+        return classifyScope<TransitionOptionsScope>(raw);
+      case OptionKey.reset:
+        return classifyScope<TransitionOptionsScope>(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:1788 TransitionSpec, the options of one
@@ -3869,11 +4257,16 @@ base class TransitionOptionsScope extends OptionScope {
       store(OptionKey.animations, classify(OptionKey.animations, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -3888,17 +4281,27 @@ base class TransitionOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.animation || OptionKey.animations => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.animation:
+      case OptionKey.animations:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name over index.d.ts:1741 AnimationSpec, the entry keys of
@@ -4141,22 +4544,38 @@ base class AnimationOptionsScope extends OptionScope {
       store(OptionKey.animateScale, OptValue<bool>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.duration => _duration,
-    OptionKey.easing => _easing,
-    OptionKey.delay => _delay,
-    OptionKey.loop => _loop,
-    OptionKey.properties => _properties,
-    OptionKey.type => _type,
-    OptionKey.fn => _fn,
-    OptionKey.from => _from,
-    OptionKey.to => _to,
-    OptionKey.onProgress => _onProgress,
-    OptionKey.onComplete => _onComplete,
-    OptionKey.animateRotate => _animateRotate,
-    OptionKey.animateScale => _animateScale,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.duration:
+        return _duration;
+      case OptionKey.easing:
+        return _easing;
+      case OptionKey.delay:
+        return _delay;
+      case OptionKey.loop:
+        return _loop;
+      case OptionKey.properties:
+        return _properties;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.fn:
+        return _fn;
+      case OptionKey.from:
+        return _from;
+      case OptionKey.to:
+        return _to;
+      case OptionKey.onProgress:
+        return _onProgress;
+      case OptionKey.onComplete:
+        return _onComplete;
+      case OptionKey.animateRotate:
+        return _animateRotate;
+      case OptionKey.animateScale:
+        return _animateScale;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -4193,40 +4612,60 @@ base class AnimationOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.duration ||
-    OptionKey.easing ||
-    OptionKey.delay ||
-    OptionKey.loop ||
-    OptionKey.properties ||
-    OptionKey.type ||
-    OptionKey.fn ||
-    OptionKey.from ||
-    OptionKey.to ||
-    OptionKey.onProgress ||
-    OptionKey.onComplete ||
-    OptionKey.animateRotate ||
-    OptionKey.animateScale => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.duration:
+      case OptionKey.easing:
+      case OptionKey.delay:
+      case OptionKey.loop:
+      case OptionKey.properties:
+      case OptionKey.type:
+      case OptionKey.fn:
+      case OptionKey.from:
+      case OptionKey.to:
+      case OptionKey.onProgress:
+      case OptionKey.onComplete:
+      case OptionKey.animateRotate:
+      case OptionKey.animateScale:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.duration => classifyNumber(raw),
-    OptionKey.easing => classifyString(raw),
-    OptionKey.delay => classifyNumber(raw),
-    OptionKey.loop => classifyBool(raw),
-    OptionKey.properties => classifyUnion(raw, 16),
-    OptionKey.type => classifyString(raw),
-    OptionKey.fn => classifyUnion(raw, 8),
-    OptionKey.from => classifyUnion(raw, 64),
-    OptionKey.to => classifyUnion(raw, 64),
-    OptionKey.onProgress => classifyUnion(raw, 8),
-    OptionKey.onComplete => classifyUnion(raw, 8),
-    OptionKey.animateRotate => classifyBool(raw),
-    OptionKey.animateScale => classifyBool(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.duration:
+        return classifyNumber(raw);
+      case OptionKey.easing:
+        return classifyString(raw);
+      case OptionKey.delay:
+        return classifyNumber(raw);
+      case OptionKey.loop:
+        return classifyBool(raw);
+      case OptionKey.properties:
+        return classifyUnion(raw, 16);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.fn:
+        return classifyUnion(raw, 8);
+      case OptionKey.from:
+        return classifyUnion(raw, 64);
+      case OptionKey.to:
+        return classifyUnion(raw, 64);
+      case OptionKey.onProgress:
+        return classifyUnion(raw, 8);
+      case OptionKey.onComplete:
+        return classifyUnion(raw, 8);
+      case OptionKey.animateRotate:
+        return classifyBool(raw);
+      case OptionKey.animateScale:
+        return classifyBool(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:1812 FontSpec, a font object (read by toFont,
@@ -4326,14 +4765,22 @@ base class FontSpecScope extends OptionScope {
       store(OptionKey.lineHeight, classify(OptionKey.lineHeight, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.family => _family,
-    OptionKey.size => _size,
-    OptionKey.style => _style,
-    OptionKey.weight => _weight,
-    OptionKey.lineHeight => _lineHeight,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.family:
+        return _family;
+      case OptionKey.size:
+        return _size;
+      case OptionKey.style:
+        return _style;
+      case OptionKey.weight:
+        return _weight;
+      case OptionKey.lineHeight:
+        return _lineHeight;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -4354,24 +4801,36 @@ base class FontSpecScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.family ||
-    OptionKey.size ||
-    OptionKey.style ||
-    OptionKey.weight ||
-    OptionKey.lineHeight => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.family:
+      case OptionKey.size:
+      case OptionKey.style:
+      case OptionKey.weight:
+      case OptionKey.lineHeight:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.family => classifyString(raw),
-    OptionKey.size => classifyNumber(raw),
-    OptionKey.style => classifyString(raw),
-    OptionKey.weight => classifyUnion(raw, 5),
-    OptionKey.lineHeight => classifyUnion(raw, 5),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.family:
+        return classifyString(raw);
+      case OptionKey.size:
+        return classifyNumber(raw);
+      case OptionKey.style:
+        return classifyString(raw);
+      case OptionKey.weight:
+        return classifyUnion(raw, 5);
+      case OptionKey.lineHeight:
+        return classifyUnion(raw, 5);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind for geometric.d.ts Padding (TRBL and Point), the padding
@@ -4486,15 +4945,24 @@ base class PaddingScope extends OptionScope {
   set y(double value) => store(OptionKey.y, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.top => _top,
-    OptionKey.right => _right,
-    OptionKey.bottom => _bottom,
-    OptionKey.left => _left,
-    OptionKey.x => _x,
-    OptionKey.y => _y,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.top:
+        return _top;
+      case OptionKey.right:
+        return _right;
+      case OptionKey.bottom:
+        return _bottom;
+      case OptionKey.left:
+        return _left;
+      case OptionKey.x:
+        return _x;
+      case OptionKey.y:
+        return _y;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -4517,26 +4985,39 @@ base class PaddingScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.top ||
-    OptionKey.right ||
-    OptionKey.bottom ||
-    OptionKey.left ||
-    OptionKey.x ||
-    OptionKey.y => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.top:
+      case OptionKey.right:
+      case OptionKey.bottom:
+      case OptionKey.left:
+      case OptionKey.x:
+      case OptionKey.y:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.top => classifyNumber(raw),
-    OptionKey.right => classifyNumber(raw),
-    OptionKey.bottom => classifyNumber(raw),
-    OptionKey.left => classifyNumber(raw),
-    OptionKey.x => classifyNumber(raw),
-    OptionKey.y => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.top:
+        return classifyNumber(raw);
+      case OptionKey.right:
+        return classifyNumber(raw);
+      case OptionKey.bottom:
+        return classifyNumber(raw);
+      case OptionKey.left:
+        return classifyNumber(raw);
+      case OptionKey.x:
+        return classifyNumber(raw);
+      case OptionKey.y:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:1735 CoreChartOptions `layout`, the scope
@@ -4585,11 +5066,16 @@ base class LayoutOptionsScope extends OptionScope {
       store(OptionKey.padding, classify(OptionKey.padding, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.autoPadding => _autoPadding,
-    OptionKey.padding => _padding,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.autoPadding:
+        return _autoPadding;
+      case OptionKey.padding:
+        return _padding;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -4604,17 +5090,27 @@ base class LayoutOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.autoPadding || OptionKey.padding => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.autoPadding:
+      case OptionKey.padding:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.autoPadding => classifyBool(raw),
-    OptionKey.padding => classifyUnion(raw, 33),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.autoPadding:
+        return classifyBool(raw);
+      case OptionKey.padding:
+        return classifyUnion(raw, 33);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:751 InteractionOptions and index.d.ts:1605
@@ -4697,13 +5193,20 @@ base class InteractionOptionsScope extends OptionScope {
       store(OptionKey.includeInvisible, OptValue<bool>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.mode => _mode,
-    OptionKey.intersect => _intersect,
-    OptionKey.axis => _axis,
-    OptionKey.includeInvisible => _includeInvisible,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.mode:
+        return _mode;
+      case OptionKey.intersect:
+        return _intersect;
+      case OptionKey.axis:
+        return _axis;
+      case OptionKey.includeInvisible:
+        return _includeInvisible;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -4726,22 +5229,33 @@ base class InteractionOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.mode ||
-    OptionKey.intersect ||
-    OptionKey.axis ||
-    OptionKey.includeInvisible => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.mode:
+      case OptionKey.intersect:
+      case OptionKey.axis:
+      case OptionKey.includeInvisible:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.mode => classifyString(raw),
-    OptionKey.intersect => classifyBool(raw),
-    OptionKey.axis => classifyString(raw),
-    OptionKey.includeInvisible => classifyBool(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.mode:
+        return classifyString(raw);
+      case OptionKey.intersect:
+        return classifyBool(raw);
+      case OptionKey.axis:
+        return classifyString(raw);
+      case OptionKey.includeInvisible:
+        return classifyBool(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for the object form of index.d.ts:54 ParsingOptions
@@ -4808,12 +5322,18 @@ base class ParsingOptionsScope extends OptionScope {
       store(OptionKey.yAxisKey, OptValue<String>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.key => _key,
-    OptionKey.xAxisKey => _xAxisKey,
-    OptionKey.yAxisKey => _yAxisKey,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.key:
+        return _key;
+      case OptionKey.xAxisKey:
+        return _xAxisKey;
+      case OptionKey.yAxisKey:
+        return _yAxisKey;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -4830,18 +5350,30 @@ base class ParsingOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.key || OptionKey.xAxisKey || OptionKey.yAxisKey => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.key:
+      case OptionKey.xAxisKey:
+      case OptionKey.yAxisKey:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.key => classifyString(raw),
-    OptionKey.xAxisKey => classifyString(raw),
-    OptionKey.yAxisKey => classifyString(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.key:
+        return classifyString(raw);
+      case OptionKey.xAxisKey:
+        return classifyString(raw);
+      case OptionKey.yAxisKey:
+        return classifyString(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for the object form of index.d.ts:75 `clip` (index.d.ts:463
@@ -4925,13 +5457,20 @@ base class ChartAreaScope extends OptionScope {
       store(OptionKey.bottom, classify(OptionKey.bottom, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.left => _left,
-    OptionKey.top => _top,
-    OptionKey.right => _right,
-    OptionKey.bottom => _bottom,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.left:
+        return _left;
+      case OptionKey.top:
+        return _top;
+      case OptionKey.right:
+        return _right;
+      case OptionKey.bottom:
+        return _bottom;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -4950,22 +5489,33 @@ base class ChartAreaScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.left ||
-    OptionKey.top ||
-    OptionKey.right ||
-    OptionKey.bottom => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.left:
+      case OptionKey.top:
+      case OptionKey.right:
+      case OptionKey.bottom:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.left => classifyUnion(raw, 3),
-    OptionKey.top => classifyUnion(raw, 3),
-    OptionKey.right => classifyUnion(raw, 3),
-    OptionKey.bottom => classifyUnion(raw, 3),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.left:
+        return classifyUnion(raw, 3);
+      case OptionKey.top:
+        return classifyUnion(raw, 3);
+      case OptionKey.right:
+        return classifyUnion(raw, 3);
+      case OptionKey.bottom:
+        return classifyUnion(raw, 3);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the
@@ -5237,23 +5787,40 @@ base class PointOptionsScope extends OptionScope {
   );
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.radius => _radius,
-    OptionKey.hitRadius => _hitRadius,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.rotation => _rotation,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverRadius => _hoverRadius,
-    OptionKey.dollarShared => _dollarShared,
-    OptionKey.dollarAnimations => _dollarAnimations,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.radius:
+        return _radius;
+      case OptionKey.hitRadius:
+        return _hitRadius;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.rotation:
+        return _rotation;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverRadius:
+        return _hoverRadius;
+      case OptionKey.dollarShared:
+        return _dollarShared;
+      case OptionKey.dollarAnimations:
+        return _dollarAnimations;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -5292,42 +5859,63 @@ base class PointOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.radius ||
-    OptionKey.hitRadius ||
-    OptionKey.pointStyle ||
-    OptionKey.rotation ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverRadius ||
-    OptionKey.dollarShared ||
-    OptionKey.dollarAnimations => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.radius:
+      case OptionKey.hitRadius:
+      case OptionKey.pointStyle:
+      case OptionKey.rotation:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverRadius:
+      case OptionKey.dollarShared:
+      case OptionKey.dollarAnimations:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.radius => classifyNumber(raw),
-    OptionKey.hitRadius => classifyNumber(raw),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.rotation => classifyNumber(raw),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverRadius => classifyNumber(raw),
-    OptionKey.dollarShared => classifyBool(raw),
-    OptionKey.dollarAnimations => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.radius:
+        return classifyNumber(raw);
+      case OptionKey.hitRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.rotation:
+        return classifyNumber(raw);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverRadius:
+        return classifyNumber(raw);
+      case OptionKey.dollarShared:
+        return classifyBool(raw);
+      case OptionKey.dollarAnimations:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:1954 LineOptions and index.d.ts:2015 LineHoverOptions, the
@@ -5764,32 +6352,58 @@ base class LineOptionsScope extends OptionScope {
   );
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.borderCapStyle => _borderCapStyle,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.capBezierPoints => _capBezierPoints,
-    OptionKey.cubicInterpolationMode => _cubicInterpolationMode,
-    OptionKey.tension => _tension,
-    OptionKey.stepped => _stepped,
-    OptionKey.fill => _fill,
-    OptionKey.spanGaps => _spanGaps,
-    OptionKey.segment => _segment,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverBorderCapStyle => _hoverBorderCapStyle,
-    OptionKey.hoverBorderDash => _hoverBorderDash,
-    OptionKey.hoverBorderDashOffset => _hoverBorderDashOffset,
-    OptionKey.hoverBorderJoinStyle => _hoverBorderJoinStyle,
-    OptionKey.dollarShared => _dollarShared,
-    OptionKey.dollarAnimations => _dollarAnimations,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.borderCapStyle:
+        return _borderCapStyle;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.capBezierPoints:
+        return _capBezierPoints;
+      case OptionKey.cubicInterpolationMode:
+        return _cubicInterpolationMode;
+      case OptionKey.tension:
+        return _tension;
+      case OptionKey.stepped:
+        return _stepped;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.spanGaps:
+        return _spanGaps;
+      case OptionKey.segment:
+        return _segment;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverBorderCapStyle:
+        return _hoverBorderCapStyle;
+      case OptionKey.hoverBorderDash:
+        return _hoverBorderDash;
+      case OptionKey.hoverBorderDashOffset:
+        return _hoverBorderDashOffset;
+      case OptionKey.hoverBorderJoinStyle:
+        return _hoverBorderJoinStyle;
+      case OptionKey.dollarShared:
+        return _dollarShared;
+      case OptionKey.dollarAnimations:
+        return _dollarAnimations;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -5846,60 +6460,90 @@ base class LineOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.borderCapStyle ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.capBezierPoints ||
-    OptionKey.cubicInterpolationMode ||
-    OptionKey.tension ||
-    OptionKey.stepped ||
-    OptionKey.fill ||
-    OptionKey.spanGaps ||
-    OptionKey.segment ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverBorderCapStyle ||
-    OptionKey.hoverBorderDash ||
-    OptionKey.hoverBorderDashOffset ||
-    OptionKey.hoverBorderJoinStyle ||
-    OptionKey.dollarShared ||
-    OptionKey.dollarAnimations => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.borderCapStyle:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.capBezierPoints:
+      case OptionKey.cubicInterpolationMode:
+      case OptionKey.tension:
+      case OptionKey.stepped:
+      case OptionKey.fill:
+      case OptionKey.spanGaps:
+      case OptionKey.segment:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverBorderCapStyle:
+      case OptionKey.hoverBorderDash:
+      case OptionKey.hoverBorderDashOffset:
+      case OptionKey.hoverBorderJoinStyle:
+      case OptionKey.dollarShared:
+      case OptionKey.dollarAnimations:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.borderCapStyle => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.capBezierPoints => classifyBool(raw),
-    OptionKey.cubicInterpolationMode => classifyString(raw),
-    OptionKey.tension => classifyNumber(raw),
-    OptionKey.stepped => classifyUnion(raw, 6),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.spanGaps => classifyUnion(raw, 3),
-    OptionKey.segment => classifyScope<SegmentOptionsScope>(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverBorderCapStyle => classifyString(raw),
-    OptionKey.hoverBorderDash => classifyUnion(raw, 16),
-    OptionKey.hoverBorderDashOffset => classifyNumber(raw),
-    OptionKey.hoverBorderJoinStyle => classifyString(raw),
-    OptionKey.dollarShared => classifyBool(raw),
-    OptionKey.dollarAnimations => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.borderCapStyle:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.capBezierPoints:
+        return classifyBool(raw);
+      case OptionKey.cubicInterpolationMode:
+        return classifyString(raw);
+      case OptionKey.tension:
+        return classifyNumber(raw);
+      case OptionKey.stepped:
+        return classifyUnion(raw, 6);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.spanGaps:
+        return classifyUnion(raw, 3);
+      case OptionKey.segment:
+        return classifyScope<SegmentOptionsScope>(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBorderCapStyle:
+        return classifyString(raw);
+      case OptionKey.hoverBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.dollarShared:
+        return classifyBool(raw);
+      case OptionKey.dollarAnimations:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2148 BarOptions and index.d.ts:2187 BarHoverOptions, the options
@@ -6173,23 +6817,40 @@ base class BarOptionsScope extends OptionScope {
   );
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.base => _base,
-    OptionKey.borderSkipped => _borderSkipped,
-    OptionKey.borderRadius => _borderRadius,
-    OptionKey.inflateAmount => _inflateAmount,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverBorderRadius => _hoverBorderRadius,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.dollarShared => _dollarShared,
-    OptionKey.dollarAnimations => _dollarAnimations,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.base:
+        return _base;
+      case OptionKey.borderSkipped:
+        return _borderSkipped;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      case OptionKey.inflateAmount:
+        return _inflateAmount;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverBorderRadius:
+        return _hoverBorderRadius;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.dollarShared:
+        return _dollarShared;
+      case OptionKey.dollarAnimations:
+        return _dollarAnimations;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -6228,42 +6889,63 @@ base class BarOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.base ||
-    OptionKey.borderSkipped ||
-    OptionKey.borderRadius ||
-    OptionKey.inflateAmount ||
-    OptionKey.borderWidth ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverBorderRadius ||
-    OptionKey.pointStyle ||
-    OptionKey.dollarShared ||
-    OptionKey.dollarAnimations => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.base:
+      case OptionKey.borderSkipped:
+      case OptionKey.borderRadius:
+      case OptionKey.inflateAmount:
+      case OptionKey.borderWidth:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverBorderRadius:
+      case OptionKey.pointStyle:
+      case OptionKey.dollarShared:
+      case OptionKey.dollarAnimations:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.base => classifyNumber(raw),
-    OptionKey.borderSkipped => classifyUnion(raw, 6),
-    OptionKey.borderRadius => classifyUnion(raw, 33),
-    OptionKey.inflateAmount => classifyUnion(raw, 5),
-    OptionKey.borderWidth => classifyUnion(raw, 33),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverBorderRadius => classifyUnion(raw, 33),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.dollarShared => classifyBool(raw),
-    OptionKey.dollarAnimations => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.base:
+        return classifyNumber(raw);
+      case OptionKey.borderSkipped:
+        return classifyUnion(raw, 6);
+      case OptionKey.borderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.inflateAmount:
+        return classifyUnion(raw, 5);
+      case OptionKey.borderWidth:
+        return classifyUnion(raw, 33);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBorderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.dollarShared:
+        return classifyBool(raw);
+      case OptionKey.dollarAnimations:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:1882 ArcOptions and index.d.ts:1944 ArcHoverOptions, the options
@@ -6678,31 +7360,56 @@ base class ArcOptionsScope extends OptionScope {
   );
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.selfJoin => _selfJoin,
-    OptionKey.borderAlign => _borderAlign,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.borderRadius => _borderRadius,
-    OptionKey.offset => _offset,
-    OptionKey.circular => _circular,
-    OptionKey.spacing => _spacing,
-    OptionKey.spacingMode => _spacingMode,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverBorderDash => _hoverBorderDash,
-    OptionKey.hoverBorderDashOffset => _hoverBorderDashOffset,
-    OptionKey.hoverOffset => _hoverOffset,
-    OptionKey.angle => _angle,
-    OptionKey.dollarShared => _dollarShared,
-    OptionKey.dollarAnimations => _dollarAnimations,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.selfJoin:
+        return _selfJoin;
+      case OptionKey.borderAlign:
+        return _borderAlign;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      case OptionKey.offset:
+        return _offset;
+      case OptionKey.circular:
+        return _circular;
+      case OptionKey.spacing:
+        return _spacing;
+      case OptionKey.spacingMode:
+        return _spacingMode;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverBorderDash:
+        return _hoverBorderDash;
+      case OptionKey.hoverBorderDashOffset:
+        return _hoverBorderDashOffset;
+      case OptionKey.hoverOffset:
+        return _hoverOffset;
+      case OptionKey.angle:
+        return _angle;
+      case OptionKey.dollarShared:
+        return _dollarShared;
+      case OptionKey.dollarAnimations:
+        return _dollarAnimations;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -6757,58 +7464,87 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.selfJoin ||
-    OptionKey.borderAlign ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.borderRadius ||
-    OptionKey.offset ||
-    OptionKey.circular ||
-    OptionKey.spacing ||
-    OptionKey.spacingMode ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverBorderDash ||
-    OptionKey.hoverBorderDashOffset ||
-    OptionKey.hoverOffset ||
-    OptionKey.angle ||
-    OptionKey.dollarShared ||
-    OptionKey.dollarAnimations => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.selfJoin:
+      case OptionKey.borderAlign:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.borderRadius:
+      case OptionKey.offset:
+      case OptionKey.circular:
+      case OptionKey.spacing:
+      case OptionKey.spacingMode:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverBorderDash:
+      case OptionKey.hoverBorderDashOffset:
+      case OptionKey.hoverOffset:
+      case OptionKey.angle:
+      case OptionKey.dollarShared:
+      case OptionKey.dollarAnimations:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.selfJoin => classifyBool(raw),
-    OptionKey.borderAlign => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.borderRadius => classifyUnion(raw, 33),
-    OptionKey.offset => classifyNumber(raw),
-    OptionKey.circular => classifyBool(raw),
-    OptionKey.spacing => classifyNumber(raw),
-    OptionKey.spacingMode => classifyString(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverBorderDash => classifyUnion(raw, 16),
-    OptionKey.hoverBorderDashOffset => classifyNumber(raw),
-    OptionKey.hoverOffset => classifyNumber(raw),
-    OptionKey.angle => classifyNumber(raw),
-    OptionKey.dollarShared => classifyBool(raw),
-    OptionKey.dollarAnimations => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.selfJoin:
+        return classifyBool(raw);
+      case OptionKey.borderAlign:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.borderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.offset:
+        return classifyNumber(raw);
+      case OptionKey.circular:
+        return classifyBool(raw);
+      case OptionKey.spacing:
+        return classifyNumber(raw);
+      case OptionKey.spacingMode:
+        return classifyString(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.hoverOffset:
+        return classifyNumber(raw);
+      case OptionKey.angle:
+        return classifyNumber(raw);
+      case OptionKey.dollarShared:
+        return classifyBool(raw);
+      case OptionKey.dollarAnimations:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind (Chart.js ADR 0021 section 2), the options of a custom
@@ -6989,17 +7725,28 @@ base class BorderRadiusScope extends OptionScope {
       store(OptionKey.innerEnd, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.topLeft => _topLeft,
-    OptionKey.topRight => _topRight,
-    OptionKey.bottomLeft => _bottomLeft,
-    OptionKey.bottomRight => _bottomRight,
-    OptionKey.outerStart => _outerStart,
-    OptionKey.outerEnd => _outerEnd,
-    OptionKey.innerStart => _innerStart,
-    OptionKey.innerEnd => _innerEnd,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.topLeft:
+        return _topLeft;
+      case OptionKey.topRight:
+        return _topRight;
+      case OptionKey.bottomLeft:
+        return _bottomLeft;
+      case OptionKey.bottomRight:
+        return _bottomRight;
+      case OptionKey.outerStart:
+        return _outerStart;
+      case OptionKey.outerEnd:
+        return _outerEnd;
+      case OptionKey.innerStart:
+        return _innerStart;
+      case OptionKey.innerEnd:
+        return _innerEnd;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -7026,30 +7773,45 @@ base class BorderRadiusScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.topLeft ||
-    OptionKey.topRight ||
-    OptionKey.bottomLeft ||
-    OptionKey.bottomRight ||
-    OptionKey.outerStart ||
-    OptionKey.outerEnd ||
-    OptionKey.innerStart ||
-    OptionKey.innerEnd => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.topLeft:
+      case OptionKey.topRight:
+      case OptionKey.bottomLeft:
+      case OptionKey.bottomRight:
+      case OptionKey.outerStart:
+      case OptionKey.outerEnd:
+      case OptionKey.innerStart:
+      case OptionKey.innerEnd:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.topLeft => classifyNumber(raw),
-    OptionKey.topRight => classifyNumber(raw),
-    OptionKey.bottomLeft => classifyNumber(raw),
-    OptionKey.bottomRight => classifyNumber(raw),
-    OptionKey.outerStart => classifyNumber(raw),
-    OptionKey.outerEnd => classifyNumber(raw),
-    OptionKey.innerStart => classifyNumber(raw),
-    OptionKey.innerEnd => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.topLeft:
+        return classifyNumber(raw);
+      case OptionKey.topRight:
+        return classifyNumber(raw);
+      case OptionKey.bottomLeft:
+        return classifyNumber(raw);
+      case OptionKey.bottomRight:
+        return classifyNumber(raw);
+      case OptionKey.outerStart:
+        return classifyNumber(raw);
+      case OptionKey.outerEnd:
+        return classifyNumber(raw);
+      case OptionKey.innerStart:
+        return classifyNumber(raw);
+      case OptionKey.innerEnd:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2302 ComplexFillTarget and the object `{value}` of
@@ -7133,13 +7895,20 @@ base class FillTargetScope extends OptionScope {
   set value(double value) => store(OptionKey.value, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.target => _target,
-    OptionKey.above => _above,
-    OptionKey.below => _below,
-    OptionKey.value => _value,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.target:
+        return _target;
+      case OptionKey.above:
+        return _above;
+      case OptionKey.below:
+        return _below;
+      case OptionKey.value:
+        return _value;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -7158,22 +7927,33 @@ base class FillTargetScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.target ||
-    OptionKey.above ||
-    OptionKey.below ||
-    OptionKey.value => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.target:
+      case OptionKey.above:
+      case OptionKey.below:
+      case OptionKey.value:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.target => classifyUnion(raw, 39),
-    OptionKey.above => classifyUnion(raw, 64),
-    OptionKey.below => classifyUnion(raw, 64),
-    OptionKey.value => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.target:
+        return classifyUnion(raw, 39);
+      case OptionKey.above:
+        return classifyUnion(raw, 64);
+      case OptionKey.below:
+        return classifyUnion(raw, 64);
+      case OptionKey.value:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable
@@ -7314,16 +8094,26 @@ base class SegmentOptionsScope extends OptionScope {
       store(OptionKey.borderWidth, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.borderCapStyle => _borderCapStyle,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.borderWidth => _borderWidth,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.borderCapStyle:
+        return _borderCapStyle;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -7348,28 +8138,42 @@ base class SegmentOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.backgroundColor ||
-    OptionKey.borderColor ||
-    OptionKey.borderCapStyle ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.borderWidth => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.backgroundColor:
+      case OptionKey.borderColor:
+      case OptionKey.borderCapStyle:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.borderWidth:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.borderCapStyle => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.borderWidth => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.borderCapStyle:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:96 BarControllerDatasetOptions (index.d.ts:66
@@ -8162,52 +8966,98 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.base => _base,
-    OptionKey.borderSkipped => _borderSkipped,
-    OptionKey.borderRadius => _borderRadius,
-    OptionKey.inflateAmount => _inflateAmount,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.barPercentage => _barPercentage,
-    OptionKey.categoryPercentage => _categoryPercentage,
-    OptionKey.barThickness => _barThickness,
-    OptionKey.maxBarThickness => _maxBarThickness,
-    OptionKey.minBarLength => _minBarLength,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.grouped => _grouped,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.skipNull => _skipNull,
-    OptionKey.hoverBorderRadius => _hoverBorderRadius,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.fill => _fill,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.elements => _elements,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.descData => _descData,
-    OptionKey.descDecimated => _descDecimated,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.base:
+        return _base;
+      case OptionKey.borderSkipped:
+        return _borderSkipped;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      case OptionKey.inflateAmount:
+        return _inflateAmount;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.barPercentage:
+        return _barPercentage;
+      case OptionKey.categoryPercentage:
+        return _categoryPercentage;
+      case OptionKey.barThickness:
+        return _barThickness;
+      case OptionKey.maxBarThickness:
+        return _maxBarThickness;
+      case OptionKey.minBarLength:
+        return _minBarLength;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.grouped:
+        return _grouped;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.skipNull:
+        return _skipNull;
+      case OptionKey.hoverBorderRadius:
+        return _hoverBorderRadius;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.descData:
+        return _descData;
+      case OptionKey.descDecimated:
+        return _descDecimated;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -8308,100 +9158,150 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.base ||
-    OptionKey.borderSkipped ||
-    OptionKey.borderRadius ||
-    OptionKey.inflateAmount ||
-    OptionKey.borderWidth ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.barPercentage ||
-    OptionKey.categoryPercentage ||
-    OptionKey.barThickness ||
-    OptionKey.maxBarThickness ||
-    OptionKey.minBarLength ||
-    OptionKey.pointStyle ||
-    OptionKey.grouped ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.skipNull ||
-    OptionKey.hoverBorderRadius ||
-    OptionKey.rAxisID ||
-    OptionKey.fill ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.elements ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.descData ||
-    OptionKey.descDecimated => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.base:
+      case OptionKey.borderSkipped:
+      case OptionKey.borderRadius:
+      case OptionKey.inflateAmount:
+      case OptionKey.borderWidth:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.barPercentage:
+      case OptionKey.categoryPercentage:
+      case OptionKey.barThickness:
+      case OptionKey.maxBarThickness:
+      case OptionKey.minBarLength:
+      case OptionKey.pointStyle:
+      case OptionKey.grouped:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.skipNull:
+      case OptionKey.hoverBorderRadius:
+      case OptionKey.rAxisID:
+      case OptionKey.fill:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.elements:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.descData:
+      case OptionKey.descDecimated:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.base => classifyNumber(raw),
-    OptionKey.borderSkipped => classifyUnion(raw, 6),
-    OptionKey.borderRadius => classifyUnion(raw, 33),
-    OptionKey.inflateAmount => classifyUnion(raw, 5),
-    OptionKey.borderWidth => classifyUnion(raw, 33),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.barPercentage => classifyNumber(raw),
-    OptionKey.categoryPercentage => classifyNumber(raw),
-    OptionKey.barThickness => classifyUnion(raw, 5),
-    OptionKey.maxBarThickness => classifyNumber(raw),
-    OptionKey.minBarLength => classifyNumber(raw),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.grouped => classifyBool(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.skipNull => classifyBool(raw),
-    OptionKey.hoverBorderRadius => classifyUnion(raw, 33),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.descData => classifyUnion(raw, 64),
-    OptionKey.descDecimated => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.base:
+        return classifyNumber(raw);
+      case OptionKey.borderSkipped:
+        return classifyUnion(raw, 6);
+      case OptionKey.borderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.inflateAmount:
+        return classifyUnion(raw, 5);
+      case OptionKey.borderWidth:
+        return classifyUnion(raw, 33);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.barPercentage:
+        return classifyNumber(raw);
+      case OptionKey.categoryPercentage:
+        return classifyNumber(raw);
+      case OptionKey.barThickness:
+        return classifyUnion(raw, 5);
+      case OptionKey.maxBarThickness:
+        return classifyNumber(raw);
+      case OptionKey.minBarLength:
+        return classifyNumber(raw);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.grouped:
+        return classifyBool(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.skipNull:
+        return classifyBool(raw);
+      case OptionKey.hoverBorderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.descData:
+        return classifyUnion(raw, 64);
+      case OptionKey.descDecimated:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:189 LineControllerDatasetOptions (index.d.ts:66
@@ -9440,65 +10340,124 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.pointBackgroundColor => _pointBackgroundColor,
-    OptionKey.pointBorderColor => _pointBorderColor,
-    OptionKey.pointBorderWidth => _pointBorderWidth,
-    OptionKey.pointHitRadius => _pointHitRadius,
-    OptionKey.pointRadius => _pointRadius,
-    OptionKey.pointRotation => _pointRotation,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.pointHoverBackgroundColor => _pointHoverBackgroundColor,
-    OptionKey.pointHoverBorderColor => _pointHoverBorderColor,
-    OptionKey.pointHoverBorderWidth => _pointHoverBorderWidth,
-    OptionKey.pointHoverRadius => _pointHoverRadius,
-    OptionKey.borderCapStyle => _borderCapStyle,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.capBezierPoints => _capBezierPoints,
-    OptionKey.cubicInterpolationMode => _cubicInterpolationMode,
-    OptionKey.tension => _tension,
-    OptionKey.stepped => _stepped,
-    OptionKey.fill => _fill,
-    OptionKey.spanGaps => _spanGaps,
-    OptionKey.segment => _segment,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.hoverBorderCapStyle => _hoverBorderCapStyle,
-    OptionKey.hoverBorderDash => _hoverBorderDash,
-    OptionKey.hoverBorderDashOffset => _hoverBorderDashOffset,
-    OptionKey.hoverBorderJoinStyle => _hoverBorderJoinStyle,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.showLine => _showLine,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.elements => _elements,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.descData => _descData,
-    OptionKey.descDecimated => _descDecimated,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.pointBackgroundColor:
+        return _pointBackgroundColor;
+      case OptionKey.pointBorderColor:
+        return _pointBorderColor;
+      case OptionKey.pointBorderWidth:
+        return _pointBorderWidth;
+      case OptionKey.pointHitRadius:
+        return _pointHitRadius;
+      case OptionKey.pointRadius:
+        return _pointRadius;
+      case OptionKey.pointRotation:
+        return _pointRotation;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.pointHoverBackgroundColor:
+        return _pointHoverBackgroundColor;
+      case OptionKey.pointHoverBorderColor:
+        return _pointHoverBorderColor;
+      case OptionKey.pointHoverBorderWidth:
+        return _pointHoverBorderWidth;
+      case OptionKey.pointHoverRadius:
+        return _pointHoverRadius;
+      case OptionKey.borderCapStyle:
+        return _borderCapStyle;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.capBezierPoints:
+        return _capBezierPoints;
+      case OptionKey.cubicInterpolationMode:
+        return _cubicInterpolationMode;
+      case OptionKey.tension:
+        return _tension;
+      case OptionKey.stepped:
+        return _stepped;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.spanGaps:
+        return _spanGaps;
+      case OptionKey.segment:
+        return _segment;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.hoverBorderCapStyle:
+        return _hoverBorderCapStyle;
+      case OptionKey.hoverBorderDash:
+        return _hoverBorderDash;
+      case OptionKey.hoverBorderDashOffset:
+        return _hoverBorderDashOffset;
+      case OptionKey.hoverBorderJoinStyle:
+        return _hoverBorderJoinStyle;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.showLine:
+        return _showLine;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.descData:
+        return _descData;
+      case OptionKey.descDecimated:
+        return _descDecimated;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -9628,126 +10587,189 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.pointBackgroundColor ||
-    OptionKey.pointBorderColor ||
-    OptionKey.pointBorderWidth ||
-    OptionKey.pointHitRadius ||
-    OptionKey.pointRadius ||
-    OptionKey.pointRotation ||
-    OptionKey.pointStyle ||
-    OptionKey.pointHoverBackgroundColor ||
-    OptionKey.pointHoverBorderColor ||
-    OptionKey.pointHoverBorderWidth ||
-    OptionKey.pointHoverRadius ||
-    OptionKey.borderCapStyle ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.capBezierPoints ||
-    OptionKey.cubicInterpolationMode ||
-    OptionKey.tension ||
-    OptionKey.stepped ||
-    OptionKey.fill ||
-    OptionKey.spanGaps ||
-    OptionKey.segment ||
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.hoverBorderCapStyle ||
-    OptionKey.hoverBorderDash ||
-    OptionKey.hoverBorderDashOffset ||
-    OptionKey.hoverBorderJoinStyle ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.showLine ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.rAxisID ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.elements ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.descData ||
-    OptionKey.descDecimated => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.pointBackgroundColor:
+      case OptionKey.pointBorderColor:
+      case OptionKey.pointBorderWidth:
+      case OptionKey.pointHitRadius:
+      case OptionKey.pointRadius:
+      case OptionKey.pointRotation:
+      case OptionKey.pointStyle:
+      case OptionKey.pointHoverBackgroundColor:
+      case OptionKey.pointHoverBorderColor:
+      case OptionKey.pointHoverBorderWidth:
+      case OptionKey.pointHoverRadius:
+      case OptionKey.borderCapStyle:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.capBezierPoints:
+      case OptionKey.cubicInterpolationMode:
+      case OptionKey.tension:
+      case OptionKey.stepped:
+      case OptionKey.fill:
+      case OptionKey.spanGaps:
+      case OptionKey.segment:
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.hoverBorderCapStyle:
+      case OptionKey.hoverBorderDash:
+      case OptionKey.hoverBorderDashOffset:
+      case OptionKey.hoverBorderJoinStyle:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.showLine:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.rAxisID:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.elements:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.descData:
+      case OptionKey.descDecimated:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.pointBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.pointBorderColor => classifyUnion(raw, 64),
-    OptionKey.pointBorderWidth => classifyNumber(raw),
-    OptionKey.pointHitRadius => classifyNumber(raw),
-    OptionKey.pointRadius => classifyNumber(raw),
-    OptionKey.pointRotation => classifyNumber(raw),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.pointHoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.pointHoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.pointHoverBorderWidth => classifyNumber(raw),
-    OptionKey.pointHoverRadius => classifyNumber(raw),
-    OptionKey.borderCapStyle => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.capBezierPoints => classifyBool(raw),
-    OptionKey.cubicInterpolationMode => classifyString(raw),
-    OptionKey.tension => classifyNumber(raw),
-    OptionKey.stepped => classifyUnion(raw, 6),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.spanGaps => classifyUnion(raw, 3),
-    OptionKey.segment => classifyScope<SegmentOptionsScope>(raw),
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverBorderCapStyle => classifyString(raw),
-    OptionKey.hoverBorderDash => classifyUnion(raw, 16),
-    OptionKey.hoverBorderDashOffset => classifyNumber(raw),
-    OptionKey.hoverBorderJoinStyle => classifyString(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.showLine => classifyBool(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.descData => classifyUnion(raw, 64),
-    OptionKey.descDecimated => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.pointBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.pointHitRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointRotation:
+        return classifyNumber(raw);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointHoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointHoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointHoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.pointHoverRadius:
+        return classifyNumber(raw);
+      case OptionKey.borderCapStyle:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.capBezierPoints:
+        return classifyBool(raw);
+      case OptionKey.cubicInterpolationMode:
+        return classifyString(raw);
+      case OptionKey.tension:
+        return classifyNumber(raw);
+      case OptionKey.stepped:
+        return classifyUnion(raw, 6);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.spanGaps:
+        return classifyUnion(raw, 3);
+      case OptionKey.segment:
+        return classifyScope<SegmentOptionsScope>(raw);
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBorderCapStyle:
+        return classifyString(raw);
+      case OptionKey.hoverBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.showLine:
+        return classifyBool(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.descData:
+        return classifyUnion(raw, 64);
+      case OptionKey.descDecimated:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:162 BubbleControllerDatasetOptions (index.d.ts:66
@@ -10395,44 +11417,82 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.radius => _radius,
-    OptionKey.hitRadius => _hitRadius,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.rotation => _rotation,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverRadius => _hoverRadius,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.fill => _fill,
-    OptionKey.elements => _elements,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.descData => _descData,
-    OptionKey.descDecimated => _descDecimated,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.radius:
+        return _radius;
+      case OptionKey.hitRadius:
+        return _hitRadius;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.rotation:
+        return _rotation;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverRadius:
+        return _hoverRadius;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.descData:
+        return _descData;
+      case OptionKey.descDecimated:
+        return _descDecimated;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -10517,84 +11577,126 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.radius ||
-    OptionKey.hitRadius ||
-    OptionKey.pointStyle ||
-    OptionKey.rotation ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverRadius ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.rAxisID ||
-    OptionKey.fill ||
-    OptionKey.elements ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.descData ||
-    OptionKey.descDecimated => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.radius:
+      case OptionKey.hitRadius:
+      case OptionKey.pointStyle:
+      case OptionKey.rotation:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverRadius:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.rAxisID:
+      case OptionKey.fill:
+      case OptionKey.elements:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.descData:
+      case OptionKey.descDecimated:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.radius => classifyNumber(raw),
-    OptionKey.hitRadius => classifyNumber(raw),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.rotation => classifyNumber(raw),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverRadius => classifyNumber(raw),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.descData => classifyUnion(raw, 64),
-    OptionKey.descDecimated => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.radius:
+        return classifyNumber(raw);
+      case OptionKey.hitRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.rotation:
+        return classifyNumber(raw);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverRadius:
+        return classifyNumber(raw);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.descData:
+        return classifyUnion(raw, 64);
+      case OptionKey.descDecimated:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:247 DoughnutControllerDatasetOptions (index.d.ts:66
@@ -11476,57 +12578,108 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.selfJoin => _selfJoin,
-    OptionKey.borderAlign => _borderAlign,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.borderRadius => _borderRadius,
-    OptionKey.offset => _offset,
-    OptionKey.circular => _circular,
-    OptionKey.spacing => _spacing,
-    OptionKey.spacingMode => _spacingMode,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverBorderDash => _hoverBorderDash,
-    OptionKey.hoverBorderDashOffset => _hoverBorderDashOffset,
-    OptionKey.hoverOffset => _hoverOffset,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.circumference => _circumference,
-    OptionKey.rotation => _rotation,
-    OptionKey.weight => _weight,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.cutout => _cutout,
-    OptionKey.radius => _radius,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.fill => _fill,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.elements => _elements,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.descData => _descData,
-    OptionKey.descDecimated => _descDecimated,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.selfJoin:
+        return _selfJoin;
+      case OptionKey.borderAlign:
+        return _borderAlign;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      case OptionKey.offset:
+        return _offset;
+      case OptionKey.circular:
+        return _circular;
+      case OptionKey.spacing:
+        return _spacing;
+      case OptionKey.spacingMode:
+        return _spacingMode;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverBorderDash:
+        return _hoverBorderDash;
+      case OptionKey.hoverBorderDashOffset:
+        return _hoverBorderDashOffset;
+      case OptionKey.hoverOffset:
+        return _hoverOffset;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.circumference:
+        return _circumference;
+      case OptionKey.rotation:
+        return _rotation;
+      case OptionKey.weight:
+        return _weight;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.cutout:
+        return _cutout;
+      case OptionKey.radius:
+        return _radius;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.descData:
+        return _descData;
+      case OptionKey.descDecimated:
+        return _descDecimated;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -11637,110 +12790,165 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.selfJoin ||
-    OptionKey.borderAlign ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.borderRadius ||
-    OptionKey.offset ||
-    OptionKey.circular ||
-    OptionKey.spacing ||
-    OptionKey.spacingMode ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverBorderDash ||
-    OptionKey.hoverBorderDashOffset ||
-    OptionKey.hoverOffset ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.circumference ||
-    OptionKey.rotation ||
-    OptionKey.weight ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.cutout ||
-    OptionKey.radius ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.rAxisID ||
-    OptionKey.fill ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.elements ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.descData ||
-    OptionKey.descDecimated => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.selfJoin:
+      case OptionKey.borderAlign:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.borderRadius:
+      case OptionKey.offset:
+      case OptionKey.circular:
+      case OptionKey.spacing:
+      case OptionKey.spacingMode:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverBorderDash:
+      case OptionKey.hoverBorderDashOffset:
+      case OptionKey.hoverOffset:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.circumference:
+      case OptionKey.rotation:
+      case OptionKey.weight:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.cutout:
+      case OptionKey.radius:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.rAxisID:
+      case OptionKey.fill:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.elements:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.descData:
+      case OptionKey.descDecimated:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.selfJoin => classifyBool(raw),
-    OptionKey.borderAlign => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.borderRadius => classifyUnion(raw, 33),
-    OptionKey.offset => classifyNumber(raw),
-    OptionKey.circular => classifyBool(raw),
-    OptionKey.spacing => classifyNumber(raw),
-    OptionKey.spacingMode => classifyString(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverBorderDash => classifyUnion(raw, 16),
-    OptionKey.hoverBorderDashOffset => classifyNumber(raw),
-    OptionKey.hoverOffset => classifyNumber(raw),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.circumference => classifyNumber(raw),
-    OptionKey.rotation => classifyNumber(raw),
-    OptionKey.weight => classifyNumber(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.cutout => classifyUnion(raw, 5),
-    OptionKey.radius => classifyUnion(raw, 5),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.descData => classifyUnion(raw, 64),
-    OptionKey.descDecimated => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.selfJoin:
+        return classifyBool(raw);
+      case OptionKey.borderAlign:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.borderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.offset:
+        return classifyNumber(raw);
+      case OptionKey.circular:
+        return classifyBool(raw);
+      case OptionKey.spacing:
+        return classifyNumber(raw);
+      case OptionKey.spacingMode:
+        return classifyString(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.hoverOffset:
+        return classifyNumber(raw);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.circumference:
+        return classifyNumber(raw);
+      case OptionKey.rotation:
+        return classifyNumber(raw);
+      case OptionKey.weight:
+        return classifyNumber(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.cutout:
+        return classifyUnion(raw, 5);
+      case OptionKey.radius:
+        return classifyUnion(raw, 5);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.descData:
+        return classifyUnion(raw, 64);
+      case OptionKey.descDecimated:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:390 PolarAreaControllerDatasetOptions (index.d.ts:247
@@ -12639,58 +13847,110 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.selfJoin => _selfJoin,
-    OptionKey.borderAlign => _borderAlign,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.borderRadius => _borderRadius,
-    OptionKey.offset => _offset,
-    OptionKey.circular => _circular,
-    OptionKey.spacing => _spacing,
-    OptionKey.spacingMode => _spacingMode,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverBorderDash => _hoverBorderDash,
-    OptionKey.hoverBorderDashOffset => _hoverBorderDashOffset,
-    OptionKey.hoverOffset => _hoverOffset,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.circumference => _circumference,
-    OptionKey.rotation => _rotation,
-    OptionKey.weight => _weight,
-    OptionKey.angle => _angle,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.startAngle => _startAngle,
-    OptionKey.cutoutPercentage => _cutoutPercentage,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.fill => _fill,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.elements => _elements,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.descData => _descData,
-    OptionKey.descDecimated => _descDecimated,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.selfJoin:
+        return _selfJoin;
+      case OptionKey.borderAlign:
+        return _borderAlign;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      case OptionKey.offset:
+        return _offset;
+      case OptionKey.circular:
+        return _circular;
+      case OptionKey.spacing:
+        return _spacing;
+      case OptionKey.spacingMode:
+        return _spacingMode;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverBorderDash:
+        return _hoverBorderDash;
+      case OptionKey.hoverBorderDashOffset:
+        return _hoverBorderDashOffset;
+      case OptionKey.hoverOffset:
+        return _hoverOffset;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.circumference:
+        return _circumference;
+      case OptionKey.rotation:
+        return _rotation;
+      case OptionKey.weight:
+        return _weight;
+      case OptionKey.angle:
+        return _angle;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.startAngle:
+        return _startAngle;
+      case OptionKey.cutoutPercentage:
+        return _cutoutPercentage;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.descData:
+        return _descData;
+      case OptionKey.descDecimated:
+        return _descDecimated;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -12803,112 +14063,168 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.selfJoin ||
-    OptionKey.borderAlign ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.borderRadius ||
-    OptionKey.offset ||
-    OptionKey.circular ||
-    OptionKey.spacing ||
-    OptionKey.spacingMode ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverBorderDash ||
-    OptionKey.hoverBorderDashOffset ||
-    OptionKey.hoverOffset ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.circumference ||
-    OptionKey.rotation ||
-    OptionKey.weight ||
-    OptionKey.angle ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.startAngle ||
-    OptionKey.cutoutPercentage ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.rAxisID ||
-    OptionKey.fill ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.elements ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.descData ||
-    OptionKey.descDecimated => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.selfJoin:
+      case OptionKey.borderAlign:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.borderRadius:
+      case OptionKey.offset:
+      case OptionKey.circular:
+      case OptionKey.spacing:
+      case OptionKey.spacingMode:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverBorderDash:
+      case OptionKey.hoverBorderDashOffset:
+      case OptionKey.hoverOffset:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.circumference:
+      case OptionKey.rotation:
+      case OptionKey.weight:
+      case OptionKey.angle:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.startAngle:
+      case OptionKey.cutoutPercentage:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.rAxisID:
+      case OptionKey.fill:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.elements:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.descData:
+      case OptionKey.descDecimated:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.selfJoin => classifyBool(raw),
-    OptionKey.borderAlign => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.borderRadius => classifyUnion(raw, 33),
-    OptionKey.offset => classifyNumber(raw),
-    OptionKey.circular => classifyBool(raw),
-    OptionKey.spacing => classifyNumber(raw),
-    OptionKey.spacingMode => classifyString(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverBorderDash => classifyUnion(raw, 16),
-    OptionKey.hoverBorderDashOffset => classifyNumber(raw),
-    OptionKey.hoverOffset => classifyNumber(raw),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.circumference => classifyNumber(raw),
-    OptionKey.rotation => classifyNumber(raw),
-    OptionKey.weight => classifyNumber(raw),
-    OptionKey.angle => classifyNumber(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.startAngle => classifyNumber(raw),
-    OptionKey.cutoutPercentage => classifyNumber(raw),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.descData => classifyUnion(raw, 64),
-    OptionKey.descDecimated => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.selfJoin:
+        return classifyBool(raw);
+      case OptionKey.borderAlign:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.borderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.offset:
+        return classifyNumber(raw);
+      case OptionKey.circular:
+        return classifyBool(raw);
+      case OptionKey.spacing:
+        return classifyNumber(raw);
+      case OptionKey.spacingMode:
+        return classifyString(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.hoverOffset:
+        return classifyNumber(raw);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.circumference:
+        return classifyNumber(raw);
+      case OptionKey.rotation:
+        return classifyNumber(raw);
+      case OptionKey.weight:
+        return classifyNumber(raw);
+      case OptionKey.angle:
+        return classifyNumber(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.startAngle:
+        return classifyNumber(raw);
+      case OptionKey.cutoutPercentage:
+        return classifyNumber(raw);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.descData:
+        return classifyUnion(raw, 64);
+      case OptionKey.descDecimated:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:430 RadarControllerDatasetOptions (index.d.ts:66
@@ -14016,69 +15332,132 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.radius => _radius,
-    OptionKey.hitRadius => _hitRadius,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.rotation => _rotation,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.hoverBorderWidth => _hoverBorderWidth,
-    OptionKey.hoverBorderColor => _hoverBorderColor,
-    OptionKey.hoverBackgroundColor => _hoverBackgroundColor,
-    OptionKey.hoverRadius => _hoverRadius,
-    OptionKey.pointBackgroundColor => _pointBackgroundColor,
-    OptionKey.pointBorderColor => _pointBorderColor,
-    OptionKey.pointBorderWidth => _pointBorderWidth,
-    OptionKey.pointHitRadius => _pointHitRadius,
-    OptionKey.pointRadius => _pointRadius,
-    OptionKey.pointRotation => _pointRotation,
-    OptionKey.pointHoverBackgroundColor => _pointHoverBackgroundColor,
-    OptionKey.pointHoverBorderColor => _pointHoverBorderColor,
-    OptionKey.pointHoverBorderWidth => _pointHoverBorderWidth,
-    OptionKey.pointHoverRadius => _pointHoverRadius,
-    OptionKey.borderCapStyle => _borderCapStyle,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    OptionKey.borderJoinStyle => _borderJoinStyle,
-    OptionKey.capBezierPoints => _capBezierPoints,
-    OptionKey.cubicInterpolationMode => _cubicInterpolationMode,
-    OptionKey.tension => _tension,
-    OptionKey.stepped => _stepped,
-    OptionKey.fill => _fill,
-    OptionKey.spanGaps => _spanGaps,
-    OptionKey.segment => _segment,
-    OptionKey.hoverBorderCapStyle => _hoverBorderCapStyle,
-    OptionKey.hoverBorderDash => _hoverBorderDash,
-    OptionKey.hoverBorderDashOffset => _hoverBorderDashOffset,
-    OptionKey.hoverBorderJoinStyle => _hoverBorderJoinStyle,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.showLine => _showLine,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.elements => _elements,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.descData => _descData,
-    OptionKey.descDecimated => _descDecimated,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.radius:
+        return _radius;
+      case OptionKey.hitRadius:
+        return _hitRadius;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.rotation:
+        return _rotation;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.hoverBorderWidth:
+        return _hoverBorderWidth;
+      case OptionKey.hoverBorderColor:
+        return _hoverBorderColor;
+      case OptionKey.hoverBackgroundColor:
+        return _hoverBackgroundColor;
+      case OptionKey.hoverRadius:
+        return _hoverRadius;
+      case OptionKey.pointBackgroundColor:
+        return _pointBackgroundColor;
+      case OptionKey.pointBorderColor:
+        return _pointBorderColor;
+      case OptionKey.pointBorderWidth:
+        return _pointBorderWidth;
+      case OptionKey.pointHitRadius:
+        return _pointHitRadius;
+      case OptionKey.pointRadius:
+        return _pointRadius;
+      case OptionKey.pointRotation:
+        return _pointRotation;
+      case OptionKey.pointHoverBackgroundColor:
+        return _pointHoverBackgroundColor;
+      case OptionKey.pointHoverBorderColor:
+        return _pointHoverBorderColor;
+      case OptionKey.pointHoverBorderWidth:
+        return _pointHoverBorderWidth;
+      case OptionKey.pointHoverRadius:
+        return _pointHoverRadius;
+      case OptionKey.borderCapStyle:
+        return _borderCapStyle;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      case OptionKey.borderJoinStyle:
+        return _borderJoinStyle;
+      case OptionKey.capBezierPoints:
+        return _capBezierPoints;
+      case OptionKey.cubicInterpolationMode:
+        return _cubicInterpolationMode;
+      case OptionKey.tension:
+        return _tension;
+      case OptionKey.stepped:
+        return _stepped;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.spanGaps:
+        return _spanGaps;
+      case OptionKey.segment:
+        return _segment;
+      case OptionKey.hoverBorderCapStyle:
+        return _hoverBorderCapStyle;
+      case OptionKey.hoverBorderDash:
+        return _hoverBorderDash;
+      case OptionKey.hoverBorderDashOffset:
+        return _hoverBorderDashOffset;
+      case OptionKey.hoverBorderJoinStyle:
+        return _hoverBorderJoinStyle;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.showLine:
+        return _showLine;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.descData:
+        return _descData;
+      case OptionKey.descDecimated:
+        return _descDecimated;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -14216,134 +15595,201 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.borderWidth ||
-    OptionKey.borderColor ||
-    OptionKey.backgroundColor ||
-    OptionKey.radius ||
-    OptionKey.hitRadius ||
-    OptionKey.pointStyle ||
-    OptionKey.rotation ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.hoverBorderWidth ||
-    OptionKey.hoverBorderColor ||
-    OptionKey.hoverBackgroundColor ||
-    OptionKey.hoverRadius ||
-    OptionKey.pointBackgroundColor ||
-    OptionKey.pointBorderColor ||
-    OptionKey.pointBorderWidth ||
-    OptionKey.pointHitRadius ||
-    OptionKey.pointRadius ||
-    OptionKey.pointRotation ||
-    OptionKey.pointHoverBackgroundColor ||
-    OptionKey.pointHoverBorderColor ||
-    OptionKey.pointHoverBorderWidth ||
-    OptionKey.pointHoverRadius ||
-    OptionKey.borderCapStyle ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset ||
-    OptionKey.borderJoinStyle ||
-    OptionKey.capBezierPoints ||
-    OptionKey.cubicInterpolationMode ||
-    OptionKey.tension ||
-    OptionKey.stepped ||
-    OptionKey.fill ||
-    OptionKey.spanGaps ||
-    OptionKey.segment ||
-    OptionKey.hoverBorderCapStyle ||
-    OptionKey.hoverBorderDash ||
-    OptionKey.hoverBorderDashOffset ||
-    OptionKey.hoverBorderJoinStyle ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.showLine ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.rAxisID ||
-    OptionKey.elements ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.descData ||
-    OptionKey.descDecimated => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.borderWidth:
+      case OptionKey.borderColor:
+      case OptionKey.backgroundColor:
+      case OptionKey.radius:
+      case OptionKey.hitRadius:
+      case OptionKey.pointStyle:
+      case OptionKey.rotation:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.hoverBorderWidth:
+      case OptionKey.hoverBorderColor:
+      case OptionKey.hoverBackgroundColor:
+      case OptionKey.hoverRadius:
+      case OptionKey.pointBackgroundColor:
+      case OptionKey.pointBorderColor:
+      case OptionKey.pointBorderWidth:
+      case OptionKey.pointHitRadius:
+      case OptionKey.pointRadius:
+      case OptionKey.pointRotation:
+      case OptionKey.pointHoverBackgroundColor:
+      case OptionKey.pointHoverBorderColor:
+      case OptionKey.pointHoverBorderWidth:
+      case OptionKey.pointHoverRadius:
+      case OptionKey.borderCapStyle:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+      case OptionKey.borderJoinStyle:
+      case OptionKey.capBezierPoints:
+      case OptionKey.cubicInterpolationMode:
+      case OptionKey.tension:
+      case OptionKey.stepped:
+      case OptionKey.fill:
+      case OptionKey.spanGaps:
+      case OptionKey.segment:
+      case OptionKey.hoverBorderCapStyle:
+      case OptionKey.hoverBorderDash:
+      case OptionKey.hoverBorderDashOffset:
+      case OptionKey.hoverBorderJoinStyle:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.showLine:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.rAxisID:
+      case OptionKey.elements:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.descData:
+      case OptionKey.descDecimated:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.radius => classifyNumber(raw),
-    OptionKey.hitRadius => classifyNumber(raw),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.rotation => classifyNumber(raw),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.hoverBorderWidth => classifyNumber(raw),
-    OptionKey.hoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.hoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.hoverRadius => classifyNumber(raw),
-    OptionKey.pointBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.pointBorderColor => classifyUnion(raw, 64),
-    OptionKey.pointBorderWidth => classifyNumber(raw),
-    OptionKey.pointHitRadius => classifyNumber(raw),
-    OptionKey.pointRadius => classifyNumber(raw),
-    OptionKey.pointRotation => classifyNumber(raw),
-    OptionKey.pointHoverBackgroundColor => classifyUnion(raw, 64),
-    OptionKey.pointHoverBorderColor => classifyUnion(raw, 64),
-    OptionKey.pointHoverBorderWidth => classifyNumber(raw),
-    OptionKey.pointHoverRadius => classifyNumber(raw),
-    OptionKey.borderCapStyle => classifyString(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    OptionKey.borderJoinStyle => classifyString(raw),
-    OptionKey.capBezierPoints => classifyBool(raw),
-    OptionKey.cubicInterpolationMode => classifyString(raw),
-    OptionKey.tension => classifyNumber(raw),
-    OptionKey.stepped => classifyUnion(raw, 6),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.spanGaps => classifyUnion(raw, 3),
-    OptionKey.segment => classifyScope<SegmentOptionsScope>(raw),
-    OptionKey.hoverBorderCapStyle => classifyString(raw),
-    OptionKey.hoverBorderDash => classifyUnion(raw, 16),
-    OptionKey.hoverBorderDashOffset => classifyNumber(raw),
-    OptionKey.hoverBorderJoinStyle => classifyString(raw),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.showLine => classifyBool(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.descData => classifyUnion(raw, 64),
-    OptionKey.descDecimated => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.radius:
+        return classifyNumber(raw);
+      case OptionKey.hitRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.rotation:
+        return classifyNumber(raw);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.hoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.hoverRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.pointHitRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointRadius:
+        return classifyNumber(raw);
+      case OptionKey.pointRotation:
+        return classifyNumber(raw);
+      case OptionKey.pointHoverBackgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointHoverBorderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.pointHoverBorderWidth:
+        return classifyNumber(raw);
+      case OptionKey.pointHoverRadius:
+        return classifyNumber(raw);
+      case OptionKey.borderCapStyle:
+        return classifyString(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.borderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.capBezierPoints:
+        return classifyBool(raw);
+      case OptionKey.cubicInterpolationMode:
+        return classifyString(raw);
+      case OptionKey.tension:
+        return classifyNumber(raw);
+      case OptionKey.stepped:
+        return classifyUnion(raw, 6);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.spanGaps:
+        return classifyUnion(raw, 3);
+      case OptionKey.segment:
+        return classifyScope<SegmentOptionsScope>(raw);
+      case OptionKey.hoverBorderCapStyle:
+        return classifyString(raw);
+      case OptionKey.hoverBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.hoverBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.hoverBorderJoinStyle:
+        return classifyString(raw);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.showLine:
+        return classifyBool(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.descData:
+        return classifyUnion(raw, 64);
+      case OptionKey.descDecimated:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:66 ControllerDatasetOptions with index.d.ts:3859
@@ -14788,33 +16234,60 @@ base class GenericDatasetOptionsScope extends OptionScope {
       store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parsing => _parsing,
-    OptionKey.normalized => _normalized,
-    OptionKey.indexAxis => _indexAxis,
-    OptionKey.clip => _clip,
-    OptionKey.label => _label,
-    OptionKey.order => _order,
-    OptionKey.stack => _stack,
-    OptionKey.hidden => _hidden,
-    OptionKey.tooltip => _tooltip,
-    OptionKey.type => _type,
-    OptionKey.data => _data,
-    OptionKey.xAxisID => _xAxisID,
-    OptionKey.yAxisID => _yAxisID,
-    OptionKey.rAxisID => _rAxisID,
-    OptionKey.fill => _fill,
-    OptionKey.drawActiveElementsOnTop => _drawActiveElementsOnTop,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.transitions => _transitions,
-    OptionKey.elements => _elements,
-    OptionKey.datasetElementType => _datasetElementType,
-    OptionKey.dataElementType => _dataElementType,
-    OptionKey.descData => _descData,
-    OptionKey.descDecimated => _descDecimated,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+        return _parsing;
+      case OptionKey.normalized:
+        return _normalized;
+      case OptionKey.indexAxis:
+        return _indexAxis;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.order:
+        return _order;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.hidden:
+        return _hidden;
+      case OptionKey.tooltip:
+        return _tooltip;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.data:
+        return _data;
+      case OptionKey.xAxisID:
+        return _xAxisID;
+      case OptionKey.yAxisID:
+        return _yAxisID;
+      case OptionKey.rAxisID:
+        return _rAxisID;
+      case OptionKey.fill:
+        return _fill;
+      case OptionKey.drawActiveElementsOnTop:
+        return _drawActiveElementsOnTop;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.transitions:
+        return _transitions;
+      case OptionKey.elements:
+        return _elements;
+      case OptionKey.datasetElementType:
+        return _datasetElementType;
+      case OptionKey.dataElementType:
+        return _dataElementType;
+      case OptionKey.descData:
+        return _descData;
+      case OptionKey.descDecimated:
+        return _descDecimated;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -14877,62 +16350,93 @@ base class GenericDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parsing ||
-    OptionKey.normalized ||
-    OptionKey.indexAxis ||
-    OptionKey.clip ||
-    OptionKey.label ||
-    OptionKey.order ||
-    OptionKey.stack ||
-    OptionKey.hidden ||
-    OptionKey.tooltip ||
-    OptionKey.type ||
-    OptionKey.data ||
-    OptionKey.xAxisID ||
-    OptionKey.yAxisID ||
-    OptionKey.rAxisID ||
-    OptionKey.fill ||
-    OptionKey.drawActiveElementsOnTop ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.transitions ||
-    OptionKey.elements ||
-    OptionKey.datasetElementType ||
-    OptionKey.dataElementType ||
-    OptionKey.descData ||
-    OptionKey.descDecimated => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parsing:
+      case OptionKey.normalized:
+      case OptionKey.indexAxis:
+      case OptionKey.clip:
+      case OptionKey.label:
+      case OptionKey.order:
+      case OptionKey.stack:
+      case OptionKey.hidden:
+      case OptionKey.tooltip:
+      case OptionKey.type:
+      case OptionKey.data:
+      case OptionKey.xAxisID:
+      case OptionKey.yAxisID:
+      case OptionKey.rAxisID:
+      case OptionKey.fill:
+      case OptionKey.drawActiveElementsOnTop:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.transitions:
+      case OptionKey.elements:
+      case OptionKey.datasetElementType:
+      case OptionKey.dataElementType:
+      case OptionKey.descData:
+      case OptionKey.descDecimated:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parsing => classifyUnion(raw, 34),
-    OptionKey.normalized => classifyBool(raw),
-    OptionKey.indexAxis => classifyString(raw),
-    OptionKey.clip => classifyUnion(raw, 35),
-    OptionKey.label => classifyString(raw),
-    OptionKey.order => classifyNumber(raw),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.hidden => classifyBool(raw),
-    OptionKey.tooltip => classifyScope<TooltipDatasetOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.data => classifyUnion(raw, 16),
-    OptionKey.xAxisID => classifyString(raw),
-    OptionKey.yAxisID => classifyString(raw),
-    OptionKey.rAxisID => classifyString(raw),
-    OptionKey.fill => classifyUnion(raw, 39),
-    OptionKey.drawActiveElementsOnTop => classifyBool(raw),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.transitions => classifyScope<TransitionsSpecScope>(raw),
-    OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
-    OptionKey.datasetElementType => classifyUnion(raw, 6),
-    OptionKey.dataElementType => classifyUnion(raw, 6),
-    OptionKey.descData => classifyUnion(raw, 64),
-    OptionKey.descDecimated => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parsing:
+        return classifyUnion(raw, 34);
+      case OptionKey.normalized:
+        return classifyBool(raw);
+      case OptionKey.indexAxis:
+        return classifyString(raw);
+      case OptionKey.clip:
+        return classifyUnion(raw, 35);
+      case OptionKey.label:
+        return classifyString(raw);
+      case OptionKey.order:
+        return classifyNumber(raw);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.hidden:
+        return classifyBool(raw);
+      case OptionKey.tooltip:
+        return classifyScope<TooltipDatasetOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.data:
+        return classifyUnion(raw, 16);
+      case OptionKey.xAxisID:
+        return classifyString(raw);
+      case OptionKey.yAxisID:
+        return classifyString(raw);
+      case OptionKey.rAxisID:
+        return classifyString(raw);
+      case OptionKey.fill:
+        return classifyUnion(raw, 39);
+      case OptionKey.drawActiveElementsOnTop:
+        return classifyBool(raw);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.transitions:
+        return classifyScope<TransitionsSpecScope>(raw);
+      case OptionKey.elements:
+        return classifyScope<ElementOptionsByTypeScope>(raw);
+      case OptionKey.datasetElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.dataElementType:
+        return classifyUnion(raw, 6);
+      case OptionKey.descData:
+        return classifyUnion(raw, 64);
+      case OptionKey.descDecimated:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:3829 ScaleOptions, the union of index.d.ts:1200 CoreScaleOptions,
@@ -15824,57 +17328,108 @@ base class ScaleOptionsScope extends OptionScope {
   set fullSize(bool value) => store(OptionKey.fullSize, OptValue<bool>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.display => _display,
-    OptionKey.alignToPixels => _alignToPixels,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.reverse => _reverse,
-    OptionKey.clip => _clip,
-    OptionKey.weight => _weight,
-    OptionKey.min => _min,
-    OptionKey.max => _max,
-    OptionKey.suggestedMin => _suggestedMin,
-    OptionKey.suggestedMax => _suggestedMax,
-    OptionKey.beforeUpdate => _beforeUpdate,
-    OptionKey.beforeSetDimensions => _beforeSetDimensions,
-    OptionKey.afterSetDimensions => _afterSetDimensions,
-    OptionKey.beforeDataLimits => _beforeDataLimits,
-    OptionKey.afterDataLimits => _afterDataLimits,
-    OptionKey.beforeBuildTicks => _beforeBuildTicks,
-    OptionKey.afterBuildTicks => _afterBuildTicks,
-    OptionKey.beforeTickToLabelConversion => _beforeTickToLabelConversion,
-    OptionKey.afterTickToLabelConversion => _afterTickToLabelConversion,
-    OptionKey.beforeCalculateLabelRotation => _beforeCalculateLabelRotation,
-    OptionKey.afterCalculateLabelRotation => _afterCalculateLabelRotation,
-    OptionKey.beforeFit => _beforeFit,
-    OptionKey.afterFit => _afterFit,
-    OptionKey.afterUpdate => _afterUpdate,
-    OptionKey.bounds => _bounds,
-    OptionKey.position => _position,
-    OptionKey.stack => _stack,
-    OptionKey.stackWeight => _stackWeight,
-    OptionKey.axis => _axis,
-    OptionKey.offset => _offset,
-    OptionKey.grid => _grid,
-    OptionKey.border => _border,
-    OptionKey.title => _title,
-    OptionKey.stacked => _stacked,
-    OptionKey.ticks => _ticks,
-    OptionKey.labels => _labels,
-    OptionKey.beginAtZero => _beginAtZero,
-    OptionKey.grace => _grace,
-    OptionKey.offsetAfterAutoskip => _offsetAfterAutoskip,
-    OptionKey.adapters => _adapters,
-    OptionKey.time => _time,
-    OptionKey.animate => _animate,
-    OptionKey.startAngle => _startAngle,
-    OptionKey.angleLines => _angleLines,
-    OptionKey.pointLabels => _pointLabels,
-    OptionKey.type => _type,
-    OptionKey.id => _id,
-    OptionKey.fullSize => _fullSize,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+        return _display;
+      case OptionKey.alignToPixels:
+        return _alignToPixels;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.reverse:
+        return _reverse;
+      case OptionKey.clip:
+        return _clip;
+      case OptionKey.weight:
+        return _weight;
+      case OptionKey.min:
+        return _min;
+      case OptionKey.max:
+        return _max;
+      case OptionKey.suggestedMin:
+        return _suggestedMin;
+      case OptionKey.suggestedMax:
+        return _suggestedMax;
+      case OptionKey.beforeUpdate:
+        return _beforeUpdate;
+      case OptionKey.beforeSetDimensions:
+        return _beforeSetDimensions;
+      case OptionKey.afterSetDimensions:
+        return _afterSetDimensions;
+      case OptionKey.beforeDataLimits:
+        return _beforeDataLimits;
+      case OptionKey.afterDataLimits:
+        return _afterDataLimits;
+      case OptionKey.beforeBuildTicks:
+        return _beforeBuildTicks;
+      case OptionKey.afterBuildTicks:
+        return _afterBuildTicks;
+      case OptionKey.beforeTickToLabelConversion:
+        return _beforeTickToLabelConversion;
+      case OptionKey.afterTickToLabelConversion:
+        return _afterTickToLabelConversion;
+      case OptionKey.beforeCalculateLabelRotation:
+        return _beforeCalculateLabelRotation;
+      case OptionKey.afterCalculateLabelRotation:
+        return _afterCalculateLabelRotation;
+      case OptionKey.beforeFit:
+        return _beforeFit;
+      case OptionKey.afterFit:
+        return _afterFit;
+      case OptionKey.afterUpdate:
+        return _afterUpdate;
+      case OptionKey.bounds:
+        return _bounds;
+      case OptionKey.position:
+        return _position;
+      case OptionKey.stack:
+        return _stack;
+      case OptionKey.stackWeight:
+        return _stackWeight;
+      case OptionKey.axis:
+        return _axis;
+      case OptionKey.offset:
+        return _offset;
+      case OptionKey.grid:
+        return _grid;
+      case OptionKey.border:
+        return _border;
+      case OptionKey.title:
+        return _title;
+      case OptionKey.stacked:
+        return _stacked;
+      case OptionKey.ticks:
+        return _ticks;
+      case OptionKey.labels:
+        return _labels;
+      case OptionKey.beginAtZero:
+        return _beginAtZero;
+      case OptionKey.grace:
+        return _grace;
+      case OptionKey.offsetAfterAutoskip:
+        return _offsetAfterAutoskip;
+      case OptionKey.adapters:
+        return _adapters;
+      case OptionKey.time:
+        return _time;
+      case OptionKey.animate:
+        return _animate;
+      case OptionKey.startAngle:
+        return _startAngle;
+      case OptionKey.angleLines:
+        return _angleLines;
+      case OptionKey.pointLabels:
+        return _pointLabels;
+      case OptionKey.type:
+        return _type;
+      case OptionKey.id:
+        return _id;
+      case OptionKey.fullSize:
+        return _fullSize;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -15993,110 +17548,165 @@ base class ScaleOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.display ||
-    OptionKey.alignToPixels ||
-    OptionKey.backgroundColor ||
-    OptionKey.reverse ||
-    OptionKey.clip ||
-    OptionKey.weight ||
-    OptionKey.min ||
-    OptionKey.max ||
-    OptionKey.suggestedMin ||
-    OptionKey.suggestedMax ||
-    OptionKey.beforeUpdate ||
-    OptionKey.beforeSetDimensions ||
-    OptionKey.afterSetDimensions ||
-    OptionKey.beforeDataLimits ||
-    OptionKey.afterDataLimits ||
-    OptionKey.beforeBuildTicks ||
-    OptionKey.afterBuildTicks ||
-    OptionKey.beforeTickToLabelConversion ||
-    OptionKey.afterTickToLabelConversion ||
-    OptionKey.beforeCalculateLabelRotation ||
-    OptionKey.afterCalculateLabelRotation ||
-    OptionKey.beforeFit ||
-    OptionKey.afterFit ||
-    OptionKey.afterUpdate ||
-    OptionKey.bounds ||
-    OptionKey.position ||
-    OptionKey.stack ||
-    OptionKey.stackWeight ||
-    OptionKey.axis ||
-    OptionKey.offset ||
-    OptionKey.grid ||
-    OptionKey.border ||
-    OptionKey.title ||
-    OptionKey.stacked ||
-    OptionKey.ticks ||
-    OptionKey.labels ||
-    OptionKey.beginAtZero ||
-    OptionKey.grace ||
-    OptionKey.offsetAfterAutoskip ||
-    OptionKey.adapters ||
-    OptionKey.time ||
-    OptionKey.animate ||
-    OptionKey.startAngle ||
-    OptionKey.angleLines ||
-    OptionKey.pointLabels ||
-    OptionKey.type ||
-    OptionKey.id ||
-    OptionKey.fullSize => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+      case OptionKey.alignToPixels:
+      case OptionKey.backgroundColor:
+      case OptionKey.reverse:
+      case OptionKey.clip:
+      case OptionKey.weight:
+      case OptionKey.min:
+      case OptionKey.max:
+      case OptionKey.suggestedMin:
+      case OptionKey.suggestedMax:
+      case OptionKey.beforeUpdate:
+      case OptionKey.beforeSetDimensions:
+      case OptionKey.afterSetDimensions:
+      case OptionKey.beforeDataLimits:
+      case OptionKey.afterDataLimits:
+      case OptionKey.beforeBuildTicks:
+      case OptionKey.afterBuildTicks:
+      case OptionKey.beforeTickToLabelConversion:
+      case OptionKey.afterTickToLabelConversion:
+      case OptionKey.beforeCalculateLabelRotation:
+      case OptionKey.afterCalculateLabelRotation:
+      case OptionKey.beforeFit:
+      case OptionKey.afterFit:
+      case OptionKey.afterUpdate:
+      case OptionKey.bounds:
+      case OptionKey.position:
+      case OptionKey.stack:
+      case OptionKey.stackWeight:
+      case OptionKey.axis:
+      case OptionKey.offset:
+      case OptionKey.grid:
+      case OptionKey.border:
+      case OptionKey.title:
+      case OptionKey.stacked:
+      case OptionKey.ticks:
+      case OptionKey.labels:
+      case OptionKey.beginAtZero:
+      case OptionKey.grace:
+      case OptionKey.offsetAfterAutoskip:
+      case OptionKey.adapters:
+      case OptionKey.time:
+      case OptionKey.animate:
+      case OptionKey.startAngle:
+      case OptionKey.angleLines:
+      case OptionKey.pointLabels:
+      case OptionKey.type:
+      case OptionKey.id:
+      case OptionKey.fullSize:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.display => classifyUnion(raw, 6),
-    OptionKey.alignToPixels => classifyBool(raw),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.reverse => classifyBool(raw),
-    OptionKey.clip => classifyBool(raw),
-    OptionKey.weight => classifyNumber(raw),
-    OptionKey.min => classifyUnion(raw, 64),
-    OptionKey.max => classifyUnion(raw, 64),
-    OptionKey.suggestedMin => classifyUnion(raw, 64),
-    OptionKey.suggestedMax => classifyUnion(raw, 64),
-    OptionKey.beforeUpdate => classifyUnion(raw, 8),
-    OptionKey.beforeSetDimensions => classifyUnion(raw, 8),
-    OptionKey.afterSetDimensions => classifyUnion(raw, 8),
-    OptionKey.beforeDataLimits => classifyUnion(raw, 8),
-    OptionKey.afterDataLimits => classifyUnion(raw, 8),
-    OptionKey.beforeBuildTicks => classifyUnion(raw, 8),
-    OptionKey.afterBuildTicks => classifyUnion(raw, 8),
-    OptionKey.beforeTickToLabelConversion => classifyUnion(raw, 8),
-    OptionKey.afterTickToLabelConversion => classifyUnion(raw, 8),
-    OptionKey.beforeCalculateLabelRotation => classifyUnion(raw, 8),
-    OptionKey.afterCalculateLabelRotation => classifyUnion(raw, 8),
-    OptionKey.beforeFit => classifyUnion(raw, 8),
-    OptionKey.afterFit => classifyUnion(raw, 8),
-    OptionKey.afterUpdate => classifyUnion(raw, 8),
-    OptionKey.bounds => classifyString(raw),
-    OptionKey.position => classifyUnion(raw, 36),
-    OptionKey.stack => classifyString(raw),
-    OptionKey.stackWeight => classifyNumber(raw),
-    OptionKey.axis => classifyString(raw),
-    OptionKey.offset => classifyBool(raw),
-    OptionKey.grid => classifyScope<GridLineOptionsScope>(raw),
-    OptionKey.border => classifyScope<BorderOptionsScope>(raw),
-    OptionKey.title => classifyScope<ScaleTitleOptionsScope>(raw),
-    OptionKey.stacked => classifyUnion(raw, 6),
-    OptionKey.ticks => classifyScope<TickOptionsScope>(raw),
-    OptionKey.labels => classifyUnion(raw, 16),
-    OptionKey.beginAtZero => classifyBool(raw),
-    OptionKey.grace => classifyUnion(raw, 5),
-    OptionKey.offsetAfterAutoskip => classifyBool(raw),
-    OptionKey.adapters => classifyUnion(raw, 64),
-    OptionKey.time => classifyScope<TimeScaleTimeOptionsScope>(raw),
-    OptionKey.animate => classifyBool(raw),
-    OptionKey.startAngle => classifyNumber(raw),
-    OptionKey.angleLines => classifyScope<AngleLineOptionsScope>(raw),
-    OptionKey.pointLabels => classifyScope<PointLabelOptionsScope>(raw),
-    OptionKey.type => classifyString(raw),
-    OptionKey.id => classifyString(raw),
-    OptionKey.fullSize => classifyBool(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.display:
+        return classifyUnion(raw, 6);
+      case OptionKey.alignToPixels:
+        return classifyBool(raw);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.reverse:
+        return classifyBool(raw);
+      case OptionKey.clip:
+        return classifyBool(raw);
+      case OptionKey.weight:
+        return classifyNumber(raw);
+      case OptionKey.min:
+        return classifyUnion(raw, 64);
+      case OptionKey.max:
+        return classifyUnion(raw, 64);
+      case OptionKey.suggestedMin:
+        return classifyUnion(raw, 64);
+      case OptionKey.suggestedMax:
+        return classifyUnion(raw, 64);
+      case OptionKey.beforeUpdate:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeSetDimensions:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterSetDimensions:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeDataLimits:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterDataLimits:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeBuildTicks:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterBuildTicks:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeTickToLabelConversion:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterTickToLabelConversion:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeCalculateLabelRotation:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterCalculateLabelRotation:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeFit:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterFit:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterUpdate:
+        return classifyUnion(raw, 8);
+      case OptionKey.bounds:
+        return classifyString(raw);
+      case OptionKey.position:
+        return classifyUnion(raw, 36);
+      case OptionKey.stack:
+        return classifyString(raw);
+      case OptionKey.stackWeight:
+        return classifyNumber(raw);
+      case OptionKey.axis:
+        return classifyString(raw);
+      case OptionKey.offset:
+        return classifyBool(raw);
+      case OptionKey.grid:
+        return classifyScope<GridLineOptionsScope>(raw);
+      case OptionKey.border:
+        return classifyScope<BorderOptionsScope>(raw);
+      case OptionKey.title:
+        return classifyScope<ScaleTitleOptionsScope>(raw);
+      case OptionKey.stacked:
+        return classifyUnion(raw, 6);
+      case OptionKey.ticks:
+        return classifyScope<TickOptionsScope>(raw);
+      case OptionKey.labels:
+        return classifyUnion(raw, 16);
+      case OptionKey.beginAtZero:
+        return classifyBool(raw);
+      case OptionKey.grace:
+        return classifyUnion(raw, 5);
+      case OptionKey.offsetAfterAutoskip:
+        return classifyBool(raw);
+      case OptionKey.adapters:
+        return classifyUnion(raw, 64);
+      case OptionKey.time:
+        return classifyScope<TimeScaleTimeOptionsScope>(raw);
+      case OptionKey.animate:
+        return classifyBool(raw);
+      case OptionKey.startAngle:
+        return classifyNumber(raw);
+      case OptionKey.angleLines:
+        return classifyScope<AngleLineOptionsScope>(raw);
+      case OptionKey.pointLabels:
+        return classifyScope<PointLabelOptionsScope>(raw);
+      case OptionKey.type:
+        return classifyString(raw);
+      case OptionKey.id:
+        return classifyString(raw);
+      case OptionKey.fullSize:
+        return classifyBool(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind for the object form of index.d.ts:3270 CartesianScaleOptions
@@ -16654,38 +18264,70 @@ base class TickOptionsScope extends OptionScope {
       store(OptionKey.minor, OptScope<MinorTickOptionsScope>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.backdropColor => _backdropColor,
-    OptionKey.backdropPadding => _backdropPadding,
-    OptionKey.callback => _callback,
-    OptionKey.display => _display,
-    OptionKey.color => _color,
-    OptionKey.font => _font,
-    OptionKey.padding => _padding,
-    OptionKey.showLabelBackdrop => _showLabelBackdrop,
-    OptionKey.textStrokeColor => _textStrokeColor,
-    OptionKey.textStrokeWidth => _textStrokeWidth,
-    OptionKey.z => _z,
-    OptionKey.major => _major,
-    OptionKey.sampleSize => _sampleSize,
-    OptionKey.align => _align,
-    OptionKey.autoSkip => _autoSkip,
-    OptionKey.autoSkipPadding => _autoSkipPadding,
-    OptionKey.crossAlign => _crossAlign,
-    OptionKey.includeBounds => _includeBounds,
-    OptionKey.labelOffset => _labelOffset,
-    OptionKey.minRotation => _minRotation,
-    OptionKey.maxRotation => _maxRotation,
-    OptionKey.mirror => _mirror,
-    OptionKey.maxTicksLimit => _maxTicksLimit,
-    OptionKey.format => _format,
-    OptionKey.precision => _precision,
-    OptionKey.stepSize => _stepSize,
-    OptionKey.count => _count,
-    OptionKey.source => _source,
-    OptionKey.minor => _minor,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.backdropColor:
+        return _backdropColor;
+      case OptionKey.backdropPadding:
+        return _backdropPadding;
+      case OptionKey.callback:
+        return _callback;
+      case OptionKey.display:
+        return _display;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.font:
+        return _font;
+      case OptionKey.padding:
+        return _padding;
+      case OptionKey.showLabelBackdrop:
+        return _showLabelBackdrop;
+      case OptionKey.textStrokeColor:
+        return _textStrokeColor;
+      case OptionKey.textStrokeWidth:
+        return _textStrokeWidth;
+      case OptionKey.z:
+        return _z;
+      case OptionKey.major:
+        return _major;
+      case OptionKey.sampleSize:
+        return _sampleSize;
+      case OptionKey.align:
+        return _align;
+      case OptionKey.autoSkip:
+        return _autoSkip;
+      case OptionKey.autoSkipPadding:
+        return _autoSkipPadding;
+      case OptionKey.crossAlign:
+        return _crossAlign;
+      case OptionKey.includeBounds:
+        return _includeBounds;
+      case OptionKey.labelOffset:
+        return _labelOffset;
+      case OptionKey.minRotation:
+        return _minRotation;
+      case OptionKey.maxRotation:
+        return _maxRotation;
+      case OptionKey.mirror:
+        return _mirror;
+      case OptionKey.maxTicksLimit:
+        return _maxTicksLimit;
+      case OptionKey.format:
+        return _format;
+      case OptionKey.precision:
+        return _precision;
+      case OptionKey.stepSize:
+        return _stepSize;
+      case OptionKey.count:
+        return _count;
+      case OptionKey.source:
+        return _source;
+      case OptionKey.minor:
+        return _minor;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -16754,72 +18396,108 @@ base class TickOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.backdropColor ||
-    OptionKey.backdropPadding ||
-    OptionKey.callback ||
-    OptionKey.display ||
-    OptionKey.color ||
-    OptionKey.font ||
-    OptionKey.padding ||
-    OptionKey.showLabelBackdrop ||
-    OptionKey.textStrokeColor ||
-    OptionKey.textStrokeWidth ||
-    OptionKey.z ||
-    OptionKey.major ||
-    OptionKey.sampleSize ||
-    OptionKey.align ||
-    OptionKey.autoSkip ||
-    OptionKey.autoSkipPadding ||
-    OptionKey.crossAlign ||
-    OptionKey.includeBounds ||
-    OptionKey.labelOffset ||
-    OptionKey.minRotation ||
-    OptionKey.maxRotation ||
-    OptionKey.mirror ||
-    OptionKey.maxTicksLimit ||
-    OptionKey.format ||
-    OptionKey.precision ||
-    OptionKey.stepSize ||
-    OptionKey.count ||
-    OptionKey.source ||
-    OptionKey.minor => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.backdropColor:
+      case OptionKey.backdropPadding:
+      case OptionKey.callback:
+      case OptionKey.display:
+      case OptionKey.color:
+      case OptionKey.font:
+      case OptionKey.padding:
+      case OptionKey.showLabelBackdrop:
+      case OptionKey.textStrokeColor:
+      case OptionKey.textStrokeWidth:
+      case OptionKey.z:
+      case OptionKey.major:
+      case OptionKey.sampleSize:
+      case OptionKey.align:
+      case OptionKey.autoSkip:
+      case OptionKey.autoSkipPadding:
+      case OptionKey.crossAlign:
+      case OptionKey.includeBounds:
+      case OptionKey.labelOffset:
+      case OptionKey.minRotation:
+      case OptionKey.maxRotation:
+      case OptionKey.mirror:
+      case OptionKey.maxTicksLimit:
+      case OptionKey.format:
+      case OptionKey.precision:
+      case OptionKey.stepSize:
+      case OptionKey.count:
+      case OptionKey.source:
+      case OptionKey.minor:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.backdropColor => classifyUnion(raw, 64),
-    OptionKey.backdropPadding => classifyUnion(raw, 33),
-    OptionKey.callback => classifyUnion(raw, 10),
-    OptionKey.display => classifyBool(raw),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.font => classifyScope<FontSpecScope>(raw),
-    OptionKey.padding => classifyNumber(raw),
-    OptionKey.showLabelBackdrop => classifyBool(raw),
-    OptionKey.textStrokeColor => classifyUnion(raw, 64),
-    OptionKey.textStrokeWidth => classifyNumber(raw),
-    OptionKey.z => classifyNumber(raw),
-    OptionKey.major => classifyScope<MajorTickOptionsScope>(raw),
-    OptionKey.sampleSize => classifyNumber(raw),
-    OptionKey.align => classifyString(raw),
-    OptionKey.autoSkip => classifyBool(raw),
-    OptionKey.autoSkipPadding => classifyNumber(raw),
-    OptionKey.crossAlign => classifyString(raw),
-    OptionKey.includeBounds => classifyBool(raw),
-    OptionKey.labelOffset => classifyNumber(raw),
-    OptionKey.minRotation => classifyNumber(raw),
-    OptionKey.maxRotation => classifyNumber(raw),
-    OptionKey.mirror => classifyBool(raw),
-    OptionKey.maxTicksLimit => classifyNumber(raw),
-    OptionKey.format => classifyUnion(raw, 64),
-    OptionKey.precision => classifyNumber(raw),
-    OptionKey.stepSize => classifyNumber(raw),
-    OptionKey.count => classifyNumber(raw),
-    OptionKey.source => classifyString(raw),
-    OptionKey.minor => classifyScope<MinorTickOptionsScope>(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.backdropColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backdropPadding:
+        return classifyUnion(raw, 33);
+      case OptionKey.callback:
+        return classifyUnion(raw, 10);
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.font:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.padding:
+        return classifyNumber(raw);
+      case OptionKey.showLabelBackdrop:
+        return classifyBool(raw);
+      case OptionKey.textStrokeColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.textStrokeWidth:
+        return classifyNumber(raw);
+      case OptionKey.z:
+        return classifyNumber(raw);
+      case OptionKey.major:
+        return classifyScope<MajorTickOptionsScope>(raw);
+      case OptionKey.sampleSize:
+        return classifyNumber(raw);
+      case OptionKey.align:
+        return classifyString(raw);
+      case OptionKey.autoSkip:
+        return classifyBool(raw);
+      case OptionKey.autoSkipPadding:
+        return classifyNumber(raw);
+      case OptionKey.crossAlign:
+        return classifyString(raw);
+      case OptionKey.includeBounds:
+        return classifyBool(raw);
+      case OptionKey.labelOffset:
+        return classifyNumber(raw);
+      case OptionKey.minRotation:
+        return classifyNumber(raw);
+      case OptionKey.maxRotation:
+        return classifyNumber(raw);
+      case OptionKey.mirror:
+        return classifyBool(raw);
+      case OptionKey.maxTicksLimit:
+        return classifyNumber(raw);
+      case OptionKey.format:
+        return classifyUnion(raw, 64);
+      case OptionKey.precision:
+        return classifyNumber(raw);
+      case OptionKey.stepSize:
+        return classifyNumber(raw);
+      case OptionKey.count:
+        return classifyNumber(raw);
+      case OptionKey.source:
+        return classifyString(raw);
+      case OptionKey.minor:
+        return classifyScope<MinorTickOptionsScope>(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:3170 TickOptions `major`, the major ticks
@@ -16849,10 +18527,14 @@ base class MajorTickOptionsScope extends OptionScope {
   set enabled(bool value) => store(OptionKey.enabled, OptValue<bool>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.enabled => _enabled,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.enabled:
+        return _enabled;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -16865,16 +18547,24 @@ base class MajorTickOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.enabled => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.enabled:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.enabled => classifyBool(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.enabled:
+        return classifyBool(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind for core.scale.defaults.js:75 `ticks.minor`, an empty object
@@ -17142,22 +18832,38 @@ base class GridLineOptionsScope extends OptionScope {
   set z(double value) => store(OptionKey.z, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.display => _display,
-    OptionKey.circular => _circular,
-    OptionKey.color => _color,
-    OptionKey.lineWidth => _lineWidth,
-    OptionKey.drawOnChartArea => _drawOnChartArea,
-    OptionKey.drawTicks => _drawTicks,
-    OptionKey.tickBorderDash => _tickBorderDash,
-    OptionKey.tickBorderDashOffset => _tickBorderDashOffset,
-    OptionKey.tickColor => _tickColor,
-    OptionKey.tickLength => _tickLength,
-    OptionKey.tickWidth => _tickWidth,
-    OptionKey.offset => _offset,
-    OptionKey.z => _z,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+        return _display;
+      case OptionKey.circular:
+        return _circular;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.lineWidth:
+        return _lineWidth;
+      case OptionKey.drawOnChartArea:
+        return _drawOnChartArea;
+      case OptionKey.drawTicks:
+        return _drawTicks;
+      case OptionKey.tickBorderDash:
+        return _tickBorderDash;
+      case OptionKey.tickBorderDashOffset:
+        return _tickBorderDashOffset;
+      case OptionKey.tickColor:
+        return _tickColor;
+      case OptionKey.tickLength:
+        return _tickLength;
+      case OptionKey.tickWidth:
+        return _tickWidth;
+      case OptionKey.offset:
+        return _offset;
+      case OptionKey.z:
+        return _z;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -17194,40 +18900,60 @@ base class GridLineOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.display ||
-    OptionKey.circular ||
-    OptionKey.color ||
-    OptionKey.lineWidth ||
-    OptionKey.drawOnChartArea ||
-    OptionKey.drawTicks ||
-    OptionKey.tickBorderDash ||
-    OptionKey.tickBorderDashOffset ||
-    OptionKey.tickColor ||
-    OptionKey.tickLength ||
-    OptionKey.tickWidth ||
-    OptionKey.offset ||
-    OptionKey.z => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+      case OptionKey.circular:
+      case OptionKey.color:
+      case OptionKey.lineWidth:
+      case OptionKey.drawOnChartArea:
+      case OptionKey.drawTicks:
+      case OptionKey.tickBorderDash:
+      case OptionKey.tickBorderDashOffset:
+      case OptionKey.tickColor:
+      case OptionKey.tickLength:
+      case OptionKey.tickWidth:
+      case OptionKey.offset:
+      case OptionKey.z:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.display => classifyBool(raw),
-    OptionKey.circular => classifyBool(raw),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.lineWidth => classifyNumber(raw),
-    OptionKey.drawOnChartArea => classifyBool(raw),
-    OptionKey.drawTicks => classifyBool(raw),
-    OptionKey.tickBorderDash => classifyUnion(raw, 16),
-    OptionKey.tickBorderDashOffset => classifyNumber(raw),
-    OptionKey.tickColor => classifyUnion(raw, 64),
-    OptionKey.tickLength => classifyNumber(raw),
-    OptionKey.tickWidth => classifyNumber(raw),
-    OptionKey.offset => classifyBool(raw),
-    OptionKey.z => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.circular:
+        return classifyBool(raw);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.lineWidth:
+        return classifyNumber(raw);
+      case OptionKey.drawOnChartArea:
+        return classifyBool(raw);
+      case OptionKey.drawTicks:
+        return classifyBool(raw);
+      case OptionKey.tickBorderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.tickBorderDashOffset:
+        return classifyNumber(raw);
+      case OptionKey.tickColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.tickLength:
+        return classifyNumber(raw);
+      case OptionKey.tickWidth:
+        return classifyNumber(raw);
+      case OptionKey.offset:
+        return classifyBool(raw);
+      case OptionKey.z:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:3042 BorderOptions, the scope `border` of a scale.
@@ -17344,15 +19070,24 @@ base class BorderOptionsScope extends OptionScope {
   set z(double value) => store(OptionKey.z, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.display => _display,
-    OptionKey.dash => _dash,
-    OptionKey.dashOffset => _dashOffset,
-    OptionKey.color => _color,
-    OptionKey.width => _width,
-    OptionKey.z => _z,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+        return _display;
+      case OptionKey.dash:
+        return _dash;
+      case OptionKey.dashOffset:
+        return _dashOffset;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.width:
+        return _width;
+      case OptionKey.z:
+        return _z;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -17375,26 +19110,39 @@ base class BorderOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.display ||
-    OptionKey.dash ||
-    OptionKey.dashOffset ||
-    OptionKey.color ||
-    OptionKey.width ||
-    OptionKey.z => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+      case OptionKey.dash:
+      case OptionKey.dashOffset:
+      case OptionKey.color:
+      case OptionKey.width:
+      case OptionKey.z:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.display => classifyBool(raw),
-    OptionKey.dash => classifyUnion(raw, 16),
-    OptionKey.dashOffset => classifyNumber(raw),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.width => classifyNumber(raw),
-    OptionKey.z => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.dash:
+        return classifyUnion(raw, 16);
+      case OptionKey.dashOffset:
+        return classifyNumber(raw);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.width:
+        return classifyNumber(raw);
+      case OptionKey.z:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:3309 CartesianScaleOptions `title`, the title
@@ -17549,17 +19297,28 @@ base class ScaleTitleOptionsScope extends OptionScope {
       store(OptionKey.padding, classify(OptionKey.padding, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.display => _display,
-    OptionKey.align => _align,
-    OptionKey.text => _text,
-    OptionKey.color => _color,
-    OptionKey.strokeColor => _strokeColor,
-    OptionKey.strokeWidth => _strokeWidth,
-    OptionKey.font => _font,
-    OptionKey.padding => _padding,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+        return _display;
+      case OptionKey.align:
+        return _align;
+      case OptionKey.text:
+        return _text;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.strokeColor:
+        return _strokeColor;
+      case OptionKey.strokeWidth:
+        return _strokeWidth;
+      case OptionKey.font:
+        return _font;
+      case OptionKey.padding:
+        return _padding;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -17586,30 +19345,45 @@ base class ScaleTitleOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.display ||
-    OptionKey.align ||
-    OptionKey.text ||
-    OptionKey.color ||
-    OptionKey.strokeColor ||
-    OptionKey.strokeWidth ||
-    OptionKey.font ||
-    OptionKey.padding => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+      case OptionKey.align:
+      case OptionKey.text:
+      case OptionKey.color:
+      case OptionKey.strokeColor:
+      case OptionKey.strokeWidth:
+      case OptionKey.font:
+      case OptionKey.padding:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.display => classifyBool(raw),
-    OptionKey.align => classifyString(raw),
-    OptionKey.text => classifyUnion(raw, 20),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.strokeColor => classifyUnion(raw, 64),
-    OptionKey.strokeWidth => classifyNumber(raw),
-    OptionKey.font => classifyScope<FontSpecScope>(raw),
-    OptionKey.padding => classifyUnion(raw, 33),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.align:
+        return classifyString(raw);
+      case OptionKey.text:
+        return classifyUnion(raw, 20);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.strokeColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.strokeWidth:
+        return classifyNumber(raw);
+      case OptionKey.font:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.padding:
+        return classifyUnion(raw, 33);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:3429 TimeScaleTimeOptions, the scope `time` of a time scale.
@@ -17747,16 +19521,26 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
       store(OptionKey.minUnit, OptValue<String>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.parser => _parser,
-    OptionKey.round => _round,
-    OptionKey.isoWeekday => _isoWeekday,
-    OptionKey.displayFormats => _displayFormats,
-    OptionKey.tooltipFormat => _tooltipFormat,
-    OptionKey.unit => _unit,
-    OptionKey.minUnit => _minUnit,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.parser:
+        return _parser;
+      case OptionKey.round:
+        return _round;
+      case OptionKey.isoWeekday:
+        return _isoWeekday;
+      case OptionKey.displayFormats:
+        return _displayFormats;
+      case OptionKey.tooltipFormat:
+        return _tooltipFormat;
+      case OptionKey.unit:
+        return _unit;
+      case OptionKey.minUnit:
+        return _minUnit;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -17785,28 +19569,42 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.parser ||
-    OptionKey.round ||
-    OptionKey.isoWeekday ||
-    OptionKey.displayFormats ||
-    OptionKey.tooltipFormat ||
-    OptionKey.unit ||
-    OptionKey.minUnit => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.parser:
+      case OptionKey.round:
+      case OptionKey.isoWeekday:
+      case OptionKey.displayFormats:
+      case OptionKey.tooltipFormat:
+      case OptionKey.unit:
+      case OptionKey.minUnit:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.parser => classifyUnion(raw, 14),
-    OptionKey.round => classifyUnion(raw, 6),
-    OptionKey.isoWeekday => classifyUnion(raw, 3),
-    OptionKey.displayFormats => classifyScope<DisplayFormatsScope>(raw),
-    OptionKey.tooltipFormat => classifyString(raw),
-    OptionKey.unit => classifyUnion(raw, 6),
-    OptionKey.minUnit => classifyString(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.parser:
+        return classifyUnion(raw, 14);
+      case OptionKey.round:
+        return classifyUnion(raw, 6);
+      case OptionKey.isoWeekday:
+        return classifyUnion(raw, 3);
+      case OptionKey.displayFormats:
+        return classifyScope<DisplayFormatsScope>(raw);
+      case OptionKey.tooltipFormat:
+        return classifyString(raw);
+      case OptionKey.unit:
+        return classifyUnion(raw, 6);
+      case OptionKey.minUnit:
+        return classifyString(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:3447 TimeScaleTimeOptions `displayFormats`,
@@ -17992,19 +19790,32 @@ base class DisplayFormatsScope extends OptionScope {
   set year(String value) => store(OptionKey.year, OptValue<String>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.datetime => _datetime,
-    OptionKey.millisecond => _millisecond,
-    OptionKey.second => _second,
-    OptionKey.minute => _minute,
-    OptionKey.hour => _hour,
-    OptionKey.day => _day,
-    OptionKey.week => _week,
-    OptionKey.month => _month,
-    OptionKey.quarter => _quarter,
-    OptionKey.year => _year,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.datetime:
+        return _datetime;
+      case OptionKey.millisecond:
+        return _millisecond;
+      case OptionKey.second:
+        return _second;
+      case OptionKey.minute:
+        return _minute;
+      case OptionKey.hour:
+        return _hour;
+      case OptionKey.day:
+        return _day;
+      case OptionKey.week:
+        return _week;
+      case OptionKey.month:
+        return _month;
+      case OptionKey.quarter:
+        return _quarter;
+      case OptionKey.year:
+        return _year;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -18035,34 +19846,51 @@ base class DisplayFormatsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.datetime ||
-    OptionKey.millisecond ||
-    OptionKey.second ||
-    OptionKey.minute ||
-    OptionKey.hour ||
-    OptionKey.day ||
-    OptionKey.week ||
-    OptionKey.month ||
-    OptionKey.quarter ||
-    OptionKey.year => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.datetime:
+      case OptionKey.millisecond:
+      case OptionKey.second:
+      case OptionKey.minute:
+      case OptionKey.hour:
+      case OptionKey.day:
+      case OptionKey.week:
+      case OptionKey.month:
+      case OptionKey.quarter:
+      case OptionKey.year:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.datetime => classifyString(raw),
-    OptionKey.millisecond => classifyString(raw),
-    OptionKey.second => classifyString(raw),
-    OptionKey.minute => classifyString(raw),
-    OptionKey.hour => classifyString(raw),
-    OptionKey.day => classifyString(raw),
-    OptionKey.week => classifyString(raw),
-    OptionKey.month => classifyString(raw),
-    OptionKey.quarter => classifyString(raw),
-    OptionKey.year => classifyString(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.datetime:
+        return classifyString(raw);
+      case OptionKey.millisecond:
+        return classifyString(raw);
+      case OptionKey.second:
+        return classifyString(raw);
+      case OptionKey.minute:
+        return classifyString(raw);
+      case OptionKey.hour:
+        return classifyString(raw);
+      case OptionKey.day:
+        return classifyString(raw);
+      case OptionKey.week:
+        return classifyString(raw);
+      case OptionKey.month:
+        return classifyString(raw);
+      case OptionKey.quarter:
+        return classifyString(raw);
+      case OptionKey.year:
+        return classifyString(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:3568 RadialLinearScaleOptions `angleLines`,
@@ -18164,14 +19992,22 @@ base class AngleLineOptionsScope extends OptionScope {
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.display => _display,
-    OptionKey.color => _color,
-    OptionKey.lineWidth => _lineWidth,
-    OptionKey.borderDash => _borderDash,
-    OptionKey.borderDashOffset => _borderDashOffset,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+        return _display;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.lineWidth:
+        return _lineWidth;
+      case OptionKey.borderDash:
+        return _borderDash;
+      case OptionKey.borderDashOffset:
+        return _borderDashOffset;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -18192,24 +20028,36 @@ base class AngleLineOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.display ||
-    OptionKey.color ||
-    OptionKey.lineWidth ||
-    OptionKey.borderDash ||
-    OptionKey.borderDashOffset => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+      case OptionKey.color:
+      case OptionKey.lineWidth:
+      case OptionKey.borderDash:
+      case OptionKey.borderDashOffset:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.display => classifyBool(raw),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.lineWidth => classifyNumber(raw),
-    OptionKey.borderDash => classifyUnion(raw, 16),
-    OptionKey.borderDashOffset => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.lineWidth:
+        return classifyNumber(raw);
+      case OptionKey.borderDash:
+        return classifyUnion(raw, 16);
+      case OptionKey.borderDashOffset:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:3613 RadialLinearScaleOptions `pointLabels`,
@@ -18386,18 +20234,30 @@ base class PointLabelOptionsScope extends OptionScope {
       store(OptionKey.centerPointLabels, OptValue<bool>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.backdropColor => _backdropColor,
-    OptionKey.backdropPadding => _backdropPadding,
-    OptionKey.borderRadius => _borderRadius,
-    OptionKey.display => _display,
-    OptionKey.color => _color,
-    OptionKey.font => _font,
-    OptionKey.callback => _callback,
-    OptionKey.padding => _padding,
-    OptionKey.centerPointLabels => _centerPointLabels,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.backdropColor:
+        return _backdropColor;
+      case OptionKey.backdropPadding:
+        return _backdropPadding;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      case OptionKey.display:
+        return _display;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.font:
+        return _font;
+      case OptionKey.callback:
+        return _callback;
+      case OptionKey.padding:
+        return _padding;
+      case OptionKey.centerPointLabels:
+        return _centerPointLabels;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -18426,32 +20286,48 @@ base class PointLabelOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.backdropColor ||
-    OptionKey.backdropPadding ||
-    OptionKey.borderRadius ||
-    OptionKey.display ||
-    OptionKey.color ||
-    OptionKey.font ||
-    OptionKey.callback ||
-    OptionKey.padding ||
-    OptionKey.centerPointLabels => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.backdropColor:
+      case OptionKey.backdropPadding:
+      case OptionKey.borderRadius:
+      case OptionKey.display:
+      case OptionKey.color:
+      case OptionKey.font:
+      case OptionKey.callback:
+      case OptionKey.padding:
+      case OptionKey.centerPointLabels:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.backdropColor => classifyUnion(raw, 64),
-    OptionKey.backdropPadding => classifyUnion(raw, 33),
-    OptionKey.borderRadius => classifyUnion(raw, 33),
-    OptionKey.display => classifyUnion(raw, 6),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.font => classifyScope<FontSpecScope>(raw),
-    OptionKey.callback => classifyUnion(raw, 8),
-    OptionKey.padding => classifyNumber(raw),
-    OptionKey.centerPointLabels => classifyBool(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.backdropColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.backdropPadding:
+        return classifyUnion(raw, 33);
+      case OptionKey.borderRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.display:
+        return classifyUnion(raw, 6);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.font:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.callback:
+        return classifyUnion(raw, 8);
+      case OptionKey.padding:
+        return classifyNumber(raw);
+      case OptionKey.centerPointLabels:
+        return classifyBool(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2422 LegendOptions, the scope `plugins.legend`.
@@ -18745,25 +20621,44 @@ base class LegendOptionsScope extends OptionScope {
       store(OptionKey.events, classify(OptionKey.events, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.display => _display,
-    OptionKey.position => _position,
-    OptionKey.align => _align,
-    OptionKey.maxHeight => _maxHeight,
-    OptionKey.maxWidth => _maxWidth,
-    OptionKey.fullSize => _fullSize,
-    OptionKey.reverse => _reverse,
-    OptionKey.onClick => _onClick,
-    OptionKey.onHover => _onHover,
-    OptionKey.onLeave => _onLeave,
-    OptionKey.labels => _labels,
-    OptionKey.rtl => _rtl,
-    OptionKey.textDirection => _textDirection,
-    OptionKey.title => _title,
-    OptionKey.weight => _weight,
-    OptionKey.events => _events,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+        return _display;
+      case OptionKey.position:
+        return _position;
+      case OptionKey.align:
+        return _align;
+      case OptionKey.maxHeight:
+        return _maxHeight;
+      case OptionKey.maxWidth:
+        return _maxWidth;
+      case OptionKey.fullSize:
+        return _fullSize;
+      case OptionKey.reverse:
+        return _reverse;
+      case OptionKey.onClick:
+        return _onClick;
+      case OptionKey.onHover:
+        return _onHover;
+      case OptionKey.onLeave:
+        return _onLeave;
+      case OptionKey.labels:
+        return _labels;
+      case OptionKey.rtl:
+        return _rtl;
+      case OptionKey.textDirection:
+        return _textDirection;
+      case OptionKey.title:
+        return _title;
+      case OptionKey.weight:
+        return _weight;
+      case OptionKey.events:
+        return _events;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -18806,46 +20701,69 @@ base class LegendOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.display ||
-    OptionKey.position ||
-    OptionKey.align ||
-    OptionKey.maxHeight ||
-    OptionKey.maxWidth ||
-    OptionKey.fullSize ||
-    OptionKey.reverse ||
-    OptionKey.onClick ||
-    OptionKey.onHover ||
-    OptionKey.onLeave ||
-    OptionKey.labels ||
-    OptionKey.rtl ||
-    OptionKey.textDirection ||
-    OptionKey.title ||
-    OptionKey.weight ||
-    OptionKey.events => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+      case OptionKey.position:
+      case OptionKey.align:
+      case OptionKey.maxHeight:
+      case OptionKey.maxWidth:
+      case OptionKey.fullSize:
+      case OptionKey.reverse:
+      case OptionKey.onClick:
+      case OptionKey.onHover:
+      case OptionKey.onLeave:
+      case OptionKey.labels:
+      case OptionKey.rtl:
+      case OptionKey.textDirection:
+      case OptionKey.title:
+      case OptionKey.weight:
+      case OptionKey.events:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.display => classifyBool(raw),
-    OptionKey.position => classifyUnion(raw, 36),
-    OptionKey.align => classifyString(raw),
-    OptionKey.maxHeight => classifyNumber(raw),
-    OptionKey.maxWidth => classifyNumber(raw),
-    OptionKey.fullSize => classifyBool(raw),
-    OptionKey.reverse => classifyBool(raw),
-    OptionKey.onClick => classifyUnion(raw, 8),
-    OptionKey.onHover => classifyUnion(raw, 8),
-    OptionKey.onLeave => classifyUnion(raw, 8),
-    OptionKey.labels => classifyScope<LegendLabelOptionsScope>(raw),
-    OptionKey.rtl => classifyBool(raw),
-    OptionKey.textDirection => classifyString(raw),
-    OptionKey.title => classifyScope<LegendTitleOptionsScope>(raw),
-    OptionKey.weight => classifyNumber(raw),
-    OptionKey.events => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.position:
+        return classifyUnion(raw, 36);
+      case OptionKey.align:
+        return classifyString(raw);
+      case OptionKey.maxHeight:
+        return classifyNumber(raw);
+      case OptionKey.maxWidth:
+        return classifyNumber(raw);
+      case OptionKey.fullSize:
+        return classifyBool(raw);
+      case OptionKey.reverse:
+        return classifyBool(raw);
+      case OptionKey.onClick:
+        return classifyUnion(raw, 8);
+      case OptionKey.onHover:
+        return classifyUnion(raw, 8);
+      case OptionKey.onLeave:
+        return classifyUnion(raw, 8);
+      case OptionKey.labels:
+        return classifyScope<LegendLabelOptionsScope>(raw);
+      case OptionKey.rtl:
+        return classifyBool(raw);
+      case OptionKey.textDirection:
+        return classifyString(raw);
+      case OptionKey.title:
+        return classifyScope<LegendTitleOptionsScope>(raw);
+      case OptionKey.weight:
+        return classifyNumber(raw);
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:2469 LegendOptions `labels`, the labels of the
@@ -19112,23 +21030,40 @@ base class LegendLabelOptionsScope extends OptionScope {
       store(OptionKey.borderRadius, OptValue<double>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.boxWidth => _boxWidth,
-    OptionKey.boxHeight => _boxHeight,
-    OptionKey.color => _color,
-    OptionKey.font => _font,
-    OptionKey.padding => _padding,
-    OptionKey.pointStyleWidth => _pointStyleWidth,
-    OptionKey.generateLabels => _generateLabels,
-    OptionKey.filter => _filter,
-    OptionKey.sort => _sort,
-    OptionKey.pointStyle => _pointStyle,
-    OptionKey.textAlign => _textAlign,
-    OptionKey.usePointStyle => _usePointStyle,
-    OptionKey.useBorderRadius => _useBorderRadius,
-    OptionKey.borderRadius => _borderRadius,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.boxWidth:
+        return _boxWidth;
+      case OptionKey.boxHeight:
+        return _boxHeight;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.font:
+        return _font;
+      case OptionKey.padding:
+        return _padding;
+      case OptionKey.pointStyleWidth:
+        return _pointStyleWidth;
+      case OptionKey.generateLabels:
+        return _generateLabels;
+      case OptionKey.filter:
+        return _filter;
+      case OptionKey.sort:
+        return _sort;
+      case OptionKey.pointStyle:
+        return _pointStyle;
+      case OptionKey.textAlign:
+        return _textAlign;
+      case OptionKey.usePointStyle:
+        return _usePointStyle;
+      case OptionKey.useBorderRadius:
+        return _useBorderRadius;
+      case OptionKey.borderRadius:
+        return _borderRadius;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -19171,42 +21106,63 @@ base class LegendLabelOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.boxWidth ||
-    OptionKey.boxHeight ||
-    OptionKey.color ||
-    OptionKey.font ||
-    OptionKey.padding ||
-    OptionKey.pointStyleWidth ||
-    OptionKey.generateLabels ||
-    OptionKey.filter ||
-    OptionKey.sort ||
-    OptionKey.pointStyle ||
-    OptionKey.textAlign ||
-    OptionKey.usePointStyle ||
-    OptionKey.useBorderRadius ||
-    OptionKey.borderRadius => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.boxWidth:
+      case OptionKey.boxHeight:
+      case OptionKey.color:
+      case OptionKey.font:
+      case OptionKey.padding:
+      case OptionKey.pointStyleWidth:
+      case OptionKey.generateLabels:
+      case OptionKey.filter:
+      case OptionKey.sort:
+      case OptionKey.pointStyle:
+      case OptionKey.textAlign:
+      case OptionKey.usePointStyle:
+      case OptionKey.useBorderRadius:
+      case OptionKey.borderRadius:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.boxWidth => classifyNumber(raw),
-    OptionKey.boxHeight => classifyNumber(raw),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.font => classifyScope<FontSpecScope>(raw),
-    OptionKey.padding => classifyNumber(raw),
-    OptionKey.pointStyleWidth => classifyNumber(raw),
-    OptionKey.generateLabels => classifyUnion(raw, 8),
-    OptionKey.filter => classifyUnion(raw, 8),
-    OptionKey.sort => classifyUnion(raw, 8),
-    OptionKey.pointStyle => classifyUnion(raw, 64),
-    OptionKey.textAlign => classifyString(raw),
-    OptionKey.usePointStyle => classifyBool(raw),
-    OptionKey.useBorderRadius => classifyBool(raw),
-    OptionKey.borderRadius => classifyNumber(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.boxWidth:
+        return classifyNumber(raw);
+      case OptionKey.boxHeight:
+        return classifyNumber(raw);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.font:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.padding:
+        return classifyNumber(raw);
+      case OptionKey.pointStyleWidth:
+        return classifyNumber(raw);
+      case OptionKey.generateLabels:
+        return classifyUnion(raw, 8);
+      case OptionKey.filter:
+        return classifyUnion(raw, 8);
+      case OptionKey.sort:
+        return classifyUnion(raw, 8);
+      case OptionKey.pointStyle:
+        return classifyUnion(raw, 64);
+      case OptionKey.textAlign:
+        return classifyString(raw);
+      case OptionKey.usePointStyle:
+        return classifyBool(raw);
+      case OptionKey.useBorderRadius:
+        return classifyBool(raw);
+      case OptionKey.borderRadius:
+        return classifyNumber(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only name for index.d.ts:2552 LegendOptions `title`, the title of the
@@ -19325,15 +21281,24 @@ base class LegendTitleOptionsScope extends OptionScope {
   set text(String value) => store(OptionKey.text, OptValue<String>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.display => _display,
-    OptionKey.color => _color,
-    OptionKey.font => _font,
-    OptionKey.position => _position,
-    OptionKey.padding => _padding,
-    OptionKey.text => _text,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+        return _display;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.font:
+        return _font;
+      case OptionKey.position:
+        return _position;
+      case OptionKey.padding:
+        return _padding;
+      case OptionKey.text:
+        return _text;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -19360,26 +21325,39 @@ base class LegendTitleOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.display ||
-    OptionKey.color ||
-    OptionKey.font ||
-    OptionKey.position ||
-    OptionKey.padding ||
-    OptionKey.text => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.display:
+      case OptionKey.color:
+      case OptionKey.font:
+      case OptionKey.position:
+      case OptionKey.padding:
+      case OptionKey.text:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.display => classifyBool(raw),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.font => classifyScope<FontSpecScope>(raw),
-    OptionKey.position => classifyString(raw),
-    OptionKey.padding => classifyUnion(raw, 33),
-    OptionKey.text => classifyString(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.font:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.position:
+        return classifyString(raw);
+      case OptionKey.padding:
+        return classifyUnion(raw, 33);
+      case OptionKey.text:
+        return classifyString(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2579 TitleOptions, the scopes `plugins.title` and
@@ -19568,19 +21546,32 @@ base class TitleOptionsScope extends OptionScope {
       store(OptionKey.events, classify(OptionKey.events, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.align => _align,
-    OptionKey.display => _display,
-    OptionKey.position => _position,
-    OptionKey.color => _color,
-    OptionKey.font => _font,
-    OptionKey.fullSize => _fullSize,
-    OptionKey.padding => _padding,
-    OptionKey.text => _text,
-    OptionKey.weight => _weight,
-    OptionKey.events => _events,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.align:
+        return _align;
+      case OptionKey.display:
+        return _display;
+      case OptionKey.position:
+        return _position;
+      case OptionKey.color:
+        return _color;
+      case OptionKey.font:
+        return _font;
+      case OptionKey.fullSize:
+        return _fullSize;
+      case OptionKey.padding:
+        return _padding;
+      case OptionKey.text:
+        return _text;
+      case OptionKey.weight:
+        return _weight;
+      case OptionKey.events:
+        return _events;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -19611,34 +21602,51 @@ base class TitleOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.align ||
-    OptionKey.display ||
-    OptionKey.position ||
-    OptionKey.color ||
-    OptionKey.font ||
-    OptionKey.fullSize ||
-    OptionKey.padding ||
-    OptionKey.text ||
-    OptionKey.weight ||
-    OptionKey.events => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.align:
+      case OptionKey.display:
+      case OptionKey.position:
+      case OptionKey.color:
+      case OptionKey.font:
+      case OptionKey.fullSize:
+      case OptionKey.padding:
+      case OptionKey.text:
+      case OptionKey.weight:
+      case OptionKey.events:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.align => classifyString(raw),
-    OptionKey.display => classifyBool(raw),
-    OptionKey.position => classifyString(raw),
-    OptionKey.color => classifyUnion(raw, 64),
-    OptionKey.font => classifyScope<FontSpecScope>(raw),
-    OptionKey.fullSize => classifyBool(raw),
-    OptionKey.padding => classifyUnion(raw, 33),
-    OptionKey.text => classifyUnion(raw, 20),
-    OptionKey.weight => classifyNumber(raw),
-    OptionKey.events => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.align:
+        return classifyString(raw);
+      case OptionKey.display:
+        return classifyBool(raw);
+      case OptionKey.position:
+        return classifyString(raw);
+      case OptionKey.color:
+        return classifyUnion(raw, 64);
+      case OptionKey.font:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.fullSize:
+        return classifyBool(raw);
+      case OptionKey.padding:
+        return classifyUnion(raw, 33);
+      case OptionKey.text:
+        return classifyUnion(raw, 20);
+      case OptionKey.weight:
+        return classifyNumber(raw);
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2795 TooltipOptions (index.d.ts:1605 CoreInteractionOptions), the
@@ -20458,54 +22466,102 @@ base class TooltipOptionsScope extends OptionScope {
       store(OptionKey.events, classify(OptionKey.events, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.mode => _mode,
-    OptionKey.intersect => _intersect,
-    OptionKey.axis => _axis,
-    OptionKey.includeInvisible => _includeInvisible,
-    OptionKey.enabled => _enabled,
-    OptionKey.external => _external,
-    OptionKey.position => _position,
-    OptionKey.xAlign => _xAlign,
-    OptionKey.yAlign => _yAlign,
-    OptionKey.itemSort => _itemSort,
-    OptionKey.filter => _filter,
-    OptionKey.backgroundColor => _backgroundColor,
-    OptionKey.boxPadding => _boxPadding,
-    OptionKey.titleColor => _titleColor,
-    OptionKey.titleFont => _titleFont,
-    OptionKey.titleSpacing => _titleSpacing,
-    OptionKey.titleMarginBottom => _titleMarginBottom,
-    OptionKey.titleAlign => _titleAlign,
-    OptionKey.bodySpacing => _bodySpacing,
-    OptionKey.bodyColor => _bodyColor,
-    OptionKey.bodyFont => _bodyFont,
-    OptionKey.bodyAlign => _bodyAlign,
-    OptionKey.footerSpacing => _footerSpacing,
-    OptionKey.footerMarginTop => _footerMarginTop,
-    OptionKey.footerColor => _footerColor,
-    OptionKey.footerFont => _footerFont,
-    OptionKey.footerAlign => _footerAlign,
-    OptionKey.padding => _padding,
-    OptionKey.caretPadding => _caretPadding,
-    OptionKey.caretSize => _caretSize,
-    OptionKey.cornerRadius => _cornerRadius,
-    OptionKey.multiKeyBackground => _multiKeyBackground,
-    OptionKey.displayColors => _displayColors,
-    OptionKey.boxWidth => _boxWidth,
-    OptionKey.boxHeight => _boxHeight,
-    OptionKey.usePointStyle => _usePointStyle,
-    OptionKey.borderColor => _borderColor,
-    OptionKey.borderWidth => _borderWidth,
-    OptionKey.rtl => _rtl,
-    OptionKey.textDirection => _textDirection,
-    OptionKey.animation => _animation,
-    OptionKey.animations => _animations,
-    OptionKey.callbacks => _callbacks,
-    OptionKey.reverse => _reverse,
-    OptionKey.events => _events,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.mode:
+        return _mode;
+      case OptionKey.intersect:
+        return _intersect;
+      case OptionKey.axis:
+        return _axis;
+      case OptionKey.includeInvisible:
+        return _includeInvisible;
+      case OptionKey.enabled:
+        return _enabled;
+      case OptionKey.external:
+        return _external;
+      case OptionKey.position:
+        return _position;
+      case OptionKey.xAlign:
+        return _xAlign;
+      case OptionKey.yAlign:
+        return _yAlign;
+      case OptionKey.itemSort:
+        return _itemSort;
+      case OptionKey.filter:
+        return _filter;
+      case OptionKey.backgroundColor:
+        return _backgroundColor;
+      case OptionKey.boxPadding:
+        return _boxPadding;
+      case OptionKey.titleColor:
+        return _titleColor;
+      case OptionKey.titleFont:
+        return _titleFont;
+      case OptionKey.titleSpacing:
+        return _titleSpacing;
+      case OptionKey.titleMarginBottom:
+        return _titleMarginBottom;
+      case OptionKey.titleAlign:
+        return _titleAlign;
+      case OptionKey.bodySpacing:
+        return _bodySpacing;
+      case OptionKey.bodyColor:
+        return _bodyColor;
+      case OptionKey.bodyFont:
+        return _bodyFont;
+      case OptionKey.bodyAlign:
+        return _bodyAlign;
+      case OptionKey.footerSpacing:
+        return _footerSpacing;
+      case OptionKey.footerMarginTop:
+        return _footerMarginTop;
+      case OptionKey.footerColor:
+        return _footerColor;
+      case OptionKey.footerFont:
+        return _footerFont;
+      case OptionKey.footerAlign:
+        return _footerAlign;
+      case OptionKey.padding:
+        return _padding;
+      case OptionKey.caretPadding:
+        return _caretPadding;
+      case OptionKey.caretSize:
+        return _caretSize;
+      case OptionKey.cornerRadius:
+        return _cornerRadius;
+      case OptionKey.multiKeyBackground:
+        return _multiKeyBackground;
+      case OptionKey.displayColors:
+        return _displayColors;
+      case OptionKey.boxWidth:
+        return _boxWidth;
+      case OptionKey.boxHeight:
+        return _boxHeight;
+      case OptionKey.usePointStyle:
+        return _usePointStyle;
+      case OptionKey.borderColor:
+        return _borderColor;
+      case OptionKey.borderWidth:
+        return _borderWidth;
+      case OptionKey.rtl:
+        return _rtl;
+      case OptionKey.textDirection:
+        return _textDirection;
+      case OptionKey.animation:
+        return _animation;
+      case OptionKey.animations:
+        return _animations;
+      case OptionKey.callbacks:
+        return _callbacks;
+      case OptionKey.reverse:
+        return _reverse;
+      case OptionKey.events:
+        return _events;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -20606,104 +22662,156 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.mode ||
-    OptionKey.intersect ||
-    OptionKey.axis ||
-    OptionKey.includeInvisible ||
-    OptionKey.enabled ||
-    OptionKey.external ||
-    OptionKey.position ||
-    OptionKey.xAlign ||
-    OptionKey.yAlign ||
-    OptionKey.itemSort ||
-    OptionKey.filter ||
-    OptionKey.backgroundColor ||
-    OptionKey.boxPadding ||
-    OptionKey.titleColor ||
-    OptionKey.titleFont ||
-    OptionKey.titleSpacing ||
-    OptionKey.titleMarginBottom ||
-    OptionKey.titleAlign ||
-    OptionKey.bodySpacing ||
-    OptionKey.bodyColor ||
-    OptionKey.bodyFont ||
-    OptionKey.bodyAlign ||
-    OptionKey.footerSpacing ||
-    OptionKey.footerMarginTop ||
-    OptionKey.footerColor ||
-    OptionKey.footerFont ||
-    OptionKey.footerAlign ||
-    OptionKey.padding ||
-    OptionKey.caretPadding ||
-    OptionKey.caretSize ||
-    OptionKey.cornerRadius ||
-    OptionKey.multiKeyBackground ||
-    OptionKey.displayColors ||
-    OptionKey.boxWidth ||
-    OptionKey.boxHeight ||
-    OptionKey.usePointStyle ||
-    OptionKey.borderColor ||
-    OptionKey.borderWidth ||
-    OptionKey.rtl ||
-    OptionKey.textDirection ||
-    OptionKey.animation ||
-    OptionKey.animations ||
-    OptionKey.callbacks ||
-    OptionKey.reverse ||
-    OptionKey.events => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.mode:
+      case OptionKey.intersect:
+      case OptionKey.axis:
+      case OptionKey.includeInvisible:
+      case OptionKey.enabled:
+      case OptionKey.external:
+      case OptionKey.position:
+      case OptionKey.xAlign:
+      case OptionKey.yAlign:
+      case OptionKey.itemSort:
+      case OptionKey.filter:
+      case OptionKey.backgroundColor:
+      case OptionKey.boxPadding:
+      case OptionKey.titleColor:
+      case OptionKey.titleFont:
+      case OptionKey.titleSpacing:
+      case OptionKey.titleMarginBottom:
+      case OptionKey.titleAlign:
+      case OptionKey.bodySpacing:
+      case OptionKey.bodyColor:
+      case OptionKey.bodyFont:
+      case OptionKey.bodyAlign:
+      case OptionKey.footerSpacing:
+      case OptionKey.footerMarginTop:
+      case OptionKey.footerColor:
+      case OptionKey.footerFont:
+      case OptionKey.footerAlign:
+      case OptionKey.padding:
+      case OptionKey.caretPadding:
+      case OptionKey.caretSize:
+      case OptionKey.cornerRadius:
+      case OptionKey.multiKeyBackground:
+      case OptionKey.displayColors:
+      case OptionKey.boxWidth:
+      case OptionKey.boxHeight:
+      case OptionKey.usePointStyle:
+      case OptionKey.borderColor:
+      case OptionKey.borderWidth:
+      case OptionKey.rtl:
+      case OptionKey.textDirection:
+      case OptionKey.animation:
+      case OptionKey.animations:
+      case OptionKey.callbacks:
+      case OptionKey.reverse:
+      case OptionKey.events:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.mode => classifyString(raw),
-    OptionKey.intersect => classifyBool(raw),
-    OptionKey.axis => classifyString(raw),
-    OptionKey.includeInvisible => classifyBool(raw),
-    OptionKey.enabled => classifyBool(raw),
-    OptionKey.external => classifyUnion(raw, 8),
-    OptionKey.position => classifyString(raw),
-    OptionKey.xAlign => classifyString(raw),
-    OptionKey.yAlign => classifyString(raw),
-    OptionKey.itemSort => classifyUnion(raw, 8),
-    OptionKey.filter => classifyUnion(raw, 8),
-    OptionKey.backgroundColor => classifyUnion(raw, 64),
-    OptionKey.boxPadding => classifyNumber(raw),
-    OptionKey.titleColor => classifyUnion(raw, 64),
-    OptionKey.titleFont => classifyScope<FontSpecScope>(raw),
-    OptionKey.titleSpacing => classifyNumber(raw),
-    OptionKey.titleMarginBottom => classifyNumber(raw),
-    OptionKey.titleAlign => classifyString(raw),
-    OptionKey.bodySpacing => classifyNumber(raw),
-    OptionKey.bodyColor => classifyUnion(raw, 64),
-    OptionKey.bodyFont => classifyScope<FontSpecScope>(raw),
-    OptionKey.bodyAlign => classifyString(raw),
-    OptionKey.footerSpacing => classifyNumber(raw),
-    OptionKey.footerMarginTop => classifyNumber(raw),
-    OptionKey.footerColor => classifyUnion(raw, 64),
-    OptionKey.footerFont => classifyScope<FontSpecScope>(raw),
-    OptionKey.footerAlign => classifyString(raw),
-    OptionKey.padding => classifyUnion(raw, 33),
-    OptionKey.caretPadding => classifyNumber(raw),
-    OptionKey.caretSize => classifyNumber(raw),
-    OptionKey.cornerRadius => classifyUnion(raw, 33),
-    OptionKey.multiKeyBackground => classifyUnion(raw, 64),
-    OptionKey.displayColors => classifyBool(raw),
-    OptionKey.boxWidth => classifyNumber(raw),
-    OptionKey.boxHeight => classifyNumber(raw),
-    OptionKey.usePointStyle => classifyBool(raw),
-    OptionKey.borderColor => classifyUnion(raw, 64),
-    OptionKey.borderWidth => classifyNumber(raw),
-    OptionKey.rtl => classifyBool(raw),
-    OptionKey.textDirection => classifyString(raw),
-    OptionKey.animation => classifyUnion(raw, 34),
-    OptionKey.animations => classifyUnion(raw, 34),
-    OptionKey.callbacks => classifyScope<TooltipCallbacksScope>(raw),
-    OptionKey.reverse => classifyBool(raw),
-    OptionKey.events => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.mode:
+        return classifyString(raw);
+      case OptionKey.intersect:
+        return classifyBool(raw);
+      case OptionKey.axis:
+        return classifyString(raw);
+      case OptionKey.includeInvisible:
+        return classifyBool(raw);
+      case OptionKey.enabled:
+        return classifyBool(raw);
+      case OptionKey.external:
+        return classifyUnion(raw, 8);
+      case OptionKey.position:
+        return classifyString(raw);
+      case OptionKey.xAlign:
+        return classifyString(raw);
+      case OptionKey.yAlign:
+        return classifyString(raw);
+      case OptionKey.itemSort:
+        return classifyUnion(raw, 8);
+      case OptionKey.filter:
+        return classifyUnion(raw, 8);
+      case OptionKey.backgroundColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.boxPadding:
+        return classifyNumber(raw);
+      case OptionKey.titleColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.titleFont:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.titleSpacing:
+        return classifyNumber(raw);
+      case OptionKey.titleMarginBottom:
+        return classifyNumber(raw);
+      case OptionKey.titleAlign:
+        return classifyString(raw);
+      case OptionKey.bodySpacing:
+        return classifyNumber(raw);
+      case OptionKey.bodyColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.bodyFont:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.bodyAlign:
+        return classifyString(raw);
+      case OptionKey.footerSpacing:
+        return classifyNumber(raw);
+      case OptionKey.footerMarginTop:
+        return classifyNumber(raw);
+      case OptionKey.footerColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.footerFont:
+        return classifyScope<FontSpecScope>(raw);
+      case OptionKey.footerAlign:
+        return classifyString(raw);
+      case OptionKey.padding:
+        return classifyUnion(raw, 33);
+      case OptionKey.caretPadding:
+        return classifyNumber(raw);
+      case OptionKey.caretSize:
+        return classifyNumber(raw);
+      case OptionKey.cornerRadius:
+        return classifyUnion(raw, 33);
+      case OptionKey.multiKeyBackground:
+        return classifyUnion(raw, 64);
+      case OptionKey.displayColors:
+        return classifyBool(raw);
+      case OptionKey.boxWidth:
+        return classifyNumber(raw);
+      case OptionKey.boxHeight:
+        return classifyNumber(raw);
+      case OptionKey.usePointStyle:
+        return classifyBool(raw);
+      case OptionKey.borderColor:
+        return classifyUnion(raw, 64);
+      case OptionKey.borderWidth:
+        return classifyNumber(raw);
+      case OptionKey.rtl:
+        return classifyBool(raw);
+      case OptionKey.textDirection:
+        return classifyString(raw);
+      case OptionKey.animation:
+        return classifyUnion(raw, 34);
+      case OptionKey.animations:
+        return classifyUnion(raw, 34);
+      case OptionKey.callbacks:
+        return classifyScope<TooltipCallbacksScope>(raw);
+      case OptionKey.reverse:
+        return classifyBool(raw);
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2739 TooltipCallbacks (index.d.ts:2726 TooltipDatasetCallbacks),
@@ -20972,23 +23080,40 @@ base class TooltipCallbacksScope extends OptionScope {
       store(OptionKey.afterFooter, classify(OptionKey.afterFooter, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.beforeLabel => _beforeLabel,
-    OptionKey.label => _label,
-    OptionKey.afterLabel => _afterLabel,
-    OptionKey.labelColor => _labelColor,
-    OptionKey.labelTextColor => _labelTextColor,
-    OptionKey.labelPointStyle => _labelPointStyle,
-    OptionKey.beforeTitle => _beforeTitle,
-    OptionKey.title => _title,
-    OptionKey.afterTitle => _afterTitle,
-    OptionKey.beforeBody => _beforeBody,
-    OptionKey.afterBody => _afterBody,
-    OptionKey.beforeFooter => _beforeFooter,
-    OptionKey.footer => _footer,
-    OptionKey.afterFooter => _afterFooter,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.beforeLabel:
+        return _beforeLabel;
+      case OptionKey.label:
+        return _label;
+      case OptionKey.afterLabel:
+        return _afterLabel;
+      case OptionKey.labelColor:
+        return _labelColor;
+      case OptionKey.labelTextColor:
+        return _labelTextColor;
+      case OptionKey.labelPointStyle:
+        return _labelPointStyle;
+      case OptionKey.beforeTitle:
+        return _beforeTitle;
+      case OptionKey.title:
+        return _title;
+      case OptionKey.afterTitle:
+        return _afterTitle;
+      case OptionKey.beforeBody:
+        return _beforeBody;
+      case OptionKey.afterBody:
+        return _afterBody;
+      case OptionKey.beforeFooter:
+        return _beforeFooter;
+      case OptionKey.footer:
+        return _footer;
+      case OptionKey.afterFooter:
+        return _afterFooter;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -21027,42 +23152,63 @@ base class TooltipCallbacksScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.beforeLabel ||
-    OptionKey.label ||
-    OptionKey.afterLabel ||
-    OptionKey.labelColor ||
-    OptionKey.labelTextColor ||
-    OptionKey.labelPointStyle ||
-    OptionKey.beforeTitle ||
-    OptionKey.title ||
-    OptionKey.afterTitle ||
-    OptionKey.beforeBody ||
-    OptionKey.afterBody ||
-    OptionKey.beforeFooter ||
-    OptionKey.footer ||
-    OptionKey.afterFooter => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.beforeLabel:
+      case OptionKey.label:
+      case OptionKey.afterLabel:
+      case OptionKey.labelColor:
+      case OptionKey.labelTextColor:
+      case OptionKey.labelPointStyle:
+      case OptionKey.beforeTitle:
+      case OptionKey.title:
+      case OptionKey.afterTitle:
+      case OptionKey.beforeBody:
+      case OptionKey.afterBody:
+      case OptionKey.beforeFooter:
+      case OptionKey.footer:
+      case OptionKey.afterFooter:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.beforeLabel => classifyUnion(raw, 8),
-    OptionKey.label => classifyUnion(raw, 8),
-    OptionKey.afterLabel => classifyUnion(raw, 8),
-    OptionKey.labelColor => classifyUnion(raw, 8),
-    OptionKey.labelTextColor => classifyUnion(raw, 8),
-    OptionKey.labelPointStyle => classifyUnion(raw, 8),
-    OptionKey.beforeTitle => classifyUnion(raw, 8),
-    OptionKey.title => classifyUnion(raw, 8),
-    OptionKey.afterTitle => classifyUnion(raw, 8),
-    OptionKey.beforeBody => classifyUnion(raw, 8),
-    OptionKey.afterBody => classifyUnion(raw, 8),
-    OptionKey.beforeFooter => classifyUnion(raw, 8),
-    OptionKey.footer => classifyUnion(raw, 8),
-    OptionKey.afterFooter => classifyUnion(raw, 8),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.beforeLabel:
+        return classifyUnion(raw, 8);
+      case OptionKey.label:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterLabel:
+        return classifyUnion(raw, 8);
+      case OptionKey.labelColor:
+        return classifyUnion(raw, 8);
+      case OptionKey.labelTextColor:
+        return classifyUnion(raw, 8);
+      case OptionKey.labelPointStyle:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeTitle:
+        return classifyUnion(raw, 8);
+      case OptionKey.title:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterTitle:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeBody:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterBody:
+        return classifyUnion(raw, 8);
+      case OptionKey.beforeFooter:
+        return classifyUnion(raw, 8);
+      case OptionKey.footer:
+        return classifyUnion(raw, 8);
+      case OptionKey.afterFooter:
+        return classifyUnion(raw, 8);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset
@@ -21093,10 +23239,14 @@ base class TooltipDatasetOptionsScope extends OptionScope {
       store(OptionKey.callbacks, OptScope<TooltipCallbacksScope>(value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.callbacks => _callbacks,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.callbacks:
+        return _callbacks;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -21113,16 +23263,24 @@ base class TooltipDatasetOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.callbacks => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.callbacks:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.callbacks => classifyScope<TooltipCallbacksScope>(raw),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.callbacks:
+        return classifyScope<TooltipCallbacksScope>(raw);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
@@ -21188,12 +23346,18 @@ base class FillerOptionsScope extends OptionScope {
       store(OptionKey.events, classify(OptionKey.events, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.drawTime => _drawTime,
-    OptionKey.propagate => _propagate,
-    OptionKey.events => _events,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.drawTime:
+        return _drawTime;
+      case OptionKey.propagate:
+        return _propagate;
+      case OptionKey.events:
+        return _events;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -21210,18 +23374,30 @@ base class FillerOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.drawTime || OptionKey.propagate || OptionKey.events => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.drawTime:
+      case OptionKey.propagate:
+      case OptionKey.events:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.drawTime => classifyString(raw),
-    OptionKey.propagate => classifyBool(raw),
-    OptionKey.events => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.drawTime:
+        return classifyString(raw);
+      case OptionKey.propagate:
+        return classifyBool(raw);
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// index.d.ts:2292 DecimationOptions (the union of index.d.ts:2283
@@ -21324,14 +23500,22 @@ base class DecimationOptionsScope extends OptionScope {
       store(OptionKey.events, classify(OptionKey.events, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.enabled => _enabled,
-    OptionKey.threshold => _threshold,
-    OptionKey.algorithm => _algorithm,
-    OptionKey.samples => _samples,
-    OptionKey.events => _events,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.enabled:
+        return _enabled;
+      case OptionKey.threshold:
+        return _threshold;
+      case OptionKey.algorithm:
+        return _algorithm;
+      case OptionKey.samples:
+        return _samples;
+      case OptionKey.events:
+        return _events;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -21352,24 +23536,36 @@ base class DecimationOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.enabled ||
-    OptionKey.threshold ||
-    OptionKey.algorithm ||
-    OptionKey.samples ||
-    OptionKey.events => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.enabled:
+      case OptionKey.threshold:
+      case OptionKey.algorithm:
+      case OptionKey.samples:
+      case OptionKey.events:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.enabled => classifyBool(raw),
-    OptionKey.threshold => classifyNumber(raw),
-    OptionKey.algorithm => classifyString(raw),
-    OptionKey.samples => classifyNumber(raw),
-    OptionKey.events => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.enabled:
+        return classifyBool(raw);
+      case OptionKey.threshold:
+        return classifyNumber(raw);
+      case OptionKey.algorithm:
+        return classifyString(raw);
+      case OptionKey.samples:
+        return classifyNumber(raw);
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// plugin.colors.ts:4 ColorsPluginOptions, the scope `plugins.colors`.
@@ -21474,14 +23670,22 @@ base class ColorsOptionsScope extends OptionScope {
   );
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.enabled => _enabled,
-    OptionKey.forceOverride => _forceOverride,
-    OptionKey.events => _events,
-    OptionKey.dollarBorderColors => _dollarBorderColors,
-    OptionKey.dollarBackgroundColors => _dollarBackgroundColors,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.enabled:
+        return _enabled;
+      case OptionKey.forceOverride:
+        return _forceOverride;
+      case OptionKey.events:
+        return _events;
+      case OptionKey.dollarBorderColors:
+        return _dollarBorderColors;
+      case OptionKey.dollarBackgroundColors:
+        return _dollarBackgroundColors;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -21505,24 +23709,36 @@ base class ColorsOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.enabled ||
-    OptionKey.forceOverride ||
-    OptionKey.events ||
-    OptionKey.dollarBorderColors ||
-    OptionKey.dollarBackgroundColors => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.enabled:
+      case OptionKey.forceOverride:
+      case OptionKey.events:
+      case OptionKey.dollarBorderColors:
+      case OptionKey.dollarBackgroundColors:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.enabled => classifyBool(raw),
-    OptionKey.forceOverride => classifyBool(raw),
-    OptionKey.events => classifyUnion(raw, 16),
-    OptionKey.dollarBorderColors => classifyUnion(raw, 16),
-    OptionKey.dollarBackgroundColors => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.enabled:
+        return classifyBool(raw);
+      case OptionKey.forceOverride:
+        return classifyBool(raw);
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      case OptionKey.dollarBorderColors:
+        return classifyUnion(raw, 16);
+      case OptionKey.dollarBackgroundColors:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind, the options of a plugin without a plugin kind (an inline or
@@ -21553,10 +23769,14 @@ base class GenericPluginOptionsScope extends OptionScope {
       store(OptionKey.events, classify(OptionKey.events, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.events => _events,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.events:
+        return _events;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -21573,16 +23793,24 @@ base class GenericPluginOptionsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.events => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.events:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.events => classifyUnion(raw, 16),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.events:
+        return classifyUnion(raw, 16);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }
 
 /// Port-only kind for the descriptor tree of Chart.defaults.describe
@@ -21670,13 +23898,20 @@ base class DescriptorsScope extends OptionScope {
       store(OptionKey.descAllKeys, classify(OptionKey.descAllKeys, value));
 
   @override
-  Opt<Object?>? cellOf(OptionKey key) => switch (key) {
-    OptionKey.descScriptable => _descScriptable,
-    OptionKey.descIndexable => _descIndexable,
-    OptionKey.descFallback => _descFallback,
-    OptionKey.descAllKeys => _descAllKeys,
-    _ => null,
-  };
+  Opt<Object?>? cellOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.descScriptable:
+        return _descScriptable;
+      case OptionKey.descIndexable:
+        return _descIndexable;
+      case OptionKey.descFallback:
+        return _descFallback;
+      case OptionKey.descAllKeys:
+        return _descAllKeys;
+      default:
+        return null;
+    }
+  }
 
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
@@ -21695,20 +23930,31 @@ base class DescriptorsScope extends OptionScope {
   }
 
   @override
-  bool hasField(OptionKey key) => switch (key) {
-    OptionKey.descScriptable ||
-    OptionKey.descIndexable ||
-    OptionKey.descFallback ||
-    OptionKey.descAllKeys => true,
-    _ => false,
-  };
+  bool hasField(OptionKey key) {
+    switch (key) {
+      case OptionKey.descScriptable:
+      case OptionKey.descIndexable:
+      case OptionKey.descFallback:
+      case OptionKey.descAllKeys:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => switch (key) {
-    OptionKey.descScriptable => classifyUnion(raw, 64),
-    OptionKey.descIndexable => classifyUnion(raw, 64),
-    OptionKey.descFallback => classifyUnion(raw, 64),
-    OptionKey.descAllKeys => classifyUnion(raw, 64),
-    _ => kind.classifyOther(raw),
-  };
+  Opt<Object?> classify(OptionKey key, Object? raw) {
+    switch (key) {
+      case OptionKey.descScriptable:
+        return classifyUnion(raw, 64);
+      case OptionKey.descIndexable:
+        return classifyUnion(raw, 64);
+      case OptionKey.descFallback:
+        return classifyUnion(raw, 64);
+      case OptionKey.descAllKeys:
+        return classifyUnion(raw, 64);
+      default:
+        return kind.classifyOther(raw);
+    }
+  }
 }

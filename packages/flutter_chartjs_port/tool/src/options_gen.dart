@@ -325,6 +325,73 @@ Map<String, String> generate(Schema schema) => {
 /// The new foreign slot List of [length] slots.
 String _filled(int length) => 'List<Object?>.filled($length, null)';
 
+/// A `switch` statement on [subject] at the indent [indent]: one group of
+/// `case` labels for each entry of [cases] (the label expressions, and the
+/// statement of the group, already indented by [indent] plus 4 spaces when
+/// it has several lines), and [fallback] as the statement of `default`, or
+/// no `default` for Dart `null` (an exhaustive switch on an enum).
+///
+/// The generated dispatches on an `OptionKey` or a `ScopeKind` are switch
+/// statements, not switch expressions: the VM compiles a switch statement on
+/// an enum to a jump table, and a switch expression to one comparison for
+/// each case, in order.
+String _switchStatement(
+  String indent,
+  String subject,
+  List<(List<String>, String)> cases,
+  String? fallback,
+) {
+  final out = StringBuffer('${indent}switch ($subject) {\n');
+  for (final (labels, statement) in cases) {
+    for (final label in labels) {
+      out.write('$indent  case $label:\n');
+    }
+    out.write('$indent    $statement\n');
+  }
+  if (fallback != null) {
+    out
+      ..write('$indent  default:\n')
+      ..write('$indent    $fallback\n');
+  }
+  out.write('$indent}\n');
+  return out.toString();
+}
+
+/// `OptionKey.<identifier>` of the key [name].
+String _keyRef(String name) => 'OptionKey.${keyIdentifier(name)}';
+
+/// A member [signature] whose body is [_switchStatement] on [subject] at the
+/// indent of a member: each case returns its expression, and `default`
+/// returns [fallback] (no `default` for Dart `null`).
+String _switchMember(
+  String signature,
+  String subject,
+  List<(String, String)> cases,
+  String? fallback,
+) =>
+    '  $signature {\n'
+    '${_switchStatement('    ', subject, [
+      for (final (label, value) in cases) ([label], 'return $value;'),
+    ], fallback == null ? null : 'return $fallback;')}'
+    '  }\n';
+
+/// The statement of the kind [kind] in `childKind`: the nested switch on
+/// the key, or `return null;` for a kind with no scope key.
+String _childKindStatement(Kind kind) {
+  final scoped = {
+    for (final MapEntry(key: name, value: shape) in kind.keys.entries)
+      if (shape.scope != null) name: shape.scope!,
+  };
+  if (scoped.isEmpty) return 'return null;';
+  return _switchStatement('      ', 'key', [
+    for (final MapEntry(key: name, value: scope) in scoped.entries)
+      (
+        ['OptionKey.${keyIdentifier(name)}'],
+        'return ScopeKind.${lowerFirst(scope)};',
+      ),
+  ], 'return null;').trimRight();
+}
+
 /// The branch of the raw read of a `double` field for an `int` raw value.
 String _intRead(int bit, String id) =>
     ': _int & $bit != 0\n      ? _$id.toInt()\n      ';
@@ -557,42 +624,40 @@ String _resolved(Schema schema) {
       ..write('      }\n    }\n')
       ..write('    super.storeKey(key, raw);\n  }\n')
       ..write('\n  @override\n')
-      ..write('  Object? valueOf(OptionKey key) => switch (key) {\n');
-    for (final key in typed) {
-      final id = keyIdentifier(key);
-      out.write('    OptionKey.$id => ${id}Value,\n');
-    }
-    out
-      ..write('    _ => super.valueOf(key),\n  };\n')
+      ..write(
+        _switchMember('Object? valueOf(OptionKey key)', 'key', [
+          for (final key in typed)
+            (
+              'OptionKey.${keyIdentifier(key)}',
+              '${keyIdentifier(key)}Value',
+            ),
+        ], 'super.valueOf(key)'),
+      )
       ..write('\n  @override\n')
-      ..write('  bool isPresent(OptionKey key) => switch (key) {\n');
-    for (final (slot, key) in typed.indexed) {
-      out.write(
-        '    OptionKey.${keyIdentifier(key)} => '
-        '_present & ${1 << slot} != 0,\n',
-      );
-    }
-    out
-      ..write('    _ => super.isPresent(key),\n  };\n')
+      ..write(
+        _switchMember('bool isPresent(OptionKey key)', 'key', [
+          for (final (slot, key) in typed.indexed)
+            ('OptionKey.${keyIdentifier(key)}', '_present & ${1 << slot} != 0'),
+        ], 'super.isPresent(key)'),
+      )
       ..write('\n  @override\n')
-      ..write('  bool isForeign(OptionKey key) => switch (key) {\n');
-    for (final (slot, key) in typed.indexed) {
-      out.write(
-        '    OptionKey.${keyIdentifier(key)} => '
-        '_foreign & ${1 << slot} != 0,\n',
-      );
-    }
-    out
-      ..write('    _ => false,\n  };\n')
+      ..write(
+        _switchMember('bool isForeign(OptionKey key)', 'key', [
+          for (final (slot, key) in typed.indexed)
+            ('OptionKey.${keyIdentifier(key)}', '_foreign & ${1 << slot} != 0'),
+        ], 'false'),
+      )
       ..write('\n  @override\n')
-      ..write('  Object? foreignOf(OptionKey key) => switch (key) {\n');
-    for (final (slot, key) in typed.indexed) {
-      out.write(
-        '    OptionKey.${keyIdentifier(key)} => '
-        '_foreign & ${1 << slot} != 0 ? _foreignRaw![$slot] : null,\n',
-      );
-    }
-    out.write('    _ => null,\n  };\n}\n');
+      ..write(
+        _switchMember('Object? foreignOf(OptionKey key)', 'key', [
+          for (final (slot, key) in typed.indexed)
+            (
+              'OptionKey.${keyIdentifier(key)}',
+              '_foreign & ${1 << slot} != 0 ? _foreignRaw![$slot] : null',
+            ),
+        ], 'null'),
+      )
+      ..write('}\n');
   }
   return out.toString();
 }
@@ -677,106 +742,101 @@ String _scopeKinds(Schema schema) {
     )
     ..write('  final String? element;\n\n')
     ..write('  /// A new empty scope of this kind.\n')
-    ..write('  OptionScope create() => switch (this) {\n');
-  for (final kind in schema.kinds) {
-    out.write('    ScopeKind.${kind.enumName} => ${kind.className}(),\n');
-  }
-  out
-    ..write('  };\n\n')
-    ..write('  /// The declared keys, in schema order.\n')
-    ..write('  List<OptionKey> get keys => switch (this) {\n');
-  for (final kind in schema.kinds) {
-    final keys = [
-      for (final name in kind.keys.keys) 'OptionKey.${keyIdentifier(name)}',
-    ];
-    out.write(
-      '    ScopeKind.${kind.enumName} => const [${keys.join(', ')}],\n',
-    );
-  }
-  out
-    ..write('  };\n\n')
     ..write(
-      '  /// The shape bits (`ShapeBits`) of the declared key [key], or 0 for a\n'
+      _switchMember('OptionScope create()', 'this', [
+        for (final kind in schema.kinds)
+          ('ScopeKind.${kind.enumName}', '${kind.className}()'),
+      ], null),
+    )
+    ..write('\n  /// The declared keys, in schema order.\n')
+    ..write(
+      _switchMember('List<OptionKey> get keys', 'this', [
+        for (final kind in schema.kinds)
+          (
+            'ScopeKind.${kind.enumName}',
+            'const [${kind.keys.keys.map(_keyRef).join(', ')}]',
+          ),
+      ], null),
+    )
+    ..write(
+      '\n  /// The shape bits (`ShapeBits`) of the declared key [key], or 0 for a\n'
       '  /// key that the kind does not declare.\n',
     )
-    ..write('  int shapeOf(OptionKey key) => switch (this) {\n');
-  for (final kind in schema.kinds) {
-    if (kind.keys.isEmpty) {
-      out.write('    ScopeKind.${kind.enumName} => 0,\n');
-      continue;
-    }
-    out.write('    ScopeKind.${kind.enumName} => switch (key) {\n');
-    for (final MapEntry(key: name, value: shape) in kind.keys.entries) {
-      out.write('      OptionKey.${keyIdentifier(name)} => ${shape.mask},\n');
-    }
-    out.write('      _ => 0,\n    },\n');
-  }
-  out
-    ..write('  };\n\n')
+    ..write('  int shapeOf(OptionKey key) {\n')
     ..write(
-      '  /// The kind of the nested scope of the declared key [key], when its\n'
+      _switchStatement('    ', 'this', [
+        for (final kind in schema.kinds)
+          (
+            ['ScopeKind.${kind.enumName}'],
+            kind.keys.isEmpty
+                ? 'return 0;'
+                : _switchStatement('      ', 'key', [
+                    for (final MapEntry(key: name, value: shape)
+                        in kind.keys.entries)
+                      (
+                        ['OptionKey.${keyIdentifier(name)}'],
+                        'return ${shape.mask};',
+                      ),
+                  ], 'return 0;').trimRight(),
+          ),
+      ], null),
+    )
+    ..write('  }\n')
+    ..write(
+      '\n  /// The kind of the nested scope of the declared key [key], when its\n'
       '  /// shape has a `scope` atom, else Dart `null`.\n',
     )
-    ..write('  ScopeKind? childKind(OptionKey key) => switch (this) {\n');
-  for (final kind in schema.kinds) {
-    final scoped = {
-      for (final MapEntry(key: name, value: shape) in kind.keys.entries)
-        if (shape.scope != null) name: shape.scope!,
-    };
-    if (scoped.isEmpty) {
-      out.write('    ScopeKind.${kind.enumName} => null,\n');
-      continue;
-    }
-    out.write('    ScopeKind.${kind.enumName} => switch (key) {\n');
-    for (final MapEntry(key: name, value: scope) in scoped.entries) {
-      out.write(
-        '      OptionKey.${keyIdentifier(name)} => '
-        'ScopeKind.${lowerFirst(scope)},\n',
-      );
-    }
-    out.write('      _ => null,\n    },\n');
-  }
-  out
-    ..write('  };\n\n')
+    ..write('  ScopeKind? childKind(OptionKey key) {\n')
     ..write(
-      '  /// The shape bits of a key that the kind does not declare (`others`\n'
+      _switchStatement('    ', 'this', [
+        for (final kind in schema.kinds)
+          (['ScopeKind.${kind.enumName}'], _childKindStatement(kind)),
+      ], null),
+    )
+    ..write('  }\n')
+    ..write(
+      '\n  /// The shape bits of a key that the kind does not declare (`others`\n'
       '  /// of the schema; `any` when the schema gives none).\n',
     )
-    ..write('  int get othersShape => switch (this) {\n');
-  for (final kind in schema.kinds) {
-    out.write(
-      '    ScopeKind.${kind.enumName} => '
-      '${kind.others?.mask ?? shapeAtoms['any']},\n',
-    );
-  }
-  out
-    ..write('  };\n\n')
     ..write(
-      '  /// The kind of the nested scope of a key that the kind does not\n'
+      _switchMember('int get othersShape', 'this', [
+        for (final kind in schema.kinds)
+          (
+            'ScopeKind.${kind.enumName}',
+            '${kind.others?.mask ?? shapeAtoms['any']}',
+          ),
+      ], null),
+    )
+    ..write(
+      '\n  /// The kind of the nested scope of a key that the kind does not\n'
       '  /// declare (the `scope` atom of `others`), else Dart `null`.\n',
     )
-    ..write('  ScopeKind? get othersKind => switch (this) {\n');
-  for (final kind in schema.kinds) {
-    final scope = kind.others?.scope;
-    out.write(
-      '    ScopeKind.${kind.enumName} => '
-      '${scope == null ? 'null' : 'ScopeKind.${lowerFirst(scope)}'},\n',
-    );
-  }
-  out
-    ..write('  };\n\n')
     ..write(
-      '  /// The cell of the raw JS value [raw] for a key that the kind does not\n'
+      _switchMember('ScopeKind? get othersKind', 'this', [
+        for (final kind in schema.kinds)
+          (
+            'ScopeKind.${kind.enumName}',
+            switch (kind.others?.scope) {
+              null => 'null',
+              final scope => 'ScopeKind.${lowerFirst(scope)}',
+            },
+          ),
+      ], null),
+    )
+    ..write(
+      '\n  /// The cell of the raw JS value [raw] for a key that the kind does not\n'
       '  /// declare, by the shape `others`.\n',
     )
-    ..write('  Opt<Object?> classifyOther(Object? raw) => switch (this) {\n');
-  for (final kind in schema.kinds) {
-    out.write(
-      '    ScopeKind.${kind.enumName} => '
-      '${(kind.others ?? Shape(shapeAtoms['any']!)).classify},\n',
-    );
-  }
-  out.write('  };\n}\n');
+    ..write(
+      _switchMember('Opt<Object?> classifyOther(Object? raw)', 'this', [
+        for (final kind in schema.kinds)
+          (
+            'ScopeKind.${kind.enumName}',
+            (kind.others ?? Shape(shapeAtoms['any']!)).classify,
+          ),
+      ], null),
+    )
+    ..write('}\n');
   return out.toString();
 }
 
@@ -849,19 +909,18 @@ String _scopes(Schema schema) {
     // cellOf
     out
       ..write('\n  @override\n')
-      ..write('  Opt<Object?>? cellOf(OptionKey key) => ');
-    if (kind.keys.isEmpty) {
-      out.write('null;\n');
-    } else {
-      out.write('switch (key) {\n');
-      for (final name in kind.keys.keys) {
-        final id = keyIdentifier(name);
-        out.write('    OptionKey.$id => _$id,\n');
-      }
-      out.write('    _ => null,\n  };\n');
-    }
-    // setCell
-    out
+      ..write(
+        kind.keys.isEmpty
+            ? '  Opt<Object?>? cellOf(OptionKey key) => null;\n'
+            : _switchMember('Opt<Object?>? cellOf(OptionKey key)', 'key', [
+                for (final name in kind.keys.keys)
+                  (
+                    'OptionKey.${keyIdentifier(name)}',
+                    '_${keyIdentifier(name)}',
+                  ),
+              ], 'null'),
+      )
+      // setCell
       ..write('\n  @override\n')
       ..write('  void setCell(OptionKey key, Opt<Object?>? cell) {\n');
     if (kind.keys.isNotEmpty) {
@@ -889,34 +948,33 @@ String _scopes(Schema schema) {
     out
       ..write('  }\n')
       ..write('\n  @override\n')
-      ..write('  bool hasField(OptionKey key) => ');
-    if (kind.keys.isEmpty) {
-      out.write('false;\n');
-    } else {
-      final ids = [
-        for (final name in kind.keys.keys) 'OptionKey.${keyIdentifier(name)}',
-      ];
-      out.write(
-        'switch (key) {\n    ${ids.join(' || ')} => true,\n'
-        '    _ => false,\n  };\n',
-      );
-    }
-    // classify
-    out
+      ..write(
+        kind.keys.isEmpty
+            ? '  bool hasField(OptionKey key) => false;\n'
+            : '  bool hasField(OptionKey key) {\n'
+                  '${_switchStatement('    ', 'key', [
+                    ([...kind.keys.keys.map(_keyRef)], 'return true;'),
+                  ], 'return false;')}'
+                  '  }\n',
+      )
+      // classify
       ..write('\n  @override\n')
-      ..write('  Opt<Object?> classify(OptionKey key, Object? raw) => ');
-    if (kind.keys.isEmpty) {
-      out.write('kind.classifyOther(raw);\n');
-    } else {
-      out.write('switch (key) {\n');
-      for (final MapEntry(key: name, value: shape) in kind.keys.entries) {
-        out.write(
-          '    OptionKey.${keyIdentifier(name)} => ${shape.classify},\n',
-        );
-      }
-      out.write('    _ => kind.classifyOther(raw),\n  };\n');
-    }
-    out.write('}\n');
+      ..write(
+        kind.keys.isEmpty
+            ? '  Opt<Object?> classify(OptionKey key, Object? raw) => '
+                  'kind.classifyOther(raw);\n'
+            : _switchMember(
+                'Opt<Object?> classify(OptionKey key, Object? raw)',
+                'key',
+                [
+                  for (final MapEntry(key: name, value: shape)
+                      in kind.keys.entries)
+                    ('OptionKey.${keyIdentifier(name)}', shape.classify),
+                ],
+                'kind.classifyOther(raw)',
+              ),
+      )
+      ..write('}\n');
   }
   return out.toString();
 }

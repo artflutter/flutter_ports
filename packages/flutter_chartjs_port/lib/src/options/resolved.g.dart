@@ -491,60 +491,108 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   }
 
   @override
-  Object? valueOf(OptionKey key) => switch (key) {
-    OptionKey.borderWidth => borderWidthValue,
-    OptionKey.hitRadius => hitRadiusValue,
-    OptionKey.hoverBorderWidth => hoverBorderWidthValue,
-    OptionKey.hoverRadius => hoverRadiusValue,
-    OptionKey.pointStyle => pointStyleValue,
-    OptionKey.radius => radiusValue,
-    OptionKey.rotation => rotationValue,
-    OptionKey.backgroundColor => backgroundColorValue,
-    OptionKey.borderColor => borderColorValue,
-    _ => super.valueOf(key),
-  };
+  Object? valueOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return borderWidthValue;
+      case OptionKey.hitRadius:
+        return hitRadiusValue;
+      case OptionKey.hoverBorderWidth:
+        return hoverBorderWidthValue;
+      case OptionKey.hoverRadius:
+        return hoverRadiusValue;
+      case OptionKey.pointStyle:
+        return pointStyleValue;
+      case OptionKey.radius:
+        return radiusValue;
+      case OptionKey.rotation:
+        return rotationValue;
+      case OptionKey.backgroundColor:
+        return backgroundColorValue;
+      case OptionKey.borderColor:
+        return borderColorValue;
+      default:
+        return super.valueOf(key);
+    }
+  }
 
   @override
-  bool isPresent(OptionKey key) => switch (key) {
-    OptionKey.borderWidth => _present & 1 != 0,
-    OptionKey.hitRadius => _present & 2 != 0,
-    OptionKey.hoverBorderWidth => _present & 4 != 0,
-    OptionKey.hoverRadius => _present & 8 != 0,
-    OptionKey.pointStyle => _present & 16 != 0,
-    OptionKey.radius => _present & 32 != 0,
-    OptionKey.rotation => _present & 64 != 0,
-    OptionKey.backgroundColor => _present & 128 != 0,
-    OptionKey.borderColor => _present & 256 != 0,
-    _ => super.isPresent(key),
-  };
+  bool isPresent(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return _present & 1 != 0;
+      case OptionKey.hitRadius:
+        return _present & 2 != 0;
+      case OptionKey.hoverBorderWidth:
+        return _present & 4 != 0;
+      case OptionKey.hoverRadius:
+        return _present & 8 != 0;
+      case OptionKey.pointStyle:
+        return _present & 16 != 0;
+      case OptionKey.radius:
+        return _present & 32 != 0;
+      case OptionKey.rotation:
+        return _present & 64 != 0;
+      case OptionKey.backgroundColor:
+        return _present & 128 != 0;
+      case OptionKey.borderColor:
+        return _present & 256 != 0;
+      default:
+        return super.isPresent(key);
+    }
+  }
 
   @override
-  bool isForeign(OptionKey key) => switch (key) {
-    OptionKey.borderWidth => _foreign & 1 != 0,
-    OptionKey.hitRadius => _foreign & 2 != 0,
-    OptionKey.hoverBorderWidth => _foreign & 4 != 0,
-    OptionKey.hoverRadius => _foreign & 8 != 0,
-    OptionKey.pointStyle => _foreign & 16 != 0,
-    OptionKey.radius => _foreign & 32 != 0,
-    OptionKey.rotation => _foreign & 64 != 0,
-    OptionKey.backgroundColor => _foreign & 128 != 0,
-    OptionKey.borderColor => _foreign & 256 != 0,
-    _ => false,
-  };
+  bool isForeign(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return _foreign & 1 != 0;
+      case OptionKey.hitRadius:
+        return _foreign & 2 != 0;
+      case OptionKey.hoverBorderWidth:
+        return _foreign & 4 != 0;
+      case OptionKey.hoverRadius:
+        return _foreign & 8 != 0;
+      case OptionKey.pointStyle:
+        return _foreign & 16 != 0;
+      case OptionKey.radius:
+        return _foreign & 32 != 0;
+      case OptionKey.rotation:
+        return _foreign & 64 != 0;
+      case OptionKey.backgroundColor:
+        return _foreign & 128 != 0;
+      case OptionKey.borderColor:
+        return _foreign & 256 != 0;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Object? foreignOf(OptionKey key) => switch (key) {
-    OptionKey.borderWidth => _foreign & 1 != 0 ? _foreignRaw![0] : null,
-    OptionKey.hitRadius => _foreign & 2 != 0 ? _foreignRaw![1] : null,
-    OptionKey.hoverBorderWidth => _foreign & 4 != 0 ? _foreignRaw![2] : null,
-    OptionKey.hoverRadius => _foreign & 8 != 0 ? _foreignRaw![3] : null,
-    OptionKey.pointStyle => _foreign & 16 != 0 ? _foreignRaw![4] : null,
-    OptionKey.radius => _foreign & 32 != 0 ? _foreignRaw![5] : null,
-    OptionKey.rotation => _foreign & 64 != 0 ? _foreignRaw![6] : null,
-    OptionKey.backgroundColor => _foreign & 128 != 0 ? _foreignRaw![7] : null,
-    OptionKey.borderColor => _foreign & 256 != 0 ? _foreignRaw![8] : null,
-    _ => null,
-  };
+  Object? foreignOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderWidth:
+        return _foreign & 1 != 0 ? _foreignRaw![0] : null;
+      case OptionKey.hitRadius:
+        return _foreign & 2 != 0 ? _foreignRaw![1] : null;
+      case OptionKey.hoverBorderWidth:
+        return _foreign & 4 != 0 ? _foreignRaw![2] : null;
+      case OptionKey.hoverRadius:
+        return _foreign & 8 != 0 ? _foreignRaw![3] : null;
+      case OptionKey.pointStyle:
+        return _foreign & 16 != 0 ? _foreignRaw![4] : null;
+      case OptionKey.radius:
+        return _foreign & 32 != 0 ? _foreignRaw![5] : null;
+      case OptionKey.rotation:
+        return _foreign & 64 != 0 ? _foreignRaw![6] : null;
+      case OptionKey.backgroundColor:
+        return _foreign & 128 != 0 ? _foreignRaw![7] : null;
+      case OptionKey.borderColor:
+        return _foreign & 256 != 0 ? _foreignRaw![8] : null;
+      default:
+        return null;
+    }
+  }
 }
 
 /// index.d.ts:1954 LineOptions and index.d.ts:2015 LineHoverOptions, the
@@ -1163,81 +1211,148 @@ final class LineOptions extends ElementOptions {
   }
 
   @override
-  Object? valueOf(OptionKey key) => switch (key) {
-    OptionKey.borderCapStyle => borderCapStyleValue,
-    OptionKey.borderDash => borderDashValue,
-    OptionKey.borderDashOffset => borderDashOffsetValue,
-    OptionKey.borderJoinStyle => borderJoinStyleValue,
-    OptionKey.borderWidth => borderWidthValue,
-    OptionKey.capBezierPoints => capBezierPointsValue,
-    OptionKey.cubicInterpolationMode => cubicInterpolationModeValue,
-    OptionKey.fill => fillValue,
-    OptionKey.spanGaps => spanGapsValue,
-    OptionKey.stepped => steppedValue,
-    OptionKey.tension => tensionValue,
-    OptionKey.backgroundColor => backgroundColorValue,
-    OptionKey.borderColor => borderColorValue,
-    OptionKey.segment => segmentValue,
-    _ => super.valueOf(key),
-  };
+  Object? valueOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderCapStyle:
+        return borderCapStyleValue;
+      case OptionKey.borderDash:
+        return borderDashValue;
+      case OptionKey.borderDashOffset:
+        return borderDashOffsetValue;
+      case OptionKey.borderJoinStyle:
+        return borderJoinStyleValue;
+      case OptionKey.borderWidth:
+        return borderWidthValue;
+      case OptionKey.capBezierPoints:
+        return capBezierPointsValue;
+      case OptionKey.cubicInterpolationMode:
+        return cubicInterpolationModeValue;
+      case OptionKey.fill:
+        return fillValue;
+      case OptionKey.spanGaps:
+        return spanGapsValue;
+      case OptionKey.stepped:
+        return steppedValue;
+      case OptionKey.tension:
+        return tensionValue;
+      case OptionKey.backgroundColor:
+        return backgroundColorValue;
+      case OptionKey.borderColor:
+        return borderColorValue;
+      case OptionKey.segment:
+        return segmentValue;
+      default:
+        return super.valueOf(key);
+    }
+  }
 
   @override
-  bool isPresent(OptionKey key) => switch (key) {
-    OptionKey.borderCapStyle => _present & 1 != 0,
-    OptionKey.borderDash => _present & 2 != 0,
-    OptionKey.borderDashOffset => _present & 4 != 0,
-    OptionKey.borderJoinStyle => _present & 8 != 0,
-    OptionKey.borderWidth => _present & 16 != 0,
-    OptionKey.capBezierPoints => _present & 32 != 0,
-    OptionKey.cubicInterpolationMode => _present & 64 != 0,
-    OptionKey.fill => _present & 128 != 0,
-    OptionKey.spanGaps => _present & 256 != 0,
-    OptionKey.stepped => _present & 512 != 0,
-    OptionKey.tension => _present & 1024 != 0,
-    OptionKey.backgroundColor => _present & 2048 != 0,
-    OptionKey.borderColor => _present & 4096 != 0,
-    OptionKey.segment => _present & 8192 != 0,
-    _ => super.isPresent(key),
-  };
+  bool isPresent(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderCapStyle:
+        return _present & 1 != 0;
+      case OptionKey.borderDash:
+        return _present & 2 != 0;
+      case OptionKey.borderDashOffset:
+        return _present & 4 != 0;
+      case OptionKey.borderJoinStyle:
+        return _present & 8 != 0;
+      case OptionKey.borderWidth:
+        return _present & 16 != 0;
+      case OptionKey.capBezierPoints:
+        return _present & 32 != 0;
+      case OptionKey.cubicInterpolationMode:
+        return _present & 64 != 0;
+      case OptionKey.fill:
+        return _present & 128 != 0;
+      case OptionKey.spanGaps:
+        return _present & 256 != 0;
+      case OptionKey.stepped:
+        return _present & 512 != 0;
+      case OptionKey.tension:
+        return _present & 1024 != 0;
+      case OptionKey.backgroundColor:
+        return _present & 2048 != 0;
+      case OptionKey.borderColor:
+        return _present & 4096 != 0;
+      case OptionKey.segment:
+        return _present & 8192 != 0;
+      default:
+        return super.isPresent(key);
+    }
+  }
 
   @override
-  bool isForeign(OptionKey key) => switch (key) {
-    OptionKey.borderCapStyle => _foreign & 1 != 0,
-    OptionKey.borderDash => _foreign & 2 != 0,
-    OptionKey.borderDashOffset => _foreign & 4 != 0,
-    OptionKey.borderJoinStyle => _foreign & 8 != 0,
-    OptionKey.borderWidth => _foreign & 16 != 0,
-    OptionKey.capBezierPoints => _foreign & 32 != 0,
-    OptionKey.cubicInterpolationMode => _foreign & 64 != 0,
-    OptionKey.fill => _foreign & 128 != 0,
-    OptionKey.spanGaps => _foreign & 256 != 0,
-    OptionKey.stepped => _foreign & 512 != 0,
-    OptionKey.tension => _foreign & 1024 != 0,
-    OptionKey.backgroundColor => _foreign & 2048 != 0,
-    OptionKey.borderColor => _foreign & 4096 != 0,
-    OptionKey.segment => _foreign & 8192 != 0,
-    _ => false,
-  };
+  bool isForeign(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderCapStyle:
+        return _foreign & 1 != 0;
+      case OptionKey.borderDash:
+        return _foreign & 2 != 0;
+      case OptionKey.borderDashOffset:
+        return _foreign & 4 != 0;
+      case OptionKey.borderJoinStyle:
+        return _foreign & 8 != 0;
+      case OptionKey.borderWidth:
+        return _foreign & 16 != 0;
+      case OptionKey.capBezierPoints:
+        return _foreign & 32 != 0;
+      case OptionKey.cubicInterpolationMode:
+        return _foreign & 64 != 0;
+      case OptionKey.fill:
+        return _foreign & 128 != 0;
+      case OptionKey.spanGaps:
+        return _foreign & 256 != 0;
+      case OptionKey.stepped:
+        return _foreign & 512 != 0;
+      case OptionKey.tension:
+        return _foreign & 1024 != 0;
+      case OptionKey.backgroundColor:
+        return _foreign & 2048 != 0;
+      case OptionKey.borderColor:
+        return _foreign & 4096 != 0;
+      case OptionKey.segment:
+        return _foreign & 8192 != 0;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Object? foreignOf(OptionKey key) => switch (key) {
-    OptionKey.borderCapStyle => _foreign & 1 != 0 ? _foreignRaw![0] : null,
-    OptionKey.borderDash => _foreign & 2 != 0 ? _foreignRaw![1] : null,
-    OptionKey.borderDashOffset => _foreign & 4 != 0 ? _foreignRaw![2] : null,
-    OptionKey.borderJoinStyle => _foreign & 8 != 0 ? _foreignRaw![3] : null,
-    OptionKey.borderWidth => _foreign & 16 != 0 ? _foreignRaw![4] : null,
-    OptionKey.capBezierPoints => _foreign & 32 != 0 ? _foreignRaw![5] : null,
-    OptionKey.cubicInterpolationMode =>
-      _foreign & 64 != 0 ? _foreignRaw![6] : null,
-    OptionKey.fill => _foreign & 128 != 0 ? _foreignRaw![7] : null,
-    OptionKey.spanGaps => _foreign & 256 != 0 ? _foreignRaw![8] : null,
-    OptionKey.stepped => _foreign & 512 != 0 ? _foreignRaw![9] : null,
-    OptionKey.tension => _foreign & 1024 != 0 ? _foreignRaw![10] : null,
-    OptionKey.backgroundColor => _foreign & 2048 != 0 ? _foreignRaw![11] : null,
-    OptionKey.borderColor => _foreign & 4096 != 0 ? _foreignRaw![12] : null,
-    OptionKey.segment => _foreign & 8192 != 0 ? _foreignRaw![13] : null,
-    _ => null,
-  };
+  Object? foreignOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderCapStyle:
+        return _foreign & 1 != 0 ? _foreignRaw![0] : null;
+      case OptionKey.borderDash:
+        return _foreign & 2 != 0 ? _foreignRaw![1] : null;
+      case OptionKey.borderDashOffset:
+        return _foreign & 4 != 0 ? _foreignRaw![2] : null;
+      case OptionKey.borderJoinStyle:
+        return _foreign & 8 != 0 ? _foreignRaw![3] : null;
+      case OptionKey.borderWidth:
+        return _foreign & 16 != 0 ? _foreignRaw![4] : null;
+      case OptionKey.capBezierPoints:
+        return _foreign & 32 != 0 ? _foreignRaw![5] : null;
+      case OptionKey.cubicInterpolationMode:
+        return _foreign & 64 != 0 ? _foreignRaw![6] : null;
+      case OptionKey.fill:
+        return _foreign & 128 != 0 ? _foreignRaw![7] : null;
+      case OptionKey.spanGaps:
+        return _foreign & 256 != 0 ? _foreignRaw![8] : null;
+      case OptionKey.stepped:
+        return _foreign & 512 != 0 ? _foreignRaw![9] : null;
+      case OptionKey.tension:
+        return _foreign & 1024 != 0 ? _foreignRaw![10] : null;
+      case OptionKey.backgroundColor:
+        return _foreign & 2048 != 0 ? _foreignRaw![11] : null;
+      case OptionKey.borderColor:
+        return _foreign & 4096 != 0 ? _foreignRaw![12] : null;
+      case OptionKey.segment:
+        return _foreign & 8192 != 0 ? _foreignRaw![13] : null;
+      default:
+        return null;
+    }
+  }
 }
 
 /// index.d.ts:2148 BarOptions and index.d.ts:2187 BarHoverOptions, the options
@@ -1550,52 +1665,92 @@ final class BarOptions extends ElementOptions {
   }
 
   @override
-  Object? valueOf(OptionKey key) => switch (key) {
-    OptionKey.borderSkipped => borderSkippedValue,
-    OptionKey.borderWidth => borderWidthValue,
-    OptionKey.borderRadius => borderRadiusValue,
-    OptionKey.inflateAmount => inflateAmountValue,
-    OptionKey.pointStyle => pointStyleValue,
-    OptionKey.backgroundColor => backgroundColorValue,
-    OptionKey.borderColor => borderColorValue,
-    _ => super.valueOf(key),
-  };
+  Object? valueOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderSkipped:
+        return borderSkippedValue;
+      case OptionKey.borderWidth:
+        return borderWidthValue;
+      case OptionKey.borderRadius:
+        return borderRadiusValue;
+      case OptionKey.inflateAmount:
+        return inflateAmountValue;
+      case OptionKey.pointStyle:
+        return pointStyleValue;
+      case OptionKey.backgroundColor:
+        return backgroundColorValue;
+      case OptionKey.borderColor:
+        return borderColorValue;
+      default:
+        return super.valueOf(key);
+    }
+  }
 
   @override
-  bool isPresent(OptionKey key) => switch (key) {
-    OptionKey.borderSkipped => _present & 1 != 0,
-    OptionKey.borderWidth => _present & 2 != 0,
-    OptionKey.borderRadius => _present & 4 != 0,
-    OptionKey.inflateAmount => _present & 8 != 0,
-    OptionKey.pointStyle => _present & 16 != 0,
-    OptionKey.backgroundColor => _present & 32 != 0,
-    OptionKey.borderColor => _present & 64 != 0,
-    _ => super.isPresent(key),
-  };
+  bool isPresent(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderSkipped:
+        return _present & 1 != 0;
+      case OptionKey.borderWidth:
+        return _present & 2 != 0;
+      case OptionKey.borderRadius:
+        return _present & 4 != 0;
+      case OptionKey.inflateAmount:
+        return _present & 8 != 0;
+      case OptionKey.pointStyle:
+        return _present & 16 != 0;
+      case OptionKey.backgroundColor:
+        return _present & 32 != 0;
+      case OptionKey.borderColor:
+        return _present & 64 != 0;
+      default:
+        return super.isPresent(key);
+    }
+  }
 
   @override
-  bool isForeign(OptionKey key) => switch (key) {
-    OptionKey.borderSkipped => _foreign & 1 != 0,
-    OptionKey.borderWidth => _foreign & 2 != 0,
-    OptionKey.borderRadius => _foreign & 4 != 0,
-    OptionKey.inflateAmount => _foreign & 8 != 0,
-    OptionKey.pointStyle => _foreign & 16 != 0,
-    OptionKey.backgroundColor => _foreign & 32 != 0,
-    OptionKey.borderColor => _foreign & 64 != 0,
-    _ => false,
-  };
+  bool isForeign(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderSkipped:
+        return _foreign & 1 != 0;
+      case OptionKey.borderWidth:
+        return _foreign & 2 != 0;
+      case OptionKey.borderRadius:
+        return _foreign & 4 != 0;
+      case OptionKey.inflateAmount:
+        return _foreign & 8 != 0;
+      case OptionKey.pointStyle:
+        return _foreign & 16 != 0;
+      case OptionKey.backgroundColor:
+        return _foreign & 32 != 0;
+      case OptionKey.borderColor:
+        return _foreign & 64 != 0;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Object? foreignOf(OptionKey key) => switch (key) {
-    OptionKey.borderSkipped => _foreign & 1 != 0 ? _foreignRaw![0] : null,
-    OptionKey.borderWidth => _foreign & 2 != 0 ? _foreignRaw![1] : null,
-    OptionKey.borderRadius => _foreign & 4 != 0 ? _foreignRaw![2] : null,
-    OptionKey.inflateAmount => _foreign & 8 != 0 ? _foreignRaw![3] : null,
-    OptionKey.pointStyle => _foreign & 16 != 0 ? _foreignRaw![4] : null,
-    OptionKey.backgroundColor => _foreign & 32 != 0 ? _foreignRaw![5] : null,
-    OptionKey.borderColor => _foreign & 64 != 0 ? _foreignRaw![6] : null,
-    _ => null,
-  };
+  Object? foreignOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderSkipped:
+        return _foreign & 1 != 0 ? _foreignRaw![0] : null;
+      case OptionKey.borderWidth:
+        return _foreign & 2 != 0 ? _foreignRaw![1] : null;
+      case OptionKey.borderRadius:
+        return _foreign & 4 != 0 ? _foreignRaw![2] : null;
+      case OptionKey.inflateAmount:
+        return _foreign & 8 != 0 ? _foreignRaw![3] : null;
+      case OptionKey.pointStyle:
+        return _foreign & 16 != 0 ? _foreignRaw![4] : null;
+      case OptionKey.backgroundColor:
+        return _foreign & 32 != 0 ? _foreignRaw![5] : null;
+      case OptionKey.borderColor:
+        return _foreign & 64 != 0 ? _foreignRaw![6] : null;
+      default:
+        return null;
+    }
+  }
 }
 
 /// index.d.ts:1882 ArcOptions and index.d.ts:1944 ArcHoverOptions, the options
@@ -2250,78 +2405,146 @@ final class ArcOptions extends ElementOptions {
   }
 
   @override
-  Object? valueOf(OptionKey key) => switch (key) {
-    OptionKey.borderAlign => borderAlignValue,
-    OptionKey.borderColor => borderColorValue,
-    OptionKey.borderDash => borderDashValue,
-    OptionKey.borderDashOffset => borderDashOffsetValue,
-    OptionKey.borderJoinStyle => borderJoinStyleValue,
-    OptionKey.borderRadius => borderRadiusValue,
-    OptionKey.borderWidth => borderWidthValue,
-    OptionKey.offset => offsetValue,
-    OptionKey.spacing => spacingValue,
-    OptionKey.spacingMode => spacingModeValue,
-    OptionKey.angle => angleValue,
-    OptionKey.circular => circularValue,
-    OptionKey.selfJoin => selfJoinValue,
-    OptionKey.backgroundColor => backgroundColorValue,
-    _ => super.valueOf(key),
-  };
+  Object? valueOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderAlign:
+        return borderAlignValue;
+      case OptionKey.borderColor:
+        return borderColorValue;
+      case OptionKey.borderDash:
+        return borderDashValue;
+      case OptionKey.borderDashOffset:
+        return borderDashOffsetValue;
+      case OptionKey.borderJoinStyle:
+        return borderJoinStyleValue;
+      case OptionKey.borderRadius:
+        return borderRadiusValue;
+      case OptionKey.borderWidth:
+        return borderWidthValue;
+      case OptionKey.offset:
+        return offsetValue;
+      case OptionKey.spacing:
+        return spacingValue;
+      case OptionKey.spacingMode:
+        return spacingModeValue;
+      case OptionKey.angle:
+        return angleValue;
+      case OptionKey.circular:
+        return circularValue;
+      case OptionKey.selfJoin:
+        return selfJoinValue;
+      case OptionKey.backgroundColor:
+        return backgroundColorValue;
+      default:
+        return super.valueOf(key);
+    }
+  }
 
   @override
-  bool isPresent(OptionKey key) => switch (key) {
-    OptionKey.borderAlign => _present & 1 != 0,
-    OptionKey.borderColor => _present & 2 != 0,
-    OptionKey.borderDash => _present & 4 != 0,
-    OptionKey.borderDashOffset => _present & 8 != 0,
-    OptionKey.borderJoinStyle => _present & 16 != 0,
-    OptionKey.borderRadius => _present & 32 != 0,
-    OptionKey.borderWidth => _present & 64 != 0,
-    OptionKey.offset => _present & 128 != 0,
-    OptionKey.spacing => _present & 256 != 0,
-    OptionKey.spacingMode => _present & 512 != 0,
-    OptionKey.angle => _present & 1024 != 0,
-    OptionKey.circular => _present & 2048 != 0,
-    OptionKey.selfJoin => _present & 4096 != 0,
-    OptionKey.backgroundColor => _present & 8192 != 0,
-    _ => super.isPresent(key),
-  };
+  bool isPresent(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderAlign:
+        return _present & 1 != 0;
+      case OptionKey.borderColor:
+        return _present & 2 != 0;
+      case OptionKey.borderDash:
+        return _present & 4 != 0;
+      case OptionKey.borderDashOffset:
+        return _present & 8 != 0;
+      case OptionKey.borderJoinStyle:
+        return _present & 16 != 0;
+      case OptionKey.borderRadius:
+        return _present & 32 != 0;
+      case OptionKey.borderWidth:
+        return _present & 64 != 0;
+      case OptionKey.offset:
+        return _present & 128 != 0;
+      case OptionKey.spacing:
+        return _present & 256 != 0;
+      case OptionKey.spacingMode:
+        return _present & 512 != 0;
+      case OptionKey.angle:
+        return _present & 1024 != 0;
+      case OptionKey.circular:
+        return _present & 2048 != 0;
+      case OptionKey.selfJoin:
+        return _present & 4096 != 0;
+      case OptionKey.backgroundColor:
+        return _present & 8192 != 0;
+      default:
+        return super.isPresent(key);
+    }
+  }
 
   @override
-  bool isForeign(OptionKey key) => switch (key) {
-    OptionKey.borderAlign => _foreign & 1 != 0,
-    OptionKey.borderColor => _foreign & 2 != 0,
-    OptionKey.borderDash => _foreign & 4 != 0,
-    OptionKey.borderDashOffset => _foreign & 8 != 0,
-    OptionKey.borderJoinStyle => _foreign & 16 != 0,
-    OptionKey.borderRadius => _foreign & 32 != 0,
-    OptionKey.borderWidth => _foreign & 64 != 0,
-    OptionKey.offset => _foreign & 128 != 0,
-    OptionKey.spacing => _foreign & 256 != 0,
-    OptionKey.spacingMode => _foreign & 512 != 0,
-    OptionKey.angle => _foreign & 1024 != 0,
-    OptionKey.circular => _foreign & 2048 != 0,
-    OptionKey.selfJoin => _foreign & 4096 != 0,
-    OptionKey.backgroundColor => _foreign & 8192 != 0,
-    _ => false,
-  };
+  bool isForeign(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderAlign:
+        return _foreign & 1 != 0;
+      case OptionKey.borderColor:
+        return _foreign & 2 != 0;
+      case OptionKey.borderDash:
+        return _foreign & 4 != 0;
+      case OptionKey.borderDashOffset:
+        return _foreign & 8 != 0;
+      case OptionKey.borderJoinStyle:
+        return _foreign & 16 != 0;
+      case OptionKey.borderRadius:
+        return _foreign & 32 != 0;
+      case OptionKey.borderWidth:
+        return _foreign & 64 != 0;
+      case OptionKey.offset:
+        return _foreign & 128 != 0;
+      case OptionKey.spacing:
+        return _foreign & 256 != 0;
+      case OptionKey.spacingMode:
+        return _foreign & 512 != 0;
+      case OptionKey.angle:
+        return _foreign & 1024 != 0;
+      case OptionKey.circular:
+        return _foreign & 2048 != 0;
+      case OptionKey.selfJoin:
+        return _foreign & 4096 != 0;
+      case OptionKey.backgroundColor:
+        return _foreign & 8192 != 0;
+      default:
+        return false;
+    }
+  }
 
   @override
-  Object? foreignOf(OptionKey key) => switch (key) {
-    OptionKey.borderAlign => _foreign & 1 != 0 ? _foreignRaw![0] : null,
-    OptionKey.borderColor => _foreign & 2 != 0 ? _foreignRaw![1] : null,
-    OptionKey.borderDash => _foreign & 4 != 0 ? _foreignRaw![2] : null,
-    OptionKey.borderDashOffset => _foreign & 8 != 0 ? _foreignRaw![3] : null,
-    OptionKey.borderJoinStyle => _foreign & 16 != 0 ? _foreignRaw![4] : null,
-    OptionKey.borderRadius => _foreign & 32 != 0 ? _foreignRaw![5] : null,
-    OptionKey.borderWidth => _foreign & 64 != 0 ? _foreignRaw![6] : null,
-    OptionKey.offset => _foreign & 128 != 0 ? _foreignRaw![7] : null,
-    OptionKey.spacing => _foreign & 256 != 0 ? _foreignRaw![8] : null,
-    OptionKey.spacingMode => _foreign & 512 != 0 ? _foreignRaw![9] : null,
-    OptionKey.angle => _foreign & 1024 != 0 ? _foreignRaw![10] : null,
-    OptionKey.circular => _foreign & 2048 != 0 ? _foreignRaw![11] : null,
-    OptionKey.selfJoin => _foreign & 4096 != 0 ? _foreignRaw![12] : null,
-    OptionKey.backgroundColor => _foreign & 8192 != 0 ? _foreignRaw![13] : null,
-    _ => null,
-  };
+  Object? foreignOf(OptionKey key) {
+    switch (key) {
+      case OptionKey.borderAlign:
+        return _foreign & 1 != 0 ? _foreignRaw![0] : null;
+      case OptionKey.borderColor:
+        return _foreign & 2 != 0 ? _foreignRaw![1] : null;
+      case OptionKey.borderDash:
+        return _foreign & 4 != 0 ? _foreignRaw![2] : null;
+      case OptionKey.borderDashOffset:
+        return _foreign & 8 != 0 ? _foreignRaw![3] : null;
+      case OptionKey.borderJoinStyle:
+        return _foreign & 16 != 0 ? _foreignRaw![4] : null;
+      case OptionKey.borderRadius:
+        return _foreign & 32 != 0 ? _foreignRaw![5] : null;
+      case OptionKey.borderWidth:
+        return _foreign & 64 != 0 ? _foreignRaw![6] : null;
+      case OptionKey.offset:
+        return _foreign & 128 != 0 ? _foreignRaw![7] : null;
+      case OptionKey.spacing:
+        return _foreign & 256 != 0 ? _foreignRaw![8] : null;
+      case OptionKey.spacingMode:
+        return _foreign & 512 != 0 ? _foreignRaw![9] : null;
+      case OptionKey.angle:
+        return _foreign & 1024 != 0 ? _foreignRaw![10] : null;
+      case OptionKey.circular:
+        return _foreign & 2048 != 0 ? _foreignRaw![11] : null;
+      case OptionKey.selfJoin:
+        return _foreign & 4096 != 0 ? _foreignRaw![12] : null;
+      case OptionKey.backgroundColor:
+        return _foreign & 8192 != 0 ? _foreignRaw![13] : null;
+      default:
+        return null;
+    }
+  }
 }
