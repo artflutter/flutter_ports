@@ -18,6 +18,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show clipArea, unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.dataset.dart'
     show getDatasetClipArea;
+import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
+    show SegmentStyle;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
@@ -330,11 +332,15 @@ void _fill(
   final parts = segments(line, target, property);
 
   for (final (source: src, target: tgt, :start, :end) in parts) {
-    // `const {style: {backgroundColor = color} = {}} = src`.
+    // `const {style: {backgroundColor = color} = {}} = src`. The style of
+    // a segment of `helpers.segment` is a typed `SegmentStyle` (Chart.js
+    // ADR 0054 §9); another object reads by name.
     final style = src.style;
-    final backgroundColor = style == null
-        ? color
-        : _orDefault(jsGet(style, 'backgroundColor'), color);
+    final backgroundColor = switch (style) {
+      null => color,
+      final SegmentStyle style => _orDefault(style.backgroundColor, color),
+      _ => _orDefault(jsGet(style, 'backgroundColor'), color),
+    };
     final notShape = target != true;
 
     ctx
