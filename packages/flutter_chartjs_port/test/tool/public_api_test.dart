@@ -139,6 +139,23 @@ const Map<String, String> _notExported = {
   'TooltipLabelStyle': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipPosition': 'an internal typed plugin type of Chart.js ADR 0054',
+  // The typed scale option facades of Chart.js ADR 0054 section 4
+  // (lib/src/core/scale_options.dart, extension types over the resolver
+  // view): internal in 0.1.0.
+  'BorderOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+  'CartesianScaleOptions':
+      'an internal typed scale facade of Chart.js ADR 0054',
+  'CategoryScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+  'CoreScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+  'GridLineOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+  'LinearScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+  'LogarithmicScaleOptions':
+      'an internal typed scale facade of Chart.js ADR 0054',
+  'RadialLinearScaleOptions':
+      'an internal typed scale facade of Chart.js ADR 0054',
+  'TickOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+  'TimeScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+  'TimeScaleTimeOptions': 'an internal typed scale facade of Chart.js ADR 0054',
 };
 
 /// The members of an exported concrete class whose `_` doc name is not the
@@ -195,7 +212,8 @@ Set<String> _hiddenNames(LibraryElement library) => {
 /// typedef, extension or extension type, and its name.
 final RegExp _typeDeclaration = RegExp(
   r'^(?:(?:abstract|base|final|interface|sealed|mixin)\s+)*'
-  r'(?:class|mixin|enum|typedef|extension\s+type|extension)\s+([A-Za-z_]\w*)',
+  r'(?:class|mixin|enum|typedef|extension\s+type(?:\s+const)?|extension)'
+  r'\s+([A-Za-z_]\w*)',
   multiLine: true,
 );
 
