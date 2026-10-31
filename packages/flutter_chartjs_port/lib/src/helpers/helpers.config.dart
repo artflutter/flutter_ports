@@ -288,6 +288,7 @@ final class OptionResolver implements ResolverProxy {
   /// helpers.config.ts:64 the `get` trap for the option name [prop]:
   /// `_cached(target, prop, () => _resolveWithPrefixes(...))`.
   Object? _get(String prop) {
+    // DIVERGES(chartjs): adapt-resolver-cached-read, _cached inline.
     final own = _own(prop);
     if (!identical(own, _absent)) return own;
     if (prop == 'constructor') {
@@ -632,6 +633,7 @@ final class OptionView implements ContextProxy {
   /// helpers.config.ts:150 the `get` trap for the option name [prop]. The
   /// receiver is this view.
   Object? _get(String prop) {
+    // DIVERGES(chartjs): adapt-resolver-cached-read, _cached inline.
     final own = _own(prop);
     if (!identical(own, _absent)) return own;
     if (prop == 'constructor') {

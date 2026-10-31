@@ -136,9 +136,10 @@ and for the typed public API of Chart.js ADR 0052.
   (`false`) or a user function.
 - `defaults.route` of a typed scope is a typed route of the scope (`OptionScope.addRoute`): a
   read of the local cell that gives `undefined` reads the target cell at each access; a local
-  object merges over the target object (U `core.defaults.js:130-157`). A route of a raw Map node
-  (a user object in the defaults) keeps the `RoutedScope` of Chart.js ADR 0043 until the close
-  step.
+  object merges over the target object (U `core.defaults.js:130-157`). A scope object or a
+  target scope object of a route that is a raw Map node (a user object in the defaults) becomes a
+  typed scope with the same keys, values and key order in the place of the Map in the object that
+  owns it (the close step, §19; row `adapt-defaults-route`). `RoutedScope` is gone.
 - A change of `Chart.defaults` reaches a chart at its next `update()`: `config.update()` drops the
   scope lists and the resolvers (U `core.config.js:197-206`). The scale options copy the defaults
   at the first init of a scale, as `mergeScaleConfig` does upstream (U `core.config.js:71-113`).
@@ -183,8 +184,8 @@ and for the typed public API of Chart.js ADR 0052.
   memos are gone (lane L5): `compileThemeData` compiles at each call, and the theme switch of
   `ChartView` keeps the compiled scope of its current theme (§18).
 - No second (generic) resolver stays. During the migration, the Map resolver of Chart.js ADR 0043
-  is the frozen file `test/support/legacy/helpers_config_map.dart`, the reference of O3 (§15). The
-  close step deletes it.
+  was the frozen file `test/support/legacy/helpers_config_map.dart`, the reference of O3 (§15).
+  The close step deleted it (§19).
 
 ### 5. The raw boundary and the face
 
@@ -208,11 +209,12 @@ and for the typed public API of Chart.js ADR 0052.
   and the tests. It is never in a hot path.
 - `isObject` is true for a raw Map and for a typed scope (the leaf rule of Chart.js ADR 0043 in its
   new form).
-- During the migration the same objects also extend `MapBase` (scaffolding). `MapBase` owns
-  `operator []` and `operator []=` with the Map rules (Dart `null` for an absent key). Thus the
-  face members are `jsRead` and `jsWrite` during the migration. The close step removes `MapBase`;
-  then `operator []` and `operator []=` of each face forward to `jsRead` and `jsWrite`, with the
-  JS rules (`undefined` for an absent key). This is an item of the close step (§16).
+- During the migration the same objects also extended `MapBase` (scaffolding). The close step
+  removed it (§19): no class of `lib/src` outside `lib/src/js/` is a `Map`, and `operator []` and
+  `operator []=` of each face are `jsRead` and `jsWrite`, with the JS rules (`undefined` for an
+  absent key). `JsProxyObject` (the resolvers) is a face with `ownKeys` (the `ownKeys` trap) and
+  `hasProperty` (the `has` trap). The structural rule of `check:typed-reads` (§15) fails if a Map
+  supertype comes back.
 
 - The boundary after B6: the config of the user (`config`, `config.data`, `config.options` and
   the dataset objects) stays raw: the Maps of the user, read through `RawScope` and `jsGet`, with
@@ -225,8 +227,8 @@ and for the typed public API of Chart.js ADR 0052.
 - The boundary after L5: the chart root is a typed `ChartConfigurationScope` for both entries of
   `ChartView` (the lowering root of a typed config, and the top-level values of the app Map of
   `ChartView.raw`). The `data` and `options` of `ChartView.raw` stay the Maps of the app, with
-  their identity. The close step makes `Config._initConfig`, `_themeOf` and the `isObject` paths
-  take a typed root, data and options with no Map scaffolding.
+  their identity. The close step made `Config._initConfig`, `_themeOf` and the `isObject` paths
+  take a typed root, data and options with no Map scaffolding (§19).
 
 ### 6. Values outside the type of a key
 
@@ -353,8 +355,9 @@ and for the typed public API of Chart.js ADR 0052.
      running animation (U `core.animation.js:51-65`), so a fixed subclass cannot follow.
      `Animation.typed` keeps the number path in two `double` fields, and the number path writes an
      element through `Element.writeNumber`.
-  2. `$animations` stays a `Map<String, Animation>` until the close step: the specs, O1 and
-     `test/support/jasmine.dart` read it as a plain Map in key order.
+  2. `$animations` stays a `Map<String, Animation>`: the specs, O1 and
+     `test/support/jasmine.dart` read it as a plain Map in key order, and `Element.$animations`
+     is a public member. The close step keeps it (Open 4).
   3. No easing `enum`: a user can replace a built-in easing in the mutable `effects` Map, so each
      name reads the Map.
 
@@ -474,7 +477,8 @@ and `adapt-typed-contexts`.
   test config also runs in Chrome without `dart:io`. A new pair fails until its lane reviews the
   readers of that key and adds the pair. `--dart-define=O2_COLLECT=true` prints the pairs.
 - O3, the legacy resolver against the typed resolver (the test `(O3)` of each case of
-  `test/port/options/observation_test.dart`, B4 to the close step). It shares the corpus of O1. It
+  `test/port/options/observation_test.dart`, B4 to the close step; the close step removed it with
+  the legacy resolver, §19). It shares the corpus of O1. It
   builds the chart of each case twice, once for each implementation, because a walk can write
   empty objects into the first scope (`subGetTarget`). It makes the resolvers of the chart options,
   of each dataset, its animations, its dataset and data element options in the modes `default`
@@ -486,17 +490,19 @@ and `adapt-typed-contexts`.
 - D2, the resolver trace of Chart.js ADR 0053 against Node.js, stays, with 11 new cases (B0).
 - Tool 9, `check:typed-reads` (`tool/check_typed_reads.dart`, in `check:port`): the counts of the
   by-name forms in each file of `lib/src` outside `lib/src/js/` and `lib/src/options/` must not
-  grow above the baselines of `tool/typed_reads/` (one file for each source file). At the close
-  step, the structural rule (no `Map` supertype on a class of `lib/src` outside `lib/src/js/`)
-  fails if the scaffolding comes back.
+  grow above the baselines of `tool/typed_reads/` (one file for each source file). Since the close
+  step each baseline is an allowlist entry: its `#` lines give the reason of each by-name form
+  that stays, and `--update` keeps them. The structural rule (no `Map` supertype on a class, a
+  mixin or an extension type of `lib/src` outside `lib/src/js/`, also of `lib/src/options/`)
+  fails if the scaffolding comes back; it has no baseline.
 - `options:gen:check` (B1).
 
 ### 16. The steps, the ownership and the night
 
-- The close step removes the scaffolding: `MapBase` of the typed classes (then `operator []`
-  and `operator []=` of each face forward to `jsRead` and `jsWrite` with the JS rules), the
-  legacy Map resolver and O3, `ContextObject`, `RoutedScope` and the Map protocol of the classes
-  of Chart.js ADR 0018.
+- The close step removed the scaffolding (§19): `MapBase` of the typed classes (now
+  `operator []` and `operator []=` of each face are `jsRead` and `jsWrite` with the JS rules),
+  the legacy Map resolver and O3, `ContextObject` as a Map, `RoutedScope` and the Map protocol of
+  the classes of Chart.js ADR 0018.
 - The base step (one agent, commits B0-B6, each green with all suites), then five lanes in
   parallel worktrees (L1 controllers and parsed data, L2 scales, L3 elements, props and
   animations, L4 plugins, L5 chart level, raw boundary and the typed public API), then the close
@@ -557,6 +563,53 @@ acceptance of this ADR (lane L5):
   config, a typed `ChartConfigurationScope` (§5); `data` and `options` keep the identity of the app
   Maps.
 
+### 19. The close step (done 2026-10-31)
+
+- The scaffolding is gone. `OptionScope`, `TypedRecord` (the parsed items, the stack objects, the
+  props, the hook arguments, the legend items, hit boxes and tooltip items), `IndexValues`,
+  `ElementOptions` and `GenericElementOptions`, `AnimationSpec`, `ContextObject`,
+  `OptionResolver`, `OptionView` and `Plugin` implement only `JsObjectFace`. `JsProxyObject` and
+  the types `ResolverProxy` and `ContextProxy` are faces, not Maps. The frozen Map of the
+  compiled theme (an object under a key with no option kind) is `JsFrozenMap` of the JS runtime
+  (`lib/src/js/js_object.dart`), a plain object of the runtime. `RoutedScope` and its
+  replacement table are gone (§3). The legacy resolver and O3 are gone (§15).
+- The JS runtime takes faces: `jsGet`, `jsGetKey`, `jsObjectKeys` and `jsOwnPropertyNames` (any
+  object, also a List and a String), `jsAssign` (any source), and the new `jsIsObjectLike`,
+  `jsSet`, `jsHasOwn`, `jsDeleteKey` and `jsObjectOrNull`. `isObject` is true for a Map and a face;
+  `clone`, `merge`, `mergeIf`, `each` and the cell classification take faces as objects, as the
+  scaffolding gave them. The config boundary (`initConfig`, `initData`, `initOptions`, `_themeOf`,
+  `chartThemeOf`) takes the typed root, data and options of a typed config.
+- The scale cache `_cache` is the typed `ScaleCache` (`data`, `labels`, `all`, `$bar` as `bar`;
+  §4, the caches of upstream as typed fields). `AnimationSpec` has no `MapBase`.
+- The public API (accepted by the lead on 2026-10-31; 0.1.0 is not published):
+  `chartjs.dart` and the app library export `JsObjectFace`, the by-name face that raw-API code
+  uses for a context, the hook arguments, the options and the other typed objects of a chart.
+  `Chart.data`, `ChartConfiguration.data` and `ChartConfiguration.options` are `Object` (a Map of
+  the user or a typed scope); `Chart.options` is the view (`ContextResolver`); `getContext()` of
+  a chart gives a `ContextObject`; `Chart.overrides` is the typed overrides scope; the `Merger`
+  typedef and `InteractionModeFunction` take `Object` targets and options; `Defaults.set`, `get`,
+  `describe` and `override` return `Object`; `notifyPlugins` takes any args object;
+  `Element.options` and the `options` of the props are `Object?`. The harness adds
+  `acquireChartRoot` for a typed root.
+- The ratchet: `check:typed-reads` has the structural rule (§15), and each baseline that stays
+  is an allowlist entry with its reasons. The by-name forms that stay are in these categories:
+  the JS runtime (`lib/src/js/`, not counted), the generated faces, `RawScope` and the
+  `optionKeyOf` switch (`lib/src/options/`, not counted); the objects of the user (the config,
+  the data and the datasets, the data items of `parsing: false`, the component statics and
+  plugin objects of user code, a context or an options object of user code, a legend or tooltip
+  item of user code) and the writes into them of §5; the generic walk of the resolvers over a
+  scope of any kind and the slots of their cache objects (`helpers.config.dart`); the generic
+  helpers over any object (`clone`, `merge`, `each`, `Object.assign` of `Element.assign` and
+  `copyOptions`, `toFont`); the functions of the user called with JS arity; and the
+  dictionaries by name of upstream (`formatters`, the easing `effects`, the tooltip
+  `positioners`, the adapter prototype, the UMD statics, the named colors). Totals after the
+  close step: jsGet 239, jsGetKey 22, string index 86, jsCall 31, jsObjectKeys 40 and no Map
+  supertype (before: 224, 22, 120, 31, 37, 8 `extends MapBase`, 2 `implements Map`). The
+  counts of jsGet and jsObjectKeys rose where an uncounted Map index read became a counted face
+  read.
+- The tests, the harness and the gallery read typed objects through the face or their typed
+  members. The observation digests O1 did not change.
+
 ## Alternatives considered
 
 - The Map model of Chart.js ADR 0043. Rejected by the maintainer.
@@ -584,7 +637,8 @@ acceptance of this ADR (lane L5):
 - The bump of the typed layers is a hand merge from the upstream diff (§14). The algorithm files
   keep their upstream structure.
 - Tests read library objects through the face or through typed members. The access forms of tests
-  change at the close step; their expectations do not change.
+  changed at the close step; their expectations did not change, except where a test pinned the
+  removed Map behavior (an absent key reads `undefined`, §19).
 
 ## Open
 
@@ -595,8 +649,14 @@ acceptance of this ADR (lane L5):
    `Color` with no CSS string, `Float64List` doughnut values and typed theme component styles come
    after 0.1.0.
 3. The sub view of the element step at the first user call of the element (§4). B4 keeps the
-   upstream form. L3 did not measure the lazy form (it lives in the base file `core.config.dart`);
-   the close step can. The results, the user calls and O3 stay.
+   upstream form. L3 did not measure the lazy form (it lives in the base file `core.config.dart`),
+   and the close step did not change it: a timed measurement decides it. The results, the user
+   calls and O1 stay.
+4. Left by the close step, each because it changes a public member: a typed table of the running
+   animations (`Element.$animations` stays a `Map<String, Animation>`), a typed params record of
+   `types.LineElement.pathSegment` (the filler and `simpleArc` read `bounds` and the params by
+   name), and a typed `cfg` record of `new Scale(cfg)` (the construct of a class value of user
+   code gives a Map).
 
 ## Evidence
 

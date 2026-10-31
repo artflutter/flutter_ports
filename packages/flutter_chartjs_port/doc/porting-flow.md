@@ -578,7 +578,9 @@ and the items that stay open. In short:
 ### 2.15 Chart.js ADR 0018: Typed element options (gate 4)
 
 [Chart.js ADR 0018](adr/0018-typed-element-options.md) holds the decision, its evidence
-and the items that stay open. In short:
+and the items that stay open. [Chart.js ADR 0054](adr/0054-typed-internal-model.md) supersedes it:
+after its close step the options are typed objects with the face `JsObjectFace`, not Maps, and
+the classes live in `lib/src/options/`. The decision of Chart.js ADR 0018, in short:
 - The port-only file `lib/src/elements/element_options.dart` declares `ElementOptions`, a
   `MapBase<String, Object?>`, and its four final subclasses `PointOptions`, `LineOptions`,
   `BarOptions` and `ArcOptions`. An instance is a Map. Thus Chart.js ADR 0043 stays valid, and

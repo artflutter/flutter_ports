@@ -602,6 +602,14 @@ Write the options as in the Chart.js docs, with these rules of Dart:
   ```
 - **`undefined` is a value.** Chart.js tells an absent key, `undefined` and `null` apart. Dart
   `null` is the JavaScript `null`. The library exports `undefined` for the third state.
+- **The objects of a chart are not Maps.** The context of a scriptable option, the arguments of
+  a plugin hook, `chart.options` and the other objects that the chart makes are typed objects.
+  Read them by name through `JsObjectFace`; a missing key reads `undefined`:
+
+  ```dart
+  'backgroundColor': (JsObjectFace context) =>
+      context['dataIndex'] == 0 ? '#FF6384' : '#36A2EB',
+  ```
 
 The updates of a raw configuration:
 
@@ -623,7 +631,7 @@ The updates of a raw configuration:
 | Library | Contents |
 |---|---|
 | `package:flutter_chartjs_port/flutter_chartjs_port.dart` | The library of an app: `ChartView`, the typed API (`ChartConfig`, the dataset classes, the axes, the option groups and the callback details), `ChartTheme`, `ChartThemeData`, and the Chart.js API: `Chart`, the controllers, elements, scales and plugin objects, `registerables`, `defaults`, the types of the callbacks, the date zone functions, `notifyArrayListeners` and `undefined`. It leaves out `Animation` and `Element`, two names that Flutter also has, so an app imports it next to `material.dart` with no prefix. |
-| `package:flutter_chartjs_port/chartjs.dart` | The `chart.js` entry of npm, for code that extends Chart.js (a plugin, a controller or a scale): the whole Chart.js API with `Animation` and `Element`, the Canvas 2D interface that a plugin draws on (`chart.ctx`), `ChartMeta` and `JsClass` (the class value of a subclass). It has no typed API. Next to Flutter, import it with a prefix or with `hide Animation, Element`. |
+| `package:flutter_chartjs_port/chartjs.dart` | The `chart.js` entry of npm, for code that extends Chart.js (a plugin, a controller or a scale): the whole Chart.js API with `Animation` and `Element`, the Canvas 2D interface that a plugin draws on (`chart.ctx`), `ChartMeta`, `JsClass` (the class value of a subclass) and `JsObjectFace` (the read by name of an object of the chart). It has no typed API. Next to Flutter, import it with a prefix or with `hide Animation, Element`. |
 | `package:flutter_chartjs_port/helpers.dart` | The `chart.js/helpers` entry: the public helpers of Chart.js. An upper case constant has a lowerCamelCase name: `PI` is `pi`. Import it with a prefix. |
 
 `ChartConfig` is the typed config of a `ChartView`. `ChartConfiguration` is another type: the
@@ -651,7 +659,7 @@ app reads. These differences are visible to an app:
 - **Dart collections.** In a raw configuration, a dataset Map has the type
   `Map<String, Object?>`, a label List is growable and takes a `String` (`<Object?>[...]` for
   labels that are not strings), and the configuration is never `const`
-  ([Raw Chart.js configs](#raw-chartjs-configs)). The typed config makes its own Maps.
+  ([Raw Chart.js configs](#raw-chartjs-configs)). The typed config makes its own typed objects.
 - **Data changes.** A `push`, `pop`, `shift`, `splice` or `unshift` on a data List needs
   `notifyArrayListeners` ([Updates](#updates)).
 - **No DOM and no CSS.** The CSS of the canvas and of its container (margins, paddings, borders,

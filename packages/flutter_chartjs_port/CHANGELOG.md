@@ -44,6 +44,13 @@ The first release: a native Dart port of Chart.js v4.6.1 for Flutter.
 - **Libraries.** `flutter_chartjs_port.dart` for apps, with the typed API, `chartjs.dart` for
   code that extends Chart.js (plugins, controllers and scales), and `helpers.dart` for the
   Chart.js helpers.
+- **Typed internals.** The options, the resolvers, the parsed data, the element properties, the
+  contexts and the plugins are typed Dart objects, not Maps. Code that extends Chart.js reads such
+  an object by name through `JsObjectFace` (for example `(context as JsObjectFace)['dataIndex']`
+  or `(args as JsObjectFace)['event']` in a plugin hook): a missing key reads `undefined`.
+  `Chart.data`, `Chart.config.data` and `Chart.config.options` are `Object` (the `Map` of a raw
+  configuration, or a typed object), `Chart.options` is the options resolver, and the
+  `Merger` and `InteractionModeFunction` types take `Object` targets and options.
 - **Differences.** The README lists the differences from Chart.js that an app can see: the date
   formats, the Dart collection types of a raw configuration, the data array changes and the
   missing DOM.

@@ -65,7 +65,7 @@ melos:
       description: Fail when a generated file of flutter_chartjs_port lib/src/options/ differs from the output of tool/options_schema.yaml, or when that folder has a .g.dart file that the generator does not write.
     check:typed-reads:
       run: dart run packages/flutter_chartjs_port/tool/check_typed_reads.dart
-      description: Fail when a count of the by-name forms (jsGet, jsGetKey, string index, jsCall, jsObjectKeys, extends MapBase, with MapMixin, implements Map) in a flutter_chartjs_port lib/src file outside lib/src/js/ and lib/src/options/ is above its baseline in tool/typed_reads/, or when a baseline is stale (tool 9). Options go after "--", for example "dart run melos run check:typed-reads -- --update" (write the baselines from the current tree).
+      description: Fail when a count of the by-name forms (jsGet, jsGetKey, string index, jsCall, jsObjectKeys, extends MapBase, with MapMixin, implements Map) in a flutter_chartjs_port lib/src file outside lib/src/js/ and lib/src/options/ is above its baseline in tool/typed_reads/, or when a baseline is stale, and on a class of lib/src outside lib/src/js/ with a Map supertype, the structural rule (tool 9). Options go after "--", for example "dart run melos run check:typed-reads -- --update" (write the baselines from the current tree).
     check:port:
       steps:
         - check:lib-imports

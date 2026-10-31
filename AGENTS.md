@@ -67,7 +67,13 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
     count. It fails when a count is above its baseline in `tool/typed_reads/<path>.txt` (one file
     for each source file, one line `<form> <count>` for each form; no file means 0), and on a
     stale or bad baseline. A lower count passes with a note. `-- --update` writes the baselines
-    from the tree. A lane lowers its own baselines; it never raises one.
+    from the tree and keeps their `#` lines. Since the close step of Chart.js ADR 0054, each
+    baseline is an allowlist entry: its `#` lines give the reason of each by-name form that stays
+    (an object of the user, the generic walk of the resolvers, a function of the user, a
+    dictionary by name of upstream). No change raises a count without a reason line. The
+    structural rule: a class, a mixin or an extension type of `lib/src` outside `lib/src/js/`
+    (also of `lib/src/options/`) with a Map supertype (`Map`, or a name that ends with `Map`,
+    `MapBase`, `MapMixin` or `MapView`) is an error, with no baseline.
   - `options:gen:check`: the check mode of `options:gen` (below).
 - `dart run melos run options:gen`: writes the typed option scopes of `flutter_chartjs_port`
   (`lib/src/options/option_keys.g.dart`, `scope_kinds.g.dart` and `scopes.g.dart`) and the
@@ -197,9 +203,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `OptUndefined`, `OptNull`, `OptForeign`) and the classification of a raw JS value for a key of
     a shape. `option_scope.dart` has `OptionScope`, the base of the typed scopes: the own-key
     order of JS, the extras (the keys that its kind does not declare) and the face by name
-    (`jsRead`, `jsWrite`, `jsHas`, `jsDelete`, `jsKeys`): it implements `JsObjectFace` of
-    `js_object.dart`, and during the migration it also extends `MapBase` (the scaffolding of
-    Chart.js ADR 0054 §5, with the Map read rules). `raw_scope.dart` has `RawScope`, an extension
+    (`jsRead`, `jsWrite`, `jsHas`, `jsDelete`, `jsKeys`, `operator []` and `operator []=`): it
+    implements `JsObjectFace` of `js_object.dart` (Chart.js ADR 0054 §5) and is not a `Map`.
+    `raw_scope.dart` has `RawScope`, an extension
     type over a user Map: the walk reads a user Map through it. `jsGet`, `jsObjectKeys`,
     `isObject`, `clone`, `merge` and `mergeIf` take a typed scope; a `merge` into a typed scope
     makes typed children (`_cloneToScope` of `helpers.core`). The generated files have `OptionKey`
@@ -212,24 +218,36 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `overrides` and `descriptors` statics of the controllers, elements, scales and plugins), not
     from generated values: a bump changes a default in the same file as upstream (Chart.js ADR
     0054 §3). `defaultRoutes` stays a table of route strings. `Defaults.route` of a typed scope
-    is a typed route (`OptionScope.addRoute`). The face members are `jsRead` and `jsWrite` during
-    the migration, because `MapBase` owns `operator []`; the close step forwards
-    `operator []` and `operator []=` to them with the JS rules. `resolved.g.dart` (generated from
-    the `resolved` lists of the schema) has the resolved options of the four elements:
-    `PointOptions`, `LineOptions`, `BarOptions` and `ArcOptions`, each key a typed field (`double`,
-    `bool`, `String?` or `Object?`) with a present bit and a foreign slot (`isForeign`,
-    `foreignOf`, Chart.js ADR 0054 §6 and §9). `element_options_base.dart` has their base
-    `ElementOptions` (the Map protocol, `$shared`, `$animations`, the extras, the frozen state,
-    `storeKey`) and `GenericElementOptions`. `foreign_audit.dart` has the hook `foreignAudit` of
-    the oracle O2: the typed classes call it inside `assert` for each value that they keep in a
-    foreign slot.
+    is a typed route (`OptionScope.addRoute`); a scope or target scope that is a raw Map becomes a
+    typed scope with the same keys in its owner (row `adapt-defaults-route`). `resolved.g.dart`
+    (generated from the `resolved` lists of the schema) has the resolved options of the four
+    elements: `PointOptions`, `LineOptions`, `BarOptions` and `ArcOptions`, each key a typed
+    field (`double`, `bool`, `String?` or `Object?`) with a present bit and a foreign slot
+    (`isForeign`, `foreignOf`, Chart.js ADR 0054 §6 and §9). `element_options_base.dart` has
+    their base `ElementOptions` (the face, `$shared`, `$animations`, the extras, the frozen
+    state, `storeKey`) and `GenericElementOptions`. `foreign_audit.dart` has the hook
+    `foreignAudit` of the oracle O2: the typed classes call it inside `assert` for each value that
+    they keep in a foreign slot.
   - `lib/src/helpers/helpers.config.dart` (Chart.js ADR 0054 §4): the typed resolvers
     `OptionResolver` (the target of `_createResolver`) and `OptionView` (the target of
     `_attachContext`), with the typed read `readKey(OptionKey)` and a cache by `OptionKey`.
     `Resolver` and `ContextResolver` are their typedefs; `lib/helpers.dart` hides the class names.
-    Both have the face (`JsObjectFace`) over their traps. `mergeScaleConfig` of `core.config.dart`
+    Both are a `JsProxyObject`: the face (`JsObjectFace`) over their traps, with `ownKeys` (the
+    `ownKeys` trap) and `hasProperty` (the `has` trap). `mergeScaleConfig` of `core.config.dart`
     writes a typed `ScaleOptionsByIdScope` of `ScaleOptionsScope`s into `options.scales`; the
-    config, the data and the options of the user stay raw Maps (Chart.js ADR 0054 §5).
+    config, the data and the options of the user stay raw Maps (Chart.js ADR 0054 §5), and the
+    config boundary also takes the typed root, data and options of a typed config.
+  - The face rules (Chart.js ADR 0054 §5, the close step): no class of `lib/src` outside
+    `lib/src/js/` is a `Map`. A typed object (a typed scope, resolved options, a resolver or a
+    view, a context, a parsed item, a props or hook-argument record, a plugin, a legend or
+    tooltip item, `AnimationSpec`) is a `JsObjectFace`: `operator []` and `jsRead` give
+    `undefined` for an absent key, `jsKeys` gives the `Object.keys` order, `jsHas` and `jsDelete`
+    are `hasOwnProperty` and `delete`. `JsObjectFace` is public (`chartjs.dart` and the app
+    library): raw-API code reads a context, the hook arguments or the options by name through
+    it. A `Map` of the port is an object of the user or a plain object of the JS runtime
+    (`JsFrozenMap`, the frozen object of the compiled theme). The JS runtime (`jsGet`,
+    `jsObjectKeys`, `jsAssign`, `jsSet`, `jsHasOwn`, `jsDeleteKey`, `jsObjectOrNull`) and
+    `isObject`, `clone`, `merge`, `mergeIf` and `each` take Maps and faces.
     The walk reads a typed scope with `OptionScope.lookup`. `Config.resolveElementNamedOptions` of
     `core.config.dart` is the typed element step of `_resolveElementOptions`: it reads each own key
     of `defaults.elements.<type>` with `readKey` and stores it into the resolved class of the type.
@@ -614,11 +632,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `descriptors` equal the inventory in values and key order (a function default by its
     presence; each object is a typed scope). A bump edits the schema for keys and kinds and the
     component file for values; the test fails until both equal the new inventory. `opt_test.dart` and `option_scope_test.dart` test the cells and
-    the scopes on the VM, dart2js and dart2wasm. O3 is the test `(O3)` of each case of
-    `observation_test.dart`: the resolvers of the chart, the datasets, the animations, the
-    elements (modes `default` and `active`) and the plugins, and their views, compare with the
-    frozen Map resolver `test/support/legacy/helpers_config_map.dart` (keys of
-    `Object.getOwnPropertyNames`, values to a depth of 4, user calls). O2: `foreign_audit.dart`
+    the scopes on the VM, dart2js and dart2wasm. O1 and O2 stay after the close step of Chart.js
+    ADR 0054; the oracle O3 and the frozen Map resolver of `test/support/legacy/` are gone. A test
+    reads a typed object through the face (`JsObjectFace`) or its typed members, never as a
+    `Map`. O2: `foreign_audit.dart`
     has the reviewed set `reviewedForeignPairs` (one TSV line `owner<TAB>key<TAB>kind` for each
     pair). `flutter_test_config.dart` sets the hook `foreignAudit` before each test file and fails
     the file on a foreign pair that the set does not list (row `harness-foreign-audit`). A new pair
@@ -733,7 +750,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/flutter.dart`: the part that needs the Flutter engine, for `flutter test` only. It has
     `installTestFont()`. It also has the DOM stand-in of `lib/src/dom.dart` and the chart helpers
     `acquireChart`, `releaseChart`, `releaseCharts`, `afterEvent`, `waitForResize` and
-    `triggerMouseEvent` (Chart.js ADR 0022). The DOM stand-in exports are `document`, `window`,
+    `triggerMouseEvent` (Chart.js ADR 0022). `acquireChart` takes the config Map of a spec;
+    `acquireChartRoot` takes the typed root scope of a typed config (`ChartConfigLowering`,
+    Chart.js ADR 0054 §7). The DOM stand-in exports are `document`, `window`,
     `HarnessDocument`, `HarnessElement`, `HarnessWindow`, `setTimeout`, `afterEachChart`,
     `pumpFrames`, `pumpFrame`, `waitForDone`, `frameInterval`, `specTimeout`, and the extensions
     `CanvasParentElement` and `CssProperties`. Only one `pumpFrames` loop pumps at a time: a loop
@@ -1058,6 +1077,17 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   - `js_promise.dart` has the promise jobs of Chart.js ADR 0019 §7:
     `jsEnqueuePromiseJob`, `jsRunWithMicrotaskCheckpoint` (the checkpoint after an animator frame
     callback) and `jsPromiseAll` (`Promise.all`).
+- Rule 2 for the typed layers (Chart.js ADR 0054 §13). A file that ports an upstream module
+  keeps its mapped path, its line-1 header and the upstream function names and order, also in
+  the config, resolver and data layers. The data representation of these layers is typed:
+  option scopes, resolved options, parsed items, element properties, animation keys, contexts
+  and plugin objects are Dart classes, not emulations of JS objects, and none is a `Map` (the
+  structural rule of `check:typed-reads`). A ported file with a typed representation carries one
+  file marker `// DIVERGES(chartjs): <row id>, the typed representation of Chart.js ADR 0054`
+  after its header. The files of `lib/src/options/` are port-only; the generated ones come from
+  `tool/options_schema.yaml` through `tool/options_gen.dart`. A typed object is read by name only
+  through its face (`JsObjectFace`), in a cold path; a by-name form that stays in `lib/src` has a
+  reason line in its baseline of `tool/typed_reads/`.
 - File names in the upstream spelling and the `_` rules: Chart.js ADR 0012.
   `check:headers` already compares each Dart path with the mapped path.
 - Spec names and skip reasons: `porting-flow.md` §1 step 5 (proposed). The skip reasons are
