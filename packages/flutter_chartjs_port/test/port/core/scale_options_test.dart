@@ -158,7 +158,11 @@ void main() {
       expect(options.border.width, 2);
       expect(options.border.dash, [4]);
       expect(options.title.text, 'T');
-      expect(options.ticks.major.enabled, same(undefined));
+      // No scope has `ticks.major` (the scale defaults hold `major: {}`):
+      // the nested facade holds `undefined`, and its read throws the
+      // `TypeError` of `undefined.enabled`, as upstream.
+      expect(options.ticks.major.raw, same(undefined));
+      expect(() => options.ticks.major.enabled, throwsA(isA<TypeError>()));
     });
 
     test('a primitive gives undefined for each key', () {
