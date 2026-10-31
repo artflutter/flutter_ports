@@ -925,6 +925,33 @@ Changes to the cited files:
   of 2026-10-30 above gets the end of its last sentence. No library file, test or row of
   `doc/parity.md` changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and
   the estimates do not change. No trigger occurred.
+- 2026-10-31, the typed internal model of [Chart.js ADR 0054](adr/0054-typed-internal-model.md)
+  (proposed, phase 10) and the toolchain pin of Flutter 3.47.8. Both landed on `main` while the
+  forms of §7 waited on their branch; the forms came onto `main` after them, and this entry gives
+  the references after both. `lib/src/core/core.controller.dart` reads the options of `_resize`
+  and of the `retinaScale` call through the typed keys (`OptionKey`); the sizing steps do not
+  change, and this plan cites no line of the file. `lib/src/types/index.dart`,
+  `lib/src/widgets/chart_view.dart`, `chart_keyboard.dart`, `chart_theme_switch.dart`,
+  `lib/src/elements/element.arc.dart`, `element.line.dart` and `tool/src/lib_imports.dart` change;
+  this plan cites no line of them. `doc/parity.md` changes rows in place up to line 471 (the row
+  of `js_fast_paths.dart` at line 463 goes, and the row of `scale_options.dart` comes at line 465)
+  and gets 23 port-only rows after line 502 (among them the rows of `lib/src/options/`,
+  `test/port/options/` and tool 9). The rows that this plan cites
+  (`canvas_ui.dart` at line 405, `canvas_ui_path.dart` 406, `canvas.dart` 410,
+  `platform.flutter.dart` 412, `chart_host.dart` 413, `canvas_ui_test.dart` 419,
+  `platform.flutter_test.dart` 449 and `chart_host_test.dart` 450) do not move, and the typed model
+  does not change their text. The row of `canvas_ui_native_test.dart` stays the last row of the
+  port-only table. `doc/porting-flow.md` §2.12 gets one line on the pin of 3.47.8: the cited rows
+  of the harness table of §3 move from lines 830-831 to lines 831-832, and §3.7 gives the new
+  lines; §2.2 (lines 266-267) and §2.7 (lines 361-364) do not move, and the text of the cited rows
+  does not change. The pin moves to the stable release 3.47.8 (Dart 3.13.7, engine `cf636b1dfb`).
+  Its four commits after 3.47.7 are two fixes of the tool and the syncs of Dart and of the engine:
+  it has none of the three changes of §4.2, so trigger 3 did not occur, and §4.2 records the
+  check. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`,
+  `helpers.dom.dart` or a test of §2.6, §3.5 and §7.5 changes, and `doc/performance.md` and
+  Chart.js ADRs 0013 and 0014 do not change. `lib/src/canvas/` reads no chart option, so the forms
+  of §7 need no change. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No other trigger occurred.
 
 ## 1. Why
 
@@ -1583,7 +1610,7 @@ do not change.
 Work package C2 made these changes in phase 5, except the `performance.md` figures. These figures
 are for work package P. The line numbers below are the lines after C2. The lines of Chart.js ADR
 0014 are the lines after its status line of 2026-10-29 (the lines after C2, plus 1). The
-porting-flow.md line numbers are the lines of 2026-10-30, after the docs of phase 9.
+porting-flow.md line numbers are the lines of 2026-10-31, after the pin of Flutter 3.47.8.
 - **Chart.js ADR 0014:**
   - §2 (lines 87-94): "the display size of the canvas" is the px styles that `retinaScale` writes,
     else the render size.
@@ -1601,7 +1628,7 @@ porting-flow.md line numbers are the lines of 2026-10-30, after the docs of phas
 - **`porting-flow.md`** (proposed): §2.2 (lines 266-267), "`paint` applies
   `scale(1 / devicePixelRatio)`" becomes "`paint` maps the bitmap pixels with the scale of the
   host". §2.7 (lines 361-364): one bullet on the canvas attributes. §3, harness table (lines
-  830-831), `acquireChart`: 512 x 512 as attributes (`UiCanvasElement(width: 512, height: 512)`),
+  831-832), `acquireChart`: 512 x 512 as attributes (`UiCanvasElement(width: 512, height: 512)`),
   the `canvas.style` option fills the inline style, a wrapper style becomes a `SizedBox`,
   `ConstrainedBox` or `Padding`, and the default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display size rule of
   Chart.js ADR 0022 §9 (the inline px styles, else the render size, with the CSS rule for one
@@ -1731,6 +1758,13 @@ left `master` on 2026-07-08, before the three merges. The cherry-pick of #190048
 thread. #190048 is in the beta releases from 3.48.0-0.1.pre, and #191014 is in the beta releases
 from 3.49.0-0.1.pre. #194139 merged on 2026-10-17. Only `master` has it: the beta release
 3.50.0-0.1.pre does not. Thus trigger 3 did not occur.
+
+On 2026-10-31, the toolchain pin moves to the stable release 3.47.8 (Dart 3.13.7, engine
+`cf636b1dfb`), on the same release branch. Its four commits after 3.47.7 are two fixes of
+`flutter_tools` (#194578 and #194740), the Dart roll (#195123) and the engine sync (#195136). Its
+engine sources still have no `skwasm/wasm_worker_semaphore.cc`, and `skwasm/surface.cc` still
+sets no strike cache for each thread. It has none of the three changes. Thus trigger 3 did not
+occur.
 
 **Removal criterion:** the toolchain pin (`.fvmrc`) is a stable release with all three changes.
 Then remove the snap and its test group "rotated text", and run the crash case of performance.md
