@@ -627,12 +627,15 @@ String _optionKeys(Schema schema) {
     ..write(
       '/// The [OptionKey] of the JS name [name], or Dart `null` for a name\n'
       '/// that is not a key of the schema.\n'
-      'OptionKey? optionKeyOf(String name) => switch (name) {\n',
+      '///\n'
+      '/// A hashed lookup: a `switch` on the names compiles to one string\n'
+      '/// comparison for each name, in order, on the VM.\n'
+      'OptionKey? optionKeyOf(String name) => _optionKeysByName[name];\n\n'
+      '/// The keys by their JS names.\n'
+      'final Map<String, OptionKey> _optionKeysByName = {\n'
+      '  for (final key in OptionKey.values) key.jsName: key,\n'
+      '};\n',
     );
-  for (final name in names) {
-    out.write('  ${dartString(name)} => OptionKey.${keyIdentifier(name)},\n');
-  }
-  out.write('  _ => null,\n};\n');
   return out.toString();
 }
 
