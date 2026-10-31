@@ -695,9 +695,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       fast-path layers, and a typed internal model replaces them. Chart.js ADR 0054 (the typed
       internal model) is proposed: it waits for the base step, the five lanes, the close step and
       one night with no block. On acceptance, it supersedes Chart.js ADRs 0043, 0018 and 0021, and
-      parts of Chart.js ADRs 0017, 0036 and 0038 (its §5.2). It decides the artifacts of Chart.js
-      ADR 0053: the fast-path switch, D1 and `test:nofast` are gone; D2, the bench cells and the
-      P3 page stay. The other ADRs are accepted. Docs name them
+      parts of Chart.js ADRs 0017, 0036, 0038 (also §3, the hook parameter counts) and 0050 (the
+      form of the compiled theme and its memo, its §18), as its §17 states. It decides the
+      artifacts of Chart.js ADR 0053: the fast-path switch, D1 and `test:nofast` are gone; D2, the
+      bench cells and the P3 page stay. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

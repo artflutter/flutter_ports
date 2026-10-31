@@ -10,16 +10,19 @@
     whole.
   - [Chart.js ADR 0017](0017-element-properties.md) §3, §4, §5 and §7 (element properties).
   - [Chart.js ADR 0036](0036-parsed-data.md) §1, §2, §6 and §7 (parsed data).
-  - [Chart.js ADR 0038](0038-plugin-modules.md) §1 (the plugin object form), §3 (hooks) and §10
-    (dispatch by `jsCall`).
+  - [Chart.js ADR 0038](0038-plugin-modules-class-values-and-interfaces.md) §1 (the plugin object
+    form), §3 (the hooks and their upstream parameter counts) and §10 (dispatch by `jsCall`).
+  - [Chart.js ADR 0050](0050-public-theme-api.md) (accepted, it does not change): the form of the
+    compiled theme in "One scope", the memo of `compileThemeData` and steps 1 and 2 of "Runtime
+    switch" (§18).
 - Decides the artifacts of [Chart.js ADR 0053](0053-resolver-fast-paths.md) (rejected).
 - Related: [Chart.js ADR 0020](0020-registry-and-component-classes.md) (class values),
   [Chart.js ADR 0025](0025-scale-value-parameters.md) (`Object?` value methods),
   [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (the protected behavior),
   [Chart.js ADR 0045](0045-reference-engine-arm64.md) (the reference engine, numbers are
-  `double`), [Chart.js ADR 0050](0050-public-theme-api.md) and
-  [Chart.js ADR 0052](0052-typed-public-api.md) (both proposed: the lane L5 edits them in place,
-  §16), [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
+  `double`), [Chart.js ADR 0052](0052-typed-public-api.md) (proposed: the lane L5 edits it in
+  place, §16), [Chart.js ADR 0028](0028-controller-interfaces.md) §1 (no element module in a
+  controller), [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
   [performance.md](../performance.md) §10.10, §13.6, §13.7 and §14.9.
 
 ## Context
@@ -86,7 +89,8 @@ and for the typed public API of Chart.js ADR 0052.
   generator.
 - The generated parts: `enum OptionKey` (one entry for each distinct option name, with `jsName`)
   and the `switch` `optionKeyOf(String name)`; one final scope class for each scope kind; the
-  resolved classes of the element kinds; the facades of the other kinds; the descriptor tables;
+  resolved classes of the element kinds (the facades of the scale and plugin options are
+  hand-written, §4 and §12); the descriptor tables;
   the defaults; the props classes and the `AnimatedProp` constants. A name that is not in the
   schema stays a `String` and goes to the `extras` of its scope. No intern table.
 - Names: a resolved class or a facade takes the name of its `index.d.ts` interface
@@ -164,11 +168,20 @@ and for the typed public API of Chart.js ADR 0052.
 - The animation options (`_resolveAnimations`), the chart, scale and plugin options are typed
   views. `setContext` for each tick makes a new view, as upstream. The plugin options keep
   `{scriptable: false, indexable: false, allKeys: true}` (U `core.plugins.js:175-187`).
+- The facades of the scale options are hand-written, not generated (lane L2): extension types with
+  the `index.d.ts` names over the `OptionView` of a scale, in the port-only
+  `lib/src/core/scale_options.dart` (a pure layer through `core.ticks`). `Scale.options` is a
+  `CoreScaleOptions`, and each scale class narrows it to the facade of its type. A getter is the
+  typed read `readKey` of its `OptionKey` and gives the raw JS value: the readers keep their JS
+  operators. A nested facade (`TickOptions`, `FontSpecOptions`, ...) holds any JS value and reads
+  with `readOption`. The other lanes read the scale options through them.
 - The cache rule: the only caches are the caches of upstream, as typed fields: `_scopeCache`,
   `_resolverCache`, the key lists, the `_cached` slots of each resolver and view,
   `_cachedDataOpts`, `_sharedOptions`, `_cachedMeta`, the plugin descriptor cache, the scale
   caches and the `WeakMap` of the subtitle. No memo or cache of our own. The bar index memo, the
-  animations memo of Chart.js ADR 0053 and the theme compile memos are not allowed.
+  animations memo of Chart.js ADR 0053 and the theme compile memos are not allowed. The two theme
+  memos are gone (lane L5): `compileThemeData` compiles at each call, and the theme switch of
+  `ChartView` keeps the compiled scope of its current theme (§18).
 - No second (generic) resolver stays. During the migration, the Map resolver of Chart.js ADR 0043
   is the frozen file `test/support/legacy/helpers_config_map.dart`, the reference of O3 (§15). The
   close step deletes it.
@@ -209,6 +222,12 @@ and for the typed public API of Chart.js ADR 0052.
   object there. `chart.options`, the scale options and the plugin options are typed views
   (`OptionView`) with the face. The lowering of Chart.js ADR 0052 gives raw Maps until L5.
 
+- The boundary after L5: the chart root is a typed `ChartConfigurationScope` for both entries of
+  `ChartView` (the lowering root of a typed config, and the top-level values of the app Map of
+  `ChartView.raw`). The `data` and `options` of `ChartView.raw` stay the Maps of the app, with
+  their identity. The close step makes `Config._initConfig`, `_themeOf` and the `isObject` paths
+  take a typed root, data and options with no Map scaffolding.
+
 ### 6. Values outside the type of a key
 
 - A resolved field has the type of the `index.d.ts` union of its key (`double`, an `enum`, a sealed
@@ -237,6 +256,16 @@ and for the typed public API of Chart.js ADR 0052.
   key is the default key, else by name.
 - `ChartConfig.plugins` stays `List<Map<String, Object?>>?` in 0.1.0 (user Maps through
   `MapPlugin`, §12).
+- As built (lane L5): the lowering root is a `ChartConfigurationScope` with a `ChartDataScope` and
+  a `ChartOptionsScope`. Each dataset gets the dataset scope of its controller, each axis a
+  `ScaleOptionsScope`, and the groups typed scopes. `put(scope, OptionKey, value)` stores the
+  cell of the shape of the key; a Map value becomes a typed child scope. `mergeExtra` merges
+  `extra` into cells and child scopes (Lists by reference); `extra` still wins over a typed key.
+  The reconcile patches the live dataset scope against a shallow copy of the cells of the last
+  lowering. `DataPoint` is frozen: a write by name throws a `TypeError`, as for a frozen object.
+- A `TypedDataItem` that is not a Map, as the object `data` of a dataset, converts through its
+  face (`jsKeys` and `jsRead` in `_convertObjectDataToArray`, lane L1), like upstream object data.
+  Nothing throws.
 
 ### 8. Parsed items
 
@@ -258,6 +287,13 @@ and for the typed public API of Chart.js ADR 0052.
   (`lib/src/options/typed_record.dart`): typed fields by slot, a present bit and a foreign slot for
   each field, extras, the own-key order (up to 7 keys in 4-bit groups of one `int`, also on the
   web, then a list), the face and, during the migration, the Map scaffolding.
+- The private objects (`_stacks`, the stack objects, the `_custom` of a floating bar) keep a
+  value of another type that user code wrote into them; such a value reads through the face (lane
+  L1).
+- `_cachedDataOpts` is two typed Maps with the upstream keys, one for the element options and one
+  for the animations. A user element type with the id `animation` and a mode equal to a
+  transition name thus does not collide with an animation cache key, where upstream collides in
+  its one cache object (a named difference of the row `adapt-typed-parsed`).
 - Doughnut and pie keep `_parsed` as the upstream number List.
 - A `Float64List` is allowed only for an internal array of numbers that no user code reaches.
   `Float64List` columns of parsed items are rejected: they cannot keep the identity of an item or
@@ -269,20 +305,36 @@ and for the typed public API of Chart.js ADR 0052.
 - Each numeric property of an element is a `double` field (NaN in the `undefined` state) and a bit
   of `int _undefined`. The typed getter gives the field. The typed setter stores and clears the
   bit. The face gives `undefined` for a set bit. A `double?` store boxes; it is not used.
-- `$context` is a typed field (`ScriptableContext?`).
+- `$context` is a typed member of `Element`: a `ContextObject?` with a `covariant` setter. The
+  four element classes narrow it to `ScriptableContext?`, and `Scale` to
+  `ScriptableScaleContext?`. The face keeps any value; the typed getter gives Dart `null` for a
+  value of another type. `getContext` of the dataset controller reads and writes the typed
+  member: a value that it does not give, which only user code can write, reads as absent, and a
+  new data context takes its place (row `adapt-typed-contexts`).
 - `PointProperties`, `BarProperties`, `ArcProperties` and `LineProperties`
   (`lib/src/options/props.dart`: the fields and the key orders of the upstream literals) replace
   the property Map literals of the controllers. The names end in `Properties`, the name of the
   upstream variable, because `PointProps` (U `element.point.ts:18`) and `ArcProps` (U
-  `element.arc.ts:365`) are the property types of the element classes and keep their ports. `Element.assign(props)` and the direct writes of the
-  line and scatter controllers use the typed setters only for an element of the exact built-in
-  class (`identical(element.runtimeType, BarElement)`). A user element class gets the writes by
-  name, in the same key order.
+  `element.arc.ts:365`) are the property types of the element classes and keep their ports.
+  `Element.assign(props)` uses the typed setters only for an element of the exact built-in class:
+  `Element.typedWrites` is true for the class `PointElement`, `BarElement`, `ArcElement` or
+  `LineElement` itself, not for a user subclass. A user element class gets the writes by name, in
+  the same key order.
+- The direct writes of the line and scatter controllers and the line writes of line, scatter and
+  radar test `typedWrites` too. They write through the port-only interfaces
+  `types.PointElementWrites` and `types.LineElementWrites` of `lib/src/types/`, which the concrete
+  point and line classes implement: the controllers import no element module, and Chart.js ADR
+  0028 §1 stays. Each write reaches the element at once, as upstream. `_setStyle` keeps a one-key
+  Map `{options}`, because the element can be of any class.
 - The typed property API of the elements: the typed setters of today (`set x(double)` and the
   others), `Element.markUndefined(AnimatedProp)` and `Element.isUndefined(AnimatedProp)`. L3
   changes the storage; the signatures stay.
 - `getProps` keeps its upstream signature for user code. Ported callers use typed forms that give
-  the fields or the `to` of the running animations.
+  the fields or the `to` of the running animations: the methods `Element.finalNumber` and
+  `Element.finalValue`, not a result class. `Element.numberOf` gives the typed current number of a
+  property of an element of any class (the angles of `core.interaction`), as
+  `Element.writeNumber` writes it: the typed getters of the built-in class, else the read by
+  name.
 
 ### 10. Animations
 
@@ -295,11 +347,16 @@ and for the typed public API of Chart.js ADR 0052.
   and the face for an id that it does not declare.
 - `Animations` keeps its properties in a table by key id and a small list for custom keys.
   `configure` keeps the rule of U `core.animations.js:31-35`. `_createAnimations` walks the props
-  key order from the last key (U `:76`). `$animations` is a typed table by id.
-- `Animation` subclasses by interpolator: `NumberAnimation` (two `double` fields),
-  `ColorAnimation`, `BooleanAnimation` and the generic class for a user `fn` or mixed values (U
-  `core.animation.js:35`). A built-in easing name resolves to an `enum`. Another name reads the
-  mutable `effects` Map (user easings).
+  key order from the last key (U `:76`).
+- As built (lane L3), three parts of the plan did not hold:
+  1. No `Animation` subclasses by interpolator. `update()` can change the value kinds of a
+     running animation (U `core.animation.js:51-65`), so a fixed subclass cannot follow.
+     `Animation.typed` keeps the number path in two `double` fields, and the number path writes an
+     element through `Element.writeNumber`.
+  2. `$animations` stays a `Map<String, Animation>` until the close step: the specs, O1 and
+     `test/support/jasmine.dart` read it as a plain Map in key order.
+  3. No easing `enum`: a user can replace a built-in easing in the mutable `effects` Map, so each
+     name reads the Map.
 
 ### 11. Contexts
 
@@ -337,9 +394,23 @@ and for the typed public API of Chart.js ADR 0052.
   `TooltipDrawHookArgs`, with the keys of the upstream literals in their order. `Plugin` stays
   internal (no public library exports it) until the typed public plugin API (Open 2).
 - The seven built-in plugins are `Plugin` instances whose fields hold the private top-level hook
-  functions in the upstream key order. Their options are typed facades. The legend items, the hit
-  boxes and the tooltip items are typed classes with extras and the face.
-  `Tooltip.positioners` stays a dictionary by name (user positioners).
+  functions in the upstream key order. Their options are typed facades: hand-written extension
+  types in the port-only pure `lib/src/plugins/plugin_options.dart` that read one `OptionKey`
+  through `readOption`, not generated. The legend items, the hit boxes and the tooltip items are
+  typed classes with extras and the face. They implement the port-only interfaces
+  `types.TypedLegendItem`, `types.TypedLegendHitBox` and `types.TypedTooltipItem`, through which
+  the views of the typed API and the keyboard of `ChartView` read them with no import of a plugin
+  (Chart.js ADR 0052 §8). `Tooltip.positioners` stays a dictionary by name (user positioners).
+- A built-in hook is a function of the hook type `(chart, args, options)`. This supersedes Chart.js
+  ADR 0038 §3 (the upstream parameter count of each hook): the `length` of a hook function is no
+  behavior of Chart.js. The plugin service calls each hook with three arguments, and no upstream
+  code reads the `length` of a hook. The dispatch reference test
+  (`test/port/plugins/index_test.dart`) compares the hook keys as typed hook functions, and keeps
+  the upstream counts of the reference only for the args that its recording closures record. A
+  built-in hook that reads no args takes any args object. The `afterEvent` hooks of the legend and
+  of the tooltip take `EventHookArgs`, and the `beforeDatasetDraw` of the filler takes
+  `DatasetDrawHookArgs`: `notifyPlugins` with a Map args object throws a `TypeError` in these three
+  hooks, where upstream reads the Map (row `adapt-typed-plugins`).
 - `MapPlugin`, an extension type over the Map, adapts a user Map plugin (inline or registered).
   It reads `map[hook]` at each notify and calls it with `jsCall` (any arity, `this` is the Map), as
   upstream. A user Map plugin's
@@ -434,8 +505,8 @@ and `adapt-typed-contexts`.
 - L5 edits the proposed Chart.js ADR 0052 in place: §2 (the lowering targets are typed scopes), §3
   (`DataPoint` final class, the reconcile on typed scopes), §6 (views over typed classes), §8 (the
   import allowlist adds `lib/src/options/`), §11 (the lowering test on scope faces) and the
-  Consequences. L5 edits the proposed Chart.js ADR 0050 in place: the compiled theme is a typed
-  scope; the memo of each instance goes.
+  Consequences. Chart.js ADR 0050 is accepted and does not change: §18 states the part of it that
+  this ADR supersedes (the compiled theme is a typed scope; the memo of each instance goes).
 - The night rule is the rule of judge-c.md §6.1 (phase 10), written on 2026-10-30 before any run:
   side A is `caf0356`, side B is `main` after the close step; the deciding platforms are macOS AOT
   and the dedicated Chrome with dart2wasm; the cells, the classes (GAIN, REGRESSION, NEUTRAL) and
@@ -454,13 +525,37 @@ and `adapt-typed-contexts`.
 - Chart.js ADR 0017: §1, §2, §6 and §8-§11.
 - Chart.js ADR 0036: §3, §4, §5 and §8 (the 3-read form).
 - Chart.js ADR 0038: §2, §4-§9 and §11. §8 (the decimation accessor) gains the typed field pair
-  for a typed dataset scope.
+  for a typed dataset scope. §3 goes whole: the hooks are typed functions with three parameters
+  (§12).
+- Chart.js ADR 0050: all of it except the form of the compiled theme in "One scope", the memo
+  sentence of the `ChartThemeData` bullet and steps 1 and 2 of "Runtime switch", which §18 states
+  again.
 - Chart.js ADR 0020: no supersession. The statics of a class value hold typed scopes.
 - Chart.js ADR 0025: unchanged (`Object?` value methods).
 - Chart.js ADR 0053 (rejected): its artifacts are decided here. The switch
   (`lib/src/js/js_fast_paths.dart`), D1 (`test/port/js/js_fast_paths_test.dart`), the melos
   script `test:nofast` and the CI job `test-nofast` are gone (B0). D2, the bench cells and the P3
   page stay.
+
+### 18. The compiled theme (supersedes a part of Chart.js ADR 0050)
+
+Chart.js ADR 0050 is accepted and does not change. These texts replace its parts on the
+acceptance of this ADR (lane L5):
+
+- "One scope", first sentence: a theme compiles to one deep-frozen typed scope, a
+  `ChartOptionsScope` (the kind of `Chart.defaults`, §3). Each nested object is a frozen typed
+  scope of its kind; an object under a key with no kind is a frozen Map; the palette Lists are
+  frozen Lists. The rest of "One scope" stays: the raw config carries it under `$theme`, and the
+  resolver and the scale merge read it where Chart.js ADR 0050 states.
+- The memo sentence of the `ChartThemeData` bullet ("The compiled map of an instance is memoized
+  per instance"): `compileThemeData` compiles at each call, with no memo (§4). The theme switch of
+  `ChartView` keeps the compiled scope of its current theme and compiles only a new theme. Thus
+  the palette list must not change while it is the theme of a chart.
+- "Runtime switch", step 1: "it compiles the theme (memo)" becomes "it compiles the theme once and
+  keeps the compiled scope".
+- "Runtime switch", step 2: the widget writes the compiled scope under `$theme` of its own root
+  config, a typed `ChartConfigurationScope` (§5); `data` and `options` keep the identity of the app
+  Maps.
 
 ## Alternatives considered
 
@@ -500,7 +595,8 @@ and `adapt-typed-contexts`.
    `Color` with no CSS string, `Float64List` doughnut values and typed theme component styles come
    after 0.1.0.
 3. The sub view of the element step at the first user call of the element (§4). B4 keeps the
-   upstream form. L3 can measure the lazy form; the results, the user calls and O3 stay.
+   upstream form. L3 did not measure the lazy form (it lives in the base file `core.config.dart`);
+   the close step can. The results, the user calls and O3 stay.
 
 ## Evidence
 
