@@ -212,7 +212,7 @@ void main() {
         );
         expect(
           point.y,
-          closeTo(area.bottom - item.y!.toDouble() * area.height, 1e-9),
+          closeTo(area.bottom - item.y! * area.height, 1e-9),
         );
       }
     }
@@ -606,8 +606,7 @@ void main() {
     await _frames(tester, 176);
     expect(animator.running(chart), isTrue);
     final area = chart.chartArea!;
-    final target =
-        area.bottom - state.dataOf(0).first.y!.toDouble() * area.height;
+    final target = area.bottom - state.dataOf(0).first.y! * area.height;
     expect((point.y - y).abs(), lessThan((target - y).abs()));
     // 200 frames of 16 ms are 3200 ms.
     await _frames(tester, 20);
@@ -632,7 +631,7 @@ void main() {
     final item = state.dataOf(0).first;
     expect(
       point.y,
-      closeTo(area.bottom - item.y!.toDouble() * area.height, 1e-9),
+      closeTo(area.bottom - item.y! * area.height, 1e-9),
     );
     expect(point.y, isNot(y));
 
@@ -731,7 +730,7 @@ void main() {
     final item = state.dataOf(0).first;
     expect(
       _point(chart, 0, 0).y,
-      closeTo(area.bottom - item.y!.toDouble() * area.height, 1e-9),
+      closeTo(area.bottom - item.y! * area.height, 1e-9),
     );
     expect(tester.takeException(), isNull);
   });
