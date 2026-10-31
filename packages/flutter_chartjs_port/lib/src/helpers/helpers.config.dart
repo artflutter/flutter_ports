@@ -59,6 +59,7 @@ library;
 
 import 'dart:core';
 import 'dart:core' as core;
+import 'dart:typed_data' show Uint16List;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -105,22 +106,31 @@ Object _keyOf(String name) => optionKeyOf(name) ?? name;
 /// The resolver of a scale or of the chart options caches dozens of keys,
 /// and a scale reads some of them for each point (`startAngle` and
 /// `reverse` of the radial scale in the filler of a radar). Thus a table of
-/// more than [_scanMax] keys also has a hashed index of the positions, as
-/// the properties of the upstream cache object have.
+/// more than [_scanMax] keys also has an index of the positions: by
+/// [OptionKey.index] for a key, and a hashed one for a name, as the
+/// properties of the upstream cache object have.
 final class _Cache {
   List<Object>? _keys;
   List<Object?>? _values;
 
-  /// The position of each key in [_keys], once the table has more than
+  /// The position plus 1 of each [OptionKey] in [_keys], at its
+  /// [OptionKey.index] (0 for an absent key), once the table has more than
   /// [_scanMax] keys. Dart `null` before.
-  Map<Object, int>? _positions;
+  Uint16List? _keyPositions;
+
+  /// The position of each name in [_keys], once [_keyPositions] exists.
+  Map<String, int>? _namePositions;
 
   /// The most keys that [_index] scans.
   static const int _scanMax = 8;
 
   int _index(Object key) {
-    final positions = _positions;
-    if (positions != null) return positions[key] ?? -1;
+    final keyPositions = _keyPositions;
+    if (keyPositions != null) {
+      return key is OptionKey
+          ? keyPositions[key.index] - 1
+          : _namePositions![key as String] ?? -1;
+    }
     final keys = _keys;
     if (keys == null) return -1;
     if (key is OptionKey) {
@@ -150,9 +160,8 @@ final class _Cache {
     }
     final keys = (_keys ??= <Object>[])..add(key);
     (_values ??= <Object?>[]).add(value);
-    final positions = _positions;
-    if (positions != null) {
-      positions[key] = keys.length - 1;
+    if (_keyPositions != null) {
+      _setPosition(key, keys.length - 1);
     } else if (keys.length > _scanMax) {
       _buildPositions();
     }
@@ -163,13 +172,25 @@ final class _Cache {
     if (index < 0) return;
     _keys!.removeAt(index);
     _values!.removeAt(index);
-    if (_positions != null) _buildPositions();
+    if (_keyPositions != null) _buildPositions();
   }
 
-  /// Builds [_positions] from [_keys].
+  /// Builds [_keyPositions] and [_namePositions] from [_keys].
   void _buildPositions() {
     final keys = _keys!;
-    _positions = {for (var i = 0; i < keys.length; i++) keys[i]: i};
+    _keyPositions = Uint16List(OptionKey.values.length);
+    _namePositions = <String, int>{};
+    for (var i = 0; i < keys.length; i++) {
+      _setPosition(keys[i], i);
+    }
+  }
+
+  void _setPosition(Object key, int position) {
+    if (key is OptionKey) {
+      _keyPositions![key.index] = position + 1;
+    } else {
+      _namePositions![key as String] = position;
+    }
   }
 
   /// The names of the cached keys, in their order.
