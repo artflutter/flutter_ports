@@ -680,15 +680,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0042 with the public classes, the presets, the theme switch and the touch sizes,
       and supersedes it (2026-10-30). The porting lead accepted Chart.js ADRs 0032, 0034, 0035 and
       0036 on 2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046
-      on 2026-10-29, and Chart.js ADRs 0047, 0048, 0049 and 0050 on 2026-10-30. Chart.js ADR 0037 waited
+      on 2026-10-29, Chart.js ADRs 0047, 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051 and 0052 on
+      2026-10-31. Chart.js ADR 0037 waited
       for the device check of step 8. Docs and code cite them for the current rules. The porting
       lead (the agent that runs the phase) owns the ADR statuses (the maintainer, 2026-10-21). It
       accepts an ADR when the decision is implemented and its gates are green. A changed decision
       still gets a new ADR that supersedes the old one. Chart.js ADR 0044 (the stack fill search)
       is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result.
-      Chart.js ADR 0051 (input events and interaction state) is proposed: it waits for the night
-      series B-N1. Chart.js ADR 0052 (the typed public API) is proposed: it waits for its tests and
-      the night cells T1-T4. On acceptance, it supersedes the item "Raw configs in 0.1.0" and Open 1
+      Chart.js ADR 0051 (input events and interaction state) and Chart.js ADR 0052 (the typed public
+      API) are accepted (2026-10-31): by the maintainer's rule of that day, the lead accepts a record
+      when its code passes the tests, and no record waits for a measurement night. Chart.js ADR
+      0052 supersedes the item "Raw configs in 0.1.0" and Open 1
       of Chart.js ADR 0043, the export list of the app library of Chart.js ADR 0048 §5, and of
       Chart.js ADR 0049 §1 (the type of `config`), the two §4 bullets of the typed path and Open 2.
       Chart.js ADR 0053 (the resolver fast paths) is rejected: the maintainer rejected the memo and

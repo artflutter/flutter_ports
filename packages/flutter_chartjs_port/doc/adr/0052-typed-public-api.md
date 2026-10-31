@@ -1,6 +1,7 @@
 # Chart.js ADR 0052: The typed public API
 
-- Status: proposed
+- Status: accepted (2026-10-31). The lead accepted it when its code passed the tests, by the
+  maintainer's rule of 2026-10-31: no record waits for a measurement night.
 - Date: 2026-10-30
 - Supersedes, on acceptance, these parts only (the section "Superseded parts" restates each one in
   full):

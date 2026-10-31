@@ -1,6 +1,7 @@
 # Chart.js ADR 0051: Input events and interaction state
 
-- Status: proposed
+- Status: accepted (2026-10-31). The lead accepted it when its code passed the tests, by the
+  maintainer's rule of 2026-10-31: no record waits for a measurement night.
 - Date: 2026-10-29
 - Related: [Chart.js ADR 0037](0037-legend-and-tooltip-input-path.md) (the input path: sections
   9, 11, 14, 16 and 17, and Open 4, which this ADR takes),

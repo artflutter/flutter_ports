@@ -30,10 +30,10 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0045-0050 are accepted.
-  Chart.js ADRs 0051 and 0052 are proposed. Chart.js ADR 0053 is rejected (the maintainer chose a typed internal model). Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0045-0052 are accepted. Chart.js ADR 0053 is rejected (the maintainer chose a typed internal model). Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
   lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046 on
-  2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30. Fourteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
+  2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051 and 0052 on
+  2026-10-31. Fourteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
   supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR 0008, Chart.js ADR 0032
   supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR 0009, Chart.js ADR 0035
@@ -117,9 +117,9 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0049: The ChartView widget and reduced motion](adr/0049-chart-view-widget.md)
   - [Chart.js ADR 0050: The public theme API](adr/0050-public-theme-api.md) (it supersedes
     Chart.js ADR 0042)
-  - [Chart.js ADR 0051: Input events and interaction state](adr/0051-input-events-and-interaction-state.md) (proposed)
-  - [Chart.js ADR 0052: The typed public API](adr/0052-typed-public-api.md) (proposed; on
-    acceptance, it supersedes parts of Chart.js ADRs 0043, 0048 and 0049)
+  - [Chart.js ADR 0051: Input events and interaction state](adr/0051-input-events-and-interaction-state.md) (accepted)
+  - [Chart.js ADR 0052: The typed public API](adr/0052-typed-public-api.md) (accepted; it
+    supersedes parts of Chart.js ADRs 0043, 0048 and 0049)
   - [Chart.js ADR 0053: The resolver fast paths](adr/0053-resolver-fast-paths.md) (rejected)
   - [Chart.js ADR 0054: The typed internal model](adr/0054-typed-internal-model.md) (proposed; on
     acceptance, it supersedes Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017,
