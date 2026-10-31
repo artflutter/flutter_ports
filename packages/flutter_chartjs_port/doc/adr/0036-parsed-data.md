@@ -1,6 +1,7 @@
 # Chart.js ADR 0036: Parsed data in the controllers
 
 - Status: accepted (2026-10-21)
+- Superseded in part by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31), for §1, §2, §6 and §7
 - Date: 2026-10-21
 - Supersedes: [Chart.js ADR 0027](0027-parsed-data.md)
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (records for inline object types),

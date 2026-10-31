@@ -1,8 +1,10 @@
 # Chart.js ADR 0054: The typed internal model
 
-- Status: proposed
+- Status: accepted (2026-10-31). The base step, the five lanes and the close step are on `main`,
+  and their full gates and CI passed. The lead accepted it by the maintainer's rule of 2026-10-31: a
+  record is accepted when its code passes the tests, and no record waits for a measurement night.
 - Date: 2026-10-30
-- Supersedes, on acceptance (§17 restates what stays of each one):
+- Supersedes (§17 restates what stays of each one):
   - [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (options representation
     and resolver), whole.
   - [Chart.js ADR 0018](0018-typed-element-options.md) (typed element options), whole.

@@ -1,6 +1,7 @@
 # Chart.js ADR 0043: Options representation and resolver
 
 - Status: accepted (2026-10-23)
+- Superseded by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31)
 - Date: 2026-10-23
 - Supersedes: [Chart.js ADR 0006](0006-options-representation-and-resolver.md)
 - Related: [Chart.js ADR 0039](0039-tooltip-model-and-animation.md) §10 (`helpers.merge` with an

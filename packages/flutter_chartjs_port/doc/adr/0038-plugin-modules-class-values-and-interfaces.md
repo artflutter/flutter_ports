@@ -1,6 +1,7 @@
 # Chart.js ADR 0038: Plugin modules, class values and interfaces
 
 - Status: accepted (2026-10-23)
+- Superseded in part by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31), for §1, §3 and §10
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, a member with its
   first ported reader, records for inline object types),
