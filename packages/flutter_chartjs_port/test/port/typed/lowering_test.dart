@@ -7,6 +7,8 @@ import 'dart:ui' show Color, FontWeight;
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show createContext;
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show JsFunction, jsCall;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
@@ -1163,12 +1165,16 @@ void main() {
         for (final key in ['backgroundColor', 'borderColor']) {
           final script = lowered[key];
           // The 2 arguments of a scriptable option: the context and the
-          // options resolver.
+          // options resolver. The context is a typed data context of
+          // `createContext`, as the chart gives (Chart.js ADR 0054 §11).
           expect(script, isA<Object? Function(Object?, Object?)>());
           final values = [
             for (final index in [0.0, 1.0, 2.0])
               jsCall(script, [
-                <String, Object?>{'type': 'data', 'dataIndex': index},
+                createContext(null, <String, Object?>{
+                  'type': 'data',
+                  'dataIndex': index,
+                }),
                 undefined,
               ]),
           ];
