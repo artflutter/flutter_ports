@@ -31,11 +31,12 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0045-0052 are accepted.
-  Chart.js ADRs 0054 and 0055 are proposed. Chart.js ADR 0053 is rejected (the maintainer chose a typed internal model). Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043, 0045-0052 and 0055 are accepted.
+  Chart.js ADR 0054 is proposed. Chart.js ADR 0053 is rejected (the maintainer chose a typed internal model). Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
   lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046 on
-  2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051 and 0052 on
-  2026-10-31. Fourteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
+  2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051, 0052 and 0055 on
+  2026-10-31. Since 2026-10-31, Chart.js ADR 0055 supersedes Chart.js ADR 0013, and Chart.js ADR
+  0052 supersedes parts of Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
   supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR 0008, Chart.js ADR 0032
   supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR 0009, Chart.js ADR 0035
@@ -67,7 +68,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     Chart.js ADR 0035)
   - [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md) (it supersedes Chart.js ADR
     0004)
-  - [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md)
+  - [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) (superseded by Chart.js ADR 0055)
   - [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md)
     (superseded by Chart.js ADR 0037)
   - [Chart.js ADR 0015: Text](adr/0015-text.md)
@@ -127,8 +128,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     acceptance, it supersedes Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017,
     0036 and 0038)
   - [Chart.js ADR 0055: The native draw path of the canvas layer](adr/0055-native-draw-path.md)
-    (proposed; it waits for the night series CV of canvas-cuts-plan.md §7.6; on acceptance, it
-    supersedes Chart.js ADR 0013)
+    (accepted; it supersedes Chart.js ADR 0013)
 
 ## What gets ported
 
@@ -167,7 +167,8 @@ Elements, 5 = Core), not the numbers of the table below.
 release) is in progress. Phase 2 ported the
 rest of the JS runtime, 14 helper files, the `core.defaults` closure and `@kurkle/color` 0.3.2
 ([parity.md](parity.md)). Phase 3 added the canvas layer over `dart:ui`
-([Chart.js ADR 0013](adr/0013-canvas-model.md)), the internal chart host and `src/platform`
+([Chart.js ADR 0013](adr/0013-canvas-model.md), superseded by
+[Chart.js ADR 0055](adr/0055-native-draw-path.md)), the internal chart host and `src/platform`
 ([Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md)), canvas text and the test font
 ([Chart.js ADR 0015](adr/0015-text.md)), and the phase 3 harness rows. All 18 helper files are
 ported. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5
@@ -246,7 +247,8 @@ the design. Chart.js ADRs 0003 and
 options representation of Chart.js ADR 0006, now in
 [Chart.js ADR 0043](adr/0043-options-representation-and-resolver.md).
 
-- **Canvas model.** Decided in [Chart.js ADR 0013](adr/0013-canvas-model.md): a Canvas
+- **Canvas model.** Decided in [Chart.js ADR 0055](adr/0055-native-draw-path.md), which
+  supersedes Chart.js ADR 0013: a Canvas
   2D-compatible layer over `dart:ui`, with a retained bitmap of pictures in device pixels. The
   upstream drawing code stays close to line for line.
 - **Options.** Upstream resolves options through `Proxy`-based scopes (defaults, overrides,

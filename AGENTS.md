@@ -498,7 +498,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     reads drop the underscore: `startValue`, `endValue`, `valueRange`, `offsets`, `generate`,
     `unit`, `adapter`, `pointLabels`, `pointLabelItems`. The time scales read each date through
     `adapters._date` (Chart.js ADR 0024).
-  - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0013 and 0015). `canvas.dart` is
+  - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0055 and 0015). `canvas.dart` is
     the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its four parts
     (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart` and
     `canvas_ui_batch.dart`, the circle batch) are the `dart:ui` implementation. No helper imports
@@ -661,7 +661,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0055. Fourteen of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0055. Since 2026-10-31, Chart.js ADR 0055 supersedes
+      Chart.js ADR 0013, and Chart.js ADR 0052 supersedes parts of Chart.js ADRs 0043, 0048 and
+      0049. Earlier supersessions: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -680,7 +682,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0042 with the public classes, the presets, the theme switch and the touch sizes,
       and supersedes it (2026-10-30). The porting lead accepted Chart.js ADRs 0032, 0034, 0035 and
       0036 on 2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046
-      on 2026-10-29, Chart.js ADRs 0047, 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051 and 0052 on
+      on 2026-10-29, Chart.js ADRs 0047, 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051, 0052 and 0055 on
       2026-10-31. Chart.js ADR 0037 waited
       for the device check of step 8. Docs and code cite them for the current rules. The porting
       lead (the agent that runs the phase) owns the ADR statuses (the maintainer, 2026-10-21). It
@@ -701,8 +703,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       form of the compiled theme and its memo, its §18), as its §17 states. It decides the
       artifacts of Chart.js ADR 0053: the fast-path switch, D1 and `test:nofast` are gone; D2, the
       bench cells and the P3 page stay. Chart.js ADR 0055 (the native draw path of the canvas
-      layer) is proposed: it waits for the night series CV of `canvas-cuts-plan.md` §7.6. On
-      acceptance, it supersedes Chart.js ADR 0013. The other ADRs are accepted. Docs name them
+      layer) is accepted (2026-10-31) and supersedes Chart.js ADR 0013. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

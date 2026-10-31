@@ -1,6 +1,7 @@
 # Chart.js ADR 0013: Canvas model
 
 - Status: accepted (2026-10-21)
+- Superseded by: [Chart.js ADR 0055](0055-native-draw-path.md) (2026-10-31)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (no Chromium geometry),
   [Chart.js ADR 0014](0014-input-events-and-chart-host.md) (the chart host),

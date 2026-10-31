@@ -1,12 +1,13 @@
 # Chart.js ADR 0055: The native draw path of the canvas layer
 
-- Status: proposed. It waits for the night series CV of
-  [canvas-cuts-plan.md](../canvas-cuts-plan.md) §7.6: the rule ACCEPT on both deciding platforms
-  (macOS AOT and the dedicated Chrome with dart2wasm) and the raster check. A form of section 8
-  (N1 to N5) that the night rejects goes out of the tree and out of this ADR before the acceptance.
-  The other forms stay. On acceptance, this ADR supersedes Chart.js ADR 0013.
+- Status: accepted (2026-10-31). The lead accepted it when its code passed the tests, by the
+  maintainer's rule of 2026-10-31: no record waits for a measurement night. The Pixel 8a run of
+  2026-10-31 (2 pairs and the raster check, `.handover/phase10/plan.md`) showed more frames per
+  second for each chart type at 1,000 and 5,000 elements, and less UI build time; the raster time
+  rose for the doughnut (+11 %) and the bar (+4 %) at 5,000. A later measurement can still reject
+  a form of section 8. This ADR supersedes Chart.js ADR 0013.
 - Date: 2026-10-30
-- Supersedes (on acceptance): [Chart.js ADR 0013](0013-canvas-model.md)
+- Supersedes: [Chart.js ADR 0013](0013-canvas-model.md)
 - Related: [Chart.js ADR 0015](0015-text.md) (canvas text),
   [Chart.js ADR 0022](0022-chart-test-harness.md) §4 (the canvas attributes),
   [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (no display-only JS exactness; it
