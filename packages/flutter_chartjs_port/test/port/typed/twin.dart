@@ -19,6 +19,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Expects the lowered [actual] to be the raw twin [expected].
@@ -50,11 +51,17 @@ void _twin(Object? actual, Object? expected, String path) {
 
 /// Expects [map] to take a write of any value: a `<String, Object?>` Map
 /// that is not unmodifiable.
+///
+/// The probe writes the JS `undefined` (an `Undefined`, not a `String`):
+/// a narrower Map throws its `TypeError`, an unmodifiable Map throws, and a
+/// typed scope of the lowering (Chart.js ADR 0054 §7) keeps an own
+/// `undefined` cell, which no option kind keeps in a foreign slot. Thus the
+/// probe key adds no pair to the audit O2.
 void _expectWritable(Map<String, Object?> map, String path) {
   const probe = r'$twinProbe';
   expect(map.containsKey(probe), isFalse, reason: path);
   expect(
-    () => map[probe] = Object(),
+    () => map[probe] = undefined,
     returnsNormally,
     reason: '$path takes a write',
   );
