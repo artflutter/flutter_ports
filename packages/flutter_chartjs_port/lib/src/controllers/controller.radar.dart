@@ -15,10 +15,13 @@
 ///   dataset options read typed ([OptionView.readKey]).
 /// - The properties of the line are a [LineProperties], and those of a
 ///   point a [PointProperties] (Chart.js ADR 0054 §9). The write
-///   `line.points = points` is the typed setter of a line of the exact class
-///   [LineElement], and a write by name through `types.PropertyAccess` for a
-///   line of another class. The scale cast to `types.RadialLinearScale`
-///   stands at the upstream call of `getPointPositionForValue` (:88).
+///   `line.points = points` is the typed setter of
+///   `types.LineElementWrites` for a line of the built-in class
+///   (`typedWrites`), and a write by name through `types.PropertyAccess` for
+///   a line of another class. The controller imports no element module
+///   (Chart.js ADR 0028, section 1). The scale cast to
+///   `types.RadialLinearScale` stands at the upstream call of
+///   `getPointPositionForValue` (:88).
 /// - The label of [RadarController.getLabelAndValue] is the raw label
 ///   (Chart.js ADR 0028, section 2).
 /// - [RadarController.jsClass] is the class as a value with the statics
@@ -32,8 +35,6 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart'
-    show LineElement;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, parseObjectDataRadialScaleOf;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -149,9 +150,9 @@ class RadarController extends DatasetController {
   /// controller.radar.js:53 `update(mode)`.
   ///
   /// `meta.data || []`: `meta.data` is always a List. `line.points =
-  /// points` is the typed setter of a line of the exact class
-  /// [LineElement], and a write by name through `types.PropertyAccess` for
-  /// a line of another class (Chart.js ADR 0054 §9): the setter of
+  /// points` is the typed setter of [types.LineElementWrites] for a line of
+  /// the built-in class, and a write by name through `types.PropertyAccess`
+  /// for a line of another class (Chart.js ADR 0054 §9): the setter of
   /// `LineElement` copies the elements into a typed list (row
   /// `adapt-line-points-elements`). The null check throws a [TypeError] for
   /// a meta without a dataset element, as the JS write into `undefined`
@@ -165,8 +166,8 @@ class RadarController extends DatasetController {
 
     // Update Line
     final target = line!;
-    if (identical(target.runtimeType, LineElement)) {
-      (target as LineElement).points = points;
+    if (target case final types.LineElementWrites line when line.typedWrites) {
+      line.points = points;
     } else {
       _setProperty(target as types.PropertyAccess, 'points', points);
     }

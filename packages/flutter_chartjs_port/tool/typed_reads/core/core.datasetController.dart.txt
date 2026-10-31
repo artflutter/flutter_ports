@@ -11,12 +11,11 @@ jsGet 12
 jsGetKey 4
 # stringIndex: the write `dataset.data = []` into the dataset of the user,
 #   `item._stacks = {}` into a Map item and a class value item, the read
-#   `item._stacks` of a Map item (stacksOf), the statics datasetElementType
-#   and dataElementType of a class value (Chart.js ADR 0020), and
-#   `element.$context` (2) with the writes of getContext into an element
-#   context that user code put into `$context` (6): these 8 go with the
-#   typed `$context` of lane L3.
-stringIndex 14
+#   `item._stacks` of a Map item (stacksOf), and the statics
+#   datasetElementType and dataElementType of a class value (Chart.js ADR
+#   0020). getContext reads the typed `Element.$context` (Chart.js ADR 0054
+#   §9).
+stringIndex 6
 # jsCall: the draw of the dataset element with JS arity: a line takes
 #   start and count, another element class ignores them.
 jsCall 1

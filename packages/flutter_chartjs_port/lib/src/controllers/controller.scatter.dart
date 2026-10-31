@@ -20,10 +20,12 @@
 /// - The properties of a point are a [PointProperties], and those of the
 ///   line a [LineProperties] (Chart.js ADR 0054 §9). The writes into the
 ///   point of a direct update and the four writes into the line
-///   (`scatter.js:80-83`) take the typed setters for an element of the
-///   exact class [PointElement] or [LineElement], and the writes by name
-///   through `types.PropertyAccess` for an element of another class (a user
-///   element class, Chart.js ADR 0017, section 5).
+///   (`scatter.js:80-83`) take the typed setters of
+///   `types.PointElementWrites` and `types.LineElementWrites` for an element
+///   of a built-in class (`typedWrites`, the exact-class rule), and the
+///   writes by name through `types.PropertyAccess` for an element of another
+///   class (a user element class, Chart.js ADR 0017, section 5). The
+///   controller imports no element module (Chart.js ADR 0028, section 1).
 ///   [ScatterController.getMaxOverflow] casts a point to
 ///   `types.PointElement` at `size`.
 /// - `this.chart.registry` (`scatter.js:105`) is the singleton `registry`
@@ -40,10 +42,6 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart'
-    show LineElement;
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    show PointElement;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, LineOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -87,8 +85,9 @@ void _setProperty(types.PropertyAccess element, String key, Object? value) {
 ///
 /// `properties` is the point of a direct update and a new object in the
 /// other modes (:127). The new object is a [PointProperties]. A point of
-/// the exact class [PointElement] takes the typed setters. A point of
-/// another class (a user element class) takes the writes by name of
+/// the built-in class takes the typed setters of [types.PointElementWrites].
+/// A point of another class (a user element class) takes the writes by name
+/// of
 /// [_setProperty], in the same order. The writes reach the point at once,
 /// as upstream: the scriptable options of the user that run between two
 /// writes see the earlier writes.
@@ -101,21 +100,25 @@ final class _PointWrites {
   /// The new object of a mode that is not direct, else Dart `null`.
   PointProperties? object;
 
-  /// The point of the exact class [PointElement] of a direct update.
-  PointElement? _element;
+  /// The point of a direct update that takes the typed writes: a point
+  /// whose [types.PointElementWrites.typedWrites] is true, the class
+  /// `PointElement` itself.
+  types.PointElementWrites? _element;
 
-  /// The point of another class of a direct update.
-  types.PropertyAccess? _access;
+  /// The point of a direct update, for the writes by name: a point of
+  /// another class, and the keys and values that the typed setters do not
+  /// take.
+  late types.PropertyAccess _access;
 
   /// :127 `const properties = directUpdate ? point : {};`.
   void begin(types.Element point) {
     if (!direct) {
       object = PointProperties();
-    } else if (identical(point.runtimeType, PointElement)) {
-      _element = point as PointElement;
-      _access = null;
     } else {
-      _element = null;
+      _element = switch (point) {
+        final types.PointElementWrites point when point.typedWrites => point,
+        _ => null,
+      };
       // Each data element is an Element: the cast of `_insertElements`
       // (row adapt-component-class-role).
       _access = point as types.PropertyAccess;
@@ -131,13 +134,13 @@ final class _PointWrites {
     }
     final element = _element;
     if (element == null) {
-      _setProperty(_access!, axis, value);
+      _setProperty(_access, axis, value);
     } else if (key == AxisKey.x) {
       element.x = value;
     } else if (key == AxisKey.y) {
       element.y = value;
     } else {
-      _setProperty(element, axis, value);
+      _setProperty(_access, axis, value);
     }
   }
 
@@ -151,7 +154,7 @@ final class _PointWrites {
     } else if (_element case final element?) {
       element.skip = value;
     } else {
-      _setProperty(_access!, 'skip', value);
+      _setProperty(_access, 'skip', value);
     }
   }
 
@@ -165,7 +168,7 @@ final class _PointWrites {
     } else if (_element case final element?) {
       element.stop = value;
     } else {
-      _setProperty(_access!, 'stop', value);
+      _setProperty(_access, 'stop', value);
     }
   }
 
@@ -177,12 +180,12 @@ final class _PointWrites {
       object.parsed = value;
     } else if (_element case final element? when value != null) {
       if (value is Undefined) {
-        _setProperty(element, 'parsed', value);
+        _setProperty(_access, 'parsed', value);
       } else {
         element.parsed = value;
       }
     } else {
-      _setProperty(_element ?? _access!, 'parsed', value);
+      _setProperty(_access, 'parsed', value);
     }
   }
 
@@ -193,7 +196,7 @@ final class _PointWrites {
     if (object != null) {
       object.raw = value;
     } else {
-      _setProperty(_element ?? _access!, 'raw', value);
+      _setProperty(_access, 'raw', value);
     }
   }
 
@@ -205,7 +208,7 @@ final class _PointWrites {
     } else if (_element case final element?) {
       element.options = value;
     } else {
-      _setProperty(_access!, 'options', value);
+      _setProperty(_access, 'options', value);
     }
   }
 }
@@ -287,8 +290,9 @@ class ScatterController extends DatasetController {
   ///
   /// - With a truthy `showLine`, the update adds the dataset element when
   ///   [datasetElementType] is falsy (:74-76, Chart.js issue #11333). The
-  ///   four writes of :80-83 are the typed setters of a line of the exact
-  ///   class [LineElement], and writes by name of an untyped property for a
+  ///   four writes of :80-83 are the typed setters of
+  ///   [types.LineElementWrites] for a line of the built-in class, and writes
+  ///   by name of an untyped property for a
   ///   line of another class (Chart.js ADR 0017, section 5; Chart.js ADR
   ///   0028, section 1). The null check throws a [TypeError] for Dart
   ///   `null`, as `undefined._chart = ...` does. The write `points` goes to
@@ -329,8 +333,9 @@ class ScatterController extends DatasetController {
       // Update Line
       final target = line!;
       final decimated = jsTruthy(jsGetKey(dataset, '_decimated'));
-      if (identical(target.runtimeType, LineElement)) {
-        (target as LineElement)
+      if (target case final types.LineElementWrites line
+          when line.typedWrites) {
+        line
           ..chart = chart
           ..datasetIndex = index
           ..decimated = decimated

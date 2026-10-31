@@ -381,8 +381,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     its own library, at the upstream read. Three other kinds of casts stay: a `List` cast of a
     value that upstream reads as an array, the `String` cast of a parsing key and the `AnyObject`
     cast of an object that the controller made. `getLabelAndValue` gives
-    `({Object? label, String value})`. The files are not pure layers: each imports
-    `core.datasetController`.
+    `({Object? label, String value})`. Line, scatter and radar write an element of a built-in
+    class (`typedWrites`, the exact-class rule of Chart.js ADR 0054 §9) through the port-only
+    interfaces `types.PointElementWrites` and `types.LineElementWrites`, which the concrete
+    classes implement: no controller imports an element module (Chart.js ADR 0028 §1). The files
+    are not pure layers: each imports `core.datasetController`.
     - `controller.bar.dart`: `getStackCount` and `getStackIndex` are the `_getStackCount` and
       `_getStackIndex` of upstream with `@internal`, because the spec reads them (Chart.js ADR
       0012).
@@ -390,8 +393,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       pass (`vValue`, `iValue`), and it reads `prevParsed[iAxis]` at each pass, because the
       scriptable options of the user run between two passes (the 3-read form of Chart.js ADR
       0036). `update` writes `_chart`, `_datasetIndex`, `_decimated` and `points` into the line
-      with the typed setters for a `LineElement`, by name (`types.PropertyAccess`) for another
-      class, and `draw` casts the line to `types.LineElement`.
+      with the typed setters of `types.LineElementWrites` for a line of the built-in class
+      (`typedWrites`), by name (`types.PropertyAccess`) for another class, and `draw` casts the
+      line to `types.LineElement`.
     - `controller.bubble.dart`: the parsed radius goes to `_custom`. `resolveDataElementOptions`
       copies the options with `values.clone()` and `storeKey(OptionKey.dollarShared, false)`
       (Chart.js ADR 0021 §3) and adds the radius with `jsAdd`: a string radius joins, as upstream.
@@ -410,8 +414,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `== 'angular'`. `overrides` holds the legend functions as tear-offs of top-level functions.
       `parseObjectData` calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)` and no
       longer uses `jsCall`.
-    - `controller.radar.dart`: the write `line.points = points` is the typed setter for a
-      `LineElement`, by name through `types.PropertyAccess` for another class. `parseObjectData`
+    - `controller.radar.dart`: the write `line.points = points` is the typed setter of
+      `types.LineElementWrites` for a line of the built-in class, by name through
+      `types.PropertyAccess` for another class. `parseObjectData`
       calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)` and no longer uses `jsCall`.
       The cast to `types.RadialLinearScale` stands in the loop of
       `updateElements`, at `controller.radar.js:88`. The label of `getLabelAndValue` is the raw

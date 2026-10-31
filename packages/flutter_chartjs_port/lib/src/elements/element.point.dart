@@ -146,9 +146,14 @@ typedef PointProps = Point;
 /// to the Map of extra properties of [Element].
 ///
 /// The class implements `types.VisualElementRange`, because upstream has a
-/// [getRange] (element.point.ts:102, Chart.js ADR 0020, section 9).
+/// [getRange] (element.point.ts:102, Chart.js ADR 0020, section 9). It
+/// implements `types.PointElementWrites`, the typed writes of the line and
+/// scatter controllers (Chart.js ADR 0054 §9).
 class PointElement extends Element
-    implements types.RadialPointElement, types.VisualElementRange {
+    implements
+        types.RadialPointElement,
+        types.VisualElementRange,
+        types.PointElementWrites {
   /// element.point.ts:49 `constructor(cfg)`.
   ///
   /// element.point.ts:52-55 set `options`, `parsed`, `skip` and `stop` to
@@ -254,8 +259,10 @@ class PointElement extends Element
   /// reaches it. No ported code reads it, so `CartesianParsedData` has no
   /// Dart type yet (Chart.js ADR 0003). The value is the parsed object that
   /// the dataset controller gives (phase 5).
+  @override
   Object? get parsed => _parsed;
 
+  @override
   set parsed(Object value) => _parsed = value;
 
   /// element.point.ts:25 `skip?: boolean`.
@@ -265,6 +272,7 @@ class PointElement extends Element
   @override
   bool? get skip => _skip;
 
+  @override
   set skip(bool value) => _skip = value;
 
   /// element.point.ts:26 `stop?: boolean`.
@@ -274,6 +282,7 @@ class PointElement extends Element
   @override
   bool? get stop => _stop;
 
+  @override
   set stop(bool value) => _stop = value;
 
   /// geometric.d.ts:48 `cp1x?: number` of [SplinePoint], which

@@ -1150,6 +1150,93 @@ abstract interface class LineElement implements Element {
   ]);
 }
 
+/// The typed writes of a controller into a point element, a port-only
+/// interface (Chart.js ADR 0054 §9): the writes `properties[key] = value`
+/// of the direct update of the line and scatter controllers
+/// (controller.line.js:91-111, controller.scatter.js:127-140).
+///
+/// The concrete `PointElement` of `element.point.dart` implements it. Thus
+/// a controller writes a point with no import of the concrete module
+/// (Chart.js ADR 0028 §1). The fakes of the tests implement [PointElement],
+/// so [PointElement] does not declare the setters, and this interface does
+/// not implement [PointElement]: the class `PointElement` stays its one
+/// implementer (Chart.js ADR 0040 §11). A controller writes through this
+/// interface only when [typedWrites] is true. An element of a user subclass
+/// takes the writes by name, so that its `operator []=` sees each write.
+/// The getters pair the setters.
+abstract interface class PointElementWrites {
+  /// `Element.typedWrites`: true for an element of the built-in class
+  /// itself, not of a user subclass (the exact-class rule of Chart.js ADR
+  /// 0054 §9).
+  bool get typedWrites;
+
+  /// core.element.ts:11 `x`. NaN in the `undefined` state.
+  double get x;
+
+  set x(double value);
+
+  /// core.element.ts:12 `y`. NaN in the `undefined` state.
+  double get y;
+
+  set y(double value);
+
+  /// element.point.ts:25 `skip`. Dart `null` stands for JS `undefined`.
+  bool? get skip;
+
+  set skip(bool value);
+
+  /// element.point.ts:26 `stop`. Dart `null` stands for JS `undefined`.
+  bool? get stop;
+
+  set stop(bool value);
+
+  /// element.point.ts:24 `parsed`. Dart `null` stands for JS `undefined`.
+  /// The setter does not take JS `null` and `undefined`: they go by name.
+  Object? get parsed;
+
+  set parsed(Object value);
+
+  /// core.element.ts:14 `options`. Dart `null` stands for JS `undefined`.
+  Map<String, Object?>? get options;
+
+  set options(Map<String, Object?>? value);
+}
+
+/// The typed writes of a controller into a line element, a port-only
+/// interface (Chart.js ADR 0054 §9): the writes of controller.line.js:57-60,
+/// controller.scatter.js:80-83 and controller.radar.js:60.
+///
+/// The concrete `LineElement` of `element.line.dart` implements it, as
+/// [PointElementWrites] states for a point. A controller writes through it
+/// only when [typedWrites] is true, and by name through [PropertyAccess]
+/// otherwise. The getters pair the setters.
+abstract interface class LineElementWrites {
+  /// `Element.typedWrites`: true for an element of the built-in class
+  /// itself, as [PointElementWrites.typedWrites].
+  bool get typedWrites;
+
+  /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`.
+  Chart? get chart;
+
+  set chart(Chart value);
+
+  /// element.line.js:292 `_datasetIndex`. Dart `null` stands for JS
+  /// `undefined`.
+  double? get datasetIndex;
+
+  set datasetIndex(double value);
+
+  /// element.line.js:290 `_decimated`.
+  abstract bool decimated;
+
+  /// element.line.js:315 `get points()` and :308 `set points(points)`: the
+  /// setter copies the elements into a typed list (row
+  /// `adapt-line-points-elements`).
+  List<PointElement> get points;
+
+  set points(List<Element> value);
+}
+
 /// simpleArc.js:4 `simpleArc`: the members that filler.drawing.js calls by
 /// name on a fill target (:153, :201). It is not a declaration of
 /// `index.d.ts`. The class `SimpleArc` of `plugin.filler/simpleArc.dart`

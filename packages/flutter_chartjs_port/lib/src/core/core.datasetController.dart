@@ -1774,15 +1774,17 @@ class DatasetController
   /// @protected
   ///
   /// Dart `null` for [index], [active] and [mode] stands for JS `undefined`.
-  /// An [index] of a data element gives the context of that element. It is
-  /// an extra property `$context` of the element (Chart.js ADR 0017,
-  /// section 5).
+  /// An [index] of a data element gives the context of that element: the
+  /// typed member `$context` of the element ([Element.$context], Chart.js
+  /// ADR 0054 §9).
   ///
   /// The contexts are [ScriptableContext] objects: the writes are typed
-  /// (Chart.js ADR 0054 §11). An element context of another class that user
-  /// code put into `$context` takes the writes by name: a Map, else the
-  /// cast throws a [TypeError], as the JS write into a primitive does. The
-  /// typed `$context` of the elements (lane L3) removes that path.
+  /// (Chart.js ADR 0054 §11). A context of another type that user code put
+  /// into `$context` of an element of a user class takes the writes through
+  /// its face. A value that the typed member does not give (a value that is
+  /// not a context, or for a built-in element class a context that is not a
+  /// [ScriptableContext]) reads as Dart `null`, and a new data context takes
+  /// its place (row `adapt-typed-contexts`).
   AnyObject getContext([
     double? index,
     // The upstream signature has a positional `active`.
@@ -1793,14 +1795,13 @@ class DatasetController
     final dataset = getDataset();
     if (index != null && index >= 0 && index < cachedMeta.data.length) {
       final element = _at(cachedMeta.data, index)! as Element;
-      var elementContext = element[r'$context'];
-      if (!jsTruthy(elementContext)) {
-        element[r'$context'] = elementContext = _createDataContext(
-          getContext(),
-          index,
-          element,
-        );
-      }
+      // A context object is truthy: Dart `null` is the falsy `undefined`
+      // start state.
+      final elementContext = element.$context ??= _createDataContext(
+        getContext(),
+        index,
+        element,
+      );
       // `dataset.data[index]`: the data of the dataset object of the user,
       // read after the write of `parsed`, as upstream.
       Object? raw() => jsGetIndex(jsGet(dataset, 'data'), index);
@@ -1813,13 +1814,13 @@ class DatasetController
           ..active = jsTruthy(active)
           ..mode = mode ?? undefined;
       }
-      return (elementContext! as AnyObject)
-        ..['parsed'] = getParsed(index)
-        ..['raw'] = raw()
-        ..['dataIndex'] = index
-        ..['index'] = index
-        ..['active'] = jsTruthy(active)
-        ..['mode'] = mode ?? undefined;
+      return elementContext
+        ..jsWrite('parsed', getParsed(index))
+        ..jsWrite('raw', raw())
+        ..jsWrite('dataIndex', index)
+        ..jsWrite('index', index)
+        ..jsWrite('active', jsTruthy(active))
+        ..jsWrite('mode', mode ?? undefined);
     }
     return ($context ??= _createDatasetContext(chart.getContext(), this.index))
       ..dataset = dataset

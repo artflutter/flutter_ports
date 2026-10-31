@@ -699,7 +699,9 @@ void _draw(
 ///
 /// The line of a line or radar dataset (Chart.js ADR 0017). It extends
 /// [Element] and implements [types.LineElement], the interface that
-/// `helpers.segment` reads, and [types.VisualElement].
+/// `helpers.segment` reads, [types.VisualElement] and
+/// [types.LineElementWrites], the typed writes of the line, scatter and
+/// radar controllers (Chart.js ADR 0054 §9).
 ///
 /// ## Properties
 ///
@@ -723,7 +725,7 @@ void _draw(
 /// `_segments`, `segments`, `_decimated`, `_pointsUpdated` and
 /// `_datasetIndex`, and pass the other names to [Element].
 class LineElement extends Element
-    implements types.LineElement, types.VisualElement {
+    implements types.LineElement, types.VisualElement, types.LineElementWrites {
   /// element.line.js:279 `constructor(cfg)`.
   ///
   /// The properties get the start values of element.line.js:282-292. Then
@@ -824,6 +826,7 @@ class LineElement extends Element
   /// (controller.line.js:59). Upstream never writes `undefined` to it.
   /// Thus a write by name accepts only a `bool`.
   @internal
+  @override
   bool decimated = false;
 
   /// element.line.js:291 `_pointsUpdated = false`: whether
@@ -845,6 +848,7 @@ class LineElement extends Element
   types.Chart? get chart => _chart;
 
   @internal
+  @override
   set chart(types.Chart value) => _chart = value;
 
   /// element.line.js:285 `_loop`. Dart `null` stands for JS `undefined`, the
@@ -879,6 +883,7 @@ class LineElement extends Element
   double? get datasetIndex => _datasetIndexUndefined ? null : _datasetIndex;
 
   @internal
+  @override
   set datasetIndex(double value) {
     _datasetIndex = value;
     _datasetIndexUndefined = false;
@@ -934,6 +939,7 @@ class LineElement extends Element
   /// section 3). An element that is not a `types.PointElement` throws a
   /// [TypeError] (the difference `adapt-line-points-elements`).
   // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
+  @override
   set points(List<types.Element> points) => _setPoints(_pointElements(points));
 
   /// element.line.js:315 `get points()`.
