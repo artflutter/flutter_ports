@@ -117,8 +117,9 @@ final class ChartThemeSwitch {
   /// records [theme] as the applied theme and writes its compiled theme
   /// under `$theme` of [root], or removes the key when it compiles to Dart
   /// `null`. A new chart of the same theme keeps the compiled theme of the
-  /// state: it compiles only a new theme.
-  void start(ChartConfigurationScope root, ChartThemeData? theme) {
+  /// state: it compiles only a new theme. [root] is the typed root of the
+  /// widget or a root Map, the root of the frameless benchmark.
+  void start(AnyObject root, ChartThemeData? theme) {
     if (theme != _applied || _compiled == null) {
       _compiled = compileThemeData(theme);
     }
@@ -153,7 +154,7 @@ final class ChartThemeSwitch {
   ///    `'none'` or `'resize'`.
   String? apply(
     types.Chart chart,
-    ChartConfigurationScope root,
+    AnyObject root,
     ChartThemeData? theme, {
     required bool reducedMotion,
   }) {
@@ -164,7 +165,7 @@ final class ChartThemeSwitch {
     final compiled = _compiled = compileThemeData(theme);
     if (compiled == null && oldCompiled == null) return null;
     _writeTheme(root, compiled);
-    final options = root.optionsCell?.raw;
+    final options = _read(root, OptionKey.options);
     if (options is AnyObject) _write(options, OptionKey.scales, _scales);
     _restorePalette(chart);
     if (compiled == null) return 'default';
@@ -232,12 +233,12 @@ final class ChartThemeSwitch {
     }
   }
 
-  /// Writes [compiled] under `$theme` of [root], or removes the key.
-  static void _writeTheme(
-    ChartConfigurationScope root,
-    ChartOptionsScope? compiled,
-  ) {
-    if (compiled == null) {
+  /// Writes [compiled] under `$theme` of [root], or removes the key: the
+  /// typed cell of a [ChartConfigurationScope], else the key of a root Map.
+  static void _writeTheme(AnyObject root, ChartOptionsScope? compiled) {
+    if (root is! ChartConfigurationScope) {
+      _write(root, OptionKey.dollarTheme, compiled ?? _absent);
+    } else if (compiled == null) {
       root.dollarThemeCell = null;
     } else {
       root.dollarTheme = compiled;
