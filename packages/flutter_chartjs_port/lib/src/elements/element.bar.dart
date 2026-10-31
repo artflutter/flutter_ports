@@ -607,7 +607,9 @@ class BarElement extends Element implements types.VisualElementRange {
   /// Whether the element is of the class [BarElement] itself, not of a user
   /// subclass: the typed writes are for this class only (Chart.js ADR 0054
   /// §9).
-  late final bool _builtIn = identical(runtimeType, BarElement);
+  // The `Type` objects of dart2wasm are not canonical: `identical` of two
+  // `Type` objects of one class can be false there, so the test is `==`.
+  late final bool _builtIn = runtimeType == BarElement;
 
   /// [Element.typedWrites]: true for the class [BarElement] itself.
   @internal

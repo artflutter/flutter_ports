@@ -381,7 +381,9 @@ class PointElement extends Element
   /// Whether the element is of the class [PointElement] itself, not of a user
   /// subclass: the typed writes are for this class only (Chart.js ADR 0054
   /// §9).
-  late final bool _builtIn = identical(runtimeType, PointElement);
+  // The `Type` objects of dart2wasm are not canonical: `identical` of two
+  // `Type` objects of one class can be false there, so the test is `==`.
+  late final bool _builtIn = runtimeType == PointElement;
 
   /// [Element.typedWrites]: true for the class [PointElement] itself.
   @internal
