@@ -609,8 +609,16 @@ void _pathArc(
   final outerEndAdjustedRadius = outerRadius - outerEnd;
   final outerStartAdjustedAngle =
       outerStartAngle + outerStart / outerStartAdjustedRadius;
-  final outerEndAdjustedAngle =
-      outerEndAngle - outerEnd / outerEndAdjustedRadius;
+  var outerEndAdjustedAngle = outerEndAngle - outerEnd / outerEndAdjustedRadius;
+  // DIVERGES(chartjs): adapt-rounded-arc-collapse, keep a collapsed span zero.
+  // Corner limits leave a nonnegative span, but rounding at that limit can
+  // reverse its endpoints by an ulp. Canvas would wrap that into a full turn.
+  // Negative trimmed spans retain their original directed-arc behavior.
+  if (circular &&
+      angleDelta >= 0 &&
+      outerEndAdjustedAngle < outerStartAdjustedAngle) {
+    outerEndAdjustedAngle = outerStartAdjustedAngle;
+  }
 
   final innerStartAdjustedRadius = innerRadius + innerStart;
   final innerEndAdjustedRadius = innerRadius + innerEnd;
@@ -668,16 +676,19 @@ void _pathArc(
     }
 
     // The inner arc from point 5 to point b to point 6
-    final innerMidAdjustedAngle =
-        ((innerEndAngle - (innerEnd / innerRadius)) +
-            (innerStartAngle + (innerStart / innerRadius))) /
-        2;
+    final innerArcStart = innerEndAngle - innerEnd / innerRadius;
+    var innerArcEnd = innerStartAngle + innerStart / innerRadius;
+    // DIVERGES(chartjs): adapt-rounded-arc-collapse, inner arc direction.
+    if (angleDelta >= 0 && innerArcEnd > innerArcStart) {
+      innerArcEnd = innerArcStart;
+    }
+    final innerMidAdjustedAngle = (innerArcStart + innerArcEnd) / 2;
     ctx
       ..arc(
         x,
         y,
         innerRadius,
-        innerEndAngle - (innerEnd / innerRadius),
+        innerArcStart,
         innerMidAdjustedAngle,
         true,
       )
@@ -686,7 +697,7 @@ void _pathArc(
         y,
         innerRadius,
         innerMidAdjustedAngle,
-        innerStartAngle + (innerStart / innerRadius),
+        innerArcEnd,
         true,
       );
 

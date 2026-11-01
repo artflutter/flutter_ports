@@ -199,6 +199,63 @@ List<ContextCall> _named(MockContext ctx, String name) => [
 final Matcher _isUndefined = same(undefined);
 
 void main() {
+  test('rounded circular arcs do not wrap when their spans collapse', () {
+    final cases = [
+      (
+        inner: 15.5,
+        outer: 23.25,
+        start: -0.524968019741612,
+        end: -0.025128536999438678,
+        spacing: 2.0,
+      ),
+      (
+        inner: 6.0,
+        outer: 9.0,
+        start: -1.5707963267948966,
+        end: -0.9777829576527991,
+        spacing: 2.0,
+      ),
+      (inner: 6.0, outer: 9.0, start: -0.15, end: 0.25, spacing: 0.0),
+    ];
+    for (final c in cases) {
+      final ctx = _CanvasContext();
+      (ArcElement()
+            ..x = 50
+            ..y = 50
+            ..innerRadius = c.inner
+            ..outerRadius = c.outer
+            ..startAngle = c.start
+            ..endAngle = c.end
+            ..circumference = c.end - c.start
+            ..options = ArcOptions(
+              _options({
+                'borderRadius': 4.0,
+                'spacing': c.spacing,
+                'offset': 0.0,
+                'circular': true,
+                'selfJoin': false,
+                'borderAlign': 'center',
+              }),
+            ))
+          .draw(ctx);
+      final arcs = _named(ctx, 'arc').where((call) {
+        final args = call['args']! as List<Object?>;
+        return args[0] == 50.0 && args[1] == 50.0;
+      });
+      expect(arcs, isNotEmpty);
+      for (final call in arcs) {
+        final args = call['args']! as List<Object?>;
+        final from = args[3]! as double;
+        final to = args[4]! as double;
+        if (args[5] == true) {
+          expect(to, lessThanOrEqualTo(from), reason: 'inner arc: $c');
+        } else {
+          expect(to, greaterThanOrEqualTo(from), reason: 'outer arc: $c');
+        }
+      }
+    }
+  });
+
   setUpSpecs();
 
   group('properties', () {

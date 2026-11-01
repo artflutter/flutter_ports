@@ -996,6 +996,15 @@ Changes to the cited files:
   gap guard difference did not reproduce. The implementation stays uncommitted;
   no canvas-plan trigger occurred.
 
+- 2026-11-01, the rounded-arc center regression. At 1k arcs, corner saturation
+  can reverse an inner arc by an ulp and make Canvas draw a full circle. The fix
+  is in `element.arc.dart` `_pathArc`: keep collapsed rounded outer/inner spans
+  in their intended direction. Native canvas arc semantics, sector recognition,
+  batching and host code stay unchanged. The arc command tests and the new
+  `test/port/elements/rounded_arc_center_test.dart` pin the failure; the macOS
+  release check renders 1k arcs over 24 frames at DPR 1/2 with clear centers.
+  This adds no canvas cut and changes no inventory estimate. No trigger occurred.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.
