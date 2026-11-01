@@ -983,6 +983,19 @@ Changes to the cited files:
   path/host cut estimates and their historical source references are unchanged.
   This is an API cleanup with no measured speedup claimed. No trigger occurred.
 
+- 2026-11-01, the stack exact-point experiment (ADR 0058). Performance.md adds
+  §23 and its chapter-table entry. Only filler stack construction has candidate
+  library changes; no cited canvas/host source, pinning test or cut estimate
+  changes. The experiment fails its guard criterion and remains uncommitted.
+  Existing section references remain valid. No canvas-plan trigger occurred.
+
+- 2026-11-01, the stack-search follow-up. ADR 0058 and performance.md §23 retain
+  the initial failed guards and add isolated/corrected-order measurements of the
+  revised candidate. Only an internal segment type token replaces the dummy line
+  construction; no canvas/host source or cut estimate changes. The large Chrome
+  gap guard difference did not reproduce. The implementation stays uncommitted;
+  no canvas-plan trigger occurred.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.

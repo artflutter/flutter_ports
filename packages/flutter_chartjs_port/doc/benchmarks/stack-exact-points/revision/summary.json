@@ -1,0 +1,402 @@
+[
+  {
+    "platform": "macos",
+    "case": "fill.gaps",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 5.283,
+    "candidate_ms": 5.2715,
+    "change_ms": -0.011500000000000732,
+    "reduction_pct": 0.21767934885482676,
+    "runs": {
+      "A": [
+        5.2700000000000005,
+        5.296
+      ],
+      "C": [
+        5.256,
+        5.287
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "fill.gaps",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 6.59,
+    "candidate_ms": 6.634499999999999,
+    "change_ms": 0.04449999999999932,
+    "reduction_pct": -0.6752655538694974,
+    "runs": {
+      "A": [
+        6.553999999999999,
+        6.626
+      ],
+      "C": [
+        6.611999999999999,
+        6.656999999999999
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "fill.radar",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 0.429,
+    "candidate_ms": 0.435,
+    "change_ms": 0.006000000000000005,
+    "reduction_pct": -1.3986013986013957,
+    "runs": {
+      "A": [
+        0.43,
+        0.428
+      ],
+      "C": [
+        0.434,
+        0.436
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "fill.radar",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 1.6705,
+    "candidate_ms": 1.675,
+    "change_ms": 0.0044999999999999485,
+    "reduction_pct": -0.2693804250224474,
+    "runs": {
+      "A": [
+        1.679,
+        1.662
+      ],
+      "C": [
+        1.681,
+        1.669
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "chart.a",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 0.1625,
+    "candidate_ms": 0.1635,
+    "change_ms": 0.0010000000000000009,
+    "reduction_pct": -0.6153846153846176,
+    "runs": {
+      "A": [
+        0.162,
+        0.163
+      ],
+      "C": [
+        0.164,
+        0.163
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "chart.b",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 0.4435,
+    "candidate_ms": 0.446,
+    "change_ms": 0.0025000000000000022,
+    "reduction_pct": -0.5636978579481422,
+    "runs": {
+      "A": [
+        0.443,
+        0.444
+      ],
+      "C": [
+        0.446,
+        0.446
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "fill.stack",
+    "n": 100,
+    "call": "draw",
+    "baseline_ms": 0.4345,
+    "candidate_ms": 0.1145,
+    "change_ms": -0.32,
+    "reduction_pct": 73.64787111622555,
+    "runs": {
+      "A": [
+        0.435,
+        0.434
+      ],
+      "C": [
+        0.114,
+        0.115
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "fill.stack",
+    "n": 100,
+    "call": "update",
+    "baseline_ms": 1.0225,
+    "candidate_ms": 0.6935,
+    "change_ms": -0.32899999999999996,
+    "reduction_pct": 32.1760391198044,
+    "runs": {
+      "A": [
+        1.023,
+        1.022
+      ],
+      "C": [
+        0.6950000000000001,
+        0.6920000000000001
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "fill.stack",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 30.4345,
+    "candidate_ms": 0.9265000000000001,
+    "change_ms": -29.508,
+    "reduction_pct": 96.95575744631914,
+    "runs": {
+      "A": [
+        30.21,
+        30.659000000000002
+      ],
+      "C": [
+        0.925,
+        0.928
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "fill.stack",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 34.7445,
+    "candidate_ms": 4.1775,
+    "change_ms": -30.567,
+    "reduction_pct": 87.97651426844537,
+    "runs": {
+      "A": [
+        34.771,
+        34.718
+      ],
+      "C": [
+        4.17,
+        4.185
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.gaps",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 9.1165,
+    "candidate_ms": 9.1695,
+    "change_ms": 0.05299999999999905,
+    "reduction_pct": -0.5813634618548669,
+    "runs": {
+      "A": [
+        8.854000000000001,
+        9.379
+      ],
+      "C": [
+        8.923,
+        9.416
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.gaps",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 11.9925,
+    "candidate_ms": 11.8825,
+    "change_ms": -0.10999999999999943,
+    "reduction_pct": 0.9172399416301769,
+    "runs": {
+      "A": [
+        11.874,
+        12.111
+      ],
+      "C": [
+        11.42,
+        12.344999999999999
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.radar",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 0.6695,
+    "candidate_ms": 0.6865,
+    "change_ms": 0.017000000000000015,
+    "reduction_pct": -2.5392083644510954,
+    "runs": {
+      "A": [
+        0.674,
+        0.665
+      ],
+      "C": [
+        0.676,
+        0.697
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.radar",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 2.383,
+    "candidate_ms": 2.3369999999999997,
+    "change_ms": -0.04600000000000026,
+    "reduction_pct": 1.9303399076794014,
+    "runs": {
+      "A": [
+        2.367,
+        2.399
+      ],
+      "C": [
+        2.296,
+        2.378
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "chart.a",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 0.2725,
+    "candidate_ms": 0.2715,
+    "change_ms": -0.0010000000000000009,
+    "reduction_pct": 0.3669724770642202,
+    "runs": {
+      "A": [
+        0.271,
+        0.274
+      ],
+      "C": [
+        0.273,
+        0.27
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "chart.b",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 0.737,
+    "candidate_ms": 0.7284999999999999,
+    "change_ms": -0.008500000000000063,
+    "reduction_pct": 1.1533242876526573,
+    "runs": {
+      "A": [
+        0.737,
+        0.737
+      ],
+      "C": [
+        0.722,
+        0.735
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.stack",
+    "n": 100,
+    "call": "draw",
+    "baseline_ms": 0.736,
+    "candidate_ms": 0.164,
+    "change_ms": -0.572,
+    "reduction_pct": 77.71739130434783,
+    "runs": {
+      "A": [
+        0.743,
+        0.729
+      ],
+      "C": [
+        0.165,
+        0.163
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.stack",
+    "n": 100,
+    "call": "update",
+    "baseline_ms": 1.6625,
+    "candidate_ms": 1.053,
+    "change_ms": -0.6095000000000002,
+    "reduction_pct": 36.66165413533835,
+    "runs": {
+      "A": [
+        1.664,
+        1.661
+      ],
+      "C": [
+        1.055,
+        1.051
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.stack",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 54.2795,
+    "candidate_ms": 1.3744999999999998,
+    "change_ms": -52.905,
+    "reduction_pct": 97.46773643825016,
+    "runs": {
+      "A": [
+        54.079,
+        54.480000000000004
+      ],
+      "C": [
+        1.4,
+        1.349
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "fill.stack",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 59.787,
+    "candidate_ms": 6.185499999999999,
+    "change_ms": -53.6015,
+    "reduction_pct": 89.65410540753007,
+    "runs": {
+      "A": [
+        59.391999999999996,
+        60.182
+      ],
+      "C": [
+        6.313,
+        6.058
+      ]
+    }
+  }
+]

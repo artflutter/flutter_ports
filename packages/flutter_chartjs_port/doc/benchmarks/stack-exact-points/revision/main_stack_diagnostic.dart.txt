@@ -1,0 +1,36 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'bench_done.dart';
+
+const variant = String.fromEnvironment('VARIANT');
+Future<void> run() async {
+ final rows=<Map<String,Object?>>[];
+ try {
+  registerGalleryComponents();
+  final cells=<(ChartBenchCase,int)>[
+   for(final n in [100,1000])
+    for(final c in selectChartBenchCases('fill.stack')) (c,n),
+   for(final c in selectChartBenchCases('fill.gaps,fill.radar')) (c,1000),
+   for(final c in selectChartBenchCases('chart.a,chart.b'))
+    if(c.keys['type']=='line') (c,1000),
+  ];
+  const guardOnly = bool.fromEnvironment('GUARD_ONLY');
+  for(final (c,n) in cells) {
+   if (guardOnly && c.id != 'fill.gaps') continue;
+   await Future<void>.delayed(const Duration(milliseconds:100));
+   final row={'variant':variant,'experimentCase':c.id,...runChartBenchCase(c,n,const ChartBenchSettings(warmupMs:250,batches:7,batchMs:100))};
+   rows.add(row);
+   print('STACK_RESULT ${jsonEncode(row)}');
+  }
+  print('STACK_DONE $variant');
+  await finish(jsonEncode(rows));
+ } catch(e,s) { print('STACK_ERROR $e\n$s'); await finish(jsonEncode({'error':'$e','stack':'$s'})); }
+}
+void main() {
+ WidgetsFlutterBinding.ensureInitialized();
+ runApp(const MaterialApp(home:Scaffold(body:Center(child:Text('Stack fill experiment')))));
+ WidgetsBinding.instance.addPostFrameCallback((_)=>unawaited(run()));
+}

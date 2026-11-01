@@ -1,0 +1,20 @@
+import 'dart:convert';
+import 'dart:js_interop';
+@JS('fetch')
+external JSPromise<JSAny?> send(JSString url, JSAny options);
+@JS('navigator.userAgent')
+external JSString get userAgent;
+Future<void> finish(String data) async {
+  final rows=jsonDecode(data);
+  if(rows is List) {
+    for(final row in rows) {
+      row['backend']=const bool.fromEnvironment('dart.tool.dart2wasm')?'wasm':'js';
+      row['userAgent']=userAgent.toDart;
+    }
+  }
+  await send('http://127.0.0.1:8899/results'.toJS, {'method':'POST','body':jsonEncode(rows)}.jsify()!).toDart;
+}
+
+@JS('location.search')
+external JSString get locationSearch;
+bool get isolatedGuard => locationSearch.toDart.contains('guard=1');

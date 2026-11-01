@@ -1,0 +1,1 @@
+export 'bench_done_native.dart' if (dart.library.js_interop) 'bench_done_web.dart';

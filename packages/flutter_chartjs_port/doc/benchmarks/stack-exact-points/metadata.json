@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-01",
+  "baseline": "3ea45085a961adc2fc50770294d6cce04417ac2d",
+  "candidate": "uncommitted exact-point stack search, ADR 0058",
+  "result": "not accepted: repeated guard regressions",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "platforms": [
+    "Apple M3 Max / macOS 27.0.1 / release",
+    "Chrome 156.0.8078.79 / release Wasm"
+  ],
+  "schedule": "A/B/B/A; two processes per variant; ten cells per process",
+  "settings": {
+    "warmupMs": 250,
+    "batches": 7,
+    "batchMs": 100
+  },
+  "candidateSHA256": {
+    "lib/src/plugins/plugin.filler/filler.target.stack.dart": "fa9c65676877c91f33c0652b6a11fc1aeaa1a339816c33de07f6abfdbb3ea750",
+    "lib/src/plugins/plugin.filler/stack_point_search.dart": "9bd2172b0604d36530b929dc74ae4921f737a8b99bf157edcc83e7475df8b4ce"
+  },
+  "limits": [
+    "CPU-side update/draw/recording completion, not FPS or GPU raster",
+    "No confidence interval from two pairs",
+    "Only aligned stacked lines benchmarked; unsupported inputs still use the original search",
+    "No Android or iOS timing in this initial experiment",
+    "No shared interpolation or segment helper edits; cause of unrelated guard shifts not established"
+  ]
+}

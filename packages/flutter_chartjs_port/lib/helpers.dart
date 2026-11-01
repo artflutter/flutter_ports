@@ -69,6 +69,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         measureText,
         merger,
         mergerIf,
+        nativeSegmentType,
         normalizeAngle,
         parseObjectDataRadialScale,
         parseObjectDataRadialScaleOf,

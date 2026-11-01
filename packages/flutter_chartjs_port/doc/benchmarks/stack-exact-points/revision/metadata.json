@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-01",
+  "baseline": "3ea45085a961adc2fc50770294d6cce04417ac2d",
+  "initialCandidate": "B: original two-file shortcut",
+  "revisedCandidate": "C: replace dummy line construction with an internal segment Type constant",
+  "diagnostic": "A/B/B/A, gap case only, two cells per fresh Chrome process, GUARD_ONLY=true",
+  "finalProtocol": "A/C/C/A; guards before stacked fills; otherwise unchanged 250ms warmup, 7x100ms batches and 10 cells",
+  "result": "large Chrome gap regression not reproduced in isolated/final controls; large stack gains retained; small residual shifts inconclusive",
+  "candidateSHA256": {
+    "lib/src/plugins/plugin.filler/filler.target.stack.dart": "fa9c65676877c91f33c0652b6a11fc1aeaa1a339816c33de07f6abfdbb3ea750",
+    "lib/src/plugins/plugin.filler/stack_point_search.dart": "238c5ef2d01aa1fa0da1386cbe19038242f1cd1b6ee2ef75d5755f5de960585b",
+    "lib/src/helpers/helpers.segment.dart": "af1735db06bbc9a1b46a2c6445f5ea36b966f83d7cc3559cd4845bfd4b906c4e",
+    "lib/helpers.dart": "4fb50d8576e84a7f8749dbb5eae944d895e8233a29a52620b238a09bd6dc7cdf"
+  },
+  "limitations": [
+    "No confidence intervals from two pairs",
+    "No claim that a specific GC/JIT mechanism was established",
+    "Two setup runs executed 10 rather than 2 cells because query-based selection failed; excluded from isolated comparison by row-count validation",
+    "No mobile measurements; CPU timings, not FPS/raster"
+  ],
+  "initialEvidence": "../measurements.json.gz and ../candidate.patch retained unchanged"
+}

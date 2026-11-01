@@ -1,0 +1,4 @@
+import 'dart:io';
+Future<void> finish(String data) async { exit(0); }
+
+bool get isolatedGuard => Platform.environment['STACK_GUARD'] == '1';
