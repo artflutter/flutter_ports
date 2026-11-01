@@ -1,0 +1,232 @@
+[
+  {
+    "case": "chart.a",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 0.28500000000000003,
+    "candidate_ms": 0.28150000000000003,
+    "change_ms": -0.003500000000000003,
+    "saved_percent": 1.2280701754386003,
+    "paired_saved_percent": [
+      -0.3571428571428559,
+      2.758620689655178
+    ],
+    "process_values": {
+      "A": [
+        0.28,
+        0.29000000000000004
+      ],
+      "B": [
+        0.281,
+        0.28200000000000003
+      ]
+    }
+  },
+  {
+    "case": "chart.b",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 0.8145,
+    "candidate_ms": 0.831,
+    "change_ms": 0.01649999999999996,
+    "saved_percent": -2.02578268876612,
+    "paired_saved_percent": [
+      -2.6151930261519407,
+      -1.4527845036319542
+    ],
+    "process_values": {
+      "A": [
+        0.8029999999999999,
+        0.826
+      ],
+      "B": [
+        0.824,
+        0.838
+      ]
+    }
+  },
+  {
+    "case": "fill.radar",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 0.9125000000000001,
+    "candidate_ms": 0.9025000000000001,
+    "change_ms": -0.010000000000000009,
+    "saved_percent": 1.0958904109588996,
+    "paired_saved_percent": [
+      1.758241758241763,
+      0.43715846994535346
+    ],
+    "process_values": {
+      "A": [
+        0.91,
+        0.915
+      ],
+      "B": [
+        0.894,
+        0.911
+      ]
+    }
+  },
+  {
+    "case": "fill.radar",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 3.645,
+    "candidate_ms": 3.5845000000000002,
+    "change_ms": -0.060499999999999776,
+    "saved_percent": 1.6598079561042423,
+    "paired_saved_percent": [
+      1.746478873239432,
+      1.5775401069518802
+    ],
+    "process_values": {
+      "A": [
+        3.55,
+        3.74
+      ],
+      "B": [
+        3.488,
+        3.681
+      ]
+    }
+  },
+  {
+    "case": "fill.stack",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 1.8045,
+    "candidate_ms": 1.7675,
+    "change_ms": -0.03699999999999992,
+    "saved_percent": 2.050429481850924,
+    "paired_saved_percent": [
+      2.169076751946608,
+      1.9326339039204776
+    ],
+    "process_values": {
+      "A": [
+        1.798,
+        1.811
+      ],
+      "B": [
+        1.7590000000000001,
+        1.776
+      ]
+    }
+  },
+  {
+    "case": "fill.stack",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 8.5775,
+    "candidate_ms": 8.2405,
+    "change_ms": -0.33699999999999974,
+    "saved_percent": 3.9288837073739424,
+    "paired_saved_percent": [
+      0.16534782095194434,
+      7.596685082872911
+    ],
+    "process_values": {
+      "A": [
+        8.467,
+        8.687999999999999
+      ],
+      "B": [
+        8.453,
+        8.028
+      ]
+    }
+  },
+  {
+    "case": "fill.gaps",
+    "n": 100,
+    "call": "draw",
+    "baseline_ms": 0.4855,
+    "candidate_ms": 0.362,
+    "change_ms": -0.1235,
+    "saved_percent": 25.437693099897018,
+    "paired_saved_percent": [
+      25.103734439834025,
+      25.76687116564417
+    ],
+    "process_values": {
+      "A": [
+        0.482,
+        0.489
+      ],
+      "B": [
+        0.361,
+        0.363
+      ]
+    }
+  },
+  {
+    "case": "fill.gaps",
+    "n": 100,
+    "call": "update",
+    "baseline_ms": 1.244,
+    "candidate_ms": 1.1515,
+    "change_ms": -0.09250000000000003,
+    "saved_percent": 7.435691318327975,
+    "paired_saved_percent": [
+      7.413376309427866,
+      7.457898957497989
+    ],
+    "process_values": {
+      "A": [
+        1.2409999999999999,
+        1.247
+      ],
+      "B": [
+        1.149,
+        1.1540000000000001
+      ]
+    }
+  },
+  {
+    "case": "fill.gaps",
+    "n": 1000,
+    "call": "draw",
+    "baseline_ms": 10.704,
+    "candidate_ms": 5.339,
+    "change_ms": -5.365,
+    "saved_percent": 50.12144992526159,
+    "paired_saved_percent": [
+      50.238741690852905,
+      50.00466113545259
+    ],
+    "process_values": {
+      "A": [
+        10.681,
+        10.727
+      ],
+      "B": [
+        5.315,
+        5.363
+      ]
+    }
+  },
+  {
+    "case": "fill.gaps",
+    "n": 1000,
+    "call": "update",
+    "baseline_ms": 14.914,
+    "candidate_ms": 8.183,
+    "change_ms": -6.731,
+    "saved_percent": 45.13209065307765,
+    "paired_saved_percent": [
+      40.4104183109708,
+      49.27317349443081
+    ],
+    "process_values": {
+      "A": [
+        13.937,
+        15.891
+      ],
+      "B": [
+        8.305,
+        8.061
+      ]
+    }
+  }
+]

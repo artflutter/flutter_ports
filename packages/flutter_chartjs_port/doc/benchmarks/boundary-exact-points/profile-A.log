@@ -1,0 +1,5 @@
+--------- beginning of main
+The Dart VM service is listening on http://127.0.0.1:45573/xhdlEEhX4y8=/
+[IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+GAP_PROFILE_START
+GAP_PROFILE_END {"mode":"fill","case":"gaps","n":1000,"datasets":3,"call":"draw","primary":"draw+end","iterations":1470,"notifies":10,"drawMedianMs":"10.572","drawP10Ms":"10.218","drawP90Ms":"10.852","endMedianMs":"0.122","endP10Ms":"0.117","endP90Ms":"0.125","elementsMedianMs":"0.000","elementsP10Ms":"0.000","elementsP90Ms":"0.000","layoutMedianMs":"0.000","layoutP10Ms":"0.000","layoutP90Ms":"0.000","datasetsUpdateMedianMs":"0.000","datasetsUpdateP10Ms":"0.000","datasetsUpdateP90Ms":"0.000","datasetsDrawMedianMs":"10.483","datasetsDrawP10Ms":"10.136","datasetsDrawP90Ms":"10.767","batches":30,"batchIterations":49,"batchMs":500,"warmupMs":1000,"warmupIterations":97,"width":800,"height":480,"dpr":1,"build":"profile","platform":"android","startMs":1793575928313,"wallMs":16809}

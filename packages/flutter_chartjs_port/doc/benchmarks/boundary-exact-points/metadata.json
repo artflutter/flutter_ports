@@ -1,0 +1,22 @@
+{
+  "baseline": "34418049c791285fdc684a337b44b9a1f0c17e4a",
+  "date": "2026-11-02",
+  "candidate": "uncommitted boundary exact-point lookup",
+  "sourceSha256": {
+    "lib/src/plugins/plugin.filler/filler.drawing.dart": "ff1d51077e2cc05958ebc19979fe5d3d535d11ea93772cf87647ce2026705e6f",
+    "lib/src/plugins/plugin.filler/boundary_point_search.dart": "d86b4f119b72773197b2b05804521a3843e9b9debe80c81f55b1669c98177535"
+  },
+  "device": "Pixel 8a",
+  "android": "google/akita/akita:17/CP3A.261005.005/16271449:user/release-keys",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "order": [
+    "A",
+    "B",
+    "B",
+    "A"
+  ],
+  "profileSamples": 12984,
+  "casesPerRun": 10,
+  "validation": "two pairs, directional CPU evidence only; no raster or FPS measurement"
+}

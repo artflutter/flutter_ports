@@ -1,0 +1,147 @@
+--- a/lib/src/plugins/plugin.filler/filler.drawing.dart
++++ b/lib/src/plugins/plugin.filler/filler.drawing.dart
+@@ -29,0 +30,2 @@
++// DIVERGES(chartjs): adapt-boundary-exact-points, private boundary endpoints.
++import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
+@@ -54,0 +57,8 @@
++  // DIVERGES(chartjs): adapt-boundary-exact-points, capture target provenance
++  // before getTarget calls a scale or any user code. These modes create a fresh
++  // boundary, not a dataset line accessible to callbacks during drawing.
++  final fill = source.fill;
++  final linearBoundary =
++      fill is String &&
++      (fill == 'origin' || fill == 'start' || fill == 'end') &&
++      source.scale is! types.RadialLinearScale;
+@@ -88,0 +99 @@
++      linearBoundary: linearBoundary,
+@@ -175,0 +187 @@
++  required bool linearBoundary,
+@@ -177,0 +190,6 @@
++
++  // DIVERGES(chartjs): adapt-boundary-exact-points, the private target cannot
++  // change during the two color passes. Rebuild the index on every draw.
++  final boundarySearch = linearBoundary
++      ? BoundaryPointSearch.create(target, property)
++      : null;
+@@ -192,0 +211 @@
++        boundarySearch: boundarySearch,
+@@ -207,0 +227 @@
++        boundarySearch: boundarySearch,
+@@ -223,0 +244 @@
++    boundarySearch: boundarySearch,
+@@ -330,0 +352 @@
++  required BoundaryPointSearch? boundarySearch,
+@@ -366 +388,2 @@
+-        interpolatedLineTo(ctx, target, end, property);
++        // DIVERGES(chartjs): adapt-boundary-exact-points, private endpoint.
++        _boundaryLineTo(ctx, target, end, property, boundarySearch);
+@@ -377 +400,2 @@
+-        interpolatedLineTo(ctx, target, start, property);
++        // DIVERGES(chartjs): adapt-boundary-exact-points, private endpoint.
++        _boundaryLineTo(ctx, target, start, property, boundarySearch);
+@@ -384,0 +409,17 @@
++  }
++}
++
++// DIVERGES(chartjs): adapt-boundary-exact-points, original interpolation
++// for every nonmatching endpoint and every target outside the narrow shortcut.
++void _boundaryLineTo(
++  CanvasRenderingContext2D ctx,
++  Object target,
++  types.PointElement point,
++  String property,
++  BoundaryPointSearch? search,
++) {
++  final exact = search?.find(point);
++  if (exact == null) {
++    interpolatedLineTo(ctx, target, point, property);
++  } else {
++    ctx.lineTo(exact.x, exact.y);
+--- /dev/null
++++ b/lib/src/plugins/plugin.filler/boundary_point_search.dart
+@@ -0,0 +1,85 @@
++// Original code, not ported from Chart.js: fill boundary endpoint search.
++
++import 'package:flutter_chartjs_port/src/elements/element.line.dart';
++import 'package:flutter_chartjs_port/src/elements/element.point.dart';
++import 'package:flutter_chartjs_port/src/types/index.dart' as types;
++import 'package:meta/meta.dart';
++
++/// Allows differential tests to use the original boundary interpolation.
++@visibleForTesting
++bool boundaryPointSearchEnabled = true;
++
++/// Exact endpoint lookup for a newly constructed, private linear fill boundary.
++///
++/// Only drawfill's origin/start/end targets qualify. They contain fresh points,
++/// have no user callbacks, and cannot be reached by user code during the draw.
++/// This index must not be retained on a chart or used for dataset targets.
++final class BoundaryPointSearch {
++  BoundaryPointSearch._(this._points, this._horizontal);
++
++  final List<types.PointElement> _points;
++  final bool _horizontal;
++
++  /// Validates the private boundary once for this draw. Reversed, degenerate,
++  /// non-finite and tolerance-adjacent coordinates use original interpolation.
++  static BoundaryPointSearch? create(Object target, String property) {
++    if (!boundaryPointSearchEnabled ||
++        target.runtimeType != LineElement ||
++        (property != 'x' && property != 'y')) {
++      return null;
++    }
++    final line = target as LineElement;
++    final points = line.points;
++    // createBoundaryLine makes this ordinary growable list itself. Never read
++    // a user list or overridden point getter while validating the shortcut.
++    if (line.loop == true ||
++        points.runtimeType != <types.PointElement>[].runtimeType ||
++        points.length < 4 ||
++        points.any((point) => point.runtimeType != PointElement)) {
++      return null;
++    }
++    final horizontal = property == 'x';
++    final fixed = horizontal ? points.first.y : points.first.x;
++    if (!fixed.isFinite) return null;
++    var previous = double.negativeInfinity;
++    for (final point in points) {
++      final value = horizontal ? point.x : point.y;
++      if (!value.isFinite ||
++          (horizontal ? point.y : point.x) != fixed ||
++          (point.skip ?? false) ||
++          (point.stop ?? false)) {
++        return null;
++      }
++      if (previous.isFinite) {
++        // Beyond isBetween's 1e-6 tolerance, including rounding at large
++        // coordinates. An exact hit then gives only the bound segment [i, i].
++        final margin = 1e-5 + (value.abs() + previous.abs()) * 1e-12;
++        if (!(value - previous > margin)) return null;
++      }
++      previous = value;
++    }
++    return BoundaryPointSearch._(points, horizontal);
++  }
++
++  /// Returns the same point as interpolate's single [i, i] result. A miss
++  /// leaves interpolation, including its tolerance and arithmetic, unchanged.
++  types.PointElement? find(types.PointElement point) {
++    if (point.runtimeType != PointElement) return null;
++    final value = _horizontal ? point.x : point.y;
++    if (!value.isFinite) return null;
++    var low = 0;
++    var high = _points.length;
++    while (low < high) {
++      final middle = (low + high) >> 1;
++      final candidate = _horizontal ? _points[middle].x : _points[middle].y;
++      if (candidate < value) {
++        low = middle + 1;
++      } else {
++        high = middle;
++      }
++    }
++    if (low == _points.length) return null;
++    final result = _points[low];
++    return (_horizontal ? result.x : result.y) == value ? result : null;
++  }
++}
