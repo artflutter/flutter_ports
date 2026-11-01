@@ -279,6 +279,7 @@ void main() {
           copyReference(controllerPolarAreaReference.first.config)!
               as AnyObject;
       config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });
   });

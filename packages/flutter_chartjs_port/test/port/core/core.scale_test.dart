@@ -3,8 +3,11 @@
 library;
 
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
@@ -23,6 +26,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import 'scale_reference.dart';
 
 // The chart cases of core.scale.tests.js need a chart controller (phase 7).
@@ -293,7 +297,9 @@ final Map<String, Object> _functions = {
         '${(self! as Scale).type}${jsToString(value)}',
   ),
   'colorByIndex': (Object? ctx) =>
-      jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2)) ? 'red' : 'blue',
+      jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2))
+      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
   'widthByIndex': (Object? ctx) =>
       jsGet(ctx, 'type') == 'tick' ? jsToNumber(jsGet(ctx, 'index')) + 1 : 5.0,
   'undefinedOddWidth': (Object? ctx) =>
@@ -305,7 +311,9 @@ final Map<String, Object> _functions = {
   },
   'colorByMajor': (Object? ctx) {
     final tick = jsGet(ctx, 'tick');
-    return tick is Tick && (tick.major ?? false) ? 'red' : 'grey';
+    return tick is Tick && (tick.major ?? false)
+        ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        : const native_ui.Color.fromRGBO(128, 128, 128, 1);
   },
   'dropFirst': (Object? scale) {
     final s = scale! as Scale;
@@ -327,6 +335,7 @@ Object? _copy(Object? value) => switch (value) {
 /// A matcher of a reference value: numbers with [closeTo], NaN with
 /// [isNaN], lists and maps item by item, other values with `==`.
 Object? _matcher(Object? expected) => switch (expected) {
+  final String text when isReferenceColor(text) => referenceColorOrString(text),
   final num n when n.isNaN => isNaN,
   final num n when n.isInfinite => equals(n),
   final num n => closeTo(n, 1e-9),
@@ -583,6 +592,7 @@ final class _SubScale extends _TestScale {
 }
 
 void main() {
+  installNativeColorCodec();
   setUpDefaultsRestore();
 
   test('the reference comes from Node.js v24.22.1 on arm64', () {

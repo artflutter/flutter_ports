@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/core/core.controller.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 
 /// Port of `src/core/core.controller.js`: the class [Chart].
 ///
@@ -33,6 +34,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show Config, determineAxis, getIndexAxis;
@@ -62,6 +64,9 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show Debounced, debounce;
 import 'package:flutter_chartjs_port/src/helpers/index.dart'
+    as helpers
+    show isPointInArea;
+import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show
         ContextObject,
         clearCanvas,
@@ -71,9 +76,6 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart'
         isDomSupported,
         retinaScale,
         unclipArea;
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
-    as helpers
-    show isPointInArea;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
@@ -617,6 +619,17 @@ final class _ActiveElement implements types.ActiveElement {
   final double index;
 }
 
+Config _colorConfig(Object? userConfig) {
+  installNativeColorCodec();
+  validateChartColors(userConfig);
+  return Config(userConfig);
+}
+
+core_defaults.Defaults _nativeDefaults() {
+  installNativeColorCodec();
+  return core_defaults.defaults;
+}
+
 /// core.controller.js:103 `Chart`.
 class Chart implements types.Chart {
   /// core.controller.js:123 `constructor(item, userConfig)`.
@@ -633,7 +646,9 @@ class Chart implements types.Chart {
   ///
   /// `console.error` is a `print` of the message.
   // eslint-disable-next-line max-statements
-  Chart(Object? item, [Object? userConfig]) : config = Config(userConfig) {
+  Chart(Object? item, [Object? userConfig])
+    : config = _colorConfig(userConfig) {
+    installNativeColorCodec();
     final config = this.config;
     final initialCanvas = _getCanvas(item);
     final existingChart = _getChart(initialCanvas);
@@ -717,14 +732,17 @@ class Chart implements types.Chart {
   }
 
   /// core.controller.js:105 `static defaults = defaults`.
-  static final core_defaults.Defaults defaults = core_defaults.defaults;
+  static final core_defaults.Defaults defaults = _nativeDefaults();
 
   /// core.controller.js:106 `static instances = instances`: the charts by
   /// the `ToString` of their [id] (index.d.ts:594).
   static final Map<String, Chart> instances = _instances;
 
   /// core.controller.js:107 `static overrides = overrides`.
-  static OverridesByTypeScope get overrides => core_defaults.overrides;
+  static OverridesByTypeScope get overrides {
+    installNativeColorCodec();
+    return core_defaults.overrides;
+  }
 
   /// core.controller.js:108 `static registry = registry`.
   static final core_registry.Registry registry = core_registry.registry;

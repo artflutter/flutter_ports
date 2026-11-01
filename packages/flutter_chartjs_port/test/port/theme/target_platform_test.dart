@@ -2,7 +2,11 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -38,6 +42,7 @@ bool _isObject(Object? value) =>
     value is Map<String, Object?> || value is JsObjectFace;
 
 void main() {
+  installNativeColorCodec();
   test('the compiled light preset is the same on each target platform', () {
     final expected = _leaves(compileChartTheme(_copy(ChartThemes.light)));
     expect(expected, isNotEmpty);
@@ -57,7 +62,7 @@ void main() {
             config.chartOptionScopes(),
             <String, Object?>{},
           )['color'],
-          'rgba(102, 102, 102, 1)',
+          const native_ui.Color.fromRGBO(102, 102, 102, 1),
           reason: '$platform',
         );
       } finally {

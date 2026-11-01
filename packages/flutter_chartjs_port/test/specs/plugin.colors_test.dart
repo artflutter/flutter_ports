@@ -1,8 +1,13 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.colors.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
@@ -32,16 +37,25 @@ JsObjectFace? _options(Object element) =>
     (element as Element).options as JsObjectFace?;
 
 void main() {
+  installNativeColorCodec();
   group('Plugin.colors', () {
     group('auto', fixture.specs('plugin.colors'));
 
     group('Plugin.colors.chartDefaults', () {
       void beforeAll() {
-        defaults['backgroundColor'] = <Object?>['green', 'yellow'];
+        defaults['backgroundColor'] = <Object?>[
+          const native_ui.Color.fromRGBO(0, 128, 0, 1),
+          const native_ui.Color.fromRGBO(255, 255, 0, 1),
+        ];
       }
 
       void afterAll() {
-        defaults['backgroundColor'] = 'rgba(0,0,0,0.1)';
+        defaults['backgroundColor'] = const native_ui.Color.fromRGBO(
+          0,
+          0,
+          0,
+          0.1,
+        );
       }
 
       testWidgets('should not use colors plugin when chart defaults are '
@@ -67,8 +81,14 @@ void main() {
         });
 
         final meta = chart.getDatasetMeta(0);
-        expect(_options(meta.data[0])!['backgroundColor'], 'green');
-        expect(_options(meta.data[1])!['backgroundColor'], 'yellow');
+        expect(
+          _options(meta.data[0])!['backgroundColor'],
+          const native_ui.Color.fromRGBO(0, 128, 0, 1),
+        );
+        expect(
+          _options(meta.data[1])!['backgroundColor'],
+          const native_ui.Color.fromRGBO(255, 255, 0, 1),
+        );
       });
     });
   });

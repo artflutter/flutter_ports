@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
 
@@ -638,13 +640,24 @@ void main() {
     test('finds a prefixed key', () {
       final resolver = createResolver(
         [
-          <String, Object?>{'hoverColor': 'red'},
+          <String, Object?>{
+            'hoverColor': const color_values.PreparedColor(255, 0, 0, 1),
+          },
         ],
         ['hover', ''],
       );
-      expect(resolveObjectKey(resolver, 'color'), 'red');
-      expect(resolveObjectKey({'o': resolver}, 'o.color'), 'red');
-      expect(resolveObjectKey(attachContext(resolver, {}), 'color'), 'red');
+      expect(
+        resolveObjectKey(resolver, 'color'),
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
+      expect(
+        resolveObjectKey({'o': resolver}, 'o.color'),
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
+      expect(
+        resolveObjectKey(attachContext(resolver, {}), 'color'),
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
       expect(resolveObjectKey(resolver, '_fallback'), same(undefined));
     });
 

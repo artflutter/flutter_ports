@@ -6,9 +6,12 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -98,6 +101,7 @@ typedef _Case = ({
 });
 
 void main() {
+  installNativeColorCodec();
   final cases = _cases();
   final names = <String>[];
   final stems = <String>{};
@@ -315,6 +319,7 @@ String _run(_Case c, {required bool wrap}) {
   final out = StringBuffer();
   final trace = <String>[];
   final input = c.make();
+  nativeFixtureColors(input.config);
   if (wrap) _wrapFunctions(input.config, 'config', trace);
   try {
     withClock(Clock.fixed(_now), () {
@@ -620,6 +625,9 @@ String _throwText(Object e) => switch (e) {
 String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
   if (identical(value, undefined)) return 'undefined';
   switch (value) {
+    case final native_ui.Color color:
+      return 'Color(${color.colorSpace.name}; '
+          '${[color.a, color.r, color.g, color.b].map(jsNumberToString).join(', ')})';
     case null:
       return 'null';
     case final bool b:
@@ -814,9 +822,19 @@ bool _isObject(Object? value) =>
 
 const int _n = 50;
 
-const String _background = 'rgba(54, 162, 235, 0.45)';
+const native_ui.Color _background = native_ui.Color.fromRGBO(
+  54,
+  162,
+  235,
+  0.45,
+);
 
-const String _backgroundOdd = 'rgba(255, 99, 132, 0.45)';
+const native_ui.Color _backgroundOdd = native_ui.Color.fromRGBO(
+  255,
+  99,
+  132,
+  0.45,
+);
 
 /// `stressScriptableBackground` of the gallery.
 Object? _scriptableBackground(Object? context) =>
@@ -908,7 +926,7 @@ Map<String, Object?> _benchConfig(
         <String, Object?>{
           'data': data,
           'backgroundColor': backgroundColor,
-          'borderColor': '#36A2EB',
+          'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
           'borderWidth': 1.0,
           if (points) ...<String, Object?>{
             'pointStyle': 'circle',
@@ -1081,7 +1099,8 @@ _Case _animationDefaultsCase() {
 }
 
 /// A scriptable option with a constant result.
-Object? _constantBackground(Object? ctx) => 'rgba(0, 0, 0, 0.1)';
+Object? _constantBackground(Object? ctx) =>
+    const native_ui.Color.fromRGBO(0, 0, 0, 0.1);
 
 double _index(Object? ctx) => switch (_dataIndex(ctx)) {
   final double i => i,
@@ -1096,7 +1115,9 @@ final List<_Case> _focusedCases = [
         'data': _values(6),
         'pointRadius': (Object? ctx) => 2 + _index(ctx) % 3,
         'borderColor': (Object? ctx, Object? options) =>
-            jsGet(ctx, 'type') == 'dataset' ? '#ff0000' : '#00ff00',
+            jsGet(ctx, 'type') == 'dataset'
+            ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+            : const native_ui.Color.fromRGBO(0, 255, 0, 1),
       },
     ]),
   ),
@@ -1109,8 +1130,9 @@ final List<_Case> _focusedCases = [
       options: <String, Object?>{
         'datasets': <String, Object?>{
           'line': <String, Object?>{
-            'pointBackgroundColor': (Object? ctx) =>
-                _index(ctx) > 2 ? 'red' : 'blue',
+            'pointBackgroundColor': (Object? ctx) => _index(ctx) > 2
+                ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+                : const native_ui.Color.fromRGBO(0, 0, 255, 1),
           },
         },
       },
@@ -1153,7 +1175,11 @@ final List<_Case> _focusedCases = [
       <String, Object?>{
         'data': _values(6),
         'pointRadius': <Object?>[2.0, 4.0, 6.0],
-        'pointBackgroundColor': <Object?>['red', 'green', 'blue'],
+        'pointBackgroundColor': <Object?>[
+          const native_ui.Color.fromRGBO(255, 0, 0, 1),
+          const native_ui.Color.fromRGBO(0, 128, 0, 1),
+          const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ],
         'borderDash': <Object?>[4.0, 2.0],
       },
     ]),
@@ -1164,8 +1190,9 @@ final List<_Case> _focusedCases = [
       <String, Object?>{
         'data': _values(6),
         'pointHoverRadius': 7.0,
-        'hoverBackgroundColor': (Object? ctx) =>
-            jsGet(ctx, 'active') == true ? 'red' : 'blue',
+        'hoverBackgroundColor': (Object? ctx) => jsGet(ctx, 'active') == true
+            ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+            : const native_ui.Color.fromRGBO(0, 0, 255, 1),
         'pointHoverBorderWidth': (Object? ctx) => 1 + _index(ctx),
       },
     ]),
@@ -1217,7 +1244,8 @@ final List<_Case> _focusedCases = [
         'interaction': <String, Object?>{'axis': 'x'},
         'plugins': <String, Object?>{
           'tooltip': <String, Object?>{
-            'backgroundColor': (Object? ctx) => 'rgba(1, 2, 3, 0.5)',
+            'backgroundColor': (Object? ctx) =>
+                const native_ui.Color.fromRGBO(1, 2, 3, 0.5),
             'callbacks': <String, Object?>{
               'label': (Object? item) => 'item',
             },
@@ -1225,7 +1253,8 @@ final List<_Case> _focusedCases = [
           'legend': <String, Object?>{
             'labels': <String, Object?>{
               'font': (Object? ctx) => <String, Object?>{'size': 11.0},
-              'color': (Object? ctx) => '#333333',
+              'color': (Object? ctx) =>
+                  const native_ui.Color.fromRGBO(51, 51, 51, 1),
             },
           },
         },
@@ -1431,8 +1460,9 @@ final List<_Case> _focusedCases = [
       [
         <String, Object?>{
           'data': _values(6, 1),
-          'backgroundColor': (Object? ctx) =>
-              _index(ctx).toInt().isEven ? 'red' : 'blue',
+          'backgroundColor': (Object? ctx) => _index(ctx).toInt().isEven
+              ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+              : const native_ui.Color.fromRGBO(0, 0, 255, 1),
         },
       ],
       type: 'polarArea',

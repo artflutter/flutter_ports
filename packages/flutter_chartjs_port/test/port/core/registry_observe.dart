@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
+import '../../support/color_json.dart';
+
 /// The observations of one scenario: one line `<label>: <value>` for each
 /// [observe] call, and the labels of the known objects.
 final class Observations {
@@ -37,7 +39,7 @@ final class Observations {
   void observe(String what, Object? value) => _lines.add('$what: $value');
 
   /// The lines, as the generator joins them.
-  String get text => _lines.join('\n');
+  String get text => referenceColorTokens(_lines.join('\n'));
 
   /// `JSON.stringify(value, replacer)` with the replacer of the generator:
   /// a labelled object is `"<label>"`, [undefined] is `"<undefined>"`, and
@@ -49,6 +51,9 @@ final class Observations {
         : _labels[value];
     if (label != null) return jsonEncode('<$label>');
     return switch (value) {
+      _ when nativeColorBytes(value) != null => jsonEncode(
+        nativeColorBytes(value),
+      ),
       null => 'null',
       Undefined() => '"<undefined>"',
       final bool b => b ? 'true' : 'false',

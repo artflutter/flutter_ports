@@ -1,10 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.canvas.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
+
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     as helpers;
@@ -184,6 +189,7 @@ final class _Opts implements RenderTextOpts {
 }
 
 void main() {
+  installNativeColorCodec();
   group('Chart.helpers.canvas', () {
     // Chart.js v4.5.1+7169e651 has no `test/fixtures/helpers` directory, so
     // the group has 0 fixtures.
@@ -503,7 +509,7 @@ void main() {
           0,
           0,
           font,
-          const _Opts(color: 'red'),
+          const _Opts(color: native_ui.Color.fromRGBO(255, 0, 0, 1)),
         );
 
         expect(context.getCalls(), [
@@ -514,7 +520,7 @@ void main() {
           },
           {
             'name': 'setFillStyle',
-            'args': ['red'],
+            'args': [const native_ui.Color.fromRGBO(255, 0, 0, 1)],
           },
           {
             'name': 'fillText',
@@ -533,7 +539,10 @@ void main() {
           0,
           0,
           font,
-          const _Opts(strokeColor: 'red', strokeWidth: 2),
+          const _Opts(
+            strokeColor: native_ui.Color.fromRGBO(255, 0, 0, 1),
+            strokeWidth: 2,
+          ),
         );
         expect(context.getCalls(), [
           {'name': 'save', 'args': <Object?>[]},
@@ -543,7 +552,7 @@ void main() {
           },
           {
             'name': 'setStrokeStyle',
-            'args': ['red'],
+            'args': [const native_ui.Color.fromRGBO(255, 0, 0, 1)],
           },
           {
             'name': 'setLineWidth',

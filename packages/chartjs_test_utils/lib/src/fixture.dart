@@ -1,4 +1,5 @@
 // Ported from chartjs-test-utils v0.4.0 src/fixture.js (MIT, chartjs-test-utils Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, migrate frozen fixture colors.
 
 /// Port of `src/fixture.js`: the fixture smoke runner (Chart.js ADR 0029).
 ///
@@ -52,6 +53,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:chartjs_test_utils/src/dom.dart' show pumpFrame, pumpFrames;
+import 'package:chartjs_test_utils/src/native_colors.dart';
 import 'package:chartjs_test_utils/src/utils.dart' as utils;
 // The harness keeps the charts of flutter_chartjs_port, which does not export
 // lib/src.
@@ -352,6 +354,7 @@ void specFromFixture(String description, String input, FixtureInputs inputs) {
     }
 
     final fixtureOptions = json['options'] as Map<String, Object?>?;
+    nativeFixtureColors(config);
     final chart = utils.acquireChart(config, fixtureOptions); // :50
     try {
       final run = fixtureOptions == null

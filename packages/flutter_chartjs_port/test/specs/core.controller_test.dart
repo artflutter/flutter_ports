@@ -1,12 +1,17 @@
 // Ported from Chart.js v4.6.1 test/specs/core.controller.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
+
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -163,6 +168,7 @@ void _unshift(List<Object?> array, List<Object?> items) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('Chart', () {
     // https://github.com/chartjs/Chart.js/issues/2481
     // See global.deprecations.tests.js for backward compatibility
@@ -2922,8 +2928,13 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'data': <Object?>[1, 2, 3],
-                'borderColor': 'red',
-                'hoverBorderColor': 'blue',
+                'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+                'hoverBorderColor': const native_ui.Color.fromRGBO(
+                  0,
+                  0,
+                  255,
+                  1,
+                ),
               },
             ],
           },
@@ -2932,14 +2943,20 @@ void main() {
         final meta = chart.getDatasetMeta(0);
         final arc0 = meta.data[0] as Element;
         var props = arc0.getProps(const ['borderColor']);
-        expect(jsGet(props['options'], 'borderColor'), jasmineEquals('red'));
+        expect(
+          jsGet(props['options'], 'borderColor'),
+          jasmineEquals(const native_ui.Color.fromRGBO(255, 0, 0, 1)),
+        );
 
         chart.setActiveElements(<Object?>[
           <String, Object?>{'datasetIndex': 0, 'index': 0},
         ]);
 
         props = arc0.getProps(const ['borderColor']);
-        expect(jsGet(props['options'], 'borderColor'), jasmineEquals('blue'));
+        expect(
+          jsGet(props['options'], 'borderColor'),
+          jasmineEquals(const native_ui.Color.fromRGBO(0, 0, 255, 1)),
+        );
 
         final active = chart.getActiveElements();
         expect(active.length, jasmineEquals(1));
@@ -2957,8 +2974,13 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'data': <Object?>[1, 2, 3],
-                'borderColor': 'red',
-                'hoverBorderColor': 'blue',
+                'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+                'hoverBorderColor': const native_ui.Color.fromRGBO(
+                  0,
+                  0,
+                  255,
+                  1,
+                ),
               },
             ],
           },
@@ -2969,7 +2991,10 @@ void main() {
         final point1 = meta.data[1] as Element;
 
         final props = point0.getProps(const ['borderColor']);
-        expect(jsGet(props['options'], 'borderColor'), jasmineEquals('red'));
+        expect(
+          jsGet(props['options'], 'borderColor'),
+          jasmineEquals(const native_ui.Color.fromRGBO(255, 0, 0, 1)),
+        );
 
         await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
           'x': point0.x,
@@ -2987,11 +3012,11 @@ void main() {
         );
         expect(
           (point0.options! as JsObjectFace)['borderColor'],
-          jasmineEquals('blue'),
+          jasmineEquals(const native_ui.Color.fromRGBO(0, 0, 255, 1)),
         );
         expect(
           (point1.options! as JsObjectFace)['borderColor'],
-          jasmineEquals('red'),
+          jasmineEquals(const native_ui.Color.fromRGBO(255, 0, 0, 1)),
         );
 
         chart.setActiveElements(<Object?>[
@@ -3009,11 +3034,11 @@ void main() {
         );
         expect(
           (point0.options! as JsObjectFace)['borderColor'],
-          jasmineEquals('red'),
+          jasmineEquals(const native_ui.Color.fromRGBO(255, 0, 0, 1)),
         );
         expect(
           (point1.options! as JsObjectFace)['borderColor'],
-          jasmineEquals('blue'),
+          jasmineEquals(const native_ui.Color.fromRGBO(0, 0, 255, 1)),
         );
 
         chart.update();
@@ -3029,11 +3054,11 @@ void main() {
         );
         expect(
           (point0.options! as JsObjectFace)['borderColor'],
-          jasmineEquals('red'),
+          jasmineEquals(const native_ui.Color.fromRGBO(255, 0, 0, 1)),
         );
         expect(
           (point1.options! as JsObjectFace)['borderColor'],
-          jasmineEquals('blue'),
+          jasmineEquals(const native_ui.Color.fromRGBO(0, 0, 255, 1)),
         );
       },
     );

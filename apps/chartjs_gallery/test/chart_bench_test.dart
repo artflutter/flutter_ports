@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: tests of the chart benchmark.
 
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
@@ -9,6 +10,8 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter/material.dart' hide Title, Tooltip;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // Not public: UiCanvasElement, the canvas of the internal host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
     show UiCanvasElement;
@@ -121,6 +124,7 @@ double _median(Map<String, Object?> line, String part) =>
     double.parse(line['${part}MedianMs']! as String);
 
 void main() {
+  installNativeColorCodec();
   testWidgets('main_bench prints one BENCH line for a tiny case', (
     tester,
   ) async {
@@ -1231,9 +1235,18 @@ void main() {
       expect(dataset['backgroundColor'], isNotNull, reason: type);
       final element = chart.getDatasetMeta(0).data.first;
       for (final (color, surface) in [
-        ('rgba(153, 153, 153, 1)', 'rgba(0, 0, 0, 1)'),
-        ('rgba(102, 102, 102, 1)', 'rgba(255, 255, 255, 1)'),
-        ('rgba(153, 153, 153, 1)', 'rgba(0, 0, 0, 1)'),
+        (
+          const native_ui.Color.fromRGBO(153, 153, 153, 1),
+          const native_ui.Color.fromRGBO(0, 0, 0, 1),
+        ),
+        (
+          const native_ui.Color.fromRGBO(102, 102, 102, 1),
+          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
+        (
+          const native_ui.Color.fromRGBO(153, 153, 153, 1),
+          const native_ui.Color.fromRGBO(0, 0, 0, 1),
+        ),
       ]) {
         scene.frame!(chart);
         expect(chart.options['color'], color, reason: type);
@@ -1280,8 +1293,8 @@ void main() {
     addTearDown(chart.destroy);
     scene.prepare!(chart);
     final element = chart.getDatasetMeta(0).data.first;
-    const black = 'rgba(0, 0, 0, 1)';
-    const white = 'rgba(255, 255, 255, 1)';
+    const black = native_ui.Color.fromRGBO(0, 0, 0, 1);
+    const white = native_ui.Color.fromRGBO(255, 255, 255, 1);
     expect((element.options! as JsObjectFace)['borderColor'], white);
     final borders = <Object?>[];
     for (var i = 0; i < 2 * chartBenchFadeFrames; i++) {
@@ -1291,8 +1304,7 @@ void main() {
     const f = chartBenchFadeFrames;
     // The arc border animates from the light surface to the dark surface in
     // the first transition and back in the second one. The colors
-    // interpolator gives the hex string of a grey between the ends
-    // (core.animations.defaults.js, the `hexString` of @kurkle/color), and
+    // interpolator gives a native grey Color between the ends, and
     // the last frame gives the end value.
     expect(borders[f - 1], black);
     expect(borders[2 * f - 1], white);
@@ -1302,7 +1314,7 @@ void main() {
     ];
     for (final border in between) {
       expect(border, isNot(anyOf(black, white)));
-      expect(border, matches(RegExp(r'^#([0-9A-F]{3}|[0-9A-F]{6})$')));
+      expect(border, isA<Color>());
     }
     expect(between.toSet(), hasLength(between.length));
     // The timed case draws in each frame only for the doughnut: in the

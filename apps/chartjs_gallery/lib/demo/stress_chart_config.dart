@@ -5,6 +5,7 @@
 
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 // Not public: jsToNumber of case (c), kept for the series before phase 9.
@@ -18,11 +19,11 @@ const int stressAnimateMs = 1000;
 
 /// The background color of the chart points, as in the stress mode
 /// `elements`.
-const String stressChartBackground = 'rgba(54, 162, 235, 0.45)';
+const ui.Color stressChartBackground = ui.Color.fromRGBO(54, 162, 235, 0.45);
 
 /// The background color of the odd chart points of the scriptable
 /// `backgroundColor`.
-const String stressChartBackgroundOdd = 'rgba(255, 99, 132, 0.45)';
+const ui.Color stressChartBackgroundOdd = ui.Color.fromRGBO(255, 99, 132, 0.45);
 
 /// The scriptable `backgroundColor` of case (c). It reads the data index of
 /// its context, as the scriptable option of a user does. The option needs
@@ -370,7 +371,7 @@ Map<String, Object?> stressChartConfig({
           'backgroundColor': scriptable
               ? stressScriptableBackground
               : stressChartBackground,
-          'borderColor': '#36A2EB',
+          'borderColor': const ui.Color(0xFF36A2EB),
           'borderWidth': 1.0,
           if (type.points) ...{
             'pointStyle': 'circle',

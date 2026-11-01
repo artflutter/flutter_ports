@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: the gallery demo of phase 6.
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
@@ -64,18 +65,18 @@ const Map<String, String> _typeText = {
 const Map<String, String> _unitText = {'month': 'mon'};
 
 /// The datasets of the chart: the label, the colors and the point style.
-const List<({String label, String background, String border, String style})>
+const List<({String label, ui.Color background, ui.Color border, String style})>
 _datasetStyles = [
   (
     label: 'A',
-    background: 'rgba(54, 162, 235, 0.5)',
-    border: '#36A2EB',
+    background: ui.Color.fromRGBO(54, 162, 235, 0.5),
+    border: ui.Color(0xFF36A2EB),
     style: 'circle',
   ),
   (
     label: 'B',
-    background: 'rgba(255, 99, 132, 0.5)',
-    border: '#FF6384',
+    background: ui.Color.fromRGBO(255, 99, 132, 0.5),
+    border: ui.Color(0xFFFF6384),
     style: 'rectRot',
   ),
 ];

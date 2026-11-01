@@ -1,4 +1,7 @@
 // Ported from Chart.js v4.6.1 docs/samples/area/line-boundaries.md (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
+
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, JsObjectFace;
@@ -69,8 +72,8 @@ Map<String, Object?> _config(Object fill) => <String, Object?>{
           -59.53,
           -0.87,
         ],
-        'borderColor': 'rgb(255, 99, 132)',
-        'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+        'borderColor': const ui.Color.fromRGBO(255, 99, 132, 1),
+        'backgroundColor': const ui.Color.fromRGBO(255, 99, 132, 0.5),
         'fill': fill,
       },
     ],

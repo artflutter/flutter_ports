@@ -1,3 +1,4 @@
+# Resolved color fields materialize native values at writes (ADR 0057).
 # Original code, not ported from Chart.js: the option schema of the typed internal model.
 #
 # The hand-written schema of Chart.js ADR 0054 section 2. tool/options_gen.dart reads it and

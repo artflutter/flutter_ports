@@ -349,26 +349,26 @@ ChartBenchCase _axesCase(StressAxisType scale, ChartBenchCall call) =>
     );
 
 /// The border colors of the datasets of the plugin cases, in turn.
-const List<String> _benchBorders = [
-  'rgb(54, 162, 235)',
-  'rgb(255, 99, 132)',
-  'rgb(255, 159, 64)',
-  'rgb(255, 205, 86)',
-  'rgb(75, 192, 192)',
-  'rgb(153, 102, 255)',
-  'rgb(201, 203, 207)',
+const List<ui.Color> _benchBorders = [
+  ui.Color.fromRGBO(54, 162, 235, 1),
+  ui.Color.fromRGBO(255, 99, 132, 1),
+  ui.Color.fromRGBO(255, 159, 64, 1),
+  ui.Color.fromRGBO(255, 205, 86, 1),
+  ui.Color.fromRGBO(75, 192, 192, 1),
+  ui.Color.fromRGBO(153, 102, 255, 1),
+  ui.Color.fromRGBO(201, 203, 207, 1),
 ];
 
 /// The fill colors of the datasets of the plugin cases: the border colors
 /// with alpha 0.5.
-const List<String> _benchFills = [
-  'rgba(54, 162, 235, 0.5)',
-  'rgba(255, 99, 132, 0.5)',
-  'rgba(255, 159, 64, 0.5)',
-  'rgba(255, 205, 86, 0.5)',
-  'rgba(75, 192, 192, 0.5)',
-  'rgba(153, 102, 255, 0.5)',
-  'rgba(201, 203, 207, 0.5)',
+const List<ui.Color> _benchFills = [
+  ui.Color.fromRGBO(54, 162, 235, 0.5),
+  ui.Color.fromRGBO(255, 99, 132, 0.5),
+  ui.Color.fromRGBO(255, 159, 64, 0.5),
+  ui.Color.fromRGBO(255, 205, 86, 0.5),
+  ui.Color.fromRGBO(75, 192, 192, 0.5),
+  ui.Color.fromRGBO(153, 102, 255, 0.5),
+  ui.Color.fromRGBO(201, 203, 207, 0.5),
 ];
 
 /// The time of one frame at 60 Hz, in ms: the step of the dates of the
@@ -1182,7 +1182,7 @@ ChartBenchCase _primitiveCase() => ChartBenchCase(
           <String, Object?>{
             'data': data,
             'backgroundColor': stressChartBackground,
-            'borderColor': '#36A2EB',
+            'borderColor': const ui.Color(0xFF36A2EB),
             'borderWidth': 1.0,
             'pointStyle': 'circle',
             'radius': 3.0,

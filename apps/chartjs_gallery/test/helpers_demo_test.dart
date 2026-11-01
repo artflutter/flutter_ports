@@ -4,6 +4,8 @@ import 'package:chartjs_gallery/helpers_demo.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Pumps the demo page at [size] logical pixels.
@@ -58,6 +60,7 @@ Future<void> _scrollTo(WidgetTester tester, Finder finder, [double dy = 200]) =>
     tester.scrollUntilVisible(finder, dy, scrollable: _page.first);
 
 void main() {
+  installNativeColorCodec();
   testWidgets('the gallery opens the demo from its first entry', (
     tester,
   ) async {
@@ -92,42 +95,26 @@ void main() {
     expect(find.text('easeInOutBounce'), findsOneWidget);
   });
 
-  testWidgets('colors: parses the samples, a typed color and mixes', (
-    tester,
-  ) async {
+  testWidgets('colors: native samples and numerical mixing', (tester) async {
     await _pumpDemo(tester);
     await _openTab(tester, 'Colors');
-
-    await tester.enterText(find.byKey(const ValueKey('color.input')), 'orange');
-    await tester.pump();
-    expect(find.text('rgb(255, 165, 0)'), findsOneWidget);
-    expect(find.text('#FFA500'), findsOneWidget);
-
-    // rgb.js keeps alpha 127.5 unrounded; hexString truncates it to 7F.
-    await _scrollTo(tester, find.text('#FF63847F'));
-    expect(find.text('rgba(255, 99, 132, 0.5)'), findsOneWidget);
-
-    await _scrollTo(tester, find.text("'red'"));
-    expect(find.text('rgb(255, 0, 0)'), findsOneWidget);
-    expect(find.text('hsl(0, 100%, 50%)'), findsOneWidget);
-    await _scrollTo(tester, find.text("'${sampleColors.last}'"));
-    expect(find.textContaining('valid: false'), findsOneWidget);
-
+    expect(find.text('Flutter Color values'), findsOneWidget);
+    expect(find.byKey(const ValueKey('color.input')), findsNothing);
+    expect(sampleColors, everyElement(isA<Color>()));
     await _scrollTo(tester, find.byKey(const ValueKey('color.weight')));
-    Finder mixed(String text) => find.descendant(
-      of: find.byKey(const ValueKey('color.mixed')),
-      matching: find.text(text),
-    );
-    // weight 0.5 of #FF6384 and #36A2EB.
-    expect(mixed('rgb(155, 131, 184)'), findsOneWidget);
+    final before = tester
+        .widget<Slider>(find.byKey(const ValueKey('color.weight')))
+        .value;
     await tester.drag(
       find.byKey(const ValueKey('color.weight')),
       const Offset(-1000, 0),
     );
     await tester.pump();
-    // weight 0: the second color.
-    expect(mixed('rgb(54, 162, 235)'), findsOneWidget);
-    expect(mixed('#36A2EB'), findsOneWidget);
+    expect(
+      tester.widget<Slider>(find.byKey(const ValueKey('color.weight'))).value,
+      lessThan(before),
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('tick labels: formats the ranges and follows the locale', (
@@ -246,12 +233,12 @@ void main() {
     await _pumpDemo(tester);
     await _openTab(tester, 'Options');
     // Absent and undefined go to defaults; null is a value.
-    expect(find.text("'rgba(0,0,0,0.1)'"), findsNWidgets(2));
+    expect(find.text('Color(0x1A000000)'), findsNWidgets(2));
     expect(find.text('null'), findsOneWidget);
-    expect(find.text("'#36A2EB'"), findsOneWidget);
+    expect(find.text('Color(0xFF36A2EB)'), findsOneWidget);
 
-    await _scrollTo(tester, find.text("'#059BFF'"));
-    expect(find.text("'#059BFF'"), findsOneWidget);
+    await _scrollTo(tester, find.text('Color(0xFF059BFF)'));
+    expect(find.text('Color(0xFF059BFF)'), findsOneWidget);
 
     await _scrollTo(tester, find.text('italic 600 16px Georgia, serif'));
     await _scrollTo(tester, find.text('{top: 1, left: 2}'));

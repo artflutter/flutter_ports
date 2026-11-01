@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.tooltip.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:collection';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -92,15 +96,25 @@ AnyObject _twoDatasets({
     <String, Object?>{
       'label': 'Dataset 1',
       'data': <Object?>[10, 20, 30],
-      'pointHoverBorderColor': 'rgb(255, 0, 0)',
-      'pointHoverBackgroundColor': 'rgb(0, 255, 0)',
+      'pointHoverBorderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+        0,
+        255,
+        0,
+        1,
+      ),
       ...extra1,
     },
     <String, Object?>{
       'label': 'Dataset 2',
       'data': <Object?>[40, 40, 40],
-      'pointHoverBorderColor': 'rgb(0, 0, 255)',
-      'pointHoverBackgroundColor': 'rgb(0, 255, 255)',
+      'pointHoverBorderColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
+      'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+        0,
+        255,
+        255,
+        1,
+      ),
       ...extra2,
     },
   ],
@@ -113,8 +127,13 @@ AnyObject _oneDataset() => <String, Object?>{
     <String, Object?>{
       'label': 'Dataset 1',
       'data': <Object?>[10, 20, 30],
-      'pointHoverBorderColor': 'rgb(255, 0, 0)',
-      'pointHoverBackgroundColor': 'rgb(0, 255, 0)',
+      'pointHoverBorderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+        0,
+        255,
+        0,
+        1,
+      ),
     },
   ],
   'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
@@ -217,6 +236,7 @@ final class _TextAlignChart implements types.Chart {
 }
 
 void main() {
+  installNativeColorCodec();
   group('Plugin.Tooltip', () {
     group('auto', fixture.specs('plugin.tooltip'));
 
@@ -229,8 +249,18 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'data': <Object?>[10, 20, 30],
-                'pointHoverBorderColor': 'rgb(255, 0, 0)',
-                'pointHoverBackgroundColor': 'rgb(0, 255, 0)',
+                'pointHoverBorderColor': const native_ui.Color.fromRGBO(
+                  255,
+                  0,
+                  0,
+                  1,
+                ),
+                'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+                  0,
+                  255,
+                  0,
+                  1,
+                ),
               },
             ],
             'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
@@ -313,7 +343,10 @@ void main() {
         );
         expect(tooltip.xAlign, 'left');
         expect(tooltip.yAlign, 'center');
-        expect(jsGet(options, 'bodyColor'), '#fff');
+        expect(
+          jsGet(options, 'bodyColor'),
+          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        );
 
         expect(
           jsGet(options, 'bodyFont')! as JsObjectFace,
@@ -332,7 +365,10 @@ void main() {
           }),
         );
 
-        expect(jsGet(options, 'titleColor'), '#fff');
+        expect(
+          jsGet(options, 'titleColor'),
+          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        );
         expect(
           jsGet(options, 'titleFont')! as JsObjectFace,
           toEqualOptions(<String, Object?>{
@@ -351,7 +387,10 @@ void main() {
           }),
         );
 
-        expect(jsGet(options, 'footerColor'), '#fff');
+        expect(
+          jsGet(options, 'footerColor'),
+          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        );
         expect(
           jsGet(options, 'footerFont')! as JsObjectFace,
           toEqualOptions(<String, Object?>{
@@ -377,8 +416,13 @@ void main() {
             'caretSize': 5,
             'caretPadding': 2,
             'cornerRadius': 6,
-            'backgroundColor': 'rgba(0,0,0,0.8)',
-            'multiKeyBackground': '#fff',
+            'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+            'multiKeyBackground': const native_ui.Color.fromRGBO(
+              255,
+              255,
+              255,
+              1,
+            ),
             'displayColors': true,
           }),
         );
@@ -517,8 +561,13 @@ void main() {
           'caretSize': 5,
           'caretPadding': 2,
           'cornerRadius': 6,
-          'backgroundColor': 'rgba(0,0,0,0.8)',
-          'multiKeyBackground': '#fff',
+          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+          'multiKeyBackground': const native_ui.Color.fromRGBO(
+            255,
+            255,
+            255,
+            1,
+          ),
           'displayColors': true,
         }),
       );
@@ -532,7 +581,12 @@ void main() {
       );
       expect(tooltip.afterBody, jasmineEquals(<Object?>[]));
       expect(tooltip.footer, jasmineEquals(<Object?>[]));
-      expect(tooltip.labelTextColors, jasmineEquals(<Object?>['#fff']));
+      expect(
+        tooltip.labelTextColors,
+        jasmineEquals(<Object?>[
+          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ]),
+      );
 
       expect(
         tooltip.labelColors,
@@ -563,7 +617,7 @@ void main() {
               'beforeFooter': () => 'beforeFooter',
               'footer': () => 'footer',
               'afterFooter': () => 'afterFooter',
-              'labelTextColor': () => 'labelTextColor',
+              'labelTextColor': () => const native_ui.Color(0xFF123ABC),
               'labelPointStyle': () => <String, Object?>{
                 'pointStyle': 'labelPointStyle',
                 'rotation': 42,
@@ -645,8 +699,13 @@ void main() {
           'caretSize': 5,
           'caretPadding': 2,
           'cornerRadius': 6,
-          'backgroundColor': 'rgba(0,0,0,0.8)',
-          'multiKeyBackground': '#fff',
+          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+          'multiKeyBackground': const native_ui.Color.fromRGBO(
+            255,
+            255,
+            255,
+            1,
+          ),
         }),
       );
 
@@ -670,7 +729,10 @@ void main() {
           'body': <Object?>[callbackBodyItem(), callbackBodyItem()],
           'afterBody': <Object?>['afterBody'],
           'footer': <Object?>['beforeFooter', 'footer', 'afterFooter'],
-          'labelTextColors': <Object?>['labelTextColor', 'labelTextColor'],
+          'labelTextColors': <Object?>[
+            const native_ui.Color(0xFF123ABC),
+            const native_ui.Color(0xFF123ABC),
+          ],
           'labelColors': <Object?>[_defaultLabelColor(), _defaultLabelColor()],
           'labelPointStyles': <Object?>[pointStyle(), pointStyle()],
         }),
@@ -1139,22 +1201,52 @@ void main() {
                 <String, Object?>{
                   'label': 'Dataset 1',
                   'data': <Object?>[10, 20, 30],
-                  'pointHoverBorderColor': 'rgb(255, 0, 0)',
-                  'pointHoverBackgroundColor': 'rgb(0, 255, 0)',
+                  'pointHoverBorderColor': const native_ui.Color.fromRGBO(
+                    255,
+                    0,
+                    0,
+                    1,
+                  ),
+                  'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+                    0,
+                    255,
+                    0,
+                    1,
+                  ),
                   'stack': 'stack1',
                 },
                 <String, Object?>{
                   'label': 'Dataset 2',
                   'data': <Object?>[40, 40, 40],
-                  'pointHoverBorderColor': 'rgb(0, 0, 255)',
-                  'pointHoverBackgroundColor': 'rgb(0, 255, 255)',
+                  'pointHoverBorderColor': const native_ui.Color.fromRGBO(
+                    0,
+                    0,
+                    255,
+                    1,
+                  ),
+                  'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+                    0,
+                    255,
+                    255,
+                    1,
+                  ),
                   'stack': 'stack1',
                 },
                 <String, Object?>{
                   'label': 'Dataset 3',
                   'data': <Object?>[90, 100, 110],
-                  'pointHoverBorderColor': 'rgb(0, 0, 255)',
-                  'pointHoverBackgroundColor': 'rgb(0, 255, 255)',
+                  'pointHoverBorderColor': const native_ui.Color.fromRGBO(
+                    0,
+                    0,
+                    255,
+                    1,
+                  ),
+                  'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+                    0,
+                    255,
+                    255,
+                    1,
+                  ),
                 },
               ],
               'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
@@ -1222,8 +1314,8 @@ void main() {
               <String, Object?>{
                 'data': <Object?>[50, 50],
                 'backgroundColor': <Object?>[
-                  'rgb(255, 0, 0)',
-                  'rgb(0, 255, 0)',
+                  const native_ui.Color.fromRGBO(255, 0, 0, 1),
+                  const native_ui.Color.fromRGBO(0, 255, 0, 1),
                 ],
                 'label': 'Dataset 1',
               },
@@ -1310,7 +1402,7 @@ void main() {
               'beforeFooter': () => 'beforeFooter\nnewline',
               'footer': () => 'footer\nnewline',
               'afterFooter': () => 'afterFooter\nnewline',
-              'labelTextColor': () => 'labelTextColor',
+              'labelTextColor': () => const native_ui.Color(0xFF123ABC),
             },
           }),
         ),
@@ -1390,8 +1482,13 @@ void main() {
           'caretSize': 5,
           'caretPadding': 2,
           'cornerRadius': 6,
-          'backgroundColor': 'rgba(0,0,0,0.8)',
-          'multiKeyBackground': '#fff',
+          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+          'multiKeyBackground': const native_ui.Color.fromRGBO(
+            255,
+            255,
+            255,
+            1,
+          ),
         }),
       );
 
@@ -1429,7 +1526,10 @@ void main() {
             'afterFooter',
             'newline',
           ],
-          'labelTextColors': <Object?>['labelTextColor', 'labelTextColor'],
+          'labelTextColors': <Object?>[
+            const native_ui.Color(0xFF123ABC),
+            const native_ui.Color(0xFF123ABC),
+          ],
           'labelColors': <Object?>[labelColor(), labelColor()],
         }),
       );
@@ -1459,7 +1559,7 @@ void main() {
               'style': _font('style'),
               'size': _font('size'),
             },
-            'bodyColor': '#fff',
+            'bodyColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
             'bodyAlign': body,
             'bodySpacing': 2,
 
@@ -1469,7 +1569,7 @@ void main() {
               'weight': 'bold',
               'size': _font('size'),
             },
-            'titleColor': '#fff',
+            'titleColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
             'titleAlign': title,
             'titleSpacing': 2,
             'titleMarginBottom': 6,
@@ -1480,7 +1580,7 @@ void main() {
               'weight': 'bold',
               'size': _font('size'),
             },
-            'footerColor': '#fff',
+            'footerColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
             'footerAlign': footer,
             'footerSpacing': 2,
             'footerMarginTop': 6,
@@ -1489,10 +1589,15 @@ void main() {
             'caretSize': 5,
             'cornerRadius': 6,
             'caretPadding': 2,
-            'borderColor': '#aaa',
+            'borderColor': const native_ui.Color.fromRGBO(170, 170, 170, 1),
             'borderWidth': 1,
-            'backgroundColor': 'rgba(0,0,0,0.8)',
-            'multiKeyBackground': '#fff',
+            'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+            'multiKeyBackground': const native_ui.Color.fromRGBO(
+              255,
+              255,
+              255,
+              1,
+            ),
             'displayColors': false,
           },
           'opacity': 1,
@@ -1503,15 +1608,22 @@ void main() {
           'body': <Object?>[_bodyItem('label')],
           'afterBody': <Object?>[],
           'footer': <Object?>['footer'],
-          'labelTextColors': <Object?>['#fff'],
+          'labelTextColors': <Object?>[
+            const native_ui.Color.fromRGBO(255, 255, 255, 1),
+          ],
           'labelColors': <Object?>[
             <String, Object?>{
-              'borderColor': 'rgb(255, 0, 0)',
-              'backgroundColor': 'rgb(0, 255, 0)',
+              'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'backgroundColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
             },
             <String, Object?>{
-              'borderColor': 'rgb(0, 0, 255)',
-              'backgroundColor': 'rgb(0, 255, 255)',
+              'borderColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                0,
+                255,
+                255,
+                1,
+              ),
             },
           ],
         });
@@ -1524,11 +1636,11 @@ void main() {
         <String, Object?>{'name': 'save', 'args': <Object?>[]},
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>['rgba(0,0,0,0.8)'],
+          'args': <Object?>[const native_ui.Color.fromRGBO(0, 0, 0, 0.8)],
         },
         <String, Object?>{
           'name': 'setStrokeStyle',
-          'args': <Object?>['#aaa'],
+          'args': <Object?>[const native_ui.Color.fromRGBO(170, 170, 170, 1)],
         },
         <String, Object?>{
           'name': 'setLineWidth',
@@ -1615,7 +1727,7 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>['#fff'],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'setFont',
@@ -1639,11 +1751,11 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>['#fff'],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>['#fff'],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'fillText',
@@ -1659,7 +1771,7 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>['#fff'],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'setFont',
@@ -1867,8 +1979,18 @@ void main() {
           final dataset = <String, Object?>{
             'label': 'Dataset 1',
             'data': <Object?>[10, 20, 30],
-            'pointHoverBorderColor': 'rgb(255, 0, 0)',
-            'pointHoverBackgroundColor': 'rgb(0, 255, 0)',
+            'pointHoverBorderColor': const native_ui.Color.fromRGBO(
+              255,
+              0,
+              0,
+              1,
+            ),
+            'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+              0,
+              255,
+              0,
+              1,
+            ),
           };
           final chart = acquireChart(
             _line(
@@ -2095,7 +2217,9 @@ void main() {
             'body': <Object?>[_bodyItem('Dataset 1: 10')],
             'afterBody': <Object?>[],
             'footer': <Object?>[],
-            'labelTextColors': <Object?>['#fff'],
+            'labelTextColors': <Object?>[
+              const native_ui.Color.fromRGBO(255, 255, 255, 1),
+            ],
             'labelColors': <Object?>[_defaultLabelColor()],
             'labelPointStyles': <Object?>[
               <String, Object?>{'pointStyle': 'circle', 'rotation': 0},

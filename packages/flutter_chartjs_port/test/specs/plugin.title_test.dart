@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.title.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -74,7 +78,7 @@ List<Object?> _textCalls(List<Object?> translate, double rotate) => [
   },
   <String, Object?>{
     'name': 'setFillStyle',
-    'args': <Object?>['#666'],
+    'args': <Object?>[const native_ui.Color.fromRGBO(102, 102, 102, 1)],
   },
   <String, Object?>{
     'name': 'setTextAlign',
@@ -92,6 +96,7 @@ List<Object?> _textCalls(List<Object?> translate, double rotate) => [
 ];
 
 void main() {
+  installNativeColorCodec();
   // Test the rectangle element
 
   group('Plugin.title', () {

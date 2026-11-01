@@ -2,9 +2,13 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/foundation.dart' show ValueChanged;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animator.dart'
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -69,6 +73,7 @@ Map<String, Object?> _legendBox(Chart chart, int index) {
 List<ActiveElement> _asActive(List<ChartHit> hits) => hits;
 
 void main() {
+  installNativeColorCodec();
   group('ChartHit and ChartEventDetails', () {
     testWidgets('onClick gets the hits with int indexes and no copy', (
       tester,
@@ -136,11 +141,11 @@ void main() {
       // Chart.js keeps one context object for each element and sets its
       // `active` at each resolution: the state at the call.
       final activeAtCall = <(int?, bool)>[];
-      String record(Object? context, Object? options) {
+      native_ui.Color record(Object? context, Object? options) {
         final view = context! as ChartContext;
         contexts.add(view);
         activeAtCall.add((view.dataIndex, view.active));
-        return 'rgba(255, 0, 0, 1)';
+        return const native_ui.Color.fromRGBO(255, 0, 0, 1);
       }
 
       final chart = acquireChart(<String, Object?>{

@@ -2,10 +2,14 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart' show triggerMouseEvent;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -255,7 +259,7 @@ List<Object?> _ring(Chart chart) {
 /// The ring calls of section 6 for the rectangle ([x], [y], [w], [h]).
 List<Object?> _ringCalls(double x, double y, double w, double h) => [
   ['save'],
-  ['setStrokeStyle', '#666'],
+  ['setStrokeStyle', const native_ui.Color.fromRGBO(102, 102, 102, 1)],
   ['setLineWidth', 2.0],
   [
     'setLineDash',
@@ -275,6 +279,7 @@ void _highlight(FocusHighlightStrategy strategy) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('the keys give the state of a mouse at the target', () {
     for (final type in ['bar', 'line', 'doughnut', 'radar']) {
       testWidgets(type, (tester) async {
@@ -1017,11 +1022,18 @@ void main() {
           onChartCreated: (c) => chart = c,
         ),
       );
-      await tester.pumpWidget(build(<String, Object?>{'color': '#123456'}));
+      await tester.pumpWidget(
+        build(<String, Object?>{
+          'color': const native_ui.Color.fromRGBO(18, 52, 86, 1),
+        }),
+      );
       node.requestFocus();
       await tester.pump();
       final calls = _ring(chart);
-      expect(calls[1], ['setStrokeStyle', '#123456']);
+      expect(calls[1], [
+        'setStrokeStyle',
+        const native_ui.Color.fromRGBO(18, 52, 86, 1),
+      ]);
 
       await tester.pumpWidget(
         build(<String, Object?>{

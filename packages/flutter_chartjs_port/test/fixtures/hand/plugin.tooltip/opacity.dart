@@ -1,6 +1,9 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.tooltip/opacity.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
+
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -31,9 +34,9 @@ Map<String, Object?> fixture() {
     ..width = 6
     ..height = 6;
   patternContext
-    ..fillStyle = '#ff0000'
+    ..fillStyle = const native_ui.Color(0xffff0000)
     ..fillRect(0, 0, 6, 6)
-    ..fillStyle = '#ffff00'
+    ..fillStyle = const native_ui.Color(0xffffff00)
     ..fillRect(0, 0, 4, 4);
 
   final pattern = patternContext.createPattern(
@@ -97,8 +100,8 @@ Map<String, Object?> fixture() {
               final created = chart.ctx!.createLinearGradient(0, 0, 512, 256);
               gradient = created;
               created
-                ..addColorStop(0, '#ff0000')
-                ..addColorStop(1, '#0000ff');
+                ..addColorStop(0, const native_ui.Color(0xffff0000))
+                ..addColorStop(1, const native_ui.Color(0xff0000ff));
             }
             final datasets =
                 (chart.config.data as AnyObject)['datasets']! as List<Object?>;

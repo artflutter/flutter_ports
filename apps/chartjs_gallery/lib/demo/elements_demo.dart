@@ -2,6 +2,7 @@
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/canvas_demo.dart'
     show chartColors, drawCaption;
@@ -73,10 +74,10 @@ const List<Object> _borderJoinStyleValues = [
 ];
 
 /// The colors of the bar dataset and of the line dataset.
-const String _barColor = '#36A2EB';
-const String _barBackground = 'rgba(54, 162, 235, 0.5)';
-const String _lineColor = '#FF6384';
-const String _lineBackground = 'rgba(255, 99, 132, 0.5)';
+const ui.Color _barColor = ui.Color(0xFF36A2EB);
+const ui.Color _barBackground = ui.Color.fromRGBO(54, 162, 235, 0.5);
+const ui.Color _lineColor = ui.Color(0xFFFF6384);
+const ui.Color _lineBackground = ui.Color.fromRGBO(255, 99, 132, 0.5);
 
 /// The hover offset of an arc minus its offset.
 const double _arcHoverGain = 16;
@@ -495,7 +496,7 @@ class ElementsDemoState extends State<ElementsDemo> {
 
     // The value lines of the bar and line area.
     ctx
-      ..strokeStyle = 'rgba(0, 0, 0, 0.1)'
+      ..strokeStyle = const ui.Color.fromRGBO(0, 0, 0, 0.1)
       ..lineWidth = 1
       ..beginPath();
     for (var value = 0.0; value <= _maxValue; value += 5) {

@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/plugins/plugin.colors.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 
 /// Port of `src/plugins/plugin.colors.ts`.
 ///
@@ -45,6 +46,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsIsObjectLike, jsSet;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ColorsOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
@@ -54,26 +56,24 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
 
 /// plugin.colors.ts:14 `BORDER_COLORS`.
-const List<String> _borderColors = [
-  'rgb(54, 162, 235)', // blue
-  'rgb(255, 99, 132)', // red
-  'rgb(255, 159, 64)', // orange
-  'rgb(255, 205, 86)', // yellow
-  'rgb(75, 192, 192)', // green
-  'rgb(153, 102, 255)', // purple
-  'rgb(201, 203, 207)', // grey
+final List<PreparedColor> _borderColors = [
+  const PreparedColor(54, 162, 235, 1), // blue
+  const PreparedColor(255, 99, 132, 1), // red
+  const PreparedColor(255, 159, 64, 1), // orange
+  const PreparedColor(255, 205, 86, 1), // yellow
+  const PreparedColor(75, 192, 192, 1), // green
+  const PreparedColor(153, 102, 255, 1), // purple
+  const PreparedColor(201, 203, 207, 1), // grey
 ];
 
 /// plugin.colors.ts:25 `BACKGROUND_COLORS`.
 ///
 /// Border colors with 50% transparency. `String.prototype.replace` with a
 /// string pattern replaces the first match only: [String.replaceFirst].
-final List<String> _backgroundColors = _borderColors
-    .map(
-      (color) =>
-          color.replaceFirst('rgb(', 'rgba(').replaceFirst(')', ', 0.5)'),
-    )
-    .toList();
+final List<PreparedColor> _backgroundColors = [
+  for (final color in _borderColors)
+    PreparedColor(color.red, color.green, color.blue, 0.5),
+];
 
 // DIVERGES(chartjs): theme-H4a, the theme palette keys, variables and reader.
 /// The key of the border palette under `plugins.colors` of a theme map
@@ -110,20 +110,24 @@ List<Object?>? _themePalette(Object? theme, String key) {
 Object? _getBorderColor(int i) {
   // DIVERGES(chartjs): theme-H4b, the theme palette comes first.
   final themeColors = _themeBorderColors;
+  if (themeColors != null) {
+    // js-ok: i is an int and never negative, so Dart % equals JS %.
+    return publicColorValue(themeColors[i % themeColors.length]);
+  }
   // js-ok: i is an int and never negative, so Dart % equals JS %.
-  if (themeColors != null) return themeColors[i % themeColors.length];
-  // js-ok: i is an int and never negative, so Dart % equals JS %.
-  return _borderColors[i % _borderColors.length];
+  return _borderColors[i % _borderColors.length].paint;
 }
 
 /// plugin.colors.ts:31 `getBackgroundColor(i)`.
 Object? _getBackgroundColor(int i) {
   // DIVERGES(chartjs): theme-H4c, the theme palette comes first.
   final themeColors = _themeBackgroundColors;
+  if (themeColors != null) {
+    // js-ok: i is an int and never negative, so Dart % equals JS %.
+    return publicColorValue(themeColors[i % themeColors.length]);
+  }
   // js-ok: i is an int and never negative, so Dart % equals JS %.
-  if (themeColors != null) return themeColors[i % themeColors.length];
-  // js-ok: i is an int and never negative, so Dart % equals JS %.
-  return _backgroundColors[i % _backgroundColors.length];
+  return _backgroundColors[i % _backgroundColors.length].paint;
 }
 
 /// The write `dataset[key] = value` of a colorizer into the dataset
@@ -294,8 +298,14 @@ bool _containsColorsDefinition(Object? descriptor) {
 /// inequality of a value and a string is the Dart `!=`. The reads are the
 /// typed reads of the keys of `defaults` (with their routes).
 bool _containsDefaultColorsDefenitions() {
-  return defaults.lookup(OptionKey.borderColor)?.raw != 'rgba(0,0,0,0.1)' ||
-      defaults.lookup(OptionKey.backgroundColor)?.raw != 'rgba(0,0,0,0.1)';
+  return !sameSolidColor(
+        defaults.lookup(OptionKey.borderColor)?.raw,
+        const PreparedColor(0, 0, 0, 0.1),
+      ) ||
+      !sameSolidColor(
+        defaults.lookup(OptionKey.backgroundColor)?.raw,
+        const PreparedColor(0, 0, 0, 0.1),
+      );
 }
 
 /// plugin.colors.ts:102 `beforeLayout(chart, _args, options)`.

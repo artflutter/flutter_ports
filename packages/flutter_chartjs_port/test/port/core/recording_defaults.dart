@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
+import '../../support/color_json.dart';
+
 /// A [Defaults] that records each call with its arguments, as
 /// `[method, ...arguments]`. It changes nothing.
 ///
@@ -46,6 +48,7 @@ final class RecordingDefaults implements Defaults {
 /// `"<int>"`, so the comparison with the probe fails.
 String probeJson(Object? value) => switch (value) {
   null => 'null',
+  _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
   final double d => jsNumberToString(d),

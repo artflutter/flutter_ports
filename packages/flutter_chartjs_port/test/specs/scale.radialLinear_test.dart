@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.radialLinear.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec reads the registry, the defaults and the charts of
 // flutter_chartjs_port, which does not export lib/src yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -94,6 +98,7 @@ JsObjectFace _optionsR(Chart chart, [String? key]) {
 }
 
 void main() {
+  installNativeColorCodec();
   // Tests for the radial linear scale used by the polar area and radar charts
   group('Test the radial linear scale', () {
     group('auto', fixture.specs('scale.radialLinear'));
@@ -118,7 +123,7 @@ void main() {
 
           'angleLines': <String, Object?>{
             'display': true,
-            'color': 'rgba(0,0,0,0.1)',
+            'color': const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
             'lineWidth': 1,
             'borderDash': <Object?>[],
             'borderDashOffset': 0.0,

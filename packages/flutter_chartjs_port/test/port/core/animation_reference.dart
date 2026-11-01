@@ -32,7 +32,7 @@ final class AnimationGradient implements CanvasGradient {
   const AnimationGradient._();
 
   @override
-  void addColorStop(double offset, String color) {}
+  void addColorStop(double offset, Object color) {}
 }
 
 /// The gradient of [animationColorReference] and [animationColorSequence].

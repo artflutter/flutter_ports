@@ -2,17 +2,21 @@
 @TestOn('vm')
 library;
 
-// dart:io reads the manifest and the snapshot, so the web legs
-// (`dart test -p chrome`) cannot compile this file.
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as native_ui;
 
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
+
+// dart:io reads the manifest and the snapshot, so the web legs
+// (`dart test -p chrome`) cannot compile this file.
+import '../../support/color_json.dart';
 
 // theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0050,
 // Consequences). The test compares the compiled light preset with the
@@ -270,15 +274,30 @@ Map<String, Object?> _reportLeaves(Map<String, Object?> manifest) => {
       : null;
 }
 
-/// Whether the emitted [value] at [path] equals the upstream [upstream].
+/// JSON diagnostics with numerical native color channels.
+String _encode(Object? value) => jsonEncode(
+  value,
+  toEncodable: (value) =>
+      nativeColorBytes(value) ?? (throw ArgumentError.value(value)),
+);
+
 bool _same(String path, Object? value, Object? upstream) {
-  if (_isColorKey(path) && value is String && upstream is String) {
-    final a = Color(value).rgbString();
-    final b = Color(upstream).rgbString();
+  if (_isColorKey(path) && value is List && upstream is List) {
+    return value.length == upstream.length &&
+        List.generate(
+          value.length,
+          (i) => _same('color', value[i], upstream[i]),
+        ).every((v) => v);
+  }
+  if (_isColorKey(path) &&
+      (value is String || nativeColorBytes(value) != null) &&
+      (upstream is String || nativeColorBytes(upstream) != null)) {
+    final a = referenceParsedColor(value).rgbString();
+    final b = referenceParsedColor(upstream).rgbString();
     if (a != null && b != null) return a == b;
   }
   if (value is num && upstream is num) return value == upstream;
-  return jsonEncode(value) == jsonEncode(upstream);
+  return _encode(value) == _encode(upstream);
 }
 
 /// The report lists of theming.md §8 test 4 for the emitted [emitted], the
@@ -324,7 +343,7 @@ Map<String, List<String>> _report(
     }
     if (!_same(path, value, upstream)) {
       changed.add(
-        '$path: emitted ${jsonEncode(value)}, upstream ${jsonEncode(upstream)}',
+        '$path: emitted ${_encode(value)}, upstream ${_encode(upstream)}',
       );
     }
   }
@@ -333,7 +352,7 @@ Map<String, List<String>> _report(
   }
   for (final MapEntry(key: path, :value) in leaves.entries) {
     if (_isVisual(path) && !isEmitted(path) && !notThemed.containsKey(path)) {
-      added.add('$path: ${jsonEncode(value)}');
+      added.add('$path: ${_encode(value)}');
     }
   }
   for (final path in notThemed.keys) {
@@ -346,8 +365,8 @@ Map<String, List<String>> _report(
       final recorded = notThemedValues[path];
       if (!_same(path, recorded, upstream)) {
         stale.add(
-          '$path: upstream ${jsonEncode(upstream)}, '
-          'recorded ${jsonEncode(recorded)}',
+          '$path: upstream ${_encode(upstream)}, '
+          'recorded ${_encode(recorded)}',
         );
       }
     }
@@ -377,6 +396,7 @@ String _text(Map<String, List<String>> lists) => [
 ].join('\n');
 
 void main() {
+  installNativeColorCodec();
   final root = _repositoryRoot();
   final manifestFile = root == null
       ? null
@@ -413,8 +433,8 @@ void main() {
       expect(leaves.keys.toList(), snapshot.keys.toList(), reason: hint);
       for (final MapEntry(key: path, :value) in leaves.entries) {
         expect(
-          jsonEncode(value),
-          jsonEncode(snapshot[path]),
+          _same(path, value, snapshot[path]),
+          isTrue,
           reason: '$path. $hint',
         );
       }
@@ -432,15 +452,17 @@ void main() {
     // The report on changed inventories: a bump that adds, removes or
     // changes a key gives an entry in the list of the change.
     const emitted = <String, Object?>{
-      'color': 'rgba(102, 102, 102, 1)',
+      'color': native_ui.Color.fromRGBO(102, 102, 102, 1),
       'scale.ticks.font.family': 'serif',
       'scale.ticks.font.size': 12.0,
     };
     const manifest = <String, Object?>{
-      'color': '#666',
+      'color': native_ui.Color.fromRGBO(102, 102, 102, 1),
       'font.family': 'serif',
       'font.size': 12,
-      'scale.ticks.color': <String, Object?>{'route': '#666'},
+      'scale.ticks.color': <String, Object?>{
+        'route': native_ui.Color.fromRGBO(102, 102, 102, 1),
+      },
     };
     const notThemed = {
       'font.family': 'test',
@@ -465,13 +487,13 @@ void main() {
       // shows here. A key that is not visual does not.
       final lists = report(emitted, {
         ...manifest,
-        'scale.title.strokeColor': '#000',
+        'scale.title.strokeColor': const native_ui.Color.fromRGBO(0, 0, 0, 1),
         'scale.title.strokeWidth': 0,
         'plugins.legend.labels.font': <String, Object?>{'size': 12},
       });
       expect(lists, {
         'ADDED': [
-          'scale.title.strokeColor: "#000"',
+          'scale.title.strokeColor: [0,0,0,255]',
           'plugins.legend.labels.font: {"size":12}',
         ],
       });
@@ -481,14 +503,14 @@ void main() {
       final lists = report(emitted, {
         'font.family': 'serif',
         'font.size': 12,
-        'scale.ticks.color': '#000',
-        'scale.grid.color': '#000',
+        'scale.ticks.color': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+        'scale.grid.color': const native_ui.Color.fromRGBO(0, 0, 0, 1),
       });
       expect(lists['REMOVED'], ['color']);
       // A font slot without any leaf in the manifest is REMOVED too.
       expect(
         report(emitted, {
-          'color': '#666',
+          'color': const native_ui.Color.fromRGBO(102, 102, 102, 1),
           'font.family': 'serif',
           'font.size': 12,
         })['REMOVED'],
@@ -499,32 +521,59 @@ void main() {
     test('a changed value is CHANGED with the new literal', () {
       final lists = report(emitted, {
         ...manifest,
-        'color': {'route': '#555'},
+        'color': {'route': const native_ui.Color.fromRGBO(85, 85, 85, 1)},
         'font.size': 13,
         'scale.ticks.font.family': 'mono',
       });
       expect(lists['CHANGED'], [
-        'color: emitted "rgba(102, 102, 102, 1)", upstream "#555"',
+        'color: emitted [102,102,102,255], upstream [85,85,85,255]',
         'scale.ticks.font.family: emitted "serif", upstream "mono"',
         'scale.ticks.font.size: emitted 12.0, upstream 13',
       ]);
     });
 
     test('colors compare after the parse', () {
-      expect(_same('color', 'rgba(102, 102, 102, 1)', '#666'), isTrue);
       expect(
-        _same('a.backdropColor', 'rgba(0, 0, 0, 0.75)', '#000000bf'),
+        _same(
+          'color',
+          const native_ui.Color.fromRGBO(102, 102, 102, 1),
+          const native_ui.Color.fromRGBO(102, 102, 102, 1),
+        ),
         isTrue,
       );
-      expect(_same('color', 'rgba(0, 0, 0, 0.1)', 'rgba(0,0,0,0.1)'), isTrue);
-      expect(_same('color', 'rgba(0, 0, 0, 0.1)', 'rgba(0,0,0,0.2)'), isFalse);
+      expect(
+        _same(
+          'a.backdropColor',
+          const native_ui.Color.fromRGBO(0, 0, 0, 0.75),
+          const native_ui.Color.fromRGBO(0, 0, 0, 0.75),
+        ),
+        isTrue,
+      );
+      expect(
+        _same(
+          'color',
+          const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+          const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+        ),
+        isTrue,
+      );
+      expect(
+        _same(
+          'color',
+          const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+          const native_ui.Color.fromRGBO(0, 0, 0, 0.2),
+        ),
+        isFalse,
+      );
       // A function is not a color.
       expect(
-        _same('color', 'rgba(0, 0, 0, 0.1)', {'function': '0123456789ab'}),
+        _same('color', const native_ui.Color.fromRGBO(0, 0, 0, 0.1), {
+          'function': '0123456789ab',
+        }),
         isFalse,
       );
       // A string that is not a color key compares as a string.
-      expect(_same('font.family', '#666', 'rgba(102, 102, 102, 1)'), isFalse);
+      expect(_same('font.family', '#666', 'rgb(102, 102, 102)'), isFalse);
     });
 
     test(r'a $ key of the inventory is DOLLAR', () {
@@ -615,7 +664,9 @@ void main() {
           {...emitted, 'plugins.title.color.alpha': 1.0},
           {
             ...manifest,
-            'plugins.title.color': {'route': '#666'},
+            'plugins.title.color': {
+              'route': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+            },
           },
         ),
         {
@@ -712,7 +763,7 @@ void main() {
       const palette = r'plugins.colors.$borderColors';
       final withPalette = <String, Object?>{
         ...emitted,
-        palette: ['rgba(54, 162, 235, 1)'],
+        palette: [const native_ui.Color.fromRGBO(54, 162, 235, 1)],
       };
       expect(report(withPalette, manifest), {
         'REMOVED': [palette],
@@ -726,7 +777,9 @@ void main() {
           withPalette,
           {
             ...manifest,
-            palette: <Object?>['rgb(54, 162, 235)'],
+            palette: <Object?>[
+              const native_ui.Color.fromRGBO(54, 162, 235, 1),
+            ],
           },
           notThemed,
           constants,

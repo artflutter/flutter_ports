@@ -3,6 +3,7 @@
 
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/bench/chart_bench.dart'
     show
@@ -1016,8 +1017,8 @@ class StressDemoState extends State<StressDemo> {
   static final element_options.PointOptions _pointElementOptions =
       element_options.PointOptions({
         ..._plainDefaults(PointElement.defaults),
-        'backgroundColor': 'rgba(54, 162, 235, 0.45)',
-        'borderColor': '#36A2EB',
+        'backgroundColor': const ui.Color.fromRGBO(54, 162, 235, 0.45),
+        'borderColor': const ui.Color(0xFF36A2EB),
         'borderWidth': 1.0,
         'pointStyle': 'circle',
         'radius': 3.0,
@@ -1030,7 +1031,7 @@ class StressDemoState extends State<StressDemo> {
   static final element_options.LineOptions _lineElementOptions =
       element_options.LineOptions({
         ..._plainDefaults(LineElement.defaults),
-        'borderColor': '#FF6384',
+        'borderColor': const ui.Color(0xFFFF6384),
         'borderDash': const <double>[],
         'borderWidth': 1.5,
         'tension': 0.0,
@@ -1042,8 +1043,8 @@ class StressDemoState extends State<StressDemo> {
   static final element_options.BarOptions _barOptions =
       element_options.BarOptions({
         ..._plainDefaults(BarElement.defaults),
-        'backgroundColor': 'rgba(54, 162, 235, 0.45)',
-        'borderColor': '#36A2EB',
+        'backgroundColor': const ui.Color.fromRGBO(54, 162, 235, 0.45),
+        'borderColor': const ui.Color(0xFF36A2EB),
         'borderWidth': 1.0,
         'borderRadius': 4.0,
       });
@@ -1065,11 +1066,11 @@ class StressDemoState extends State<StressDemo> {
   /// 0018). A `List<double>` dash goes to `setLineDash` without a copy.
   static final List<element_options.ArcOptions> _arcOptions = [
     for (final color in const [
-      'rgba(54, 162, 235, 0.5)',
-      'rgba(255, 99, 132, 0.5)',
-      'rgba(255, 159, 64, 0.5)',
-      'rgba(255, 205, 86, 0.5)',
-      'rgba(75, 192, 192, 0.5)',
+      ui.Color.fromRGBO(54, 162, 235, 0.5),
+      ui.Color.fromRGBO(255, 99, 132, 0.5),
+      ui.Color.fromRGBO(255, 159, 64, 0.5),
+      ui.Color.fromRGBO(255, 205, 86, 0.5),
+      ui.Color.fromRGBO(75, 192, 192, 0.5),
     ])
       element_options.ArcOptions({
         ..._plainDefaults(ArcElement.defaults),
@@ -1677,8 +1678,8 @@ class StressDemoState extends State<StressDemo> {
   void _drawPrimitives(CanvasRenderingContext2D ctx, double w, double h) {
     if (_points) {
       ctx
-        ..fillStyle = 'rgba(54, 162, 235, 0.45)'
-        ..strokeStyle = '#36A2EB'
+        ..fillStyle = const ui.Color.fromRGBO(54, 162, 235, 0.45)
+        ..strokeStyle = const ui.Color(0xFF36A2EB)
         ..lineWidth = 1;
       for (var i = 0; i < _n; i++) {
         drawPoint(ctx, _pointOptions, _px[i] * w, _py[i] * h);
@@ -1686,7 +1687,7 @@ class StressDemoState extends State<StressDemo> {
     }
     if (_line) {
       ctx
-        ..strokeStyle = '#FF6384'
+        ..strokeStyle = const ui.Color(0xFFFF6384)
         ..lineWidth = 1.5
         ..beginPath();
       final last = _n - 1;
@@ -1871,14 +1872,14 @@ class StressDemoState extends State<StressDemo> {
       8,
       _titleFont,
       TextOpts(
-        color: '#333333',
+        color: const ui.Color(0xFF333333),
         textBaseline: 'top',
         backdrop: Backdrop(
           4,
           4,
           titleWidth + 8,
           _titleFont.lineHeight + 4,
-          'rgba(255, 255, 255, 0.85)',
+          const ui.Color.fromRGBO(255, 255, 255, 0.85),
         ),
       ),
     );

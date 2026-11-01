@@ -4,6 +4,7 @@
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
@@ -276,7 +277,7 @@ class CoreDemoState extends State<CoreDemo> {
     if (ctx == null || area == null) return;
     ctx
       ..save()
-      ..strokeStyle = 'rgba(0, 0, 0, 0.1)'
+      ..strokeStyle = const ui.Color.fromRGBO(0, 0, 0, 0.1)
       ..lineWidth = 1
       ..beginPath();
     for (var i = 0; i <= 4; i++) {

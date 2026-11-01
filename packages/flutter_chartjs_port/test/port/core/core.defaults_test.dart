@@ -12,8 +12,12 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
+
+import '../../support/color_json.dart';
 
 // Upstream behavior that test/specs/core.defaults.tests.js does not check
 // (AGENTS.md rule 3). The expected values come from src/core/core.defaults.js
@@ -27,7 +31,10 @@ import 'package:test/test.dart';
 
 /// `JSON.stringify(value, replacer)` with the replacer of the Node.js probe:
 /// `undefined` is `"<undefined>"` and a function is `"<fn>"`.
-String _json(Object? value) => switch (value) {
+String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
+
+String _jsonRaw(Object? value) => switch (value) {
+  _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
@@ -134,63 +141,70 @@ void main() {
       );
       expect(
         _json(defaults),
-        '{"animation":{"delay":"<undefined>","duration":1000,'
-        '"easing":"easeOutQuart","fn":"<undefined>","from":"<undefined>",'
-        '"loop":"<undefined>","to":"<undefined>","type":"<undefined>"},'
-        '"backgroundColor":"rgba(0,0,0,0.1)",'
-        '"borderColor":"rgba(0,0,0,0.1)","color":"#666","datasets":{},'
-        '"devicePixelRatio":"<fn>","elements":{},'
-        '"events":["mousemove","mouseout","click","touchstart","touchmove"],'
-        '"font":{"family":"\'Helvetica Neue\', \'Helvetica\', \'Arial\', '
-        'sans-serif","size":12,"style":"normal","lineHeight":1.2,'
-        '"weight":null},"hover":{},"hoverBackgroundColor":"<fn>",'
-        '"hoverBorderColor":"<fn>","hoverColor":"<fn>","indexAxis":"x",'
-        '"interaction":{"mode":"nearest","intersect":true,'
-        '"includeInvisible":false},"maintainAspectRatio":true,'
-        '"onHover":null,"onClick":null,"parsing":true,"plugins":{},'
-        '"responsive":true,"scale":{"display":true,"offset":false,'
-        '"reverse":false,"beginAtZero":false,"bounds":"ticks","clip":true,'
-        '"grace":0,"grid":{"display":true,"lineWidth":1,'
-        '"drawOnChartArea":true,"drawTicks":true,"tickLength":8,'
-        '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
-        '"color":"rgba(0,0,0,0.1)"},"border":{"display":true,"dash":[],'
-        '"dashOffset":0,"width":1,"color":"rgba(0,0,0,0.1)"},'
-        '"title":{"display":false,"text":"","padding":{"top":4,"bottom":4},'
-        '"color":"#666"},"ticks":{"minRotation":0,"maxRotation":50,'
-        '"mirror":false,"textStrokeWidth":0,"textStrokeColor":"",'
-        '"padding":3,"display":true,"autoSkip":true,"autoSkipPadding":3,'
-        '"labelOffset":0,"callback":"<fn>","minor":{},"major":{},'
-        '"align":"center","crossAlign":"near","showLabelBackdrop":false,'
-        '"backdropColor":"rgba(255, 255, 255, '
-        '0.75)","backdropPadding":2,'
-        '"color":"#666"}},"scales":{},"showLine":true,'
-        '"drawActiveElementsOnTop":true,"animations":{"colors":'
-        '{"type":"color","properties":["color","borderColor",'
-        '"backgroundColor"]},"numbers":{"type":"number","properties":'
-        '["x","y","borderWidth","radius","tension"]}},"transitions":'
-        '{"active":{"animation":{"duration":400}},"resize":{"animation":'
-        '{"duration":0}},"show":{"animations":{"colors":'
-        '{"from":"transparent"},"visible":{"type":"boolean","duration":0}}},'
-        '"hide":{"animations":{"colors":{"to":"transparent"},"visible":'
-        '{"type":"boolean","easing":"linear","fn":"<fn>"}}}},'
-        '"layout":{"autoPadding":true,"padding":{"top":0,"right":0,'
-        '"bottom":0,"left":0}}}',
+        referenceColorTokens(
+          '{"animation":{"delay":"<undefined>","duration":1000,'
+          '"easing":"easeOutQuart","fn":"<undefined>","from":"<undefined>",'
+          '"loop":"<undefined>","to":"<undefined>","type":"<undefined>"},'
+          '"backgroundColor":"rgba(0,0,0,0.1)",'
+          '"borderColor":"rgba(0,0,0,0.1)","color":"#666","datasets":{},'
+          '"devicePixelRatio":"<fn>","elements":{},'
+          '"events":["mousemove","mouseout","click","touchstart","touchmove"],'
+          '"font":{"family":"\'Helvetica Neue\', \'Helvetica\', \'Arial\', '
+          'sans-serif","size":12,"style":"normal","lineHeight":1.2,'
+          '"weight":null},"hover":{},"hoverBackgroundColor":"<fn>",'
+          '"hoverBorderColor":"<fn>","hoverColor":"<fn>","indexAxis":"x",'
+          '"interaction":{"mode":"nearest","intersect":true,'
+          '"includeInvisible":false},"maintainAspectRatio":true,'
+          '"onHover":null,"onClick":null,"parsing":true,"plugins":{},'
+          '"responsive":true,"scale":{"display":true,"offset":false,'
+          '"reverse":false,"beginAtZero":false,"bounds":"ticks","clip":true,'
+          '"grace":0,"grid":{"display":true,"lineWidth":1,'
+          '"drawOnChartArea":true,"drawTicks":true,"tickLength":8,'
+          '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
+          '"color":"rgba(0,0,0,0.1)"},"border":{"display":true,"dash":[],'
+          '"dashOffset":0,"width":1,"color":"rgba(0,0,0,0.1)"},'
+          '"title":{"display":false,"text":"","padding":{"top":4,"bottom":4},'
+          '"color":"#666"},"ticks":{"minRotation":0,"maxRotation":50,'
+          '"mirror":false,"textStrokeWidth":0,"textStrokeColor":"",'
+          '"padding":3,"display":true,"autoSkip":true,"autoSkipPadding":3,'
+          '"labelOffset":0,"callback":"<fn>","minor":{},"major":{},'
+          '"align":"center","crossAlign":"near","showLabelBackdrop":false,'
+          '"backdropColor":"rgba(255, 255, 255, '
+          '0.75)","backdropPadding":2,'
+          '"color":"#666"}},"scales":{},"showLine":true,'
+          '"drawActiveElementsOnTop":true,"animations":{"colors":'
+          '{"type":"color","properties":["color","borderColor",'
+          '"backgroundColor"]},"numbers":{"type":"number","properties":'
+          '["x","y","borderWidth","radius","tension"]}},"transitions":'
+          '{"active":{"animation":{"duration":400}},"resize":{"animation":'
+          '{"duration":0}},"show":{"animations":{"colors":'
+          '{"from":"transparent"},"visible":{"type":"boolean","duration":0}}},'
+          '"hide":{"animations":{"colors":{"to":"transparent"},"visible":'
+          '{"type":"boolean","easing":"linear","fn":"<fn>"}}}},'
+          '"layout":{"autoPadding":true,"padding":{"top":0,"right":0,'
+          '"bottom":0,"left":0}}}',
+        ),
       );
     });
 
     test('has the upstream descriptors and overrides', () {
       expect(
         _json(descriptors),
-        '{"_scriptable":"<fn>","_indexable":"<fn>",'
-        '"hover":{"_fallback":"interaction"},'
-        '"interaction":{"_scriptable":false,"_indexable":false},'
-        '"animation":{"_fallback":false,"_indexable":false,'
-        '"_scriptable":"<fn>"},"animations":{"_fallback":"animation"},'
-        '"scale":{"_fallback":false,"_scriptable":"<fn>",'
-        '"_indexable":"<fn>","ticks":{"_scriptable":"<fn>",'
-        '"_indexable":"<fn>"}},"scales":{"_fallback":"scale"}}',
+        referenceColorTokens(
+          '{"_scriptable":"<fn>","_indexable":"<fn>",'
+          '"hover":{"_fallback":"interaction"},'
+          '"interaction":{"_scriptable":false,"_indexable":false},'
+          '"animation":{"_fallback":false,"_indexable":false,'
+          '"_scriptable":"<fn>"},"animations":{"_fallback":"animation"},'
+          '"scale":{"_fallback":false,"_scriptable":"<fn>",'
+          '"_indexable":"<fn>","ticks":{"_scriptable":"<fn>",'
+          '"_indexable":"<fn>"}},"scales":{"_fallback":"scale"}}',
+        ),
       );
-      expect(_json(overrides), '{}');
+      expect(
+        _json(overrides),
+        referenceColorTokens('{}'),
+      );
       expect(jsCall(descriptors['_scriptable'], ['onClick']), false);
       expect(jsCall(descriptors['_scriptable'], ['color']), true);
       expect(jsCall(descriptors['_indexable'], ['events']), false);
@@ -231,40 +245,70 @@ void main() {
         'offset',
         'color',
       ]);
-      expect(_get(scale['ticks'], 'color'), '#666');
-      expect(_get(scale['grid'], 'color'), 'rgba(0,0,0,0.1)');
-      expect(_get(scale['border'], 'color'), 'rgba(0,0,0,0.1)');
-      expect(_get(scale['title'], 'color'), '#666');
+      expect(
+        _get(scale['ticks'], 'color'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
+      expect(
+        _get(scale['grid'], 'color'),
+        const color_values.PreparedColor(0, 0, 0, 0.1),
+      );
+      expect(
+        _get(scale['border'], 'color'),
+        const color_values.PreparedColor(0, 0, 0, 0.1),
+      );
+      expect(
+        _get(scale['title'], 'color'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
 
-      defaults['color'] = 'red';
-      defaults['borderColor'] = 'blue';
-      expect(_get(scale['ticks'], 'color'), 'red');
-      expect(_get(scale['grid'], 'color'), 'blue');
-      expect(_get(scale['border'], 'color'), 'blue');
-      expect(_get(scale['title'], 'color'), 'red');
+      defaults['color'] = const color_values.PreparedColor(255, 0, 0, 1);
+      defaults['borderColor'] = const color_values.PreparedColor(0, 0, 255, 1);
+      expect(
+        _get(scale['ticks'], 'color'),
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
+      expect(
+        _get(scale['grid'], 'color'),
+        const color_values.PreparedColor(0, 0, 255, 1),
+      );
+      expect(
+        _get(scale['border'], 'color'),
+        const color_values.PreparedColor(0, 0, 255, 1),
+      );
+      expect(
+        _get(scale['title'], 'color'),
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
     });
 
     test('calls its function values', () {
       expect(
         jsCall(defaults['hoverBackgroundColor'], [
           <String, Object?>{},
-          <String, Object?>{'backgroundColor': 'rgba(0,0,0,0.1)'},
+          <String, Object?>{
+            'backgroundColor': const color_values.PreparedColor(0, 0, 0, 0.1),
+          },
         ]),
-        '#00000019',
+        const color_values.PreparedColor(0, 0, 0, 0.1),
       );
       expect(
         jsCall(defaults['hoverBorderColor'], [
           <String, Object?>{},
-          <String, Object?>{'borderColor': '#36A2EB'},
+          <String, Object?>{
+            'borderColor': const color_values.PreparedColor(54, 162, 235, 1),
+          },
         ]),
-        '#059BFF',
+        const color_values.PreparedColor(5, 155, 255, 1),
       );
       expect(
         jsCall(defaults['hoverColor'], [
           <String, Object?>{},
-          <String, Object?>{'color': '#666'},
+          <String, Object?>{
+            'color': const color_values.PreparedColor(102, 102, 102, 1),
+          },
         ]),
-        '#5C5C5C',
+        const color_values.PreparedColor(92, 92, 92, 1),
       );
       expect(
         jsCall(defaults['devicePixelRatio'], [
@@ -279,12 +323,19 @@ void main() {
         <String, Object?>{},
         <String, Object?>{'backgroundColor': value},
       ]);
-      for (final value in [undefined, '', 'nope', 0.0, double.nan, -0.0]) {
-        expect(hover(value), same(undefined), reason: '$value');
+      expect(hover(undefined), same(undefined));
+      for (final value in ['', 'nope', 0.0, double.nan, -0.0]) {
+        expect(() => hover(value), throwsArgumentError, reason: '$value');
       }
-      expect(hover('currentColor'), same(undefined));
-      expect(hover('#fff'), '#E6E6E6');
-      expect(hover(<String, Object?>{'r': 1.0}), '#010000');
+      expect(() => hover('currentColor'), throwsArgumentError);
+      expect(
+        hover(const color_values.PreparedColor(255, 255, 255, 1)),
+        const color_values.PreparedColor(230, 230, 230, 1),
+      );
+      expect(
+        hover(const color_values.PreparedColor(1, 0, 0, 1)),
+        const color_values.PreparedColor(1, 0, 0, 1),
+      );
       expect(
         jsCall(defaults['hoverColor'], [<String, Object?>{}, 'str']),
         same(undefined),
@@ -295,9 +346,14 @@ void main() {
       final resolver = createResolver(
         [
           <String, Object?>{
-            'barBackgroundColor': '#ff0000',
-            'barBorderColor': '#00ff00',
-            'barColor': '#0000ff',
+            'barBackgroundColor': const color_values.PreparedColor(
+              255,
+              0,
+              0,
+              1,
+            ),
+            'barBorderColor': const color_values.PreparedColor(0, 255, 0, 1),
+            'barColor': const color_values.PreparedColor(0, 0, 255, 1),
           },
         ],
         ['bar', ''],
@@ -309,15 +365,15 @@ void main() {
           <String, Object?>{},
           resolver,
         ]),
-        '#E60000',
+        const color_values.PreparedColor(230, 0, 0, 1),
       );
       expect(
         jsCall(defaults['hoverBorderColor'], [<String, Object?>{}, context]),
-        '#00E600',
+        const color_values.PreparedColor(0, 230, 0, 1),
       );
       expect(
         jsCall(defaults['hoverColor'], [<String, Object?>{}, resolver]),
-        '#0000E6',
+        const color_values.PreparedColor(0, 0, 230, 1),
       );
     });
   });
@@ -329,7 +385,10 @@ void main() {
           <String, Object?>{'a': 1.0},
           <String, Object?>{'b': 2.0},
         ]);
-      expect(_json(d['v']), '{"a":1,"b":2}');
+      expect(
+        _json(d['v']),
+        referenceColorTokens('{"a":1,"b":2}'),
+      );
     });
 
     test('returns the scope object', () {
@@ -345,8 +404,14 @@ void main() {
       _defaults()
         ..describe('dd', <String, Object?>{'_fallback': 'x'})
         ..override('oo', <String, Object?>{'y': 1.0});
-      expect(_json(descriptors['dd']), '{"_fallback":"x"}');
-      expect(_json(overrides['oo']), '{"y":1}');
+      expect(
+        _json(descriptors['dd']),
+        referenceColorTokens('{"_fallback":"x"}'),
+      );
+      expect(
+        _json(overrides['oo']),
+        referenceColorTokens('{"y":1}'),
+      );
       _defaults().describe(<String, Object?>{'_rootDesc': true});
       expect(descriptors['_rootDesc'], true);
     });
@@ -374,14 +439,23 @@ void main() {
       final d = _defaults()
         ..set('k', <String, Object?>{'z': 0.0})
         ..set('k.z', <String, Object?>{'w': 1.0});
-      expect(_json(d['k']), '{"z":{"w":1}}');
+      expect(
+        _json(d['k']),
+        referenceColorTokens('{"z":{"w":1}}'),
+      );
       d['k2'] = null;
       d.set('k2', <String, Object?>{'w': 1.0});
-      expect(_json(d['k2']), '{"w":1}');
+      expect(
+        _json(d['k2']),
+        referenceColorTokens('{"w":1}'),
+      );
       d['k3'] = undefined;
       d.set('k3', <String, Object?>{'w': 1.0});
       expect(_keys(d).skip(_keys(d).length - 3), ['k', 'k2', 'k3']);
-      expect(_json(d['k3']), '{"w":1}');
+      expect(
+        _json(d['k3']),
+        referenceColorTokens('{"w":1}'),
+      );
     });
 
     test('a routed name reads the target for undefined, not for null', () {
@@ -391,7 +465,7 @@ void main() {
       final c = d['c'];
       expect(_get(c, 'x'), isNull);
       jsSet(c, 'x', undefined);
-      expect(_get(c, 'x'), '#666');
+      expect(_get(c, 'x'), const color_values.PreparedColor(102, 102, 102, 1));
       expect(_keys(c), ['x']);
       d['color'] = 'red';
       expect(_get(c, 'x'), 'red');
@@ -417,7 +491,10 @@ void main() {
         })
         ..route('a', 'font', 'b', 'font')
         ..set('a', <String, Object?>{'font': undefined});
-      expect(_json(_get(d['a'], 'font')), '{"size":20,"style":"bold"}');
+      expect(
+        _json(_get(d['a'], 'font')),
+        referenceColorTokens('{"size":20,"style":"bold"}'),
+      );
     });
   });
 
@@ -435,7 +512,10 @@ void main() {
     test('merges a local object over the target object', () {
       final d = routedFont();
       final a = d['a'];
-      expect(_json(_get(a, 'font')), '{"size":10,"style":"bold"}');
+      expect(
+        _json(_get(a, 'font')),
+        referenceColorTokens('{"size":10,"style":"bold"}'),
+      );
       expect(identical(_get(a, 'font'), _get(a, 'font')), false);
       expect(_keys(a), ['font']);
     });
@@ -446,13 +526,22 @@ void main() {
           'font': <String, Object?>{'weight': 'bold'},
         });
       final a = d['a'];
-      expect(_json(_local(a, 'font')), '{"size":10}');
-      expect(_json(_get(a, 'font')), '{"size":10,"style":"bold"}');
+      expect(
+        _json(_local(a, 'font')),
+        referenceColorTokens('{"size":10}'),
+      );
+      expect(
+        _json(_get(a, 'font')),
+        referenceColorTokens('{"size":10,"style":"bold"}'),
+      );
     });
 
     test('a route on the root', () {
       final d = routedFont()..route('', 'rootRouted', 'a', 'font');
-      expect(_json(d['rootRouted']), '{"size":10,"style":"bold"}');
+      expect(
+        _json(d['rootRouted']),
+        referenceColorTokens('{"size":10,"style":"bold"}'),
+      );
     });
 
     test('a new name comes last, an own name keeps its place', () {
@@ -462,7 +551,10 @@ void main() {
         ..set('f', <String, Object?>{'p': 1.0, 'z': 5.0, 'q': 2.0})
         ..route('f', 'z', '', 'color');
       expect(_keys(d['e']), ['p', 'q', 'z']);
-      expect(_get(d['e'], 'z'), '#666');
+      expect(
+        _get(d['e'], 'z'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
       expect(jsHasOwn(d['e'], 'z'), true);
       expect(_keys(d['f']), ['p', 'z', 'q']);
       expect(_get(d['f'], 'z'), 5.0);
@@ -484,9 +576,18 @@ void main() {
           'o': <String, Object?>{'k': 1.0},
         })
         ..route('i', 'o', 'i', 'arr');
-      expect(_json(_get(d['g'], 'o')), '{"0":"a","1":"b","2":"c","k":1}');
-      expect(_json(_get(d['h'], 'o')), '{"k":1}');
-      expect(_json(_get(d['i'], 'o')), '{"0":"x","1":"y","k":1}');
+      expect(
+        _json(_get(d['g'], 'o')),
+        referenceColorTokens('{"0":"a","1":"b","2":"c","k":1}'),
+      );
+      expect(
+        _json(_get(d['h'], 'o')),
+        referenceColorTokens('{"k":1}'),
+      );
+      expect(
+        _json(_get(d['i'], 'o')),
+        referenceColorTokens('{"0":"x","1":"y","k":1}'),
+      );
       d
         ..['color'] = 'red'
         ..set('c', <String, Object?>{'x': null})
@@ -496,7 +597,7 @@ void main() {
         });
       expect(
         _json(_get(d['c'], 'x')),
-        '{"0":"r","1":"e","2":"d","deep":1}',
+        referenceColorTokens('{"0":"r","1":"e","2":"d","deep":1}'),
       );
     });
 
@@ -515,8 +616,14 @@ void main() {
     test('creates the scope, then the target scope', () {
       final d = _defaults()..route('nr.inner', 'x', 'nt', 'y');
       expect(_keys(d).skip(_keys(d).length - 2), ['nr', 'nt']);
-      expect(_json(d['nr']), '{"inner":{"x":"<undefined>"}}');
-      expect(_json(d['nt']), '{}');
+      expect(
+        _json(d['nr']),
+        referenceColorTokens('{"inner":{"x":"<undefined>"}}'),
+      );
+      expect(
+        _json(d['nt']),
+        referenceColorTokens('{}'),
+      );
     });
 
     test('a copy of a routed scope reads the routes', () {
@@ -526,7 +633,10 @@ void main() {
         })
         ..route('g', 'o', '', 'font');
       d['font'] = <String, Object?>{'size': 3.0};
-      expect(_json(d['g']), '{"o":{"size":3,"k":1}}');
+      expect(
+        _json(d['g']),
+        referenceColorTokens('{"o":{"size":3,"k":1}}'),
+      );
     });
 
     test('a new routed name is not configurable', () {
@@ -536,7 +646,10 @@ void main() {
       expect(() => d.route('e', 'z', '', 'backgroundColor'), _throwsTypeError);
       // The failed route stored the routed value as the local value.
       d['color'] = 'green';
-      expect(_get(d['e'], 'z'), '#666');
+      expect(
+        _get(d['e'], 'z'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
       expect(
         () => jsDeleteKey(d['e'], 'z'),
         _throwsTypeError,
@@ -583,7 +696,10 @@ void main() {
         () => d.route('nonobj', 'x', 'newTarget', 'y'),
         _throwsTypeError,
       );
-      expect(_json(d['newTarget']), '{}');
+      expect(
+        _json(d['newTarget']),
+        referenceColorTokens('{}'),
+      );
     });
 
     test('a route on a scope that a route reads goes to the owner', () {
@@ -594,14 +710,26 @@ void main() {
         ..set('p', <String, Object?>{})
         ..route('p', 'font', 't', 'font')
         ..route('p.font', 'size', '', 'color');
-      expect(_get(_get(d['t'], 'font'), 'size'), '#666');
-      expect(_json(_get(d['p'], 'font')), '{"size":"#666"}');
+      expect(
+        _get(_get(d['t'], 'font'), 'size'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
+      expect(
+        _json(_get(d['p'], 'font')),
+        referenceColorTokens('{"size":"#666"}'),
+      );
       expect(_local(d['p'], 'font'), same(undefined));
       jsSet(d['t'], 'font', <String, Object?>{
         'size': 7.0,
       });
-      expect(_json(_get(d['p'], 'font')), '{"size":7}');
-      expect(_json(_get(d['t'], 'font')), '{"size":7}');
+      expect(
+        _json(_get(d['p'], 'font')),
+        referenceColorTokens('{"size":7}'),
+      );
+      expect(
+        _json(_get(d['t'], 'font')),
+        referenceColorTokens('{"size":7}'),
+      );
     });
 
     test('a route on a routed undefined value goes to the target', () {
@@ -612,14 +740,23 @@ void main() {
         })
         ..route('a', 'font', 'b', 'font')
         ..route('a.font', 'x', '', 'color');
-      expect(_get(_get(d['b'], 'font'), 'x'), '#666');
+      expect(
+        _get(_get(d['b'], 'font'), 'x'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
       expect(_local(d['a'], 'font'), same(undefined));
-      expect(_json(_get(d['a'], 'font')), '{"size":20,"x":"#666"}');
+      expect(
+        _json(_get(d['a'], 'font')),
+        referenceColorTokens('{"size":20,"x":"#666"}'),
+      );
       expect(_keys(_get(d['b'], 'font')), ['size', 'x']);
       jsSet(d['b'], 'font', <String, Object?>{
         'size': 30.0,
       });
-      expect(_json(_get(d['a'], 'font')), '{"size":30}');
+      expect(
+        _json(_get(d['a'], 'font')),
+        referenceColorTokens('{"size":30}'),
+      );
     });
   });
 
@@ -640,7 +777,7 @@ void main() {
       routed['q'] = undefined;
       expect(_get(plain, 'q'), 2.0);
       expect(_local(routed, 'q'), same(undefined));
-      expect(routed['q'], '#666');
+      expect(routed['q'], const color_values.PreparedColor(102, 102, 102, 1));
       expect(identical(d.get('s'), routed), true);
     });
 
@@ -649,7 +786,10 @@ void main() {
         ..set('c', <String, Object?>{'_x': 1.0, 'x': 2.0})
         ..route('c', 'x', '', 'color');
       // Upstream gives {"_x":2,"x":2}.
-      expect(_json(d['c']), '{"_x":1,"x":2}');
+      expect(
+        _json(d['c']),
+        referenceColorTokens('{"_x":1,"x":2}'),
+      );
       jsSet(d['c'], '_x', undefined);
       // Upstream gives '#666'.
       expect(_get(d['c'], 'x'), 2.0);
@@ -661,8 +801,14 @@ void main() {
         ..set('u', <String, Object?>{})
         ..route('u', 'v', 't', 'v')
         ..route('t', 'v', '', 'color');
-      expect(_get(d['t'], 'v'), '#666');
-      expect(_get(d['u'], 'v'), '#666');
+      expect(
+        _get(d['t'], 'v'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
+      expect(
+        _get(d['u'], 'v'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
     });
   });
 
@@ -715,7 +861,10 @@ void main() {
     void checkSnapshot() {
       expect(_json(defaults), defaultsJson);
       expect(_json(descriptors), descriptorsJson);
-      expect(_json(overrides), '{}');
+      expect(
+        _json(overrides),
+        referenceColorTokens('{}'),
+      );
       final scale = defaults['scale']! as JsObjectFace;
       expect(identical(scale['ticks'], ticks), true);
       expect(identical(defaults['events'], events), true);
@@ -727,8 +876,11 @@ void main() {
       expect(_keys(defaults['font']), isNot(contains('fallbackFamily')));
       expect(defaults['font'], isA<OptionScope>());
       // The routes of the snapshot still read the root.
-      defaults['color'] = 'blue';
-      expect(_get(scale['ticks'], 'color'), 'blue');
+      defaults['color'] = const color_values.PreparedColor(0, 0, 255, 1);
+      expect(
+        _get(scale['ticks'], 'color'),
+        const color_values.PreparedColor(0, 0, 255, 1),
+      );
     }
 
     void changeScopes() {

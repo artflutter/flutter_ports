@@ -9,10 +9,13 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
+
+import '../../support/color_json.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
@@ -35,7 +38,10 @@ import 'package:test/test.dart';
 /// `"<undefined>"`, a function gives `"<fn>"` and a [RawThemeColor] gives
 /// its rgba() string in angle brackets. The form is the same on every
 /// platform.
-String _json(Object? value) => switch (value) {
+String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
+
+String _jsonRaw(Object? value) => switch (value) {
+  _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
@@ -116,21 +122,21 @@ const RawThemeColor _red = (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0);
 const RawThemeColor _blue = (alpha: 0.8, red: 0.0, green: 0.0, blue: 1.0);
 
 /// `BORDER_COLORS` (`plugin.colors.ts:14-22`).
-const List<String> _upstreamBorderColors = [
-  'rgb(54, 162, 235)',
-  'rgb(255, 99, 132)',
-  'rgb(255, 159, 64)',
-  'rgb(255, 205, 86)',
-  'rgb(75, 192, 192)',
-  'rgb(153, 102, 255)',
-  'rgb(201, 203, 207)',
+const List<color_values.PreparedColor> _upstreamBorderColors = [
+  color_values.PreparedColor(54, 162, 235, 1),
+  color_values.PreparedColor(255, 99, 132, 1),
+  color_values.PreparedColor(255, 159, 64, 1),
+  color_values.PreparedColor(255, 205, 86, 1),
+  color_values.PreparedColor(75, 192, 192, 1),
+  color_values.PreparedColor(153, 102, 255, 1),
+  color_values.PreparedColor(201, 203, 207, 1),
 ];
 
 /// `BACKGROUND_COLORS` (`plugin.colors.ts:25`): each border color with
 /// `replace('rgb(', 'rgba(')` and then `replace(')', ', 0.5)')`.
-final List<String> _upstreamBackgroundColors = [
+final List<color_values.PreparedColor> _upstreamBackgroundColors = [
   for (final color in _upstreamBorderColors)
-    color.replaceFirst('rgb(', 'rgba(').replaceFirst(')', ', 0.5)'),
+    color_values.PreparedColor(color.red, color.green, color.blue, 0.5),
 ];
 
 /// The labels of the scope objects of a scope list: the name of a known
@@ -204,18 +210,30 @@ final Map<String, Map<String, Object?>> _testThemes = {
   'raw': {
     'raw': <String, Object?>{
       'scale': <String, Object?>{
-        'ticks': <String, Object?>{'textStrokeColor': 'blue'},
+        'ticks': <String, Object?>{
+          'textStrokeColor': const color_values.PreparedColor(0, 0, 255, 1),
+        },
       },
       'plugins': <String, Object?>{
-        'tooltip': <String, Object?>{'borderColor': 'red'},
+        'tooltip': <String, Object?>{
+          'borderColor': const color_values.PreparedColor(255, 0, 0, 1),
+        },
         'colors': <String, Object?>{
-          r'$borderColors': <Object?>['red', 'blue'],
-          r'$backgroundColors': <Object?>['pink', 'cyan'],
+          r'$borderColors': <Object?>[
+            const color_values.PreparedColor(255, 0, 0, 1),
+            const color_values.PreparedColor(0, 0, 255, 1),
+          ],
+          r'$backgroundColors': <Object?>[
+            const color_values.PreparedColor(255, 192, 203, 1),
+            const color_values.PreparedColor(0, 255, 255, 1),
+          ],
         },
       },
       'scales': <String, Object?>{
         'radialLinear': <String, Object?>{
-          'pointLabels': <String, Object?>{'color': 'green'},
+          'pointLabels': <String, Object?>{
+            'color': const color_values.PreparedColor(0, 128, 0, 1),
+          },
         },
         'linear': <String, Object?>{
           'grid': <String, Object?>{'color': _red},
@@ -267,14 +285,19 @@ void main() {
     test('the light preset', () {
       // The same leaves, in the same order, on the VM, dart2js and dart2wasm.
       const font = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-      const gray = 'rgba(102, 102, 102, 1)';
-      const tenth = 'rgba(0, 0, 0, 0.1)';
-      const white = 'rgba(255, 255, 255, 1)';
+      const gray = color_values.PreparedColor(102, 102, 102, 1);
+      const tenth = color_values.PreparedColor(0, 0, 0, 0.1);
+      const white = color_values.PreparedColor(255, 255, 255, 1);
       final leaves = _leaves(compileChartTheme(ChartThemes.light));
       expect(leaves, {
         'color': gray,
         'scale.ticks.color': gray,
-        'scale.ticks.backdropColor': 'rgba(255, 255, 255, 0.75)',
+        'scale.ticks.backdropColor': const color_values.PreparedColor(
+          255,
+          255,
+          255,
+          0.75,
+        ),
         'scale.ticks.font.family': font,
         'scale.ticks.font.size': 12.0,
         'scale.ticks.font.style': 'normal',
@@ -310,7 +333,12 @@ void main() {
         'plugins.legend.title.font.size': 12.0,
         'plugins.legend.title.font.style': 'normal',
         'plugins.legend.title.font.lineHeight': 1.2,
-        'plugins.tooltip.backgroundColor': 'rgba(0, 0, 0, 0.8)',
+        'plugins.tooltip.backgroundColor': const color_values.PreparedColor(
+          0,
+          0,
+          0,
+          0.8,
+        ),
         'plugins.tooltip.titleColor': white,
         'plugins.tooltip.bodyColor': white,
         'plugins.tooltip.footerColor': white,
@@ -328,13 +356,13 @@ void main() {
         'plugins.tooltip.footerFont.style': 'normal',
         'plugins.tooltip.footerFont.lineHeight': 1.2,
         r'plugins.colors.$borderColors': [
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(255, 205, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(201, 203, 207, 1)',
+          const color_values.PreparedColor(54, 162, 235, 1),
+          const color_values.PreparedColor(255, 99, 132, 1),
+          const color_values.PreparedColor(255, 159, 64, 1),
+          const color_values.PreparedColor(255, 205, 86, 1),
+          const color_values.PreparedColor(75, 192, 192, 1),
+          const color_values.PreparedColor(153, 102, 255, 1),
+          const color_values.PreparedColor(201, 203, 207, 1),
         ],
         r'plugins.colors.$backgroundColors': _upstreamBackgroundColors,
         'elements.point.borderColor': tenth,
@@ -344,7 +372,12 @@ void main() {
         'elements.bar.borderColor': tenth,
         'elements.bar.backgroundColor': tenth,
         'elements.arc.backgroundColor': tenth,
-        'elements.arc.borderColor': 'rgba(255, 255, 255, 1)',
+        'elements.arc.borderColor': const color_values.PreparedColor(
+          255,
+          255,
+          255,
+          1,
+        ),
         ..._transitionLeaves,
       });
       expect(leaves.keys, [
@@ -418,7 +451,7 @@ void main() {
     });
 
     test('each color token emits its keys of theming.md §4', () {
-      const red = 'rgba(200, 0, 0, 1)';
+      const red = color_values.PreparedColor(200, 0, 0, 1);
       final expected = <String, Map<String, Object?>>{
         'color': {
           'color': red,
@@ -446,7 +479,12 @@ void main() {
         },
         'surface': {
           'elements.arc.borderColor': red,
-          'scale.ticks.backdropColor': 'rgba(200, 0, 0, 0.75)',
+          'scale.ticks.backdropColor': const color_values.PreparedColor(
+            200,
+            0,
+            0,
+            0.75,
+          ),
         },
         // The tooltip colors (plugin.tooltip.js:1279, 1280, 1287, 1292,
         // 1305).
@@ -478,8 +516,14 @@ void main() {
           )),
         ),
       );
-      expect(leaves['elements.arc.borderColor'], 'rgba(0, 0, 255, 0.5)');
-      expect(leaves['scale.ticks.backdropColor'], 'rgba(0, 0, 255, 0.75)');
+      expect(
+        leaves['elements.arc.borderColor'],
+        const color_values.PreparedColor(0, 0, 255, 0.5),
+      );
+      expect(
+        leaves['scale.ticks.backdropColor'],
+        const color_values.PreparedColor(0, 0, 255, 0.75),
+      );
     });
 
     test('a font emits its fields that are not null into each slot', () {
@@ -658,10 +702,16 @@ void main() {
         'scale.ticks.font.size': 10.0,
         'scale.ticks.textStrokeColor': 'raw-stroke',
         'scale.title': 'raw-title',
-        'scales.radialLinear.pointLabels.color': 'rgba(200, 0, 0, 1)',
+        'scales.radialLinear.pointLabels.color':
+            const color_values.PreparedColor(200, 0, 0, 1),
         'scales.radialLinear.pointLabels.font.family': 'serif',
-        'plugins.title.color': 'rgba(200, 0, 0, 1)',
-        'plugins.subtitle.color': 'rgba(200, 0, 0, 1)',
+        'plugins.title.color': const color_values.PreparedColor(200, 0, 0, 1),
+        'plugins.subtitle.color': const color_values.PreparedColor(
+          200,
+          0,
+          0,
+          1,
+        ),
         'plugins.title.font.family': 'serif',
         'plugins.title.font.size': 14.0,
         'plugins.subtitle.font.family': 'serif',
@@ -702,7 +752,12 @@ void main() {
         'radialLinear.pointLabels.color': 'raw-point-labels',
         'radialLinear.pointLabels.font.size': 11.0,
         'radialLinear.pointLabels.font.style': 'italic',
-        'radialLinear.angleLines.color': 'rgba(200, 0, 0, 1)',
+        'radialLinear.angleLines.color': const color_values.PreparedColor(
+          200,
+          0,
+          0,
+          1,
+        ),
         'radialLinear.angleLines.lineWidth': 2.0,
       });
     });
@@ -715,18 +770,21 @@ void main() {
           },
           'plugins': <String, Object?>{
             'colors': <String, Object?>{
-              r'$borderColors': <Object?>[_red, 'blue'],
+              r'$borderColors': <Object?>[
+                _red,
+                const color_values.PreparedColor(0, 0, 255, 1),
+              ],
             },
           },
         },
       });
       expect(
         _at(compiled, 'scale.ticks.textStrokeColor'),
-        'rgba(200, 0, 0, 1)',
+        const color_values.PreparedColor(200, 0, 0, 1),
       );
       expect(_at(compiled, r'plugins.colors.$borderColors'), [
-        'rgba(200, 0, 0, 1)',
-        'blue',
+        const color_values.PreparedColor(200, 0, 0, 1),
+        const color_values.PreparedColor(0, 0, 255, 1),
       ]);
     });
 
@@ -840,14 +898,14 @@ void main() {
         }),
       );
       expect(_at(compiled, border), [
-        'rgba(200, 0, 0, 1)',
-        'rgba(0, 0, 255, 0.8)',
+        const color_values.PreparedColor(200, 0, 0, 1),
+        const color_values.PreparedColor(0, 0, 255, 0.8),
       ]);
       // The alpha 0.5 of BACKGROUND_COLORS (plugin.colors.ts:25) replaces
       // the alpha of each color.
       expect(_at(compiled, background), [
-        'rgba(200, 0, 0, 0.5)',
-        'rgba(0, 0, 255, 0.5)',
+        const color_values.PreparedColor(200, 0, 0, 0.5),
+        const color_values.PreparedColor(0, 0, 255, 0.5),
       ]);
     });
 
@@ -863,14 +921,23 @@ void main() {
       );
       // The blue screen of theming.md §8 test 6 needs alpha 1 without a
       // raw key.
-      expect(backgroundAt(1.0), ['rgba(200, 0, 0, 1)', 'rgba(0, 0, 255, 1)']);
+      expect(backgroundAt(1.0), [
+        const color_values.PreparedColor(200, 0, 0, 1),
+        const color_values.PreparedColor(0, 0, 255, 1),
+      ]);
       expect(backgroundAt(0.25), [
-        'rgba(200, 0, 0, 0.25)',
-        'rgba(0, 0, 255, 0.25)',
+        const color_values.PreparedColor(200, 0, 0, 0.25),
+        const color_values.PreparedColor(0, 0, 255, 0.25),
       ]);
       // An int is a number too, and the alpha clamps.
-      expect(backgroundAt(0), ['rgba(200, 0, 0, 0)', 'rgba(0, 0, 255, 0)']);
-      expect(backgroundAt(2.0), ['rgba(200, 0, 0, 1)', 'rgba(0, 0, 255, 1)']);
+      expect(backgroundAt(0), [
+        const color_values.PreparedColor(200, 0, 0, 0),
+        const color_values.PreparedColor(0, 0, 255, 0),
+      ]);
+      expect(backgroundAt(2.0), [
+        const color_values.PreparedColor(200, 0, 0, 1),
+        const color_values.PreparedColor(0, 0, 255, 1),
+      ]);
     });
 
     test('the key order and the item order', () {
@@ -886,9 +953,9 @@ void main() {
         r'$backgroundColors',
       ]);
       expect(_at(compiled, border), [
-        'rgba(0, 0, 255, 0.8)',
-        'rgba(200, 0, 0, 1)',
-        'rgba(0, 0, 255, 0.8)',
+        const color_values.PreparedColor(0, 0, 255, 0.8),
+        const color_values.PreparedColor(200, 0, 0, 1),
+        const color_values.PreparedColor(0, 0, 255, 0.8),
       ]);
       // With the other tokens, the palette comes after the title, subtitle,
       // legend and tooltip keys of plugins.
@@ -959,8 +1026,8 @@ void main() {
         ),
       );
       expect(leaves, {
-        border: ['rgba(200, 0, 0, 1)'],
-        background: ['rgba(200, 0, 0, 0.5)'],
+        border: [const color_values.PreparedColor(200, 0, 0, 1)],
+        background: [const color_values.PreparedColor(200, 0, 0, 0.5)],
         ..._transitionLeaves,
       });
     });
@@ -973,16 +1040,20 @@ void main() {
         'raw': <String, Object?>{
           'plugins': <String, Object?>{
             'colors': <String, Object?>{
-              r'$borderColors': <Object?>['red'],
+              r'$borderColors': <Object?>[
+                const color_values.PreparedColor(255, 0, 0, 1),
+              ],
             },
           },
         },
       });
       // The raw List replaces the token List as a whole.
-      expect(_at(compiled, border), ['red']);
+      expect(_at(compiled, border), [
+        const color_values.PreparedColor(255, 0, 0, 1),
+      ]);
       expect(_at(compiled, background), [
-        'rgba(200, 0, 0, 0.5)',
-        'rgba(0, 0, 255, 0.5)',
+        const color_values.PreparedColor(200, 0, 0, 0.5),
+        const color_values.PreparedColor(0, 0, 255, 0.5),
       ]);
       expect(_keys(_at(compiled, 'plugins.colors')), [
         r'$borderColors',
@@ -998,18 +1069,21 @@ void main() {
       expect(borders, hasLength(_upstreamBorderColors.length));
       for (var i = 0; i < borders.length; i++) {
         expect(
-          Color(borders[i]).rgbString(),
-          Color(_upstreamBorderColors[i]).rgbString(),
+          referenceParsedColor(borders[i]).rgbString(),
+          referenceParsedColor(_upstreamBorderColors[i]).rgbString(),
           reason: '$i',
         );
         expect(
-          Color(borders[i]).rgbString(),
-          _upstreamBorderColors[i],
+          referenceParsedColor(borders[i]).rgbString(),
+          referenceParsedColor(_upstreamBorderColors[i]).rgbString(),
           reason: '$i',
         );
       }
       expect(_at(compiled, background), _upstreamBackgroundColors);
-      expect(_upstreamBackgroundColors.first, 'rgba(54, 162, 235, 0.5)');
+      expect(
+        _upstreamBackgroundColors.first,
+        const color_values.PreparedColor(54, 162, 235, 0.5),
+      );
     });
 
     test(
@@ -1021,7 +1095,10 @@ void main() {
             'borders': <Object?>[_red],
           },
           <String, Object?>{
-            'colors': <Object?>[_red, 'red'],
+            'colors': <Object?>[
+              _red,
+              const color_values.PreparedColor(255, 0, 0, 1),
+            ],
           },
           <String, Object?>{
             'colors': <String, Object?>{'0': _red},
@@ -1049,22 +1126,28 @@ void main() {
       () {
         final compiled = compileChartTheme({
           'palette': <String, Object?>{
-            'colors': <Object?>[_red, 'red', _blue],
+            'colors': <Object?>[
+              _red,
+              const color_values.PreparedColor(255, 0, 0, 1),
+              _blue,
+            ],
             'backgroundAlpha': '1',
           },
         });
         expect(_at(compiled, border), [
-          'rgba(200, 0, 0, 1)',
-          'rgba(0, 0, 255, 0.8)',
+          const color_values.PreparedColor(200, 0, 0, 1),
+          const color_values.PreparedColor(0, 0, 255, 0.8),
         ]);
         expect(_at(compiled, background), [
-          'rgba(200, 0, 0, 0.5)',
-          'rgba(0, 0, 255, 0.5)',
+          const color_values.PreparedColor(200, 0, 0, 0.5),
+          const color_values.PreparedColor(0, 0, 255, 0.5),
         ]);
         expect(
           compileChartTheme({
             'palette': <String, Object?>{
-              'colors': <Object?>['red'],
+              'colors': <Object?>[
+                const color_values.PreparedColor(255, 0, 0, 1),
+              ],
             },
           }),
           isNull,
@@ -1111,7 +1194,10 @@ void main() {
     test('the title color is the color token', () {
       // The route of the title color (plugin.title.js:158-160).
       final compiled = compileChartTheme(_colorTheme('color', _blue));
-      expect(_at(compiled, 'plugins.title.color'), 'rgba(0, 0, 255, 0.8)');
+      expect(
+        _at(compiled, 'plugins.title.color'),
+        const color_values.PreparedColor(0, 0, 255, 0.8),
+      );
       expect(
         _keys(_at(compiled, 'plugins.title')),
         ['color'],
@@ -1141,11 +1227,17 @@ void main() {
         'colors': <String, Object?>{'color': _red},
         'raw': <String, Object?>{
           'plugins': <String, Object?>{
-            'title': <String, Object?>{'color': 'blue', 'position': 'bottom'},
+            'title': <String, Object?>{
+              'color': const color_values.PreparedColor(0, 0, 255, 1),
+              'position': 'bottom',
+            },
           },
         },
       });
-      expect(_at(compiled, 'plugins.title.color'), 'blue');
+      expect(
+        _at(compiled, 'plugins.title.color'),
+        const color_values.PreparedColor(0, 0, 255, 1),
+      );
       expect(_at(compiled, 'plugins.title.position'), 'bottom');
     });
   });
@@ -1168,7 +1260,10 @@ void main() {
     test('the subtitle color is the color token', () {
       // The route of the subtitle color (plugin.subtitle.js:45-47).
       final compiled = compileChartTheme(_colorTheme('color', _blue));
-      expect(_at(compiled, 'plugins.subtitle.color'), 'rgba(0, 0, 255, 0.8)');
+      expect(
+        _at(compiled, 'plugins.subtitle.color'),
+        const color_values.PreparedColor(0, 0, 255, 0.8),
+      );
       expect(
         _keys(_at(compiled, 'plugins.subtitle')),
         ['color'],
@@ -1376,7 +1471,12 @@ void main() {
       // plugin.tooltip.js:1279.
       final compiled = compileChartTheme(_colorTheme('inverseSurface', _blue));
       expect(_leaves(compiled), {
-        'plugins.tooltip.backgroundColor': 'rgba(0, 0, 255, 0.8)',
+        'plugins.tooltip.backgroundColor': const color_values.PreparedColor(
+          0,
+          0,
+          255,
+          0.8,
+        ),
         ..._transitionLeaves,
       });
       expect(_keys(compiled), ['plugins', 'transitions']);
@@ -1388,10 +1488,30 @@ void main() {
         _colorTheme('onInverseSurface', _blue),
       );
       expect(_leaves(compiled), {
-        'plugins.tooltip.titleColor': 'rgba(0, 0, 255, 0.8)',
-        'plugins.tooltip.bodyColor': 'rgba(0, 0, 255, 0.8)',
-        'plugins.tooltip.footerColor': 'rgba(0, 0, 255, 0.8)',
-        'plugins.tooltip.multiKeyBackground': 'rgba(0, 0, 255, 0.8)',
+        'plugins.tooltip.titleColor': const color_values.PreparedColor(
+          0,
+          0,
+          255,
+          0.8,
+        ),
+        'plugins.tooltip.bodyColor': const color_values.PreparedColor(
+          0,
+          0,
+          255,
+          0.8,
+        ),
+        'plugins.tooltip.footerColor': const color_values.PreparedColor(
+          0,
+          0,
+          255,
+          0.8,
+        ),
+        'plugins.tooltip.multiKeyBackground': const color_values.PreparedColor(
+          0,
+          0,
+          255,
+          0.8,
+        ),
         ..._transitionLeaves,
       });
       // The other color tokens give no tooltip key. The tooltip border
@@ -1418,16 +1538,18 @@ void main() {
       final compiled = compileChartTheme(ChartThemes.light);
       expect(
         _at(compiled, 'plugins.tooltip.backgroundColor'),
-        'rgba(0, 0, 0, 0.8)',
+        const color_values.PreparedColor(0, 0, 0, 0.8),
       );
       expect(
-        Color(_at(compiled, 'plugins.tooltip.backgroundColor')).rgbString(),
-        Color('rgba(0,0,0,0.8)').rgbString(),
+        referenceParsedColor(_at(compiled, 'plugins.tooltip.backgroundColor'))
+            .rgbString(),
+        referenceParsedColor('rgba(0,0,0,0.8)').rgbString(),
       );
       for (final key in tooltipColors.skip(1)) {
         expect(
-          Color(_at(compiled, 'plugins.tooltip.$key')).rgbString(),
-          Color('#fff').rgbString(),
+          referenceParsedColor(_at(compiled, 'plugins.tooltip.$key'))
+              .rgbString(),
+          referenceParsedColor('#fff').rgbString(),
           reason: key,
         );
       }
@@ -1546,10 +1668,10 @@ void main() {
       });
       expect(_leaves(_at(compiled, 'plugins.tooltip')), {
         'backgroundColor': 'raw-background',
-        'titleColor': 'rgba(200, 0, 0, 1)',
-        'bodyColor': 'rgba(200, 0, 0, 1)',
-        'footerColor': 'rgba(200, 0, 0, 1)',
-        'multiKeyBackground': 'rgba(200, 0, 0, 1)',
+        'titleColor': const color_values.PreparedColor(200, 0, 0, 1),
+        'bodyColor': const color_values.PreparedColor(200, 0, 0, 1),
+        'footerColor': const color_values.PreparedColor(200, 0, 0, 1),
+        'multiKeyBackground': const color_values.PreparedColor(200, 0, 0, 1),
         'titleFont.family': 'serif',
         'titleFont.size': 14.0,
         'titleFont.lineHeight': 1.5,
@@ -1595,7 +1717,7 @@ void main() {
         themeColorToRgba((alpha: 0.1, red: 0.0, green: 0.0, blue: 0.0)),
         'rgba(0, 0, 0, 0.1)',
       );
-      // The alpha of Color(0x1A000000) (theming.md §4).
+      // The alpha of referenceParsedColor(0x1A000000) (theming.md §4).
       expect(
         themeColorToRgba((alpha: 26 / 255, red: 0.0, green: 0.0, blue: 0.0)),
         'rgba(0, 0, 0, 0.10196078431372549)',
@@ -1842,12 +1964,21 @@ void main() {
     test('a raw key that breaks the guard fails an assert', () {
       final themes = <Map<String, Object?>>[
         {
-          'raw': <String, Object?>{'backgroundColor': 'red'},
+          'raw': <String, Object?>{
+            'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+          },
         },
         {
           'raw': <String, Object?>{
             'elements': <String, Object?>{
-              'bar': <String, Object?>{'hoverBackgroundColor': 'red'},
+              'bar': <String, Object?>{
+                'hoverBackgroundColor': const color_values.PreparedColor(
+                  255,
+                  0,
+                  0,
+                  1,
+                ),
+              },
             },
           },
         },
@@ -1877,7 +2008,9 @@ void main() {
           'raw': <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
-                'grid': <String, Object?>{'color': 'red'},
+                'grid': <String, Object?>{
+                  'color': const color_values.PreparedColor(255, 0, 0, 1),
+                },
               },
             },
           },
@@ -1983,15 +2116,25 @@ void main() {
           'plugins': <String, Object?>{
             'legend': <String, Object?>{
               'position': 'left',
-              'title': <String, Object?>{'color': 'red'},
+              'title': <String, Object?>{
+                'color': const color_values.PreparedColor(255, 0, 0, 1),
+              },
             },
-            'tooltip': <String, Object?>{'borderColor': 'red'},
+            'tooltip': <String, Object?>{
+              'borderColor': const color_values.PreparedColor(255, 0, 0, 1),
+            },
           },
         },
       });
       expect(_at(compiled, 'plugins.legend.position'), 'left');
-      expect(_at(compiled, 'plugins.legend.title.color'), 'red');
-      expect(_at(compiled, 'plugins.tooltip.borderColor'), 'red');
+      expect(
+        _at(compiled, 'plugins.legend.title.color'),
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
+      expect(
+        _at(compiled, 'plugins.tooltip.borderColor'),
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
     });
 
     test('a raw palette that is not a List with items fails an assert', () {
@@ -2027,7 +2170,10 @@ void main() {
         'raw': <String, Object?>{
           'plugins': <String, Object?>{
             'colors': <String, Object?>{
-              r'$borderColors': <Object?>['red', null],
+              r'$borderColors': <Object?>[
+                const color_values.PreparedColor(255, 0, 0, 1),
+                null,
+              ],
             },
           },
         },
@@ -2048,7 +2194,9 @@ void main() {
             'colors': <String, Object?>{'outline': _red},
           },
           {
-            'colors': <String, Object?>{'color': 'red'},
+            'colors': <String, Object?>{
+              'color': const color_values.PreparedColor(255, 0, 0, 1),
+            },
           },
           {
             'typography': <String, Object?>{'title': <String, Object?>{}},
@@ -2101,7 +2249,10 @@ void main() {
       expect(() => ticks['color'] = 'x', throwsA(isA<TypeError>()));
       expect(() => ticks.jsDelete('color'), throwsA(isA<TypeError>()));
       expect(ticks.jsDelete('absent'), isFalse);
-      expect(_at(compiled, 'scale.ticks.color'), 'rgba(102, 102, 102, 1)');
+      expect(
+        _at(compiled, 'scale.ticks.color'),
+        const color_values.PreparedColor(102, 102, 102, 1),
+      );
 
       final dash =
           _at(
@@ -2130,7 +2281,10 @@ void main() {
       );
       expect(scopes.first, same(_at(compiled, 'plugins.tooltip')));
       final resolver = config.createResolver(scopes, <String, Object?>{});
-      expect(resolver['borderColor'], 'red');
+      expect(
+        resolver['borderColor'],
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
       expect(() => resolver['borderColor'] = 'x', throwsA(isA<TypeError>()));
     });
   });
@@ -2359,7 +2513,9 @@ void main() {
         'raw': <String, Object?>{
           'scales': <String, Object?>{
             'x': <String, Object?>{
-              'ticks': <String, Object?>{'color': 'red'},
+              'ticks': <String, Object?>{
+                'color': const color_values.PreparedColor(255, 0, 0, 1),
+              },
             },
           },
         },
@@ -2386,7 +2542,9 @@ void main() {
         'raw': <String, Object?>{
           'scales': <String, Object?>{
             'radialLinear': <String, Object?>{
-              'pointLabels': <String, Object?>{'color': 'red'},
+              'pointLabels': <String, Object?>{
+                'color': const color_values.PreparedColor(255, 0, 0, 1),
+              },
             },
           },
         },

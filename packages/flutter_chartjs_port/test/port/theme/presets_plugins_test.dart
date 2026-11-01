@@ -2,18 +2,22 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ParsedFont, toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the plugin keys (Chart.js ADR 0050): the options of
@@ -64,7 +68,7 @@ Map<String, Object?> _fontFields(ParsedFont font) => {
 };
 
 /// The parsed form of the CSS color [value].
-String? _parsed(Object? value) => Color(value).rgbString();
+String? _parsed(Object? value) => referenceParsedColor(value).rgbString();
 
 /// Whether the key [path] of `themeLightPlugins` is a font.
 bool _isFont(String path) => themeLightPlugins[path] is Map<String, Object?>;
@@ -101,6 +105,7 @@ Chart _chart(Object? theme) => acquireChart(<String, Object?>{
 });
 
 void main() {
+  installNativeColorCodec();
   test('the plugin keys are the 19 keys of the theme spec', () {
     expect(themeLightPlugins.keys, [
       'title.color',
@@ -134,7 +139,11 @@ void main() {
       final options = _resolve(_chart(null));
       for (final MapEntry(key: path, value: upstream)
           in themeLightPlugins.entries) {
-        expect(options[path], upstream, reason: path);
+        expect(
+          options[path],
+          upstream is String ? referenceColorOrString(upstream) : upstream,
+          reason: path,
+        );
       }
     });
 
@@ -148,7 +157,11 @@ void main() {
           expect(_parsed(options[path]), _parsed(upstream), reason: path);
           expect(_parsed(upstream), isNotNull, reason: path);
         } else {
-          expect(options[path], upstream, reason: path);
+          expect(
+            options[path],
+            upstream is String ? referenceColorOrString(upstream) : upstream,
+            reason: path,
+          );
         }
       }
       // The local weights stay (theming.md §3.4).
@@ -167,14 +180,17 @@ void main() {
       // The theme strings, not the upstream strings: the theme scope gives
       // the values (hunk H2).
       final options = _resolve(_chart(compileChartTheme(ChartThemes.light)));
-      const gray = 'rgba(102, 102, 102, 1)';
-      const white = 'rgba(255, 255, 255, 1)';
+      const gray = native_ui.Color.fromRGBO(102, 102, 102, 1);
+      const white = native_ui.Color.fromRGBO(255, 255, 255, 1);
       expect(options['title.color'], gray);
       expect(options['subtitle.color'], gray);
       // plugin.legend.js:661, 707 read chart.options.color.
       expect(options['legend.labels.color'], gray);
       expect(options['legend.title.color'], gray);
-      expect(options['tooltip.backgroundColor'], 'rgba(0, 0, 0, 0.8)');
+      expect(
+        options['tooltip.backgroundColor'],
+        const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+      );
       for (final key in [
         'titleColor',
         'bodyColor',
@@ -184,7 +200,10 @@ void main() {
         expect(options['tooltip.$key'], white, reason: key);
       }
       // No token for the tooltip border (plugin.tooltip.js:1308).
-      expect(options['tooltip.borderColor'], 'rgba(0,0,0,0)');
+      expect(
+        options['tooltip.borderColor'],
+        const native_ui.Color.fromRGBO(0, 0, 0, 0),
+      );
     });
 
     testWidgets('a theme font keeps the local weights', (tester) async {
@@ -216,8 +235,14 @@ void main() {
           }),
         ),
       );
-      expect(options['tooltip.backgroundColor'], 'rgba(0, 0, 255, 1)');
-      expect(options['tooltip.bodyColor'], 'rgba(255, 255, 0, 1)');
+      expect(
+        options['tooltip.backgroundColor'],
+        const native_ui.Color.fromRGBO(0, 0, 255, 1),
+      );
+      expect(
+        options['tooltip.bodyColor'],
+        const native_ui.Color.fromRGBO(255, 255, 0, 1),
+      );
       for (final (path, weight) in [
         ('title.font', 'bold'),
         ('subtitle.font', 'normal'),
@@ -235,8 +260,14 @@ void main() {
       expect(options['tooltip.boxWidth'], 14.0);
       expect(options['tooltip.boxHeight'], 14.0);
       // The upstream colors without a token stay.
-      expect(options['title.color'], '#666');
-      expect(options['tooltip.borderColor'], 'rgba(0,0,0,0)');
+      expect(
+        options['title.color'],
+        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+      );
+      expect(
+        options['tooltip.borderColor'],
+        const native_ui.Color.fromRGBO(0, 0, 0, 0),
+      );
     });
   });
 }

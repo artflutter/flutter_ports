@@ -438,6 +438,7 @@ String _resolved(Schema schema) {
       "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/element_options_base.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';\n"
+      "import 'package:flutter_chartjs_port/src/options/prepared_color.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n",
     );
   for (final kind in schema.kinds) {
@@ -584,7 +585,7 @@ String _resolved(Schema schema) {
             '    }\n',
           );
         default:
-          out.write('    _$id = raw;\n');
+          out.write('    _$id = publicColorValue(raw);\n');
       }
       out.write('  }\n');
     }

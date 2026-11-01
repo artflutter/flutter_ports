@@ -3,9 +3,12 @@
 library;
 
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
@@ -23,7 +26,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
@@ -34,7 +36,12 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
-import 'precedence_reference.dart';
+import '../../support/color_json.dart';
+import 'precedence_reference.dart'
+    as frozen
+    show themePrecedencePrototype, themePrecedenceUpstream;
+import 'precedence_reference.dart'
+    hide themePrecedencePrototype, themePrecedenceUpstream;
 
 // theming.md §8 test 1 at the chart level and the rows of §8 test 2 that
 // need no palette, with test-registered components (theming.md §10, the
@@ -275,6 +282,8 @@ final AnyObject _themeProbe = <String, Object?>{
 /// `undefined` is `"<undefined>"` and a function is `"<fn>"`. A Map gives its
 /// keys in the `Object.keys` order.
 String _json(Object? value) => switch (value) {
+  final _ColorMarker marker => jsonEncode(marker.label),
+  _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
@@ -298,7 +307,11 @@ String _entry(Object map, String key) =>
 
 /// The text of the observed [value]: a string is the string, another value
 /// is its JSON.
-String _text(Object? value) => value is String ? value : _json(value);
+String _text(Object? value) => value is _ColorMarker
+    ? value.label
+    : value is String
+    ? referenceColorText(value)
+    : _json(value);
 
 /// The lines `<label>: <value>` of the scenario [name] of [reference], by
 /// label.
@@ -423,9 +436,9 @@ const AnyObject _fontTheme = <String, Object?>{
 /// column "Replaces"), by the dot path in `defaults`, as the generator
 /// writes them.
 const Map<String, Object?> _tokenReplaced = {
-  'color': 'rgba(51, 102, 153, 1)',
-  'borderColor': 'rgba(0, 128, 0, 0.5)',
-  'scale.ticks.backdropColor': 'rgba(0, 0, 0, 0.75)',
+  'color': native_ui.Color.fromRGBO(51, 102, 153, 1),
+  'borderColor': native_ui.Color.fromRGBO(0, 128, 0, 0.5),
+  'scale.ticks.backdropColor': native_ui.Color.fromRGBO(0, 0, 0, 0.75),
   'font.family': 'Arial',
   'font.size': 14.0,
   'scales.radialLinear.pointLabels.font.style': 'italic',
@@ -453,13 +466,13 @@ List<String> _snapshot(Object? theme, {bool user = false}) {
   final dataset = <String, Object?>{'data': _points()};
   final options = <String, Object?>{};
   if (user) {
-    dataset['backgroundColor'] = 'rgb(0, 0, 255)';
+    dataset['backgroundColor'] = const native_ui.Color.fromRGBO(0, 0, 255, 1);
     options['scales'] = <String, Object?>{
       'x': <String, Object?>{
-        'ticks': <String, Object?>{'color': 'user-ticks'},
+        'ticks': <String, Object?>{'color': _ColorMarker('user-ticks')},
       },
     };
-    options['color'] = 'user-color';
+    options['color'] = _ColorMarker('user-color');
   }
   if (theme != null && !identical(theme, _absent) && theme is! String) {
     observe('theme', theme);
@@ -847,15 +860,26 @@ typedef _Observe = void Function(String label, Object? value);
 /// The theme palette P1 of the generator: three border and three background
 /// sentinels.
 AnyObject _paletteP1() => <String, Object?>{
-  themeBorderColorsKey: <Object?>['P1-b0', 'P1-b1', 'P1-b2'],
-  themeBackgroundColorsKey: <Object?>['P1-g0', 'P1-g1', 'P1-g2'],
+  themeBorderColorsKey: <Object?>[
+    _ColorMarker('P1-b0'),
+    _ColorMarker('P1-b1'),
+    _ColorMarker('P1-b2'),
+  ],
+  themeBackgroundColorsKey: <Object?>[
+    _ColorMarker('P1-g0'),
+    _ColorMarker('P1-g1'),
+    _ColorMarker('P1-g2'),
+  ],
 };
 
 /// The theme palette P2 of the generator: two border and two background
 /// sentinels.
 AnyObject _paletteP2() => <String, Object?>{
-  themeBorderColorsKey: <Object?>['P2-b0', 'P2-b1'],
-  themeBackgroundColorsKey: <Object?>['P2-g0', 'P2-g1'],
+  themeBorderColorsKey: <Object?>[_ColorMarker('P2-b0'), _ColorMarker('P2-b1')],
+  themeBackgroundColorsKey: <Object?>[
+    _ColorMarker('P2-g0'),
+    _ColorMarker('P2-g1'),
+  ],
 };
 
 /// A raw theme Map with the element colors of the generator (if [elements])
@@ -867,8 +891,8 @@ AnyObject _paletteTheme({bool elements = false, AnyObject? palette}) =>
         'elements': <String, Object?>{
           for (final element in ['bar', 'arc'])
             element: <String, Object?>{
-              'backgroundColor': 'T-bg',
-              'borderColor': 'T-bc',
+              'backgroundColor': _ColorMarker('T-bg'),
+              'borderColor': _ColorMarker('T-bc'),
             },
         },
       if (palette != null) 'plugins': <String, Object?>{'colors': palette},
@@ -1030,7 +1054,9 @@ List<String> _lightPalette(String type, Object? theme) {
 /// [value] with each color string in its parsed form (`rgbString` of
 /// @kurkle/color), in Lists too. Another value stays.
 Object? _parsedColors(Object? value) => switch (value) {
-  final String s when kurkle.Color(s).valid => kurkle.Color(s).rgbString(),
+  final String s when referenceParsedColor(s).valid => referenceParsedColor(
+    s,
+  ).rgbString(),
   final List<Object?> list => [for (final item in list) _parsedColors(item)],
   _ => value,
 };
@@ -1046,6 +1072,7 @@ List<Object?> _parsedLines(Iterable<String> lines) => [
 ];
 
 void main() {
+  installNativeColorCodec();
   Chart.register([
     _themeController('themeTest'),
     _themeController('themeTest2'),
@@ -1212,41 +1239,45 @@ void main() {
           final options = <String, Object?>{};
           final theme = <String, Object?>{};
           if (levels.contains('dataset')) {
-            dataset['backgroundColor'] = 'E1-dataset';
+            dataset['backgroundColor'] = _ColorMarker('E1-dataset');
           }
           if (levels.contains('options')) {
             options['elements'] = <String, Object?>{
-              'point': <String, Object?>{'backgroundColor': 'E2-options'},
+              'point': <String, Object?>{
+                'backgroundColor': _ColorMarker('E2-options'),
+              },
             };
           }
           if (levels.contains('overrides')) {
             _put(
               overrides,
               'themeTest.elements.point.backgroundColor',
-              'E3-overrides',
+              _ColorMarker('E3-overrides'),
             );
           }
           if (levels.contains('theme')) {
             theme['elements'] = <String, Object?>{
-              'point': <String, Object?>{'backgroundColor': 'E4-theme'},
+              'point': <String, Object?>{
+                'backgroundColor': _ColorMarker('E4-theme'),
+              },
             };
           }
           if (levels.contains('controllerDefaults')) {
             _put(
               defaults,
               'datasets.themeTest.backgroundColor',
-              'E5-controller-defaults',
+              _ColorMarker('E5-controller-defaults'),
             );
           }
           if (levels.contains('elementDefaults')) {
             _put(
               defaults,
               'elements.point.backgroundColor',
-              'E6-element-defaults',
+              _ColorMarker('E6-element-defaults'),
             );
           }
           if (levels.contains('rootDefaults')) {
-            _put(defaults, 'backgroundColor', 'E7-root-defaults');
+            _put(defaults, 'backgroundColor', _ColorMarker('E7-root-defaults'));
           }
           final chart = acquireChart(<String, Object?>{
             'type': 'themeTest',
@@ -1265,7 +1296,9 @@ void main() {
       /// ([userHover]).
       List<Object?> active({required bool themed, bool userHover = false}) {
         final dataset = <String, Object?>{'data': _points()};
-        if (userHover) dataset['hoverBackgroundColor'] = 'E1-dataset-hover';
+        if (userHover) {
+          dataset['hoverBackgroundColor'] = _ColorMarker('E1-dataset-hover');
+        }
         final chart = acquireChart(<String, Object?>{
           'type': 'themeTest',
           'data': <String, Object?>{
@@ -1275,7 +1308,14 @@ void main() {
           if (themed)
             themeConfigKey: <String, Object?>{
               'elements': <String, Object?>{
-                'point': <String, Object?>{'backgroundColor': 'rgb(200, 0, 0)'},
+                'point': <String, Object?>{
+                  'backgroundColor': const native_ui.Color.fromRGBO(
+                    200,
+                    0,
+                    0,
+                    1,
+                  ),
+                },
               },
             },
         });
@@ -1334,46 +1374,50 @@ void main() {
           final x = <String, Object?>{};
           final theme = <String, Object?>{};
           if (levels.contains('user')) {
-            x['ticks'] = <String, Object?>{'color': 'S1-user'};
+            x['ticks'] = <String, Object?>{'color': _ColorMarker('S1-user')};
           }
           if (levels.contains('chartOverrides')) {
             _put(
               overrides,
               'themeTest.scales._index_.ticks.color',
-              'S2-chart-overrides',
+              _ColorMarker('S2-chart-overrides'),
             );
           }
           if (levels.contains('datasetOverrides')) {
             _put(
               overrides,
               'themeTest2.scales._index_.ticks.color',
-              'S3-dataset-overrides',
+              _ColorMarker('S3-dataset-overrides'),
             );
           }
           if (levels.contains('themeType')) {
             theme['scales'] = <String, Object?>{
               'themeLinear': <String, Object?>{
-                'ticks': <String, Object?>{'color': 'S4-theme-type'},
+                'ticks': <String, Object?>{
+                  'color': _ColorMarker('S4-theme-type'),
+                },
               },
             };
           }
           if (levels.contains('themeScale')) {
             theme['scale'] = <String, Object?>{
-              'ticks': <String, Object?>{'color': 'S5-theme-scale'},
+              'ticks': <String, Object?>{
+                'color': _ColorMarker('S5-theme-scale'),
+              },
             };
           }
           if (levels.contains('scaleDefaults')) {
             _put(
               defaults,
               'scales.themeLinear.ticks.color',
-              'S6-scale-defaults',
+              _ColorMarker('S6-scale-defaults'),
             );
           }
           if (levels.contains('scaleBase')) {
-            _put(defaults, 'scale.ticks.color', 'S7-scale-base');
+            _put(defaults, 'scale.ticks.color', _ColorMarker('S7-scale-base'));
           }
           if (levels.contains('rootColor')) {
-            _put(defaults, 'color', 'S8-root-color');
+            _put(defaults, 'color', _ColorMarker('S8-root-color'));
           }
           final chart = acquireChart(<String, Object?>{
             'type': 'themeTest',
@@ -1444,16 +1488,24 @@ void main() {
         (levels) {
           final options = <String, Object?>{};
           final theme = <String, Object?>{};
-          if (levels.contains('user')) options['color'] = 'C1-user';
-          if (levels.contains('overrides')) {
-            _put(overrides, 'themeTest.color', 'C2-overrides');
+          if (levels.contains('user')) {
+            options['color'] = _ColorMarker('C1-user');
           }
-          if (levels.contains('theme')) theme['color'] = 'C3-theme';
+          if (levels.contains('overrides')) {
+            _put(overrides, 'themeTest.color', _ColorMarker('C2-overrides'));
+          }
+          if (levels.contains('theme')) {
+            theme['color'] = _ColorMarker('C3-theme');
+          }
           if (levels.contains('datasetDefaults')) {
-            _put(defaults, 'datasets.themeTest.color', 'C4-dataset-defaults');
+            _put(
+              defaults,
+              'datasets.themeTest.color',
+              _ColorMarker('C4-dataset-defaults'),
+            );
           }
           if (levels.contains('defaults')) {
-            _put(defaults, 'color', 'C5-defaults');
+            _put(defaults, 'color', _ColorMarker('C5-defaults'));
           }
           final chart = acquireChart(<String, Object?>{
             'type': 'themeTest',
@@ -1495,61 +1547,71 @@ void main() {
           final y = <String, Object?>{};
           final theme = <String, Object?>{};
           if (levels.contains('user')) {
-            x['ticks'] = <String, Object?>{'color': 'S1-user-x'};
-            y['ticks'] = <String, Object?>{'color': 'S1-user-y'};
+            x['ticks'] = <String, Object?>{'color': _ColorMarker('S1-user-x')};
+            y['ticks'] = <String, Object?>{'color': _ColorMarker('S1-user-y')};
           }
           if (levels.contains('chartOverrides')) {
             _put(
               overrides,
               'themeReal.scales._index_.ticks.color',
-              'S2-chart-x',
+              _ColorMarker('S2-chart-x'),
             );
             _put(
               overrides,
               'themeReal.scales._value_.ticks.color',
-              'S2-chart-y',
+              _ColorMarker('S2-chart-y'),
             );
           }
           if (levels.contains('datasetOverrides')) {
             _put(
               overrides,
               'themeReal2.scales._index_.ticks.color',
-              'S3-dataset-x',
+              _ColorMarker('S3-dataset-x'),
             );
             _put(
               overrides,
               'themeReal2.scales._value_.ticks.color',
-              'S3-dataset-y',
+              _ColorMarker('S3-dataset-y'),
             );
           }
           if (levels.contains('themeType')) {
             theme['scales'] = <String, Object?>{
               'category': <String, Object?>{
-                'ticks': <String, Object?>{'color': 'S4-theme-category'},
+                'ticks': <String, Object?>{
+                  'color': _ColorMarker('S4-theme-category'),
+                },
               },
               'linear': <String, Object?>{
-                'ticks': <String, Object?>{'color': 'S4-theme-linear'},
+                'ticks': <String, Object?>{
+                  'color': _ColorMarker('S4-theme-linear'),
+                },
               },
             };
           }
           if (levels.contains('themeScale')) {
             theme['scale'] = <String, Object?>{
-              'ticks': <String, Object?>{'color': 'S5-theme-scale'},
+              'ticks': <String, Object?>{
+                'color': _ColorMarker('S5-theme-scale'),
+              },
             };
           }
           if (levels.contains('scaleDefaults')) {
             _put(
               defaults,
               'scales.category.ticks.color',
-              'S6-category-defaults',
+              _ColorMarker('S6-category-defaults'),
             );
-            _put(defaults, 'scales.linear.ticks.color', 'S6-linear-defaults');
+            _put(
+              defaults,
+              'scales.linear.ticks.color',
+              _ColorMarker('S6-linear-defaults'),
+            );
           }
           if (levels.contains('scaleBase')) {
-            _put(defaults, 'scale.ticks.color', 'S7-scale-base');
+            _put(defaults, 'scale.ticks.color', _ColorMarker('S7-scale-base'));
           }
           if (levels.contains('rootColor')) {
-            _put(defaults, 'color', 'S8-root-color');
+            _put(defaults, 'color', _ColorMarker('S8-root-color'));
           }
           final chart = acquireChart(<String, Object?>{
             'type': 'themeReal',
@@ -1586,36 +1648,42 @@ void main() {
           final r = <String, Object?>{};
           final theme = <String, Object?>{};
           if (levels.contains('user')) {
-            r['pointLabels'] = <String, Object?>{'color': 'R1-user'};
+            r['pointLabels'] = <String, Object?>{
+              'color': _ColorMarker('R1-user'),
+            };
           }
           if (levels.contains('chartOverrides')) {
             _put(
               overrides,
               'themeRadial.scales.r.pointLabels.color',
-              'R2-chart',
+              _ColorMarker('R2-chart'),
             );
           }
           if (levels.contains('themeType')) {
             theme['scales'] = <String, Object?>{
               'radialLinear': <String, Object?>{
-                'pointLabels': <String, Object?>{'color': 'R3-theme-type'},
+                'pointLabels': <String, Object?>{
+                  'color': _ColorMarker('R3-theme-type'),
+                },
               },
             };
           }
           if (levels.contains('themeScale')) {
             theme['scale'] = <String, Object?>{
-              'pointLabels': <String, Object?>{'color': 'R4-theme-scale'},
+              'pointLabels': <String, Object?>{
+                'color': _ColorMarker('R4-theme-scale'),
+              },
             };
           }
           if (levels.contains('scaleDefaults')) {
             _put(
               defaults,
               'scales.radialLinear.pointLabels.color',
-              'R5-scale-defaults',
+              _ColorMarker('R5-scale-defaults'),
             );
           }
           if (levels.contains('rootColor')) {
-            _put(defaults, 'color', 'R6-root-color');
+            _put(defaults, 'color', _ColorMarker('R6-root-color'));
           }
           final themed =
               levels.contains('themeType') || levels.contains('themeScale');
@@ -1650,32 +1718,38 @@ void main() {
           final r = <String, Object?>{};
           final theme = <String, Object?>{};
           if (levels.contains('user')) {
-            r['angleLines'] = <String, Object?>{'color': 'A1-user'};
+            r['angleLines'] = <String, Object?>{
+              'color': _ColorMarker('A1-user'),
+            };
           }
           if (levels.contains('userGrid')) {
-            r['grid'] = <String, Object?>{'color': 'A2-user-grid'};
+            r['grid'] = <String, Object?>{
+              'color': _ColorMarker('A2-user-grid'),
+            };
           }
           if (levels.contains('themeType')) {
             theme['scales'] = <String, Object?>{
               'radialLinear': <String, Object?>{
-                'angleLines': <String, Object?>{'color': 'A3-theme-type'},
+                'angleLines': <String, Object?>{
+                  'color': _ColorMarker('A3-theme-type'),
+                },
               },
             };
           }
           if (levels.contains('themeGrid')) {
             theme['scale'] = <String, Object?>{
-              'grid': <String, Object?>{'color': 'A4-theme-grid'},
+              'grid': <String, Object?>{'color': _ColorMarker('A4-theme-grid')},
             };
           }
           if (levels.contains('scaleDefaults')) {
             _put(
               defaults,
               'scales.radialLinear.angleLines.color',
-              'A5-scale-defaults',
+              _ColorMarker('A5-scale-defaults'),
             );
           }
           if (levels.contains('rootBorderColor')) {
-            _put(defaults, 'borderColor', 'A6-root-border-color');
+            _put(defaults, 'borderColor', _ColorMarker('A6-root-border-color'));
           }
           final themed =
               levels.contains('themeType') || levels.contains('themeGrid');
@@ -1767,32 +1841,36 @@ void main() {
           final r = <String, Object?>{};
           final theme = <String, Object?>{};
           if (levels.contains('user')) {
-            r['ticks'] = <String, Object?>{'color': 'T1-user'};
+            r['ticks'] = <String, Object?>{'color': _ColorMarker('T1-user')};
           }
           if (levels.contains('themeType')) {
             theme['scales'] = <String, Object?>{
               'radialLinear': <String, Object?>{
-                'ticks': <String, Object?>{'color': 'T2-theme-type'},
+                'ticks': <String, Object?>{
+                  'color': _ColorMarker('T2-theme-type'),
+                },
               },
             };
           }
           if (levels.contains('themeScale')) {
             theme['scale'] = <String, Object?>{
-              'ticks': <String, Object?>{'color': 'T3-theme-scale'},
+              'ticks': <String, Object?>{
+                'color': _ColorMarker('T3-theme-scale'),
+              },
             };
           }
           if (levels.contains('scaleDefaults')) {
             _put(
               defaults,
               'scales.radialLinear.ticks.color',
-              'T4-scale-defaults',
+              _ColorMarker('T4-scale-defaults'),
             );
           }
           if (levels.contains('scaleBase')) {
-            _put(defaults, 'scale.ticks.color', 'T5-scale-base');
+            _put(defaults, 'scale.ticks.color', _ColorMarker('T5-scale-base'));
           }
           if (levels.contains('rootColor')) {
-            _put(defaults, 'color', 'T6-root-color');
+            _put(defaults, 'color', _ColorMarker('T6-root-color'));
           }
           final themed =
               levels.contains('themeType') || levels.contains('themeScale');
@@ -1840,7 +1918,7 @@ void main() {
               'bar',
               theme: theme(),
               datasets: [
-                <String, Object?>{'borderColor': 'U'},
+                <String, Object?>{'borderColor': _ColorMarker('U')},
               ],
             ).$1,
           );
@@ -1850,7 +1928,7 @@ void main() {
             _paletteChart(
               'bar',
               theme: theme(),
-              options: <String, Object?>{'backgroundColor': 'U'},
+              options: <String, Object?>{'backgroundColor': _ColorMarker('U')},
             ).$1,
           );
           _observePalette(
@@ -1861,7 +1939,7 @@ void main() {
               theme: theme(),
               options: <String, Object?>{
                 'elements': <String, Object?>{
-                  'bar': <String, Object?>{'borderColor': 'U'},
+                  'bar': <String, Object?>{'borderColor': _ColorMarker('U')},
                 },
               },
             ).$1,
@@ -1873,7 +1951,7 @@ void main() {
               'bar',
               theme: theme(),
               datasets: [
-                <String, Object?>{'borderColor': 'U'},
+                <String, Object?>{'borderColor': _ColorMarker('U')},
               ],
               colorOptions: <String, Object?>{'forceOverride': true},
             ).$1,
@@ -1987,7 +2065,7 @@ void main() {
             for (final (name, value) in <(String, Object?)>[
               ('empty', <Object?>[]),
               ('string', 'red'),
-              ('map', <String, Object?>{'a': 'P1-b0'}),
+              ('map', <String, Object?>{'a': _ColorMarker('P1-b0')}),
             ]) {
               final theme = _paletteTheme(
                 palette: <String, Object?>{
@@ -2115,7 +2193,7 @@ void main() {
           if (color == '<undefined>')
             color
           else
-            kurkle.Color(color).rgbString(),
+            referenceParsedColor(color).rgbString(),
       ];
       expect(parsed(lines['colors']!), parsed(_upstream(upstream, 'colors')));
       for (final label in ['scales', 'fonts', 'size']) {
@@ -2278,8 +2356,12 @@ void main() {
         <String, Object?>{
           'scales': <String, Object?>{
             'radialLinear': <String, Object?>{
-              'pointLabels': <String, Object?>{'color': 'red'},
-              'angleLines': <String, Object?>{'color': 'red'},
+              'pointLabels': <String, Object?>{
+                'color': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              },
+              'angleLines': <String, Object?>{
+                'color': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              },
             },
           },
         },
@@ -2291,10 +2373,14 @@ void main() {
         <String, Object?>{
           'scales': <String, Object?>{
             'category': <String, Object?>{
-              'ticks': <String, Object?>{'color': 'red'},
+              'ticks': <String, Object?>{
+                'color': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              },
             },
             'linear': <String, Object?>{
-              'ticks': <String, Object?>{'color': 'red'},
+              'ticks': <String, Object?>{
+                'color': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              },
             },
           },
         },
@@ -2325,7 +2411,9 @@ void main() {
     // Chart.js ADR 0030, section 9: the bar chart keeps the axes x and y of
     // its overrides, and the doughnut chart gets no axis.
     const redTicks = <String, Object?>{
-      'ticks': <String, Object?>{'color': 'red'},
+      'ticks': <String, Object?>{
+        'color': native_ui.Color.fromRGBO(255, 0, 0, 1),
+      },
     };
     for (final (name, type, theme) in <(String, String, Object?)>[
       ('axes of a bar chart without a theme', 'bar', null),
@@ -2335,8 +2423,12 @@ void main() {
         <String, Object?>{
           'scales': <String, Object?>{
             'radialLinear': <String, Object?>{
-              'pointLabels': <String, Object?>{'color': 'red'},
-              'angleLines': <String, Object?>{'color': 'red'},
+              'pointLabels': <String, Object?>{
+                'color': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              },
+              'angleLines': <String, Object?>{
+                'color': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              },
             },
           },
         },
@@ -2409,7 +2501,42 @@ void main() {
         themeConfigKey: compileChartTheme(_hoverTheme),
       });
       await triggerMouseEvent(chart, 'mousemove', _hoverPoint(chart, 0));
-      expect(jsGet(_point(chart).options, 'backgroundColor'), '#B40000');
+      expect(
+        jsGet(_point(chart).options, 'backgroundColor'),
+        const native_ui.Color.fromRGBO(180, 0, 0, 1),
+      );
     });
   });
 }
+
+// Native colors keep the original symbolic identities of the precedence probes.
+// Their numeric paint value is irrelevant to the ordering assertion.
+final class _ColorMarker extends native_ui.Color {
+  _ColorMarker(this.label) : super(0xFF000000 | _markerRgb(label));
+  final String label;
+}
+
+int _markerRgb(String label) {
+  var hash = 0x123456;
+  for (final unit in label.codeUnits) {
+    hash = (hash * 31 + unit) & 0xFFFFFF;
+  }
+  return hash;
+}
+
+String _referenceLines(String text) => [
+  for (final line in text.split('\n'))
+    if (line.contains(': '))
+      line.substring(0, line.indexOf(': ') + 2) +
+          referenceColorText(line.substring(line.indexOf(': ') + 2))
+    else
+      line,
+].join('\n');
+final Map<String, String> themePrecedenceUpstream = {
+  for (final entry in frozen.themePrecedenceUpstream.entries)
+    entry.key: _referenceLines(entry.value),
+};
+final Map<String, String> themePrecedencePrototype = {
+  for (final entry in frozen.themePrecedencePrototype.entries)
+    entry.key: _referenceLines(entry.value),
+};

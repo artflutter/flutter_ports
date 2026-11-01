@@ -2,6 +2,20 @@
 @TestOn('vm')
 library;
 
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isObject;
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:test/test.dart';
+
 // The schema drift test of Chart.js ADR 0054 §2 and §15. It walks the
 // generated scope kinds (`lib/src/options/scope_kinds.g.dart`, the output of
 // `tool/options_schema.yaml`):
@@ -22,19 +36,7 @@ library;
 //   is an inventory path, each object of the roots is a typed scope, and the
 //   keys of each declaration site keep their order in their object.
 
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isObject;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:test/test.dart';
+import '../../support/color_json.dart';
 
 /// The dataset kinds: a census path under `data.datasets[]` maps when one
 /// of them maps it.
@@ -173,6 +175,11 @@ bool _routed(Object? object, String key) => switch (object) {
 /// [expected], or Dart `null` when they are equal. A function compares by
 /// its presence; a route compares the value read through the route.
 String? _mismatch(Object? actual, Object? expected) {
+  if (expected is String && nativeColorBytes(actual) != null) {
+    return referenceColorOrString(expected).matches(actual, {})
+        ? null
+        : '$actual != $expected';
+  }
   switch (expected) {
     case null:
       return actual == null ? null : 'not null: $actual';

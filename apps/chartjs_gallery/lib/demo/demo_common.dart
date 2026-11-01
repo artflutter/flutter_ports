@@ -17,6 +17,7 @@ String jsNumberText(double value) => jsNumberToString(value);
 /// The JavaScript source form of an option value, for display: `undefined`,
 /// `null`, a quoted string, a JS number string, or `{…}` and `[…]`.
 String showJs(Object? value) => switch (value) {
+  final Color color => 'Color(0x${_argbText(color)})',
   Undefined() => 'undefined',
   null => 'null',
   final String s => "'$s'",
@@ -51,11 +52,6 @@ Color? flutterColor(kc.Color color) {
     blue: rgb.b / 255,
   );
 }
-
-/// The Flutter color of a CSS color string, parsed by the ported
-/// `@kurkle/color`, or `null` when it does not parse.
-Color? cssColor(String? css) =>
-    css == null ? null : flutterColor(kc.Color(css));
 
 /// A centered column with a readable maximum width, for wide screens.
 ///
@@ -354,3 +350,6 @@ class _DemoTabBarViewState extends State<DemoTabBarView> {
     );
   }
 }
+
+String _argbText(Color color) =>
+    color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase();

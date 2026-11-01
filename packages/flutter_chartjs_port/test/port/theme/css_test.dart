@@ -5,8 +5,11 @@ library;
 import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 
 import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart' show rgbParse;
 import 'package:flutter_chartjs_port/src/theme/css.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -106,13 +109,21 @@ final Map<String, (TextStyle, Map<String, Object?>)> _fonts = {
 };
 
 void main() {
+  installNativeColorCodec();
   group('colorToRgba', () {
     for (final MapEntry(key: name, value: (color, rgba)) in _colors.entries) {
       test('$name: the string of the compiled theme', () {
         expect(colorToRgba(color), rgba);
         final compiled = compileThemeData(ChartThemeData(color: color));
-        expect(compiled!['color'], colorToRgba(color));
-        expect(_at(compiled, 'scale.ticks.color'), colorToRgba(color));
+        final parsed = rgbParse(rgba)!;
+        final expected = Color.fromRGBO(
+          parsed.r.round(),
+          parsed.g.round(),
+          parsed.b.round(),
+          parsed.a / 255,
+        );
+        expect(compiled!['color'], expected);
+        expect(_at(compiled, 'scale.ticks.color'), expected);
       });
     }
 

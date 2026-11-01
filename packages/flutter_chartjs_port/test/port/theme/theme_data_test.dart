@@ -3,10 +3,13 @@
 library;
 
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -20,6 +23,8 @@ import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/color_json.dart';
 
 // theming.md §8 test 7 (Chart.js ADR 0050, "The public classes"): the value
 // equality, `copyWith`, `lerp` and the diagnostics of `ChartThemeData`, the
@@ -307,6 +312,7 @@ List<String> _hits(Chart chart) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('==, hashCode and copyWith', () {
     test('equal themes are == with equal hashes', () {
       final copy = _full.copyWith();
@@ -504,22 +510,25 @@ void main() {
   });
 
   group('the conversion to the raw Map theme', () {
-    String? colorOf(Color color) =>
-        compileThemeData(ChartThemeData(color: color))!['color'] as String?;
+    Color? colorOf(Color color) =>
+        compileThemeData(ChartThemeData(color: color))!['color'] as Color?;
 
     test('an sRGB color', () {
-      expect(colorOf(const Color(0xFF36A2EB)), 'rgba(54, 162, 235, 1)');
+      expect(
+        colorOf(const Color(0xFF36A2EB)),
+        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+      );
     });
 
     test('Color.from keeps the alpha 0.1', () {
       expect(
         colorOf(const Color.from(alpha: 0.1, red: 0, green: 0, blue: 0)),
-        'rgba(0, 0, 0, 0.1)',
+        const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
       );
       // The 8-bit alpha of Color(0x1A000000) is not 0.1 (theming.md §4).
       expect(
         colorOf(const Color(0x1A000000)),
-        'rgba(0, 0, 0, 0.10196078431372549)',
+        const Color(0x1A000000),
       );
     });
 
@@ -536,7 +545,7 @@ void main() {
             colorSpace: ColorSpace.displayP3,
           ),
         ),
-        'rgba(221, 64, 37, 1)',
+        const native_ui.Color.fromRGBO(221, 64, 37, 1),
       );
     });
 
@@ -647,10 +656,10 @@ void main() {
         const ChartThemeData(palette: [_green]),
       );
       expect(_at(compiled, r'plugins.colors.$borderColors'), [
-        'rgba(0, 128, 0, 0.5)',
+        const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
       ]);
       expect(_at(compiled, r'plugins.colors.$backgroundColors'), [
-        'rgba(0, 128, 0, 0.5)',
+        const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
       ]);
     });
   });
@@ -665,7 +674,10 @@ void main() {
       final oracle = compileChartTheme(ChartThemes.light);
       expect(_plain(compiled), _plain(oracle));
       // The key order too: the compiled objects keep the insertion order.
-      expect(jsonEncode(_plain(compiled)), jsonEncode(_plain(oracle)));
+      expect(
+        jsonEncode(canonicalColors(_plain(compiled))),
+        jsonEncode(canonicalColors(_plain(oracle))),
+      );
     });
 
     test('each call compiles again (no memo, Chart.js ADR 0054 §4)', () {
@@ -699,7 +711,10 @@ void main() {
 
     test('the compiled theme is frozen', () {
       final compiled = compileThemeData(_full)!;
-      expect(() => compiled['color'] = 'red', throwsA(isA<TypeError>()));
+      expect(
+        () => compiled['color'] = const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        throwsA(isA<TypeError>()),
+      );
     });
   });
 
@@ -730,10 +745,13 @@ void main() {
           reason: token,
         );
       }
-      expect(compileThemeData(dark)!['color'], 'rgba(153, 153, 153, 1)');
+      expect(
+        compileThemeData(dark)!['color'],
+        const native_ui.Color.fromRGBO(153, 153, 153, 1),
+      );
       expect(
         _at(compileThemeData(dark), 'plugins.tooltip.backgroundColor'),
-        'rgba(255, 255, 255, 0.8)',
+        const native_ui.Color.fromRGBO(255, 255, 255, 0.8),
       );
     });
 

@@ -1,6 +1,8 @@
 // The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
+import 'dart:ui' as ui;
+
 import 'package:chartjs_gallery/demo/canvas_demo.dart'
     show chartColors, labelColor;
 import 'package:chartjs_gallery/demo/demo_chart.dart';
@@ -144,7 +146,7 @@ class _EventsDemoState extends State<EventsDemo> {
     final h = chart.height;
     // A 40 px grid.
     ctx
-      ..strokeStyle = 'rgba(0, 0, 0, 0.08)'
+      ..strokeStyle = const ui.Color.fromRGBO(0, 0, 0, 0.08)
       ..lineWidth = 1
       ..beginPath();
     for (var x = 40.0; x < w; x += 40) {
@@ -174,7 +176,7 @@ class _EventsDemoState extends State<EventsDemo> {
     // The last coalesced mousemove positions.
     for (var i = _trail.length - 1; i >= 0; i--) {
       final alpha = (1 - i / _trail.length) * 0.5;
-      ctx.fillStyle = 'rgba(54, 162, 235, ${alpha.toStringAsFixed(2)})';
+      ctx.fillStyle = ui.Color.fromRGBO(54, 162, 235, alpha);
       drawPoint(
         ctx,
         const PointOptions(pointStyle: 'circle', radius: 3, borderWidth: 0),
@@ -188,7 +190,7 @@ class _EventsDemoState extends State<EventsDemo> {
       return;
     }
     ctx
-      ..strokeStyle = 'rgba(255, 99, 132, 0.8)'
+      ..strokeStyle = const ui.Color.fromRGBO(255, 99, 132, 0.8)
       ..lineWidth = 1
       ..setLineDash([5, 4])
       ..beginPath()
@@ -198,8 +200,8 @@ class _EventsDemoState extends State<EventsDemo> {
       ..lineTo(hit.dx, h)
       ..stroke()
       ..setLineDash([])
-      ..fillStyle = 'rgba(255, 99, 132, 0.35)'
-      ..strokeStyle = '#FF6384'
+      ..fillStyle = const ui.Color.fromRGBO(255, 99, 132, 0.35)
+      ..strokeStyle = const ui.Color(0xFFFF6384)
       ..lineWidth = 2;
     drawPoint(
       ctx,
@@ -518,12 +520,12 @@ class _Counter extends StatelessWidget {
 
   final String label;
   final int value;
-  final String color;
+  final ui.Color color;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final swatch = cssColor(color) ?? theme.colorScheme.primary;
+    final swatch = color;
     return Container(
       constraints: const BoxConstraints(minWidth: 150),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

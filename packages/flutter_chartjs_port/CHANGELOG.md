@@ -1,5 +1,8 @@
 ## 0.1.0
 
+- Color inputs now require Flutter `Color`, including raw configuration maps,
+  callbacks, lists and gradient stops. CSS strings throw `ArgumentError`.
+
 The first release: a native Dart port of Chart.js v4.6.1 for Flutter.
 
 - **Upstream.** The package ports the Chart.js tag `v4.6.1` (commit `76d8cf89`) with no backport:
@@ -12,7 +15,7 @@ The first release: a native Dart port of Chart.js v4.6.1 for Flutter.
   scales (category, linear, logarithmic, time, timeseries and radial linear), the seven plugins
   (colors, decimation, filler, legend, subtitle, title and tooltip), the core (the configuration
   and the option resolver, the registry, the animations, the interaction modes, the layout and the
-  events) and the public helpers. The color parser is a port of @kurkle/color 0.3.2.
+  events) and the public helpers. Color arithmetic is based on @kurkle/color 0.3.2; chart inputs use Flutter Color.
 - **`ChartView`.** The widget of one chart. `ChartView(config: ChartConfig(...))` takes the typed
   config, and `ChartView.raw(config: {...})` takes the Chart.js configuration as a Dart `Map`
   (also `jsonDecode` output). The widget starts the chart in its first layout, applies a new

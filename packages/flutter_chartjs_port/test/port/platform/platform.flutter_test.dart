@@ -2,8 +2,12 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -44,6 +48,7 @@ Widget _box(Widget child) => Directionality(
 );
 
 void main() {
+  installNativeColorCodec();
   group('EVENT_TYPES', () {
     test('maps the DOM types of platform.dom.js:21', () {
       expect(eventTypes, {
@@ -176,7 +181,7 @@ void main() {
       canvas.style
         ..setProperty('width', '475px')
         ..setProperty('height', '450px');
-      context.fillStyle = '#ff0000';
+      context.fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1);
 
       expect(platform.releaseContext(context), isTrue);
       expect((canvas.width, canvas.height), (300, 150));
@@ -184,7 +189,7 @@ void main() {
       expect(canvas.style.getPropertyValue('height'), '480px');
       expect(canvas.style.getPropertyValue('display'), '');
       // The context is back at its default state.
-      expect(context.fillStyle, '#000000');
+      expect(context.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(platform.releaseContext(context), isFalse);
     });
 

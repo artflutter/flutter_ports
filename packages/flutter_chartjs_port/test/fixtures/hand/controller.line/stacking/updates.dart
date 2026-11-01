@@ -1,6 +1,9 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.line/stacking/updates.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native colors in fixture updates.
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
+
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
@@ -19,17 +22,17 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'data': <Object?>[1, 1, 1],
           'stack': 's1',
-          'borderColor': '#ff0000',
+          'borderColor': const ui.Color(0xFFFF0000),
         },
         <String, Object?>{
           'data': <Object?>[2, 2, 2],
           'stack': 's1',
-          'borderColor': '#00ff00',
+          'borderColor': const ui.Color(0xFF00FF00),
         },
         <String, Object?>{
           'data': <Object?>[3, 3, 3],
           'stack': 's1',
-          'borderColor': '#0000ff',
+          'borderColor': const ui.Color(0xFF0000FF),
         },
       ],
     },
@@ -51,7 +54,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       final dataset = <String, Object?>{
         'data': <Object?>[1.5, 1.5, 1.5],
         'stack': 's2',
-        'borderColor': '#000000',
+        'borderColor': const ui.Color(0xFF000000),
       };
       jsSplice(datasets, 1, 0, <Object?>[dataset]);
       notifyArrayListeners(datasets, 'splice', <Object?>[1, 0, dataset]);

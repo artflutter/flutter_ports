@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/core.datasetController.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
@@ -126,6 +130,7 @@ bool _isExtensible(List<Object?> data) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('Chart.DatasetController', () {
     group('auto', fixture.specs('core.datasetController'));
 
@@ -1271,7 +1276,12 @@ void main() {
     ) async {
       final data0 = <Object?>[0, 1, 2, 3, 4, 5];
       final oldColor = Chart.defaults['borderColor'];
-      Chart.defaults['borderColor'] = 'red';
+      Chart.defaults['borderColor'] = const native_ui.Color.fromRGBO(
+        255,
+        0,
+        0,
+        1,
+      );
       final chart = acquireChart(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{
@@ -1284,11 +1294,11 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       expect(
         ((meta.dataset! as Element).options! as JsObjectFace)['borderColor'],
-        'red',
+        const native_ui.Color.fromRGBO(255, 0, 0, 1),
       );
       expect(
         (_element(meta, 0).options! as JsObjectFace)['borderColor'],
-        'red',
+        const native_ui.Color.fromRGBO(255, 0, 0, 1),
       );
 
       // Reset old shared state
@@ -1427,7 +1437,8 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'data': <Object?>[1, 2, 3],
-                'backgroundColor': () => 'red',
+                'backgroundColor': () =>
+                    const native_ui.Color.fromRGBO(255, 0, 0, 1),
               },
             ],
           },

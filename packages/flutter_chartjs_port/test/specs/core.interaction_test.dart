@@ -1,8 +1,13 @@
 // Ported from Chart.js v4.6.1 test/specs/core.interaction.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -94,15 +99,20 @@ List<Object?> _datasets(
     'label': 'Dataset 1',
     'data': data1,
     'pointRadius': ?radius1,
-    'pointHoverBorderColor': 'rgb(255, 0, 0)',
-    'pointHoverBackgroundColor': 'rgb(0, 255, 0)',
+    'pointHoverBorderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+    'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
   },
   <String, Object?>{
     'label': 'Dataset 2',
     'data': data2,
     'pointRadius': ?radius2,
-    'pointHoverBorderColor': 'rgb(0, 0, 255)',
-    'pointHoverBackgroundColor': 'rgb(0, 255, 255)',
+    'pointHoverBorderColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
+    'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
+      0,
+      255,
+      255,
+      1,
+    ),
   },
 ];
 
@@ -182,6 +192,7 @@ _testCases = [
 ];
 
 void main() {
+  installNativeColorCodec();
   group('Core.Interaction', () {
     group('auto', fixture.specs('core.interaction'));
 

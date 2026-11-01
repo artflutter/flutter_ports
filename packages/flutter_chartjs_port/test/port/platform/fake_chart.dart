@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: a chart fake for platform tests.
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/platform/index.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -148,7 +150,7 @@ final class FakeChart implements types.Chart {
       ..resetTransform()
       ..clearRect(0, 0, width * pixelRatio, height * pixelRatio)
       ..restore()
-      ..fillStyle = '#ff0000'
+      ..fillStyle = const color_values.PreparedColor(255, 0, 0, 1)
       ..fillRect(0, 0, width, height);
   }
 

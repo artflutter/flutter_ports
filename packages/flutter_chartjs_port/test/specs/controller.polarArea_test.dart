@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/controller.polarArea.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -82,8 +86,8 @@ void _expectArc(ChartMeta meta, int i, _ArcValues expected) {
   expect(
     _options(arc),
     objectContaining(<String, Object?>{
-      'backgroundColor': 'rgb(255, 0, 0)',
-      'borderColor': 'rgb(0, 255, 0)',
+      'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      'borderColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
       'borderWidth': 1.2,
     }),
     reason: '$i',
@@ -91,6 +95,7 @@ void _expectArc(ChartMeta meta, int i, _ArcValues expected) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('Chart.controllers.polarArea', () {
     group('auto', fixture.specs('controller.polarArea'));
 
@@ -266,8 +271,8 @@ void main() {
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'elements': <String, Object?>{
             'arc': <String, Object?>{
-              'backgroundColor': 'rgb(255, 0, 0)',
-              'borderColor': 'rgb(0, 255, 0)',
+              'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'borderColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
               'borderWidth': 1.2,
             },
           },
@@ -288,15 +293,31 @@ void main() {
       }
 
       // arc styles
-      _dataset(chart, 0)['backgroundColor'] = 'rgb(128, 129, 130)';
-      _dataset(chart, 0)['borderColor'] = 'rgb(56, 57, 58)';
+      _dataset(chart, 0)['backgroundColor'] = const native_ui.Color.fromRGBO(
+        128,
+        129,
+        130,
+        1,
+      );
+      _dataset(chart, 0)['borderColor'] = const native_ui.Color.fromRGBO(
+        56,
+        57,
+        58,
+        1,
+      );
       _dataset(chart, 0)['borderWidth'] = 1.123;
 
       chart.update();
 
       for (var i = 0; i < 4; ++i) {
-        expect(_option(meta.data[i], 'backgroundColor'), 'rgb(128, 129, 130)');
-        expect(_option(meta.data[i], 'borderColor'), 'rgb(56, 57, 58)');
+        expect(
+          _option(meta.data[i], 'backgroundColor'),
+          const native_ui.Color.fromRGBO(128, 129, 130, 1),
+        );
+        expect(
+          _option(meta.data[i], 'borderColor'),
+          const native_ui.Color.fromRGBO(56, 57, 58, 1),
+        );
         expect(_option(meta.data[i], 'borderWidth'), 1.123);
       }
 
@@ -332,8 +353,8 @@ void main() {
           },
           'elements': <String, Object?>{
             'arc': <String, Object?>{
-              'backgroundColor': 'rgb(255, 0, 0)',
-              'borderColor': 'rgb(0, 255, 0)',
+              'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'borderColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
               'borderWidth': 1.2,
             },
           },
@@ -372,8 +393,8 @@ void main() {
           'showLine': true,
           'elements': <String, Object?>{
             'arc': <String, Object?>{
-              'backgroundColor': 'rgb(255, 0, 0)',
-              'borderColor': 'rgb(0, 255, 0)',
+              'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'borderColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
               'borderWidth': 1.2,
             },
           },
@@ -430,8 +451,13 @@ void main() {
             'cutoutPercentage': 0,
             'elements': <String, Object?>{
               'arc': <String, Object?>{
-                'backgroundColor': 'rgb(100, 150, 200)',
-                'borderColor': 'rgb(50, 100, 150)',
+                'backgroundColor': const native_ui.Color.fromRGBO(
+                  100,
+                  150,
+                  200,
+                  1,
+                ),
+                'borderColor': const native_ui.Color.fromRGBO(50, 100, 150, 1),
                 'borderWidth': 2,
               },
             },
@@ -444,13 +470,25 @@ void main() {
         final arc = chart.getDatasetMeta(0).data[0];
 
         await triggerMouseEvent(chart, 'mousemove', arc);
-        expect(_option(arc, 'backgroundColor'), '#3187DD');
-        expect(_option(arc, 'borderColor'), '#175A9D');
+        expect(
+          _option(arc, 'backgroundColor'),
+          const native_ui.Color.fromRGBO(49, 135, 221, 1),
+        );
+        expect(
+          _option(arc, 'borderColor'),
+          const native_ui.Color.fromRGBO(23, 90, 157, 1),
+        );
         expect(_option(arc, 'borderWidth'), 2);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
-        expect(_option(arc, 'backgroundColor'), 'rgb(100, 150, 200)');
-        expect(_option(arc, 'borderColor'), 'rgb(50, 100, 150)');
+        expect(
+          _option(arc, 'backgroundColor'),
+          const native_ui.Color.fromRGBO(100, 150, 200, 1),
+        );
+        expect(
+          _option(arc, 'borderColor'),
+          const native_ui.Color.fromRGBO(50, 100, 150, 1),
+        );
         expect(_option(arc, 'borderWidth'), 2);
       });
 
@@ -461,21 +499,38 @@ void main() {
         final arc = chart.getDatasetMeta(0).data[0];
 
         helpers.merge(_dataset(chart, 0), <String, Object?>{
-          'hoverBackgroundColor': 'rgb(200, 100, 150)',
-          'hoverBorderColor': 'rgb(150, 50, 100)',
+          'hoverBackgroundColor': const native_ui.Color.fromRGBO(
+            200,
+            100,
+            150,
+            1,
+          ),
+          'hoverBorderColor': const native_ui.Color.fromRGBO(150, 50, 100, 1),
           'hoverBorderWidth': 8.4,
         });
 
         chart.update();
 
         await triggerMouseEvent(chart, 'mousemove', arc);
-        expect(_option(arc, 'backgroundColor'), 'rgb(200, 100, 150)');
-        expect(_option(arc, 'borderColor'), 'rgb(150, 50, 100)');
+        expect(
+          _option(arc, 'backgroundColor'),
+          const native_ui.Color.fromRGBO(200, 100, 150, 1),
+        );
+        expect(
+          _option(arc, 'borderColor'),
+          const native_ui.Color.fromRGBO(150, 50, 100, 1),
+        );
         expect(_option(arc, 'borderWidth'), 8.4);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
-        expect(_option(arc, 'backgroundColor'), 'rgb(100, 150, 200)');
-        expect(_option(arc, 'borderColor'), 'rgb(50, 100, 150)');
+        expect(
+          _option(arc, 'backgroundColor'),
+          const native_ui.Color.fromRGBO(100, 150, 200, 1),
+        );
+        expect(
+          _option(arc, 'borderColor'),
+          const native_ui.Color.fromRGBO(50, 100, 150, 1),
+        );
         expect(_option(arc, 'borderWidth'), 2);
       });
 
@@ -488,8 +543,18 @@ void main() {
         helpers.merge(
           jsGet(jsGet(chart.options, 'elements'), 'arc'),
           <String, Object?>{
-            'hoverBackgroundColor': 'rgb(200, 100, 150)',
-            'hoverBorderColor': 'rgb(150, 50, 100)',
+            'hoverBackgroundColor': const native_ui.Color.fromRGBO(
+              200,
+              100,
+              150,
+              1,
+            ),
+            'hoverBorderColor': const native_ui.Color.fromRGBO(
+              150,
+              50,
+              100,
+              1,
+            ),
             'hoverBorderWidth': 8.4,
           },
         );
@@ -497,13 +562,25 @@ void main() {
         chart.update();
 
         await triggerMouseEvent(chart, 'mousemove', arc);
-        expect(_option(arc, 'backgroundColor'), 'rgb(200, 100, 150)');
-        expect(_option(arc, 'borderColor'), 'rgb(150, 50, 100)');
+        expect(
+          _option(arc, 'backgroundColor'),
+          const native_ui.Color.fromRGBO(200, 100, 150, 1),
+        );
+        expect(
+          _option(arc, 'borderColor'),
+          const native_ui.Color.fromRGBO(150, 50, 100, 1),
+        );
         expect(_option(arc, 'borderWidth'), 8.4);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
-        expect(_option(arc, 'backgroundColor'), 'rgb(100, 150, 200)');
-        expect(_option(arc, 'borderColor'), 'rgb(50, 100, 150)');
+        expect(
+          _option(arc, 'backgroundColor'),
+          const native_ui.Color.fromRGBO(100, 150, 200, 1),
+        );
+        expect(
+          _option(arc, 'borderColor'),
+          const native_ui.Color.fromRGBO(50, 100, 150, 1),
+        );
         expect(_option(arc, 'borderWidth'), 2);
       });
     });

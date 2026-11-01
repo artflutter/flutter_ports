@@ -1,8 +1,13 @@
 // Ported from Chart.js v4.6.1 test/specs/global.defaults.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -57,15 +62,20 @@ AnyObject _config(String type) => <String, Object?>{
     'datasets': <Object?>[
       <String, Object?>{
         'data': <Object?>[10, 20, double.nan],
-        'backgroundColor': <Object?>['red', 'green', 'blue'],
+        'backgroundColor': <Object?>[
+          const native_ui.Color.fromRGBO(255, 0, 0, 1),
+          const native_ui.Color.fromRGBO(0, 128, 0, 1),
+          const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ],
         'borderWidth': 2,
-        'borderColor': '#000',
+        'borderColor': const native_ui.Color.fromRGBO(0, 0, 0, 1),
       },
     ],
   },
 };
 
 void main() {
+  installNativeColorCodec();
   group('Default Configs', () {
     group('Doughnut Chart', () {
       testWidgets('should return correct legend label objects', (
@@ -74,9 +84,9 @@ void main() {
         final chart = acquireChart(_config('doughnut'));
 
         final expectedCommon = <String, Object?>{
-          'fontColor': '#666',
+          'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
           'hidden': false,
-          'strokeStyle': '#000',
+          'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
           'textAlign': undefined,
           'lineWidth': 2,
           'pointStyle': undefined,
@@ -89,19 +99,19 @@ void main() {
         final expected = <Object?>[
           <String, Object?>{
             'text': 'label1',
-            'fillStyle': 'red',
+            'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
             'index': 0,
             ...expectedCommon,
           },
           <String, Object?>{
             'text': 'label2',
-            'fillStyle': 'green',
+            'fillStyle': const native_ui.Color.fromRGBO(0, 128, 0, 1),
             'index': 1,
             ...expectedCommon,
           },
           <String, Object?>{
             'text': 'label3',
-            'fillStyle': 'blue',
+            'fillStyle': const native_ui.Color.fromRGBO(0, 0, 255, 1),
             'index': 2,
             ...expectedCommon,
           },
@@ -119,9 +129,11 @@ void main() {
               'datasets': <Object?>[
                 <String, Object?>{
                   'data': <Object?>[10],
-                  'backgroundColor': <Object?>['red'],
+                  'backgroundColor': <Object?>[
+                    const native_ui.Color.fromRGBO(255, 0, 0, 1),
+                  ],
                   'borderWidth': 2,
-                  'borderColor': '#000',
+                  'borderColor': const native_ui.Color.fromRGBO(0, 0, 0, 1),
                   'borderDash': <Object?>[1, 2, 3],
                   'borderDashOffset': 1,
                   'borderJoinStyle': 'miter',
@@ -145,11 +157,11 @@ void main() {
           final expected = <Object?>[
             <String, Object?>{
               'text': 'label1',
-              'fillStyle': 'red',
+              'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
               'index': 0,
-              'fontColor': '#666',
+              'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
               'hidden': false,
-              'strokeStyle': '#000',
+              'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
               'textAlign': 'left',
               'lineWidth': 2,
               'pointStyle': undefined,
@@ -190,33 +202,33 @@ void main() {
         final expected = <Object?>[
           <String, Object?>{
             'text': 'label1',
-            'fillStyle': 'red',
-            'fontColor': '#666',
+            'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+            'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
             'hidden': false,
             'index': 0,
-            'strokeStyle': '#000',
+            'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
             'textAlign': undefined,
             'lineWidth': 2,
             'pointStyle': undefined,
           },
           <String, Object?>{
             'text': 'label2',
-            'fillStyle': 'green',
-            'fontColor': '#666',
+            'fillStyle': const native_ui.Color.fromRGBO(0, 128, 0, 1),
+            'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
             'hidden': false,
             'index': 1,
-            'strokeStyle': '#000',
+            'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
             'textAlign': undefined,
             'lineWidth': 2,
             'pointStyle': undefined,
           },
           <String, Object?>{
             'text': 'label3',
-            'fillStyle': 'blue',
-            'fontColor': '#666',
+            'fillStyle': const native_ui.Color.fromRGBO(0, 0, 255, 1),
+            'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
             'hidden': false,
             'index': 2,
-            'strokeStyle': '#000',
+            'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
             'textAlign': undefined,
             'lineWidth': 2,
             'pointStyle': undefined,

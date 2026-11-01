@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.time.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
@@ -180,6 +184,7 @@ JsObjectFace _cloneTimeDefaults() =>
     clone(jsGet(jsGet(Chart.defaults, 'scales'), 'time'))! as JsObjectFace;
 
 void main() {
+  installNativeColorCodec();
   group('Time scale tests', () {
     group('auto', fixture.specs('scale.time'));
 
@@ -1182,7 +1187,12 @@ void main() {
                   <String, Object?>{'x': 640940400000, 'y': '27.25'},
                   <String, Object?>{'x': 641026800000, 'y': '25.93'},
                 ],
-                'backgroundColor': '#ff6666',
+                'backgroundColor': const native_ui.Color.fromRGBO(
+                  255,
+                  102,
+                  102,
+                  1,
+                ),
               },
             ],
           },

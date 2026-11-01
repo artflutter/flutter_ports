@@ -17,6 +17,7 @@ import 'dart:ui' show Color, FontStyle, lerpDouble;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show ColorProperty, TextStyle;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
@@ -376,6 +377,7 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
 @internal
 ChartOptionsScope? compileThemeData(ChartThemeData? data) {
   if (data == null) return null;
+  installNativeColorCodec();
   return compileChartTheme(themeDataToRaw(data));
 }
 

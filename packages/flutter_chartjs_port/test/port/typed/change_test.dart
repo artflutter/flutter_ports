@@ -2,8 +2,12 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -126,6 +130,7 @@ Offset _barPoint(WidgetTester tester, Chart chart, int index) {
 Color _blueFor(ChartContext context) => const Color(0xFF0000FF);
 
 void main() {
+  installNativeColorCodec();
   group('the change test', () {
     testWidgets('a parent that builds an == config in each build gives no '
         'update', (tester) async {
@@ -211,7 +216,7 @@ void main() {
       expect(
         (chart.getDatasetMeta(0).data.first.options!
             as JsObjectFace)['backgroundColor'],
-        'rgba(0, 0, 255, 1)',
+        const native_ui.Color.fromRGBO(0, 0, 255, 1),
       );
       parent.show(colorFor: _blueFor);
       await tester.pump();
@@ -223,7 +228,7 @@ void main() {
       expect(
         (chart.getDatasetMeta(0).data.first.options!
             as JsObjectFace)['backgroundColor'],
-        'rgba(255, 0, 0, 1)',
+        const native_ui.Color.fromRGBO(255, 0, 0, 1),
       );
     });
 

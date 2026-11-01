@@ -202,6 +202,7 @@ void main() {
       final config =
           copyReference(pluginSubtitleReference.first.config)! as AnyObject;
       config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });
   });

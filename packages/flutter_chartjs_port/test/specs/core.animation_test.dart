@@ -1,8 +1,11 @@
 // Ported from Chart.js v4.6.1 test/specs/core.animation.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:test/test.dart';
 
 // `Chart.Animation` is the class Animation of core.animation.dart. The spec
@@ -44,28 +47,36 @@ void main() {
           {'duration': 1000, 'type': 'color'},
           target,
           'color',
-          'red',
+          const color_values.PreparedColor(255, 0, 0, 1),
         )..from = undefined;
         anim.tick(anim.start + 500);
-        expect(target['color'], '#FF000080');
+        expect(
+          target['color'],
+          const color_values.PreparedColor(255, 0, 0, 128 / 255),
+        );
 
         anim
-          ..from = 'blue'
+          ..from = const color_values.PreparedColor(0, 0, 255, 1)
           ..to = undefined
           ..tick(anim.start + 500);
-        expect(target['color'], '#0000FF80');
+        expect(
+          target['color'],
+          const color_values.PreparedColor(0, 0, 255, 128 / 255),
+        );
       });
 
       test('should not try to mix invalid color', () {
-        final target = <String, Object?>{'color': 'blue'};
+        final target = <String, Object?>{
+          'color': const color_values.PreparedColor(0, 0, 255, 1),
+        };
         final anim = Animation(
           {'duration': 1000, 'type': 'color'},
           target,
           'color',
           'invalid',
         );
-        anim.tick(anim.start + 500);
-        expect(target['color'], 'invalid');
+        // Color-only input deliberately rejects the upstream CSS fallback.
+        expect(() => anim.tick(anim.start + 500), throwsArgumentError);
       });
     });
 
@@ -88,42 +99,66 @@ void main() {
     });
 
     test('should update', () {
-      final target = <String, Object?>{'testColor': 'transparent'};
+      final target = <String, Object?>{
+        'testColor': const color_values.PreparedColor(0, 0, 0, 0),
+      };
       final anim = Animation(
         {'duration': 100, 'type': 'color'},
         target,
         'testColor',
-        'red',
+        const color_values.PreparedColor(255, 0, 0, 1),
       );
 
       anim.tick(anim.start + 50);
-      expect(target['testColor'], '#FF000080');
+      expect(
+        target['testColor'],
+        const color_values.PreparedColor(255, 0, 0, 128 / 255),
+      );
 
       anim
-        ..update({'duration': 500}, 'blue', jsDateNow())
+        ..update(
+          {'duration': 500},
+          const color_values.PreparedColor(0, 0, 255, 1),
+          jsDateNow(),
+        )
         ..tick(anim.start + 250);
-      expect(target['testColor'], '#4000BFBF');
+      expect(
+        target['testColor'],
+        const color_values.PreparedColor(64, 0, 191, 191 / 255),
+      );
 
       anim.tick(anim.start + 500);
-      expect(target['testColor'], 'blue');
+      expect(
+        target['testColor'],
+        const color_values.PreparedColor(0, 0, 255, 1),
+      );
     });
 
     test('should not update when finished', () {
-      final target = <String, Object?>{'testColor': 'transparent'};
+      final target = <String, Object?>{
+        'testColor': const color_values.PreparedColor(0, 0, 0, 0),
+      };
       final anim = Animation(
         {'duration': 100, 'type': 'color'},
         target,
         'testColor',
-        'red',
+        const color_values.PreparedColor(255, 0, 0, 1),
       );
 
       anim.tick(anim.start + 100);
-      expect(target['testColor'], 'red');
+      expect(
+        target['testColor'],
+        const color_values.PreparedColor(255, 0, 0, 1),
+      );
       expect(anim.active(), isFalse);
 
-      anim.update({'duration': 500}, 'blue', jsDateNow());
+      anim.update(
+        {'duration': 500},
+        const color_values.PreparedColor(0, 0, 255, 1),
+        jsDateNow(),
+      );
       expect(anim.duration, 100);
-      expect(anim.to, 'red');
+      expect(anim.to, const color_values.PreparedColor(255, 0, 0, 1));
     });
   });
 }

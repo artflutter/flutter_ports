@@ -2,11 +2,14 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
 import 'dart:ui' show Color, FontWeight;
 
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show createContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -34,8 +37,8 @@ import 'twin.dart';
 
 const Color _red = Color(0xFFFF6384);
 const Color _blue = Color(0xFF36A2EB);
-const String _redValue = 'rgba(255, 99, 132, 1)';
-const String _blueValue = 'rgba(54, 162, 235, 1)';
+const native_ui.Color _redValue = native_ui.Color.fromRGBO(255, 99, 132, 1);
+const native_ui.Color _blueValue = native_ui.Color.fromRGBO(54, 162, 235, 1);
 
 /// A scriptable color: blue at the data index 1, else red.
 Color _colorFor(ChartContext context) => context.dataIndex == 1 ? _blue : _red;
@@ -1145,6 +1148,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
 };
 
 void main() {
+  installNativeColorCodec();
   group('the datasets', () {
     group('each parameter of Dataset, in each dataset class', () {
       for (final MapEntry(key: name, value: (set, twin)) in _common.entries) {
@@ -1311,10 +1315,12 @@ void main() {
           _lower(
             const LineDataset(
               backgroundColor: _red,
-              extra: {'backgroundColor': 'red'},
+              extra: {
+                'backgroundColor': native_ui.Color.fromRGBO(255, 0, 0, 1),
+              },
             ),
           ),
-          {'backgroundColor': 'red'},
+          {'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1)},
         );
       });
 
@@ -1366,7 +1372,10 @@ void main() {
       });
 
       test('a List and a function go by reference', () {
-        final segment = <String, Object?>{'borderColor': (Object? c) => 'red'};
+        final segment = <String, Object?>{
+          'borderColor': (Object? c) =>
+              const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        };
         final list = <Object?>[1, 2];
         final lowered = _lower(
           LineDataset(extra: {'segment': segment, 'tags': list}),

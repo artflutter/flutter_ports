@@ -49,7 +49,7 @@ void main() {
         describeAnimation,
         setAnimations,
         '["describe","animations",{"_fallback":"animation"}]',
-        setTransitions,
+        setTransitions.replaceAll('"transparent"', '[0,0,0,0]'),
       ]);
     });
 

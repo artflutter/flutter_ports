@@ -1,7 +1,10 @@
 // Ported from Chart.js v4.6.1 test/fixtures/core.scale/ticks/rotated-multi-line.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
+
+import 'dart:ui' as native_ui;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 
@@ -54,7 +57,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           // const ctx = chart.ctx; ctx.save(); ...
           chart.ctx!
             ..save()
-            ..strokeStyle = 'red'
+            ..strokeStyle = const native_ui.Color(0xffff0000)
             ..strokeRect(0, 0, chart.width, chart.height)
             ..restore();
         },

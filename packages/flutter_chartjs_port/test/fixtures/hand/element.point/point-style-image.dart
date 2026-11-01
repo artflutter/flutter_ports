@@ -1,7 +1,10 @@
 // Ported from Chart.js v4.6.1 test/fixtures/element.point/point-style-image.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
+
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -18,14 +21,14 @@ Map<String, Object?> fixture() {
     ..height = 40;
 
   imageContext
-    ..fillStyle = '#f00'
+    ..fillStyle = const native_ui.Color(0xffff0000)
     ..beginPath()
     ..moveTo(20, 0)
     ..lineTo(10, 40)
     ..lineTo(20, 30)
     ..closePath()
     ..fill()
-    ..fillStyle = '#a00'
+    ..fillStyle = const native_ui.Color(0xffaa0000)
     ..beginPath()
     ..moveTo(20, 0)
     ..lineTo(30, 40)

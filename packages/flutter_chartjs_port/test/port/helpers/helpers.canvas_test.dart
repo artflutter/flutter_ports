@@ -4,6 +4,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -1032,7 +1034,7 @@ void main() {
   group('renderText', () {
     test('draws the backdrop of each line and restores the fill style', () {
       final ctx = createMockContext()
-        ..fillStyle = 'blue'
+        ..fillStyle = const color_values.PreparedColor(0, 0, 255, 1)
         ..resetCalls();
       renderText(
         ctx,
@@ -1041,7 +1043,13 @@ void main() {
         2,
         const _CanvasFont('9px x', '15'),
         const _Opts(
-          backdrop: _Backdrop(1, 2, 3, 4, 'red'),
+          backdrop: _Backdrop(
+            1,
+            2,
+            3,
+            4,
+            color_values.PreparedColor(255, 0, 0, 1),
+          ),
           // An empty stroke color stops the stroke, and an empty color
           // leaves the fill style.
           strokeColor: '',
@@ -1055,7 +1063,7 @@ void main() {
       final backdrop = [
         {
           'name': 'setFillStyle',
-          'args': ['red'],
+          'args': [const color_values.PreparedColor(255, 0, 0, 1)],
         },
         {
           'name': 'fillRect',
@@ -1063,13 +1071,13 @@ void main() {
         },
         {
           'name': 'setFillStyle',
-          'args': ['blue'],
+          'args': [const color_values.PreparedColor(0, 0, 255, 1)],
         },
       ];
       List<Object?> underline(double y) => [
         {
           'name': 'setStrokeStyle',
-          'args': ['blue'],
+          'args': [const color_values.PreparedColor(0, 0, 255, 1)],
         },
         {'name': 'beginPath', 'args': <Object?>[]},
         // A falsy decorationWidth gives 2.
@@ -1155,7 +1163,10 @@ void main() {
           1,
           2,
           const _CanvasFont('9px x', 20),
-          _Opts(strokeColor: 'red', strokeWidth: width),
+          _Opts(
+            strokeColor: const color_values.PreparedColor(255, 0, 0, 1),
+            strokeWidth: width,
+          ),
         );
         expect(
           ctx.getCalls().map((call) => call['name']),

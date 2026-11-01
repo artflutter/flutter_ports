@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/types/color.d.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 
 /// The declaration of `src/types/color.d.ts` (Chart.js ADR 0003,
 /// porting-flow.md 2.4).
@@ -11,7 +12,7 @@
 /// `@kurkle/color`, not this type.
 ///
 /// The proposed Dart form is `Object`, as for every option value (Chart.js
-/// ADR 0043). The value is a CSS color `String`, or a gradient or pattern of
+/// ADR 0043). The value is a Flutter `Color`, or a gradient or pattern of
 /// the canvas layer (`lib/src/canvas/`, phase 3).
 /// `isPatternOrGradient` (helpers.color.ts:3) tells the two kinds apart. The
 /// form is not the `Color` of `dart:ui`, and it is not the `Color` of
@@ -34,14 +35,15 @@ library;
 // A DOM interface with one member: lib.dom.d.ts has the same shape.
 // ignore: one_member_abstracts
 abstract interface class CanvasGradient {
-  /// `addColorStop(offset, color)`: adds a stop of the CSS [color] at
+  /// `addColorStop(offset, color)`: adds a stop of the Flutter Color [color] at
   /// [offset], in [0, 1].
   ///
   /// The DOM throws an `IndexSizeError` for an offset outside [0, 1] and a
-  /// `SyntaxError` for a color that does not parse. The canvas layer throws
-  /// a [RangeError] and a [FormatException]. A gradient that a context
+  /// `SyntaxError` for a color that does not parse. This port throws
+  /// a [RangeError] for the offset and [ArgumentError] for a non-Color.
+  /// A gradient that a context
   /// creates (`createLinearGradient`, phase 3) implements it.
-  void addColorStop(double offset, String color);
+  void addColorStop(double offset, Object color);
 }
 
 /// lib.dom.d.ts `CanvasPattern`, a member of the union `Color`

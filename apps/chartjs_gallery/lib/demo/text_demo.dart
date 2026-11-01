@@ -2,6 +2,7 @@
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/canvas_demo.dart'
     show chartColors, drawCaption, labelColor;
@@ -144,7 +145,7 @@ class _TextDemoState extends State<TextDemo> {
           final x = _anchorX(textAligns[c], left, cellWidth);
           final y = top + cellHeight / 2;
           ctx
-            ..strokeStyle = 'rgba(0, 0, 0, 0.12)'
+            ..strokeStyle = const ui.Color.fromRGBO(0, 0, 0, 0.12)
             ..lineWidth = 1
             ..strokeRect(left + 0.5, top + 0.5, cellWidth - 1, cellHeight - 1);
           if (_clipCells) {
@@ -152,7 +153,7 @@ class _TextDemoState extends State<TextDemo> {
           }
           // The alignment point: the baseline and the x of the anchor.
           ctx
-            ..strokeStyle = 'rgba(255, 99, 132, 0.45)'
+            ..strokeStyle = const ui.Color.fromRGBO(255, 99, 132, 0.45)
             ..beginPath()
             ..moveTo(left, y + 0.5)
             ..lineTo(left + cellWidth, y + 0.5)
@@ -162,18 +163,18 @@ class _TextDemoState extends State<TextDemo> {
             ..font = font.string
             ..textAlign = textAligns[c]
             ..textBaseline = textBaselines[r]
-            ..fillStyle = '#333333'
+            ..fillStyle = const ui.Color(0xFF333333)
             ..fillText(_text, x, y);
           final m = ctx.measureText(_text);
           ctx
-            ..strokeStyle = '#36A2EB'
+            ..strokeStyle = const ui.Color(0xFF36A2EB)
             ..strokeRect(
               x - m.actualBoundingBoxLeft,
               y - m.actualBoundingBoxAscent,
               m.actualBoundingBoxLeft + m.actualBoundingBoxRight,
               m.actualBoundingBoxAscent + m.actualBoundingBoxDescent,
             )
-            ..fillStyle = '#FF6384';
+            ..fillStyle = const ui.Color(0xFFFF6384);
           drawPoint(
             ctx,
             const PointOptions(
@@ -254,7 +255,7 @@ class _TextDemoState extends State<TextDemo> {
       // textAlign 'start' follows the direction of the canvas style.
       ctx
         ..textAlign = 'start'
-        ..fillStyle = '#333333'
+        ..fillStyle = const ui.Color(0xFF333333)
         ..fillText(
           "textAlign 'start', canvas style direction: "
           '${_styleDirection(ctx)}',
@@ -306,17 +307,19 @@ class _TextDemoState extends State<TextDemo> {
       if (isLongest) longestX = x;
       ctx
         ..fillStyle = isLongest
-            ? 'rgba(255, 99, 132, 0.35)'
-            : 'rgba(54, 162, 235, 0.18)'
+            ? const ui.Color.fromRGBO(255, 99, 132, 0.35)
+            : const ui.Color.fromRGBO(54, 162, 235, 0.18)
         ..fillRect(x, y, width, rowHeight - 4)
         ..font = font.string
         ..textAlign = 'left'
         ..textBaseline = 'middle'
-        ..fillStyle = skipped ? '#999999' : '#333333'
+        ..fillStyle = skipped
+            ? const ui.Color(0xFF999999)
+            : const ui.Color(0xFF333333)
         ..fillText(text, x, y + (rowHeight - 4) / 2);
     }
     ctx
-      ..strokeStyle = '#FF6384'
+      ..strokeStyle = const ui.Color(0xFFFF6384)
       ..lineWidth = 1.5
       ..setLineDash([4, 3])
       ..beginPath()

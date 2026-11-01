@@ -1,4 +1,6 @@
 // Ported from Chart.js v4.6.1 docs/charts/line.md (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
+import 'dart:ui' as ui;
 
 /// The line chart of `docs/charts/line.md:5-31`.
 ///
@@ -22,7 +24,7 @@ Map<String, Object?> lineConfig() => <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
         'fill': false,
-        'borderColor': 'rgb(75, 192, 192)',
+        'borderColor': const ui.Color.fromRGBO(75, 192, 192, 1),
         'tension': 0.1,
       },
     ],
@@ -53,22 +55,22 @@ Map<String, Object?> lineVerticalConfig() => <String, Object?>{
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
         'fill': false,
         'backgroundColor': <Object?>[
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(255, 205, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(201, 203, 207, 0.2)',
+          const ui.Color.fromRGBO(255, 99, 132, 0.2),
+          const ui.Color.fromRGBO(255, 159, 64, 0.2),
+          const ui.Color.fromRGBO(255, 205, 86, 0.2),
+          const ui.Color.fromRGBO(75, 192, 192, 0.2),
+          const ui.Color.fromRGBO(54, 162, 235, 0.2),
+          const ui.Color.fromRGBO(153, 102, 255, 0.2),
+          const ui.Color.fromRGBO(201, 203, 207, 0.2),
         ],
         'borderColor': <Object?>[
-          'rgb(255, 99, 132)',
-          'rgb(255, 159, 64)',
-          'rgb(255, 205, 86)',
-          'rgb(75, 192, 192)',
-          'rgb(54, 162, 235)',
-          'rgb(153, 102, 255)',
-          'rgb(201, 203, 207)',
+          const ui.Color.fromRGBO(255, 99, 132, 1),
+          const ui.Color.fromRGBO(255, 159, 64, 1),
+          const ui.Color.fromRGBO(255, 205, 86, 1),
+          const ui.Color.fromRGBO(75, 192, 192, 1),
+          const ui.Color.fromRGBO(54, 162, 235, 1),
+          const ui.Color.fromRGBO(153, 102, 255, 1),
+          const ui.Color.fromRGBO(201, 203, 207, 1),
         ],
         'borderWidth': 1.0,
       },

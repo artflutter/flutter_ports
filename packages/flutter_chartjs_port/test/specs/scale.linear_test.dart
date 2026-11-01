@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.linear.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -87,6 +91,7 @@ Matcher _toBeCloseTo(num expected, [num precision = 2]) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('Linear Scale', () {
     group('auto', fixture.specs('scale.linear'));
 
@@ -1426,17 +1431,32 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'Closed',
-              'backgroundColor': '#382765',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                56,
+                39,
+                101,
+                1,
+              ),
               'data': <Object?>[2500, 2000, 1500],
             },
             <String, Object?>{
               'label': 'In Progress',
-              'backgroundColor': '#7BC225',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                123,
+                194,
+                37,
+                1,
+              ),
               'data': <Object?>[1000, 2000, 1500],
             },
             <String, Object?>{
               'label': 'Assigned',
-              'backgroundColor': '#ffC225',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                255,
+                194,
+                37,
+                1,
+              ),
               'data': <Object?>[1000, 2000, 1500],
             },
           ],
@@ -1475,7 +1495,12 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset 1',
-              'backgroundColor': '#382765',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                56,
+                39,
+                101,
+                1,
+              ),
               'data': <Object?>[2500, 2000, 1500],
               'hidden': true,
             },
@@ -1506,7 +1531,12 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset 1',
-              'backgroundColor': '#382765',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                56,
+                39,
+                101,
+                1,
+              ),
               'data': <Object?>[2500, 2000, 1500],
             },
           ],
@@ -1535,7 +1565,12 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset 1',
-              'backgroundColor': '#382765',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                56,
+                39,
+                101,
+                1,
+              ),
               'data': <Object?>[-2500, -2000, -1500],
             },
           ],

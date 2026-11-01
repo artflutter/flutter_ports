@@ -2,8 +2,12 @@
 @TestOn('vm')
 library;
 
-// flutter_test and dart:ui: the web legs cannot compile this file.
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/pure.dart';
+// flutter_test and dart:ui: the web legs cannot compile this file.
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
@@ -67,8 +71,8 @@ Map<String, Object?> _cfg(Map<String, Object?> extra) => {
   'width': 31.7,
   'height': 89.6,
   'options': <String, Object?>{
-    'borderColor': 'rgba(54, 162, 235, 1)',
-    'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+    'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
+    'backgroundColor': const native_ui.Color.fromRGBO(54, 162, 235, 0.5),
     'borderWidth': 1,
     'borderRadius': 4,
   },
@@ -153,6 +157,7 @@ Future<void> _expectUpstreamPixels(Map<String, Object?> cfg) async {
 }
 
 void main() {
+  installNativeColorCodec();
   for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
     /// [_expectUpstreamPixels] with the options of [cfg] in the form of
     /// this group.
@@ -168,8 +173,8 @@ void main() {
         await expectUpstreamPixels(
           _cfg({
             'options': <String, Object?>{
-              'borderColor': 'red',
-              'backgroundColor': 'blue',
+              'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
               'borderWidth': <String, Object?>{
                 'top': 3,
                 'right': 1,
@@ -192,8 +197,8 @@ void main() {
         await expectUpstreamPixels(
           _cfg({
             'options': <String, Object?>{
-              'borderColor': 'red',
-              'backgroundColor': 'blue',
+              'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
               'borderWidth': 2,
               'borderRadius': 0,
             },
@@ -222,7 +227,7 @@ void main() {
         await expectUpstreamPixels(
           _cfg({
             'options': <String, Object?>{
-              'backgroundColor': 'green',
+              'backgroundColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
               'borderWidth': 0,
               'borderRadius': 6,
             },

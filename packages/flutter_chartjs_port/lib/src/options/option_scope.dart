@@ -33,6 +33,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
@@ -334,7 +335,7 @@ abstract base class OptionScope
   @override
   Object? jsRead(String name) {
     final cell = lookup(name);
-    return cell == null ? undefined : cell.raw;
+    return cell == null ? undefined : publicColorValue(cell.raw);
   }
 
   /// `object[name] = value` (`[[Set]]`): stores the cell of [value].

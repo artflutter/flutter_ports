@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/core/core.defaults.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 // DIVERGES(chartjs): adapt-typed-options, typed scopes of Chart.js ADR 0054.
 
 /// Port of `src/core/core.defaults.js`.
@@ -23,8 +24,8 @@
 /// (differences.md row `adapt-defaults-route`).
 library;
 
-import 'dart:core';
 import 'dart:core' as core show override;
+import 'dart:core';
 
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.defaults.dart';
@@ -36,6 +37,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -148,9 +150,9 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   /// [descriptorValues] is `_descriptors`. [appliers] is `_appliers`.
   Defaults(Object? descriptorValues, List<void Function(Defaults)> appliers) {
     animationCell = optUndefined;
-    backgroundColor = 'rgba(0,0,0,0.1)';
-    borderColor = 'rgba(0,0,0,0.1)';
-    this.color = '#666';
+    backgroundColor = const PreparedColor(0, 0, 0, 0.1);
+    borderColor = const PreparedColor(0, 0, 0, 0.1);
+    this.color = const PreparedColor(102, 102, 102, 1);
     datasets = DatasetOptionsByTypeScope();
     devicePixelRatioCell = OptFunction<double>(
       _fn1(

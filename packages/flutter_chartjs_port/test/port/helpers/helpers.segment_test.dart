@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -187,7 +189,7 @@ final class _Segment implements Segment {
 /// A gradient object. Its JS `toString()` tag is `[object CanvasGradient]`.
 final class _Gradient implements CanvasGradient {
   @override
-  void addColorStop(double offset, String color) {}
+  void addColorStop(double offset, Object color) {}
 }
 
 /// An object of a class, which `JSON.stringify` writes with its own
@@ -221,7 +223,10 @@ Object? _plainStyle(Object? style) => style is JsObjectFace
     : style;
 
 /// The base options of the style cases.
-const AnyObject _base = {'borderColor': 'blue', 'borderWidth': 3.0};
+const AnyObject _base = {
+  'borderColor': color_values.PreparedColor(0, 0, 255, 1),
+  'borderWidth': 3.0,
+};
 
 /// The `readStyle` object (helpers.segment.js:337) of [_base] with the given
 /// values.
@@ -229,7 +234,7 @@ Matcher _style({
   Object? backgroundColor = undefined,
   Object? borderDash = undefined,
   Object? borderWidth = 3.0,
-  Object? borderColor = 'blue',
+  Object? borderColor = const color_values.PreparedColor(0, 0, 255, 1),
 }) => equals(<String, Object?>{
   'backgroundColor': backgroundColor,
   'borderCapStyle': undefined,
@@ -557,7 +562,9 @@ void main() {
           contexts.add(ctx);
           return {
             ..._base,
-            'borderColor': _p0(ctx).y >= 2 ? 'red' : 'blue',
+            'borderColor': _p0(ctx).y >= 2
+                ? const color_values.PreparedColor(255, 0, 0, 1)
+                : const color_values.PreparedColor(0, 0, 255, 1),
           };
         },
       };
@@ -569,7 +576,12 @@ void main() {
       );
       expect(computeSegments(line, segmentOptions), [
         _segment(0, 2, false, _style()),
-        _segment(2, 5, false, _style(borderColor: 'red')),
+        _segment(
+          2,
+          5,
+          false,
+          _style(borderColor: const color_values.PreparedColor(255, 0, 0, 1)),
+        ),
       ]);
       final ctx = contexts[0];
       expect(jsObjectKeys(ctx), [
@@ -625,7 +637,9 @@ void main() {
       final redAt2 = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,
-          'borderColor': _p0DataIndex(ctx) == 2 ? 'red' : 'blue',
+          'borderColor': _p0DataIndex(ctx) == 2
+              ? const color_values.PreparedColor(255, 0, 0, 1)
+              : const color_values.PreparedColor(0, 0, 255, 1),
         },
       };
       expect(
@@ -639,7 +653,14 @@ void main() {
         ),
         [
           _segment(0, 1, false, _style()),
-          _segment(1, 3, false, _style(borderColor: 'red')),
+          _segment(
+            1,
+            3,
+            false,
+            _style(
+              borderColor: const color_values.PreparedColor(255, 0, 0, 1),
+            ),
+          ),
           _segment(3, 5, false, _style()),
         ],
       );
@@ -654,8 +675,8 @@ void main() {
         'setContext': (Object? ctx) => {
           ..._base,
           'borderColor': (ctx! as JsObjectFace)['p1DataIndex'] == 3
-              ? 'red'
-              : 'blue',
+              ? const color_values.PreparedColor(255, 0, 0, 1)
+              : const color_values.PreparedColor(0, 0, 255, 1),
         },
       };
       expect(
@@ -669,7 +690,14 @@ void main() {
         ),
         [
           _segment(0, 1, false, _style()),
-          _segment(1, 3, false, _style(borderColor: 'red')),
+          _segment(
+            1,
+            3,
+            false,
+            _style(
+              borderColor: const color_values.PreparedColor(255, 0, 0, 1),
+            ),
+          ),
           _segment(3, 5, false, _style()),
         ],
       );
@@ -679,7 +707,9 @@ void main() {
       final redAt2 = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,
-          'borderColor': _p0DataIndex(ctx) == 2 ? 'red' : 'blue',
+          'borderColor': _p0DataIndex(ctx) == 2
+              ? const color_values.PreparedColor(255, 0, 0, 1)
+              : const color_values.PreparedColor(0, 0, 255, 1),
         },
       };
       expect(
@@ -695,7 +725,14 @@ void main() {
         ),
         [
           _segment(0, 2, true, _style()),
-          _segment(2, 3, true, _style(borderColor: 'red')),
+          _segment(
+            2,
+            3,
+            true,
+            _style(
+              borderColor: const color_values.PreparedColor(255, 0, 0, 1),
+            ),
+          ),
         ],
       );
     });
@@ -793,7 +830,7 @@ void main() {
           'backgroundColor': _p0DataIndex(ctx) == 1 ? 0.0 : g1,
         },
       };
-      expect(computeSegments(line, zero), hasLength(1));
+      expect(() => computeSegments(line, zero), throwsArgumentError);
     });
 
     test('compares the JSON text of strings with escapes', () {
@@ -893,14 +930,14 @@ void main() {
       final leaves = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,
-          'borderColor': _Leaf(_p0DataIndex(ctx) == 1 ? 1 : 2),
+          'borderDash': _Leaf(_p0DataIndex(ctx) == 1 ? 1 : 2),
         },
       };
       expect(
         computeSegments(
           _Line(
             _points('oooo'),
-            options: {..._base, 'borderColor': const _Leaf(2)},
+            options: {..._base, 'borderDash': const _Leaf(2)},
             chart: _Chart(),
           ),
           leaves,

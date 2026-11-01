@@ -4,9 +4,12 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -18,7 +21,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show dispatchCanvasEvent;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -30,6 +32,7 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
 import '../scales/scale_chart_harness.dart';
@@ -194,7 +197,7 @@ AnyObject _undefinedAxisIds(AnyObject observation) => <String, Object?>{
 /// [value] in its parsed form when it is a color: `Color(value).rgbString()`
 /// (`_parseColor` of controller_chart_harness.dart).
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => Color(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s).rgbString() ?? s,
   _ => value,
 };
 
@@ -294,6 +297,7 @@ AnyObject _line(Object? legendOptions, {List<Object?>? plugins}) =>
     };
 
 void main() {
+  installNativeColorCodec();
   testReferenceOrigin(
     node: pluginLegendReferenceNode,
     arch: pluginLegendReferenceArch,
@@ -368,6 +372,7 @@ void main() {
           copyReference(pluginLegendReference.first.config, _functions)!
               as AnyObject;
       config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });
   });
@@ -626,7 +631,7 @@ void main() {
     /// writes of the legend draw of a chart with the option `color`
     /// [color] and the theme [theme], whose item has no `fillStyle` and no
     /// `strokeStyle`.
-    (Object?, List<List<Object?>>) styles({String? color, AnyObject? theme}) {
+    (Object?, List<List<Object?>>) styles({Object? color, AnyObject? theme}) {
       final config = _line(<String, Object?>{
         'labels': <String, Object?>{
           'generateLabels': (Object? chart) => <Object?>[
@@ -662,15 +667,17 @@ void main() {
     const expected = [
       ['setStrokeStyle', null],
       ['setFillStyle', null],
-      ['setFillStyle', '#666'],
-      ['setStrokeStyle', '#666'],
+      ['setFillStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
+      ['setStrokeStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
     ];
 
     testWidgets('the box reads defaults.color, not the chart color', (
       tester,
     ) async {
-      final (color, calls) = styles(color: 'green');
-      expect(color, 'green');
+      final (color, calls) = styles(
+        color: const native_ui.Color.fromRGBO(0, 128, 0, 1),
+      );
+      expect(color, const native_ui.Color.fromRGBO(0, 128, 0, 1));
       expect(calls, expected);
     });
 
@@ -687,7 +694,7 @@ void main() {
           },
         },
       );
-      expect(color, 'rgba(0, 128, 0, 1)');
+      expect(color, const native_ui.Color.fromRGBO(0, 128, 0, 1));
       expect(calls, expected);
     });
   });
@@ -711,7 +718,7 @@ void main() {
       // keys of the item are [text, fillStyle, textAlign]. The port writes
       // `undefined` into a Map<String, String>.
       final items = [
-        {'text': 'Apples', 'fillStyle': 'red'},
+        <String, String>{'text': 'Apples'},
       ];
       expect(
         () => legendChart(<String, Object?>{
@@ -728,7 +735,10 @@ void main() {
     ) async {
       // The probe: the keys [text, fillStyle, textAlign], and textAlign is
       // undefined.
-      final item = <String, Object?>{'text': 'Apples', 'fillStyle': 'red'};
+      final item = <String, Object?>{
+        'text': 'Apples',
+        'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      };
       legendChart(<String, Object?>{
         'labels': <String, Object?>{
           'generateLabels': (Object? chart) => <Object?>[item],
