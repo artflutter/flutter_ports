@@ -24,23 +24,20 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart'
     show b2n, n2b, round;
-import 'package:flutter_chartjs_port/src/kurkle_color/hex.dart' show hexParse;
 import 'package:flutter_chartjs_port/src/kurkle_color/hex.dart'
     as hex_js
     show hexString;
 import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
-    show hsl2rgb, hueParse, rgb2hsl;
-import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
     as hue_js
     show hslString, rotate;
+import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
+    show hsl2rgb, rgb2hsl;
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
-import 'package:flutter_chartjs_port/src/kurkle_color/names.dart'
-    show nameParse;
-import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart' show rgbParse;
 import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart'
     as rgb_js
     show rgbString;
 import 'package:flutter_chartjs_port/src/kurkle_color/srgb.dart' as srgb_js;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 
 /// color.js:24 `modHSL`.
 ///
@@ -118,15 +115,6 @@ RGBA _fromObject(Object? input) {
   return v;
 }
 
-/// color.js:69 `functionParse`.
-RGBA? _functionParse(String str) {
-  // str.charAt(0) of '' is ''.
-  if (str.isNotEmpty && str.codeUnitAt(0) == 114) {
-    return rgbParse(str);
-  }
-  return hueParse(str);
-}
-
 /// `typeof value` for the Dart values that stand for JS values
 /// (js_number.dart): `null` and every object that is not a function are
 /// `'object'`.
@@ -148,8 +136,9 @@ class Color {
   /// color.js:81 `constructor`.
   ///
   /// [input] is a [Color], an RGBA object (an [RGBA] or a `Map` with the keys
-  /// `r`, `g`, `b` and `a`), a CSS color string or a `List` `[r, g, b]` or
-  /// `[r, g, b, a]`. The `a` of an object or a list is alpha [0..1].
+  /// `r`, `g`, `b` and `a`), or a `List` `[r, g, b]` or `[r, g, b, a]`.
+  /// The installed native bridge also accepts Flutter Color. Strings throw
+  /// (ADR 0057). The `a` of an object or a list is alpha [0..1].
   ///
   /// A [Color] input gives that instance, as the JS constructor returns it.
   /// Another input that is not an object or a string gives a color that is
@@ -159,24 +148,52 @@ class Color {
     if (input is Color) {
       return input;
     }
-    RGBA? v;
-    // DIVERGES(chartjs): adapt-kurkle-color-dispatch, performance
-    // optimisations.
+    // DIVERGES(chartjs): adapt-direct-colors, no string color constructor.
     if (input is String) {
-      if (input.isNotEmpty && input.codeUnitAt(0) == 35) {
-        v = hexParse(input);
-      } else if (input.isNotEmpty && input.codeUnitAt(input.length - 1) == 41) {
-        v = _functionParse(input);
-      } else {
-        v = nameParse(input) ?? _functionParse(input);
-      }
-    } else if (_typeOf(input) == 'object') {
+      throw ArgumentError.value(
+        input,
+        'color',
+        'CSS color strings are unsupported; use Flutter Color',
+      );
+    }
+    final native = nativeColorReader?.call(input);
+    if (native != null) {
+      return Color.fromRgbaBytes(
+        RGBA(
+          r: native.red.toDouble(),
+          g: native.green.toDouble(),
+          b: native.blue.toDouble(),
+          a: native.alpha * 255,
+        ),
+      );
+    }
+    RGBA? v;
+    if (_typeOf(input) == 'object') {
       v = _fromObject(input);
     }
     return Color._(v);
   }
 
   Color._(this._rgb) : _valid = _rgb != null;
+
+  /// Internal numerical construction with alpha in byte units. Native inputs
+  /// do not require parsing or premature alpha rounding.
+  factory Color.fromRgbaBytes(RGBA value) => Color._(
+    RGBA(r: value.r, g: value.g, b: value.b, a: value.a),
+  );
+
+  /// A copy of the numerical channels, including the unrounded byte alpha.
+  RGBA? get rgbaBytes {
+    final value = _rgb;
+    return value == null
+        ? null
+        : RGBA(
+            r: value.r,
+            g: value.g,
+            b: value.b,
+            a: value.a,
+          );
+  }
 
   /// color.js:96 `_rgb`. The [RGBA] with `a` as a byte [0..255]. Dart `null`
   /// stands for JS `undefined`: the input did not parse.

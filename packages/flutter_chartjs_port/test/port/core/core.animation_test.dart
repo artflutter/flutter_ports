@@ -11,9 +11,13 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import 'animation_reference.dart';
 
 // The behavior of Chart.js ADR 0019 that test/specs/core.animation.tests.js
@@ -32,6 +36,27 @@ import 'animation_reference.dart';
 /// Whether [actual] is the reference value [expected]: the same type and
 /// value, NaN for NaN, and the sign of a zero.
 bool _same(Object? actual, Object? expected) {
+  if ((actual is String || actual is Map || actual is List) &&
+      nativeColorBytes(expected) != null) {
+    return _same(expected, actual);
+  }
+  if (nativeColorBytes(actual) != null && expected is Map) {
+    final converted = referenceColorInput(expected);
+    final a = nativeColorBytes(actual);
+    final b = nativeColorBytes(converted);
+    if (a != null && b != null) {
+      return List.generate(4, (i) => a[i] == b[i]).every((v) => v);
+    }
+  }
+  if (expected is String && nativeColorBytes(actual) != null) {
+    final rgb = referenceColor(expected).rgbaBytes;
+    if (rgb == null) return false;
+    final bytes = nativeColorBytes(actual)!;
+    return bytes[0] == rgb.r.round() &&
+        bytes[1] == rgb.g.round() &&
+        bytes[2] == rgb.b.round() &&
+        bytes[3] == rgb.a.round();
+  }
   if (expected is double) {
     if (actual is! num) return false;
     final value = actual.toDouble();
@@ -132,16 +157,18 @@ void _replay(
 /// Runs the color animation of [animationColorReference] from [from] to
 /// [to], and returns the value after each tick at the 11 factors.
 List<Object?> _colorResults(Object? from, Object? to) {
-  final target = <String, Object?>{'color': 'black'};
+  final target = <String, Object?>{
+    'color': const color_values.PreparedColor(0, 0, 0, 1),
+  };
   final anim =
       Animation(
           {'duration': 1000, 'loop': true, 'type': 'color'},
           target,
           'color',
-          'red',
+          const color_values.PreparedColor(255, 0, 0, 1),
         )
-        ..from = from
-        ..to = to;
+        ..from = referenceColorInput(from)
+        ..to = referenceColorInput(to);
   return [
     for (var k = 0; k <= 10; k++)
       (() {
@@ -277,8 +304,24 @@ void main() {
   });
 
   group('adapt-animation-color-cache', () {
-    test('each color pair at 11 factors gives the upstream colors', () {
+    test('supported color pairs at 11 factors give the upstream colors', () {
       for (final (from, to, results) in animationColorReference) {
+        final inputs = [referenceColorInput(from), referenceColorInput(to)];
+        bool supported(Object? value) =>
+            value == null ||
+            value is Undefined ||
+            value is CanvasGradient ||
+            value is CanvasPattern ||
+            nativeColorBytes(value) != null;
+        if (!inputs.every(supported)) {
+          for (final input in inputs.where((value) => !supported(value))) {
+            expect(
+              () => color_values.requireSolidColor(input),
+              throwsArgumentError,
+            );
+          }
+          continue;
+        }
         expect(
           _colorResults(from, to),
           pairwiseCompare<Object?, Object?>(results, _same, 'reference'),
@@ -288,16 +331,39 @@ void main() {
     });
 
     test('a change of from and to between the calls parses again', () {
-      final target = <String, Object?>{'color': 'black'};
+      final target = <String, Object?>{
+        'color': const color_values.PreparedColor(0, 0, 0, 1),
+      };
       final anim = Animation(
         {'duration': 1000, 'loop': true, 'type': 'color'},
         target,
         'color',
-        'red',
+        const color_values.PreparedColor(255, 0, 0, 1),
       );
       for (final (i, step) in animationColorSequence.indexed) {
-        if (!identical(step.from, animationAbsent)) anim.from = step.from;
-        if (!identical(step.to, animationAbsent)) anim.to = step.to;
+        if (!identical(step.from, animationAbsent)) {
+          anim.from = referenceColorInput(step.from);
+        }
+        if (!identical(step.to, animationAbsent)) {
+          anim.to = referenceColorInput(step.to);
+        }
+        final invalid = [anim.from, anim.to].where(
+          (value) =>
+              value != null &&
+              value is! Undefined &&
+              value is! CanvasGradient &&
+              value is! CanvasPattern &&
+              nativeColorBytes(value) == null,
+        );
+        if (invalid.isNotEmpty) {
+          for (final value in invalid) {
+            expect(
+              () => color_values.requireSolidColor(value),
+              throwsArgumentError,
+            );
+          }
+          continue;
+        }
         anim.tick(anim.start + step.offset);
         expect(target['color'], _isValue(step.result), reason: 'step $i');
       }
@@ -306,14 +372,19 @@ void main() {
     test('repeated ticks of the same pair give the same colors', () {
       // The cache mixes a clone of the cached target color. Thus a second
       // round of ticks gives the colors of the first round.
-      final first = _colorResults('#36A2EB80', 'rgb(255, 99, 132)');
-      final target = <String, Object?>{'color': 'black'};
+      final first = _colorResults(
+        const color_values.PreparedColor(54, 162, 235, 0.5),
+        const color_values.PreparedColor(255, 99, 132, 1),
+      );
+      final target = <String, Object?>{
+        'color': const color_values.PreparedColor(0, 0, 0, 1),
+      };
       final anim = Animation(
         {'duration': 1000, 'loop': true, 'type': 'color'},
         target,
         'color',
-        'rgb(255, 99, 132)',
-      )..from = '#36A2EB80';
+        const color_values.PreparedColor(255, 99, 132, 1),
+      )..from = const color_values.PreparedColor(54, 162, 235, 0.5);
       for (var round = 0; round < 3; round++) {
         for (var k = 0; k <= 10; k++) {
           anim.tick(anim.start + 100 * k);

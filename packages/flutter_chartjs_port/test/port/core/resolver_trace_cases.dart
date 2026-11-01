@@ -2,14 +2,7 @@
 @TestOn('vm')
 library;
 
-// The user functions and the setups of the cases of
-// tool/reference/resolver_trace_reference.mjs (D2 of Chart.js ADR 0053), by
-// name. test/port/core/resolver_trace_test.dart (D2) and the observation
-// oracle O1 (test/port/options/observation_test.dart) use them. Each
-// function has the body of the function of the same name in the generator.
-//
-// This library is not a test file: `flutter test` runs only the files that
-// end in `_test.dart`.
+import 'dart:ui' as native_ui;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
@@ -72,15 +65,24 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
   };
   double index(Object? ctx) => jsToNumber(jsGet(ctx, 'dataIndex'));
   return {
-    'dsColor': fn('dsColor', (ctx, _) => index(ctx) % 2 == 0 ? 'red' : 'blue'),
-    'lineBorderColor': fn('lineBorderColor', (_, _) => 'green'),
+    'dsColor': fn(
+      'dsColor',
+      (ctx, _) => index(ctx) % 2 == 0
+          ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+          : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+    ),
+    'lineBorderColor': fn(
+      'lineBorderColor',
+      (_, _) => const native_ui.Color.fromRGBO(0, 128, 0, 1),
+    ),
     'elementHitRadius': fn('elementHitRadius', (ctx, _) => index(ctx) + 1),
     'optionRotation': fn('optionRotation', (_, _) => 15.0),
     'defBorderWidth': fn('defBorderWidth', (_, _) => 2.0),
     'hoverColor': fn(
       'hoverColor',
-      (_, options) =>
-          jsToNumber(jsGet(options, 'radius')) > 5 ? 'black' : 'white',
+      (_, options) => jsToNumber(jsGet(options, 'radius')) > 5
+          ? const native_ui.Color.fromRGBO(0, 0, 0, 1)
+          : const native_ui.Color.fromRGBO(255, 255, 255, 1),
     ),
     'barRadius': fn('barRadius', (ctx, _) => jsGet(ctx, 'dataIndex')),
     'arcRadius': fn('arcRadius', (ctx, _) => index(ctx) + 1),
@@ -142,7 +144,10 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
       'gridWidth',
       (ctx, _) => jsToNumber(jsGet(ctx, 'index')) % 2 == 0 ? 2.0 : 1.0,
     ),
-    'legendColor': fn('legendColor', (_, _) => '#00ff00'),
+    'legendColor': fn(
+      'legendColor',
+      (_, _) => const native_ui.Color.fromRGBO(0, 255, 0, 1),
+    ),
     'writeRadiusActive': fn('writeRadiusActive', (ctx, options) {
       if (jsTruthy(jsGet(ctx, 'active')) && jsGet(ctx, 'dataIndex') == 2.0) {
         (options! as JsObjectFace)['radius'] = 9.0;
@@ -154,8 +159,8 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
       final datasets =
           jsGet((chart! as Chart).data, 'datasets')! as List<Object?>;
       (datasets[0]! as AnyObject)
-        ..['backgroundColor'] = 'green'
-        ..['borderColor'] = 'blue';
+        ..['backgroundColor'] = const native_ui.Color.fromRGBO(0, 128, 0, 1)
+        ..['borderColor'] = const native_ui.Color.fromRGBO(0, 0, 255, 1);
       return undefined;
     },
   };

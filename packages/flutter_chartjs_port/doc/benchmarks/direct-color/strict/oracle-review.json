@@ -1,0 +1,34 @@
+[
+  {
+    "case": "fixture_controller.bar_backgroundColor_scriptable.js_plain_.txt",
+    "baselineLines": 3285,
+    "nativeLines": 3285,
+    "callbackTraceEqual": true,
+    "baselineSHA256": "e6ef206939f9fca8da992dfb1d7236b9e40017da737e0527d186f73a9d3e97ea",
+    "nativeSHA256": "319a098f3bc44385e28a4821d9c027496af1c36ed2efb3745ce283f27a4dee53"
+  },
+  {
+    "case": "fixture_controller.bar_backgroundColor_scriptable.js_trace_.txt",
+    "baselineLines": 3422,
+    "nativeLines": 3422,
+    "callbackTraceEqual": true,
+    "baselineSHA256": "304210eefad4a6bc3e4af799cacdc876656c95aaa1543943a52b6d7c82f5c391",
+    "nativeSHA256": "e1888f226197b1664d752b2348ca18bac9b5bfad0eabbc4cd393acab8a4e735c"
+  },
+  {
+    "case": "bench_chart.c_plain_.txt",
+    "baselineLines": 14135,
+    "nativeLines": 14135,
+    "callbackTraceEqual": true,
+    "baselineSHA256": "2ba6792f64bac6b708dd4825ce1c62d4de2516c650ad7edc0881d850c2cc70c9",
+    "nativeSHA256": "f48c0da46fedeb580d2c0531c41f5112f441721ec70908bbc37662dd302ba165"
+  },
+  {
+    "case": "bench_chart.c_trace_.txt",
+    "baselineLines": 14566,
+    "nativeLines": 14566,
+    "callbackTraceEqual": true,
+    "baselineSHA256": "f433a0cd7ba5adbb8267528a5c659890b2749c8c3445130defcd49343c636a48",
+    "nativeSHA256": "7a36677ac8ddfb8124f1903c9fe2ffb7e7da8f8cdba2fd9eebe9526965084967"
+  }
+]

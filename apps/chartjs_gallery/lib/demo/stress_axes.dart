@@ -15,6 +15,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
@@ -162,7 +163,7 @@ Map<String, Object?> stressAxesConfig({
       <String, Object?>{
         'data': scene.data,
         'backgroundColor': stressChartBackground,
-        'borderColor': '#36A2EB',
+        'borderColor': const ui.Color(0xFF36A2EB),
         'borderWidth': 1.0,
         'pointStyle': 'circle',
         'radius': 3.0,

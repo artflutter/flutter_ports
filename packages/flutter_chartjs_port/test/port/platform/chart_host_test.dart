@@ -2,11 +2,15 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart'
     show ClipRectLayer, RenderRepaintBoundary;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -121,6 +125,7 @@ Future<UiCanvasElement> _pumpHost(
 }
 
 void main() {
+  installNativeColorCodec();
   group('first layout', () {
     testWidgets('sizes a chart that starts before the layout at once', (
       tester,
@@ -309,7 +314,7 @@ void main() {
       // display size, here its render size of 400 x 200.
       final canvas = UiCanvasElement(width: 400, height: 200);
       canvas.getContext2d()
-        ..fillStyle = '#ff0000'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 200, 100);
       await tester.pumpWidget(
         _box(RepaintBoundary(child: ChartHost(canvas: canvas))),
@@ -385,7 +390,7 @@ void main() {
         ..resetTransform()
         ..clearRect(0, 0, canvas.width.toDouble(), canvas.height.toDouble())
         ..restore()
-        ..fillStyle = '#0000ff'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..fillRect(0, 0, chart.width / 2, chart.height);
     }
 
@@ -557,7 +562,7 @@ void main() {
       final canvas = UiCanvasElement(width: 200, height: 100);
       canvas.style.setProperty('width', '600px');
       canvas.getContext2d()
-        ..fillStyle = '#0000ff'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..fillRect(0, 0, 100, 100);
       await tester.pumpWidget(
         _box(RepaintBoundary(child: ChartHost(canvas: canvas)), width: 800),

@@ -1,0 +1,13 @@
+{
+  "baseline": "175337ff09d37b6aa7a5de76cdf5f90e44be6bc8",
+  "date": "2026-11-01",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "mac": "Apple M3 Max, macOS 27.0.1",
+  "chrome": "Headless Chrome 156, release Wasm verified at runtime",
+  "android": "Pixel 8a, release arm64",
+  "ios": "not run; device not connected",
+  "protocol": "ABBA, two processes per side, 10 cells per process; 250 ms warmup, 7 x ~100 ms batches",
+  "scope": "5000 points, typed dataset lowering, hidden category and linear axes, update(none), no animations; CPU draw/update/end only",
+  "initial_screen": "One earlier macOS ABBA screen before the publicColorValue inline pragma is excluded from final figures."
+}

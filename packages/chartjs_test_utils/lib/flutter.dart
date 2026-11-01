@@ -65,3 +65,4 @@ export 'src/index.dart'
         specsFromFixtures,
         triggerMouseEvent,
         waitForResize;
+export 'src/native_colors.dart' show nativeFixtureColors;

@@ -3,9 +3,12 @@
 library;
 
 import 'dart:typed_data';
+import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
@@ -16,11 +19,11 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show getHoverColor;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
 // theming.md §8 test 6, the full blue screen (Chart.js ADR 0050, "The blue
@@ -134,15 +137,17 @@ const Map<String, Set<String>> knownLeaks = {};
 /// (plugin.legend.js:286), not the options, for its fill (:314) and its
 /// stroke (:319). If upstream removes the read, the pin case fails and this
 /// list changes.
-const Set<String> knownSingletonLeaks = {
-  'setFillStyle #666',
-  'setStrokeStyle #666',
+final Set<String> knownSingletonLeaks = {
+  'setFillStyle ${const native_ui.Color(0xFF666666)}',
+  'setStrokeStyle ${const native_ui.Color(0xFF666666)}',
 };
 
 /// The hover color of the blue: the ported `getHoverColor` of `#2050c0`
 /// (helpers.color.ts:28-32), the value of the root hover scriptables of
 /// core.defaults.js:62-64 over the themed base color.
-final Object? _hoverBlue = getHoverColor('#2050c0');
+final Object? _hoverBlue = getHoverColor(
+  const native_ui.Color.fromRGBO(32, 80, 192, 1),
+);
 
 /// The known setters of an active case of the chart type [type]: the
 /// setters with the value [_hoverBlue]. The bar draws its border as a fill
@@ -330,7 +335,7 @@ const Set<String> _styleSetters = {'setFillStyle', 'setStrokeStyle'};
 /// Whether the style [value] keeps a pixel blue over the blue background:
 /// a color with the channels of [_blue] (any alpha), or alpha 0.
 bool _keepsBlue(Object? value) {
-  final rgb = kurkle.Color(value).rgb;
+  final rgb = referenceParsedColor(value).rgb;
   if (rgb == null) return false;
   return rgb.a == 0 ||
       (rgb.r == ((_blue >> 16) & 0xFF) &&
@@ -506,12 +511,14 @@ Future<int> _expectBlue(
 }
 
 void main() {
+  installNativeColorCodec();
   test('the compiled blue theme emits each color as the blue', () {
     final colors = _themeColors(compileChartTheme(_blueTheme)).toList();
     expect(colors, isNotEmpty);
     for (final (path, value) in colors) {
-      expect(value, isA<String>(), reason: path);
-      final rgb = kurkle.Color(value).rgb;
+      expect(value, isNot(isA<String>()), reason: path);
+      expect(nativeColorBytes(value), isNotNull, reason: path);
+      final rgb = referenceParsedColor(value).rgb;
       expect(rgb, isNotNull, reason: path);
       expect([rgb!.r, rgb.g, rgb.b], [32, 80, 192], reason: path);
       // The token `surface` gives the tick backdrop at alpha 0.75. The
@@ -580,7 +587,7 @@ void main() {
 
   test('the hover color of the blue is #003CCA', () {
     // The value of the probes F-P2 and Pf-B7 of Chart.js ADR 0050.
-    expect(_hoverBlue, '#003CCA');
+    expect(_hoverBlue, const native_ui.Color.fromRGBO(0, 60, 202, 1));
   });
 
   for (final colors in [true, false]) {
@@ -598,7 +605,7 @@ void main() {
           chart,
           const ui.Color(_blue),
         );
-        final rgb = kurkle.Color(_hoverBlue).rgb!;
+        final rgb = referenceParsedColor(_hoverBlue).rgb!;
         final check = _segmentCheck(pixels, [
           rgb.r.round(),
           rgb.g.round(),
@@ -669,10 +676,10 @@ void main() {
     expect(
       leaks,
       containsAll(<String>[
-        'setStrokeStyle rgb(54, 162, 235)',
-        'setFillStyle rgba(54, 162, 235, 0.5)',
-        'setStrokeStyle rgb(255, 99, 132)',
-        'setFillStyle rgba(255, 99, 132, 0.5)',
+        'setStrokeStyle ${const ui.Color.fromRGBO(54, 162, 235, 1)}',
+        'setFillStyle ${const ui.Color.fromRGBO(54, 162, 235, 0.5)}',
+        'setStrokeStyle ${const ui.Color.fromRGBO(255, 99, 132, 1)}',
+        'setFillStyle ${const ui.Color.fromRGBO(255, 99, 132, 0.5)}',
       ]),
     );
   });

@@ -58,7 +58,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         PluginOptionsByTypeScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/theme/css.dart' show colorToRgba;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show
@@ -471,14 +470,11 @@ Object? Function(Object?) animationTrampoline(
   return null;
 };
 
-/// The option value of [color]: its `rgba()` string through `colorToRgba`
-/// of `css.dart`, the conversion of the theme (Chart.js ADR 0050). Dart
-/// `null` for `null`.
-String? colorValue(Color? color) => color == null ? null : colorToRgba(color);
+/// Keeps the native [color] unchanged, including null for an unset option.
+Color? colorValue(Color? color) => color;
 
-/// The option value of a color with three forms: [color] as its string,
-/// [colors] as a new List of strings, or [colorFor] as a scriptable
-/// closure ([colorScript]). Dart `null` when the three are `null`.
+/// A native color, a mutable indexable color list, or a color callback.
+/// Dart `null` when the three are `null`.
 ///
 /// The constructors of the typed classes assert that at most one is set.
 Object? colorOption(
@@ -486,16 +482,15 @@ Object? colorOption(
   List<Color>? colors,
   ChartScript<Color>? colorFor,
 ) {
-  if (color != null) return colorToRgba(color);
+  if (color != null) return color;
   if (colors != null) {
-    return <Object?>[for (final color in colors) colorToRgba(color)];
+    return <Object?>[...colors];
   }
   if (colorFor != null) return colorScript(colorFor);
   return null;
 }
 
-/// The scriptable option of [colorFor]: a closure that gives the `rgba()`
-/// string of the color of each context.
+/// The scriptable option of [colorFor], returning its native Color unchanged.
 ///
 /// The closure takes the 2 arguments of a Chart.js scriptable option, the
 /// context and the options resolver, and `jsCall` calls it with JS arity
@@ -504,7 +499,7 @@ Object? colorOption(
 /// function, so it resolves the options of each data item, as for a raw
 /// closure (`core.config.js:351-366`, `:405-418`).
 Object? Function(Object?, Object?) colorScript(ChartScript<Color> colorFor) =>
-    (context, options) => colorToRgba(colorFor(context! as ChartContext));
+    (context, options) => colorFor(context! as ChartContext);
 
 /// The option value of [padding]: a new `PaddingScope` with the keys
 /// `top`, `right`, `bottom` and `left` (`index.d.ts`, `Padding`). Dart

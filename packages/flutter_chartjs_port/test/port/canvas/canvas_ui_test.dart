@@ -2,12 +2,15 @@
 @TestOn('vm')
 library;
 
-// flutter_test and dart:ui: the web legs cannot compile this file.
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+// flutter_test and dart:ui: the web legs cannot compile this file.
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -182,6 +185,7 @@ int _worstDifference(ByteData a, ByteData b) {
 }
 
 void main() {
+  installNativeColorCodec();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('element', () {
@@ -209,7 +213,7 @@ void main() {
     test('setting width or height resets the state and the bitmap', () {
       final element = UiCanvasElement(width: 50, height: 50);
       final ctx = element.getContext2d()
-        ..fillStyle = 'red'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..lineWidth = 5
         ..font = 'bold 20px Arial'
         ..translate(10, 10)
@@ -218,7 +222,7 @@ void main() {
       expect(ctx.isEmpty, isFalse);
       element.width = 50;
       expect(ctx.isEmpty, isTrue);
-      expect(ctx.fillStyle, '#000000');
+      expect(ctx.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(ctx.lineWidth, 1);
       expect(ctx.font, '10px sans-serif');
       // The stack is empty: this restore does nothing, and a fill at the
@@ -259,19 +263,19 @@ void main() {
     test('removeAttribute gives the default size and clears the bitmap', () {
       final element = UiCanvasElement(width: 50, height: 40);
       final ctx = element.getContext2d()
-        ..fillStyle = 'red'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 10, 10);
       element.removeAttribute('width');
       expect(element.getAttribute('width'), isNull);
       expect((element.width, element.height), (300, 40));
       expect(ctx.isEmpty, isTrue);
-      expect(ctx.fillStyle, '#000000');
+      expect(ctx.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
 
       // An absent attribute and the style attribute do not reset the
       // context, as in the DOM. The style attribute reflects the inline
       // style (Chart.js ADR 0022, section 4).
       ctx
-        ..fillStyle = 'red'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 10, 10);
       element
         ..removeAttribute('width')
@@ -484,14 +488,14 @@ void main() {
   group('state', () {
     test('save and restore keep styles but not the path', () async {
       final ctx = _context()
-        ..fillStyle = 'red'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..save()
-        ..fillStyle = 'blue'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..lineWidth = 3
         ..beginPath()
         ..rect(0, 0, 20, 20)
         ..restore();
-      expect(ctx.fillStyle, '#ff0000');
+      expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
       expect(ctx.lineWidth, 1);
       ctx.fill();
       final pixels = await _render(ctx);
@@ -501,17 +505,15 @@ void main() {
 
     test('a restore without a save does nothing', () {
       final ctx = _context()
-        ..fillStyle = 'red'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..restore();
-      expect(ctx.fillStyle, '#ff0000');
+      expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
     });
 
-    test('invalid values are ignored', () {
+    test('invalid non-color values are ignored', () {
       final ctx = _context()
-        ..fillStyle = 'red'
-        ..fillStyle = 'not a color'
-        ..fillStyle = 12
-        ..strokeStyle = 'rgba(0, 0, 255, 0.5)'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 0.5)
         ..strokeStyle = null
         ..lineWidth = -1
         ..lineWidth = double.nan
@@ -526,8 +528,8 @@ void main() {
         ..textAlign = 'bogus'
         ..textBaseline = 'bogus'
         ..direction = 'bogus';
-      expect(ctx.fillStyle, '#ff0000');
-      expect(ctx.strokeStyle, 'rgba(0, 0, 255, 0.5)');
+      expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
+      expect(ctx.strokeStyle, const native_ui.Color.fromRGBO(0, 0, 255, 0.5));
       expect(ctx.lineWidth, 1);
       expect(ctx.lineCap, 'butt');
       expect(ctx.lineJoin, 'miter');
@@ -542,14 +544,14 @@ void main() {
 
     test('valid values read back', () {
       final ctx = _context()
-        ..fillStyle = '#ABC'
+        ..fillStyle = const native_ui.Color.fromRGBO(170, 187, 204, 1)
         ..lineCap = 'round'
         ..lineJoin = 'bevel'
         ..globalCompositeOperation = 'destination-over'
         ..textAlign = 'center'
         ..textBaseline = 'middle'
         ..direction = 'rtl';
-      expect(ctx.fillStyle, '#aabbcc');
+      expect(ctx.fillStyle, const native_ui.Color.fromRGBO(170, 187, 204, 1));
       expect(ctx.lineCap, 'round');
       expect(ctx.lineJoin, 'bevel');
       expect(ctx.globalCompositeOperation, 'destination-over');
@@ -641,7 +643,7 @@ void main() {
 
     test('a partial clear clears pixels, not what is below', () async {
       final ctx = _context()
-        ..fillStyle = 'red'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 100, 100)
         ..clearRect(0, 0, 10, 10);
       final pixels = await _render(ctx, background: const ui.Color(0xFF0000FF));
@@ -776,8 +778,8 @@ void main() {
         final ctx = _context()
           ..translate(10, 0)
           ..scale(2, 2)
-          ..fillStyle = '#ff0000'
-          ..strokeStyle = '#0000ff'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+          ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
           ..lineWidth = 2
           ..beginPath()
           ..arc(20, 25, 10, 0, 2 * math.pi)
@@ -925,8 +927,8 @@ void main() {
 
     test('a linear gradient', () async {
       final gradient = _context().createLinearGradient(0, 0, 100, 0)
-        ..addColorStop(0, 'red')
-        ..addColorStop(1, 'blue');
+        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
       final ctx = _context()
         ..fillStyle = gradient
         ..fillRect(0, 0, 100, 100);
@@ -934,18 +936,24 @@ void main() {
       final pixels = await _render(ctx);
       expect(pixels.r(2, 50), greaterThan(240));
       expect(pixels.b(97, 50), greaterThan(240));
-      expect(() => gradient.addColorStop(1.5, 'red'), throwsRangeError);
+      expect(
+        () => gradient.addColorStop(
+          1.5,
+          const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        ),
+        throwsRangeError,
+      );
       expect(
         () => gradient.addColorStop(0.5, 'not a color'),
-        throwsFormatException,
+        throwsArgumentError,
       );
     });
 
     test('a gradient is in user space at fill time', () async {
       final ctx = _context();
       final gradient = ctx.createLinearGradient(0, 0, 50, 0)
-        ..addColorStop(0, 'red')
-        ..addColorStop(1, 'blue');
+        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
       ctx
         ..translate(50, 0)
         ..fillStyle = gradient
@@ -958,8 +966,8 @@ void main() {
     test('radial and conic gradients paint', () async {
       final ctx = _context();
       final radial = ctx.createRadialGradient(0, 0, 10, 0, 0, 100)
-        ..addColorStop(0, 'red')
-        ..addColorStop(1, 'blue');
+        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
       ctx
         ..fillStyle = radial
         ..fillRect(0, 0, 100, 100);
@@ -968,8 +976,8 @@ void main() {
       expect(pixels.b(99, 99), greaterThan(200));
 
       final conic = ctx.createConicGradient(0, 50, 50)
-        ..addColorStop(0, 'red')
-        ..addColorStop(1, 'blue');
+        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
       ctx
         ..clearRect(0, 0, 100, 100)
         ..fillStyle = conic
@@ -1016,7 +1024,7 @@ void main() {
     test('toImageSource snapshots the bitmap in device pixels', () async {
       final canvas = UiCanvasElement(width: 20, height: 10);
       final ctx = canvas.getContext2d()
-        ..fillStyle = '#0000ff'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..fillRect(0, 0, 5, 5);
       final source = canvas.toImageSource();
       expect(source.width, 20);
@@ -1143,10 +1151,10 @@ void main() {
 
     test('a composite operation draws inside a layer', () async {
       final ctx = _context()
-        ..fillStyle = 'red'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 50, 50)
         ..globalCompositeOperation = 'destination-over'
-        ..fillStyle = 'lime'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
         ..fillRect(0, 0, 100, 100);
       final pixels = await _render(ctx);
       expect(pixels.r(25, 25), 255);
@@ -1256,7 +1264,7 @@ void main() {
       }) async {
         final ctx = _context()
           ..font = '16px Arial'
-          ..fillStyle = '#000000'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1)
           ..translate(50, 50)
           ..rotate(angle)
           ..translate(shift, 0)
@@ -1312,8 +1320,8 @@ void main() {
       expect(stroked.width, greaterThan(0));
       final gradientText = await inkOf((ctx) {
         final gradient = ctx.createLinearGradient(0, 0, 200, 0)
-          ..addColorStop(0, 'red')
-          ..addColorStop(1, 'blue');
+          ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+          ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
         ctx
           ..fillStyle = gradient
           ..fillText('HHH', 100, 50);
@@ -1325,10 +1333,10 @@ void main() {
       // Red left of x = 100, blue right of it, in user space.
       UiCanvasGradient halves(UiCanvasContext ctx) =>
           ctx.createLinearGradient(0, 0, 200, 0)
-            ..addColorStop(0, 'red')
-            ..addColorStop(0.5, 'red')
-            ..addColorStop(0.5, 'blue')
-            ..addColorStop(1, 'blue');
+            ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+            ..addColorStop(0.5, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+            ..addColorStop(0.5, const native_ui.Color.fromRGBO(0, 0, 255, 1))
+            ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
 
       Future<UiCanvasPattern> halvesPattern(UiCanvasContext ctx) async {
         final recorder = ui.PictureRecorder();
@@ -1427,7 +1435,7 @@ void main() {
     test('a disposed paragraph still paints in the recording', () async {
       final ctx = _context(width: 200)
         ..font = '20px sans-serif'
-        ..fillStyle = '#ff0000'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillText('HH', 10, 50);
       // The paragraph that the context drew, from the cache.
       final first = layoutCanvasText(
@@ -1438,7 +1446,7 @@ void main() {
         cacheKey: const ui.Color(0xFFFF0000),
       );
       // Distinct texts, outside the bitmap, evict and dispose it.
-      ctx.fillStyle = '#00ff00';
+      ctx.fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1);
       for (var i = 0; i <= paragraphCacheSize; i++) {
         ctx.fillText('evict $i', 300, 300);
       }
@@ -1446,8 +1454,8 @@ void main() {
       // A gradient paragraph is disposed after its draw.
       ctx
         ..fillStyle = (ctx.createLinearGradient(0, 0, 200, 0)
-          ..addColorStop(0, 'blue')
-          ..addColorStop(1, 'blue'))
+          ..addColorStop(0, const native_ui.Color.fromRGBO(0, 0, 255, 1))
+          ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1)))
         ..fillText('HH', 110, 50);
       // The left stem of each first H.
       var pixels = await _render(ctx);
@@ -1540,8 +1548,8 @@ void main() {
 
     test('gives the pixels of the separate draws', () async {
       final ctx = _context()
-        ..fillStyle = 'rgba(54, 162, 235, 0.45)'
-        ..strokeStyle = '#36A2EB'
+        ..fillStyle = const native_ui.Color.fromRGBO(54, 162, 235, 0.45)
+        ..strokeStyle = const native_ui.Color.fromRGBO(54, 162, 235, 1)
         ..lineWidth = 1;
       points(ctx, centers);
       final batched = await _render(
@@ -1590,12 +1598,12 @@ void main() {
       // 20 red points, then 20 blue points at the same places: blue on top.
       final ctx = _context()
         ..lineWidth = 2
-        ..fillStyle = '#ff0000'
-        ..strokeStyle = '#ff0000';
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1);
       points(ctx, centers.take(20).toList());
       ctx
-        ..fillStyle = '#0000ff'
-        ..strokeStyle = '#0000ff';
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1);
       points(ctx, centers.take(20).toList());
       final pixels = await _render(ctx);
       for (final c in centers.take(20)) {
@@ -1606,15 +1614,15 @@ void main() {
 
     test('draws before a later draw, a clip and a restore', () async {
       final ctx = _context()
-        ..fillStyle = '#ff0000'
-        ..strokeStyle = '#ff0000';
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1);
       points(ctx, centers);
       ctx
         ..save()
         ..beginPath()
         ..rect(0, 0, 50, 100)
         ..clip()
-        ..fillStyle = '#00ff00'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
         ..fillRect(0, 0, 100, 5)
         ..restore();
       final pixels = await _render(ctx);
@@ -1628,8 +1636,8 @@ void main() {
 
     test('a full clear drops the pending circles', () async {
       final ctx = _context()
-        ..fillStyle = '#ff0000'
-        ..strokeStyle = '#ff0000';
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1);
       points(ctx, centers);
       ctx.clearRect(0, 0, 100, 100);
       expect(ctx.isEmpty, isTrue);
@@ -1640,7 +1648,7 @@ void main() {
     test('a dashed stroke does not join the batch', () async {
       final ctx = _context()
         ..lineWidth = 4
-        ..strokeStyle = '#000000'
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1)
         ..setLineDash([10, 1000]);
       for (var i = 0; i < 20; i++) {
         ctx
@@ -1689,8 +1697,8 @@ void main() {
     }) => (c: ui.Offset(x, y), r: r, fill: fill, stroke: stroke, width: width);
 
     UiCanvasContext styled() => _context()
-      ..fillStyle = '#ff0000'
-      ..strokeStyle = '#0000ff'
+      ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+      ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
       ..lineWidth = 1;
 
     test('a transform change in a run moves only the later points', () async {
@@ -1731,11 +1739,11 @@ void main() {
       run(0, red, blue);
       ctx.globalAlpha = 0.5;
       run(22, red.withValues(alpha: 0.5), blue.withValues(alpha: 0.5));
-      ctx.fillStyle = '#00ff00';
+      ctx.fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1);
       run(44, green.withValues(alpha: 0.5), blue.withValues(alpha: 0.5));
       ctx
         ..globalAlpha = 1
-        ..strokeStyle = '#000000';
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1);
       run(66, green, black);
       final pixels = await _render(ctx);
       expect(
@@ -1746,7 +1754,8 @@ void main() {
 
     test('a circle fill and a later fill of the same color', () async {
       const half = ui.Color.from(alpha: 0.5, red: 1, green: 0, blue: 0);
-      final ctx = _context()..fillStyle = 'rgba(255, 0, 0, 0.5)';
+      final ctx = _context()
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 0.5);
       final dots = <_Dot>[];
       for (final c in centers.take(20)) {
         circle(ctx, c.dx, c.dy, 3, stroke: false);
@@ -1950,8 +1959,8 @@ void main() {
 
       final element = UiCanvasElement(width: 100, height: 100);
       final resized = element.getContext2d()
-        ..fillStyle = '#ff0000'
-        ..strokeStyle = '#0000ff';
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1);
       points(resized, centers);
       element.width = 100;
       expect(resized.isEmpty, isTrue);
@@ -1978,12 +1987,12 @@ void main() {
         final x = c.dx * 0.4;
         final y = c.dy / 2;
         ctx
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..fill(Path2D()..arc(x, y, 1.5, 0, 2 * math.pi));
         dots.add(dot(2 * x, c.dy, 3, stroke: null));
         circle(ctx, x + 1, y, 1.5);
         dots.add(dot(2 * x + 2, c.dy, 3, width: 2));
-        ctx.fillStyle = '#00ff00';
+        ctx.fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1);
         circle(ctx, x + 2, y, 1.5, stroke: false);
         dots.add(dot(2 * x + 4, c.dy, 3, fill: green, stroke: null));
       }
@@ -2100,8 +2109,8 @@ void main() {
 
     test('many points', () async {
       final ctx = _context(width: 200, height: 200)
-        ..fillStyle = '#ff0000'
-        ..strokeStyle = '#0000ff';
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1);
       final dots = <_Dot>[];
       final random = math.Random(7);
       for (var i = 0; i < 3000; i++) {
@@ -2130,8 +2139,8 @@ void main() {
       for (var k = 0; k < 40; k++) {
         other
           ..clearRect(0, 0, 100, 100)
-          ..fillStyle = 'rgb($k, 200, 0)'
-          ..strokeStyle = '#00ff00';
+          ..fillStyle = native_ui.Color.fromRGBO(k, 200, 0, 1)
+          ..strokeStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1);
         points(other, centers.take(10).toList());
         await _render(other);
       }
@@ -2153,8 +2162,8 @@ void main() {
       final element = UiCanvasElement(width: 263, height: 263);
       final ctx = element.getContext2d()
         ..setTransform(dpr, 0, 0, dpr, 0, 0)
-        ..fillStyle = '#ff0000'
-        ..strokeStyle = '#0000ff';
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1);
       points(ctx, centers);
       // RenderView scales the scene by the ratio, and the host paints the
       // bitmap at 1 / ratio.
@@ -2228,7 +2237,7 @@ void main() {
     test('a wide stroke draws directly', () async {
       // The sprite would hold the line width: 16880 pixels wide.
       final ctx = _context()
-        ..strokeStyle = '#0000ff'
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..lineWidth = 2100;
       for (var i = 0; i < 20; i++) {
         circle(ctx, 50 + i * 0.1, 50, 3, fill: false);
@@ -2256,7 +2265,7 @@ void main() {
       }
       // 40 runs of other colors in the same recording, outside the bitmap.
       for (var k = 0; k < 40; k++) {
-        ctx.fillStyle = 'rgb($k, 200, 0)';
+        ctx.fillStyle = native_ui.Color.fromRGBO(k, 200, 0, 1);
         for (var i = 0; i < 10; i++) {
           circle(ctx, 200.0 + i, 200, 3);
         }
@@ -2285,7 +2294,8 @@ void main() {
         return ui.Offset(sx / sum, sy / sum);
       }
 
-      final ctx = _context()..fillStyle = '#ff0000';
+      final ctx = _context()
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1);
       for (final c in centers) {
         circle(ctx, c.dx, c.dy, 3, stroke: false);
       }
@@ -2379,11 +2389,11 @@ void main() {
     test('a round trip of the pixels', () async {
       final canvas = UiCanvasElement(width: 20, height: 10);
       canvas.getContext2d()
-        ..fillStyle = '#ff0000'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 10, 5)
-        ..fillStyle = '#00ff00'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
         ..fillRect(10, 0, 10, 5)
-        ..fillStyle = '#0000ff'
+        ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..fillRect(0, 5, 10, 5);
       final url = await canvas.toDataURL();
       expect(url, startsWith('data:image/png;base64,'));

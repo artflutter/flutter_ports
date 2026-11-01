@@ -21,7 +21,7 @@ compares the existing Chart.js packages.
 - A typed Dart API: `ChartConfig`, one dataset class for each chart type, typed axes and option
   groups, Flutter values (`Color`, `TextStyle`, `Duration`, `EdgeInsets`) and callbacks with
   `int` indexes.
-- The raw Chart.js configuration as a Dart `Map` (`ChartView.raw`), for a copy of the Chart.js
+- The raw Chart.js structure as a Dart `Map` (`ChartView.raw`), with native `Color` values, for a copy of the Chart.js
   docs or `jsonDecode` output: the same keys, the same defaults and the same results.
 - Animations, hover, tooltips and legend clicks with a mouse, a touch screen or the keyboard.
 - A theme API with light and dark presets, a semantics node for screen readers, and reduced
@@ -399,7 +399,7 @@ ChartConfig(
 ```
 
 `ChartConfig.extra` goes into `options`. A key of `extra` wins over a parameter with the same
-key, and a Map value merges into the Map of the key. Thus `extra` also takes a CSS color string,
+key, and a Map value merges into the Map of the key. Thus `extra` also takes a native `Color`,
 a gradient function or the JavaScript `null` (Dart `null` in a parameter means "not set"). For a
 config that the typed API does not fit, use [`ChartView.raw`](#raw-chartjs-configs).
 
@@ -519,6 +519,12 @@ chart in a `MediaQuery` with `disableAnimations: false`.
 
 ## Raw Chart.js configs
 
+Solid colors must be Flutter `Color` values in both APIs. CSS color strings such as
+`'red'`, `'#36A2EB'` and `'rgba(54, 162, 235, 0.5)'` throw `ArgumentError`.
+Use `const Color(0xFF36A2EB)` or `const Color.fromRGBO(54, 162, 235, 0.5)` instead.
+Lists contain colors and scriptable color callbacks return colors. Gradient stops
+also require `Color`; gradient and pattern paint objects remain supported.
+
 `ChartView.raw` takes a Chart.js configuration as a Dart `Map`: `type`, `data`, `options`,
 `plugins` (inline plugins) and `platform`, with every option of Chart.js. Use it for a copy of the
 [Chart.js docs](https://www.chartjs.org/docs/4.6.1/) or for the output of `jsonDecode`:
@@ -608,7 +614,9 @@ Write the options as in the Chart.js docs, with these rules of Dart:
 
   ```dart
   'backgroundColor': (JsObjectFace context) =>
-      context['dataIndex'] == 0 ? '#FF6384' : '#36A2EB',
+      context['dataIndex'] == 0
+          ? const Color(0xFFFF6384)
+          : const Color(0xFF36A2EB),
   ```
 
 The updates of a raw configuration:

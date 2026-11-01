@@ -2,6 +2,7 @@
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
@@ -25,19 +26,19 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show bezierCurveTo, steppedLineTo;
 
 /// The Chart.js sample colors.
-const List<String> chartColors = [
-  '#36A2EB',
-  '#FF6384',
-  '#4BC0C0',
-  '#FF9F40',
-  '#9966FF',
-  '#FFCD56',
-  '#C9CBCF',
+const List<ui.Color> chartColors = [
+  ui.Color(0xFF36A2EB),
+  ui.Color(0xFFFF6384),
+  ui.Color(0xFF4BC0C0),
+  ui.Color(0xFFFF9F40),
+  ui.Color(0xFF9966FF),
+  ui.Color(0xFFFFCD56),
+  ui.Color(0xFFC9CBCF),
 ];
 
 /// The color of the labels that the demos draw on the canvas: the Chart.js
 /// default `color`.
-const String labelColor = '#666';
+const ui.Color labelColor = ui.Color(0xFF666666);
 
 /// A label under a drawing, with `renderText` and the default font.
 void drawCaption(
@@ -125,15 +126,15 @@ class _PointStylesCardState extends State<_PointStylesCard> {
     final canvas = UiCanvasElement(width: 32, height: 32);
     final ctx = canvas.getContext2d();
     final gradient = ctx.createRadialGradient(11, 10, 2, 16, 16, 16)
-      ..addColorStop(0, '#FFE29A')
-      ..addColorStop(1, '#FF6384');
+      ..addColorStop(0, const ui.Color(0xFFFFE29A))
+      ..addColorStop(1, const ui.Color(0xFFFF6384));
     ctx
       ..fillStyle = gradient
       ..beginPath()
       ..arc(16, 16, 15, 0, 2 * math.pi)
       ..fill()
-      ..fillStyle = '#FFFFFF'
-      ..strokeStyle = '#FFFFFF'
+      ..fillStyle = const ui.Color(0xFFFFFFFF)
+      ..strokeStyle = const ui.Color(0xFFFFFFFF)
       ..lineWidth = 2.5;
     drawPoint(
       ctx,
@@ -171,11 +172,11 @@ class _PointStylesCardState extends State<_PointStylesCard> {
       final x = left + cellWidth / 2;
       final y = top + (cellHeight - 18) / 2;
       ctx
-        ..strokeStyle = 'rgba(0, 0, 0, 0.08)'
+        ..strokeStyle = const ui.Color.fromRGBO(0, 0, 0, 0.08)
         ..lineWidth = 1
         ..strokeRect(left + 3.5, top + 3.5, cellWidth - 7, cellHeight - 7)
-        ..fillStyle = 'rgba(54, 162, 235, 0.35)'
-        ..strokeStyle = '#36A2EB'
+        ..fillStyle = const ui.Color.fromRGBO(54, 162, 235, 0.35)
+        ..strokeStyle = const ui.Color(0xFF36A2EB)
         ..lineWidth = _borderWidth;
       drawPointLegend(
         ctx,
@@ -334,7 +335,7 @@ class _RenderTextCardState extends State<_RenderTextCard> {
       ..save()
       ..translate(x, y)
       ..rotate(rotation)
-      ..strokeStyle = 'rgba(255, 99, 132, 0.6)'
+      ..strokeStyle = const ui.Color.fromRGBO(255, 99, 132, 0.6)
       ..lineWidth = 1
       ..setLineDash([4, 4])
       ..beginPath()
@@ -362,13 +363,13 @@ class _RenderTextCardState extends State<_RenderTextCard> {
       TextOpts(
         translation: (x, y),
         rotation: rotation,
-        color: '#36A2EB',
+        color: const ui.Color(0xFF36A2EB),
         textAlign: 'center',
         textBaseline: 'middle',
         underline: _underline,
         strikethrough: _strikethrough,
         decorationWidth: 3,
-        strokeColor: _stroke ? '#FFFFFF' : null,
+        strokeColor: _stroke ? const ui.Color(0xFFFFFFFF) : null,
         strokeWidth: _stroke ? 6 : null,
         maxWidth: _maxWidth ? _maxWidthValue : null,
         backdrop: _backdrop
@@ -377,7 +378,7 @@ class _RenderTextCardState extends State<_RenderTextCard> {
                 backdropTop,
                 widest + 16,
                 lines.length * lineHeight + 8,
-                'rgba(255, 206, 86, 0.35)',
+                const ui.Color.fromRGBO(255, 206, 86, 0.35),
               )
             : null,
       ),
@@ -479,8 +480,8 @@ class _RoundedRectCardState extends State<_RoundedRectCard> {
     final x = (chart.width - w) / 2;
     const y = 16.0;
     ctx
-      ..fillStyle = 'rgba(75, 192, 192, 0.35)'
-      ..strokeStyle = '#4BC0C0'
+      ..fillStyle = const ui.Color.fromRGBO(75, 192, 192, 0.35)
+      ..strokeStyle = const ui.Color(0xFF4BC0C0)
       ..lineWidth = 3
       ..beginPath();
     addRoundedRectPath(
@@ -616,7 +617,7 @@ class _LinesCardState extends State<_LinesCard> {
         ctx.stroke();
       }
       ctx
-        ..fillStyle = '#FFFFFF'
+        ..fillStyle = const ui.Color(0xFFFFFFFF)
         ..lineWidth = 2;
       for (final point in points) {
         drawPoint(
@@ -701,7 +702,7 @@ class _ClipCardState extends State<_ClipCard> {
         ..stroke();
     }
     ctx
-      ..fillStyle = 'rgba(255, 99, 132, 0.55)'
+      ..fillStyle = const ui.Color.fromRGBO(255, 99, 132, 0.55)
       ..beginPath()
       ..arc(area.left, area.top, 48, 0, 2 * math.pi)
       ..fill()
@@ -710,7 +711,7 @@ class _ClipCardState extends State<_ClipCard> {
       ..fill();
     if (_clip) unclipArea(ctx);
     ctx
-      ..strokeStyle = '#333333'
+      ..strokeStyle = const ui.Color(0xFF333333)
       ..lineWidth = 1.5
       ..setLineDash([6, 4])
       ..strokeRect(area.left, area.top, area.width, area.height)
@@ -786,9 +787,9 @@ class _PaintCardState extends State<_PaintCard>
   static UiImageSource _makeTile() {
     final canvas = UiCanvasElement(width: 16, height: 16);
     final ctx = canvas.getContext2d()
-      ..fillStyle = '#FFF4E0'
+      ..fillStyle = const ui.Color(0xFFFFF4E0)
       ..fillRect(0, 0, 16, 16)
-      ..strokeStyle = '#FF9F40'
+      ..strokeStyle = const ui.Color(0xFFFF9F40)
       ..lineWidth = 3
       ..lineCap = 'square'
       ..beginPath()
@@ -846,9 +847,9 @@ class _PaintCardState extends State<_PaintCard>
       switch (_panels[i]) {
         case 'createLinearGradient':
           final g = ctx.createLinearGradient(left, top, left + size, top + size)
-            ..addColorStop(0, '#36A2EB')
-            ..addColorStop(0.5, '#9966FF')
-            ..addColorStop(1, '#FF6384');
+            ..addColorStop(0, const ui.Color(0xFF36A2EB))
+            ..addColorStop(0.5, const ui.Color(0xFF9966FF))
+            ..addColorStop(1, const ui.Color(0xFFFF6384));
           ctx
             ..fillStyle = g
             ..fillRect(left, top, size, size);
@@ -862,9 +863,9 @@ class _PaintCardState extends State<_PaintCard>
                   cy,
                   size / 2,
                 )
-                ..addColorStop(0, '#FFFFFF')
-                ..addColorStop(0.4, '#FFCD56')
-                ..addColorStop(1, '#FF9F40');
+                ..addColorStop(0, const ui.Color(0xFFFFFFFF))
+                ..addColorStop(0.4, const ui.Color(0xFFFFCD56))
+                ..addColorStop(1, const ui.Color(0xFFFF9F40));
           ctx
             ..fillStyle = g
             ..beginPath()
@@ -884,7 +885,7 @@ class _PaintCardState extends State<_PaintCard>
         case 'createPattern':
           ctx
             ..fillStyle = ctx.createPattern(_tile, 'repeat')
-            ..strokeStyle = '#FF9F40'
+            ..strokeStyle = const ui.Color(0xFFFF9F40)
             ..lineWidth = 2
             ..beginPath();
           addRoundedRectPath(
@@ -907,12 +908,12 @@ class _PaintCardState extends State<_PaintCard>
             ..stroke();
         case 'setLineDash':
           ctx
-            ..strokeStyle = '#4BC0C0'
+            ..strokeStyle = const ui.Color(0xFF4BC0C0)
             ..lineWidth = 3
             ..setLineDash([10, 6])
             ..lineDashOffset = -_offset
             ..strokeRect(left + 2, top + 2, size - 4, size - 4)
-            ..strokeStyle = '#9966FF'
+            ..strokeStyle = const ui.Color(0xFF9966FF)
             ..lineCap = 'round'
             ..setLineDash([0.5, 9])
             ..lineWidth = 6

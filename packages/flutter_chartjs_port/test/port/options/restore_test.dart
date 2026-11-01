@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 // The defaults restore of the harness (`setUpDefaultsRestore`, the row
 // `harness-defaults-restore`) over the typed roots of Chart.js ADR 0054: the
 // key order, the cells, the extras and the routes of each typed scope come
@@ -10,6 +12,8 @@ library;
 // shard, the second test finds the state that the restore after the first
 // test made.
 
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
@@ -20,6 +24,7 @@ PointOptionsScope _point() =>
     jsGet(jsGet(defaults, 'elements'), 'point')! as PointOptionsScope;
 
 void main() {
+  installNativeColorCodec();
   late List<String> pointKeys;
   late Object? font;
   late Object? pointCell;
@@ -41,7 +46,10 @@ void main() {
     expect(identical(defaults.fontCell!.raw, font), isTrue);
     expect(descriptors.jsKeys(), descriptorKeys);
     // The route of `backgroundColor` reads the root.
-    expect(point.jsRead('backgroundColor'), 'rgba(0,0,0,0.1)');
+    expect(
+      point.jsRead('backgroundColor'),
+      const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+    );
     expect(point.routeOf('backgroundColor'), isNotNull);
   }
 
@@ -53,8 +61,11 @@ void main() {
     expect(point.jsKeys().last, 'extraKey');
     defaults
       ..font = (FontSpecScope()..size = 30.0)
-      ..backgroundColor = 'red';
-    expect(point.jsRead('backgroundColor'), 'red');
+      ..backgroundColor = const native_ui.Color.fromRGBO(255, 0, 0, 1);
+    expect(
+      point.jsRead('backgroundColor'),
+      const native_ui.Color.fromRGBO(255, 0, 0, 1),
+    );
     descriptors.jsWrite('leak', DescriptorsScope());
   }
 

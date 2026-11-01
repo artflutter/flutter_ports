@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_gallery/bench/chart_bench.dart'
     show chartBenchHeight, chartBenchOptions, chartBenchWidth;
@@ -15,6 +16,8 @@ import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // Not public: UiCanvasElement, the canvas of the internal host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
     show UiCanvasElement;
@@ -195,6 +198,7 @@ Future<List<Map<String, Object?>>> _stressLines(
 }
 
 void main() {
+  installNativeColorCodec();
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
@@ -252,7 +256,7 @@ void main() {
           expect((options! as JsObjectFace)['radius'], 3);
           expect(
             (options as JsObjectFace)['backgroundColor'],
-            'rgba(54, 162, 235, 0.45)',
+            const native_ui.Color.fromRGBO(54, 162, 235, 0.45),
           );
 
           // Stopping publishes the figures.
@@ -581,11 +585,11 @@ void main() {
     expect(identical(points[2].options, options), isFalse);
     expect(
       (options as JsObjectFace)['backgroundColor'],
-      'rgba(54, 162, 235, 0.45)',
+      const native_ui.Color.fromRGBO(54, 162, 235, 0.45),
     );
     expect(
       (points[1].options! as JsObjectFace)['backgroundColor'],
-      'rgba(255, 99, 132, 0.45)',
+      const native_ui.Color.fromRGBO(255, 99, 132, 0.45),
     );
     final before = points[1].options;
     await _frames(tester, 3);
@@ -656,7 +660,7 @@ void main() {
     expect(identical(_chart(tester), third), isFalse);
     expect(
       (_points(tester)[1].options! as JsObjectFace)['backgroundColor'],
-      'rgba(255, 99, 132, 0.45)',
+      const native_ui.Color.fromRGBO(255, 99, 132, 0.45),
     );
     expect(tester.takeException(), isNull);
   });

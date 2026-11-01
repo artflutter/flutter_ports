@@ -1,11 +1,16 @@
 // The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
+import 'dart:ui' as ui;
+
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
     show ParsedFont, toFont, toFontString, toPadding;
+// The demo calls pure resolvers without constructing a Chart first.
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // Not public: _createResolver and _attachContext, upstream `_` helpers.
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
@@ -23,8 +28,8 @@ final List<_Scope> _scopes = [
     scope: <String, Object?>{'borderColor': undefined},
   ),
   (
-    label: "{borderColor: '#36A2EB'}",
-    scope: <String, Object?>{'borderColor': '#36A2EB'},
+    label: '{borderColor: Color(0xFF36A2EB)}',
+    scope: <String, Object?>{'borderColor': const ui.Color(0xFF36A2EB)},
   ),
 ];
 
@@ -76,6 +81,7 @@ class OptionsDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    installNativeColorCodec();
     return DemoPageBody(
       children: [
         DemoCard(
@@ -148,7 +154,7 @@ class OptionsDemo extends StatelessWidget {
 
   Widget _nested(BuildContext context) {
     final dataset = <String, Object?>{
-      'backgroundColor': '#36A2EB',
+      'backgroundColor': const ui.Color(0xFF36A2EB),
       'font': <String, Object?>{'size': 20.0, 'weight': 'bold'},
     };
     final resolver = createResolver([dataset, defaults]);
@@ -159,7 +165,7 @@ class OptionsDemo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Mono(
-          "dataset = {backgroundColor: '#36A2EB', "
+          'dataset = {backgroundColor: Color(0xFF36A2EB), '
           "font: {size: 20, weight: 'bold'}}",
         ),
         const SizedBox(height: 8),
@@ -184,10 +190,10 @@ class OptionsDemo extends StatelessWidget {
           runSpacing: 6,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            ColorSwatchBox(color: cssColor('#36A2EB'), size: 28),
+            const ColorSwatchBox(color: ui.Color(0xFF36A2EB), size: 28),
             const Text('backgroundColor'),
             const SizedBox(width: 10),
-            ColorSwatchBox(color: cssColor(hover as String?), size: 28),
+            ColorSwatchBox(color: hover as ui.Color?, size: 28),
             const Text('hover'),
           ],
         ),

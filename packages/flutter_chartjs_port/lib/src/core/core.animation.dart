@@ -1,5 +1,6 @@
 // Ported from Chart.js v4.6.1 src/core/core.animation.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-typed-elements, typed keys of Chart.js ADR 0054.
+// DIVERGES(chartjs): adapt-direct-colors, preserve the color animation cache.
 
 /// Port of `src/core/core.animation.js` (Chart.js ADR 0019).
 ///
@@ -43,7 +44,8 @@ import 'dart:async';
 
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
+import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
+    show color, isPatternOrGradient;
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
     show effects;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -58,13 +60,14 @@ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     show Color;
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
 /// core.animation.js:5 `transparent`.
-const String _transparent = 'transparent';
+const PreparedColor _transparent = PreparedColor(0, 0, 0, 0);
 
 /// core.animation.js:6-25 the type of a member of `interpolators`: the value
 /// at [factor] between [from] and [to].
@@ -93,7 +96,20 @@ Object? _color(Object? from, Object? to, double factor) {
   final c1 = c0 is Color && c0.valid
       ? color(jsTruthy(to) ? to : _transparent)
       : false;
-  return c1 is Color && c1.valid ? c1.mix(c0 as Color, factor).hexString() : to;
+  return c1 is Color && c1.valid ? _mixedColor(c1, c0 as Color, factor) : to;
+}
+
+Object _mixedColor(Color to, Color from, double factor) {
+  final rgb = to.mix(from, factor).rgbaBytes!;
+  return PreparedColor(
+    // js-ok: color arithmetic produces finite non-negative byte channels.
+    rgb.r.round(),
+    // js-ok: color arithmetic produces finite non-negative byte channels.
+    rgb.g.round(),
+    // js-ok: color arithmetic produces finite non-negative byte channels.
+    rgb.b.round(),
+    rgb.a / 255,
+  ).paint;
 }
 
 /// core.animation.js:22 `interpolators.number`.
@@ -151,21 +167,23 @@ final class _ColorInterpolator {
 
   /// The color at [factor] between [from] and [to], as [_color] gives.
   Object? call(Object? from, Object? to, double factor) {
-    final f = jsTruthy(from) ? from : _transparent;
-    final t = jsTruthy(to) ? to : _transparent;
-    if (f is! String || t is! String) return _color(from, to, factor);
+    final f = publicColorValue(jsTruthy(from) ? from : _transparent);
+    final t = publicColorValue(jsTruthy(to) ? to : _transparent);
+    if (isPatternOrGradient(f) || isPatternOrGradient(t)) {
+      return _color(from, to, factor);
+    }
     var c0 = _c0;
     if (c0 == null || !identical(f, _fromKey)) {
       _fromKey = f;
-      _c0 = c0 = Color(f);
+      _c0 = c0 = color(f) as Color;
     }
     if (!c0.valid) return to;
     var c1 = _c1;
     if (c1 == null || !identical(t, _toKey)) {
       _toKey = t;
-      _c1 = c1 = Color(t);
+      _c1 = c1 = color(t) as Color;
     }
-    return c1.valid ? c1.clone().mix(c0, factor).hexString() : to;
+    return c1.valid ? _mixedColor(c1.clone(), c0, factor) : to;
   }
 }
 

@@ -1,0 +1,1286 @@
+diff --git a/lib/src/canvas/canvas_ui.dart b/lib/src/canvas/canvas_ui.dart
+index 8469f1b..5643c53 100644
+--- a/lib/src/canvas/canvas_ui.dart
++++ b/lib/src/canvas/canvas_ui.dart
+@@ -48,6 +48,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:meta/meta.dart';
+ 
+ export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart'
+@@ -501,7 +502,8 @@ final class _UiTextMetrics implements TextMetrics {
+ ///
+ /// See the library comment for the picture model. The host calls [paint]
+ /// in its paint phase and repaints when [onChanged] fires.
+-final class UiCanvasContext implements CanvasRenderingContext2D {
++final class UiCanvasContext
++    implements CanvasRenderingContext2D, PreparedColorContext {
+   UiCanvasContext._(this._element) {
+     _s = _states[0];
+     _path = UiPathBuilder(_s.transform);
+@@ -1091,7 +1093,11 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
+   /// color that does not parse and another value do nothing.
+   @override
+   set fillStyle(Object? value) {
+-    if (value is String) {
++    if (value is PreparedColor) {
++      _s
++        ..fillColor = value.paint as ui.Color
++        ..fillShader = null;
++    } else if (value is String) {
+       final color = parseCssColor(value);
+       if (color == null) return;
+       _s
+@@ -1111,7 +1117,11 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
+   /// color that does not parse and another value do nothing.
+   @override
+   set strokeStyle(Object? value) {
+-    if (value is String) {
++    if (value is PreparedColor) {
++      _s
++        ..strokeColor = value.paint as ui.Color
++        ..strokeShader = null;
++    } else if (value is String) {
+       final color = parseCssColor(value);
+       if (color == null) return;
+       _s
+diff --git a/lib/src/core/core.animation.dart b/lib/src/core/core.animation.dart
+index 92ba247..fa1147d 100644
+--- a/lib/src/core/core.animation.dart
++++ b/lib/src/core/core.animation.dart
+@@ -1,5 +1,6 @@
+ // Ported from Chart.js v4.6.1 src/core/core.animation.js (MIT, Chart.js Contributors).
+ // DIVERGES(chartjs): adapt-typed-elements, typed keys of Chart.js ADR 0054.
++// DIVERGES(chartjs): adapt-direct-colors, preserve the color animation cache.
+ 
+ /// Port of `src/core/core.animation.js` (Chart.js ADR 0019).
+ ///
+@@ -58,6 +59,7 @@ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
+     show Color;
+ import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+     show AnimatedProp;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+@@ -151,8 +153,8 @@ final class _ColorInterpolator {
+ 
+   /// The color at [factor] between [from] and [to], as [_color] gives.
+   Object? call(Object? from, Object? to, double factor) {
+-    final f = jsTruthy(from) ? from : _transparent;
+-    final t = jsTruthy(to) ? to : _transparent;
++    final f = publicColorValue(jsTruthy(from) ? from : _transparent);
++    final t = publicColorValue(jsTruthy(to) ? to : _transparent);
+     if (f is! String || t is! String) return _color(from, to, factor);
+     var c0 = _c0;
+     if (c0 == null || !identical(f, _fromKey)) {
+diff --git a/lib/src/core/core.animations.dart b/lib/src/core/core.animations.dart
+index 635f2aa..02043b9 100644
+--- a/lib/src/core/core.animations.dart
++++ b/lib/src/core/core.animations.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/core/core.animations.js (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, retain unanimated paint values.
+ // DIVERGES(chartjs): adapt-typed-elements, typed keys of Chart.js ADR 0054.
+ 
+ /// Port of `src/core/core.animations.js` (Chart.js ADR 0019, with the typed
+@@ -355,7 +356,17 @@ class Animations {
+       } else {
+         // The face: `Object.assign` of a plain object.
+         for (final key in jsObjectKeys(values)) {
+-          writeProperty(target, key, _readName(values, key));
++          // Preserve prepared paints when copying unanimated element options.
++          final value = values is ElementOptions
++              ? switch (key) {
++                  'backgroundColor' => values.paintOf(
++                    OptionKey.backgroundColor,
++                  ),
++                  'borderColor' => values.paintOf(OptionKey.borderColor),
++                  _ => _readName(values, key),
++                }
++              : _readName(values, key);
++          writeProperty(target, key, value);
+         }
+       }
+       return null;
+diff --git a/lib/src/core/scale_options.dart b/lib/src/core/scale_options.dart
+index a42e8b5..267bae2 100644
+--- a/lib/src/core/scale_options.dart
++++ b/lib/src/core/scale_options.dart
+@@ -75,7 +75,7 @@ extension type const CoreScaleOptions(OptionView _view) implements OptionView {
+   Object? get alignToPixels => _view.readKey(OptionKey.alignToPixels);
+ 
+   /// index.d.ts:1213 `backgroundColor: Color`.
+-  Object? get backgroundColor => _view.readKey(OptionKey.backgroundColor);
++  Object? get backgroundColor => readOption(_view, OptionKey.backgroundColor);
+ 
+   /// index.d.ts:1218 `reverse: boolean`.
+   Object? get reverse => _view.readKey(OptionKey.reverse);
+diff --git a/lib/src/elements/element.arc.dart b/lib/src/elements/element.arc.dart
+index e99eb2e..7800af5 100644
+--- a/lib/src/elements/element.arc.dart
++++ b/lib/src/elements/element.arc.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.arc.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.arc.ts`: the arc element of the doughnut,
+@@ -99,7 +100,7 @@ Object? _borderAlign(Object? options) => options is ArcOptions
+ /// The option `borderColor` of [options], as [_borderAlign] reads
+ /// `borderAlign`.
+ Object? _borderColor(Object? options) => options is ArcOptions
+-    ? rawOption(options, OptionKey.borderColor, options.borderColor)
++    ? options.paintOf(OptionKey.borderColor)
+     : _byName(options, 'borderColor');
+ 
+ /// The option `borderDash` of [options], as [_borderAlign] reads
+@@ -142,7 +143,7 @@ bool _selfJoin(Object? options) => options is ArcOptions
+ /// The option `backgroundColor` of [options], as [_borderAlign] reads
+ /// `borderAlign`.
+ Object? _backgroundColor(Object? options) => options is ArcOptions
+-    ? rawOption(options, OptionKey.backgroundColor, options.backgroundColor)
++    ? options.paintOf(OptionKey.backgroundColor)
+     : _byName(options, 'backgroundColor');
+ 
+ /// The typed `double` field of the numeric option [key] of [options]:
+@@ -1547,8 +1548,8 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
+     final radiusOffset = offset * fix;
+ 
+     ctx
+-      ..fillStyle = canvasStyle(_backgroundColor(options))
+-      ..strokeStyle = canvasStyle(_borderColor(options));
++      ..fillStyle = canvasStyle(_backgroundColor(options), ctx)
++      ..strokeStyle = canvasStyle(_borderColor(options), ctx);
+ 
+     _drawArc(ctx, this, radiusOffset, spacing, circular);
+     _drawBorder(ctx, this, radiusOffset, spacing, circular);
+diff --git a/lib/src/elements/element.bar.dart b/lib/src/elements/element.bar.dart
+index 9a30419..41dedf3 100644
+--- a/lib/src/elements/element.bar.dart
++++ b/lib/src/elements/element.bar.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.bar.js (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.bar.js`.
+@@ -89,13 +90,13 @@ Object? _borderRadius(Object? options) => options is BarOptions
+ /// The option `borderColor` of [options], as [_borderWidth] reads
+ /// `borderWidth`.
+ Object? _borderColor(Object? options) => options is BarOptions
+-    ? rawOption(options, OptionKey.borderColor, options.borderColor)
++    ? options.paintOf(OptionKey.borderColor)
+     : _byName(options, 'borderColor');
+ 
+ /// The option `backgroundColor` of [options], as [_borderWidth] reads
+ /// `borderWidth`.
+ Object? _backgroundColor(Object? options) => options is BarOptions
+-    ? rawOption(options, OptionKey.backgroundColor, options.backgroundColor)
++    ? options.paintOf(OptionKey.backgroundColor)
+     : _byName(options, 'backgroundColor');
+ 
+ /// The `ToBoolean` of the edges `skip.top`, `skip.right`, `skip.bottom` and
+@@ -788,14 +789,14 @@ class BarElement extends Element implements types.VisualElementRange {
+       if (inflateAmount != 0) ctx.clip();
+       addRectPath(ctx, _inflateRect(inner, -inflateAmount, outer));
+       ctx
+-        ..fillStyle = canvasStyle(borderColor)
++        ..fillStyle = canvasStyle(borderColor, ctx)
+         ..fill('evenodd');
+     }
+ 
+     ctx.beginPath();
+     addRectPath(ctx, _inflateRect(inner, inflateAmount));
+     ctx
+-      ..fillStyle = canvasStyle(backgroundColor)
++      ..fillStyle = canvasStyle(backgroundColor, ctx)
+       ..fill()
+       ..restore();
+   }
+diff --git a/lib/src/elements/element.line.dart b/lib/src/elements/element.line.dart
+index e7b663b..6856975 100644
+--- a/lib/src/elements/element.line.dart
++++ b/lib/src/elements/element.line.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.line.js (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.line.js`.
+@@ -146,7 +147,7 @@ Object? _borderWidth(Object? options) => switch (options) {
+ /// The option `borderColor` of [options], as [_borderCapStyle] reads
+ /// `borderCapStyle`.
+ Object? _borderColor(Object? options) => switch (options) {
+-  final LineOptions o => rawOption(o, OptionKey.borderColor, o.borderColor),
++  final LineOptions o => o.paintOf(OptionKey.borderColor),
+   final SegmentStyle style => style.borderColor,
+   _ => _byName(options, 'borderColor'),
+ };
+@@ -236,7 +237,7 @@ void _setStyle(
+       ..lineWidth = plainOption(options, OptionKey.borderWidth)
+           ? options.borderWidth
+           : canvasNumber(_borderWidth(options))
+-      ..strokeStyle = canvasStyle(_borderColor(options));
++      ..strokeStyle = canvasStyle(_borderColor(options), ctx);
+     return;
+   }
+   final s = style ?? options;
+@@ -258,6 +259,7 @@ void _setStyle(
+     )
+     ..strokeStyle = canvasStyle(
+       valueOrDefault(_borderColor(s), _borderColor(options)),
++      ctx,
+     );
+ }
+ 
+diff --git a/lib/src/elements/element.point.dart b/lib/src/elements/element.point.dart
+index 49dfbca..d6cdeff 100644
+--- a/lib/src/elements/element.point.dart
++++ b/lib/src/elements/element.point.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.point.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.point.ts`.
+@@ -642,11 +643,11 @@ class PointElement extends Element
+       // A color field holds the raw value: Dart `null` for an absent key,
+       // which the canvas ignores as it ignores `undefined`.
+       ctx
+-        ..strokeStyle = canvasStyle(opts.borderColor)
++        ..strokeStyle = canvasStyle(opts.paintOf(OptionKey.borderColor), ctx)
+         ..lineWidth = plainOption(opts, OptionKey.borderWidth)
+             ? opts.borderWidth
+             : canvasNumber(_raw(opts, OptionKey.borderWidth))
+-        ..fillStyle = canvasStyle(opts.backgroundColor);
++        ..fillStyle = canvasStyle(opts.paintOf(OptionKey.backgroundColor), ctx);
+     } else {
+       ctx
+         ..strokeStyle = canvasStyle(_byName(opts, OptionKey.borderColor))
+diff --git a/lib/src/helpers/helpers.color.dart b/lib/src/helpers/helpers.color.dart
+index f38bb78..04ec6d7 100644
+--- a/lib/src/helpers/helpers.color.dart
++++ b/lib/src/helpers/helpers.color.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/helpers/helpers.color.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ 
+ /// Port of `src/helpers/helpers.color.ts`.
+ ///
+@@ -9,6 +10,7 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
+     show Color;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/color.dart';
+ 
+ /// helpers.color.ts:3 `isPatternOrGradient`.
+@@ -29,7 +31,7 @@ bool isPatternOrGradient(Object? value) {
+ /// [Color] of [value]. As in JavaScript, a JS `null` [value] (Dart `null`)
+ /// throws.
+ Object color(Object? value) {
+-  return isPatternOrGradient(value) ? value! : Color(value);
++  return isPatternOrGradient(value) ? value! : Color(publicColorValue(value));
+ }
+ 
+ /// helpers.color.ts:28 `getHoverColor`.
+@@ -41,5 +43,5 @@ Object color(Object? value) {
+ Object? getHoverColor(Object? value) {
+   return isPatternOrGradient(value)
+       ? value
+-      : Color(value).saturate(0.5).darken(0.1).hexString();
++      : Color(publicColorValue(value)).saturate(0.5).darken(0.1).hexString();
+ }
+diff --git a/lib/src/helpers/helpers.config.dart b/lib/src/helpers/helpers.config.dart
+index 72ff7e3..f54cc70 100644
+--- a/lib/src/helpers/helpers.config.dart
++++ b/lib/src/helpers/helpers.config.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/helpers/helpers.config.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-options, typed resolvers of Chart.js ADR 0054.
+ 
+ /// Port of `src/helpers/helpers.config.ts`: the option resolvers.
+@@ -57,8 +58,8 @@
+ /// sub-resolver.
+ library;
+ 
+-import 'dart:core';
+ import 'dart:core' as core;
++import 'dart:core';
+ import 'dart:typed_data' show Uint16List;
+ 
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
+@@ -75,6 +76,7 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+     show ElementOptions;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+ import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart';
+ import 'package:meta/meta.dart';
+ 
+@@ -402,7 +404,7 @@ final class OptionResolver implements ResolverProxy {
+   ///
+   /// A trap for getting property values.
+   @core.override
+-  Object? operator [](String name) => _get(name);
++  Object? operator [](String name) => publicColorValue(_get(name));
+ 
+   /// helpers.config.ts:73 the `getOwnPropertyDescriptor` trap: whether the
+   /// first scope owns [key].
+@@ -446,7 +448,7 @@ final class OptionResolver implements ResolverProxy {
+ 
+   /// `resolver[name]`: the `get` trap ([operator []]).
+   @core.override
+-  Object? jsRead(String name) => _get(name);
++  Object? jsRead(String name) => publicColorValue(_get(name));
+ 
+   /// `resolver[name] = value`: the `set` trap ([operator []=]).
+   @core.override
+@@ -558,8 +560,8 @@ final class OptionResolver implements ResolverProxy {
+ /// typed [ElementOptions]: its [ElementOptions.valueOf]. Upstream reads the
+ /// property by name. Port-only.
+ Object? readOption(Object? options, OptionKey key) => switch (options) {
+-  final OptionView view => view.readKey(key),
+-  final OptionResolver resolver => resolver.readKey(key),
++  final OptionView view => publicColorValue(view.readKey(key)),
++  final OptionResolver resolver => publicColorValue(resolver.readKey(key)),
+   final ElementOptions elementOptions => elementOptions.valueOf(key),
+   _ => jsGet(options, key.jsName),
+ };
+@@ -741,7 +743,7 @@ final class OptionView implements ContextProxy {
+   ///
+   /// A trap for getting property values.
+   @core.override
+-  Object? operator [](String name) => _get(name);
++  Object? operator [](String name) => publicColorValue(_get(name));
+ 
+   /// helpers.config.ts:159 the `getOwnPropertyDescriptor` trap: whether a
+   /// descriptor exists for [key].
+@@ -784,7 +786,7 @@ final class OptionView implements ContextProxy {
+ 
+   /// `resolver[name]`: the `get` trap ([operator []]).
+   @core.override
+-  Object? jsRead(String name) => _get(name);
++  Object? jsRead(String name) => publicColorValue(_get(name));
+ 
+   /// `resolver[name] = value`: the `set` trap ([operator []=]).
+   @core.override
+@@ -974,8 +976,10 @@ Object? _resolveWithContext(OptionView view, String prop, OptionKey? key) {
+   final subProxy = view._slot('_subProxy');
+   final descriptors = view._slot('_descriptors')! as Descriptor;
+   // resolve from proxy
+-  var value = key != null && proxy is OptionResolver
+-      ? proxy.readKey(key)
++  var value = proxy is OptionResolver
++      ? key == null
++            ? proxy._get(prop)
++            : proxy.readKey(key)
+       : jsGet(proxy, prop);
+ 
+   // resolve with context
+@@ -1035,10 +1039,10 @@ Object? _resolveScriptable(
+     throw StateError('Recursion detected: ${stack.join('->')}->$prop');
+   }
+   stack.add(prop);
+-  var value = jsCall(getValue, [
+-    context,
+-    if (jsTruthy(subProxy)) subProxy else receiver,
+-  ]);
++  final options = jsTruthy(subProxy) ? subProxy : receiver;
++  var value = getValue is PreparedColorCallback
++      ? getValue.resolve(context, options)
++      : jsCall(getValue, [context, options]);
+   stack.remove(prop);
+   if (_needsSubResolver(prop, value)) {
+     // When scriptable option returns an object, create a resolver on that.
+@@ -1071,7 +1075,10 @@ Object? _resolveArray(
+   final index = jsGet(context, 'index');
+   if (!identical(index, undefined) && isIndexable(prop)) {
+     final remainder = jsToNumber(index).remainder(value.length);
+-    return jsGet(value, jsNumberToString(remainder));
++    return jsGet(
++      value is PreparedColorList ? value.prepared : value,
++      jsNumberToString(remainder),
++    );
+   } else if (isObject(value[0])) {
+     // Array of objects, return array or resolvers
+     final arr = value;
+diff --git a/lib/src/helpers/helpers.core.dart b/lib/src/helpers/helpers.core.dart
+index af8dd90..b244cad 100644
+--- a/lib/src/helpers/helpers.core.dart
++++ b/lib/src/helpers/helpers.core.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/helpers/helpers.core.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ 
+ /// Port of `src/helpers/helpers.core.ts`.
+ ///
+@@ -31,6 +32,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+     show OptionScope, ScopeKind;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/data_item.dart'
+     show TypedDataItem;
+@@ -331,6 +333,11 @@ bool elementsEqual(List<ActiveDataPoint>? a0, List<ActiveDataPoint>? a1) {
+ Object? clone(Object? source) {
+   // A typed scope gives a typed copy (Chart.js ADR 0054 §3).
+   if (source is OptionScope) return source.cloneScope();
++  if (source is PreparedColorList) {
++    return PreparedColorList([
++      for (final value in source.prepared) clone(value),
++    ]);
++  }
+   if (isArray(source)) {
+     final array = source! as List;
+     // Array.prototype.map(clone). clone(v) is v for each number of a typed
+@@ -677,7 +684,8 @@ bool defined(Object? value) => !identical(value, undefined);
+ /// helpers.core.ts:393 `isFunction`: `typeof value === 'function'`, which is
+ /// [jsIsFunction]: a Dart [Function], a [JsFunction] or a class value
+ /// (`JsClass`, Chart.js ADR 0020).
+-bool isFunction(Object? value) => jsIsFunction(value);
++bool isFunction(Object? value) =>
++    value is PreparedColorCallback || jsIsFunction(value);
+ 
+ /// helpers.core.ts:396 `setsEqual`.
+ ///
+diff --git a/lib/src/js/js_webidl.dart b/lib/src/js/js_webidl.dart
+index 5ddf920..173b8c0 100644
+--- a/lib/src/js/js_webidl.dart
++++ b/lib/src/js/js_webidl.dart
+@@ -34,6 +34,7 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/js/js_number.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ 
+ /// The value that the canvas setter `fillStyle` or `strokeStyle` gets for
+ /// the option value [value], for example `ctx.fillStyle =
+@@ -43,7 +44,11 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ /// The [undefined] sentinel of an absent option gives Dart `null`. The DOM
+ /// ignores `undefined`, which is not a color, and the canvas layer ignores
+ /// `null`. Another value passes as it is.
+-Object? canvasStyle(Object? value) => value is Undefined ? null : value;
++Object? canvasStyle(Object? value, [Object? context]) => switch (value) {
++  Undefined() => null,
++  PreparedColor() when context is! PreparedColorContext => value.css,
++  _ => value,
++};
+ 
+ /// The value that the canvas setter `lineWidth` or `lineDashOffset` gets
+ /// for the option value [value] (element.point.ts:97,
+diff --git a/lib/src/options/element_options_base.dart b/lib/src/options/element_options_base.dart
+index d9f90f4..e14b6e0 100644
+--- a/lib/src/options/element_options_base.dart
++++ b/lib/src/options/element_options_base.dart
+@@ -22,7 +22,9 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
+     show JsFreezable, JsObjectFace;
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
++import 'package:meta/meta.dart' show internal;
+ 
+ /// The type of [_absent].
+ final class _Absent {
+@@ -200,7 +202,7 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
+   @override
+   Object? jsRead(String name) {
+     final raw = rawOf(name);
+-    if (!identical(raw, _absent)) return raw;
++    if (!identical(raw, _absent)) return publicColorValue(raw);
+     // A known key is never an extra key.
+     final extra = _extra;
+     return extra != null && extra.containsKey(name) ? extra[name] : undefined;
+@@ -303,6 +305,11 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
+   /// fields; this base, and thus [GenericElementOptions], reads the face.
+   Object? valueOf(OptionKey key) => jsRead(key.jsName);
+ 
++  /// Internal paint read. Generated classes retain a prepared color here,
++  /// while their public getters and face expose its CSS string.
++  @internal
++  Object? paintOf(OptionKey key) => valueOf(key);
++
+   /// Whether the value of the declared key [key] is outside the type of its
+   /// field (Chart.js ADR 0054 §6): the field holds the JS conversion, and
+   /// [foreignOf] gives the raw value.
+@@ -380,7 +387,7 @@ final class GenericElementOptions extends ElementOptions {
+   }
+ 
+   @override
+-  Object? jsRead(String name) => _mapValue(name);
++  Object? jsRead(String name) => publicColorValue(_mapValue(name));
+ 
+   /// Writes [value] for [name].
+   ///
+diff --git a/lib/src/options/opt.dart b/lib/src/options/opt.dart
+index 42d237a..83acd67 100644
+--- a/lib/src/options/opt.dart
++++ b/lib/src/options/opt.dart
+@@ -29,6 +29,7 @@ library;
+ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
+ import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/data_item.dart'
+     show TypedDataItem;
+ 
+@@ -177,7 +178,9 @@ abstract final class ShapeBits {
+ Opt<T>? _special<T>(Object? raw) {
+   if (raw == null) return optNull;
+   if (raw is Undefined) return optUndefined;
+-  if (jsIsFunction(raw)) return OptFunction<T>(raw);
++  if (raw is PreparedColorCallback || jsIsFunction(raw)) {
++    return OptFunction<T>(raw);
++  }
+   if (raw is List<Object?>) return OptList<T>(raw);
+   if (raw is Map<String, Object?> ||
+       raw is OptionObject ||
+diff --git a/lib/src/options/option_scope.dart b/lib/src/options/option_scope.dart
+index a64237c..c447eff 100644
+--- a/lib/src/options/option_scope.dart
++++ b/lib/src/options/option_scope.dart
+@@ -33,6 +33,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
+ import 'package:flutter_chartjs_port/src/options/opt.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
+ import 'package:flutter_chartjs_port/src/types/data_item.dart'
+     show TypedDataItem;
+@@ -334,7 +335,7 @@ abstract base class OptionScope
+   @override
+   Object? jsRead(String name) {
+     final cell = lookup(name);
+-    return cell == null ? undefined : cell.raw;
++    return cell == null ? undefined : publicColorValue(cell.raw);
+   }
+ 
+   /// `object[name] = value` (`[[Set]]`): stores the cell of [value].
+@@ -521,6 +522,9 @@ Opt<T> cloneCell<T>(Opt<T> cell) => switch (cell) {
+ /// value itself.
+ Object? cloneValue(Object? value) => switch (value) {
+   final OptionScope scope => scope.cloneScope(),
++  final PreparedColorList list => PreparedColorList([
++    for (final item in list.prepared) cloneValue(item),
++  ]),
+   final List<Object?> list => <Object?>[
+     for (final item in list) cloneValue(item),
+   ],
+diff --git a/lib/src/options/resolved.g.dart b/lib/src/options/resolved.g.dart
+index 12d8ca8..3b77882 100644
+--- a/lib/src/options/resolved.g.dart
++++ b/lib/src/options/resolved.g.dart
+@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
+ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+ 
+ /// index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the
+@@ -260,10 +261,11 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
+   Object? _pointStyle = null;
+ 
+   /// `pointStyle`: the JS conversion of the value of the key.
+-  Object? get pointStyle => _pointStyle;
++  Object? get pointStyle => publicColorValue(_pointStyle);
+ 
+   /// `pointStyle`: the raw value, or [undefined] for an absent key.
+-  Object? get pointStyleValue => _present & 16 == 0 ? undefined : _raw4();
++  Object? get pointStyleValue =>
++      _present & 16 == 0 ? undefined : publicColorValue(_raw4());
+ 
+   Object? _raw4() => _present & 16 == 0
+       ? elementOptionAbsent
+@@ -365,10 +367,11 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
+   Object? _backgroundColor = null;
+ 
+   /// `backgroundColor`: the JS conversion of the value of the key.
+-  Object? get backgroundColor => _backgroundColor;
++  Object? get backgroundColor => publicColorValue(_backgroundColor);
+ 
+   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
+-  Object? get backgroundColorValue => _present & 128 == 0 ? undefined : _raw7();
++  Object? get backgroundColorValue =>
++      _present & 128 == 0 ? undefined : publicColorValue(_raw7());
+ 
+   Object? _raw7() => _present & 128 == 0
+       ? elementOptionAbsent
+@@ -390,10 +393,11 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
+   Object? _borderColor = null;
+ 
+   /// `borderColor`: the JS conversion of the value of the key.
+-  Object? get borderColor => _borderColor;
++  Object? get borderColor => publicColorValue(_borderColor);
+ 
+   /// `borderColor`: the raw value, or [undefined] for an absent key.
+-  Object? get borderColorValue => _present & 256 == 0 ? undefined : _raw8();
++  Object? get borderColorValue =>
++      _present & 256 == 0 ? undefined : publicColorValue(_raw8());
+ 
+   Object? _raw8() => _present & 256 == 0
+       ? elementOptionAbsent
+@@ -414,15 +418,15 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
+ 
+   @override
+   Object? rawOf(String key) => switch (key) {
+-    'borderWidth' => _raw0(),
+-    'hitRadius' => _raw1(),
+-    'hoverBorderWidth' => _raw2(),
+-    'hoverRadius' => _raw3(),
+-    'pointStyle' => _raw4(),
+-    'radius' => _raw5(),
+-    'rotation' => _raw6(),
+-    'backgroundColor' => _raw7(),
+-    'borderColor' => _raw8(),
++    'borderWidth' => publicColorValue(_raw0()),
++    'hitRadius' => publicColorValue(_raw1()),
++    'hoverBorderWidth' => publicColorValue(_raw2()),
++    'hoverRadius' => publicColorValue(_raw3()),
++    'pointStyle' => publicColorValue(_raw4()),
++    'radius' => publicColorValue(_raw5()),
++    'rotation' => publicColorValue(_raw6()),
++    'backgroundColor' => publicColorValue(_raw7()),
++    'borderColor' => publicColorValue(_raw8()),
+     _ => super.rawOf(key),
+   };
+ 
+@@ -516,6 +520,18 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
+     }
+   }
+ 
++  @override
++  Object? paintOf(OptionKey key) {
++    switch (key) {
++      case OptionKey.backgroundColor:
++        return _present & 128 == 0 ? undefined : _raw7();
++      case OptionKey.borderColor:
++        return _present & 256 == 0 ? undefined : _raw8();
++      default:
++        return super.paintOf(key);
++    }
++  }
++
+   @override
+   bool isPresent(OptionKey key) {
+     switch (key) {
+@@ -712,10 +728,11 @@ final class LineOptions extends ElementOptions {
+   Object? _borderDash = null;
+ 
+   /// `borderDash`: the JS conversion of the value of the key.
+-  Object? get borderDash => _borderDash;
++  Object? get borderDash => publicColorValue(_borderDash);
+ 
+   /// `borderDash`: the raw value, or [undefined] for an absent key.
+-  Object? get borderDashValue => _present & 2 == 0 ? undefined : _raw1();
++  Object? get borderDashValue =>
++      _present & 2 == 0 ? undefined : publicColorValue(_raw1());
+ 
+   Object? _raw1() => _present & 2 == 0
+       ? elementOptionAbsent
+@@ -914,10 +931,11 @@ final class LineOptions extends ElementOptions {
+   Object? _fill = null;
+ 
+   /// `fill`: the JS conversion of the value of the key.
+-  Object? get fill => _fill;
++  Object? get fill => publicColorValue(_fill);
+ 
+   /// `fill`: the raw value, or [undefined] for an absent key.
+-  Object? get fillValue => _present & 128 == 0 ? undefined : _raw7();
++  Object? get fillValue =>
++      _present & 128 == 0 ? undefined : publicColorValue(_raw7());
+ 
+   Object? _raw7() => _present & 128 == 0
+       ? elementOptionAbsent
+@@ -939,10 +957,11 @@ final class LineOptions extends ElementOptions {
+   Object? _spanGaps = null;
+ 
+   /// `spanGaps`: the JS conversion of the value of the key.
+-  Object? get spanGaps => _spanGaps;
++  Object? get spanGaps => publicColorValue(_spanGaps);
+ 
+   /// `spanGaps`: the raw value, or [undefined] for an absent key.
+-  Object? get spanGapsValue => _present & 256 == 0 ? undefined : _raw8();
++  Object? get spanGapsValue =>
++      _present & 256 == 0 ? undefined : publicColorValue(_raw8());
+ 
+   Object? _raw8() => _present & 256 == 0
+       ? elementOptionAbsent
+@@ -964,10 +983,11 @@ final class LineOptions extends ElementOptions {
+   Object? _stepped = null;
+ 
+   /// `stepped`: the JS conversion of the value of the key.
+-  Object? get stepped => _stepped;
++  Object? get stepped => publicColorValue(_stepped);
+ 
+   /// `stepped`: the raw value, or [undefined] for an absent key.
+-  Object? get steppedValue => _present & 512 == 0 ? undefined : _raw9();
++  Object? get steppedValue =>
++      _present & 512 == 0 ? undefined : publicColorValue(_raw9());
+ 
+   Object? _raw9() => _present & 512 == 0
+       ? elementOptionAbsent
+@@ -1029,11 +1049,11 @@ final class LineOptions extends ElementOptions {
+   Object? _backgroundColor = null;
+ 
+   /// `backgroundColor`: the JS conversion of the value of the key.
+-  Object? get backgroundColor => _backgroundColor;
++  Object? get backgroundColor => publicColorValue(_backgroundColor);
+ 
+   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
+   Object? get backgroundColorValue =>
+-      _present & 2048 == 0 ? undefined : _raw11();
++      _present & 2048 == 0 ? undefined : publicColorValue(_raw11());
+ 
+   Object? _raw11() => _present & 2048 == 0
+       ? elementOptionAbsent
+@@ -1055,10 +1075,11 @@ final class LineOptions extends ElementOptions {
+   Object? _borderColor = null;
+ 
+   /// `borderColor`: the JS conversion of the value of the key.
+-  Object? get borderColor => _borderColor;
++  Object? get borderColor => publicColorValue(_borderColor);
+ 
+   /// `borderColor`: the raw value, or [undefined] for an absent key.
+-  Object? get borderColorValue => _present & 4096 == 0 ? undefined : _raw12();
++  Object? get borderColorValue =>
++      _present & 4096 == 0 ? undefined : publicColorValue(_raw12());
+ 
+   Object? _raw12() => _present & 4096 == 0
+       ? elementOptionAbsent
+@@ -1080,10 +1101,11 @@ final class LineOptions extends ElementOptions {
+   Object? _segment = null;
+ 
+   /// `segment`: the JS conversion of the value of the key.
+-  Object? get segment => _segment;
++  Object? get segment => publicColorValue(_segment);
+ 
+   /// `segment`: the raw value, or [undefined] for an absent key.
+-  Object? get segmentValue => _present & 8192 == 0 ? undefined : _raw13();
++  Object? get segmentValue =>
++      _present & 8192 == 0 ? undefined : publicColorValue(_raw13());
+ 
+   Object? _raw13() => _present & 8192 == 0
+       ? elementOptionAbsent
+@@ -1104,20 +1126,20 @@ final class LineOptions extends ElementOptions {
+ 
+   @override
+   Object? rawOf(String key) => switch (key) {
+-    'borderCapStyle' => _raw0(),
+-    'borderDash' => _raw1(),
+-    'borderDashOffset' => _raw2(),
+-    'borderJoinStyle' => _raw3(),
+-    'borderWidth' => _raw4(),
+-    'capBezierPoints' => _raw5(),
+-    'cubicInterpolationMode' => _raw6(),
+-    'fill' => _raw7(),
+-    'spanGaps' => _raw8(),
+-    'stepped' => _raw9(),
+-    'tension' => _raw10(),
+-    'backgroundColor' => _raw11(),
+-    'borderColor' => _raw12(),
+-    'segment' => _raw13(),
++    'borderCapStyle' => publicColorValue(_raw0()),
++    'borderDash' => publicColorValue(_raw1()),
++    'borderDashOffset' => publicColorValue(_raw2()),
++    'borderJoinStyle' => publicColorValue(_raw3()),
++    'borderWidth' => publicColorValue(_raw4()),
++    'capBezierPoints' => publicColorValue(_raw5()),
++    'cubicInterpolationMode' => publicColorValue(_raw6()),
++    'fill' => publicColorValue(_raw7()),
++    'spanGaps' => publicColorValue(_raw8()),
++    'stepped' => publicColorValue(_raw9()),
++    'tension' => publicColorValue(_raw10()),
++    'backgroundColor' => publicColorValue(_raw11()),
++    'borderColor' => publicColorValue(_raw12()),
++    'segment' => publicColorValue(_raw13()),
+     _ => super.rawOf(key),
+   };
+ 
+@@ -1246,6 +1268,18 @@ final class LineOptions extends ElementOptions {
+     }
+   }
+ 
++  @override
++  Object? paintOf(OptionKey key) {
++    switch (key) {
++      case OptionKey.backgroundColor:
++        return _present & 2048 == 0 ? undefined : _raw11();
++      case OptionKey.borderColor:
++        return _present & 4096 == 0 ? undefined : _raw12();
++      default:
++        return super.paintOf(key);
++    }
++  }
++
+   @override
+   bool isPresent(OptionKey key) {
+     switch (key) {
+@@ -1426,10 +1460,11 @@ final class BarOptions extends ElementOptions {
+   Object? _borderSkipped = null;
+ 
+   /// `borderSkipped`: the JS conversion of the value of the key.
+-  Object? get borderSkipped => _borderSkipped;
++  Object? get borderSkipped => publicColorValue(_borderSkipped);
+ 
+   /// `borderSkipped`: the raw value, or [undefined] for an absent key.
+-  Object? get borderSkippedValue => _present & 1 == 0 ? undefined : _raw0();
++  Object? get borderSkippedValue =>
++      _present & 1 == 0 ? undefined : publicColorValue(_raw0());
+ 
+   Object? _raw0() => _present & 1 == 0
+       ? elementOptionAbsent
+@@ -1451,10 +1486,11 @@ final class BarOptions extends ElementOptions {
+   Object? _borderWidth = null;
+ 
+   /// `borderWidth`: the JS conversion of the value of the key.
+-  Object? get borderWidth => _borderWidth;
++  Object? get borderWidth => publicColorValue(_borderWidth);
+ 
+   /// `borderWidth`: the raw value, or [undefined] for an absent key.
+-  Object? get borderWidthValue => _present & 2 == 0 ? undefined : _raw1();
++  Object? get borderWidthValue =>
++      _present & 2 == 0 ? undefined : publicColorValue(_raw1());
+ 
+   Object? _raw1() => _present & 2 == 0
+       ? elementOptionAbsent
+@@ -1476,10 +1512,11 @@ final class BarOptions extends ElementOptions {
+   Object? _borderRadius = null;
+ 
+   /// `borderRadius`: the JS conversion of the value of the key.
+-  Object? get borderRadius => _borderRadius;
++  Object? get borderRadius => publicColorValue(_borderRadius);
+ 
+   /// `borderRadius`: the raw value, or [undefined] for an absent key.
+-  Object? get borderRadiusValue => _present & 4 == 0 ? undefined : _raw2();
++  Object? get borderRadiusValue =>
++      _present & 4 == 0 ? undefined : publicColorValue(_raw2());
+ 
+   Object? _raw2() => _present & 4 == 0
+       ? elementOptionAbsent
+@@ -1501,10 +1538,11 @@ final class BarOptions extends ElementOptions {
+   Object? _inflateAmount = null;
+ 
+   /// `inflateAmount`: the JS conversion of the value of the key.
+-  Object? get inflateAmount => _inflateAmount;
++  Object? get inflateAmount => publicColorValue(_inflateAmount);
+ 
+   /// `inflateAmount`: the raw value, or [undefined] for an absent key.
+-  Object? get inflateAmountValue => _present & 8 == 0 ? undefined : _raw3();
++  Object? get inflateAmountValue =>
++      _present & 8 == 0 ? undefined : publicColorValue(_raw3());
+ 
+   Object? _raw3() => _present & 8 == 0
+       ? elementOptionAbsent
+@@ -1526,10 +1564,11 @@ final class BarOptions extends ElementOptions {
+   Object? _pointStyle = null;
+ 
+   /// `pointStyle`: the JS conversion of the value of the key.
+-  Object? get pointStyle => _pointStyle;
++  Object? get pointStyle => publicColorValue(_pointStyle);
+ 
+   /// `pointStyle`: the raw value, or [undefined] for an absent key.
+-  Object? get pointStyleValue => _present & 16 == 0 ? undefined : _raw4();
++  Object? get pointStyleValue =>
++      _present & 16 == 0 ? undefined : publicColorValue(_raw4());
+ 
+   Object? _raw4() => _present & 16 == 0
+       ? elementOptionAbsent
+@@ -1551,10 +1590,11 @@ final class BarOptions extends ElementOptions {
+   Object? _backgroundColor = null;
+ 
+   /// `backgroundColor`: the JS conversion of the value of the key.
+-  Object? get backgroundColor => _backgroundColor;
++  Object? get backgroundColor => publicColorValue(_backgroundColor);
+ 
+   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
+-  Object? get backgroundColorValue => _present & 32 == 0 ? undefined : _raw5();
++  Object? get backgroundColorValue =>
++      _present & 32 == 0 ? undefined : publicColorValue(_raw5());
+ 
+   Object? _raw5() => _present & 32 == 0
+       ? elementOptionAbsent
+@@ -1576,10 +1616,11 @@ final class BarOptions extends ElementOptions {
+   Object? _borderColor = null;
+ 
+   /// `borderColor`: the JS conversion of the value of the key.
+-  Object? get borderColor => _borderColor;
++  Object? get borderColor => publicColorValue(_borderColor);
+ 
+   /// `borderColor`: the raw value, or [undefined] for an absent key.
+-  Object? get borderColorValue => _present & 64 == 0 ? undefined : _raw6();
++  Object? get borderColorValue =>
++      _present & 64 == 0 ? undefined : publicColorValue(_raw6());
+ 
+   Object? _raw6() => _present & 64 == 0
+       ? elementOptionAbsent
+@@ -1600,13 +1641,13 @@ final class BarOptions extends ElementOptions {
+ 
+   @override
+   Object? rawOf(String key) => switch (key) {
+-    'borderSkipped' => _raw0(),
+-    'borderWidth' => _raw1(),
+-    'borderRadius' => _raw2(),
+-    'inflateAmount' => _raw3(),
+-    'pointStyle' => _raw4(),
+-    'backgroundColor' => _raw5(),
+-    'borderColor' => _raw6(),
++    'borderSkipped' => publicColorValue(_raw0()),
++    'borderWidth' => publicColorValue(_raw1()),
++    'borderRadius' => publicColorValue(_raw2()),
++    'inflateAmount' => publicColorValue(_raw3()),
++    'pointStyle' => publicColorValue(_raw4()),
++    'backgroundColor' => publicColorValue(_raw5()),
++    'borderColor' => publicColorValue(_raw6()),
+     _ => super.rawOf(key),
+   };
+ 
+@@ -1686,6 +1727,18 @@ final class BarOptions extends ElementOptions {
+     }
+   }
+ 
++  @override
++  Object? paintOf(OptionKey key) {
++    switch (key) {
++      case OptionKey.backgroundColor:
++        return _present & 32 == 0 ? undefined : _raw5();
++      case OptionKey.borderColor:
++        return _present & 64 == 0 ? undefined : _raw6();
++      default:
++        return super.paintOf(key);
++    }
++  }
++
+   @override
+   bool isPresent(OptionKey key) {
+     switch (key) {
+@@ -1870,10 +1923,11 @@ final class ArcOptions extends ElementOptions {
+   Object? _borderColor = null;
+ 
+   /// `borderColor`: the JS conversion of the value of the key.
+-  Object? get borderColor => _borderColor;
++  Object? get borderColor => publicColorValue(_borderColor);
+ 
+   /// `borderColor`: the raw value, or [undefined] for an absent key.
+-  Object? get borderColorValue => _present & 2 == 0 ? undefined : _raw1();
++  Object? get borderColorValue =>
++      _present & 2 == 0 ? undefined : publicColorValue(_raw1());
+ 
+   Object? _raw1() => _present & 2 == 0
+       ? elementOptionAbsent
+@@ -1895,10 +1949,11 @@ final class ArcOptions extends ElementOptions {
+   Object? _borderDash = null;
+ 
+   /// `borderDash`: the JS conversion of the value of the key.
+-  Object? get borderDash => _borderDash;
++  Object? get borderDash => publicColorValue(_borderDash);
+ 
+   /// `borderDash`: the raw value, or [undefined] for an absent key.
+-  Object? get borderDashValue => _present & 4 == 0 ? undefined : _raw2();
++  Object? get borderDashValue =>
++      _present & 4 == 0 ? undefined : publicColorValue(_raw2());
+ 
+   Object? _raw2() => _present & 4 == 0
+       ? elementOptionAbsent
+@@ -1992,10 +2047,11 @@ final class ArcOptions extends ElementOptions {
+   Object? _borderRadius = null;
+ 
+   /// `borderRadius`: the JS conversion of the value of the key.
+-  Object? get borderRadius => _borderRadius;
++  Object? get borderRadius => publicColorValue(_borderRadius);
+ 
+   /// `borderRadius`: the raw value, or [undefined] for an absent key.
+-  Object? get borderRadiusValue => _present & 32 == 0 ? undefined : _raw5();
++  Object? get borderRadiusValue =>
++      _present & 32 == 0 ? undefined : publicColorValue(_raw5());
+ 
+   Object? _raw5() => _present & 32 == 0
+       ? elementOptionAbsent
+@@ -2273,11 +2329,11 @@ final class ArcOptions extends ElementOptions {
+   Object? _backgroundColor = null;
+ 
+   /// `backgroundColor`: the JS conversion of the value of the key.
+-  Object? get backgroundColor => _backgroundColor;
++  Object? get backgroundColor => publicColorValue(_backgroundColor);
+ 
+   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
+   Object? get backgroundColorValue =>
+-      _present & 8192 == 0 ? undefined : _raw13();
++      _present & 8192 == 0 ? undefined : publicColorValue(_raw13());
+ 
+   Object? _raw13() => _present & 8192 == 0
+       ? elementOptionAbsent
+@@ -2298,20 +2354,20 @@ final class ArcOptions extends ElementOptions {
+ 
+   @override
+   Object? rawOf(String key) => switch (key) {
+-    'borderAlign' => _raw0(),
+-    'borderColor' => _raw1(),
+-    'borderDash' => _raw2(),
+-    'borderDashOffset' => _raw3(),
+-    'borderJoinStyle' => _raw4(),
+-    'borderRadius' => _raw5(),
+-    'borderWidth' => _raw6(),
+-    'offset' => _raw7(),
+-    'spacing' => _raw8(),
+-    'spacingMode' => _raw9(),
+-    'angle' => _raw10(),
+-    'circular' => _raw11(),
+-    'selfJoin' => _raw12(),
+-    'backgroundColor' => _raw13(),
++    'borderAlign' => publicColorValue(_raw0()),
++    'borderColor' => publicColorValue(_raw1()),
++    'borderDash' => publicColorValue(_raw2()),
++    'borderDashOffset' => publicColorValue(_raw3()),
++    'borderJoinStyle' => publicColorValue(_raw4()),
++    'borderRadius' => publicColorValue(_raw5()),
++    'borderWidth' => publicColorValue(_raw6()),
++    'offset' => publicColorValue(_raw7()),
++    'spacing' => publicColorValue(_raw8()),
++    'spacingMode' => publicColorValue(_raw9()),
++    'angle' => publicColorValue(_raw10()),
++    'circular' => publicColorValue(_raw11()),
++    'selfJoin' => publicColorValue(_raw12()),
++    'backgroundColor' => publicColorValue(_raw13()),
+     _ => super.rawOf(key),
+   };
+ 
+@@ -2440,6 +2496,18 @@ final class ArcOptions extends ElementOptions {
+     }
+   }
+ 
++  @override
++  Object? paintOf(OptionKey key) {
++    switch (key) {
++      case OptionKey.borderColor:
++        return _present & 2 == 0 ? undefined : _raw1();
++      case OptionKey.backgroundColor:
++        return _present & 8192 == 0 ? undefined : _raw13();
++      default:
++        return super.paintOf(key);
++    }
++  }
++
+   @override
+   bool isPresent(OptionKey key) {
+     switch (key) {
+diff --git a/lib/src/theme/css.dart b/lib/src/theme/css.dart
+index ddf0160..d32ee36 100644
+--- a/lib/src/theme/css.dart
++++ b/lib/src/theme/css.dart
+@@ -25,6 +25,7 @@ library;
+ import 'dart:ui' show Color, ColorSpace, FontStyle;
+ 
+ import 'package:flutter/painting.dart' show TextStyle;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show FontSpecScope;
+ import 'package:flutter_chartjs_port/src/theme/compile.dart'
+@@ -50,6 +51,25 @@ RawThemeColor? rawColorOf(Color? color) {
+ /// blue: 0)`.
+ String colorToRgba(Color color) => themeColorToRgba(rawColorOf(color)!);
+ 
++/// Prepares a typed color once, retaining its CSS channels for public reads.
++PreparedColor prepareColor(Color color) {
++  final value = rawColorOf(color)!;
++  final red = (value.red * 255).round().clamp(0, 255);
++  final green = (value.green * 255).round().clamp(0, 255);
++  final blue = (value.blue * 255).round().clamp(0, 255);
++  final alpha = value.alpha.clamp(0.0, 1.0);
++  // rgbParse keeps alpha * 255; Color.rgb applies b2n before the canvas
++  // rounds back to a byte. Preserve that order, including halfway cases.
++  final opacity = (alpha * 255 / 2.55 + 0.5).truncateToDouble() / 100;
++  final paint = Color.fromARGB(
++    (opacity * 255).round().clamp(0, 255),
++    red,
++    green,
++    blue,
++  );
++  return PreparedColor(red, green, blue, alpha, paint);
++}
++
+ /// The CSS generic families (CSS Fonts 4 §4.2), the names that the family
+ /// string gives without quotes. The canvas layer knows the same names.
+ const Set<String> _genericFamilies = {
+diff --git a/lib/src/typed/lower.dart b/lib/src/typed/lower.dart
+index e2d85b2..0cd4ce6 100644
+--- a/lib/src/typed/lower.dart
++++ b/lib/src/typed/lower.dart
+@@ -48,6 +48,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+     show OptScope, OptionKey, OptionScope, ScopeKind;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show
+         ChartConfigurationScope,
+@@ -58,7 +59,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+         PluginOptionsByTypeScope,
+         ScaleOptionsByIdScope,
+         ScaleOptionsScope;
+-import 'package:flutter_chartjs_port/src/theme/css.dart' show colorToRgba;
++import 'package:flutter_chartjs_port/src/theme/css.dart' show prepareColor;
+ import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
+ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
+     show
+@@ -471,14 +472,13 @@ Object? Function(Object?) animationTrampoline(
+   return null;
+ };
+ 
+-/// The option value of [color]: its `rgba()` string through `colorToRgba`
+-/// of `css.dart`, the conversion of the theme (Chart.js ADR 0050). Dart
+-/// `null` for `null`.
+-String? colorValue(Color? color) => color == null ? null : colorToRgba(color);
++/// The prepared option value of [color], with its original CSS public face.
++/// Dart `null` for `null`.
++Object? colorValue(Color? color) => color == null ? null : prepareColor(color);
+ 
+-/// The option value of a color with three forms: [color] as its string,
+-/// [colors] as a new List of strings, or [colorFor] as a scriptable
+-/// closure ([colorScript]). Dart `null` when the three are `null`.
++/// A prepared scalar, an indexable list, or a scriptable color. Public
++/// reads expose CSS strings, a mutable list, or a Dart function as before.
++/// Dart `null` when the three are `null`.
+ ///
+ /// The constructors of the typed classes assert that at most one is set.
+ Object? colorOption(
+@@ -486,16 +486,16 @@ Object? colorOption(
+   List<Color>? colors,
+   ChartScript<Color>? colorFor,
+ ) {
+-  if (color != null) return colorToRgba(color);
++  if (color != null) return prepareColor(color);
+   if (colors != null) {
+-    return <Object?>[for (final color in colors) colorToRgba(color)];
++    return PreparedColorList([for (final color in colors) prepareColor(color)]);
+   }
+   if (colorFor != null) return colorScript(colorFor);
+   return null;
+ }
+ 
+-/// The scriptable option of [colorFor]: a closure that gives the `rgba()`
+-/// string of the color of each context.
++/// The scriptable option of [colorFor]: the resolver receives a prepared
++/// color; a call through the public option face receives its CSS string.
+ ///
+ /// The closure takes the 2 arguments of a Chart.js scriptable option, the
+ /// context and the options resolver, and `jsCall` calls it with JS arity
+@@ -503,8 +503,10 @@ Object? colorOption(
+ /// so the cast to the view [ChartContext] makes no copy. The resolver sees a
+ /// function, so it resolves the options of each data item, as for a raw
+ /// closure (`core.config.js:351-366`, `:405-418`).
+-Object? Function(Object?, Object?) colorScript(ChartScript<Color> colorFor) =>
+-    (context, options) => colorToRgba(colorFor(context! as ChartContext));
++PreparedColorCallback colorScript(ChartScript<Color> colorFor) =>
++    PreparedColorCallback(
++      (context, options) => prepareColor(colorFor(context! as ChartContext)),
++    );
+ 
+ /// The option value of [padding]: a new `PaddingScope` with the keys
+ /// `top`, `right`, `bottom` and `left` (`index.d.ts`, `Padding`). Dart
+--- /dev/null
++++ b/lib/src/options/prepared_color.dart
+@@ -0,0 +1,97 @@
++// Original code, not ported from Chart.js: prepared colors and a CSS face.
++
++/// Internal colors keep their paint value without a string round trip. The
++/// public option face exposes the original CSS value on demand.
++library;
++
++import 'dart:collection';
++
++import 'package:flutter_chartjs_port/src/js/js_number.dart'
++    show jsNumberToString;
++import 'package:meta/meta.dart' show internal;
++
++/// A typed color after the Flutter color-space conversion. [paint] belongs
++/// to the canvas layer; keeping it opaque preserves this layer's purity.
++@internal
++final class PreparedColor {
++  /// Keeps the CSS channels and the corresponding native paint color.
++  PreparedColor(this.red, this.green, this.blue, this.alpha, this.paint);
++
++  /// The clamped sRGB channel bytes.
++  final int red;
++
++  /// The green channel byte.
++  final int green;
++
++  /// The blue channel byte.
++  final int blue;
++
++  /// The original clamped alpha, before the canvas's percentage rounding.
++  final double alpha;
++
++  /// The native color, already normalized as the CSS parser would do.
++  final Object paint;
++
++  /// The observable value of the typed option before this adaptation.
++  late final String css =
++      'rgba($red, $green, $blue, ${jsNumberToString(alpha)})';
++}
++
++/// A color callback with separate internal and public results. Both paths
++/// call the user's callback exactly once; neither caches its answer.
++@internal
++final class PreparedColorCallback {
++  /// The callback used by the typed resolver.
++  PreparedColorCallback(this.resolve);
++
++  /// Computes one internal color for the supplied context and options.
++  final PreparedColor Function(Object?, Object?) resolve;
++
++  /// The ordinary Dart function exposed through the public option face.
++  // Identity is stable across repeated reads of the public option.
++  // ignore: prefer_function_declarations_over_variables
++  late final Object? Function(Object?, Object?) publicCall = (
++    context,
++    options,
++  ) => resolve(context, options).css;
++}
++
++/// A mutable color list whose ordinary reads remain CSS strings. The
++/// resolver reads [prepared] to avoid formatting each indexed color.
++@internal
++final class PreparedColorList extends ListBase<Object?> {
++  /// Takes ownership of a fresh, growable list of internal values.
++  PreparedColorList(this.prepared);
++
++  /// Internal values, including any later writes made through the List API.
++  final List<Object?> prepared;
++
++  @override
++  int get length => prepared.length;
++
++  @override
++  set length(int value) => prepared.length = value;
++
++  @override
++  Object? operator [](int index) => publicColorValue(prepared[index]);
++
++  @override
++  void operator []=(int index, Object? value) => prepared[index] = value;
++}
++
++/// Converts only internal color representations at an observable boundary.
++/// Raw user values and Lists keep their identity and behavior.
++@internal
++@pragma('vm:prefer-inline')
++@pragma('dart2js:prefer-inline')
++@pragma('wasm:prefer-inline')
++Object? publicColorValue(Object? value) => switch (value) {
++  PreparedColor(:final css) => css,
++  PreparedColorCallback(:final publicCall) => publicCall,
++  _ => value,
++};
++
++/// Canvas capability: only native canvases accept the internal paint value.
++/// Other Canvas 2D implementations continue to receive CSS strings.
++@internal
++abstract interface class PreparedColorContext {}

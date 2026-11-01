@@ -1,0 +1,156 @@
+// Experimental benchmark only. See the accompanying reproduction README.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as charts;
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
+import 'package:flutter_chartjs_port/src/theme/css.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart';
+
+const variant = directColorExperiment ? 'B' : 'A';
+const modes = ['raw-static', 'static', 'raw-script16', 'script16', 'script-unique', 'indexable-unique'];
+Object? sink;
+
+void emit(Map<String, Object?> row) => print('DIRECT ${jsonEncode({'variant': variant, ...row})}');
+
+List<ui.Color> palette(int count) => [
+  for (var i = 0; i < count; i++)
+    ui.Color.fromARGB(180 + i % 76, (i * 73) & 255, (i >> 3) & 255, (i * 29 + (i >> 8)) & 255),
+];
+
+Object? style(String mode, List<ui.Color> colors) {
+  if (mode == 'raw-static') return colorToRgba(colors[0]);
+  if (mode == 'static') return colorOption(colors[0], null, null);
+  if (mode == 'indexable-unique') return colorOption(null, colors, null);
+  ui.Color choose(charts.ChartContext context) => colors[(context.dataIndex ?? 0) % colors.length];
+  if (mode == 'raw-script16') {
+    return (Object? context, Object? options) => colorToRgba(choose(context! as charts.ChartContext));
+  }
+  return colorScript(choose);
+}
+
+Map<String, Object?> config(String mode, int n) {
+  final colors = palette(mode.endsWith('unique') ? n : 16);
+  final background = style(mode, colors);
+  return {
+    'type': 'line',
+    'data': <String, Object?>{
+      'datasets': <Object?>[
+        {
+          'data': [for (var i = 0; i < n; i++) {'x': i / n, 'y': 0.1 + ((i * 17) % 97) / 120}],
+          'backgroundColor': background,
+          'borderColor': '#123456',
+          'pointBorderWidth': 0.0,
+          'pointRadius': 3.0,
+          'showLine': false,
+          'fill': false,
+        },
+      ],
+    },
+    'options': {
+      'responsive': false,
+      'devicePixelRatio': 1.0,
+      'animation': false,
+      'events': <String>[],
+      'parsing': false,
+      'plugins': <String, Object?>{'legend': false, 'tooltip': false, 'colors': false},
+      'scales': unitScales(hideTicks: true),
+    },
+  };
+}
+
+int hashBytes(Uint8List bytes) {
+  var hash = 2166136261;
+  for (final byte in bytes) { hash = ((hash ^ byte) * 16777619) & 0xffffffff; }
+  return hash;
+}
+
+Future<void> correctness() async {
+  // Check alpha quantization, fractional channels, wide gamut and out-of-range RGB.
+  final random = math.Random(719);
+  final colors = <ui.Color>[
+    for (var i = 0; i <= 10000; i++) ui.Color.from(alpha: i / 10000, red: 0.21, green: 0.73, blue: 0.91),
+    ...palette(5000),
+    for (var i = 0; i < 2000; i++) ui.Color.from(alpha: random.nextDouble(), red: random.nextDouble(), green: random.nextDouble(), blue: random.nextDouble(), colorSpace: ui.ColorSpace.displayP3),
+    const ui.Color.from(alpha: 0.345, red: -0.1, green: 1.2, blue: 0.5, colorSpace: ui.ColorSpace.extendedSRGB),
+  ];
+  for (var i = 0; i < colors.length; i++) {
+    final expected = parseCssColor(colorToRgba(colors[i]))!;
+    final actual = directPaintColor(colors[i]);
+    if (actual != expected) throw StateError('Color mismatch $i: $actual vs $expected');
+  }
+  emit({'check': 'normalized-colors', 'count': colors.length, 'passed': true});
+  for (final mode in modes) {
+    final canvas = UiCanvasElement(width: 800, height: 480);
+    final chart = charts.Chart(canvas, config(mode, 600));
+    final context = canvas.getContext2d();
+    final recorder = ui.PictureRecorder();
+    context.paint(ui.Canvas(recorder), ui.Offset.zero, 1, 1);
+    final picture = recorder.endRecording();
+    final image = await picture.toImage(800, 480);
+    final bytes = (await image.toByteData())!.buffer.asUint8List();
+    var nonzero = 0;
+    for (var i = 3; i < bytes.length; i += 4) { if (bytes[i] != 0) nonzero++; }
+    if (nonzero < 1000) throw StateError('Empty chart $mode');
+    emit({'check': 'pixels', 'case': mode, 'hash': hashBytes(bytes), 'nonzero': nonzero});
+    image.dispose(); picture.dispose(); chart.destroy(); context.dispose();
+  }
+}
+
+void micro(String name, void Function(int) op) {
+  final watch = Stopwatch()..start();
+  var i = 0;
+  while (watch.elapsedMilliseconds < 100) { for (var j = 0; j < 100; j++) op(i++); }
+  final samples = <double>[];
+  for (var b = 0; b < 7; b++) {
+    watch.reset(); var count = 0;
+    do { for (var j = 0; j < 500; j++) op(count + j); count += 500; } while (watch.elapsedMicroseconds < 40000);
+    samples.add(watch.elapsedTicks / watch.frequency * 1e9 / count);
+  }
+  samples.sort();
+  emit({'kind': 'micro', 'case': name, 'medianNs': samples[3], 'samplesNs': samples});
+}
+
+Future<void> run() async {
+  try {
+    registerGalleryComponents();
+    await correctness();
+    final small = palette(16), large = palette(4096);
+    for (final entry in [('16', small), ('4096', large)]) {
+      final colors = entry.$2;
+      micro('lower-${entry.$1}', (i) { sink = colorValue(colors[i % colors.length]); });
+      micro('lower-and-paint-${entry.$1}', (i) {
+        final value = colorValue(colors[i % colors.length]);
+        sink = value is ui.Color ? value : parseCssColor(value! as String);
+      });
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    for (final n in [1000, 5000]) {
+      for (final mode in modes) {
+        for (final call in [ChartBenchCall.draw, ChartBenchCall.update]) {
+          await Future<void>.delayed(const Duration(milliseconds: 80));
+          final result = runChartBenchCase(
+            ChartBenchCase(mode: 'color', name: mode, call: call, scene: (n) => ChartBenchScene(config: config(mode, n))),
+            n,
+            const ChartBenchSettings(batches: 9, batchMs: 100, warmupMs: 300),
+          );
+          emit({'kind': 'chart', ...result});
+        }
+      }
+    }
+    print('DIRECT_DONE $variant');
+  } catch (e, s) { print('DIRECT_ERROR $e\n$s'); }
+}
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MaterialApp(home: Scaffold(body: Center(child: Text('Direct color benchmark')))));
+  WidgetsBinding.instance.addPostFrameCallback((_) { unawaited(run()); });
+}

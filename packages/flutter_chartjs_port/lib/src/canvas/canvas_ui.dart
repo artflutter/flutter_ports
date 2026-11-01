@@ -44,6 +44,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
@@ -236,6 +237,7 @@ final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
   /// [height], in device pixels. A `null` size has no attribute and the DOM
   /// default: 300 wide, 150 high.
   UiCanvasElement({int? width, int? height}) {
+    installNativeColorCodec();
     if (width != null) this.width = width;
     if (height != null) this.height = height;
   }
@@ -1082,45 +1084,43 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   // Styles.
 
   static Object _styleValue(ui.Color? color, UiShaderSource? shader) =>
-      shader ?? serializeCssColor(color!);
+      shader ?? color!;
 
   @override
   Object? get fillStyle => _styleValue(_s.fillColor, _s.fillShader);
 
-  /// A CSS color string, a [UiCanvasGradient] or a [UiCanvasPattern]. A
-  /// color that does not parse and another value do nothing.
+  /// A native Color, a [UiCanvasGradient] or a [UiCanvasPattern].
+  /// Invalid solid colors throw without changing the current style.
   @override
   set fillStyle(Object? value) {
-    if (value is String) {
-      final color = parseCssColor(value);
-      if (color == null) return;
-      _s
-        ..fillColor = color
-        ..fillShader = null;
-    } else if (value is UiShaderSource) {
+    if (value == null) return;
+    if (value is UiShaderSource) {
       _s
         ..fillShader = value
         ..fillColor = null;
+    } else {
+      _s
+        ..fillColor = requireUiColor(value, 'fillStyle')
+        ..fillShader = null;
     }
   }
 
   @override
   Object? get strokeStyle => _styleValue(_s.strokeColor, _s.strokeShader);
 
-  /// A CSS color string, a [UiCanvasGradient] or a [UiCanvasPattern]. A
-  /// color that does not parse and another value do nothing.
+  /// A native Color, a [UiCanvasGradient] or a [UiCanvasPattern].
+  /// Invalid solid colors throw without changing the current style.
   @override
   set strokeStyle(Object? value) {
-    if (value is String) {
-      final color = parseCssColor(value);
-      if (color == null) return;
-      _s
-        ..strokeColor = color
-        ..strokeShader = null;
-    } else if (value is UiShaderSource) {
+    if (value == null) return;
+    if (value is UiShaderSource) {
       _s
         ..strokeShader = value
         ..strokeColor = null;
+    } else {
+      _s
+        ..strokeColor = requireUiColor(value, 'strokeStyle')
+        ..strokeShader = null;
     }
   }
 

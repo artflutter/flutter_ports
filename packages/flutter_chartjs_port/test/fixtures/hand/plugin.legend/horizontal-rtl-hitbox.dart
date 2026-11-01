@@ -1,7 +1,10 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.legend/horizontal-rtl-hitbox.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
+
+import 'dart:ui' as native_ui;
 
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -43,7 +46,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'afterDraw': (types.Chart chart) {
           final ctx = chart.ctx!
             ..save()
-            ..strokeStyle = 'green'
+            ..strokeStyle = const native_ui.Color(0xff008000)
             ..lineWidth = 1;
 
           final legend = chart.legend! as Legend;

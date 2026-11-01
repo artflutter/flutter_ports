@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/helpers/helpers.config.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color values.
 // DIVERGES(chartjs): adapt-typed-options, typed resolvers of Chart.js ADR 0054.
 
 /// Port of `src/helpers/helpers.config.ts`: the option resolvers.
@@ -57,8 +58,8 @@
 /// sub-resolver.
 library;
 
-import 'dart:core';
 import 'dart:core' as core;
+import 'dart:core';
 import 'dart:typed_data' show Uint16List;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
@@ -75,6 +76,7 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
@@ -402,7 +404,7 @@ final class OptionResolver implements ResolverProxy {
   ///
   /// A trap for getting property values.
   @core.override
-  Object? operator [](String name) => _get(name);
+  Object? operator [](String name) => publicColorValue(_get(name));
 
   /// helpers.config.ts:73 the `getOwnPropertyDescriptor` trap: whether the
   /// first scope owns [key].
@@ -446,7 +448,7 @@ final class OptionResolver implements ResolverProxy {
 
   /// `resolver[name]`: the `get` trap ([operator []]).
   @core.override
-  Object? jsRead(String name) => _get(name);
+  Object? jsRead(String name) => publicColorValue(_get(name));
 
   /// `resolver[name] = value`: the `set` trap ([operator []=]).
   @core.override
@@ -741,7 +743,7 @@ final class OptionView implements ContextProxy {
   ///
   /// A trap for getting property values.
   @core.override
-  Object? operator [](String name) => _get(name);
+  Object? operator [](String name) => publicColorValue(_get(name));
 
   /// helpers.config.ts:159 the `getOwnPropertyDescriptor` trap: whether a
   /// descriptor exists for [key].
@@ -784,7 +786,7 @@ final class OptionView implements ContextProxy {
 
   /// `resolver[name]`: the `get` trap ([operator []]).
   @core.override
-  Object? jsRead(String name) => _get(name);
+  Object? jsRead(String name) => publicColorValue(_get(name));
 
   /// `resolver[name] = value`: the `set` trap ([operator []=]).
   @core.override
@@ -974,8 +976,10 @@ Object? _resolveWithContext(OptionView view, String prop, OptionKey? key) {
   final subProxy = view._slot('_subProxy');
   final descriptors = view._slot('_descriptors')! as Descriptor;
   // resolve from proxy
-  var value = key != null && proxy is OptionResolver
-      ? proxy.readKey(key)
+  var value = proxy is OptionResolver
+      ? key == null
+            ? proxy._get(prop)
+            : proxy.readKey(key)
       : jsGet(proxy, prop);
 
   // resolve with context
@@ -1035,10 +1039,8 @@ Object? _resolveScriptable(
     throw StateError('Recursion detected: ${stack.join('->')}->$prop');
   }
   stack.add(prop);
-  var value = jsCall(getValue, [
-    context,
-    if (jsTruthy(subProxy)) subProxy else receiver,
-  ]);
+  final options = jsTruthy(subProxy) ? subProxy : receiver;
+  var value = jsCall(getValue, [context, options]);
   stack.remove(prop);
   if (_needsSubResolver(prop, value)) {
     // When scriptable option returns an object, create a resolver on that.
@@ -1071,7 +1073,10 @@ Object? _resolveArray(
   final index = jsGet(context, 'index');
   if (!identical(index, undefined) && isIndexable(prop)) {
     final remainder = jsToNumber(index).remainder(value.length);
-    return jsGet(value, jsNumberToString(remainder));
+    return jsGet(
+      value,
+      jsNumberToString(remainder),
+    );
   } else if (isObject(value[0])) {
     // Array of objects, return array or resolvers
     final arr = value;
@@ -1280,7 +1285,7 @@ Object? _resolve(String key, List<Object?> scopes) {
       value = jsGet(scope, key);
     }
     if (!identical(value, undefined)) {
-      return value;
+      return publicColorValue(value);
     }
   }
   return undefined;

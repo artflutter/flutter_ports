@@ -1,5 +1,10 @@
 # flutter_chartjs_port theming design
 
+The current color contract is [ADR 0057](adr/0057-direct-typed-colors.md): public
+colors are Flutter `Color` values and compiled themes emit native/numerical colors.
+CSS spellings in upstream comparisons below identify historical reference values,
+not accepted chart inputs.
+
 - Status: proposed ([Chart.js ADR 0042](adr/0042-theming.md), accepted (2026-10-23), restates
   [Chart.js ADR 0001](adr/0001-theming.md) with the palette change and supersedes it.
   [Chart.js ADR 0050](adr/0050-public-theme-api.md), accepted (2026-10-30), restates Chart.js ADR

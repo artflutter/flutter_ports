@@ -4,9 +4,12 @@ library;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -34,6 +37,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import 'dataset_controller_reference.dart';
 
 // The specs of core.datasetController.tests.js need the controllers of
@@ -632,8 +636,9 @@ final class _FakeChart implements types.Chart {
 
 /// The functions of the `{$fn: name}` markers.
 final Map<Object?, Object?> _functions = {
-  'colorByIndex': (Object? ctx) =>
-      jsGet(ctx, 'dataIndex') == 1 ? 'red' : 'blue',
+  'colorByIndex': (Object? ctx) => jsGet(ctx, 'dataIndex') == 1
+      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
   'typeIsDataset': (Object? ctx) =>
       jsGet(ctx, 'type') == 'dataset' ? 75.0 : 0.0,
 };
@@ -654,6 +659,7 @@ Object? _materialize(Object? value) => switch (value) {
 
 /// The text of a value in the observations, as the generator gives it.
 String _enc(Object? v) => switch (v) {
+  _ when nativeColorBytes(v) != null => jsonEncode(nativeColorBytes(v)),
   Undefined() => 'undefined',
   null => 'null',
   bool() => '$v',
@@ -1079,6 +1085,7 @@ _Run _runTo(String name, int count) {
 }
 
 void main() {
+  installNativeColorCodec();
   setUpSpecs();
 
   // A TypedRegistry of the elements registers the element classes before the
@@ -1107,7 +1114,10 @@ void main() {
     for (final (:spec, :observations) in datasetControllerReference) {
       test(spec['name']! as String, () {
         final run = _Run(spec);
-        expect(run.runAll(), observations.split('\n'));
+        expect(
+          run.runAll().map(referenceColorTokens).toList(),
+          observations.split('\n').map(referenceColorTokens).toList(),
+        );
       });
     }
   });
@@ -1578,7 +1588,10 @@ void main() {
       expect(opts0, isNot(same(opts1)));
       expect(opts0[r'$shared'], isFalse);
       expect(jsObjectIsFrozen(opts0), isFalse);
-      expect(opts1['backgroundColor'], 'red');
+      expect(
+        opts1['backgroundColor'],
+        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      );
     });
 
     test('the dataset options are a new LineOptions for each call', () {

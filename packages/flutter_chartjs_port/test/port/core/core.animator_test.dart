@@ -2,9 +2,13 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show HTMLCanvasElement;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -90,6 +94,7 @@ Animation _start(
 }
 
 void main() {
+  installNativeColorCodec();
   group('platform-animation-promise-checkpoint', () {
     testWidgets('a later callback of the last frame sees the shared options', (
       tester,
@@ -130,11 +135,11 @@ void main() {
       };
       final hover = <String, Object?>{
         r'$shared': true,
-        'backgroundColor': '#FF0000',
+        'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
       };
       final normal = <String, Object?>{
         r'$shared': true,
-        'backgroundColor': '#0000FF',
+        'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
       };
       final target = <String, Object?>{'options': hover};
       // The un-hover.
@@ -160,7 +165,10 @@ void main() {
       expect(copy, isNot(same(hover)));
       expect(copy[r'$shared'], isFalse);
       await _frames(tester, 25);
-      expect(copy['backgroundColor'], '#FF0000');
+      expect(
+        copy['backgroundColor'],
+        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      );
       expect(target['options'], same(hover));
       expect(animator.running(chart), isFalse);
       animator.remove(chart);

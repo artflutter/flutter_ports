@@ -960,6 +960,20 @@ Changes to the cited files:
   file changes, and `doc/parity.md` does not change. The references, the inventory (§1.1), the
   tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
+- 2026-11-01, the direct typed-color experiment. `doc/performance.md` gains section 20
+  and a reproduction package under `doc/benchmarks/direct-color/`. The canvas setter
+  candidate exists only in an isolated benchmark copy. No production canvas or host
+  file, pinning test, cited source line or estimate changes. No trigger occurred.
+
+- 2026-11-01, ADR 0057 now requires Flutter Color for solid paints, including
+  raw configs. `canvas_colors.dart` validates native colors; `UiCanvasContext`
+  assigns them directly, and gradient stops require Color. The string parser and
+  its cache are removed from rendering. This supersedes the earlier compatible
+  prepared-color experiment recorded in performance.md §21. Geometry, clipping,
+  batching and host ownership are unchanged. The contract tests and migrated
+  reference tests cover the API change; §22 records the final measurements.
+  No deferred canvas cut is brought forward.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.
@@ -981,6 +995,12 @@ library got 25 lines more net, because the attribute model and the interface nee
 the estimate (§3.9).
 
 ### 1.1 Code inventory
+
+ADR 0057 changes the solid-color setters in `canvas_ui.dart` to accept native
+Color values and reject strings through `canvas_colors.dart`. It removes the CSS
+parser/cache path from `canvas_ui_paint.dart`. This independent color adaptation
+does not implement any path or host cut below; the historical line references in
+the cut inventory describe their original review snapshots.
 
 | Part | File:lines | Lines | Flutter API that replaces it | Verdict |
 |---|---|---:|---|---|

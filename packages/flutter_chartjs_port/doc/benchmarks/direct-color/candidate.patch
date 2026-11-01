@@ -1,0 +1,86 @@
+--- a/lib/src/typed/lower.dart
++++ b/lib/src/typed/lower.dart
+@@ -40,6 +40,7 @@
+ /// Internal: no public library exports it.
+ library;
+ 
++import 'dart:ui' show ColorSpace;
+ import 'dart:ui' show Color;
+ 
+ import 'package:flutter/foundation.dart' show Key, ValueChanged;
+@@ -474,7 +475,25 @@
+ /// The option value of [color]: its `rgba()` string through `colorToRgba`
+ /// of `css.dart`, the conversion of the theme (Chart.js ADR 0050). Dart
+ /// `null` for `null`.
+-String? colorValue(Color? color) => color == null ? null : colorToRgba(color);
++const bool directColorExperiment = bool.fromEnvironment('DIRECT_COLOR');
++
++Color directPaintColor(Color color) {
++  final srgb = color.withValues(colorSpace: ColorSpace.extendedSRGB);
++  final alpha = srgb.a.clamp(0.0, 1.0);
++  // Preserve rgbParse -> Color.rgb (b2n) -> parseCssColor alpha rounding.
++  final opacity = ((alpha * 255 / 2.55 + 0.5).truncateToDouble() / 100);
++  return Color.fromARGB(
++    (opacity * 255).round().clamp(0, 255),
++    (srgb.r * 255).round().clamp(0, 255),
++    (srgb.g * 255).round().clamp(0, 255),
++    (srgb.b * 255).round().clamp(0, 255),
++  );
++}
++
++Object _experimentColor(Color color) => directColorExperiment
++    ? directPaintColor(color) : colorToRgba(color);
++
++Object? colorValue(Color? color) => color == null ? null : _experimentColor(color);
+ 
+ /// The option value of a color with three forms: [color] as its string,
+ /// [colors] as a new List of strings, or [colorFor] as a scriptable
+@@ -486,9 +505,9 @@
+   List<Color>? colors,
+   ChartScript<Color>? colorFor,
+ ) {
+-  if (color != null) return colorToRgba(color);
++  if (color != null) return _experimentColor(color);
+   if (colors != null) {
+-    return <Object?>[for (final color in colors) colorToRgba(color)];
++    return <Object?>[for (final color in colors) _experimentColor(color)];
+   }
+   if (colorFor != null) return colorScript(colorFor);
+   return null;
+@@ -504,7 +523,7 @@
+ /// function, so it resolves the options of each data item, as for a raw
+ /// closure (`core.config.js:351-366`, `:405-418`).
+ Object? Function(Object?, Object?) colorScript(ChartScript<Color> colorFor) =>
+-    (context, options) => colorToRgba(colorFor(context! as ChartContext));
++    (context, options) => _experimentColor(colorFor(context! as ChartContext));
+ 
+ /// The option value of [padding]: a new `PaddingScope` with the keys
+ /// `top`, `right`, `bottom` and `left` (`index.d.ts`, `Padding`). Dart
+--- a/lib/src/canvas/canvas_ui.dart
++++ b/lib/src/canvas/canvas_ui.dart
+@@ -1091,7 +1091,11 @@
+   /// color that does not parse and another value do nothing.
+   @override
+   set fillStyle(Object? value) {
+-    if (value is String) {
++    if (const bool.fromEnvironment('DIRECT_COLOR') && value is ui.Color) {
++      _s
++        ..fillColor = value
++        ..fillShader = null;
++    } else if (value is String) {
+       final color = parseCssColor(value);
+       if (color == null) return;
+       _s
+@@ -1111,7 +1115,11 @@
+   /// color that does not parse and another value do nothing.
+   @override
+   set strokeStyle(Object? value) {
+-    if (value is String) {
++    if (const bool.fromEnvironment('DIRECT_COLOR') && value is ui.Color) {
++      _s
++        ..strokeColor = value
++        ..strokeShader = null;
++    } else if (value is String) {
+       final color = parseCssColor(value);
+       if (color == null) return;
+       _s

@@ -1,6 +1,9 @@
 // Ported from Chart.js v4.6.1 test/fixtures/element.point/rotation.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
+
+import 'dart:ui' as native_ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -57,8 +60,8 @@ Map<String, Object?> fixture() {
                     .createLinearGradient(0, 0, 512, 256);
                 gradient = created;
                 created
-                  ..addColorStop(0, '#ff0000')
-                  ..addColorStop(1, '#0000ff');
+                  ..addColorStop(0, const native_ui.Color(0xffff0000))
+                  ..addColorStop(1, const native_ui.Color(0xff0000ff));
               }
               return gradient;
             },

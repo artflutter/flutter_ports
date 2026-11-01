@@ -2,8 +2,12 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -104,13 +108,6 @@ List<Object?> _spyOnUpdates([void Function(Chart chart)? onBeforeUpdate]) {
   return modes;
 }
 
-/// The `rgba()` string of [color].
-String _rgba(Color color) {
-  int channel(double v) => (v * 255).round();
-  return 'rgba(${channel(color.r)}, ${channel(color.g)}, '
-      '${channel(color.b)}, 1)';
-}
-
 /// A host whose state sets the config and the theme of its ChartView in one
 /// `setState`.
 class _Host extends StatefulWidget {
@@ -137,6 +134,7 @@ class _HostState extends State<_Host> {
 }
 
 void main() {
+  installNativeColorCodec();
   group('the match rule', () {
     testWidgets('J2b: a key keeps the Map, the meta and the hidden state of '
         'a dataset after a removal at index 0', (tester) async {
@@ -370,7 +368,7 @@ void main() {
       );
       final chart = _chart(tester);
       final written = _dataset(chart, 0)['borderColor'];
-      expect(written, 'rgb(54, 162, 235)');
+      expect(written, const native_ui.Color.fromRGBO(54, 162, 235, 1));
 
       await tester.pumpWidget(
         _view(
@@ -568,7 +566,7 @@ void main() {
       final host = tester.state<_HostState>(find.byType(_Host));
       final chart = _chart(tester);
       final map = _dataset(chart, 0);
-      expect(map['borderColor'], _rgba(_green));
+      expect(map['borderColor'], _green);
       expect(modes, [undefined]);
 
       final data = [4, 5, 6];
@@ -577,14 +575,14 @@ void main() {
       expect(modes, [undefined, 'theme']);
       expect(_dataset(chart, 0), same(map));
       expect(map['data'], same(data));
-      expect(map['borderColor'], _rgba(_blue));
+      expect(map['borderColor'], _blue);
 
       // A typed color in the frame of a switch wins over the palette: the
       // switch restores only a value that the colors plugin wrote.
       host.show(config(data, borderColor: _red), themeA);
       await tester.pump();
       expect(modes, [undefined, 'theme', 'theme']);
-      expect(map['borderColor'], _rgba(_red));
+      expect(map['borderColor'], _red);
     });
   });
 

@@ -2,11 +2,14 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
 import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
@@ -70,6 +73,7 @@ String? _pointLabel(ChartTooltipItem item) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('ChartKind', () {
     const kinds = <ChartKind>[
       .bar,
@@ -154,10 +158,10 @@ void main() {
               'label': 'My First Dataset',
               'data': data,
               'backgroundColor': <Object?>[
-                for (final (r, g, b) in _rainbow) 'rgba($r, $g, $b, 0.2)',
+                for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 0.2),
               ],
               'borderColor': <Object?>[
-                for (final (r, g, b) in _rainbow) 'rgba($r, $g, $b, 1)',
+                for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 1),
               ],
               'borderWidth': 1,
             },
@@ -208,14 +212,19 @@ void main() {
               'type': 'bar',
               'label': 'Bar Dataset',
               'data': <Object?>[10, 20, 30, 40],
-              'backgroundColor': 'rgba(255, 99, 132, 0.2)',
-              'borderColor': 'rgba(255, 99, 132, 1)',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                255,
+                99,
+                132,
+                0.2,
+              ),
+              'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
             },
             <String, Object?>{
               'type': 'line',
               'label': 'Line Dataset',
               'data': <Object?>[50, 50, 50, 50],
-              'borderColor': 'rgba(54, 162, 235, 1)',
+              'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
               'fill': false,
             },
           ],
@@ -265,7 +274,12 @@ void main() {
             <String, Object?>{
               'label': 'Scatter Dataset',
               'data': points,
-              'backgroundColor': 'rgba(255, 99, 132, 1)',
+              'backgroundColor': const native_ui.Color.fromRGBO(
+                255,
+                99,
+                132,
+                1,
+              ),
             },
           ],
         },

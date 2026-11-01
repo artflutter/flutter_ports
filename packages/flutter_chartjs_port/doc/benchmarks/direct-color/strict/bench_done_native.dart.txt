@@ -1,0 +1,8 @@
+import 'dart:io';
+Future<void> finish(String data) async {
+ if (Platform.isIOS) {
+  final id = Platform.environment['BENCH_RUN_ID'] ?? 'manual';
+  await File('${Directory.systemTemp.path}/color-results-$id.json').writeAsString(data, flush: true);
+ }
+ if (Platform.isMacOS) exit(0);
+}

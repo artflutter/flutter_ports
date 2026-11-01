@@ -1,0 +1,722 @@
+[
+  {
+    "platform": "macos",
+    "case": "raw-script16",
+    "call": "draw",
+    "A_ms": 0.8445,
+    "B_ms": 0.7395,
+    "reduction_pct": 12.433392539964473,
+    "runs": {
+      "A": [
+        0.83,
+        0.859
+      ],
+      "B": [
+        0.728,
+        0.751
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "raw-script16",
+    "call": "update",
+    "A_ms": 24.5795,
+    "B_ms": 23.637,
+    "reduction_pct": 3.8344962265302374,
+    "runs": {
+      "A": [
+        24.275,
+        24.884
+      ],
+      "B": [
+        23.281,
+        23.993
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "static",
+    "call": "draw",
+    "A_ms": 0.7535000000000001,
+    "B_ms": 0.668,
+    "reduction_pct": 11.347047113470477,
+    "runs": {
+      "A": [
+        0.745,
+        0.762
+      ],
+      "B": [
+        0.659,
+        0.677
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "static",
+    "call": "update",
+    "A_ms": 10.842500000000001,
+    "B_ms": 10.8065,
+    "reduction_pct": 0.33202674659904563,
+    "runs": {
+      "A": [
+        10.564,
+        11.121
+      ],
+      "B": [
+        10.655,
+        10.958
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "script16",
+    "call": "draw",
+    "A_ms": 0.832,
+    "B_ms": 0.7415,
+    "reduction_pct": 10.877403846153832,
+    "runs": {
+      "A": [
+        0.838,
+        0.826
+      ],
+      "B": [
+        0.73,
+        0.753
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "script16",
+    "call": "update",
+    "A_ms": 24.2455,
+    "B_ms": 23.7145,
+    "reduction_pct": 2.1900971314264495,
+    "runs": {
+      "A": [
+        24.486,
+        24.005000000000003
+      ],
+      "B": [
+        23.209,
+        24.22
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "script-unique",
+    "call": "draw",
+    "A_ms": 1.915,
+    "B_ms": 0.7384999999999999,
+    "reduction_pct": 61.4360313315927,
+    "runs": {
+      "A": [
+        1.969,
+        1.861
+      ],
+      "B": [
+        0.729,
+        0.748
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "script-unique",
+    "call": "update",
+    "A_ms": 27.1685,
+    "B_ms": 23.773,
+    "reduction_pct": 12.497929587573854,
+    "runs": {
+      "A": [
+        27.605,
+        26.732
+      ],
+      "B": [
+        23.282,
+        24.264
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "indexable-unique",
+    "call": "draw",
+    "A_ms": 1.8965,
+    "B_ms": 0.7475,
+    "reduction_pct": 60.58528868969153,
+    "runs": {
+      "A": [
+        1.875,
+        1.918
+      ],
+      "B": [
+        0.732,
+        0.763
+      ]
+    }
+  },
+  {
+    "platform": "macos",
+    "case": "indexable-unique",
+    "call": "update",
+    "A_ms": 24.987499999999997,
+    "B_ms": 23.479,
+    "reduction_pct": 6.037018509254621,
+    "runs": {
+      "A": [
+        25.644,
+        24.331
+      ],
+      "B": [
+        23.240000000000002,
+        23.718
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "raw-script16",
+    "call": "draw",
+    "A_ms": 1.412,
+    "B_ms": 1.1664999999999999,
+    "reduction_pct": 17.386685552407933,
+    "runs": {
+      "A": [
+        1.416,
+        1.408
+      ],
+      "B": [
+        1.1769999999999998,
+        1.156
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "raw-script16",
+    "call": "update",
+    "A_ms": 35.1265,
+    "B_ms": 32.628,
+    "reduction_pct": 7.112863507608214,
+    "runs": {
+      "A": [
+        35.476,
+        34.777
+      ],
+      "B": [
+        32.391,
+        32.865
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "static",
+    "call": "draw",
+    "A_ms": 1.269,
+    "B_ms": 1.0324999999999998,
+    "reduction_pct": 18.6367218282112,
+    "runs": {
+      "A": [
+        1.2999999999999998,
+        1.238
+      ],
+      "B": [
+        1.037,
+        1.0279999999999998
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "static",
+    "call": "update",
+    "A_ms": 13.081,
+    "B_ms": 12.8505,
+    "reduction_pct": 1.7620976989526693,
+    "runs": {
+      "A": [
+        13.125,
+        13.037
+      ],
+      "B": [
+        13.012,
+        12.689
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "script16",
+    "call": "draw",
+    "A_ms": 1.392,
+    "B_ms": 1.1475,
+    "reduction_pct": 17.56465517241379,
+    "runs": {
+      "A": [
+        1.43,
+        1.3539999999999999
+      ],
+      "B": [
+        1.132,
+        1.1629999999999998
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "script16",
+    "call": "update",
+    "A_ms": 34.546,
+    "B_ms": 31.8555,
+    "reduction_pct": 7.788166502634164,
+    "runs": {
+      "A": [
+        34.562,
+        34.53
+      ],
+      "B": [
+        31.442,
+        32.269
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "script-unique",
+    "call": "draw",
+    "A_ms": 2.9735,
+    "B_ms": 1.138,
+    "reduction_pct": 61.728602656801755,
+    "runs": {
+      "A": [
+        2.968,
+        2.979
+      ],
+      "B": [
+        1.152,
+        1.1239999999999999
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "script-unique",
+    "call": "update",
+    "A_ms": 37.212,
+    "B_ms": 31.765,
+    "reduction_pct": 14.637751263033438,
+    "runs": {
+      "A": [
+        37.408,
+        37.016
+      ],
+      "B": [
+        31.883,
+        31.647000000000002
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "indexable-unique",
+    "call": "draw",
+    "A_ms": 3.089,
+    "B_ms": 1.1505,
+    "reduction_pct": 62.75493687277436,
+    "runs": {
+      "A": [
+        3.125,
+        3.053
+      ],
+      "B": [
+        1.176,
+        1.125
+      ]
+    }
+  },
+  {
+    "platform": "chrome",
+    "case": "indexable-unique",
+    "call": "update",
+    "A_ms": 34.655,
+    "B_ms": 32.325500000000005,
+    "reduction_pct": 6.721973741162879,
+    "runs": {
+      "A": [
+        35.1,
+        34.21
+      ],
+      "B": [
+        32.414,
+        32.237
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "raw-script16",
+    "call": "draw",
+    "A_ms": 1.323,
+    "B_ms": 1.143,
+    "reduction_pct": 13.605442176870742,
+    "runs": {
+      "A": [
+        1.3119999999999998,
+        1.334
+      ],
+      "B": [
+        1.1360000000000001,
+        1.15
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "raw-script16",
+    "call": "update",
+    "A_ms": 44.4025,
+    "B_ms": 44.460499999999996,
+    "reduction_pct": -0.13062327571644605,
+    "runs": {
+      "A": [
+        43.802,
+        45.003
+      ],
+      "B": [
+        44.507999999999996,
+        44.413000000000004
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "static",
+    "call": "draw",
+    "A_ms": 1.182,
+    "B_ms": 1.004,
+    "reduction_pct": 15.059221658206424,
+    "runs": {
+      "A": [
+        1.174,
+        1.19
+      ],
+      "B": [
+        1.0,
+        1.008
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "static",
+    "call": "update",
+    "A_ms": 22.3005,
+    "B_ms": 19.4105,
+    "reduction_pct": 12.95935068720433,
+    "runs": {
+      "A": [
+        21.106,
+        23.494999999999997
+      ],
+      "B": [
+        21.342000000000002,
+        17.479
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "script16",
+    "call": "draw",
+    "A_ms": 1.3295,
+    "B_ms": 1.1244999999999998,
+    "reduction_pct": 15.419330575404288,
+    "runs": {
+      "A": [
+        1.312,
+        1.347
+      ],
+      "B": [
+        1.1159999999999999,
+        1.133
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "script16",
+    "call": "update",
+    "A_ms": 44.583,
+    "B_ms": 44.9875,
+    "reduction_pct": -0.9072965031514224,
+    "runs": {
+      "A": [
+        43.958999999999996,
+        45.207
+      ],
+      "B": [
+        45.062,
+        44.913
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "script-unique",
+    "call": "draw",
+    "A_ms": 3.1519999999999997,
+    "B_ms": 1.1475,
+    "reduction_pct": 63.594543147208114,
+    "runs": {
+      "A": [
+        3.1189999999999998,
+        3.1849999999999996
+      ],
+      "B": [
+        1.154,
+        1.1409999999999998
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "script-unique",
+    "call": "update",
+    "A_ms": 49.948,
+    "B_ms": 43.477000000000004,
+    "reduction_pct": 12.95547369264034,
+    "runs": {
+      "A": [
+        48.805,
+        51.091
+      ],
+      "B": [
+        43.485,
+        43.469
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "indexable-unique",
+    "call": "draw",
+    "A_ms": 3.2035,
+    "B_ms": 1.1335000000000002,
+    "reduction_pct": 64.61682534727642,
+    "runs": {
+      "A": [
+        3.212,
+        3.195
+      ],
+      "B": [
+        1.1360000000000001,
+        1.131
+      ]
+    }
+  },
+  {
+    "platform": "android",
+    "case": "indexable-unique",
+    "call": "update",
+    "A_ms": 45.529,
+    "B_ms": 43.607,
+    "reduction_pct": 4.221485207230568,
+    "runs": {
+      "A": [
+        45.06,
+        45.998000000000005
+      ],
+      "B": [
+        42.934999999999995,
+        44.278999999999996
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "raw-script16",
+    "call": "draw",
+    "A_ms": 0.642,
+    "B_ms": 0.5549999999999999,
+    "reduction_pct": 13.551401869158886,
+    "runs": {
+      "A": [
+        0.62,
+        0.664
+      ],
+      "B": [
+        0.542,
+        0.568
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "raw-script16",
+    "call": "update",
+    "A_ms": 18.7965,
+    "B_ms": 18.0445,
+    "reduction_pct": 4.00074481951428,
+    "runs": {
+      "A": [
+        18.022000000000002,
+        19.571
+      ],
+      "B": [
+        17.660999999999998,
+        18.428
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "static",
+    "call": "draw",
+    "A_ms": 0.5925,
+    "B_ms": 0.5115000000000001,
+    "reduction_pct": 13.670886075949362,
+    "runs": {
+      "A": [
+        0.575,
+        0.61
+      ],
+      "B": [
+        0.501,
+        0.522
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "static",
+    "call": "update",
+    "A_ms": 8.3415,
+    "B_ms": 8.3855,
+    "reduction_pct": -0.5274830665947361,
+    "runs": {
+      "A": [
+        8.053,
+        8.629999999999999
+      ],
+      "B": [
+        8.191,
+        8.58
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "script16",
+    "call": "draw",
+    "A_ms": 0.6765,
+    "B_ms": 0.584,
+    "reduction_pct": 13.67331855136733,
+    "runs": {
+      "A": [
+        0.657,
+        0.696
+      ],
+      "B": [
+        0.571,
+        0.597
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "script16",
+    "call": "update",
+    "A_ms": 19.3505,
+    "B_ms": 18.8495,
+    "reduction_pct": 2.5890803855197597,
+    "runs": {
+      "A": [
+        18.806,
+        19.895
+      ],
+      "B": [
+        18.515,
+        19.184
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "script-unique",
+    "call": "draw",
+    "A_ms": 1.5745,
+    "B_ms": 0.589,
+    "reduction_pct": 62.59129882502381,
+    "runs": {
+      "A": [
+        1.528,
+        1.621
+      ],
+      "B": [
+        0.581,
+        0.597
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "script-unique",
+    "call": "update",
+    "A_ms": 21.4535,
+    "B_ms": 18.9005,
+    "reduction_pct": 11.900156151676866,
+    "runs": {
+      "A": [
+        20.886,
+        22.021
+      ],
+      "B": [
+        18.693,
+        19.108
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "indexable-unique",
+    "call": "draw",
+    "A_ms": 1.592,
+    "B_ms": 0.5965,
+    "reduction_pct": 62.53140703517588,
+    "runs": {
+      "A": [
+        1.556,
+        1.628
+      ],
+      "B": [
+        0.583,
+        0.61
+      ]
+    }
+  },
+  {
+    "platform": "ios",
+    "case": "indexable-unique",
+    "call": "update",
+    "A_ms": 19.886,
+    "B_ms": 19.237000000000002,
+    "reduction_pct": 3.2636025344463304,
+    "runs": {
+      "A": [
+        19.318,
+        20.453999999999997
+      ],
+      "B": [
+        19.026,
+        19.448
+      ]
+    }
+  }
+]

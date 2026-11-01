@@ -45,6 +45,10 @@ import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:test/test.dart';
 
+export 'package:chartjs_test_utils/src/color_reference.dart'
+    show referenceColor;
+export 'package:chartjs_test_utils/src/color_values.dart' show equalColorValues;
+
 export 'src/context.dart' show ContextCall, MockContext, createMockContext;
 export 'src/matchers.dart'
     show

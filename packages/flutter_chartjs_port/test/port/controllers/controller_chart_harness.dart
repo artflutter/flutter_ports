@@ -56,12 +56,12 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import '../scales/scale_chart_harness.dart';
 import '../scales/scale_time_harness.dart' show atNow;
 
@@ -414,7 +414,7 @@ bool _isColorKey(String key) => key == 'color' || key.endsWith('Color');
 /// A value that does not parse stays as it is. A List gets the parse of
 /// each item.
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => Color(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s).rgbString() ?? s,
   final List<Object?> list => [for (final item in list) _parseColor(item)],
   _ => value,
 };
@@ -749,6 +749,10 @@ Future<void> runStep(
   Chart chart,
   List<Object?> step,
 ) async {
+  nativeFixtureColors(<String, Object?>{
+    'data': chart.data,
+    'options': chart.config.options,
+  });
   switch (step) {
     case ['update']:
       chart.update();
@@ -994,6 +998,7 @@ Future<void> _runCaseSteps(
   }
   final options = copyReference(c.options)! as AnyObject;
 
+  nativeFixtureColors(config);
   if (at == 'initial') {
     expect(
       () => acquireChart(config, options),

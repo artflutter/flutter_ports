@@ -12,11 +12,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the parts of phases 5 and 6, and the values that
@@ -40,7 +42,7 @@ import 'light_reference.dart';
 
 /// The parsed form of the CSS color [value]: the `rgbString` of the ported
 /// @kurkle/color, as the canvas layer parses a color.
-String? _parsed(Object? value) => Color(value).rgbString();
+String? _parsed(Object? value) => referenceParsedColor(value).rgbString();
 
 /// A field of a font: `.font.<field>` or `.<name>Font.<field>` at the end of
 /// a dot path, with the font key as group 1.
@@ -232,12 +234,24 @@ void main() {
             if (elementCase.mode == 'active') {
               // The hover colors of the defaults derive from the themed base
               // color (core.defaults.js:62-64): equal hex strings.
-              expect(value, upstream[key], reason: '$reason $key');
+              expect(
+                value,
+                upstream[key] is String
+                    ? referenceColorOrString(upstream[key]! as String)
+                    : upstream[key],
+                reason: '$reason $key',
+              );
             }
           } else if (identical(upstream[key], undefined)) {
             expect(value, same(undefined), reason: '$reason $key');
           } else {
-            expect(value, upstream[key], reason: '$reason $key');
+            expect(
+              value,
+              upstream[key] is String
+                  ? referenceColorOrString(upstream[key]! as String)
+                  : upstream[key],
+              reason: '$reason $key',
+            );
           }
         }
       }
@@ -251,7 +265,11 @@ void main() {
           final upstream = elementCase.options[key];
           expect(
             options[key],
-            identical(upstream, undefined) ? same(undefined) : upstream,
+            identical(upstream, undefined)
+                ? same(undefined)
+                : upstream is String
+                ? referenceColorOrString(upstream)
+                : upstream,
             reason: '${elementCase.type} ${elementCase.mode} $key',
           );
         }
@@ -268,7 +286,11 @@ void main() {
         } else {
           expect(_parsed(themed[key]), _parsed(upstream), reason: key);
         }
-        expect(plain[key], upstream, reason: key);
+        expect(
+          plain[key],
+          upstream is String ? referenceColorOrString(upstream) : upstream,
+          reason: key,
+        );
       }
     });
 
@@ -282,9 +304,9 @@ void main() {
       }
 
       final themed = color(compileChartTheme(ChartThemes.light));
-      expect(themed, 'rgba(102, 102, 102, 1)');
+      expect(themed, const color_values.PreparedColor(102, 102, 102, 1));
       expect(_parsed(themed), _parsed(themeLightChartColor));
-      expect(color(null), themeLightChartColor);
+      expect(color(null), referenceColorOrString(themeLightChartColor));
     });
 
     test('the 8-bit alpha of Color(0x1A000000) gives another hover color', () {
@@ -297,10 +319,13 @@ void main() {
       final pointActive = themeLightElements.firstWhere(
         (c) => c.type == 'point' && c.mode == 'active',
       );
-      expect(pointActive.options['backgroundColor'], '#00000019');
+      expect(
+        pointActive.options['backgroundColor'],
+        '#00000019',
+      );
       expect(
         _resolveElement(pointActive, theme)['backgroundColor'],
-        '#0000001A',
+        const color_values.PreparedColor(0, 0, 0, 26 / 255),
       );
     });
   });

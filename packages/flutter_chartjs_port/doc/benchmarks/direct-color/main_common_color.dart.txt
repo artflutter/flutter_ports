@@ -1,0 +1,60 @@
+// Opaque and simple fractional-alpha guard for the direct-color experiment.
+import 'dart:async';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as charts;
+import 'package:flutter_chartjs_port/src/theme/css.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
+import 'main_direct_color.dart' as bench;
+
+List<ui.Color> colorsOf(String alpha) => [
+  for (var i = 0; i < 16; i++) ui.Color.fromRGBO((i * 73) & 255, (i * 41) & 255, (i * 29) & 255, alpha == 'opaque' ? 1 : 0.45),
+];
+
+Map<String, Object?> scene(String alpha, bool raw, int n) {
+  final colors = colorsOf(alpha);
+  ui.Color choose(charts.ChartContext context) => colors[(context.dataIndex ?? 0) % colors.length];
+  final Object fn = raw
+      ? (Object? context, Object? options) => colorToRgba(choose(context! as charts.ChartContext))
+      : colorScript(choose);
+  final cfg = bench.config('raw-static', n);
+  final data = cfg['data']! as Map<String, Object?>;
+  final dataset = (data['datasets']! as List).first as Map<String, Object?>;
+  dataset['backgroundColor'] = fn;
+  return cfg;
+}
+
+Future<void> run() async {
+  try {
+    registerGalleryComponents();
+    for (final alpha in ['opaque', 'fractional']) {
+      final colors = colorsOf(alpha);
+      bench.micro('lower-and-paint-$alpha-16', (i) {
+        final value = colorValue(colors[i % 16]);
+        bench.sink = value is ui.Color ? value : parseCssColor(value! as String);
+      });
+    }
+    for (final n in [1000, 5000]) {
+      for (final alpha in ['opaque', 'fractional']) {
+        for (final raw in [true, false]) {
+          await Future<void>.delayed(const Duration(milliseconds: 80));
+          final result = runChartBenchCase(
+            ChartBenchCase(mode: 'color-common', name: '${raw ? 'raw' : 'typed'}-$alpha', call: ChartBenchCall.update, scene: (n) => ChartBenchScene(config: scene(alpha, raw, n))),
+            n, const ChartBenchSettings(batches: 9, batchMs: 100, warmupMs: 300),
+          );
+          bench.emit({'kind': 'chart', ...result});
+        }
+      }
+    }
+    print('DIRECT_DONE ${bench.variant}');
+  } catch(e,s) { print('DIRECT_ERROR $e\n$s'); }
+}
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MaterialApp(home: Scaffold(body: Center(child: Text('Common color guard')))));
+  WidgetsBinding.instance.addPostFrameCallback((_) { unawaited(run()); });
+}

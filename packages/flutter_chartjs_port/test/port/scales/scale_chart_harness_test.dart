@@ -3,15 +3,20 @@
 library;
 
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/color_json.dart';
 
 import '../canvas/path2d_record.dart';
 import 'scale_chart_harness.dart';
@@ -188,8 +193,14 @@ final Map<String, Object?> _functions = {
 
 /// The reference text of [calls]: one JSON line `[name, ...args]` for each
 /// call, as the generators write it.
-String _callsText(List<List<Object?>> calls) =>
-    calls.map(jsonEncode).join('\n');
+String _callsText(List<List<Object?>> calls) => calls
+    .map(
+      (call) => jsonEncode(
+        call,
+        toEncodable: (value) => referenceParsedColor(value).rgbString(),
+      ),
+    )
+    .join('\n');
 
 /// The records `{name, args}` of [calls], the form of `recordedCalls`.
 List<Object?> _records(List<List<Object?>> calls) => [
@@ -219,6 +230,7 @@ List<List<Object?>> _upstreamBar({
 ];
 
 void main() {
+  installNativeColorCodec();
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
   Chart.register([
@@ -410,8 +422,8 @@ void main() {
         'width': 30,
         'height': 80,
         'options': <String, Object?>{
-          'borderColor': 'red',
-          'backgroundColor': 'blue',
+          'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
           'borderWidth': 2,
           'borderRadius': 0,
         },

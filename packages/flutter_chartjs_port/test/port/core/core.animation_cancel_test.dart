@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import 'animation_reference.dart';
 
 // The behavior of Animation.cancel() that test/specs/core.animation.tests.js
@@ -40,6 +41,9 @@ import 'animation_reference.dart';
 /// Whether [actual] is the reference value [expected]: the same type and
 /// value, NaN for NaN, and the sign of a zero.
 bool _same(Object? actual, Object? expected) {
+  if (expected is String && nativeColorBytes(actual) != null) {
+    return referenceColorOrString(expected).matches(actual, {});
+  }
   if (expected is double) {
     if (actual is! num) return false;
     final value = actual.toDouble();
@@ -83,12 +87,14 @@ void _replay(
   required AnyObject Function(Map<String, Object?> cfg) cfgOf,
   required String label,
 }) {
+  Object? input(Object? value) =>
+      cancelCase.cfg['type'] == 'color' ? referenceColorInput(value) : value;
   if (!identical(cancelCase.current, animationAbsent)) {
-    writeProperty(target, prop, cancelCase.current);
+    writeProperty(target, prop, input(cancelCase.current));
   }
   final anim = withClock(
     _at(animationCancelNow),
-    () => Animation(cfgOf(cancelCase.cfg), target, prop, cancelCase.to),
+    () => Animation(cfgOf(cancelCase.cfg), target, prop, input(cancelCase.to)),
   );
   AnimationSettled? settled;
   unawaited(
@@ -109,7 +115,7 @@ void _replay(
           case 'cancel':
             withClock(_at(anim.start + step.$2), anim.cancel);
           case 'to':
-            anim.to = step.$3;
+            anim.to = input(step.$3);
         }
       });
       // The steps compare the error of the port with the error of upstream.

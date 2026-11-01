@@ -1,10 +1,13 @@
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // Not public: the typed element options of Chart.js ADR 0018.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, BarOptions, LineOptions, PointOptions;
@@ -116,6 +119,7 @@ Future<void> _slide(WidgetTester tester, String key, double value) async {
 }
 
 void main() {
+  installNativeColorCodec();
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
@@ -146,7 +150,10 @@ void main() {
       'triangle',
     );
     expect((line.options! as JsObjectFace)['capBezierPoints'], isTrue);
-    expect((state.arcs.first.options! as JsObjectFace)['borderColor'], '#fff');
+    expect(
+      (state.arcs.first.options! as JsObjectFace)['borderColor'],
+      const native_ui.Color.fromRGBO(255, 255, 255, 1),
+    );
     // Each element has typed options (Chart.js ADR 0018).
     expect(state.bars.first.options, isA<BarOptions>());
     expect(state.points.first.options, isA<PointOptions>());
@@ -267,8 +274,14 @@ void main() {
       (bar.options! as JsObjectFace)['borderColor'],
       (bar.options! as JsObjectFace)['hoverBorderColor'],
     );
-    expect((bar.options! as JsObjectFace)['borderColor'], isNot('#36A2EB'));
-    expect((state.bars[0].options! as JsObjectFace)['borderColor'], '#36A2EB');
+    expect(
+      (bar.options! as JsObjectFace)['borderColor'],
+      isNot(const native_ui.Color.fromRGBO(54, 162, 235, 1)),
+    );
+    expect(
+      (state.bars[0].options! as JsObjectFace)['borderColor'],
+      const native_ui.Color.fromRGBO(54, 162, 235, 1),
+    );
 
     // A move inside the same bar does not draw again.
     final renders = chart.renders;
@@ -284,7 +297,10 @@ void main() {
     expect(_testRow(tester), startsWith('test PointElement.inRange'));
     expect(chart.renders, greaterThan(renders));
     expect(bar.active, isFalse);
-    expect((bar.options! as JsObjectFace)['borderColor'], '#36A2EB');
+    expect(
+      (bar.options! as JsObjectFace)['borderColor'],
+      const native_ui.Color.fromRGBO(54, 162, 235, 1),
+    );
     final point = state.points[2];
     expect(point.active, isTrue);
     expect(

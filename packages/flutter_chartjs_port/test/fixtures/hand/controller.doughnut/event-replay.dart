@@ -1,9 +1,11 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.doughnut/event-replay.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -23,7 +25,7 @@ Map<String, Object?> fixture() {
     ctx
       ..beginPath()
       ..arc(center.x, center.y, 8, 0, math.pi * 2)
-      ..fillStyle = 'yellow'
+      ..fillStyle = const native_ui.Color(0xffffff00)
       ..fill();
   }
 

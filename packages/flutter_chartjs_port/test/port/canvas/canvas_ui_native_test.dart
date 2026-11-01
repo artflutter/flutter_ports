@@ -2,16 +2,20 @@
 @TestOn('vm')
 library;
 
+import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as native_ui;
+import 'dart:ui' as ui;
+
 // dart:ui and flutter_test: the web legs cannot compile this file. The
 // forms N1 to N5 of canvas-cuts-plan.md §7 keep the Canvas 2D calls and
 // change how the layer gives them to dart:ui. Each pixel test compares a
 // form with the same drawing on another path.
 
-import 'dart:math' as math;
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-
+import 'package:flutter/painting.dart' show HSLColor;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart'
     show maxAtlasInstances;
@@ -113,12 +117,11 @@ typedef _Dot = ({
   double width,
 });
 
-/// The CSS text of [color] for `fillStyle` and `strokeStyle`.
-String _css(ui.Color color) =>
-    'rgba(${(color.r * 255).round()}, ${(color.g * 255).round()}, '
-    '${(color.b * 255).round()}, ${color.a})';
+/// Pass the native paint through unchanged.
+ui.Color _css(ui.Color color) => color;
 
 void main() {
+  installNativeColorCodec();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('N1: a native save only for a state with a clip of its own', () {
@@ -133,8 +136,8 @@ void main() {
 
     test('a save and a restore with no clip keep the circle run', () {
       final ctx = UiCanvasElement(width: 100, height: 100).getContext2d()
-        ..fillStyle = '#ff0000'
-        ..strokeStyle = '#0000ff';
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1);
       circle(ctx, 10, 10);
       ctx
         ..save()
@@ -161,7 +164,7 @@ void main() {
     test('a clip in a nested state cuts until its restore', () async {
       final port = await renderContext((ctx) {
         ctx
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..save()
           ..save()
           ..beginPath()
@@ -173,14 +176,14 @@ void main() {
           ..fillRect(0, 0, 160, 40)
           ..restore()
           // Still clipped, and the translation is gone.
-          ..fillStyle = '#00ff00'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
           ..fillRect(0, 40, 160, 40)
           ..restore()
           // The clip is gone.
-          ..fillStyle = '#0000ff'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
           ..fillRect(0, 80, 160, 40)
           ..restore()
-          ..fillStyle = '#000000'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1)
           ..fillRect(0, 120, 160, 40);
       });
       final reference = await _renderUi((canvas) {
@@ -202,7 +205,7 @@ void main() {
     test('a new recording replays the levels with clips only', () async {
       final port = await renderContext((ctx) {
         ctx
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..fillRect(0, 0, 10, 10)
           // Level 1 has a clip, level 2 has none, level 3 has a clip.
           ..save()
@@ -218,15 +221,15 @@ void main() {
         // The end of a recording: the next draw starts a new one.
         _paint(ctx);
         ctx
-          ..fillStyle = '#00ff00'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
           ..fillRect(0, 20, 160, 20)
           ..restore()
-          ..fillStyle = '#0000ff'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
           ..fillRect(0, 60, 160, 20);
         _paint(ctx);
         ctx
           ..restore()
-          ..fillStyle = '#000000'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1)
           ..fillRect(0, 100, 160, 20)
           ..restore()
           ..fillRect(0, 140, 160, 20);
@@ -265,7 +268,7 @@ void main() {
           ..clip()
           ..restore()
           ..restore()
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..fillRect(0, 0, 160, 160);
       });
       final reference = await _renderUi(
@@ -288,7 +291,7 @@ void main() {
       element.width = 100;
       ctx
         ..restore()
-        ..fillStyle = '#ff0000'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 100, 100);
       final recorder = ui.PictureRecorder();
       ctx.paint(ui.Canvas(recorder), ui.Offset.zero, 1, 1);
@@ -307,7 +310,7 @@ void main() {
       final port = await renderContext((ctx) {
         ctx
           ..onChanged = (() => changes++)
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..beginPath()
           ..rect(10, 10, 0, 50)
           ..fill()
@@ -335,11 +338,11 @@ void main() {
           ..beginPath()
           ..rect(x, 20, 0.6, 100)
           ..rect(x + 0.3, 21, 0, 98)
-          ..fillStyle = '#36a2eb'
+          ..fillStyle = const native_ui.Color.fromRGBO(54, 162, 235, 1)
           ..fill('evenodd')
           ..beginPath()
           ..rect(x + 0.3, 21, 0, 98)
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..fill()
           ..restore();
       }
@@ -350,7 +353,7 @@ void main() {
         }
       });
       final reference = await renderContext((ctx) {
-        ctx.fillStyle = '#36a2eb';
+        ctx.fillStyle = const native_ui.Color.fromRGBO(54, 162, 235, 1);
         for (var i = 0; i < 40; i++) {
           ctx.fillRect(10 + i * 3.4, 20, 0.6, 100);
         }
@@ -363,12 +366,12 @@ void main() {
     test('a fill with no area between two draws keeps their order', () async {
       final port = await renderContext((ctx) {
         ctx
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..fillRect(0, 0, 80, 80)
           ..beginPath()
           ..rect(40, 40, 0, 80)
           ..fill()
-          ..fillStyle = '#0000ff'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
           ..fillRect(40, 40, 80, 80);
       });
       final reference = await _renderUi((canvas) {
@@ -541,7 +544,7 @@ void main() {
     test('beginPath after a build starts an empty path', () async {
       final port = await renderContext((ctx) {
         ctx
-          ..strokeStyle = '#ff0000'
+          ..strokeStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..lineWidth = 4
           ..beginPath()
           ..moveTo(10, 10)
@@ -550,7 +553,7 @@ void main() {
           ..beginPath()
           ..moveTo(10, 80)
           ..lineTo(150, 80)
-          ..strokeStyle = '#0000ff'
+          ..strokeStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
           ..stroke();
       });
       final reference = await _renderUi((canvas) {
@@ -829,7 +832,7 @@ void main() {
     test('the fill of a sector gives the pixels of its path', () async {
       void retinaStyle(UiCanvasContext ctx) => ctx
         ..scale(2, 2)
-        ..fillStyle = 'rgba(54, 162, 235, 0.45)';
+        ..fillStyle = const native_ui.Color.fromRGBO(54, 162, 235, 0.45);
       const angles = [
         (0.3, 2.1),
         (-1.4, 3.0),
@@ -860,8 +863,8 @@ void main() {
         'a gradient',
         (ctx) {
           final gradient = ctx.createLinearGradient(20, 0, 140, 0)
-            ..addColorStop(0, '#ff0000')
-            ..addColorStop(1, '#0000ff');
+            ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
+            ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
           ctx
             ..scale(2, 2)
             ..fillStyle = gradient;
@@ -875,31 +878,31 @@ void main() {
           ..translate(80, 80)
           ..rotate(0.7)
           ..globalAlpha = 0.5
-          ..fillStyle = '#00aa00',
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 170, 0, 1),
         (p) => sectorCalls(p, 0, 0, 60, 20, 0.2, 4),
       );
       await expectSectorPixels(
         'a mirror',
         (ctx) => ctx
           ..transform(-2, 0, 0, 2, 320, 0)
-          ..fillStyle = '#aa00aa',
+          ..fillStyle = const native_ui.Color.fromRGBO(170, 0, 170, 1),
         (p) => sectorCalls(p, 80, 80, 60, 0, 0.4, 2.4),
       );
       await expectSectorPixels(
         'a device pixel ratio of 2.625',
         (ctx) => ctx
           ..scale(2.625, 2.625)
-          ..fillStyle = '#ff6384',
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 99, 132, 1),
         (p) => sectorCalls(p, 60, 60, 50, 25, 1.1, 3.3),
       );
       await expectSectorPixels(
         'a composite operation',
         (ctx) => ctx
           ..scale(2, 2)
-          ..fillStyle = '#000000'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1)
           ..fillRect(0, 0, 160, 80)
           ..globalCompositeOperation = 'xor'
-          ..fillStyle = '#ff0000',
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1),
         (p) => sectorCalls(p, 80, 80, 60, 30, -0.5, 2.5),
       );
     });
@@ -910,13 +913,18 @@ void main() {
           ..scale(2, 2)
           ..lineJoin = 'bevel'
           ..lineWidth = 2
-          ..strokeStyle = '#ffffff';
+          ..strokeStyle = const native_ui.Color.fromRGBO(255, 255, 255, 1);
         var start = -math.pi / 2;
         for (var i = 0; i < 24; i++) {
           final end = start + (0.1 + (i % 5) * 0.06);
           ctx
             ..save()
-            ..fillStyle = 'hsla(${i * 15}, 70%, 50%, 0.8)'
+            ..fillStyle = HSLColor.fromAHSL(
+              0.8,
+              (i * 15.0) % 360,
+              0.7,
+              0.5,
+            ).toColor()
             ..beginPath();
           sectorCalls(ctx, 80, 80, 70, 35, start, end);
           if (built) ctx.debugPath.path;
@@ -966,8 +974,13 @@ void main() {
           'outerRadius': 60,
           'circumference': 1.75,
           'options': <String, Object?>{
-            'backgroundColor': 'rgba(54, 162, 235, 0.45)',
-            'borderColor': '#36A2EB',
+            'backgroundColor': const native_ui.Color.fromRGBO(
+              54,
+              162,
+              235,
+              0.45,
+            ),
+            'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
             'borderWidth': 0,
             'circular': true,
           },

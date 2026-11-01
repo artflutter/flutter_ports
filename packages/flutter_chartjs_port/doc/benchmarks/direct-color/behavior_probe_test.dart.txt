@@ -1,0 +1,15 @@
+import 'dart:ui';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show getHoverColor;
+import 'package:flutter_chartjs_port/src/theme/css.dart' show colorToRgba;
+
+void main() {
+  test('direct Flutter Color still needs a hover adapter', () {
+    const color = Color(0xFF2050C0);
+    final css = getHoverColor(colorToRgba(color));
+    final direct = getHoverColor(color);
+    print('HOVER_BOUNDARY css=$css direct=$direct');
+    expect(css, '#003CCA');
+    expect(direct, '#000');
+  });
+}

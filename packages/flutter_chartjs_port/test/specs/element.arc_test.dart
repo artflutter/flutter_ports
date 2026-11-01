@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/element.arc.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsAtan2, jsCos, jsMin, jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:test/test.dart';
 
 // The spec constructs Chart.elements.ArcElement. Here it is the ArcElement
@@ -366,8 +369,13 @@ void main() {
               'offset': 0,
               'borderWidth': 0,
               'borderRadius': 0,
-              'backgroundColor': 'red',
-              'borderColor': 'black',
+              'backgroundColor': const color_values.PreparedColor(
+                255,
+                0,
+                0,
+                1,
+              ),
+              'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
             },
           });
         }
@@ -430,8 +438,8 @@ void main() {
           'offset': 0,
           'borderWidth': 0,
           'borderRadius': 0,
-          'backgroundColor': 'red',
-          'borderColor': 'black',
+          'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+          'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
         },
       });
 
@@ -464,8 +472,8 @@ void main() {
             'offset': 0,
             'borderWidth': 0,
             'borderRadius': 0,
-            'backgroundColor': 'red',
-            'borderColor': 'black',
+            'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+            'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
           },
         });
 
@@ -509,8 +517,8 @@ void main() {
             'offset': 0,
             'borderWidth': 0,
             'borderRadius': 0,
-            'backgroundColor': 'red',
-            'borderColor': 'black',
+            'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+            'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
           },
         });
 
@@ -547,8 +555,8 @@ void main() {
             'offset': 0,
             'borderWidth': 6,
             'borderRadius': 12,
-            'backgroundColor': 'red',
-            'borderColor': 'black',
+            'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+            'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
           },
         });
 
@@ -589,8 +597,8 @@ void main() {
           'offset': 0,
           'borderWidth': 0,
           'borderRadius': 0,
-          'backgroundColor': 'red',
-          'borderColor': 'black',
+          'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+          'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
         },
       });
 
@@ -626,8 +634,8 @@ void main() {
             'borderWidth': 2,
             'borderRadius': 0,
             'borderJoinStyle': 'round',
-            'backgroundColor': 'red',
-            'borderColor': 'black',
+            'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+            'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
           },
         });
 
@@ -663,8 +671,8 @@ void main() {
           'borderWidth': 10,
           'borderRadius': 1,
           'borderJoinStyle': 'round',
-          'backgroundColor': 'red',
-          'borderColor': 'black',
+          'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+          'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
         },
       });
 

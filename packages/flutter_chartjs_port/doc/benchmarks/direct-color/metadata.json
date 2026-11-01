@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-01",
+  "baseline": "175337ff09d37b6aa7a5de76cdf5f90e44be6bc8",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "engine": "cf636b1dfb818dd6a3ff16e390e93b1a036969c8",
+  "androidFingerprint": "google/akita/akita:17/CP3A.260905.009/16091614:user/release-keys",
+  "device": "Pixel 8a",
+  "abi": "arm64-v8a",
+  "build": "release",
+  "renderer": "Impeller Vulkan",
+  "profiler": false,
+  "mainSequence": "ABBA BAAB",
+  "commonSequence": "ABBA",
+  "hoverProbe": "CSS #003CCA; direct Flutter Color #000; assertions passed",
+  "reproduction": "Setup reconstructed measured candidate sources and a release APK rebuilt successfully."
+}

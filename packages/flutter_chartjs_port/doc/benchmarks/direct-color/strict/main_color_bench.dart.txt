@@ -1,0 +1,69 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as charts;
+import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
+import 'package:flutter_chartjs_port/src/theme/css.dart' show colorToRgba;
+import 'bench_done.dart';
+
+const variant = String.fromEnvironment('VARIANT');
+final results = <Map<String,Object?>>[];
+const modes = ['raw-script16', 'static', 'script16', 'script-unique', 'indexable-unique'];
+List<ui.Color> colors(int n, bool varied) => [
+  for (var i=0;i<n;i++)
+    if (varied) ui.Color.fromARGB(180+i%76,(i*73)&255,(i>>3)&255,(i*29+(i>>8))&255)
+    else ui.Color.fromRGBO((i*73)&255,(i*41)&255,(i*29)&255,0.45),
+];
+Map<String,Object?> config(String mode,int n) {
+  final palette=colors(mode.endsWith('unique')?n:16,mode.endsWith('unique'));
+  ui.Color choose(charts.ChartContext context)=>palette[(context.dataIndex??0)%palette.length];
+  final data=<num>[for(var i=0;i<n;i++) (i*17)%97];
+  final dataset=lowerDataset(charts.LineDataset(
+    data:data,
+    backgroundColor:mode=='static'?palette[0]:null,
+    backgroundColors:mode=='indexable-unique'?palette:null,
+    backgroundColorFor:mode.startsWith('script')?choose:null,
+    borderColor:const ui.Color(0xFF123456),
+    pointRadius:3,
+    pointBorderWidth:0,
+    extra:<String,Object?>{
+      'showLine':false,
+      'fill':false,
+      if(mode=='raw-script16') 'backgroundColor':(Object? ctx,Object? opts)=>(variant == 'A' ? colorToRgba(choose(ctx! as charts.ChartContext)) : choose(ctx! as charts.ChartContext)),
+    },
+  ),charts.ChartKind.line);
+  return <String,Object?>{
+    'type':'line',
+    'data':<String,Object?>{'labels':<Object?>[for(var i=0;i<n;i++)i.toString()],'datasets':<Object?>[dataset]},
+    'options':<String,Object?>{
+      'animation':false,'events':<Object?>[], 'responsive':false,'devicePixelRatio':1.0,
+      'plugins':<String,Object?>{'legend':false,'tooltip':false,'colors':false},
+      'scales':<String,Object?>{'x':<String,Object?>{'display':false},'y':<String,Object?>{'display':false,'min':0.0,'max':100.0}},
+    },
+  };
+}
+Future<void> run() async {
+ try {
+  registerGalleryComponents();
+  for(final mode in modes) {
+   for(final call in [ChartBenchCall.draw,ChartBenchCall.update]) {
+    await Future<void>.delayed(const Duration(milliseconds:100));
+    final row=runChartBenchCase(
+      ChartBenchCase(mode:'direct-color',name:mode,call:call,scene:(n)=>ChartBenchScene(config:config(mode,n))),
+      5000,const ChartBenchSettings(warmupMs:250,batches:7,batchMs:100));
+    results.add({'variant':variant,...row});
+    print('COLOR_RESULT ${jsonEncode(results.last)}');
+   }
+  }
+  print('COLOR_DONE $variant');
+  await finish(jsonEncode(results));
+ } catch(e,s) { print('COLOR_ERROR $e\n$s'); await finish(jsonEncode({'error':'$e','stack':'$s'})); }
+}
+void main() {
+ WidgetsFlutterBinding.ensureInitialized();
+ runApp(const MaterialApp(home:Scaffold(body:Center(child:Text('Direct color benchmark')))));
+ WidgetsBinding.instance.addPostFrameCallback((_) {unawaited(run());});
+}

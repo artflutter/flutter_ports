@@ -36,11 +36,11 @@ library;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import '../controllers/controller_chart_harness.dart' show observeControllers;
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
@@ -230,7 +230,7 @@ bool _isColorKey(String key) => key == 'color' || key.endsWith('Color');
 /// [value] with each color in its parsed form. A value that does not parse
 /// stays as it is. A List gets the parse of each item.
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => kurkle.Color(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s).rgbString() ?? s,
   final List<Object?> list => [for (final item in list) _parseColor(item)],
   _ => value,
 };

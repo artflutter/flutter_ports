@@ -2,7 +2,11 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
@@ -10,12 +14,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ParsedFont, toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the radial linear scale case of phase 6: the light
@@ -34,7 +38,7 @@ import 'light_reference.dart';
 
 /// The parsed form of the CSS color [value]: the `rgbString` of the ported
 /// @kurkle/color, as the canvas layer parses a color.
-String? _parsed(Object? value) => Color(value).rgbString();
+String? _parsed(Object? value) => referenceParsedColor(value).rgbString();
 
 /// The value of the dot path [path] in [root].
 Object? _at(Object? root, String path) {
@@ -86,6 +90,7 @@ Map<String, Object?> _resolveRadial(Object? theme) {
 }
 
 void main() {
+  installNativeColorCodec();
   setUpSpecs();
 
   TypedRegistry(Scale.jsClass, 'scales').register(RadialLinearScale.jsClass);
@@ -117,7 +122,11 @@ void main() {
       for (final MapEntry(:key, value: upstream) in themeLightRadial.entries) {
         expect(
           plain[key],
-          identical(upstream, undefined) ? same(undefined) : upstream,
+          identical(upstream, undefined)
+              ? same(undefined)
+              : upstream is String
+              ? referenceColorOrString(upstream)
+              : upstream,
           reason: key,
         );
       }
@@ -128,9 +137,18 @@ void main() {
       // scale.radialLinear.js:400-404: the strings are the rgba() form of
       // the compiler (theming.md §3.3).
       final themed = _resolveRadial(compileChartTheme(ChartThemes.light));
-      expect(themed['pointLabels.color'], 'rgba(102, 102, 102, 1)');
-      expect(themed['angleLines.color'], 'rgba(0, 0, 0, 0.1)');
-      expect(themed['ticks.color'], 'rgba(102, 102, 102, 1)');
+      expect(
+        themed['pointLabels.color'],
+        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+      );
+      expect(
+        themed['angleLines.color'],
+        const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+      );
+      expect(
+        themed['ticks.color'],
+        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+      );
     });
   });
 }

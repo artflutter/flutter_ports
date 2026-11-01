@@ -17,8 +17,10 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import 'registry_observe.dart';
-import 'registry_reference.dart';
+import 'registry_reference.dart' as frozen show registryReference;
+import 'registry_reference.dart' hide registryReference;
 
 // The 19 cases of core.plugin.tests.js run on charts of acquireChart. These
 // tests cover the PluginService of
@@ -644,3 +646,8 @@ null calls: 0''');
     });
   });
 }
+
+final Map<String, String> registryReference = {
+  for (final entry in frozen.registryReference.entries)
+    entry.key: referenceColorTokens(entry.value),
+};

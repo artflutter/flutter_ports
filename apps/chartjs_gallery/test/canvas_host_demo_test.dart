@@ -1,3 +1,5 @@
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
@@ -5,6 +7,8 @@ import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // Not public: UiCanvasElement and UiImageSource of the canvas layer.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
     show UiCanvasElement, UiImageSource;
@@ -104,6 +108,7 @@ void _expectDrawn(WidgetTester tester, String key, {double dpr = _phoneDpr}) {
 }
 
 void main() {
+  installNativeColorCodec();
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
@@ -275,7 +280,7 @@ void main() {
       final ctx = canvas.getContext2d()
         ..font = '32px sans-serif'
         ..textBaseline = 'top'
-        ..fillStyle = '#FF0000'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillText('X', 4, 4);
       final source = canvas.toImageSource();
       expect(await _pixel(source, 20, 20), 0xFFFF0000);

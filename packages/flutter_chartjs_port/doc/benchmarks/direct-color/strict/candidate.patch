@@ -1,0 +1,1790 @@
+--- a/lib/helpers.dart
++++ b/lib/helpers.dart
+@@ -18,6 +18,9 @@
+ /// Next to `package:flutter_chartjs_port/chartjs.dart`, import it with a
+ /// prefix, as `src/index.umd.ts` keeps the helpers in `Chart.helpers`.
+ library;
++
++import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
++import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' as colors;
+ 
+ export 'package:flutter_chartjs_port/src/helpers/index.dart'
+     hide
+@@ -42,6 +45,7 @@
+         boundSegment,
+         boundSegments,
+         capitalize,
++        color,
+         computeSegments,
+         createResolver,
+         decimalPlaces,
+@@ -50,6 +54,7 @@
+         elementsEqual,
+         factorize,
+         filterBetween,
++        getHoverColor,
+         getParentNode,
+         getStartAndCountOfVisiblePoints,
+         int16Range,
+@@ -79,3 +84,15 @@
+         textX,
+         toLeftRightCenter,
+         updateBezierControlPoints;
++
++/// The color helper accepts Flutter Color, never CSS strings.
++Object color(Object? value) {
++  installNativeColorCodec();
++  return colors.color(value);
++}
++
++/// Computes a native hover color without formatting or parsing strings.
++Object? getHoverColor(Object? value) {
++  installNativeColorCodec();
++  return colors.getHoverColor(value);
++}
+--- /dev/null
++++ b/lib/src/canvas/canvas_colors.dart
+@@ -0,0 +1,163 @@
++// Original code, not ported from Chart.js: the Flutter Color-only boundary.
++
++import 'dart:ui' as ui;
++
++import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
++import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
++import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
++import 'package:flutter_chartjs_port/src/types/color.dart';
++
++bool _installed = false;
++
++/// Installs the numerical/native bridge without any parser or string cache.
++void installNativeColorCodec() {
++  if (_installed) return;
++  _installed = true;
++  nativeColorCheck = (value) => value is ui.Color;
++  nativeColorReader = (value) {
++    if (value is! ui.Color) return null;
++    final srgb = value.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
++    return PreparedColor(
++      (srgb.r * 255).round().clamp(0, 255),
++      (srgb.g * 255).round().clamp(0, 255),
++      (srgb.b * 255).round().clamp(0, 255),
++      srgb.a.clamp(0.0, 1.0),
++      value,
++    );
++  };
++  nativeColorWriter = (value) => ui.Color.fromRGBO(
++    value.red,
++    value.green,
++    value.blue,
++    value.alpha,
++  );
++}
++
++/// A solid canvas color. CSS strings and all other values fail explicitly.
++ui.Color requireUiColor(Object? value, String argument) {
++  if (value is ui.Color) return value;
++  if (value is PreparedColor) {
++    installNativeColorCodec();
++    return value.paint as ui.Color;
++  }
++  throw ArgumentError.value(
++    value,
++    argument,
++    'Expected Flutter Color; CSS color strings are unsupported',
++  );
++}
++
++Object? _field(Object? object, String key) => switch (object) {
++  final Map<Object?, Object?> map => map[key],
++  final JsObjectFace face => face.jsRead(key),
++  _ => null,
++};
++
++Iterable<String> _keys(Object? object) => switch (object) {
++  final Map<Object?, Object?> map => map.keys.whereType<String>(),
++  final JsObjectFace face => face.jsKeys(),
++  _ => const <String>[],
++};
++
++bool _colorKey(String key) =>
++    key == 'color' ||
++    key.endsWith('Color') ||
++    key == 'multiKeyBackground' ||
++    key == r'$borderColors' ||
++    key == r'$backgroundColors';
++
++/// Rejects static CSS inputs before a failed constructor can acquire a canvas.
++/// Dataset data/labels are not color options. Callback results are checked when
++/// consumed, without extra calls to user code.
++void validateChartColors(Object? config) {
++  final seen = Set<Object>.identity();
++  void color(Object? value, String path) {
++    if (value == null || value is Undefined || jsIsFunction(value)) return;
++    if (value is List) {
++      if (!seen.add(value)) return;
++      for (var i = 0; i < value.length; i++) {
++        color(value[i], '$path[$i]');
++      }
++      return;
++    }
++    if (value is ui.Color ||
++        value is PreparedColor ||
++        value is CanvasGradient ||
++        value is CanvasPattern) {
++      return;
++    }
++    throw ArgumentError.value(
++      value,
++      path,
++      'Expected Flutter Color; CSS color strings are unsupported',
++    );
++  }
++
++  void scope(Object? value, String path, {bool dataset = false}) {
++    if (value is! Map && value is! JsObjectFace) return;
++    if (!seen.add(value!)) return;
++    for (final key in _keys(value)) {
++      if (dataset && (key == 'data' || key == 'label')) continue;
++      final child = _field(value, key);
++      if (key == 'animations') {
++        for (final group in _keys(child)) {
++          final spec = _field(child, group);
++          if (_field(spec, 'type') == 'color') {
++            color(_field(spec, 'from'), '$path.animations.$group.from');
++            color(_field(spec, 'to'), '$path.animations.$group.to');
++          }
++        }
++      } else if (key == 'scales' ||
++          key == 'datasets' ||
++          key == 'elements' ||
++          key == 'transitions') {
++        for (final id in _keys(child)) {
++          scope(
++            _field(child, id),
++            '$path.$key.$id',
++            dataset: key == 'datasets',
++          );
++        }
++      } else if (key == 'fill') {
++        color(_field(child, 'above'), '$path.fill.above');
++        color(_field(child, 'below'), '$path.fill.below');
++      } else if (key == 'plugins') {
++        for (final plugin in const [
++          'legend',
++          'title',
++          'subtitle',
++          'tooltip',
++          'colors',
++          'filler',
++          'decimation',
++        ]) {
++          scope(_field(child, plugin), '$path.plugins.$plugin');
++        }
++      } else if (_colorKey(key)) {
++        color(child, '$path.$key');
++      } else if (const [
++        'scale',
++        'hover',
++        'segment',
++        'pointLabels',
++        'ticks',
++        'grid',
++        'border',
++        'title',
++        'subtitle',
++        'labels',
++      ].contains(key)) {
++        scope(child, '$path.$key');
++      }
++    }
++  }
++
++  scope(_field(config, 'options'), 'options');
++  final datasets = _field(_field(config, 'data'), 'datasets');
++  if (datasets is List) {
++    for (var i = 0; i < datasets.length; i++) {
++      scope(datasets[i], 'data.datasets[$i]', dataset: true);
++    }
++  }
++}
+--- a/lib/src/canvas/canvas_ui.dart
++++ b/lib/src/canvas/canvas_ui.dart
+@@ -44,6 +44,7 @@
+ import 'dart:ui' as ui;
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
++import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+@@ -236,6 +237,7 @@
+   /// [height], in device pixels. A `null` size has no attribute and the DOM
+   /// default: 300 wide, 150 high.
+   UiCanvasElement({int? width, int? height}) {
++    installNativeColorCodec();
+     if (width != null) this.width = width;
+     if (height != null) this.height = height;
+   }
+@@ -1082,7 +1084,7 @@
+   // Styles.
+ 
+   static Object _styleValue(ui.Color? color, UiShaderSource? shader) =>
+-      shader ?? serializeCssColor(color!);
++      shader ?? color!;
+ 
+   @override
+   Object? get fillStyle => _styleValue(_s.fillColor, _s.fillShader);
+@@ -1091,16 +1093,15 @@
+   /// color that does not parse and another value do nothing.
+   @override
+   set fillStyle(Object? value) {
+-    if (value is String) {
+-      final color = parseCssColor(value);
+-      if (color == null) return;
+-      _s
+-        ..fillColor = color
+-        ..fillShader = null;
+-    } else if (value is UiShaderSource) {
++    if (value == null) return;
++    if (value is UiShaderSource) {
+       _s
+         ..fillShader = value
+         ..fillColor = null;
++    } else {
++      _s
++        ..fillColor = requireUiColor(value, 'fillStyle')
++        ..fillShader = null;
+     }
+   }
+ 
+@@ -1111,16 +1112,15 @@
+   /// color that does not parse and another value do nothing.
+   @override
+   set strokeStyle(Object? value) {
+-    if (value is String) {
+-      final color = parseCssColor(value);
+-      if (color == null) return;
+-      _s
+-        ..strokeColor = color
+-        ..strokeShader = null;
+-    } else if (value is UiShaderSource) {
++    if (value == null) return;
++    if (value is UiShaderSource) {
+       _s
+         ..strokeShader = value
+         ..strokeColor = null;
++    } else {
++      _s
++        ..strokeColor = requireUiColor(value, 'strokeStyle')
++        ..strokeShader = null;
+     }
+   }
+ 
+--- a/lib/src/canvas/canvas_ui_paint.dart
++++ b/lib/src/canvas/canvas_ui_paint.dart
+@@ -1,12 +1,11 @@
+ // Original code, not ported from Chart.js: the dart:ui canvas styles.
+ 
+ /// The styles of the `dart:ui` canvas context (Chart.js ADR 0013,
+-/// porting-flow.md 2.2): CSS colors, gradients, patterns, images,
++/// porting-flow.md 2.2): native colors, gradients, patterns, images,
+ /// composite operations and line dashes.
+ ///
+-/// - A CSS color string parses with the ported @kurkle/color
+-///   (`lib/src/kurkle_color/`), through a bounded cache of `ui.Color`
+-///   values. A string that does not parse is invalid: the DOM ignores it.
++/// - Solid paints and gradient stops require `ui.Color`. Strings throw;
++///   there is no CSS color parser or color-string cache (ADR 0057).
+ /// - A gradient builds its `ui.Gradient` when a draw uses it, with the
+ ///   transform of that draw (the DOM rule: gradient coordinates are in the
+ ///   user space of the draw). The shader is cached for the last matrix.
+@@ -20,32 +19,14 @@
+ import 'dart:ui' as ui;
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
+-
+-/// The bound of the color cache. A full cache starts again empty.
+-const int _colorCacheSize = 512;
+-
+-final Map<String, ui.Color?> _colorCache = {};
+-
+-/// The `ui.Color` of the CSS color [value], or `null` when [value] does not
+-/// parse. The parser is the ported @kurkle/color. Results are cached.
+-ui.Color? parseCssColor(String value) {
+-  final cached = _colorCache[value];
+-  if (cached != null || _colorCache.containsKey(value)) return cached;
+-  if (_colorCache.length >= _colorCacheSize) _colorCache.clear();
+-  final parsed = kurkle.Color(value.trim());
+-  ui.Color? color;
+-  if (parsed.valid) {
+-    final rgb = parsed.rgb!;
+-    color = ui.Color.fromARGB(
+-      (rgb.a * 255).round().clamp(0, 255),
+-      rgb.r.round().clamp(0, 255),
+-      rgb.g.round().clamp(0, 255),
+-      rgb.b.round().clamp(0, 255),
+-    );
+-  }
+-  return _colorCache[value] = color;
+-}
++import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
++
++/// CSS color parsing is unsupported. Supply a Flutter Color instead.
++ui.Color? parseCssColor(String value) => throw ArgumentError.value(
++  value,
++  'color',
++  'CSS color strings are unsupported; use Flutter Color',
++);
+ 
+ String _hex2(int v) => v.toRadixString(16).padLeft(2, '0');
+ 
+@@ -219,18 +200,15 @@
+   List<ui.Color> get colors => List.unmodifiable(_colors);
+ 
+   /// `addColorStop(offset, color)`. An offset outside [0, 1] throws a
+-  /// [RangeError] (the DOM `IndexSizeError`). A color that does not parse
+-  /// throws a [FormatException] (the DOM `SyntaxError`). A stop with the
++  /// [RangeError] (the DOM `IndexSizeError`). A value that is not a native
++  /// color throws an [ArgumentError] (ADR 0057). A stop with the
+   /// same offset as earlier stops goes after them.
+   @override
+-  void addColorStop(double offset, String color) {
++  void addColorStop(double offset, Object color) {
+     if (!(offset >= 0 && offset <= 1)) {
+       throw RangeError.range(offset, 0, 1, 'offset');
+     }
+-    final parsed = parseCssColor(color);
+-    if (parsed == null) {
+-      throw FormatException('The color does not parse', color);
+-    }
++    final parsed = requireUiColor(color, 'gradient color');
+     var i = _offsets.length;
+     while (i > 0 && _offsets[i - 1] > offset) {
+       i--;
+--- a/lib/src/core/core.animation.dart
++++ b/lib/src/core/core.animation.dart
+@@ -1,5 +1,6 @@
+ // Ported from Chart.js v4.6.1 src/core/core.animation.js (MIT, Chart.js Contributors).
+ // DIVERGES(chartjs): adapt-typed-elements, typed keys of Chart.js ADR 0054.
++// DIVERGES(chartjs): adapt-direct-colors, preserve the color animation cache.
+ 
+ /// Port of `src/core/core.animation.js` (Chart.js ADR 0019).
+ ///
+@@ -43,7 +44,8 @@
+ 
+ import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
+ import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
+-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
++import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
++    show color, isPatternOrGradient;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
+     show effects;
+ import 'package:flutter_chartjs_port/src/js/js_class.dart';
+@@ -58,13 +60,14 @@
+     show Color;
+ import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+     show AnimatedProp;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+ import 'package:meta/meta.dart';
+ 
+ /// core.animation.js:5 `transparent`.
+-const String _transparent = 'transparent';
++const PreparedColor _transparent = PreparedColor(0, 0, 0, 0);
+ 
+ /// core.animation.js:6-25 the type of a member of `interpolators`: the value
+ /// at [factor] between [from] and [to].
+@@ -93,7 +96,17 @@
+   final c1 = c0 is Color && c0.valid
+       ? color(jsTruthy(to) ? to : _transparent)
+       : false;
+-  return c1 is Color && c1.valid ? c1.mix(c0 as Color, factor).hexString() : to;
++  return c1 is Color && c1.valid ? _mixedColor(c1, c0 as Color, factor) : to;
++}
++
++Object _mixedColor(Color to, Color from, double factor) {
++  final rgb = to.mix(from, factor).rgbaBytes!;
++  return PreparedColor(
++    rgb.r.round(),
++    rgb.g.round(),
++    rgb.b.round(),
++    rgb.a / 255,
++  ).paint;
+ }
+ 
+ /// core.animation.js:22 `interpolators.number`.
+@@ -151,21 +164,23 @@
+ 
+   /// The color at [factor] between [from] and [to], as [_color] gives.
+   Object? call(Object? from, Object? to, double factor) {
+-    final f = jsTruthy(from) ? from : _transparent;
+-    final t = jsTruthy(to) ? to : _transparent;
+-    if (f is! String || t is! String) return _color(from, to, factor);
++    final f = publicColorValue(jsTruthy(from) ? from : _transparent);
++    final t = publicColorValue(jsTruthy(to) ? to : _transparent);
++    if (isPatternOrGradient(f) || isPatternOrGradient(t)) {
++      return _color(from, to, factor);
++    }
+     var c0 = _c0;
+     if (c0 == null || !identical(f, _fromKey)) {
+       _fromKey = f;
+-      _c0 = c0 = Color(f);
++      _c0 = c0 = color(f) as Color;
+     }
+     if (!c0.valid) return to;
+     var c1 = _c1;
+     if (c1 == null || !identical(t, _toKey)) {
+       _toKey = t;
+-      _c1 = c1 = Color(t);
+-    }
+-    return c1.valid ? c1.clone().mix(c0, factor).hexString() : to;
++      _c1 = c1 = color(t) as Color;
++    }
++    return c1.valid ? _mixedColor(c1.clone(), c0, factor) : to;
+   }
+ }
+ 
+--- a/lib/src/core/core.animations.defaults.dart
++++ b/lib/src/core/core.animations.defaults.dart
+@@ -13,6 +13,7 @@
+ import 'package:flutter_chartjs_port/src/js/js_math.dart';
+ import 'package:flutter_chartjs_port/src/js/js_number.dart';
+ import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show
+         AnimationOptionsScope,
+@@ -73,14 +74,16 @@
+           ..animation = (AnimationOptionsScope()..duration = 0.0))
+         ..show = (TransitionOptionsScope()
+           ..animations = (AnimationsSpecScope()
+-            ..colors = (AnimationOptionsScope()..from = 'transparent')
++            ..colors = (AnimationOptionsScope()
++              ..from = const PreparedColor(0, 0, 0, 0))
+             ..visible = (AnimationOptionsScope()
+               ..type = 'boolean'
+               // show immediately
+               ..duration = 0.0)))
+         ..hide = (TransitionOptionsScope()
+           ..animations = (AnimationsSpecScope()
+-            ..colors = (AnimationOptionsScope()..to = 'transparent')
++            ..colors = (AnimationOptionsScope()
++              ..to = const PreparedColor(0, 0, 0, 0))
+             ..visible = (AnimationOptionsScope()
+               ..type = 'boolean'
+               ..easing = 'linear'
+--- a/lib/src/core/core.controller.dart
++++ b/lib/src/core/core.controller.dart
+@@ -33,6 +33,7 @@
+ library;
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
++import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+ import 'package:flutter_chartjs_port/src/core/core.config.dart'
+     show Config, determineAxis, getIndexAxis;
+@@ -62,6 +63,9 @@
+ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
+     show Debounced, debounce;
+ import 'package:flutter_chartjs_port/src/helpers/index.dart'
++    as helpers
++    show isPointInArea;
++import 'package:flutter_chartjs_port/src/helpers/index.dart'
+     show
+         ContextObject,
+         clearCanvas,
+@@ -71,9 +75,6 @@
+         isDomSupported,
+         retinaScale,
+         unclipArea;
+-import 'package:flutter_chartjs_port/src/helpers/index.dart'
+-    as helpers
+-    show isPointInArea;
+ import 'package:flutter_chartjs_port/src/js/js_array.dart';
+ import 'package:flutter_chartjs_port/src/js/js_class.dart';
+ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
+@@ -617,6 +618,17 @@
+   final double index;
+ }
+ 
++Config _colorConfig(Object? userConfig) {
++  installNativeColorCodec();
++  validateChartColors(userConfig);
++  return Config(userConfig);
++}
++
++core_defaults.Defaults _nativeDefaults() {
++  installNativeColorCodec();
++  return core_defaults.defaults;
++}
++
+ /// core.controller.js:103 `Chart`.
+ class Chart implements types.Chart {
+   /// core.controller.js:123 `constructor(item, userConfig)`.
+@@ -633,7 +645,9 @@
+   ///
+   /// `console.error` is a `print` of the message.
+   // eslint-disable-next-line max-statements
+-  Chart(Object? item, [Object? userConfig]) : config = Config(userConfig) {
++  Chart(Object? item, [Object? userConfig])
++    : config = _colorConfig(userConfig) {
++    installNativeColorCodec();
+     final config = this.config;
+     final initialCanvas = _getCanvas(item);
+     final existingChart = _getChart(initialCanvas);
+@@ -717,14 +731,17 @@
+   }
+ 
+   /// core.controller.js:105 `static defaults = defaults`.
+-  static final core_defaults.Defaults defaults = core_defaults.defaults;
++  static final core_defaults.Defaults defaults = _nativeDefaults();
+ 
+   /// core.controller.js:106 `static instances = instances`: the charts by
+   /// the `ToString` of their [id] (index.d.ts:594).
+   static final Map<String, Chart> instances = _instances;
+ 
+   /// core.controller.js:107 `static overrides = overrides`.
+-  static OverridesByTypeScope get overrides => core_defaults.overrides;
++  static OverridesByTypeScope get overrides {
++    installNativeColorCodec();
++    return core_defaults.overrides;
++  }
+ 
+   /// core.controller.js:108 `static registry = registry`.
+   static final core_registry.Registry registry = core_registry.registry;
+--- a/lib/src/core/core.defaults.dart
++++ b/lib/src/core/core.defaults.dart
+@@ -23,8 +23,8 @@
+ /// (differences.md row `adapt-defaults-route`).
+ library;
+ 
++import 'dart:core' as core show override;
+ import 'dart:core';
+-import 'dart:core' as core show override;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
+ import 'package:flutter_chartjs_port/src/core/core.layouts.defaults.dart';
+@@ -36,6 +36,7 @@
+ import 'package:flutter_chartjs_port/src/js/js_object.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+@@ -148,9 +149,9 @@
+   /// [descriptorValues] is `_descriptors`. [appliers] is `_appliers`.
+   Defaults(Object? descriptorValues, List<void Function(Defaults)> appliers) {
+     animationCell = optUndefined;
+-    backgroundColor = 'rgba(0,0,0,0.1)';
+-    borderColor = 'rgba(0,0,0,0.1)';
+-    this.color = '#666';
++    backgroundColor = const PreparedColor(0, 0, 0, 0.1);
++    borderColor = const PreparedColor(0, 0, 0, 0.1);
++    this.color = const PreparedColor(102, 102, 102, 1);
+     datasets = DatasetOptionsByTypeScope();
+     devicePixelRatioCell = OptFunction<double>(
+       _fn1(
+--- a/lib/src/core/core.scale.defaults.dart
++++ b/lib/src/core/core.scale.defaults.dart
+@@ -13,6 +13,7 @@
+ import 'package:flutter_chartjs_port/src/js/js_object.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/opt.dart' show OptFunction;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show
+         BorderOptionsScope,
+@@ -83,7 +84,7 @@
+           ..maxRotation = 50.0
+           ..mirror = false
+           ..textStrokeWidth = 0.0
+-          ..textStrokeColor = ''
++          ..textStrokeColor = const PreparedColor(0, 0, 0, 0)
+           ..padding = 3.0
+           ..display = true
+           ..autoSkip = true
+@@ -97,7 +98,7 @@
+           ..align = 'center'
+           ..crossAlign = 'near'
+           ..showLabelBackdrop = false
+-          ..backdropColor = 'rgba(255, 255, 255, 0.75)'
++          ..backdropColor = const PreparedColor(255, 255, 255, 0.75)
+           ..backdropPadding = 2.0),
+     )
+     ..route('scale.ticks', 'color', '', 'color')
+--- a/lib/src/elements/element.arc.dart
++++ b/lib/src/elements/element.arc.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.arc.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.arc.ts`: the arc element of the doughnut,
+@@ -72,6 +73,7 @@
+     show AnimatedProp;
+ import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show ArcOptionsScope, DescriptorsScope;
+@@ -928,7 +930,7 @@
+   /// typed scope of the kind `ArcOptions` (Chart.js ADR 0054 §3).
+   static final ArcOptionsScope defaults = ArcOptionsScope()
+     ..borderAlign = 'center'
+-    ..borderColor = '#fff'
++    ..borderColor = const PreparedColor(255, 255, 255, 1)
+     ..borderDash = <Object?>[]
+     ..borderDashOffset = 0.0
+     ..borderJoinStyleCell = optUndefined
+--- a/lib/src/elements/element.bar.dart
++++ b/lib/src/elements/element.bar.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.bar.js (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.bar.js`.
+--- a/lib/src/elements/element.line.dart
++++ b/lib/src/elements/element.line.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.line.js (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.line.js`.
+--- a/lib/src/elements/element.point.dart
++++ b/lib/src/elements/element.point.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.point.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+ 
+ /// Port of `src/elements/element.point.ts`.
+--- a/lib/src/helpers/helpers.color.dart
++++ b/lib/src/helpers/helpers.color.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/helpers/helpers.color.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ 
+ /// Port of `src/helpers/helpers.color.ts`.
+ ///
+@@ -7,8 +8,10 @@
+ /// [CanvasPattern] of the canvas layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
+-    show Color;
++    show Color, RGBA;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/color.dart';
+ 
+ /// helpers.color.ts:3 `isPatternOrGradient`.
+@@ -29,17 +32,32 @@
+ /// [Color] of [value]. As in JavaScript, a JS `null` [value] (Dart `null`)
+ /// throws.
+ Object color(Object? value) {
+-  return isPatternOrGradient(value) ? value! : Color(value);
++  if (isPatternOrGradient(value)) return value!;
++  final channels = requireSolidColor(value);
++  return Color.fromRgbaBytes(
++    RGBA(
++      r: channels.red.toDouble(),
++      g: channels.green.toDouble(),
++      b: channels.blue.toDouble(),
++      a: channels.alpha * 255,
++    ),
++  );
+ }
+ 
+ /// helpers.color.ts:28 `getHoverColor`.
+ ///
+ /// Returns a [CanvasGradient] or [CanvasPattern] unchanged. Else returns the
+-/// hex string of [value], saturated by 0.5 and darkened by 0.1. Dart `null`
+-/// stands for the JS `undefined` result of a [value] that does not parse. As
+-/// in JavaScript, a JS `null` [value] (Dart `null`) throws.
++/// native color of [value], saturated by 0.5 and darkened by 0.1. An absent
++/// value returns null. Strings and other non-color inputs throw (ADR 0057).
+ Object? getHoverColor(Object? value) {
+-  return isPatternOrGradient(value)
+-      ? value
+-      : Color(value).saturate(0.5).darken(0.1).hexString();
++  if (value is Undefined) return null;
++  if (isPatternOrGradient(value)) return value;
++  final hovered = (color(value) as Color).saturate(0.5).darken(0.1);
++  final rgb = hovered.rgbaBytes!;
++  return PreparedColor(
++    rgb.r.round(),
++    rgb.g.round(),
++    rgb.b.round(),
++    rgb.a / 255,
++  ).paint;
+ }
+--- a/lib/src/helpers/helpers.config.dart
++++ b/lib/src/helpers/helpers.config.dart
+@@ -1,4 +1,5 @@
+ // Ported from Chart.js v4.6.1 src/helpers/helpers.config.ts (MIT, Chart.js Contributors).
++// DIVERGES(chartjs): adapt-direct-colors, prepared colors and a CSS face.
+ // DIVERGES(chartjs): adapt-typed-options, typed resolvers of Chart.js ADR 0054.
+ 
+ /// Port of `src/helpers/helpers.config.ts`: the option resolvers.
+@@ -57,8 +58,8 @@
+ /// sub-resolver.
+ library;
+ 
++import 'dart:core' as core;
+ import 'dart:core';
+-import 'dart:core' as core;
+ import 'dart:typed_data' show Uint16List;
+ 
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
+@@ -75,6 +76,7 @@
+     show ElementOptions;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+ import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart';
+ import 'package:meta/meta.dart';
+ 
+@@ -402,7 +404,7 @@
+   ///
+   /// A trap for getting property values.
+   @core.override
+-  Object? operator [](String name) => _get(name);
++  Object? operator [](String name) => publicColorValue(_get(name));
+ 
+   /// helpers.config.ts:73 the `getOwnPropertyDescriptor` trap: whether the
+   /// first scope owns [key].
+@@ -446,7 +448,7 @@
+ 
+   /// `resolver[name]`: the `get` trap ([operator []]).
+   @core.override
+-  Object? jsRead(String name) => _get(name);
++  Object? jsRead(String name) => publicColorValue(_get(name));
+ 
+   /// `resolver[name] = value`: the `set` trap ([operator []=]).
+   @core.override
+@@ -741,7 +743,7 @@
+   ///
+   /// A trap for getting property values.
+   @core.override
+-  Object? operator [](String name) => _get(name);
++  Object? operator [](String name) => publicColorValue(_get(name));
+ 
+   /// helpers.config.ts:159 the `getOwnPropertyDescriptor` trap: whether a
+   /// descriptor exists for [key].
+@@ -784,7 +786,7 @@
+ 
+   /// `resolver[name]`: the `get` trap ([operator []]).
+   @core.override
+-  Object? jsRead(String name) => _get(name);
++  Object? jsRead(String name) => publicColorValue(_get(name));
+ 
+   /// `resolver[name] = value`: the `set` trap ([operator []=]).
+   @core.override
+@@ -974,8 +976,10 @@
+   final subProxy = view._slot('_subProxy');
+   final descriptors = view._slot('_descriptors')! as Descriptor;
+   // resolve from proxy
+-  var value = key != null && proxy is OptionResolver
+-      ? proxy.readKey(key)
++  var value = proxy is OptionResolver
++      ? key == null
++            ? proxy._get(prop)
++            : proxy.readKey(key)
+       : jsGet(proxy, prop);
+ 
+   // resolve with context
+@@ -1035,10 +1039,8 @@
+     throw StateError('Recursion detected: ${stack.join('->')}->$prop');
+   }
+   stack.add(prop);
+-  var value = jsCall(getValue, [
+-    context,
+-    if (jsTruthy(subProxy)) subProxy else receiver,
+-  ]);
++  final options = jsTruthy(subProxy) ? subProxy : receiver;
++  var value = jsCall(getValue, [context, options]);
+   stack.remove(prop);
+   if (_needsSubResolver(prop, value)) {
+     // When scriptable option returns an object, create a resolver on that.
+@@ -1071,7 +1073,10 @@
+   final index = jsGet(context, 'index');
+   if (!identical(index, undefined) && isIndexable(prop)) {
+     final remainder = jsToNumber(index).remainder(value.length);
+-    return jsGet(value, jsNumberToString(remainder));
++    return jsGet(
++      value,
++      jsNumberToString(remainder),
++    );
+   } else if (isObject(value[0])) {
+     // Array of objects, return array or resolvers
+     final arr = value;
+@@ -1280,7 +1285,7 @@
+       value = jsGet(scope, key);
+     }
+     if (!identical(value, undefined)) {
+-      return value;
++      return publicColorValue(value);
+     }
+   }
+   return undefined;
+--- a/lib/src/helpers/helpers.segment.dart
++++ b/lib/src/helpers/helpers.segment.dart
+@@ -3,6 +3,7 @@
+ // Upstream reassigns the parameters start and loop of solidSegments, and s
+ // and e of addStyle. The port keeps these assignments.
+ // ignore_for_file: parameter_assignments
++// DIVERGES(chartjs): adapt-direct-colors, native segment color comparison.
+ 
+ /// Port of `src/helpers/helpers.segment.js`.
+ ///
+@@ -41,6 +42,7 @@
+ import 'package:flutter_chartjs_port/src/js/js_object.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/typed_record.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart';
+ 
+@@ -590,13 +592,25 @@
+ /// in the key order), resolved element options give their typed fields.
+ SegmentStyle _readStyle(Object? options) {
+   return SegmentStyle()
+-    ..backgroundColor = readOption(options, OptionKey.backgroundColor)
++    ..backgroundColor = _styleColor(
++      readOption(options, OptionKey.backgroundColor),
++    )
+     ..borderCapStyle = readOption(options, OptionKey.borderCapStyle)
+     ..borderDash = readOption(options, OptionKey.borderDash)
+     ..borderDashOffset = readOption(options, OptionKey.borderDashOffset)
+     ..borderJoinStyle = readOption(options, OptionKey.borderJoinStyle)
+     ..borderWidth = readOption(options, OptionKey.borderWidth)
+-    ..borderColor = readOption(options, OptionKey.borderColor);
++    ..borderColor = _styleColor(readOption(options, OptionKey.borderColor));
++}
++
++Object? _styleColor(Object? value) {
++  if (value == null ||
++      value is Undefined ||
++      isSolidColor(value) ||
++      isPatternOrGradient(value)) {
++    return value;
++  }
++  throw ArgumentError.value(value, 'segment color', 'Expected Flutter Color');
+ }
+ 
+ /// helpers.segment.js:337-347 the object literal of `readStyle`: the style
+@@ -751,7 +765,18 @@
+     return false;
+   }
+   final cache = <Object?>[];
++  final solidColors = <Object?>[];
+   Object? replacer(String key, Object? value) {
++    if (isSolidColor(value)) {
++      final native = publicColorValue(value);
++      var index = solidColors.indexOf(native);
++      if (index < 0) {
++        index = solidColors.length;
++        solidColors.add(native);
++      }
++      // An internal comparison token, never a CSS paint value.
++      return 'native-color:$index';
++    }
+     if (!isPatternOrGradient(value)) {
+       return value;
+     }
+--- a/lib/src/js/js_webidl.dart
++++ b/lib/src/js/js_webidl.dart
+@@ -34,6 +34,7 @@
+ 
+ import 'package:flutter_chartjs_port/src/js/js_number.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ 
+ /// The value that the canvas setter `fillStyle` or `strokeStyle` gets for
+ /// the option value [value], for example `ctx.fillStyle =
+@@ -43,7 +44,11 @@
+ /// The [undefined] sentinel of an absent option gives Dart `null`. The DOM
+ /// ignores `undefined`, which is not a color, and the canvas layer ignores
+ /// `null`. Another value passes as it is.
+-Object? canvasStyle(Object? value) => value is Undefined ? null : value;
++Object? canvasStyle(Object? value) => switch (value) {
++  Undefined() => null,
++  PreparedColor() => value.paint,
++  _ => value,
++};
+ 
+ /// The value that the canvas setter `lineWidth` or `lineDashOffset` gets
+ /// for the option value [value] (element.point.ts:97,
+--- a/lib/src/kurkle_color/color.dart
++++ b/lib/src/kurkle_color/color.dart
+@@ -24,23 +24,20 @@
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart'
+     show b2n, n2b, round;
+-import 'package:flutter_chartjs_port/src/kurkle_color/hex.dart' show hexParse;
+ import 'package:flutter_chartjs_port/src/kurkle_color/hex.dart'
+     as hex_js
+     show hexString;
+ import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
+-    show hsl2rgb, hueParse, rgb2hsl;
+-import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
+     as hue_js
+     show hslString, rotate;
++import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
++    show hsl2rgb, rgb2hsl;
+ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+-import 'package:flutter_chartjs_port/src/kurkle_color/names.dart'
+-    show nameParse;
+-import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart' show rgbParse;
+ import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart'
+     as rgb_js
+     show rgbString;
+ import 'package:flutter_chartjs_port/src/kurkle_color/srgb.dart' as srgb_js;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ 
+ /// color.js:24 `modHSL`.
+ ///
+@@ -118,15 +115,6 @@
+   return v;
+ }
+ 
+-/// color.js:69 `functionParse`.
+-RGBA? _functionParse(String str) {
+-  // str.charAt(0) of '' is ''.
+-  if (str.isNotEmpty && str.codeUnitAt(0) == 114) {
+-    return rgbParse(str);
+-  }
+-  return hueParse(str);
+-}
+-
+ /// `typeof value` for the Dart values that stand for JS values
+ /// (js_number.dart): `null` and every object that is not a function are
+ /// `'object'`.
+@@ -148,8 +136,9 @@
+   /// color.js:81 `constructor`.
+   ///
+   /// [input] is a [Color], an RGBA object (an [RGBA] or a `Map` with the keys
+-  /// `r`, `g`, `b` and `a`), a CSS color string or a `List` `[r, g, b]` or
+-  /// `[r, g, b, a]`. The `a` of an object or a list is alpha [0..1].
++  /// `r`, `g`, `b` and `a`), or a `List` `[r, g, b]` or `[r, g, b, a]`.
++  /// The installed native bridge also accepts Flutter Color. Strings throw
++  /// (ADR 0057). The `a` of an object or a list is alpha [0..1].
+   ///
+   /// A [Color] input gives that instance, as the JS constructor returns it.
+   /// Another input that is not an object or a string gives a color that is
+@@ -159,24 +148,52 @@
+     if (input is Color) {
+       return input;
+     }
++    // DIVERGES(chartjs): adapt-direct-colors, no string color constructor.
++    if (input is String) {
++      throw ArgumentError.value(
++        input,
++        'color',
++        'CSS color strings are unsupported; use Flutter Color',
++      );
++    }
++    final native = nativeColorReader?.call(input);
++    if (native != null) {
++      return Color.fromRgbaBytes(
++        RGBA(
++          r: native.red.toDouble(),
++          g: native.green.toDouble(),
++          b: native.blue.toDouble(),
++          a: native.alpha * 255,
++        ),
++      );
++    }
+     RGBA? v;
+-    // DIVERGES(chartjs): adapt-kurkle-color-dispatch, performance
+-    // optimisations.
+-    if (input is String) {
+-      if (input.isNotEmpty && input.codeUnitAt(0) == 35) {
+-        v = hexParse(input);
+-      } else if (input.isNotEmpty && input.codeUnitAt(input.length - 1) == 41) {
+-        v = _functionParse(input);
+-      } else {
+-        v = nameParse(input) ?? _functionParse(input);
+-      }
+-    } else if (_typeOf(input) == 'object') {
++    if (_typeOf(input) == 'object') {
+       v = _fromObject(input);
+     }
+     return Color._(v);
+   }
+ 
+   Color._(this._rgb) : _valid = _rgb != null;
++
++  /// Internal numerical construction with alpha in byte units. Native inputs
++  /// do not require parsing or premature alpha rounding.
++  factory Color.fromRgbaBytes(RGBA value) => Color._(
++    RGBA(r: value.r, g: value.g, b: value.b, a: value.a),
++  );
++
++  /// A copy of the numerical channels, including the unrounded byte alpha.
++  RGBA? get rgbaBytes {
++    final value = _rgb;
++    return value == null
++        ? null
++        : RGBA(
++            r: value.r,
++            g: value.g,
++            b: value.b,
++            a: value.a,
++          );
++  }
+ 
+   /// color.js:96 `_rgb`. The [RGBA] with `a` as a byte [0..255]. Dart `null`
+   /// stands for JS `undefined`: the input did not parse.
+--- a/lib/src/options/element_options_base.dart
++++ b/lib/src/options/element_options_base.dart
+@@ -22,6 +22,7 @@
+     show JsFreezable, JsObjectFace;
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ 
+ /// The type of [_absent].
+@@ -200,7 +201,7 @@
+   @override
+   Object? jsRead(String name) {
+     final raw = rawOf(name);
+-    if (!identical(raw, _absent)) return raw;
++    if (!identical(raw, _absent)) return publicColorValue(raw);
+     // A known key is never an extra key.
+     final extra = _extra;
+     return extra != null && extra.containsKey(name) ? extra[name] : undefined;
+@@ -380,7 +381,7 @@
+   }
+ 
+   @override
+-  Object? jsRead(String name) => _mapValue(name);
++  Object? jsRead(String name) => publicColorValue(_mapValue(name));
+ 
+   /// Writes [value] for [name].
+   ///
+--- a/lib/src/options/option_scope.dart
++++ b/lib/src/options/option_scope.dart
+@@ -33,6 +33,7 @@
+ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
+ import 'package:flutter_chartjs_port/src/options/opt.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
+ import 'package:flutter_chartjs_port/src/types/data_item.dart'
+     show TypedDataItem;
+@@ -334,7 +335,7 @@
+   @override
+   Object? jsRead(String name) {
+     final cell = lookup(name);
+-    return cell == null ? undefined : cell.raw;
++    return cell == null ? undefined : publicColorValue(cell.raw);
+   }
+ 
+   /// `object[name] = value` (`[[Set]]`): stores the cell of [value].
+--- /dev/null
++++ b/lib/src/options/prepared_color.dart
+@@ -0,0 +1,111 @@
++// Original code, not ported from Chart.js: numerical colors for pure layers.
++
++/// Built-in colors stay numerical in pure Dart. Flutter installs the native
++/// codec at the chart/canvas boundary; user color inputs must be Flutter Color.
++library;
++
++import 'package:flutter_chartjs_port/src/js/js_number.dart'
++    show jsNumberToString;
++import 'package:meta/meta.dart' show immutable, internal;
++
++/// Converts a Flutter Color to numerical channels without parsing text.
++@internal
++PreparedColor? Function(Object?)? nativeColorReader;
++
++/// Allocation-free native solid-color type check installed by Flutter.
++@internal
++bool Function(Object?)? nativeColorCheck;
++
++/// Constructs a Flutter Color from numerical channels.
++@internal
++Object Function(PreparedColor)? nativeColorWriter;
++
++/// Numerical sRGB channels used by defaults, themes and color arithmetic.
++@internal
++@immutable
++final class PreparedColor {
++  /// Keeps numerical channels and, when supplied, the original native color.
++  const PreparedColor(
++    this.red,
++    this.green,
++    this.blue,
++    this.alpha, [
++    Object? paint,
++  ]) : _paint = paint;
++
++  /// Red byte.
++  final int red;
++
++  /// Green byte.
++  final int green;
++
++  /// Blue byte.
++  final int blue;
++
++  /// Alpha in [0, 1].
++  final double alpha;
++
++  final Object? _paint;
++
++  /// The native color. A pure-Dart caller can retain this numerical value
++  /// until a Flutter boundary installs the codec.
++  Object get paint {
++    if (_paint != null) return _paint;
++    final write = nativeColorWriter;
++    return write == null ? this : write(this);
++  }
++
++  @override
++  bool operator ==(Object other) =>
++      other is PreparedColor &&
++      red == other.red &&
++      green == other.green &&
++      blue == other.blue &&
++      alpha == other.alpha;
++
++  @override
++  int get hashCode => Object.hash(red, green, blue, alpha);
++
++  /// Legacy formatting for test/reference code. Rendering never reads it.
++  String get css => 'rgba($red, $green, $blue, ${jsNumberToString(alpha)})';
++}
++
++/// Requires a native solid color or an internal numerical color. No string
++/// syntax, including names and hex values, is accepted.
++@internal
++PreparedColor requireSolidColor(Object? value) {
++  if (value is PreparedColor) return value;
++  if (value is! String) {
++    final color = nativeColorReader?.call(value);
++    if (color != null) return color;
++  }
++  throw ArgumentError.value(
++    value,
++    'color',
++    'Expected Flutter Color; CSS color strings are unsupported',
++  );
++}
++
++/// Whether a value is a numerical or native solid color.
++@internal
++bool isSolidColor(Object? value) =>
++    value is PreparedColor || (nativeColorCheck?.call(value) ?? false);
++
++/// Numerical equality for the built-in default palette detection.
++@internal
++bool sameSolidColor(Object? a, PreparedColor b) {
++  final color = a is PreparedColor ? a : nativeColorReader?.call(a);
++  if (color == null) return false;
++  return color.red == b.red &&
++      color.green == b.green &&
++      color.blue == b.blue &&
++      color.alpha == b.alpha;
++}
++
++/// Public Flutter reads expose Color values, never generated CSS text.
++@internal
++@pragma('vm:prefer-inline')
++@pragma('dart2js:prefer-inline')
++@pragma('wasm:prefer-inline')
++Object? publicColorValue(Object? value) =>
++    value is PreparedColor ? value.paint : value;
+--- a/lib/src/options/resolved.g.dart
++++ b/lib/src/options/resolved.g.dart
+@@ -23,6 +23,7 @@
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
+ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+ 
+ /// index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the
+@@ -279,7 +280,7 @@
+       return;
+     }
+     _present |= 16;
+-    _pointStyle = raw;
++    _pointStyle = publicColorValue(raw);
+   }
+ 
+   double _radius = 0;
+@@ -384,7 +385,7 @@
+       return;
+     }
+     _present |= 128;
+-    _backgroundColor = raw;
++    _backgroundColor = publicColorValue(raw);
+   }
+ 
+   Object? _borderColor = null;
+@@ -409,7 +410,7 @@
+       return;
+     }
+     _present |= 256;
+-    _borderColor = raw;
++    _borderColor = publicColorValue(raw);
+   }
+ 
+   @override
+@@ -731,7 +732,7 @@
+       return;
+     }
+     _present |= 2;
+-    _borderDash = raw;
++    _borderDash = publicColorValue(raw);
+   }
+ 
+   double _borderDashOffset = 0;
+@@ -933,7 +934,7 @@
+       return;
+     }
+     _present |= 128;
+-    _fill = raw;
++    _fill = publicColorValue(raw);
+   }
+ 
+   Object? _spanGaps = null;
+@@ -958,7 +959,7 @@
+       return;
+     }
+     _present |= 256;
+-    _spanGaps = raw;
++    _spanGaps = publicColorValue(raw);
+   }
+ 
+   Object? _stepped = null;
+@@ -983,7 +984,7 @@
+       return;
+     }
+     _present |= 512;
+-    _stepped = raw;
++    _stepped = publicColorValue(raw);
+   }
+ 
+   double _tension = 0;
+@@ -1049,7 +1050,7 @@
+       return;
+     }
+     _present |= 2048;
+-    _backgroundColor = raw;
++    _backgroundColor = publicColorValue(raw);
+   }
+ 
+   Object? _borderColor = null;
+@@ -1074,7 +1075,7 @@
+       return;
+     }
+     _present |= 4096;
+-    _borderColor = raw;
++    _borderColor = publicColorValue(raw);
+   }
+ 
+   Object? _segment = null;
+@@ -1099,7 +1100,7 @@
+       return;
+     }
+     _present |= 8192;
+-    _segment = raw;
++    _segment = publicColorValue(raw);
+   }
+ 
+   @override
+@@ -1445,7 +1446,7 @@
+       return;
+     }
+     _present |= 1;
+-    _borderSkipped = raw;
++    _borderSkipped = publicColorValue(raw);
+   }
+ 
+   Object? _borderWidth = null;
+@@ -1470,7 +1471,7 @@
+       return;
+     }
+     _present |= 2;
+-    _borderWidth = raw;
++    _borderWidth = publicColorValue(raw);
+   }
+ 
+   Object? _borderRadius = null;
+@@ -1495,7 +1496,7 @@
+       return;
+     }
+     _present |= 4;
+-    _borderRadius = raw;
++    _borderRadius = publicColorValue(raw);
+   }
+ 
+   Object? _inflateAmount = null;
+@@ -1520,7 +1521,7 @@
+       return;
+     }
+     _present |= 8;
+-    _inflateAmount = raw;
++    _inflateAmount = publicColorValue(raw);
+   }
+ 
+   Object? _pointStyle = null;
+@@ -1545,7 +1546,7 @@
+       return;
+     }
+     _present |= 16;
+-    _pointStyle = raw;
++    _pointStyle = publicColorValue(raw);
+   }
+ 
+   Object? _backgroundColor = null;
+@@ -1570,7 +1571,7 @@
+       return;
+     }
+     _present |= 32;
+-    _backgroundColor = raw;
++    _backgroundColor = publicColorValue(raw);
+   }
+ 
+   Object? _borderColor = null;
+@@ -1595,7 +1596,7 @@
+       return;
+     }
+     _present |= 64;
+-    _borderColor = raw;
++    _borderColor = publicColorValue(raw);
+   }
+ 
+   @override
+@@ -1889,7 +1890,7 @@
+       return;
+     }
+     _present |= 2;
+-    _borderColor = raw;
++    _borderColor = publicColorValue(raw);
+   }
+ 
+   Object? _borderDash = null;
+@@ -1914,7 +1915,7 @@
+       return;
+     }
+     _present |= 4;
+-    _borderDash = raw;
++    _borderDash = publicColorValue(raw);
+   }
+ 
+   double _borderDashOffset = 0;
+@@ -2011,7 +2012,7 @@
+       return;
+     }
+     _present |= 32;
+-    _borderRadius = raw;
++    _borderRadius = publicColorValue(raw);
+   }
+ 
+   double _borderWidth = 0;
+@@ -2293,7 +2294,7 @@
+       return;
+     }
+     _present |= 8192;
+-    _backgroundColor = raw;
++    _backgroundColor = publicColorValue(raw);
+   }
+ 
+   @override
+--- a/lib/src/plugins/plugin.colors.dart
++++ b/lib/src/plugins/plugin.colors.dart
+@@ -45,6 +45,7 @@
+     show jsGet, jsIsObjectLike, jsSet;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+     show OptionKey, OptionScope;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show ColorsOptionsScope;
+ import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+@@ -54,26 +55,24 @@
+ import 'package:meta/meta.dart';
+ 
+ /// plugin.colors.ts:14 `BORDER_COLORS`.
+-const List<String> _borderColors = [
+-  'rgb(54, 162, 235)', // blue
+-  'rgb(255, 99, 132)', // red
+-  'rgb(255, 159, 64)', // orange
+-  'rgb(255, 205, 86)', // yellow
+-  'rgb(75, 192, 192)', // green
+-  'rgb(153, 102, 255)', // purple
+-  'rgb(201, 203, 207)', // grey
++final List<PreparedColor> _borderColors = [
++  const PreparedColor(54, 162, 235, 1), // blue
++  const PreparedColor(255, 99, 132, 1), // red
++  const PreparedColor(255, 159, 64, 1), // orange
++  const PreparedColor(255, 205, 86, 1), // yellow
++  const PreparedColor(75, 192, 192, 1), // green
++  const PreparedColor(153, 102, 255, 1), // purple
++  const PreparedColor(201, 203, 207, 1), // grey
+ ];
+ 
+ /// plugin.colors.ts:25 `BACKGROUND_COLORS`.
+ ///
+ /// Border colors with 50% transparency. `String.prototype.replace` with a
+ /// string pattern replaces the first match only: [String.replaceFirst].
+-final List<String> _backgroundColors = _borderColors
+-    .map(
+-      (color) =>
+-          color.replaceFirst('rgb(', 'rgba(').replaceFirst(')', ', 0.5)'),
+-    )
+-    .toList();
++final List<PreparedColor> _backgroundColors = [
++  for (final color in _borderColors)
++    PreparedColor(color.red, color.green, color.blue, 0.5),
++];
+ 
+ // DIVERGES(chartjs): theme-H4a, the theme palette keys, variables and reader.
+ /// The key of the border palette under `plugins.colors` of a theme map
+@@ -111,9 +110,11 @@
+   // DIVERGES(chartjs): theme-H4b, the theme palette comes first.
+   final themeColors = _themeBorderColors;
+   // js-ok: i is an int and never negative, so Dart % equals JS %.
+-  if (themeColors != null) return themeColors[i % themeColors.length];
++  if (themeColors != null) {
++    return publicColorValue(themeColors[i % themeColors.length]);
++  }
+   // js-ok: i is an int and never negative, so Dart % equals JS %.
+-  return _borderColors[i % _borderColors.length];
++  return _borderColors[i % _borderColors.length].paint;
+ }
+ 
+ /// plugin.colors.ts:31 `getBackgroundColor(i)`.
+@@ -121,9 +122,11 @@
+   // DIVERGES(chartjs): theme-H4c, the theme palette comes first.
+   final themeColors = _themeBackgroundColors;
+   // js-ok: i is an int and never negative, so Dart % equals JS %.
+-  if (themeColors != null) return themeColors[i % themeColors.length];
++  if (themeColors != null) {
++    return publicColorValue(themeColors[i % themeColors.length]);
++  }
+   // js-ok: i is an int and never negative, so Dart % equals JS %.
+-  return _backgroundColors[i % _backgroundColors.length];
++  return _backgroundColors[i % _backgroundColors.length].paint;
+ }
+ 
+ /// The write `dataset[key] = value` of a colorizer into the dataset
+@@ -294,8 +297,14 @@
+ /// inequality of a value and a string is the Dart `!=`. The reads are the
+ /// typed reads of the keys of `defaults` (with their routes).
+ bool _containsDefaultColorsDefenitions() {
+-  return defaults.lookup(OptionKey.borderColor)?.raw != 'rgba(0,0,0,0.1)' ||
+-      defaults.lookup(OptionKey.backgroundColor)?.raw != 'rgba(0,0,0,0.1)';
++  return !sameSolidColor(
++        defaults.lookup(OptionKey.borderColor)?.raw,
++        const PreparedColor(0, 0, 0, 0.1),
++      ) ||
++      !sameSolidColor(
++        defaults.lookup(OptionKey.backgroundColor)?.raw,
++        const PreparedColor(0, 0, 0, 0.1),
++      );
+ }
+ 
+ /// plugin.colors.ts:102 `beforeLayout(chart, _args, options)`.
+--- a/lib/src/plugins/plugin.tooltip.dart
++++ b/lib/src/plugins/plugin.tooltip.dart
+@@ -69,6 +69,7 @@
+ import 'package:flutter_chartjs_port/src/options/opt.dart'
+     show OptFunction, optNull;
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show
+         AnimationOptionsScope,
+@@ -2530,17 +2531,17 @@
+     ..enabled = true
+     ..externalCell = optNull
+     ..position = 'average'
+-    ..backgroundColor = 'rgba(0,0,0,0.8)'
+-    ..titleColor = '#fff'
++    ..backgroundColor = const PreparedColor(0, 0, 0, 0.8)
++    ..titleColor = const PreparedColor(255, 255, 255, 1)
+     ..titleFont = (FontSpecScope()..weight = 'bold')
+     ..titleSpacing = 2.0
+     ..titleMarginBottom = 6.0
+     ..titleAlign = 'left'
+-    ..bodyColor = '#fff'
++    ..bodyColor = const PreparedColor(255, 255, 255, 1)
+     ..bodySpacing = 2.0
+     ..bodyFont = FontSpecScope()
+     ..bodyAlign = 'left'
+-    ..footerColor = '#fff'
++    ..footerColor = const PreparedColor(255, 255, 255, 1)
+     ..footerSpacing = 2.0
+     ..footerMarginTop = 6.0
+     ..footerFont = (FontSpecScope()..weight = 'bold')
+@@ -2551,10 +2552,10 @@
+     ..cornerRadius = 6.0
+     ..boxHeightCell = const OptFunction<double>(_bodyFontSize)
+     ..boxWidthCell = const OptFunction<double>(_bodyFontSize)
+-    ..multiKeyBackground = '#fff'
++    ..multiKeyBackground = const PreparedColor(255, 255, 255, 1)
+     ..displayColors = true
+     ..boxPadding = 0.0
+-    ..borderColor = 'rgba(0,0,0,0)'
++    ..borderColor = const PreparedColor(0, 0, 0, 0)
+     ..borderWidth = 0.0
+     ..animation = (AnimationOptionsScope()
+       ..duration = 400.0
+--- a/lib/src/theme/compile.dart
++++ b/lib/src/theme/compile.dart
+@@ -49,6 +49,7 @@
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+     show OptionScope;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show ChartOptionsScope;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+@@ -58,7 +59,7 @@
+ ///
+ /// `rawColorOf` of `css.dart` converts a `dart:ui` `Color` of any color
+ /// space through `ColorSpace.extendedSRGB` to these components (Chart.js ADR
+-/// 0050, theming.md §3.3). [themeColorToRgba] clamps them.
++/// 0050, theming.md §3.3). [themeColorValue] clamps them.
+ typedef RawThemeColor = ({double alpha, double red, double green, double blue});
+ 
+ /// The `rgba()` string of [color] (theming.md §3.3): 8-bit sRGB channels and
+@@ -70,13 +71,20 @@
+ /// `(alpha: 0.1, red: 0, green: 0, blue: 0)` gives `'rgba(0, 0, 0, 0.1)'`.
+ /// The alpha of `Color(0x1A000000)` gives
+ /// `'rgba(0, 0, 0, 0.10196078431372549)'` instead (theming.md §4).
+-String themeColorToRgba(RawThemeColor color) {
++PreparedColor _themeColorChannels(RawThemeColor color) {
+   final red = _channel(color.red);
+   final green = _channel(color.green);
+   final blue = _channel(color.blue);
+-  final alpha = jsNumberToString(color.alpha.clamp(0.0, 1.0));
+-  return 'rgba($red, $green, $blue, $alpha)';
+-}
++  final alpha = color.alpha.clamp(0.0, 1.0);
++  return PreparedColor(red, green, blue, alpha);
++}
++
++/// Legacy formatting for test/reference data, not the compiled theme.
++Object themeColorValue(RawThemeColor color) =>
++    publicColorValue(_themeColorChannels(color))!;
++
++/// Formats legacy reference data; compiled chart themes never call this.
++String themeColorToRgba(RawThemeColor color) => _themeColorChannels(color).css;
+ 
+ /// The 8-bit value of the color component [x].
+ int _channel(double x) => (x * 255.0).round().clamp(0, 255);
+@@ -519,7 +527,7 @@
+ ///
+ /// - Dart `null` gives `null`. A theme that emits no key other than
+ ///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
+-/// - Each color token emits its keys of theming.md §4 as [themeColorToRgba]
++/// - Each color token emits its keys of theming.md §4 as [themeColorValue]
+ ///   strings. The font token `font` emits a Map of its fields that are not
+ ///   `null` into each scale slot, into the two legend fonts and into
+ ///   `plugins.tooltip.bodyFont`, and the same Map without `weight` into
+@@ -528,7 +536,7 @@
+ ///   point-label font is the `font` Map without `size`, then the fields of
+ ///   `pointLabels` over it (theming.md §3.4).
+ /// - The `palette` emits the two palette keys of `plugins.colors` as Lists
+-///   of [themeColorToRgba] strings (Chart.js ADR 0050, theming.md §4).
++///   of [themeColorValue] strings (Chart.js ADR 0050, theming.md §4).
+ /// - The `raw` keys beat the token keys, key by key. Maps merge, and a Map
+ ///   that holds no key after the guard is left out.
+ /// - A key that [themeNeverEmittedReason] rejects is never emitted. In debug
+@@ -572,7 +580,7 @@
+   for (final MapEntry(key: token, value: paths) in _colorTokenKeys.entries) {
+     final color = _color(colors, token);
+     if (color == null) continue;
+-    final rgba = themeColorToRgba(color);
++    final rgba = themeColorValue(color);
+     for (final path in paths) {
+       _put(keys, path, rgba);
+     }
+@@ -580,7 +588,7 @@
+       _put(
+         keys,
+         _backdropKey,
+-        themeColorToRgba((
++        themeColorValue((
+           alpha: _backdropAlpha,
+           red: color.red,
+           green: color.green,
+@@ -632,7 +640,7 @@
+       in _tooltipColorTokenKeys.entries) {
+     final color = _color(colors, token);
+     if (color == null) continue;
+-    final rgba = themeColorToRgba(color);
++    final rgba = themeColorValue(color);
+     for (final path in paths) {
+       _put(keys, path, rgba);
+     }
+@@ -738,11 +746,11 @@
+       ? backgroundAlpha.toDouble()
+       : _paletteBackgroundAlpha;
+   _put(keys, r'plugins.colors.$borderColors', [
+-    for (final color in list) themeColorToRgba(color),
++    for (final color in list) themeColorValue(color),
+   ]);
+   _put(keys, r'plugins.colors.$backgroundColors', [
+     for (final color in list)
+-      themeColorToRgba((
++      themeColorValue((
+         alpha: alpha,
+         red: color.red,
+         green: color.green,
+@@ -859,7 +867,7 @@
+ }
+ 
+ /// The frozen copy of [value]: a frozen [JsFrozenMap] for a Map, a frozen
+-/// [_FrozenList] for a List, the [themeColorToRgba] string for a
++/// [_FrozenList] for a List, the [themeColorValue] string for a
+ /// [RawThemeColor], else [value].
+ Object? _freeze(Object? value) => switch (value) {
+   final AnyObject map => jsObjectFreeze(
+@@ -868,7 +876,7 @@
+   final List<Object?> list => jsObjectFreeze(
+     _FrozenList([for (final item in list) _freeze(item)]),
+   ),
+-  final RawThemeColor color => themeColorToRgba(color),
++  final RawThemeColor color => themeColorValue(color),
+   _ => value,
+ };
+ 
+--- a/lib/src/theme/css.dart
++++ b/lib/src/theme/css.dart
+@@ -25,6 +25,7 @@
+ import 'dart:ui' show Color, ColorSpace, FontStyle;
+ 
+ import 'package:flutter/painting.dart' show TextStyle;
++import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show FontSpecScope;
+ import 'package:flutter_chartjs_port/src/theme/compile.dart'
+@@ -49,6 +50,25 @@
+ /// `'rgba(0, 0, 0, 0.1)'` for `Color.from(alpha: 0.1, red: 0, green: 0,
+ /// blue: 0)`.
+ String colorToRgba(Color color) => themeColorToRgba(rawColorOf(color)!);
++
++/// Prepares a typed color once, retaining its CSS channels for public reads.
++PreparedColor prepareColor(Color color) {
++  final value = rawColorOf(color)!;
++  final red = (value.red * 255).round().clamp(0, 255);
++  final green = (value.green * 255).round().clamp(0, 255);
++  final blue = (value.blue * 255).round().clamp(0, 255);
++  final alpha = value.alpha.clamp(0.0, 1.0);
++  // rgbParse keeps alpha * 255; Color.rgb applies b2n before the canvas
++  // rounds back to a byte. Preserve that order, including halfway cases.
++  final opacity = (alpha * 255 / 2.55 + 0.5).truncateToDouble() / 100;
++  final paint = Color.fromARGB(
++    (opacity * 255).round().clamp(0, 255),
++    red,
++    green,
++    blue,
++  );
++  return PreparedColor(red, green, blue, alpha, paint);
++}
+ 
+ /// The CSS generic families (CSS Fonts 4 §4.2), the names that the family
+ /// string gives without quotes. The canvas layer knows the same names.
+--- a/lib/src/theme/theme_data.dart
++++ b/lib/src/theme/theme_data.dart
+@@ -17,6 +17,7 @@
+ 
+ import 'package:flutter/foundation.dart';
+ import 'package:flutter/painting.dart' show ColorProperty, TextStyle;
++import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show ChartOptionsScope;
+ import 'package:flutter_chartjs_port/src/theme/compile.dart';
+@@ -376,6 +377,7 @@
+ @internal
+ ChartOptionsScope? compileThemeData(ChartThemeData? data) {
+   if (data == null) return null;
++  installNativeColorCodec();
+   return compileChartTheme(themeDataToRaw(data));
+ }
+ 
+--- a/lib/src/typed/lower.dart
++++ b/lib/src/typed/lower.dart
+@@ -58,7 +58,6 @@
+         PluginOptionsByTypeScope,
+         ScaleOptionsByIdScope,
+         ScaleOptionsScope;
+-import 'package:flutter_chartjs_port/src/theme/css.dart' show colorToRgba;
+ import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
+ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
+     show
+@@ -471,14 +470,11 @@
+   return null;
+ };
+ 
+-/// The option value of [color]: its `rgba()` string through `colorToRgba`
+-/// of `css.dart`, the conversion of the theme (Chart.js ADR 0050). Dart
+-/// `null` for `null`.
+-String? colorValue(Color? color) => color == null ? null : colorToRgba(color);
+-
+-/// The option value of a color with three forms: [color] as its string,
+-/// [colors] as a new List of strings, or [colorFor] as a scriptable
+-/// closure ([colorScript]). Dart `null` when the three are `null`.
++/// Keeps the native [color] unchanged, including null for an unset option.
++Color? colorValue(Color? color) => color;
++
++/// A native color, a mutable indexable color list, or a color callback.
++/// Dart `null` when the three are `null`.
+ ///
+ /// The constructors of the typed classes assert that at most one is set.
+ Object? colorOption(
+@@ -486,16 +482,15 @@
+   List<Color>? colors,
+   ChartScript<Color>? colorFor,
+ ) {
+-  if (color != null) return colorToRgba(color);
++  if (color != null) return color;
+   if (colors != null) {
+-    return <Object?>[for (final color in colors) colorToRgba(color)];
++    return <Object?>[...colors];
+   }
+   if (colorFor != null) return colorScript(colorFor);
+   return null;
+ }
+ 
+-/// The scriptable option of [colorFor]: a closure that gives the `rgba()`
+-/// string of the color of each context.
++/// The scriptable option of [colorFor], returning its native Color unchanged.
+ ///
+ /// The closure takes the 2 arguments of a Chart.js scriptable option, the
+ /// context and the options resolver, and `jsCall` calls it with JS arity
+@@ -504,7 +499,7 @@
+ /// function, so it resolves the options of each data item, as for a raw
+ /// closure (`core.config.js:351-366`, `:405-418`).
+ Object? Function(Object?, Object?) colorScript(ChartScript<Color> colorFor) =>
+-    (context, options) => colorToRgba(colorFor(context! as ChartContext));
++    (context, options) => colorFor(context! as ChartContext);
+ 
+ /// The option value of [padding]: a new `PaddingScope` with the keys
+ /// `top`, `right`, `bottom` and `left` (`index.d.ts`, `Padding`). Dart
+--- a/lib/src/types/color.dart
++++ b/lib/src/types/color.dart
+@@ -41,7 +41,7 @@
+   /// `SyntaxError` for a color that does not parse. The canvas layer throws
+   /// a [RangeError] and a [FormatException]. A gradient that a context
+   /// creates (`createLinearGradient`, phase 3) implements it.
+-  void addColorStop(double offset, String color);
++  void addColorStop(double offset, Object color);
+ }
+ 
+ /// lib.dom.d.ts `CanvasPattern`, a member of the union `Color`

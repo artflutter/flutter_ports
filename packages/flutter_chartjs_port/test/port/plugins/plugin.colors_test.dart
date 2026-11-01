@@ -2,7 +2,11 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -184,6 +188,7 @@ AnyObject _dataset(Chart chart, int index) =>
         as AnyObject;
 
 void main() {
+  installNativeColorCodec();
   testReferenceOrigin(
     node: pluginColorsReferenceNode,
     arch: pluginColorsReferenceArch,
@@ -227,37 +232,109 @@ void main() {
         _config(
           'bar',
           datasets: 3,
-          theme: _paletteTheme(['b0', 'b1'], ['g0', 'g1']),
+          theme: _paletteTheme(
+            [
+              const native_ui.Color(0xff000001),
+              const native_ui.Color(0xff000002),
+            ],
+            [
+              const native_ui.Color(0xff000003),
+              const native_ui.Color(0xff000004),
+            ],
+          ),
         ),
       );
-      expect(_dataset(chart, 0)['borderColor'], 'b0');
-      expect(_dataset(chart, 1)['borderColor'], 'b1');
-      expect(_dataset(chart, 2)['borderColor'], 'b0');
-      expect(_dataset(chart, 2)['backgroundColor'], 'g0');
+      expect(
+        _dataset(chart, 0)['borderColor'],
+        const native_ui.Color(0xff000001),
+      );
+      expect(
+        _dataset(chart, 1)['borderColor'],
+        const native_ui.Color(0xff000002),
+      );
+      expect(
+        _dataset(chart, 2)['borderColor'],
+        const native_ui.Color(0xff000001),
+      );
+      expect(
+        _dataset(chart, 2)['backgroundColor'],
+        const native_ui.Color(0xff000003),
+      );
     });
 
     testWidgets('the doughnut and polar area colorizers read the palette', (
       tester,
     ) async {
       final doughnut = acquireChart(
-        _config('doughnut', theme: _paletteTheme(['b0', 'b1'], ['g0'])),
+        _config(
+          'doughnut',
+          theme: _paletteTheme(
+            [
+              const native_ui.Color(0xff000001),
+              const native_ui.Color(0xff000002),
+            ],
+            [const native_ui.Color(0xff000003)],
+          ),
+        ),
       );
-      expect(_dataset(doughnut, 0)['backgroundColor'], ['b0', 'b1', 'b0']);
-      expect(_dataset(doughnut, 1)['backgroundColor'], ['b1', 'b0', 'b1']);
+      expect(_dataset(doughnut, 0)['backgroundColor'], [
+        const native_ui.Color(0xff000001),
+        const native_ui.Color(0xff000002),
+        const native_ui.Color(0xff000001),
+      ]);
+      expect(_dataset(doughnut, 1)['backgroundColor'], [
+        const native_ui.Color(0xff000002),
+        const native_ui.Color(0xff000001),
+        const native_ui.Color(0xff000002),
+      ]);
       final polar = acquireChart(
-        _config('polarArea', theme: _paletteTheme(['b0'], ['g0', 'g1'])),
+        _config(
+          'polarArea',
+          theme: _paletteTheme(
+            [const native_ui.Color(0xff000001)],
+            [
+              const native_ui.Color(0xff000003),
+              const native_ui.Color(0xff000004),
+            ],
+          ),
+        ),
       );
-      expect(_dataset(polar, 0)['backgroundColor'], ['g0', 'g1', 'g0']);
-      expect(_dataset(polar, 1)['backgroundColor'], ['g1', 'g0', 'g1']);
+      expect(_dataset(polar, 0)['backgroundColor'], [
+        const native_ui.Color(0xff000003),
+        const native_ui.Color(0xff000004),
+        const native_ui.Color(0xff000003),
+      ]);
+      expect(_dataset(polar, 1)['backgroundColor'], [
+        const native_ui.Color(0xff000004),
+        const native_ui.Color(0xff000003),
+        const native_ui.Color(0xff000004),
+      ]);
     });
 
     testWidgets('H5 resets the palette: an unthemed chart after a themed '
         'chart gets the upstream palette', (tester) async {
-      acquireChart(_config('bar', theme: _paletteTheme(['b0'], ['g0'])));
+      acquireChart(
+        _config(
+          'bar',
+          theme: _paletteTheme(
+            [const native_ui.Color(0xff000001)],
+            [const native_ui.Color(0xff000003)],
+          ),
+        ),
+      );
       final chart = acquireChart(_config('bar'));
-      expect(_dataset(chart, 0)['borderColor'], 'rgb(54, 162, 235)');
-      expect(_dataset(chart, 1)['borderColor'], 'rgb(255, 99, 132)');
-      expect(_dataset(chart, 1)['backgroundColor'], 'rgba(255, 99, 132, 0.5)');
+      expect(
+        _dataset(chart, 0)['borderColor'],
+        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+      );
+      expect(
+        _dataset(chart, 1)['borderColor'],
+        const native_ui.Color.fromRGBO(255, 99, 132, 1),
+      );
+      expect(
+        _dataset(chart, 1)['backgroundColor'],
+        const native_ui.Color.fromRGBO(255, 99, 132, 0.5),
+      );
     });
 
     testWidgets('an empty List, a String or a Map palette gives the upstream '
@@ -266,10 +343,13 @@ void main() {
         final chart = acquireChart(
           _config('bar', theme: _paletteTheme(value, value)),
         );
-        expect(_dataset(chart, 0)['borderColor'], 'rgb(54, 162, 235)');
+        expect(
+          _dataset(chart, 0)['borderColor'],
+          const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        );
         expect(
           _dataset(chart, 0)['backgroundColor'],
-          'rgba(54, 162, 235, 0.5)',
+          const native_ui.Color.fromRGBO(54, 162, 235, 0.5),
         );
       }
     });
@@ -281,10 +361,13 @@ void main() {
       ((config['options']! as AnyObject)['plugins']!
           as AnyObject)['colors'] = <String, Object?>{
         'enabled': true,
-        themeBorderColorsKey: <Object?>['u0'],
+        themeBorderColorsKey: <Object?>[const native_ui.Color(0xff000005)],
       };
       final chart = acquireChart(config);
-      expect(_dataset(chart, 0)['borderColor'], 'rgb(54, 162, 235)');
+      expect(
+        _dataset(chart, 0)['borderColor'],
+        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+      );
     });
   });
 
@@ -347,8 +430,14 @@ void main() {
           'data': <Object?>[1, 2, 3],
         }),
       );
-      expect(_dataset(chart, 0)['borderColor'], 'rgb(54, 162, 235)');
-      expect(_dataset(chart, 0)['backgroundColor'], 'rgba(54, 162, 235, 0.5)');
+      expect(
+        _dataset(chart, 0)['borderColor'],
+        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+      );
+      expect(
+        _dataset(chart, 0)['backgroundColor'],
+        const native_ui.Color.fromRGBO(54, 162, 235, 0.5),
+      );
     });
   });
 
@@ -364,26 +453,38 @@ void main() {
     testWidgets('a changed defaults.borderColor stops the colorize', (
       tester,
     ) async {
-      defaults['borderColor'] = 'red';
+      defaults['borderColor'] = const native_ui.Color.fromRGBO(255, 0, 0, 1);
       final chart = acquireChart(_config('bar'));
       expect(jsGet(_dataset(chart, 1), 'borderColor'), same(undefined));
       expect(jsGet(_dataset(chart, 1), 'backgroundColor'), same(undefined));
       final options =
           (chart.getDatasetMeta(1).data[0] as Element).options! as JsObjectFace;
-      expect(options['borderColor'], 'red');
-      expect(options['backgroundColor'], 'rgba(0,0,0,0.1)');
+      expect(
+        options['borderColor'],
+        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      );
+      expect(
+        options['backgroundColor'],
+        const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+      );
     });
 
     testWidgets('forceOverride colorizes over a changed defaults.borderColor', (
       tester,
     ) async {
-      defaults['borderColor'] = 'red';
+      defaults['borderColor'] = const native_ui.Color.fromRGBO(255, 0, 0, 1);
       final config = _config('bar');
       ((config['options']! as AnyObject)['plugins']! as AnyObject)['colors'] =
           <String, Object?>{'enabled': true, 'forceOverride': true};
       final chart = acquireChart(config);
-      expect(_dataset(chart, 1)['borderColor'], 'rgb(255, 99, 132)');
-      expect(_dataset(chart, 1)['backgroundColor'], 'rgba(255, 99, 132, 0.5)');
+      expect(
+        _dataset(chart, 1)['borderColor'],
+        const native_ui.Color.fromRGBO(255, 99, 132, 1),
+      );
+      expect(
+        _dataset(chart, 1)['backgroundColor'],
+        const native_ui.Color.fromRGBO(255, 99, 132, 0.5),
+      );
     });
   });
 }

@@ -4,11 +4,14 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CSSStyleDeclaration, HTMLCanvasElement;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
@@ -24,7 +27,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show optionKeyOf;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
@@ -34,6 +36,8 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/color_json.dart';
 
 import '../../support/jasmine.dart' show jasmineEquals;
 import '../controllers/controller_chart_harness.dart'
@@ -111,8 +115,9 @@ final Map<String, Object?> _functions = {
   // () => ''
   'cbAfterFooter': () => '',
   // (item) => item.datasetIndex === 0 ? 'red' : 'blue'
-  'cbLabelTextColor': (Object? item) =>
-      jsGet(item, 'datasetIndex') == 0.0 ? 'red' : 'blue',
+  'cbLabelTextColor': (Object? item) => jsGet(item, 'datasetIndex') == 0.0
+      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
   // (item) => item.datasetIndex !== 1
   'tooltipFilter': (Object? item) => jsGet(item, 'datasetIndex') != 1.0,
   // (a, b) => b.datasetIndex - a.datasetIndex
@@ -132,8 +137,10 @@ final Map<String, Object?> _functions = {
   // backgroundColor: 'blue', borderWidth: {top: 1, left: 2}, borderDash:
   // [2, 1], borderDashOffset: 1, borderRadius: 3})
   'roundLabelColor': (Object? item) => <String, Object?>{
-    'borderColor': jsGet(item, 'datasetIndex') == 0.0 ? 'red' : 'green',
-    'backgroundColor': 'blue',
+    'borderColor': jsGet(item, 'datasetIndex') == 0.0
+        ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        : const native_ui.Color.fromRGBO(0, 128, 0, 1),
+    'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
     'borderWidth': <String, Object?>{'top': 1.0, 'left': 2.0},
     'borderDash': <Object?>[2.0, 1.0],
     'borderDashOffset': 1.0,
@@ -226,7 +233,7 @@ Object? _observeTooltip(Chart chart) {
 
 /// [value] in its parsed form when it is a color: `Color(value).rgbString()`.
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => Color(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s).rgbString() ?? s,
   _ => value,
 };
 
@@ -579,6 +586,7 @@ void _replay(
 Tooltip _newTooltip() => Tooltip((chart: _FakeChart(), options: null));
 
 void main() {
+  installNativeColorCodec();
   // The custom positioner of the generator.
   Tooltip.positioners['custom'] = _customPositioner;
 
@@ -672,6 +680,7 @@ void main() {
           copyReference(pluginTooltipReference.first.config, _functions)!
               as AnyObject;
       config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });
   });
@@ -1247,7 +1256,8 @@ void main() {
                   'label': (Object? item) =>
                       jsAdd('D1 ', jsGet(item, 'formattedValue')),
                   'beforeLabel': () => 'pre',
-                  'labelTextColor': () => 'red',
+                  'labelTextColor': () =>
+                      const native_ui.Color.fromRGBO(255, 0, 0, 1),
                   'title': () => 'not used',
                 },
               },
@@ -1273,7 +1283,10 @@ void main() {
       ]);
       expect(jsGet(t.body![0], 'before'), isEmpty);
       expect(jsGet(t.body![1], 'before'), ['pre']);
-      expect(t.labelTextColors, ['#fff', 'red']);
+      expect(t.labelTextColors, [
+        const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      ]);
       expect(t.width, closeTo(66.037109375, 1e-9));
       expect(t.height, closeTo(79.6, 1e-9));
       expect(t.x, closeTo(273.00732421875, 1e-9));

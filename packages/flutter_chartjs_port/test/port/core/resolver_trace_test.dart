@@ -2,18 +2,6 @@
 @TestOn('vm')
 library;
 
-// The D2 reference trace of Chart.js ADR 0053: the charts of
-// tool/reference/resolver_trace_reference.mjs on the port, against the data
-// of a build of the pinned Chart.js. After each step, the test compares the
-// resolved options of each element with their key order, the ordered calls
-// of the user functions of the config, the result of the steps that give
-// one, and for the animation cases the `$animations` of each element and of
-// its options. The header of the generator gives the observations, the
-// trace entries and the steps. The functions and the setups of
-// resolver_trace_cases.dart have the bodies of the generator. The defaults
-// restore of the harness puts back the defaults and the descriptors after
-// each case (`setUpDefaultsRestore`).
-
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -31,6 +19,19 @@ import 'package:flutter_chartjs_port/src/types/index.dart'
     show ElementPropertyRead;
 import 'package:flutter_test/flutter_test.dart';
 
+// The D2 reference trace of Chart.js ADR 0053: the charts of
+// tool/reference/resolver_trace_reference.mjs on the port, against the data
+// of a build of the pinned Chart.js. After each step, the test compares the
+// resolved options of each element with their key order, the ordered calls
+// of the user functions of the config, the result of the steps that give
+// one, and for the animation cases the `$animations` of each element and of
+// its options. The header of the generator gives the observations, the
+// trace entries and the steps. The functions and the setups of
+// resolver_trace_cases.dart have the bodies of the generator. The defaults
+// restore of the harness puts back the defaults and the descriptors after
+// each case (`setUpDefaultsRestore`).
+
+import '../../support/color_json.dart';
 import '../controllers/controller_chart_harness.dart' show ReferenceEvent;
 import '../scales/scale_chart_harness.dart'
     show copyReference, referenceMatcher, testReferenceOrigin;
@@ -196,11 +197,23 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       return _valueOf(jsGet(chart.options, key), 0);
     case ['setOption', final String path, final Object? value]:
       final (object, key) = _parentOf(chart.options, path);
-      jsSet(object, key, value);
+      jsSet(
+        object,
+        key,
+        key == 'color' || key.endsWith('Color')
+            ? referenceColorInput(value)
+            : value,
+      );
     case ['setDefault', final String path, final Object? value]:
       // The defaults restore of the harness puts the old value back.
       final (object, key) = _parentOf(defaults, path);
-      jsSet(object, key, value);
+      jsSet(
+        object,
+        key,
+        key == 'color' || key.endsWith('Color')
+            ? referenceColorInput(value)
+            : value,
+      );
     case ['deleteDefault', final String path]:
       final (object, key) = _parentOf(defaults, path);
       jsDeleteKey(object, key);
@@ -299,6 +312,8 @@ void _runCase(ResolverTraceReferenceCase c) {
   final trace = <Object?>[];
   final functions = resolverTraceFunctions(trace);
   if (c.setup case final setup?) resolverTraceSetups[setup]!(functions);
+  final config = copyReference(c.config, functions)! as AnyObject;
+  nativeFixtureColors(config);
   final expected = c.expected;
   final steps = expected['steps']! as List<Object?>;
   final error = expected['error'] as Map<String, Object?>?;
@@ -310,7 +325,7 @@ void _runCase(ResolverTraceReferenceCase c) {
     trace.clear();
     Object? run() => k == 0
         ? chart = acquireChart(
-            copyReference(c.config, functions)! as AnyObject,
+            config,
           )
         : _applyStep(chart!, step);
     if (error != null && (error['at']! as num).toInt() == k) {

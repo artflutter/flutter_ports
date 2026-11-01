@@ -19,8 +19,10 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import 'registry_observe.dart';
-import 'registry_reference.dart';
+import 'registry_reference.dart' as frozen show registryReference;
+import 'registry_reference.dart' hide registryReference;
 
 // The 15 cases of core.registry.tests.js call Chart.register and read
 // Chart.registry (core.controller, a later group). These tests cover the
@@ -385,3 +387,8 @@ void main() {
     expect(Element.jsClass['defaultRoutes'], same(undefined));
   });
 }
+
+final Map<String, String> registryReference = {
+  for (final entry in frozen.registryReference.entries)
+    entry.key: referenceColorTokens(entry.value),
+};

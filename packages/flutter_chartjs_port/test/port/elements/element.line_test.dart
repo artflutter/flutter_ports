@@ -11,11 +11,14 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import '../canvas/path2d_record.dart';
 import 'line_reference.dart';
 
@@ -75,7 +78,9 @@ AnyObject _segmentOption(String kind) => switch (kind) {
     'setContext': (Object? ctx) {
       final late = jsToNumber(jsGet(ctx, 'p0DataIndex')) >= 2;
       return <String, Object?>{
-        'borderColor': late ? 'blue' : 'red',
+        'borderColor': late
+            ? const color_values.PreparedColor(0, 0, 255, 1)
+            : const color_values.PreparedColor(255, 0, 0, 1),
         'borderWidth': late ? 4.0 : 2.0,
       };
     },
@@ -113,7 +118,14 @@ LineElement _line(
   List<types.PointElement> points,
   Object Function(AnyObject) form,
 ) {
-  final options = c.options;
+  final options = c.options == null
+      ? null
+      : <String, Object?>{
+          for (final entry in c.options!.entries)
+            entry.key: entry.key.endsWith('Color')
+                ? referenceColorInput(entry.value)
+                : entry.value,
+        };
   final segment = c.segment;
   return LineElement({
     'points': points,
@@ -134,6 +146,7 @@ Matcher _number(num n) => n.isNaN ? isNaN : closeTo(n, 1e-9);
 /// The expected value [value] of a reference call as a matcher structure.
 Object? _expected(Object? value) => switch (value) {
   final num n => _number(n),
+  final String s when isReferenceColor(s) => referenceColorOrString(s),
   final LineReferencePath path => {
     'path': path.id,
     'calls': _expectedCalls(path.calls),
@@ -319,7 +332,7 @@ AnyObject _plain(JsObjectFace scope) => {
 /// The resolved options of a line: the defaults and a border color.
 AnyObject _options([AnyObject extra = const {}]) => {
   ..._plain(LineElement.defaults),
-  'borderColor': 'black',
+  'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
   ...extra,
 };
 

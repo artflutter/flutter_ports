@@ -1,4 +1,5 @@
 // Ported from chartjs-test-utils v0.4.0 src/matchers.options.js (MIT, chartjs-test-utils Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native colors compare by value.
 
 /// Port of `src/matchers.options.js`: the `toEqualOptions` matcher.
 ///
@@ -23,6 +24,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:chartjs_test_utils/src/color_values.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -57,6 +59,8 @@ bool _isArray(Object? value) {
 /// compares by identity: `true`, `false`, `null` and [undefined] are single
 /// instances, and objects, arrays and functions compare by reference.
 bool strictEquals(Object? actual, Object? expected) {
+  final colorEquality = equalColorValues(actual, expected);
+  if (colorEquality != null) return colorEquality;
   if (actual is num && expected is num) return actual == expected;
   if (actual is String && expected is String) return actual == expected;
   return identical(actual, expected);

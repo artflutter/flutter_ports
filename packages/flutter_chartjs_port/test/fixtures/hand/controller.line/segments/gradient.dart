@@ -23,8 +23,8 @@ Map<String, Object?> fixture() {
     // DOMString argument of addColorStop is the ToString of the value.
     final gradient =
         ctx.createLinearGradient(jsToNumber(x0), 0, jsToNumber(x1), 0)
-          ..addColorStop(0, jsToString(jsGet(p0.options, 'backgroundColor')))
-          ..addColorStop(1, jsToString(jsGet(p1.options, 'backgroundColor')));
+          ..addColorStop(0, jsGet(p0.options, 'backgroundColor')!)
+          ..addColorStop(1, jsGet(p1.options, 'backgroundColor')!);
     return gradient;
   }
 

@@ -1,11 +1,15 @@
 // Ported from Chart.js v4.6.1 test/specs/core.scale.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -203,6 +207,7 @@ List<String> _gridLineNames(String prefix) {
 }
 
 void main() {
+  installNativeColorCodec();
   group('Core.scale', () {
     group('auto', fixture.specs('core.scale'));
 
@@ -1124,9 +1129,9 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-x',
-                  'color': '#ddd',
+                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
                   'strokeWidth': 1,
-                  'strokeColor': '#333',
+                  'strokeColor': const native_ui.Color.fromRGBO(51, 51, 51, 1),
                 },
               },
               'y': <String, Object?>{
@@ -1134,9 +1139,9 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-y',
-                  'color': '#ddd',
+                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
                   'strokeWidth': 2,
-                  'strokeColor': '#222',
+                  'strokeColor': const native_ui.Color.fromRGBO(34, 34, 34, 1),
                 },
               },
             },
@@ -1155,7 +1160,7 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-x',
-                  'color': '#ddd',
+                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
                 },
               },
               'y': <String, Object?>{
@@ -1163,7 +1168,7 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-y',
-                  'color': '#ddd',
+                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
                 },
               },
             },
@@ -1176,7 +1181,10 @@ void main() {
       ) async {
         final chart = getChartWithScaleTitleStroke();
         final scale = chart.scales['x']!;
-        expect(_member(scale.options['title'], 'strokeColor'), '#333');
+        expect(
+          _member(scale.options['title'], 'strokeColor'),
+          const native_ui.Color.fromRGBO(51, 51, 51, 1),
+        );
         expect(_member(scale.options['title'], 'strokeWidth'), 1);
       });
 
@@ -1185,7 +1193,10 @@ void main() {
       ) async {
         final chart = getChartWithScaleTitleStroke();
         final scale = chart.scales['y']!;
-        expect(_member(scale.options['title'], 'strokeColor'), '#222');
+        expect(
+          _member(scale.options['title'], 'strokeColor'),
+          const native_ui.Color.fromRGBO(34, 34, 34, 1),
+        );
         expect(_member(scale.options['title'], 'strokeWidth'), 2);
       });
 

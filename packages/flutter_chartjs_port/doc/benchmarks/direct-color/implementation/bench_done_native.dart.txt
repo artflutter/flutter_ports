@@ -1,0 +1,2 @@
+import 'dart:io';
+Future<void> finish(String data) async { if (Platform.isMacOS) exit(0); }

@@ -2,11 +2,14 @@
 @TestOn('vm')
 library;
 
-// flutter_test and dart:ui: the web legs cannot compile this file.
 import 'dart:math' as math;
+import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+// flutter_test and dart:ui: the web legs cannot compile this file.
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -124,6 +127,7 @@ List<(ui.Offset, double)> _contours(ui.Path path) => [
 ];
 
 void main() {
+  installNativeColorCodec();
   group('UiPathBuilder.roundRect', () {
     test('adds one rounded rectangle under the identity', () {
       final b = _builder()..roundRect(10, 20, 100, 50, [1, 2, 3, 4]);
@@ -344,7 +348,7 @@ void main() {
         final render = await renderContext((ctx) {
           ctx
             ..beginPath()
-            ..fillStyle = '#000000';
+            ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1);
           shapes(ctx);
           ctx.fill();
         });
@@ -728,10 +732,10 @@ void main() {
           ..beginPath()
           ..roundRect(20, 20, 100, 100, 30)
           ..clip()
-          ..fillStyle = '#ff0000'
+          ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
           ..fillRect(0, 0, 160, 160)
           ..paint(ui.Canvas(ui.PictureRecorder()), ui.Offset.zero, 1, 1)
-          ..fillStyle = '#0000ff'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
           ..fillRect(0, 0, 160, 160);
       });
       expect(render.alpha(70, 70), 255);

@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 
 /// index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the
@@ -279,7 +280,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       return;
     }
     _present |= 16;
-    _pointStyle = raw;
+    _pointStyle = publicColorValue(raw);
   }
 
   double _radius = 0;
@@ -384,7 +385,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       return;
     }
     _present |= 128;
-    _backgroundColor = raw;
+    _backgroundColor = publicColorValue(raw);
   }
 
   Object? _borderColor = null;
@@ -409,7 +410,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       return;
     }
     _present |= 256;
-    _borderColor = raw;
+    _borderColor = publicColorValue(raw);
   }
 
   @override
@@ -731,7 +732,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 2;
-    _borderDash = raw;
+    _borderDash = publicColorValue(raw);
   }
 
   double _borderDashOffset = 0;
@@ -933,7 +934,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 128;
-    _fill = raw;
+    _fill = publicColorValue(raw);
   }
 
   Object? _spanGaps = null;
@@ -958,7 +959,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 256;
-    _spanGaps = raw;
+    _spanGaps = publicColorValue(raw);
   }
 
   Object? _stepped = null;
@@ -983,7 +984,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 512;
-    _stepped = raw;
+    _stepped = publicColorValue(raw);
   }
 
   double _tension = 0;
@@ -1049,7 +1050,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 2048;
-    _backgroundColor = raw;
+    _backgroundColor = publicColorValue(raw);
   }
 
   Object? _borderColor = null;
@@ -1074,7 +1075,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 4096;
-    _borderColor = raw;
+    _borderColor = publicColorValue(raw);
   }
 
   Object? _segment = null;
@@ -1099,7 +1100,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 8192;
-    _segment = raw;
+    _segment = publicColorValue(raw);
   }
 
   @override
@@ -1445,7 +1446,7 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 1;
-    _borderSkipped = raw;
+    _borderSkipped = publicColorValue(raw);
   }
 
   Object? _borderWidth = null;
@@ -1470,7 +1471,7 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 2;
-    _borderWidth = raw;
+    _borderWidth = publicColorValue(raw);
   }
 
   Object? _borderRadius = null;
@@ -1495,7 +1496,7 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 4;
-    _borderRadius = raw;
+    _borderRadius = publicColorValue(raw);
   }
 
   Object? _inflateAmount = null;
@@ -1520,7 +1521,7 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 8;
-    _inflateAmount = raw;
+    _inflateAmount = publicColorValue(raw);
   }
 
   Object? _pointStyle = null;
@@ -1545,7 +1546,7 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 16;
-    _pointStyle = raw;
+    _pointStyle = publicColorValue(raw);
   }
 
   Object? _backgroundColor = null;
@@ -1570,7 +1571,7 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 32;
-    _backgroundColor = raw;
+    _backgroundColor = publicColorValue(raw);
   }
 
   Object? _borderColor = null;
@@ -1595,7 +1596,7 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 64;
-    _borderColor = raw;
+    _borderColor = publicColorValue(raw);
   }
 
   @override
@@ -1889,7 +1890,7 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 2;
-    _borderColor = raw;
+    _borderColor = publicColorValue(raw);
   }
 
   Object? _borderDash = null;
@@ -1914,7 +1915,7 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 4;
-    _borderDash = raw;
+    _borderDash = publicColorValue(raw);
   }
 
   double _borderDashOffset = 0;
@@ -2011,7 +2012,7 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 32;
-    _borderRadius = raw;
+    _borderRadius = publicColorValue(raw);
   }
 
   double _borderWidth = 0;
@@ -2293,7 +2294,7 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 8192;
-    _backgroundColor = raw;
+    _backgroundColor = publicColorValue(raw);
   }
 
   @override

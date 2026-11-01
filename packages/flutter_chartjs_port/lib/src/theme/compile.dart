@@ -49,6 +49,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -58,7 +59,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 ///
 /// `rawColorOf` of `css.dart` converts a `dart:ui` `Color` of any color
 /// space through `ColorSpace.extendedSRGB` to these components (Chart.js ADR
-/// 0050, theming.md §3.3). [themeColorToRgba] clamps them.
+/// 0050, theming.md §3.3). [themeColorValue] clamps them.
 typedef RawThemeColor = ({double alpha, double red, double green, double blue});
 
 /// The `rgba()` string of [color] (theming.md §3.3): 8-bit sRGB channels and
@@ -70,13 +71,20 @@ typedef RawThemeColor = ({double alpha, double red, double green, double blue});
 /// `(alpha: 0.1, red: 0, green: 0, blue: 0)` gives `'rgba(0, 0, 0, 0.1)'`.
 /// The alpha of `Color(0x1A000000)` gives
 /// `'rgba(0, 0, 0, 0.10196078431372549)'` instead (theming.md §4).
-String themeColorToRgba(RawThemeColor color) {
+PreparedColor _themeColorChannels(RawThemeColor color) {
   final red = _channel(color.red);
   final green = _channel(color.green);
   final blue = _channel(color.blue);
-  final alpha = jsNumberToString(color.alpha.clamp(0.0, 1.0));
-  return 'rgba($red, $green, $blue, $alpha)';
+  final alpha = color.alpha.clamp(0.0, 1.0);
+  return PreparedColor(red, green, blue, alpha);
 }
+
+/// Legacy formatting for test/reference data, not the compiled theme.
+Object themeColorValue(RawThemeColor color) =>
+    publicColorValue(_themeColorChannels(color))!;
+
+/// Formats legacy reference data; compiled chart themes never call this.
+String themeColorToRgba(RawThemeColor color) => _themeColorChannels(color).css;
 
 /// The 8-bit value of the color component [x].
 int _channel(double x) => (x * 255.0).round().clamp(0, 255);
@@ -519,7 +527,7 @@ const Map<String, Object?> _transitions = {
 ///
 /// - Dart `null` gives `null`. A theme that emits no key other than
 ///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
-/// - Each color token emits its keys of theming.md §4 as [themeColorToRgba]
+/// - Each color token emits its keys of theming.md §4 as [themeColorValue]
 ///   strings. The font token `font` emits a Map of its fields that are not
 ///   `null` into each scale slot, into the two legend fonts and into
 ///   `plugins.tooltip.bodyFont`, and the same Map without `weight` into
@@ -528,7 +536,7 @@ const Map<String, Object?> _transitions = {
 ///   point-label font is the `font` Map without `size`, then the fields of
 ///   `pointLabels` over it (theming.md §3.4).
 /// - The `palette` emits the two palette keys of `plugins.colors` as Lists
-///   of [themeColorToRgba] strings (Chart.js ADR 0050, theming.md §4).
+///   of [themeColorValue] strings (Chart.js ADR 0050, theming.md §4).
 /// - The `raw` keys beat the token keys, key by key. Maps merge, and a Map
 ///   that holds no key after the guard is left out.
 /// - A key that [themeNeverEmittedReason] rejects is never emitted. In debug
@@ -572,7 +580,7 @@ ChartOptionsScope? _compile(AnyObject theme) {
   for (final MapEntry(key: token, value: paths) in _colorTokenKeys.entries) {
     final color = _color(colors, token);
     if (color == null) continue;
-    final rgba = themeColorToRgba(color);
+    final rgba = themeColorValue(color);
     for (final path in paths) {
       _put(keys, path, rgba);
     }
@@ -580,7 +588,7 @@ ChartOptionsScope? _compile(AnyObject theme) {
       _put(
         keys,
         _backdropKey,
-        themeColorToRgba((
+        themeColorValue((
           alpha: _backdropAlpha,
           red: color.red,
           green: color.green,
@@ -632,7 +640,7 @@ ChartOptionsScope? _compile(AnyObject theme) {
       in _tooltipColorTokenKeys.entries) {
     final color = _color(colors, token);
     if (color == null) continue;
-    final rgba = themeColorToRgba(color);
+    final rgba = themeColorValue(color);
     for (final path in paths) {
       _put(keys, path, rgba);
     }
@@ -738,11 +746,11 @@ void _palette(AnyObject keys, AnyObject palette) {
       ? backgroundAlpha.toDouble()
       : _paletteBackgroundAlpha;
   _put(keys, r'plugins.colors.$borderColors', [
-    for (final color in list) themeColorToRgba(color),
+    for (final color in list) themeColorValue(color),
   ]);
   _put(keys, r'plugins.colors.$backgroundColors', [
     for (final color in list)
-      themeColorToRgba((
+      themeColorValue((
         alpha: alpha,
         red: color.red,
         green: color.green,
@@ -859,7 +867,7 @@ void _mergeOver(AnyObject target, AnyObject source) {
 }
 
 /// The frozen copy of [value]: a frozen [JsFrozenMap] for a Map, a frozen
-/// [_FrozenList] for a List, the [themeColorToRgba] string for a
+/// [_FrozenList] for a List, the [themeColorValue] string for a
 /// [RawThemeColor], else [value].
 Object? _freeze(Object? value) => switch (value) {
   final AnyObject map => jsObjectFreeze(
@@ -868,7 +876,7 @@ Object? _freeze(Object? value) => switch (value) {
   final List<Object?> list => jsObjectFreeze(
     _FrozenList([for (final item in list) _freeze(item)]),
   ),
-  final RawThemeColor color => themeColorToRgba(color),
+  final RawThemeColor color => themeColorValue(color),
   _ => value,
 };
 

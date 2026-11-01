@@ -3,6 +3,7 @@
 // Upstream reassigns the parameters start and loop of solidSegments, and s
 // and e of addStyle. The port keeps these assignments.
 // ignore_for_file: parameter_assignments
+// DIVERGES(chartjs): adapt-direct-colors, native segment color comparison.
 
 /// Port of `src/helpers/helpers.segment.js`.
 ///
@@ -41,6 +42,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
@@ -590,13 +592,25 @@ Object? _setContext(Object? segmentOptions, Object ctx) =>
 /// in the key order), resolved element options give their typed fields.
 SegmentStyle _readStyle(Object? options) {
   return SegmentStyle()
-    ..backgroundColor = readOption(options, OptionKey.backgroundColor)
+    ..backgroundColor = _styleColor(
+      readOption(options, OptionKey.backgroundColor),
+    )
     ..borderCapStyle = readOption(options, OptionKey.borderCapStyle)
     ..borderDash = readOption(options, OptionKey.borderDash)
     ..borderDashOffset = readOption(options, OptionKey.borderDashOffset)
     ..borderJoinStyle = readOption(options, OptionKey.borderJoinStyle)
     ..borderWidth = readOption(options, OptionKey.borderWidth)
-    ..borderColor = readOption(options, OptionKey.borderColor);
+    ..borderColor = _styleColor(readOption(options, OptionKey.borderColor));
+}
+
+Object? _styleColor(Object? value) {
+  if (value == null ||
+      value is Undefined ||
+      isSolidColor(value) ||
+      isPatternOrGradient(value)) {
+    return value;
+  }
+  throw ArgumentError.value(value, 'segment color', 'Expected Flutter Color');
 }
 
 /// helpers.segment.js:337-347 the object literal of `readStyle`: the style
@@ -751,7 +765,18 @@ bool _styleChanged(SegmentStyle style, SegmentStyle? prevStyle) {
     return false;
   }
   final cache = <Object?>[];
+  final solidColors = <Object?>[];
   Object? replacer(String key, Object? value) {
+    if (isSolidColor(value)) {
+      final native = publicColorValue(value);
+      var index = solidColors.indexOf(native);
+      if (index < 0) {
+        index = solidColors.length;
+        solidColors.add(native);
+      }
+      // An internal comparison token, never a CSS paint value.
+      return 'native-color:$index';
+    }
     if (!isPatternOrGradient(value)) {
       return value;
     }

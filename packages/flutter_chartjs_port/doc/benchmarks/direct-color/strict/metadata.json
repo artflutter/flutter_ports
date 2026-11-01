@@ -1,0 +1,39 @@
+{
+  "baseline": "175337ff09d37b6aa7a5de76cdf5f90e44be6bc8",
+  "candidate": "uncommitted Color-only implementation",
+  "date": "2026-11-01",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "platforms": {
+    "macos": "Apple M3 Max / macOS 27.0.1",
+    "chrome": "Chrome 156.0.8078.79 / release Wasm",
+    "android": "Pixel 8a / Android 17",
+    "ios": "iPhone 17 Pro / iOS 26.6.2 / release"
+  },
+  "schedule": "A/B/B/A; two processes per variant, ten cells per process",
+  "settings": {
+    "points": 5000,
+    "warmupMs": 250,
+    "batches": 7,
+    "batchMs": 100
+  },
+  "limits": [
+    "CPU chart/update/draw/recording completion, not GPU or FPS",
+    "Two pairs only; small differences inconclusive",
+    "macOS host also compiled isolated iOS builds during part of the series; do not interpret small shifts",
+    "Native color alpha/color-space preservation is intentional; pixel output need not match former CSS quantization"
+  ],
+  "iosLaunchCheck": {
+    "signatureValid": true,
+    "certificateMatchesProfile": true,
+    "profileIncludesDevice": true,
+    "profileExpires": "2026-11-07T16:51:36Z",
+    "certificateExpires": "2027-10-19T13:41:57Z",
+    "developerModeEnabled": true,
+    "launchError": "FBSOpenApplicationErrorDomain 3: invalid signature, inadequate entitlements, or profile trust",
+    "timingsCollected": true,
+    "resolved": true,
+    "resultCollection": "completion file in the benchmark app sandbox, written after all timed cells; reset to a sentinel before subsequent launches",
+    "note": "Trust/profile launch rejection resolved after the user requested another retry. Console-only probe produced no retained timings."
+  }
+}

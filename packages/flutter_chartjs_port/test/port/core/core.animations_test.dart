@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import 'animation_reference.dart';
 
 // Behavior of Chart.js ADR 0019 that test/specs/core.animations.tests.js
@@ -104,13 +105,21 @@ Animations _resolveAnimations(types.Chart chart, String mode) {
 /// `_resolveElementOptions` freezes them (core.datasetController.js:831).
 PointOptions _shared(String backgroundColor, double radius) => PointOptions()
   ..[r'$shared'] = true
-  ..['backgroundColor'] = backgroundColor
+  ..['backgroundColor'] = referenceColorInput(backgroundColor)
   ..['radius'] = radius
   ..freeze();
 
 /// The radius at [elapsed] ms of the 400 ms transition from 3 to 4.
 double _radius(double elapsed) =>
     3 + (4 - 3) * effects['easeOutQuart']!(elapsed / 400);
+
+// Compare exact bytes without first rounding hex alpha to a percent.
+Matcher _animationColor(String expected) => predicate<Object?>(
+  (actual) =>
+      equals(nativeColorBytes(referenceColorInput(expected)))
+          .matches(nativeColorBytes(actual), {}),
+  'native color bytes of $expected',
+);
 
 void main() {
   group('active transition', () {
@@ -167,7 +176,7 @@ void main() {
         }
         expect(
           copy['backgroundColor'],
-          animationHoverFrames[k - 1],
+          _animationColor(animationHoverFrames[k - 1]),
           reason: 'frame $k',
         );
       }
@@ -195,7 +204,7 @@ void main() {
       for (var k = 1; k <= 26; k++) {
         await tester.pump(const Duration(milliseconds: 16));
       }
-      expect(back['backgroundColor'], animationHoverFrom);
+      expect(back['backgroundColor'], _animationColor(animationHoverFrom));
       expect(back['radius'], 3);
       expect(point.options, same(shared));
       expect(animator.running(chart), isFalse);
@@ -220,7 +229,7 @@ void main() {
       final options = point.options! as JsObjectFace;
       expect(effects['easeOutQuart']!(0.5), 0.9375);
       expect(options['radius'], 3.9375);
-      expect(options['backgroundColor'], animationHoverAt200);
+      expect(options['backgroundColor'], _animationColor(animationHoverAt200));
       // Let the transition end. Then remove the chart.
       for (var k = 0; k < 14; k++) {
         await tester.pump(const Duration(milliseconds: 16));

@@ -649,7 +649,8 @@ acceptance of this ADR (lane L5):
    own A/B in the same night.
 2. Typed public plugin API, the `parsing: false` group of Chart.js ADR 0052 Open 4, `Paint` from a
    `Color` with no CSS string, `Float64List` doughnut values and typed theme component styles come
-   after 0.1.0.
+   after 0.1.0. The direct-color item was brought forward on 2026-11-01 and implemented
+   by [ADR 0057](0057-direct-typed-colors.md), with a CSS public face.
 3. The sub view of the element step at the first user call of the element (§4). B4 keeps the
    upstream form. L3 did not measure the lazy form (it lives in the base file `core.config.dart`),
    and the close step did not change it: a timed measurement decides it. The results, the user

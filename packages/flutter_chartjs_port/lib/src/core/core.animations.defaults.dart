@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/core/core.animations.defaults.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 
 /// Port of `src/core/core.animations.defaults.js`.
 ///
@@ -13,6 +14,7 @@ library;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -73,14 +75,16 @@ void applyAnimationsDefaults(Defaults defaults) {
           ..animation = (AnimationOptionsScope()..duration = 0.0))
         ..show = (TransitionOptionsScope()
           ..animations = (AnimationsSpecScope()
-            ..colors = (AnimationOptionsScope()..from = 'transparent')
+            ..colors = (AnimationOptionsScope()
+              ..from = const PreparedColor(0, 0, 0, 0))
             ..visible = (AnimationOptionsScope()
               ..type = 'boolean'
               // show immediately
               ..duration = 0.0)))
         ..hide = (TransitionOptionsScope()
           ..animations = (AnimationsSpecScope()
-            ..colors = (AnimationOptionsScope()..to = 'transparent')
+            ..colors = (AnimationOptionsScope()
+              ..to = const PreparedColor(0, 0, 0, 0))
             ..visible = (AnimationOptionsScope()
               ..type = 'boolean'
               ..easing = 'linear'

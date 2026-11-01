@@ -1,12 +1,16 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.color.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
 
 import 'dart:convert';
+import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
@@ -36,6 +40,7 @@ Future<UiImageSource> _loadImage(String src) async {
 }
 
 void main() {
+  installNativeColorCodec();
   setUpSpecs();
   group('Color helper', () {
     // `typeof obj === 'object' && obj.valid`. Of the objects that `color`
@@ -45,7 +50,10 @@ void main() {
     }
 
     test('should return a color when called with a color', () {
-      expect(isColorInstance(color('rgb(1, 2, 3)')), isTrue);
+      expect(
+        isColorInstance(color(const native_ui.Color.fromRGBO(1, 2, 3, 1))),
+        isTrue,
+      );
     });
   });
 
@@ -53,9 +61,12 @@ void main() {
     test(
       'should return a modified version of color when called with a color',
       () {
-        const originalColorRGB = 'rgb(70, 191, 189)';
+        const originalColorRGB = native_ui.Color.fromRGBO(70, 191, 189, 1);
 
-        expect(getHoverColor('#46BFBD'), isNot(originalColorRGB));
+        expect(
+          getHoverColor(const native_ui.Color.fromRGBO(70, 191, 189, 1)),
+          isNot(originalColorRGB),
+        );
       },
     );
   });

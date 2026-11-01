@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:test/test.dart';
@@ -124,14 +126,18 @@ void main() {
 
   group('merge and mergeIf', () {
     test('merge into a typed scope makes typed children', () {
-      final scope = ChartOptionsScope()..color = 'red';
+      final scope = ChartOptionsScope()
+        ..color = const color_values.PreparedColor(255, 0, 0, 1);
       merge(scope, <String, Object?>{
         'font': <String, Object?>{'size': 14.0, 'family': 'x'},
-        'color': 'blue',
+        'color': const color_values.PreparedColor(0, 0, 255, 1),
         'extra': <String, Object?>{'a': 1.0},
       });
       expect(scope.jsKeys(), ['color', 'font', 'extra']);
-      expect(scope.jsRead('color'), 'blue');
+      expect(
+        scope.jsRead('color'),
+        const color_values.PreparedColor(0, 0, 255, 1),
+      );
       final font = scope.fontCell!.raw;
       expect(font, isA<FontSpecScope>());
       expect((font! as FontSpecScope).jsKeys(), ['size', 'family']);
@@ -153,7 +159,7 @@ void main() {
         ..jsWrite('color', undefined)
         ..font = (FontSpecScope()..size = 12.0);
       mergeIf(scope, <String, Object?>{
-        'color': 'red',
+        'color': const color_values.PreparedColor(255, 0, 0, 1),
         'font': <String, Object?>{'size': 20.0, 'style': 'italic'},
         'indexAxis': 'y',
       });

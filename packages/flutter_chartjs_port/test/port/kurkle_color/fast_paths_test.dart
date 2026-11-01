@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: color fast-path equivalence tests.
 
+import 'package:chartjs_test_utils/pure.dart' show referenceColor;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsToInt32;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
@@ -19,15 +20,15 @@ void main() {
         'rgb(255,0,0)',
         'hsl(0,100%,50%)',
       ]) {
-        expect(Color(input).hexString(), '#F00');
+        expect(referenceColor(input).hexString(), '#F00');
       }
       for (final input in ['', '#ab', 'rgb(', 'RGB(255,0,0)', 'constructor']) {
-        expect(Color(input).valid, isFalse);
+        expect(referenceColor(input).valid, isFalse);
       }
-      expect(Color('#ggg').valid, isTrue);
-      expect(Color('#ggg').hexString(), '#000');
-      expect(Color('LİME').valid, isFalse);
-      expect(Color('LIME').hexString(), '#0F0');
+      expect(referenceColor('#ggg').valid, isTrue);
+      expect(referenceColor('#ggg').hexString(), '#000');
+      expect(referenceColor('LİME').valid, isFalse);
+      expect(referenceColor('LIME').hexString(), '#0F0');
     });
   });
 
@@ -159,7 +160,7 @@ void main() {
         ([12, 34, 56, 0.5], [255, 128, 0, 0.5], -1, [242, 222, 201, 0.5]),
       ];
       for (final (from, to, weight, expected) in cases) {
-        final rgb = Color(from).mix(Color(to), weight).rgb!;
+        final rgb = referenceColor(from).mix(referenceColor(to), weight).rgb!;
         expect([rgb.r, rgb.g, rgb.b, rgb.a], expected);
       }
     });
@@ -280,7 +281,7 @@ void main() {
 
   group('adapt-kurkle-color-copies', () {
     test('clone retains alpha quantization and independent mutation', () {
-      final original = Color('rgba(1,2,3,0.5)');
+      final original = referenceColor('rgba(1,2,3,0.5)');
       final copied = original.clone();
       expect(original.hexString(), '#0102037F');
       expect(copied.hexString(), '#01020380');
@@ -292,18 +293,18 @@ void main() {
     });
 
     test('clone of an invalid color with assigned RGB becomes valid', () {
-      final c = Color('invalid')..rgb = [1, 2, 3, 0.4];
+      final c = referenceColor('invalid')..rgb = [1, 2, 3, 0.4];
       expect(c.valid, isFalse);
       expect(c.clone().valid, isTrue);
       expect(_members(c.clone().rgb), (r: 1.0, g: 2.0, b: 3.0, a: 0.4));
-      expect(Color('invalid').clone().valid, isFalse);
+      expect(referenceColor('invalid').clone().valid, isFalse);
     });
 
     test('self-mixing keeps the setter alpha conversion', () {
-      final c = Color('rgba(12,34,56,0.5)');
+      final c = referenceColor('rgba(12,34,56,0.5)');
       c.mix(c, 0.25);
       expect(c.hexString(), '#0C223880');
-      final other = Color('#ff638480');
+      final other = referenceColor('#ff638480');
       final before = other.hexString();
       c.mix(other, 0.3);
       expect(other.hexString(), before);

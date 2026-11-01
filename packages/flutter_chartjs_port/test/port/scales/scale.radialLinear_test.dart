@@ -2,7 +2,11 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
@@ -57,16 +61,20 @@ final Map<String, Object?> _functions = {
     3.0 => <Object?>[label, 'x${jsNumberToString(index)}'],
     _ => '${jsToString(label)}!',
   },
-  'pointLabelColor': (Object? ctx) =>
-      jsToNumber(jsGet(ctx, 'index')) % 2 != 0 ? 'red' : 'blue',
-  'angleLineColor': (Object? ctx) =>
-      jsGet(ctx, 'label') == 'B' ? 'green' : 'gray',
-  'gridColor': (Object? ctx) =>
-      jsToNumber(jsGet(ctx, 'index')) > 2 ? 'orange' : 'purple',
+  'pointLabelColor': (Object? ctx) => jsToNumber(jsGet(ctx, 'index')) % 2 != 0
+      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+  'angleLineColor': (Object? ctx) => jsGet(ctx, 'label') == 'B'
+      ? const native_ui.Color.fromRGBO(0, 128, 0, 1)
+      : const native_ui.Color.fromRGBO(128, 128, 128, 1),
+  'gridColor': (Object? ctx) => jsToNumber(jsGet(ctx, 'index')) > 2
+      ? const native_ui.Color.fromRGBO(255, 165, 0, 1)
+      : const native_ui.Color.fromRGBO(128, 0, 128, 1),
   'pointLabelPadding': (Object? ctx) => 2 + 3 * jsToNumber(jsGet(ctx, 'index')),
   'angleLineWidth': (Object? ctx) => jsGet(ctx, 'index') == 0 ? 0.0 : 1.0,
-  'angleLineEmptyColor': (Object? ctx) =>
-      jsGet(ctx, 'index') == 1 ? '' : 'black',
+  'angleLineEmptyColor': (Object? ctx) => jsGet(ctx, 'index') == 1
+      ? ''
+      : const native_ui.Color.fromRGBO(0, 0, 0, 1),
   'tickUnit': (Object? value) => '${jsToString(value)} u',
   'hideOneAndThree': (Object? chart) {
     (chart! as Chart)
@@ -233,6 +241,7 @@ void _expectSamePosition(
 }
 
 void main() {
+  installNativeColorCodec();
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
   Chart.register([

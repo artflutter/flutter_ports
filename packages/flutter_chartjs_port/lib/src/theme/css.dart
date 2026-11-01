@@ -4,9 +4,8 @@
 /// ADR 0050, theming.md §3.3).
 ///
 /// - [rawColorOf] gives the [RawThemeColor] of a `Color`, the color token of
-///   a raw Map theme of `compile.dart`. [colorToRgba] gives its `rgba()`
-///   string through `themeColorToRgba`, the string that the compiled theme
-///   holds for the token.
+///   a raw Map theme of `compile.dart`. [colorToRgba] is a legacy formatter
+///   for reference tests; compiled themes hold native colors (ADR 0057).
 /// - [fontSpecOf] gives the `FontSpec` Map of a `TextStyle`, the font token
 ///   of a raw Map theme. [fontScopeOf] gives the same keys and values as a
 ///   typed `FontSpecScope` (Chart.js ADR 0054 §7), the font of the typed
@@ -44,7 +43,7 @@ RawThemeColor? rawColorOf(Color? color) {
 
 /// The `rgba()` string of [color]: `themeColorToRgba` of [rawColorOf].
 ///
-/// The compiled theme holds this string for a color token of [color], for
+/// Reference tests can format a color token of [color], for
 /// example `'rgba(54, 162, 235, 1)'` for `Color(0xFF36A2EB)` and
 /// `'rgba(0, 0, 0, 0.1)'` for `Color.from(alpha: 0.1, red: 0, green: 0,
 /// blue: 0)`.

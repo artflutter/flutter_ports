@@ -1,9 +1,11 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.doughnut/doughnut-rotation-circumference-8x8.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:async';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -77,7 +79,7 @@ Map<String, Object?> fixture() {
           );
         }
         ctx
-          ..strokeStyle = 'red'
+          ..strokeStyle = const native_ui.Color(0xffff0000)
           ..lineWidth = 0.5
           ..beginPath();
         for (var i = 1.0; i < 8; i++) {

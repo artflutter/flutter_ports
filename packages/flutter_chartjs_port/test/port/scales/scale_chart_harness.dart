@@ -78,6 +78,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/upstream.dart' show chartJsVersion;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/color_json.dart';
 import '../canvas/path2d_record.dart';
 import '../helpers/rounded_rect_upstream.dart';
 
@@ -491,6 +492,7 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
 ///   depends on the sign of a zero pixel (Chart.js ADR 0034).
 /// - Lists and maps: item by item. Other values: `==`.
 Object? referenceMatcher(Object? expected) => switch (expected) {
+  final String text when isReferenceColor(text) => referenceColorOrString(text),
   final num n when n.isNaN => isNaN,
   final num n when n.isInfinite => equals(n),
   final num n => closeTo(n, n.abs() > 1e3 ? n.abs() * 1e-12 : 1e-9),
@@ -827,8 +829,10 @@ void testScaleChartCases(
 }) {
   for (final c in cases) {
     testWidgets(c.name, (tester) async {
+      final config = copyReference(c.config, functions)! as AnyObject;
+      nativeFixtureColors(config);
       final chart = acquireChart(
-        copyReference(c.config, functions)! as AnyObject,
+        config,
         copyReference(c.options)! as AnyObject,
       );
       expectScaleChart(chart, c.expected, extra: extra);

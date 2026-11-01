@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -171,8 +173,8 @@ void _expectCalls(
 
 /// The options of every draw test that does not come from the reference.
 Map<String, Object?> _options([Map<String, Object?> extra = const {}]) => {
-  'backgroundColor': 'red',
-  'borderColor': 'blue',
+  'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+  'borderColor': const color_values.PreparedColor(0, 0, 255, 1),
   'borderWidth': 2,
   ...extra,
 };
@@ -398,7 +400,7 @@ void main() {
         },
         {
           'borderAlign': 'center',
-          'borderColor': '#fff',
+          'borderColor': const color_values.PreparedColor(255, 255, 255, 1),
           'borderDash': isEmpty,
           'borderDashOffset': 0.0,
           'borderJoinStyle': _isUndefined,

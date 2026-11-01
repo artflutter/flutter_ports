@@ -1,8 +1,12 @@
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_gallery/charts/chart_type_page.dart';
 import 'package:chartjs_gallery/charts/chart_types.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The stems of the docs files, in the order of the docs.
@@ -41,6 +45,7 @@ Future<Chart> _openChart(WidgetTester tester, String stem) async {
 }
 
 void main() {
+  installNativeColorCodec();
   testWidgets('lists the tracked version and every chart type', (
     tester,
   ) async {
@@ -126,7 +131,10 @@ void main() {
     expect(theme, galleryDarkChartTheme);
     expect(theme!.surface, galleryDarkTheme.colorScheme.surface);
     // The color token of the dark preset: '#666' mirrored (theming.md §4).
-    expect(chart.options['color'], 'rgba(153, 153, 153, 1)');
+    expect(
+      chart.options['color'],
+      const native_ui.Color.fromRGBO(153, 153, 153, 1),
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -140,7 +148,7 @@ void main() {
     // The arc border is the surface of the theme (element.arc.ts:379).
     expect(
       (arc.options! as JsObjectFace)['borderColor'],
-      'rgba(255, 255, 255, 1)',
+      const native_ui.Color.fromRGBO(255, 255, 255, 1),
     );
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
     await tester.pumpAndSettle();
@@ -148,12 +156,14 @@ void main() {
     // 0050, "Runtime switch").
     final state = tester.state<ChartTypePageState>(find.byType(ChartTypePage));
     expect(state.chart, same(chart));
-    expect(chart.options['color'], 'rgba(153, 153, 153, 1)');
+    expect(
+      chart.options['color'],
+      const native_ui.Color.fromRGBO(153, 153, 153, 1),
+    );
     final surface = galleryDarkTheme.colorScheme.surface;
     expect(
       (arc.options! as JsObjectFace)['borderColor'],
-      'rgba(${(surface.r * 255).round()}, ${(surface.g * 255).round()}, '
-      '${(surface.b * 255).round()}, 1)',
+      surface,
     );
     expect(tester.takeException(), isNull);
   });
@@ -169,7 +179,10 @@ void main() {
       const ChartThemeData.light(),
     );
     // The '#666' of core.defaults.js:43 as the light preset gives it.
-    expect(chart.options['color'], 'rgba(102, 102, 102, 1)');
+    expect(
+      chart.options['color'],
+      const native_ui.Color.fromRGBO(102, 102, 102, 1),
+    );
     expect(tester.takeException(), isNull);
   });
 }

@@ -9,10 +9,14 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show JsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import 'registry_observe.dart';
-import 'registry_reference.dart';
+import 'registry_reference.dart' as frozen show registryReference;
+import 'registry_reference.dart' hide registryReference;
 
 // Upstream has no spec for src/core/core.typedRegistry.js (AGENTS.md rule
 // 3). core.registry.tests.js reaches it only through Chart.register. These
@@ -253,7 +257,7 @@ void main() {
         'descriptors.elements.trouted',
         o.json(at(descriptors, 'elements.trouted')),
       );
-    defaults['color'] = 'red';
+    defaults['color'] = const color_values.PreparedColor(255, 0, 0, 1);
     scope['own'] = 7.0;
     o
       ..observe('backgroundColor after', o.json(scope['backgroundColor']))
@@ -536,3 +540,8 @@ void main() {
     }
   });
 }
+
+final Map<String, String> registryReference = {
+  for (final entry in frozen.registryReference.entries)
+    entry.key: referenceColorTokens(entry.value),
+};

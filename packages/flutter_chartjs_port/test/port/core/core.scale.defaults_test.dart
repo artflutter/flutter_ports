@@ -6,7 +6,11 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:test/test.dart';
+
+import '../../support/color_json.dart';
 
 import 'recording_defaults.dart';
 
@@ -50,7 +54,7 @@ void main() {
           '["describe","scale.ticks",{"_scriptable":"<fn>",'
           '"_indexable":"<fn>"}]';
       expect(defaults.calls.map(probeJson), [
-        setScale,
+        referenceColorText(setScale),
         '["route","scale.ticks","color","","color"]',
         '["route","scale.grid","color","","borderColor"]',
         '["route","scale.border","color","","borderColor"]',
@@ -79,9 +83,11 @@ void main() {
       expect(
         jsCall(grid['tickColor'], [
           context,
-          <String, Object?>{'color': 'red'},
+          <String, Object?>{
+            'color': const color_values.PreparedColor(255, 0, 0, 1),
+          },
         ]),
-        'red',
+        const color_values.PreparedColor(255, 0, 0, 1),
       );
     });
 

@@ -1,5 +1,30 @@
 # Performance of the canvas layer
 
+| Status | Chapter |
+| --- | --- |
+|  | [1. Test bed](#1-test-bed) |
+|  | [2. Results on macOS](#2-results-on-macos) |
+|  | [3. Results in Chrome](#3-results-in-chrome) |
+|  | [4. Results on Android](#4-results-on-android) |
+|  | [5. Changes](#5-changes) |
+|  | [6. How to measure](#6-how-to-measure) |
+|  | [7. Open](#7-open) |
+|  | [8. Elements (phase 4)](#8-elements-phase-4) |
+|  | [9. Cut 2 (phase 5)](#9-cut-2-phase-5) |
+|  | [10. Core (phase 5)](#10-core-phase-5) |
+|  | [11. Scales (phase 6)](#11-scales-phase-6) |
+|  | [12. Dates (phase 6)](#12-dates-phase-6) |
+|  | [13. Controllers (phase 7)](#13-controllers-phase-7) |
+|  | [14. Plugins (phase 8)](#14-plugins-phase-8) |
+|  | [15. The widget (phase 9)](#15-the-widget-phase-9) |
+|  | [16. The typed internal model and the native draw path (phase 10)](#16-the-typed-internal-model-and-the-native-draw-path-phase-10) |
+| ✅ | [17. Color parsing across Flutter 3.44 and 3.47](#chapter-17) |
+| ✅ | [18. Color decoder gain across platforms](#chapter-18) |
+| ✅ | [19. Android profiling and further color optimization](#chapter-19) |
+| ✅ | [20. Direct typed color to canvas: Android experiment](#chapter-20) |
+| ✅ | [21. Direct-color implementation: macOS, Chrome and Android](#chapter-21) |
+| ✅ | [22. Color-only implementation](#chapter-22) |
+
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
   ([Chart.js ADR 0015](adr/0015-text.md)). Section 8 adds the draw cost of the phase 4 elements
@@ -4637,6 +4662,11 @@ on macOS or in Chrome can still reject a form.
 5. **The accessibility path.** The maintainer took the accessibility measurement out of phase 10
    on 2026-10-30. No figure exists for the semantics path.
 
+<a id="chapter-17"></a>
+
+<details>
+<summary>17. Color parsing across Flutter 3.44 and 3.47</summary>
+
 ## 17. Color parsing across Flutter 3.44 and 3.47
 
 Investigation of 2026-10-31, at repository commit `b752133`. This concerns the ported
@@ -4790,6 +4820,13 @@ The applied decoder takes 85.6% less time (about 6.9 times faster) in this isola
 The raw results are `raw/implementation-*.jsonl` in the working evidence directory. This
 does not measure whole-chart frame time or browser performance.
 
+</details>
+
+<a id="chapter-18"></a>
+
+<details>
+<summary>18. Color decoder gain across platforms</summary>
+
 ## 18. Color decoder gain across platforms
 
 Measured on 2026-10-31 after implementing section 17. This compares the original string-keyed
@@ -4890,7 +4927,21 @@ Failed or incomplete attempts are retained separately and contribute no timing r
 The executable builds remain under `/private/tmp/kurkle-platform-bench/artifacts/`.
 The temporary benchmark app is separate from the gallery; the gallery was not replaced.
 
+</details>
+
+<a id="chapter-19"></a>
+
+<details>
+<summary>19. Android profiling and further color optimization</summary>
+
 ## 19. Android profiling and further color optimization
+
+Completed; partly superseded by [section 22](#22-color-only-implementation).
+The numerical mixing, cloning, byte-conversion and hue optimizations remain relevant
+to hover and animation. Parsing and string-formatting optimizations no longer speed
+up chart rendering, because the Color-only path keeps colors native. The measurements
+below remain evidence for the implementation tested at the time; they are not current
+whole-chart gains. The ADR status recorded below is historical.
 
 Decision record: [Chart.js ADR 0056](adr/0056-color-performance.md) (proposed).
 "Accepted" below means the selected benchmark candidate; ADR acceptance still needs the
@@ -5035,3 +5086,348 @@ the differential oracle, correctness logs, and `accepted-summary.csv`. A small r
 Dart/js/bootstrap copy permits rebuilding the comparison. APKs remain in
 `/private/tmp/kurkle-android-tuning/artifacts/`. The temporary Android benchmark app is removed
 after collection; the gallery is not replaced.
+
+</details>
+
+<a id="chapter-20"></a>
+
+<details>
+<summary>20. Direct typed color to canvas: Android experiment</summary>
+
+## 20. Direct typed color to canvas: Android experiment
+
+Completed; superseded by [section 22](#22-color-only-implementation).
+This Android prototype justified the direct Color-to-Paint path. The subsequent
+Color-only implementation handles hover, animation, themes and public color values,
+and includes measurements on all four platforms. The results and implementation
+limitations below describe the historical prototype, not outstanding work.
+
+Measured on 2026-11-01 against `175337ff09d37b6aa7a5de76cdf5f90e44be6bc8`, after
+the color-parser optimization of section 19. This investigates the direct `Color` to
+`Paint` follow-up of Chart.js ADR 0054 Open 2. The candidate exists only in an isolated
+copy; no production library code changed.
+
+### 20.1 Candidate and protocol
+
+The current typed lowering converts Flutter colors to CSS strings. The canvas parses
+those strings through a 512-entry cache, clearing the cache when full. The candidate
+lowers colors directly to normalized `dart:ui` colors and lets the canvas setters keep
+them. It preserves the existing extended-sRGB conversion, RGB clamping and canvas
+alpha quantization. Raw CSS strings still use the existing parser and cache.
+
+Pixel 8a, Android 17, Flutter 3.47.8 / Dart 3.13.7, release AOT for arm64, profiler off.
+The existing gallery frameless harness measures real chart update, draw and recording
+completion. The scene is a line controller showing points without a connecting line,
+with hidden scales, no animation or events, and an 800 × 480 bitmap at DPR 1. It calls
+the real typed `colorOption` and `colorScript` lowering functions; the rest of the
+config is identical raw configuration on both sides. Colors are preconstructed.
+
+Eight fresh processes ran A/B/B/A/B/A/A/B. Each cell uses a 300 ms warm-up and nine
+approximately 100 ms batches. The table gives medians across four process results
+per variant. A process result is the sum of its update/draw/end medians, as in the
+existing harness. Initial construction and initial list lowering are outside that
+timing. This measures CPU-side chart work, not GPU rasterization, widget cost or FPS.
+
+Battery temperature rose from 29.3 to 33.6 °C; reported thermal status stayed 0.
+The last B process also slowed in raw-string controls. All completed runs are retained,
+including that process; the small differences are not treated as established gains.
+
+### 20.2 Chart results
+
+The first series uses translucent palettes with varying byte alpha values. A static
+color is shared by every point; `script16` returns one of 16 colors; `script-unique`
+returns a distinct color per point; `indexable-unique` supplies a list of distinct
+colors. The latter two exceed the canvas cache capacity at both measured counts.
+
+| Workload, N 5000 | A, ms | B, ms | Time reduction |
+|---|---:|---:|---:|
+| Static color, update + draw + end | 2.153 | 2.090 | 2.9% |
+| Scriptable, 16 colors, update + draw + end | 28.605 | 25.007 | 12.6% |
+| Scriptable, distinct colors, update + draw + end | 30.472 | 25.135 | 17.5% |
+| Indexable, distinct colors, update + draw + end | 26.451 | 25.040 | 5.3% |
+| Scriptable, distinct colors, draw + end | 3.343 | 1.299 | 61.2% |
+| Indexable, distinct colors, draw + end | 3.293 | 1.275 | 61.3% |
+
+At N 1000, update + draw + end falls by 1.9% for static colors, 7.4% for
+`script16`, 17.8% for `script-unique`, and 6.7% for `indexable-unique`.
+
+The strongest result is the draw with more colors than the cache can hold: every
+adjacent pair reduces that time by 52.6–61.8% at N 5000. It saves about 2 ms in
+the median. The `script-unique` whole-update gain stays positive in all four pairs
+(4.5–19.1%), saving 5.337 ms in the median. The other whole-update cells each have
+at least one slower candidate pair. Static colors save only 0.063 ms at N 5000,
+below the project's 0.1 ms threshold.
+
+The raw-static and raw-script16 controls at N 5000 have whole-update medians 0.3%
+and 2.6% slower in B. Their final pair is 6.7% and 15.9% slower. This is a reason
+to keep the weaker results provisional, not to discard the last pair. This experiment
+does not claim that the candidate passes a production regression gate.
+
+### 20.3 Conversion costs
+
+Microbenchmarks consume each result, with 100 ms warm-up and seven approximately
+40 ms batches. These figures are also medians across four processes per variant.
+
+| Operation | A, ns/op | B, ns/op | Speedup |
+|---|---:|---:|---:|
+| Typed lowering, 16 colors | 428.4 | 42.4 | 10.09x |
+| Typed lowering, 4096 colors | 420.8 | 39.9 | 10.55x |
+| Lowering + canvas color lookup, 16 colors | 501.9 | 41.6 | 12.05x |
+| Lowering + canvas color lookup, 4096 colors | 879.5 | 40.5 | 21.74x |
+
+The last two operations produce a paint color; they do not issue a draw. A repeated
+palette benefits by removing string formatting and cache lookup. A palette larger
+than the cache additionally avoids repeated parsing and cache eviction. The chart
+update benefits less because option resolution and the rest of the chart still run.
+
+### 20.4 Opaque and simple-alpha colors
+
+The first palette's varying byte alpha values often produce long decimal strings.
+A separate guard uses a 16-color callback with either alpha 1 or alpha 0.45, plus
+raw-string controls of the same colors. Four fresh processes run A/B/B/A with the
+same chart timing settings. The phone had settled at 34.0–34.3 °C, thermal status 0;
+the guard's starting gate was 35 °C. These results are not pooled with section 20.2.
+
+| Scriptable palette, N 5000, update + draw + end | A, ms | B, ms | Time reduction |
+|---|---:|---:|---:|
+| 16 opaque colors | 26.009 | 25.452 | 2.1% |
+| 16 colors, alpha 0.45 | 26.909 | 24.991 | 7.1% |
+
+Both adjacent pairs improve: 1.4–2.9% for opaque and 6.4–7.9% for alpha 0.45.
+Their raw-string controls are respectively 1.3% and 1.2% slower in the median in B.
+At N 1000, the typed medians improve 5.8% and 2.1%, while the raw controls are 3.6%
+and 4.6% slower. This is a small guard, not a precision estimate for the weaker gains.
+
+Lowering plus canvas color lookup falls from 261.2 to 34.7 ns/op for opaque colors
+(7.52x), and from 304.1 to 36.6 ns/op for alpha 0.45 (8.32x). Thus the conversion
+gain also exists for common colors, but the complete update remains dominated by
+other work. It would be misleading to apply the 10–22x microbenchmark gain of
+section 20.3 to a whole chart, or to every input palette.
+
+### 20.5 Correctness and implementation boundary
+
+Each main-series process passed 17,002 direct-versus-CSS color comparisons: an alpha sweep,
+the palette, Display P3 colors and an extended-sRGB value. Six 600-point rendered
+charts have matching full-image byte hashes and nontransparent pixel counts across
+all eight processes. No golden was rewritten.
+
+This establishes the conversion and rendering checks for these workloads, not full
+behavior parity. The direct prototype changes resolved option values from strings
+to `ui.Color`. The public option face and typed/raw twin tests currently expose or
+expect strings. Hover and color animation also need adaptation: a focused VM probe
+shows `getHoverColor` of the CSS form of `Color(0xFF2050C0)` gives `#003CCA`, while
+passing the Flutter color directly gives `#000`. The current pure color parser
+does not read Flutter color channels. Theme compilation is outside this experiment.
+
+Conclusion: bypassing the string round trip merits further implementation work,
+especially for scriptable colors and palettes exceeding 512 entries. It does not
+close ADR 0054 Open 2. A production implementation must preserve observable option
+behavior, hover and animation semantics, then repeat the affected measurements.
+
+The [reproduction package](benchmarks/direct-color/README.md) retains the candidate
+patch, benchmark entries, pinned source revision and dependencies, build/run/report
+scripts, individual measurements and device/thermal metadata. The setup script was
+checked to reconstruct the measured source and successfully rebuild a release APK. APKs remain under
+`/private/tmp/chart-direct-color-20261101/artifacts/`; the experiment uses a separate
+application identifier and does not replace the gallery. The temporary benchmark
+app was uninstalled after collection.
+
+</details>
+
+<a id="chapter-21"></a>
+
+<details>
+<summary>21. Direct-color implementation: macOS, Chrome and Android</summary>
+
+## 21. Direct-color implementation: macOS, Chrome and Android
+
+Completed; superseded by [section 22](#22-color-only-implementation).
+This intermediate implementation supported both native colors and CSS strings.
+Section 22 replaces that compatibility layer with the Color-only API and adds
+iOS measurements. The implementation details and results below describe the
+historical compatible candidate, not the current API.
+
+Implemented and measured on 2026-11-01, without committing. [ADR 0057](adr/0057-direct-typed-colors.md)
+records the representation and compatibility boundaries. These are measurements of
+the implementation, not the simpler prototype of section 20.
+
+### 21.1 Implementation and validation
+
+Typed colors retain prepared native paints. Public option reads, generated getters,
+mutable color lists and callback reads still expose their original CSS values.
+Callbacks run as often as before. Shared unanimated option copies retain paints;
+the built-in elements use them directly on the native canvas. Custom and recording
+canvases continue receiving the ordinary CSS form. Hover and animation preserve
+their CSS behavior and the existing animation cache. Raw CSS keeps its bounded
+canvas cache. Theme compilation is unchanged.
+
+The affected typed API, option, resolver, canvas, animation and public-export tests
+were checked. Four typed/raw chart twins exposed a plugin/scale boundary that was
+fixed; the 52-test twin/direct-color subset then passed. The final six direct-color
+regressions pass on the VM. The spec run reports 958 passing cases, 78 existing
+skips and zero failures. Static analysis, headers, import restrictions, JS semantics,
+the typed-read ratchet and generated options checks pass. Parity was regenerated
+from the saved spec results. No golden was rewritten.
+
+### 21.2 Small release comparison
+
+Baseline: `175337ff09d37b6aa7a5de76cdf5f90e44be6bc8`. Candidate: the uncommitted
+working-tree library, compared byte-for-byte with the benchmark source snapshot.
+Flutter 3.47.8 / Dart 3.13.7. Platforms: Apple M3 Max on macOS 27.0.1, headless
+Chrome 156 running release Wasm (verified by the application), and Pixel 8a arm64.
+No iOS run: the device is to be connected later.
+
+Four fresh processes per platform, A/B/B/A. Five cases, each measuring draw and
+update separately at N 5000: a CSS-background callback control, static typed color,
+a 16-color typed callback with alpha 0.45, a callback with distinct translucent
+colors and an indexable list of those distinct colors. Each cell uses 250 ms warm-up
+and seven approximately 100 ms batches. One earlier macOS screen found overhead
+in the public color conversion helper; an inlining hint was added. Its results are
+retained separately and excluded from the final figures below. No further tuning
+series was run.
+
+This uses actual typed dataset lowering, a line controller drawing points without
+a connecting line, a hidden category x axis, a hidden linear y axis, an 800 × 480
+bitmap at DPR 1, and `update('none')`. Initial configuration, palette construction,
+widget/host work, GPU rasterization and FPS are outside the timing. The category
+scale and the compatibility implementation differ from section 20's prototype, so
+its percentages must not be treated as a before/after for this series.
+
+Each entry is A → B, milliseconds for update + draw + recording completion, followed
+by the percentage reduction. Negative percentages mean the candidate was slower.
+The values are medians of two process results per side, without confidence intervals.
+
+| Workload, 5000 points | macOS | Chrome Wasm | Pixel 8a |
+|---|---:|---:|---:|
+| Static typed color | 10.857 → 10.743 (1.1%) | 13.024 → 13.017 (0.1%) | 21.600 → 20.379 (5.7%) |
+| Callback, 16 colors | 25.148 → 24.605 (2.2%) | 34.711 → 33.560 (3.3%) | 45.347 → 46.761 (-3.1%) |
+| Callback, distinct colors | 26.992 → 24.624 (8.8%) | 37.355 → 33.661 (9.9%) | 50.752 → 45.590 (10.2%) |
+| List, distinct colors | 24.956 → 24.157 (3.2%) | 34.708 → 33.111 (4.6%) | 43.267 → 47.014 (-8.7%) |
+| CSS-background callback control | 24.805 → 25.260 (-1.8%) | 35.183 → 35.227 (-0.1%) | 43.809 → 47.416 (-8.2%) |
+
+The control still has a typed border color, so a small drawing gain is possible
+even though its background callback keeps the CSS path.
+
+For draw + recording completion alone:
+
+| Workload, 5000 points | macOS | Chrome Wasm | Pixel 8a |
+|---|---:|---:|---:|
+| Callback, distinct colors | 1.902 → 0.778 (59.1%) | 2.992 → 1.156 (61.3%) | 3.189 → 1.187 (62.8%) |
+| List, distinct colors | 1.898 → 0.776 (59.1%) | 3.130 → 1.137 (63.7%) | 3.220 → 1.188 (63.1%) |
+
+### 21.3 Interpretation and limits
+
+Large-palette drawing is the consistent win: it bypasses repeated parsing when
+the palette exceeds the 512-entry CSS cache. Distinct-color callback updates also
+improve on all three platforms. Static colors and small palettes have much smaller
+whole-update gains because the rest of the chart still runs.
+
+Android's update results are mixed. The 16-color callback, indexed palette and
+CSS-background control are slower in this short series. Battery readings stayed
+29.2–29.3 °C, but CPU frequency was not pinned, and update batch times vary. The
+control slowdown is a reason for caution, not evidence that the regressions can
+be dismissed as noise. Keep these as provisional regressions; this is not an
+across-the-board performance acceptance or an FPS claim. The code remains an
+uncommitted candidate for review, with iOS and broader release qualification pending.
+
+The [implementation reproduction package](benchmarks/direct-color/implementation/README.md)
+retains the exact library patch, workload, dependency lockfile, commands, native
+binary hashes, individual process results and summaries. The standalone Android
+benchmark app was removed after collection; the gallery was not replaced.
+
+</details>
+
+<a id="chapter-22"></a>
+
+<details>
+<summary>22. Color-only implementation</summary>
+
+## 22. Color-only implementation
+
+2026-11-01. Final user-requested API: solid colors are Flutter `Color` in typed
+and raw configurations, callbacks and gradient stops. CSS strings throw
+`ArgumentError`. Typed lowering retains the native color; the canvas assigns it
+directly. There is no CSS parser or string-color cache in the chart path.
+Numerical defaults, hover and animation preserve the pure-Dart architecture.
+The existing per-animation endpoint cache remains; it caches numerical endpoints,
+not strings or user callback answers. See [ADR 0057](adr/0057-direct-typed-colors.md).
+
+### Bounded release comparison
+
+A is commit `175337ff09d37b6aa7a5de76cdf5f90e44be6bc8`; B is the uncommitted
+Color-only implementation. Flutter 3.47.8 / Dart 3.13.7. macOS: Apple M3 Max,
+macOS 27.0.1; Chrome 156.0.8078.79, release WebAssembly; Android: Pixel 8a,
+Android 17; iOS: iPhone 17 Pro, iOS 26.6.2. Each platform ran A/B/B/A, two
+processes per variant. Each cell uses
+5000 points, 250 ms warmup and seven 100 ms batches. Measurements cover CPU
+chart update/draw/recording completion, not rasterization or FPS. Initial config
+lowering is outside the timer. The raw callback returns CSS in A and Color in B.
+
+Positive percentages below mean less time. Draw means drawing plus recording
+completion; update includes update, draw and completion. All measured process
+values and millisecond medians are in the [reproduction package](benchmarks/direct-color/strict/README.md).
+
+| Case | Operation | macOS | Chrome Wasm | Android | iOS |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Raw callback, 16 colors | draw | +12.4% | +17.4% | +13.6% | +13.6% |
+| Raw callback, 16 colors | update | +3.8% | +7.1% | -0.1% | +4.0% |
+| Static color | draw | +11.3% | +18.6% | +15.1% | +13.7% |
+| Static color | update | +0.3% | +1.8% | +13.0% | -0.5% |
+| Typed callback, 16 colors | draw | +10.9% | +17.6% | +15.4% | +13.7% |
+| Typed callback, 16 colors | update | +2.2% | +7.8% | -0.9% | +2.6% |
+| Typed callback, 5000 colors | draw | +61.4% | +61.7% | +63.6% | +62.6% |
+| Typed callback, 5000 colors | update | +12.5% | +14.6% | +13.0% | +11.9% |
+| List, 5000 colors | draw | +60.6% | +62.8% | +64.6% | +62.5% |
+| List, 5000 colors | update | +6.0% | +6.7% | +4.2% | +3.3% |
+
+Distinct colors show the strongest result: about 61–65% less drawing CPU time,
+with full updates about 12–15% faster for distinct callbacks and 3–7% faster
+for distinct lists. For example, Android distinct callbacks draw in 1.147 ms
+instead of 3.152 ms, and update in 43.477 ms instead of 49.948 ms.
+The baseline's bounded string cache cannot retain that palette.
+
+Repeated-color updates are workload-dependent: Android raw/typed 16-color
+callbacks changed by −0.1%/−0.9%, effectively unchanged at this sample size.
+Static updates ranged from −0.5% to +13.0%; the latter is not evidence of a
+universal static-color gain. Two pairs are insufficient for confidence intervals.
+The macOS host also compiled isolated iOS builds during part of its series;
+small macOS shifts are inconclusive. No further tuning/repetitions were done.
+
+These compare the original implementation with the complete direct-color change.
+They do **not** isolate the incremental benefit of forbidding strings compared
+with a compatible direct-color fast path. Removing compatibility mainly simplifies
+code and eliminates the parser/cache; the direct native path supplies the main
+measured gain. Native alpha and wide-gamut colors also avoid the old CSS
+quantization, so pixel output can intentionally differ from the old route.
+
+### iOS and verification
+
+iOS completed the release A/B/B/A comparison after the development-profile
+launch rejection was resolved. Distinct callback colors reduced draw CPU time
+from 1.575 ms to 0.589 ms (62.6%), and full update time from 21.453 ms to
+18.901 ms (11.9%). Distinct lists reduced draw time by 62.5% and full updates
+by 3.3%. Static updates changed by −0.5%, effectively unchanged in this run.
+
+The app's release console did not expose benchmark output. Results were instead
+written into its own temporary directory after timing and retrieved with
+`devicectl`. Subsequent launches first replace the old result with a sentinel;
+each result must contain ten release cells of the expected variant. One initial
+console-only launch is excluded. The same production library and timed workload
+were used; only result collection changed. The reproduction package includes the
+iOS runner and completion helper.
+
+The VM spec suite passed 958 tests (78 existing skips), and the observation oracle
+passed 1476 cases. Its reviewed native-color representation retains callback
+counts/order; all fixtures construct except the deliberate recursion probes.
+Nine focused Color-only contract tests passed on VM and Chrome Wasm. Affected
+reference tests (4155 passed, 61 existing skips in the final affected-file run)
+and gallery assertions were migrated to native colors while
+retaining their geometry, ordering, option and callback checks. Static analysis,
+import/header rules, JS semantics, typed-read counts and generated options were
+checked; parity is regenerated from the saved passing spec run. Pre-push
+verification additionally runs the full workspace suite, Chrome JS/Wasm suites,
+spec-case coverage and fixture checks. Golden and device UI suites were not
+repeated for this change.
+
+
+</details>

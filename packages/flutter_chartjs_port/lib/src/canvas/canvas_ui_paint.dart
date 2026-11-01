@@ -1,12 +1,11 @@
 // Original code, not ported from Chart.js: the dart:ui canvas styles.
 
 /// The styles of the `dart:ui` canvas context (Chart.js ADR 0013,
-/// porting-flow.md 2.2): CSS colors, gradients, patterns, images,
+/// porting-flow.md 2.2): native colors, gradients, patterns, images,
 /// composite operations and line dashes.
 ///
-/// - A CSS color string parses with the ported @kurkle/color
-///   (`lib/src/kurkle_color/`), through a bounded cache of `ui.Color`
-///   values. A string that does not parse is invalid: the DOM ignores it.
+/// - Solid paints and gradient stops require `ui.Color`. Strings throw;
+///   there is no CSS color parser or color-string cache (ADR 0057).
 /// - A gradient builds its `ui.Gradient` when a draw uses it, with the
 ///   transform of that draw (the DOM rule: gradient coordinates are in the
 ///   user space of the draw). The shader is cached for the last matrix.
@@ -20,32 +19,14 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 
-/// The bound of the color cache. A full cache starts again empty.
-const int _colorCacheSize = 512;
-
-final Map<String, ui.Color?> _colorCache = {};
-
-/// The `ui.Color` of the CSS color [value], or `null` when [value] does not
-/// parse. The parser is the ported @kurkle/color. Results are cached.
-ui.Color? parseCssColor(String value) {
-  final cached = _colorCache[value];
-  if (cached != null || _colorCache.containsKey(value)) return cached;
-  if (_colorCache.length >= _colorCacheSize) _colorCache.clear();
-  final parsed = kurkle.Color(value.trim());
-  ui.Color? color;
-  if (parsed.valid) {
-    final rgb = parsed.rgb!;
-    color = ui.Color.fromARGB(
-      (rgb.a * 255).round().clamp(0, 255),
-      rgb.r.round().clamp(0, 255),
-      rgb.g.round().clamp(0, 255),
-      rgb.b.round().clamp(0, 255),
-    );
-  }
-  return _colorCache[value] = color;
-}
+/// CSS color parsing is unsupported. Supply a Flutter Color instead.
+ui.Color? parseCssColor(String value) => throw ArgumentError.value(
+  value,
+  'color',
+  'CSS color strings are unsupported; use Flutter Color',
+);
 
 String _hex2(int v) => v.toRadixString(16).padLeft(2, '0');
 
@@ -219,18 +200,15 @@ final class UiCanvasGradient extends UiShaderSource implements CanvasGradient {
   List<ui.Color> get colors => List.unmodifiable(_colors);
 
   /// `addColorStop(offset, color)`. An offset outside [0, 1] throws a
-  /// [RangeError] (the DOM `IndexSizeError`). A color that does not parse
-  /// throws a [FormatException] (the DOM `SyntaxError`). A stop with the
+  /// [RangeError] (the DOM `IndexSizeError`). A value that is not a native
+  /// color throws an [ArgumentError] (ADR 0057). A stop with the
   /// same offset as earlier stops goes after them.
   @override
-  void addColorStop(double offset, String color) {
+  void addColorStop(double offset, Object color) {
     if (!(offset >= 0 && offset <= 1)) {
       throw RangeError.range(offset, 0, 1, 'offset');
     }
-    final parsed = parseCssColor(color);
-    if (parsed == null) {
-      throw FormatException('The color does not parse', color);
-    }
+    final parsed = requireUiColor(color, 'gradient color');
     var i = _offsets.length;
     while (i > 0 && _offsets[i - 1] > offset) {
       i--;

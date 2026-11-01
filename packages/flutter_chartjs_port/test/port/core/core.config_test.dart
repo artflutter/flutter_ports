@@ -19,9 +19,13 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
+    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
+
+import '../../support/color_json.dart';
 
 // Upstream has no spec for src/core/core.config.js (AGENTS.md rule 3). The
 // expected values come from src/core/core.config.js at v4.5.1, with the
@@ -45,7 +49,10 @@ import 'package:test/test.dart';
 /// `JSON.stringify(value, replacer)` with the replacer of the Node.js probe:
 /// `undefined` is `"<undefined>"` and a function is `"<fn>"`. A Map gives its
 /// keys in the `Object.keys` order, also a resolver.
-String _json(Object? value) => switch (value) {
+String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
+
+String _jsonRaw(Object? value) => switch (value) {
+  _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
@@ -125,7 +132,12 @@ Object? _at(Object? root, String path) {
 }
 
 /// The default `ticks.backdropColor` of the scales.
-const String _backdrop = 'rgba(255, 255, 255, 0.75)';
+const color_values.PreparedColor _backdrop = color_values.PreparedColor(
+  255,
+  255,
+  255,
+  0.75,
+);
 
 /// A [StateError] with the message of `determineAxis`.
 Matcher _axisError(String id) => throwsA(
@@ -361,8 +373,14 @@ void main() {
   group('initConfig', () {
     test('an absent or null config', () {
       for (final config in [Config(), Config(undefined)]) {
-        expect(_json(config.data), '{"datasets":[],"labels":[]}');
-        expect(_json(config.options), '{"plugins":{},"scales":{}}');
+        expect(
+          _json(config.data),
+          referenceColorTokens('{"datasets":[],"labels":[]}'),
+        );
+        expect(
+          _json(config.options),
+          referenceColorTokens('{"plugins":{},"scales":{}}'),
+        );
         expect(config.type, same(undefined));
       }
     });
@@ -382,8 +400,10 @@ void main() {
       expect(config.options, same(raw['options']));
       expect(
         _json(raw),
-        '{"type":"line","data":{"labels":["a"],"datasets":[]},'
-        '"options":{"plugins":{"legend":false},"scales":{}}}',
+        referenceColorTokens(
+          '{"type":"line","data":{"labels":["a"],"datasets":[]},'
+          '"options":{"plugins":{"legend":false},"scales":{}}}',
+        ),
       );
     });
 
@@ -395,15 +415,19 @@ void main() {
       Config(raw);
       expect(
         _json(raw),
-        '{"options":{"plugins":null,"scales":{}},'
-        '"data":{"datasets":[],"labels":[]}}',
+        referenceColorTokens(
+          '{"options":{"plugins":null,"scales":{}},'
+          '"data":{"datasets":[],"labels":[]}}',
+        ),
       );
       final raw2 = <String, Object?>{'options': null};
       Config(raw2);
       expect(
         _json(raw2),
-        '{"options":{"plugins":{},"scales":{}},'
-        '"data":{"datasets":[],"labels":[]}}',
+        referenceColorTokens(
+          '{"options":{"plugins":{},"scales":{}},'
+          '"data":{"datasets":[],"labels":[]}}',
+        ),
       );
     });
 
@@ -462,10 +486,16 @@ void main() {
       config.data = <String, Object?>{
         'labels': [1.0],
       };
-      expect(_json(raw['data']), '{"labels":[1],"datasets":[]}');
+      expect(
+        _json(raw['data']),
+        referenceColorTokens('{"labels":[1],"datasets":[]}'),
+      );
       expect(config.data, same(raw['data']));
       config.data = null;
-      expect(_json(raw['data']), '{"datasets":[],"labels":[]}');
+      expect(
+        _json(raw['data']),
+        referenceColorTokens('{"datasets":[],"labels":[]}'),
+      );
     });
 
     test('set options writes the raw config', () {
@@ -828,7 +858,9 @@ void main() {
         'options': <String, Object?>{
           'scales': <String, Object?>{
             'x': <String, Object?>{
-              'grid': <String, Object?>{'color': 'red'},
+              'grid': <String, Object?>{
+                'color': const color_values.PreparedColor(255, 0, 0, 1),
+              },
             },
           },
         },
@@ -839,31 +871,35 @@ void main() {
       const title =
           '"title":{"display":false,"text":"","padding":{"top":4,'
           '"bottom":4},"color":"#666"}';
-      const ticks =
+      final ticks =
           '"ticks":{"minRotation":0,"maxRotation":50,"mirror":false,'
           '"textStrokeWidth":0,"textStrokeColor":"","padding":3,'
           '"display":true,"autoSkip":true,"autoSkipPadding":3,'
           '"labelOffset":0,"callback":"<fn>","minor":{},"major":{},'
           '"align":"center","crossAlign":"near","showLabelBackdrop":false,'
-          '"backdropColor":"$_backdrop","backdropPadding":2,'
+          '"backdropColor":"${_backdrop.css}","backdropPadding":2,'
           '"color":"#666"}';
       expect(
         _json(_at(config.options, 'scales.x')),
-        '{"axis":"x","grid":{"color":"red","offset":true,"display":true,'
-        '"lineWidth":1,"drawOnChartArea":true,"drawTicks":true,'
-        '"tickLength":8,"tickWidth":"<fn>","tickColor":"<fn>"},'
-        '"type":"tcat","offset":true,"cat":1,"display":true,'
-        '"reverse":false,"beginAtZero":false,"bounds":"ticks","clip":true,'
-        '"grace":0,$border,$title,$ticks}',
+        referenceColorTokens(
+          '{"axis":"x","grid":{"color":"red","offset":true,"display":true,'
+          '"lineWidth":1,"drawOnChartArea":true,"drawTicks":true,'
+          '"tickLength":8,"tickWidth":"<fn>","tickColor":"<fn>"},'
+          '"type":"tcat","offset":true,"cat":1,"display":true,'
+          '"reverse":false,"beginAtZero":false,"bounds":"ticks","clip":true,'
+          '"grace":0,$border,$title,$ticks}',
+        ),
       );
       expect(
         _json(_at(config.options, 'scales.y')),
-        '{"axis":"y","type":"tlin","beginAtZero":true,"lin":1,'
-        '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
-        '"clip":true,"grace":0,"grid":{"display":true,"lineWidth":1,'
-        '"drawOnChartArea":true,"drawTicks":true,"tickLength":8,'
-        '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
-        '"color":"rgba(0,0,0,0.1)"},$border,$title,$ticks}',
+        referenceColorTokens(
+          '{"axis":"y","type":"tlin","beginAtZero":true,"lin":1,'
+          '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
+          '"clip":true,"grace":0,"grid":{"display":true,"lineWidth":1,'
+          '"drawOnChartArea":true,"drawTicks":true,"tickLength":8,'
+          '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
+          '"color":"rgba(0,0,0,0.1)"},$border,$title,$ticks}',
+        ),
       );
     });
   });
@@ -892,10 +928,12 @@ void main() {
       expect(identical(first['x'], scales['x']), isFalse);
       expect(
         _json(_scaleSummary(scales['x'])),
-        '{"axis":"x","min":1,"type":"tcat","offset":true,"grid":"{...}",'
-        '"cat":1,"display":true,"reverse":false,"beginAtZero":false,'
-        '"bounds":"ticks","clip":true,"grace":0,"border":"{...}",'
-        '"title":"{...}","ticks":"{...}","max":9}',
+        referenceColorTokens(
+          '{"axis":"x","min":1,"type":"tcat","offset":true,"grid":"{...}",'
+          '"cat":1,"display":true,"reverse":false,"beginAtZero":false,'
+          '"bounds":"ticks","clip":true,"grace":0,"border":"{...}",'
+          '"title":"{...}","ticks":"{...}","max":9}',
+        ),
       );
     });
 
@@ -912,7 +950,10 @@ void main() {
             }
             ..update();
       expect(jsObjectKeys(config.options), ['plugins', 'scales']);
-      expect(_json((config.options as AnyObject)['plugins']), '{"a":1}');
+      expect(
+        _json((config.options as AnyObject)['plugins']),
+        referenceColorTokens('{"a":1}'),
+      );
       expect(
         jsObjectKeys(
           (config.options as AnyObject)['scales']! as JsObjectFace,
@@ -1330,7 +1371,10 @@ void main() {
       ]);
       final noType = Config(<String, Object?>{});
       final scopes = noType.chartOptionScopes();
-      expect(_json(scopes[3]), '{"type":"<undefined>"}');
+      expect(
+        _json(scopes[3]),
+        referenceColorTokens('{"type":"<undefined>"}'),
+      );
       expect(jsObjectKeys(scopes[3]! as Map<String, Object?>), ['type']);
     });
   });
@@ -1364,8 +1408,10 @@ void main() {
       );
       expect(
         _json(result),
-        r'{"$shared":true,"radius":3,"pointStyle":"circle","nul":null,'
-        '"und":"<undefined>","missing":"<undefined>","extra":1}',
+        referenceColorTokens(
+          r'{"$shared":true,"radius":3,"pointStyle":"circle","nul":null,'
+          '"und":"<undefined>","missing":"<undefined>","extra":1}',
+        ),
       );
       expect(jsObjectKeys(result), [
         r'$shared',
@@ -1388,7 +1434,7 @@ void main() {
             ['point', ''],
           ),
         ),
-        r'{"$shared":true,"radius":5}',
+        referenceColorTokens(r'{"$shared":true,"radius":5}'),
       );
       expect(
         _json(
@@ -1399,7 +1445,7 @@ void main() {
             ['pointHover', 'hover', 'point', ''],
           ),
         ),
-        r'{"$shared":true,"radius":4,"borderColor":"H"}',
+        referenceColorTokens(r'{"$shared":true,"radius":4,"borderColor":"H"}'),
       );
     });
 
@@ -1436,7 +1482,10 @@ void main() {
           return context;
         },
       );
-      expect(_json(result), r'{"$shared":false,"radius":2,"other":1}');
+      expect(
+        _json(result),
+        referenceColorTokens(r'{"$shared":false,"radius":2,"other":1}'),
+      );
       expect(calls, 1);
     });
 
@@ -1458,7 +1507,9 @@ void main() {
             ['hover', ''],
           ),
         ),
-        r'{"$shared":false,"backgroundColor":"B","borderColor":"H"}',
+        referenceColorTokens(
+          r'{"$shared":false,"backgroundColor":"B","borderColor":"H"}',
+        ),
       );
       expect(
         _json(
@@ -1469,7 +1520,9 @@ void main() {
             ['Hover', 'HOVERx', 'x', ''],
           ),
         ),
-        r'{"$shared":false,"backgroundColor":"B","borderColor":"B"}',
+        referenceColorTokens(
+          r'{"$shared":false,"backgroundColor":"B","borderColor":"B"}',
+        ),
       );
     });
 
@@ -1487,7 +1540,7 @@ void main() {
             context,
           ),
         ),
-        r'{"$shared":false,"radius":2}',
+        referenceColorTokens(r'{"$shared":false,"radius":2}'),
       );
       expect(
         _json(
@@ -1499,7 +1552,7 @@ void main() {
             context,
           ),
         ),
-        r'{"$shared":false,"radius":[]}',
+        referenceColorTokens(r'{"$shared":false,"radius":[]}'),
       );
       final font = config.resolveNamedOptions(
         [
@@ -1512,7 +1565,10 @@ void main() {
         ['font'],
         <String, Object?>{'index': 4.0},
       );
-      expect(_json(font), r'{"$shared":false,"font":{"size":12}}');
+      expect(
+        _json(font),
+        referenceColorTokens(r'{"$shared":false,"font":{"size":12}}'),
+      );
       expect(
         (config.resolveNamedOptions(
           [
@@ -1553,7 +1609,7 @@ void main() {
             <String, Object?>{'index': 1.0},
           ),
         ),
-        r'{"$shared":true,"radius":[1,2]}',
+        referenceColorTokens(r'{"$shared":true,"radius":[1,2]}'),
       );
       expect(
         (config.resolveNamedOptions(
@@ -1589,7 +1645,7 @@ void main() {
     test(r'empty names, duplicate names and $shared as a name', () {
       expect(
         _json(config.resolveNamedOptions(scopes, [], <String, Object?>{})),
-        r'{"$shared":true}',
+        referenceColorTokens(r'{"$shared":true}'),
       );
       expect(
         _json(
@@ -1598,7 +1654,7 @@ void main() {
             'radius',
           ], <String, Object?>{}),
         ),
-        r'{"$shared":true,"radius":3}',
+        referenceColorTokens(r'{"$shared":true,"radius":3}'),
       );
       expect(
         _json(
@@ -1610,7 +1666,7 @@ void main() {
             <String, Object?>{},
           ),
         ),
-        r'{"$shared":"x"}',
+        referenceColorTokens(r'{"$shared":"x"}'),
       );
       final scriptable = config.resolveNamedOptions(
         [
@@ -1620,7 +1676,10 @@ void main() {
         <String, Object?>{},
       );
       expect(jsObjectKeys(scriptable), [r'$shared', 'a']);
-      expect(_json(scriptable), r'{"$shared":"x","a":1}');
+      expect(
+        _json(scriptable),
+        referenceColorTokens(r'{"$shared":"x","a":1}'),
+      );
       expect(
         jsObjectKeys(
           config.resolveNamedOptions(
@@ -1804,10 +1863,16 @@ void main() {
       final array = <Object?>[];
       final config = Config(<String, Object?>{'data': array});
       expect(config.data, isNot(same(array)));
-      expect(_json(config.data), '{"datasets":[],"labels":[]}');
+      expect(
+        _json(config.data),
+        referenceColorTokens('{"datasets":[],"labels":[]}'),
+      );
 
       config.data = <Object?>[1, 2];
-      expect(_json(config.data), '{"datasets":[],"labels":[]}');
+      expect(
+        _json(config.data),
+        referenceColorTokens('{"datasets":[],"labels":[]}'),
+      );
     });
 
     test('a function data throws a TypeError', () {
@@ -1822,7 +1887,10 @@ void main() {
       final config = Config(<String, Object?>{})..options = null;
       expect(() => config.options, throwsA(isA<TypeError>()));
       config.update();
-      expect(_json(config.options), '{"plugins":{},"scales":{}}');
+      expect(
+        _json(config.options),
+        referenceColorTokens('{"plugins":{},"scales":{}}'),
+      );
     });
 
     test('the data getter throws after a write into the raw config', () {
@@ -2070,7 +2138,10 @@ void main() {
       );
       expect(result, isNot(isA<ElementOptions>()));
       expect(result, isA<Map<String, Object?>>());
-      expect(_json(result), r'{"$shared":true,"x":1}');
+      expect(
+        _json(result),
+        referenceColorTokens(r'{"$shared":true,"x":1}'),
+      );
     });
   });
 
@@ -2284,7 +2355,7 @@ void main() {
     test('the element precedence of theming.md §3.2', () {
       // theming.md §8 test 2, the element rows. The plain value is the
       // value without a theme.
-      String run(List<String> levels, {bool themeRoot = false}) {
+      Object? run(List<String> levels, {bool themeRoot = false}) {
         overrides.jsDelete('tthm');
         defaults.set('elements.tbar', <String, Object?>{});
         (_at(defaults, 'elements')! as JsObjectFace)['tbar'] =
@@ -2330,12 +2401,11 @@ void main() {
           c.datasetElementScopeKeys('tthm', 'tbar'),
         );
         return (c.resolveNamedOptions(
-              scopes,
-              ['backgroundColor'],
-              <String, Object?>{},
-              ['tbar', ''],
-            ) as AnyObject)['backgroundColor']!
-            as String;
+          scopes,
+          ['backgroundColor'],
+          <String, Object?>{},
+          ['tbar', ''],
+        ) as AnyObject)['backgroundColor'];
       }
 
       const all = ['dataset', 'options', 'overrides', 'theme', 'defaults'];
@@ -2344,7 +2414,7 @@ void main() {
       expect(run(all.sublist(2)), 'L3-overrides');
       expect(run(all.sublist(3)), 'L4-theme');
       expect(run(all.sublist(4)), 'L5-defaults');
-      expect(run(const []), 'rgba(0,0,0,0.1)');
+      expect(run(const []), const color_values.PreparedColor(0, 0, 0, 0.1));
       // Without the theme level, each run equals the upstream run.
       expect(run(['overrides', 'defaults']), 'L3-overrides');
       expect(run(['defaults']), 'L5-defaults');
@@ -2393,7 +2463,14 @@ void main() {
         'options': <String, Object?>{},
         themeConfigKey: <String, Object?>{
           'elements': <String, Object?>{
-            'tbar': <String, Object?>{'backgroundColor': 'rgb(200, 0, 0)'},
+            'tbar': <String, Object?>{
+              'backgroundColor': const color_values.PreparedColor(
+                200,
+                0,
+                0,
+                1,
+              ),
+            },
           },
         },
       });
@@ -2410,8 +2487,10 @@ void main() {
             ['tbarHover', 'hover', 'tbar', ''],
           ),
         ),
-        r'{"$shared":false,"backgroundColor":"#B40000",'
-        '"hoverBackgroundColor":"#B40000"}',
+        referenceColorTokens(
+          r'{"$shared":false,"backgroundColor":"#B40000",'
+          '"hoverBackgroundColor":"#B40000"}',
+        ),
       );
     });
 
@@ -2682,9 +2761,11 @@ void main() {
       final themed = Config(raw(themed: true));
       expect(
         _json(_at(themed.options, 'scales.x.grid')),
-        '{"lineWidth":3,"color":"theme-grid","tickColor":"theme-tick",'
-        '"display":true,"drawOnChartArea":true,"drawTicks":true,'
-        '"tickLength":8,"tickWidth":"<fn>","offset":false}',
+        referenceColorTokens(
+          '{"lineWidth":3,"color":"theme-grid","tickColor":"theme-tick",'
+          '"display":true,"drawOnChartArea":true,"drawTicks":true,'
+          '"tickLength":8,"tickWidth":"<fn>","offset":false}',
+        ),
       );
       expect(_at(themed.options, 'scales.x.ticks.color'), 'theme-ticks');
       expect(
@@ -2709,9 +2790,11 @@ void main() {
       final plain = Config(raw(themed: false));
       expect(
         _json(_at(plain.options, 'scales.x.grid')),
-        '{"lineWidth":3,"display":true,"drawOnChartArea":true,'
-        '"drawTicks":true,"tickLength":8,"tickWidth":"<fn>",'
-        '"tickColor":"<fn>","offset":false,"color":"rgba(0,0,0,0.1)"}',
+        referenceColorTokens(
+          '{"lineWidth":3,"display":true,"drawOnChartArea":true,'
+          '"drawTicks":true,"tickLength":8,"tickWidth":"<fn>",'
+          '"tickColor":"<fn>","offset":false,"color":"rgba(0,0,0,0.1)"}',
+        ),
       );
       expect(
         jsObjectKeys(_at(plain.options, 'scales.x')! as JsObjectFace),

@@ -3,6 +3,7 @@
 library;
 
 import 'dart:typed_data';
+import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -11,6 +12,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart'
     show Directionality, SizedBox, TextDirection, TickerMode, Widget;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -462,6 +465,7 @@ JsClass _plainClass(String name, String id, [AnyObject? defaults]) {
 }
 
 void main() {
+  installNativeColorCodec();
   Chart.register(registerables);
   Chart.register([_testController, _testScale]);
 
@@ -1686,7 +1690,7 @@ void main() {
         <String, Object?>{},
       );
       chart.ctx!
-        ..fillStyle = '#ff0000'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 40, 20);
       return chart;
     }
@@ -1712,7 +1716,7 @@ void main() {
         final url = chart.toBase64Image();
         // A draw after the call is not in the result.
         chart.ctx!
-          ..fillStyle = '#0000ff'
+          ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
           ..fillRect(0, 0, 40, 20);
         final text = await url;
         expect(text, startsWith('data:image/png;base64,'));
@@ -2020,26 +2024,26 @@ void main() {
       document.body.appendChild(wrapper);
       final chart = Chart(canvas, <String, Object?>{});
       final context = chart.ctx!
-        ..fillStyle = '#ff0000'
+        ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..font = 'bold 12px Arial'
         ..lineJoin = 'round'
         ..lineCap = 'square'
         ..lineWidth = 3
         ..miterLimit = 4
-        ..strokeStyle = '#00ff00'
+        ..strokeStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
         ..textAlign = 'center'
         ..textBaseline = 'top';
 
       chart.destroy();
 
       // https://www.w3.org/TR/2dcontext/#conformance-requirements
-      expect(context.fillStyle, '#000000');
+      expect(context.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(context.font, '10px sans-serif');
       expect(context.lineJoin, 'miter');
       expect(context.lineCap, 'butt');
       expect(context.lineWidth, 1);
       expect(context.miterLimit, 10);
-      expect(context.strokeStyle, '#000000');
+      expect(context.strokeStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(context.textAlign, 'start');
       expect(context.textBaseline, 'alphabetic');
 

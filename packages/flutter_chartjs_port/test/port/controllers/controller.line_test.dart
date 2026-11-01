@@ -4,8 +4,11 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
@@ -62,8 +65,9 @@ const String _otherLineCase = 'interfaces: a dataset element of another class';
 /// bodies.
 final Map<String, Object?> _functions = {
   // (ctx) => (ctx.p0DataIndex === 1 ? 'red' : undefined)
-  'segColor': (Object? ctx) =>
-      jsGet(ctx, 'p0DataIndex') == 1 ? 'red' : undefined,
+  'segColor': (Object? ctx) => jsGet(ctx, 'p0DataIndex') == 1
+      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+      : undefined,
   // (ctx) => (ctx.p1DataIndex === 3 ? 5 : undefined)
   'segWidth': (Object? ctx) => jsGet(ctx, 'p1DataIndex') == 3 ? 5.0 : undefined,
   // (ctx) => {
@@ -155,6 +159,7 @@ void _expectLinePoints(Chart chart) {
 }
 
 void main() {
+  installNativeColorCodec();
   testReferenceOrigin(
     node: controllerLineReferenceNode,
     arch: controllerLineReferenceArch,
@@ -249,6 +254,7 @@ void main() {
           copyReference(controllerLineReference.first.config, _functions)!
               as AnyObject;
       config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });
   });
