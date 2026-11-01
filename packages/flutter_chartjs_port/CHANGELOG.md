@@ -1,5 +1,8 @@
 ## 0.1.0
 
+- Speed up aligned stacked fills with a per-build exact-point search; unsupported
+  inputs retain the original interpolation path.
+
 - Canvas `globalCompositeOperation` now takes `CanvasCompositeOperation` enum
   values instead of strings. The canvas keeps only the native blend state.
 

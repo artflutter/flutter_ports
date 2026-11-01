@@ -4,6 +4,7 @@
 // and e of addStyle. The port keeps these assignments.
 // ignore_for_file: parameter_assignments
 // DIVERGES(chartjs): adapt-direct-colors, native segment color comparison.
+// DIVERGES(chartjs): adapt-stack-exact-points, segment type identity.
 
 /// Port of `src/helpers/helpers.segment.js`.
 ///
@@ -45,6 +46,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:meta/meta.dart';
 
 /// helpers.segment.js:8 `@typedef Segment`: the plain object
 /// `{start, end, loop, style}` that this file makes.
@@ -72,6 +74,10 @@ final class _Segment implements Segment {
   @override
   final Object? style;
 }
+
+/// Type identity for the stack guard without constructing a dummy line.
+@internal
+const Type nativeSegmentType = _Segment;
 
 /// The result of `propertyFn` (helpers.segment.js:13-23).
 typedef _PropertyFn = ({

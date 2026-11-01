@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/plugins/plugin.filler/filler.target.stack.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-stack-exact-points, guarded exact-point experiment.
 
 /// Port of `src/plugins/plugin.filler/filler.target.stack.js`.
 ///
@@ -26,6 +27,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dar
     show createBoundaryLine;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
     show FillerSource;
+import 'package:flutter_chartjs_port/src/plugins/plugin.filler/stack_point_search.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -49,6 +51,13 @@ types.LineElement buildStackLine(FillerSource source) {
   final linesBelow = _getLinesBelow(scale!, index)
     ..add(createBoundaryLine((x: null, y: scale.bottom), line));
 
+  final search = StackPointSearch.create(
+    line,
+    sourcePoints,
+    segments,
+    linesBelow.length - 1,
+  );
+
   for (var i = 0; i < segments.length; i++) {
     final segment = segments[i];
     for (var j = segment.start; j <= segment.end; j++) {
@@ -56,6 +65,7 @@ types.LineElement buildStackLine(FillerSource source) {
         points,
         j < sourcePoints.length ? sourcePoints[j.toInt()] : null,
         linesBelow,
+        search,
       );
     }
   }
@@ -103,11 +113,14 @@ void _addPointsBelow(
   List<types.PointElement> points,
   types.PointElement? sourcePoint,
   List<types.Element?> linesBelow,
+  StackPointSearch? search,
 ) {
   final postponed = <types.PointElement>[];
   for (var j = 0; j < linesBelow.length; j++) {
     final line = linesBelow[j];
-    final (:first, :last, :point) = _findPoint(line, sourcePoint, 'x');
+    final (:first, :last, :point) =
+        search?.find(j, line, sourcePoint) ??
+        _findPoint(line, sourcePoint, 'x');
 
     if (point == null || (first && last)) {
       continue;

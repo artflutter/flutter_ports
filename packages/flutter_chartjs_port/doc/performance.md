@@ -24,6 +24,7 @@
 | ✅ | [20. Direct typed color to canvas: Android experiment](#chapter-20) |
 | ✅ | [21. Direct-color implementation: macOS, Chrome and Android](#chapter-21) |
 | ✅ | [22. Color-only implementation](#chapter-22) |
+|  | [23. Stacked-fill exact-point experiment](#23-stacked-fill-exact-point-experiment) |
 
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
@@ -5431,3 +5432,142 @@ repeated for this change.
 
 
 </details>
+
+## 23. Stacked-fill exact-point experiment
+
+2026-11-01. **Revised implementation completed.** The initial candidate
+failed its guard comparison. The follow-up below records the diagnosis and corrected
+comparison separately; the initial evidence remains intact.
+[ADR 0058](adr/0058-stack-exact-point-search.md) records the design and the protocol.
+The baseline is
+`3ea45085a961adc2fc50770294d6cce04417ac2d`, including native Color inputs.
+
+### Candidate and limits
+
+For ordinary lines with one contiguous, non-looping segment and strictly increasing,
+finite x values separated beyond the segment tolerance, an exact x match returns
+the existing target point. A forward cursor reuses the search position; a backward
+query uses binary search. Geometry and point identity match the original `[i, i]`
+interpolation result. The source and target must have ordinary point/list/segment
+implementations; options cannot execute custom reads in the fallback.
+
+Missing matches, gaps, duplicate/near-equal coordinates, loops and custom objects
+retain the original interpolation. Validation is lazy, so unreached lower lines
+stay unread. A potentially effectful fallback disables all lookup reuse for that
+build. State lasts for one stack construction and is rebuilt after mutations.
+The boundary line retains the original path. Shared `LineElement.interpolate`,
+segment helpers, radar and canvas sources were not edited.
+
+This specifically improves aligned stacks. It does not make arbitrary stacked
+fills linear, and unsupported/unmatched inputs remain quadratic. Their correctness
+was checked, but their performance was not benchmarked in this initial experiment.
+
+### Initial bounded release results (candidate B)
+
+Flutter 3.47.8 / Dart 3.13.7. macOS: Apple M3 Max, macOS 27.0.1. Chrome:
+156.0.8078.79, release Wasm, headless Flutter CLI runner. The existing gallery cases
+use three datasets for fills. A/B/B/A, two fresh processes per variant, ten cells
+per process; 250 ms warmup, seven batches targeting 100 ms. The agent ran no builds
+or tests concurrently with timing. No run was discarded and no tuning rerun was
+pooled into the series. No Android/iOS measurement was added.
+
+Values sum the process medians of draw + recording completion, or update + draw +
+completion, then take the median across the two processes. These are CPU timings,
+not GPU raster time or FPS. Positive percentages mean less time. Two pairs provide
+no confidence interval; small shifts remain inconclusive.
+
+| Case | N | Operation | macOS A → B, ms (time saved) | Chrome Wasm A → B, ms (time saved) |
+| --- | ---: | --- | ---: | ---: |
+| `fill.stack` | 100 | draw | 0.459 → 0.121 (+73.6%) | 0.732 → 0.178 (+75.7%) |
+| `fill.stack` | 100 | update | 1.092 → 0.738 (+32.4%) | 1.774 → 1.224 (+31.0%) |
+| `fill.stack` | 1000 | draw | 31.428 → 0.947 (+97.0%) | 46.855 → 1.381 (+97.1%) |
+| `fill.stack` | 1000 | update | 36.237 → 4.524 (+87.5%) | 52.539 → 6.466 (+87.7%) |
+| `fill.gaps` | 1000 | draw | 5.463 → 5.379 (+1.5%) | 8.197 → 9.040 (-10.3%) |
+| `fill.gaps` | 1000 | update | 6.987 → 6.910 (+1.1%) | 11.063 → 11.635 (-5.2%) |
+| `fill.radar` | 1000 | draw | 0.436 → 0.454 (-4.1%) | 0.696 → 0.700 (-0.6%) |
+| `fill.radar` | 1000 | update | 1.713 → 1.756 (-2.5%) | 2.562 → 2.510 (+2.1%) |
+| `chart.a` | 1000 | draw | 0.167 → 0.168 (-0.3%) | 0.294 → 0.299 (-1.9%) |
+| `chart.b` | 1000 | update | 0.455 → 0.460 (-1.1%) | 0.780 → 0.781 (-0.1%) |
+
+At N=1000 the primary stacked-fill draw drops from 31.428 to 0.947 ms on macOS
+and from 46.855 to 1.381 ms in Chrome. Full updates drop from 36.237 to 4.524 ms
+and from 52.539 to 6.466 ms respectively. This confirms substantial headroom in
+stack target construction without replacing shared interpolation.
+
+**The candidate does not pass the guard criterion.** Chrome gap-filled draws are
+0.844 ms slower (+10.3%), with both B processes slower than either A process;
+gap-filled full updates are 0.572 ms slower (+5.2%). macOS radar drawing is 0.018 ms
+slower (+4.1%), also in both B processes. Chrome radar drawing changes by only
++0.6%, so the earlier radar-specific browser regression was not reproduced at
+that size, but a different browser guard regressed. No profile in this experiment
+establishes why unchanged paths shifted. These results are not evidence that the
+shortcut directly executes in the gaps or radar cases.
+
+### Verification and evidence
+
+Six focused differential tests pass on VM, dart2js and dart2wasm. They include 150
+seeded generated comparisons with the original algorithm, exact-hit identity,
+forward/backward queries, epsilon-near and duplicate coordinates, gaps, loops,
+stepped/curved options, mutation between builds, custom interpolation, lazy access
+and disabling indexed reuse before a foreign fallback. A real-chart test confirms
+the shortcut is reached and its recorded draw commands are identical. Existing
+stack/filler reference checks pass, as do 76 filler specification/fixture tests.
+Import/header rules, the typed-read ratchet and JS semantics checks pass.
+
+The [reproduction package](benchmarks/stack-exact-points/README.md) retains the
+measured two-file patch, protocol metadata, source hashes, benchmark entry points,
+setup/build/run scripts and all eight process records. The measured candidate was
+byte-for-byte equal to the working source at collection. `summary.json` retains
+individual process values, not just averages. Diagnose the guard regressions before
+any merge decision; this experiment makes no release or cross-device claim.
+
+### Follow-up: isolated guards and revised implementation
+
+The isolated Chrome check used original candidate B, running just gap drawing and
+updating in fresh A/B/B/A processes. Draw medians were 8.869 → 8.916 ms (+0.54%);
+full updates were 11.794 → 11.854 ms (+0.51%). The earlier 10.3%/5.2% difference
+did not reproduce. It depended on the short mixed benchmark context; the initial
+guards followed drastically different amounts of stack work. This evidence points
+to workload-order sensitivity but does not establish a particular GC/JIT mechanism.
+Two query-selection setup attempts ran the wrong cell count and failed validation;
+they are excluded by protocol, not by their timings. The valid diagnostic used an
+explicit GUARD_ONLY define and is not pooled with the original or final series.
+
+Candidate C also removes the dummy LineElement previously used to discover the
+private segment type. An internal constant gives that type identity directly,
+avoiding the extra line/list construction. It is hidden from public helpers.
+Existing interpolation, segment-scanning and radar routines are unchanged. This
+code cleanup is separate from the benchmark-order diagnosis.
+
+The final series uses **A/C/C/A**, with gaps, radar and ordinary-line guards first,
+then stacked fills. All other settings remain 250 ms warmup, seven 100 ms batches,
+the same gallery scenes and point counts, and two processes per variant. Neither
+builds nor tests ran alongside timing. No result was discarded.
+
+| Case | N | Operation | macOS A → C, ms (time saved) | Chrome Wasm A → C, ms (time saved) |
+| --- | ---: | --- | ---: | ---: |
+| `fill.gaps` | 1000 | draw | 5.283 → 5.271 (+0.2%) | 9.117 → 9.169 (-0.6%) |
+| `fill.gaps` | 1000 | update | 6.590 → 6.634 (-0.7%) | 11.992 → 11.883 (+0.9%) |
+| `fill.radar` | 1000 | draw | 0.429 → 0.435 (-1.4%) | 0.669 → 0.686 (-2.5%) |
+| `fill.radar` | 1000 | update | 1.671 → 1.675 (-0.3%) | 2.383 → 2.337 (+1.9%) |
+| `chart.a` | 1000 | draw | 0.163 → 0.164 (-0.6%) | 0.273 → 0.272 (+0.4%) |
+| `chart.b` | 1000 | update | 0.444 → 0.446 (-0.6%) | 0.737 → 0.728 (+1.2%) |
+| `fill.stack` | 100 | draw | 0.434 → 0.115 (+73.6%) | 0.736 → 0.164 (+77.7%) |
+| `fill.stack` | 100 | update | 1.022 → 0.694 (+32.2%) | 1.663 → 1.053 (+36.7%) |
+| `fill.stack` | 1000 | draw | 30.434 → 0.927 (+97.0%) | 54.279 → 1.374 (+97.5%) |
+| `fill.stack` | 1000 | update | 34.745 → 4.178 (+88.0%) | 59.787 → 6.185 (+89.7%) |
+
+**The large gap-fill guard concern is resolved in the revised validation.** Chrome
+gap draw time is +0.053 ms (+0.6%), with overlapping process ranges, and gap full
+updates are 0.110 ms faster (0.9%). The stack improvement is retained: roughly
+97% less drawing CPU time and 88–90% less full-update time at N=1000. Residual
+radar draw shifts are +0.006 ms on macOS and +0.017 ms in Chrome; small differences
+in two pairs are inconclusive. This is not a promise of zero regression, an FPS
+result, or validation on Android/iOS.
+
+The revised implementation is retained. Its guard/identity tests pass on VM,
+dart2js and dart2wasm, and public export checks confirm no new helper API leaks.
+The [revision evidence](benchmarks/stack-exact-points/revision/README.md) retains
+all isolated and final process records, the four-file measured patch, source
+hashes, the corrected harness and reproduction scripts. The original failed
+candidate and data remain in the parent evidence package.
