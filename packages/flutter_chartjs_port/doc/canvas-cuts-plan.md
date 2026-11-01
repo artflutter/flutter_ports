@@ -1005,6 +1005,10 @@ Changes to the cited files:
   release check renders 1k arcs over 24 frames at DPR 1/2 with clear centers.
   This adds no canvas cut and changes no inventory estimate. No trigger occurred.
 
+- 2026-11-02, performance.md chapter 23 is marked complete in the chapter table
+  and collapsed under details. Its heading and evidence remain intact. No source,
+  inventory, pinning test or estimate changes; no trigger occurred.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.
