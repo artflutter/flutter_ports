@@ -441,7 +441,6 @@ final class _State {
   String textBaseline = 'alphabetic';
   String direction = 'inherit';
   double globalAlpha = 1;
-  String compositeOperation = 'source-over';
   ui.BlendMode blendMode = ui.BlendMode.srcOver;
   List<_Clip> clips = const [];
 
@@ -465,7 +464,6 @@ final class _State {
     textBaseline = other.textBaseline;
     direction = other.direction;
     globalAlpha = other.globalAlpha;
-    compositeOperation = other.compositeOperation;
     blendMode = other.blendMode;
     clips = other.clips;
   }
@@ -1068,17 +1066,13 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   }
 
   @override
-  String? get globalCompositeOperation => _s.compositeOperation;
+  CanvasCompositeOperation get globalCompositeOperation =>
+      compositeOperationOf(_s.blendMode);
 
-  /// A name that has no `ui.BlendMode` does nothing, as an unknown name in
-  /// the DOM.
   @override
-  set globalCompositeOperation(String? value) {
-    final mode = compositeOperations[value];
-    if (mode == null) return;
-    _s
-      ..compositeOperation = value!
-      ..blendMode = mode;
+  set globalCompositeOperation(CanvasCompositeOperation? value) {
+    if (value == null) return;
+    _s.blendMode = blendModeOf(value);
   }
 
   // Styles.

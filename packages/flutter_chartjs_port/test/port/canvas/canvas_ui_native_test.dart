@@ -901,7 +901,7 @@ void main() {
           ..scale(2, 2)
           ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1)
           ..fillRect(0, 0, 160, 80)
-          ..globalCompositeOperation = 'xor'
+          ..globalCompositeOperation = CanvasCompositeOperation.xor
           ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1),
         (p) => sectorCalls(p, 80, 80, 60, 30, -0.5, 2.5),
       );
