@@ -391,11 +391,11 @@ void main() {
       expect(ctx.getLineDash, throwsUnsupportedError);
       ctx
         ..globalAlpha = 0.5
-        ..globalCompositeOperation = 'source-over'
+        ..globalCompositeOperation = CanvasCompositeOperation.sourceOver
         ..miterLimit = 4
         ..direction = 'rtl';
       expect(ctx.globalAlpha, 0.5);
-      expect(ctx.globalCompositeOperation, 'source-over');
+      expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
       expect(ctx.miterLimit, 4);
       expect(ctx.direction, 'rtl');
       expect(ctx.getCalls(), isEmpty);

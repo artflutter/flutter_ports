@@ -52,35 +52,68 @@ String serializeCssColor(ui.Color color) {
   return 'rgba($r, $g, $b, $alpha)';
 }
 
-/// The `ui.BlendMode` of each `globalCompositeOperation` name.
-const Map<String, ui.BlendMode> compositeOperations = {
-  'source-over': ui.BlendMode.srcOver,
-  'source-in': ui.BlendMode.srcIn,
-  'source-out': ui.BlendMode.srcOut,
-  'source-atop': ui.BlendMode.srcATop,
-  'destination-over': ui.BlendMode.dstOver,
-  'destination-in': ui.BlendMode.dstIn,
-  'destination-out': ui.BlendMode.dstOut,
-  'destination-atop': ui.BlendMode.dstATop,
-  'lighter': ui.BlendMode.plus,
-  'copy': ui.BlendMode.src,
-  'xor': ui.BlendMode.xor,
-  'multiply': ui.BlendMode.multiply,
-  'screen': ui.BlendMode.screen,
-  'overlay': ui.BlendMode.overlay,
-  'darken': ui.BlendMode.darken,
-  'lighten': ui.BlendMode.lighten,
-  'color-dodge': ui.BlendMode.colorDodge,
-  'color-burn': ui.BlendMode.colorBurn,
-  'hard-light': ui.BlendMode.hardLight,
-  'soft-light': ui.BlendMode.softLight,
-  'difference': ui.BlendMode.difference,
-  'exclusion': ui.BlendMode.exclusion,
-  'hue': ui.BlendMode.hue,
-  'saturation': ui.BlendMode.saturation,
-  'color': ui.BlendMode.color,
-  'luminosity': ui.BlendMode.luminosity,
-};
+/// Maps the pure canvas operation when its property is assigned.
+ui.BlendMode blendModeOf(CanvasCompositeOperation operation) =>
+    switch (operation) {
+      CanvasCompositeOperation.sourceOver => ui.BlendMode.srcOver,
+      CanvasCompositeOperation.sourceIn => ui.BlendMode.srcIn,
+      CanvasCompositeOperation.sourceOut => ui.BlendMode.srcOut,
+      CanvasCompositeOperation.sourceAtop => ui.BlendMode.srcATop,
+      CanvasCompositeOperation.destinationOver => ui.BlendMode.dstOver,
+      CanvasCompositeOperation.destinationIn => ui.BlendMode.dstIn,
+      CanvasCompositeOperation.destinationOut => ui.BlendMode.dstOut,
+      CanvasCompositeOperation.destinationAtop => ui.BlendMode.dstATop,
+      CanvasCompositeOperation.lighter => ui.BlendMode.plus,
+      CanvasCompositeOperation.copy => ui.BlendMode.src,
+      CanvasCompositeOperation.xor => ui.BlendMode.xor,
+      CanvasCompositeOperation.multiply => ui.BlendMode.multiply,
+      CanvasCompositeOperation.screen => ui.BlendMode.screen,
+      CanvasCompositeOperation.overlay => ui.BlendMode.overlay,
+      CanvasCompositeOperation.darken => ui.BlendMode.darken,
+      CanvasCompositeOperation.lighten => ui.BlendMode.lighten,
+      CanvasCompositeOperation.colorDodge => ui.BlendMode.colorDodge,
+      CanvasCompositeOperation.colorBurn => ui.BlendMode.colorBurn,
+      CanvasCompositeOperation.hardLight => ui.BlendMode.hardLight,
+      CanvasCompositeOperation.softLight => ui.BlendMode.softLight,
+      CanvasCompositeOperation.difference => ui.BlendMode.difference,
+      CanvasCompositeOperation.exclusion => ui.BlendMode.exclusion,
+      CanvasCompositeOperation.hue => ui.BlendMode.hue,
+      CanvasCompositeOperation.saturation => ui.BlendMode.saturation,
+      CanvasCompositeOperation.color => ui.BlendMode.color,
+      CanvasCompositeOperation.luminosity => ui.BlendMode.luminosity,
+    };
+
+/// Reads the public operation from the canvas's native blend state.
+CanvasCompositeOperation compositeOperationOf(ui.BlendMode mode) =>
+    switch (mode) {
+      ui.BlendMode.srcOver => CanvasCompositeOperation.sourceOver,
+      ui.BlendMode.srcIn => CanvasCompositeOperation.sourceIn,
+      ui.BlendMode.srcOut => CanvasCompositeOperation.sourceOut,
+      ui.BlendMode.srcATop => CanvasCompositeOperation.sourceAtop,
+      ui.BlendMode.dstOver => CanvasCompositeOperation.destinationOver,
+      ui.BlendMode.dstIn => CanvasCompositeOperation.destinationIn,
+      ui.BlendMode.dstOut => CanvasCompositeOperation.destinationOut,
+      ui.BlendMode.dstATop => CanvasCompositeOperation.destinationAtop,
+      ui.BlendMode.plus => CanvasCompositeOperation.lighter,
+      ui.BlendMode.src => CanvasCompositeOperation.copy,
+      ui.BlendMode.xor => CanvasCompositeOperation.xor,
+      ui.BlendMode.multiply => CanvasCompositeOperation.multiply,
+      ui.BlendMode.screen => CanvasCompositeOperation.screen,
+      ui.BlendMode.overlay => CanvasCompositeOperation.overlay,
+      ui.BlendMode.darken => CanvasCompositeOperation.darken,
+      ui.BlendMode.lighten => CanvasCompositeOperation.lighten,
+      ui.BlendMode.colorDodge => CanvasCompositeOperation.colorDodge,
+      ui.BlendMode.colorBurn => CanvasCompositeOperation.colorBurn,
+      ui.BlendMode.hardLight => CanvasCompositeOperation.hardLight,
+      ui.BlendMode.softLight => CanvasCompositeOperation.softLight,
+      ui.BlendMode.difference => CanvasCompositeOperation.difference,
+      ui.BlendMode.exclusion => CanvasCompositeOperation.exclusion,
+      ui.BlendMode.hue => CanvasCompositeOperation.hue,
+      ui.BlendMode.saturation => CanvasCompositeOperation.saturation,
+      ui.BlendMode.color => CanvasCompositeOperation.color,
+      ui.BlendMode.luminosity => CanvasCompositeOperation.luminosity,
+      _ => throw ArgumentError.value(mode, 'mode', 'Not a Canvas 2D operation'),
+    };
 
 /// A [CanvasImageSource] that wraps a `ui.Image`, for
 /// [CanvasRenderingContext2D.drawImage] and

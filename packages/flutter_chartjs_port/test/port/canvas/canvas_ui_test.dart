@@ -215,6 +215,7 @@ void main() {
       final ctx = element.getContext2d()
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..lineWidth = 5
+        ..globalCompositeOperation = CanvasCompositeOperation.multiply
         ..font = 'bold 20px Arial'
         ..translate(10, 10)
         ..save()
@@ -225,6 +226,7 @@ void main() {
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(ctx.lineWidth, 1);
       expect(ctx.font, '10px sans-serif');
+      expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
       // The stack is empty: this restore does nothing, and a fill at the
       // origin lands at the origin.
       ctx
@@ -489,7 +491,9 @@ void main() {
     test('save and restore keep styles but not the path', () async {
       final ctx = _context()
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        ..globalCompositeOperation = CanvasCompositeOperation.xor
         ..save()
+        ..globalCompositeOperation = CanvasCompositeOperation.multiply
         ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..lineWidth = 3
         ..beginPath()
@@ -497,6 +501,7 @@ void main() {
         ..restore();
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
       expect(ctx.lineWidth, 1);
+      expect(ctx.globalCompositeOperation, CanvasCompositeOperation.xor);
       ctx.fill();
       final pixels = await _render(ctx);
       expect(pixels.r(10, 10), 255);
@@ -523,7 +528,7 @@ void main() {
         ..miterLimit = 0
         ..globalAlpha = 2
         ..globalAlpha = double.nan
-        ..globalCompositeOperation = 'bogus'
+        ..globalCompositeOperation = null
         ..font = 'not a font'
         ..textAlign = 'bogus'
         ..textBaseline = 'bogus'
@@ -535,7 +540,7 @@ void main() {
       expect(ctx.lineJoin, 'miter');
       expect(ctx.miterLimit, 10);
       expect(ctx.globalAlpha, 1);
-      expect(ctx.globalCompositeOperation, 'source-over');
+      expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
       expect(ctx.font, '10px sans-serif');
       expect(ctx.textAlign, 'start');
       expect(ctx.textBaseline, 'alphabetic');
@@ -547,14 +552,18 @@ void main() {
         ..fillStyle = const native_ui.Color.fromRGBO(170, 187, 204, 1)
         ..lineCap = 'round'
         ..lineJoin = 'bevel'
-        ..globalCompositeOperation = 'destination-over'
+        ..globalCompositeOperation = CanvasCompositeOperation.destinationOver
+        ..globalCompositeOperation = null
         ..textAlign = 'center'
         ..textBaseline = 'middle'
         ..direction = 'rtl';
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(170, 187, 204, 1));
       expect(ctx.lineCap, 'round');
       expect(ctx.lineJoin, 'bevel');
-      expect(ctx.globalCompositeOperation, 'destination-over');
+      expect(
+        ctx.globalCompositeOperation,
+        CanvasCompositeOperation.destinationOver,
+      );
       expect(ctx.textAlign, 'center');
       expect(ctx.textBaseline, 'middle');
       expect(ctx.direction, 'rtl');
@@ -1153,7 +1162,7 @@ void main() {
       final ctx = _context()
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillRect(0, 0, 50, 50)
-        ..globalCompositeOperation = 'destination-over'
+        ..globalCompositeOperation = CanvasCompositeOperation.destinationOver
         ..fillStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
         ..fillRect(0, 0, 100, 100);
       final pixels = await _render(ctx);
@@ -2189,11 +2198,11 @@ void main() {
         circle(ctx, c.dx, c.dy, 3);
         dots.add(dot(c.dx, c.dy, 3));
       }
-      ctx.globalCompositeOperation = 'destination-out';
+      ctx.globalCompositeOperation = CanvasCompositeOperation.destinationOut;
       for (final c in centers.take(10)) {
         circle(ctx, c.dx, c.dy, 4, stroke: false);
       }
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalCompositeOperation = CanvasCompositeOperation.sourceOver;
       for (final c in centers.take(20)) {
         circle(ctx, c.dx, c.dy + 2, 3);
         dots.add(dot(c.dx, c.dy + 2, 3));

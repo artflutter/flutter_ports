@@ -519,6 +519,12 @@ chart in a `MediaQuery` with `disableAnimations: false`.
 
 ## Raw Chart.js configs
 
+Custom canvas drawing uses `CanvasCompositeOperation` for
+`chart.ctx.globalCompositeOperation`, for example
+`CanvasCompositeOperation.destinationOver` instead of `'destination-over'`.
+The enum is available from both public chart libraries and needs no `dart:ui`
+import. A null assignment leaves the native canvas operation unchanged.
+
 Solid colors must be Flutter `Color` values in both APIs. CSS color strings such as
 `'red'`, `'#36A2EB'` and `'rgba(54, 162, 235, 0.5)'` throw `ArgumentError`.
 Use `const Color(0xFF36A2EB)` or `const Color.fromRGBO(54, 162, 235, 0.5)` instead.

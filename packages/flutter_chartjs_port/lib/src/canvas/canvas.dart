@@ -28,6 +28,90 @@ import 'package:flutter_chartjs_port/src/types/color.dart';
 export 'package:flutter_chartjs_port/src/types/color.dart'
     show CanvasGradient, CanvasPattern;
 
+/// Typed Canvas 2D compositing operations, independent of Flutter.
+///
+/// Assign these values to [CanvasRenderingContext2D.globalCompositeOperation].
+/// The native canvas maps them to its renderer's blend modes at the boundary.
+enum CanvasCompositeOperation {
+  /// The Canvas 2D `source-over` operation.
+  sourceOver,
+
+  /// The Canvas 2D `source-in` operation.
+  sourceIn,
+
+  /// The Canvas 2D `source-out` operation.
+  sourceOut,
+
+  /// The Canvas 2D `source-atop` operation.
+  sourceAtop,
+
+  /// The Canvas 2D `destination-over` operation.
+  destinationOver,
+
+  /// The Canvas 2D `destination-in` operation.
+  destinationIn,
+
+  /// The Canvas 2D `destination-out` operation.
+  destinationOut,
+
+  /// The Canvas 2D `destination-atop` operation.
+  destinationAtop,
+
+  /// The Canvas 2D `lighter` operation.
+  lighter,
+
+  /// The Canvas 2D `copy` operation.
+  copy,
+
+  /// The Canvas 2D `xor` operation.
+  xor,
+
+  /// The Canvas 2D `multiply` operation.
+  multiply,
+
+  /// The Canvas 2D `screen` operation.
+  screen,
+
+  /// The Canvas 2D `overlay` operation.
+  overlay,
+
+  /// The Canvas 2D `darken` operation.
+  darken,
+
+  /// The Canvas 2D `lighten` operation.
+  lighten,
+
+  /// The Canvas 2D `color-dodge` operation.
+  colorDodge,
+
+  /// The Canvas 2D `color-burn` operation.
+  colorBurn,
+
+  /// The Canvas 2D `hard-light` operation.
+  hardLight,
+
+  /// The Canvas 2D `soft-light` operation.
+  softLight,
+
+  /// The Canvas 2D `difference` operation.
+  difference,
+
+  /// The Canvas 2D `exclusion` operation.
+  exclusion,
+
+  /// The Canvas 2D `hue` operation.
+  hue,
+
+  /// The Canvas 2D `saturation` operation.
+  saturation,
+
+  /// The Canvas 2D `color` operation.
+  color,
+
+  /// The Canvas 2D `luminosity` operation.
+  luminosity,
+}
+
 /// lib.dom.d.ts `CanvasPath`: the path methods that
 /// [CanvasRenderingContext2D] and [Path2D] share.
 abstract interface class CanvasPath {
@@ -466,8 +550,9 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
   /// `globalAlpha`: a value in [0, 1]. The DOM default is 1.
   abstract double? globalAlpha;
 
-  /// `globalCompositeOperation`. The DOM default is `'source-over'`.
-  abstract String? globalCompositeOperation;
+  /// The compositing operation. The native default is
+  /// [CanvasCompositeOperation.sourceOver]; setting null leaves it unchanged.
+  abstract CanvasCompositeOperation? globalCompositeOperation;
 
   // Fill and stroke styles.
 

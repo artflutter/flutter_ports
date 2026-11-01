@@ -974,6 +974,15 @@ Changes to the cited files:
   reference tests cover the API change; §22 records the final measurements.
   No deferred canvas cut is brought forward.
 
+- 2026-11-01, the requested composite-operation API cleanup. The pure enum
+  `CanvasCompositeOperation` in `canvas.dart` replaces string operation inputs.
+  `canvas_ui_paint.dart` maps all 26 supported operations at property access;
+  `canvas_ui.dart` retains only native `BlendMode` state. Draws still read that
+  native state directly. Existing state/reset tests and native pixel tests now
+  use enum values. The inventory below records this retained boundary code;
+  path/host cut estimates and their historical source references are unchanged.
+  This is an API cleanup with no measured speedup claimed. No trigger occurred.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.
@@ -1004,6 +1013,7 @@ the cut inventory describe their original review snapshots.
 
 | Part | File:lines | Lines | Flutter API that replaces it | Verdict |
 |---|---|---:|---|---|
+| Typed composite operation | `canvas.dart` `CanvasCompositeOperation`; `canvas_ui_paint.dart` `blendModeOf`/`compositeOperationOf`; `canvas_ui.dart` `globalCompositeOperation` | 26 supported operations | Native `ui.BlendMode` stored directly; pure enum at the public boundary | **Keep**. No string map or duplicate operation state; no per-draw conversion. |
 | `UiPathBuilder._bezierArc` (cubic Béziers for a skew, a non-uniform scale with rotation, a rotated ellipse) | `lib/src/canvas/canvas_ui_path.dart:1364-1416` | 53 | `ui.Path.arcTo` in user space, then `extendWithPath(arc, Offset.zero, matrix4: m)` | **Remove** (cut 1) |
 | `_addArc`, axis-aligned branch with the reflection cases `a < 0`, `d < 0` and both | `canvas_ui_path.dart:1300-1322` | 23 | The same matrix path | **Remove** (cut 1) |
 | `_addArc`, similarity branch (rotation, uniform scale, mirror) | `canvas_ui_path.dart:1290-1299` | 10 | It already calls `ui.Path.arcTo` in bitmap space | **Keep**. It is the hot path: `retinaScale` and `translate` give a similarity. |

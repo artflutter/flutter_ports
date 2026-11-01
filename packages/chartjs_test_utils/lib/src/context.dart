@@ -1,4 +1,5 @@
 // Ported from chartjs-test-utils v0.4.0 src/context.js (MIT, chartjs-test-utils Contributors).
+// DIVERGES(chartjs): platform-composite-enum, typed compositing operations.
 
 /// Port of `src/context.js`: the mock canvas context that records calls.
 ///
@@ -372,7 +373,7 @@ class MockContext implements CanvasRenderingContext2D {
   double? globalAlpha;
 
   @override
-  String? globalCompositeOperation;
+  CanvasCompositeOperation? globalCompositeOperation;
 
   @override
   double? miterLimit;

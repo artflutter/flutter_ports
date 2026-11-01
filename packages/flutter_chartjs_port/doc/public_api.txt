@@ -11,6 +11,7 @@ BasePlatform
 BasicPlatform
 BubbleController
 CSSStyleDeclaration
+CanvasCompositeOperation
 CanvasFontSpec
 CanvasGradient
 CanvasImageSource
@@ -105,6 +106,7 @@ BasicPlatform
 BubbleController
 BubbleDataset
 CSSStyleDeclaration
+CanvasCompositeOperation
 CanvasFontSpec
 CanvasGradient
 CanvasImageSource

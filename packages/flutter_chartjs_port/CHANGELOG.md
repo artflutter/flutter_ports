@@ -1,5 +1,8 @@
 ## 0.1.0
 
+- Canvas `globalCompositeOperation` now takes `CanvasCompositeOperation` enum
+  values instead of strings. The canvas keeps only the native blend state.
+
 - Color inputs now require Flutter `Color`, including raw configuration maps,
   callbacks, lists and gradient stops. CSS strings throw `ArgumentError`.
 

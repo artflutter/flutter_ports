@@ -32,6 +32,7 @@ library;
 export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show
         CSSStyleDeclaration,
+        CanvasCompositeOperation,
         CanvasGradient,
         CanvasImageSource,
         CanvasPath,
