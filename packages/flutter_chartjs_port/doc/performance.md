@@ -25,6 +25,7 @@
 | ✅ | [21. Direct-color implementation: macOS, Chrome and Android](#chapter-21) |
 | ✅ | [22. Color-only implementation](#chapter-22) |
 | ✅ | [23. Stacked-fill exact-point experiment](#chapter-23) |
+| ✅ | [24. Private boundary endpoint search on Android](#chapter-24) |
 
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
@@ -5578,3 +5579,75 @@ hashes, the corrected harness and reproduction scripts. The original failed
 candidate and data remain in the parent evidence package.
 
 </details>
+
+<a id="chapter-24"></a>
+
+## 24. Private boundary endpoint search on Android
+
+2026-11-02. Implemented, with bounded release validation on the connected Pixel
+8a. [ADR 0059](adr/0059-boundary-exact-point-search.md) records the decision;
+[the report and reproduction package](benchmarks/boundary-exact-points/README.md)
+retain the profile, raw runs, source hashes and exact measured patch.
+
+The baseline is `3441804`, after the stack-fill work. Its Android CPU profile
+collected 12,984 samples: `boundSegments` has 66.9% inclusive, `boundSegment`
+64.5%, and `interpolatedLineTo` 45.2%. These shares overlap. Endpoint interpolation
+repeatedly scans the generated constant boundary for every source segment and
+both above/below color passes.
+
+The filler now validates a private origin/start/end linear boundary once per draw
+and binary-searches exact endpoints. Each hit returns the same existing point as
+original interpolation. Misses and unsupported inputs use the original path.
+Shared interpolation, segment matching and canvas code are unchanged. This does
+not make the complete fill algorithm linear. Dataset targets retain their user
+callbacks, and no index survives into another draw.
+
+### Release comparison
+
+Flutter 3.47.8 / Dart 3.13.7, Android 17, arm64 release, profiler off. A/B/B/A,
+two fresh processes per variant; ten cells, nine 150 ms batches after 500 ms
+warmup. Three fill datasets, 800 × 480 canvas, DPR 1. Controls run first. No
+builds or tests ran alongside timing, and no run was discarded. The values sum
+per-process medians of draw + recording completion, plus update for full updates,
+then take the median across processes. Positive percentages mean less CPU time.
+
+| Cell | N | Operation | Baseline → candidate, ms | Time saved |
+| --- | ---: | --- | ---: | ---: |
+| `fill.gaps` | 100 | draw | 0.486 → 0.362 | 25.4% |
+| `fill.gaps` | 100 | update | 1.244 → 1.152 | 7.4% |
+| `fill.gaps` | 1000 | draw | 10.704 → 5.339 | 50.1% |
+| `fill.gaps` | 1000 | update | 14.914 → 8.183 | 45.1% |
+| `chart.a` | 1000 | draw | 0.285 → 0.282 | 1.2% |
+| `chart.b` | 1000 | update | 0.815 → 0.831 | -2.0% |
+| `fill.radar` | 1000 | draw | 0.913 → 0.903 | 1.1% |
+| `fill.radar` | 1000 | update | 3.645 → 3.585 | 1.7% |
+| `fill.stack` | 1000 | draw | 1.805 → 1.768 | 2.1% |
+| `fill.stack` | 1000 | update | 8.578 → 8.241 | 3.9% |
+
+At N=1000, paired draw reductions are 50.2% and 50.0%; full-update reductions
+are 40.4% and 49.3%. Baseline update results vary (13.937 and 15.891 ms), so
+45.1% is a directional aggregate, not a precise universal gain. No control
+exceeds both predeclared regression limits, 0.1 ms and 5%; the only slower
+control is ordinary-line update, +0.0165 ms (+2.0%). Battery temperatures were
+29.2–29.4 °C and every before/after thermal status was 0.
+
+Two pairs provide no confidence interval. These are CPU measurements, not GPU
+raster time or FPS. There is no performance claim for other platforms. The raw
+records remain available, including the small control shifts.
+
+### Correctness
+
+Two hundred seeded private boundaries on both axes compare exact point identity
+with original interpolation. Guards exercise duplicate/near/non-finite/reversed
+coordinates, nonconstant and looping boundaries, foreign getters and misses.
+Twelve real-chart cases compare every draw command for origin/start/end, both
+axes, normal/reversed scales, curved/stepped lines and mutations between updates.
+A custom dataset target retains the same interpolation callbacks and draw commands.
+The pure boundary and related filler tests pass on both dart2js and dart2wasm.
+
+Final verification: workspace tests pass (10,572, with 87 skips), the full web
+suite passes on dart2js and dart2wasm (7,894 chart-port and 110 test-utils tests,
+with four skips), upstream case coverage passes (958 passed, 78 skipped), and
+fixtures pass (628 passed, 39 skipped). Formatting, fatal-info analysis and all
+seven port checks pass. Parity is regenerated. The reproduction package rebuilds
+the exact measured library sources by hash; the implementation is retained.

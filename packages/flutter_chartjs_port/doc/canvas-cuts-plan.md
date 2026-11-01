@@ -1009,6 +1009,11 @@ Changes to the cited files:
   and collapsed under details. Its heading and evidence remain intact. No source,
   inventory, pinning test or estimate changes; no trigger occurred.
 
+- 2026-11-02, constant-boundary endpoint search (ADR 0059). Performance.md adds
+  chapter 24 and Android CPU measurements. The filler can reuse an exact point
+  of its private boundary. No canvas/host source, command sequence, pinning test,
+  inventory or cut estimate changes. No canvas-plan trigger occurred.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.

@@ -27,6 +27,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+// DIVERGES(chartjs): adapt-boundary-exact-points, private boundary endpoints.
+import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart'
     show findSegmentEnd, getBounds, segments;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart'
@@ -52,6 +54,14 @@ void drawfill(
   FillerSource source,
   types.ChartArea? area,
 ) {
+  // DIVERGES(chartjs): adapt-boundary-exact-points, capture target provenance
+  // before getTarget calls a scale or any user code. These modes create a fresh
+  // boundary, not a dataset line accessible to callbacks during drawing.
+  final fill = source.fill;
+  final linearBoundary =
+      fill is String &&
+      (fill == 'origin' || fill == 'start' || fill == 'end') &&
+      source.scale is! types.RadialLinearScale;
   final target = getTarget(source);
   final chart = source.chart;
   final index = source.index;
@@ -86,6 +96,7 @@ void drawfill(
       scale: scale,
       axis: axis,
       clip: clip,
+      linearBoundary: linearBoundary,
     );
     unclipArea(ctx);
   }
@@ -173,8 +184,15 @@ void _doFill(
   required types.Scale? scale,
   required Object? axis,
   required types.TRBL? clip,
+  required bool linearBoundary,
 }) {
   final property = (line.loop ?? false) ? 'angle' : _axisKey(axis);
+
+  // DIVERGES(chartjs): adapt-boundary-exact-points, the private target cannot
+  // change during the two color passes. Rebuild the index on every draw.
+  final boundarySearch = linearBoundary
+      ? BoundaryPointSearch.create(target, property)
+      : null;
 
   ctx.save();
 
@@ -190,6 +208,7 @@ void _doFill(
         scale: scale,
         property: property,
         clip: clip,
+        boundarySearch: boundarySearch,
       );
       ctx
         ..restore()
@@ -205,6 +224,7 @@ void _doFill(
         scale: scale,
         property: property,
         clip: clip,
+        boundarySearch: boundarySearch,
       );
       ctx
         ..restore()
@@ -221,6 +241,7 @@ void _doFill(
     scale: scale,
     property: property,
     clip: clip,
+    boundarySearch: boundarySearch,
   );
 
   ctx.restore();
@@ -328,6 +349,7 @@ void _fill(
   required Object? color,
   required types.Scale? scale,
   required types.TRBL? clip,
+  required BoundaryPointSearch? boundarySearch,
 }) {
   final parts = segments(line, target, property);
 
@@ -363,7 +385,8 @@ void _fill(
       if (lineLoop) {
         ctx.closePath();
       } else {
-        interpolatedLineTo(ctx, target, end, property);
+        // DIVERGES(chartjs): adapt-boundary-exact-points, private endpoint.
+        _boundaryLineTo(ctx, target, end, property, boundarySearch);
       }
 
       final targetLoop =
@@ -374,7 +397,8 @@ void _fill(
           true;
       loop = lineLoop && targetLoop;
       if (!loop) {
-        interpolatedLineTo(ctx, target, start, property);
+        // DIVERGES(chartjs): adapt-boundary-exact-points, private endpoint.
+        _boundaryLineTo(ctx, target, start, property, boundarySearch);
       }
     }
 
@@ -382,6 +406,23 @@ void _fill(
       ..closePath()
       ..fill((loop ?? false) ? 'evenodd' : 'nonzero')
       ..restore();
+  }
+}
+
+// DIVERGES(chartjs): adapt-boundary-exact-points, original interpolation
+// for every nonmatching endpoint and every target outside the narrow shortcut.
+void _boundaryLineTo(
+  CanvasRenderingContext2D ctx,
+  Object target,
+  types.PointElement point,
+  String property,
+  BoundaryPointSearch? search,
+) {
+  final exact = search?.find(point);
+  if (exact == null) {
+    interpolatedLineTo(ctx, target, point, property);
+  } else {
+    ctx.lineTo(exact.x, exact.y);
   }
 }
 
