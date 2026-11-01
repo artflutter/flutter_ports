@@ -24,7 +24,7 @@
 | ✅ | [20. Direct typed color to canvas: Android experiment](#chapter-20) |
 | ✅ | [21. Direct-color implementation: macOS, Chrome and Android](#chapter-21) |
 | ✅ | [22. Color-only implementation](#chapter-22) |
-|  | [23. Stacked-fill exact-point experiment](#23-stacked-fill-exact-point-experiment) |
+| ✅ | [23. Stacked-fill exact-point experiment](#chapter-23) |
 
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
@@ -5433,6 +5433,11 @@ repeated for this change.
 
 </details>
 
+<a id="chapter-23"></a>
+
+<details>
+<summary>23. Stacked-fill exact-point experiment</summary>
+
 ## 23. Stacked-fill exact-point experiment
 
 2026-11-01. **Revised implementation completed.** The initial candidate
@@ -5571,3 +5576,5 @@ The [revision evidence](benchmarks/stack-exact-points/revision/README.md) retain
 all isolated and final process records, the four-file measured patch, source
 hashes, the corrected harness and reproduction scripts. The original failed
 candidate and data remain in the parent evidence package.
+
+</details>
