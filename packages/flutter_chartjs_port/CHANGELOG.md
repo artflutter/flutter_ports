@@ -1,5 +1,7 @@
 ## 0.1.0
 
+- Fix blinking doughnut centers when rounded corners consume a small arc span.
+
 - Speed up aligned stacked fills with a per-build exact-point search; unsupported
   inputs retain the original interpolation path.
 
