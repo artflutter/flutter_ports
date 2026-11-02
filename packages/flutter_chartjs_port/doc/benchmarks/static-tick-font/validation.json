@@ -1,0 +1,12 @@
+{
+  "packageTests": {"passed": 10086, "skipped": 84, "excludedTags": ["fixtures", "golden"]},
+  "targetedBrowserTests": {"javascriptPassed": 150, "wasmPassed": 150},
+  "importGuardTests": {"passed": 33},
+  "fixtures": {"files": 26, "errors": 0, "warnings": 0},
+  "analyze": "passed",
+  "format": "passed",
+  "checkPort": "passed",
+  "parity": "regenerated",
+  "layoutParity": "exact across all four final runs in all 12 cells",
+  "primaryGate": "passed: 48.2% and 47.7% less update CPU in the two pairs"
+}

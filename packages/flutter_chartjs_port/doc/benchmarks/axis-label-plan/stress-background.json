@@ -1,0 +1,32 @@
+[
+  {
+    "mode": "axes",
+    "n": 20000,
+    "m": 0,
+    "fps": "0.00",
+    "drawMs": "0.00",
+    "updateMs": "0.00",
+    "call": "update",
+    "scale": "category",
+    "yScale": "logarithmic",
+    "autoSkip": true,
+    "ticks": 44,
+    "rotation": "50.00",
+    "elementsMs": "0.00",
+    "layoutMs": "0.00",
+    "datasetsUpdateMs": "0.00",
+    "datasetsDrawMs": "0.00",
+    "host": "canvas",
+    "buildMs": "0.00",
+    "buildMaxMs": "23.10",
+    "rasterMs": "0.00",
+    "rasterMaxMs": "249.83",
+    "batches": null,
+    "batchFrames": 0,
+    "buildP50Ms": null,
+    "buildP90Ms": null,
+    "rasterP50Ms": null,
+    "rasterP90Ms": null,
+    "windows": 14
+  }
+]

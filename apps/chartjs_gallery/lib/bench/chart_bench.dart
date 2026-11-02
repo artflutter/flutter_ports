@@ -1549,6 +1549,10 @@ final Stopwatch _watch = Stopwatch()..start();
 final class _BenchChart extends Chart {
   _BenchChart(super.item, [super.userConfig]);
 
+  // This wrapper only records timings; data/config getters remain Chart's.
+  @override
+  bool get supportsNativeCategoryLabels => true;
+
   /// The ticks of the draws since the last reset.
   int drawTicks = 0;
 

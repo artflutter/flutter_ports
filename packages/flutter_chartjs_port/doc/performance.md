@@ -5796,3 +5796,285 @@ two existing skips. Upstream coverage passes (958, 78 skipped), fixtures pass
 pass. Parity is regenerated. The final library hash matches the measured candidate.
 The performance change is retained; baseline 6197449 is pushed and its
 GitHub CI run 41370124105 passed.
+
+## 27. Category-axis label layout on macOS
+
+2026-11-02. The reported stress configuration is `MODE=axes`, N=20000, M=0,
+`CALL=update`, category x and logarithmic y. Its screenshot reports 57.06 ms
+layout out of 61.10 ms update, with 5.85 ms draw and 1.14 ms raster. M controls
+the extra plugin labels, not axis tick labels. The 44 displayed x ticks are the
+result of auto-skip, after the full candidate list has been processed.
+
+A fresh macOS profile of that configuration confirms the hot path. The capture
+has 4629 samples and includes startup: `_computeLabelSizes` appears in 3480
+samples (75.2%), `resolveTickFontOptions` in 2596 (56.1%), `toFont` in 1634
+(35.3%), and `getContext` in 552 (11.9%). These are overlapping inclusive
+shares of the capture, not additive phase times. This supports optimizing the
+per-label work; it does not establish an FPS gain by itself.
+
+The change preserves every candidate tick, font callback and measurement:
+
+- `toFont` reads known option keys through `readOption`, avoiding string-key
+  dispatch for typed resolvers while retaining raw-object reads and callback order.
+- For a double line height, use the result of JavaScript's decimal conversion and
+  the anchored regex directly. Zero (also -0) parses as positive zero; values in
+  [1e-6, 1e21) multiply the size; negative, nonfinite and exponent-form values
+  use the default. Strings and other inputs retain the original regex path.
+- The six literal font-style alternatives bypass the regex. Oblique angles and
+  invalid styles retain the regex and warnings.
+- A tick context is constructed directly with the same prototype, field values,
+  own-key order and identity lifetime, without allocating and copying a Map.
+
+There is no new cache of resolved fonts, no sampling option, and no change to
+label rotation, auto-skip, text metrics caches or the chart configuration.
+
+### A/B comparison
+
+Baseline `8bcbe47`; Apple M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7,
+arm64 profile AOT, Impeller. The existing frameless benchmark runs the same
+stress scene at its fixed 800 × 480 canvas: category/logarithmic and the
+linear/logarithmic control, at 1000/5000/20000 points, each with update and draw.
+Each cell has 1000 ms warmup and nine 250 ms batches. Process order is A/B/B/A;
+no builds or tests run alongside timing, and no process result is discarded.
+Values below are medians of the two process results per variant. This is a local
+exploratory comparison, not a claim about other devices, debug builds or web.
+
+| X axis | N | Update ms, A → B | Saved | Layout ms, A → B | Full call ms, A → B |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| category | 1000 | 2.784 → 1.942 | 30.2% | 2.470 → 1.632 | 3.309 → 2.436 |
+| category | 5000 | 11.922 → 7.919 | 33.6% | 11.075 → 7.046 | 13.332 → 9.296 |
+| category | 20000 | 51.155 → 35.152 | 31.3% | 48.029 → 32.229 | 56.873 → 40.907 |
+| linear | 1000 | 0.784 → 0.689 | 12.1% | 0.505 → 0.401 | 1.206 → 1.094 |
+| linear | 5000 | 1.428 → 1.334 | 6.6% | 0.679 → 0.570 | 2.671 → 2.545 |
+| linear | 20000 | 3.917 → 3.868 | 1.2% | 1.328 → 1.227 | 8.303 → 8.247 |
+
+Full call sums update, draw and recording-completion medians within each process
+before combining processes. At category N=20000 it falls 28.1%. The draw-only
+full call is 4.111 → 4.097 ms; drawing is not the improvement. The maximum
+increase among draw-only full-call controls is 0.0015 ms. All four runs have
+exactly equal x/y tick values, labels, rotation and chart bounds in each cell.
+The category x axis has 33 ticks at 50 degrees at this benchmark size; the
+screenshot has a different size and therefore 44 ticks.
+
+**Keep the change.** It removes measurable overhead without reducing label
+coverage or changing the callback contract. It does not eliminate the O(N)
+category layout or reach a 16.7 ms frame budget at 20000 points. A future reuse of
+resolved fonts needs separate treatment of scriptable/indexed options and
+mutation; the current change deliberately evaluates each tick as before.
+
+[Reproduction and raw measurements](benchmarks/category-layout/README.md) include
+the probe, original CPU samples, four process results and the numerical summary.
+The regression cases cover numeric boundaries, signed zero, nonfinite values,
+scriptable/indexed font fields, literal font styles, and tick-context identity,
+prototype inheritance and own-key order. The existing upstream scale reference
+cases cover the resulting layout and drawing commands.
+
+Validation: all 10063 non-fixture/non-golden package tests pass (84 skips);
+76 targeted helper tests pass in each of Chrome JavaScript and WebAssembly.
+The full fixture smoke runner passes (26 files, no errors or warnings).
+Workspace analysis and format checks pass, as do all check:port steps. The
+parity report is regenerated from status.yaml.
+
+## 28. Guarded reuse of static tick fonts
+
+2026-11-02. [ADR 0063](adr/0063-static-tick-font.md) follows §27: the baseline
+already has that optimization, after which the user observed 18–19 FPS in the
+same stress configuration. This comparison measures the additional change.
+
+`Scale.resolveTickFontOptions` still creates/reads each tick context. It then
+checks already-cached raw font inputs, or the live default-font scalar cells
+when `ticks.font` is absent. With ordinary resolver slots, no sub-proxy, inert
+cached descriptors and a plain unrouted global fallback, equal scalar inputs
+reuse a private parsed-font template. Each caller gets a fresh `ParsedFont`.
+Inputs are checked every time, so resolver writes/deletes and global-default
+changes cannot leave an old font in use. Functions, arrays, partial/foreign
+values, invalid styles, custom getters and overrides retain normal resolution.
+This is not a cache of a function's result. No candidate tick or text measurement
+is removed, and auto-skip and rotation are unchanged.
+
+### A/B comparison against §27
+
+Apple M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7, arm64 profile AOT,
+Impeller. The same frameless probe uses an 800 × 480 canvas, category x /
+logarithmic y and linear x / logarithmic y, N=1000/5000/20000, update and draw.
+Each cell has 1000 ms warmup and nine 250 ms batches; process order is A/B/B/A.
+No builds or tests run during timing. All four final process results are kept.
+The protocol requires at least 15% less category N=20000 update time in each
+pair and exact layout output, and checks full-call controls against repeatable
+increases above both 5% and 0.1 ms.
+
+Values are medians across the two process results of each variant. Full call
+sums each process's update, draw and recording-completion medians first.
+
+| X axis | N | Update ms, A → B | Saved | Layout ms, A → B | Full call ms, A → B |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| category | 1000 | 1.725 → 0.919 | 46.7% | 1.464 → 0.665 | 2.162 → 1.328 |
+| category | 5000 | 7.050 → 3.380 | 52.1% | 6.319 → 2.690 | 8.265 → 4.583 |
+| category | 20000 | 30.869 → 16.075 | 47.9% | 28.066 → 13.216 | 35.932 → 21.991 |
+| linear | 1000 | 0.608 → 0.490 | 19.5% | 0.355 → 0.242 | 0.969 → 0.829 |
+| linear | 5000 | 1.190 → 1.068 | 10.2% | 0.509 → 0.401 | 2.293 → 2.156 |
+| linear | 20000 | 3.430 → 3.334 | 2.8% | 1.098 → 1.008 | 7.400 → 7.352 |
+
+**Keep the change.** Category N=20000 update improves 48.2% and 47.7% in the two
+pairs, and full-call cost improves 39.3% and 38.3%. All axes' tick values, labels,
+rotation and chart bounds match exactly across all four runs in all 12 cells.
+No full-call control reaches the regression threshold. The largest draw-only
+full-call increase is 0.043 ms (linear N=20000, 1.2%).
+
+Retain the component tradeoff: the draw inside a category update at N=20000 is
+4.210 → 5.068 ms (+20.4%), despite the lower full-call time. Draw-only is
+3.7315 → 3.7680 ms including recording completion. The cause of that component
+shift has not been isolated; the net full-call comparison includes it. This
+local CPU result is not a promise of user FPS or mobile/web performance.
+
+Two preliminary implementations were measured and are retained in the evidence:
+one inspected descriptor keys as strings instead of typed keys; the next did
+not handle the absent `ticks.font` that this workload uses. Neither is retained.
+The final four-run comparison uses the complete default-font guard described
+above. [Protocol, patches and raw measurements](benchmarks/static-tick-font/README.md)
+allow reproducing the baseline and candidate independently of the uncommitted
+working-tree documentation.
+
+Validation: 10086 non-fixture/non-golden package tests pass (84 skips), including
+22 new cache cases and the scale integration case. All 150 targeted font/resolver
+browser tests pass in both Chrome JavaScript and WebAssembly. The fixture runner
+passes (26 files, no errors or warnings). Analysis, formatting, all port checks
+and the regenerated parity report pass. The cache is an explicit framework-free
+root in the import guard; its 33 checker tests pass as well.
+
+## 29. Axis pipeline scan: options, bounds and invalidation
+
+2026-11-02. This is an investigation, not a new production implementation.
+[The complete report](axis-pipeline-options.md) inventories 18 improvement
+families, describes the dependency/invalidation model, and distinguishes measured
+configuration changes, unsafe structural ceilings and unimplemented estimates.
+[Evidence and reproduction](benchmarks/axis-pipeline-scan/README.md) retain all
+three 20-case sweeps, paired layout observations, a fresh CPU profile and a label
+comparison microbenchmark. The baseline includes §27 and §28.
+
+At 20,000 points, category x/logarithmic y and an 800 × 480 canvas, the current
+baseline has 14.675 ms layout and a 24.192 ms full chart call. sampleSize 100
+reduces these to 1.507 / 8.966 ms. With known bounds they become 0.686 / 8.061 ms.
+A prototype reusing x-layout gives 0.998 / 7.655 ms with automatic y, and
+0.223 / 7.204 ms with fixed bounds. Reusing all layout skips that phase and leaves
+2.534 ms update and a 6.675 ms full call. These are local profile-AOT CPU figures,
+not actual gallery FPS. Point drawing/updating remains a separate workload.
+
+All of these alternatives match the unchanged scene's checked layout outputs.
+Sampling misses a deliberately long unsampled label; blind caches fail on size,
+label and domain changes. A warmed pass still makes 20,000 candidate ticks,
+20,000 label conversions and 20,066 font requests. A cheap comparison of 20,000
+ordinary string labels costs only 0.0201 ms in a separate AOT microbenchmark,
+so a guarded cache need not require immutable inputs for that common case.
+
+The recommended architecture caches content/metrics, axis geometry and paint
+separately, retaining the full path for dynamic callbacks or unsupported hooks.
+The target is roughly 0.3–0.6 ms of validated steady-state layout with known
+bounds; this production cache has not been implemented. Configuration-only
+sampling/bounds is a smaller option with explicit behavioral tradeoffs. The
+report also records ineffective fixed rotation, hidden-axis work, and a large
+hidden-tick draw regression caused by retaining 20,000 tick candidates while
+preparing grid items before the grid display check.
+
+## 30. Guarded category label measurement plans
+
+2026-11-02. [ADR 0064](adr/0064-axis-label-plan.md) implements the content/metrics
+part of the pipeline study, with live geometry. It keeps one full string-label
+measurement plan per category scale, checks ordered content, static font inputs
+and the native font environment, and reuses matching width/height aggregates.
+It still creates fresh ticks and contexts, invokes user callbacks and hooks, and
+runs rotation, auto-skip and fit against current dimensions and domains.
+
+The exact built-in formatter also has guarded native-source dispatch after its
+first normal read. Unknown Chart/Config subclasses, custom containers/tick lists,
+non-default callbacks and dynamic/foreign fonts retain their ordinary paths.
+Flutter font notifications advance a native metrics generation and clear text
+caches. No sampling, fixed bounds or reduced point count is enabled.
+
+A/B/B/A against the retained §28 implementation, Apple M3 Max, macOS 27.0.1,
+Flutter 3.47.8 / Dart 3.13.7, arm64 profile AOT, Impeller, 800 × 480 at DPR 1.
+Each cell has 1000 ms warmup and nine 250 ms batches. No builds/tests run alongside
+measurement; all results are kept. Values are medians of two process results per
+variant. Full calls sum each process's update, draw and recording-completion
+medians first.
+
+| X axis | N | Update ms, A → B | Layout ms, A → B | Full call ms, A → B |
+| --- | ---: | ---: | ---: | ---: |
+| category | 1000 | 0.936 → 0.570 | 0.675 → 0.287 | 1.353 → 1.006 |
+| category | 5000 | 3.549 → 1.284 | 2.809 → 0.591 | 4.808 → 2.449 |
+| category | 20000 | 16.331 → 5.425 | 13.553 → 2.483 | 22.571 → 10.724 |
+| linear | 1000 | 0.515 → 0.493 | 0.253 → 0.240 | 0.873 → 0.837 |
+| linear | 5000 | 1.099 → 1.074 | 0.412 → 0.399 | 2.216 → 2.175 |
+| linear | 20000 | 3.452 → 3.425 | 1.029 → 1.016 | 7.591 → 7.551 |
+
+**Keep the change.** At N=20000 the primary category update improves 66.0% and
+67.6% in the paired runs, exceeding the 40% gate. Full-call savings are 52.0% and
+53.0%, exceeding 30%. All x/y tick values, labels, rotation and chart bounds match
+in all cells. No full-call control exceeds both the 5% and 0.1 ms regression gates.
+Draw-only category N=20000 is 3.891 → 3.849 ms including recording completion.
+
+A separate foreground 30-second run of the actual stress screen reports **60 FPS**,
+44 visible x ticks at 50°, 5.31 ms update, 2.37 ms layout, 4.64 ms draw, 10.76 ms
+average build (14.70 ms maximum), and 1.02 ms average raster. The existing runner
+excludes startup. A background launch was throttled and yielded no valid FPS
+summary; its log is retained but is not used as performance evidence. This result
+is for profile mode on this Mac, not a promise about debug or other devices.
+
+The measured approach is intentionally more conservative than the frozen-layout
+prototypes of §29: fresh candidate/context work and automatic y limits remain.
+The sub-1ms axis target is not claimed. Correctness checks additionally cover
+in-flight getter mutation: the resolved first font must match its scalar inputs,
+and root context, tick-list and option identities must remain valid before a hit.
+Non-string labels cannot populate a plan after side-effectful conversion.
+
+[Raw measurements, protocol, patches, frame statistics and validation](benchmarks/axis-label-plan/README.md)
+include the preliminary measurement-only candidate and the final conservative
+guard refinements. Cached/uncached twins compare all point positions through
+label/font/domain/viewport changes, and user callback/getter behavior is pinned.
+
+Final validation: 10107 VM package tests pass (84 skips; fixtures/goldens excluded),
+43 final integration/guard cases pass on each of Chrome JavaScript and WebAssembly,
+and the fixture runner passes (26 files, zero errors/warnings). Analysis, formatting,
+all port checks and regenerated parity pass. The temporary browser harness was
+removed from test/ after validation. No golden files were changed.
+
+## 31. Deferred contexts for unobserved ticks
+
+2026-11-02. [ADR 0065](adr/0065-lazy-tick-context.md) is a focused follow-up to
+§30: after a label-plan hit, Tick captures the original parent and index, then
+constructs its context on first read. Repeated reads retain identity, explicit
+writes/clears override pending creation, and retained skipped ticks still expose
+the context from their own update. Hooks that inspect every context still obtain
+every context. No callback, point, label or geometry calculation is suppressed.
+
+A/B/B/A against the validated §30 implementation, Apple M3 Max, macOS 27.0.1,
+Flutter 3.47.8 / Dart 3.13.7, profile AOT, Impeller, 800 × 480, 20000 points.
+Seven 200 ms batches follow 800 ms warmup; no builds/tests run alongside timing.
+All four runs are kept. Full-call figures sum update, draw and recording completion
+within each process before taking the median across processes.
+
+| Case | Layout ms, A → B | Full chart call ms, A → B |
+| --- | ---: | ---: |
+| Category/logarithmic, automatic bounds | 2.598 → 2.013 | 11.083 → 9.337 |
+| Same, known bounds | 1.779 → 1.172 | 10.116 → 8.518 |
+| sampleSize 100 control | 1.504 → 1.566 | 8.796 → 8.907 |
+| Custom scale/font control | 8.889 → 9.012 | 16.806 → 17.047 |
+| Draw-only control | 0 → 0 | 3.865 → 3.893 |
+
+The primary layout reduction is 22.5%, and the full-call reduction is 15.8%.
+Both primary pairs exceed the 10% layout gate. No control has a repeatable
+full-call increase above both 5% and 0.1 ms. Keep the measured tradeoff: unsupported
+paths still allocate the slightly larger Tick objects; their small increases are
+shown rather than described as zero. Tick values/labels, limits, rotation and chart
+bounds agree exactly across all runs.
+
+This change adds CPU headroom to the previously measured 60 FPS implementation;
+no higher FPS is claimed or newly measured here. Layout is still about 2 ms with
+automatic y limits. The numeric-range and further label-loop experiments are not
+part of this change. [Protocol, raw data and reproduction](benchmarks/lazy-tick-context/README.md).
+
+Validation: all 10112 permanent VM package tests pass (84 skips), as do all 19
+context/layout integration cases on each of JavaScript and WebAssembly. The
+fixture runner passes with zero errors/warnings; analysis, formatting, parity and
+all port checks pass. The temporary browser harness was removed after testing.
+Only this focused runtime change is retained.

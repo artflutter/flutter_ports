@@ -1,0 +1,399 @@
+{
+  "layoutParity": true,
+  "primary": {
+    "updatePercentSaved": [
+      66.00441501103754,
+      67.59527103508994
+    ],
+    "fullCallPercentSaved": [
+      51.958090003435245,
+      53.04749702571612
+    ]
+  },
+  "cases": [
+    {
+      "case": "category",
+      "n": 1000,
+      "call": "update",
+      "ticks": 33,
+      "rotation": 50.0,
+      "updateMedianMs": {
+        "before": 0.9359999999999999,
+        "after": 0.5700000000000001,
+        "percentSaved": 39.102564102564095
+      },
+      "layoutMedianMs": {
+        "before": 0.6755,
+        "after": 0.2875,
+        "percentSaved": 57.438934122871956
+      },
+      "drawMedianMs": {
+        "before": 0.3605,
+        "after": 0.3745,
+        "percentSaved": -3.8834951456310662
+      },
+      "endMedianMs": {
+        "before": 0.0565,
+        "after": 0.061,
+        "percentSaved": -7.964601769911495
+      },
+      "fullCallMs": {
+        "before": 1.353,
+        "after": 1.0055,
+        "percentSaved": 25.683665927568367
+      }
+    },
+    {
+      "case": "category",
+      "n": 1000,
+      "call": "draw",
+      "ticks": 33,
+      "rotation": 50.0,
+      "updateMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "layoutMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "drawMedianMs": {
+        "before": 0.251,
+        "after": 0.2545,
+        "percentSaved": -1.3944223107569709
+      },
+      "endMedianMs": {
+        "before": 0.054,
+        "after": 0.0555,
+        "percentSaved": -2.77777777777779
+      },
+      "fullCallMs": {
+        "before": 0.305,
+        "after": 0.31,
+        "percentSaved": -1.6393442622950838
+      }
+    },
+    {
+      "case": "category",
+      "n": 5000,
+      "call": "update",
+      "ticks": 33,
+      "rotation": 50.0,
+      "updateMedianMs": {
+        "before": 3.549,
+        "after": 1.2845,
+        "percentSaved": 63.80670611439842
+      },
+      "layoutMedianMs": {
+        "before": 2.8095,
+        "after": 0.5905,
+        "percentSaved": 78.9820252714006
+      },
+      "drawMedianMs": {
+        "before": 1.0175,
+        "after": 0.9355,
+        "percentSaved": 8.058968058968063
+      },
+      "endMedianMs": {
+        "before": 0.241,
+        "after": 0.2285,
+        "percentSaved": 5.186721991701237
+      },
+      "fullCallMs": {
+        "before": 4.8075,
+        "after": 2.4485,
+        "percentSaved": 49.06916276651066
+      }
+    },
+    {
+      "case": "category",
+      "n": 5000,
+      "call": "draw",
+      "ticks": 33,
+      "rotation": 50.0,
+      "updateMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "layoutMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "drawMedianMs": {
+        "before": 0.8374999999999999,
+        "after": 0.8225,
+        "percentSaved": 1.7910447761193882
+      },
+      "endMedianMs": {
+        "before": 0.2225,
+        "after": 0.222,
+        "percentSaved": 0.22471910112359383
+      },
+      "fullCallMs": {
+        "before": 1.06,
+        "after": 1.0445,
+        "percentSaved": 1.4622641509434042
+      }
+    },
+    {
+      "case": "category",
+      "n": 20000,
+      "call": "update",
+      "ticks": 33,
+      "rotation": 50.0,
+      "updateMedianMs": {
+        "before": 16.3315,
+        "after": 5.4254999999999995,
+        "percentSaved": 66.7789241649573
+      },
+      "layoutMedianMs": {
+        "before": 13.553,
+        "after": 2.483,
+        "percentSaved": 81.67933298900613
+      },
+      "drawMedianMs": {
+        "before": 5.38,
+        "after": 4.3865,
+        "percentSaved": 18.46654275092937
+      },
+      "endMedianMs": {
+        "before": 0.8594999999999999,
+        "after": 0.9125,
+        "percentSaved": -6.166375799883661
+      },
+      "fullCallMs": {
+        "before": 22.570999999999998,
+        "after": 10.724499999999999,
+        "percentSaved": 52.48549023082717
+      }
+    },
+    {
+      "case": "category",
+      "n": 20000,
+      "call": "draw",
+      "ticks": 33,
+      "rotation": 50.0,
+      "updateMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "layoutMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "drawMedianMs": {
+        "before": 3.0570000000000004,
+        "after": 3.024,
+        "percentSaved": 1.0794896957801892
+      },
+      "endMedianMs": {
+        "before": 0.834,
+        "after": 0.8245,
+        "percentSaved": 1.1390887290167795
+      },
+      "fullCallMs": {
+        "before": 3.891,
+        "after": 3.8485,
+        "percentSaved": 1.0922641994345894
+      }
+    },
+    {
+      "case": "linear",
+      "n": 1000,
+      "call": "update",
+      "ticks": 11,
+      "rotation": 0.0,
+      "updateMedianMs": {
+        "before": 0.515,
+        "after": 0.493,
+        "percentSaved": 4.27184466019418
+      },
+      "layoutMedianMs": {
+        "before": 0.2525,
+        "after": 0.24,
+        "percentSaved": 4.950495049504955
+      },
+      "drawMedianMs": {
+        "before": 0.2995,
+        "after": 0.28800000000000003,
+        "percentSaved": 3.839732888146896
+      },
+      "endMedianMs": {
+        "before": 0.057999999999999996,
+        "after": 0.056,
+        "percentSaved": 3.4482758620689613
+      },
+      "fullCallMs": {
+        "before": 0.8725,
+        "after": 0.837,
+        "percentSaved": 4.068767908309468
+      }
+    },
+    {
+      "case": "linear",
+      "n": 1000,
+      "call": "draw",
+      "ticks": 11,
+      "rotation": 0.0,
+      "updateMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "layoutMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "drawMedianMs": {
+        "before": 0.216,
+        "after": 0.2135,
+        "percentSaved": 1.157407407407407
+      },
+      "endMedianMs": {
+        "before": 0.0555,
+        "after": 0.055,
+        "percentSaved": 0.9009009009009028
+      },
+      "fullCallMs": {
+        "before": 0.2715,
+        "after": 0.2685,
+        "percentSaved": 1.104972375690605
+      }
+    },
+    {
+      "case": "linear",
+      "n": 5000,
+      "call": "update",
+      "ticks": 11,
+      "rotation": 0.0,
+      "updateMedianMs": {
+        "before": 1.0985,
+        "after": 1.0735000000000001,
+        "percentSaved": 2.2758306781975324
+      },
+      "layoutMedianMs": {
+        "before": 0.41200000000000003,
+        "after": 0.399,
+        "percentSaved": 3.1553398058252413
+      },
+      "drawMedianMs": {
+        "before": 0.888,
+        "after": 0.873,
+        "percentSaved": 1.6891891891891886
+      },
+      "endMedianMs": {
+        "before": 0.23,
+        "after": 0.2285,
+        "percentSaved": 0.6521739130434745
+      },
+      "fullCallMs": {
+        "before": 2.2165,
+        "after": 2.175,
+        "percentSaved": 1.8723212271599454
+      }
+    },
+    {
+      "case": "linear",
+      "n": 5000,
+      "call": "draw",
+      "ticks": 11,
+      "rotation": 0.0,
+      "updateMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "layoutMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "drawMedianMs": {
+        "before": 0.796,
+        "after": 0.798,
+        "percentSaved": -0.2512562814070307
+      },
+      "endMedianMs": {
+        "before": 0.223,
+        "after": 0.225,
+        "percentSaved": -0.8968609865470878
+      },
+      "fullCallMs": {
+        "before": 1.0190000000000001,
+        "after": 1.0230000000000001,
+        "percentSaved": -0.39254170755642637
+      }
+    },
+    {
+      "case": "linear",
+      "n": 20000,
+      "call": "update",
+      "ticks": 11,
+      "rotation": 0.0,
+      "updateMedianMs": {
+        "before": 3.4515000000000002,
+        "after": 3.4255,
+        "percentSaved": 0.7532956685499137
+      },
+      "layoutMedianMs": {
+        "before": 1.029,
+        "after": 1.016,
+        "percentSaved": 1.263362487852271
+      },
+      "drawMedianMs": {
+        "before": 3.2880000000000003,
+        "after": 3.274,
+        "percentSaved": 0.42579075425791535
+      },
+      "endMedianMs": {
+        "before": 0.8514999999999999,
+        "after": 0.8514999999999999,
+        "percentSaved": 0.0
+      },
+      "fullCallMs": {
+        "before": 7.591,
+        "after": 7.551,
+        "percentSaved": 0.5269397971281786
+      }
+    },
+    {
+      "case": "linear",
+      "n": 20000,
+      "call": "draw",
+      "ticks": 11,
+      "rotation": 0.0,
+      "updateMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "layoutMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "drawMedianMs": {
+        "before": 3.0410000000000004,
+        "after": 2.973,
+        "percentSaved": 2.2361065439000516
+      },
+      "endMedianMs": {
+        "before": 0.8514999999999999,
+        "after": 0.8285,
+        "percentSaved": 2.701115678214905
+      },
+      "fullCallMs": {
+        "before": 3.8925,
+        "after": 3.8015,
+        "percentSaved": 2.337829158638416
+      }
+    }
+  ]
+}

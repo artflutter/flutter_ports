@@ -23,10 +23,13 @@
 /// Thus this library is not a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
+    show callback, isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show limitValue;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
@@ -208,6 +211,56 @@ class CategoryScale extends Scale {
   /// The fields `_startValue`, `_valueRange` and `_addedLabels` get their
   /// start values in their declarations (scale.category.js:51-53).
   CategoryScale(super.cfg);
+
+  static final Type _nativeTickListType = <Tick>[].runtimeType;
+
+  @override
+  @internal
+  bool get supportsStaticLabelPlan => runtimeType == CategoryScale;
+
+  /// Resolve the built-in formatter directly, retaining its getLabels read
+  /// and re-reading the callback at each tick. Other callbacks use the normal
+  /// dispatch and receive the original index, list and receiver.
+  @override
+  void generateTickLabels(List<Tick> ticks) {
+    // DIVERGES(chartjs): adapt-category-label-dispatch, same default formatter.
+    if (runtimeType != CategoryScale) {
+      super.generateTickLabels(ticks);
+      return;
+    }
+    final opts = options.ticks;
+    List<Object?>? labels;
+    for (var i = 0, ilen = ticks.length; i < ilen; i++) {
+      final tick = ticks[i];
+      final cb = opts.callback;
+      if (!identical(cb, const JsFunction(_getLabelForValue))) {
+        labels = null;
+        tick.label = callback(cb, [tick.value, i.toDouble(), ticks], this);
+        continue;
+      }
+      final source = labels;
+      tick.label = source == null
+          ? _getLabelForValue(this, tick.value)
+          : tick.value >= 0 && tick.value < source.length
+          ? _labelAt(source, tick.value)
+          : tick.value;
+      if (i == 0 &&
+          ticks.runtimeType == _nativeTickListType &&
+          opts.raw is OptionView &&
+          chart is CategoryLabelSource) {
+        final cached = options.cachedCategoryLabelSource();
+        if (cached != null) {
+          labels = (chart as CategoryLabelSource).categoryLabels(
+            cached.labels,
+            horizontal:
+                cached.position == 'top' ||
+                cached.position == 'bottom' ||
+                axis == 'x',
+          );
+        }
+      }
+    }
+  }
 
   // scale.category.js:36 `static id = 'category'`. Scale has the instance
   // field `id`. Thus the value is only in the statics of jsClass.

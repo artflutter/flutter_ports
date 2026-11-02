@@ -31,6 +31,8 @@
 /// options, as upstream imports no element module.
 library;
 
+import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
@@ -55,6 +57,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsByIdScope, ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// core.config.js:5 `getIndexAxis`.
 ///
@@ -445,6 +448,17 @@ class Config implements types.ChartConfiguration {
   set type(Object? type) {
     jsSet(_config, 'type', type);
   }
+
+  /// Native category labels after the ordinary first callback has resolved the
+  /// source. Config subclasses and custom containers retain normal reads.
+  @internal
+  // DIVERGES(chartjs): adapt-category-label-dispatch, native container guard.
+  List<Object?>? categoryLabels(
+    Object? explicitLabels, {
+    required bool horizontal,
+  }) => runtimeType == Config
+      ? nativeCategoryLabels(_config, explicitLabels, horizontal: horizontal)
+      : null;
 
   /// core.config.js:177 `get data()`.
   ///

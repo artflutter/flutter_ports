@@ -1,0 +1,649 @@
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -70,7 +70,13 @@
+ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
+     show MinMax, halfPi, int16Range, limitValue, toDegrees, toRadians;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+-    show ScriptableScaleContext, addGrace, createContext, toFont, toPadding;
++    show
++        ParsedFont,
++        ScriptableScaleContext,
++        addGrace,
++        createContext,
++        toFont,
++        toPadding;
+ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+ import 'package:flutter_chartjs_port/src/js/js_class.dart';
+ import 'package:flutter_chartjs_port/src/js/js_math.dart';
+@@ -80,6 +86,7 @@
+ import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+     show OptionKey;
++import 'package:flutter_chartjs_port/src/options/static_font.dart';
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+ import 'package:flutter_chartjs_port/src/types/layout.dart'
+@@ -330,10 +337,7 @@
+   Tick tick,
+ ) {
+   // DIVERGES(chartjs): adapt-tick-context-construction, no temporary Map.
+-  return ScriptableScaleContext(parent)
+-    ..jsWrite('tick', tick)
+-    ..jsWrite('index', index.toDouble())
+-    ..jsWrite('type', 'tick');
++  return ScriptableScaleContext.tick(parent, tick, index.toDouble());
+ }
+ 
+ /// core.scale.js:122 `titleAlign`.
+@@ -434,6 +438,35 @@
+   double right;
+   double top;
+   double bottom;
++}
++
++/// One full candidate-label measurement, independent of viewport and tick
++/// selection. Keep just one plan; fitted/auto-skipped subsets do not replace it.
++final class _AxisLabelPlan {
++  _AxisLabelPlan(this.labels, this.font, this.sizes);
++
++  final List<String> labels;
++  final StaticFontInputs font;
++  final _LabelSizes sizes;
++
++  bool matches(List<Tick> ticks, StaticFontInputs currentFont) {
++    if (font != currentFont || labels.length != ticks.length) return false;
++    for (var i = 0; i < labels.length; i++) {
++      final label = ticks[i].label;
++      if (label is! String || label != labels[i]) return false;
++    }
++    return true;
++  }
++
++  static List<String>? captureLabels(List<Tick> ticks) {
++    final labels = <String>[];
++    for (final tick in ticks) {
++      final label = tick.label;
++      if (label is! String) return null;
++      labels.add(label);
++    }
++    return labels;
++  }
+ }
+ 
+ /// The label sizes of `_computeLabelSizes` (core.scale.js:862-869): the
+@@ -1232,6 +1265,7 @@
+ 
+     // Allow modification of ticks in callback.
+     afterBuildTicks();
++    if (ticks!.length < 256) _labelPlan = null;
+ 
+     // Compute tick rotation and fit using a sampled subset of labels
+     // We generally don't need to compute the size of every single label for
+@@ -1823,6 +1857,30 @@
+     final heights = <double>[];
+     final increment = (length / _getTicksLimit(length, maxTicksLimit))
+         .floorToDouble();
++    // DIVERGES(chartjs): adapt-axis-label-plan, reuse content metrics only.
++    final generation = switch (ctx) {
++      final CanvasTextMetricsSource source => source.textMetricsGeneration,
++      _ => null,
++    };
++    if (!identical(_metricsContext, ctx) ||
++        !identical(_metricsGeneration, generation)) {
++      if (_metricsGeneration != null || generation != null) caches.clear();
++      _labelPlan = null;
++      _metricsContext = ctx;
++      _metricsGeneration = generation;
++    }
++    final canPlan =
++        supportsStaticLabelPlan &&
++        generation != null &&
++        $context != null &&
++        length >= 256 &&
++        increment == 1 &&
++        identical(ticks, this.ticks) &&
++        ticks.runtimeType == _nativeTickListType;
++    StaticFontInputs? planFont;
++    List<String>? planLabels;
++    final planOptions = canPlan ? options : null;
++    final planTicks = planOptions?.ticks.raw;
+     var widestLabelSize = 0.0;
+     var highestLabelSize = 0.0;
+     double i;
+@@ -1840,6 +1898,34 @@
+       label = ticks[index].label;
+       tickFont = resolveTickFontOptions(index);
+       ctx!.font = fontString = tickFont.string;
++      if (canPlan &&
++          index == 0 &&
++          ctx.font == fontString &&
++          $context != null &&
++          identical(ticks, this.ticks) &&
++          identical(options, planOptions) &&
++          identical(options.ticks.raw, planTicks) &&
++          label is String &&
++          label == ticks[0].label &&
++          tickFont is ParsedFont) {
++        final inputs = TickFontCache.staticInputs(planTicks);
++        planFont =
++            inputs != null && TickFontCache.matchesResolved(inputs, tickFont)
++            ? inputs
++            : null;
++        final plan = _labelPlan;
++        if (planFont != null && plan != null && plan.matches(ticks, planFont)) {
++          // Preserve every fresh tick context, its original index and any
++          // context already supplied by a hook. No scriptable font is skipped.
++          final parent = $context!;
++          for (var j = 1; j < length; j++) {
++            final tick = ticks[j];
++            tick.$context ??= _createTickContext(parent, j, tick);
++          }
++          return plan.sizes;
++        }
++        if (planFont != null) planLabels = _AxisLabelPlan.captureLabels(ticks);
++      }
+       // `caches[fontString]` converts a `null` font string to the key
+       // 'null'.
+       final key = fontString ?? 'null';
+@@ -1889,7 +1975,7 @@
+       height: _orZero(_at(heights, idx)),
+     );
+ 
+-    return _LabelSizes(
++    final result = _LabelSizes(
+       valueAt(0),
+       valueAt(length - 1),
+       valueAt(widest),
+@@ -1897,7 +1983,23 @@
+       widths,
+       heights,
+     );
+-  }
++    if (canPlan) {
++      _labelPlan = planFont == null || planLabels == null
++          ? null
++          : _AxisLabelPlan(planLabels, planFont, result);
++    }
++    return result;
++  }
++
++  /// Whether the exact built-in scale permits scalar label-metric reuse.
++  /// Custom scale subclasses retain their original virtual font behavior.
++  @internal
++  bool get supportsStaticLabelPlan => false;
++
++  static final Type _nativeTickListType = <Tick>[].runtimeType;
++  Object? _metricsContext;
++  Object? _metricsGeneration;
++  _AxisLabelPlan? _labelPlan;
+ 
+   /// core.scale.js:877 `getLabelForValue(value)`.
+   ///
+--- a/packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart
+@@ -4,7 +4,7 @@
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     show OptionView;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+-    show ParsedFont;
++    show ParsedFont, toFont;
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+     show FontSpecScope;
+@@ -21,19 +21,41 @@
+   ParsedFont? read(Object? ticks) {
+     final font = _font;
+     if (font == null) return null;
+-    final inputs = _readInputs(ticks);
++    final inputs = staticInputs(ticks);
+     return inputs != null && inputs == _inputs ? _copy(font) : null;
+   }
+ 
+   /// Learn only after a complete upstream resolution has populated the raw
+   /// resolver caches. Never keep the object returned to the caller.
+   void remember(Object? ticks, ParsedFont font) {
+-    final inputs = _readInputs(ticks);
+-    _inputs = inputs;
+-    _font = inputs == null ? null : _copy(font);
++    final inputs = staticInputs(ticks);
++    final valid = inputs != null && matchesResolved(inputs, font);
++    _inputs = valid ? inputs : null;
++    _font = valid ? _copy(font) : null;
+   }
+ 
+-  static StaticFontInputs? _readInputs(Object? ticks) {
++  /// A getter may write an earlier font field while toFont is still reading
++  /// later fields. Such a mixed result must not be remembered for the new
++  /// scalar tuple. The comparison itself reads only owned primitive values.
++  static bool matchesResolved(StaticFontInputs inputs, ParsedFont font) {
++    if (font.weight != null && font.weight is! String) return false;
++    final expected = toFont({
++      'size': inputs.size,
++      'family': inputs.family,
++      'style': inputs.style,
++      'lineHeight': inputs.lineHeight,
++      'weight': inputs.weight,
++    }, const <String, Object?>{});
++    return font.size == expected.size &&
++        font.family == expected.family &&
++        font.style == expected.style &&
++        font.lineHeight == expected.lineHeight &&
++        font.weight == expected.weight &&
++        font.string == expected.string;
++  }
++
++  /// Current scalar inputs, inspected without executing any font callbacks.
++  static StaticFontInputs? staticInputs(Object? ticks) {
+     if (ticks is! OptionView) return null;
+     final fallback = _plainFallback();
+     if (fallback == null) return null;
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
+@@ -555,7 +555,9 @@
+ base class ContextObject implements JsObjectFace {
+   /// `Object.create(prototype)`: an object without own properties. Dart
+   /// `null` is the `null` prototype.
+-  ContextObject(this.prototype);
++  ContextObject(this.prototype) : _names = <String>[];
++
++  ContextObject._withNames(this.prototype, this._names);
+ 
+   /// `Object.getPrototypeOf(this)`: the parent context, or Dart `null`. A
+   /// parent is a [ContextObject] or a `Map` (a context object of user
+@@ -563,7 +565,7 @@
+   final Object? prototype;
+ 
+   /// The own keys, in insertion order.
+-  final List<String> _names = <String>[];
++  final List<String> _names;
+ 
+   /// The own keys that are not typed fields, and their values.
+   List<String>? _extraNames;
+@@ -916,6 +918,14 @@
+   /// A scale or tick context with the parent [prototype].
+   ScriptableScaleContext(super.prototype);
+ 
++  /// The fresh tick context, with the upstream literal's own-key order.
++  // DIVERGES(chartjs): adapt-tick-context-construction, direct typed fields.
++  ScriptableScaleContext.tick(Object? parent, Object tick, double index)
++    : _tick = tick,
++      _index = index,
++      _type = 'tick',
++      super._withNames(parent, ['tick', 'index', 'type']);
++
+   Object? _scale = _unset;
+   Object? _tick = _unset;
+   Object? _index = _unset;
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -691,6 +691,18 @@
+       !identical(proxy._cache.get(OptionKey.descScriptable), _absent) &&
+       !identical(proxy._cache.get(OptionKey.descIndexable), _absent) &&
+       !identical(proxy._cache.get(OptionKey.descAllKeys), _absent);
++
++  /// Label-source options already read by the first category callback. Never
++  /// execute a scriptable option merely to qualify a bulk-label fast path.
++  @internal
++  ({Object? labels, String? position})? cachedCategoryLabelSource() {
++    // DIVERGES(chartjs): adapt-category-label-dispatch, cached source inputs.
++    final labels = _cache.get(OptionKey.labels);
++    if (identical(labels, _absent)) return null;
++    if (jsTruthy(labels)) return (labels: labels, position: null);
++    final position = _cache.get(OptionKey.position);
++    return position is String ? (labels: labels, position: position) : null;
++  }
+ 
+   /// The own property [name] of the target, or [_absent].
+   Object? _own(String name) {
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+@@ -23,10 +23,13 @@
+ /// Thus this library is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
++import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
++    show OptionView;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+-    show isNullOrUndef;
++    show callback, isNullOrUndef;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
+     show limitValue;
+ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
+@@ -209,6 +212,56 @@
+   /// start values in their declarations (scale.category.js:51-53).
+   CategoryScale(super.cfg);
+ 
++  static final Type _nativeTickListType = <Tick>[].runtimeType;
++
++  @override
++  @internal
++  bool get supportsStaticLabelPlan => runtimeType == CategoryScale;
++
++  /// Resolve the built-in formatter directly, retaining its getLabels read
++  /// and re-reading the callback at each tick. Other callbacks use the normal
++  /// dispatch and receive the original index, list and receiver.
++  @override
++  void generateTickLabels(List<Tick> ticks) {
++    // DIVERGES(chartjs): adapt-category-label-dispatch, same default formatter.
++    if (runtimeType != CategoryScale) {
++      super.generateTickLabels(ticks);
++      return;
++    }
++    final opts = options.ticks;
++    List<Object?>? labels;
++    for (var i = 0, ilen = ticks.length; i < ilen; i++) {
++      final tick = ticks[i];
++      final cb = opts.callback;
++      if (!identical(cb, const JsFunction(_getLabelForValue))) {
++        labels = null;
++        tick.label = callback(cb, [tick.value, i.toDouble(), ticks], this);
++        continue;
++      }
++      final source = labels;
++      tick.label = source == null
++          ? _getLabelForValue(this, tick.value)
++          : tick.value >= 0 && tick.value < source.length
++          ? _labelAt(source, tick.value)
++          : tick.value;
++      if (i == 0 &&
++          ticks.runtimeType == _nativeTickListType &&
++          opts.raw is OptionView &&
++          chart is CategoryLabelSource) {
++        final cached = options.cachedCategoryLabelSource();
++        if (cached != null) {
++          labels = (chart as CategoryLabelSource).categoryLabels(
++            cached.labels,
++            horizontal:
++                cached.position == 'top' ||
++                cached.position == 'bottom' ||
++                axis == 'x',
++          );
++        }
++      }
++    }
++  }
++
+   // scale.category.js:36 `static id = 'category'`. Scale has the instance
+   // field `id`. Thus the value is only in the statics of jsClass.
+ 
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas.dart
+@@ -27,6 +27,15 @@
+ 
+ export 'package:flutter_chartjs_port/src/types/color.dart'
+     show CanvasGradient, CanvasPattern;
++
++/// Optional internal capability for a context with deterministic text metrics.
++/// A generation changes whenever existing font/text measurements become stale.
++/// Null disables cross-update measurement reuse. The font setter and measuring
++/// text must have no user-observable side effects beyond canvas font state.
++abstract interface class CanvasTextMetricsSource {
++  /// Identity token for the current font environment, or null without tracking.
++  Object? get textMetricsGeneration;
++}
+ 
+ /// Typed Canvas 2D compositing operations, independent of Flutter.
+ ///
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+@@ -45,6 +45,7 @@
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
++import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+@@ -500,13 +501,17 @@
+ ///
+ /// See the library comment for the picture model. The host calls [paint]
+ /// in its paint phase and repaints when [onChanged] fires.
+-final class UiCanvasContext implements CanvasRenderingContext2D {
++final class UiCanvasContext
++    implements CanvasRenderingContext2D, CanvasTextMetricsSource {
+   UiCanvasContext._(this._element) {
+     _s = _states[0];
+     _path = UiPathBuilder(_s.transform);
+   }
+ 
+   final UiCanvasElement _element;
++
++  @override
++  Object? get textMetricsGeneration => trackedTextMetricsGeneration();
+ 
+   final List<_State> _states = [_State()];
+   int _depth = 0;
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_text.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_text.dart
+@@ -373,6 +373,23 @@
+ final LinkedHashMap<(CanvasFont, String), CanvasTextMetricsData> _metrics =
+     LinkedHashMap();
+ 
++Object _textMetricsGeneration = Object();
++
++/// Identity of the current native font environment.
++Object get canvasTextMetricsGeneration => _textMetricsGeneration;
++
++/// Flutter's fontsChange notification invalidates both native paragraphs and
++/// numeric metrics. Axis plans observe the new generation on update.
++void invalidateCanvasTextMetrics() {
++  for (final layout in _layouts.values) {
++    layout.paragraph.dispose();
++  }
++  _layouts.clear();
++  _metrics.clear();
++  _fontCache.clear();
++  _textMetricsGeneration = Object();
++}
++
+ /// The count of entries in the paragraph cache, for tests.
+ int get canvasParagraphCacheLength => _layouts.length;
+ 
+--- a/packages/flutter_chartjs_port/lib/src/core/core.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+@@ -30,6 +30,8 @@
+ /// options class of the element type. This file does not import the element
+ /// options, as upstream imports no element module.
+ library;
++
++import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ 
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+@@ -55,6 +57,7 @@
+     show ScaleOptionsByIdScope, ScaleOptionsScope;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
++import 'package:meta/meta.dart';
+ 
+ /// core.config.js:5 `getIndexAxis`.
+ ///
+@@ -445,6 +448,17 @@
+   set type(Object? type) {
+     jsSet(_config, 'type', type);
+   }
++
++  /// Native category labels after the ordinary first callback has resolved the
++  /// source. Config subclasses and custom containers retain normal reads.
++  @internal
++  // DIVERGES(chartjs): adapt-category-label-dispatch, native container guard.
++  List<Object?>? categoryLabels(
++    Object? explicitLabels, {
++    required bool horizontal,
++  }) => runtimeType == Config
++      ? nativeCategoryLabels(_config, explicitLabels, horizontal: horizontal)
++      : null;
+ 
+   /// core.config.js:177 `get data()`.
+   ///
+--- a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+@@ -35,6 +35,7 @@
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
++import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+ import 'package:flutter_chartjs_port/src/core/core.config.dart'
+     show Config, determineAxis, getIndexAxis;
+@@ -625,7 +626,7 @@
+ }
+ 
+ /// core.controller.js:103 `Chart`.
+-class Chart implements types.Chart {
++class Chart implements types.Chart, CategoryLabelSource {
+   /// core.controller.js:123 `constructor(item, userConfig)`.
+   ///
+   /// [item] is a canvas element, a context, an object with a `canvas`, or
+@@ -979,6 +980,21 @@
+     // Calculate
+     return jsTruthy(height) ? width / height : null;
+   }
++
++  /// Internal eligibility for native label-source reads. A subclass with
++  /// effectful data/config getters must retain the ordinary per-label path.
++  @internal
++  bool get supportsNativeCategoryLabels => runtimeType == Chart;
++
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-category-label-dispatch, trusted data getter.
++  List<Object?>? categoryLabels(
++    Object? explicitLabels, {
++    required bool horizontal,
++  }) => supportsNativeCategoryLabels
++      ? config.categoryLabels(explicitLabels, horizontal: horizontal)
++      : null;
+ 
+   /// core.controller.js:213 `get data()`.
+   @override
+--- /dev/null
++++ b/packages/flutter_chartjs_port/lib/src/core/category_label_source.dart
+@@ -0,0 +1,68 @@
++// Original code, not ported from Chart.js: guarded native category label reads.
++
++import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
++import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
++
++/// Internal host contract: its data/config getters have ordinary read behavior.
++/// Unknown Chart subclasses do not opt in, preserving effectful getter reads.
++// A capability checked at runtime, not a standalone operation.
++// ignore: one_member_abstracts
++abstract interface class CategoryLabelSource {
++  /// The native label list, or null when bulk reads cannot be proven safe.
++  List<Object?>? categoryLabels(
++    Object? explicitLabels, {
++    required bool horizontal,
++  });
++}
++
++final Set<Type> _mapTypes = {
++  <String, Object?>{}.runtimeType,
++  <String, Object>{}.runtimeType,
++  <String, dynamic>{}.runtimeType,
++  // DDC distinguishes literal, non-literal and identity Map implementations.
++  // Explicit constructors are essential here; literals alone omit LinkedMap.
++  // ignore: prefer_collection_literals
++  Map<String, Object?>().runtimeType,
++  // Capture the non-literal implementation for non-nullable values too.
++  // ignore: prefer_collection_literals
++  Map<String, Object>().runtimeType,
++  // Capture the non-literal implementation for dynamically typed values too.
++  // ignore: prefer_collection_literals
++  Map<String, dynamic>().runtimeType,
++  Map<String, Object?>.identity().runtimeType,
++  Map<String, Object>.identity().runtimeType,
++  Map<String, dynamic>.identity().runtimeType,
++};
++
++final Set<Type> _listTypes = {
++  <Object?>[].runtimeType,
++  <Object>[].runtimeType,
++  <String>[].runtimeType,
++  List<Object?>.empty().runtimeType,
++  List<String>.empty().runtimeType,
++  const <Object?>[].runtimeType,
++  const <String>[].runtimeType,
++};
++
++/// Probe only ordinary native containers. A custom Map/List and typed scopes
++/// with potential routes keep the per-label path. No user getter is evaluated
++/// to decide whether a custom container is safe.
++List<Object?>? nativeCategoryLabels(
++  Object config,
++  Object? explicitLabels, {
++  required bool horizontal,
++}) {
++  if (!_mapTypes.contains(config.runtimeType)) return null;
++  final data = RawScope(config as Map<String, Object?>).jsRead('data');
++  if (!_mapTypes.contains(data.runtimeType)) return null;
++  final raw = RawScope(data! as Map<String, Object?>);
++  final axisLabels = raw.jsRead(horizontal ? 'xLabels' : 'yLabels');
++  final labels = jsTruthy(explicitLabels)
++      ? explicitLabels
++      : jsTruthy(axisLabels)
++      ? axisLabels
++      : raw.jsRead('labels');
++  return _listTypes.contains(labels.runtimeType)
++      ? labels! as List<Object?>
++      : null;
++}
+--- /dev/null
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_font_tracking.dart
+@@ -0,0 +1,27 @@
++// Original code, not ported from Chart.js: native font cache invalidation.
++
++import 'package:flutter/painting.dart' show PaintingBinding;
++import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
++
++bool _listening = false;
++
++/// Track Flutter font changes before allowing cross-update metric reuse.
++/// A bare engine without a painting binding keeps the normal measurement path.
++Object? trackedTextMetricsGeneration() {
++  if (!_listening) {
++    final PaintingBinding binding;
++    try {
++      binding = PaintingBinding.instance;
++      // Flutter signals a missing binding with Error, not Exception.
++      // ignore: avoid_catching_errors
++    } on Error {
++      // BindingBase.checkInstance throws when no binding exists. Do not create
++      // a binding as a side effect of using an offscreen canvas.
++      return null;
++    }
++    binding.systemFonts.addListener(invalidateCanvasTextMetrics);
++    _listening = true;
++    invalidateCanvasTextMetrics();
++  }
++  return canvasTextMetricsGeneration;
++}
+--- a/apps/chartjs_gallery/lib/bench/chart_bench.dart
++++ b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+@@ -1549,6 +1549,10 @@
+ final class _BenchChart extends Chart {
+   _BenchChart(super.item, [super.userConfig]);
+ 
++  // This wrapper only records timings; data/config getters remain Chart's.
++  @override
++  bool get supportsNativeCategoryLabels => true;
++
+   /// The ticks of the draws since the last reset.
+   int drawTicks = 0;
+ 
+--- a/apps/chartjs_gallery/lib/demo/stress_demo.dart
++++ b/apps/chartjs_gallery/lib/demo/stress_demo.dart
+@@ -2515,6 +2515,10 @@
+ final class _StressChart extends Chart with _TickMark implements _StressMeter {
+   _StressChart(super.item, [super.userConfig]);
+ 
++  // This wrapper only records timings; data/config getters remain Chart's.
++  @override
++  bool get supportsNativeCategoryLabels => true;
++
+   @override
+   int drawMicros = 0;
+ 

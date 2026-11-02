@@ -1,0 +1,58 @@
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -191,7 +191,38 @@
+   /// makes (core.scale.js:966-967). Dart `null` stands for JS `undefined`,
+   /// the start value. It is the typed context of index.d.ts:1419 (Chart.js
+   /// ADR 0054 §11).
+-  ScriptableScaleContext? $context;
++  ScriptableScaleContext? get $context {
++    final parent = _contextParent;
++    if (parent != null) {
++      _contextParent = null;
++      _context = ScriptableScaleContext.tick(
++        parent,
++        this,
++        _contextIndex.toDouble(),
++      );
++    }
++    return _context;
++  }
++
++  set $context(ScriptableScaleContext? value) {
++    _contextParent = null;
++    _context = value;
++  }
++
++  ScriptableScaleContext? _context;
++  ScriptableScaleContext? _contextParent;
++  int _contextIndex = 0;
++
++  /// Make the same fresh context available on first access after a static
++  /// measurement-plan hit. Capture the original parent/index before auto-skip;
++  /// a hook-supplied context or an earlier preparation always wins.
++  @internal
++  void prepareContextForLayout(ScriptableScaleContext parent, int index) {
++    // DIVERGES(chartjs): adapt-lazy-tick-context, materialize on observation.
++    if (_context != null || _contextParent != null) return;
++    _contextIndex = index;
++    _contextParent = parent;
++  }
+ }
+ 
+ /// core.scale.js:23 `sample`.
+@@ -1915,12 +1946,11 @@
+             : null;
+         final plan = _labelPlan;
+         if (planFont != null && plan != null && plan.matches(ticks, planFont)) {
+-          // Preserve every fresh tick context, its original index and any
+-          // context already supplied by a hook. No scriptable font is skipped.
++          // Preserve each context's original index/parent and any context
++          // supplied by a hook. Unobserved contexts need no allocation.
+           final parent = $context!;
+           for (var j = 1; j < length; j++) {
+-            final tick = ticks[j];
+-            tick.$context ??= _createTickContext(parent, j, tick);
++            ticks[j].prepareContextForLayout(parent, j);
+           }
+           return plan.sizes;
+         }

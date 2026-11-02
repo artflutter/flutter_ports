@@ -1,0 +1,24 @@
+// Original code, not ported from Chart.js: label-content scan microbenchmark.
+import 'dart:convert';
+@pragma('vm:never-inline')
+bool unchanged(List<String> current,List<String> snapshot){
+ if(current.length!=snapshot.length)return false;
+ for(var i=0;i<current.length;i++){
+  if(!identical(current[i],snapshot[i])&&current[i]!=snapshot[i])return false;
+ }
+ return true;
+}
+void main(){
+ var checksum=0;
+ for(final n in [1000,5000,20000,200000]){
+  final labels=List<String>.generate(n,(i)=>'Point $i');final saved=List<String>.of(labels);
+  final samples=<double>[];
+  for(var batch=0;batch<11;batch++){
+   final watch=Stopwatch()..start();var count=0;
+   do{checksum+=unchanged(labels,saved)?1:0;count++;}while(watch.elapsedMilliseconds<200);
+   if(batch>0)samples.add(watch.elapsedMicroseconds/count/1000);
+   labels[n-1]='changed $batch';checksum+=unchanged(labels,saved)?1:0;labels[n-1]=saved[n-1];
+  }
+  samples.sort();print(jsonEncode({'n':n,'medianMs':samples[5],'minMs':samples.first,'maxMs':samples.last,'checksum':checksum}));
+ }
+}

@@ -1,0 +1,13 @@
+{
+  "vmPackageTests": {"passed": 10107, "skipped": 84, "excludedTags": ["fixtures", "golden"]},
+  "targetedFinalVmTests": 43,
+  "browserIntegrationTests": {"javascriptPassed": 43, "wasmPassed": 43},
+  "fixtures": {"files": 26, "errors": 0, "warnings": 0},
+  "analysis": "passed",
+  "format": "passed",
+  "portChecks": "passed",
+  "parity": "regenerated and checked",
+  "benchmarkLayoutParity": "exact in all 12 cells of all four runs",
+  "foregroundProfile": {"seconds": 30, "fps": 60.0, "n": 20000, "ticks": 44, "rotation": 50.0, "buildAverageMs": 10.76, "rasterAverageMs": 1.02},
+  "scope": "No sampling, fixed bounds or point-count reduction; fresh ticks/contexts and live geometry retained."
+}

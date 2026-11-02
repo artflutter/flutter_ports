@@ -1,0 +1,504 @@
+{
+  "steady": {
+    "baseline/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "sample20/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "sample50/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "sample100/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "sample500/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "limit50/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "rotation50/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "sample100_rotation50/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "bounds/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "sample100_bounds/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "freeze_x/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "freeze_x_bounds/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "freeze_layout/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "sample100_freeze_layout/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "constant_font/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "direct_labels/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "direct_labels_constant_font/steady": {
+      "frames": 8,
+      "differentFields": []
+    },
+    "hide_x/steady": {
+      "frames": 8,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "hide_tick_labels/steady": {
+      "frames": 8,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    }
+  },
+  "adversarial": {
+    "baseline/long_label": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "baseline/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "baseline/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample20/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample20/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample20/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample50/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample50/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample50/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample100/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample100/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample100/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample500/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample500/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample500/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "limit50/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "limit50/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "limit50/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "rotation50/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "rotation50/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "rotation50/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample100_rotation50/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample100_rotation50/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample100_rotation50/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "bounds/long_label": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "bounds/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "limits",
+        "points",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "bounds/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "sample100_bounds/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample100_bounds/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "limits",
+        "points",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample100_bounds/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "freeze_x/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "freeze_x/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "ticks",
+        "xTicks"
+      ]
+    },
+    "freeze_x/resize": {
+      "frames": 3,
+      "differentFields": [
+        "ticks",
+        "xTicks"
+      ]
+    },
+    "freeze_x_bounds/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "freeze_x_bounds/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "limits",
+        "points",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "freeze_x_bounds/resize": {
+      "frames": 3,
+      "differentFields": [
+        "ticks",
+        "xTicks"
+      ]
+    },
+    "freeze_layout/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "freeze_layout/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "limits",
+        "points",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "freeze_layout/resize": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "ticks",
+        "xTicks"
+      ]
+    },
+    "sample100_freeze_layout/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample100_freeze_layout/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "limits",
+        "points",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "sample100_freeze_layout/resize": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "ticks",
+        "xTicks"
+      ]
+    },
+    "constant_font/long_label": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "constant_font/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "constant_font/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "direct_labels/long_label": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "direct_labels/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "direct_labels/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "direct_labels_constant_font/long_label": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "direct_labels_constant_font/domain_change": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "direct_labels_constant_font/resize": {
+      "frames": 3,
+      "differentFields": []
+    },
+    "hide_x/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "hide_x/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "hide_x/resize": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "hide_tick_labels/long_label": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "hide_tick_labels/domain_change": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    },
+    "hide_tick_labels/resize": {
+      "frames": 3,
+      "differentFields": [
+        "area",
+        "points",
+        "rotation",
+        "ticks",
+        "xTicks",
+        "yTicks"
+      ]
+    }
+  }
+}

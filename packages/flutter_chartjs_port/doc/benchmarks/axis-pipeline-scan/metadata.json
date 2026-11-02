@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-02",
+  "baseline": "8bcbe47 plus baseline.patch (both retained category/font optimizations)",
+  "device": "Apple M3 Max",
+  "os": "macOS 27.0.1",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "mode": "profile AOT, arm64, Impeller",
+  "canvas": [
+    800,
+    480
+  ],
+  "n": 20000,
+  "order": [
+    "forward",
+    "reverse",
+    "forward"
+  ],
+  "warmupMs": 800,
+  "batches": 7,
+  "batchMs": 200,
+  "runtimeSourceSha256": {
+    "packages/flutter_chartjs_port/lib/src/core/core.scale.dart": "cd3fe6afd73de7c159892eaaa255d9f5de2505997d0780c205f736a5ff9ebf9f",
+    "packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart": "ed3232475674b417faecf5b1f3d0bca412906a012ef7f9c019b2954bf9ff2370",
+    "packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart": "2c22aba1c7aa062ba8dd0860bd7911a3a0a575e05c9928fcd0de55bc7337289a",
+    "packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart": "d0e231b20650df0b7207cfcbb906ece43d4948bbe596a062392a43e4833d56ce",
+    "packages/flutter_chartjs_port/lib/src/options/static_font.dart": "f9f3c538284f8e7276dfbc7d9e3f6ee24e71f1da70c0ce809e7315741c9628df"
+  },
+  "productionCodeChangedByScan": false
+}

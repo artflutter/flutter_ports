@@ -592,6 +592,71 @@ final class _SubScale extends _TestScale {
 void main() {
   setUpDefaultsRestore();
 
+  test('font reuse still creates each tick context and sees option writes', () {
+    final chart = _plainChart();
+    final scale = _TestScale(_cfg(chart), {})
+      ..init(
+        _scaleOptions({
+          'axis': 'x',
+          'position': 'bottom',
+          'ticks': {
+            'font': {
+              'size': 12.0,
+              'family': 'Arial',
+              'style': 'normal',
+              'lineHeight': 1.2,
+              'weight': null,
+            },
+          },
+        }, chart),
+      )
+      ..ticks = [Tick(value: 0), Tick(value: 1)];
+    final first = scale.resolveTickFontOptions(0);
+    expect(scale.ticks![1].$context, isNull);
+    final second = scale.resolveTickFontOptions(1);
+    expect(second.string, first.string);
+    expect(second, isNot(same(first)));
+    expect(scale.ticks![1].$context!.index, 1.0);
+    expect(scale.ticks![1].$context!.tick, same(scale.ticks![1]));
+    final tickOptions = scale.options.ticks.raw! as ContextResolver;
+    final font = tickOptions['font']! as ContextResolver;
+    font['size'] = 22.0;
+    expect(scale.resolveTickFontOptions(1).size, 22);
+  });
+
+  test('direct tick contexts preserve identity, parent and own-key order', () {
+    final chart = _plainChart();
+    final scale =
+        _TestScale(_cfg(chart), {
+            'ticks': <Object?>[
+              <Object?>[0],
+              <Object?>[1],
+            ],
+            'min': 0,
+            'max': 1,
+          })
+          ..init(_scaleOptions({'axis': 'x', 'position': 'bottom'}, chart))
+          ..update(300, 200)
+          ..resolveTickFontOptions(0);
+    final tick = scale.ticks!.first;
+    final context = tick.$context!;
+    expect(context.jsKeys(), ['tick', 'index', 'type']);
+    expect(context.tick, same(tick));
+    expect(context.index, isA<double>());
+    expect(context.index, 0.0);
+    expect(context.type, 'tick');
+    expect(context.scale, same(scale));
+    expect(context.jsHas('scale'), isFalse);
+    expect(context.jsRead('chart'), same(chart));
+    scale.resolveTickFontOptions(0);
+    expect(tick.$context, same(context));
+    scale
+      ..update(300, 200)
+      ..resolveTickFontOptions(0);
+    expect(scale.ticks!.first.$context, isNot(same(context)));
+    expect(scale.ticks!.first.$context!.prototype, same(context.prototype));
+  });
+
   test('the reference comes from Node.js v24.22.1 on arm64', () {
     expect(scaleReferenceNode, 'v24.22.1');
     expect(scaleReferenceArch, 'arm64');

@@ -1,0 +1,121 @@
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -328,11 +328,11 @@
+   int index,
+   Tick tick,
+ ) {
+-  return createContext(parent, <String, Object?>{
+-    'tick': tick,
+-    'index': index.toDouble(),
+-    'type': 'tick',
+-  }) as ScriptableScaleContext;
++  // DIVERGES(chartjs): adapt-tick-context-construction, no temporary Map.
++  return ScriptableScaleContext(parent)
++    ..jsWrite('tick', tick)
++    ..jsWrite('index', index.toDouble())
++    ..jsWrite('type', 'tick');
+ }
+ 
+ /// core.scale.js:122 `titleAlign`.
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
+@@ -22,6 +22,8 @@
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+     show toFontString;
++import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
++    show readOption;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+     show isArray, isNullOrUndef, isObject, toDimension, valueOrDefault;
+ import 'package:flutter_chartjs_port/src/js/js_array.dart';
+@@ -29,6 +31,8 @@
+ import 'package:flutter_chartjs_port/src/js/js_number.dart';
+ import 'package:flutter_chartjs_port/src/js/js_object.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
++import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
++    show OptionKey;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/geometric.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' show CanvasFontSpec;
+@@ -57,6 +61,15 @@
+ /// `'' + value` converts with `ToString` ([jsToString]): `null` gives
+ /// `'null'` and [undefined] gives `'undefined'`.
+ double toLineHeight(Object? value, double size) {
++  // DIVERGES(chartjs): adapt-font-parsing, the decimal number path.
++  // JS prints zero (including -0) as '0', and these positive doubles
++  // without an exponent. Parsing that decimal gives the same double.
++  // Outside this range the anchored pattern rejects the sign/exponent.
++  if (value is double) {
++    if (value == 0) return size * 0.0;
++    if (value >= 1e-6 && value < 1e21) return size * value;
++    return size * 1.2;
++  }
+   final matches = _lineHeight.firstMatch(jsToString(value));
+   if (matches == null || matches[1] == 'normal') {
+     return size * 1.2;
+@@ -361,18 +374,29 @@
+   fallback = jsTruthy(fallback) ? fallback : defaults['font'];
+ 
+   var size = valueOrDefault(
+-    jsGet(options, 'size'),
+-    jsGet(fallback, 'size'),
++    readOption(options, OptionKey.size),
++    readOption(fallback, OptionKey.size),
+   );
+ 
+   if (size is String) {
+     size = _parseInt(size);
+   }
+   var style = valueOrDefault(
+-    jsGet(options, 'style'),
+-    jsGet(fallback, 'style'),
++    readOption(options, OptionKey.style),
++    readOption(fallback, OptionKey.style),
+   );
+-  if (jsTruthy(style) && !_fontStyle.hasMatch(jsToString(style))) {
++  // DIVERGES(chartjs): adapt-font-parsing, literal alternatives of FONT_STYLE.
++  final commonStyle =
++      style is String &&
++      (style == 'normal' ||
++          style == 'italic' ||
++          style == 'initial' ||
++          style == 'inherit' ||
++          style == 'unset' ||
++          style == 'oblique');
++  if (jsTruthy(style) &&
++      !commonStyle &&
++      !_fontStyle.hasMatch(jsToString(style))) {
+     // console.warn has no other counterpart in the pure layers.
+     // ignore: avoid_print
+     print('Invalid font style specified: "${jsToString(style)}"');
+@@ -383,15 +407,15 @@
+   final font = ParsedFont(
+     family: _fontMemberString(
+       valueOrDefault(
+-        jsGet(options, 'family'),
+-        jsGet(fallback, 'family'),
++        readOption(options, OptionKey.family),
++        readOption(fallback, OptionKey.family),
+       ),
+     ),
+     // `size * 1.2` and `size * value` convert size with ToNumber.
+     lineHeight: toLineHeight(
+       valueOrDefault(
+-        jsGet(options, 'lineHeight'),
+-        jsGet(fallback, 'lineHeight'),
++        readOption(options, OptionKey.lineHeight),
++        readOption(fallback, OptionKey.lineHeight),
+       ),
+       jsToNumber(size),
+     ),
+@@ -402,8 +426,8 @@
+         ? null
+         : _fontMemberString(style),
+     weight: valueOrDefault(
+-      jsGet(options, 'weight'),
+-      jsGet(fallback, 'weight'),
++      readOption(options, OptionKey.weight),
++      readOption(fallback, OptionKey.weight),
+     ),
+     string: '',
+   );

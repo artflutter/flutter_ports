@@ -22,6 +22,8 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show toFontString;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isNullOrUndef, isObject, toDimension, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -29,6 +31,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' show CanvasFontSpec;
@@ -57,6 +61,15 @@ final RegExp _fontStyle = RegExp(
 /// `'' + value` converts with `ToString` ([jsToString]): `null` gives
 /// `'null'` and [undefined] gives `'undefined'`.
 double toLineHeight(Object? value, double size) {
+  // DIVERGES(chartjs): adapt-font-parsing, the decimal number path.
+  // JS prints zero (including -0) as '0', and these positive doubles
+  // without an exponent. Parsing that decimal gives the same double.
+  // Outside this range the anchored pattern rejects the sign/exponent.
+  if (value is double) {
+    if (value == 0) return size * 0.0;
+    if (value >= 1e-6 && value < 1e21) return size * value;
+    return size * 1.2;
+  }
   final matches = _lineHeight.firstMatch(jsToString(value));
   if (matches == null || matches[1] == 'normal') {
     return size * 1.2;
@@ -361,18 +374,29 @@ ParsedFont toFont(Object? options, [Object? fallback]) {
   fallback = jsTruthy(fallback) ? fallback : defaults['font'];
 
   var size = valueOrDefault(
-    jsGet(options, 'size'),
-    jsGet(fallback, 'size'),
+    readOption(options, OptionKey.size),
+    readOption(fallback, OptionKey.size),
   );
 
   if (size is String) {
     size = _parseInt(size);
   }
   var style = valueOrDefault(
-    jsGet(options, 'style'),
-    jsGet(fallback, 'style'),
+    readOption(options, OptionKey.style),
+    readOption(fallback, OptionKey.style),
   );
-  if (jsTruthy(style) && !_fontStyle.hasMatch(jsToString(style))) {
+  // DIVERGES(chartjs): adapt-font-parsing, literal alternatives of FONT_STYLE.
+  final commonStyle =
+      style is String &&
+      (style == 'normal' ||
+          style == 'italic' ||
+          style == 'initial' ||
+          style == 'inherit' ||
+          style == 'unset' ||
+          style == 'oblique');
+  if (jsTruthy(style) &&
+      !commonStyle &&
+      !_fontStyle.hasMatch(jsToString(style))) {
     // console.warn has no other counterpart in the pure layers.
     // ignore: avoid_print
     print('Invalid font style specified: "${jsToString(style)}"');
@@ -383,15 +407,15 @@ ParsedFont toFont(Object? options, [Object? fallback]) {
   final font = ParsedFont(
     family: _fontMemberString(
       valueOrDefault(
-        jsGet(options, 'family'),
-        jsGet(fallback, 'family'),
+        readOption(options, OptionKey.family),
+        readOption(fallback, OptionKey.family),
       ),
     ),
     // `size * 1.2` and `size * value` convert size with ToNumber.
     lineHeight: toLineHeight(
       valueOrDefault(
-        jsGet(options, 'lineHeight'),
-        jsGet(fallback, 'lineHeight'),
+        readOption(options, OptionKey.lineHeight),
+        readOption(fallback, OptionKey.lineHeight),
       ),
       jsToNumber(size),
     ),
@@ -402,8 +426,8 @@ ParsedFont toFont(Object? options, [Object? fallback]) {
         ? null
         : _fontMemberString(style),
     weight: valueOrDefault(
-      jsGet(options, 'weight'),
-      jsGet(fallback, 'weight'),
+      readOption(options, OptionKey.weight),
+      readOption(fallback, OptionKey.weight),
     ),
     string: '',
   );
@@ -531,7 +555,9 @@ Object? resolve(
 base class ContextObject implements JsObjectFace {
   /// `Object.create(prototype)`: an object without own properties. Dart
   /// `null` is the `null` prototype.
-  ContextObject(this.prototype);
+  ContextObject(this.prototype) : _names = <String>[];
+
+  ContextObject._withNames(this.prototype, this._names);
 
   /// `Object.getPrototypeOf(this)`: the parent context, or Dart `null`. A
   /// parent is a [ContextObject] or a `Map` (a context object of user
@@ -539,7 +565,7 @@ base class ContextObject implements JsObjectFace {
   final Object? prototype;
 
   /// The own keys, in insertion order.
-  final List<String> _names = <String>[];
+  final List<String> _names;
 
   /// The own keys that are not typed fields, and their values.
   List<String>? _extraNames;
@@ -891,6 +917,14 @@ final class ScriptableContext extends ContextObject {
 final class ScriptableScaleContext extends ContextObject {
   /// A scale or tick context with the parent [prototype].
   ScriptableScaleContext(super.prototype);
+
+  /// The fresh tick context, with the upstream literal's own-key order.
+  // DIVERGES(chartjs): adapt-tick-context-construction, direct typed fields.
+  ScriptableScaleContext.tick(Object? parent, Object tick, double index)
+    : _tick = tick,
+      _index = index,
+      _type = 'tick',
+      super._withNames(parent, ['tick', 'index', 'type']);
 
   Object? _scale = _unset;
   Object? _tick = _unset;

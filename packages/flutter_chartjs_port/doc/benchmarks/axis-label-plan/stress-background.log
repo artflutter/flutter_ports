@@ -1,0 +1,16 @@
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":1,"frames":3,"fps":"3.00","buildMs":"11.449","rasterMs":"110.668"}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":2,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":3,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":4,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":5,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":6,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":7,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":8,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":9,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":10,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":11,"frames":5,"fps":"5.00","buildMs":"15.353","rasterMs":"5.621"}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":12,"frames":3,"fps":"3.00","buildMs":"20.251","rasterMs":"22.253"}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":13,"frames":6,"fps":"6.00","buildMs":"13.709","rasterMs":"1.446"}
+flutter: STRESS_WINDOW {"mode":"axes","n":20000,"m":0,"window":14,"frames":0,"fps":"0.00","buildMs":null,"rasterMs":null}
+flutter: STRESS {"mode":"axes","n":20000,"m":0,"fps":"0.00","drawMs":"0.00","updateMs":"0.00","call":"update","scale":"category","yScale":"logarithmic","autoSkip":true,"ticks":44,"rotation":"50.00","elementsMs":"0.00","layoutMs":"0.00","datasetsUpdateMs":"0.00","datasetsDrawMs":"0.00","host":"canvas","buildMs":"0.00","buildMaxMs":"23.10","rasterMs":"0.00","rasterMaxMs":"249.83","batches":null,"batchFrames":0,"buildP50Ms":null,"buildP90Ms":null,"rasterP50Ms":null,"rasterP90Ms":null,"windows":14}
+flutter: STRESS done

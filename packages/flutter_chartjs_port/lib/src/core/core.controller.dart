@@ -35,6 +35,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show Config, determineAxis, getIndexAxis;
@@ -625,7 +626,7 @@ Config _colorConfig(Object? userConfig) {
 }
 
 /// core.controller.js:103 `Chart`.
-class Chart implements types.Chart {
+class Chart implements types.Chart, CategoryLabelSource {
   /// core.controller.js:123 `constructor(item, userConfig)`.
   ///
   /// [item] is a canvas element, a context, an object with a `canvas`, or
@@ -979,6 +980,21 @@ class Chart implements types.Chart {
     // Calculate
     return jsTruthy(height) ? width / height : null;
   }
+
+  /// Internal eligibility for native label-source reads. A subclass with
+  /// effectful data/config getters must retain the ordinary per-label path.
+  @internal
+  bool get supportsNativeCategoryLabels => runtimeType == Chart;
+
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-category-label-dispatch, trusted data getter.
+  List<Object?>? categoryLabels(
+    Object? explicitLabels, {
+    required bool horizontal,
+  }) => supportsNativeCategoryLabels
+      ? config.categoryLabels(explicitLabels, horizontal: horizontal)
+      : null;
 
   /// core.controller.js:213 `get data()`.
   @override

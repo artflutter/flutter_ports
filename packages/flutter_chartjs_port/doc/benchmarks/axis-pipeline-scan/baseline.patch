@@ -1,0 +1,333 @@
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -51,6 +51,7 @@
+ import 'package:flutter_chartjs_port/src/core/core.element.dart';
+ import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
+ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
++import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+     show alignPixel, clipArea, measureText, renderText, unclipArea;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+@@ -328,11 +329,11 @@
+   int index,
+   Tick tick,
+ ) {
+-  return createContext(parent, <String, Object?>{
+-    'tick': tick,
+-    'index': index.toDouble(),
+-    'type': 'tick',
+-  }) as ScriptableScaleContext;
++  // DIVERGES(chartjs): adapt-tick-context-construction, no temporary Map.
++  return ScriptableScaleContext(parent)
++    ..jsWrite('tick', tick)
++    ..jsWrite('index', index.toDouble())
++    ..jsWrite('type', 'tick');
+ }
+ 
+ /// core.scale.js:122 `titleAlign`.
+@@ -2927,9 +2928,18 @@
+   /// @protected
+   @internal
+   types.CanvasFontSpec resolveTickFontOptions(int index) {
+-    final opts = options.ticks.setContext(getContext(index));
+-    return toFont(opts.font);
+-  }
++    // DIVERGES(chartjs): adapt-static-tick-font, guarded scalar font reuse.
++    final ticks = options.ticks;
++    final context = getContext(index);
++    final cached = _tickFontCache.read(ticks.raw);
++    if (cached != null) return cached;
++    final opts = ticks.setContext(context);
++    final font = toFont(opts.font);
++    _tickFontCache.remember(ticks.raw, font);
++    return font;
++  }
++
++  final TickFontCache _tickFontCache = TickFontCache();
+ 
+   /// core.scale.js:1708 `_maxDigits()`. scale.linearbase.js:263 reads it.
+   ///
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -76,6 +76,7 @@
+     show ElementOptions;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+ import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
++import 'package:flutter_chartjs_port/src/options/static_font.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart';
+ import 'package:meta/meta.dart';
+ 
+@@ -651,6 +652,45 @@
+   /// The slot names that the `set` or `deleteProperty` trap removed from
+   /// the cache object. Dart `null` before the first one.
+   Set<String>? _removedSlots;
++
++  /// The already-resolved scalar inputs of `ticks.font`, or null when a fresh
++  /// context can change them. This probe never resolves an uncached property,
++  /// invokes a descriptor, or populates a contextual view's cache.
++  ///
++  /// Only the ordinary setContext/descriptor path is eligible. The caller
++  /// still creates the tick context, checks the global font fallback and
++  /// compares these inputs on every call; resolver writes/deletes are visible.
++  @internal
++  StaticFontInputs? cachedStaticFont([StaticFontInputs? fallback]) {
++    // DIVERGES(chartjs): adapt-static-tick-font, cached scalar inputs only.
++    if (_removedSlots != null ||
++        jsTruthy(_subProxy) ||
++        (_descriptorDefaults != null && _descriptorDefaults is! _Descriptor)) {
++      return null;
++    }
++    final proxy = _proxy;
++    if (proxy is! OptionResolver || !_hasCachedDescriptors(proxy)) return null;
++    final font = proxy._cache.get(OptionKey.font);
++    // An absent ticks.font uses the live global font. The caller supplies its
++    // scalar inputs only after ruling out routed or custom fallback getters.
++    if (identical(font, undefined)) return fallback;
++    if (font is! OptionResolver || !_hasCachedDescriptors(font)) return null;
++    return staticFontInputs(
++      font._cache.get(OptionKey.size),
++      font._cache.get(OptionKey.family),
++      font._cache.get(OptionKey.style),
++      font._cache.get(OptionKey.lineHeight),
++      font._cache.get(OptionKey.weight),
++    );
++  }
++
++  /// These are the reads of attachContext that the fast path omits. A missing
++  /// entry or a changed resolver slot must go through the ordinary reads.
++  static bool _hasCachedDescriptors(OptionResolver proxy) =>
++      !proxy._slotsTouched &&
++      !identical(proxy._cache.get(OptionKey.descScriptable), _absent) &&
++      !identical(proxy._cache.get(OptionKey.descIndexable), _absent) &&
++      !identical(proxy._cache.get(OptionKey.descAllKeys), _absent);
+ 
+   /// The own property [name] of the target, or [_absent].
+   Object? _own(String name) {
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
+@@ -22,6 +22,8 @@
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+     show toFontString;
++import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
++    show readOption;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+     show isArray, isNullOrUndef, isObject, toDimension, valueOrDefault;
+ import 'package:flutter_chartjs_port/src/js/js_array.dart';
+@@ -29,6 +31,8 @@
+ import 'package:flutter_chartjs_port/src/js/js_number.dart';
+ import 'package:flutter_chartjs_port/src/js/js_object.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
++import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
++    show OptionKey;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/geometric.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' show CanvasFontSpec;
+@@ -57,6 +61,15 @@
+ /// `'' + value` converts with `ToString` ([jsToString]): `null` gives
+ /// `'null'` and [undefined] gives `'undefined'`.
+ double toLineHeight(Object? value, double size) {
++  // DIVERGES(chartjs): adapt-font-parsing, the decimal number path.
++  // JS prints zero (including -0) as '0', and these positive doubles
++  // without an exponent. Parsing that decimal gives the same double.
++  // Outside this range the anchored pattern rejects the sign/exponent.
++  if (value is double) {
++    if (value == 0) return size * 0.0;
++    if (value >= 1e-6 && value < 1e21) return size * value;
++    return size * 1.2;
++  }
+   final matches = _lineHeight.firstMatch(jsToString(value));
+   if (matches == null || matches[1] == 'normal') {
+     return size * 1.2;
+@@ -361,18 +374,29 @@
+   fallback = jsTruthy(fallback) ? fallback : defaults['font'];
+ 
+   var size = valueOrDefault(
+-    jsGet(options, 'size'),
+-    jsGet(fallback, 'size'),
++    readOption(options, OptionKey.size),
++    readOption(fallback, OptionKey.size),
+   );
+ 
+   if (size is String) {
+     size = _parseInt(size);
+   }
+   var style = valueOrDefault(
+-    jsGet(options, 'style'),
+-    jsGet(fallback, 'style'),
++    readOption(options, OptionKey.style),
++    readOption(fallback, OptionKey.style),
+   );
+-  if (jsTruthy(style) && !_fontStyle.hasMatch(jsToString(style))) {
++  // DIVERGES(chartjs): adapt-font-parsing, literal alternatives of FONT_STYLE.
++  final commonStyle =
++      style is String &&
++      (style == 'normal' ||
++          style == 'italic' ||
++          style == 'initial' ||
++          style == 'inherit' ||
++          style == 'unset' ||
++          style == 'oblique');
++  if (jsTruthy(style) &&
++      !commonStyle &&
++      !_fontStyle.hasMatch(jsToString(style))) {
+     // console.warn has no other counterpart in the pure layers.
+     // ignore: avoid_print
+     print('Invalid font style specified: "${jsToString(style)}"');
+@@ -383,15 +407,15 @@
+   final font = ParsedFont(
+     family: _fontMemberString(
+       valueOrDefault(
+-        jsGet(options, 'family'),
+-        jsGet(fallback, 'family'),
++        readOption(options, OptionKey.family),
++        readOption(fallback, OptionKey.family),
+       ),
+     ),
+     // `size * 1.2` and `size * value` convert size with ToNumber.
+     lineHeight: toLineHeight(
+       valueOrDefault(
+-        jsGet(options, 'lineHeight'),
+-        jsGet(fallback, 'lineHeight'),
++        readOption(options, OptionKey.lineHeight),
++        readOption(fallback, OptionKey.lineHeight),
+       ),
+       jsToNumber(size),
+     ),
+@@ -402,8 +426,8 @@
+         ? null
+         : _fontMemberString(style),
+     weight: valueOrDefault(
+-      jsGet(options, 'weight'),
+-      jsGet(fallback, 'weight'),
++      readOption(options, OptionKey.weight),
++      readOption(fallback, OptionKey.weight),
+     ),
+     string: '',
+   );
+--- /dev/null
++++ b/packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart
+@@ -0,0 +1,76 @@
++// Original code, not ported from Chart.js: guarded reuse of scalar tick fonts.
++
++import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
++import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
++    show OptionView;
++import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
++    show ParsedFont;
++import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
++import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
++    show FontSpecScope;
++import 'package:flutter_chartjs_port/src/options/static_font.dart';
++
++/// One previously parsed font per scale. Inputs are checked on every read;
++/// there is no cache of a scriptable result or a view tied to an old tick.
++final class TickFontCache {
++  StaticFontInputs? _inputs;
++  ParsedFont? _font;
++
++  /// A fresh font with the previously parsed values, or null for the upstream
++  /// resolution path. Fresh objects preserve the mutable `font.string` field.
++  ParsedFont? read(Object? ticks) {
++    final font = _font;
++    if (font == null) return null;
++    final inputs = _readInputs(ticks);
++    return inputs != null && inputs == _inputs ? _copy(font) : null;
++  }
++
++  /// Learn only after a complete upstream resolution has populated the raw
++  /// resolver caches. Never keep the object returned to the caller.
++  void remember(Object? ticks, ParsedFont font) {
++    final inputs = _readInputs(ticks);
++    _inputs = inputs;
++    _font = inputs == null ? null : _copy(font);
++  }
++
++  static StaticFontInputs? _readInputs(Object? ticks) {
++    if (ticks is! OptionView) return null;
++    final fallback = _plainFallback();
++    if (fallback == null) return null;
++    return ticks.cachedStaticFont(
++      staticFontInputs(
++        fallback.sizeCell?.raw,
++        fallback.familyCell?.raw,
++        fallback.styleCell?.raw,
++        fallback.lineHeightCell?.raw,
++        fallback.weightCell == null ? undefined : fallback.weightCell!.raw,
++      ),
++    );
++  }
++
++  /// toFont eagerly reads defaults.font even when all five inputs are present.
++  /// Omit those unused reads only for the exact plain built-in scope, with no
++  /// routed getters. Invalid/replaced defaults retain their reads and throws.
++  static FontSpecScope? _plainFallback() {
++    if (defaults.routeOf('font') != null) return null;
++    final font = defaults.fontCell?.raw;
++    if (font.runtimeType != FontSpecScope) return null;
++    final scope = font! as FontSpecScope;
++    return scope.routeOf('size') == null &&
++            scope.routeOf('style') == null &&
++            scope.routeOf('family') == null &&
++            scope.routeOf('lineHeight') == null &&
++            scope.routeOf('weight') == null
++        ? scope
++        : null;
++  }
++
++  static ParsedFont _copy(ParsedFont font) => ParsedFont(
++    family: font.family,
++    lineHeight: font.lineHeight,
++    size: font.size,
++    style: font.style,
++    weight: font.weight,
++    string: font.string,
++  );
++}
+--- /dev/null
++++ b/packages/flutter_chartjs_port/lib/src/options/static_font.dart
+@@ -0,0 +1,44 @@
++// Original code, not ported from Chart.js: reusable scalar font inputs.
++
++/// Font inputs already cached by a resolver, with no scriptable, indexed or
++/// foreign values. Positive numbers exclude signed-zero identity differences.
++typedef StaticFontInputs = ({
++  double size,
++  String family,
++  String style,
++  Object lineHeight,
++  String? weight,
++});
++
++/// The ordinary scalar subset with no conversions, callbacks or warnings that
++/// can have side effects. Other inputs retain the full toFont path.
++StaticFontInputs? staticFontInputs(
++  Object? size,
++  Object? family,
++  Object? style,
++  Object? lineHeight,
++  Object? weight,
++) {
++  if (size is! double || !size.isFinite || size <= 0 || family is! String) {
++    return null;
++  }
++  if (style is! String ||
++      !(style == 'normal' ||
++          style == 'italic' ||
++          style == 'initial' ||
++          style == 'inherit' ||
++          style == 'unset' ||
++          style == 'oblique') ||
++      !(lineHeight is String ||
++          (lineHeight is double && lineHeight.isFinite && lineHeight > 0)) ||
++      !(weight == null || weight is String)) {
++    return null;
++  }
++  return (
++    size: size,
++    family: family,
++    style: style,
++    lineHeight: lineHeight!,
++    weight: weight as String?,
++  );
++}

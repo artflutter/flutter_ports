@@ -3,9 +3,10 @@ import 'dart:async';
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show createResolver;
+    show attachContext, createResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -74,6 +75,34 @@ List<String> _warnings(void Function() body) {
 
 void main() {
   group('toLineHeight', () {
+    test('numeric fast path preserves decimal boundaries and signed zero', () {
+      // The string path still executes the pinned upstream regular expression.
+      for (final value in [
+        0.0,
+        -0.0,
+        double.minPositive,
+        1e-7,
+        9.999999999999997e-7,
+        1e-6,
+        1.0000000000000002e-6,
+        1.2,
+        1.2345678901234567,
+        999999999999999900000.0,
+        1e21,
+        -1.2,
+        double.nan,
+        double.infinity,
+        double.negativeInfinity,
+      ]) {
+        for (final size in [0.0, -0.0, 12.0, -12.0, double.infinity]) {
+          expect(
+            toLineHeight(value, size),
+            _isNumber(toLineHeight(jsToString(value), size)),
+            reason: '$value, size $size',
+          );
+        }
+      }
+    });
     test('reads ToString of the value with the anchored pattern', () {
       for (final value in <Object?>[
         '1.5PX',
@@ -243,6 +272,42 @@ void main() {
   });
 
   group('toFont', () {
+    test('typed reads preserve scriptable and indexed font fields', () {
+      final calls = <int>[];
+      final raw = <String, Object?>{
+        'size': (Map<String, Object?> context) {
+          final index = context['index']! as int;
+          calls.add(index);
+          return 10.0 + index;
+        },
+        'family': ['a', 'b'],
+        'style': 'italic',
+        'lineHeight': 1.5,
+      };
+      final resolver = createResolver([raw]);
+      for (var index = 0; index < 3; index++) {
+        final font = toFont(attachContext(resolver, {'index': index}));
+        expect(font.size, 10.0 + index);
+        expect(font.family, index.isEven ? 'a' : 'b');
+        expect(font.lineHeight, (10.0 + index) * 1.5);
+      }
+      expect(calls, [0, 1, 2]);
+    });
+    test('literal style alternatives retain their font strings', () {
+      for (final style in [
+        'normal',
+        'italic',
+        'initial',
+        'inherit',
+        'unset',
+        'oblique',
+      ]) {
+        expect(
+          toFont({'style': style, 'size': 12.0, 'family': 'a'}).string,
+          '$style 12px a',
+        );
+      }
+    });
     test('warns about an invalid style and drops it', () {
       late ParsedFont font;
       final warnings = _warnings(() {

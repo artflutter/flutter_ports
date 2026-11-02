@@ -1,0 +1,10 @@
+{
+  "packageTests": {"passed": 10063, "skipped": 84, "excludedTags": ["fixtures", "golden"]},
+  "targetedBrowserTests": {"javascriptPassed": 76, "wasmPassed": 76},
+  "fixtures": {"files": 26, "errors": 0, "warnings": 0},
+  "analyze": "passed",
+  "format": "passed",
+  "checkPort": "passed",
+  "parity": "regenerated",
+  "layoutParity": "exact across all four process results in all 12 cells"
+}

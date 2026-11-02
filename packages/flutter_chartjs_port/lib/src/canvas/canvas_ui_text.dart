@@ -373,6 +373,23 @@ final LinkedHashMap<Object, CanvasTextLayout> _layouts = LinkedHashMap();
 final LinkedHashMap<(CanvasFont, String), CanvasTextMetricsData> _metrics =
     LinkedHashMap();
 
+Object _textMetricsGeneration = Object();
+
+/// Identity of the current native font environment.
+Object get canvasTextMetricsGeneration => _textMetricsGeneration;
+
+/// Flutter's fontsChange notification invalidates both native paragraphs and
+/// numeric metrics. Axis plans observe the new generation on update.
+void invalidateCanvasTextMetrics() {
+  for (final layout in _layouts.values) {
+    layout.paragraph.dispose();
+  }
+  _layouts.clear();
+  _metrics.clear();
+  _fontCache.clear();
+  _textMetricsGeneration = Object();
+}
+
 /// The count of entries in the paragraph cache, for tests.
 int get canvasParagraphCacheLength => _layouts.length;
 

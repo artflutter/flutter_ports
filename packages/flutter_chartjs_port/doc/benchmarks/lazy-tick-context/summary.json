@@ -1,0 +1,170 @@
+{
+  "layoutOutputsEqual": true,
+  "primaryPairLayoutPercentSaved": [
+    27.367636092468306,
+    17.382657120127288
+  ],
+  "gatePassed": true,
+  "cases": [
+    {
+      "case": "baseline",
+      "layoutMedianMs": {
+        "before": 2.598,
+        "after": 2.0125,
+        "percentSaved": 22.53656658968436
+      },
+      "updateMedianMs": {
+        "before": 5.654999999999999,
+        "after": 4.62,
+        "percentSaved": 18.302387267904496
+      },
+      "drawMedianMs": {
+        "before": 4.5265,
+        "after": 3.8305,
+        "percentSaved": 15.3761184137855
+      },
+      "endMedianMs": {
+        "before": 0.9015,
+        "after": 0.886,
+        "percentSaved": 1.7193566278424832
+      },
+      "fullCallMs": {
+        "before": 11.082999999999998,
+        "after": 9.336500000000001,
+        "percentSaved": 15.758368672742018
+      },
+      "pairedFullCallPercentSaved": [
+        19.178692321396753,
+        12.24862888482633
+      ]
+    },
+    {
+      "case": "bounds",
+      "layoutMedianMs": {
+        "before": 1.7785,
+        "after": 1.1724999999999999,
+        "percentSaved": 34.073657576609506
+      },
+      "updateMedianMs": {
+        "before": 4.8825,
+        "after": 3.8644999999999996,
+        "percentSaved": 20.849974398361503
+      },
+      "drawMedianMs": {
+        "before": 4.3575,
+        "after": 3.762,
+        "percentSaved": 13.666092943201381
+      },
+      "endMedianMs": {
+        "before": 0.876,
+        "after": 0.891,
+        "percentSaved": -1.7123287671232834
+      },
+      "fullCallMs": {
+        "before": 10.116,
+        "after": 8.5175,
+        "percentSaved": 15.801700276789244
+      },
+      "pairedFullCallPercentSaved": [
+        16.804002354326087,
+        14.783821478382142
+      ]
+    },
+    {
+      "case": "sample100",
+      "layoutMedianMs": {
+        "before": 1.504,
+        "after": 1.5655000000000001,
+        "percentSaved": -4.08909574468086
+      },
+      "updateMedianMs": {
+        "before": 4.0794999999999995,
+        "after": 4.1905,
+        "percentSaved": -2.7209216815786474
+      },
+      "drawMedianMs": {
+        "before": 3.858,
+        "after": 3.8485,
+        "percentSaved": 0.24624157594608231
+      },
+      "endMedianMs": {
+        "before": 0.8585,
+        "after": 0.8685,
+        "percentSaved": -1.1648223645893907
+      },
+      "fullCallMs": {
+        "before": 8.796,
+        "after": 8.907499999999999,
+        "percentSaved": -1.2676216462028211
+      },
+      "pairedFullCallPercentSaved": [
+        -2.398544958508575,
+        -0.13644115974986715
+      ]
+    },
+    {
+      "case": "constant_font",
+      "layoutMedianMs": {
+        "before": 8.8885,
+        "after": 9.012,
+        "percentSaved": -1.3894357878157182
+      },
+      "updateMedianMs": {
+        "before": 11.592500000000001,
+        "after": 11.89,
+        "percentSaved": -2.5663144274315153
+      },
+      "drawMedianMs": {
+        "before": 4.3495,
+        "after": 4.2825,
+        "percentSaved": 1.540406943326822
+      },
+      "endMedianMs": {
+        "before": 0.8634999999999999,
+        "after": 0.8745,
+        "percentSaved": -1.2738853503184933
+      },
+      "fullCallMs": {
+        "before": 16.805500000000002,
+        "after": 17.047,
+        "percentSaved": -1.4370295438993042
+      },
+      "pairedFullCallPercentSaved": [
+        -0.8338793257490096,
+        -2.038996552134109
+      ]
+    },
+    {
+      "case": "draw_only",
+      "layoutMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "updateMedianMs": {
+        "before": 0.0,
+        "after": 0.0,
+        "percentSaved": 0
+      },
+      "drawMedianMs": {
+        "before": 3.027,
+        "after": 3.0435,
+        "percentSaved": -0.5450941526263575
+      },
+      "endMedianMs": {
+        "before": 0.8385,
+        "after": 0.849,
+        "percentSaved": -1.2522361359570633
+      },
+      "fullCallMs": {
+        "before": 3.8655,
+        "after": 3.8925,
+        "percentSaved": -0.6984866123399325
+      },
+      "pairedFullCallPercentSaved": [
+        -3.8090268719018994,
+        2.360184710107749
+      ]
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+// Original code, not ported from Chart.js: exploratory pipeline measurements.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_axes.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:chartjs_gallery/demo/stress_timing.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
+import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
+import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+
+const variants = [
+  'baseline',
+  'sample20',
+  'sample50',
+  'sample100',
+  'sample500',
+  'limit50',
+  'rotation50',
+  'sample100_rotation50',
+  'bounds',
+  'sample100_bounds',
+  'freeze_x',
+  'freeze_x_bounds',
+  'freeze_layout',
+  'sample100_freeze_layout',
+  'constant_font',
+  'direct_labels',
+  'direct_labels_constant_font',
+  'hide_x',
+  'hide_tick_labels',
+  'draw_only',
+];
+String currentVariant = 'baseline';
+bool counting = false;
+final counts = <String, int>{};
+final times = <String, int>{};
+T measured<T>(String name, T Function() fn) {
+  if (!counting) return fn();
+  counts.update(name, (v) => v + 1, ifAbsent: () => 1);
+  final w = Stopwatch()..start();
+  try {
+    return fn();
+  } finally {
+    times.update(
+      name,
+      (v) => v + w.elapsedMicroseconds,
+      ifAbsent: () => w.elapsedMicroseconds,
+    );
+  }
+}
+
+class ProbeCategory extends CategoryScale {
+  ProbeCategory(super.cfg) : variant = currentVariant;
+  final String variant;
+  bool ready = false;
+  types.CanvasFontSpec? sharedFont;
+  static final JsClass probeClass = JsClass(
+    'PipelineCategory',
+    superclass: CategoryScale.jsClass,
+    statics: {'id': 'pipeline-category'},
+    construct: (_, args) => ProbeCategory(scaleCfgArg(args)),
+  );
+  @override
+  void update(double w, double h, [types.TRBL? margins]) {
+    if (variant.startsWith('freeze_x') && ready) return;
+    measured('x.update', () => super.update(w, h, margins));
+  }
+
+  @override
+  List<Tick> buildTicks() => measured('x.buildTicks', () {
+    final t = super.buildTicks();
+    if (counting)
+      counts.update(
+        'x.candidates',
+        (v) => v + t.length,
+        ifAbsent: () => t.length,
+      );
+    return t;
+  });
+  @override
+  void determineDataLimits() => measured('x.limits', super.determineDataLimits);
+  @override
+  void generateTickLabels(List<Tick> ticks) => measured('x.labels', () {
+    if (counting)
+      counts.update(
+        'x.labelsConverted',
+        (v) => v + ticks.length,
+        ifAbsent: () => ticks.length,
+      );
+    if (variant.contains('direct_labels')) {
+      final labels = getLabels();
+      for (final tick in ticks) {
+        tick.label = labels[(tick.value as num).toInt()];
+      }
+    } else {
+      super.generateTickLabels(ticks);
+    }
+  });
+  @override
+  void calculateLabelRotation() =>
+      measured('x.rotation', super.calculateLabelRotation);
+  @override
+  void fit() => measured('x.fit', super.fit);
+  @override
+  types.CanvasFontSpec resolveTickFontOptions(int index) {
+    if (counting) counts.update('x.fontCalls', (v) => v + 1, ifAbsent: () => 1);
+    if (variant.contains('constant_font'))
+      return sharedFont ??= super.resolveTickFontOptions(index);
+    return super.resolveTickFontOptions(index);
+  }
+}
+
+Map<String, Object?> snapshot(Chart chart) {
+  final x = chart.scales['x']!;
+  final y = chart.scales['y']!;
+  final area = chart.chartArea!;
+  final points = chart.getDatasetMeta(0).data;
+  return {
+    'ticks': x.ticks!.length,
+    'rotation': x.labelRotation,
+    'xTicks': [
+      for (final t in x.ticks!) [t.value, t.label],
+    ],
+    'yTicks': [
+      for (final t in y.ticks!) [t.value, t.label],
+    ],
+    'limits': [x.min, x.max, y.min, y.max],
+    'area': [area.left, area.top, area.right, area.bottom],
+    'points': [
+      for (final i in [0, points.length ~/ 2, points.length - 1])
+        [
+          (points[i] as types.PointElement).x,
+          (points[i] as types.PointElement).y,
+        ],
+    ],
+  };
+}
+
+ChartBenchScene sceneFor(String variant, int n) {
+  registerGalleryComponents();
+  currentVariant = variant;
+  final custom =
+      variant.startsWith('freeze_x') ||
+      variant.contains('constant_font') ||
+      variant.contains('direct_labels') ||
+      variant == 'count';
+  if (custom) Chart.register([ProbeCategory.probeClass]);
+  final field = StressPointField(n);
+  final scene = StressAxesScene(
+    n,
+    x: StressAxisType.category,
+    y: StressAxisType.logarithmic,
+    positions: field,
+  );
+  final timing = StressChartTiming();
+  bool ready = false;
+  final plugin = <String, Object?>{
+    'id': 'pipeline_probe',
+    'beforeLayout': (Object? c, Object? a, Object? o) {
+      if (ready && variant.contains('freeze_layout')) return false;
+      return null;
+    },
+    'afterLayout': (Object? c, Object? a, Object? o) {
+      ready = true;
+      final x = (c! as Chart).scales['x'];
+      if (x is ProbeCategory) x.ready = true;
+    },
+  };
+  final config = stressAxesConfig(
+    scene: scene,
+    autoSkip: true,
+    options: chartBenchOptions,
+    plugins: [timing.plugin, plugin],
+  );
+  final options = config['options']! as Map<String, Object?>;
+  final scales = options['scales']! as Map<String, Object?>;
+  final x = scales['x']! as Map<String, Object?>;
+  final y = scales['y']! as Map<String, Object?>;
+  final ticks = x['ticks']! as Map<String, Object?>;
+  if (custom) x['type'] = 'pipeline-category';
+  if (variant.startsWith('sample'))
+    ticks['sampleSize'] = double.parse(
+      RegExp(r'sample(\d+)').firstMatch(variant)![1]!,
+    );
+  if (variant.contains('rotation50')) {
+    ticks['minRotation'] = 50.0;
+    ticks['maxRotation'] = 50.0;
+  }
+  if (variant == 'limit50') ticks['maxTicksLimit'] = 50.0;
+  if (variant.contains('bounds')) {
+    x['min'] = 0.0;
+    x['max'] = (n - 1).toDouble();
+    y['min'] = 1.0;
+    y['max'] = 100000.0;
+  }
+  if (variant == 'hide_x') x['display'] = false;
+  if (variant == 'hide_tick_labels') {
+    ticks['display'] = false;
+    (x['grid'] ??= <String, Object?>{}) as Map<String, Object?>;
+    (x['grid']! as Map<String, Object?>)['display'] = false;
+  }
+  return ChartBenchScene(
+    config: config,
+    change: () {
+      field.step(n, chartBenchStep);
+      scene.write(field);
+    },
+    takeParts: timing.take,
+    describe: (chart) {
+      final s = snapshot(chart);
+      s.remove('points');
+      return s;
+    },
+  );
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    const MaterialApp(home: Scaffold(body: Text('Pipeline investigation'))),
+  );
+  WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(run()));
+}
+
+Future<void> run() async {
+  final env = Platform.environment;
+  final mode = env['PIPELINE_MODE'] ?? 'measure';
+  final name = env['PIPELINE_RUN'] ?? mode;
+  final output = File('/tmp/pipeline-$name.jsonl');
+  void emit(Object value) => output.writeAsStringSync(
+    '${jsonEncode(value)}\n',
+    mode: FileMode.append,
+    flush: true,
+  );
+  await Future<void>.delayed(Duration(seconds: mode == 'profile' ? 4 : 1));
+  if (mode == 'verify' || mode == 'adversarial') {
+    for (final variant in variants.where((v) => v != 'draw_only')) {
+      for (final scenario
+          in mode == 'adversarial'
+              ? ['long_label', 'domain_change', 'resize']
+              : ['steady']) {
+        final reference = sceneFor('baseline', 20000);
+        final probe = sceneFor(variant, 20000);
+        final ca = UiCanvasElement(width: 800, height: 480);
+        final cb = UiCanvasElement(width: 800, height: 480);
+        final a = Chart(ca, reference.config);
+        final b = Chart(cb, probe.config);
+        try {
+          for (
+            var frame = 0;
+            frame < (mode == 'adversarial' ? 3 : 8);
+            frame++
+          ) {
+            reference.change!();
+            probe.change!();
+            if (frame == 1) {
+              for (final pair in [(reference, a), (probe, b)]) {
+                final data = pair.$1.config['data']! as Map<String, Object?>;
+                if (scenario == 'long_label') {
+                  (data['labels']! as List<Object?>)[123] =
+                      'Wide category label ' * 20;
+                }
+                if (scenario == 'domain_change') {
+                  final dataset =
+                      (data['datasets']! as List<Object?>).first!
+                          as Map<String, Object?>;
+                  ((dataset['data']! as List<Object?>)[123]!
+                          as Map<String, Object?>)['y'] =
+                      1e8;
+                }
+                if (scenario == 'resize') {
+                  pair.$2.resize(640.0, 400.0);
+                }
+              }
+            }
+            a.update('none');
+            b.update('none');
+            emit({
+              'variant': variant,
+              'scenario': scenario,
+              'frame': frame,
+              'baseline': snapshot(a),
+              'probe': snapshot(b),
+            });
+            for (final c in [ca, cb]) {
+              final r = ui.PictureRecorder();
+              c.getContext2d().paint(ui.Canvas(r), ui.Offset.zero, 1, 1);
+              r.endRecording().dispose();
+            }
+          }
+        } finally {
+          a.destroy();
+          b.destroy();
+        }
+      }
+    }
+  } else {
+    var selected =
+        (env['PIPELINE_VARIANTS'] ??
+                (mode == 'profile'
+                    ? 'baseline'
+                    : mode == 'count'
+                    ? 'count'
+                    : variants.join(',')))
+            .split(',');
+    if (env['PIPELINE_REVERSE'] == '1') selected = selected.reversed.toList();
+    final ns = (env['PIPELINE_N'] ?? '20000').split(',').map(int.parse);
+    for (final n in ns) {
+      for (final variant in selected) {
+        final c = ChartBenchCase(
+          mode: 'pipeline',
+          name: variant,
+          call: variant == 'draw_only'
+              ? ChartBenchCall.draw
+              : ChartBenchCall.update,
+          scene: (n) => sceneFor(variant, n),
+        );
+        final settings = mode == 'profile'
+            ? const ChartBenchSettings(
+                batches: 100,
+                batchMs: 250,
+                warmupMs: 4000,
+              )
+            : const ChartBenchSettings(batches: 7, batchMs: 200, warmupMs: 800);
+        final result = runChartBenchCase(
+          c,
+          n,
+          settings,
+          onChart: mode == 'count'
+              ? (chart) {
+                  counts.clear();
+                  times.clear();
+                  counting = true;
+                  chart.update('none');
+                  counting = false;
+                  emit({'counts': counts, 'inclusiveMicros': times});
+                }
+              : null,
+        );
+        emit(result);
+        await Future<void>.delayed(const Duration(milliseconds: 150));
+      }
+    }
+  }
+  exit(0);
+}

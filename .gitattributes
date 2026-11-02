@@ -6,3 +6,6 @@
 *.icns binary
 
 *.g.dart linguist-generated=true
+
+# Unified-diff artifacts use a single space for empty context lines.
+*.patch whitespace=-blank-at-eol,-blank-at-eof

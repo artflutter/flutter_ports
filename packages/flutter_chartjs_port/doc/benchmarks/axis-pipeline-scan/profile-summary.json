@@ -1,0 +1,839 @@
+{
+  "samples": 5782,
+  "spanSeconds": 10.003269,
+  "functions": [
+    {
+      "name": "_propagateToListeners",
+      "owner": "_Future",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future_impl.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "_handleMessage",
+      "owner": "_Timer",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/timer_impl.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "_runTimers",
+      "owner": "_Timer",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/timer_impl.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "<anonymous closure>",
+      "owner": "_createTimer",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/timer_patch.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "runChartBenchCase",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/apps/chartjs_gallery/lib/bench/chart_bench.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "iterate",
+      "owner": "_Loop",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/apps/chartjs_gallery/lib/bench/chart_bench.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "<anonymous closure>",
+      "owner": "Future.delayed",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "_complete",
+      "owner": "_Future",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future_impl.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "handleValueCallback",
+      "owner": "_propagateToListeners",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future_impl.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "run",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/.dart_tool/layout_pipeline_probe.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "_handleMessage",
+      "owner": "_RawReceivePort",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/isolate_patch.dart",
+      "inclusive": 5694,
+      "self": 0
+    },
+    {
+      "name": "update",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 5340,
+      "self": 0
+    },
+    {
+      "name": "_updateLayout",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 3554,
+      "self": 0
+    },
+    {
+      "name": "_update",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.layouts.dart",
+      "inclusive": 3549,
+      "self": 0
+    },
+    {
+      "name": "_fitBoxes",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.layouts.dart",
+      "inclusive": 3541,
+      "self": 0
+    },
+    {
+      "name": "update",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 3539,
+      "self": 0
+    },
+    {
+      "name": "_getLabelSizes",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 2340,
+      "self": 0
+    },
+    {
+      "name": "_computeLabelSizes",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 2311,
+      "self": 95
+    },
+    {
+      "name": "calculateLabelRotation",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 2292,
+      "self": 0
+    },
+    {
+      "name": "render",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 1007,
+      "self": 0
+    },
+    {
+      "name": "draw",
+      "owner": "_BenchChart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/apps/chartjs_gallery/lib/bench/chart_bench.dart",
+      "inclusive": 1007,
+      "self": 0
+    },
+    {
+      "name": "draw",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 1007,
+      "self": 0
+    },
+    {
+      "name": "resolveTickFontOptions",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 942,
+      "self": 5
+    },
+    {
+      "name": "_drawDatasets",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 931,
+      "self": 0
+    },
+    {
+      "name": "_drawDataset",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 931,
+      "self": 0
+    },
+    {
+      "name": "draw",
+      "owner": "LineController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart",
+      "inclusive": 931,
+      "self": 0
+    },
+    {
+      "name": "draw",
+      "owner": "DatasetController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusive": 931,
+      "self": 22
+    },
+    {
+      "name": "measureText",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.canvas.dart",
+      "inclusive": 899,
+      "self": 0
+    },
+    {
+      "name": "draw",
+      "owner": "PointElement",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.point.dart",
+      "inclusive": 887,
+      "self": 35
+    },
+    {
+      "name": "_convertTicksToLabels",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 839,
+      "self": 7
+    },
+    {
+      "name": "generateTickLabels",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 805,
+      "self": 27
+    },
+    {
+      "name": "_updateDatasets",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 716,
+      "self": 0
+    },
+    {
+      "name": "jsCall",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_function.dart",
+      "inclusive": 712,
+      "self": 6
+    },
+    {
+      "name": "_updateDataset",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 711,
+      "self": 0
+    },
+    {
+      "name": "update_",
+      "owner": "DatasetController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusive": 711,
+      "self": 0
+    },
+    {
+      "name": "callback",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.core.dart",
+      "inclusive": 710,
+      "self": 0
+    },
+    {
+      "name": "update",
+      "owner": "LineController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart",
+      "inclusive": 710,
+      "self": 0
+    },
+    {
+      "name": "_applyThis",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_function.dart",
+      "inclusive": 652,
+      "self": 61
+    },
+    {
+      "name": "drawPoint",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.canvas.dart",
+      "inclusive": 633,
+      "self": 10
+    },
+    {
+      "name": "updateElements",
+      "owner": "LineController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart",
+      "inclusive": 630,
+      "self": 76
+    },
+    {
+      "name": "measureText",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 609,
+      "self": 11
+    },
+    {
+      "name": "_invoke",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_function.dart",
+      "inclusive": 595,
+      "self": 24
+    },
+    {
+      "name": "[]",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 576,
+      "self": 33
+    },
+    {
+      "name": "drawPointLegend",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.canvas.dart",
+      "inclusive": 552,
+      "self": 75
+    },
+    {
+      "name": "_getLabelForValue",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart",
+      "inclusive": 515,
+      "self": 5
+    },
+    {
+      "name": "getContext",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 490,
+      "self": 31
+    },
+    {
+      "name": "getLabels",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 484,
+      "self": 16
+    },
+    {
+      "name": "_createTickContext",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 434,
+      "self": 5
+    },
+    {
+      "name": "_getValueOrData",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 430,
+      "self": 430
+    },
+    {
+      "name": "[]=",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 405,
+      "self": 7
+    },
+    {
+      "name": "read",
+      "owner": "TickFontCache",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart",
+      "inclusive": 400,
+      "self": 10
+    },
+    {
+      "name": "==",
+      "owner": "_OneByteString",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/string_patch.dart",
+      "inclusive": 400,
+      "self": 400
+    },
+    {
+      "name": "measureCanvasText",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_text.dart",
+      "inclusive": 349,
+      "self": 31
+    },
+    {
+      "name": "_set",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 344,
+      "self": 22
+    },
+    {
+      "name": "jsWrite",
+      "owner": "ContextObject",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart",
+      "inclusive": 333,
+      "self": 52
+    },
+    {
+      "name": "parsedValueOf",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusive": 320,
+      "self": 16
+    },
+    {
+      "name": "add",
+      "owner": "_GrowableList",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/growable_array.dart",
+      "inclusive": 302,
+      "self": 0
+    },
+    {
+      "name": "jsGetKey",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_object.dart",
+      "inclusive": 277,
+      "self": 94
+    },
+    {
+      "name": "_growToNextCapacity",
+      "owner": "_GrowableList",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/growable_array.dart",
+      "inclusive": 258,
+      "self": 8
+    },
+    {
+      "name": "jsGet",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_object.dart",
+      "inclusive": 256,
+      "self": 105
+    },
+    {
+      "name": "_readInputs",
+      "owner": "TickFontCache",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart",
+      "inclusive": 249,
+      "self": 33
+    },
+    {
+      "name": "paint",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 247,
+      "self": 0
+    },
+    {
+      "name": "flush",
+      "owner": "CircleBatch",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart",
+      "inclusive": 239,
+      "self": 102
+    },
+    {
+      "name": "_endRecording",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 239,
+      "self": 0
+    },
+    {
+      "name": "_flushBatch",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 235,
+      "self": 0
+    },
+    {
+      "name": "getMinMax",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 235,
+      "self": 0
+    },
+    {
+      "name": "determineDataLimits",
+      "owner": "LogarithmicScale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/scales/scale.logarithmic.dart",
+      "inclusive": 235,
+      "self": 0
+    },
+    {
+      "name": "getMinMax",
+      "owner": "DatasetController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusive": 234,
+      "self": 11
+    },
+    {
+      "name": "getPixelForValue",
+      "owner": "LogarithmicScale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/scales/scale.logarithmic.dart",
+      "inclusive": 222,
+      "self": 13
+    },
+    {
+      "name": "stroke",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 214,
+      "self": 30
+    },
+    {
+      "name": "_grow",
+      "owner": "_GrowableList",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/growable_array.dart",
+      "inclusive": 203,
+      "self": 61
+    },
+    {
+      "name": "jsLog10",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_math.dart",
+      "inclusive": 199,
+      "self": 0
+    },
+    {
+      "name": "ieee754Log10",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/fdlibm_log.dart",
+      "inclusive": 186,
+      "self": 9
+    },
+    {
+      "name": "_insert",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 174,
+      "self": 45
+    },
+    {
+      "name": "_findValueOrInsertPoint",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 155,
+      "self": 128
+    },
+    {
+      "name": "readKey",
+      "owner": "OptionView",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart",
+      "inclusive": 153,
+      "self": 34
+    },
+    {
+      "name": "_rehash",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 148,
+      "self": 0
+    },
+    {
+      "name": "_equals",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 148,
+      "self": 0
+    },
+    {
+      "name": "_strokeCircle",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 144,
+      "self": 41
+    },
+    {
+      "name": "_init",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 142,
+      "self": 12
+    },
+    {
+      "name": "jsTruthy",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_number.dart",
+      "inclusive": 141,
+      "self": 141
+    },
+    {
+      "name": "remove",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 140,
+      "self": 39
+    },
+    {
+      "name": "_hashCode",
+      "owner": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm_shared/lib/compact_hash.dart",
+      "inclusive": 138,
+      "self": 0
+    },
+    {
+      "name": "drawRawAtlas",
+      "owner": "_NativeCanvas",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusive": 137,
+      "self": 0
+    },
+    {
+      "name": "__drawAtlas$Method$FfiNative",
+      "owner": "_NativeCanvas",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusive": 137,
+      "self": 1
+    },
+    {
+      "name": "_drawAtlas",
+      "owner": "_NativeCanvas",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusive": 137,
+      "self": 0
+    },
+    {
+      "name": "_batchCircle",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 130,
+      "self": 48
+    },
+    {
+      "name": "skip",
+      "owner": "getMinMax",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusive": 129,
+      "self": 11
+    },
+    {
+      "name": "fill",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 127,
+      "self": 51
+    },
+    {
+      "name": "_allocateData",
+      "owner": "_GrowableList",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/growable_array.dart",
+      "inclusive": 125,
+      "self": 14
+    },
+    {
+      "name": "get",
+      "owner": "_Cache",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart",
+      "inclusive": 124,
+      "self": 51
+    },
+    {
+      "name": "ieee754Log",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/fdlibm_log.dart",
+      "inclusive": 118,
+      "self": 83
+    },
+    {
+      "name": "<anonymous closure>",
+      "owner": "sceneFor",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/.dart_tool/layout_pipeline_probe.dart",
+      "inclusive": 105,
+      "self": 0
+    },
+    {
+      "name": "data",
+      "owner": "Chart",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusive": 104,
+      "self": 0
+    },
+    {
+      "name": "isPointInArea",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.canvas.dart",
+      "inclusive": 101,
+      "self": 34
+    },
+    {
+      "name": "data",
+      "owner": "Config",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.config.dart",
+      "inclusive": 96,
+      "self": 9
+    },
+    {
+      "name": "getParsed",
+      "owner": "DatasetController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusive": 92,
+      "self": 0
+    },
+    {
+      "name": "font=",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 89,
+      "self": 0
+    },
+    {
+      "name": "write",
+      "owner": "StressAxesScene",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/apps/chartjs_gallery/lib/demo/stress_axes.dart",
+      "inclusive": 89,
+      "self": 17
+    },
+    {
+      "name": "==",
+      "owner": "_Record",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/record_patch.dart",
+      "inclusive": 85,
+      "self": 85
+    },
+    {
+      "name": "[]",
+      "owner": "_GrowableList",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/growable_array.dart",
+      "inclusive": 84,
+      "self": 84
+    },
+    {
+      "name": "buildTicks",
+      "owner": "CategoryScale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart",
+      "inclusive": 83,
+      "self": 11
+    },
+    {
+      "name": "cachedStaticFont",
+      "owner": "OptionView",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart",
+      "inclusive": 79,
+      "self": 10
+    },
+    {
+      "name": "parseCanvasFont",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_text.dart",
+      "inclusive": 77,
+      "self": 16
+    },
+    {
+      "name": "_index",
+      "owner": "_Cache",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart",
+      "inclusive": 77,
+      "self": 77
+    },
+    {
+      "name": "updateRangeFromParsed",
+      "owner": "DatasetController",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusive": 69,
+      "self": 12
+    },
+    {
+      "name": "_plainFallback",
+      "owner": "TickFontCache",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart",
+      "inclusive": 68,
+      "self": 27
+    },
+    {
+      "name": "_Double.fromInteger",
+      "owner": "_Double",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/double.dart",
+      "inclusive": 67,
+      "self": 47
+    },
+    {
+      "name": "draw",
+      "owner": "_ScaleLayer",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 67,
+      "self": 0
+    },
+    {
+      "name": "hashCode",
+      "owner": "_Record",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/record_patch.dart",
+      "inclusive": 65,
+      "self": 56
+    },
+    {
+      "name": "Uint32List",
+      "owner": "Uint32List",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/typed_data_patch.dart",
+      "inclusive": 64,
+      "self": 0
+    },
+    {
+      "name": "isHorizontal",
+      "owner": "Scale",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.scale.dart",
+      "inclusive": 63,
+      "self": 12
+    },
+    {
+      "name": "singleCircle",
+      "owner": "UiPathBuilder",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusive": 62,
+      "self": 0
+    },
+    {
+      "name": "arc",
+      "owner": "UiCanvasContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusive": 61,
+      "self": 11
+    },
+    {
+      "name": "readOption",
+      "owner": "",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart",
+      "inclusive": 60,
+      "self": 6
+    },
+    {
+      "name": "ScriptableScaleContext",
+      "owner": "ScriptableScaleContext",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart",
+      "inclusive": 60,
+      "self": 17
+    },
+    {
+      "name": "contains",
+      "owner": "ListBase",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/collection/list.dart",
+      "inclusive": 54,
+      "self": 54
+    },
+    {
+      "name": "ContextObject",
+      "owner": "ContextObject",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart",
+      "inclusive": 53,
+      "self": 0
+    },
+    {
+      "name": "add",
+      "owner": "CircleBatch",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart",
+      "inclusive": 50,
+      "self": 50
+    }
+  ]
+}

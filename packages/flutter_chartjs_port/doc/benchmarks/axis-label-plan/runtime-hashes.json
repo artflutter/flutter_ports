@@ -1,0 +1,16 @@
+{
+  "packages/flutter_chartjs_port/lib/src/core/core.scale.dart": "de77ae68a7b22e36edb36ba1b63a93122a18edd5316a157e81498cd78745adb6",
+  "packages/flutter_chartjs_port/lib/src/core/tick_font_cache.dart": "5077a2c57b0e2b1d408cca3c51ad8e193abd51334824aab9408ed29749b12a22",
+  "packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart": "b3a9c0715d86cb5765b8fa6a13d16ee1fb7069173a230f8918693b41536bab1d",
+  "packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart": "cb6ba9d521589583a0b73ee6ddf13bd8e494f62e9ba100f57c8a628904d3ade6",
+  "packages/flutter_chartjs_port/lib/src/scales/scale.category.dart": "02bf6cbcbb5f5f108eb7b6beddff0d6cadaae1172f8600b4a22d103a2fdbc3de",
+  "packages/flutter_chartjs_port/lib/src/canvas/canvas.dart": "f9f321a53821b2701aa4b92201f6d3b6e06556f918c2b341c7f8c5ff3d539300",
+  "packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart": "54f8732e54086225535526e1eb321d18c9d6b82ad8a9446d37850cc21c39ced8",
+  "packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_text.dart": "639ce83b44bdae76a3b59a4d46f0356e1a94ea3dd47c77cb312d69301b24f54c",
+  "packages/flutter_chartjs_port/lib/src/core/core.config.dart": "0f2167ff88a042ac1973ec70c934a66d6ceb523a51ce337aa3d487933feae207",
+  "packages/flutter_chartjs_port/lib/src/core/core.controller.dart": "04626d03de9600174db01319487d0b76e652ca4681e9c29d77412d17827a7772",
+  "packages/flutter_chartjs_port/lib/src/core/category_label_source.dart": "05ee145272734d9463f1ecfee86f6088d8334ec1f32d853933417a9aeb5f8738",
+  "packages/flutter_chartjs_port/lib/src/canvas/canvas_font_tracking.dart": "548fe41e93f8aabd3bf9afc16458dd4b760d8ebf3aa81bf5a8c9fae895ab4095",
+  "apps/chartjs_gallery/lib/bench/chart_bench.dart": "a469faa3cdcbb5e34ba6aa25f835163845c0129aa59dd311c519456740cab6d9",
+  "apps/chartjs_gallery/lib/demo/stress_demo.dart": "e6e0240a756fcc29f65134afcfae529213c3b2464dd3452e9301409e9ad231f6"
+}

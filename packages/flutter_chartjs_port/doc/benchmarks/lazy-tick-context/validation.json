@@ -1,0 +1,17 @@
+{
+  "vmTestsPassed": 10112,
+  "vmTestsSkipped": 84,
+  "browserJavaScriptPassed": 19,
+  "browserWasmPassed": 19,
+  "fixtures": {
+    "files": 26,
+    "errors": 0,
+    "warnings": 0
+  },
+  "analysis": "passed",
+  "format": "passed",
+  "portChecks": "passed",
+  "parity": "regenerated and checked",
+  "productionScope": "core.scale.dart only",
+  "sourceSha256": "443386be57952c1621800972e18657e4dff480a295f79f2ffb1ef272dde4b86a"
+}

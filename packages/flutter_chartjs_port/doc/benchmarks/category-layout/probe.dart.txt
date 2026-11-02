@@ -1,0 +1,92 @@
+// Original code, not ported from Chart.js: category-axis profiling probe.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_axes.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:chartjs_gallery/demo/stress_timing.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MaterialApp(home: Scaffold(body: Text('Category profile'))));
+  WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(run()));
+}
+
+Future<void> run() async {
+  await Future<void>.delayed(const Duration(seconds: 1));
+  final output = File(
+    '/tmp/category-${Platform.environment['CATEGORY_RUN'] ?? 'probe'}.jsonl',
+  );
+  for (final x in [StressAxisType.category, StressAxisType.linear]) {
+    for (final n in [1000, 5000, 20000]) {
+      for (final call in [ChartBenchCall.update, ChartBenchCall.draw]) {
+        final c = ChartBenchCase(
+          mode: 'axes',
+          name: x.name,
+          call: call,
+          keys: {'yScale': 'logarithmic'},
+          scene: (n) {
+            registerGalleryComponents();
+            final field = StressPointField(n);
+            final scene = StressAxesScene(
+              n,
+              x: x,
+              y: StressAxisType.logarithmic,
+              positions: field,
+            );
+            final timing = StressChartTiming();
+            return ChartBenchScene(
+              config: stressAxesConfig(
+                scene: scene,
+                autoSkip: true,
+                options: chartBenchOptions,
+                plugins: [timing.plugin],
+              ),
+              change: () {
+                field.step(n, chartBenchStep);
+                scene.write(field);
+              },
+              takeParts: timing.take,
+              describe: (chart) {
+                final x = chart.scales['x']!;
+                final y = chart.scales['y']!;
+                return {
+                  'ticks': x.ticks!.length,
+                  'rotation': x.labelRotation,
+                  'xTicks': [
+                    for (final t in x.ticks!) [t.value, t.label],
+                  ],
+                  'yTicks': [
+                    for (final t in y.ticks!) [t.value, t.label],
+                  ],
+                  'area': [
+                    chart.chartArea!.left,
+                    chart.chartArea!.top,
+                    chart.chartArea!.right,
+                    chart.chartArea!.bottom,
+                  ],
+                };
+              },
+            );
+          },
+        );
+        final result = runChartBenchCase(
+          c,
+          n,
+          const ChartBenchSettings(batches: 9, batchMs: 250, warmupMs: 1000),
+        );
+        output.writeAsStringSync(
+          '${jsonEncode(result)}\n',
+          mode: FileMode.append,
+          flush: true,
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      }
+    }
+  }
+  exit(0);
+}
