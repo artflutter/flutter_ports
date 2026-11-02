@@ -79,6 +79,16 @@ final class _Segment implements Segment {
 @internal
 const Type nativeSegmentType = _Segment;
 
+// DIVERGES(chartjs): adapt-boundary-segment-search, retain the native segment
+// representation for exact bounds of a private, unstyled linear boundary.
+/// An internal segment for validated, non-wrapping private boundary indices.
+@internal
+Segment createBoundarySegment(int start, int end) => _Segment(
+  start: start.toDouble(),
+  end: end.toDouble(),
+  loop: false,
+);
+
 /// The result of `propertyFn` (helpers.segment.js:13-23).
 typedef _PropertyFn = ({
   bool Function(double, double, double) between,

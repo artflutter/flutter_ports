@@ -351,7 +351,14 @@ void _fill(
   required types.TRBL? clip,
   required BoundaryPointSearch? boundarySearch,
 }) {
-  final parts = segments(line, target, property);
+  // DIVERGES(chartjs): adapt-boundary-segment-search, share the private target
+  // lookup across source segments and the two color passes of this draw.
+  final parts = segments(
+    line,
+    target,
+    property,
+    boundarySearch: boundarySearch,
+  );
 
   for (final (source: src, target: tgt, :start, :end) in parts) {
     // `const {style: {backgroundColor = color} = {}} = src`. The style of

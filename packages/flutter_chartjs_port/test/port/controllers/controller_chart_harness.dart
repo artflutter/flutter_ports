@@ -39,6 +39,8 @@ library;
 import 'dart:convert';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
+    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -950,6 +952,10 @@ Future<void> _runControllerCase(
   required bool hits,
   required Map<String, Object?> Function(Chart chart)? observeExtra,
 }) async {
+  // A shard can start with a themed case before any chart installs the codec.
+  // Initialize the Flutter boundary before comparing public default reads:
+  // PreparedColor.paint otherwise changes representation during the case.
+  installNativeColorCodec();
   final defaultsBefore = theme == null ? null : _snapshot(defaults);
   await _runCaseSteps(
     tester,

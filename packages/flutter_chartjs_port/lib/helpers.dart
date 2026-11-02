@@ -47,6 +47,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         capitalize,
         color,
         computeSegments,
+        createBoundarySegment,
         createResolver,
         decimalPlaces,
         deprecated,
