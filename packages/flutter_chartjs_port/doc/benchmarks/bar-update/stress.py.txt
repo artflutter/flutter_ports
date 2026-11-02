@@ -1,0 +1,21 @@
+import os,subprocess,time,json
+from pathlib import Path
+for variant,call in [('a','update'),('a','anim'),('b','update'),('b','anim')]:
+ app='/tmp/bar-update-'+variant+'.app'
+ path=Path('/tmp/bar-update-stress-fg-'+variant+'-'+call+'.log')
+ with path.open('w') as log:
+  proc=subprocess.Popen([app+'/Contents/MacOS/chartjs_gallery'],env={**os.environ,'BAR_MODE':'stress','BAR_CALL':call},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   time.sleep(2)
+   result=subprocess.run(['osascript','-l','JavaScript','-e',f'ObjC.import("AppKit"); var app=$.NSRunningApplication.runningApplicationWithProcessIdentifier({proc.pid}); app.activateWithOptions(2); delay(0.2); console.log(app.active);'],check=True,capture_output=True,text=True)
+   print('foreground',variant,call,result.stderr.strip(),flush=True)
+   for _ in range(180):
+    text=path.read_text()
+    if 'STRESS {' in text:
+     print(variant,call, next(l for l in text.splitlines() if 'STRESS {' in l),flush=True)
+     break
+    if proc.poll() is not None: raise RuntimeError(text)
+    time.sleep(.25)
+   else: raise RuntimeError('No summary: '+path.read_text())
+  finally:
+   proc.terminate();proc.wait()

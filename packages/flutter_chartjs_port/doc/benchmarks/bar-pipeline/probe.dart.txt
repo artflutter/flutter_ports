@@ -1,0 +1,169 @@
+// Original code, not ported from Chart.js: bar performance investigation.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'native.dart';
+import 'controller.dart';
+
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:chartjs_gallery/demo/stress_timing.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Animation;
+import 'package:flutter_chartjs_port/src/js/js_date.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+
+class AnimatedPlatform extends BasicPlatform {
+  static final value = JsClass(
+    'BarProbePlatform',
+    superclass: BasicPlatform.jsClass,
+    construct: (_, args) => AnimatedPlatform(),
+  );
+  @override
+  void updateConfig(types.ChartConfiguration config) {}
+}
+
+ChartBenchCase makeCase(String variant) => ChartBenchCase(
+  mode: 'barScan',
+  name: variant,
+  call: variant.startsWith('anim')
+      ? ChartBenchCall.frame
+      : variant.startsWith('draw')
+      ? ChartBenchCall.draw
+      : ChartBenchCall.update,
+  scene: (n) {
+    registerGalleryComponents();
+    if (variant.contains('index_memo'))
+      Chart.register([ProbeBarController.jsClass]);
+    final field = StressPointField(n);
+    final scene = StressChartScene(StressChartType.bar, n, field);
+    final timing = StressChartTiming();
+    final animated = variant.startsWith('anim');
+    final config = stressChartConfig(
+      scene: scene,
+      scriptable: false,
+      animate: animated,
+      options: chartBenchOptions,
+      plugins: [timing.plugin],
+    );
+    if (variant.contains('index_memo')) config['type'] = 'probe-bar';
+    final opts = config['options']! as Map<String, Object?>;
+    final data = config['data']! as Map<String, Object?>;
+    final dataset = (data['datasets']! as List).first as Map<String, Object?>;
+    if (variant.contains('ungrouped')) dataset['grouped'] = false;
+    if (variant.contains('thickness')) dataset['barThickness'] = 800 / n * 0.72;
+    if (variant.contains('no_border')) dataset['borderWidth'] = 0.0;
+    if (variant.contains('y_only'))
+      opts['animations'] = {
+        'numbers': {
+          'properties': ['y'],
+        },
+      };
+    if (animated) config['platform'] = AnimatedPlatform.value;
+    var now = jsDateNow();
+    return ChartBenchScene(
+      config: config,
+      takeParts: timing.take,
+      change: () {
+        field.step(n, chartBenchStep);
+        scene.write(field);
+      },
+      prepare: animated
+          ? (chart) {
+              if (variant.contains('settled')) {
+                chart.stop();
+                chart.update('none');
+              }
+              field.step(n, 0.25);
+              scene.write(field);
+              chart.update();
+              now = jsDateNow();
+            }
+          : null,
+      frame: animated
+          ? (chart) {
+              now += chartBenchFrameMs;
+              animator.update(now);
+            }
+          : null,
+      describe: (chart) => {
+        'animations': animator.getAnims(chart).items.length,
+        'nonFiniteAnimationEndpoints': animator
+            .getAnims(chart)
+            .items
+            .where(
+              (a) =>
+                  (a.from is double && !(a.from as double).isFinite) ||
+                  (a.to is double && !(a.to as double).isFinite),
+            )
+            .length,
+        'bars': [
+          for (final i in [0, n ~/ 2, n - 1])
+            [
+              for (final key in ['x', 'y', 'base', 'width', 'height'])
+                jsonNumber(
+                  (chart.getDatasetMeta(0).data[i]
+                      as types.ElementPropertyRead)[key],
+                ),
+            ],
+        ],
+        'ticks': chart.scales['x']!.ticks!.length,
+      },
+    );
+  },
+);
+Object? jsonNumber(Object? v) => v is double && !v.isFinite ? v.toString() : v;
+Future<void> run() async {
+  final env = Platform.environment;
+  final profile = env['BAR_PROFILE'] == '1';
+  final output = File('/tmp/bar-${env['BAR_RUN'] ?? 'scan'}.jsonl');
+  await Future<void>.delayed(Duration(seconds: profile ? 4 : 1));
+  animator.refresh = () {};
+  var variants =
+      (env['BAR_VARIANTS'] ??
+              'baseline,ungrouped,thickness,ungrouped_thickness,no_border,draw,draw_no_border,anim,anim_no_border,anim_y_only,anim_settled')
+          .split(',');
+  if (env['BAR_REVERSE'] == '1') variants = variants.reversed.toList();
+  for (final n
+      in (env['BAR_N'] ?? '1000,5000,20000').split(',').map(int.parse)) {
+    for (final variant in variants) {
+      final result = variant == 'native_verify'
+          ? await verifyChunks(n)
+          : variant.startsWith('native')
+          ? nativeCase(n, variant)
+          : runChartBenchCase(
+              makeCase(variant),
+              n,
+              ChartBenchSettings(
+                batches: profile ? 100 : 7,
+                batchMs: profile ? 300 : 200,
+                warmupMs: profile ? 4000 : 800,
+              ),
+            );
+      output.writeAsStringSync(
+        '${jsonEncode(result)}\n',
+        mode: FileMode.append,
+        flush: true,
+      );
+      print(
+        'BAR $variant $n ${result['updateMedianMs']} ${result['drawMedianMs']}',
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    }
+  }
+  exit(0);
+}
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    const MaterialApp(
+      home: Scaffold(
+        body: Center(child: Text('Bar performance investigation')),
+      ),
+    ),
+  );
+  unawaited(run());
+}

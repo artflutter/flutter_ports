@@ -1,0 +1,6 @@
+import os,subprocess,json
+for name,app in [('a','/tmp/bar-draw-final.app'),('c','/tmp/bar-update-c.app')]:
+ with open('/tmp/bar-update-quick-'+name+'.log','w') as log:
+  subprocess.run([app+'/Contents/MacOS/chartjs_gallery'],env={**os.environ,'BAR_RUN':'update-quick-'+name,'BAR_N':'20000','BAR_VARIANTS':'update'},stdout=log,stderr=subprocess.STDOUT,check=True)
+ for l in open('/tmp/bar-update-quick-'+name+'.jsonl'):
+  r=json.loads(l);print(name,{k:r.get(k+'MedianMs') for k in ['update','draw','end','elements','datasetsUpdate','layout']},flush=True)

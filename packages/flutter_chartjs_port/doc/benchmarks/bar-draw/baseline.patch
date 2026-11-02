@@ -1,0 +1,126 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+index 46fc1c8..6b078da 100644
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+@@ -11,14 +11,14 @@
+ ///   canvas is the list of pictures recorded since the last full clear.
+ /// - A `clearRect` that covers the whole canvas, with no clip, drops the
+ ///   list. `clearCanvas` does that at the start of each chart render, so
+-///   a chart frame is one picture.
++///   a chart frame starts a new paint generation.
+ /// - A partial `clearRect` draws with `BlendMode.clear`. A composite
+ ///   operation other than `source-over` blends with the content. Then
+ ///   [UiCanvasContext.paint] draws the pictures inside a layer, so that
+ ///   the clear does not reach what is below the canvas.
+ /// - [UiCanvasContext.paint] ends the current recording. When more than a
+-///   few pictures pile up without a full clear, the context flattens them
+-///   into one image of the bitmap size, so that memory stays bounded.
++///   few paint generations pile up without a full clear, the context flattens
++///   them into one image of the bitmap size, so that memory stays bounded.
+ /// - [UiCanvasContext.onChanged] tells the host that the content changed,
+ ///   once until the next paint.
+ ///
+@@ -57,9 +57,13 @@ export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart'
+ export 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart'
+     show CanvasFont, parseCanvasFont;
+ 
+-/// The count of pictures above which [UiCanvasContext.paint] flattens the
+-/// content into one image.
+-const int _maxPictures = 8;
++/// The retained paint generations before flattening (ADR 0066). A large
++/// generation can span multiple pictures without triggering rasterization.
++const int _maxPaintGenerations = 8;
++
++/// Bound native drawPicture's spatial-index consolidation. Pending circle
++/// runs keep their existing batching; they do not consume this budget.
++const int _maxPictureDraws = 256;
+ 
+ const ui.Color _black = ui.Color(0xFF000000);
+ 
+@@ -536,6 +540,9 @@ final class UiCanvasContext
+   // recording canvas draws them first, so the draw order stays.
+   final CircleBatch _batch = CircleBatch();
+   bool _hasContent = false;
++  int _pictureDraws = 0;
++  int _paintGenerations = 0;
++  bool _generationHasContent = false;
+   final List<ui.Picture> _pictures = [];
+   ui.Image? _flatImage;
+   bool _needsLayer = false;
+@@ -617,7 +624,7 @@ final class UiCanvasContext
+     _notified = false;
+     if (_disposed) return;
+     _endRecording();
+-    if (_pictures.length > _maxPictures) _flatten();
++    if (_paintGenerations > _maxPaintGenerations) _flatten();
+     if (_pictures.isEmpty) return;
+     final bounds = _bitmapBounds;
+     canvas
+@@ -677,7 +684,7 @@ final class UiCanvasContext
+       stroke: stroke,
+       width: width,
+     );
+-    _drew();
++    _drew(batched: true);
+     return true;
+   }
+ 
+@@ -706,7 +713,11 @@ final class UiCanvasContext
+   bool get _ownsClips =>
+       _depth > 0 && !identical(_s.clips, _states[_depth - 1].clips);
+ 
+-  void _endRecording() {
++  void _endRecording({bool split = false}) {
++    if (!split && _generationHasContent) {
++      _paintGenerations++;
++      _generationHasContent = false;
++    }
+     if (_batch.length > 0) _flushBatch();
+     final recorder = _recorder;
+     if (recorder == null) return;
+@@ -719,10 +730,12 @@ final class UiCanvasContext
+     _recorder = null;
+     _canvas = null;
+     _hasContent = false;
++    _pictureDraws = 0;
+   }
+ 
+   void _discardRecording() {
+     _batch.clear();
++    _pictureDraws = 0;
+     final recorder = _recorder;
+     if (recorder == null) {
+       _hasContent = false;
+@@ -739,6 +752,8 @@ final class UiCanvasContext
+       picture.dispose();
+     }
+     _pictures.clear();
++    _paintGenerations = 0;
++    _generationHasContent = false;
+     _flatImage?.dispose();
+     _flatImage = null;
+     _needsLayer = false;
+@@ -750,8 +765,14 @@ final class UiCanvasContext
+     _onChanged?.call();
+   }
+ 
+-  void _drew() {
++  void _drew({bool batched = false}) {
+     _hasContent = true;
++    _generationHasContent = true;
++    // All callers have finished their native save/transform/draw/restore
++    // sequence. The next recording replays the remaining logical clips.
++    if (!batched && ++_pictureDraws >= _maxPictureDraws) {
++      _endRecording(split: true);
++    }
+     _changed();
+   }
+ 
+@@ -768,6 +789,7 @@ final class UiCanvasContext
+     final imageRecorder = ui.PictureRecorder();
+     ui.Canvas(imageRecorder).drawImage(image, ui.Offset.zero, _layerPaint);
+     _pictures.add(imageRecorder.endRecording());
++    _paintGenerations = 1;
+   }
+ 
+   /// The pictures drawn into one image of the bitmap size, in device

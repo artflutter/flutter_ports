@@ -1,0 +1,53 @@
+// Original code, not ported from Chart.js: investigation prototype geometry checks.
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+
+import 'probe.dart' as probe;
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  for (final n in [1000, 20000]) {
+    test('index memo matches all bars through ordinary updates at N=$n', () {
+      final a = probe.makeCase('baseline').scene(n),
+          b = probe.makeCase('index_memo').scene(n);
+      final ca = UiCanvasElement(width: 800, height: 480),
+          cb = UiCanvasElement(width: 800, height: 480);
+      final x = Chart(ca, a.config), y = Chart(cb, b.config);
+      try {
+        for (var step = 0; step < 4; step++) {
+          a.change!();
+          b.change!();
+          if (step == 2) {
+            x.resize(640, 400);
+            y.resize(640, 400);
+          }
+          x.update('none');
+          y.update('none');
+          final xa = x.getDatasetMeta(0).data, ya = y.getDatasetMeta(0).data;
+          for (var i = 0; i < n; i++) {
+            for (final key in [
+              'x',
+              'y',
+              'base',
+              'width',
+              'height',
+              'horizontal',
+              'inflateAmount',
+            ]) {
+              expect(
+                (ya[i] as types.ElementPropertyRead)[key],
+                (xa[i] as types.ElementPropertyRead)[key],
+                reason: 'step=$step bar=$i key=$key',
+              );
+            }
+          }
+        }
+      } finally {
+        x.destroy();
+        y.destroy();
+      }
+    });
+  }
+}

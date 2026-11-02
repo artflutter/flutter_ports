@@ -1,0 +1,296 @@
+[
+  {
+    "n": 1000,
+    "case": "baseline",
+    "medianFullMs": 4.333,
+    "fullMs": [
+      4.508,
+      4.1579999999999995
+    ],
+    "updateMedianMs": 1.9545,
+    "drawMedianMs": 0.679,
+    "endMedianMs": 1.6995,
+    "datasetsUpdateMedianMs": 1.5474999999999999,
+    "layoutMedianMs": 0.1055
+  },
+  {
+    "n": 1000,
+    "case": "index_memo",
+    "medianFullMs": 3.4095,
+    "fullMs": [
+      3.423,
+      3.396
+    ],
+    "updateMedianMs": 1.056,
+    "drawMedianMs": 0.6535,
+    "endMedianMs": 1.7000000000000002,
+    "datasetsUpdateMedianMs": 0.6805,
+    "layoutMedianMs": 0.0945
+  },
+  {
+    "n": 1000,
+    "case": "ungrouped",
+    "medianFullMs": 3.5965,
+    "fullMs": [
+      3.629,
+      3.564
+    ],
+    "updateMedianMs": 1.255,
+    "drawMedianMs": 0.657,
+    "endMedianMs": 1.6844999999999999,
+    "datasetsUpdateMedianMs": 0.876,
+    "layoutMedianMs": 0.0935
+  },
+  {
+    "n": 1000,
+    "case": "draw",
+    "medianFullMs": 2.37,
+    "fullMs": [
+      2.3609999999999998,
+      2.379
+    ],
+    "updateMedianMs": 0.0,
+    "drawMedianMs": 0.639,
+    "endMedianMs": 1.7309999999999999,
+    "datasetsUpdateMedianMs": 0.0,
+    "layoutMedianMs": 0.0
+  },
+  {
+    "n": 1000,
+    "case": "anim",
+    "medianFullMs": 2.144,
+    "fullMs": [
+      2.126,
+      2.162
+    ],
+    "updateMedianMs": 0.0455,
+    "drawMedianMs": 0.639,
+    "endMedianMs": 1.4595,
+    "datasetsUpdateMedianMs": 0.0,
+    "layoutMedianMs": 0.0
+  },
+  {
+    "n": 1000,
+    "case": "native_rects",
+    "medianFullMs": 2.2571222222222227,
+    "fullMs": [
+      2.255044943820225,
+      2.25919950062422
+    ],
+    "record": 0.17112709113607988,
+    "innerEnd": 0.005877153558052434,
+    "drawPicture": 1.8988314606741574,
+    "outerEnd": 0.18007865168539328,
+    "dispose": 0.001207865168539326
+  },
+  {
+    "n": 1000,
+    "case": "native_chunk",
+    "medianFullMs": 1.5185110783815325,
+    "fullMs": [
+      1.5104422905525847,
+      1.5265798662104804
+    ],
+    "record": 0.18441869072403422,
+    "innerEnd": 0.001956081851345189,
+    "drawPicture": 1.212906228313671,
+    "outerEnd": 0.117169471431876,
+    "dispose": 0.0020606060606060605
+  },
+  {
+    "n": 5000,
+    "case": "baseline",
+    "medianFullMs": 18.444499999999998,
+    "fullMs": [
+      18.566,
+      18.323
+    ],
+    "updateMedianMs": 9.955,
+    "drawMedianMs": 3.604,
+    "endMedianMs": 4.8855,
+    "datasetsUpdateMedianMs": 8.6785,
+    "layoutMedianMs": 0.256
+  },
+  {
+    "n": 5000,
+    "case": "index_memo",
+    "medianFullMs": 12.935500000000001,
+    "fullMs": [
+      12.974,
+      12.897
+    ],
+    "updateMedianMs": 5.055,
+    "drawMedianMs": 3.0985,
+    "endMedianMs": 4.782,
+    "datasetsUpdateMedianMs": 3.972,
+    "layoutMedianMs": 0.1915
+  },
+  {
+    "n": 5000,
+    "case": "ungrouped",
+    "medianFullMs": 14.272,
+    "fullMs": [
+      14.352,
+      14.192
+    ],
+    "updateMedianMs": 5.994,
+    "drawMedianMs": 3.485,
+    "endMedianMs": 4.792999999999999,
+    "datasetsUpdateMedianMs": 4.832,
+    "layoutMedianMs": 0.2115
+  },
+  {
+    "n": 5000,
+    "case": "draw",
+    "medianFullMs": 7.7250000000000005,
+    "fullMs": [
+      7.704000000000001,
+      7.746
+    ],
+    "updateMedianMs": 0.0,
+    "drawMedianMs": 3.132,
+    "endMedianMs": 4.593,
+    "datasetsUpdateMedianMs": 0.0,
+    "layoutMedianMs": 0.0
+  },
+  {
+    "n": 5000,
+    "case": "anim",
+    "medianFullMs": 7.8255,
+    "fullMs": [
+      7.785,
+      7.866
+    ],
+    "updateMedianMs": 0.2495,
+    "drawMedianMs": 3.166,
+    "endMedianMs": 4.41,
+    "datasetsUpdateMedianMs": 0.0,
+    "layoutMedianMs": 0.0
+  },
+  {
+    "n": 5000,
+    "case": "native_rects",
+    "medianFullMs": 4.524838131313132,
+    "fullMs": [
+      4.538431818181818,
+      4.511244444444444
+    ],
+    "record": 0.844869191919192,
+    "innerEnd": 0.025137121212121215,
+    "drawPicture": 3.6321537878787877,
+    "outerEnd": 0.019643686868686866,
+    "dispose": 0.0030343434343434346
+  },
+  {
+    "n": 5000,
+    "case": "native_chunk",
+    "medianFullMs": 1.8623171945309793,
+    "fullMs": [
+      1.8592499999999998,
+      1.865384389061959
+    ],
+    "record": 0.9059135081343026,
+    "innerEnd": 0.0014093977154724818,
+    "drawPicture": 0.9332489615784008,
+    "outerEnd": 0.013888845621322258,
+    "dispose": 0.007856481481481482
+  },
+  {
+    "n": 20000,
+    "case": "baseline",
+    "medianFullMs": 105.95,
+    "fullMs": [
+      104.762,
+      107.138
+    ],
+    "updateMedianMs": 41.322500000000005,
+    "drawMedianMs": 13.145499999999998,
+    "endMedianMs": 51.482,
+    "datasetsUpdateMedianMs": 36.9165,
+    "layoutMedianMs": 0.636
+  },
+  {
+    "n": 20000,
+    "case": "index_memo",
+    "medianFullMs": 88.86449999999999,
+    "fullMs": [
+      89.656,
+      88.073
+    ],
+    "updateMedianMs": 23.424500000000002,
+    "drawMedianMs": 14.791,
+    "endMedianMs": 50.649,
+    "datasetsUpdateMedianMs": 18.654,
+    "layoutMedianMs": 0.653
+  },
+  {
+    "n": 20000,
+    "case": "ungrouped",
+    "medianFullMs": 92.86850000000001,
+    "fullMs": [
+      94.043,
+      91.694
+    ],
+    "updateMedianMs": 28.334,
+    "drawMedianMs": 13.2985,
+    "endMedianMs": 51.236000000000004,
+    "datasetsUpdateMedianMs": 23.722,
+    "layoutMedianMs": 0.6435
+  },
+  {
+    "n": 20000,
+    "case": "draw",
+    "medianFullMs": 63.986000000000004,
+    "fullMs": [
+      64.66,
+      63.312000000000005
+    ],
+    "updateMedianMs": 0.0,
+    "drawMedianMs": 12.727,
+    "endMedianMs": 51.259,
+    "datasetsUpdateMedianMs": 0.0,
+    "layoutMedianMs": 0.0
+  },
+  {
+    "n": 20000,
+    "case": "anim",
+    "medianFullMs": 63.7205,
+    "fullMs": [
+      64.785,
+      62.656
+    ],
+    "updateMedianMs": 1.513,
+    "drawMedianMs": 13.1645,
+    "endMedianMs": 49.043,
+    "datasetsUpdateMedianMs": 0.0,
+    "layoutMedianMs": 0.0
+  },
+  {
+    "n": 20000,
+    "case": "native_rects",
+    "medianFullMs": 53.9405,
+    "fullMs": [
+      54.79125,
+      53.08975
+    ],
+    "record": 3.436125,
+    "innerEnd": 0.10087499999999999,
+    "drawPicture": 50.366749999999996,
+    "outerEnd": 0.0245,
+    "dispose": 0.01225
+  },
+  {
+    "n": 20000,
+    "case": "native_chunk",
+    "medianFullMs": 7.2101690349880005,
+    "fullMs": [
+      7.337783882783882,
+      7.082554187192118
+    ],
+    "record": 3.7132777093596054,
+    "innerEnd": 0.0011607142857142858,
+    "drawPicture": 3.442727216748769,
+    "outerEnd": 0.013457417582417582,
+    "dispose": 0.03954597701149425
+  }
+]

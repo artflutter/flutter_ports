@@ -31,6 +31,7 @@
 /// options, as upstream imports no element module.
 library;
 
+import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
@@ -458,6 +459,16 @@ class Config implements types.ChartConfiguration {
     required bool horizontal,
   }) => runtimeType == Config
       ? nativeCategoryLabels(_config, explicitLabels, horizontal: horizontal)
+      : null;
+
+  /// A live, effect-free proof of the ordinary single bar dataset container.
+  @internal
+  // DIVERGES(chartjs): adapt-live-bar-layout, native source guard.
+  bool hasNativeSingleBarDataset(String axis) =>
+      _barDatasetSource?.read(axis) ?? false;
+
+  late final SingleBarDatasetSource? _barDatasetSource = runtimeType == Config
+      ? SingleBarDatasetSource(_config)
       : null;
 
   /// core.config.js:177 `get data()`.

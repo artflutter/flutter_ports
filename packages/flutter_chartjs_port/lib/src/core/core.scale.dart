@@ -48,6 +48,8 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
@@ -740,6 +742,8 @@ abstract class _ScalePrototype extends Element {
 class Scale extends _ScalePrototype
     implements
         types.Scale,
+        NativeBarIndexReads,
+        BulkBarScale,
         types.LayoutItemBeforeLayout,
         types.LayoutItemConfigure,
         types.LayoutItemPadding,
@@ -1027,6 +1031,37 @@ class Scale extends _ScalePrototype
   @internal
   @override
   late List<types.LayoutLayer> Function()? layers = _layers;
+
+  /// Unknown scale classes retain their virtual topology reads.
+  // DIVERGES(chartjs): adapt-live-bar-layout, unknown scales retain reads.
+  @override
+  @internal
+  bool get supportsNativeBarIndexReads => false;
+
+  /// Unknown scales retain all their virtual projection/grid calls.
+  @override
+  @internal
+  bool get supportsBulkBarUpdate => false;
+
+  static final _bulkTickLists = <Type>{
+    <Tick>[].runtimeType,
+    List<Tick>.empty().runtimeType,
+    const <Tick>[].runtimeType,
+  };
+
+  /// Inspect cached settings and the tick container without resolving options
+  /// or creating contexts. The first bulk item's normal lookup does that.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-bulk-bar-update, prove grid lookup purity.
+  bool get hasStaticBulkBarGrid {
+    if (!supportsBulkBarUpdate) return false;
+    final raw = super.options;
+    if (raw is! OptionView) return false;
+    final usesTicks = raw.cachedBulkBarGridUsesTicks;
+    if (usesTicks == null) return false;
+    return !usesTicks || _bulkTickLists.contains(ticks.runtimeType);
+  }
 
   /// core.scale.js:179 `options`, the resolved options of the scale.
   ///

@@ -1,0 +1,29 @@
+sandbox_extension_issue_file_to_process failed for /tmp/bar-update-b.app: 1 (Operation not permitted)
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+flutter: The Dart VM service is listening on http://127.0.0.1:65177/3I9d2oH3LUg=/
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":1,"frames":21,"fps":"21.00","buildMs":"37.857","rasterMs":"15.798"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":2,"frames":24,"fps":"24.00","buildMs":"38.337","rasterMs":"13.666"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":3,"frames":24,"fps":"24.00","buildMs":"37.525","rasterMs":"13.549"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":4,"frames":24,"fps":"24.00","buildMs":"37.210","rasterMs":"13.543"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":5,"frames":24,"fps":"24.00","buildMs":"37.799","rasterMs":"13.748"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":6,"frames":24,"fps":"24.00","buildMs":"37.897","rasterMs":"13.691"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":7,"frames":24,"fps":"24.00","buildMs":"37.635","rasterMs":"13.597"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":8,"frames":24,"fps":"24.00","buildMs":"37.671","rasterMs":"13.659"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":9,"frames":24,"fps":"24.00","buildMs":"37.355","rasterMs":"13.556"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":10,"frames":24,"fps":"24.00","buildMs":"38.200","rasterMs":"13.672"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":11,"frames":25,"fps":"25.00","buildMs":"37.504","rasterMs":"13.607"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":12,"frames":24,"fps":"24.00","buildMs":"38.038","rasterMs":"13.598"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":13,"frames":24,"fps":"24.00","buildMs":"37.888","rasterMs":"13.760"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":14,"frames":24,"fps":"24.00","buildMs":"37.811","rasterMs":"13.726"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":15,"frames":23,"fps":"23.00","buildMs":"39.120","rasterMs":"13.893"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":16,"frames":24,"fps":"24.00","buildMs":"38.060","rasterMs":"13.659"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":17,"frames":24,"fps":"24.00","buildMs":"37.848","rasterMs":"13.592"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":18,"frames":24,"fps":"24.00","buildMs":"38.205","rasterMs":"13.702"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":19,"frames":24,"fps":"24.00","buildMs":"38.789","rasterMs":"13.857"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":20,"frames":24,"fps":"24.00","buildMs":"39.815","rasterMs":"13.957"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":21,"frames":24,"fps":"24.00","buildMs":"37.638","rasterMs":"13.647"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":22,"frames":24,"fps":"24.00","buildMs":"37.776","rasterMs":"13.720"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":23,"frames":24,"fps":"24.00","buildMs":"38.137","rasterMs":"13.808"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":24,"frames":24,"fps":"24.00","buildMs":"37.913","rasterMs":"13.733"}
+flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"23.97","drawMs":"12.96","updateMs":"22.13","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"3.63","layoutMs":"0.81","datasetsUpdateMs":"17.45","datasetsDrawMs":"12.69","host":"canvas","buildMs":"38.01","buildMaxMs":"46.72","rasterMs":"13.80","rasterMaxMs":"15.59","batches":15,"batchFrames":550,"buildP50Ms":"37.56","buildP90Ms":"39.59","rasterP50Ms":"13.65","rasterP90Ms":"13.96","windows":24}
+flutter: STRESS done

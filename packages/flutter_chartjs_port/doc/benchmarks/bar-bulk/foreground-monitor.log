@@ -1,0 +1,20 @@
+foreground a update true
+active a 0 true
+active a 12 true
+active a 24 true
+active a 36 true
+active a 48 true
+active a 60 true
+active a 72 true
+active a 84 true
+a update flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"23.88","drawMs":"12.60","updateMs":"21.86","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"3.59","layoutMs":"0.75","datasetsUpdateMs":"17.30","datasetsDrawMs":"12.34","host":"canvas","buildMs":"37.54","buildMaxMs":"39.91","rasterMs":"14.09","rasterMaxMs":"14.61","batches":15,"batchFrames":552,"buildP50Ms":"37.10","buildP90Ms":"39.00","rasterP50Ms":"13.85","rasterP90Ms":"14.26","windows":24}
+foreground b update true
+active b 0 true
+active b 12 true
+active b 24 true
+active b 36 true
+active b 48 true
+active b 60 true
+active b 72 true
+active b 84 true
+b update flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"31.12","drawMs":"14.29","updateMs":"9.89","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"3.99","layoutMs":"0.77","datasetsUpdateMs":"4.88","datasetsDrawMs":"14.04","host":"canvas","buildMs":"27.22","buildMaxMs":"32.76","rasterMs":"13.74","rasterMaxMs":"15.50","batches":15,"batchFrames":741,"buildP50Ms":"26.80","buildP90Ms":"30.38","rasterP50Ms":"13.57","rasterP90Ms":"13.90","windows":24}

@@ -6078,3 +6078,264 @@ context/layout integration cases on each of JavaScript and WebAssembly. The
 fixture runner passes with zero errors/warnings; analysis, formatting, parity and
 all port checks pass. The temporary browser harness was removed after testing.
 Only this focused runtime change is retained.
+
+## 32. Bar updates, looping animation and native picture painting
+
+2026-11-02. [Investigation and implementation priorities](bar-performance.md),
+with [raw evidence and reproduction](benchmarks/bar-pipeline/README.md). No
+production runtime or gallery configuration change is included.
+
+The existing 20,000-bar stress configuration reproduces a 41.323 ms update,
+13.145 ms draw and 51.482 ms host paint/record completion: a 105.950 ms full CPU
+call. A looping animation frame is 63.721 ms, including only 1.513 ms ticking
+animations. These are local arm64 macOS profile-AOT figures at 800 × 480, DPR 1,
+from two forward/reverse sweeps. They are not measured FPS.
+
+Separate profiles attribute 50.2% of update samples and 77.6% of animation
+samples to native `Canvas.drawPicture`. A pure Flutter rectangle reproduction
+confirms the cost independently of Chart.js. Its 20,000-rectangle full call drops
+from 53.941 to 7.210 ms when recording at most 256 rectangles per picture;
+`drawPicture` drops from 50.367 to 3.443 ms. All twelve local Impeller RGBA
+comparisons match exactly, including translucency, overlap and fractional clips.
+This is a native prototype, not an integrated canvas change: the existing
+8-picture flattening threshold and the full canvas state/compositing API need
+explicit treatment before adopting it.
+
+An isolated, unguarded per-update bar-index memo reduces the chart update from
+41.323 to 23.425 ms; full calls improve from 105.950 to 88.864 ms. The draw
+component increases from 13.145 to 14.791 ms and is retained in the comparison.
+Two geometry tests pass for all checked properties through four updates and
+resize, at N=1000 and 20000. Dynamic callbacks/getters, subclasses and indexed
+stack behavior remain production design requirements.
+
+Prioritize bounded native recordings, then a guarded bar-index plan. Removing
+borders or animating fewer properties barely changes the dominating host paint
+cost. Fixed bar thickness with automatic inflation makes this workload much
+worse by enabling per-bar clipping. No combined-candidate gain, actual FPS
+improvement or mobile/web result is claimed.
+
+## 33. Bounded native recordings for dense bar charts
+
+2026-11-02. [ADR 0066](adr/0066-bounded-canvas-recordings.md) implements the first
+recommendation of §32. `UiCanvasContext` ends a picture after 256 non-batched
+paint calls. The next recorder replays existing logical clips. Drawing order,
+current paths, styles, transforms, composite behavior and all chart items remain
+unchanged. Circle runs keep their existing batching. Retention now counts eight
+completed paint/snapshot generations, rather than eight internal picture chunks,
+so a large frame does not immediately trigger image flattening.
+
+A/B/B/A against `1d37d64`, Apple M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart
+3.13.7, arm64 profile AOT, Impeller, 800 × 480 at DPR 1. Seven 200 ms batches
+follow 800 ms warmup. No builds/tests ran alongside measurement. Full CPU calls
+sum update/tick, draw and host paint/record completion within each process, then
+take the median across its two process results.
+
+| N | Bar update full call, before → after | Draw-only full call, before → after | Animation frame CPU, before → after |
+| ---: | ---: | ---: | ---: |
+| 1000 | 4.527 → 3.222 ms | 2.380 → 1.113 ms | 2.083 → 1.114 ms |
+| 5000 | 19.071 → 15.300 ms | 7.928 → 4.127 ms | 8.056 → 4.346 ms |
+| 20000 | 108.629 → 60.291 ms | 64.376 → 15.596 ms | 63.474 → 17.151 ms |
+
+**Keep the change.** At 20k, updates improve 44.5%, draw-only calls 75.8%, and
+animation CPU 73.0%. Both pairs pass the predeclared primary gates. The update's
+host paint/completion falls from 51.766 to 2.323 ms; update logic remains about
+43–44 ms and drawing about 14 ms. There is no bar-index cache in this change.
+Line and bubble controls stay within the combined 5%/0.1 ms regression limits.
+Doughnut drawing and fixed-thickness bars also improve; all control figures are
+retained rather than inferred from the primary case.
+
+Separate 25-second runs of the actual stress screen activate each exact process
+and retain 24–25 timing windows. The final foreground comparison at N=20000, M=0 is:
+
+| Operation | Before FPS | After FPS | Before/after average build | Before/after average raster |
+| --- | ---: | ---: | ---: | ---: |
+| Update each frame | 8.33 | 15.00 | 115.91 → 61.20 ms | 15.41 → 14.13 ms |
+| Looping animation | 12.72 | 49.42 | 73.79 → 18.64 ms | 15.01 → 13.89 ms |
+
+These are local profile-mode FPS measurements, one process per cell, not mobile
+or web performance claims. The remaining bar-controller work still limits update
+FPS. Animation is much smoother but does not reach a measured 60 FPS here.
+
+[Protocol, harnesses, patches, every raw measurement and validation](benchmarks/bar-implementation/README.md)
+include an initial mislabeled line-control selector (excluded from bar-update
+results) and preliminary foreground runs with short candidate windows (excluded
+from the final FPS comparison). The corrected explicit bar-update series and
+process-specific foreground activation provide the reported results.
+
+Validation: all 10,678 workspace tests pass (the Chart.js package has 10,144
+passes and 84 skips), as do all 32 new canvas cases in each of Chrome JavaScript
+and WebAssembly. The fixture runner passes 26 files with zero errors/warnings.
+Analysis, formatting, regenerated parity and all port checks pass. The temporary
+browser harness was removed. No golden image was changed.
+
+## 34. Scalar geometry for ordinary bar drawing
+
+2026-11-02. [ADR 0067](adr/0067-scalar-bar-geometry.md) removes temporary corner,
+bounds and inflated-rectangle objects from the ordinary BarElement draw. The
+branch accepts only the exact built-in element, final typed options/edges,
+numeric zero radius, positive-zero inflation, finite scalar border width and
+positive finite outer bounds. It preserves every canvas call, its order, the
+color-setter timing and the final current path. Other inputs keep the original
+path. There is no option/geometry cache or native renderer substitution.
+
+A/B/B/A against §33's bounded-recording implementation, Apple M3 Max,
+macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7, arm64 profile AOT, Impeller,
+800 × 480 at DPR 1. Seven 200 ms batches follow 800 ms warmup. Full CPU calls
+sum update/tick, draw and host paint/completion in each process before taking
+the median of its two results. No builds/tests ran alongside measurements.
+
+| N | Bar draw full call, before → after | Animation frame CPU, before → after | Bar update full call, before → after |
+| ---: | ---: | ---: | ---: |
+| 1000 | 1.101 → 0.967 ms | 1.119 → 0.997 ms | 3.237 → 3.269 ms |
+| 5000 | 4.039 → 3.327 ms | 4.374 → 3.635 ms | 14.584 → 13.563 ms |
+| 20000 | 15.569 → 13.182 ms | 17.532 → 14.883 ms | 59.498 → 56.507 ms |
+
+**Keep the change.** At 20k, draw full calls improve 15.3% and animation frame
+CPU 15.1%. Both pairs pass the predeclared 10% gate. Drawing itself is
+13.389 → 10.949 ms in draw-only and 13.937 → 11.284 ms during animation.
+No rounded/inflated-bar or line/bubble/doughnut control has a repeatable full-call
+regression above both 5% and 0.1 ms. The 20k full-update result is noisier:
+its pairs improve 0.6% and 9.3%; dataset updating is unchanged and dominates it.
+
+Separate foreground stress runs at 20k bars give:
+
+| Operation | Before FPS | After FPS | Before/after average build | Before/after average raster |
+| --- | ---: | ---: | ---: | ---: |
+| Update each frame | 15.15 | 16.28 | 60.01 → 57.56 ms | 14.44 → 14.49 ms |
+| Looping animation | 48.88 | 58.43 | 18.84 → 16.50 ms | 14.41 → 14.72 ms |
+
+These are one local profile-mode process per cell, with exact process activation,
+not a platform-wide FPS guarantee. Each scenario runs for 25 seconds; the candidate
+animation has 18 complete timing windows and the other cells 24. The shorter
+coverage is retained in the raw evidence. Its build P90 is 17.26 ms: animation is
+close to 60 FPS but is not a measured sustained 60 FPS result. Continuous updates
+remain limited by dataset-controller work.
+
+[Protocol, patches, raw profiles/timings, foreground windows and validation](benchmarks/bar-draw/README.md)
+retain the preliminary scalar implementation and the final signed-zero/degenerate
+fallback refinements separately. The test grid compares drawing traces for 3,456 input combinations,
+extra fallback/getter cases, and 108 exact pixel twins against the
+unchanged subclass path. No bar is aggregated or dropped, and no golden is updated.
+
+Validation: all 10,688 workspace tests pass (the Chart.js package has 10,154
+passes and 84 skips). All ten targeted tests pass in both Chrome JavaScript and
+WebAssembly. Fixtures pass 26 files with zero errors/warnings. Analysis,
+formatting, regenerated parity and all port checks pass. The temporary browser
+harness was removed; no golden files were changed.
+
+## 35. Live bar update layout and property construction
+
+2026-11-02. [ADR 0068](adr/0068-live-bar-update-layout.md) targets the remaining
+update cost after §34. For the ordinary single-dataset case it proves the current
+axis count and axis/stack position through guarded native reads. It observes
+state before and after category-trait resolution, reusing a proof only across
+cached primitive reads that cannot execute user code. Container types are
+classified by identity, but values, routes, list lengths and metadata remain live.
+Unknown/custom/multiple-dataset/indexed-stack cases retain the original path.
+
+Owned finite nondecreasing scale values also skip sorting, with uniqueness
+unchanged. BarProperties constructs its initial seven fields and key-order bits
+together, preserving independent objects, field order and later mutations.
+No parsing, point, callback or draw is suppressed.
+
+A/B/B/A against the validated §34 runtime, Apple M3 Max, macOS 27.0.1,
+Flutter 3.47.8 / Dart 3.13.7, arm64 profile AOT, Impeller, 800 × 480 at DPR 1.
+Seven 200ms batches follow 800ms warmup; no builds/tests run alongside timing.
+Full calls sum update, draw and host paint/completion in each process first.
+
+| N | Full update CPU, before → after | Improvement |
+| ---: | ---: | ---: |
+| 1000 | 3.070 → 2.039 ms | 33.6% |
+| 5000 | 14.020 → 8.062 ms | 42.5% |
+| 20000 | 55.747 → 35.962 ms | 35.5% |
+
+At 20k, update-only work falls 42.436 → 21.764ms, including dataset updating
+37.855 → 17.404ms. Keep the component tradeoff: draw inside an update increases
+11.012 → 11.948ms; paint/completion stays about 2.3ms. Full calls improve in both
+pairs (34.9% and 36.1%), exceeding the predeclared 20% gate.
+
+**Keep the change.** No control has a repeatable regression above both 5% and
+0.1ms. The controls include rounded/inflated bars, multiple datasets, skipNull,
+scriptable colors and line/bubble/doughnut. The 20k animation pairs vary (+5.5%
+and -3.7%); both are retained. Draw-only remains essentially unchanged.
+
+Foreground 25-second stress runs at 20k bars give:
+
+| Operation | Before FPS | After FPS | Before/after average build | Before/after average raster |
+| --- | ---: | ---: | ---: | ---: |
+| Update each frame | 16.59 | 23.97 | 56.88 → 37.55 ms | 12.56 → 13.54 ms |
+| Looping animation | 59.90 | 59.81 | 15.85 → 16.08 ms | 13.46 → 13.71 ms |
+
+These are local profile-mode measurements with exact process activation and
+24–25 complete one-second windows per run. Continuous updates still do not reach
+60 FPS: the remaining update, parsing and drawing exceed the 16.67ms frame budget.
+No mobile/web performance gain is inferred.
+
+[Protocol, patches, profiles, all timings, foreground windows and validation](benchmarks/bar-update/README.md)
+retain the failed initial guard (runtimeType inspection dominated it), the
+identity-classification iteration and the final pure-trait/property-construction
+version. The native branch is tested against the original subclass path through
+mutations and reentrant updates, with explicit cold-cache and custom-source guards.
+
+Validation: all 10,700 workspace tests pass (the Chart.js package has 10,166
+passes and 84 skips). All twelve targeted tests pass in each of Chrome JavaScript
+and WebAssembly. Fixtures pass 26 files with zero errors/warnings. Analysis,
+formatting, regenerated parity and all port checks pass. The temporary browser
+harness was removed. No golden files were changed.
+
+## 36. Bulk numeric bar updates
+
+2026-11-02. [ADR 0069](adr/0069-bulk-numeric-bar-updates.md) preserves the first
+ordinary item and preflights the remainder of an update in mode `none`. Eligible
+native numeric bars reuse scalar settings and base/grid calculations and write
+element fields directly, preserving order, visibility, fresh skipped-edge
+objects, shared options and undefined state. No parsing, hook, callback or bar
+is dropped. Unsupported inputs retain the ordinary loop before any bulk writes.
+Visible axes qualify only with proven static grid lookups; scriptable grids do not.
+
+A/B/B/A against §35, Apple M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7,
+arm64 profile AOT, Impeller, 800 × 480 at DPR 1. Seven 200ms batches follow 800ms
+warmup, with no concurrent builds/tests. Full calls sum update, draw and host
+paint/completion within each process before taking the median of its two runs.
+
+| N | Full update CPU, before → after | Improvement |
+| ---: | ---: | ---: |
+| 1000 | 2.187 → 1.577 ms | 27.9% |
+| 5000 | 8.923 → 5.530 ms | 38.0% |
+| 20000 | 37.582 → 26.876 ms | 28.5% |
+
+At 20k, update-only work falls 22.872 → 10.382ms and dataset updating
+18.212 → 4.704ms. Retain the component tradeoff: drawing inside updates rises
+12.394 → 14.042ms, and element preparation 3.697 → 4.540ms in this series.
+The full call includes these costs. Their shifts have not been isolated.
+
+**Keep the change.** Both 20k pairs exceed the 15% gate (31.1% and 25.5%). No
+control has a repeatable regression above both 5% and 0.1ms. Controls include
+rounded/inflated bars, multiple datasets, skipNull, scriptable colors, other chart
+types, draw and animation. All measurements are retained.
+
+A fresh foreground comparison checks process activity throughout each 25-second
+scenario; every check is active and both runs retain 24 one-second windows:
+
+| Metric at 20000 bars | Before | After |
+| --- | ---: | ---: |
+| Continuous update FPS | 23.88 | 31.12 |
+| Average update computation | 21.86 ms | 9.89 ms |
+| Average Flutter build | 37.54 ms | 27.22 ms |
+| Average raster | 14.09 ms | 13.74 ms |
+
+These are local profile-mode results, one process per cell. The full frame still
+exceeds the 16.67ms budget for 60 FPS; drawing/painting now costs more than the
+bulk update. No mobile/web performance gain is inferred.
+
+[Protocol, source patches, every timing run, activity monitoring and validation](benchmarks/bar-bulk/README.md)
+retain the initial inactive guard and the shorter preliminary foreground sample.
+Activation and geometry tests cover both orientations, static visible grids,
+callback-preserving fallbacks, partial ranges, custom classes and late invalid
+items. An owner-mismatch guard also prevents borrowing a scale from another chart.
+
+Validation: all 10,713 workspace tests pass (the Chart.js package has 10,179
+passes and 84 skips), as do all thirteen targeted tests in each of Chrome
+JavaScript and WebAssembly. Fixtures pass 26 files with zero errors/warnings.
+Analysis, formatting, regenerated parity and all port checks pass. The temporary
+browser harness was removed. No golden files were changed.

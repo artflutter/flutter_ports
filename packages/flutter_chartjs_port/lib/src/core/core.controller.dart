@@ -35,6 +35,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
@@ -626,7 +628,12 @@ Config _colorConfig(Object? userConfig) {
 }
 
 /// core.controller.js:103 `Chart`.
-class Chart implements types.Chart, CategoryLabelSource {
+class Chart
+    implements
+        types.Chart,
+        CategoryLabelSource,
+        SingleBarIndexSource,
+        BulkBarChart {
   /// core.controller.js:123 `constructor(item, userConfig)`.
   ///
   /// [item] is a canvas element, a context, an object with a `canvas`, or
@@ -995,6 +1002,96 @@ class Chart implements types.Chart, CategoryLabelSource {
   }) => supportsNativeCategoryLabels
       ? config.categoryLabels(explicitLabels, horizontal: horizontal)
       : null;
+
+  /// Timing wrappers may opt in only when config/options/scales/metas and
+  /// their virtual enumeration methods retain Chart's ordinary behavior.
+  @internal
+  bool get supportsNativeBarIndexReads => runtimeType == Chart;
+
+  /// Bulk updates additionally require ordinary context, pixel-ratio and
+  /// visibility behavior. Timing-only wrappers may explicitly opt in.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-bulk-bar-update, ordinary native chart reads.
+  bool get supportsBulkBarUpdate => super.runtimeType == Chart;
+
+  final _barScaleKeys = BarScaleKeys();
+  static final Type _nativeMetaListType = <ChartMeta?>[].runtimeType;
+  List<ChartMeta?>? _barMetaList;
+  bool _barMetaListNative = false;
+
+  /// Recheck live topology at the original observation point. There is no
+  /// snapshot of dataset/scale/stack values that can survive a callback.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-live-bar-layout, single-dataset topology proof.
+  bool hasSingleBarIndexLayout(
+    types.DatasetController controller,
+    types.Scale scale,
+  ) {
+    if (!supportsNativeBarIndexReads ||
+        controller is! NativeBarIndexReads ||
+        !(controller as NativeBarIndexReads).supportsNativeBarIndexReads ||
+        scale is! NativeBarIndexReads ||
+        !(scale as NativeBarIndexReads).supportsNativeBarIndexReads ||
+        controller is! DatasetController ||
+        !identical(controller.chart, this) ||
+        !identical(scale.chart, this) ||
+        controller.index != 0) {
+      return false;
+    }
+    if (_options.runtimeType != OptionView || config.runtimeType != Config) {
+      return false;
+    }
+    final axis = _options.cachedBarIndexAxis;
+    if (axis == null || !config.hasNativeSingleBarDataset(axis)) return false;
+    final metas = sortedMetasets;
+    if (!identical(metas, _barMetaList)) {
+      _barMetaList = metas;
+      _barMetaListNative = metas.runtimeType == _nativeMetaListType;
+    }
+    if (!_barMetaListNative || metas.length != 1) {
+      return false;
+    }
+    final meta = metas[0];
+    if (meta == null ||
+        !identical(meta, controller.cachedMeta) ||
+        !identical(meta.controller, controller) ||
+        !identical(meta.iScale, scale) ||
+        meta.type != 'bar') {
+      return false;
+    }
+    final name = meta.stack;
+    if (!(name == null ||
+        name is String ||
+        name is num ||
+        name is bool ||
+        identical(name, undefined))) {
+      return false;
+    }
+    final grouped = controller.options;
+    final stacked = scale.options;
+    if (grouped.runtimeType != OptionView ||
+        !grouped.hasCachedBarGrouping ||
+        stacked is! OptionView ||
+        stacked.runtimeType != OptionView ||
+        !stacked.hasCachedBarStacking) {
+      return false;
+    }
+    final scaleAxis = scale.axis;
+    if ((scaleAxis != 'x' && scaleAxis != 'y') ||
+        (scaleAxis == 'x' ? meta.xAxisID : meta.yAxisID) is! String) {
+      return false;
+    }
+    // Preserve the first-scale search order and short circuit. A later custom
+    // or uninitialized scale was not read by the upstream search either.
+    for (final key in _barScaleKeys.read(scales)) {
+      final candidate = scales[key]!;
+      if (!candidate.supportsNativeBarIndexReads) return false;
+      if (candidate.axis == axis) return true;
+    }
+    return false;
+  }
 
   /// core.controller.js:213 `get data()`.
   @override

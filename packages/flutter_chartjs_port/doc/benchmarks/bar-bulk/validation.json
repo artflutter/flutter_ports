@@ -1,0 +1,41 @@
+{
+  "workspaceTests": {
+    "status": "passed",
+    "passed": 10713,
+    "chartjsPortPassed": 10179,
+    "chartjsPortSkipped": 84,
+    "excludes": [
+      "fixtures",
+      "golden"
+    ]
+  },
+  "newTests": 13,
+  "chromeJavaScript": {
+    "passed": 13
+  },
+  "chromeWebAssembly": {
+    "passed": 13
+  },
+  "fixtures": {
+    "files": 26,
+    "errors": 0,
+    "warnings": 0
+  },
+  "analyze": "passed, no issues",
+  "format": "passed, 770 files, zero changes",
+  "portChecks": "passed",
+  "parity": "passed, zero errors/warnings",
+  "goldensChanged": false,
+  "fullWebSuiteRun": false,
+  "performanceGates": "passed",
+  "logs": {
+    "workspaceTests": "workspaceTests.log.gz",
+    "chromeJavaScript": "chromeJavaScript.log.gz",
+    "chromeWebAssembly": "chromeWebAssembly.log.gz",
+    "fixtures": "fixtures.log.gz",
+    "analyze": "analyze.log.gz",
+    "parity": "parity.log.gz",
+    "portChecks": "portChecks.log.gz",
+    "format": "format.log.gz"
+  }
+}

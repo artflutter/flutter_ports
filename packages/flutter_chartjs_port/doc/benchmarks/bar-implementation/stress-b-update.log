@@ -1,0 +1,11 @@
+sandbox_extension_issue_file_to_process failed for /tmp/bar-implementation-b.app: 1 (Operation not permitted)
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+flutter: The Dart VM service is listening on http://127.0.0.1:64129/e-GTdxfMPxE=/
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":1,"frames":15,"fps":"15.00","buildMs":"57.963","rasterMs":"16.774"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":2,"frames":14,"fps":"14.00","buildMs":"59.354","rasterMs":"14.478"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":3,"frames":16,"fps":"16.00","buildMs":"60.471","rasterMs":"14.422"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":4,"frames":14,"fps":"14.00","buildMs":"59.358","rasterMs":"14.220"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":5,"frames":15,"fps":"15.00","buildMs":"60.758","rasterMs":"14.400"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":6,"frames":16,"fps":"16.00","buildMs":"62.580","rasterMs":"14.684"}
+flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"14.99","drawMs":"14.19","updateMs":"43.79","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"3.35","layoutMs":"0.73","datasetsUpdateMs":"39.47","datasetsDrawMs":"13.92","host":"canvas","buildMs":"59.51","buildMaxMs":"67.74","rasterMs":"15.05","rasterMaxMs":"40.01","batches":15,"batchFrames":65,"buildP50Ms":"60.19","buildP90Ms":"62.82","rasterP50Ms":"14.37","rasterP90Ms":"14.68","windows":6}
+flutter: STRESS done

@@ -1,0 +1,117 @@
+{
+  "productionCodeChanged": false,
+  "profileBuild": "passed",
+  "geometryTests": {
+    "passed": 2,
+    "counts": [
+      1000,
+      20000
+    ],
+    "updatesPerCount": 4,
+    "includesResize": true,
+    "propertiesPerBar": [
+      "x",
+      "y",
+      "base",
+      "width",
+      "height",
+      "horizontal",
+      "inflateAmount"
+    ]
+  },
+  "nativePixelChecks": [
+    {
+      "mode": "nativeVerify",
+      "n": 1000,
+      "observations": [
+        {
+          "alpha": 255,
+          "overlap": false,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 255,
+          "overlap": true,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 96,
+          "overlap": false,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 96,
+          "overlap": true,
+          "differentChannels": 0,
+          "maxDifference": 0
+        }
+      ]
+    },
+    {
+      "mode": "nativeVerify",
+      "n": 5000,
+      "observations": [
+        {
+          "alpha": 255,
+          "overlap": false,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 255,
+          "overlap": true,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 96,
+          "overlap": false,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 96,
+          "overlap": true,
+          "differentChannels": 0,
+          "maxDifference": 0
+        }
+      ]
+    },
+    {
+      "mode": "nativeVerify",
+      "n": 20000,
+      "observations": [
+        {
+          "alpha": 255,
+          "overlap": false,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 255,
+          "overlap": true,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 96,
+          "overlap": false,
+          "differentChannels": 0,
+          "maxDifference": 0
+        },
+        {
+          "alpha": 96,
+          "overlap": true,
+          "differentChannels": 0,
+          "maxDifference": 0
+        }
+      ]
+    }
+  ],
+  "libraryHashesUnchanged": true,
+  "fullPackageSuiteRun": false,
+  "browserTestsRun": false
+}

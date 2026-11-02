@@ -135,6 +135,34 @@ abstract base class TypedRecord implements JsObjectFace {
   Object? foreignSlot(int slot) =>
       isForeignSlot(slot) ? _foreignValues![slot] : null;
 
+  /// Initialize the first [count] declared fields of a fresh compact record.
+  /// The subclass has already assigned their typed values. This is the own
+  /// key order of the equivalent literal/cascade, without per-field appends.
+  @protected
+  void initializeSlots(int count) {
+    assert(count >= 0 && count <= 7, 'At most seven initial slots');
+    assert(
+      fieldNames.length >= count && fieldNames.length <= _maxGroups,
+      'Initial slots require the compact declared-field layout',
+    );
+    assert(
+      _present == 0 && _count == 0 && _orderList == null,
+      'Only a fresh record can initialize slots',
+    );
+    _present = (1 << count) - 1;
+    _order = const [
+      0,
+      0x1,
+      0x21,
+      0x321,
+      0x4321,
+      0x54321,
+      0x654321,
+      0x7654321,
+    ][count];
+    _count = count;
+  }
+
   /// Marks the field [slot] present after a typed store of a subclass: a
   /// new key goes to the end of the key order, and a foreign value goes.
   @protected

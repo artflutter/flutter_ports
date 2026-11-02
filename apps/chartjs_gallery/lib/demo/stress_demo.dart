@@ -2520,6 +2520,12 @@ final class _StressChart extends Chart with _TickMark implements _StressMeter {
   bool get supportsNativeCategoryLabels => true;
 
   @override
+  bool get supportsNativeBarIndexReads => true;
+
+  @override
+  bool get supportsBulkBarUpdate => true;
+
+  @override
   int drawMicros = 0;
 
   @override

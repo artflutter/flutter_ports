@@ -1,0 +1,17 @@
+{
+  "baseline": "1d37d641bd4847bba8cbff757c68bf326f1f863a",
+  "machine": "Apple M3 Max",
+  "os": "macOS 27.0.1",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "build": "arm64 profile AOT, Impeller",
+  "canvas": [
+    800,
+    480
+  ],
+  "dpr": 1,
+  "baselineCanvasSha256": "54f8732e54086225535526e1eb321d18c9d6b82ad8a9446d37850cc21c39ced8",
+  "candidateCanvasSha256": "f8ac7c18104d3d34abcc2063df06866e5b6fe48907079375d4aabd55a9d3c5ab",
+  "finalCanvasSha256": "e33ccfec6b6dd3d40211c5b3c842b2e01828030052bd362fdc48b944e7116ec5",
+  "finalSourceDifference": "Only comment wrapping relative to the measured runtime source"
+}

@@ -1,0 +1,15 @@
+import subprocess,os,time,re,sys
+from pathlib import Path
+root=Path('/Users/vasilich/IdeaProjects/flutter_ports')
+variant=sys.argv[1]
+with open('/tmp/bar-update-d-profile-'+variant+'.log','w') as log:
+ p=subprocess.Popen(['/tmp/bar-update-d.app/Contents/MacOS/chartjs_gallery'],env={**os.environ,'BAR_PROFILE':'1','BAR_VARIANTS':variant,'BAR_N':'20000','BAR_RUN':'update-d-profile-'+variant},stdout=log,stderr=subprocess.STDOUT)
+ try:
+  for _ in range(200):
+   text=Path(log.name).read_text();m=re.search(r'http://127.0.0.1:(\d+)/(\S+)',text)
+   if m:break
+   time.sleep(.1)
+  else:raise RuntimeError(text)
+  subprocess.run(['dart','--packages='+str(root/'.dart_tool/package_config.json'),str(root/'.dart_tool/bar_scan/profile.dart'),f'ws://127.0.0.1:{m[1]}/{m[2]}ws','/tmp/bar-update-d-profile-'+variant+'.json'],check=True)
+ finally:
+  p.terminate();p.wait()

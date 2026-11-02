@@ -1,0 +1,160 @@
+// Original code, not ported from Chart.js: native recording isolation.
+import 'dart:ui' as ui;
+
+Map<String, Object?> nativeCase(int n, String variant) {
+  final rects = List.generate(
+    n,
+    (i) => ui.Rect.fromLTWH(
+      (i + .14) * 800 / n,
+      ((i * 7919) % 400).toDouble(),
+      .72 * 800 / n,
+      480 - ((i * 7919) % 400).toDouble(),
+    ),
+  );
+  final paint = ui.Paint()..color = const ui.Color(0xFF36A2EB);
+  final path = ui.Path();
+  for (final r in rects) {
+    path.addRect(r);
+  }
+  final clock = Stopwatch()..start();
+  final samples = List.generate(5, (_) => <double>[]);
+  List<int> one() {
+    final t0 = clock.elapsedMicroseconds;
+    var inner = ui.PictureRecorder();
+    var canvas = ui.Canvas(inner);
+    final pictures = <ui.Picture>[];
+    final chunk = variant.contains('chunk') ? 256 : n;
+    if (variant.contains('clip'))
+      canvas.clipRect(const ui.Rect.fromLTWH(0, 0, 800, 480));
+    if (variant.contains('path')) {
+      canvas.drawPath(path, paint);
+    } else {
+      for (var i = 0; i < n; i++) {
+        canvas.drawRect(rects[i], paint);
+        if ((i + 1) % chunk == 0 && i + 1 < n) {
+          pictures.add(inner.endRecording());
+          inner = ui.PictureRecorder();
+          canvas = ui.Canvas(inner);
+          if (variant.contains('clip'))
+            canvas.clipRect(const ui.Rect.fromLTWH(0, 0, 800, 480));
+        }
+      }
+    }
+    final t1 = clock.elapsedMicroseconds;
+    pictures.add(inner.endRecording());
+    final t2 = clock.elapsedMicroseconds;
+    final outer = ui.PictureRecorder();
+    final host = ui.Canvas(outer);
+    host.save();
+    host.clipRect(const ui.Rect.fromLTWH(0, 0, 800, 480));
+    for (final picture in pictures) {
+      host.drawPicture(picture);
+    }
+    host.restore();
+    final t3 = clock.elapsedMicroseconds;
+    final hostPicture = outer.endRecording();
+    final t4 = clock.elapsedMicroseconds;
+    hostPicture.dispose();
+    for (final picture in pictures) {
+      picture.dispose();
+    }
+    final t5 = clock.elapsedMicroseconds;
+    return [t1 - t0, t2 - t1, t3 - t2, t4 - t3, t5 - t4];
+  }
+
+  final warmup = clock.elapsedMilliseconds;
+  while (clock.elapsedMilliseconds - warmup < 800) {
+    one();
+  }
+  for (var b = 0; b < 7; b++) {
+    final sums = List.filled(5, 0);
+    var count = 0;
+    final start = clock.elapsedMilliseconds;
+    do {
+      final result = one();
+      for (var i = 0; i < 5; i++) {
+        sums[i] += result[i];
+      }
+      count++;
+    } while (clock.elapsedMilliseconds - start < 200);
+    for (var i = 0; i < 5; i++) {
+      samples[i].add(sums[i] / count / 1000);
+    }
+  }
+  const names = ['record', 'innerEnd', 'drawPicture', 'outerEnd', 'dispose'];
+  return {
+    'mode': 'native',
+    'case': variant,
+    'n': n,
+    for (var i = 0; i < 5; i++) names[i]: (samples[i]..sort())[3],
+  };
+}
+
+Future<Map<String, Object?>> verifyChunks(int n) async {
+  final observations = <Object?>[];
+  for (final alpha in [255, 96]) {
+    for (final overlap in [false, true]) {
+      Future<List<int>> pixels(int chunk) async {
+        final pictures = <ui.Picture>[];
+        var recorder = ui.PictureRecorder();
+        var canvas = ui.Canvas(recorder);
+        void setup() {
+          canvas.translate(.3, .7);
+          canvas.clipRect(const ui.Rect.fromLTWH(1.2, 2.4, 794.6, 472.2));
+        }
+
+        setup();
+        final paint = ui.Paint()
+          ..color = ui.Color.fromARGB(alpha, 54, 162, 235);
+        for (var i = 0; i < n; i++) {
+          final y = ((i * 7919) % 400).toDouble();
+          canvas.drawRect(
+            ui.Rect.fromLTWH(
+              (i + .14) * 800 / n,
+              y,
+              (overlap ? 1.8 : .72) * 800 / n,
+              480 - y,
+            ),
+            paint,
+          );
+          if ((i + 1) % chunk == 0 && i + 1 < n) {
+            pictures.add(recorder.endRecording());
+            recorder = ui.PictureRecorder();
+            canvas = ui.Canvas(recorder);
+            setup();
+          }
+        }
+        pictures.add(recorder.endRecording());
+        final hostRecorder = ui.PictureRecorder();
+        final host = ui.Canvas(hostRecorder);
+        for (final picture in pictures) {
+          host.drawPicture(picture);
+        }
+        final finalPicture = hostRecorder.endRecording();
+        final image = await finalPicture.toImage(800, 480);
+        final bytes = (await image.toByteData())!.buffer.asUint8List().toList();
+        image.dispose();
+        finalPicture.dispose();
+        for (final p in pictures) {
+          p.dispose();
+        }
+        return bytes;
+      }
+
+      final a = await pixels(n), b = await pixels(256);
+      var different = 0, maxDifference = 0;
+      for (var i = 0; i < a.length; i++) {
+        final d = (a[i] - b[i]).abs();
+        if (d > 0) different++;
+        if (d > maxDifference) maxDifference = d;
+      }
+      observations.add({
+        'alpha': alpha,
+        'overlap': overlap,
+        'differentChannels': different,
+        'maxDifference': maxDifference,
+      });
+    }
+  }
+  return {'mode': 'nativeVerify', 'n': n, 'observations': observations};
+}

@@ -1,0 +1,9 @@
+import os,subprocess
+from pathlib import Path
+for name,variant in [('a1','a'),('b1','b'),('b2','b'),('a2','a')]:
+ run='impl-'+name+'-update'
+ path=Path('/tmp/bar-'+run+'.jsonl')
+ if path.exists():raise RuntimeError('Result exists: '+str(path))
+ with open('/tmp/bar-'+run+'.log','w') as log:
+  subprocess.run(['/tmp/bar-implementation-'+variant+'.app/Contents/MacOS/chartjs_gallery'],env={**os.environ,'BAR_RUN':run,'BAR_VARIANTS':'update','BAR_N':'1000,5000,20000'},stdout=log,stderr=subprocess.STDOUT,check=True)
+ print(run,len(path.read_text().splitlines()),flush=True)

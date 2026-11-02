@@ -1,0 +1,133 @@
+--- controller.bar.dart
++++ controller.dart
+@@ -3,7 +3,7 @@
+ 
+ /// Port of `src/controllers/controller.bar.js`.
+ ///
+-/// [BarController] is the dataset controller of the `bar` charts. It parses
++/// [ProbeBarController] is the dataset controller of the `bar` charts. It parses
+ /// the float bars (`[start, end]`), computes the pixels of each bar from the
+ /// index scale and the value scale, and writes the properties of each
+ /// `BarElement` through `updateElement`.
+@@ -29,7 +29,7 @@
+ ///   `lib/src/types/` and imports no concrete scale, element or chart
+ ///   module (Chart.js ADR 0028, section 1). The draw casts each bar to
+ ///   `types.VisualElement`, as `DatasetController.draw` does.
+-/// - [BarController.jsClass] is the class as a value with the statics `id`,
++/// - [ProbeBarController.jsClass] is the class as a value with the statics `id`,
+ ///   `defaults` and `overrides` (Chart.js ADR 0020, section 3).
+ /// - The memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks`
+ ///   for each bar, the `skipNull` find and the empty object of
+@@ -584,18 +584,18 @@
+   }
+ }
+ 
+-/// controller.bar.js:258 `BarController extends DatasetController`.
+-class BarController extends DatasetController {
+-  /// `new BarController(chart, datasetIndex)`. Upstream declares no
++/// controller.bar.js:258 `ProbeBarController extends DatasetController`.
++class ProbeBarController extends DatasetController {
++  /// `new ProbeBarController(chart, datasetIndex)`. Upstream declares no
+   /// constructor in this class. [newTarget] is `new.target` (Chart.js ADR
+   /// 0020, section 4).
+-  BarController(super.chart, super.datasetIndex, [super.newTarget]);
++  ProbeBarController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
+   /// controller.bar.js:260 `static id = 'bar'`.
+-  static const String id = 'bar';
++  static const String id = 'probe-bar';
+ 
+   /// controller.bar.js:265 `static defaults`, a typed scope of the kind
+-  /// `BarControllerDatasetOptions` (Chart.js ADR 0054 §3).
++  /// `ProbeBarControllerDatasetOptions` (Chart.js ADR 0054 §3).
+   static final BarControllerDatasetOptionsScope defaults =
+       BarControllerDatasetOptionsScope()
+         ..datasetElementType = false
+@@ -626,20 +626,20 @@
+           ..beginAtZero = true,
+       ));
+ 
+-  /// controller.bar.js:258 `class BarController extends DatasetController`
++  /// controller.bar.js:258 `class ProbeBarController extends DatasetController`
+   /// as a value (Chart.js ADR 0020, section 3).
+   ///
+   /// It extends [DatasetController.jsClass]. Its statics are `id`
+   /// (`'bar'`), [defaults] and [overrides], in the upstream order of
+-  /// declaration (:260-298). Its `construct` calls `BarController(chart,
++  /// declaration (:260-298). Its `construct` calls `ProbeBarController(chart,
+   /// datasetIndex, newTarget)` with the arguments of [controllerArgs].
+   static final JsClass jsClass = JsClass(
+-    'BarController',
++    'ProbeBarController',
+     superclass: DatasetController.jsClass,
+     statics: {'id': id, 'defaults': defaults, 'overrides': overrides},
+     construct: (newTarget, args) {
+       final (:chart, :datasetIndex) = controllerArgs(args);
+-      return BarController(chart, datasetIndex, newTarget);
++      return ProbeBarController(chart, datasetIndex, newTarget);
+     },
+   );
+ 
+@@ -848,6 +848,9 @@
+     double count,
+     String mode,
+   ) {
++    _memoAxis = null;
++    _memoFirstSet = false;
++    _memoStackIndex = null;
+     final reset = mode == 'reset';
+     final index = this.index;
+     final vScale = cachedMeta.vScale;
+@@ -1011,6 +1014,13 @@
+   /// `indexAxis` option. Dart `null` stands for the JS `undefined` of
+   /// `shift()` on an empty array.
+   String? getFirstScaleIdForIndexAxis() {
++    if (_memoFirstSet) return _memoFirst;
++    _memoFirst = _firstUncached();
++    _memoFirstSet = true;
++    return _memoFirst;
++  }
++
++  String? _firstUncached() {
+     final scales = chart.scales;
+     final indexScaleId = readOption(chart.options, OptionKey.indexAxis);
+     // The `Object.keys` order of the scale ids of the user.
+@@ -1040,7 +1050,8 @@
+   /// `forEach` first. The port tests for a List and needs no cast (IV
+   /// §4.8). It throws a [TypeError] for another value, as `for...of` does
+   /// for a value that is not iterable.
+-  List<String> _getAxis() {
++  List<String> _getAxis() => _memoAxis ??= _getAxisUncached();
++  List<String> _getAxisUncached() {
+     final axis = <String, Object?>{};
+     final firstScaleAxisId = getFirstScaleIdForIndexAxis();
+     // The data object of the user.
+@@ -1082,12 +1093,15 @@
+     Object? name = undefined,
+     double? dataIndex,
+   ]) {
++    if (dataIndex == null && _memoStackIndex != null) return _memoStackIndex!;
+     final stacks = _getStacks(datasetIndex, dataIndex);
+     final index = !identical(name, undefined)
+         ? stacks.indexWhere((stack) => _strictEquals(stack, name))
+         : -1; // indexOf returns -1 if element is not present
+ 
+-    return (index == -1 ? stacks.length - 1 : index).toDouble();
++    final result = (index == -1 ? stacks.length - 1 : index).toDouble();
++    if (dataIndex == null) _memoStackIndex = result;
++    return result;
+   }
+ 
+   /// controller.bar.js:532 `_getRuler()`.
+@@ -1095,6 +1109,11 @@
+   ///
+   /// `pixels` is a [Float64List]: an internal array of numbers that no user
+   /// code reaches (Chart.js ADR 0054 §8).
++  List<String>? _memoAxis;
++  String? _memoFirst;
++  bool _memoFirstSet = false;
++  double? _memoStackIndex;
++
+   _Ruler _getRuler() {
+     final opts = options;
+     final meta = cachedMeta;

@@ -220,6 +220,20 @@ final class BarProperties extends TypedRecord {
   /// An object without own keys.
   BarProperties();
 
+  /// The initial seven fields of controller.bar's property literal, in the
+  /// same own-key order. Later options/edge/inflation writes keep that order.
+  BarProperties.geometry({
+    required this._horizontal,
+    required this._base,
+    required this._enableBorderRadius,
+    required this._x,
+    required this._y,
+    required this._height,
+    required this._width,
+  }) {
+    initializeSlots(7);
+  }
+
   static const List<String> _fieldNames = [
     'horizontal',
     'base',

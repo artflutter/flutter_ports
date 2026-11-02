@@ -1,0 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:vm_service/vm_service_io.dart';
+
+Future<void> main(List<String> args) async {
+  final service = await vmServiceConnectUri(args[0]);
+  await service.setFlag('profiler', 'true');
+  final vm = await service.getVM();
+  final isolate = vm.isolates!.firstWhere((i) => i.name == 'main');
+  await Future<void>.delayed(const Duration(seconds: 9));
+  await service.clearCpuSamples(isolate.id!);
+  await Future<void>.delayed(const Duration(seconds: 10));
+  final samples = await service.getCpuSamples(isolate.id!, 0, 1 << 62);
+  await File(args[1]).writeAsString(jsonEncode(samples.toJson()));
+  print('samples: ${samples.sampleCount}');
+  await service.dispose();
+}

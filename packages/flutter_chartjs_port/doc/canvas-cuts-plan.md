@@ -2302,3 +2302,46 @@ The rule follows judge-r §5.1-§5.2 and the rule of the typed series of phase 1
 4. **The web.** No repository suite runs the `dart:ui` layer on the web (§2.6). The forms use
    `drawArc` and `drawRawAtlas` with colors, which skwasm and CanvasKit have. The browser runs of
    the night check them.
+
+### 7.9 Bounded recordings after the bar pipeline investigation
+
+2026-11-02. The new evidence in [bar-performance.md](bar-performance.md) isolates
+native `Canvas.drawPicture` bounds consolidation as the dominant cost of dense
+bar painting. [ADR 0066](adr/0066-bounded-canvas-recordings.md) splits recordings
+after 256 non-batched paint calls, preserving operation order and replaying the
+existing clip stack at the next recording. This addresses §7.8 item 3's recording
+question: the large local cost is embedding the picture, not endRecording itself.
+
+The previous picture-count flattening rule becomes a paint-generation limit:
+eight completed generations, independently of their internal picture chunks.
+Small recordings and circle batching retain their existing paths. This adds no
+shape aggregation, atlas approximation, sampling or layer at a split. The
+`canvas_ui_chunks_test.dart` regressions cover all composite modes and mixed
+gradient/pattern/text/image/stroke work across boundaries, clip restoration,
+partial clears, full clear, snapshots, resize, history flattening and circle runs.
+The performance figures and retained full-call control measurements are in
+performance.md §33 and benchmarks/bar-implementation/. No mobile gain is inferred
+from the macOS measurement, and this does not reopen the rejected R1–R6 forms.
+
+### 7.10 Scalar preparation of ordinary bars
+
+2026-11-02. [ADR 0067](adr/0067-scalar-bar-geometry.md) removes temporary bounds,
+corner and inflated-rectangle objects from the ordinary typed BarElement draw.
+It keeps the canvas calls (including the empty inner fill) unchanged and leaves
+rounded/inflated/custom/degenerate cases on the existing path. N1–N5 and the
+recording chunks of ADR 0066 are unchanged; this is element preparation rather
+than a new renderer shape or batching rule. Exact trace and pixel regressions
+are in `test/port/elements/element.bar_rectangular_test.dart`. The measurements
+and fallback/other-chart controls are in performance.md §34 and
+benchmarks/bar-draw/. Do not infer gains for the rejected R1–R6 forms.
+
+### 7.11 Bulk numeric updates before drawing
+
+2026-11-02. [ADR 0069](adr/0069-bulk-numeric-bar-updates.md) changes the controller's
+numeric update preparation and adds a guarded native element writer. It does not
+change BarElement.draw, native shape calls, paint order, the N1–N5 renderer paths
+or ADR 0066's recording chunks. The update improves while drawing remains a major
+frame cost. Eligibility and exact-state/callback regressions are in
+`test/port/controllers/bar_bulk_update_test.dart`; timings and controls are in
+performance.md §36 and benchmarks/bar-bulk/. No rejected rendering approximation
+is introduced by this update path.

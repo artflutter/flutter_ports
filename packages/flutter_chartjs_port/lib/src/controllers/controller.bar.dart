@@ -42,6 +42,9 @@ library;
 
 import 'dart:typed_data';
 
+import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show
         DatasetController,
@@ -134,7 +137,21 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
     // `values.concat(...)`: a new List.
     values = values + visibleMetas[i].controller!.getAllParsedValues(scale);
   }
-  final unique = arrayUnique(jsSort(values, (a, b) => a - b));
+  // DIVERGES(chartjs): adapt-live-bar-layout, owned numeric sorted input.
+  // Concatenation above owns this list even if a custom controller supplied
+  // its source. No user comparator/getter is omitted by this numeric scan.
+  var ordered = true;
+  var previous = double.negativeInfinity;
+  for (final value in values) {
+    if (!value.isFinite || value < previous) {
+      ordered = false;
+      break;
+    }
+    previous = value;
+  }
+  final unique = arrayUnique(
+    ordered ? values : jsSort(values, (a, b) => a - b),
+  );
   scale.cache.bar = unique;
   return unique;
 }
@@ -585,7 +602,7 @@ void _setInflateAmount(
 }
 
 /// controller.bar.js:258 `BarController extends DatasetController`.
-class BarController extends DatasetController {
+class BarController extends DatasetController implements NativeBarIndexReads {
   /// `new BarController(chart, datasetIndex)`. Upstream declares no
   /// constructor in this class. [newTarget] is `new.target` (Chart.js ADR
   /// 0020, section 4).
@@ -642,6 +659,13 @@ class BarController extends DatasetController {
       return BarController(chart, datasetIndex, newTarget);
     },
   );
+
+  late final bool _nativeBarIndexReads = runtimeType == BarController;
+
+  /// Unknown subclasses retain their getDataset/getParsed/stack overrides.
+  @override
+  @internal
+  bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
 
   /// controller.bar.js:306 `parsePrimitiveData(meta, data, start, count)`.
   ///
@@ -871,19 +895,20 @@ class BarController extends DatasetController {
           ? axisStackOf(itemStacks, vKey, vAxis)
           : undefined;
 
-      final properties = BarProperties()
-        ..horizontal = horizontal
-        ..base = vpixels.base
+      final properties = BarProperties.geometry(
+        horizontal: horizontal,
+        base: vpixels.base,
         // :410 `!stack || isFloatBar(parsed._custom) || (index ===
         // stack._top || index === stack._bottom)`.
-        ..enableBorderRadius =
+        enableBorderRadius:
             !jsTruthy(stack) ||
             _isFloatBar(_customOf(parsed)) ||
-            (index == _stackTop(stack) || index == _stackBottom(stack))
-        ..x = horizontal ? vpixels.head : ipixels.center
-        ..y = horizontal ? ipixels.center : vpixels.head
-        ..height = horizontal ? ipixels.size : vpixels.size.abs()
-        ..width = horizontal ? vpixels.size.abs() : ipixels.size;
+            (index == _stackTop(stack) || index == _stackBottom(stack)),
+        x: horizontal ? vpixels.head : ipixels.center,
+        y: horizontal ? ipixels.center : vpixels.head,
+        height: horizontal ? ipixels.size : vpixels.size.abs(),
+        width: horizontal ? vpixels.size.abs() : ipixels.size,
+      );
 
       if (includeOptions) {
         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
@@ -901,7 +926,179 @@ class BarController extends DatasetController {
       _setBorderSkipped(properties, options, stack, index);
       _setInflateAmount(properties, options, ruler.ratio);
       updateElement(bars[i.toInt()], i, properties, mode);
+      // The first ordinary item resolves options at their original points.
+      // Qualification for the remainder runs no user code and writes nothing.
+      // DIVERGES(chartjs): adapt-bulk-bar-update, guarded numeric remainder.
+      if (i == start &&
+          mode == 'none' &&
+          includeOptions &&
+          sharedOptions is BarOptions &&
+          _updateBulk(
+            bars,
+            i + 1,
+            start + count,
+            ruler,
+            vScale,
+            vAxis,
+            horizontal,
+            sharedOptions,
+          )) {
+        return;
+      }
     }
+  }
+
+  /// Preflight the entire remaining range before direct native writes. There
+  /// can be no callback between the captured settings and the final element.
+  bool _updateBulk(
+    List<types.Element> bars,
+    double first,
+    double end,
+    _Ruler ruler,
+    types.Scale valueScale,
+    String valueAxis,
+    bool horizontal,
+    BarOptions shared,
+  ) {
+    if (super.runtimeType != BarController) return false;
+    final owner = chart;
+    if (owner is! BulkBarChart ||
+        !(owner as BulkBarChart).supportsBulkBarUpdate ||
+        owner is! SingleBarIndexSource ||
+        valueScale is! BulkBarScale ||
+        !(valueScale as BulkBarScale).supportsBulkBarUpdate ||
+        !identical(valueScale.chart, owner) ||
+        !identical(cachedMeta.vScale, valueScale) ||
+        valueScale.axis != valueAxis ||
+        !(valueAxis == 'x' || valueAxis == 'y') ||
+        !identical(cachedMeta.stacked, false) ||
+        !identical(ruler.grouped, true) ||
+        !(owner as SingleBarIndexSource).hasSingleBarIndexLayout(
+          this,
+          ruler.scale,
+        )) {
+      return false;
+    }
+    final settings = options.cachedBulkBarOptions;
+    if (settings == null ||
+        !(valueScale as BulkBarScale).hasStaticBulkBarGrid) {
+      return false;
+    }
+    final edge = shared.borderSkippedValue;
+    if (!(edge == null ||
+        identical(edge, undefined) ||
+        edge is bool ||
+        edge is String)) {
+      return false;
+    }
+    final amount = shared.inflateAmountValue;
+    final double inflate;
+    if (amount is String && amount == 'auto') {
+      inflate = ruler.ratio == 1 ? 0.33 : 0;
+    } else if (amount is num && amount.isFinite) {
+      inflate = amount.toDouble();
+    } else {
+      return false;
+    }
+    final parsed = cachedMeta.parsed;
+    if (!nativeBulkBarLists(bars, parsed) ||
+        !first.isFinite ||
+        !end.isFinite ||
+        first < 0 ||
+        end <= first ||
+        first != first.truncateToDouble() ||
+        end != end.truncateToDouble() ||
+        end > bars.length ||
+        end > parsed.length ||
+        end > ruler.pixels.length) {
+      return false;
+    }
+    final begin = first.toInt();
+    final stop = end.toInt();
+    final values = Float64List(stop - begin);
+    final key = AxisKey.of(valueAxis);
+    for (var i = begin; i < stop; i++) {
+      final element = bars[i];
+      final item = parsed[i];
+      if (element is! BulkBarElement ||
+          !(element as BulkBarElement).supportsBulkBarWrites ||
+          item is! ParsedItem ||
+          item.hasForeign ||
+          item.hasSlot(3) ||
+          item.hasSlot(4)) {
+        return false;
+      }
+      final value = item.valueOf(key);
+      if (value is! num || !value.isFinite) return false;
+      values[i - begin] = value.toDouble();
+    }
+    final stacks = ruler.stackCount;
+    if (!stacks.isFinite || stacks <= 0) return false;
+    final double size;
+    final double ratio;
+    if (settings.thickness case final thickness?) {
+      size = thickness * stacks;
+      ratio = 1;
+    } else {
+      final minimum = ruler.min;
+      if (minimum is! num || !minimum.isFinite) return false;
+      size = minimum.toDouble() * settings.categoryPercentage;
+      ratio = settings.barPercentage;
+    }
+    final chunk = size / stacks;
+    final breadth = jsMin(settings.maxThickness, chunk * ratio);
+    if (!size.isFinite || !chunk.isFinite || !breadth.isFinite) return false;
+    final basePixel = valueScale.getPixelForValue(settings.base);
+    final actualBase = settings.base == 0 ? 0.0 : settings.base;
+    final actualBasePixel = valueScale.getPixelForValue(actualBase);
+    if (!basePixel.isFinite || !actualBasePixel.isFinite) return false;
+    double? gridWidth;
+    for (var i = begin; i < stop; i++) {
+      var base = basePixel;
+      final head = chart.getDataVisibility(i)
+          ? valueScale.getPixelForValue(0.0 + values[i - begin])
+          : base;
+      var length = head - base;
+      if (base == actualBasePixel) {
+        // Preserve the first tick-context creation at the original point.
+        gridWidth ??= valueScale.getLineWidthForValue(actualBase);
+        final halfGrid = sign(length) * gridWidth / 2;
+        base += halfGrid;
+        length -= halfGrid;
+      }
+      // Keep upstream operation order, including the zero stack-index term.
+      final rangeStart = ruler.pixels[i] - size / 2;
+      final center = rangeStart + chunk * 0.0 + chunk / 2;
+      final BorderSkipped skipped;
+      if (identical(edge, true)) {
+        skipped = BorderSkipped.all();
+      } else {
+        skipped = BorderSkipped();
+        if (edge is String && edge.isNotEmpty) {
+          _skipEdge(
+            skipped,
+            _parseEdge(
+              edge,
+              horizontal ? 'left' : 'bottom',
+              horizontal ? 'right' : 'top',
+              horizontal ? base > head : base < head,
+            ),
+          );
+        }
+      }
+      (bars[i] as BulkBarElement).writeBulkBar(
+        horizontal: horizontal,
+        base: base,
+        x: horizontal ? head : center,
+        y: horizontal ? center : head,
+        height: horizontal ? breadth : length.abs(),
+        width: horizontal ? length.abs() : breadth,
+        options: shared,
+        skipped: skipped,
+        inflate: inflate,
+      );
+    }
+    return true;
   }
 
   /// controller.bar.js:434 `_getStacks(last, dataIndex)`.
@@ -1266,7 +1463,19 @@ class BarController extends DatasetController {
     );
     double center;
     double size;
-    final axisCount = _getAxisCount();
+    // DIVERGES(chartjs): adapt-live-bar-layout, check live state twice.
+    final source = supportsNativeBarIndexReads && chart is SingleBarIndexSource
+        ? chart as SingleBarIndexSource
+        : null;
+    final direct =
+        !jsTruthy(skipNull) &&
+        source != null &&
+        source.hasSingleBarIndexLayout(this, scale);
+    final axisCount = direct ? 1.0 : _getAxisCount();
+    final pureTraits =
+        direct &&
+        options.runtimeType == OptionView &&
+        options.hasCachedStaticBarTraits;
     if (jsTruthy(ruler.grouped)) {
       final stackCount = jsTruthy(skipNull)
           ? getStackCount(index)
@@ -1284,20 +1493,29 @@ class BarController extends DatasetController {
               options,
               stackCount * axisCount,
             );
-      final axisID = _indexAxisIdOf(getDataset());
-      final axes = _getAxis();
-      final axisKey = valueOrDefault(
-        axisID,
-        getFirstScaleIdForIndexAxis() ?? undefined,
-      );
-      final axisNumber = axes.indexWhere((key) => key == axisKey);
-      final stackIndex =
-          getStackIndex(
-            this.index,
-            cachedMeta.stack,
-            jsTruthy(skipNull) ? index : null,
-          ) +
-          axisNumber;
+      final double stackIndex;
+      // Range options may run user callbacks and mutate axes or datasets.
+      // Observe the topology again exactly where the original does.
+      if (!jsTruthy(skipNull) &&
+          source != null &&
+          (pureTraits || source.hasSingleBarIndexLayout(this, scale))) {
+        stackIndex = 0;
+      } else {
+        final axisID = _indexAxisIdOf(getDataset());
+        final axes = _getAxis();
+        final axisKey = valueOrDefault(
+          axisID,
+          getFirstScaleIdForIndexAxis() ?? undefined,
+        );
+        final axisNumber = axes.indexWhere((key) => key == axisKey);
+        stackIndex =
+            getStackIndex(
+              this.index,
+              cachedMeta.stack,
+              jsTruthy(skipNull) ? index : null,
+            ) +
+            axisNumber;
+      }
       center = range.start + (range.chunk * stackIndex) + (range.chunk / 2);
       size = jsMin(maxBarThickness, range.chunk * jsToNumber(range.ratio));
     } else {

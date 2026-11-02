@@ -1,0 +1,49 @@
+{
+  "workspaceTests": {
+    "status": "passed",
+    "passed": 10688,
+    "chartjsPortPassed": 10154,
+    "chartjsPortSkipped": 84,
+    "excludes": [
+      "fixtures",
+      "golden"
+    ]
+  },
+  "newBarTests": 10,
+  "traceGridPairs": 3456,
+  "additionalFallbackCases": true,
+  "pixelPairs": 108,
+  "chromeJavaScript": {
+    "passed": 10
+  },
+  "chromeWebAssembly": {
+    "passed": 10
+  },
+  "fixtures": {
+    "files": 26,
+    "errors": 0,
+    "warnings": 0
+  },
+  "analyze": "passed, no issues",
+  "format": "passed, 766 files, zero changes",
+  "portChecks": "passed",
+  "parity": "passed, zero errors/warnings",
+  "goldensChanged": false,
+  "fullWebSuiteRun": false,
+  "logs": {
+    "workspaceTests": "workspaceTests.log.gz",
+    "targetedBarTests": "targetedBarTests.log.gz",
+    "finalGuardTests": "finalGuardTests.log.gz",
+    "chromeJavaScript": "chromeJavaScript.log.gz",
+    "chromeWebAssembly": "chromeWebAssembly.log.gz",
+    "fixtures": "fixtures.log.gz",
+    "analyze": "analyze.log.gz",
+    "parity": "parity.log.gz",
+    "portChecks": "portChecks.log.gz",
+    "format": "format.log.gz"
+  },
+  "performanceGates": "passed",
+  "newProductionRuntimeFiles": [
+    "lib/src/elements/element.bar.dart"
+  ]
+}

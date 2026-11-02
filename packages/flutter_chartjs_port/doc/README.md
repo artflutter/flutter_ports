@@ -25,6 +25,11 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Performance:** [performance.md](performance.md), the profile builds of the gallery stress demo
   on macOS, in Chrome and on an Android phone, two baselines (plain Flutter and the Chrome
   canvas), and the changes that the builds caused, for example the circle batch.
+- **Bar performance:** [update, animation and native picture investigation](bar-performance.md).
+  Implementation: [ADR 0066, bounded canvas recordings](adr/0066-bounded-canvas-recordings.md).
+  Drawing follow-up: [ADR 0067, scalar bar geometry](adr/0067-scalar-bar-geometry.md).
+  Update follow-up: [ADR 0068, live bar update layout](adr/0068-live-bar-update-layout.md).
+  Numeric update path: [ADR 0069](adr/0069-bulk-numeric-bar-updates.md).
 - **Axis pipeline options:** [measured alternatives and proposed structure](axis-pipeline-options.md)
   for reducing steady-state category-axis layout below 1 ms, with compatibility
   constraints and invalidation probes.

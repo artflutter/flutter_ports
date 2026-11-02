@@ -1,0 +1,396 @@
+{
+  "sampleCount": 7677,
+  "timeExtentMicros": 10000755,
+  "topInclusive": [
+    {
+      "name": "_propagateToListeners",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future_impl.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_handleMessage",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/timer_impl.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_runTimers",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/timer_impl.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "<anonymous closure>",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/timer_patch.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "<anonymous closure>",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_complete",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future_impl.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "runChartBenchCase",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/apps/chartjs_gallery/lib/bench/chart_bench.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "iterate",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/apps/chartjs_gallery/lib/bench/chart_bench.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "handleValueCallback",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/async/future_impl.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "run",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/.dart_tool/bar_impl/probe.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_handleMessage",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/isolate_patch.dart",
+      "inclusivePercent": 98.0721636055751,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "draw",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/apps/chartjs_gallery/lib/bench/chart_bench.dart",
+      "inclusivePercent": 84.01719421649082,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "draw",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusivePercent": 84.01719421649082,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_drawDatasets",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusivePercent": 83.62641656897226,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_drawDataset",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.controller.dart",
+      "inclusivePercent": 83.6133906473883,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "draw",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart",
+      "inclusivePercent": 83.30076852937346,
+      "exclusivePercent": 0.3907776475185619
+    },
+    {
+      "name": "draw",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 80.27875472189658,
+      "exclusivePercent": 0.4298554122704181
+    },
+    {
+      "name": "fill",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 42.54265989318744,
+      "exclusivePercent": 1.5631105900742477
+    },
+    {
+      "name": "drawRect",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 29.803308584082323,
+      "exclusivePercent": 0.4168294906864661
+    },
+    {
+      "name": "__drawRect$Method$FfiNative",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 29.256219877556337,
+      "exclusivePercent": 0.5210368633580826
+    },
+    {
+      "name": "_drawRect",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 29.256219877556337,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "paint",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 13.924710173244756,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "__drawPicture$Method$FfiNative",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 13.885632408492901,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "forEach",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/growable_array.dart",
+      "inclusivePercent": 13.885632408492901,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_drawPicture",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 13.885632408492901,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "drawPicture",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 13.885632408492901,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_boundingRects",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 13.403673309886674,
+      "exclusivePercent": 0.5080109417741305
+    },
+    {
+      "name": "_addNormalRectPath",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 12.765403152273024,
+      "exclusivePercent": 0.9248404324605966
+    },
+    {
+      "name": "rect",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 11.827536798228474,
+      "exclusivePercent": 0.4428813338543702
+    },
+    {
+      "name": "rect",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 10.590074247753028,
+      "exclusivePercent": 1.7454734922495767
+    },
+    {
+      "name": "_pathLineTo",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 4.832616907646216,
+      "exclusivePercent": 3.3997655334114887
+    },
+    {
+      "name": "_setupPaint",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 4.48091702487951,
+      "exclusivePercent": 0.3647258043506578
+    },
+    {
+      "name": "_parseBorderWidth",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 3.4909469844991534,
+      "exclusivePercent": 0.8857626677087403
+    },
+    {
+      "name": "_parseBorderRadius",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 3.451869219747297,
+      "exclusivePercent": 0.7294516087013156
+    },
+    {
+      "name": "[Stub] AllocateObject",
+      "url": "",
+      "inclusivePercent": 3.425817376579393,
+      "exclusivePercent": 3.425817376579393
+    },
+    {
+      "name": "rawOption",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element_options.dart",
+      "inclusivePercent": 2.5140028657027487,
+      "exclusivePercent": 0.7424775302852676
+    },
+    {
+      "name": "_getBarBounds",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 2.435847336199036,
+      "exclusivePercent": 1.3546958447310147
+    },
+    {
+      "name": "_direct",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 2.3446658851113718,
+      "exclusivePercent": 2.3446658851113718
+    },
+    {
+      "name": "getParsed",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart",
+      "inclusivePercent": 2.2925621987755633,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_drew",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 2.201380747687899,
+      "exclusivePercent": 0.403803569102514
+    },
+    {
+      "name": "[Stub] AllocateRecord",
+      "url": "",
+      "inclusivePercent": 2.1232252181841864,
+      "exclusivePercent": 2.0841474534323305
+    },
+    {
+      "name": "shapePair",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 2.0711215318483784,
+      "exclusivePercent": 0.07815552950371239
+    },
+    {
+      "name": "save",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 2.0580956102644263,
+      "exclusivePercent": 0.3256480395988016
+    },
+    {
+      "name": "_hasRadius",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 1.9148104728409534,
+      "exclusivePercent": 0.403803569102514
+    },
+    {
+      "name": "_moveToMapped",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 1.8236290217532891,
+      "exclusivePercent": 0.5861664712778429
+    },
+    {
+      "name": "endRecording",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 1.7454734922495767,
+      "exclusivePercent": 0.013025921583952065
+    },
+    {
+      "name": "__endRecording$Method$FfiNative",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 1.7324475706656246,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_endRecording",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 1.7324475706656246,
+      "exclusivePercent": 0.0
+    },
+    {
+      "name": "_endRecording",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 1.6542920411619122,
+      "exclusivePercent": 0.013025921583952065
+    },
+    {
+      "name": "color=",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 1.5761365116581998,
+      "exclusivePercent": 1.5761365116581998
+    },
+    {
+      "name": "copyFrom",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 1.5500846684902956,
+      "exclusivePercent": 1.5500846684902956
+    },
+    {
+      "name": "_inflateRect",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 1.5240328253223916,
+      "exclusivePercent": 1.5110069037384395
+    },
+    {
+      "name": "finalNumber",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/core/core.element.dart",
+      "inclusivePercent": 1.4589032174026313,
+      "exclusivePercent": 1.4589032174026313
+    },
+    {
+      "name": "jsTruthy",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/js/js_number.dart",
+      "inclusivePercent": 1.419825452650775,
+      "exclusivePercent": 1.419825452650775
+    },
+    {
+      "name": "[]",
+      "url": "org-dartlang-sdk:///flutter/third_party/dart/sdk/lib/_internal/vm/lib/growable_array.dart",
+      "inclusivePercent": 1.3677217663149668,
+      "exclusivePercent": 1.3677217663149668
+    },
+    {
+      "name": "_asRRect",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 1.3286440015631107,
+      "exclusivePercent": 0.2865702748469454
+    },
+    {
+      "name": "shader=",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 1.2374625504754462,
+      "exclusivePercent": 0.3516998827667057
+    },
+    {
+      "name": "_pathMoveTo",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 1.2374625504754462,
+      "exclusivePercent": 0.7815552950371238
+    },
+    {
+      "name": "_c",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart",
+      "inclusivePercent": 1.1332551778038296,
+      "exclusivePercent": 0.23446658851113716
+    },
+    {
+      "name": "isPresent",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/options/resolved.g.dart",
+      "inclusivePercent": 1.0420737267161653,
+      "exclusivePercent": 1.0420737267161653
+    },
+    {
+      "name": "RRect.fromRectAndCorners",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/geometry.dart",
+      "inclusivePercent": 1.0290478051322132,
+      "exclusivePercent": 1.0290478051322132
+    },
+    {
+      "name": "blendMode=",
+      "url": "org-dartlang-sdk:///flutter/lib/ui/painting.dart",
+      "inclusivePercent": 1.0290478051322132,
+      "exclusivePercent": 1.0290478051322132
+    },
+    {
+      "name": "_skipOrLimit",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 0.9508922756285008,
+      "exclusivePercent": 0.9508922756285008
+    },
+    {
+      "name": "_pathClose",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_path.dart",
+      "inclusivePercent": 0.9378663540445487,
+      "exclusivePercent": 0.4949850201901785
+    },
+    {
+      "name": "_borderRadius",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart",
+      "inclusivePercent": 0.9248404324605966,
+      "exclusivePercent": 0.13025921583952066
+    }
+  ]
+}

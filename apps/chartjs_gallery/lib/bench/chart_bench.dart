@@ -1553,6 +1553,12 @@ final class _BenchChart extends Chart {
   @override
   bool get supportsNativeCategoryLabels => true;
 
+  @override
+  bool get supportsNativeBarIndexReads => true;
+
+  @override
+  bool get supportsBulkBarUpdate => true;
+
   /// The ticks of the draws since the last reset.
   int drawTicks = 0;
 

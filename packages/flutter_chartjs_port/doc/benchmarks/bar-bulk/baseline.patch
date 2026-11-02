@@ -1,0 +1,739 @@
+diff --git a/apps/chartjs_gallery/lib/bench/chart_bench.dart b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+index 4bb7d7f..05a7db0 100644
+--- a/apps/chartjs_gallery/lib/bench/chart_bench.dart
++++ b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+@@ -1553,6 +1553,9 @@ final class _BenchChart extends Chart {
+   @override
+   bool get supportsNativeCategoryLabels => true;
+ 
++  @override
++  bool get supportsNativeBarIndexReads => true;
++
+   /// The ticks of the draws since the last reset.
+   int drawTicks = 0;
+ 
+diff --git a/apps/chartjs_gallery/lib/demo/stress_demo.dart b/apps/chartjs_gallery/lib/demo/stress_demo.dart
+index b5c90e7..49df121 100644
+--- a/apps/chartjs_gallery/lib/demo/stress_demo.dart
++++ b/apps/chartjs_gallery/lib/demo/stress_demo.dart
+@@ -2519,6 +2519,9 @@ final class _StressChart extends Chart with _TickMark implements _StressMeter {
+   @override
+   bool get supportsNativeCategoryLabels => true;
+ 
++  @override
++  bool get supportsNativeBarIndexReads => true;
++
+   @override
+   int drawMicros = 0;
+ 
+diff --git a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+index 46fc1c8..6b078da 100644
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+@@ -11,14 +11,14 @@
+ ///   canvas is the list of pictures recorded since the last full clear.
+ /// - A `clearRect` that covers the whole canvas, with no clip, drops the
+ ///   list. `clearCanvas` does that at the start of each chart render, so
+-///   a chart frame is one picture.
++///   a chart frame starts a new paint generation.
+ /// - A partial `clearRect` draws with `BlendMode.clear`. A composite
+ ///   operation other than `source-over` blends with the content. Then
+ ///   [UiCanvasContext.paint] draws the pictures inside a layer, so that
+ ///   the clear does not reach what is below the canvas.
+ /// - [UiCanvasContext.paint] ends the current recording. When more than a
+-///   few pictures pile up without a full clear, the context flattens them
+-///   into one image of the bitmap size, so that memory stays bounded.
++///   few paint generations pile up without a full clear, the context flattens
++///   them into one image of the bitmap size, so that memory stays bounded.
+ /// - [UiCanvasContext.onChanged] tells the host that the content changed,
+ ///   once until the next paint.
+ ///
+@@ -57,9 +57,13 @@ export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart'
+ export 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart'
+     show CanvasFont, parseCanvasFont;
+ 
+-/// The count of pictures above which [UiCanvasContext.paint] flattens the
+-/// content into one image.
+-const int _maxPictures = 8;
++/// The retained paint generations before flattening (ADR 0066). A large
++/// generation can span multiple pictures without triggering rasterization.
++const int _maxPaintGenerations = 8;
++
++/// Bound native drawPicture's spatial-index consolidation. Pending circle
++/// runs keep their existing batching; they do not consume this budget.
++const int _maxPictureDraws = 256;
+ 
+ const ui.Color _black = ui.Color(0xFF000000);
+ 
+@@ -536,6 +540,9 @@ final class UiCanvasContext
+   // recording canvas draws them first, so the draw order stays.
+   final CircleBatch _batch = CircleBatch();
+   bool _hasContent = false;
++  int _pictureDraws = 0;
++  int _paintGenerations = 0;
++  bool _generationHasContent = false;
+   final List<ui.Picture> _pictures = [];
+   ui.Image? _flatImage;
+   bool _needsLayer = false;
+@@ -617,7 +624,7 @@ final class UiCanvasContext
+     _notified = false;
+     if (_disposed) return;
+     _endRecording();
+-    if (_pictures.length > _maxPictures) _flatten();
++    if (_paintGenerations > _maxPaintGenerations) _flatten();
+     if (_pictures.isEmpty) return;
+     final bounds = _bitmapBounds;
+     canvas
+@@ -677,7 +684,7 @@ final class UiCanvasContext
+       stroke: stroke,
+       width: width,
+     );
+-    _drew();
++    _drew(batched: true);
+     return true;
+   }
+ 
+@@ -706,7 +713,11 @@ final class UiCanvasContext
+   bool get _ownsClips =>
+       _depth > 0 && !identical(_s.clips, _states[_depth - 1].clips);
+ 
+-  void _endRecording() {
++  void _endRecording({bool split = false}) {
++    if (!split && _generationHasContent) {
++      _paintGenerations++;
++      _generationHasContent = false;
++    }
+     if (_batch.length > 0) _flushBatch();
+     final recorder = _recorder;
+     if (recorder == null) return;
+@@ -719,10 +730,12 @@ final class UiCanvasContext
+     _recorder = null;
+     _canvas = null;
+     _hasContent = false;
++    _pictureDraws = 0;
+   }
+ 
+   void _discardRecording() {
+     _batch.clear();
++    _pictureDraws = 0;
+     final recorder = _recorder;
+     if (recorder == null) {
+       _hasContent = false;
+@@ -739,6 +752,8 @@ final class UiCanvasContext
+       picture.dispose();
+     }
+     _pictures.clear();
++    _paintGenerations = 0;
++    _generationHasContent = false;
+     _flatImage?.dispose();
+     _flatImage = null;
+     _needsLayer = false;
+@@ -750,8 +765,14 @@ final class UiCanvasContext
+     _onChanged?.call();
+   }
+ 
+-  void _drew() {
++  void _drew({bool batched = false}) {
+     _hasContent = true;
++    _generationHasContent = true;
++    // All callers have finished their native save/transform/draw/restore
++    // sequence. The next recording replays the remaining logical clips.
++    if (!batched && ++_pictureDraws >= _maxPictureDraws) {
++      _endRecording(split: true);
++    }
+     _changed();
+   }
+ 
+@@ -768,6 +789,7 @@ final class UiCanvasContext
+     final imageRecorder = ui.PictureRecorder();
+     ui.Canvas(imageRecorder).drawImage(image, ui.Offset.zero, _layerPaint);
+     _pictures.add(imageRecorder.endRecording());
++    _paintGenerations = 1;
+   }
+ 
+   /// The pictures drawn into one image of the bitmap size, in device
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 81e48a0..43ec62e 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -42,6 +42,8 @@ library;
+ 
+ import 'dart:typed_data';
+ 
++import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
++
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show
+         DatasetController,
+@@ -134,7 +136,21 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
+     // `values.concat(...)`: a new List.
+     values = values + visibleMetas[i].controller!.getAllParsedValues(scale);
+   }
+-  final unique = arrayUnique(jsSort(values, (a, b) => a - b));
++  // DIVERGES(chartjs): adapt-live-bar-layout, owned numeric sorted input.
++  // Concatenation above owns this list even if a custom controller supplied
++  // its source. No user comparator/getter is omitted by this numeric scan.
++  var ordered = true;
++  var previous = double.negativeInfinity;
++  for (final value in values) {
++    if (!value.isFinite || value < previous) {
++      ordered = false;
++      break;
++    }
++    previous = value;
++  }
++  final unique = arrayUnique(
++    ordered ? values : jsSort(values, (a, b) => a - b),
++  );
+   scale.cache.bar = unique;
+   return unique;
+ }
+@@ -585,7 +601,7 @@ void _setInflateAmount(
+ }
+ 
+ /// controller.bar.js:258 `BarController extends DatasetController`.
+-class BarController extends DatasetController {
++class BarController extends DatasetController implements NativeBarIndexReads {
+   /// `new BarController(chart, datasetIndex)`. Upstream declares no
+   /// constructor in this class. [newTarget] is `new.target` (Chart.js ADR
+   /// 0020, section 4).
+@@ -643,6 +659,13 @@ class BarController extends DatasetController {
+     },
+   );
+ 
++  late final bool _nativeBarIndexReads = runtimeType == BarController;
++
++  /// Unknown subclasses retain their getDataset/getParsed/stack overrides.
++  @override
++  @internal
++  bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
++
+   /// controller.bar.js:306 `parsePrimitiveData(meta, data, start, count)`.
+   ///
+   /// Overriding primitive data parsing since we support mixed
+@@ -871,19 +894,20 @@ class BarController extends DatasetController {
+           ? axisStackOf(itemStacks, vKey, vAxis)
+           : undefined;
+ 
+-      final properties = BarProperties()
+-        ..horizontal = horizontal
+-        ..base = vpixels.base
++      final properties = BarProperties.geometry(
++        horizontal: horizontal,
++        base: vpixels.base,
+         // :410 `!stack || isFloatBar(parsed._custom) || (index ===
+         // stack._top || index === stack._bottom)`.
+-        ..enableBorderRadius =
++        enableBorderRadius:
+             !jsTruthy(stack) ||
+             _isFloatBar(_customOf(parsed)) ||
+-            (index == _stackTop(stack) || index == _stackBottom(stack))
+-        ..x = horizontal ? vpixels.head : ipixels.center
+-        ..y = horizontal ? ipixels.center : vpixels.head
+-        ..height = horizontal ? ipixels.size : vpixels.size.abs()
+-        ..width = horizontal ? vpixels.size.abs() : ipixels.size;
++            (index == _stackTop(stack) || index == _stackBottom(stack)),
++        x: horizontal ? vpixels.head : ipixels.center,
++        y: horizontal ? ipixels.center : vpixels.head,
++        height: horizontal ? ipixels.size : vpixels.size.abs(),
++        width: horizontal ? vpixels.size.abs() : ipixels.size,
++      );
+ 
+       if (includeOptions) {
+         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
+@@ -1266,7 +1290,19 @@ class BarController extends DatasetController {
+     );
+     double center;
+     double size;
+-    final axisCount = _getAxisCount();
++    // DIVERGES(chartjs): adapt-live-bar-layout, check live state twice.
++    final source = supportsNativeBarIndexReads && chart is SingleBarIndexSource
++        ? chart as SingleBarIndexSource
++        : null;
++    final direct =
++        !jsTruthy(skipNull) &&
++        source != null &&
++        source.hasSingleBarIndexLayout(this, scale);
++    final axisCount = direct ? 1.0 : _getAxisCount();
++    final pureTraits =
++        direct &&
++        options.runtimeType == OptionView &&
++        options.hasCachedStaticBarTraits;
+     if (jsTruthy(ruler.grouped)) {
+       final stackCount = jsTruthy(skipNull)
+           ? getStackCount(index)
+@@ -1284,20 +1320,29 @@ class BarController extends DatasetController {
+               options,
+               stackCount * axisCount,
+             );
+-      final axisID = _indexAxisIdOf(getDataset());
+-      final axes = _getAxis();
+-      final axisKey = valueOrDefault(
+-        axisID,
+-        getFirstScaleIdForIndexAxis() ?? undefined,
+-      );
+-      final axisNumber = axes.indexWhere((key) => key == axisKey);
+-      final stackIndex =
+-          getStackIndex(
+-            this.index,
+-            cachedMeta.stack,
+-            jsTruthy(skipNull) ? index : null,
+-          ) +
+-          axisNumber;
++      final double stackIndex;
++      // Range options may run user callbacks and mutate axes or datasets.
++      // Observe the topology again exactly where the original does.
++      if (!jsTruthy(skipNull) &&
++          source != null &&
++          (pureTraits || source.hasSingleBarIndexLayout(this, scale))) {
++        stackIndex = 0;
++      } else {
++        final axisID = _indexAxisIdOf(getDataset());
++        final axes = _getAxis();
++        final axisKey = valueOrDefault(
++          axisID,
++          getFirstScaleIdForIndexAxis() ?? undefined,
++        );
++        final axisNumber = axes.indexWhere((key) => key == axisKey);
++        stackIndex =
++            getStackIndex(
++              this.index,
++              cachedMeta.stack,
++              jsTruthy(skipNull) ? index : null,
++            ) +
++            axisNumber;
++      }
+       center = range.start + (range.chunk * stackIndex) + (range.chunk / 2);
+       size = jsMin(maxBarThickness, range.chunk * jsToNumber(range.ratio));
+     } else {
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.config.dart b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+index 6de7973..4f0da86 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+@@ -31,6 +31,7 @@
+ /// options, as upstream imports no element module.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ 
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+@@ -460,6 +461,16 @@ class Config implements types.ChartConfiguration {
+       ? nativeCategoryLabels(_config, explicitLabels, horizontal: horizontal)
+       : null;
+ 
++  /// A live, effect-free proof of the ordinary single bar dataset container.
++  @internal
++  // DIVERGES(chartjs): adapt-live-bar-layout, native source guard.
++  bool hasNativeSingleBarDataset(String axis) =>
++      _barDatasetSource?.read(axis) ?? false;
++
++  late final SingleBarDatasetSource? _barDatasetSource = runtimeType == Config
++      ? SingleBarDatasetSource(_config)
++      : null;
++
+   /// core.config.js:177 `get data()`.
+   ///
+   /// `initData` makes it an object (a Map or a typed scope). Only a write
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+index bf7481e..c0b2c42 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+@@ -35,6 +35,7 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
++import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+ import 'package:flutter_chartjs_port/src/core/core.config.dart'
+@@ -626,7 +627,7 @@ Config _colorConfig(Object? userConfig) {
+ }
+ 
+ /// core.controller.js:103 `Chart`.
+-class Chart implements types.Chart, CategoryLabelSource {
++class Chart implements types.Chart, CategoryLabelSource, SingleBarIndexSource {
+   /// core.controller.js:123 `constructor(item, userConfig)`.
+   ///
+   /// [item] is a canvas element, a context, an object with a `canvas`, or
+@@ -996,6 +997,87 @@ class Chart implements types.Chart, CategoryLabelSource {
+       ? config.categoryLabels(explicitLabels, horizontal: horizontal)
+       : null;
+ 
++  /// Timing wrappers may opt in only when config/options/scales/metas and
++  /// their virtual enumeration methods retain Chart's ordinary behavior.
++  @internal
++  bool get supportsNativeBarIndexReads => runtimeType == Chart;
++
++  final _barScaleKeys = BarScaleKeys();
++  static final Type _nativeMetaListType = <ChartMeta?>[].runtimeType;
++  List<ChartMeta?>? _barMetaList;
++  bool _barMetaListNative = false;
++
++  /// Recheck live topology at the original observation point. There is no
++  /// snapshot of dataset/scale/stack values that can survive a callback.
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-live-bar-layout, single-dataset topology proof.
++  bool hasSingleBarIndexLayout(
++    types.DatasetController controller,
++    types.Scale scale,
++  ) {
++    if (!supportsNativeBarIndexReads ||
++        controller is! NativeBarIndexReads ||
++        !(controller as NativeBarIndexReads).supportsNativeBarIndexReads ||
++        scale is! NativeBarIndexReads ||
++        !(scale as NativeBarIndexReads).supportsNativeBarIndexReads ||
++        controller.index != 0) {
++      return false;
++    }
++    if (_options.runtimeType != OptionView || config.runtimeType != Config) {
++      return false;
++    }
++    final axis = _options.cachedBarIndexAxis;
++    if (axis == null || !config.hasNativeSingleBarDataset(axis)) return false;
++    final metas = sortedMetasets;
++    if (!identical(metas, _barMetaList)) {
++      _barMetaList = metas;
++      _barMetaListNative = metas.runtimeType == _nativeMetaListType;
++    }
++    if (!_barMetaListNative || metas.length != 1) {
++      return false;
++    }
++    final meta = metas[0];
++    if (meta == null ||
++        !identical(meta, controller.cachedMeta) ||
++        !identical(meta.controller, controller) ||
++        !identical(meta.iScale, scale) ||
++        meta.type != 'bar') {
++      return false;
++    }
++    final name = meta.stack;
++    if (!(name == null ||
++        name is String ||
++        name is num ||
++        name is bool ||
++        identical(name, undefined))) {
++      return false;
++    }
++    final grouped = controller.options;
++    final stacked = scale.options;
++    if (grouped is! OptionView ||
++        grouped.runtimeType != OptionView ||
++        !grouped.hasCachedBarGrouping ||
++        stacked is! OptionView ||
++        stacked.runtimeType != OptionView ||
++        !stacked.hasCachedBarStacking) {
++      return false;
++    }
++    final scaleAxis = scale.axis;
++    if ((scaleAxis != 'x' && scaleAxis != 'y') ||
++        (scaleAxis == 'x' ? meta.xAxisID : meta.yAxisID) is! String) {
++      return false;
++    }
++    // Preserve the first-scale search order and short circuit. A later custom
++    // or uninitialized scale was not read by the upstream search either.
++    for (final key in _barScaleKeys.read(scales)) {
++      final candidate = scales[key]!;
++      if (!candidate.supportsNativeBarIndexReads) return false;
++      if (candidate.axis == axis) return true;
++    }
++    return false;
++  }
++
+   /// core.controller.js:213 `get data()`.
+   @override
+   Object get data {
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+index f09ab33..bf6c831 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -48,6 +48,7 @@ library;
+ import 'dart:math' as math;
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
++import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+ import 'package:flutter_chartjs_port/src/core/core.element.dart';
+ import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
+ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+@@ -740,6 +741,7 @@ abstract class _ScalePrototype extends Element {
+ class Scale extends _ScalePrototype
+     implements
+         types.Scale,
++        NativeBarIndexReads,
+         types.LayoutItemBeforeLayout,
+         types.LayoutItemConfigure,
+         types.LayoutItemPadding,
+@@ -1028,6 +1030,12 @@ class Scale extends _ScalePrototype
+   @override
+   late List<types.LayoutLayer> Function()? layers = _layers;
+ 
++  /// Unknown scale classes retain their virtual topology reads.
++  // DIVERGES(chartjs): adapt-live-bar-layout, unknown scales retain reads.
++  @override
++  @internal
++  bool get supportsNativeBarIndexReads => false;
++
+   /// core.scale.js:179 `options`, the resolved options of the scale.
+   ///
+   /// [init] sets the `ContextProxy` of the options, an [OptionView]. The
+diff --git a/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart b/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart
+index 9a30419..b589271 100644
+--- a/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart
+@@ -1,5 +1,6 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.bar.js (MIT, Chart.js Contributors).
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
++// DIVERGES(chartjs): adapt-rectangular-bar-draw, scalar ordinary bar geometry.
+ 
+ /// Port of `src/elements/element.bar.js`.
+ ///
+@@ -774,6 +775,27 @@ class BarElement extends Element implements types.VisualElementRange {
+     final options = this.options;
+     final borderColor = _borderColor(options);
+     final backgroundColor = _backgroundColor(options);
++    if (_builtIn &&
++        inflateAmount == 0 &&
++        !inflateAmount.isNegative &&
++        options is BarOptions) {
++      final radius = options.borderRadiusValue;
++      final borderWidth = options.borderWidthValue;
++      final skipped = _borderSkipped;
++      if (radius is num &&
++          radius == 0 &&
++          borderWidth is num &&
++          skipped is BorderSkipped &&
++          _drawRectangular(
++            ctx,
++            borderWidth.toDouble(),
++            skipped,
++            borderColor,
++            backgroundColor,
++          )) {
++        return;
++      }
++    }
+     final (:inner, :outer) = _boundingRects(this);
+     final addRectPath = _hasRadius(outer.radius)
+         ? addRoundedRectPath
+@@ -800,6 +822,72 @@ class BarElement extends Element implements types.VisualElementRange {
+       ..restore();
+   }
+ 
++  /// The ordinary numeric, unrounded case of boundingRects/draw (ADR 0067).
++  /// Only the exact built-in element and final typed option/edge classes
++  /// enter here: computing these scalars invokes no user getter. Keep the
++  /// same canvas calls, including the empty inner fill and final current
++  /// path, so custom contexts observe the original draw sequence.
++  bool _drawRectangular(
++    CanvasRenderingContext2D ctx,
++    double borderWidth,
++    BorderSkipped skipped,
++    Object? borderColor,
++    Object? backgroundColor,
++  ) {
++    if (!borderWidth.isFinite) return false;
++    final x = this.x;
++    final y = this.y;
++    final base = _base;
++    final horizontal = _horizontal == true;
++    final half = (horizontal ? _height : _width) / 2;
++    final left = horizontal ? jsMin(x, base) : x - half;
++    final right = horizontal ? jsMax(x, base) : x + half;
++    final top = horizontal ? y - half : jsMin(y, base);
++    final bottom = horizontal ? y + half : jsMax(y, base);
++    final width = right - left;
++    final height = bottom - top;
++    if (!left.isFinite ||
++        !top.isFinite ||
++        !width.isFinite ||
++        !height.isFinite ||
++        width <= 0 ||
++        height <= 0) {
++      return false;
++    }
++    final bw = limitValue(borderWidth, 0, width / 2);
++    final bh = limitValue(borderWidth, 0, height / 2);
++    final l = skipped.left ? 0.0 : bw;
++    final r = skipped.right ? 0.0 : bw;
++    final t = skipped.top ? 0.0 : bh;
++    final b = skipped.bottom ? 0.0 : bh;
++    final innerX = left + l;
++    final innerY = top + t;
++    final innerWidth = width - l - r;
++    final innerHeight = height - t - b;
++
++    ctx.save();
++    if (width != innerWidth || height != innerHeight) {
++      ctx
++        ..beginPath()
++        ..rect(
++          left + (left != innerX ? -0.0 : 0.0),
++          top + (top != innerY ? -0.0 : 0.0),
++          width,
++          height,
++        )
++        ..rect(innerX, innerY, innerWidth, innerHeight)
++        ..fillStyle = canvasStyle(borderColor)
++        ..fill('evenodd');
++    }
++    ctx
++      ..beginPath()
++      ..rect(innerX, innerY, innerWidth, innerHeight)
++      ..fillStyle = canvasStyle(backgroundColor)
++      ..fill()
++      ..restore();
++    return true;
++  }
++
+   /// element.bar.js:203 `inRange(mouseX, mouseY, useFinalPosition)`.
+   @override
+   bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) {
+diff --git a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+index 56d7e47..b4cc93f 100644
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -692,6 +692,41 @@ final class OptionView implements ContextProxy {
+       !identical(proxy._cache.get(OptionKey.descIndexable), _absent) &&
+       !identical(proxy._cache.get(OptionKey.descAllKeys), _absent);
+ 
++  /// A cached cartesian index axis, without resolving or invoking anything.
++  @internal
++  // DIVERGES(chartjs): adapt-live-bar-layout, inspect only resolved values.
++  String? get cachedBarIndexAxis {
++    if (runtimeType != OptionView) return null;
++    final value = _cache.get(OptionKey.indexAxis);
++    return value is String && (value == 'x' || value == 'y') ? value : null;
++  }
++
++  /// True only when category-trait reads are cached primitives. The normal
++  /// range computation then cannot invoke user code between topology reads.
++  @internal
++  bool get hasCachedStaticBarTraits {
++    if (runtimeType != OptionView) return false;
++    final thickness = _cache.get(OptionKey.barThickness);
++    if (thickness is num) return true;
++    return (identical(thickness, undefined) ||
++            (thickness is String && thickness == 'flex')) &&
++        _cache.get(OptionKey.categoryPercentage) is num &&
++        _cache.get(OptionKey.barPercentage) is num;
++  }
++
++  /// Whether the normal grouped read is already a cached boolean.
++  @internal
++  bool get hasCachedBarGrouping =>
++      runtimeType == OptionView && _cache.get(OptionKey.grouped) is bool;
++
++  /// Whether the normal stacked read is cached and cannot call user code.
++  @internal
++  bool get hasCachedBarStacking {
++    if (runtimeType != OptionView) return false;
++    final value = _cache.get(OptionKey.stacked);
++    return value is bool || identical(value, undefined);
++  }
++
+   /// Label-source options already read by the first category callback. Never
+   /// execute a scriptable option merely to qualify a bulk-label fast path.
+   @internal
+diff --git a/packages/flutter_chartjs_port/lib/src/options/props.dart b/packages/flutter_chartjs_port/lib/src/options/props.dart
+index aefe2ed..2c9cc99 100644
+--- a/packages/flutter_chartjs_port/lib/src/options/props.dart
++++ b/packages/flutter_chartjs_port/lib/src/options/props.dart
+@@ -220,6 +220,20 @@ final class BarProperties extends TypedRecord {
+   /// An object without own keys.
+   BarProperties();
+ 
++  /// The initial seven fields of controller.bar's property literal, in the
++  /// same own-key order. Later options/edge/inflation writes keep that order.
++  BarProperties.geometry({
++    required this._horizontal,
++    required this._base,
++    required this._enableBorderRadius,
++    required this._x,
++    required this._y,
++    required this._height,
++    required this._width,
++  }) {
++    initializeSlots(7);
++  }
++
+   static const List<String> _fieldNames = [
+     'horizontal',
+     'base',
+diff --git a/packages/flutter_chartjs_port/lib/src/options/typed_record.dart b/packages/flutter_chartjs_port/lib/src/options/typed_record.dart
+index 7b3b75f..2d8bd41 100644
+--- a/packages/flutter_chartjs_port/lib/src/options/typed_record.dart
++++ b/packages/flutter_chartjs_port/lib/src/options/typed_record.dart
+@@ -135,6 +135,34 @@ abstract base class TypedRecord implements JsObjectFace {
+   Object? foreignSlot(int slot) =>
+       isForeignSlot(slot) ? _foreignValues![slot] : null;
+ 
++  /// Initialize the first [count] declared fields of a fresh compact record.
++  /// The subclass has already assigned their typed values. This is the own
++  /// key order of the equivalent literal/cascade, without per-field appends.
++  @protected
++  void initializeSlots(int count) {
++    assert(count >= 0 && count <= 7, 'At most seven initial slots');
++    assert(
++      fieldNames.length >= count && fieldNames.length <= _maxGroups,
++      'Initial slots require the compact declared-field layout',
++    );
++    assert(
++      _present == 0 && _count == 0 && _orderList == null,
++      'Only a fresh record can initialize slots',
++    );
++    _present = (1 << count) - 1;
++    _order = const [
++      0,
++      0x1,
++      0x21,
++      0x321,
++      0x4321,
++      0x54321,
++      0x654321,
++      0x7654321,
++    ][count];
++    _count = count;
++  }
++
+   /// Marks the field [slot] present after a typed store of a subclass: a
+   /// new key goes to the end of the key order, and a foreign value goes.
+   @protected
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+index 2993f39..19a3827 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+@@ -288,6 +288,14 @@ class CategoryScale extends Scale {
+     construct: (newTarget, args) => CategoryScale(scaleCfgArg(args)),
+   );
+ 
++  /// This exact built-in scale has ordinary axis and metadata reads.
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
++  bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
++
++  late final bool _nativeBarIndexReads = runtimeType == CategoryScale;
++
+   /// The options of the scale, through the facade of the category scale
+   /// options (index.d.ts:3344).
+   @override
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+index 54c476b..d8242ea 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+@@ -76,6 +76,14 @@ class LinearScale extends LinearScaleBase {
+     construct: (newTarget, args) => LinearScale(scaleCfgArg(args)),
+   );
+ 
++  /// This exact built-in scale has ordinary axis and metadata reads.
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
++  bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
++
++  late final bool _nativeBarIndexReads = runtimeType == LinearScale;
++
+   /// The options of the scale, through the facade of the linear scale
+   /// options (index.d.ts:3356).
+   @override

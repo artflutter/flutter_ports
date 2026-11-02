@@ -1,0 +1,112 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart b/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart
+index 9a30419..b589271 100644
+--- a/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/elements/element.bar.dart
+@@ -1,5 +1,6 @@
+ // Ported from Chart.js v4.6.1 src/elements/element.bar.js (MIT, Chart.js Contributors).
+ // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
++// DIVERGES(chartjs): adapt-rectangular-bar-draw, scalar ordinary bar geometry.
+ 
+ /// Port of `src/elements/element.bar.js`.
+ ///
+@@ -774,6 +775,27 @@ class BarElement extends Element implements types.VisualElementRange {
+     final options = this.options;
+     final borderColor = _borderColor(options);
+     final backgroundColor = _backgroundColor(options);
++    if (_builtIn &&
++        inflateAmount == 0 &&
++        !inflateAmount.isNegative &&
++        options is BarOptions) {
++      final radius = options.borderRadiusValue;
++      final borderWidth = options.borderWidthValue;
++      final skipped = _borderSkipped;
++      if (radius is num &&
++          radius == 0 &&
++          borderWidth is num &&
++          skipped is BorderSkipped &&
++          _drawRectangular(
++            ctx,
++            borderWidth.toDouble(),
++            skipped,
++            borderColor,
++            backgroundColor,
++          )) {
++        return;
++      }
++    }
+     final (:inner, :outer) = _boundingRects(this);
+     final addRectPath = _hasRadius(outer.radius)
+         ? addRoundedRectPath
+@@ -800,6 +822,72 @@ class BarElement extends Element implements types.VisualElementRange {
+       ..restore();
+   }
+ 
++  /// The ordinary numeric, unrounded case of boundingRects/draw (ADR 0067).
++  /// Only the exact built-in element and final typed option/edge classes
++  /// enter here: computing these scalars invokes no user getter. Keep the
++  /// same canvas calls, including the empty inner fill and final current
++  /// path, so custom contexts observe the original draw sequence.
++  bool _drawRectangular(
++    CanvasRenderingContext2D ctx,
++    double borderWidth,
++    BorderSkipped skipped,
++    Object? borderColor,
++    Object? backgroundColor,
++  ) {
++    if (!borderWidth.isFinite) return false;
++    final x = this.x;
++    final y = this.y;
++    final base = _base;
++    final horizontal = _horizontal == true;
++    final half = (horizontal ? _height : _width) / 2;
++    final left = horizontal ? jsMin(x, base) : x - half;
++    final right = horizontal ? jsMax(x, base) : x + half;
++    final top = horizontal ? y - half : jsMin(y, base);
++    final bottom = horizontal ? y + half : jsMax(y, base);
++    final width = right - left;
++    final height = bottom - top;
++    if (!left.isFinite ||
++        !top.isFinite ||
++        !width.isFinite ||
++        !height.isFinite ||
++        width <= 0 ||
++        height <= 0) {
++      return false;
++    }
++    final bw = limitValue(borderWidth, 0, width / 2);
++    final bh = limitValue(borderWidth, 0, height / 2);
++    final l = skipped.left ? 0.0 : bw;
++    final r = skipped.right ? 0.0 : bw;
++    final t = skipped.top ? 0.0 : bh;
++    final b = skipped.bottom ? 0.0 : bh;
++    final innerX = left + l;
++    final innerY = top + t;
++    final innerWidth = width - l - r;
++    final innerHeight = height - t - b;
++
++    ctx.save();
++    if (width != innerWidth || height != innerHeight) {
++      ctx
++        ..beginPath()
++        ..rect(
++          left + (left != innerX ? -0.0 : 0.0),
++          top + (top != innerY ? -0.0 : 0.0),
++          width,
++          height,
++        )
++        ..rect(innerX, innerY, innerWidth, innerHeight)
++        ..fillStyle = canvasStyle(borderColor)
++        ..fill('evenodd');
++    }
++    ctx
++      ..beginPath()
++      ..rect(innerX, innerY, innerWidth, innerHeight)
++      ..fillStyle = canvasStyle(backgroundColor)
++      ..fill()
++      ..restore();
++    return true;
++  }
++
+   /// element.bar.js:203 `inRange(mouseX, mouseY, useFinalPosition)`.
+   @override
+   bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) {

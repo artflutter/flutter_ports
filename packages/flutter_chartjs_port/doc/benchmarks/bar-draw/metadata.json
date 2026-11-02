@@ -1,0 +1,21 @@
+{
+  "baseCommit": "1d37d641bd4847bba8cbff757c68bf326f1f863a",
+  "baseline": "baseCommit + baseline.patch (ADR 0066)",
+  "candidate": "baseline + candidate.patch",
+  "machine": "Apple M3 Max",
+  "os": "macOS 27.0.1",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "build": "arm64 profile AOT, Impeller",
+  "canvas": [
+    800,
+    480
+  ],
+  "dpr": 1,
+  "sourceHashes": {
+    "packages/flutter_chartjs_port/lib/src/elements/element.bar.dart": "7a2598ef930ddb5e5879e9371a79374dbebe84308be1833cef6aa365d7dd917b",
+    "packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart": "e33ccfec6b6dd3d40211c5b3c842b2e01828030052bd362fdc48b944e7116ec5",
+    "apps/chartjs_gallery/lib/bench/chart_bench.dart": "a469faa3cdcbb5e34ba6aa25f835163845c0129aa59dd311c519456740cab6d9",
+    "apps/chartjs_gallery/lib/demo/stress_chart_config.dart": "83495bb2abd1db6da45812dff3b7b22be9613e1921d4b231cbffc925c702ac8d"
+  }
+}
