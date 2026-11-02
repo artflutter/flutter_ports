@@ -1,0 +1,21 @@
+--- a/lib/src/core/core.datasetController.dart
++++ b/lib/src/core/core.datasetController.dart
+@@ -940,0 +941,6 @@
++  // DIVERGES(chartjs): adapt-element-option-cache-key, reuse only the last
++  // joined string. The option cache and its invalidation stay unchanged.
++  String? _lastElementTypeName;
++  String? _lastElementMode;
++  String _lastElementCacheKey = '';
++
+@@ -1874 +1880,10 @@
+-    final cacheKey = '$typeName-$resolvedMode';
++    // DIVERGES(chartjs): adapt-element-option-cache-key, retain the original
++    // string key (including collisions) and convert the element id every time.
++    final String cacheKey;
++    if (typeName == _lastElementTypeName && resolvedMode == _lastElementMode) {
++      cacheKey = _lastElementCacheKey;
++    } else {
++      _lastElementTypeName = typeName;
++      _lastElementMode = resolvedMode;
++      cacheKey = _lastElementCacheKey = '$typeName-$resolvedMode';
++    }

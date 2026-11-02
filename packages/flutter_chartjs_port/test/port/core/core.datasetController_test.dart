@@ -1082,6 +1082,17 @@ _Run _runTo(String name, int count) {
   return run;
 }
 
+/// An element id whose string conversion must run even on an option cache hit.
+final class _CountingElementId {
+  int calls = 0;
+
+  @override
+  String toString() {
+    calls++;
+    return 'point';
+  }
+}
+
 void main() {
   setUpSpecs();
 
@@ -1545,6 +1556,83 @@ void main() {
           reason: '$items',
         );
       }
+    });
+  });
+
+  group('element option cache keys', () {
+    test('repeated modes and element types keep sharing and clones', () {
+      final run = _runTo('shared options of a line chart', 2);
+      final controller = run.controller(0);
+      final normal = controller.resolveDataElementOptions(0);
+      final active = controller.resolveDataElementOptions(0, 'active');
+      expect(active, isNot(same(normal)));
+      final line = controller.resolveDatasetElementOptions();
+      expect(line, isA<LineOptions>());
+      expect(controller.resolveDataElementOptions(1), same(normal));
+      expect(controller.resolveDataElementOptions(1, 'default'), same(normal));
+      // The default hover colors are scriptable, so active options stay fresh.
+      final nextActive = controller.resolveDataElementOptions(1, 'active');
+      expect(nextActive, isNot(same(active)));
+      expect(nextActive[r'$shared'], isFalse);
+      expect(controller.resolveDatasetElementOptions(), isNot(same(line)));
+    });
+
+    test('an element id is converted on every cache hit', () {
+      final run = _runTo('shared options of a line chart', 2);
+      final controller = run.controller(0);
+      final cached = controller.resolveDataElementOptions(0);
+      final id = _CountingElementId();
+      controller.dataElementType = <String, Object?>{'id': id};
+      expect(controller.resolveDataElementOptions(0), same(cached));
+      expect(controller.resolveDataElementOptions(1), same(cached));
+      expect(id.calls, 2);
+    });
+
+    test(
+      'hyphenated type and mode pairs retain the original key collision',
+      () {
+        final run = _runTo('shared options of a line chart', 2);
+        final controller = run.controller(0);
+        final originalType = controller.dataElementType;
+        final cached = controller.resolveDataElementOptions(0, 'default-x');
+        controller.dataElementType = <String, Object?>{'id': 'point-default'};
+        expect(controller.resolveDataElementOptions(0, 'x'), same(cached));
+        controller.dataElementType = originalType;
+        expect(
+          controller.resolveDataElementOptions(1, 'default-x'),
+          same(cached),
+        );
+      },
+    );
+
+    test('configuration changes invalidate values even with the same key', () {
+      final run = _runTo('shared options of a line chart', 2);
+      final controller = run.controller(0);
+      final before = controller.resolveDataElementOptions(0) as PointOptions;
+      run._dataset(0)['pointRadius'] = 17.0;
+      (controller.chart.config as Config).update();
+      controller.configure();
+      final after = controller.resolveDataElementOptions(0) as PointOptions;
+      expect(after, isNot(same(before)));
+      expect(after.radius, 17);
+      expect(before.radius, isNot(17));
+    });
+
+    test('a repeated key does not cache scriptable option results', () {
+      final run = _runTo('shared options of a line chart', 2);
+      final controller = run.controller(0);
+      var calls = 0;
+      run._dataset(0)['pointRadius'] = (context, options) =>
+          (++calls).toDouble();
+      (controller.chart.config as Config).update();
+      controller.configure();
+      final first = controller.resolveDataElementOptions(0) as PointOptions;
+      final firstCalls = calls;
+      final second = controller.resolveDataElementOptions(0) as PointOptions;
+      expect(calls, greaterThan(firstCalls));
+      expect(second.radius, greaterThan(first.radius));
+      expect(first.$sharedValue, isFalse);
+      expect(second, isNot(same(first)));
     });
   });
 

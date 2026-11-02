@@ -1,0 +1,21 @@
+{
+  "baseline": "61974490ac010822d7469c94ab23ff37ff392a36",
+  "date": "2026-11-02",
+  "candidate": "last element-option cache-key string per controller",
+  "sourceSha256": {
+    "lib/src/core/core.datasetController.dart": "1aaa9a1509943b9243e3cbce12f39256c38169fbc6aa9bcd455fd8a9f2e57010"
+  },
+  "device": "Pixel 8a",
+  "android": "google/akita/akita:17/CP3A.261005.005/16271449:user/release-keys",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "order": [
+    "A",
+    "B",
+    "B",
+    "A"
+  ],
+  "profileSamples": 11548,
+  "casesPerRun": 15,
+  "metric": "update CPU primary; full update/draw/recording-completion totals also reported; two pairs only"
+}

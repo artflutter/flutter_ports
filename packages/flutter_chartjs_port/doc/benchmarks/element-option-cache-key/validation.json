@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-02",
+  "libraryMatchesMeasuredCandidate": true,
+  "checks": [
+    {
+      "command": "flutter test test/port/core/core.datasetController_test.dart --plain-name \"element option cache keys\" (unchanged baseline)",
+      "result": "5 passed before the production change"
+    },
+    {
+      "command": "flutter test test/port/core/core.datasetController_test.dart test/port/core/core.datasetController_chart_test.dart test/specs/core.datasetController_test.dart --exclude-tags fixtures",
+      "result": "133 passed on candidate"
+    },
+    {
+      "command": "dart run melos run test --no-select",
+      "result": "10583 passed, 87 skipped across six packages"
+    },
+    {
+      "command": "dart run melos run test:web",
+      "result": "3950 chart-port + 55 harness tests per compiler mode passed; two existing skips per mode"
+    },
+    {
+      "command": "dart run packages/flutter_chartjs_port/tool/spec_cases.dart --results <spec-results.jsonl>",
+      "result": "958 passed, 78 skipped, no failed/missing cases"
+    },
+    {
+      "command": "dart run melos run test:fixtures",
+      "result": "628 passed, 39 expected skips, no failed/missing fixtures"
+    },
+    {
+      "command": "dart run melos run format:check; dart run melos run analyze; dart run melos run check:port",
+      "result": "all passed, including all seven port checks"
+    },
+    {
+      "command": "setup.py and candidate source hash comparison",
+      "result": "reconstructed and final working source match the measured candidate"
+    }
+  ]
+}

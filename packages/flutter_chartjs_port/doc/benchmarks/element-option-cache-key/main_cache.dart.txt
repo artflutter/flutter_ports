@@ -1,0 +1,42 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+const variant = String.fromEnvironment('VARIANT', defaultValue:'A');
+ChartBenchCase cell(String id, ChartBenchCall call, [String? type]) =>
+ selectChartBenchCases(id).firstWhere((c) => c.call == call && (type == null || c.keys['type'] == type));
+Future<void> run() async {
+ try {
+  registerGalleryComponents();
+  final cells = <(ChartBenchCase,int)>[
+   (cell('chart.a',ChartBenchCall.draw),5000),
+   (cell('chart.bar',ChartBenchCall.draw),1000),
+   (cell('chart.radar',ChartBenchCall.draw),1000),
+   (cell('chart.bubble',ChartBenchCall.draw),5000),
+   (cell('fill.gaps',ChartBenchCall.draw),1000),
+   (cell('chart.b',ChartBenchCall.update,'line'),5000),
+   (cell('chart.c',ChartBenchCall.update),1000),
+   (cell('tooltip.hover',ChartBenchCall.frame),1000),
+   for (final n in [1000,5000]) ...[
+    (cell('chart.bubble',ChartBenchCall.update),n),
+    (cell('chart.b',ChartBenchCall.update,'scatter'),n),
+   ],
+   (cell('chart.polarArea',ChartBenchCall.update),1000),
+   (cell('chart.radar',ChartBenchCall.update),1000),
+   (cell('chart.bar',ChartBenchCall.update),5000),
+  ];
+  for (final (c,n) in cells) {
+   await Future<void>.delayed(const Duration(milliseconds:100));
+   final id = c.id == 'chart.b' ? '${c.id}.${c.keys['type']}' : c.id;
+   final row = {'variant':variant,'experimentCase':id,...runChartBenchCase(c,n,const ChartBenchSettings(warmupMs:500,batches:9,batchMs:150))};
+   print('CACHE_RESULT ${jsonEncode(row)}');
+  }
+  print('CACHE_DONE $variant');
+ } catch(e,s) { print('CACHE_ERROR $e\n$s'); }
+}
+void main() {
+ WidgetsFlutterBinding.ensureInitialized();
+ runApp(const MaterialApp(home:Scaffold(body:Center(child:Text('Element option cache benchmark')))));
+ WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(run()));
+}

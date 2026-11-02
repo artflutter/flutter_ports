@@ -1,0 +1,1550 @@
+{
+  "protocol_passed": true,
+  "cells": [
+    {
+      "case": "chart.a",
+      "n": 5000,
+      "call": "draw",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 0.0,
+          "candidate_ms": 0.0,
+          "change_ms": 0.0,
+          "saved_percent": null,
+          "pairs": [
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            },
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 1.0659999999999998,
+          "candidate_ms": 1.0915,
+          "change_ms": 0.025500000000000078,
+          "saved_percent": -2.392120075046922,
+          "pairs": [
+            {
+              "change_ms": 0.03100000000000014,
+              "saved_percent": -2.943969610636299
+            },
+            {
+              "change_ms": 0.020000000000000018,
+              "saved_percent": -1.853568118628357
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.303,
+          "candidate_ms": 0.321,
+          "change_ms": 0.018000000000000016,
+          "saved_percent": -5.940594059405946,
+          "pairs": [
+            {
+              "change_ms": 0.027000000000000024,
+              "saved_percent": -9.000000000000007
+            },
+            {
+              "change_ms": 0.009000000000000008,
+              "saved_percent": -2.941176470588247
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 1.369,
+          "candidate_ms": 1.4125,
+          "change_ms": 0.043500000000000094,
+          "saved_percent": -3.177501826150486,
+          "pairs": [
+            {
+              "change_ms": 0.05800000000000005,
+              "saved_percent": -4.286770140428686
+            },
+            {
+              "change_ms": 0.028999999999999915,
+              "saved_percent": -2.093862815884462
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 0.0,
+            "draw": 1.053,
+            "end": 0.3,
+            "total": 1.353
+          },
+          {
+            "update": 0.0,
+            "draw": 1.079,
+            "end": 0.306,
+            "total": 1.385
+          }
+        ],
+        "B": [
+          {
+            "update": 0.0,
+            "draw": 1.084,
+            "end": 0.327,
+            "total": 1.411
+          },
+          {
+            "update": 0.0,
+            "draw": 1.099,
+            "end": 0.315,
+            "total": 1.414
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.bar",
+      "n": 1000,
+      "call": "draw",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 0.0,
+          "candidate_ms": 0.0,
+          "change_ms": 0.0,
+          "saved_percent": null,
+          "pairs": [
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            },
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 1.3325,
+          "candidate_ms": 1.3335,
+          "change_ms": 0.0009999999999998899,
+          "saved_percent": -0.07504690431519023,
+          "pairs": [
+            {
+              "change_ms": 0.019000000000000128,
+              "saved_percent": -1.4537107880642886
+            },
+            {
+              "change_ms": -0.017000000000000126,
+              "saved_percent": 1.2518409425625987
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 5.0489999999999995,
+          "candidate_ms": 5.032500000000001,
+          "change_ms": -0.01649999999999885,
+          "saved_percent": 0.32679738562089167,
+          "pairs": [
+            {
+              "change_ms": 0.03000000000000025,
+              "saved_percent": -0.6085192697768749
+            },
+            {
+              "change_ms": -0.06299999999999972,
+              "saved_percent": 1.219040247678016
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 6.3815,
+          "candidate_ms": 6.366,
+          "change_ms": -0.015500000000000291,
+          "saved_percent": 0.24288960275797855,
+          "pairs": [
+            {
+              "change_ms": 0.04899999999999949,
+              "saved_percent": -0.7856341189674376
+            },
+            {
+              "change_ms": -0.07999999999999918,
+              "saved_percent": 1.2258657676984197
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 0.0,
+            "draw": 1.307,
+            "end": 4.93,
+            "total": 6.237
+          },
+          {
+            "update": 0.0,
+            "draw": 1.358,
+            "end": 5.168,
+            "total": 6.526
+          }
+        ],
+        "B": [
+          {
+            "update": 0.0,
+            "draw": 1.326,
+            "end": 4.96,
+            "total": 6.286
+          },
+          {
+            "update": 0.0,
+            "draw": 1.341,
+            "end": 5.105,
+            "total": 6.446000000000001
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.radar",
+      "n": 1000,
+      "call": "draw",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 0.0,
+          "candidate_ms": 0.0,
+          "change_ms": 0.0,
+          "saved_percent": null,
+          "pairs": [
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            },
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 0.6475,
+          "candidate_ms": 0.6515,
+          "change_ms": 0.0040000000000000036,
+          "saved_percent": -0.617760617760621,
+          "pairs": [
+            {
+              "change_ms": 0.006000000000000005,
+              "saved_percent": -0.9389671361502261
+            },
+            {
+              "change_ms": 0.0020000000000000018,
+              "saved_percent": -0.304878048780477
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.0685,
+          "candidate_ms": 0.0725,
+          "change_ms": 0.00399999999999999,
+          "saved_percent": -5.8394160583941535,
+          "pairs": [
+            {
+              "change_ms": 0.0049999999999999906,
+              "saved_percent": -7.352941176470584
+            },
+            {
+              "change_ms": 0.002999999999999989,
+              "saved_percent": -4.347826086956497
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 0.7160000000000001,
+          "candidate_ms": 0.724,
+          "change_ms": 0.007999999999999896,
+          "saved_percent": -1.1173184357541777,
+          "pairs": [
+            {
+              "change_ms": 0.010999999999999899,
+              "saved_percent": -1.5558698727015319
+            },
+            {
+              "change_ms": 0.004999999999999893,
+              "saved_percent": -0.6896551724137723
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 0.0,
+            "draw": 0.639,
+            "end": 0.068,
+            "total": 0.7070000000000001
+          },
+          {
+            "update": 0.0,
+            "draw": 0.656,
+            "end": 0.069,
+            "total": 0.7250000000000001
+          }
+        ],
+        "B": [
+          {
+            "update": 0.0,
+            "draw": 0.645,
+            "end": 0.073,
+            "total": 0.718
+          },
+          {
+            "update": 0.0,
+            "draw": 0.658,
+            "end": 0.072,
+            "total": 0.73
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.bubble",
+      "n": 5000,
+      "call": "draw",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 0.0,
+          "candidate_ms": 0.0,
+          "change_ms": 0.0,
+          "saved_percent": null,
+          "pairs": [
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            },
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 6.5365,
+          "candidate_ms": 6.547499999999999,
+          "change_ms": 0.010999999999999233,
+          "saved_percent": -0.16828577985159576,
+          "pairs": [
+            {
+              "change_ms": 0.0699999999999994,
+              "saved_percent": -1.0874631039303972
+            },
+            {
+              "change_ms": -0.04800000000000004,
+              "saved_percent": 0.7233273056057921
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 3.75,
+          "candidate_ms": 3.7705,
+          "change_ms": 0.020500000000000185,
+          "saved_percent": -0.5466666666666731,
+          "pairs": [
+            {
+              "change_ms": 0.06199999999999983,
+              "saved_percent": -1.679306608884068
+            },
+            {
+              "change_ms": -0.020999999999999908,
+              "saved_percent": 0.5514705882352922
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 10.2865,
+          "candidate_ms": 10.318,
+          "change_ms": 0.03149999999999942,
+          "saved_percent": -0.3062266076896858,
+          "pairs": [
+            {
+              "change_ms": 0.1319999999999979,
+              "saved_percent": -1.3031888636587885
+            },
+            {
+              "change_ms": -0.06899999999999906,
+              "saved_percent": 0.6606664113366412
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 0.0,
+            "draw": 6.437,
+            "end": 3.692,
+            "total": 10.129000000000001
+          },
+          {
+            "update": 0.0,
+            "draw": 6.636,
+            "end": 3.808,
+            "total": 10.443999999999999
+          }
+        ],
+        "B": [
+          {
+            "update": 0.0,
+            "draw": 6.507,
+            "end": 3.754,
+            "total": 10.261
+          },
+          {
+            "update": 0.0,
+            "draw": 6.588,
+            "end": 3.787,
+            "total": 10.375
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "fill.gaps",
+      "n": 1000,
+      "call": "draw",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 0.0,
+          "candidate_ms": 0.0,
+          "change_ms": 0.0,
+          "saved_percent": null,
+          "pairs": [
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            },
+            {
+              "change_ms": 0.0,
+              "saved_percent": null
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 2.7045000000000003,
+          "candidate_ms": 2.755,
+          "change_ms": 0.050499999999999545,
+          "saved_percent": -1.8672582732482734,
+          "pairs": [
+            {
+              "change_ms": 0.07200000000000006,
+              "saved_percent": -2.7108433734939874
+            },
+            {
+              "change_ms": 0.028999999999999915,
+              "saved_percent": -1.053396294950959
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.103,
+          "candidate_ms": 0.1065,
+          "change_ms": 0.003500000000000003,
+          "saved_percent": -3.398058252427183,
+          "pairs": [
+            {
+              "change_ms": 0.0050000000000000044,
+              "saved_percent": -4.854368932038833
+            },
+            {
+              "change_ms": 0.0020000000000000018,
+              "saved_percent": -1.9417475728155331
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 2.8075,
+          "candidate_ms": 2.8615000000000004,
+          "change_ms": 0.05400000000000027,
+          "saved_percent": -1.9234194122885295,
+          "pairs": [
+            {
+              "change_ms": 0.07699999999999996,
+              "saved_percent": -2.7908662558898234
+            },
+            {
+              "change_ms": 0.030999999999999694,
+              "saved_percent": -1.085434173669464
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 0.0,
+            "draw": 2.656,
+            "end": 0.103,
+            "total": 2.7590000000000003
+          },
+          {
+            "update": 0.0,
+            "draw": 2.753,
+            "end": 0.103,
+            "total": 2.8560000000000003
+          }
+        ],
+        "B": [
+          {
+            "update": 0.0,
+            "draw": 2.728,
+            "end": 0.108,
+            "total": 2.8360000000000003
+          },
+          {
+            "update": 0.0,
+            "draw": 2.782,
+            "end": 0.105,
+            "total": 2.887
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.b.line",
+      "n": 5000,
+      "call": "update",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 1.037,
+          "candidate_ms": 1.027,
+          "change_ms": -0.010000000000000009,
+          "saved_percent": 0.9643201542912205,
+          "pairs": [
+            {
+              "change_ms": 0.008000000000000007,
+              "saved_percent": -0.7866273352999054
+            },
+            {
+              "change_ms": -0.028000000000000025,
+              "saved_percent": 2.6490066225165587
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 1.1785,
+          "candidate_ms": 1.19,
+          "change_ms": 0.011499999999999844,
+          "saved_percent": -0.9758167161646014,
+          "pairs": [
+            {
+              "change_ms": 0.019000000000000128,
+              "saved_percent": -1.6351118760757455
+            },
+            {
+              "change_ms": 0.0040000000000000036,
+              "saved_percent": -0.33472803347280866
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.34750000000000003,
+          "candidate_ms": 0.353,
+          "change_ms": 0.005499999999999949,
+          "saved_percent": -1.5827338129496216,
+          "pairs": [
+            {
+              "change_ms": 0.02899999999999997,
+              "saved_percent": -8.761329305135934
+            },
+            {
+              "change_ms": -0.018000000000000016,
+              "saved_percent": 4.94505494505495
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 2.5629999999999997,
+          "candidate_ms": 2.57,
+          "change_ms": 0.007000000000000117,
+          "saved_percent": -0.2731174404994263,
+          "pairs": [
+            {
+              "change_ms": 0.05600000000000005,
+              "saved_percent": -2.231075697211149
+            },
+            {
+              "change_ms": -0.04200000000000026,
+              "saved_percent": 1.6055045871559703
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 1.017,
+            "draw": 1.162,
+            "end": 0.331,
+            "total": 2.51
+          },
+          {
+            "update": 1.057,
+            "draw": 1.195,
+            "end": 0.364,
+            "total": 2.616
+          }
+        ],
+        "B": [
+          {
+            "update": 1.025,
+            "draw": 1.181,
+            "end": 0.36,
+            "total": 2.566
+          },
+          {
+            "update": 1.029,
+            "draw": 1.199,
+            "end": 0.346,
+            "total": 2.574
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.c",
+      "n": 1000,
+      "call": "update",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 4.862,
+          "candidate_ms": 4.7465,
+          "change_ms": -0.11549999999999994,
+          "saved_percent": 2.375565610859731,
+          "pairs": [
+            {
+              "change_ms": -0.043999999999999595,
+              "saved_percent": 0.9232060428031819
+            },
+            {
+              "change_ms": -0.18700000000000028,
+              "saved_percent": 3.771682129891085
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 0.3155,
+          "candidate_ms": 0.277,
+          "change_ms": -0.03849999999999998,
+          "saved_percent": 12.202852614896987,
+          "pairs": [
+            {
+              "change_ms": -0.034999999999999976,
+              "saved_percent": 11.075949367088601
+            },
+            {
+              "change_ms": -0.04199999999999998,
+              "saved_percent": 13.33333333333333
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.1095,
+          "candidate_ms": 0.11349999999999999,
+          "change_ms": 0.00399999999999999,
+          "saved_percent": -3.65296803652968,
+          "pairs": [
+            {
+              "change_ms": 0.011999999999999997,
+              "saved_percent": -11.111111111111116
+            },
+            {
+              "change_ms": -0.0040000000000000036,
+              "saved_percent": 3.603603603603611
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 5.287000000000001,
+          "candidate_ms": 5.1370000000000005,
+          "change_ms": -0.15000000000000036,
+          "saved_percent": 2.837147720824673,
+          "pairs": [
+            {
+              "change_ms": -0.06700000000000017,
+              "saved_percent": 1.290944123314064
+            },
+            {
+              "change_ms": -0.23300000000000054,
+              "saved_percent": 4.327637444279353
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 4.766,
+            "draw": 0.316,
+            "end": 0.108,
+            "total": 5.19
+          },
+          {
+            "update": 4.958,
+            "draw": 0.315,
+            "end": 0.111,
+            "total": 5.384
+          }
+        ],
+        "B": [
+          {
+            "update": 4.722,
+            "draw": 0.281,
+            "end": 0.12,
+            "total": 5.123
+          },
+          {
+            "update": 4.771,
+            "draw": 0.273,
+            "end": 0.107,
+            "total": 5.151
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "tooltip.hover",
+      "n": 1000,
+      "call": "frame",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 0.19,
+          "candidate_ms": 0.1955,
+          "change_ms": 0.005500000000000005,
+          "saved_percent": -2.894736842105261,
+          "pairs": [
+            {
+              "change_ms": 0.008000000000000007,
+              "saved_percent": -4.419889502762442
+            },
+            {
+              "change_ms": 0.0030000000000000027,
+              "saved_percent": -1.5075376884422065
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 1.109,
+          "candidate_ms": 1.109,
+          "change_ms": 0.0,
+          "saved_percent": 0.0,
+          "pairs": [
+            {
+              "change_ms": 0.006000000000000005,
+              "saved_percent": -0.5509641873278293
+            },
+            {
+              "change_ms": -0.006000000000000005,
+              "saved_percent": 0.5314437555358764
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.053,
+          "candidate_ms": 0.0535,
+          "change_ms": 0.0005000000000000004,
+          "saved_percent": -0.9433962264151052,
+          "pairs": [
+            {
+              "change_ms": 0.0,
+              "saved_percent": 0.0
+            },
+            {
+              "change_ms": 0.0010000000000000009,
+              "saved_percent": -1.85185185185186
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 1.352,
+          "candidate_ms": 1.358,
+          "change_ms": 0.006000000000000005,
+          "saved_percent": -0.4437869822485174,
+          "pairs": [
+            {
+              "change_ms": 0.014000000000000012,
+              "saved_percent": -1.0590015128593144
+            },
+            {
+              "change_ms": -0.0020000000000000018,
+              "saved_percent": 0.14471780028944004
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 0.181,
+            "draw": 1.089,
+            "end": 0.052,
+            "total": 1.322
+          },
+          {
+            "update": 0.199,
+            "draw": 1.129,
+            "end": 0.054,
+            "total": 1.3820000000000001
+          }
+        ],
+        "B": [
+          {
+            "update": 0.189,
+            "draw": 1.095,
+            "end": 0.052,
+            "total": 1.336
+          },
+          {
+            "update": 0.202,
+            "draw": 1.123,
+            "end": 0.055,
+            "total": 1.3800000000000001
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.bubble",
+      "n": 1000,
+      "call": "update",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 1.8775,
+          "candidate_ms": 1.6364999999999998,
+          "change_ms": -0.2410000000000001,
+          "saved_percent": 12.836218375499342,
+          "pairs": [
+            {
+              "change_ms": -0.32400000000000007,
+              "saved_percent": 16.455053326561707
+            },
+            {
+              "change_ms": -0.15800000000000014,
+              "saved_percent": 8.846584546472569
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 1.375,
+          "candidate_ms": 1.4295,
+          "change_ms": 0.05449999999999999,
+          "saved_percent": -3.963636363636369,
+          "pairs": [
+            {
+              "change_ms": 0.031999999999999806,
+              "saved_percent": -2.3494860499265746
+            },
+            {
+              "change_ms": 0.07700000000000018,
+              "saved_percent": -5.54755043227666
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 1.2465000000000002,
+          "candidate_ms": 1.2565,
+          "change_ms": 0.009999999999999787,
+          "saved_percent": -0.8022462896108973,
+          "pairs": [
+            {
+              "change_ms": 0.017999999999999794,
+              "saved_percent": -1.4598540145985162
+            },
+            {
+              "change_ms": 0.0020000000000000018,
+              "saved_percent": -0.15873015873015817
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 4.4990000000000006,
+          "candidate_ms": 4.3225,
+          "change_ms": -0.17650000000000077,
+          "saved_percent": 3.923094020893547,
+          "pairs": [
+            {
+              "change_ms": -0.274,
+              "saved_percent": 6.003505696757228
+            },
+            {
+              "change_ms": -0.07899999999999974,
+              "saved_percent": 1.781686964366258
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 1.969,
+            "draw": 1.362,
+            "end": 1.233,
+            "total": 4.564
+          },
+          {
+            "update": 1.786,
+            "draw": 1.388,
+            "end": 1.26,
+            "total": 4.434
+          }
+        ],
+        "B": [
+          {
+            "update": 1.645,
+            "draw": 1.394,
+            "end": 1.251,
+            "total": 4.29
+          },
+          {
+            "update": 1.628,
+            "draw": 1.465,
+            "end": 1.262,
+            "total": 4.355
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.b.scatter",
+      "n": 1000,
+      "call": "update",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 1.0545,
+          "candidate_ms": 0.79,
+          "change_ms": -0.26449999999999996,
+          "saved_percent": 25.082977714556655,
+          "pairs": [
+            {
+              "change_ms": -0.252,
+              "saved_percent": 24.184261036468325
+            },
+            {
+              "change_ms": -0.2769999999999999,
+              "saved_percent": 25.96063730084348
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 0.2615,
+          "candidate_ms": 0.281,
+          "change_ms": 0.019500000000000017,
+          "saved_percent": -7.45697896749522,
+          "pairs": [
+            {
+              "change_ms": 0.013000000000000012,
+              "saved_percent": -4.8689138576779145
+            },
+            {
+              "change_ms": 0.025999999999999968,
+              "saved_percent": -10.156249999999979
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.087,
+          "candidate_ms": 0.087,
+          "change_ms": 0.0,
+          "saved_percent": 0.0,
+          "pairs": [
+            {
+              "change_ms": 0.0,
+              "saved_percent": 0.0
+            },
+            {
+              "change_ms": 0.0,
+              "saved_percent": 0.0
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 1.403,
+          "candidate_ms": 1.158,
+          "change_ms": -0.2450000000000001,
+          "saved_percent": 17.46258018531719,
+          "pairs": [
+            {
+              "change_ms": -0.2390000000000001,
+              "saved_percent": 17.12034383954155
+            },
+            {
+              "change_ms": -0.2509999999999999,
+              "saved_percent": 17.80141843971631
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 1.042,
+            "draw": 0.267,
+            "end": 0.087,
+            "total": 1.3960000000000001
+          },
+          {
+            "update": 1.067,
+            "draw": 0.256,
+            "end": 0.087,
+            "total": 1.41
+          }
+        ],
+        "B": [
+          {
+            "update": 0.79,
+            "draw": 0.28,
+            "end": 0.087,
+            "total": 1.157
+          },
+          {
+            "update": 0.79,
+            "draw": 0.282,
+            "end": 0.087,
+            "total": 1.159
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.bubble",
+      "n": 5000,
+      "call": "update",
+      "primary": true,
+      "metrics": {
+        "update": {
+          "baseline_ms": 8.506,
+          "candidate_ms": 7.135999999999999,
+          "change_ms": -1.370000000000001,
+          "saved_percent": 16.106277921467218,
+          "pairs": [
+            {
+              "change_ms": -1.4779999999999998,
+              "saved_percent": 16.864445458694654
+            },
+            {
+              "change_ms": -1.2619999999999996,
+              "saved_percent": 15.300678952473323
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 7.1655,
+          "candidate_ms": 7.9185,
+          "change_ms": 0.7530000000000001,
+          "saved_percent": -10.508687460749421,
+          "pairs": [
+            {
+              "change_ms": 0.6559999999999997,
+              "saved_percent": -9.248554913294793
+            },
+            {
+              "change_ms": 0.8499999999999988,
+              "saved_percent": -11.743575573362786
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 4.4555,
+          "candidate_ms": 4.4655000000000005,
+          "change_ms": 0.010000000000000675,
+          "saved_percent": -0.2244417012681188,
+          "pairs": [
+            {
+              "change_ms": 0.07500000000000018,
+              "saved_percent": -1.7029972752043543
+            },
+            {
+              "change_ms": -0.054999999999999716,
+              "saved_percent": 1.2203239405369382
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 20.127,
+          "candidate_ms": 19.52,
+          "change_ms": -0.6069999999999993,
+          "saved_percent": 3.015849356585676,
+          "pairs": [
+            {
+              "change_ms": -0.7469999999999999,
+              "saved_percent": 3.6868861359261595
+            },
+            {
+              "change_ms": -0.46699999999999875,
+              "saved_percent": 2.335817536137641
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 8.764,
+            "draw": 7.093,
+            "end": 4.404,
+            "total": 20.261
+          },
+          {
+            "update": 8.248,
+            "draw": 7.238,
+            "end": 4.507,
+            "total": 19.993
+          }
+        ],
+        "B": [
+          {
+            "update": 7.286,
+            "draw": 7.749,
+            "end": 4.479,
+            "total": 19.514
+          },
+          {
+            "update": 6.986,
+            "draw": 8.088,
+            "end": 4.452,
+            "total": 19.526
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.b.scatter",
+      "n": 5000,
+      "call": "update",
+      "primary": true,
+      "metrics": {
+        "update": {
+          "baseline_ms": 3.685,
+          "candidate_ms": 2.2965,
+          "change_ms": -1.3885,
+          "saved_percent": 37.67978290366351,
+          "pairs": [
+            {
+              "change_ms": -1.46,
+              "saved_percent": 39.10016068559186
+            },
+            {
+              "change_ms": -1.3170000000000002,
+              "saved_percent": 36.221122112211226
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 1.3335,
+          "candidate_ms": 1.3335,
+          "change_ms": 0.0,
+          "saved_percent": 0.0,
+          "pairs": [
+            {
+              "change_ms": 0.013000000000000123,
+              "saved_percent": -1.0023130300693905
+            },
+            {
+              "change_ms": -0.013000000000000123,
+              "saved_percent": 0.9489051094890621
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.378,
+          "candidate_ms": 0.376,
+          "change_ms": -0.0020000000000000018,
+          "saved_percent": 0.5291005291005346,
+          "pairs": [
+            {
+              "change_ms": 0.006000000000000005,
+              "saved_percent": -1.6304347826086918
+            },
+            {
+              "change_ms": -0.010000000000000009,
+              "saved_percent": 2.577319587628868
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 5.3965,
+          "candidate_ms": 4.006,
+          "change_ms": -1.3904999999999994,
+          "saved_percent": 25.76670063930324,
+          "pairs": [
+            {
+              "change_ms": -1.4409999999999998,
+              "saved_percent": 26.690127801444707
+            },
+            {
+              "change_ms": -1.3399999999999999,
+              "saved_percent": 24.84241750092695
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 3.734,
+            "draw": 1.297,
+            "end": 0.368,
+            "total": 5.399
+          },
+          {
+            "update": 3.636,
+            "draw": 1.37,
+            "end": 0.388,
+            "total": 5.394
+          }
+        ],
+        "B": [
+          {
+            "update": 2.274,
+            "draw": 1.31,
+            "end": 0.374,
+            "total": 3.958
+          },
+          {
+            "update": 2.319,
+            "draw": 1.357,
+            "end": 0.378,
+            "total": 4.054
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.polarArea",
+      "n": 1000,
+      "call": "update",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 1.124,
+          "candidate_ms": 0.96,
+          "change_ms": -0.16400000000000015,
+          "saved_percent": 14.590747330960863,
+          "pairs": [
+            {
+              "change_ms": -0.18300000000000005,
+              "saved_percent": 16.15180935569286
+            },
+            {
+              "change_ms": -0.14500000000000002,
+              "saved_percent": 13.00448430493274
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 3.8034999999999997,
+          "candidate_ms": 3.7329999999999997,
+          "change_ms": -0.07050000000000001,
+          "saved_percent": 1.853555935322726,
+          "pairs": [
+            {
+              "change_ms": -0.1459999999999999,
+              "saved_percent": 3.7657982976528226
+            },
+            {
+              "change_ms": 0.004999999999999893,
+              "saved_percent": -0.13404825737264314
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.916,
+          "candidate_ms": 0.919,
+          "change_ms": 0.0030000000000000027,
+          "saved_percent": -0.3275109170305601,
+          "pairs": [
+            {
+              "change_ms": 0.018000000000000016,
+              "saved_percent": -1.9933554817275656
+            },
+            {
+              "change_ms": -0.01200000000000001,
+              "saved_percent": 1.2917115177610294
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 5.843500000000001,
+          "candidate_ms": 5.612,
+          "change_ms": -0.23150000000000048,
+          "saved_percent": 3.961666809275266,
+          "pairs": [
+            {
+              "change_ms": -0.31099999999999994,
+              "saved_percent": 5.259597497040414
+            },
+            {
+              "change_ms": -0.15200000000000014,
+              "saved_percent": 2.6324904745410493
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 1.133,
+            "draw": 3.877,
+            "end": 0.903,
+            "total": 5.913
+          },
+          {
+            "update": 1.115,
+            "draw": 3.73,
+            "end": 0.929,
+            "total": 5.774
+          }
+        ],
+        "B": [
+          {
+            "update": 0.95,
+            "draw": 3.731,
+            "end": 0.921,
+            "total": 5.602
+          },
+          {
+            "update": 0.97,
+            "draw": 3.735,
+            "end": 0.917,
+            "total": 5.622
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.radar",
+      "n": 1000,
+      "call": "update",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 0.9855,
+          "candidate_ms": 0.843,
+          "change_ms": -0.14250000000000007,
+          "saved_percent": 14.459665144596656,
+          "pairs": [
+            {
+              "change_ms": -0.16100000000000003,
+              "saved_percent": 16.328600405679516
+            },
+            {
+              "change_ms": -0.124,
+              "saved_percent": 12.588832487309642
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 0.7989999999999999,
+          "candidate_ms": 0.834,
+          "change_ms": 0.03500000000000003,
+          "saved_percent": -4.380475594493127,
+          "pairs": [
+            {
+              "change_ms": 0.07399999999999995,
+              "saved_percent": -9.724047306176086
+            },
+            {
+              "change_ms": -0.0040000000000000036,
+              "saved_percent": 0.4778972520907976
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 0.075,
+          "candidate_ms": 0.076,
+          "change_ms": 0.0010000000000000009,
+          "saved_percent": -1.333333333333342,
+          "pairs": [
+            {
+              "change_ms": 0.0020000000000000018,
+              "saved_percent": -2.7027027027026973
+            },
+            {
+              "change_ms": 0.0,
+              "saved_percent": 0.0
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 1.8595,
+          "candidate_ms": 1.7530000000000001,
+          "change_ms": -0.10649999999999982,
+          "saved_percent": 5.727346060769012,
+          "pairs": [
+            {
+              "change_ms": -0.08499999999999996,
+              "saved_percent": 4.667764964305321
+            },
+            {
+              "change_ms": -0.1279999999999999,
+              "saved_percent": 6.743940990516329
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 0.986,
+            "draw": 0.761,
+            "end": 0.074,
+            "total": 1.821
+          },
+          {
+            "update": 0.985,
+            "draw": 0.837,
+            "end": 0.076,
+            "total": 1.898
+          }
+        ],
+        "B": [
+          {
+            "update": 0.825,
+            "draw": 0.835,
+            "end": 0.076,
+            "total": 1.736
+          },
+          {
+            "update": 0.861,
+            "draw": 0.833,
+            "end": 0.076,
+            "total": 1.77
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    },
+    {
+      "case": "chart.bar",
+      "n": 5000,
+      "call": "update",
+      "primary": false,
+      "metrics": {
+        "update": {
+          "baseline_ms": 21.575499999999998,
+          "candidate_ms": 23.057499999999997,
+          "change_ms": 1.4819999999999993,
+          "saved_percent": -6.868902227063112,
+          "pairs": [
+            {
+              "change_ms": 2.855999999999998,
+              "saved_percent": -13.439367559173675
+            },
+            {
+              "change_ms": 0.10800000000000054,
+              "saved_percent": -0.49315068493152037
+            }
+          ]
+        },
+        "draw": {
+          "baseline_ms": 9.298,
+          "candidate_ms": 8.7075,
+          "change_ms": -0.5905000000000005,
+          "saved_percent": 6.3508281350828195,
+          "pairs": [
+            {
+              "change_ms": -1.1479999999999997,
+              "saved_percent": 11.617081562436748
+            },
+            {
+              "change_ms": -0.03300000000000125,
+              "saved_percent": 0.37870094101447593
+            }
+          ]
+        },
+        "end": {
+          "baseline_ms": 9.7295,
+          "candidate_ms": 9.6665,
+          "change_ms": -0.06300000000000061,
+          "saved_percent": 0.6475152885554336,
+          "pairs": [
+            {
+              "change_ms": -0.05299999999999905,
+              "saved_percent": 0.5444273240883368
+            },
+            {
+              "change_ms": -0.0730000000000004,
+              "saved_percent": 0.7507198683669336
+            }
+          ]
+        },
+        "total": {
+          "baseline_ms": 40.603,
+          "candidate_ms": 41.4315,
+          "change_ms": 0.8284999999999982,
+          "saved_percent": -2.040489618993657,
+          "pairs": [
+            {
+              "change_ms": 1.654999999999994,
+              "saved_percent": -4.049623177057837
+            },
+            {
+              "change_ms": 0.001999999999995339,
+              "saved_percent": -0.0049581040210133764
+            }
+          ]
+        }
+      },
+      "process_values": {
+        "A": [
+          {
+            "update": 21.251,
+            "draw": 9.882,
+            "end": 9.735,
+            "total": 40.868
+          },
+          {
+            "update": 21.9,
+            "draw": 8.714,
+            "end": 9.724,
+            "total": 40.338
+          }
+        ],
+        "B": [
+          {
+            "update": 24.107,
+            "draw": 8.734,
+            "end": 9.682,
+            "total": 42.522999999999996
+          },
+          {
+            "update": 22.008,
+            "draw": 8.681,
+            "end": 9.651,
+            "total": 40.339999999999996
+          }
+        ]
+      },
+      "repeatable_total_regression": false
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+const variant=String.fromEnvironment('VARIANT',defaultValue:'A');
+const profile=bool.fromEnvironment('PROFILE');
+Future<void> run() async {
+ try {
+  registerGalleryComponents();
+  if(profile){
+   await Future<void>.delayed(const Duration(seconds:15));
+   print('GAP_PROFILE_START');
+   final c=selectChartBenchCases('chart.bubble').firstWhere((c) => c.call == ChartBenchCall.update);
+   final row=runChartBenchCase(c,5000,const ChartBenchSettings(warmupMs:1000,batches:30,batchMs:500));
+   print('GAP_PROFILE_END ${jsonEncode(row)}');
+   return;
+  }
+  final cells=<(ChartBenchCase,int)>[
+   for(final c in selectChartBenchCases('fill.radar,chart.a,chart.b'))
+    if(c.id.startsWith('fill.')||c.keys['type']=='line') (c,1000),
+   for(final c in selectChartBenchCases('fill.stack')) (c,1000),
+   for(final n in [100,1000]) for(final c in selectChartBenchCases('fill.gaps')) (c,n),
+  ];
+  for(final (c,n) in cells){
+   await Future<void>.delayed(const Duration(milliseconds:100));
+   final row={'variant':variant,'experimentCase':c.id,...runChartBenchCase(c,n,const ChartBenchSettings(warmupMs:500,batches:9,batchMs:150))};
+   print('GAP_RESULT ${jsonEncode(row)}');
+  }
+  print('GAP_DONE $variant');
+ }catch(e,s){print('GAP_ERROR $e\n$s');}
+}
+void main(){WidgetsFlutterBinding.ensureInitialized();runApp(const MaterialApp(home:Scaffold(body:Center(child:Text('Gap fill benchmark')))));WidgetsBinding.instance.addPostFrameCallback((_)=>unawaited(run()));}
