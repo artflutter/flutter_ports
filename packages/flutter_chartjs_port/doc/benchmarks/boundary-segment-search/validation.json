@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-02",
+  "libraryMatchesMeasuredCandidate": true,
+  "checks": [
+    {
+      "command": "dart run melos run format:check",
+      "result": "passed; 0 files changed"
+    },
+    {
+      "command": "dart run melos run analyze",
+      "result": "passed; no issues"
+    },
+    {
+      "command": "dart run melos run test --no-select",
+      "result": "passed; 10575 tests across six packages, 87 skipped"
+    },
+    {
+      "command": "dart run melos run test:web",
+      "result": "passed; 7900 chart-port and 110 test-utils tests, 4 skipped, dart2js and dart2wasm"
+    },
+    {
+      "command": "dart run packages/flutter_chartjs_port/tool/spec_cases.dart --results <spec-results.jsonl>",
+      "result": "passed; 958 upstream cases, 78 skips, no failed or missing cases"
+    },
+    {
+      "command": "dart run melos run test:fixtures",
+      "result": "passed; 628 fixtures, 39 expected skips, no failed or missing fixtures"
+    },
+    {
+      "command": "dart run melos run check:port",
+      "result": "all seven checks passed"
+    },
+    {
+      "command": "setup.py --repo <repo> --out <empty scratch directory>",
+      "result": "all five reconstructed source hashes match the measured candidate and final library"
+    }
+  ]
+}

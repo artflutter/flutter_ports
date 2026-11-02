@@ -713,6 +713,12 @@ Required in phase 9:
    `workflow_dispatch` run with `update_goldens` writes the files and uploads them as the artifact
    `theme-goldens`. A local Mac never writes them (CoreText). The first golden files come from the
    dispatch run 41001061748 at `6c461f3`. Each other run of the job compares them.
+   The native-color migration (ADR 0057, `e3a98b9`) removed CSS alpha quantization.
+   The references were refreshed by [dispatch 41366426627](https://github.com/artflutter/flutter_ports/actions/runs/41366426627)
+   at `e942d50` on 2026-11-02, with Flutter 3.47.8 on the same pinned runner.
+   Every changed channel differs by exactly one byte: 110,148 pixels in the
+   light image and 4,002 in the dark image. The downloaded artifact matches the
+   inspected CI actual images pixel-for-pixel; the comparator remains exact.
 
 Only a regression adds more: SHADOWED and INCONSISTENT coverage classes, randomized themes, or
 goldens for each chart type.

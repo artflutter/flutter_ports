@@ -31,7 +31,10 @@ class _ObservedLine extends LineElement {
 }
 
 void main() {
-  tearDown(() => boundaryPointSearchEnabled = true);
+  tearDown(() {
+    boundaryPointSearchEnabled = true;
+    boundarySegmentSearchEnabled = true;
+  });
   testWidgets('a user dataset target keeps its interpolation callbacks', (
     tester,
   ) async {
@@ -120,6 +123,14 @@ void main() {
             if (!reverse) {
               expect(search, isNotNull);
               expect(search!.find(target.points[2]), same(target.points[2]));
+              expect(
+                search.bound((
+                  property: axis,
+                  start: axis == 'x' ? target.points[0].x : target.points[0].y,
+                  end: axis == 'x' ? target.points[1].x : target.points[1].y,
+                )),
+                isNotNull,
+              );
             } else {
               expect(search, isNull);
             }
@@ -127,6 +138,9 @@ void main() {
             final original = drawCalls(chart);
             boundaryPointSearchEnabled = true;
             expect(drawCalls(chart), original);
+            boundarySegmentSearchEnabled = false;
+            expect(drawCalls(chart), original);
+            boundarySegmentSearchEnabled = true;
             // The next update builds a fresh boundary with the new scale range.
             final data = chart.data as Map<String, Object?>;
             final datasets = data['datasets']! as List<Object?>;

@@ -1,0 +1,113 @@
+--- a/lib/helpers.dart
++++ b/lib/helpers.dart
+@@ -49,0 +50 @@
++        createBoundarySegment,
+--- a/lib/src/helpers/helpers.segment.dart
++++ b/lib/src/helpers/helpers.segment.dart
+@@ -80,0 +81,10 @@
++
++// DIVERGES(chartjs): adapt-boundary-segment-search, retain the native segment
++// representation for exact bounds of a private, unstyled linear boundary.
++/// An internal segment for validated, non-wrapping private boundary indices.
++@internal
++Segment createBoundarySegment(int start, int end) => _Segment(
++  start: start.toDouble(),
++  end: end.toDouble(),
++  loop: false,
++);
+--- a/lib/src/plugins/plugin.filler/filler.drawing.dart
++++ b/lib/src/plugins/plugin.filler/filler.drawing.dart
+@@ -354 +354,8 @@
+-  final parts = segments(line, target, property);
++  // DIVERGES(chartjs): adapt-boundary-segment-search, share the private target
++  // lookup across source segments and the two color passes of this draw.
++  final parts = segments(
++    line,
++    target,
++    property,
++    boundarySearch: boundarySearch,
++  );
+--- a/lib/src/plugins/plugin.filler/filler.segment.dart
++++ b/lib/src/plugins/plugin.filler/filler.segment.dart
+@@ -25,0 +26,2 @@
++// DIVERGES(chartjs): adapt-boundary-segment-search, per-draw private boundary.
++import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
+@@ -51,2 +53,3 @@
+-  String property,
+-) {
++  String property, {
++  BoundaryPointSearch? boundarySearch,
++}) {
+@@ -85 +88,6 @@
+-    final targetSegments = boundSegments(target, bounds);
++    // DIVERGES(chartjs): adapt-boundary-segment-search, exact bounds of a
++    // validated private target. Keep original source matching below.
++    final exact = boundarySearch?.bound(bounds);
++    final targetSegments = exact == null
++        ? boundSegments(target, bounds)
++        : [exact];
+--- a/lib/src/plugins/plugin.filler/boundary_point_search.dart
++++ b/lib/src/plugins/plugin.filler/boundary_point_search.dart
+@@ -4,0 +5,2 @@
++import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
++    show createBoundarySegment;
+@@ -10,0 +13,4 @@
++
++/// Allows differential tests to retain endpoint search but scan segment bounds.
++@visibleForTesting
++bool boundarySegmentSearchEnabled = true;
+@@ -21,0 +28,2 @@
++  int _boundCursor = 0;
++  double _lastBound = double.negativeInfinity;
+@@ -63,0 +72,51 @@
++  /// Returns the same single segment as boundSegments for exact ascending
++  /// bounds. The target is the same private, unstyled boundary used by [find].
++  /// Source geometry and source callbacks are still handled by boundSegment.
++  types.Segment? bound(
++    ({String property, double start, double end})? bounds,
++  ) {
++    if (!boundarySegmentSearchEnabled ||
++        bounds == null ||
++        bounds.property != (_horizontal ? 'x' : 'y') ||
++        !bounds.start.isFinite ||
++        !bounds.end.isFinite ||
++        bounds.start > bounds.end) {
++      return null;
++    }
++    final start = _boundIndex(bounds.start);
++    if (start < 0) return null;
++    final end = _boundIndex(bounds.end);
++    if (end < 0) return null;
++    return createBoundarySegment(start, end);
++  }
++
++  int _boundIndex(double value) {
++    var index = _boundCursor;
++    if (value < _lastBound) {
++      // The next color pass, an overlapping range or a backward source query.
++      var low = 0;
++      var high = _points.length;
++      while (low < high) {
++        final middle = (low + high) >> 1;
++        final candidate = _horizontal ? _points[middle].x : _points[middle].y;
++        if (candidate < value) {
++          low = middle + 1;
++        } else {
++          high = middle;
++        }
++      }
++      index = low;
++    } else {
++      while (index < _points.length &&
++          (_horizontal ? _points[index].x : _points[index].y) < value) {
++        index++;
++      }
++    }
++    _boundCursor = index;
++    _lastBound = value;
++    return index < _points.length &&
++            (_horizontal ? _points[index].x : _points[index].y) == value
++        ? index
++        : -1;
++  }
++

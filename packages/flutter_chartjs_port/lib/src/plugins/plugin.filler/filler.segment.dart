@@ -23,6 +23,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
     show boundSegment, boundSegments;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
+// DIVERGES(chartjs): adapt-boundary-segment-search, per-draw private boundary.
+import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The bounds object of `_getBounds` (filler.segment.js:62).
@@ -48,8 +50,9 @@ typedef FillPart = ({
 List<FillPart> segments(
   types.LineElement line,
   Object target,
-  String property,
-) {
+  String property, {
+  BoundaryPointSearch? boundarySearch,
+}) {
   final segments = line.segments;
   final points = line.points;
   final tpoints = target is types.LineElement ? target.points : null;
@@ -82,7 +85,12 @@ List<FillPart> segments(
 
     // Get all segments from `target` that intersect the bounds of current
     // segment of `line`
-    final targetSegments = boundSegments(target, bounds);
+    // DIVERGES(chartjs): adapt-boundary-segment-search, exact bounds of a
+    // validated private target. Keep original source matching below.
+    final exact = boundarySearch?.bound(bounds);
+    final targetSegments = exact == null
+        ? boundSegments(target, bounds)
+        : [exact];
 
     for (final tgt in targetSegments) {
       final subBounds = getBounds(

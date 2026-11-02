@@ -1,0 +1,25 @@
+{
+  "baseline": "e942d500e2633471f1da7c5b3e567265199e14ed",
+  "date": "2026-11-02",
+  "candidate": "uncommitted exact private boundary segment search",
+  "sourceSha256": {
+    "lib/helpers.dart": "d3be9a5f38366d2c7c752b1852497dd7078698b00171728067d87bc010f2fd57",
+    "lib/src/helpers/helpers.segment.dart": "e1ddfa6bac1616dee718644451080c603ede593d40b0d9341f7af0a2a75c74a6",
+    "lib/src/plugins/plugin.filler/filler.drawing.dart": "b4fce05610207386a022eb5533457f9f199e6f5c968ef339462f16dba2a1ce4f",
+    "lib/src/plugins/plugin.filler/filler.segment.dart": "ee386427561b89c68c27062d9f3bd8d39c19419df3abb289870ad99992456414",
+    "lib/src/plugins/plugin.filler/boundary_point_search.dart": "25bc7ab37dbc56202e2b9cf4b0fd3131601ced7e383919856db13836b4388d71"
+  },
+  "device": "Pixel 8a",
+  "android": "google/akita/akita:17/CP3A.261005.005/16271449:user/release-keys",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "order": [
+    "A",
+    "B",
+    "B",
+    "A"
+  ],
+  "profileSamples": 13025,
+  "casesPerRun": 10,
+  "validation": "two pairs, directional CPU evidence only; no raster or FPS measurement"
+}

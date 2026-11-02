@@ -26,6 +26,7 @@
 | ✅ | [22. Color-only implementation](#chapter-22) |
 | ✅ | [23. Stacked-fill exact-point experiment](#chapter-23) |
 | ✅ | [24. Private boundary endpoint search on Android](#chapter-24) |
+| ✅ | [25. Private boundary segment matching on Android](#chapter-25) |
 
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
@@ -5651,3 +5652,77 @@ with four skips), upstream case coverage passes (958 passed, 78 skipped), and
 fixtures pass (628 passed, 39 skipped). Formatting, fatal-info analysis and all
 seven port checks pass. Parity is regenerated. The reproduction package rebuilds
 the exact measured library sources by hash; the implementation is retained.
+
+<a id="chapter-25"></a>
+
+## 25. Private boundary segment matching on Android
+
+2026-11-02. [ADR 0060](adr/0060-boundary-segment-search.md) extends the private
+boundary lookup of chapter 24 to exact segment bounds. The baseline is `e942d50`,
+which already includes the endpoint improvement. The current Android profile
+collected 13,025 samples: matching `segments` has 50.3% inclusive, `boundSegments`
+43.7%, and `boundSegment` 44.6% (26.0% self). The inclusive shares overlap.
+
+A cursor now advances across ordered exact bounds on the same private constant
+boundary; backward/overlapping queries use binary search. A hit returns the same
+native segment type and fields as the original scan. Source geometry and shared
+scanner loops stay unchanged, and misses or unsupported cases use the original
+path. No new segment implementer or public API is introduced. State is per draw.
+
+### Android release comparison
+
+Pixel 8a, Android 17, Flutter 3.47.8 / Dart 3.13.7, arm64 release, profiler off.
+The prewritten protocol uses A/B/B/A, two fresh processes per variant, controls
+first, nine 150 ms batches after 500 ms warmup. Three fill datasets, 800 × 480
+canvas at DPR 1. No builds or tests ran alongside timing; no run was discarded.
+Values sum per-process draw + recording-completion medians, plus update for full
+updates, then take the median across processes. Positive means less CPU time.
+
+| Cell | N | Operation | Baseline → candidate, ms | Time saved |
+| --- | ---: | --- | ---: | ---: |
+| `fill.gaps` | 100 | draw | 0.3655 → 0.3345 | 8.5% |
+| `fill.gaps` | 100 | update | 1.1535 → 1.0970 | 4.9% |
+| `fill.gaps` | 1000 | draw | 5.2980 → 2.8820 | 45.6% |
+| `fill.gaps` | 1000 | update | 8.5565 → 5.9920 | 30.0% |
+| `chart.a` | 1000 | draw | 0.2785 → 0.2840 | -2.0% |
+| `chart.b` | 1000 | update | 0.8115 → 0.8090 | 0.3% |
+| `fill.radar` | 1000 | draw | 0.8925 → 0.8955 | -0.3% |
+| `fill.radar` | 1000 | update | 3.8060 → 3.5435 | 6.9% |
+| `fill.stack` | 1000 | draw | 1.7385 → 1.7565 | -1.0% |
+| `fill.stack` | 1000 | update | 8.1355 → 8.3205 | -2.3% |
+
+The N=1000 paired draw reductions are 45.3% and 45.9%; full updates improve by
+37.8% and 21.5%. Baseline update processes give 8.927/8.186 ms; candidate processes
+give 5.556/6.428 ms. Thus 30.0% is a directional aggregate. The largest slower
+control, stack update, is +0.185 ms (+2.3%); it does not exceed both predeclared
+thresholds of 0.1 ms and 5% in aggregate. Its pairs differ: one improves 3.5%,
+while the other is +0.663 ms (+8.4%), exceeding both limits once. This does not
+meet the protocol's repeatability criterion; its cause remains unestablished.
+The smaller draw-control shifts remain inconclusive. No unrelated control
+improvement is attributed to the change. Temperatures were 29.0–29.4 °C and all
+before/after thermal statuses were 0.
+
+Two pairs do not give a confidence interval. This is bounded CPU evidence, with
+no GPU time, FPS or other-device performance claim. The
+[report and reproduction package](benchmarks/boundary-segment-search/README.md)
+retain all four processes, the profile, source hashes and the exact measured patch.
+
+### Correctness
+
+Two hundred generated boundaries compare native segment type and fields with
+the original scanner on both axes and reordered/overlapping/repeated ranges.
+Another 200 generated source cases compare complete fill parts for both color
+passes, including source mutations after boundary construction. Explicit guards
+cover misses, tolerance-near values, invalid/reversed/non-finite bounds and cursor
+recovery. Real charts compare every draw command with no shortcut, with the prior
+endpoint shortcut only, and with both enabled. Custom dataset callbacks and the
+public export list remain unchanged. Focused pure tests pass on VM, dart2js and
+dart2wasm. The reproduction script reconstructs all five measured library files
+with matching hashes.
+
+Final verification: workspace tests pass (10,575, 87 skipped), the full
+web suite passes (7,900 chart-port and 110 test-utils tests, four skips), upstream
+coverage passes (958 cases, 78 skipped), and fixtures pass (628, 39 skipped).
+Formatting, fatal-info analysis and all seven port checks pass. Parity is
+regenerated; final library hashes match the measured candidate. The implementation
+is retained.

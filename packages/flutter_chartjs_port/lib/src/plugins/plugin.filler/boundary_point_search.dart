@@ -2,12 +2,18 @@
 
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
+    show createBoundarySegment;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
 /// Allows differential tests to use the original boundary interpolation.
 @visibleForTesting
 bool boundaryPointSearchEnabled = true;
+
+/// Allows differential tests to retain endpoint search but scan segment bounds.
+@visibleForTesting
+bool boundarySegmentSearchEnabled = true;
 
 /// Exact endpoint lookup for a newly constructed, private linear fill boundary.
 ///
@@ -19,6 +25,8 @@ final class BoundaryPointSearch {
 
   final List<types.PointElement> _points;
   final bool _horizontal;
+  int _boundCursor = 0;
+  double _lastBound = double.negativeInfinity;
 
   /// Validates the private boundary once for this draw. Reversed, degenerate,
   /// non-finite and tolerance-adjacent coordinates use original interpolation.
@@ -59,6 +67,57 @@ final class BoundaryPointSearch {
       previous = value;
     }
     return BoundaryPointSearch._(points, horizontal);
+  }
+
+  /// Returns the same single segment as boundSegments for exact ascending
+  /// bounds. The target is the same private, unstyled boundary used by [find].
+  /// Source geometry and source callbacks are still handled by boundSegment.
+  types.Segment? bound(
+    ({String property, double start, double end})? bounds,
+  ) {
+    if (!boundarySegmentSearchEnabled ||
+        bounds == null ||
+        bounds.property != (_horizontal ? 'x' : 'y') ||
+        !bounds.start.isFinite ||
+        !bounds.end.isFinite ||
+        bounds.start > bounds.end) {
+      return null;
+    }
+    final start = _boundIndex(bounds.start);
+    if (start < 0) return null;
+    final end = _boundIndex(bounds.end);
+    if (end < 0) return null;
+    return createBoundarySegment(start, end);
+  }
+
+  int _boundIndex(double value) {
+    var index = _boundCursor;
+    if (value < _lastBound) {
+      // The next color pass, an overlapping range or a backward source query.
+      var low = 0;
+      var high = _points.length;
+      while (low < high) {
+        final middle = (low + high) >> 1;
+        final candidate = _horizontal ? _points[middle].x : _points[middle].y;
+        if (candidate < value) {
+          low = middle + 1;
+        } else {
+          high = middle;
+        }
+      }
+      index = low;
+    } else {
+      while (index < _points.length &&
+          (_horizontal ? _points[index].x : _points[index].y) < value) {
+        index++;
+      }
+    }
+    _boundCursor = index;
+    _lastBound = value;
+    return index < _points.length &&
+            (_horizontal ? _points[index].x : _points[index].y) == value
+        ? index
+        : -1;
   }
 
   /// Returns the same point as interpolate's single [i, i] result. A miss
