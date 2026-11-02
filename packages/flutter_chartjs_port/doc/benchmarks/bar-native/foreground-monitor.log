@@ -1,0 +1,52 @@
+native-final-a1-primary 9
+native-final-a1-controls 12
+native-final-a1-guards 4
+native-final-b1-primary 9
+native-final-b1-controls 12
+native-final-b1-guards 4
+native-final-b2-primary 9
+native-final-b2-controls 12
+native-final-b2-guards 4
+native-final-a2-primary 9
+native-final-a2-controls 12
+native-final-a2-guards 4
+foreground a update true
+active a 0 true
+active a 12 false
+active a 24 false
+active a 36 false
+active a 48 false
+active a 60 false
+active a 72 false
+active a 84 false
+a update flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"22.76","drawMs":"14.49","updateMs":"9.66","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"3.92","layoutMs":"0.73","datasetsUpdateMs":"4.73","datasetsDrawMs":"14.24","host":"canvas","buildMs":"27.17","buildMaxMs":"33.21","rasterMs":"14.82","rasterMaxMs":"38.34","batches":8,"batchFrames":23,"buildP50Ms":"26.50","buildP90Ms":"27.91","rasterP50Ms":"13.73","rasterP90Ms":"13.96","windows":2}
+foreground a anim true
+active a 0 true
+active a 12 true
+active a 24 true
+active a 36 true
+active a 48 true
+active a 60 true
+active a 72 true
+active a 84 true
+a anim flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"59.87","drawMs":"11.61","updateMs":"0.00","animatorMs":"1.48","call":"animate","type":"bar","sharing":true,"scriptable":false,"elementsMs":"0.00","layoutMs":"0.00","datasetsUpdateMs":"0.00","datasetsDrawMs":"0.00","host":"canvas","buildMs":"16.00","buildMaxMs":"17.55","rasterMs":"13.91","rasterMaxMs":"14.75","batches":15,"batchFrames":1405,"buildP50Ms":"15.73","buildP90Ms":"16.43","rasterP50Ms":"13.85","rasterP90Ms":"14.26","windows":24}
+foreground b update true
+active b 0 true
+active b 12 true
+active b 24 true
+active b 36 true
+active b 48 true
+active b 60 true
+active b 72 true
+active b 84 true
+b update flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"35.61","drawMs":"9.19","updateMs":"11.89","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"4.58","layoutMs":"1.24","datasetsUpdateMs":"5.85","datasetsDrawMs":"8.94","host":"canvas","buildMs":"24.05","buildMaxMs":"30.58","rasterMs":"14.21","rasterMaxMs":"15.16","batches":15,"batchFrames":844,"buildP50Ms":"24.02","buildP90Ms":"27.56","rasterP50Ms":"14.13","rasterP90Ms":"14.50","windows":24}
+foreground b anim true
+active b 0 true
+active b 12 true
+active b 24 true
+active b 36 true
+active b 48 true
+active b 60 true
+active b 72 true
+active b 84 true
+b anim flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"59.92","drawMs":"9.16","updateMs":"0.00","animatorMs":"1.62","call":"animate","type":"bar","sharing":true,"scriptable":false,"elementsMs":"0.00","layoutMs":"0.00","datasetsUpdateMs":"0.00","datasetsDrawMs":"0.00","host":"canvas","buildMs":"13.73","buildMaxMs":"16.67","rasterMs":"13.72","rasterMaxMs":"15.11","batches":15,"batchFrames":1406,"buildP50Ms":"13.47","buildP90Ms":"14.02","rasterP50Ms":"13.66","rasterP90Ms":"14.03","windows":24}

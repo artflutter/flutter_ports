@@ -1,0 +1,56 @@
+{
+  "workspaceTests": {
+    "status": "passed",
+    "passed": 10748,
+    "chartjsPortPassed": 10214,
+    "chartjsPortSkipped": 84,
+    "excludes": [
+      "fixtures",
+      "golden"
+    ]
+  },
+  "newTests": 35,
+  "blendPixelPairs": 312,
+  "chromeJavaScript": {
+    "passed": 35
+  },
+  "chromeWebAssembly": {
+    "passed": 35
+  },
+  "fixtures": {
+    "files": 26,
+    "errors": 0,
+    "warnings": 0
+  },
+  "analyze": "passed, no issues",
+  "format": "passed, 772 files, zero changes",
+  "portChecks": "passed",
+  "parity": "passed, zero errors/warnings",
+  "goldensChanged": false,
+  "fullWebSuiteRun": true,
+  "performanceGates": "passed",
+  "logs": {
+    "workspaceTests": "workspaceTests.log.gz",
+    "chromeJavaScript": "chromeJavaScript.log.gz",
+    "chromeWebAssembly": "chromeWebAssembly.log.gz",
+    "fixtures": "fixtures.log.gz",
+    "analyze": "analyze.log.gz",
+    "parity": "parity.log.gz",
+    "portChecks": "portChecks.log.gz",
+    "format": "format.log.gz",
+    "fullWebSuite": "fullWebSuite.log.gz",
+    "upstreamCases": "upstreamCases.log.gz"
+  },
+  "fullWebSuite": {
+    "chartjsJavaScriptPassed": 3982,
+    "chartjsWebAssemblyPassed": 3982,
+    "chartjsSkippedPerBackend": 2,
+    "utilsPassedPerBackend": 55
+  },
+  "upstreamCases": {
+    "passed": 958,
+    "skipped": 78,
+    "failed": 0,
+    "files": 53
+  }
+}

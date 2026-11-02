@@ -1,0 +1,14 @@
+import os,subprocess
+from pathlib import Path
+for name,variant in [('a1','a'),('b1','b'),('b2','b'),('a2','a')]:
+ for group,ns,cases in [
+  ('primary','1000,5000,20000','update,draw,anim'),
+  ('controls','1000,5000','draw_rounded,thickness,update_line,update_bubble,draw_doughnut,multi'),
+  ('guards','100,1000','indexed,scriptable'),
+ ]:
+  run='native-final-'+name+'-'+group
+  path=Path('/tmp/bar-'+run+'.jsonl')
+  if path.exists():raise RuntimeError('Result exists: '+str(path))
+  with open('/tmp/bar-'+run+'.log','w') as log:
+   subprocess.run([('/tmp/bar-bulk-d.app' if variant=='a' else '/tmp/bar-native-final.app')+'/Contents/MacOS/chartjs_gallery'],env={**os.environ,'BAR_RUN':run,'BAR_VARIANTS':cases,'BAR_N':ns},stdout=log,stderr=subprocess.STDOUT,check=True)
+  print(run,len(path.read_text().splitlines()),flush=True)

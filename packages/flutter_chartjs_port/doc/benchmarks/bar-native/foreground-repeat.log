@@ -1,0 +1,10 @@
+foreground a update true
+active a 0 true
+active a 12 true
+active a 24 true
+active a 36 true
+active a 48 true
+active a 60 true
+active a 72 true
+active a 84 true
+a update flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"31.15","drawMs":"14.28","updateMs":"9.79","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"4.00","layoutMs":"0.74","datasetsUpdateMs":"4.79","datasetsDrawMs":"14.03","host":"canvas","buildMs":"27.11","buildMaxMs":"33.17","rasterMs":"14.29","rasterMaxMs":"15.87","batches":15,"batchFrames":738,"buildP50Ms":"26.66","buildP90Ms":"29.85","rasterP50Ms":"14.17","rasterP90Ms":"14.56","windows":24}

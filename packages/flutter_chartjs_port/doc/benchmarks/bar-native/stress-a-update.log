@@ -1,0 +1,7 @@
+sandbox_extension_issue_file_to_process failed for /tmp/bar-bulk-d.app: 1 (Operation not permitted)
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+flutter: The Dart VM service is listening on http://127.0.0.1:49672/OwMH4ISw3zE=/
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":1,"frames":28,"fps":"28.00","buildMs":"27.242","rasterMs":"15.190"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":2,"frames":11,"fps":"11.00","buildMs":"27.287","rasterMs":"13.717"}
+flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"22.76","drawMs":"14.49","updateMs":"9.66","animatorMs":"0.00","call":"update","type":"bar","sharing":true,"scriptable":false,"elementsMs":"3.92","layoutMs":"0.73","datasetsUpdateMs":"4.73","datasetsDrawMs":"14.24","host":"canvas","buildMs":"27.17","buildMaxMs":"33.21","rasterMs":"14.82","rasterMaxMs":"38.34","batches":8,"batchFrames":23,"buildP50Ms":"26.50","buildP90Ms":"27.91","rasterP50Ms":"13.73","rasterP90Ms":"13.96","windows":2}
+flutter: STRESS done
