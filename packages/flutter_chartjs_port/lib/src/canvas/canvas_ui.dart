@@ -46,6 +46,7 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
@@ -506,7 +507,10 @@ final class _UiTextMetrics implements TextMetrics {
 /// See the library comment for the picture model. The host calls [paint]
 /// in its paint phase and repaints when [onChanged] fires.
 final class UiCanvasContext
-    implements CanvasRenderingContext2D, CanvasTextMetricsSource {
+    implements
+        CanvasRenderingContext2D,
+        CanvasTextMetricsSource,
+        RectBarCanvas {
   UiCanvasContext._(this._element) {
     _s = _states[0];
     _path = UiPathBuilder(_s.transform);
@@ -645,6 +649,8 @@ final class UiCanvasContext
     _dropPictures();
     _disposed = true;
     _onChanged = null;
+    _rectBarBorder = null;
+    _rectBarBackground = null;
   }
 
   // The recording.
@@ -1221,6 +1227,111 @@ final class UiCanvasContext
       _c.drawPath(_rectPath(x, y, w, h), _fillPaint);
     }
     _drew();
+  }
+
+  ui.Color? _rectBarBorder;
+  ui.Color? _rectBarBackground;
+
+  // Only exact immutable sRGB colors qualify. Cache that validation by
+  // identity; gradients, unusual color objects and non-finite channels keep
+  // their ordinary setters and possible errors at the original point.
+  static bool _rectBarColor(Object? value, ui.Color? validated) {
+    if (validated != null && identical(value, validated)) return true;
+    if (value is! ui.Color ||
+        value.runtimeType != ui.Color ||
+        value.colorSpace != ui.ColorSpace.sRGB) {
+      return false;
+    }
+    return value.a >= 0 &&
+        value.a <= 1 &&
+        value.r >= 0 &&
+        value.r <= 1 &&
+        value.g >= 0 &&
+        value.g <= 1 &&
+        value.b >= 0 &&
+        value.b <= 1;
+  }
+
+  /// Fused ordinary bars (ADR 0070). The logical style stack is untouched;
+  /// the final inner path and each successful fill's recording count remain.
+  @override
+  @internal
+  bool tryDrawRectBar({
+    required double outerX,
+    required double outerY,
+    required double outerWidth,
+    required double outerHeight,
+    required double innerX,
+    required double innerY,
+    required double innerWidth,
+    required double innerHeight,
+    required Object? borderColor,
+    required Object? backgroundColor,
+  }) {
+    // A callback can inspect or mutate the temporary style/path/save state.
+    // Let the original sequence handle any draw that can notify user code.
+    if (_disposed ||
+        (!_notified && _onChanged != null) ||
+        ui.Picture.onCreate != null ||
+        ui.Picture.onDispose != null ||
+        ui.Image.onCreate != null ||
+        ui.Image.onDispose != null ||
+        !identical(_path.transform, _s.transform) ||
+        !_s.transform.isAxisAligned ||
+        !_s.transform.isInvertible ||
+        !_finite4(outerX, outerY, outerWidth, outerHeight) ||
+        !_finite4(innerX, innerY, innerWidth, innerHeight) ||
+        outerWidth <= 0 ||
+        outerHeight <= 0 ||
+        innerWidth < 0 ||
+        innerHeight < 0 ||
+        !_rectBarColor(borderColor, _rectBarBorder) ||
+        !_rectBarColor(backgroundColor, _rectBarBackground)) {
+      return false;
+    }
+    final outer = _mappedRect(outerX, outerY, outerWidth, outerHeight);
+    final inner = _mappedRect(innerX, innerY, innerWidth, innerHeight);
+    if (!outer.isFinite || !inner.isFinite) return false;
+    final hasBorder = outerWidth != innerWidth || outerHeight != innerHeight;
+    ({ui.RRect outer, ui.RRect inner})? ring;
+    if (hasBorder && !inner.isEmpty) {
+      ring = _ring((
+        first: ui.RRect.fromRectXY(outer, 0, 0),
+        second: ui.RRect.fromRectXY(inner, 0, 0),
+      ));
+      if (ring == null) return false;
+    }
+    final border = borderColor! as ui.Color;
+    final background = backgroundColor! as ui.Color;
+    _rectBarBorder = border;
+    _rectBarBackground = background;
+    if (hasBorder && _setupPaint(_fillPaint, border, null, mapped: true)) {
+      final canvas = _c; // Flush pending circles in their original order.
+      if (ring != null) {
+        canvas.drawDRRect(ring.outer, ring.inner, _fillPaint);
+      } else if (!outer.isEmpty) {
+        canvas.drawRect(outer, _fillPaint);
+      }
+      _drew();
+    }
+    // Paths are outside save/restore. Retain the exact rect commands and
+    // direction for a later stroke, clip, append or inspection by a plugin.
+    _path
+      ..reset()
+      ..rect(innerX, innerY, innerWidth, innerHeight);
+    if (inner.isEmpty) {
+      // Empty fills still count/notify and may start the next recording.
+      // With guarded solid colors their private paint mutation is unobserved.
+      if (_s.globalAlpha != 0 || _s.blendMode != ui.BlendMode.srcOver) {
+        if (_s.blendMode != ui.BlendMode.srcOver) _needsLayer = true;
+        _c;
+        _drew();
+      }
+    } else if (_setupPaint(_fillPaint, background, null, mapped: true)) {
+      _c.drawRect(inner, _fillPaint);
+      _drew();
+    }
+    return true;
   }
 
   @override

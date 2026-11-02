@@ -1,5 +1,8 @@
 ## 0.1.0
 
+- Draw supported rectangular bars through a guarded native canvas operation,
+  preserving pixels, canvas state, callbacks and the existing fallback.
+
 - Add a guarded bulk numeric bar update path that reuses scalar settings and
   directly writes native elements while preserving callbacks and fallbacks.
 

@@ -30,6 +30,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   Drawing follow-up: [ADR 0067, scalar bar geometry](adr/0067-scalar-bar-geometry.md).
   Update follow-up: [ADR 0068, live bar update layout](adr/0068-live-bar-update-layout.md).
   Numeric update path: [ADR 0069](adr/0069-bulk-numeric-bar-updates.md).
+  Native rectangle drawing: [ADR 0070](adr/0070-native-rectangular-bar-drawing.md).
 - **Axis pipeline options:** [measured alternatives and proposed structure](axis-pipeline-options.md)
   for reducing steady-state category-axis layout below 1 ms, with compatibility
   constraints and invalidation probes.

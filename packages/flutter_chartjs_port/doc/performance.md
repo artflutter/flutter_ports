@@ -6339,3 +6339,62 @@ passes and 84 skips), as do all thirteen targeted tests in each of Chrome
 JavaScript and WebAssembly. Fixtures pass 26 files with zero errors/warnings.
 Analysis, formatting, regenerated parity and all port checks pass. The temporary
 browser harness was removed. No golden files were changed.
+
+## 37. Direct native drawing of ordinary rectangular bars
+
+[ADR 0070](adr/0070-native-rectangular-bar-drawing.md) offers the existing scalar
+bar geometry to an optional native context operation. Supported solid-color bars
+skip intermediate border paths and save-state copying. The final inner path,
+styles, clips, draw order, notifications and recording counts remain. Callback-
+observable, complex and unsupported cases retain the ordinary sequence. No bars
+are merged, approximated or removed.
+
+A/B/B/A against `5dafa22`, Apple M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart
+3.13.7, arm64 profile AOT, Impeller, 800 × 480 at DPR 1. Seven 200ms batches
+follow 800ms warmup; no builds/tests run alongside timing. Full calls sum update,
+draw and host paint/completion within each process before aggregating its two runs.
+
+| N | Full draw call, before → after | Full update call, before → after | Animation frame CPU, before → after |
+| ---: | ---: | ---: | ---: |
+| 1000 | 0.934 → 0.813 ms | 1.545 → 1.413 ms | 0.958 → 0.822 ms |
+| 5000 | 3.223 → 2.554 ms | 5.476 → 4.714 ms | 3.479 → 2.845 ms |
+| 20000 | 12.586 → 10.051 ms | 25.627 → 21.912 ms | 13.970 → 11.206 ms |
+
+**Keep the change.** Full draw calls improve 20.1% at 20k, with both pairs passing
+the 15% gate (19.7% and 20.6%). Updates improve 14.5% and animation CPU 19.8%.
+Draw-only drawing falls 10.518 → 8.001ms; recording completion stays about 2.1ms.
+No rounded/inflated, other-chart, multi-dataset, indexed or scriptable control has
+a repeatable regression above both 5% and 0.1ms. All component shifts are retained.
+
+Monitored foreground 25-second stress runs at N=20000, M=0:
+
+| Operation | Before FPS | After FPS | Before/after average build | Before/after average raster |
+| --- | ---: | ---: | ---: | ---: |
+| Update each frame | 31.15 | 35.61 | 27.11 → 24.05 ms | 14.29 → 14.21 ms |
+| Looping animation | 59.87 | 59.92 | 16.00 → 13.73 ms | 13.91 → 13.72 ms |
+
+The original baseline update run lost focus and is excluded. Its replacement
+and all reported candidate/animation runs pass the activity monitor and retain
+24 complete one-second windows. These are one local process per cell, not a
+cross-device guarantee. Updates still exceed the 16.67ms budget for 60 FPS;
+animation gains CPU headroom while remaining at the display-rate ceiling.
+
+[Protocol, source, every timing run, activity logs and validation](benchmarks/bar-native/README.md)
+retain the invalid foreground run and its replacement. Exact pixel/state twins
+cover all blend modes, errors, observers and current-path use. No golden changed.
+
+Validation: all 10,748 workspace tests pass (the Chart.js package has 10,214
+passes and 84 skips), as do all 35 new tests in each of Chrome JavaScript and
+WebAssembly. Fixtures pass 26 files with zero errors/warnings. Analysis, format,
+regenerated parity and all port checks pass. The temporary browser harness was
+removed; no golden files were changed.
+
+Pre-push validation also passes the complete Chrome JavaScript and WebAssembly
+suites (3,982 Chart.js tests and 55 utility tests per backend) and the upstream
+case check (958 passed, 78 skipped, zero failures).
+
+A separate candidate CPU profile identifies parsing as the next update target:
+20.9% of samples within `Chart.update` include parsing, with repeated category
+label retrieval a major contributor. The proposed guarded numeric/category
+parse path and raw profile are recorded in the benchmark README. This is a
+profiling recommendation, not a measured gain from an implemented change.

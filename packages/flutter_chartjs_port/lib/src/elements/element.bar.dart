@@ -34,6 +34,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -900,6 +901,23 @@ class BarElement extends Element
     final innerY = top + t;
     final innerWidth = width - l - r;
     final innerHeight = height - t - b;
+
+    // DIVERGES(chartjs): adapt-native-rect-bar, optional fused native drawing.
+    if (ctx is RectBarCanvas &&
+        (ctx as RectBarCanvas).tryDrawRectBar(
+          outerX: left + (left != innerX ? -0.0 : 0.0),
+          outerY: top + (top != innerY ? -0.0 : 0.0),
+          outerWidth: width,
+          outerHeight: height,
+          innerX: innerX,
+          innerY: innerY,
+          innerWidth: innerWidth,
+          innerHeight: innerHeight,
+          borderColor: borderColor,
+          backgroundColor: backgroundColor,
+        )) {
+      return true;
+    }
 
     ctx.save();
     if (width != innerWidth || height != innerHeight) {

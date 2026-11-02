@@ -548,6 +548,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `canvas_ui_batch.dart`, the circle batch) are the `dart:ui` implementation. No helper imports
     them. `canvas_ui.dart` reflects the `style` attribute of the canvas. Other attributes keep their
     values as strings (Chart.js ADR 0022).
+    Chart.js ADR 0070 offers ordinary bar rectangles to an optional native
+    context operation. It preserves the final path, state and fill accounting,
+    and declines callbacks, unsupported colors/transforms and complex geometry.
+    `test/port/canvas/canvas_rect_bar_test.dart` pins pixel/state equivalence.
     Chart.js ADR 0066 bounds native recordings at 256 non-batched paint calls.
     Internal picture chunks share one paint generation; more than eight completed
     generations flatten. Circle runs keep their existing batching. The pixel and

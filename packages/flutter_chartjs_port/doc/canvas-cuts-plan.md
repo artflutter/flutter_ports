@@ -2345,3 +2345,13 @@ frame cost. Eligibility and exact-state/callback regressions are in
 `test/port/controllers/bar_bulk_update_test.dart`; timings and controls are in
 performance.md §36 and benchmarks/bar-bulk/. No rejected rendering approximation
 is introduced by this update path.
+
+### 7.12 Native ordinary rectangle-bar operation
+
+ADR 0070 fuses the already-computed ordinary bar rectangles into the existing
+native rectangle/ring draws. The final path, draw order, clipping and recording
+counts remain. Observable callbacks and unsupported styles/transforms/geometry
+retain the Canvas 2D sequence. This removes path/state preparation without
+reopening R6's atlas/triangle approximations. Pixel/state regressions are in
+`test/port/canvas/canvas_rect_bar_test.dart`; measurements are in performance.md
+§37 and benchmarks/bar-native/. ADR 0066's recording limit remains unchanged.
