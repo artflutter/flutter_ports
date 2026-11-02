@@ -1,12 +1,12 @@
 // Original code, not ported from Chart.js: element.bar cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/options/props.dart' show BorderSkipped;
 import 'package:flutter_chartjs_port/src/types/animation.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -137,8 +137,8 @@ Map<String, Object?> _drawCfg([Map<String, Object?> extra = const {}]) => {
   'width': 30,
   'height': 80,
   'options': <String, Object?>{
-    'borderColor': const color_values.PreparedColor(255, 0, 0, 1),
-    'backgroundColor': const color_values.PreparedColor(0, 0, 255, 1),
+    'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
+    'backgroundColor': const ui.Color.fromRGBO(0, 0, 255, 1),
     'borderWidth': 2,
     'borderRadius': 0,
   },

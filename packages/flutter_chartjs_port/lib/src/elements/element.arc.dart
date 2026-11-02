@@ -37,6 +37,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -73,7 +74,6 @@ import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ArcOptionsScope, DescriptorsScope;
@@ -941,7 +941,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// typed scope of the kind `ArcOptions` (Chart.js ADR 0054 §3).
   static final ArcOptionsScope defaults = ArcOptionsScope()
     ..borderAlign = 'center'
-    ..borderColor = const PreparedColor(255, 255, 255, 1)
+    ..borderColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..borderDash = <Object?>[]
     ..borderDashOffset = 0.0
     ..borderJoinStyleCell = optUndefined

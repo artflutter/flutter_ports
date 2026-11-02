@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: core.config cases with no spec.
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
@@ -19,8 +20,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -130,14 +129,6 @@ Object? _at(Object? root, String path) {
   }
   return node;
 }
-
-/// The default `ticks.backdropColor` of the scales.
-const color_values.PreparedColor _backdrop = color_values.PreparedColor(
-  255,
-  255,
-  255,
-  0.75,
-);
 
 /// A [StateError] with the message of `determineAxis`.
 Matcher _axisError(String id) => throwsA(
@@ -859,7 +850,7 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'grid': <String, Object?>{
-                'color': const color_values.PreparedColor(255, 0, 0, 1),
+                'color': const ui.Color.fromRGBO(255, 0, 0, 1),
               },
             },
           },
@@ -871,13 +862,15 @@ void main() {
       const title =
           '"title":{"display":false,"text":"","padding":{"top":4,'
           '"bottom":4},"color":"#666"}';
-      final ticks =
+      const ticks =
           '"ticks":{"minRotation":0,"maxRotation":50,"mirror":false,'
           '"textStrokeWidth":0,"textStrokeColor":"","padding":3,'
           '"display":true,"autoSkip":true,"autoSkipPadding":3,'
           '"labelOffset":0,"callback":"<fn>","minor":{},"major":{},'
           '"align":"center","crossAlign":"near","showLabelBackdrop":false,'
-          '"backdropColor":"${_backdrop.css}","backdropPadding":2,'
+          // The CSS scalar is frozen upstream reference data.
+          // ignore: missing_whitespace_between_adjacent_strings
+          '"backdropColor":"rgba(255, 255, 255, 0.75)","backdropPadding":2,'
           '"color":"#666"}';
       expect(
         _json(_at(config.options, 'scales.x')),
@@ -2414,7 +2407,7 @@ void main() {
       expect(run(all.sublist(2)), 'L3-overrides');
       expect(run(all.sublist(3)), 'L4-theme');
       expect(run(all.sublist(4)), 'L5-defaults');
-      expect(run(const []), const color_values.PreparedColor(0, 0, 0, 0.1));
+      expect(run(const []), const ui.Color.fromRGBO(0, 0, 0, 0.1));
       // Without the theme level, each run equals the upstream run.
       expect(run(['overrides', 'defaults']), 'L3-overrides');
       expect(run(['defaults']), 'L5-defaults');
@@ -2464,7 +2457,7 @@ void main() {
         themeConfigKey: <String, Object?>{
           'elements': <String, Object?>{
             'tbar': <String, Object?>{
-              'backgroundColor': const color_values.PreparedColor(
+              'backgroundColor': const ui.Color.fromRGBO(
                 200,
                 0,
                 0,

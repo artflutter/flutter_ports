@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: helpers.config cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, each, merge, mergeIf, resolveObjectKey;
@@ -8,8 +10,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
 
@@ -641,22 +641,22 @@ void main() {
       final resolver = createResolver(
         [
           <String, Object?>{
-            'hoverColor': const color_values.PreparedColor(255, 0, 0, 1),
+            'hoverColor': const ui.Color.fromRGBO(255, 0, 0, 1),
           },
         ],
         ['hover', ''],
       );
       expect(
         resolveObjectKey(resolver, 'color'),
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
       expect(
         resolveObjectKey({'o': resolver}, 'o.color'),
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
       expect(
         resolveObjectKey(attachContext(resolver, {}), 'color'),
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
       expect(resolveObjectKey(resolver, '_fallback'), same(undefined));
     });

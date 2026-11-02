@@ -26,6 +26,7 @@ library;
 
 import 'dart:core' as core show override;
 import 'dart:core';
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.defaults.dart';
@@ -37,7 +38,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -150,9 +150,9 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   /// [descriptorValues] is `_descriptors`. [appliers] is `_appliers`.
   Defaults(Object? descriptorValues, List<void Function(Defaults)> appliers) {
     animationCell = optUndefined;
-    backgroundColor = const PreparedColor(0, 0, 0, 0.1);
-    borderColor = const PreparedColor(0, 0, 0, 0.1);
-    this.color = const PreparedColor(102, 102, 102, 1);
+    backgroundColor = const ui.Color.fromRGBO(0, 0, 0, 0.1);
+    borderColor = const ui.Color.fromRGBO(0, 0, 0, 0.1);
+    this.color = const ui.Color.fromRGBO(102, 102, 102, 1);
     datasets = DatasetOptionsByTypeScope();
     devicePixelRatioCell = OptFunction<double>(
       _fn1(

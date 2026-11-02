@@ -5,8 +5,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
@@ -90,7 +88,6 @@ Map<String, Object?> _resolveRadial(Object? theme) {
 }
 
 void main() {
-  installNativeColorCodec();
   setUpSpecs();
 
   TypedRegistry(Scale.jsClass, 'scales').register(RadialLinearScale.jsClass);

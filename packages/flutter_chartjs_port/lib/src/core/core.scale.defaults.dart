@@ -10,11 +10,12 @@
 /// the `defaults` object of `core.defaults.js`.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show OptFunction;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         BorderOptionsScope,
@@ -85,7 +86,7 @@ void applyScaleDefaults(Defaults defaults) {
           ..maxRotation = 50.0
           ..mirror = false
           ..textStrokeWidth = 0.0
-          ..textStrokeColor = const PreparedColor(0, 0, 0, 0)
+          ..textStrokeColor = const ui.Color.fromRGBO(0, 0, 0, 0)
           ..padding = 3.0
           ..display = true
           ..autoSkip = true
@@ -99,7 +100,7 @@ void applyScaleDefaults(Defaults defaults) {
           ..align = 'center'
           ..crossAlign = 'near'
           ..showLabelBackdrop = false
-          ..backdropColor = const PreparedColor(255, 255, 255, 0.75)
+          ..backdropColor = const ui.Color.fromRGBO(255, 255, 255, 0.75)
           ..backdropPadding = 2.0),
     )
     ..route('scale.ticks', 'color', '', 'color')

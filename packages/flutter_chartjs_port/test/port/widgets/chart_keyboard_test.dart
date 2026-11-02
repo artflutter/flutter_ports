@@ -8,8 +8,6 @@ import 'package:chartjs_test_utils/flutter.dart' show triggerMouseEvent;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -279,7 +277,6 @@ void _highlight(FocusHighlightStrategy strategy) {
 }
 
 void main() {
-  installNativeColorCodec();
   group('the keys give the state of a mouse at the target', () {
     for (final type in ['bar', 'line', 'doughnut', 'radar']) {
       testWidgets(type, (tester) async {

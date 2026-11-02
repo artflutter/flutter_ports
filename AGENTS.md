@@ -13,6 +13,11 @@ of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`,
 
 Run from the repository root. `melos` is a dev dependency: use `dart run melos …`.
 
+Chart.js ADR 0061: the historical "pure layer" names below now mean framework-free
+core layers. They may use `dart:ui.Color`, but no `package:flutter` framework APIs.
+The chart core and harness run through Flutter; standalone Dart execution is no
+longer supported. No global color installer or intermediate option color exists.
+
 - `flutter pub get`: resolve the whole workspace (single root `pubspec.lock`).
 - `dart run melos run format` / `format:check`
 - `dart run melos run analyze`: `dart analyze --fatal-infos` over the workspace.
@@ -32,7 +37,8 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   `test/upstream_test.dart` of `flutter_chartjs_port`, `flutter_d3_port`, `flutter_echarts_port`
   and `flutter_chartjs_plugin_zoom_port`.
 - `dart run melos run test:web`: the `flutter_chartjs_port` and `chartjs_test_utils` tests without
-  `@TestOn('vm')`, in Chrome, compiled with dart2js and with dart2wasm. It needs a local Google
+  `@TestOn('vm')`, in Chrome through Flutter (JavaScript/DDC and WebAssembly). `tool/test_web.dart`
+  selects browser-capable files before compilation. It needs a local Google
   Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8)
@@ -742,7 +748,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 - `packages/chartjs_test_utils`: the test harness, a port of chartjs-test-utils 0.4.0
   (`publish_to: none`, a dev_dependency of `flutter_chartjs_port`). The ported files are in `lib/src/`.
   `flutter_test` and `clock` are regular dependencies of the package, for `lib/src/dom.dart`.
-  - `lib/pure.dart`: the pure part. It has `setUpSpecs()`, the spec set-up for `dart test`,
+  - `lib/pure.dart`: the framework-free core part (legacy filename). It has
+    `setUpSpecs()`, the spec set-up for Flutter core tests,
     `setUpDefaultsRestore()`, `createMockContext`, `MockContext` and the matchers
     (`toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`, `toEqualOptions`, `toBeValidChart`,
     `toBeChartOfSize`). `createMockContext` is in `lib/src/context.dart` (the row
@@ -1208,8 +1215,9 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `harness-register-builtins` of `packages/flutter_chartjs_port/test/port/flutter_test_config_test.dart`,
   `packages/flutter_chartjs_port/test/port/core/date_format_locale_test.dart` and the group
   `harness-release-at-unmount` of `packages/chartjs_test_utils/test/index_test.dart`.
-- A pure-layer file reaches neither `dart:ui` nor `package:flutter` through its direct or indirect
-  imports. `check:lib-imports` computes the pure layers from the roots in
+- A core (historically pure-layer) file may use `dart:ui.Color`, but reaches no
+  `package:flutter` framework library through its direct or indirect imports (ADR 0061).
+  `check:lib-imports` computes the core layers from the roots in
   `packages/flutter_chartjs_port/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
   `lib/src/types/`, `lib/src/kurkle_color/`, the helpers except `helpers.extras`, the files of
   `lib/src/elements/`, `plugin.decimation` and the files of `plugin.filler/` of `lib/src/plugins/`,
@@ -1218,9 +1226,9 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `core.interaction`, `core.layouts`, `core.animation`, `animation_spec`, `reduced_motion`,
   `core.typedRegistry` and the port-only `date_*.dart`. Of `lib/src/theme/`, the roots are `compile.dart` and `presets.dart`.
   The canvas interface `lib/src/canvas/canvas.dart` is pure, because `helpers.canvas` imports it.
-- Write the tests of pure layers with `package:test`, not `flutter_test`. These tests run on the
-  VM (`test`) and in Chrome with dart2js and dart2wasm (`test:web`).
-- A test file that imports `flutter_test`, `dart:io`, `dart:ui` or other non-pure code needs
+- Write core tests with `package:test`. Execute them through Flutter on the VM
+  (`test`) and in Chrome with JavaScript/DDC and WebAssembly (`test:web`).
+- A test file that imports `dart:io` or VM-only framework/engine test code needs
   `@TestOn('vm')` after its header line. `test:web` does not compile it. `check:lib-imports` fails
   on a test file without `@TestOn('vm')` that imports more than pure layers, `package:test` and
   `package:chartjs_test_utils/pure.dart`. It does not examine the tests of `chartjs_test_utils`.
@@ -1243,7 +1251,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   Chart.js ADR 0022 §8). After the registration, it sets `defaults.plugins.colors.enabled = false`
   (the port of `test/index.js:25-28`), before the snapshot of the restore. `setUpSpecs()` and
   `removeBuiltins()` remove them again, also the colors plugin and its defaults. Thus a pure-layer
-  file has the same state under `flutter test` and `dart test`.
+  file has the same state under the VM and browser Flutter test runners.
 - The unmount of the harness body calls `releaseCharts` (the row `harness-release-at-unmount`).
   This runs before the end-of-test checks of flutter_test and before the `tearDown` functions. A
   `tearDown(releaseCharts)` is the fallback after a failed test. `releaseCharts` never deletes a

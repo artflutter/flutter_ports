@@ -429,7 +429,7 @@ String _resolved(Schema schema) {
       '/// `ElementOptions` keeps `\$shared`, `\$animations`, the extras, the\n'
       '/// frozen state and the face (Chart.js ADR 0054 §5).\n'
       '///\n'
-      '/// This library is a pure layer.\n'
+      '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
       "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'\n"
       '    show DrawPointOptions;\n'
@@ -438,7 +438,6 @@ String _resolved(Schema schema) {
       "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/element_options_base.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/prepared_color.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n",
     );
   for (final kind in schema.kinds) {
@@ -585,7 +584,7 @@ String _resolved(Schema schema) {
             '    }\n',
           );
         default:
-          out.write('    _$id = publicColorValue(raw);\n');
+          out.write('    _$id = raw;\n');
       }
       out.write('  }\n');
     }
@@ -673,7 +672,7 @@ String _optionKeys(Schema schema) {
       '/// one entry for each distinct key name of `tool/options_schema.yaml`.\n'
       '/// A name that is not here stays a `String` (an extra of its scope).\n'
       '///\n'
-      '/// This library is a pure layer.\n'
+      '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
       '/// An option key by its JS name.\n'
       'enum OptionKey {\n',
@@ -715,7 +714,7 @@ String _scopeKinds(Schema schema) {
       '/// one entry for each kind of `tool/options_schema.yaml`, with its\n'
       '/// keys, their shapes and the kinds of the nested scopes.\n'
       '///\n'
-      '/// This library is a pure layer.\n'
+      '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
       "import 'package:flutter_chartjs_port/src/options/opt.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n"
@@ -854,7 +853,7 @@ String _scopes(Schema schema) {
       '/// typed setter of a plain value. `OptionScope` keeps the key order,\n'
       '/// the extras and the face.\n'
       '///\n'
-      '/// This library is a pure layer.\n'
+      '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
       "import 'package:flutter_chartjs_port/src/options/opt.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n"

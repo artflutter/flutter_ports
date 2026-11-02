@@ -6,8 +6,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -322,7 +320,6 @@ class _HostState extends State<_Host> {
 }
 
 void main() {
-  installNativeColorCodec();
   group('the forms of the probe F-P4', () {
     testWidgets('F0, no reset: the old theme stays in the scales and the '
         'datasets', (tester) async {

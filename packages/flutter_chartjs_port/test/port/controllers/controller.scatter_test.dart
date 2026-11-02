@@ -7,8 +7,6 @@ import 'dart:io';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/controllers/controller.scatter.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
@@ -121,7 +119,6 @@ void _expectLinePoints(Chart chart) {
 }
 
 void main() {
-  installNativeColorCodec();
   testReferenceOrigin(
     node: controllerScatterReferenceNode,
     arch: controllerScatterReferenceArch,

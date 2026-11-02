@@ -6,8 +6,6 @@ import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 // Not public: the typed element options of Chart.js ADR 0018.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, BarOptions, LineOptions, PointOptions;
@@ -119,7 +117,6 @@ Future<void> _slide(WidgetTester tester, String key, double value) async {
 }
 
 void main() {
-  installNativeColorCodec();
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 

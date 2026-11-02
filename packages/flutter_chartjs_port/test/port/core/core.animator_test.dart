@@ -7,8 +7,6 @@ import 'dart:ui' as native_ui;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show HTMLCanvasElement;
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -94,7 +92,6 @@ Animation _start(
 }
 
 void main() {
-  installNativeColorCodec();
   group('platform-animation-promise-checkpoint', () {
     testWidgets('a later callback of the last frame sees the shared options', (
       tester,

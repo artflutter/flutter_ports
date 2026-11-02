@@ -8,10 +8,10 @@ library;
 // Test-only access to the native color bridge.
 // Callback arity must remain explicit for the observation oracle.
 // ignore_for_file: implementation_imports, avoid_types_on_closure_parameters
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/src/color_reference.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 
 final _callbacks = Expando<Object>('fixture native color callback');
 
@@ -28,7 +28,6 @@ bool _isColor(String key) =>
 
 /// Migrates color options, leaving data, labels and ordinary text intact.
 void nativeFixtureColors(Object? config) {
-  installNativeColorCodec();
   final seen = Set<Object>.identity();
   Object? color(Object? value) {
     // Upstream uses false/empty colors to suppress a stroke.
@@ -38,12 +37,12 @@ void nativeFixtureColors(Object? config) {
       final parsed = referenceColor(value);
       if (!parsed.valid) return value;
       final rgb = parsed.rgbaBytes!;
-      return PreparedColor(
+      return ui.Color.fromRGBO(
         rgb.r.round(),
         rgb.g.round(),
         rgb.b.round(),
         rgb.a / 255,
-      ).paint;
+      );
     }
     if (value is List) return <Object?>[for (final item in value) color(item)];
     if (value is JsFunction || value is Function) {

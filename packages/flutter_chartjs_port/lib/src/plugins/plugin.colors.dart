@@ -33,6 +33,8 @@
 /// `core.datasetController.dart`.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart'
     show DoughnutController;
 import 'package:flutter_chartjs_port/src/controllers/controller.polarArea.dart'
@@ -46,7 +48,6 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsIsObjectLike, jsSet;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ColorsOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
@@ -56,23 +57,21 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
 
 /// plugin.colors.ts:14 `BORDER_COLORS`.
-final List<PreparedColor> _borderColors = [
-  const PreparedColor(54, 162, 235, 1), // blue
-  const PreparedColor(255, 99, 132, 1), // red
-  const PreparedColor(255, 159, 64, 1), // orange
-  const PreparedColor(255, 205, 86, 1), // yellow
-  const PreparedColor(75, 192, 192, 1), // green
-  const PreparedColor(153, 102, 255, 1), // purple
-  const PreparedColor(201, 203, 207, 1), // grey
+final List<ui.Color> _borderColors = [
+  const ui.Color.fromRGBO(54, 162, 235, 1), // blue
+  const ui.Color.fromRGBO(255, 99, 132, 1), // red
+  const ui.Color.fromRGBO(255, 159, 64, 1), // orange
+  const ui.Color.fromRGBO(255, 205, 86, 1), // yellow
+  const ui.Color.fromRGBO(75, 192, 192, 1), // green
+  const ui.Color.fromRGBO(153, 102, 255, 1), // purple
+  const ui.Color.fromRGBO(201, 203, 207, 1), // grey
 ];
 
 /// plugin.colors.ts:25 `BACKGROUND_COLORS`.
 ///
-/// Border colors with 50% transparency. `String.prototype.replace` with a
-/// string pattern replaces the first match only: [String.replaceFirst].
-final List<PreparedColor> _backgroundColors = [
-  for (final color in _borderColors)
-    PreparedColor(color.red, color.green, color.blue, 0.5),
+/// Border colors with 50% transparency, set directly on the native Color.
+final List<ui.Color> _backgroundColors = [
+  for (final color in _borderColors) color.withValues(alpha: 0.5),
 ];
 
 // DIVERGES(chartjs): theme-H4a, the theme palette keys, variables and reader.
@@ -112,10 +111,10 @@ Object? _getBorderColor(int i) {
   final themeColors = _themeBorderColors;
   if (themeColors != null) {
     // js-ok: i is an int and never negative, so Dart % equals JS %.
-    return publicColorValue(themeColors[i % themeColors.length]);
+    return themeColors[i % themeColors.length];
   }
   // js-ok: i is an int and never negative, so Dart % equals JS %.
-  return _borderColors[i % _borderColors.length].paint;
+  return _borderColors[i % _borderColors.length];
 }
 
 /// plugin.colors.ts:31 `getBackgroundColor(i)`.
@@ -124,10 +123,10 @@ Object? _getBackgroundColor(int i) {
   final themeColors = _themeBackgroundColors;
   if (themeColors != null) {
     // js-ok: i is an int and never negative, so Dart % equals JS %.
-    return publicColorValue(themeColors[i % themeColors.length]);
+    return themeColors[i % themeColors.length];
   }
   // js-ok: i is an int and never negative, so Dart % equals JS %.
-  return _backgroundColors[i % _backgroundColors.length].paint;
+  return _backgroundColors[i % _backgroundColors.length];
 }
 
 /// The write `dataset[key] = value` of a colorizer into the dataset
@@ -298,14 +297,21 @@ bool _containsColorsDefinition(Object? descriptor) {
 /// inequality of a value and a string is the Dart `!=`. The reads are the
 /// typed reads of the keys of `defaults` (with their routes).
 bool _containsDefaultColorsDefenitions() {
-  return !sameSolidColor(
-        defaults.lookup(OptionKey.borderColor)?.raw,
-        const PreparedColor(0, 0, 0, 0.1),
-      ) ||
-      !sameSolidColor(
-        defaults.lookup(OptionKey.backgroundColor)?.raw,
-        const PreparedColor(0, 0, 0, 0.1),
-      );
+  return !_isDefaultColor(defaults.lookup(OptionKey.borderColor)?.raw) ||
+      !_isDefaultColor(defaults.lookup(OptionKey.backgroundColor)?.raw);
+}
+
+// DIVERGES(chartjs): adapt-direct-colors, compare native default channels.
+bool _isDefaultColor(Object? value) {
+  if (value is! ui.Color) return false;
+  final color = value.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
+  // js-ok: byte rounding is the native-color normalization of ADR 0057.
+  return (color.r * 255).round().clamp(0, 255) == 0 &&
+      // js-ok: byte rounding is the native-color normalization of ADR 0057.
+      (color.g * 255).round().clamp(0, 255) == 0 &&
+      // js-ok: byte rounding is the native-color normalization of ADR 0057.
+      (color.b * 255).round().clamp(0, 255) == 0 &&
+      color.a == 0.1;
 }
 
 /// plugin.colors.ts:102 `beforeLayout(chart, _args, options)`.

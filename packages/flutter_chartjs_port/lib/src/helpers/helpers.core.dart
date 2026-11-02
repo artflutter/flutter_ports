@@ -683,12 +683,13 @@ bool isFunction(Object? value) => jsIsFunction(value);
 ///
 /// Adapted from https://stackoverflow.com/questions/31128855/comparing-ecma6-sets-for-equality#31129384
 ///
-/// A Dart [Set] stands for a JavaScript `Set`. A Dart Set compares its
-/// elements with `==`, a JavaScript `Set` with SameValueZero. The two agree
+/// A Dart [Set] stands for a JavaScript `Set`. The supplied Set chooses its
+/// equality policy; JavaScript uses SameValueZero. The two agree
 /// on strings, the element type of the upstream callers
-/// (core.controller.js:559, :597). They differ on NaN: `setsEqual({NaN},
-/// {NaN})` is true in JavaScript (differences.md
-/// `js-semantics-set-equality`).
+/// (core.controller.js:559, :597). A set using `==` differs on NaN;
+/// default Dart backends also differ
+/// (DDC finds NaN). See differences.md
+/// `js-semantics-set-equality`.
 bool setsEqual<T>(Set<T> a, Set<T> b) {
   if (a.length != b.length) {
     return false;

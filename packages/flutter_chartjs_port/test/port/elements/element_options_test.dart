@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: the typed element options.
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
@@ -16,8 +17,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet, jsObjectFreeze, jsObjectIsFrozen, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
@@ -486,8 +485,8 @@ void main() {
           final map = <String, Object?>{
             'radius': 5,
             'borderWidth': 2,
-            'borderColor': const color_values.PreparedColor(255, 0, 0, 1),
-            'backgroundColor': const color_values.PreparedColor(0, 0, 255, 1),
+            'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
+            'backgroundColor': const ui.Color.fromRGBO(0, 0, 255, 1),
             'pointStyle': style,
             'rotation': ?rotation,
           };
@@ -933,7 +932,7 @@ void _adr0021Tests() {
       r'$shared': true,
       'borderWidth': 1.0,
       'radius': 3.0,
-      'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+      'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
       'myKey': 1.0,
     };
 

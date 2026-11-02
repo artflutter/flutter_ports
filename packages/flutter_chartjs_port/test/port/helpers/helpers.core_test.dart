@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: helpers.core cases with no spec.
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -768,11 +769,14 @@ void main() {
   });
 
   group('js-semantics-set-equality', () {
-    test('compares the elements with == and not with SameValueZero', () {
-      // Pins a port difference: `setsEqual(new Set([NaN]), new Set([NaN]))`
-      // is true in JavaScript. A Dart Set finds NaN with ==, and NaN == NaN
-      // is false on the VM, dart2js and dart2wasm.
-      expect(helpers.setsEqual({double.nan}, {double.nan}), isFalse);
+    test('respects the set equality policy', () {
+      // Make the equality policy explicit: default sets handle NaN differently
+      // in DDC. The helper must honor the supplied Set's comparator.
+      Set<double> strict() => HashSet<double>(
+        equals: (a, b) => a == b,
+        hashCode: (_) => 0,
+      )..add(double.nan);
+      expect(helpers.setsEqual(strict(), strict()), isFalse);
       // 0 and -0 are the same element, as in a JavaScript Set.
       expect(helpers.setsEqual({0.0}, {-0.0}), isTrue);
     });

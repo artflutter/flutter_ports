@@ -10,8 +10,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -101,7 +99,6 @@ typedef _Case = ({
 });
 
 void main() {
-  installNativeColorCodec();
   final cases = _cases();
   final names = <String>[];
   final stems = <String>{};

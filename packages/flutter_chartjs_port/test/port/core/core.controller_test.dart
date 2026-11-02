@@ -12,8 +12,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart'
     show Directionality, SizedBox, TextDirection, TickerMode, Widget;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -465,7 +463,6 @@ JsClass _plainClass(String name, String id, [AnyObject? defaults]) {
 }
 
 void main() {
-  installNativeColorCodec();
   Chart.register(registerables);
   Chart.register([_testController, _testScale]);
 

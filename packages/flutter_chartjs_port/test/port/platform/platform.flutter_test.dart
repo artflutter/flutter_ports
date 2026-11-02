@@ -6,8 +6,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -48,7 +46,6 @@ Widget _box(Widget child) => Directionality(
 );
 
 void main() {
-  installNativeColorCodec();
   group('EVENT_TYPES', () {
     test('maps the DOM types of platform.dom.js:21', () {
       expect(eventTypes, {

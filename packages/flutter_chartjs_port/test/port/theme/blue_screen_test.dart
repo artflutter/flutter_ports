@@ -7,8 +7,6 @@ import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
@@ -511,7 +509,6 @@ Future<int> _expectBlue(
 }
 
 void main() {
-  installNativeColorCodec();
   test('the compiled blue theme emits each color as the blue', () {
     final colors = _themeColors(compileChartTheme(_blueTheme)).toList();
     expect(colors, isNotEmpty);

@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: core.animation cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
@@ -8,11 +10,11 @@ import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
+    as color_helpers;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:test/test.dart';
@@ -158,14 +160,14 @@ void _replay(
 /// [to], and returns the value after each tick at the 11 factors.
 List<Object?> _colorResults(Object? from, Object? to) {
   final target = <String, Object?>{
-    'color': const color_values.PreparedColor(0, 0, 0, 1),
+    'color': const ui.Color.fromRGBO(0, 0, 0, 1),
   };
   final anim =
       Animation(
           {'duration': 1000, 'loop': true, 'type': 'color'},
           target,
           'color',
-          const color_values.PreparedColor(255, 0, 0, 1),
+          const ui.Color.fromRGBO(255, 0, 0, 1),
         )
         ..from = referenceColorInput(from)
         ..to = referenceColorInput(to);
@@ -316,7 +318,7 @@ void main() {
         if (!inputs.every(supported)) {
           for (final input in inputs.where((value) => !supported(value))) {
             expect(
-              () => color_values.requireSolidColor(input),
+              () => color_helpers.color(input),
               throwsArgumentError,
             );
           }
@@ -332,13 +334,13 @@ void main() {
 
     test('a change of from and to between the calls parses again', () {
       final target = <String, Object?>{
-        'color': const color_values.PreparedColor(0, 0, 0, 1),
+        'color': const ui.Color.fromRGBO(0, 0, 0, 1),
       };
       final anim = Animation(
         {'duration': 1000, 'loop': true, 'type': 'color'},
         target,
         'color',
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
       for (final (i, step) in animationColorSequence.indexed) {
         if (!identical(step.from, animationAbsent)) {
@@ -358,7 +360,7 @@ void main() {
         if (invalid.isNotEmpty) {
           for (final value in invalid) {
             expect(
-              () => color_values.requireSolidColor(value),
+              () => color_helpers.color(value),
               throwsArgumentError,
             );
           }
@@ -373,18 +375,18 @@ void main() {
       // The cache mixes a clone of the cached target color. Thus a second
       // round of ticks gives the colors of the first round.
       final first = _colorResults(
-        const color_values.PreparedColor(54, 162, 235, 0.5),
-        const color_values.PreparedColor(255, 99, 132, 1),
+        const ui.Color.fromRGBO(54, 162, 235, 0.5),
+        const ui.Color.fromRGBO(255, 99, 132, 1),
       );
       final target = <String, Object?>{
-        'color': const color_values.PreparedColor(0, 0, 0, 1),
+        'color': const ui.Color.fromRGBO(0, 0, 0, 1),
       };
       final anim = Animation(
         {'duration': 1000, 'loop': true, 'type': 'color'},
         target,
         'color',
-        const color_values.PreparedColor(255, 99, 132, 1),
-      )..from = const color_values.PreparedColor(54, 162, 235, 0.5);
+        const ui.Color.fromRGBO(255, 99, 132, 1),
+      )..from = const ui.Color.fromRGBO(54, 162, 235, 0.5);
       for (var round = 0; round < 3; round++) {
         for (var k = 0; k <= 10; k++) {
           anim.tick(anim.start + 100 * k);

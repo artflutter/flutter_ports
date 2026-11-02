@@ -6,8 +6,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as native_ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
@@ -396,7 +394,6 @@ String _text(Map<String, List<String>> lists) => [
 ].join('\n');
 
 void main() {
-  installNativeColorCodec();
   final root = _repositoryRoot();
   final manifestFile = root == null
       ? null

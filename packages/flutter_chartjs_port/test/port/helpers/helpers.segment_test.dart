@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: segment cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/elements/element.point.dart'
     as element_point;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
@@ -8,8 +10,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -224,7 +224,7 @@ Object? _plainStyle(Object? style) => style is JsObjectFace
 
 /// The base options of the style cases.
 const AnyObject _base = {
-  'borderColor': color_values.PreparedColor(0, 0, 255, 1),
+  'borderColor': ui.Color.fromRGBO(0, 0, 255, 1),
   'borderWidth': 3.0,
 };
 
@@ -234,7 +234,7 @@ Matcher _style({
   Object? backgroundColor = undefined,
   Object? borderDash = undefined,
   Object? borderWidth = 3.0,
-  Object? borderColor = const color_values.PreparedColor(0, 0, 255, 1),
+  Object? borderColor = const ui.Color.fromRGBO(0, 0, 255, 1),
 }) => equals(<String, Object?>{
   'backgroundColor': backgroundColor,
   'borderCapStyle': undefined,
@@ -563,8 +563,8 @@ void main() {
           return {
             ..._base,
             'borderColor': _p0(ctx).y >= 2
-                ? const color_values.PreparedColor(255, 0, 0, 1)
-                : const color_values.PreparedColor(0, 0, 255, 1),
+                ? const ui.Color.fromRGBO(255, 0, 0, 1)
+                : const ui.Color.fromRGBO(0, 0, 255, 1),
           };
         },
       };
@@ -580,7 +580,7 @@ void main() {
           2,
           5,
           false,
-          _style(borderColor: const color_values.PreparedColor(255, 0, 0, 1)),
+          _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
         ),
       ]);
       final ctx = contexts[0];
@@ -638,8 +638,8 @@ void main() {
         'setContext': (Object? ctx) => {
           ..._base,
           'borderColor': _p0DataIndex(ctx) == 2
-              ? const color_values.PreparedColor(255, 0, 0, 1)
-              : const color_values.PreparedColor(0, 0, 255, 1),
+              ? const ui.Color.fromRGBO(255, 0, 0, 1)
+              : const ui.Color.fromRGBO(0, 0, 255, 1),
         },
       };
       expect(
@@ -658,7 +658,7 @@ void main() {
             3,
             false,
             _style(
-              borderColor: const color_values.PreparedColor(255, 0, 0, 1),
+              borderColor: const ui.Color.fromRGBO(255, 0, 0, 1),
             ),
           ),
           _segment(3, 5, false, _style()),
@@ -675,8 +675,8 @@ void main() {
         'setContext': (Object? ctx) => {
           ..._base,
           'borderColor': (ctx! as JsObjectFace)['p1DataIndex'] == 3
-              ? const color_values.PreparedColor(255, 0, 0, 1)
-              : const color_values.PreparedColor(0, 0, 255, 1),
+              ? const ui.Color.fromRGBO(255, 0, 0, 1)
+              : const ui.Color.fromRGBO(0, 0, 255, 1),
         },
       };
       expect(
@@ -695,7 +695,7 @@ void main() {
             3,
             false,
             _style(
-              borderColor: const color_values.PreparedColor(255, 0, 0, 1),
+              borderColor: const ui.Color.fromRGBO(255, 0, 0, 1),
             ),
           ),
           _segment(3, 5, false, _style()),
@@ -708,8 +708,8 @@ void main() {
         'setContext': (Object? ctx) => {
           ..._base,
           'borderColor': _p0DataIndex(ctx) == 2
-              ? const color_values.PreparedColor(255, 0, 0, 1)
-              : const color_values.PreparedColor(0, 0, 255, 1),
+              ? const ui.Color.fromRGBO(255, 0, 0, 1)
+              : const ui.Color.fromRGBO(0, 0, 255, 1),
         },
       };
       expect(
@@ -730,7 +730,7 @@ void main() {
             3,
             true,
             _style(
-              borderColor: const color_values.PreparedColor(255, 0, 0, 1),
+              borderColor: const ui.Color.fromRGBO(255, 0, 0, 1),
             ),
           ),
         ],

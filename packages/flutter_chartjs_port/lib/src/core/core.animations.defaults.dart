@@ -11,10 +11,11 @@
 /// `defaults` object of `core.defaults.js`.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -76,7 +77,7 @@ void applyAnimationsDefaults(Defaults defaults) {
         ..show = (TransitionOptionsScope()
           ..animations = (AnimationsSpecScope()
             ..colors = (AnimationOptionsScope()
-              ..from = const PreparedColor(0, 0, 0, 0))
+              ..from = const ui.Color.fromRGBO(0, 0, 0, 0))
             ..visible = (AnimationOptionsScope()
               ..type = 'boolean'
               // show immediately
@@ -84,7 +85,7 @@ void applyAnimationsDefaults(Defaults defaults) {
         ..hide = (TransitionOptionsScope()
           ..animations = (AnimationsSpecScope()
             ..colors = (AnimationOptionsScope()
-              ..to = const PreparedColor(0, 0, 0, 0))
+              ..to = const ui.Color.fromRGBO(0, 0, 0, 0))
             ..visible = (AnimationOptionsScope()
               ..type = 'boolean'
               ..easing = 'linear'

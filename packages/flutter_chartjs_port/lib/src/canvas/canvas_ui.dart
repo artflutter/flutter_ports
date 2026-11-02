@@ -237,7 +237,6 @@ final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
   /// [height], in device pixels. A `null` size has no attribute and the DOM
   /// default: 300 wide, 150 high.
   UiCanvasElement({int? width, int? height}) {
-    installNativeColorCodec();
     if (width != null) this.width = width;
     if (height != null) this.height = height;
   }

@@ -19,6 +19,8 @@
 /// @module index
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -37,7 +39,6 @@ import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart'
     as rgb_js
     show rgbString;
 import 'package:flutter_chartjs_port/src/kurkle_color/srgb.dart' as srgb_js;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 
 /// color.js:24 `modHSL`.
 ///
@@ -137,7 +138,7 @@ class Color {
   ///
   /// [input] is a [Color], an RGBA object (an [RGBA] or a `Map` with the keys
   /// `r`, `g`, `b` and `a`), or a `List` `[r, g, b]` or `[r, g, b, a]`.
-  /// The installed native bridge also accepts Flutter Color. Strings throw
+  /// The constructor also accepts Flutter Color. Strings throw
   /// (ADR 0057). The `a` of an object or a list is alpha [0..1].
   ///
   /// A [Color] input gives that instance, as the JS constructor returns it.
@@ -156,14 +157,18 @@ class Color {
         'CSS color strings are unsupported; use Flutter Color',
       );
     }
-    final native = nativeColorReader?.call(input);
-    if (native != null) {
+    if (input is ui.Color) {
+      final native = input.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
       return Color.fromRgbaBytes(
         RGBA(
-          r: native.red.toDouble(),
-          g: native.green.toDouble(),
-          b: native.blue.toDouble(),
-          a: native.alpha * 255,
+          // js-ok: native Color normalization preserves byte rounding.
+          r: (native.r * 255).round().clamp(0, 255).toDouble(),
+          // js-ok: native Color normalization preserves byte rounding.
+          g: (native.g * 255).round().clamp(0, 255).toDouble(),
+          // js-ok: native Color normalization preserves byte rounding.
+          b: (native.b * 255).round().clamp(0, 255).toDouble(),
+          // js-ok: native alpha normalization keeps the former clamping.
+          a: native.a.clamp(0.0, 1.0) * 255,
         ),
       );
     }

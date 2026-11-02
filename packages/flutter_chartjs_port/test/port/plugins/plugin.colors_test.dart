@@ -5,8 +5,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -188,7 +186,6 @@ AnyObject _dataset(Chart chart, int index) =>
         as AnyObject;
 
 void main() {
-  installNativeColorCodec();
   testReferenceOrigin(
     node: pluginColorsReferenceNode,
     arch: pluginColorsReferenceArch,

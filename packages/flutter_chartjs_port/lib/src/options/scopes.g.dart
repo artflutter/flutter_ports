@@ -9,7 +9,7 @@
 /// typed setter of a plain value. `OptionScope` keeps the key order,
 /// the extras and the face.
 ///
-/// This library is a pure layer.
+/// This is a framework-free Flutter core library (ADR 0061).
 library;
 
 import 'package:flutter_chartjs_port/src/options/opt.dart';

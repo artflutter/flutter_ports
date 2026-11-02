@@ -1,6 +1,7 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.config.tests.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 import 'dart:collection';
+import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
@@ -13,8 +14,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:test/test.dart';
 
 // A JavaScript object literal is a `Map<String, Object?>` and an array is a
@@ -101,22 +100,22 @@ void main() {
     group('_createResolver', () {
       test('should resolve to raw values', () {
         final defaults = <String, Object?>{
-          'color': const color_values.PreparedColor(255, 0, 0, 1),
-          'backgroundColor': const color_values.PreparedColor(0, 128, 0, 1),
+          'color': const ui.Color.fromRGBO(255, 0, 0, 1),
+          'backgroundColor': const ui.Color.fromRGBO(0, 128, 0, 1),
           'hoverColor': (Object? ctx, Object? options) =>
               getHoverColor(options['color']),
         };
         final options = <String, Object?>{
-          'color': const color_values.PreparedColor(0, 0, 255, 1),
+          'color': const ui.Color.fromRGBO(0, 0, 255, 1),
         };
         final resolver = createResolver([options, defaults]);
         expect(
           resolver['color'],
-          const color_values.PreparedColor(0, 0, 255, 1),
+          const ui.Color.fromRGBO(0, 0, 255, 1),
         );
         expect(
           resolver['backgroundColor'],
-          const color_values.PreparedColor(0, 128, 0, 1),
+          const ui.Color.fromRGBO(0, 128, 0, 1),
         );
         expect(resolver['hoverColor'], same(defaults['hoverColor']));
       });
@@ -510,7 +509,7 @@ void main() {
                 'animation': <String, Object?>{'duration': 400},
                 'animations': <String, Object?>{
                   'colors': <String, Object?>{
-                    'from': const color_values.PreparedColor(0, 0, 0, 0),
+                    'from': const ui.Color.fromRGBO(0, 0, 0, 0),
                   },
                 },
               },
@@ -551,7 +550,7 @@ void main() {
             show['animations']['colors'],
             toEqualOptions({
               'duration': 400,
-              'from': const color_values.PreparedColor(0, 0, 0, 0),
+              'from': const ui.Color.fromRGBO(0, 0, 0, 0),
               'easing': 'linear',
               'type': 'color',
               'properties': ['color', 'borderColor', 'backgroundColor'],
@@ -651,27 +650,27 @@ void main() {
     group('_attachContext', () {
       test('should resolve to final values', () {
         final defaults = <String, Object?>{
-          'color': const color_values.PreparedColor(255, 0, 0, 1),
-          'backgroundColor': const color_values.PreparedColor(0, 128, 0, 1),
+          'color': const ui.Color.fromRGBO(255, 0, 0, 1),
+          'backgroundColor': const ui.Color.fromRGBO(0, 128, 0, 1),
           'hoverColor': (Object? ctx, Object? options) =>
               getHoverColor(options['color']),
         };
         final options = <String, Object?>{
           'color': [
-            const color_values.PreparedColor(255, 255, 255, 1),
-            const color_values.PreparedColor(0, 0, 255, 1),
+            const ui.Color.fromRGBO(255, 255, 255, 1),
+            const ui.Color.fromRGBO(0, 0, 255, 1),
           ],
         };
         final resolver = createResolver([options, defaults]);
         final opts = attachContext(resolver, {'index': 1});
-        expect(opts['color'], const color_values.PreparedColor(0, 0, 255, 1));
+        expect(opts['color'], const ui.Color.fromRGBO(0, 0, 255, 1));
         expect(
           opts['backgroundColor'],
-          const color_values.PreparedColor(0, 128, 0, 1),
+          const ui.Color.fromRGBO(0, 128, 0, 1),
         );
         expect(
           opts['hoverColor'],
-          getHoverColor(const color_values.PreparedColor(0, 0, 255, 1)),
+          getHoverColor(const ui.Color.fromRGBO(0, 0, 255, 1)),
         );
       });
 
@@ -699,7 +698,7 @@ void main() {
         final defaults = <String, Object?>{
           'elements': <String, Object?>{
             'point': <String, Object?>{
-              'backgroundColor': const color_values.PreparedColor(
+              'backgroundColor': const ui.Color.fromRGBO(
                 255,
                 0,
                 0,
@@ -720,11 +719,11 @@ void main() {
         final opts = attachContext(resolver, {});
         expect(
           opts['elements']['point']['borderColor'],
-          getHoverColor(const color_values.PreparedColor(255, 0, 0, 1)),
+          getHoverColor(const ui.Color.fromRGBO(255, 0, 0, 1)),
         );
         expect(
           opts['elements']['point']['backgroundColor'],
-          const color_values.PreparedColor(255, 0, 0, 1),
+          const ui.Color.fromRGBO(255, 0, 0, 1),
         );
       });
 

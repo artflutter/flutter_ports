@@ -6,7 +6,7 @@
 /// one entry for each kind of `tool/options_schema.yaml`, with its
 /// keys, their shapes and the kinds of the nested scopes.
 ///
-/// This library is a pure layer.
+/// This is a framework-free Flutter core library (ADR 0061).
 library;
 
 import 'package:flutter_chartjs_port/src/options/opt.dart';

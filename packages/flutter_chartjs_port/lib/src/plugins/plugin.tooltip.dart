@@ -37,6 +37,8 @@
 /// Not a pure layer: it imports `core.animations`.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -70,7 +72,6 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
 import 'package:flutter_chartjs_port/src/options/opt.dart'
     show OptFunction, optNull;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -2532,17 +2533,17 @@ final Plugin tooltip = Plugin()
     ..enabled = true
     ..externalCell = optNull
     ..position = 'average'
-    ..backgroundColor = const PreparedColor(0, 0, 0, 0.8)
-    ..titleColor = const PreparedColor(255, 255, 255, 1)
+    ..backgroundColor = const ui.Color.fromRGBO(0, 0, 0, 0.8)
+    ..titleColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..titleFont = (FontSpecScope()..weight = 'bold')
     ..titleSpacing = 2.0
     ..titleMarginBottom = 6.0
     ..titleAlign = 'left'
-    ..bodyColor = const PreparedColor(255, 255, 255, 1)
+    ..bodyColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..bodySpacing = 2.0
     ..bodyFont = FontSpecScope()
     ..bodyAlign = 'left'
-    ..footerColor = const PreparedColor(255, 255, 255, 1)
+    ..footerColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..footerSpacing = 2.0
     ..footerMarginTop = 6.0
     ..footerFont = (FontSpecScope()..weight = 'bold')
@@ -2553,10 +2554,10 @@ final Plugin tooltip = Plugin()
     ..cornerRadius = 6.0
     ..boxHeightCell = const OptFunction<double>(_bodyFontSize)
     ..boxWidthCell = const OptFunction<double>(_bodyFontSize)
-    ..multiKeyBackground = const PreparedColor(255, 255, 255, 1)
+    ..multiKeyBackground = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..displayColors = true
     ..boxPadding = 0.0
-    ..borderColor = const PreparedColor(0, 0, 0, 0)
+    ..borderColor = const ui.Color.fromRGBO(0, 0, 0, 0)
     ..borderWidth = 0.0
     ..animation = (AnimationOptionsScope()
       ..duration = 400.0

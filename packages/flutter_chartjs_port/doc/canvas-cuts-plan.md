@@ -1027,6 +1027,13 @@ Changes to the cited files:
   channel is one byte, from native alpha replacing CSS alpha quantization. No
   canvas/host implementation, inventory or cut estimate changes. No trigger occurs.
 
+- 2026-11-02, native Flutter core colors (ADR 0061). The numerical option color
+  and global installer are removed. Defaults and themes now store Color directly;
+  canvas validation accepts that value without an adapter. Painting, clipping,
+  batching, alpha precision and the Ubuntu golden baseline are unchanged. Core
+  browser tests now use Flutter; the framework-free guard permits dart:ui Color.
+  No canvas cut or new plan trigger is introduced.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.

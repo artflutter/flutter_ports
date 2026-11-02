@@ -9,8 +9,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -185,7 +183,6 @@ int _worstDifference(ByteData a, ByteData b) {
 }
 
 void main() {
-  installNativeColorCodec();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('element', () {

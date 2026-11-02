@@ -7,8 +7,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
@@ -1072,7 +1070,6 @@ List<Object?> _parsedLines(Iterable<String> lines) => [
 ];
 
 void main() {
-  installNativeColorCodec();
   Chart.register([
     _themeController('themeTest'),
     _themeController('themeTest2'),

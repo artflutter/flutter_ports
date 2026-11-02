@@ -76,7 +76,6 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
@@ -404,7 +403,7 @@ final class OptionResolver implements ResolverProxy {
   ///
   /// A trap for getting property values.
   @core.override
-  Object? operator [](String name) => publicColorValue(_get(name));
+  Object? operator [](String name) => _get(name);
 
   /// helpers.config.ts:73 the `getOwnPropertyDescriptor` trap: whether the
   /// first scope owns [key].
@@ -448,7 +447,7 @@ final class OptionResolver implements ResolverProxy {
 
   /// `resolver[name]`: the `get` trap ([operator []]).
   @core.override
-  Object? jsRead(String name) => publicColorValue(_get(name));
+  Object? jsRead(String name) => _get(name);
 
   /// `resolver[name] = value`: the `set` trap ([operator []=]).
   @core.override
@@ -743,7 +742,7 @@ final class OptionView implements ContextProxy {
   ///
   /// A trap for getting property values.
   @core.override
-  Object? operator [](String name) => publicColorValue(_get(name));
+  Object? operator [](String name) => _get(name);
 
   /// helpers.config.ts:159 the `getOwnPropertyDescriptor` trap: whether a
   /// descriptor exists for [key].
@@ -786,7 +785,7 @@ final class OptionView implements ContextProxy {
 
   /// `resolver[name]`: the `get` trap ([operator []]).
   @core.override
-  Object? jsRead(String name) => publicColorValue(_get(name));
+  Object? jsRead(String name) => _get(name);
 
   /// `resolver[name] = value`: the `set` trap ([operator []=]).
   @core.override
@@ -1285,7 +1284,7 @@ Object? _resolve(String key, List<Object?> scopes) {
       value = jsGet(scope, key);
     }
     if (!identical(value, undefined)) {
-      return publicColorValue(value);
+      return value;
     }
   }
   return undefined;

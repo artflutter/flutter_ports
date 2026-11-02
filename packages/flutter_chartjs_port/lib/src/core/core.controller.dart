@@ -620,14 +620,8 @@ final class _ActiveElement implements types.ActiveElement {
 }
 
 Config _colorConfig(Object? userConfig) {
-  installNativeColorCodec();
   validateChartColors(userConfig);
   return Config(userConfig);
-}
-
-core_defaults.Defaults _nativeDefaults() {
-  installNativeColorCodec();
-  return core_defaults.defaults;
 }
 
 /// core.controller.js:103 `Chart`.
@@ -648,7 +642,6 @@ class Chart implements types.Chart {
   // eslint-disable-next-line max-statements
   Chart(Object? item, [Object? userConfig])
     : config = _colorConfig(userConfig) {
-    installNativeColorCodec();
     final config = this.config;
     final initialCanvas = _getCanvas(item);
     final existingChart = _getChart(initialCanvas);
@@ -732,17 +725,14 @@ class Chart implements types.Chart {
   }
 
   /// core.controller.js:105 `static defaults = defaults`.
-  static final core_defaults.Defaults defaults = _nativeDefaults();
+  static final core_defaults.Defaults defaults = core_defaults.defaults;
 
   /// core.controller.js:106 `static instances = instances`: the charts by
   /// the `ToString` of their [id] (index.d.ts:594).
   static final Map<String, Chart> instances = _instances;
 
   /// core.controller.js:107 `static overrides = overrides`.
-  static OverridesByTypeScope get overrides {
-    installNativeColorCodec();
-    return core_defaults.overrides;
-  }
+  static final OverridesByTypeScope overrides = core_defaults.overrides;
 
   /// core.controller.js:108 `static registry = registry`.
   static final core_registry.Registry registry = core_registry.registry;

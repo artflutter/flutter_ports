@@ -2,15 +2,13 @@
 @TestOn('vm')
 library;
 
-// `helpers.extras` imports `package:flutter`, so `dart run` and the web
-// compilers do not build it. `flutter test` runs this file on the VM with
-// JIT and assertions enabled:
+// Runs the core micro-benchmarks and helpers.extras through Flutter.
 //
 //   cd packages/flutter_chartjs_port && \
 //     flutter test tool/bench/bench_flutter_test.dart --reporter=silent
 //
 // `--dart-define=filter=<regexp>` and the other defines of
-// `src/harness.dart` apply.
+// `src/harness.dart` apply. These are JIT measurements with assertions enabled.
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -18,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'bench.dart' as core;
 import 'src/harness.dart';
 
 /// A scale `{axis, getUserBounds, getPixelForValue}`.
@@ -152,6 +151,7 @@ List<BenchCase> _extrasCases() => [
 
 void main() {
   test('bench', () {
+    core.main(const ['--target=flutter-test-jit']);
     runBench(
       _extrasCases(),
       parseSettings(const ['--target=flutter-test-jit']),

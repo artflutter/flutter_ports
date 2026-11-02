@@ -6,8 +6,6 @@ import 'dart:convert';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
@@ -592,7 +590,6 @@ final class _SubScale extends _TestScale {
 }
 
 void main() {
-  installNativeColorCodec();
   setUpDefaultsRestore();
 
   test('the reference comes from Node.js v24.22.1 on arm64', () {

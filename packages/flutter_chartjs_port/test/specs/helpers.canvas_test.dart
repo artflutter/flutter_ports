@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     as helpers;
@@ -189,7 +187,6 @@ final class _Opts implements RenderTextOpts {
 }
 
 void main() {
-  installNativeColorCodec();
   group('Chart.helpers.canvas', () {
     // Chart.js v4.5.1+7169e651 has no `test/fixtures/helpers` directory, so
     // the group has 0 fixtures.

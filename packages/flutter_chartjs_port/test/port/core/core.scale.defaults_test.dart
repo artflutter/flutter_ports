@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: core.scale.defaults tests.
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/core/core.scale.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -6,8 +8,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -84,10 +84,10 @@ void main() {
         jsCall(grid['tickColor'], [
           context,
           <String, Object?>{
-            'color': const color_values.PreparedColor(255, 0, 0, 1),
+            'color': const ui.Color.fromRGBO(255, 0, 0, 1),
           },
         ]),
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
     });
 

@@ -9,8 +9,6 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
@@ -40,7 +38,6 @@ Future<UiImageSource> _loadImage(String src) async {
 }
 
 void main() {
-  installNativeColorCodec();
   setUpSpecs();
   group('Color helper', () {
     // `typeof obj === 'object' && obj.valid`. Of the objects that `color`

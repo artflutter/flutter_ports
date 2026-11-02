@@ -7,6 +7,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
@@ -250,45 +251,32 @@ List<BenchCase> helperCases() => [
       return acc;
     };
   }, per: 'toFontString of a parsed font'),
-  // @kurkle/color
-  BenchCase('color', 'kurkle/parse_hex', () {
-    return (n) {
-      var acc = 0;
-      for (var i = 0; i < n; i++) {
-        if (kurkle.color('#ff6384').valid) acc++;
-      }
-      return acc;
-    };
-  }, per: "color('#ff6384')"),
-  BenchCase('color', 'kurkle/parse_rgba', () {
-    return (n) {
-      var acc = 0;
-      for (var i = 0; i < n; i++) {
-        if (kurkle.color('rgba(255, 99, 132, 0.5)').valid) acc++;
-      }
-      return acc;
-    };
-  }, per: "color('rgba(255, 99, 132, 0.5)')"),
-  BenchCase('color', 'kurkle/parse_hsl', () {
-    return (n) {
-      var acc = 0;
-      for (var i = 0; i < n; i++) {
-        if (kurkle.color('hsl(204, 82%, 57%)').valid) acc++;
-      }
-      return acc;
-    };
-  }, per: "color('hsl(204, 82%, 57%)')"),
-  BenchCase('color', 'kurkle/parse_name', () {
-    return (n) {
-      var acc = 0;
-      for (var i = 0; i < n; i++) {
-        if (kurkle.color('cornflowerblue').valid) acc++;
-      }
-      return acc;
-    };
-  }, per: "color('cornflowerblue')"),
+  // @kurkle/color, using the native inputs accepted by the chart API.
+  for (final (name, value) in const [
+    ('opaque', ui.Color(0xffff6384)),
+    ('alpha', ui.Color.fromRGBO(255, 99, 132, 0.5)),
+    (
+      'p3',
+      ui.Color.from(
+        alpha: 0.5,
+        red: 1,
+        green: 0.4,
+        blue: 0.5,
+        colorSpace: ui.ColorSpace.displayP3,
+      ),
+    ),
+  ])
+    BenchCase('color', 'kurkle/native_$name', () {
+      return (n) {
+        var acc = 0;
+        for (var i = 0; i < n; i++) {
+          acc += kurkle.color(value).rgbaBytes!.r.round();
+        }
+        return acc;
+      };
+    }, per: 'numerical channels of native $name Color'),
   BenchCase('color', 'kurkle/rgbString', () {
-    final c = kurkle.color('rgba(255, 99, 132, 0.5)');
+    final c = kurkle.color(const ui.Color.fromRGBO(255, 99, 132, 0.5));
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
@@ -296,10 +284,10 @@ List<BenchCase> helperCases() => [
       }
       return acc;
     };
-  }, per: 'rgbString of a parsed color'),
+  }, per: 'legacy rgbString of numerical channels'),
   BenchCase('color', 'kurkle/clone_mix', () {
-    final c1 = kurkle.color('#ff6384');
-    final c2 = kurkle.color('rgba(54, 162, 235, 0.5)');
+    final c1 = kurkle.color(const ui.Color(0xffff6384));
+    final c2 = kurkle.color(const ui.Color.fromRGBO(54, 162, 235, 0.5));
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
@@ -308,16 +296,16 @@ List<BenchCase> helperCases() => [
       return acc;
     };
   }, per: 'clone().mix(c2, 0.3)'),
-  BenchCase('color', 'getHoverColor/rgba', () {
+  BenchCase('color', 'getHoverColor/native', () {
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        final hover = getHoverColor('rgba(255, 99, 132, 0.5)');
-        acc += hover is String ? hover.length : 0;
+        final hover = getHoverColor(const ui.Color.fromRGBO(255, 99, 132, 0.5));
+        acc += hover is ui.Color ? (hover.r * 255).round() : 0;
       }
       return acc;
     };
-  }, per: 'parse + saturate + darken + hexString'),
+  }, per: 'native Color + saturate + darken + native Color'),
   // core.ticks and helpers.intl
   BenchCase(
     'ticks',

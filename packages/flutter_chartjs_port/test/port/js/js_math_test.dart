@@ -62,23 +62,25 @@ void main() {
   });
 
   group('jsRound', () {
-    const cases = <(double, double)>[
+    // DDC canonicalizes -0 inside const aggregates; build signed zeros.
+    final negativeZero = -double.parse('0');
+    final cases = <(double, double)>[
       (0.5, 1),
       (1.5, 2),
       (2.5, 3),
-      (-0.5, -0),
+      (-0.5, negativeZero),
       (-1.5, -1),
       (-2.5, -2),
       (0.49999999999999994, 0),
-      (-0.49999999999999994, -0),
+      (-0.49999999999999994, negativeZero),
       (4503599627370495.5, 4503599627370496),
       (-4503599627370495.5, -4503599627370495),
       (4503599627370497, 4503599627370497),
       (1e300, 1e300),
       (0.4, 0),
-      (-0.4, -0),
+      (-0.4, negativeZero),
       (0, 0),
-      (-0, -0),
+      (negativeZero, negativeZero),
       (double.nan, double.nan),
       (double.infinity, double.infinity),
       (double.negativeInfinity, double.negativeInfinity),
@@ -91,7 +93,8 @@ void main() {
   });
 
   group('jsToInt32', () {
-    const cases = <(double, double)>[
+    final negativeZero = -double.parse('0');
+    final cases = <(double, double)>[
       (2147483647, 2147483647),
       (2147483648, -2147483648),
       (-2147483648, -2147483648),
@@ -110,7 +113,7 @@ void main() {
       (1.7976931348623157e308, 0),
       (5e-324, 0),
       (-0.5, 0),
-      (-0, 0),
+      (negativeZero, 0),
       // The edges of the range that needs no wrap, and the values next to
       // them. A result is never -0.
       (2147483647.9, 2147483647),

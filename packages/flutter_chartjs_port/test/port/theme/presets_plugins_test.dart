@@ -5,8 +5,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -105,7 +103,6 @@ Chart _chart(Object? theme) => acquireChart(<String, Object?>{
 });
 
 void main() {
-  installNativeColorCodec();
   test('the plugin keys are the 19 keys of the theme spec', () {
     expect(themeLightPlugins.keys, [
       'title.color',

@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: element.arc cases with no spec.
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -8,8 +9,6 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -173,8 +172,8 @@ void _expectCalls(
 
 /// The options of every draw test that does not come from the reference.
 Map<String, Object?> _options([Map<String, Object?> extra = const {}]) => {
-  'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
-  'borderColor': const color_values.PreparedColor(0, 0, 255, 1),
+  'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
+  'borderColor': const ui.Color.fromRGBO(0, 0, 255, 1),
   'borderWidth': 2,
   ...extra,
 };
@@ -457,7 +456,7 @@ void main() {
         },
         {
           'borderAlign': 'center',
-          'borderColor': const color_values.PreparedColor(255, 255, 255, 1),
+          'borderColor': const ui.Color.fromRGBO(255, 255, 255, 1),
           'borderDash': isEmpty,
           'borderDashOffset': 0.0,
           'borderJoinStyle': _isUndefined,

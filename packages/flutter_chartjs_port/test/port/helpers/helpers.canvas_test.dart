@@ -1,11 +1,11 @@
 // Original code, not ported from Chart.js: helpers.canvas cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -1034,7 +1034,7 @@ void main() {
   group('renderText', () {
     test('draws the backdrop of each line and restores the fill style', () {
       final ctx = createMockContext()
-        ..fillStyle = const color_values.PreparedColor(0, 0, 255, 1)
+        ..fillStyle = const ui.Color.fromRGBO(0, 0, 255, 1)
         ..resetCalls();
       renderText(
         ctx,
@@ -1048,7 +1048,7 @@ void main() {
             2,
             3,
             4,
-            color_values.PreparedColor(255, 0, 0, 1),
+            ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           // An empty stroke color stops the stroke, and an empty color
           // leaves the fill style.
@@ -1063,7 +1063,7 @@ void main() {
       final backdrop = [
         {
           'name': 'setFillStyle',
-          'args': [const color_values.PreparedColor(255, 0, 0, 1)],
+          'args': [const ui.Color.fromRGBO(255, 0, 0, 1)],
         },
         {
           'name': 'fillRect',
@@ -1071,13 +1071,13 @@ void main() {
         },
         {
           'name': 'setFillStyle',
-          'args': [const color_values.PreparedColor(0, 0, 255, 1)],
+          'args': [const ui.Color.fromRGBO(0, 0, 255, 1)],
         },
       ];
       List<Object?> underline(double y) => [
         {
           'name': 'setStrokeStyle',
-          'args': [const color_values.PreparedColor(0, 0, 255, 1)],
+          'args': [const ui.Color.fromRGBO(0, 0, 255, 1)],
         },
         {'name': 'beginPath', 'args': <Object?>[]},
         // A falsy decorationWidth gives 2.
@@ -1164,7 +1164,7 @@ void main() {
           2,
           const _CanvasFont('9px x', 20),
           _Opts(
-            strokeColor: const color_values.PreparedColor(255, 0, 0, 1),
+            strokeColor: const ui.Color.fromRGBO(255, 0, 0, 1),
             strokeWidth: width,
           ),
         );

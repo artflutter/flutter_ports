@@ -28,6 +28,7 @@
 library;
 
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show isPatternOrGradient;
@@ -43,7 +44,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
@@ -622,7 +622,7 @@ SegmentStyle _readStyle(Object? options) {
 Object? _styleColor(Object? value) {
   if (value == null ||
       value is Undefined ||
-      isSolidColor(value) ||
+      value is ui.Color ||
       isPatternOrGradient(value)) {
     return value;
   }
@@ -783,12 +783,11 @@ bool _styleChanged(SegmentStyle style, SegmentStyle? prevStyle) {
   final cache = <Object?>[];
   final solidColors = <Object?>[];
   Object? replacer(String key, Object? value) {
-    if (isSolidColor(value)) {
-      final native = publicColorValue(value);
-      var index = solidColors.indexOf(native);
+    if (value is ui.Color) {
+      var index = solidColors.indexOf(value);
       if (index < 0) {
         index = solidColors.length;
-        solidColors.add(native);
+        solidColors.add(value);
       }
       // An internal comparison token, never a CSS paint value.
       return 'native-color:$index';

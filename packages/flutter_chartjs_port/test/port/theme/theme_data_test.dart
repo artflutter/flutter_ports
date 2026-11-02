@@ -8,8 +8,6 @@ import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -312,7 +310,6 @@ List<String> _hits(Chart chart) {
 }
 
 void main() {
-  installNativeColorCodec();
   group('==, hashCode and copyWith', () {
     test('equal themes are == with equal hashes', () {
       final copy = _full.copyWith();

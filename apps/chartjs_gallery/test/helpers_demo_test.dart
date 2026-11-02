@@ -4,8 +4,6 @@ import 'package:chartjs_gallery/helpers_demo.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Pumps the demo page at [size] logical pixels.
@@ -60,7 +58,6 @@ Future<void> _scrollTo(WidgetTester tester, Finder finder, [double dy = 200]) =>
     tester.scrollUntilVisible(finder, dy, scrollable: _page.first);
 
 void main() {
-  installNativeColorCodec();
   testWidgets('the gallery opens the demo from its first entry', (
     tester,
   ) async {

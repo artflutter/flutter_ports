@@ -744,7 +744,8 @@ void main() {
       expect(nan, const ElementPoint(double.nan, 1));
       expect(nan.hashCode, const ElementPoint(double.nan, 1).hashCode);
       expect(nan, isNot(const ElementPoint(0, 1)));
-      const negativeZero = ElementPoint(-0, 1);
+      // Preserve the sign without DDC's const canonicalization.
+      final negativeZero = ElementPoint(-double.parse('0'), 1);
       expect(negativeZero.x.isNegative, isTrue);
       expect(const ElementPoint(0, 1), negativeZero);
       expect(const ElementPoint(0, 1).hashCode, negativeZero.hashCode);

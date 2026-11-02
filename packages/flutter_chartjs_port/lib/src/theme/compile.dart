@@ -39,6 +39,7 @@
 library;
 
 import 'dart:collection' show ListBase;
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
@@ -49,7 +50,6 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -62,29 +62,22 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// 0050, theming.md §3.3). [themeColorValue] clamps them.
 typedef RawThemeColor = ({double alpha, double red, double green, double blue});
 
-/// The `rgba()` string of [color] (theming.md §3.3): 8-bit sRGB channels and
-/// the alpha from [jsNumberToString].
-///
-/// A channel is `(x * 255.0).round().clamp(0, 255)`, the 8-bit value of a
-/// `dart:ui` `Color` (`Color._floatToInt8`, `painting.dart:221-223`, Flutter
-/// 3.47.7). The alpha is clamped to the range from 0 to 1. Thus
-/// `(alpha: 0.1, red: 0, green: 0, blue: 0)` gives `'rgba(0, 0, 0, 0.1)'`.
-/// The alpha of `Color(0x1A000000)` gives
-/// `'rgba(0, 0, 0, 0.10196078431372549)'` instead (theming.md §4).
-PreparedColor _themeColorChannels(RawThemeColor color) {
-  final red = _channel(color.red);
-  final green = _channel(color.green);
-  final blue = _channel(color.blue);
-  final alpha = color.alpha.clamp(0.0, 1.0);
-  return PreparedColor(red, green, blue, alpha);
-}
-
-/// Legacy formatting for test/reference data, not the compiled theme.
-Object themeColorValue(RawThemeColor color) =>
-    publicColorValue(_themeColorChannels(color))!;
+/// The native color of a theme token: 8-bit sRGB channels and floating alpha.
+/// A channel uses `(x * 255).round().clamp(0, 255)`; alpha is clamped to [0, 1]
+/// without byte quantization. Thus alpha 0.1 stays 0.1, distinct from the
+/// 26/255 alpha of Color(0x1A000000) (theming.md section 4).
+ui.Color themeColorValue(RawThemeColor color) => ui.Color.fromRGBO(
+  _channel(color.red),
+  _channel(color.green),
+  _channel(color.blue),
+  color.alpha.clamp(0.0, 1.0),
+);
 
 /// Formats legacy reference data; compiled chart themes never call this.
-String themeColorToRgba(RawThemeColor color) => _themeColorChannels(color).css;
+String themeColorToRgba(RawThemeColor color) =>
+    'rgba(${_channel(color.red)}, ${_channel(color.green)}, '
+    '${_channel(color.blue)}, '
+    '${jsNumberToString(color.alpha.clamp(0.0, 1.0))})';
 
 /// The 8-bit value of the color component [x].
 int _channel(double x) => (x * 255.0).round().clamp(0, 255);

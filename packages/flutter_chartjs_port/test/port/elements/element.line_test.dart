@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: LineElement cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -11,8 +13,6 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -79,8 +79,8 @@ AnyObject _segmentOption(String kind) => switch (kind) {
       final late = jsToNumber(jsGet(ctx, 'p0DataIndex')) >= 2;
       return <String, Object?>{
         'borderColor': late
-            ? const color_values.PreparedColor(0, 0, 255, 1)
-            : const color_values.PreparedColor(255, 0, 0, 1),
+            ? const ui.Color.fromRGBO(0, 0, 255, 1)
+            : const ui.Color.fromRGBO(255, 0, 0, 1),
         'borderWidth': late ? 4.0 : 2.0,
       };
     },
@@ -332,7 +332,7 @@ AnyObject _plain(JsObjectFace scope) => {
 /// The resolved options of a line: the defaults and a border color.
 AnyObject _options([AnyObject extra = const {}]) => {
   ..._plain(LineElement.defaults),
-  'borderColor': const color_values.PreparedColor(0, 0, 0, 1),
+  'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
   ...extra,
 };
 
