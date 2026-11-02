@@ -1,5 +1,18 @@
 ## 0.1.0
 
+- Add a guarded bulk numeric bar update path that reuses scalar settings and
+  directly writes native elements while preserving callbacks and fallbacks.
+
+- Reduce ordinary single-dataset bar update overhead with live topology checks,
+  ordered-value handling and compact property construction; preserve callbacks
+  and fallback behavior.
+
+- Reduce ordinary bar drawing allocations with guarded scalar geometry while
+  preserving the canvas calls and custom/rounded/inflated behavior.
+
+- Improve dense bar updates and animation by splitting large native canvas
+  recordings while preserving drawing order, compositing and circle batching.
+
 - Fix blinking doughnut centers when rounded corners consume a small arc span.
 
 - Speed up aligned stacked fills with a per-build exact-point search; unsupported

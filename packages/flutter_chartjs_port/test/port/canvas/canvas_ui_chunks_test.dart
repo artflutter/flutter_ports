@@ -1,0 +1,258 @@
+// Original code, not ported from Chart.js: retained picture chunk regressions.
+@TestOn('vm')
+library;
+
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show CanvasCompositeOperation;
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+const _bounds = ui.Rect.fromLTWH(0, 0, 96, 64);
+const _red = ui.Color(0x80FF0000);
+const _blue = ui.Color(0xFF0000FF);
+
+Future<Uint8List> _pixels(ui.Picture picture) async {
+  final image = await picture.toImage(96, 64);
+  final data = await image.toByteData();
+  image.dispose();
+  picture.dispose();
+  return data!.buffer.asUint8List();
+}
+
+Future<Uint8List> _paint(
+  UiCanvasContext context, {
+  bool background = false,
+  double scale = 1,
+}) {
+  final recorder = ui.PictureRecorder();
+  final canvas = ui.Canvas(recorder);
+  if (background) canvas.drawRect(_bounds, ui.Paint()..color = _blue);
+  context.paint(canvas, ui.Offset.zero, scale, scale);
+  return _pixels(recorder.endRecording());
+}
+
+void _rects(UiCanvasContext context, int count) {
+  for (var i = 0; i < count; i++) {
+    context.fillRect((i % 96).toDouble(), (i % 31).toDouble(), 0.75, 32);
+  }
+}
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  for (final composite in [
+    CanvasCompositeOperation.sourceOver,
+    CanvasCompositeOperation.destinationOut,
+    CanvasCompositeOperation.xor,
+  ]) {
+    test('chunks preserve nested clips, alpha, clear and $composite', () async {
+      final context = UiCanvasElement(width: 96, height: 64).getContext2d();
+      addTearDown(context.dispose);
+      final recorder = ui.PictureRecorder();
+      final reference = ui.Canvas(recorder)
+        ..drawRect(_bounds, ui.Paint()..color = _blue)
+        ..saveLayer(_bounds, ui.Paint());
+      final red = ui.Paint()..color = _red;
+      context
+        ..fillStyle = _red
+        ..save()
+        ..translate(0.5, 0.5)
+        ..beginPath()
+        ..rect(2, 3, 90, 55)
+        ..clip()
+        ..save()
+        ..beginPath()
+        ..rect(4, 5, 84, 49)
+        ..clip();
+      reference
+        ..save()
+        ..translate(0.5, 0.5)
+        ..clipRect(const ui.Rect.fromLTWH(2, 3, 90, 55))
+        ..save()
+        ..clipRect(const ui.Rect.fromLTWH(4, 5, 84, 49));
+      for (var i = 0; i < 3100; i++) {
+        final x = (i % 96).toDouble();
+        final y = (i % 31).toDouble();
+        context.fillRect(x, y, 0.75, 32);
+        reference.drawRect(ui.Rect.fromLTWH(x, y, 0.75, 32), red);
+        if (i == 1535) {
+          context.restore();
+          reference.restore();
+        }
+      }
+      context
+        ..restore()
+        ..clearRect(30, 10, 8, 40)
+        ..globalCompositeOperation = composite
+        ..fillRect(15, 15, 60, 30);
+      reference
+        ..restore()
+        ..drawRect(
+          const ui.Rect.fromLTWH(30, 10, 8, 40),
+          ui.Paint()..blendMode = ui.BlendMode.clear,
+        )
+        ..drawRect(
+          const ui.Rect.fromLTWH(15, 15, 60, 30),
+          ui.Paint()
+            ..color = _red
+            ..blendMode = switch (composite) {
+              CanvasCompositeOperation.destinationOut => ui.BlendMode.dstOut,
+              CanvasCompositeOperation.xor => ui.BlendMode.xor,
+              _ => ui.BlendMode.srcOver,
+            },
+        )
+        ..restore();
+      expect(context.debugPictureCount, greaterThan(8));
+      expect(
+        await _paint(context, background: true),
+        await _pixels(recorder.endRecording()),
+      );
+      // One large generation must not trip the history flattening limit.
+      expect(context.debugPictureCount, greaterThan(8));
+    });
+  }
+
+  test(
+    'paint history is bounded independently of chunks and resets on clear',
+    () async {
+      final context = UiCanvasElement(width: 96, height: 64).getContext2d()
+        ..fillStyle = _red;
+      addTearDown(context.dispose);
+      _rects(context, 3100);
+      final first = await _paint(context);
+      expect(context.debugPictureCount, greaterThan(8));
+      // Repaints with no new content do not age the retained drawing.
+      for (var i = 0; i < 10; i++) {
+        expect(await _paint(context), first);
+      }
+      expect(context.debugPictureCount, greaterThan(8));
+      for (var i = 0; i < 8; i++) {
+        context.fillRect(0, 0, 1, 1);
+        await _paint(context);
+      }
+      expect(context.debugPictureCount, 1);
+      context.clearRect(0, 0, 96, 64);
+      expect(context.isEmpty, isTrue);
+      expect(context.debugPictureCount, 0);
+      _rects(context, 3100);
+      expect(await _paint(context), first);
+    },
+  );
+
+  test('snapshots preserve chunks and resize discards them', () async {
+    final context = UiCanvasElement(width: 96, height: 64).getContext2d()
+      ..fillStyle = _red;
+    addTearDown(context.dispose);
+    _rects(context, 3100);
+    final source = context.canvas.toImageSource();
+    final snapshot = await source.image.toByteData();
+    expect(await _paint(context), snapshot!.buffer.asUint8List());
+    source.image.dispose();
+    context.canvas.width = 96;
+    expect(context.isEmpty, isTrue);
+    expect(context.debugPictureCount, 0);
+  });
+
+  test(
+    'circle runs stay batched and retain order around a chunk boundary',
+    () async {
+      final context = UiCanvasElement(width: 96, height: 64).getContext2d()
+        ..fillStyle = _red;
+      addTearDown(context.dispose);
+      for (var i = 0; i < 3000; i++) {
+        context
+          ..beginPath()
+          ..arc(40, 30, 3, 0, 6.283185307179586)
+          ..fill();
+      }
+      expect(context.debugPendingCircles, 3000);
+      expect(context.debugPictureCount, 1);
+      _rects(context, 256);
+      context
+        ..fillStyle = _blue
+        ..fillRect(0, 0, 96, 64);
+      final pixels = await _paint(context);
+      for (var i = 0; i < pixels.length; i += 4) {
+        expect(pixels.sublist(i, i + 4), [0, 0, 255, 255]);
+      }
+    },
+  );
+  for (final operation in CanvasCompositeOperation.values) {
+    test('mixed drawing across splits preserves $operation', () async {
+      final sourceContext = UiCanvasElement(width: 4, height: 4).getContext2d()
+        ..fillStyle = _blue
+        ..fillRect(0, 0, 2, 4);
+      final source = sourceContext.canvas.toImageSource();
+      addTearDown(sourceContext.dispose);
+      addTearDown(source.image.dispose);
+
+      Future<Uint8List> render({required bool split}) async {
+        final context = UiCanvasElement(width: 96, height: 64).getContext2d();
+        addTearDown(context.dispose);
+        void boundary() {
+          if (!split) return;
+          context
+            ..save()
+            ..resetTransform()
+            ..globalCompositeOperation = CanvasCompositeOperation.sourceOver
+            ..fillStyle = _blue;
+          // Invisible padding consumes the chunk budget without changing the
+          // pixels. The reference performs exactly the visible operations.
+          for (var i = 0; i < 256; i++) {
+            context.fillRect(-100, -100, 1, 1);
+          }
+          context.restore();
+        }
+
+        final gradient = context.createLinearGradient(0, 0, 80, 0)
+          ..addColorStop(0, _red)
+          ..addColorStop(1, _blue);
+        context
+          ..fillStyle = gradient
+          ..fillRect(0, 0, 96, 64)
+          ..save()
+          ..translate(2.5, 1.5)
+          ..scale(1.25, 0.75)
+          ..beginPath()
+          ..roundRect(1, 2, 66, 70, 4)
+          ..clip();
+        boundary();
+        context
+          ..fillStyle = context.createPattern(source, 'repeat')
+          ..fillRect(4, 6, 30, 36);
+        boundary();
+        context
+          ..strokeStyle = gradient
+          ..lineWidth = 2
+          ..setLineDash([3, 2])
+          ..beginPath()
+          ..moveTo(0, 0);
+        boundary();
+        context
+          ..lineTo(60, 60)
+          ..stroke();
+        boundary();
+        context
+          ..fillStyle = _red
+          ..font = '12px sans-serif'
+          ..fillText('Bars', 10, 25);
+        boundary();
+        context.drawImage(source, 35, 5, 20, 20);
+        boundary();
+        context
+          ..restore()
+          ..clearRect(50, 0, 6, 35)
+          ..globalCompositeOperation = operation
+          ..fillStyle = _red
+          ..fillRect(5, 10, 70, 30);
+        if (split) expect(context.debugPictureCount, greaterThan(1));
+        return _paint(context, background: true, scale: 0.75);
+      }
+
+      expect(await render(split: true), await render(split: false));
+    });
+  }
+}

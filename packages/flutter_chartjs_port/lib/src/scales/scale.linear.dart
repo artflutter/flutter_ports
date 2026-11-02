@@ -76,6 +76,20 @@ class LinearScale extends LinearScaleBase {
     construct: (newTarget, args) => LinearScale(scaleCfgArg(args)),
   );
 
+  /// This exact built-in scale has ordinary axis and metadata reads.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
+  bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
+
+  /// Only this exact built-in class has the numeric projection contract.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-bulk-bar-update, native linear projection.
+  bool get supportsBulkBarUpdate => super.runtimeType == LinearScale;
+
+  late final bool _nativeBarIndexReads = runtimeType == LinearScale;
+
   /// The options of the scale, through the facade of the linear scale
   /// options (index.d.ts:3356).
   @override

@@ -62,6 +62,7 @@ import 'dart:core' as core;
 import 'dart:core';
 import 'dart:typed_data' show Uint16List;
 
+import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show capitalize, isArray, isFunction, isObject, resolveObjectKey;
@@ -691,6 +692,139 @@ final class OptionView implements ContextProxy {
       !identical(proxy._cache.get(OptionKey.descScriptable), _absent) &&
       !identical(proxy._cache.get(OptionKey.descIndexable), _absent) &&
       !identical(proxy._cache.get(OptionKey.descAllKeys), _absent);
+
+  /// A cached cartesian index axis, without resolving or invoking anything.
+  @internal
+  // DIVERGES(chartjs): adapt-live-bar-layout, inspect only resolved values.
+  String? get cachedBarIndexAxis {
+    if (runtimeType != OptionView) return null;
+    final value = _cache.get(OptionKey.indexAxis);
+    return value is String && (value == 'x' || value == 'y') ? value : null;
+  }
+
+  /// True only when category-trait reads are cached primitives. The normal
+  /// range computation then cannot invoke user code between topology reads.
+  @internal
+  bool get hasCachedStaticBarTraits {
+    if (runtimeType != OptionView) return false;
+    final thickness = _cache.get(OptionKey.barThickness);
+    if (thickness is num) return true;
+    return (identical(thickness, undefined) ||
+            (thickness is String && thickness == 'flex')) &&
+        _cache.get(OptionKey.categoryPercentage) is num &&
+        _cache.get(OptionKey.barPercentage) is num;
+  }
+
+  /// Already-resolved inputs for a numeric, uniform-category bulk update.
+  /// Missing values are rejected rather than resolved during qualification.
+  @internal
+  // DIVERGES(chartjs): adapt-bulk-bar-update, cached scalar probes only.
+  BulkBarOptions? get cachedBulkBarOptions {
+    final base = _cache.get(OptionKey.base);
+    final minimum = _cache.get(OptionKey.minBarLength);
+    final skip = _cache.get(OptionKey.skipNull);
+    final thickness = _cache.get(OptionKey.barThickness);
+    final maximum = _cache.get(OptionKey.maxBarThickness);
+    // Undefined converts to NaN: the min-length comparison is then false.
+    final noMinimum =
+        identical(minimum, undefined) ||
+        minimum == null ||
+        (minimum is num && (minimum.isNaN || minimum <= 0));
+    if (!noMinimum ||
+        !(identical(skip, undefined) ||
+            skip == null ||
+            identical(skip, false) ||
+            (skip is num && skip == 0))) {
+      return null;
+    }
+    final double baseNumber;
+    if (base == null || identical(base, undefined)) {
+      baseNumber = 0;
+    } else if (base is num && base.isFinite && base == base.toDouble()) {
+      baseNumber = base.toDouble();
+    } else {
+      return null;
+    }
+    final double? thicknessNumber;
+    if (thickness == null || identical(thickness, undefined)) {
+      thicknessNumber = null;
+    } else if (thickness is num && thickness.isFinite && thickness >= 0) {
+      thicknessNumber = thickness.toDouble();
+    } else {
+      return null;
+    }
+    final double maxNumber;
+    if (identical(maximum, undefined)) {
+      maxNumber = double.infinity;
+    } else if (maximum is num && !maximum.isNaN && maximum >= 0) {
+      maxNumber = maximum.toDouble();
+    } else {
+      return null;
+    }
+    var category = 1.0;
+    var bar = 1.0;
+    if (thicknessNumber == null) {
+      final cp = _cache.get(OptionKey.categoryPercentage);
+      final bp = _cache.get(OptionKey.barPercentage);
+      if (cp is! num ||
+          bp is! num ||
+          !cp.isFinite ||
+          !bp.isFinite ||
+          cp < 0 ||
+          bp < 0) {
+        return null;
+      }
+      category = cp.toDouble();
+      bar = bp.toDouble();
+    }
+    return (
+      base: baseNumber,
+      thickness: thicknessNumber,
+      categoryPercentage: category,
+      barPercentage: bar,
+      maxThickness: maxNumber,
+    );
+  }
+
+  /// Null means unsupported; false means the cached visibility/display path
+  /// returns zero before reading ticks; true means a static numeric grid.
+  @internal
+  bool? get cachedBulkBarGridUsesTicks {
+    final display = _cache.get(OptionKey.display);
+    final grid = _cache.get(OptionKey.grid);
+    if (identical(grid, _absent)) return null;
+    if (identical(display, false)) return false;
+    if (!identical(display, true) || grid is! OptionView) return null;
+    final gridDisplay = grid._cache.get(OptionKey.display);
+    if (identical(gridDisplay, false)) return false;
+    if (!identical(gridDisplay, true) ||
+        grid._removedSlots != null ||
+        jsTruthy(grid._subProxy) ||
+        (grid._descriptorDefaults != null &&
+            grid._descriptorDefaults is! _Descriptor)) {
+      return null;
+    }
+    final proxy = grid._proxy;
+    if (proxy is! OptionResolver ||
+        !_hasCachedDescriptors(proxy) ||
+        proxy._cache.get(OptionKey.lineWidth) is! num) {
+      return null;
+    }
+    return true;
+  }
+
+  /// Whether the normal grouped read is already a cached boolean.
+  @internal
+  bool get hasCachedBarGrouping =>
+      runtimeType == OptionView && _cache.get(OptionKey.grouped) is bool;
+
+  /// Whether the normal stacked read is cached and cannot call user code.
+  @internal
+  bool get hasCachedBarStacking {
+    if (runtimeType != OptionView) return false;
+    final value = _cache.get(OptionKey.stacked);
+    return value is bool || identical(value, undefined);
+  }
 
   /// Label-source options already read by the first category callback. Never
   /// execute a scriptable option merely to qualify a bulk-label fast path.

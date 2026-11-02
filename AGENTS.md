@@ -305,6 +305,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `xCenter` and `yCenter` are `double?`: Dart `null` is the `undefined` before the first layout
     (Chart.js ADR 0033). The scale reads `xCenter ?? double.nan` in arithmetic, and the radar and
     polar area controllers write it into a new element as `undefined`.
+    Chart.js ADR 0067 computes ordinary bar draw geometry with scalar locals for
+    the exact built-in element and typed options/edges. The canvas calls remain
+    unchanged; custom, rounded, inflated and degenerate cases keep the old path.
+    Chart.js ADR 0068 validates live single-dataset bar topology at its original
+    observation points. Container types are cached by identity; values/routes
+    remain live. Cached primitive category traits permit reuse within one pure
+    calculation. Unknown/custom/indexed-stack paths keep the original reads.
+    Owned ordered finite scale values skip sorting, and BarProperties.geometry
+    constructs the initial seven fields with the same presence/key order.
+    Chart.js ADR 0069 bulk-updates a preflighted numeric remainder after the first
+    ordinary bar in mode none. Native arrays/elements/scales, shared options and
+    cached scalar/grid settings are required. Direct writes preserve field order,
+    fresh skipped-edge objects, visibility and contexts. All unsupported cases
+    retain the ordinary path; see `core/bar_bulk_update.dart` and its regressions.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
@@ -534,6 +548,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `canvas_ui_batch.dart`, the circle batch) are the `dart:ui` implementation. No helper imports
     them. `canvas_ui.dart` reflects the `style` attribute of the canvas. Other attributes keep their
     values as strings (Chart.js ADR 0022).
+    Chart.js ADR 0066 bounds native recordings at 256 non-batched paint calls.
+    Internal picture chunks share one paint generation; more than eight completed
+    generations flatten. Circle runs keep their existing batching. The pixel and
+    lifecycle regressions are in `test/port/canvas/canvas_ui_chunks_test.dart`.
+
   - `lib/src/platform/` (Chart.js ADR 0037): the ports of `index.js`, `platform.base.js` and
     `platform.basic.js`, and three port-only files. `platform.flutter.dart` replaces
     `platform.dom.js`. `chart_host.dart` is the internal chart host (`ChartHost`,

@@ -1,5 +1,6 @@
 // Ported from Chart.js v4.6.1 src/elements/element.bar.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+// DIVERGES(chartjs): adapt-rectangular-bar-draw, scalar ordinary bar geometry.
 
 /// Port of `src/elements/element.bar.js`.
 ///
@@ -33,6 +34,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show BarOptions, rawOption;
@@ -376,7 +378,8 @@ _Rect _inflateRect(_Rect rect, double amount, [_Rect? refRect]) {
 ///
 /// The class implements `types.VisualElementRange`, because upstream has a
 /// [getRange] (element.bar.js:223, Chart.js ADR 0020, section 9).
-class BarElement extends Element implements types.VisualElementRange {
+class BarElement extends Element
+    implements types.VisualElementRange, BulkBarElement {
   /// element.bar.js:164 `constructor(cfg)`.
   ///
   /// `options`, [horizontal], [base], [width], [height] and [inflateAmount]
@@ -616,6 +619,40 @@ class BarElement extends Element implements types.VisualElementRange {
   @override
   bool get typedWrites => _builtIn;
 
+  /// A subclass must retain the ordinary property assignment path.
+  @override
+  @internal
+  bool get supportsBulkBarWrites => super.runtimeType == BarElement;
+
+  /// The controller's seven geometry fields, options and final edge fields,
+  /// assigned in the original order without an intermediate property record.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-bulk-bar-update, exact native element writes.
+  void writeBulkBar({
+    required bool horizontal,
+    required double base,
+    required double x,
+    required double y,
+    required double height,
+    required double width,
+    required Object options,
+    required BorderSkipped skipped,
+    required double inflate,
+  }) {
+    this
+      ..horizontal = horizontal
+      ..base = base
+      ..enableBorderRadius = true
+      ..x = x
+      ..y = y
+      ..height = height
+      ..width = width
+      ..options = options
+      ..borderSkipped = skipped
+      ..inflateAmount = inflate;
+  }
+
   /// [Element.takesProperties]: a [BarProperties], for an element of the
   /// class [BarElement] itself.
   @internal
@@ -774,6 +811,27 @@ class BarElement extends Element implements types.VisualElementRange {
     final options = this.options;
     final borderColor = _borderColor(options);
     final backgroundColor = _backgroundColor(options);
+    if (_builtIn &&
+        inflateAmount == 0 &&
+        !inflateAmount.isNegative &&
+        options is BarOptions) {
+      final radius = options.borderRadiusValue;
+      final borderWidth = options.borderWidthValue;
+      final skipped = _borderSkipped;
+      if (radius is num &&
+          radius == 0 &&
+          borderWidth is num &&
+          skipped is BorderSkipped &&
+          _drawRectangular(
+            ctx,
+            borderWidth.toDouble(),
+            skipped,
+            borderColor,
+            backgroundColor,
+          )) {
+        return;
+      }
+    }
     final (:inner, :outer) = _boundingRects(this);
     final addRectPath = _hasRadius(outer.radius)
         ? addRoundedRectPath
@@ -798,6 +856,72 @@ class BarElement extends Element implements types.VisualElementRange {
       ..fillStyle = canvasStyle(backgroundColor)
       ..fill()
       ..restore();
+  }
+
+  /// The ordinary numeric, unrounded case of boundingRects/draw (ADR 0067).
+  /// Only the exact built-in element and final typed option/edge classes
+  /// enter here: computing these scalars invokes no user getter. Keep the
+  /// same canvas calls, including the empty inner fill and final current
+  /// path, so custom contexts observe the original draw sequence.
+  bool _drawRectangular(
+    CanvasRenderingContext2D ctx,
+    double borderWidth,
+    BorderSkipped skipped,
+    Object? borderColor,
+    Object? backgroundColor,
+  ) {
+    if (!borderWidth.isFinite) return false;
+    final x = this.x;
+    final y = this.y;
+    final base = _base;
+    final horizontal = _horizontal == true;
+    final half = (horizontal ? _height : _width) / 2;
+    final left = horizontal ? jsMin(x, base) : x - half;
+    final right = horizontal ? jsMax(x, base) : x + half;
+    final top = horizontal ? y - half : jsMin(y, base);
+    final bottom = horizontal ? y + half : jsMax(y, base);
+    final width = right - left;
+    final height = bottom - top;
+    if (!left.isFinite ||
+        !top.isFinite ||
+        !width.isFinite ||
+        !height.isFinite ||
+        width <= 0 ||
+        height <= 0) {
+      return false;
+    }
+    final bw = limitValue(borderWidth, 0, width / 2);
+    final bh = limitValue(borderWidth, 0, height / 2);
+    final l = skipped.left ? 0.0 : bw;
+    final r = skipped.right ? 0.0 : bw;
+    final t = skipped.top ? 0.0 : bh;
+    final b = skipped.bottom ? 0.0 : bh;
+    final innerX = left + l;
+    final innerY = top + t;
+    final innerWidth = width - l - r;
+    final innerHeight = height - t - b;
+
+    ctx.save();
+    if (width != innerWidth || height != innerHeight) {
+      ctx
+        ..beginPath()
+        ..rect(
+          left + (left != innerX ? -0.0 : 0.0),
+          top + (top != innerY ? -0.0 : 0.0),
+          width,
+          height,
+        )
+        ..rect(innerX, innerY, innerWidth, innerHeight)
+        ..fillStyle = canvasStyle(borderColor)
+        ..fill('evenodd');
+    }
+    ctx
+      ..beginPath()
+      ..rect(innerX, innerY, innerWidth, innerHeight)
+      ..fillStyle = canvasStyle(backgroundColor)
+      ..fill()
+      ..restore();
+    return true;
   }
 
   /// element.bar.js:203 `inRange(mouseX, mouseY, useFinalPosition)`.

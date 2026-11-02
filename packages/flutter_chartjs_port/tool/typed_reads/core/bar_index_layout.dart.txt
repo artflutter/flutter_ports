@@ -1,0 +1,3 @@
+# jsObjectKeys: user-provided scale ids require JS numeric-key ordering.
+# The caller owns a native scale map; current keys are compared before reuse.
+jsObjectKeys 1

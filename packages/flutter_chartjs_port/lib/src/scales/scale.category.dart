@@ -288,6 +288,14 @@ class CategoryScale extends Scale {
     construct: (newTarget, args) => CategoryScale(scaleCfgArg(args)),
   );
 
+  /// This exact built-in scale has ordinary axis and metadata reads.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
+  bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
+
+  late final bool _nativeBarIndexReads = runtimeType == CategoryScale;
+
   /// The options of the scale, through the facade of the category scale
   /// options (index.d.ts:3344).
   @override
