@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: tests of the theme presets.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -12,8 +14,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
@@ -304,7 +304,7 @@ void main() {
       }
 
       final themed = color(compileChartTheme(ChartThemes.light));
-      expect(themed, const color_values.PreparedColor(102, 102, 102, 1));
+      expect(themed, const ui.Color.fromRGBO(102, 102, 102, 1));
       expect(_parsed(themed), _parsed(themeLightChartColor));
       expect(color(null), referenceColorOrString(themeLightChartColor));
     });
@@ -325,7 +325,7 @@ void main() {
       );
       expect(
         _resolveElement(pointActive, theme)['backgroundColor'],
-        const color_values.PreparedColor(0, 0, 0, 26 / 255),
+        const ui.Color.fromRGBO(0, 0, 0, 26 / 255),
       );
     });
   });

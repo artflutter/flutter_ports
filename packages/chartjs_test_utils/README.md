@@ -10,9 +10,9 @@ phase of each module.
 
 ## Libraries
 
-- `package:chartjs_test_utils/pure.dart`: the pure part. This library imports only `package:test`
-  and pure layers. Thus it compiles with dart2js and dart2wasm.
-  - `setUpSpecs()`: the spec set-up for `dart test`. `dart test` does not read
+- `package:chartjs_test_utils/pure.dart`: the framework-free core part (legacy filename).
+  It uses native Color and runs through Flutter on VM, JavaScript and WebAssembly.
+  - `setUpSpecs()`: the core spec setup. It complements
     `flutter_test_config.dart`. Thus each pure-layer spec file calls `setUpSpecs()` first in
     `main()`. It calls `removeBuiltins()` and `setUpDefaultsRestore()`. `setUpDefaultsRestore()`
     takes a snapshot of `defaults`, `overrides` and `descriptors` of `core.defaults` once for each
@@ -21,7 +21,7 @@ phase of each module.
   - `setUpBuiltins()` and `removeBuiltins()`: `flutter_test_config.dart` registers the built-in
     components before `main()` of each test file, as the UMD entry of the Chart.js specs does.
     `removeBuiltins()` unregisters them again. Thus a pure-layer spec file has the same state under
-    `flutter test` and `dart test`. A spec file with chart cases does not call `setUpSpecs()`.
+    the VM and browser Flutter runners. A spec file with chart cases does not call `setUpSpecs()`.
   - `createMockContext()` and `MockContext` (`src/index.js`, `src/context.js`): the mock canvas
     context that records calls. Both are in `lib/src/context.dart`, because `lib/src/index.dart`
     is not a pure layer (Chart.js ADR 0022).
@@ -55,3 +55,7 @@ repository. The font files in `lib/fonts/` are unchanged files of
 [liberation-fonts-ttf-2.1.5](https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5),
 under the SIL Open Font License 1.1 ([lib/fonts/LICENSE](lib/fonts/LICENSE)). The LICENSE file has
 the OFL as a separate component.
+
+Core tests now run through Flutter (ADR 0061), including Chrome JavaScript and
+WebAssembly via the workspace `test:web` command. `pure.dart` retains its legacy
+filename but may depend on dart:ui Color; it is not a standalone-Dart entry point.

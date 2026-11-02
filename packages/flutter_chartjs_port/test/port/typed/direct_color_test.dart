@@ -10,9 +10,12 @@ import 'package:flutter_chartjs_port/chartjs.dart' as core show Animation;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
+    as core_defaults;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     as numerical;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
@@ -44,6 +47,21 @@ void _destroy(Chart chart, UiCanvasElement canvas) {
 }
 
 void main() {
+  test('raw defaults are native before chart construction', () {
+    final before = core_defaults.defaults
+        .lookup(OptionKey.backgroundColor)!
+        .raw;
+    expect(before, const ui.Color.fromRGBO(0, 0, 0, 0.1));
+    expect(core_defaults.defaults['backgroundColor'], same(before));
+    final canvas = UiCanvasElement(width: 120, height: 80);
+    final chart = Chart(canvas, _raw());
+    expect(
+      core_defaults.defaults.lookup(OptionKey.backgroundColor)!.raw,
+      same(before),
+    );
+    expect(core_defaults.defaults['backgroundColor'], same(before));
+    _destroy(chart, canvas);
+  });
   test('public defaults expose native Color before chart construction', () {
     expect(Chart.defaults['color'], isA<ui.Color>());
   });

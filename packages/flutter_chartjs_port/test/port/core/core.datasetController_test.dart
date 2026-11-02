@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -1085,7 +1083,6 @@ _Run _runTo(String name, int count) {
 }
 
 void main() {
-  installNativeColorCodec();
   setUpSpecs();
 
   // A TypedRegistry of the elements registers the element classes before the

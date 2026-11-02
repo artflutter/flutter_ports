@@ -120,8 +120,9 @@ void main() {
       expect(jsGet(objects, 'a'), 2.5);
       // The key 1.0 becomes '1'. The Map has the int key 1 only.
       expect(jsGet(objects, 1.0), same(undefined));
-      expect(jsGet(const {'c': -0.0}, 'c'), isA<double>());
-      expect((jsGet(const {'c': -0.0}, 'c')! as double).isNegative, isTrue);
+      final signed = {'c': -double.parse('0')};
+      expect(jsGet(signed, 'c'), isA<double>());
+      expect((jsGet(signed, 'c')! as double).isNegative, isTrue);
       expect(
         jsGet(Map<String, Object?>.unmodifiable({'d': null}), 'd'),
         isNull,

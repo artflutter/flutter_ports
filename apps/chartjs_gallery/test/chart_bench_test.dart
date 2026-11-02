@@ -10,8 +10,6 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter/material.dart' hide Title, Tooltip;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 // Not public: UiCanvasElement, the canvas of the internal host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
     show UiCanvasElement;
@@ -124,7 +122,6 @@ double _median(Map<String, Object?> line, String part) =>
     double.parse(line['${part}MedianMs']! as String);
 
 void main() {
-  installNativeColorCodec();
   testWidgets('main_bench prints one BENCH line for a tiny case', (
     tester,
   ) async {

@@ -5,8 +5,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
@@ -241,7 +239,6 @@ void _expectSamePosition(
 }
 
 void main() {
-  installNativeColorCodec();
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
   Chart.register([

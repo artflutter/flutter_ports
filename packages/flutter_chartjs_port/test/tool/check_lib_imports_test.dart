@@ -187,6 +187,21 @@ void main() {
     ]);
   });
 
+  test('core and browser tests may use Flutter Color directly', () {
+    tree
+      ..write('lib/src/helpers/helpers.color.dart', [
+        _portOnly,
+        "import 'dart:ui';",
+      ])
+      ..write('test/color_test.dart', [
+        _portOnly,
+        "import 'dart:ui';",
+        "import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';",
+        "import 'package:test/test.dart';",
+      ]);
+    expect(run(), isEmpty);
+  });
+
   test('follows the pure layer through own imports', () {
     tree
       ..write('lib/src/helpers/helpers.canvas.dart', [
@@ -199,14 +214,14 @@ void main() {
       ])
       ..write('lib/src/canvas/flutter_context.dart', [
         _portOnly,
-        "import 'dart:ui';",
+        "import 'package:flutter/widgets.dart';",
       ]);
     expect(run(), [
       equals(
-        'error: lib/src/canvas/flutter_context.dart:2: imports dart:ui, but '
+        'error: lib/src/canvas/flutter_context.dart:2: imports package:flutter/widgets.dart, but '
         'the file is in the pure layer (reached from '
         'lib/src/helpers/helpers.canvas.dart -> lib/src/canvas/context.dart) '
-        '(pure layers reach neither dart:ui nor package:flutter, '
+        '(core layers import no package:flutter, '
         'porting-flow.md 3).',
       ),
     ]);
@@ -254,11 +269,15 @@ void main() {
       final original = path.endsWith('element.point.dart')
           ? "import 'package:flutter_chartjs_port/src/core/core.element.dart';"
           : "import 'package:flutter_chartjs_port/src/types/geometric.dart';";
-      tree.write(path, [_portOnly, original, "import 'dart:ui';"]);
+      tree.write(path, [
+        _portOnly,
+        original,
+        "import 'package:flutter/widgets.dart';",
+      ]);
       expect(run(), [
         equals(
-          'error: $path:3: imports dart:ui, but the file is in the pure '
-          'layer (pure layers reach neither dart:ui nor package:flutter, '
+          'error: $path:3: imports package:flutter/widgets.dart, but the file is in the pure '
+          'layer (core layers import no package:flutter, '
           'porting-flow.md 3).',
         ),
       ], reason: path);
@@ -307,7 +326,7 @@ void main() {
         equals(
           'error: $path:${saved.length + 1}: imports '
           'package:flutter/widgets.dart, but the file is in the pure layer '
-          '(pure layers reach neither dart:ui nor package:flutter, '
+          '(core layers import no package:flutter, '
           'porting-flow.md 3).',
         ),
       ], reason: path);
@@ -337,7 +356,7 @@ void main() {
       expect(run(), [
         equals(
           'error: $path:3: imports package:flutter/widgets.dart, but the file '
-          'is in the pure layer (pure layers reach neither dart:ui nor '
+          'is in the pure layer (core layers import no '
           'package:flutter, porting-flow.md 3).',
         ),
       ], reason: path);
@@ -371,11 +390,11 @@ void main() {
     expect(run(), isEmpty);
 
     for (final path in roots) {
-      tree.write(path, [...saved, "import 'dart:ui';"]);
+      tree.write(path, [...saved, "import 'package:flutter/widgets.dart';"]);
       expect(run(), [
         equals(
-          'error: $path:4: imports dart:ui, but the file is in the pure '
-          'layer (pure layers reach neither dart:ui nor package:flutter, '
+          'error: $path:4: imports package:flutter/widgets.dart, but the file is in the pure '
+          'layer (core layers import no package:flutter, '
           'porting-flow.md 3).',
         ),
       ], reason: path);
@@ -402,11 +421,14 @@ void main() {
       ]);
     expect(run(), isEmpty);
 
-    tree.write(typedRegistry, [...saved, "import 'dart:ui';"]);
+    tree.write(typedRegistry, [
+      ...saved,
+      "import 'package:flutter/widgets.dart';",
+    ]);
     expect(run(), [
       equals(
-        'error: $typedRegistry:3: imports dart:ui, but the file is in the '
-        'pure layer (pure layers reach neither dart:ui nor package:flutter, '
+        'error: $typedRegistry:3: imports package:flutter/widgets.dart, but the file is in the '
+        'pure layer (core layers import no package:flutter, '
         'porting-flow.md 3).',
       ),
     ]);
@@ -476,7 +498,7 @@ void main() {
       equals(
         'error: lib/src/helpers/helpers.dom.dart:2: imports '
         'package:flutter/widgets.dart, but the file is in the pure layer '
-        '(pure layers reach neither dart:ui nor package:flutter, '
+        '(core layers import no package:flutter, '
         'porting-flow.md 3).',
       ),
     ]);
@@ -486,7 +508,7 @@ void main() {
     tree
       ..write('lib/src/platform/platform.flutter.dart', [
         _portOnly,
-        "import 'dart:ui' as ui;",
+        "import 'package:flutter/widgets.dart' as ui;",
         "import 'chart_host.dart';",
         "import 'platform.base.dart';",
       ])
@@ -523,7 +545,7 @@ void main() {
         equals(
           'error: lib/src/platform/$name.dart:$line: imports '
           'package:flutter/scheduler.dart, but the file is in the pure layer '
-          '(pure layers reach neither dart:ui nor package:flutter, '
+          '(core layers import no package:flutter, '
           'porting-flow.md 3).',
         ),
       ], reason: name);
@@ -807,7 +829,7 @@ void main() {
     tree
       ..write('lib/src/theme/compile.dart', [
         _portOnly,
-        "import 'dart:ui' as ui;",
+        "import 'package:flutter/widgets.dart' as ui;",
       ])
       ..write('lib/src/theme/presets.dart', [
         _portOnly,
@@ -819,14 +841,14 @@ void main() {
       ]);
     expect(run(), [
       equals(
-        'error: lib/src/theme/compile.dart:2: imports dart:ui, but the file '
-        'is in the pure layer (pure layers reach neither dart:ui nor '
+        'error: lib/src/theme/compile.dart:2: imports package:flutter/widgets.dart, but the file '
+        'is in the pure layer (core layers import no '
         'package:flutter, porting-flow.md 3).',
       ),
       equals(
         'error: lib/src/theme/presets.dart:2: imports '
         'package:flutter/foundation.dart, but the file is in the pure layer '
-        '(pure layers reach neither dart:ui nor package:flutter, '
+        '(core layers import no package:flutter, '
         'porting-flow.md 3).',
       ),
       contains(
@@ -841,7 +863,7 @@ void main() {
     tree.write('lib/src/js/js_math.dart', [
       _portOnly,
       "// import 'dart:io';",
-      "/* import 'dart:ui'; */",
+      "/* import 'package:flutter/widgets.dart'; */",
       "const s = '''",
       "import 'dart:io';",
       "''';",
@@ -934,7 +956,10 @@ void main() {
   });
 
   test('adds the display prefix to paths', () {
-    tree.write('lib/src/js/js_math.dart', [_portOnly, "import 'dart:ui';"]);
+    tree.write('lib/src/js/js_math.dart', [
+      _portOnly,
+      "import 'package:flutter/widgets.dart';",
+    ]);
     final findings = checkLibImports(
       tree.root,
       displayPrefix: 'packages/flutter_chartjs_port/',

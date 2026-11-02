@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
@@ -130,7 +128,6 @@ bool _isExtensible(List<Object?> data) {
 }
 
 void main() {
-  installNativeColorCodec();
   group('Chart.DatasetController', () {
     group('auto', fixture.specs('core.datasetController'));
 

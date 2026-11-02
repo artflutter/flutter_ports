@@ -5,8 +5,6 @@ import 'package:chartjs_gallery/charts/chart_types.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The stems of the docs files, in the order of the docs.
@@ -45,7 +43,6 @@ Future<Chart> _openChart(WidgetTester tester, String stem) async {
 }
 
 void main() {
-  installNativeColorCodec();
   testWidgets('lists the tracked version and every chart type', (
     tester,
   ) async {

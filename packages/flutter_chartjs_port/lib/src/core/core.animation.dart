@@ -41,6 +41,7 @@
 library;
 
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
@@ -60,14 +61,13 @@ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     show Color;
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
 /// core.animation.js:5 `transparent`.
-const PreparedColor _transparent = PreparedColor(0, 0, 0, 0);
+const ui.Color _transparent = ui.Color.fromRGBO(0, 0, 0, 0);
 
 /// core.animation.js:6-25 the type of a member of `interpolators`: the value
 /// at [factor] between [from] and [to].
@@ -101,7 +101,7 @@ Object? _color(Object? from, Object? to, double factor) {
 
 Object _mixedColor(Color to, Color from, double factor) {
   final rgb = to.mix(from, factor).rgbaBytes!;
-  return PreparedColor(
+  return ui.Color.fromRGBO(
     // js-ok: color arithmetic produces finite non-negative byte channels.
     rgb.r.round(),
     // js-ok: color arithmetic produces finite non-negative byte channels.
@@ -109,7 +109,7 @@ Object _mixedColor(Color to, Color from, double factor) {
     // js-ok: color arithmetic produces finite non-negative byte channels.
     rgb.b.round(),
     rgb.a / 255,
-  ).paint;
+  );
 }
 
 /// core.animation.js:22 `interpolators.number`.
@@ -167,8 +167,8 @@ final class _ColorInterpolator {
 
   /// The color at [factor] between [from] and [to], as [_color] gives.
   Object? call(Object? from, Object? to, double factor) {
-    final f = publicColorValue(jsTruthy(from) ? from : _transparent);
-    final t = publicColorValue(jsTruthy(to) ? to : _transparent);
+    final f = jsTruthy(from) ? from : _transparent;
+    final t = jsTruthy(to) ? to : _transparent;
     if (isPatternOrGradient(f) || isPatternOrGradient(t)) {
       return _color(from, to, factor);
     }

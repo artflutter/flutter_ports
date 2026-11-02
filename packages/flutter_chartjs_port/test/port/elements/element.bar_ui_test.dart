@@ -6,8 +6,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
@@ -157,7 +155,6 @@ Future<void> _expectUpstreamPixels(Map<String, Object?> cfg) async {
 }
 
 void main() {
-  installNativeColorCodec();
   for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
     /// [_expectUpstreamPixels] with the options of [cfg] in the form of
     /// this group.

@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: TypedRegistry cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -9,8 +11,6 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show JsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -257,7 +257,7 @@ void main() {
         'descriptors.elements.trouted',
         o.json(at(descriptors, 'elements.trouted')),
       );
-    defaults['color'] = const color_values.PreparedColor(255, 0, 0, 1);
+    defaults['color'] = const ui.Color.fromRGBO(255, 0, 0, 1);
     scope['own'] = 7.0;
     o
       ..observe('backgroundColor after', o.json(scope['backgroundColor']))

@@ -6,7 +6,7 @@
 /// one entry for each distinct key name of `tool/options_schema.yaml`.
 /// A name that is not here stays a `String` (an extra of its scope).
 ///
-/// This library is a pure layer.
+/// This is a framework-free Flutter core library (ADR 0061).
 library;
 
 /// An option key by its JS name.

@@ -1,33 +1,17 @@
 // Original code, not ported from Chart.js: the pure part of the test harness.
 
-/// The pure part of the harness: the spec set-up for `dart test`, the mock
-/// canvas context and the matchers (porting-flow.md section 3).
+/// The framework-free core harness (legacy filename), executed by Flutter.
+/// It provides spec setup, mock canvas contexts and reference matchers.
 ///
-/// - [setUpSpecs]: the spec set-up of the pure-layer specs ("`test/index.js`
-///   equivalent"). `dart test` does not read
-///   `packages/flutter_chartjs_port/test/flutter_test_config.dart`, the
-///   `flutter test` port of Chart.js `test/index.js`. Thus each pure-layer
-///   spec file calls [setUpSpecs] first in its `main()`, and runs the same
-///   restore on the VM, dart2js and dart2wasm. Under `flutter test`, the
-///   config file runs [setUpDefaultsRestore] too. The second restore of a
-///   test finds the scopes restored already, and changes nothing.
-/// - [setUpBuiltins] and [removeBuiltins]: the config file registers the
-///   built-in components before `main()` (`harness-register-builtins`).
-///   [setUpSpecs] removes them again, because `dart test` has no such
-///   registration.
-/// - `createMockContext` and `MockContext` (`src/index.js`,
-///   `src/context.js`). Both are in `src/context.dart`
-///   (`harness-index-pure-split`), because `src/index.dart` is not a pure
-///   layer.
-/// - `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`,
-///   `toBeValidChart`, `toBeChartOfSize` and `toEqualOptions`
-///   (`src/matchers.js`, `src/matchers.options.js`).
+/// [setUpSpecs] removes any built-in component registrations and snapshots the
+/// global scopes for an isolated core spec. The outer test configuration
+/// also restores those scopes; restoring twice leaves the same state.
+/// [setUpBuiltins] and [removeBuiltins] manage each file’s registry setup.
 ///
-/// The harness part that needs the Flutter engine is
+/// The mocks and matchers need dart:ui Color through the chart core, but no
+/// Flutter framework UI. Browser tests use Flutter JavaScript/WebAssembly;
+/// standalone dart test is unsupported (ADR 0061). Chart-host helpers live in
 /// `package:chartjs_test_utils/flutter.dart`.
-///
-/// This library is a pure layer: it imports only `package:test` and the pure
-/// layers of `flutter_chartjs_port` (porting-flow.md section 3).
 library;
 
 import 'dart:collection';

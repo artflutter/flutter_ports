@@ -10,8 +10,6 @@ import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -168,7 +166,6 @@ void _unshift(List<Object?> array, List<Object?> items) {
 }
 
 void main() {
-  installNativeColorCodec();
   group('Chart', () {
     // https://github.com/chartjs/Chart.js/issues/2481
     // See global.deprecations.tests.js for backward compatibility

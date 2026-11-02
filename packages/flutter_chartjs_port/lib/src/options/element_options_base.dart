@@ -22,7 +22,6 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsFreezable, JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The type of [_absent].
@@ -201,7 +200,7 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
   @override
   Object? jsRead(String name) {
     final raw = rawOf(name);
-    if (!identical(raw, _absent)) return publicColorValue(raw);
+    if (!identical(raw, _absent)) return raw;
     // A known key is never an extra key.
     final extra = _extra;
     return extra != null && extra.containsKey(name) ? extra[name] : undefined;
@@ -381,7 +380,7 @@ final class GenericElementOptions extends ElementOptions {
   }
 
   @override
-  Object? jsRead(String name) => publicColorValue(_mapValue(name));
+  Object? jsRead(String name) => _mapValue(name);
 
   /// Writes [value] for [name].
   ///

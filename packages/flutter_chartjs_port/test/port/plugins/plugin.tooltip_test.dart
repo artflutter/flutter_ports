@@ -10,8 +10,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CSSStyleDeclaration, HTMLCanvasElement;
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
@@ -38,7 +36,6 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
-
 import '../../support/jasmine.dart' show jasmineEquals;
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
@@ -586,7 +583,6 @@ void _replay(
 Tooltip _newTooltip() => Tooltip((chart: _FakeChart(), options: null));
 
 void main() {
-  installNativeColorCodec();
   // The custom positioner of the generator.
   Tooltip.positioners['custom'] = _customPositioner;
 

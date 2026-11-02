@@ -3,11 +3,10 @@
 /// Port of `test/index.js`, the set-up of the Chart.js specs
 /// (porting-flow.md section 3, "`test/index.js` equivalent").
 ///
-/// `flutter test` runs [testExecutable] around the `main()` of each test
-/// file in this package. `dart test` does not read this file. Thus each
-/// pure-layer spec also calls `setUpSpecs()` of
-/// `package:chartjs_test_utils/pure.dart`, which runs the same restore
-/// (`harness-defaults-restore`) on the VM, dart2js and dart2wasm. Under
+/// Flutter runs [testExecutable] around each selected test file on the VM
+/// and in browsers. Core specs also call `setUpSpecs()` of
+/// `package:chartjs_test_utils/pure.dart` to remove the chart registrations
+/// and keep the same isolated state on VM, JavaScript and WebAssembly. Under
 /// `flutter test`, such a file restores the scopes twice after each test.
 /// Both restores put back the same snapshot: the second one finds nothing
 /// to change.
@@ -19,7 +18,7 @@
 /// `removeBuiltins()` removes them again. The unmount of the harness body
 /// releases the charts of `acquireChart`, with a `tearDown` as the fallback
 /// (`harness-release-at-unmount`, Chart.js ADR 0022, section 8). A
-/// pure-layer spec under `dart test` has neither of them.
+/// core spec keeps its own restore in addition to this outer setup.
 ///
 /// The harness installs no theme (Chart.js ADR 0050).
 library;
@@ -35,6 +34,7 @@ import 'dart:ui';
 // `specsFromFixtures` of the same library (Chart.js ADR 0029).
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show setDefaultDateZone;
 // The specs run on the UMD entry of Chart.js, which registers the built-in
@@ -149,7 +149,9 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   tearDown(releaseCharts);
 
   // DIVERGES(chartjs): harness-test-font, Liberation Sans for Arial/Helvetica.
-  await installTestFont();
+  // Browser core tests use mock text metrics, as the former dart-test suite
+  // did. Native paragraph/pixel tests stay VM-only and need the disk font.
+  if (!kIsWeb) await installTestFont();
 
   // The oracle O2 of Chart.js ADR 0054: each foreign value of the file is a
   // reviewed pair of test/port/options/foreign_audit.dart. Upstream has no

@@ -8,8 +8,6 @@ import 'dart:ui' show Color, FontWeight;
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show createContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -1148,7 +1146,6 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
 };
 
 void main() {
-  installNativeColorCodec();
   group('the datasets', () {
     group('each parameter of Dataset, in each dataset class', () {
       for (final MapEntry(key: name, value: (set, twin)) in _common.entries) {

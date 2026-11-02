@@ -19,9 +19,6 @@
 /// prefix, as `src/index.umd.ts` keeps the helpers in `Chart.helpers`.
 library;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' as colors;
-
 export 'package:flutter_chartjs_port/src/helpers/index.dart'
     hide
         OptionResolver,
@@ -45,7 +42,6 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         boundSegment,
         boundSegments,
         capitalize,
-        color,
         computeSegments,
         createBoundarySegment,
         createResolver,
@@ -55,7 +51,6 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         elementsEqual,
         factorize,
         filterBetween,
-        getHoverColor,
         getParentNode,
         getStartAndCountOfVisiblePoints,
         int16Range,
@@ -86,15 +81,3 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         textX,
         toLeftRightCenter,
         updateBezierControlPoints;
-
-/// The color helper accepts Flutter Color, never CSS strings.
-Object color(Object? value) {
-  installNativeColorCodec();
-  return colors.color(value);
-}
-
-/// Computes a native hover color without formatting or parsing strings.
-Object? getHoverColor(Object? value) {
-  installNativeColorCodec();
-  return colors.getHoverColor(value);
-}

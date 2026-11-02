@@ -817,6 +817,14 @@ object (row `adapt-line-points-elements`), and the draw dispatches on `types.Lin
 
 ## 3. Test harness
 
+**Current execution model (ADR 0061):** the historical pure layers are
+framework-free core layers which may use dart:ui Color directly. They no longer
+run under standalone Dart. Core tests run through Flutter on VM and Chrome
+(JavaScript/DDC and WebAssembly); tool/test_web.dart excludes VM-only files
+before compilation. The core still imports no package:flutter framework APIs.
+This supersedes earlier no-dart:ui and dart-test statements in this document.
+
+
 **Package.** `packages/chartjs_test_utils` (`publish_to: none`) mirrors the npm package module by
 module. It is a dev_dependency of `flutter_chartjs_port`. It also depends on `flutter_chartjs_port`. Probes
 showed that the workspace resolves this cycle. The harness, its notices and the test font stay

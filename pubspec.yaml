@@ -38,8 +38,8 @@ melos:
       packageFilters:
         dirExists: test
     test:web:
-      run: cd packages/flutter_chartjs_port && dart test -p chrome -c dart2js -c dart2wasm && cd ../chartjs_test_utils && dart test -p chrome -c dart2js -c dart2wasm
-      description: Run the flutter_chartjs_port and chartjs_test_utils tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
+      run: dart run packages/flutter_chartjs_port/tool/test_web.dart
+      description: Run the flutter_chartjs_port and chartjs_test_utils tests that are not @TestOn('vm') through Flutter in Chrome, with JavaScript and WebAssembly.
     test:goldens:
       run: cd packages/flutter_chartjs_port && flutter test --tags golden test/port/theme/goldens_test.dart
       description: Run the theme goldens of flutter_chartjs_port (Chart.js ADR 0050). They skip unless CHART_GOLDENS=1. Only the CI job fixtures on ubuntu-24.04 sets it. Options go after "--", for example "dart run melos run test:goldens -- --update-goldens" (write the golden files; only the workflow_dispatch run of CI with update_goldens does this).

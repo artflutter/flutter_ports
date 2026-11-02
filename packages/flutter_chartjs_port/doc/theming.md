@@ -160,7 +160,10 @@ instead of a leak into other charts. `compileThemeData` of `theme_data.dart` con
 `ChartThemeData` to a raw Map theme (`themeDataToRaw`) and keeps the compiled map for each
 `ChartThemeData` instance (Chart.js ADR 0050).
 
-Colors become `rgba()` strings with 8-bit sRGB channels and an alpha from `jsNumberToString`. Other
+Colors compile directly to Flutter `Color` values with 8-bit sRGB channels and
+unchanged floating-point alpha (ADRs 0057 and 0061). There is no intermediate
+option-color representation, installer or read-time conversion. Legacy rgba
+formatting remains only for frozen reference data. Other
 color spaces convert through `ColorSpace.extendedSRGB` and clamp, because a direct Display P3 to
 sRGB `withValues` only clamps (`dart:ui` `painting.dart:3901-3914, 4053-4056` of 3.47.7,
 `:3919-3932, 4071-4074` of 3.44.9).

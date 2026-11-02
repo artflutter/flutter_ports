@@ -8,8 +8,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -127,7 +125,6 @@ List<(ui.Offset, double)> _contours(ui.Path path) => [
 ];
 
 void main() {
-  installNativeColorCodec();
   group('UiPathBuilder.roundRect', () {
     test('adds one rounded rectangle under the identity', () {
       final b = _builder()..roundRect(10, 20, 100, 50, [1, 2, 3, 4]);

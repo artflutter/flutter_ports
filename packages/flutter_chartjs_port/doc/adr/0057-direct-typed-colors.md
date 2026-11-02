@@ -30,6 +30,10 @@ or mistake animation-group dictionaries for solid colors.
 
 ## Pure numerical layers
 
+Superseded by [ADR 0061](0061-native-flutter-colors.md): use dart:ui Color
+directly throughout the core, with no intermediate option color or installer.
+The following records the original migration design.
+
 Built-in defaults, theme tokens and the default palette use numerical
 `PreparedColor` values in pure Dart. The Flutter boundary installs the native
 reader/writer; resolution materializes native colors before element drawing.

@@ -8,8 +8,6 @@ import 'dart:ui' show Color;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
@@ -103,7 +101,6 @@ List<List<Object?>> _elements(Chart chart) => [
 ];
 
 void main() {
-  installNativeColorCodec();
   group('the object of a data point', () {
     test('each constructor makes the face of its object form', () {
       expect(_map(DataPoint(1, 2)), {'x': 1, 'y': 2});

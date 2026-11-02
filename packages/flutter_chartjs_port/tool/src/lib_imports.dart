@@ -4,7 +4,7 @@
 ///
 /// - `lib/` imports only the allowlist below (AGENTS.md rule 5).
 /// - A pure-layer file, and every file that it imports, directly or not,
-///   reaches neither `dart:ui` nor `package:flutter` (porting-flow.md 3).
+///   may use `dart:ui` Color but no `package:flutter` framework (ADR 0061).
 /// - A test without `@TestOn('vm')` compiles for the web legs, so it and its
 ///   test imports use only pure layers, `package:test` and
 ///   `package:chartjs_test_utils/pure.dart`.
@@ -29,7 +29,8 @@ import 'check_support.dart';
 import 'dart_source.dart';
 import 'headers.dart';
 
-/// The `dart:` libraries of pure layers and web tests.
+/// The `dart:` libraries of framework-free core layers and Flutter web tests.
+/// The historical pure-layer names now include dart:ui Color (ADR 0061).
 const Set<String> pureDartLibraries = {
   'dart:async',
   'dart:collection',
@@ -37,6 +38,7 @@ const Set<String> pureDartLibraries = {
   'dart:core',
   'dart:math',
   'dart:typed_data',
+  'dart:ui',
 };
 
 /// The other libraries of pure layers. [collectionLibrary] gives
@@ -347,9 +349,8 @@ final class _Edge {
     final library = libraries[path]!;
     for (final edge in library.edges) {
       if (edge.target != null || _isPureAllowed(edge.uri)) continue;
-      final reason =
-          edge.uri == 'dart:ui' || edge.uri.startsWith('package:flutter/')
-          ? 'pure layers reach neither dart:ui nor package:flutter'
+      final reason = edge.uri.startsWith('package:flutter/')
+          ? 'core layers import no package:flutter'
           : 'pure layers import only the pure allowlist';
       report(
         library,

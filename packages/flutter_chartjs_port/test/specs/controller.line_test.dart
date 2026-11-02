@@ -7,8 +7,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -117,7 +115,6 @@ final class _PointEvent implements types.ChartEvent {
 }
 
 void main() {
-  installNativeColorCodec();
   group('Chart.controllers.line', () {
     group('auto', fixture.specs('controller.line'));
 

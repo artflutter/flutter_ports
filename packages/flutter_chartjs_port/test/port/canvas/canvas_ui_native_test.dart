@@ -14,8 +14,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart' show HSLColor;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart'
     show maxAtlasInstances;
@@ -121,7 +119,6 @@ typedef _Dot = ({
 ui.Color _css(ui.Color color) => color;
 
 void main() {
-  installNativeColorCodec();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('N1: a native save only for a state with a clip of its own', () {

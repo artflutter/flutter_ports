@@ -34,7 +34,6 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 
 /// The value that the canvas setter `fillStyle` or `strokeStyle` gets for
 /// the option value [value], for example `ctx.fillStyle =
@@ -46,7 +45,6 @@ import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 /// `null`. Another value passes as it is.
 Object? canvasStyle(Object? value) => switch (value) {
   Undefined() => null,
-  PreparedColor() => value.paint,
   _ => value,
 };
 

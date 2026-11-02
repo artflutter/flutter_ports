@@ -5,42 +5,11 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:flutter_chartjs_port/src/types/color.dart';
-
-bool _installed = false;
-
-/// Installs the numerical/native bridge without any parser or string cache.
-void installNativeColorCodec() {
-  if (_installed) return;
-  _installed = true;
-  nativeColorCheck = (value) => value is ui.Color;
-  nativeColorReader = (value) {
-    if (value is! ui.Color) return null;
-    final srgb = value.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
-    return PreparedColor(
-      (srgb.r * 255).round().clamp(0, 255),
-      (srgb.g * 255).round().clamp(0, 255),
-      (srgb.b * 255).round().clamp(0, 255),
-      srgb.a.clamp(0.0, 1.0),
-      value,
-    );
-  };
-  nativeColorWriter = (value) => ui.Color.fromRGBO(
-    value.red,
-    value.green,
-    value.blue,
-    value.alpha,
-  );
-}
 
 /// A solid canvas color. CSS strings and all other values fail explicitly.
 ui.Color requireUiColor(Object? value, String argument) {
   if (value is ui.Color) return value;
-  if (value is PreparedColor) {
-    installNativeColorCodec();
-    return value.paint as ui.Color;
-  }
   throw ArgumentError.value(
     value,
     argument,
@@ -82,7 +51,6 @@ void validateChartColors(Object? config) {
       return;
     }
     if (value is ui.Color ||
-        value is PreparedColor ||
         value is CanvasGradient ||
         value is CanvasPattern) {
       return;

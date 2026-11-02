@@ -10,10 +10,10 @@
 // filler.target_test.dart compares all the cases of that run. The file is
 // a pure layer test: test:web runs it too.
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -140,7 +140,7 @@ void main() {
       expect(
         _decode(
           undefined,
-          backgroundColor: const color_values.PreparedColor(255, 0, 0, 1),
+          backgroundColor: const ui.Color.fromRGBO(255, 0, 0, 1),
         ),
         'origin',
       );

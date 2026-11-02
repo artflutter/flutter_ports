@@ -12,8 +12,6 @@ import 'dart:ui' as native_ui;
 // shard, the second test finds the state that the restore after the first
 // test made.
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
@@ -24,7 +22,6 @@ PointOptionsScope _point() =>
     jsGet(jsGet(defaults, 'elements'), 'point')! as PointOptionsScope;
 
 void main() {
-  installNativeColorCodec();
   late List<String> pointKeys;
   late Object? font;
   late Object? pointCell;

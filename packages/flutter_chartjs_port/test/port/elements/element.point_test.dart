@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: PointElement cases with no spec.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -8,8 +10,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show updateBezierControlPoints;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
@@ -175,8 +175,8 @@ PointElement _inRangePoint(
 Map<String, Object?> _options({double radius = 5}) => {
   'radius': radius,
   'borderWidth': 2,
-  'borderColor': const color_values.PreparedColor(255, 0, 0, 1),
-  'backgroundColor': const color_values.PreparedColor(0, 0, 255, 1),
+  'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
+  'backgroundColor': const ui.Color.fromRGBO(0, 0, 255, 1),
   'pointStyle': 'circle',
 };
 

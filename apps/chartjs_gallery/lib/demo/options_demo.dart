@@ -9,8 +9,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
     show ParsedFont, toFont, toFontString, toPadding;
 // The demo calls pure resolvers without constructing a Chart first.
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 // Not public: _createResolver and _attachContext, upstream `_` helpers.
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
@@ -81,7 +79,6 @@ class OptionsDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    installNativeColorCodec();
     return DemoPageBody(
       children: [
         DemoCard(

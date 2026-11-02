@@ -5,18 +5,23 @@
 library;
 
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart' show referenceColor;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as legacy;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
 import 'package:test/test.dart';
 
 /// RGBA bytes of a numerical/native color, or null for a non-color value.
 List<int>? nativeColorBytes(Object? value) {
-  final color = value is PreparedColor ? value : nativeColorReader?.call(value);
-  if (color == null) return null;
-  return [color.red, color.green, color.blue, (color.alpha * 255).round()];
+  if (value is! ui.Color) return null;
+  final color = value.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
+  return [
+    (color.r * 255).round().clamp(0, 255),
+    (color.g * 255).round().clamp(0, 255),
+    (color.b * 255).round().clamp(0, 255),
+    (color.a.clamp(0.0, 1.0) * 255).round(),
+  ];
 }
 
 bool _key(String? key) =>
@@ -101,21 +106,8 @@ String referenceColorText(String text) {
 
 /// Parses only legacy reference data; native production values are converted
 /// numerically, without sending Flutter Color objects to the old string parser.
-legacy.Color referenceParsedColor(Object? value) {
-  final channels = value is PreparedColor
-      ? value
-      : nativeColorReader?.call(value);
-  return channels == null
-      ? referenceColor(value)
-      : legacy.Color.fromRgbaBytes(
-          legacy.RGBA(
-            r: channels.red.toDouble(),
-            g: channels.green.toDouble(),
-            b: channels.blue.toDouble(),
-            a: channels.alpha * 255,
-          ),
-        );
-}
+legacy.Color referenceParsedColor(Object? value) =>
+    value is ui.Color ? legacy.Color(value) : referenceColor(value);
 
 /// JSON/probe text with CSS scalar values normalized to RGBA bytes. Keys and
 /// Other values keep their spelling; runtime values are untouched.
@@ -144,9 +136,7 @@ String referenceColorTokens(String text) {
 /// Converts a supported frozen color input to the numerical/native contract.
 /// Unsupported values stay unchanged so tests can assert their rejection.
 Object? referenceColorInput(Object? value) {
-  if (value == null ||
-      value is PreparedColor ||
-      nativeColorBytes(value) != null) {
+  if (value == null || value is ui.Color || nativeColorBytes(value) != null) {
     return value;
   }
   if (value is! String &&
@@ -176,12 +166,12 @@ Object? referenceColorInput(Object? value) {
       rgba.b != rgba.b.roundToDouble()) {
     return value;
   }
-  return PreparedColor(
+  return ui.Color.fromRGBO(
     rgba.r.round(),
     rgba.g.round(),
     rgba.b.round(),
     rgba.a / 255,
-  ).paint;
+  );
 }
 
 /// Whether a frozen string names a color value rather than a drawing opcode.

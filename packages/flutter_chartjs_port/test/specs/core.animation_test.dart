@@ -1,11 +1,11 @@
 // Ported from Chart.js v4.6.1 test/specs/core.animation.tests.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:test/test.dart';
 
 // `Chart.Animation` is the class Animation of core.animation.dart. The spec
@@ -47,27 +47,27 @@ void main() {
           {'duration': 1000, 'type': 'color'},
           target,
           'color',
-          const color_values.PreparedColor(255, 0, 0, 1),
+          const ui.Color.fromRGBO(255, 0, 0, 1),
         )..from = undefined;
         anim.tick(anim.start + 500);
         expect(
           target['color'],
-          const color_values.PreparedColor(255, 0, 0, 128 / 255),
+          const ui.Color.fromRGBO(255, 0, 0, 128 / 255),
         );
 
         anim
-          ..from = const color_values.PreparedColor(0, 0, 255, 1)
+          ..from = const ui.Color.fromRGBO(0, 0, 255, 1)
           ..to = undefined
           ..tick(anim.start + 500);
         expect(
           target['color'],
-          const color_values.PreparedColor(0, 0, 255, 128 / 255),
+          const ui.Color.fromRGBO(0, 0, 255, 128 / 255),
         );
       });
 
       test('should not try to mix invalid color', () {
         final target = <String, Object?>{
-          'color': const color_values.PreparedColor(0, 0, 255, 1),
+          'color': const ui.Color.fromRGBO(0, 0, 255, 1),
         };
         final anim = Animation(
           {'duration': 1000, 'type': 'color'},
@@ -100,65 +100,65 @@ void main() {
 
     test('should update', () {
       final target = <String, Object?>{
-        'testColor': const color_values.PreparedColor(0, 0, 0, 0),
+        'testColor': const ui.Color.fromRGBO(0, 0, 0, 0),
       };
       final anim = Animation(
         {'duration': 100, 'type': 'color'},
         target,
         'testColor',
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
 
       anim.tick(anim.start + 50);
       expect(
         target['testColor'],
-        const color_values.PreparedColor(255, 0, 0, 128 / 255),
+        const ui.Color.fromRGBO(255, 0, 0, 128 / 255),
       );
 
       anim
         ..update(
           {'duration': 500},
-          const color_values.PreparedColor(0, 0, 255, 1),
+          const ui.Color.fromRGBO(0, 0, 255, 1),
           jsDateNow(),
         )
         ..tick(anim.start + 250);
       expect(
         target['testColor'],
-        const color_values.PreparedColor(64, 0, 191, 191 / 255),
+        const ui.Color.fromRGBO(64, 0, 191, 191 / 255),
       );
 
       anim.tick(anim.start + 500);
       expect(
         target['testColor'],
-        const color_values.PreparedColor(0, 0, 255, 1),
+        const ui.Color.fromRGBO(0, 0, 255, 1),
       );
     });
 
     test('should not update when finished', () {
       final target = <String, Object?>{
-        'testColor': const color_values.PreparedColor(0, 0, 0, 0),
+        'testColor': const ui.Color.fromRGBO(0, 0, 0, 0),
       };
       final anim = Animation(
         {'duration': 100, 'type': 'color'},
         target,
         'testColor',
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
 
       anim.tick(anim.start + 100);
       expect(
         target['testColor'],
-        const color_values.PreparedColor(255, 0, 0, 1),
+        const ui.Color.fromRGBO(255, 0, 0, 1),
       );
       expect(anim.active(), isFalse);
 
       anim.update(
         {'duration': 500},
-        const color_values.PreparedColor(0, 0, 255, 1),
+        const ui.Color.fromRGBO(0, 0, 255, 1),
         jsDateNow(),
       );
       expect(anim.duration, 100);
-      expect(anim.to, const color_values.PreparedColor(255, 0, 0, 1));
+      expect(anim.to, const ui.Color.fromRGBO(255, 0, 0, 1));
     });
   });
 }

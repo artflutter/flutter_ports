@@ -3,15 +3,16 @@
 
 /// Port of `src/helpers/helpers.color.ts`.
 ///
-/// Solid option colors are native Flutter colors or internal numerical colors
+/// Solid option colors are native Flutter colors
 /// (Chart.js ADR 0057). The canvas layer also supports [CanvasGradient] and
 /// [CanvasPattern]. CSS strings are rejected.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
-    show Color, RGBA;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart';
+    show Color;
 import 'package:flutter_chartjs_port/src/types/color.dart';
 
 /// helpers.color.ts:3 `isPatternOrGradient`.
@@ -33,15 +34,10 @@ bool isPatternOrGradient(Object? value) {
 /// throws.
 Object color(Object? value) {
   if (isPatternOrGradient(value)) return value!;
-  final channels = requireSolidColor(value);
-  return Color.fromRgbaBytes(
-    RGBA(
-      r: channels.red.toDouble(),
-      g: channels.green.toDouble(),
-      b: channels.blue.toDouble(),
-      a: channels.alpha * 255,
-    ),
-  );
+  if (value is! ui.Color) {
+    throw ArgumentError.value(value, 'color', 'Expected Flutter Color');
+  }
+  return Color(value);
 }
 
 /// helpers.color.ts:28 `getHoverColor`.
@@ -54,7 +50,7 @@ Object? getHoverColor(Object? value) {
   if (isPatternOrGradient(value)) return value;
   final hovered = (color(value) as Color).saturate(0.5).darken(0.1);
   final rgb = hovered.rgbaBytes!;
-  return PreparedColor(
+  return ui.Color.fromRGBO(
     // js-ok: color arithmetic produces finite non-negative byte channels.
     rgb.r.round(),
     // js-ok: color arithmetic produces finite non-negative byte channels.
@@ -62,5 +58,5 @@ Object? getHoverColor(Object? value) {
     // js-ok: color arithmetic produces finite non-negative byte channels.
     rgb.b.round(),
     rgb.a / 255,
-  ).paint;
+  );
 }

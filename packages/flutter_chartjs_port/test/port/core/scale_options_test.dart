@@ -1,10 +1,10 @@
 // Original code, not ported from Chart.js: the scale option facades.
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -58,7 +58,7 @@ final Map<String, Object? Function(OptionView view)> _scaleGetters = {
 Map<String, Object?> _scaleValues() => {
   'display': 'auto',
   'alignToPixels': 1,
-  'backgroundColor': const color_values.PreparedColor(255, 0, 0, 1),
+  'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
   'reverse': true,
   'clip': false,
   'weight': '2',

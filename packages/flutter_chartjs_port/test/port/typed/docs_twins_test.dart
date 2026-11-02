@@ -6,8 +6,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'chart_twin.dart';
@@ -1846,7 +1844,6 @@ final List<_Twin> _typeTwins = [
 ];
 
 void main() {
-  installNativeColorCodec();
   for (final (themeName, theme) in const [
     ('unthemed', null),
     ('light', ChartThemeData.light()),

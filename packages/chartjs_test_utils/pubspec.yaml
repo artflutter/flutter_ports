@@ -33,6 +33,6 @@ dependencies:
   # it.
   flutter_test:
     sdk: flutter
-  # pure.dart runs with `dart test` on the VM, dart2js and dart2wasm. The
+  # pure.dart runs through Flutter on VM and browser JS/Wasm. The
   # constraint is the test constraint of flutter_chartjs_port.
   test: ^1.31.1

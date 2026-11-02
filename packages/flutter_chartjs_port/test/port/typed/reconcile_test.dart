@@ -6,8 +6,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -134,7 +132,6 @@ class _HostState extends State<_Host> {
 }
 
 void main() {
-  installNativeColorCodec();
   group('the match rule', () {
     testWidgets('J2b: a key keeps the Map, the meta and the hidden state of '
         'a dataset after a removal at index 0', (tester) async {

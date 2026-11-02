@@ -36,9 +36,11 @@ void main() {
   setUpSpecs();
   group('Chart.helpers.easingEffects', () {
     group('effects', () {
-      const expected = <String, List<double>>{
+      // Keep the reference's signed zeros outside DDC const canonicalization.
+      final negativeZero = -double.parse('0');
+      final expected = <String, List<double>>{
         'easeInOutBack': [
-          -0.0,
+          negativeZero,
           -0.03751855,
           -0.09255566,
           -0.07883348,
@@ -64,7 +66,7 @@ void main() {
           1,
         ],
         'easeInOutCirc': [
-          -0.0,
+          negativeZero,
           0.01010205,
           0.04174243,
           0.1,
@@ -155,7 +157,7 @@ void main() {
           1,
         ],
         'easeInOutSine': [
-          -0.0,
+          negativeZero,
           0.02447174,
           0.0954915,
           0.20610737,
@@ -168,7 +170,7 @@ void main() {
           1,
         ],
         'easeInBack': [
-          -0.0,
+          negativeZero,
           -0.01431422,
           -0.04645056,
           -0.08019954,
@@ -194,7 +196,7 @@ void main() {
           1,
         ],
         'easeInCirc': [
-          -0.0,
+          negativeZero,
           0.00501256,
           0.0202041,
           0.0460608,
@@ -389,7 +391,7 @@ void main() {
           1,
         ],
         'easeOutQuart': [
-          -0.0,
+          negativeZero,
           0.3439,
           0.5904,
           0.7599,

@@ -6,8 +6,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -207,7 +205,6 @@ DatasetController _controllerOf(Chart chart) =>
     chart.getDatasetMeta(0).controller!;
 
 void main() {
-  installNativeColorCodec();
   Chart.register([
     _controller('typedLine', 'line', 'point'),
     _controller('typedLineLine', 'line', 'line'),

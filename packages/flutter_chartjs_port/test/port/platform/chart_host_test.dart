@@ -9,8 +9,6 @@ import 'package:flutter/rendering.dart'
     show ClipRectLayer, RenderRepaintBoundary;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart'
-    show installNativeColorCodec;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -125,7 +123,6 @@ Future<UiCanvasElement> _pumpHost(
 }
 
 void main() {
-  installNativeColorCodec();
   group('first layout', () {
     testWidgets('sizes a chart that starts before the layout at once', (
       tester,

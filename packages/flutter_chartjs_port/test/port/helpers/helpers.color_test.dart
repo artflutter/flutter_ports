@@ -1,10 +1,10 @@
 // Original code, not ported from Chart.js: helpers.color tests.
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     show Color;
-import 'package:flutter_chartjs_port/src/options/prepared_color.dart'
-    as color_values;
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:test/test.dart';
 
@@ -28,7 +28,7 @@ void main() {
       expect(isPatternOrGradient(_Pattern()), isTrue);
       expect(
         isPatternOrGradient(
-          const color_values.PreparedColor(255, 255, 255, 1),
+          const ui.Color.fromRGBO(255, 255, 255, 1),
         ),
         isFalse,
       );
@@ -48,7 +48,7 @@ void main() {
   });
 
   test('color returns a Color', () {
-    final c = color(const color_values.PreparedColor(1, 2, 3, 1));
+    final c = color(const ui.Color.fromRGBO(1, 2, 3, 1));
     expect(c, isA<Color>());
     expect((c as Color).rgbString(), 'rgb(1, 2, 3)');
     expect(() => color('nope'), throwsArgumentError);
@@ -56,32 +56,32 @@ void main() {
 
   test('getHoverColor saturates by 0.5 and darkens by 0.1', () {
     expect(
-      getHoverColor(const color_values.PreparedColor(70, 191, 189, 1)),
-      const color_values.PreparedColor(32, 203, 200, 1),
+      getHoverColor(const ui.Color.fromRGBO(70, 191, 189, 1)),
+      const ui.Color.fromRGBO(32, 203, 200, 1),
     );
     expect(
-      getHoverColor(const color_values.PreparedColor(70, 191, 189, 1)),
-      const color_values.PreparedColor(32, 203, 200, 1),
+      getHoverColor(const ui.Color.fromRGBO(70, 191, 189, 1)),
+      const ui.Color.fromRGBO(32, 203, 200, 1),
     );
     expect(
-      getHoverColor(const color_values.PreparedColor(255, 0, 0, 1)),
-      const color_values.PreparedColor(230, 0, 0, 1),
+      getHoverColor(const ui.Color.fromRGBO(255, 0, 0, 1)),
+      const ui.Color.fromRGBO(230, 0, 0, 1),
     );
     expect(
-      getHoverColor(const color_values.PreparedColor(255, 99, 132, 0.5)),
-      const color_values.PreparedColor(255, 64, 105, 0.5),
+      getHoverColor(const ui.Color.fromRGBO(255, 99, 132, 0.5)),
+      const ui.Color.fromRGBO(255, 64, 105, 0.5),
     );
     expect(
-      getHoverColor(const color_values.PreparedColor(0, 0, 0, 0)),
-      const color_values.PreparedColor(0, 0, 0, 0),
+      getHoverColor(const ui.Color.fromRGBO(0, 0, 0, 0)),
+      const ui.Color.fromRGBO(0, 0, 0, 0),
     );
     expect(
-      getHoverColor(const color_values.PreparedColor(10, 20, 30, 0.5)),
-      const color_values.PreparedColor(4, 18, 32, 0.5),
+      getHoverColor(const ui.Color.fromRGBO(10, 20, 30, 0.5)),
+      const ui.Color.fromRGBO(4, 18, 32, 0.5),
     );
     expect(
-      getHoverColor(const color_values.PreparedColor(10, 20, 30, 0.5)),
-      const color_values.PreparedColor(4, 18, 32, 0.5),
+      getHoverColor(const ui.Color.fromRGBO(10, 20, 30, 0.5)),
+      const ui.Color.fromRGBO(4, 18, 32, 0.5),
     );
   });
 
