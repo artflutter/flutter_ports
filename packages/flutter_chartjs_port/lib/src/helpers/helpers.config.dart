@@ -76,6 +76,7 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
+import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
@@ -651,6 +652,57 @@ final class OptionView implements ContextProxy {
   /// The slot names that the `set` or `deleteProperty` trap removed from
   /// the cache object. Dart `null` before the first one.
   Set<String>? _removedSlots;
+
+  /// The already-resolved scalar inputs of `ticks.font`, or null when a fresh
+  /// context can change them. This probe never resolves an uncached property,
+  /// invokes a descriptor, or populates a contextual view's cache.
+  ///
+  /// Only the ordinary setContext/descriptor path is eligible. The caller
+  /// still creates the tick context, checks the global font fallback and
+  /// compares these inputs on every call; resolver writes/deletes are visible.
+  @internal
+  StaticFontInputs? cachedStaticFont([StaticFontInputs? fallback]) {
+    // DIVERGES(chartjs): adapt-static-tick-font, cached scalar inputs only.
+    if (_removedSlots != null ||
+        jsTruthy(_subProxy) ||
+        (_descriptorDefaults != null && _descriptorDefaults is! _Descriptor)) {
+      return null;
+    }
+    final proxy = _proxy;
+    if (proxy is! OptionResolver || !_hasCachedDescriptors(proxy)) return null;
+    final font = proxy._cache.get(OptionKey.font);
+    // An absent ticks.font uses the live global font. The caller supplies its
+    // scalar inputs only after ruling out routed or custom fallback getters.
+    if (identical(font, undefined)) return fallback;
+    if (font is! OptionResolver || !_hasCachedDescriptors(font)) return null;
+    return staticFontInputs(
+      font._cache.get(OptionKey.size),
+      font._cache.get(OptionKey.family),
+      font._cache.get(OptionKey.style),
+      font._cache.get(OptionKey.lineHeight),
+      font._cache.get(OptionKey.weight),
+    );
+  }
+
+  /// These are the reads of attachContext that the fast path omits. A missing
+  /// entry or a changed resolver slot must go through the ordinary reads.
+  static bool _hasCachedDescriptors(OptionResolver proxy) =>
+      !proxy._slotsTouched &&
+      !identical(proxy._cache.get(OptionKey.descScriptable), _absent) &&
+      !identical(proxy._cache.get(OptionKey.descIndexable), _absent) &&
+      !identical(proxy._cache.get(OptionKey.descAllKeys), _absent);
+
+  /// Label-source options already read by the first category callback. Never
+  /// execute a scriptable option merely to qualify a bulk-label fast path.
+  @internal
+  ({Object? labels, String? position})? cachedCategoryLabelSource() {
+    // DIVERGES(chartjs): adapt-category-label-dispatch, cached source inputs.
+    final labels = _cache.get(OptionKey.labels);
+    if (identical(labels, _absent)) return null;
+    if (jsTruthy(labels)) return (labels: labels, position: null);
+    final position = _cache.get(OptionKey.position);
+    return position is String ? (labels: labels, position: position) : null;
+  }
 
   /// The own property [name] of the target, or [_absent].
   Object? _own(String name) {

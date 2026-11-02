@@ -25,6 +25,9 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Performance:** [performance.md](performance.md), the profile builds of the gallery stress demo
   on macOS, in Chrome and on an Android phone, two baselines (plain Flutter and the Chrome
   canvas), and the changes that the builds caused, for example the circle batch.
+- **Axis pipeline options:** [measured alternatives and proposed structure](axis-pipeline-options.md)
+  for reducing steady-state category-axis layout below 1 ms, with compatibility
+  constraints and invalidation probes.
 - **Canvas and host cuts:** [canvas-cuts-plan.md](canvas-cuts-plan.md) (proposed), the plan that
   replaces arc math and host sizing code of the port with `dart:ui` and Flutter layout. Its §7, the
   native draw path of phase 10, came forward on 2026-10-30 (Chart.js ADR 0055).

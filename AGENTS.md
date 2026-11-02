@@ -336,6 +336,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       at `core.scale.js:15`. `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
       `Scale` implements `MinMax`. Its value methods take `Object?` (Chart.js ADR 0025).
+    - Chart.js ADR 0064: the exact category scale reuses full string-label
+      measurements under static-font/native-canvas guards. Tick objects, contexts,
+      callbacks and geometry fitting remain live. `category_label_source.dart`
+      guards bulk reads of native label containers; unknown chart/config classes
+      keep ordinary reads. The native canvas tracks Flutter font notifications
+      through `canvas_font_tracking.dart` to invalidate measurement plans.
     - `scale_options.dart` (port-only, pure through `core.ticks`) has the typed facades of the
       scale options (Chart.js ADR 0054 §4): extension types over the `OptionView` of a scale.
       `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
@@ -1224,7 +1230,8 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. Of
   `lib/src/core/`, the roots are `core.defaults`, `core.element`, `core.config`, `core.adapters`,
   `core.interaction`, `core.layouts`, `core.animation`, `animation_spec`, `reduced_motion`,
-  `core.typedRegistry` and the port-only `date_*.dart`. Of `lib/src/theme/`, the roots are `compile.dart` and `presets.dart`.
+  `tick_font_cache`, `core.typedRegistry` and the port-only `date_*.dart`. Of
+  `lib/src/theme/`, the roots are `compile.dart` and `presets.dart`.
   The canvas interface `lib/src/canvas/canvas.dart` is pure, because `helpers.canvas` imports it.
 - Write core tests with `package:test`. Execute them through Flutter on the VM
   (`test`) and in Chrome with JavaScript/DDC and WebAssembly (`test:web`).

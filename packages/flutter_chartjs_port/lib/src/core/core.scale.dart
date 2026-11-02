@@ -51,6 +51,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show alignPixel, clipArea, measureText, renderText, unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -69,7 +70,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, halfPi, int16Range, limitValue, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext, addGrace, createContext, toFont, toPadding;
+    show
+        ParsedFont,
+        ScriptableScaleContext,
+        addGrace,
+        createContext,
+        toFont,
+        toPadding;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
@@ -79,6 +86,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
+import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
@@ -183,7 +191,38 @@ final class Tick implements types.Tick {
   /// makes (core.scale.js:966-967). Dart `null` stands for JS `undefined`,
   /// the start value. It is the typed context of index.d.ts:1419 (Chart.js
   /// ADR 0054 §11).
-  ScriptableScaleContext? $context;
+  ScriptableScaleContext? get $context {
+    final parent = _contextParent;
+    if (parent != null) {
+      _contextParent = null;
+      _context = ScriptableScaleContext.tick(
+        parent,
+        this,
+        _contextIndex.toDouble(),
+      );
+    }
+    return _context;
+  }
+
+  set $context(ScriptableScaleContext? value) {
+    _contextParent = null;
+    _context = value;
+  }
+
+  ScriptableScaleContext? _context;
+  ScriptableScaleContext? _contextParent;
+  int _contextIndex = 0;
+
+  /// Make the same fresh context available on first access after a static
+  /// measurement-plan hit. Capture the original parent/index before auto-skip;
+  /// a hook-supplied context or an earlier preparation always wins.
+  @internal
+  void prepareContextForLayout(ScriptableScaleContext parent, int index) {
+    // DIVERGES(chartjs): adapt-lazy-tick-context, materialize on observation.
+    if (_context != null || _contextParent != null) return;
+    _contextIndex = index;
+    _contextParent = parent;
+  }
 }
 
 /// core.scale.js:23 `sample`.
@@ -328,11 +367,8 @@ ScriptableScaleContext _createTickContext(
   int index,
   Tick tick,
 ) {
-  return createContext(parent, <String, Object?>{
-    'tick': tick,
-    'index': index.toDouble(),
-    'type': 'tick',
-  }) as ScriptableScaleContext;
+  // DIVERGES(chartjs): adapt-tick-context-construction, no temporary Map.
+  return ScriptableScaleContext.tick(parent, tick, index.toDouble());
 }
 
 /// core.scale.js:122 `titleAlign`.
@@ -433,6 +469,35 @@ final class _Margins {
   double right;
   double top;
   double bottom;
+}
+
+/// One full candidate-label measurement, independent of viewport and tick
+/// selection. Keep just one plan; fitted/auto-skipped subsets do not replace it.
+final class _AxisLabelPlan {
+  _AxisLabelPlan(this.labels, this.font, this.sizes);
+
+  final List<String> labels;
+  final StaticFontInputs font;
+  final _LabelSizes sizes;
+
+  bool matches(List<Tick> ticks, StaticFontInputs currentFont) {
+    if (font != currentFont || labels.length != ticks.length) return false;
+    for (var i = 0; i < labels.length; i++) {
+      final label = ticks[i].label;
+      if (label is! String || label != labels[i]) return false;
+    }
+    return true;
+  }
+
+  static List<String>? captureLabels(List<Tick> ticks) {
+    final labels = <String>[];
+    for (final tick in ticks) {
+      final label = tick.label;
+      if (label is! String) return null;
+      labels.add(label);
+    }
+    return labels;
+  }
 }
 
 /// The label sizes of `_computeLabelSizes` (core.scale.js:862-869): the
@@ -1231,6 +1296,7 @@ class Scale extends _ScalePrototype
 
     // Allow modification of ticks in callback.
     afterBuildTicks();
+    if (ticks!.length < 256) _labelPlan = null;
 
     // Compute tick rotation and fit using a sampled subset of labels
     // We generally don't need to compute the size of every single label for
@@ -1822,6 +1888,30 @@ class Scale extends _ScalePrototype
     final heights = <double>[];
     final increment = (length / _getTicksLimit(length, maxTicksLimit))
         .floorToDouble();
+    // DIVERGES(chartjs): adapt-axis-label-plan, reuse content metrics only.
+    final generation = switch (ctx) {
+      final CanvasTextMetricsSource source => source.textMetricsGeneration,
+      _ => null,
+    };
+    if (!identical(_metricsContext, ctx) ||
+        !identical(_metricsGeneration, generation)) {
+      if (_metricsGeneration != null || generation != null) caches.clear();
+      _labelPlan = null;
+      _metricsContext = ctx;
+      _metricsGeneration = generation;
+    }
+    final canPlan =
+        supportsStaticLabelPlan &&
+        generation != null &&
+        $context != null &&
+        length >= 256 &&
+        increment == 1 &&
+        identical(ticks, this.ticks) &&
+        ticks.runtimeType == _nativeTickListType;
+    StaticFontInputs? planFont;
+    List<String>? planLabels;
+    final planOptions = canPlan ? options : null;
+    final planTicks = planOptions?.ticks.raw;
     var widestLabelSize = 0.0;
     var highestLabelSize = 0.0;
     double i;
@@ -1839,6 +1929,33 @@ class Scale extends _ScalePrototype
       label = ticks[index].label;
       tickFont = resolveTickFontOptions(index);
       ctx!.font = fontString = tickFont.string;
+      if (canPlan &&
+          index == 0 &&
+          ctx.font == fontString &&
+          $context != null &&
+          identical(ticks, this.ticks) &&
+          identical(options, planOptions) &&
+          identical(options.ticks.raw, planTicks) &&
+          label is String &&
+          label == ticks[0].label &&
+          tickFont is ParsedFont) {
+        final inputs = TickFontCache.staticInputs(planTicks);
+        planFont =
+            inputs != null && TickFontCache.matchesResolved(inputs, tickFont)
+            ? inputs
+            : null;
+        final plan = _labelPlan;
+        if (planFont != null && plan != null && plan.matches(ticks, planFont)) {
+          // Preserve each context's original index/parent and any context
+          // supplied by a hook. Unobserved contexts need no allocation.
+          final parent = $context!;
+          for (var j = 1; j < length; j++) {
+            ticks[j].prepareContextForLayout(parent, j);
+          }
+          return plan.sizes;
+        }
+        if (planFont != null) planLabels = _AxisLabelPlan.captureLabels(ticks);
+      }
       // `caches[fontString]` converts a `null` font string to the key
       // 'null'.
       final key = fontString ?? 'null';
@@ -1888,7 +2005,7 @@ class Scale extends _ScalePrototype
       height: _orZero(_at(heights, idx)),
     );
 
-    return _LabelSizes(
+    final result = _LabelSizes(
       valueAt(0),
       valueAt(length - 1),
       valueAt(widest),
@@ -1896,7 +2013,23 @@ class Scale extends _ScalePrototype
       widths,
       heights,
     );
+    if (canPlan) {
+      _labelPlan = planFont == null || planLabels == null
+          ? null
+          : _AxisLabelPlan(planLabels, planFont, result);
+    }
+    return result;
   }
+
+  /// Whether the exact built-in scale permits scalar label-metric reuse.
+  /// Custom scale subclasses retain their original virtual font behavior.
+  @internal
+  bool get supportsStaticLabelPlan => false;
+
+  static final Type _nativeTickListType = <Tick>[].runtimeType;
+  Object? _metricsContext;
+  Object? _metricsGeneration;
+  _AxisLabelPlan? _labelPlan;
 
   /// core.scale.js:877 `getLabelForValue(value)`.
   ///
@@ -2927,9 +3060,18 @@ class Scale extends _ScalePrototype
   /// @protected
   @internal
   types.CanvasFontSpec resolveTickFontOptions(int index) {
-    final opts = options.ticks.setContext(getContext(index));
-    return toFont(opts.font);
+    // DIVERGES(chartjs): adapt-static-tick-font, guarded scalar font reuse.
+    final ticks = options.ticks;
+    final context = getContext(index);
+    final cached = _tickFontCache.read(ticks.raw);
+    if (cached != null) return cached;
+    final opts = ticks.setContext(context);
+    final font = toFont(opts.font);
+    _tickFontCache.remember(ticks.raw, font);
+    return font;
   }
+
+  final TickFontCache _tickFontCache = TickFontCache();
 
   /// core.scale.js:1708 `_maxDigits()`. scale.linearbase.js:263 reads it.
   ///

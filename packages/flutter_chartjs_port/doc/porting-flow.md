@@ -998,6 +998,7 @@ These phase 5 files are pure layers too:
 - `core.config` ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md), section 7) and
   `core.adapters` (the `pureRoots` of `tool/src/lib_imports.dart`)
 - `core.interaction` and `core.layouts`
+- the port-only `tick_font_cache` ([Chart.js ADR 0063](adr/0063-static-tick-font.md))
 - `core.animation` and the port-only `animation_spec` ([Chart.js ADR 0019](adr/0019-animation.md),
   section 1)
 - `core.typedRegistry` ([Chart.js ADR 0020](adr/0020-registry-and-component-classes.md), section
@@ -1048,7 +1049,8 @@ and 8. Tool 1 uses allowlists:
   - `lib/src/js/`, `lib/src/types/`, `lib/src/kurkle_color/` and the helpers except
     `helpers.extras`
   - `core.defaults`, `core.element`, `core.config`, `core.adapters`, `core.interaction`,
-    `core.layouts`, `core.animation`, `animation_spec` and `core.typedRegistry`
+    `core.layouts`, `core.animation`, `animation_spec`, `tick_font_cache` and
+    `core.typedRegistry`
   - the files of `lib/src/elements/`
   - `platform.base`, `platform.basic` and `native_event`
   - `compile.dart` and `presets.dart` of `lib/src/theme/`

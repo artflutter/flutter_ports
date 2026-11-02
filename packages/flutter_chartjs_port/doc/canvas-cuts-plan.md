@@ -1040,6 +1040,37 @@ Changes to the cited files:
   separately, including the higher bubble draw component. No canvas-plan trigger
   is introduced; the profile does not establish the cause of that timing shift.
 
+- 2026-11-02, category-axis layout profiling. Font parsing uses guarded scalar
+  fast paths and typed reads, and core.scale constructs the same tick context
+  without an intermediate Map. Canvas text metrics, drawing commands and cache
+  sizes are unchanged. Performance.md §27 records the comparison. The inventory,
+  cut estimates and pinning tests of this plan do not change; no trigger occurs.
+
+- 2026-11-02, guarded static tick-font reuse (ADR 0063). The scale still creates
+  each tick context and issues the same text measurements and draw commands.
+  Only parsed scalar fonts are reused, with fresh returned objects and live
+  input/fallback checks. Canvas code, inventories and cut estimates are unchanged.
+  Performance.md §28 records the bounded comparison; no canvas-plan trigger occurs.
+
+- 2026-11-02, axis pipeline scan. The new axis-pipeline-options.md and
+  performance.md §29 compare configuration choices and isolated structural
+  probes; no production runtime source changes. The recommendations distinguish
+  axis planning from future renderer work. Existing canvas inventory, cut
+  estimates and tests remain unchanged; no deferred implementation is activated.
+
+- 2026-11-02, guarded category-label plans (ADR 0064). Core scales reuse
+  string/font measurements while preserving live geometry and fresh contexts.
+  The canvas interface gains an internal text-metrics generation capability; the
+  native adapter invalidates text caches on Flutter font notifications. No canvas
+  drawing command, arc/transform cut or host geometry is replaced. The existing
+  inventory/estimates of the deferred cuts remain unchanged; new behavior is
+  pinned by axis_label_plan_test.dart and performance.md §30. No trigger occurs.
+
+- 2026-11-02, deferred tick contexts (ADR 0065). Only context allocation after
+  a label-plan hit changes; observable parent/index/identity and canvas commands
+  stay the same. Performance.md §31 records the bounded comparison. Canvas cut
+  inventories, estimates and triggers are unchanged.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.

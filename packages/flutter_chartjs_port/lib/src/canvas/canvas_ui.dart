@@ -45,6 +45,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
@@ -500,13 +501,17 @@ final class _UiTextMetrics implements TextMetrics {
 ///
 /// See the library comment for the picture model. The host calls [paint]
 /// in its paint phase and repaints when [onChanged] fires.
-final class UiCanvasContext implements CanvasRenderingContext2D {
+final class UiCanvasContext
+    implements CanvasRenderingContext2D, CanvasTextMetricsSource {
   UiCanvasContext._(this._element) {
     _s = _states[0];
     _path = UiPathBuilder(_s.transform);
   }
 
   final UiCanvasElement _element;
+
+  @override
+  Object? get textMetricsGeneration => trackedTextMetricsGeneration();
 
   final List<_State> _states = [_State()];
   int _depth = 0;

@@ -28,6 +28,15 @@ import 'package:flutter_chartjs_port/src/types/color.dart';
 export 'package:flutter_chartjs_port/src/types/color.dart'
     show CanvasGradient, CanvasPattern;
 
+/// Optional internal capability for a context with deterministic text metrics.
+/// A generation changes whenever existing font/text measurements become stale.
+/// Null disables cross-update measurement reuse. The font setter and measuring
+/// text must have no user-observable side effects beyond canvas font state.
+abstract interface class CanvasTextMetricsSource {
+  /// Identity token for the current font environment, or null without tracking.
+  Object? get textMetricsGeneration;
+}
+
 /// Typed Canvas 2D compositing operations, independent of Flutter.
 ///
 /// Assign these values to [CanvasRenderingContext2D.globalCompositeOperation].

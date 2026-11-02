@@ -2515,6 +2515,10 @@ mixin _TickMark {
 final class _StressChart extends Chart with _TickMark implements _StressMeter {
   _StressChart(super.item, [super.userConfig]);
 
+  // This wrapper only records timings; data/config getters remain Chart's.
+  @override
+  bool get supportsNativeCategoryLabels => true;
+
   @override
   int drawMicros = 0;
 

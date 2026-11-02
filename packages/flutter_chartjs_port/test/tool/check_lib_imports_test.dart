@@ -298,7 +298,7 @@ void main() {
     expect(run(), isEmpty);
   });
 
-  test('treats core.animation and animation_spec as roots', () {
+  test('treats animation and tick-font helper files as roots', () {
     const sources = {
       'lib/src/core/core.animation.dart': [
         _ported,
@@ -306,6 +306,7 @@ void main() {
         "import 'package:flutter_chartjs_port/src/js/js_math.dart';",
       ],
       'lib/src/core/animation_spec.dart': [_portOnly],
+      'lib/src/core/tick_font_cache.dart': [_portOnly],
     };
     tree
       ..write('lib/src/core/core.animator.dart', [
