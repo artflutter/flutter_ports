@@ -27,6 +27,7 @@
 | ✅ | [23. Stacked-fill exact-point experiment](#chapter-23) |
 | ✅ | [24. Private boundary endpoint search on Android](#chapter-24) |
 | ✅ | [25. Private boundary segment matching on Android](#chapter-25) |
+| ✅ | [26. Element option cache-key reuse on Android](#chapter-26) |
 
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
@@ -5726,3 +5727,72 @@ coverage passes (958 cases, 78 skipped), and fixtures pass (628, 39 skipped).
 Formatting, fatal-info analysis and all seven port checks pass. Parity is
 regenerated; final library hashes match the measured candidate. The implementation
 is retained.
+
+<a id="chapter-26"></a>
+
+## 26. Element option cache-key reuse on Android
+
+2026-11-02. [ADR 0062](adr/0062-element-option-cache-key.md) reuses the last
+joined `elementType-mode` string per DatasetController. The baseline is `6197449`,
+the direct Flutter Color core, pushed before this work; its CI run 41370124105
+passed. The candidate has three private fields and one key-selection branch.
+It still converts the element id on every call and retains the original string
+map, collisions, clearing, sharing, clones and scriptable option callbacks.
+
+The Pixel 8a baseline profile collected 11,548 samples at bubble N=5000 update.
+_resolveElementOptions has 12.4% inclusive frame samples. Within that function,
+String hashCode has 2.59% self, _concatAll 2.28% and _interpolate 2.12% of the
+capture. Those profile costs motivated reuse of the string, not additional
+option-result caching. Drawing circles and recording pictures remain large costs.
+
+### Android release comparison
+
+Flutter 3.47.8 / Dart 3.13.7, Android 17, arm64 release, profiler off. The
+prewritten protocol uses A/B/B/A, 15 cells with controls first, 500 ms warmup and
+nine 150 ms batches. No builds/tests ran alongside timing; no run was discarded.
+Temperatures were 28.2–29.5 °C; all before/after thermal statuses were 0.
+
+Values are medians across two process results per variant. The full-call result
+sums each process's update + draw + recording-completion medians first. The
+predeclared primary metric is update CPU at N=5000 for bubble and unshared
+scatter; both must improve by at least 5% in each pair. Full-call totals are also
+guarded against repeatable increases exceeding both 0.1 ms and 5%.
+
+| Workload | N | Update CPU, A → B ms | Saved | Full call, A → B ms | Saved |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Bubble update | 1000 | 1.8775 → 1.6365 | 12.8% | 4.4990 → 4.3225 | 3.9% |
+| Unshared scatter update | 1000 | 1.0545 → 0.7900 | 25.1% | 1.4030 → 1.1580 | 17.5% |
+| Bubble update | 5000 | 8.5060 → 7.1360 | 16.1% | 20.1270 → 19.5200 | 3.0% |
+| Unshared scatter update | 5000 | 3.6850 → 2.2965 | 37.7% | 5.3965 → 4.0060 | 25.8% |
+
+The protocol passes. Bubble update CPU decreases 16.9% and 15.3% in the two
+pairs; scatter decreases 39.1% and 36.2%. Full scatter calls improve 26.7% and
+24.8%; full bubble calls improve 3.7% and 2.3%. No full-call control has a
+repeatable increase above both thresholds.
+
+The tradeoffs remain in the record. Bubble's draw portion inside its N=5000
+update rises 7.1655 → 7.9185 ms (+10.5%, +9.3%/+11.7% in the pairs), offsetting
+much of the update gain. Its separate draw-only control changes +0.3%. Bar full
+update at N=5000 changes 40.603 → 41.4315 ms (+2.0%): +4.05% in one pair and
+almost zero in the other; the update component alone is +6.9% in aggregate.
+The profile does not establish the cause of these component/control shifts.
+
+Other full-call changes: ordinary line draw +3.2% (+0.0435 ms), radar draw +1.1%,
+gap fill draw +1.9%, shared line update +0.3%, tooltip hover +0.4%, bar draw -0.2%,
+scriptable line update -2.8%, polar-area update -4.0% and radar update -5.7%.
+Small changes in two pairs remain inconclusive. No GPU/FPS, other-device or
+zero-regression claim is made.
+
+The [full report and reproduction package](benchmarks/element-option-cache-key/README.md)
+retain every process/component value, the baseline profile, APK/source hashes,
+prewritten protocol and exact measured patch. Reconstruction matches the measured
+library hash. Five new semantic tests passed on the unchanged baseline, then on
+the candidate; the focused controller/reference/specification run passes 133 tests.
+
+Final verification: workspace tests pass (10,583, 87 skipped); Flutter
+JavaScript and WebAssembly each pass 3,950 chart-port and 55 harness tests with
+two existing skips. Upstream coverage passes (958, 78 skipped), fixtures pass
+(628, 39 skipped), and formatting, fatal-info analysis and all seven port checks
+pass. Parity is regenerated. The final library hash matches the measured candidate.
+The performance change is retained; baseline 6197449 is pushed and its
+GitHub CI run 41370124105 passed.

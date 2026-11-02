@@ -938,6 +938,12 @@ class DatasetController
   /// both, as `this._cachedDataOpts = {}` (:445) does.
   final Map<String, ElementOptions> _cachedElementOptions = {};
 
+  // DIVERGES(chartjs): adapt-element-option-cache-key, reuse only the last
+  // joined string. The option cache and its invalidation stay unchanged.
+  String? _lastElementTypeName;
+  String? _lastElementMode;
+  String _lastElementCacheKey = '';
+
   /// core.datasetController.js:259 `_cachedDataOpts`, the part of the
   /// animations: the frozen [Animations] of [resolveAnimations] by the
   /// transition of the key `animation-transition` (:844).
@@ -1871,7 +1877,16 @@ class DatasetController
     final active = resolvedMode == 'active';
     final cache = _cachedElementOptions;
     final typeName = jsToString(elementType);
-    final cacheKey = '$typeName-$resolvedMode';
+    // DIVERGES(chartjs): adapt-element-option-cache-key, retain the original
+    // string key (including collisions) and convert the element id every time.
+    final String cacheKey;
+    if (typeName == _lastElementTypeName && resolvedMode == _lastElementMode) {
+      cacheKey = _lastElementCacheKey;
+    } else {
+      _lastElementTypeName = typeName;
+      _lastElementMode = resolvedMode;
+      cacheKey = _lastElementCacheKey = '$typeName-$resolvedMode';
+    }
     final cached = cache[cacheKey];
     final sharing = enableOptionSharing && index != null;
     if (cached != null) {

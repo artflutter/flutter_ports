@@ -1034,6 +1034,12 @@ Changes to the cited files:
   browser tests now use Flutter; the framework-free guard permits dart:ui Color.
   No canvas cut or new plan trigger is introduced.
 
+- 2026-11-02, element option key reuse (ADR 0062). The controller retains its
+  last joined key string; no canvas/host source, shape, command order or cut
+  inventory changes. Performance.md chapter 26 reports update and full-call CPU
+  separately, including the higher bubble draw component. No canvas-plan trigger
+  is introduced; the profile does not establish the cause of that timing shift.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.
