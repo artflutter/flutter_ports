@@ -138,7 +138,7 @@ ChartConfig(
     LineDataset(
       label: 'Visitors',
       data: visitors,
-      borderColor: Colors.blue,
+      borderColor: ChartValue.constant(Colors.blue),
       backgroundColor: ChartValue.constant(Colors.blue.withValues(alpha: 0.2)),
       fill: .origin,
       tension: 0.3,
@@ -172,11 +172,10 @@ LineDataset(
 
 The values of the options are Dart and Flutter values:
 
-- A dataset's `backgroundColor` is a `ChartValue<Color>`: `ChartValue.constant(color)`
-  for one color, `ChartValue.indexed(colors)` for a repeating list, or
-  `ChartValue.resolver(callback)` for a color calculated from each item's context.
-  Other single-color parameters continue to take `Color`. Dataset borders keep the
-  three parameters `borderColor`, `borderColors` and `borderColorFor`.
+- Dataset `backgroundColor` and `borderColor` each take a `ChartValue<Color>`:
+  `ChartValue.constant(color)` for one color, `ChartValue.indexed(colors)` for a
+  repeating list, or `ChartValue.resolver(callback)` for a color calculated from
+  each item's context. Other single-color parameters continue to take `Color`.
 - Fonts are `TextStyle` values: the chart reads the family, the size, the style, the weight and
   the height. It does not read the color of a `TextStyle`: each font parameter has a color
   parameter next to it, for example `labelFont` and `labelColor`.
@@ -187,19 +186,23 @@ The values of the options are Dart and Flutter values:
   `fill: .origin`. `ChartFill.dataset(0)`, `ChartFill.relative(-1)` and `ChartFill.value(10)` give
   the other fill targets.
 
-Dataset background-color migration:
+Dataset color migration:
 
 | Previous parameter | Replacement |
 |---|---|
 | `backgroundColor: color` | `backgroundColor: ChartValue.constant(color)` |
 | `backgroundColors: colors` | `backgroundColor: ChartValue.indexed(colors)` |
 | `backgroundColorFor: callback` | `backgroundColor: ChartValue.resolver(callback)` |
+| `borderColor: color` | `borderColor: ChartValue.constant(color)` |
+| `borderColors: colors` | `borderColor: ChartValue.indexed(colors)` |
+| `borderColorFor: callback` | `borderColor: ChartValue.resolver(callback)` |
 
-This change is limited to dataset background colors. Omit `backgroundColor` to
-inherit the default. `copyWith(backgroundColor: ...)` can switch between the three
-forms; a `null` copy argument retains the current form. Indexed style lists are
-copied when lowered, and callbacks should use a stable tear-off when possible.
-The raw Map API keeps its existing `backgroundColor` value/list/function forms.
+Omit either dataset color to inherit its default. `copyWith(backgroundColor: ...)`
+and `copyWith(borderColor: ...)` independently switch between the three forms;
+a `null` copy argument retains the current form. Indexed style lists are copied
+when lowered, and callbacks should use a stable tear-off when possible.
+Hover, point-specific and element-style colors retain their existing types.
+The raw Map API keeps its existing color value/list/function forms.
 
 ### Axes
 

@@ -4,8 +4,8 @@
   maintainer's rule of 2026-10-31: no record waits for a measurement night.
 - Date: 2026-10-30
 - Background-color follow-up: [ADR 0077](0077-background-chart-value.md) replaces
-  the Dataset background-color companion parameters with ChartValue<Color>.
-  Border colors and other option types retain this ADR's existing API.
+  the Dataset background/border-color companion parameters with ChartValue<Color>.
+  Other option types retain this ADR's existing API.
 - Supersedes, on acceptance, these parts only (the section "Superseded parts" restates each one in
   full):
   - [Chart.js ADR 0043](0043-options-representation-and-resolver.md), the item "Raw configs in

@@ -3,6 +3,10 @@
 2026-11-03. [ADR 0077](../../adr/0077-background-chart-value.md),
 [performance.md §43](../../performance.md#43-sealed-background-color-api-prototype).
 This experiment changes only Dataset.backgroundColor in the typed API.
+The recorded candidate is the background-only API at commit `e0fe0bc`. The later
+border-color migration is outside this comparison; use that revision for these
+exact probes, or wrap their border colors with ChartValue.constant when adapting
+them to the current API.
 
 ## Evidence
 

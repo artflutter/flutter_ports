@@ -608,9 +608,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver
-    variants. Only `Dataset.backgroundColor` uses it in the ADR 0077 prototype;
-    lowering writes the corresponding `Opt` cell directly. Border, hover, element
-    and raw color APIs retain their existing types. `axes.dart` has the 6 axes,
+    variants. `Dataset.backgroundColor` and `Dataset.borderColor` use it (ADR 0077);
+    lowering writes the corresponding `Opt` cell directly. Hover, point-specific,
+    element and raw color APIs retain their existing types. `axes.dart` has the 6 axes,
     `AxisTicks`, `AxisGrid` and `AxisTitle`.
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element

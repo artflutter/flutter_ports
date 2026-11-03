@@ -205,7 +205,7 @@ void main() {
         const BarDataset(
           label: 'A',
           backgroundColor: ChartValue.constant(_red),
-          borderColor: _red,
+          borderColor: ChartValue.constant(_red),
           borderWidth: 1,
           extra: {'backgroundColor': _blue},
         ),
@@ -265,6 +265,130 @@ void main() {
       );
     });
   }
+
+  for (final empty in _datasets()) {
+    test(
+      '${empty.runtimeType}: copyWith switches one border value independently',
+      () {
+        final indexed = empty.copyWith(
+          borderColor: const ChartValue.indexed([_red, _blue]),
+        );
+        final constant = indexed.copyWith(
+          borderColor: const ChartValue.constant(_blue),
+        );
+        final resolver = constant.copyWith(
+          borderColor: const ChartValue.resolver(_colorFor),
+        );
+        expect(indexed.borderColor, isA<ChartIndexed<Color>>());
+        expect(constant.borderColor, isA<ChartConstant<Color>>());
+        expect(resolver.borderColor, isA<ChartResolver<Color>>());
+        expect(
+          resolver.copyWith().borderColor,
+          same(resolver.borderColor),
+        );
+        expect(
+          // Explicit null is part of copyWith's keep-current-value contract.
+          // ignore: avoid_redundant_argument_values
+          resolver.copyWith(borderColor: null).borderColor,
+          same(resolver.borderColor),
+        );
+        expect(
+          lowerDataset(indexed, ChartKind.bar).ownCell(OptionKey.borderColor),
+          isA<OptList<Color>>(),
+        );
+        expect(
+          lowerDataset(
+            constant,
+            ChartKind.bar,
+          ).ownCell(OptionKey.borderColor),
+          isA<OptValue<Color>>(),
+        );
+        expect(
+          lowerDataset(
+            resolver,
+            ChartKind.bar,
+          ).ownCell(OptionKey.borderColor),
+          isA<OptFunction<Color>>(),
+        );
+      },
+    );
+  }
+
+  test('border indexed values copy independently and allow an empty list', () {
+    final colors = <Color>[_red, _blue];
+    final scope = lowerDataset(
+      BarDataset(
+        backgroundColor: const ChartValue.constant(_red),
+        borderColor: ChartValue.indexed(colors),
+      ),
+      ChartKind.bar,
+    );
+    final cell = scope.ownCell(OptionKey.borderColor)! as OptList<Color>;
+    expect(identical(cell.items, colors), isFalse);
+    cell.items
+      ..clear()
+      ..add(_blue);
+    expect(colors, [_red, _blue]);
+    expect(scope.ownCell(OptionKey.backgroundColor)!.raw, _red);
+    final empty =
+        lowerDataset(
+              const BarDataset(borderColor: ChartValue<Color>.indexed([])),
+              ChartKind.bar,
+            ).ownCell(OptionKey.borderColor)!
+            as OptList<Color>;
+    expect(empty.items, isEmpty);
+    empty.items.add(_red);
+    expect(empty.items, [_red]);
+  });
+
+  test(
+    'border resolver stays lazy and background variant stays independent',
+    () {
+      final calls = <int?>[];
+      const background = ChartValue.indexed([_red, _blue]);
+      final dataset = BarDataset(
+        backgroundColor: background,
+        borderColor: ChartValue.resolver((context) {
+          calls.add(context.dataIndex);
+          return context.dataIndex == 0 ? _red : _blue;
+        }),
+      );
+      final scope = lowerDataset(dataset, ChartKind.bar);
+      final cell = scope.ownCell(OptionKey.borderColor)! as OptFunction<Color>;
+      expect(calls, isEmpty);
+      final context = createContext(null, {'type': 'data', 'dataIndex': 1.0});
+      expect(jsCall(cell.function, [context, null]), _blue);
+      expect(calls, [1]);
+      final changed = dataset.copyWith(
+        borderColor: const ChartValue.constant(_blue),
+      );
+      expect(changed.backgroundColor, same(background));
+      expect(changed.borderColor, const ChartValue.constant(_blue));
+      expect(changed, isNot(dataset));
+    },
+  );
+
+  test('border omission, extra overrides and key order are preserved', () {
+    expect(
+      lowerDataset(
+        const BarDataset(),
+        ChartKind.bar,
+      ).ownCell(OptionKey.borderColor),
+      isNull,
+    );
+    final scope = lowerDataset(
+      const BarDataset(
+        backgroundColor: ChartValue.constant(_red),
+        borderColor: ChartValue.constant(_blue),
+        borderWidth: 1,
+        extra: {'borderColor': null},
+      ),
+      ChartKind.bar,
+    );
+    expect(scope.jsKeys(), ['backgroundColor', 'borderColor', 'borderWidth']);
+    expect(scope.ownCell(OptionKey.borderColor), same(optNull));
+    expect(scope.ownCell(OptionKey.backgroundColor)!.raw, _red);
+  });
 
   test('equivalent values preserve Dataset and ChartConfig equality', () {
     final data = <num?>[1, 2];

@@ -37,8 +37,6 @@ const List<String> _style = [
   'order',
   'backgroundColor',
   'borderColor',
-  'borderColors',
-  'borderColorFor',
   'borderWidth',
   'hoverBackgroundColor',
   'hoverBorderColor',
@@ -194,7 +192,7 @@ void main() {
           label: 'A',
           data: data,
           backgroundColor: const ChartValue.constant(_red),
-          borderColorFor: _colorFor,
+          borderColor: const ChartValue.resolver(_colorFor),
           extra: const {'clip': 5},
         ),
         BarDataset(
@@ -202,7 +200,7 @@ void main() {
           label: 'A',
           data: data,
           backgroundColor: const ChartValue.constant(_red),
-          borderColorFor: _colorFor,
+          borderColor: const ChartValue.resolver(_colorFor),
           extra: const {'clip': 5},
         ),
       );
@@ -234,11 +232,11 @@ void main() {
       );
       _expectEqual(
         LineDataset(
-          borderColors: _runtime([_red]),
+          borderColor: ChartValue.indexed(_runtime([_red])),
           borderDash: _runtime([4, 2]),
         ),
         LineDataset(
-          borderColors: _runtime([_red]),
+          borderColor: ChartValue.indexed(_runtime([_red])),
           borderDash: _runtime([4, 2]),
         ),
       );
@@ -356,31 +354,17 @@ void main() {
       const dataset = BarDataset(
         label: 'A',
         backgroundColor: ChartValue.indexed([_red]),
-        borderColorFor: _colorFor,
+        borderColor: ChartValue.resolver(_colorFor),
       );
       final shown = [
         for (final property in _properties(dataset))
           if (property.level != DiagnosticLevel.fine) property.name,
       ];
-      expect(shown, ['label', 'backgroundColor', 'borderColorFor']);
+      expect(shown, ['label', 'backgroundColor', 'borderColor']);
       expect(dataset.toString(), startsWith('BarDataset#'));
       expect(
         dataset.toString(),
         contains('(label: A, backgroundColor: ChartValue.indexed([Color('),
-      );
-    });
-
-    test('the constructor asserts one form of border color', () {
-      expect(
-        () => PieDataset(borderColor: _red, borderColorFor: _colorFor),
-        throwsAssertionError,
-      );
-      expect(
-        () => RadarDataset(
-          borderColors: const [_red],
-          borderColorFor: _colorFor,
-        ),
-        throwsAssertionError,
       );
     });
 

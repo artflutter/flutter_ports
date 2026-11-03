@@ -84,17 +84,17 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
     {'backgroundColor': (Object? context, Object? options) => _redValue},
   ),
   'borderColor': (
-    (d) => d.copyWith(borderColor: _blue),
+    (d) => d.copyWith(borderColor: const ChartValue.constant(_blue)),
     {'borderColor': _blueValue},
   ),
-  'borderColors': (
-    (d) => d.copyWith(borderColors: [_blue, _red]),
+  'borderColor indexed': (
+    (d) => d.copyWith(borderColor: const ChartValue.indexed([_blue, _red])),
     {
       'borderColor': [_blueValue, _redValue],
     },
   ),
-  'borderColorFor': (
-    (d) => d.copyWith(borderColorFor: _colorFor),
+  'borderColor resolver': (
+    (d) => d.copyWith(borderColor: const ChartValue.resolver(_colorFor)),
     {'borderColor': (Object? context, Object? options) => _redValue},
   ),
   'borderWidth': ((d) => d.copyWith(borderWidth: 2), {'borderWidth': 2}),
@@ -1162,7 +1162,7 @@ void main() {
         final lowered = _lower(
           dataset.copyWith(
             backgroundColor: const ChartValue.resolver(_colorFor),
-            borderColorFor: _colorFor,
+            borderColor: const ChartValue.resolver(_colorFor),
           ),
         );
         for (final key in ['backgroundColor', 'borderColor']) {
@@ -1406,7 +1406,7 @@ void main() {
             hidden: false,
             order: 1,
             backgroundColor: const ChartValue.constant(_red),
-            borderColor: _blue,
+            borderColor: const ChartValue.constant(_blue),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,
@@ -1477,7 +1477,7 @@ void main() {
             hidden: true,
             order: 2,
             backgroundColor: const ChartValue.indexed([_red]),
-            borderColorFor: _colorFor,
+            borderColor: const ChartValue.resolver(_colorFor),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,
@@ -1531,7 +1531,7 @@ void main() {
             hidden: true,
             order: 2,
             backgroundColor: const ChartValue.constant(_red),
-            borderColor: _blue,
+            borderColor: const ChartValue.constant(_blue),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,
@@ -1584,7 +1584,7 @@ void main() {
             hidden: false,
             order: 1,
             backgroundColor: const ChartValue.constant(_red),
-            borderColor: _blue,
+            borderColor: const ChartValue.constant(_blue),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,
@@ -1647,7 +1647,7 @@ void main() {
             hidden: false,
             order: 1,
             backgroundColor: const ChartValue.indexed([_red, _blue]),
-            borderColor: _blue,
+            borderColor: const ChartValue.constant(_blue),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,
@@ -1674,7 +1674,7 @@ void main() {
             hidden: false,
             order: 1,
             backgroundColor: const ChartValue.indexed([_red, _blue]),
-            borderColor: _blue,
+            borderColor: const ChartValue.constant(_blue),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,
@@ -1701,7 +1701,7 @@ void main() {
             hidden: false,
             order: 1,
             backgroundColor: const ChartValue.constant(_red),
-            borderColor: _blue,
+            borderColor: const ChartValue.constant(_blue),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,
@@ -1738,7 +1738,7 @@ void main() {
             hidden: true,
             order: 2,
             backgroundColor: const ChartValue.constant(_red),
-            borderColor: _blue,
+            borderColor: const ChartValue.constant(_blue),
             borderWidth: 2,
             hoverBackgroundColor: _blue,
             hoverBorderColor: _red,

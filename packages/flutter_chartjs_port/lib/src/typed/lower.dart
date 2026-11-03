@@ -17,8 +17,7 @@
 ///    parameter that is `null` writes no key.
 /// 2. A List of the app goes by reference: `data`, `points`, `labels`,
 ///    `CategoryAxis.labels` and `plugins`. A small style List
-///    (`ChartValue.indexed`, `borderColors`, `borderDash`) lowers to a new
-///    List.
+///    (`ChartValue.indexed` or `borderDash`) lowers to a new List.
 /// 3. A `Color` lowers through [colorValue], a `TextStyle` through
 ///    `fontScopeOf` of `css.dart` (a `FontSpecScope`), a `Duration` through
 ///    [millisecondsOf] and an `EdgeInsets` through [paddingScope] (a
@@ -27,8 +26,8 @@
 ///    `{value}` of `ChartFill.value`) becomes a typed scope of the kind of
 ///    its key ([put]).
 /// 4. A plain value never lowers to a closure. Only a function parameter
-///    does: a ChartValue bridge or [colorScript] for colors, a `JsFunction`
-///    for the tick format, and a trampoline for each event and text callback.
+///    does: a ChartValue bridge for dataset colors, a `JsFunction` for the
+///    tick format, and a trampoline for each event and text callback.
 /// 5. A trampoline reads the callback of the newest config of its
 ///    [ChartConfigLowering] at each call ([eventTrampoline],
 ///    [legendTrampoline], [tooltipItemsTrampoline], [tooltipItemTrampoline]
@@ -62,12 +61,10 @@ import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show
         ChartAnimationDetails,
-        ChartContext,
         ChartEventDetails,
         ChartHit,
         ChartLegendEventDetails,
         ChartLegendItem,
-        ChartScript,
         ChartTooltipItem;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
@@ -472,33 +469,6 @@ Object? Function(Object?) animationTrampoline(
 
 /// Keeps the native [color] unchanged, including null for an unset option.
 Color? colorValue(Color? color) => color;
-
-/// The remaining border-color companion parameters: a native color, mutable
-/// indexed list or callback. Dart null when all three are null.
-/// Constructors assert that at most one border-color form is set.
-Object? colorOption(
-  Color? color,
-  List<Color>? colors,
-  ChartScript<Color>? colorFor,
-) {
-  if (color != null) return color;
-  if (colors != null) {
-    return <Object?>[...colors];
-  }
-  if (colorFor != null) return colorScript(colorFor);
-  return null;
-}
-
-/// The scriptable option of [colorFor], returning its native Color unchanged.
-///
-/// The closure takes the 2 arguments of a Chart.js scriptable option, the
-/// context and the options resolver, and `jsCall` calls it with JS arity
-/// (`js_function.dart`). The context is the context object of the chart,
-/// so the cast to the view [ChartContext] makes no copy. The resolver sees a
-/// function, so it resolves the options of each data item, as for a raw
-/// closure (`core.config.js:351-366`, `:405-418`).
-Object? Function(Object?, Object?) colorScript(ChartScript<Color> colorFor) =>
-    (context, options) => colorFor(context! as ChartContext);
 
 /// The option value of [padding]: a new `PaddingScope` with the keys
 /// `top`, `right`, `bottom` and `left` (`index.d.ts`, `Padding`). Dart
