@@ -1,0 +1,10 @@
+{
+  "sampleCount": 6528,
+  "timeExtentMicros": 10002362,
+  "chartUpdateInclusiveSamples": 5510,
+  "barRulerInclusiveSamples": 1097,
+  "minimumSpacingInclusiveSamples": 984,
+  "arrayUniqueInclusiveSamples": 424,
+  "parsingInclusiveSamples": 483,
+  "note": "Inclusive sample counts overlap; these are not additive costs or wall-clock durations."
+}

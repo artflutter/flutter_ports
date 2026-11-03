@@ -1,0 +1,139 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 3c7aed0..43f5869 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -56,6 +56,7 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+         setStackValue,
+         stacksOf,
+         visualValuesOf;
++import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show BarOptions;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
+@@ -350,6 +351,16 @@ List<ParsedItem> _parseArrayOrPrimitive(
+   final iScale = meta.iScale;
+   final vScale = meta.vScale;
+   final labels = iScale!.getLabels();
++  // DIVERGES(chartjs): adapt-numeric-category-parse, guarded native range.
++  final numeric = tryParseNumericCategories(
++    iScale,
++    vScale,
++    labels,
++    data,
++    start,
++    count,
++  );
++  if (numeric != null) return numeric;
+   final singleScale = identical(iScale, vScale);
+   final iKey = AxisKey.of(iScale.axis);
+   // Upstream reads `vScale.axis` in the loop: no read for no item.
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+index 10cf6ec..7e10558 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -50,6 +50,7 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
+     as core_defaults;
+ import 'package:flutter_chartjs_port/src/core/core.element.dart';
++import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show ElementOptions, createElementOptions;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
+@@ -1373,6 +1374,16 @@ class DatasetController
+     final vKey = AxisKey.of(vAxis);
+     final labels = iScale.getLabels();
+     final singleScale = identical(iScale, vScale);
++    // DIVERGES(chartjs): adapt-numeric-category-parse, shared primitive path.
++    final numeric = tryParseNumericCategories(
++      iScale,
++      vScale,
++      labels,
++      data,
++      start,
++      count,
++    );
++    if (numeric != null) return numeric;
+     final parsed = <ParsedItem>[];
+     double index;
+ 
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+index 19a3827..0fdc5cb 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+@@ -25,6 +25,7 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
++import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     show OptionView;
+@@ -205,13 +206,34 @@ int _relativeIndex(double value, int length) {
+ /// scale.category.js:34 `CategoryScale`.
+ ///
+ /// The scale of the labels: the value of a label is its index.
+-class CategoryScale extends Scale {
++class CategoryScale extends Scale implements NativeCategoryParseScale {
+   /// scale.category.js:47 `constructor(cfg)`.
+   ///
+   /// The fields `_startValue`, `_valueRange` and `_addedLabels` get their
+   /// start values in their declarations (scale.category.js:51-53).
+   CategoryScale(super.cfg);
+ 
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-numeric-category-parse, same native label source.
++  bool supportsNativeCategoryParse(List<Object?> labels) {
++    if (super.runtimeType != CategoryScale || chart is! CategoryLabelSource) {
++      return false;
++    }
++    final cached = options.cachedCategoryLabelSource();
++    if (cached == null) return false;
++    return identical(
++      labels,
++      (chart as CategoryLabelSource).categoryLabels(
++        cached.labels,
++        horizontal:
++            cached.position == 'top' ||
++            cached.position == 'bottom' ||
++            axis == 'x',
++      ),
++    );
++  }
++
+   static final Type _nativeTickListType = <Tick>[].runtimeType;
+ 
+   @override
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+index d3d1406..04e58e6 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+@@ -26,6 +26,7 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+ import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
++import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+     show isFinite;
+@@ -41,7 +42,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
+ import 'package:meta/meta.dart';
+ 
+ /// scale.linear.js:6 `LinearScale extends LinearScaleBase`.
+-class LinearScale extends LinearScaleBase {
++class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
+   /// The constructor of LinearScaleBase (scale.linearbase.js:156). Upstream
+   /// declares no constructor in this class.
+   ///
+@@ -88,6 +89,11 @@ class LinearScale extends LinearScaleBase {
+   // DIVERGES(chartjs): adapt-bulk-bar-update, native linear projection.
+   bool get supportsBulkBarUpdate => super.runtimeType == LinearScale;
+ 
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-numeric-category-parse, exact numeric semantics.
++  bool get supportsNativeNumericParse => super.runtimeType == LinearScale;
++
+   late final bool _nativeBarIndexReads = runtimeType == LinearScale;
+ 
+   /// The options of the scale, through the facade of the linear scale

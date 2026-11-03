@@ -2355,3 +2355,11 @@ retain the Canvas 2D sequence. This removes path/state preparation without
 reopening R6's atlas/triangle approximations. Pixel/state regressions are in
 `test/port/canvas/canvas_rect_bar_test.dart`; measurements are in performance.md
 §37 and benchmarks/bar-native/. ADR 0066's recording limit remains unchanged.
+
+### 7.13 Numeric category parsing before geometry
+
+ADR 0071 reduces repeated label-source reads during primitive parsing in the bar
+and base dataset controllers. It leaves the canvas operations, renderer shapes,
+recording limit and bulk element writes unchanged. Reference/activation tests
+are in `test/port/core/primitive_parse_test.dart`; performance.md §38 and
+benchmarks/primitive-parse/ record measurements and fallback controls.

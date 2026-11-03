@@ -6398,3 +6398,56 @@ A separate candidate CPU profile identifies parsing as the next update target:
 label retrieval a major contributor. The proposed guarded numeric/category
 parse path and raw profile are recorded in the benchmark README. This is a
 profiling recommendation, not a measured gain from an implemented change.
+
+## 38. Guarded numeric category parsing
+
+[ADR 0071](adr/0071-numeric-category-parsing.md) shares a primitive parsing
+shortcut between bars and the base dataset controller. It retains the initial
+ordinary label-source read, then preflights native data and labels under exact
+category/linear scale guards. Each parsed record remains fresh; custom sources,
+scales, floating bars, coercible values and unusual labels use ordinary parsing.
+There is no cross-update cache or data aggregation.
+
+A/B/B/A against `65fc68f`, Apple M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart
+3.13.7, arm64 profile AOT, Impeller, 800 × 480 at DPR 1. Seven 200ms batches
+follow 800ms warmup. No builds/tests run concurrently. Full-call figures sum
+update, draw and host completion within each process before aggregation.
+
+| N | Full update call, before → after | Improvement |
+| ---: | ---: | ---: |
+| 1000 | 1.423 → 1.304 ms | 8.4% |
+| 5000 | 4.744 → 4.267 ms | 10.1% |
+| 20000 | 21.697 → 19.582 ms | 9.7% |
+
+Both 20k pairs pass the predeclared 8% full-call gate (11.3%, 8.2%). Element
+preparation, which includes parsing, falls 4.220 → 1.231ms (70.8%); update CPU
+falls 10.625 → 8.443ms (20.5%). The measured layout component rises
+1.171 → 1.827ms; the reported totals include that increase. Drawing and
+animation-only controls are broadly unchanged. No control has a repeatable regression above both 5% and 0.1ms.
+The object-data line control does not use the primitive shortcut; activation
+and behavior for primitive line data are verified separately in the twins.
+
+[Protocol, source hashes, raw timing runs, controls and validation](benchmarks/primitive-parse/README.md)
+retain the complete comparison. The full update still exceeds 16.67ms; this is
+not a claim of 60 FPS or of equivalent gains on mobile/web.
+
+Separate 25-second foreground runs at N=20000, M=0 improve **34.92 → 39.73 FPS**.
+Average build falls 24.46 → 22.04ms, with raster 14.29 → 14.17ms. Both processes
+remain active at every monitor check and yield 24 complete one-second windows.
+These are local single-process observations, not a cross-device guarantee.
+
+Validation: the workspace suite passes, including all 15 new regressions. The
+same 15 pass in Chrome JavaScript and WebAssembly. Fixtures pass 26 files with
+zero errors/warnings; analysis, format, regenerated parity and all port checks
+pass. The temporary browser probe is removed and no golden files change.
+
+A fresh candidate CPU profile identifies bar spacing calculation as the next
+update target: ruler creation appears in 19.9% of samples within `Chart.update`,
+including 7.7% in hash-set deduplication. Parsing is now 8.8%. These inclusive
+shares overlap. The benchmark README records the raw profile and a proposal to
+reuse projected positions and linearly deduplicate sorted values under native
+scale guards. The proposed follow-up has no measured speedup yet.
+
+Pre-push checks also pass the complete Chrome JavaScript and WebAssembly suites
+(3,982 Chart.js tests and 55 utility tests per backend) and the upstream case
+check (958 passed, 78 skipped, zero failures).

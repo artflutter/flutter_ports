@@ -25,6 +25,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView;
@@ -205,12 +206,33 @@ int _relativeIndex(double value, int length) {
 /// scale.category.js:34 `CategoryScale`.
 ///
 /// The scale of the labels: the value of a label is its index.
-class CategoryScale extends Scale {
+class CategoryScale extends Scale implements NativeCategoryParseScale {
   /// scale.category.js:47 `constructor(cfg)`.
   ///
   /// The fields `_startValue`, `_valueRange` and `_addedLabels` get their
   /// start values in their declarations (scale.category.js:51-53).
   CategoryScale(super.cfg);
+
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-numeric-category-parse, same native label source.
+  bool supportsNativeCategoryParse(List<Object?> labels) {
+    if (super.runtimeType != CategoryScale || chart is! CategoryLabelSource) {
+      return false;
+    }
+    final cached = options.cachedCategoryLabelSource();
+    if (cached == null) return false;
+    return identical(
+      labels,
+      (chart as CategoryLabelSource).categoryLabels(
+        cached.labels,
+        horizontal:
+            cached.position == 'top' ||
+            cached.position == 'bottom' ||
+            axis == 'x',
+      ),
+    );
+  }
 
   static final Type _nativeTickListType = <Tick>[].runtimeType;
 

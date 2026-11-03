@@ -361,6 +361,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
       its type. A getter gives the raw JS value, and the readers keep their JS operators. A
       nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
+    - Chart.js ADR 0071: `primitive_parse.dart` shares guarded numeric/category
+      parsing between bars and the base controller. Native source/type preflight
+      is local to each call; parsed records stay fresh and custom inputs retain
+      ordinary reads and conversions.
     - `core.datasetController.dart` has `DatasetController`, with the mixin `ArrayListener` and
       the class value `DatasetController.jsClass` (Chart.js ADR 0020). `_update` is `update_`, and
       `_getSharedOptions` is `getSharedOptions_` (Chart.js ADR 0023). `cloneIfNotShared` and
