@@ -106,12 +106,18 @@ void main() {
 
   test('typed scalars, lists and callbacks keep native Color values', () {
     for (final dataset in [
-      const LineDataset(data: [1, 3, 2], backgroundColor: _blue),
       const LineDataset(
         data: [1, 3, 2],
-        backgroundColors: [_blue, _red, _blue],
+        backgroundColor: ChartValue.constant(_blue),
       ),
-      LineDataset(data: const [1, 3, 2], backgroundColorFor: (_) => _blue),
+      const LineDataset(
+        data: [1, 3, 2],
+        backgroundColor: ChartValue.indexed([_blue, _red, _blue]),
+      ),
+      LineDataset(
+        data: const [1, 3, 2],
+        backgroundColor: ChartValue.resolver((_) => _blue),
+      ),
     ]) {
       final canvas = UiCanvasElement(width: 120, height: 80);
       final config = ChartConfig(

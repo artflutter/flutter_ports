@@ -1,0 +1,15 @@
+import json,statistics
+from pathlib import Path
+out=Path(__file__).resolve().parent
+runs={k:json.loads((out/(k+'.json')).read_text()) for k in ['a1','b1','b2','a2']}
+rows=[]
+for first in runs['a1']:
+ case,stage=first['case'],first['stage']
+ get=lambda k:next(r['medianMs'] for r in runs[k] if r['case']==case and r['stage']==stage)
+ a=statistics.mean([get('a1'),get('a2')]);b=statistics.mean([get('b1'),get('b2')])
+ pairs=[(get(y)/get(x)-1)*100 for x,y in [('a1','b1'),('a2','b2')]]
+ row={'case':case,'stage':stage,'baselineMs':a,'candidateMs':b,'changePercent':(b/a-1)*100,'pairChangesPercent':pairs}
+ rows.append(row)
+ scale=1000 if stage=='constructLower' else 1
+ print(case,stage,round(a*scale,3),'->',round(b*scale,3),'us' if scale==1000 else 'ms','change',round(row['changePercent'],1),'pairs',[round(p,1) for p in pairs])
+(out/'summary.json').write_text(json.dumps(rows,indent=2)+'\n')

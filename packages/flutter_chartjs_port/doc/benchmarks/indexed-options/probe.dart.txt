@@ -1,0 +1,59 @@
+// Original code, not ported from Chart.js: library-wide performance audit.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:developer' as dev;
+import 'dart:ui' as ui;
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'extra.dart';
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Animation;
+
+Future<void> run() async {
+  await Future<void>.delayed(const Duration(seconds: 2));
+  animator.refresh = () {};
+  final env = Platform.environment;
+  var cases = env['EXTRA']=='1' ? controlledCases() : env['EXTRA']=='datasets' ? manyDatasetCases() : selectChartBenchCases(env['CASES'] ?? 'chart,chart.c.indexable,chart.line.primitive');
+  if (env['TYPE'] != null) cases = cases.where((c) => c.keys['type'] == env['TYPE']).toList();
+  if (env['CALL'] != null) cases = cases.where((c) => c.call.name == env['CALL']).toList();
+  if (env['REVERSE'] == '1') cases = cases.reversed.toList();
+  if (env['ALLOC']=='1') {
+    final c=cases.first;
+    final n=int.parse(env['N']??'5000');
+    final scene=c.scene(n);
+    final canvas=UiCanvasElement(width:800,height:480);
+    final chart=Chart(canvas,scene.config);
+    final context=canvas.getContext2d();
+    void step() {
+      scene.change?.call(); chart.update('none');
+      final r=ui.PictureRecorder(); context.paint(ui.Canvas(r),ui.Offset.zero,1,1);
+      r.endRecording().dispose();
+    }
+    for(var i=0;i<50;i++) step();
+    dev.registerExtension('ext.audit.step',(method,params) async {
+      for(var i=0;i<20;i++) step();
+      return dev.ServiceExtensionResponse.result(jsonEncode({'updates':20,'points':n}));
+    });
+    print('ALLOC READY');
+    await Completer<void>().future;
+    return;
+  }
+  final profile = env['PROFILE'] == '1';
+  for (final n in (env['N'] ?? '1000,5000').split(',').map(int.parse)) {
+    for (final c in cases) {
+      print('START ${c.id} ${c.keys} ${c.call.name} $n');
+      final r = runChartBenchCase(c, n, ChartBenchSettings(
+        batches: profile ? 100 : 7, batchMs: 200, warmupMs: 800));
+      print('AUDIT ${jsonEncode(r)}');
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+  }
+  print('DONE');
+  exit(0);
+}
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MaterialApp(home: Scaffold(body: Text('Library performance audit'))));
+  unawaited(run().catchError((Object e, StackTrace s) { print('$e\n$s'); exit(1); }));
+}

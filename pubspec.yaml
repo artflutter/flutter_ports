@@ -33,7 +33,7 @@ melos:
       description: Run the tests of every package that has a test/ directory, without the fixture smoke tests (the tag fixtures, Chart.js ADR 0029) and the theme goldens (the tag golden, Chart.js ADR 0050). Options go after "--" and go to each flutter test call, for example "dart run melos run test --no-select -- --experimental-faster-testing --total-shards=3 --shard-index=0" (one compiled test app for each package, and the first of three shards, as in CI).
       exec:
         command: flutter test --exclude-tags fixtures,golden
-        concurrency: 1
+        concurrency: 2
         failFast: true
       packageFilters:
         dirExists: test

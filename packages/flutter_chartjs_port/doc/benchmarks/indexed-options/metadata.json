@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-03",
+  "baselineCommit": "bd3f8b5bea2a949e6ccdc40aa82fb1a4a733bb19",
+  "baselineLibrarySha256": "3266d0a6ad4491c31bd9b46de673c823b3dbdc5207c2c65d9803cf28a22c9090",
+  "candidateLibrarySha256": "153a70f4d2f72b272c78cfb56ce04d2d1720415046289b5b2070a28eebc15795",
+  "libraryFiles": 183,
+  "toolchain": {
+    "frameworkVersion": "3.47.8",
+    "channel": "stable",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "737ba8f885dc774b53b442759999a312c9461e4e",
+    "frameworkCommitDate": "2026-10-22 21:37:31 -0700",
+    "engineRevision": "cf636b1dfb818dd6a3ff16e390e93b1a036969c8",
+    "engineCommitDate": "2026-10-23 02:13:38.000Z",
+    "engineContentHash": "dfd2e6cb7d319db05e3bf1503f3e2ac60f6288a2",
+    "engineBuildDate": "2026-10-23 05:34:48.330",
+    "dartSdkVersion": "3.13.7",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.8"
+  },
+  "platform": "macOS 27.0.1 arm64, profile AOT, native canvas",
+  "canvas": {
+    "width": 800,
+    "height": 480,
+    "dpr": 1
+  },
+  "method": "A1/B1/B2/A2, forward/reverse case order; 800ms warmup, seven 200ms batches. No simultaneous builds/tests. Mean of process phase medians. Full CPU is sum of phase medians per process before aggregation.",
+  "limits": "Frameless macOS AOT CPU, no raster/FPS/widget/mobile performance claim. Source simulation outside phase timers. All paired results retained.",
+  "runtimePatchSha256": "7461d4d32ab317270639fc83746d07af32e59db2f25869732ffa56b8ec3dc735",
+  "sourceSnapshots": {
+    "probe.dart": "eb6e2f9b8b1e3f19fbafe950d45c0f333befd57d151eccfaf4600a60b1e33531",
+    "extra.dart": "eacad134242918cd51f5322bc1c9ffe505ce101dae56faf9a90970048f075049",
+    "verify_test.dart": "4e15dc71373534931ac5373f38105b79fe9e918324703057d4a2bc662a52b2d5"
+  }
+}

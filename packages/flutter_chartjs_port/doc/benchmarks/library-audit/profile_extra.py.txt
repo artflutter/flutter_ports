@@ -1,0 +1,17 @@
+import os,subprocess,re,time,gzip
+from pathlib import Path
+root=Path(__file__).resolve().parents[2];out=root/'.dart_tool/library_audit'
+for label,env in [('datasets500',{'EXTRA':'datasets','REVERSE':'1'}),('pie',{'CASES':'chart.pie','TYPE':'pie'})]:
+ with (out/('profile-'+label+'.log')).open('w') as log:
+  p=subprocess.Popen(['/tmp/chart-library-audit-extra.app/Contents/MacOS/chartjs_gallery'],env={**os.environ,'N':'5000','CALL':'update','PROFILE':'1',**env},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   for _ in range(150):
+    t=(out/('profile-'+label+'.log')).read_text();m=re.search(r'http://127.0.0.1:(\d+)/(\S+)',t)
+    if m:break
+    time.sleep(.1)
+   else:raise RuntimeError(t)
+   dest=out/('profile-'+label)
+   subprocess.run(['dart','--packages='+str(root/'.dart_tool/package_config.json'),str(out/'capture.dart'),f'ws://127.0.0.1:{m[1]}/{m[2]}ws',str(dest)],check=True)
+   raw=dest.with_suffix('.json');dest.with_suffix('.json.gz').write_bytes(gzip.compress(raw.read_bytes()));raw.unlink()
+  finally:
+   if p.poll() is None:p.terminate();p.wait(timeout=10)

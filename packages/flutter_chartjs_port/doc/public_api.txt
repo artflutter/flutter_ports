@@ -123,6 +123,7 @@ ChartArea
 ChartAxis
 ChartConfig
 ChartConfiguration
+ChartConstant
 ChartContext
 ChartEasing
 ChartElements
@@ -131,6 +132,7 @@ ChartEventDetails
 ChartFill
 ChartFiller
 ChartHit
+ChartIndexed
 ChartInteraction
 ChartInteractionMode
 ChartKind
@@ -142,12 +144,14 @@ ChartMeta
 ChartMetaClip
 ChartPointStyle
 ChartPosition
+ChartResolver
 ChartScript
 ChartTheme
 ChartThemeData
 ChartTitle
 ChartTooltip
 ChartTooltipItem
+ChartValue
 ChartView
 DataPoint
 Dataset

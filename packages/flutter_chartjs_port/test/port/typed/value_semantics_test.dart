@@ -36,8 +36,6 @@ const List<String> _style = [
   'hidden',
   'order',
   'backgroundColor',
-  'backgroundColors',
-  'backgroundColorFor',
   'borderColor',
   'borderColors',
   'borderColorFor',
@@ -195,7 +193,7 @@ void main() {
           key: const ValueKey('a'),
           label: 'A',
           data: data,
-          backgroundColor: _red,
+          backgroundColor: const ChartValue.constant(_red),
           borderColorFor: _colorFor,
           extra: const {'clip': 5},
         ),
@@ -203,7 +201,7 @@ void main() {
           key: const ValueKey('a'),
           label: 'A',
           data: data,
-          backgroundColor: _red,
+          backgroundColor: const ChartValue.constant(_red),
           borderColorFor: _colorFor,
           extra: const {'clip': 5},
         ),
@@ -227,8 +225,12 @@ void main() {
 
     test('a style List compares by its items', () {
       _expectEqual(
-        BarDataset(backgroundColors: _runtime([_red, _blue])),
-        BarDataset(backgroundColors: _runtime([_red, _blue])),
+        BarDataset(
+          backgroundColor: ChartValue.indexed(_runtime([_red, _blue])),
+        ),
+        BarDataset(
+          backgroundColor: ChartValue.indexed(_runtime([_red, _blue])),
+        ),
       );
       _expectEqual(
         LineDataset(
@@ -248,16 +250,20 @@ void main() {
 
     test('a function compares with ==', () {
       _expectEqual(
-        const BarDataset(backgroundColorFor: _colorFor),
-        const BarDataset(backgroundColorFor: _colorFor),
+        const BarDataset(backgroundColor: ChartValue.resolver(_colorFor)),
+        const BarDataset(backgroundColor: ChartValue.resolver(_colorFor)),
       );
       expect(
-        const BarDataset(backgroundColorFor: _colorFor),
-        isNot(const BarDataset(backgroundColorFor: _otherFor)),
+        const BarDataset(backgroundColor: ChartValue.resolver(_colorFor)),
+        isNot(
+          const BarDataset(backgroundColor: ChartValue.resolver(_otherFor)),
+        ),
       );
       expect(
-        BarDataset(backgroundColorFor: (context) => _red),
-        isNot(BarDataset(backgroundColorFor: (context) => _red)),
+        BarDataset(backgroundColor: ChartValue.resolver((context) => _red)),
+        isNot(
+          BarDataset(backgroundColor: ChartValue.resolver((context) => _red)),
+        ),
       );
     });
 
@@ -349,33 +355,22 @@ void main() {
     test('the diagnostics show the parameters that are set', () {
       const dataset = BarDataset(
         label: 'A',
-        backgroundColors: [_red],
+        backgroundColor: ChartValue.indexed([_red]),
         borderColorFor: _colorFor,
       );
       final shown = [
         for (final property in _properties(dataset))
           if (property.level != DiagnosticLevel.fine) property.name,
       ];
-      expect(shown, ['label', 'backgroundColors', 'borderColorFor']);
+      expect(shown, ['label', 'backgroundColor', 'borderColorFor']);
       expect(dataset.toString(), startsWith('BarDataset#'));
       expect(
         dataset.toString(),
-        contains('(label: A, backgroundColors: [Color('),
+        contains('(label: A, backgroundColor: ChartValue.indexed([Color('),
       );
     });
 
-    test('the constructor asserts one form of each color', () {
-      expect(
-        () => BarDataset(backgroundColor: _red, backgroundColors: const [_red]),
-        throwsAssertionError,
-      );
-      expect(
-        () => LineDataset(
-          backgroundColors: const [_red],
-          backgroundColorFor: _colorFor,
-        ),
-        throwsAssertionError,
-      );
+    test('the constructor asserts one form of border color', () {
       expect(
         () => PieDataset(borderColor: _red, borderColorFor: _colorFor),
         throwsAssertionError,
@@ -429,7 +424,10 @@ void main() {
         type: .bar,
         labels: labels,
         datasets: [
-          BarDataset(data: data, backgroundColors: _runtime([_red])),
+          BarDataset(
+            data: data,
+            backgroundColor: ChartValue.indexed(_runtime([_red])),
+          ),
         ],
         scales: {
           'x': _runtime(const CategoryAxis()),

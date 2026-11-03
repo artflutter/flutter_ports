@@ -1,0 +1,47 @@
+// Original code, not ported from Chart.js: controlled audit cases.
+import 'dart:ui' as ui;
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+
+List<ChartBenchCase> controlledCases() => [
+  for (final type in [StressChartType.line, StressChartType.bar, StressChartType.radar])
+    for (final style in ['static', 'indexed', 'callback'])
+      ChartBenchCase(mode:'controlled',name:'${type.name}.$style',call:ChartBenchCall.update,
+        keys:{'type':type.name,'style':style},scene:(n) {
+        registerGalleryComponents();
+        final field=StressPointField(n);
+        final scene=StressChartScene(type,n,field);
+        final cfg=stressChartConfig(scene:scene,scriptable:false,options:chartBenchOptions);
+        final ds=((cfg['data'] as Map)['datasets'] as List).first as Map;
+        ds['backgroundColor']=switch(style) {
+          'indexed' => <Object?>[stressChartBackground],
+          'callback' => (Object? ctx) => stressChartBackground,
+          _ => stressChartBackground,
+        };
+        return ChartBenchScene(config:cfg,change:()=>scene.write(field..step(n,chartBenchStep)));
+      }),
+];
+List<ChartBenchCase> manyDatasetCases() => [
+ for(final d in [1,10,100,500])
+ ChartBenchCase(mode:'datasets',name:'line.$d',call:ChartBenchCall.update,keys:{'datasets':d},scene:(total) {
+  registerGalleryComponents();
+  final n=total~/d;
+  final cfg=<String,Object?>{'type':'line','data':<String,Object?>{'datasets':[
+    for(var k=0;k<d;k++) <String,Object?>{'data':<Object?>[
+      for(var i=0;i<n;i++) <String,Object?>{'x':i/(n>1?n-1:1),'y':(i%17)/17.0}],
+      'backgroundColor':const ui.Color(0xff123456),'borderColor':const ui.Color(0xff123456),
+      'showLine':false,'radius':2.0,'clip':false,'parsing':false}
+  ]},'options':<String,Object?>{'animation':false,'events':<String>[],
+    'responsive':false,'devicePixelRatio':1.0,'plugins':false,
+    'scales':<String,Object?>{'x':stressHiddenScale('linear',min:0,max:1),'y':stressHiddenScale('linear',min:0,max:1)}}};
+  return ChartBenchScene(config:cfg,describe:(chart) {
+    var checksum=0.0;
+    final w=Stopwatch()..start();
+    for(var repeat=0;repeat<100;repeat++) for(var k=0;k<d;k++) checksum+=chart.getDatasetMeta(k).index;
+    w.stop();
+    return {'lookupSweepUs':w.elapsedMicroseconds/100,'checksum':checksum,'pointsPerDataset':n};
+  });
+ }),
+];

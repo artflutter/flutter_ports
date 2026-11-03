@@ -1,0 +1,3509 @@
+{
+  "samples": 7375,
+  "functions": [
+    {
+      "name": "_Future._propagateToListeners",
+      "url": "dart:async/future_impl.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "_Timer._handleMessage",
+      "url": "dart:isolate-patch/timer_impl.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "_Timer._runTimers",
+      "url": "dart:isolate-patch/timer_impl.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "_createTimer.<anonymous closure>",
+      "url": "dart:async-patch/timer_patch.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "Future.delayed.<anonymous closure>",
+      "url": "dart:async/future.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "_Future._complete",
+      "url": "dart:async/future_impl.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": ".runChartBenchCase",
+      "url": "package:chartjs_gallery/bench/chart_bench.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "_Loop.iterate",
+      "url": "package:chartjs_gallery/bench/chart_bench.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "_propagateToListeners.handleValueCallback",
+      "url": "dart:async/future_impl.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": ".run",
+      "url": "file:///Users/vasilich/IdeaProjects/flutter_ports/.dart_tool/library_audit/probe.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "_RawReceivePort._handleMessage",
+      "url": "dart:isolate-patch/isolate_patch.dart",
+      "inclusive": 7256,
+      "self": 0
+    },
+    {
+      "name": "Chart.update",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 5417,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateFull",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 5417,
+      "self": 0
+    },
+    {
+      "name": "_BenchChart.draw",
+      "url": "package:chartjs_gallery/bench/chart_bench.dart",
+      "inclusive": 2284,
+      "self": 0
+    },
+    {
+      "name": "Chart.draw",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 2284,
+      "self": 0
+    },
+    {
+      "name": "Chart.render",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 2284,
+      "self": 0
+    },
+    {
+      "name": "Chart._drawDatasets",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 2266,
+      "self": 0
+    },
+    {
+      "name": "Chart._drawDataset",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 2266,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.draw",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 2264,
+      "self": 13
+    },
+    {
+      "name": "PointElement.draw",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 2246,
+      "self": 13
+    },
+    {
+      "name": ".drawPoint",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.canvas.dart",
+      "inclusive": 2112,
+      "self": 1
+    },
+    {
+      "name": ".drawPointLegend",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.canvas.dart",
+      "inclusive": 2060,
+      "self": 46
+    },
+    {
+      "name": "UiCanvasContext._batchCircle",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 1775,
+      "self": 38
+    },
+    {
+      "name": "UiCanvasContext.fill",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 1761,
+      "self": 38
+    },
+    {
+      "name": "UiCanvasContext.paint",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 1681,
+      "self": 0
+    },
+    {
+      "name": "BubbleController.resolveDataElementOptions",
+      "url": "package:flutter_chartjs_port/src/controllers/controller.bubble.dart",
+      "inclusive": 1679,
+      "self": 86
+    },
+    {
+      "name": "_GrowableList.forEach",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 1628,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.__drawPicture$Method$FfiNative",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1627,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._drawPicture",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1627,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.drawPicture",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1627,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._flushBatch",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 1621,
+      "self": 3
+    },
+    {
+      "name": "CircleBatch.flush",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart",
+      "inclusive": 1613,
+      "self": 4
+    },
+    {
+      "name": "CircleBatch._drawDirect",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart",
+      "inclusive": 1569,
+      "self": 61
+    },
+    {
+      "name": "_NativeCanvas.drawCircle",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1460,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.__drawCircle$Method$FfiNative",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1446,
+      "self": 35
+    },
+    {
+      "name": "_NativeCanvas._drawCircle",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1442,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateDatasets",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1341,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.update_",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1336,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateDataset",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1336,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.buildOrUpdateElements",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1016,
+      "self": 0
+    },
+    {
+      "name": "DatasetController._resyncElements",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1015,
+      "self": 1
+    },
+    {
+      "name": "DatasetController.parse",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1013,
+      "self": 19
+    },
+    {
+      "name": "BubbleController.parseObjectData",
+      "url": "package:flutter_chartjs_port/src/controllers/controller.bubble.dart",
+      "inclusive": 977,
+      "self": 32
+    },
+    {
+      "name": "BubbleController.getMaxOverflow",
+      "url": "package:flutter_chartjs_port/src/controllers/controller.bubble.dart",
+      "inclusive": 963,
+      "self": 5
+    },
+    {
+      "name": "BubbleController.update",
+      "url": "package:flutter_chartjs_port/src/controllers/controller.bubble.dart",
+      "inclusive": 861,
+      "self": 0
+    },
+    {
+      "name": "BubbleController.updateElements",
+      "url": "package:flutter_chartjs_port/src/controllers/controller.bubble.dart",
+      "inclusive": 845,
+      "self": 44
+    },
+    {
+      "name": "DatasetController.resolveDataElementOptions",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 492,
+      "self": 11
+    },
+    {
+      "name": "PointOptions.storeKey",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 452,
+      "self": 99
+    },
+    {
+      "name": "DatasetController._resolveElementOptions",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 370,
+      "self": 60
+    },
+    {
+      "name": "DatasetController.parseObjectData",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 353,
+      "self": 24
+    },
+    {
+      "name": "_OneByteString.==",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 317,
+      "self": 317
+    },
+    {
+      "name": "ElementOptions.storeKey",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 294,
+      "self": 21
+    },
+    {
+      "name": "ElementOptions.jsWrite",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 273,
+      "self": 40
+    },
+    {
+      "name": "DatasetController.getParsed",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 229,
+      "self": 17
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.[]",
+      "url": "dart:_compact_hash",
+      "inclusive": 218,
+      "self": 3
+    },
+    {
+      "name": ".resolveObjectKey",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 203,
+      "self": 12
+    },
+    {
+      "name": "DatasetController.updateElement",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 187,
+      "self": 0
+    },
+    {
+      "name": ".dataItemValue",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 187,
+      "self": 0
+    },
+    {
+      "name": "._radiusOf",
+      "url": "package:flutter_chartjs_port/src/controllers/controller.bubble.dart",
+      "inclusive": 182,
+      "self": 50
+    },
+    {
+      "name": "TypedRecord.touchSlot",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 176,
+      "self": 63
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._getValueOrData",
+      "url": "dart:_compact_hash",
+      "inclusive": 169,
+      "self": 169
+    },
+    {
+      "name": "Element.assign",
+      "url": "package:flutter_chartjs_port/src/core/core.element.dart",
+      "inclusive": 163,
+      "self": 40
+    },
+    {
+      "name": ".jsGetIndex",
+      "url": "package:flutter_chartjs_port/src/js/js_object.dart",
+      "inclusive": 162,
+      "self": 162
+    },
+    {
+      "name": ".jsToString",
+      "url": "package:flutter_chartjs_port/src/js/js_number.dart",
+      "inclusive": 148,
+      "self": 148
+    },
+    {
+      "name": ".jsTruthy",
+      "url": "package:flutter_chartjs_port/src/js/js_number.dart",
+      "inclusive": 138,
+      "self": 138
+    },
+    {
+      "name": ".jsGet",
+      "url": "package:flutter_chartjs_port/src/js/js_object.dart",
+      "inclusive": 134,
+      "self": 58
+    },
+    {
+      "name": ".[Stub] Subtype1TestCache",
+      "url": "",
+      "inclusive": 134,
+      "self": 134
+    },
+    {
+      "name": "PointOptions.valueOf",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 131,
+      "self": 32
+    },
+    {
+      "name": "UiCanvasContext.stroke",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 122,
+      "self": 29
+    },
+    {
+      "name": "PointOptions.clone",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 112,
+      "self": 10
+    },
+    {
+      "name": "_NativePictureRecorder.endRecording",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 110,
+      "self": 0
+    },
+    {
+      "name": "_NativePictureRecorder.__endRecording$Method$FfiNative",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 110,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord._append",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 110,
+      "self": 62
+    },
+    {
+      "name": "PointElement.writePropertyAt",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 110,
+      "self": 62
+    },
+    {
+      "name": ".[Stub] AllocateObject",
+      "url": "",
+      "inclusive": 110,
+      "self": 110
+    },
+    {
+      "name": "_NativePictureRecorder._endRecording",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 110,
+      "self": 0
+    },
+    {
+      "name": "PointOptions.radiusValue",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 99,
+      "self": 30
+    },
+    {
+      "name": "_GrowableList.[]",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 97,
+      "self": 97
+    },
+    {
+      "name": "<anonymous closure>.<anonymous closure>",
+      "url": "package:chartjs_gallery/bench/chart_bench.dart",
+      "inclusive": 95,
+      "self": 0
+    },
+    {
+      "name": "PointOptions.PointOptions._copy",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 94,
+      "self": 70
+    },
+    {
+      "name": "._initOptions",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 92,
+      "self": 0
+    },
+    {
+      "name": "._mergeScaleConfig",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 92,
+      "self": 2
+    },
+    {
+      "name": "Config.update",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 92,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateLayout",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 86,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._strokeCircle",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 85,
+      "self": 21
+    },
+    {
+      "name": ".mergeIf",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 81,
+      "self": 0
+    },
+    {
+      "name": ".merge",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 80,
+      "self": 2
+    },
+    {
+      "name": "_keyResolvers.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 76,
+      "self": 8
+    },
+    {
+      "name": "StressChartScene.write",
+      "url": "package:chartjs_gallery/demo/stress_chart_config.dart",
+      "inclusive": 75,
+      "self": 14
+    },
+    {
+      "name": "._update",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 75,
+      "self": 0
+    },
+    {
+      "name": ".mergerIf",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 74,
+      "self": 1
+    },
+    {
+      "name": ".setPointAxis",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 71,
+      "self": 14
+    },
+    {
+      "name": "PointOptions._raw5",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 69,
+      "self": 68
+    },
+    {
+      "name": "PointElement.size",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 68,
+      "self": 68
+    },
+    {
+      "name": "_keyResolvers.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 67,
+      "self": 5
+    },
+    {
+      "name": "OptionScope.lookup",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 66,
+      "self": 3
+    },
+    {
+      "name": "CircleBatch.add",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart",
+      "inclusive": 65,
+      "self": 65
+    },
+    {
+      "name": "OptionView.readKey",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 65,
+      "self": 0
+    },
+    {
+      "name": "PointOptions.storeRaw",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 65,
+      "self": 11
+    },
+    {
+      "name": "._resolveWithContext",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 64,
+      "self": 0
+    },
+    {
+      "name": "._resolveWithPrefixes",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 64,
+      "self": 2
+    },
+    {
+      "name": "._fitBoxes",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 63,
+      "self": 0
+    },
+    {
+      "name": "Scale.update",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 60,
+      "self": 0
+    },
+    {
+      "name": "PointOptions._store5",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 59,
+      "self": 39
+    },
+    {
+      "name": ".isPointInArea",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.canvas.dart",
+      "inclusive": 58,
+      "self": 30
+    },
+    {
+      "name": ".dart::Zone::Reset()",
+      "url": "",
+      "inclusive": 57,
+      "self": 57
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.[]=",
+      "url": "dart:_compact_hash",
+      "inclusive": 56,
+      "self": 15
+    },
+    {
+      "name": "OptionResolver.readKey",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 55,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.setValue",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 55,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.ParsedItem.of",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 55,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._endRecording",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 52,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext.arc",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 50,
+      "self": 10
+    },
+    {
+      "name": "TypedRecord._appendGroup",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 48,
+      "self": 48
+    },
+    {
+      "name": "TypedRecord.slotAt",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 48,
+      "self": 48
+    },
+    {
+      "name": ".jsCall",
+      "url": "package:flutter_chartjs_port/src/js/js_function.dart",
+      "inclusive": 47,
+      "self": 0
+    },
+    {
+      "name": "LinearScale.getPixelForValue",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linear.dart",
+      "inclusive": 47,
+      "self": 9
+    },
+    {
+      "name": "Paint.color=",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 45,
+      "self": 45
+    },
+    {
+      "name": "._invoke",
+      "url": "package:flutter_chartjs_port/src/js/js_function.dart",
+      "inclusive": 45,
+      "self": 0
+    },
+    {
+      "name": "OptionScope._normalize",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 44,
+      "self": 4
+    },
+    {
+      "name": "OptionScope.jsRead",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 41,
+      "self": 1
+    },
+    {
+      "name": "Scale.getPixelForDecimal",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 40,
+      "self": 16
+    },
+    {
+      "name": ".[Stub] AllocateObjectParameterized",
+      "url": "",
+      "inclusive": 40,
+      "self": 40
+    },
+    {
+      "name": ".jsGetKey",
+      "url": "package:flutter_chartjs_port/src/js/js_object.dart",
+      "inclusive": 39,
+      "self": 0
+    },
+    {
+      "name": "PointProperties.options=",
+      "url": "package:flutter_chartjs_port/src/options/props.dart",
+      "inclusive": 39,
+      "self": 0
+    },
+    {
+      "name": "_BenchChart.notifyPlugins",
+      "url": "package:chartjs_gallery/bench/chart_bench.dart",
+      "inclusive": 38,
+      "self": 1
+    },
+    {
+      "name": "_GrowableList.add",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 38,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateContext",
+      "url": "",
+      "inclusive": 38,
+      "self": 36
+    },
+    {
+      "name": "Chart.notifyPlugins",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 37,
+      "self": 0
+    },
+    {
+      "name": "ElementOptions.storeRaw",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 37,
+      "self": 37
+    },
+    {
+      "name": ".[Stub] Subtype2TestCache",
+      "url": "",
+      "inclusive": 37,
+      "self": 37
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._set",
+      "url": "dart:_compact_hash",
+      "inclusive": 36,
+      "self": 15
+    },
+    {
+      "name": "PluginService.notify",
+      "url": "package:flutter_chartjs_port/src/core/core.plugins.dart",
+      "inclusive": 36,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._drew",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 35,
+      "self": 35
+    },
+    {
+      "name": "OptionScope.keyOf",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 33,
+      "self": 2
+    },
+    {
+      "name": "PointProperties.y=",
+      "url": "package:flutter_chartjs_port/src/options/props.dart",
+      "inclusive": 33,
+      "self": 2
+    },
+    {
+      "name": "._resolve",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 32,
+      "self": 3
+    },
+    {
+      "name": "._cloneFor",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 32,
+      "self": 0
+    },
+    {
+      "name": "._cloneToScope",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 31,
+      "self": 1
+    },
+    {
+      "name": "PointProperties.skip=",
+      "url": "package:flutter_chartjs_port/src/options/props.dart",
+      "inclusive": 31,
+      "self": 0
+    },
+    {
+      "name": ".dart::Thread::ExitApiScope()",
+      "url": "",
+      "inclusive": 30,
+      "self": 30
+    },
+    {
+      "name": "ParsedItem.y=",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 29,
+      "self": 10
+    },
+    {
+      "name": "LinearScaleBase.parse",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linearbase.dart",
+      "inclusive": 29,
+      "self": 4
+    },
+    {
+      "name": "PluginService._descriptors",
+      "url": "package:flutter_chartjs_port/src/core/core.plugins.dart",
+      "inclusive": 28,
+      "self": 0
+    },
+    {
+      "name": "PluginService._createDescriptors",
+      "url": "package:flutter_chartjs_port/src/core/core.plugins.dart",
+      "inclusive": 28,
+      "self": 0
+    },
+    {
+      "name": "Scale._convertTicksToLabels",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 28,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.custom=",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 28,
+      "self": 0
+    },
+    {
+      "name": ".jsAdd",
+      "url": "package:flutter_chartjs_port/src/js/js_number.dart",
+      "inclusive": 27,
+      "self": 25
+    },
+    {
+      "name": "UiPathBuilder.arc",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 27,
+      "self": 26
+    },
+    {
+      "name": "._createSubResolver",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 27,
+      "self": 0
+    },
+    {
+      "name": ".each",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 27,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateScales",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 27,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._grow",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 27,
+      "self": 22
+    },
+    {
+      "name": "Scale.generateTickLabels",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 27,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode._hashCode",
+      "url": "dart:_compact_hash",
+      "inclusive": 27,
+      "self": 0
+    },
+    {
+      "name": "._idOf",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 26,
+      "self": 26
+    },
+    {
+      "name": "ParsedItem.x=",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 26,
+      "self": 5
+    },
+    {
+      "name": "._pluginOpts",
+      "url": "package:flutter_chartjs_port/src/core/core.plugins.dart",
+      "inclusive": 26,
+      "self": 0
+    },
+    {
+      "name": ".createDescriptors",
+      "url": "package:flutter_chartjs_port/src/core/core.plugins.dart",
+      "inclusive": 26,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._growToNextCapacity",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 26,
+      "self": 0
+    },
+    {
+      "name": "._truthy",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 26,
+      "self": 0
+    },
+    {
+      "name": "._applyThis",
+      "url": "package:flutter_chartjs_port/src/js/js_function.dart",
+      "inclusive": 25,
+      "self": 0
+    },
+    {
+      "name": ".optionKeyOf",
+      "url": "package:flutter_chartjs_port/src/options/option_keys.g.dart",
+      "inclusive": 25,
+      "self": 2
+    },
+    {
+      "name": "UiCanvasContext.closePath",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 25,
+      "self": 3
+    },
+    {
+      "name": "._numeric",
+      "url": "package:flutter_chartjs_port/src/core/core.ticks.dart",
+      "inclusive": 25,
+      "self": 0
+    },
+    {
+      "name": ".callback",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 25,
+      "self": 0
+    },
+    {
+      "name": "PointProperties.x=",
+      "url": "package:flutter_chartjs_port/src/options/props.dart",
+      "inclusive": 24,
+      "self": 2
+    },
+    {
+      "name": "ElementOptions.ElementOptions.copyFrom",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 24,
+      "self": 24
+    },
+    {
+      "name": "LinearScaleBase.prototypeParse",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linearbase.dart",
+      "inclusive": 24,
+      "self": 17
+    },
+    {
+      "name": ".dart::Thread::EnterApiScope()",
+      "url": "",
+      "inclusive": 23,
+      "self": 23
+    },
+    {
+      "name": ".formatNumber",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.intl.dart",
+      "inclusive": 23,
+      "self": 0
+    },
+    {
+      "name": "._customOf",
+      "url": "package:flutter_chartjs_port/src/controllers/controller.bubble.dart",
+      "inclusive": 22,
+      "self": 22
+    },
+    {
+      "name": "UiPathBuilder.singleCircle",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 22,
+      "self": 0
+    },
+    {
+      "name": "._apply",
+      "url": "package:flutter_chartjs_port/src/js/js_function.dart",
+      "inclusive": 21,
+      "self": 1
+    },
+    {
+      "name": "._addScopesFromKey",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 21,
+      "self": 0
+    },
+    {
+      "name": "Config.createResolver",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 21,
+      "self": 0
+    },
+    {
+      "name": "_OneByteString.hashCode",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 21,
+      "self": 21
+    },
+    {
+      "name": "PointOptions._clearForeign",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 20,
+      "self": 20
+    },
+    {
+      "name": "OptionResolver._get",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 20,
+      "self": 0
+    },
+    {
+      "name": "._getProp",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 19,
+      "self": 1
+    },
+    {
+      "name": ".parsedValueOf",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 19,
+      "self": 0
+    },
+    {
+      "name": "._addScopes",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 19,
+      "self": 0
+    },
+    {
+      "name": ".plainOption",
+      "url": "package:flutter_chartjs_port/src/elements/element_options.dart",
+      "inclusive": 19,
+      "self": 0
+    },
+    {
+      "name": "List.List.of",
+      "url": "dart:core-patch/array_patch.dart",
+      "inclusive": 18,
+      "self": 0
+    },
+    {
+      "name": "_PathPoint.copyFrom",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 17,
+      "self": 17
+    },
+    {
+      "name": ".descriptors",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 17,
+      "self": 0
+    },
+    {
+      "name": "_getKeyResolver.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 17,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.jsWrite",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 17,
+      "self": 0
+    },
+    {
+      "name": "ElementOptions.isFrozen",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 17,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._dropPictures",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext.clearRect",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": ".attachContext",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 16,
+      "self": 1
+    },
+    {
+      "name": "Chart.clear",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": ".clearCanvas",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.canvas.dart",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": "Config.getOptionScopes",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 16,
+      "self": 1
+    },
+    {
+      "name": "DatasetController.getSharedOptions_",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": ".readOption",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 16,
+      "self": 1
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._findValueOrInsertPoint",
+      "url": "dart:_compact_hash",
+      "inclusive": 16,
+      "self": 16
+    },
+    {
+      "name": "OptionResolver.jsRead",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateRecord3Named",
+      "url": "",
+      "inclusive": 16,
+      "self": 16
+    },
+    {
+      "name": ".jsSetIndex",
+      "url": "package:flutter_chartjs_port/src/js/js_array.dart",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": "_NativePicture.dispose",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "_NativePicture.__dispose$Method$FfiNative",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "OptionScope._own",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 15,
+      "self": 4
+    },
+    {
+      "name": "._cloneIfNotShared",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 15,
+      "self": 15
+    },
+    {
+      "name": "._getResolver",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "Chart.ensureScalesHaveIDs",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "_NativePicture._dispose",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "._getScope",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord.hasSlot",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode._equals",
+      "url": "dart:_compact_hash",
+      "inclusive": 14,
+      "self": 0
+    },
+    {
+      "name": ".jsToNumber",
+      "url": "package:flutter_chartjs_port/src/js/js_number.dart",
+      "inclusive": 13,
+      "self": 13
+    },
+    {
+      "name": "CircleBatch.accepts",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart",
+      "inclusive": 13,
+      "self": 13
+    },
+    {
+      "name": "UiCanvasContext.strokeStyle=",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 13,
+      "self": 5
+    },
+    {
+      "name": "._isDirectUpdateMode",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 13,
+      "self": 13
+    },
+    {
+      "name": "JsNumberFormat.format",
+      "url": "package:flutter_chartjs_port/src/js/js_intl.dart",
+      "inclusive": 13,
+      "self": 1
+    },
+    {
+      "name": "Config.resolveElementNamedOptions",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 13,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.store",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._batchColor",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 12,
+      "self": 12
+    },
+    {
+      "name": ".requireUiColor",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_colors.dart",
+      "inclusive": 12,
+      "self": 12
+    },
+    {
+      "name": "Chart.buildOrUpdateScales",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.valueOf",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 12,
+      "self": 12
+    },
+    {
+      "name": "NumberFormat.format",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateObjectSlow",
+      "url": "",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": "JsClass.id",
+      "url": "package:flutter_chartjs_port/src/js/js_class.dart",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] Type Test Type: Map<String, Object?>",
+      "url": "",
+      "inclusive": 11,
+      "self": 11
+    },
+    {
+      "name": "_PathPoint.setOnArc",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 11,
+      "self": 11
+    },
+    {
+      "name": "ParsedItem.custom",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 11,
+      "self": 11
+    },
+    {
+      "name": "_GrowableList._GrowableList.of",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 11,
+      "self": 1
+    },
+    {
+      "name": "Scale.fit",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 11,
+      "self": 0
+    },
+    {
+      "name": "PointOptions.isPresent",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 11,
+      "self": 0
+    },
+    {
+      "name": "_Double._Double.fromInteger",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 10,
+      "self": 10
+    },
+    {
+      "name": ".jsObjectKeys",
+      "url": "package:flutter_chartjs_port/src/js/js_array.dart",
+      "inclusive": 10,
+      "self": 1
+    },
+    {
+      "name": "._getNumberFormat",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.intl.dart",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "Chart.buildOrUpdateControllers",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 10,
+      "self": 1
+    },
+    {
+      "name": "_Double.==",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 10,
+      "self": 10
+    },
+    {
+      "name": "_GrowableList.length",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 10,
+      "self": 10
+    },
+    {
+      "name": "_Double.isNaN",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 10,
+      "self": 10
+    },
+    {
+      "name": "_IntegerImplementation.*",
+      "url": "dart:core-patch/integers.dart",
+      "inclusive": 10,
+      "self": 9
+    },
+    {
+      "name": ".valueOrDefault",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "._addIfFound",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext.fillStyle=",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 9,
+      "self": 5
+    },
+    {
+      "name": "NumberFormat._formatNumber",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "PointProperties.options",
+      "url": "package:flutter_chartjs_port/src/options/props.dart",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": "._hasOwn",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 9,
+      "self": 2
+    },
+    {
+      "name": "TickOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": "PointProperties.fieldNames",
+      "url": "package:flutter_chartjs_port/src/options/props.dart",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": "_Double.isFinite",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 9,
+      "self": 2
+    },
+    {
+      "name": "OptionScope._extraIndex",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 8,
+      "self": 1
+    },
+    {
+      "name": "_Cache.get",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 8,
+      "self": 2
+    },
+    {
+      "name": "StressPointField.step",
+      "url": "package:chartjs_gallery/demo/stress_chart_config.dart",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "._cacheKey",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.intl.dart",
+      "inclusive": 8,
+      "self": 1
+    },
+    {
+      "name": "NumberFormat._formatFixed",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "._needContextKeys",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "ScaleOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "LinearScaleBase.buildTicks",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linearbase.dart",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "ListBase.isEmpty",
+      "url": "dart:collection/list.dart",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "PointOptions.borderWidth",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 8,
+      "self": 2
+    },
+    {
+      "name": "PointOptions.isForeign",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord.isForeignSlot",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "_Cache._index",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "OptionScope.classifyName",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": "UiCanvasContext.beginPath",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": "._keyOf",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "._buildLayoutBoxes",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": ".getIndexAxis",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "_updateLayout.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "PluginService._notify",
+      "url": "package:flutter_chartjs_port/src/core/core.plugins.dart",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": "OptionScope.owns",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "Scale._layers",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.jsHas",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.join",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": "PointElement.takesProperties",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "_StringBase.toString",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "ParsedItem.fieldNames",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "Iterable.toList",
+      "url": "dart:core/iterable.dart",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer.write",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": "_Double._mulFromInteger",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 7,
+      "self": 6
+    },
+    {
+      "name": ".[Stub] AllocateDouble",
+      "url": "",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateArray",
+      "url": "",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": ".[Native] c",
+      "url": "",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer._writeString",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 6,
+      "self": 1
+    },
+    {
+      "name": "OptionScope.childKindFor",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 6,
+      "self": 2
+    },
+    {
+      "name": "UiPathBuilder.reset",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 6,
+      "self": 6
+    },
+    {
+      "name": "UiCanvasContext._begin",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "OptionView._get",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.title",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.border",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.y",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 6,
+      "self": 6
+    },
+    {
+      "name": "LinearScaleBase.getTickLimit",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linearbase.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "OptionView.jsRead",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "Color.r",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 6,
+      "self": 6
+    },
+    {
+      "name": ".[Stub] Type Test Type: String",
+      "url": "",
+      "inclusive": 6,
+      "self": 6
+    },
+    {
+      "name": ".readElementOption",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "._read",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "ElementOptions.$sharedValue",
+      "url": "package:flutter_chartjs_port/src/options/element_options_base.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "PointOptions.hoverRadius",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "._at",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._GrowableList._ofOther",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 5,
+      "self": 1
+    },
+    {
+      "name": "StringBuffer._consumeBuffer",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "UiPathBuilder.closePath",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "_NativePictureRecorder.__constructor$Method$FfiNative",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.grid",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "Plugin.invokeHook",
+      "url": "package:flutter_chartjs_port/src/types/plugin.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "buildOrUpdateScales.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._joinWithSeparator",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "Object.==",
+      "url": "dart:core-patch/object_patch.dart",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "Color.a",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "LinearScale.computeTickLimit",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linear.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] TopTypeTypeTest",
+      "url": "",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "dart.ui._colorSpaceToIndex",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "_NativePictureRecorder._constructor",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "_NativePictureRecorder._NativePictureRecorder",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "_Double.abs",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord.ownKeyCount",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": ".DLRT_EnterHandleScope",
+      "url": "",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "_StringBase._interpolate",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 4,
+      "self": 2
+    },
+    {
+      "name": "Paint.strokeWidth=",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer._create",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": ".toFont",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.options.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "DataUpdateSnapshot.capture",
+      "url": "package:flutter_chartjs_port/src/core/data_update.dart",
+      "inclusive": 4,
+      "self": 1
+    },
+    {
+      "name": "._set",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 4,
+      "self": 2
+    },
+    {
+      "name": ".toPadding",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.options.dart",
+      "inclusive": 4,
+      "self": 1
+    },
+    {
+      "name": "NumberFormat._add",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "buildOrUpdateScales.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "ensureScalesHaveIDs.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "._number",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "Scale.resolveTickFontOptions",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "ScaleOptionsScope.cellOf",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "OptionScope.jsKeys",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 4,
+      "self": 2
+    },
+    {
+      "name": "OptionView.jsWrite",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer.toString",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "Object.runtimeType",
+      "url": "dart:core-patch/object_patch.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "WhereIterator.moveNext",
+      "url": "dart:_internal/iterable.dart",
+      "inclusive": 4,
+      "self": 1
+    },
+    {
+      "name": "Color.b",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "Element.y",
+      "url": "package:flutter_chartjs_port/src/core/core.element.dart",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "_GrowableList.[]=",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "TypedRecord._groupAt",
+      "url": "package:flutter_chartjs_port/src/options/typed_record.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": ".isNullOrUndef",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": ".optionOf",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin_options.dart",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": ".DLRT_ExitHandleScope",
+      "url": "",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "StringBuffer._addPart",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "_NativeCanvas.clipRect",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": ".createResolver",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": ".canvasArcSweep",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "._setProp",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": ".nativeDataUpdateObject",
+      "url": "package:flutter_chartjs_port/src/core/data_update.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": ".int16Range",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.math.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": ".CoreScaleOptions.ticks",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": ".toTRBL",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.options.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "._configure",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 3,
+      "self": 2
+    },
+    {
+      "name": "NumberFormat._decimalSeparator",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "NumberFormat._integerDigits",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "Config.pluginScopeKeys",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.configure",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.x",
+      "url": "package:flutter_chartjs_port/src/options/parsed.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "OptionView.objectKeys",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "._beforeLayout",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin.colors.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "PointElement._drawPointOptionsOf",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "DescriptorsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "TickOptionsScope.cellOf",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "OptionView.jsKeys",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "Scale.init",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.addAll",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 3,
+      "self": 1
+    },
+    {
+      "name": "_CompactIterator.moveNext",
+      "url": "dart:_compact_hash",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "ListIterator.moveNext",
+      "url": "dart:_internal/iterable.dart",
+      "inclusive": 3,
+      "self": 2
+    },
+    {
+      "name": "Color.g",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "Color.colorSpace",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "_Array.[]",
+      "url": "dart:core-patch/array.dart",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "_NativePath.reset",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._clipRect",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "._isMapObject",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashSetMixin._add",
+      "url": "dart:_compact_hash",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "_GrowableList._GrowableList._ofEfficientLengthIterable",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer.writeCharCode",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_StringBase._concatRange",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer._ensureCapacity",
+      "url": "dart:core-patch/string_buffer_patch.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".classifyUnion",
+      "url": "package:flutter_chartjs_port/src/options/opt.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "ListBase.indexOf",
+      "url": "dart:collection/list.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "._isValidKey",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_Cache.set",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".toFontString",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.canvas.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._NativeCanvas",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "UiCanvasContext._changed",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "UiCanvasContext.lineWidth=",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".nativeDataUpdateRoot",
+      "url": "package:flutter_chartjs_port/src/core/data_update.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".nativeDataUpdateList",
+      "url": "package:flutter_chartjs_port/src/core/data_update.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_createSubResolver.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._subGetTarget",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._updateDims",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.callback",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.axis",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.min",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".readValueToProps",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.options.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._wrapBoxes",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "TickFontCache.matchesResolved",
+      "url": "package:flutter_chartjs_port/src/core/tick_font_cache.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "TickFontCache.remember",
+      "url": "package:flutter_chartjs_port/src/core/tick_font_cache.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._retrieveAxisFromDatasets",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_getResolver.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "Config.supportsDataUpdates",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Config.data",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionView.[]=",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Scale.calculateLabelRotation",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._getKeysFromAllScopes",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionResolver.[]=",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionResolver._own",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "._reflectOwnKeys",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._insert",
+      "url": "dart:_compact_hash",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._rehash",
+      "url": "dart:_compact_hash",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._init",
+      "url": "dart:_compact_hash",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "_CompactLinkedIdentityHashSet&_LinkedHashBase&SetMixin&_HashBase&_IdenticalAndIdentityHashCode&_LinkedHashSetMixin._getKeyOrData",
+      "url": "dart:_compact_hash",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "_StringBase._concatRangeNative",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "DatasetOptionsByTypeScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "ScaleTitleOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "OptionResolver.jsWrite",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "ListBase.join",
+      "url": "dart:collection/list.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "GridLineOptionsScope.setCell",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashSetMixin.add",
+      "url": "dart:_compact_hash",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.linkScales",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "_ChartArea.right",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "_ChartArea.top",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "_IntegerImplementation._greaterThanFromInteger",
+      "url": "dart:core-patch/integers.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_Set.addAll",
+      "url": "dart:_compact_hash",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "PointOptions.radius",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "Title.position",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin.title.dart",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin.toList",
+      "url": "dart:collection/set.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_RectClip.applyTo",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionResolver.ownKeys",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionView.ownKeys",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_IntegerImplementation.>",
+      "url": "dart:core-patch/integers.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] SlowTypeTest",
+      "url": "",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] Subtype6TestCache",
+      "url": "",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "UiTransform.mapY",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Uint32List.Uint32List",
+      "url": "dart:typed_data-patch/typed_data_patch.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".ColorsPluginOptions.forceOverride",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin_options.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "PointProperties.stop",
+      "url": "package:flutter_chartjs_port/src/options/props.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.[]",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "NumberFormat._addDigit",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "LinkedHashSet.LinkedHashSet.of",
+      "url": "dart:collection/linked_hash_set.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_StringBase.isEmpty",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashSetMixin._rehash",
+      "url": "dart:_compact_hash",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.clear",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Stopwatch.elapsedTicks",
+      "url": "dart:core/stopwatch.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Stopwatch._now",
+      "url": "dart:core-patch/stopwatch_patch.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._GrowableList._ofGrowableList",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ScopeKind.create",
+      "url": "package:flutter_chartjs_port/src/options/scope_kinds.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._targetGet",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "createResolver.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._getOwnProperty",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._has",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.__constructor$Method$FfiNative",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._batchable",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._scriptableDefault",
+      "url": "package:flutter_chartjs_port/src/core/core.defaults.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Chart.data",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Chart._datasets",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._isStacked",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._getFirstScaleId",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".decimalPlaces",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.math.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "OptionScope.jsOwnKeys",
+      "url": "package:flutter_chartjs_port/src/options/option_scope.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".getDatasetClipArea",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.dataset.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "OptionView._slot",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._getCombinedMax",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".CoreScaleOptions.afterSetDimensions",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.beforeCalculateLabelRotation",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.suggestedMin",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.display",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.z",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.minRotation",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.beforeTickToLabelConversion",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.maxRotation",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.beforeFit",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.afterCalculateLabelRotation",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.offset",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.maxTicksLimit",
+      "url": "package:flutter_chartjs_port/src/core/scale_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_TRBLObject._TRBLObject",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.options.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "readValueToProps.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] Type Test Type: _LayoutWrap@469364212",
+      "url": "",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "NumberFormat._floor",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "NumberFormat._formatFractionPart",
+      "url": "package:intl/src/intl/number_format.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Chart.isDatasetVisible",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._getSizeForArea",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.dataset.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._getDatasetArea",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.dataset.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] Allocate CancelableHookArgs",
+      "url": "",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".isObject",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._idMatchesAxis",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_retrieveAxisFromDatasets.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._cachedKeys",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._themeOf",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale._isVisible",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".jsSort",
+      "url": "package:flutter_chartjs_port/src/js/js_array.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".mergeSort",
+      "url": "package:collection/src/algorithms.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "jsSort.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/js/js_array.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Chart.getDatasetMeta",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Chart._removeUnreferencedMetasets",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._allPlugins",
+      "url": "package:flutter_chartjs_port/src/core/core.plugins.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "PluginHook.of",
+      "url": "package:flutter_chartjs_port/src/types/plugin.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "UpdateHookArgs.UpdateHookArgs",
+      "url": "package:flutter_chartjs_port/src/types/plugin.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Chart._checkEventBindings",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "buildOrUpdateScales.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/core/core.controller.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._afterDatasetsUpdate",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._beforeDraw",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._numberField",
+      "url": "package:flutter_chartjs_port/src/elements/element.point.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Scale.beforeBuildTicks",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale._callHooks",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.beforeTickToLabelConversion",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.beforeFit",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.afterCalculateLabelRotation",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.beforeCalculateLabelRotation",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.getMinMax",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Scale.afterSetDimensions",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "OptionView.hasOwnProperty",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "OptionResolver.hasOwnProperty",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._resolveKeysFromAllScopes",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._mapKeys",
+      "url": "package:flutter_chartjs_port/src/js/js_array.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_keyResolvers.<anonymous closure>",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_Double.clamp",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Map.Map._fromLiteral",
+      "url": "dart:core-patch/map_patch.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_OneByteString._concatAll",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ChartOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "FontSpecScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "BubbleControllerDatasetOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "GridLineOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "BorderOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ColorsOptionsScope.hasField",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "TickOptionsScope.classify",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "GridLineOptionsScope.classify",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "ScaleTitleOptionsScope.classify",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "ChartOptionsScope.cellOf",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "DescriptorsScope.cellOf",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "MappedListIterable.elementAt",
+      "url": "dart:_internal/iterable.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "PaddingScope.setCell",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "TickOptionsScope.setCell",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ScaleTitleOptionsScope.setCell",
+      "url": "package:flutter_chartjs_port/src/options/scopes.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_AbstractType.hashCode",
+      "url": "dart:core-patch/type_patch.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Scale.layers=",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Scale.isHorizontal",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Title.isHorizontal",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin.title.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_CompactLinkedIdentityHashSet&_LinkedHashBase&SetMixin&_HashBase&_IdenticalAndIdentityHashCode&_LinkedHashSetMixin.contains",
+      "url": "dart:_compact_hash",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Title.update",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin.title.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "ListBase.contains",
+      "url": "dart:collection/list.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashSetMixin.contains",
+      "url": "dart:_compact_hash",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin.addAll",
+      "url": "dart:collection/set.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "parse.isNotInOrderComparedToPrev",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "LinearScaleBase.configure",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linearbase.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_ArrayIterator.moveNext",
+      "url": "dart:core-patch/array.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ListIterator.current",
+      "url": "dart:_internal/iterable.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Title.weight",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin.title.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_TRBLObject.top",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.options.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "PointOptions.rotation",
+      "url": "package:flutter_chartjs_port/src/options/resolved.g.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Scale.position",
+      "url": "package:flutter_chartjs_port/src/core/core.scale.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_Double.compareTo",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Element.x",
+      "url": "package:flutter_chartjs_port/src/core/core.element.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_GrowableList.iterator",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "LinearScale.options",
+      "url": "package:flutter_chartjs_port/src/scales/scale.linear.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_DescriptorDefaults.allKeys",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.types.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.containsKey",
+      "url": "dart:_compact_hash",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.length=",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._shrink",
+      "url": "dart:core-patch/growable_array.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_StringBase.indexOf",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_OneByteString.indexOf",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_StringBase.contains",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_OneByteString.contains",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_OneByteString.toLowerCase",
+      "url": "dart:core-patch/string_patch.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_Double.toDouble",
+      "url": "dart:core-patch/double.dart",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_IntegerImplementation.toDouble",
+      "url": "dart:core-patch/integers.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] StackOverflowSharedWithoutFPURegs",
+      "url": "",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] Subtype4TestCache",
+      "url": "",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] AllocateRecord2Named",
+      "url": "",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] AllocateClosure1",
+      "url": "",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] AllocateUint32Array",
+      "url": "",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".pow",
+      "url": "",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._isConfigObject",
+      "url": "package:flutter_chartjs_port/src/core/core.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._constructor",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".jsCall1",
+      "url": "package:flutter_chartjs_port/src/js/js_function.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_Descriptor.isScriptable",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.config.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".isArray",
+      "url": "package:flutter_chartjs_port/src/helpers/helpers.core.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "DatasetController._axisId",
+      "url": "package:flutter_chartjs_port/src/core/core.datasetController.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".MapPlugin.hookValue",
+      "url": "package:flutter_chartjs_port/src/types/plugin.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_HashBase._hashPattern",
+      "url": "dart:_compact_hash",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.save",
+      "url": "dart:ui/painting.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._takes",
+      "url": "package:flutter_chartjs_port/src/js/js_function.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TitleOptions.display",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._fillType",
+      "url": "package:flutter_chartjs_port/src/canvas/canvas_ui.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".FillerOptions.drawTime",
+      "url": "package:flutter_chartjs_port/src/plugins/plugin_options.dart",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_Edges.[]",
+      "url": "package:flutter_chartjs_port/src/core/core.layouts.dart",
+      "inclusive": 1,
+      "self": 0
+    }
+  ]
+}

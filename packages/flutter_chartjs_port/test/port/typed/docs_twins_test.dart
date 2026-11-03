@@ -169,7 +169,7 @@ ChartConfig _barVerticalTyped() => ChartConfig(
     BarDataset(
       label: 'My First Dataset',
       data: _docsData,
-      backgroundColors: _seven(0.2),
+      backgroundColor: ChartValue.indexed(_seven(0.2)),
       borderColors: _seven(1),
       borderWidth: 1,
     ),
@@ -207,7 +207,7 @@ ChartConfig _barHorizontalTyped() => ChartConfig(
     BarDataset(
       label: 'My First Dataset',
       data: _docsData,
-      backgroundColors: _seven(0.2),
+      backgroundColor: ChartValue.indexed(_seven(0.2)),
       borderColors: _seven(1),
       borderWidth: 1,
     ),
@@ -241,7 +241,7 @@ ChartConfig _bubbleTyped() => ChartConfig(
     BubbleDataset(
       label: 'First Dataset',
       points: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
-      backgroundColor: _red,
+      backgroundColor: const ChartValue.constant(_red),
     ),
   ],
 );
@@ -279,7 +279,7 @@ ChartConfig _doughnutTyped() => const ChartConfig(
     DoughnutDataset(
       label: 'My First Dataset',
       data: [300, 50, 100],
-      backgroundColors: [_red, _blue, _yellow],
+      backgroundColor: ChartValue.indexed([_red, _blue, _yellow]),
       hoverOffset: 4,
     ),
   ],
@@ -300,7 +300,7 @@ ChartConfig _pieTyped() => const ChartConfig(
     PieDataset(
       label: 'My First Dataset',
       data: [300, 50, 100],
-      backgroundColors: [_red, _blue, _yellow],
+      backgroundColor: ChartValue.indexed([_red, _blue, _yellow]),
       hoverOffset: 4,
     ),
   ],
@@ -375,7 +375,7 @@ ChartConfig _lineVerticalTyped() => ChartConfig(
       label: 'My First Dataset',
       data: _docsData,
       fill: .none,
-      backgroundColors: _seven(0.2),
+      backgroundColor: ChartValue.indexed(_seven(0.2)),
       borderColors: _seven(1),
       borderWidth: 1,
     ),
@@ -424,7 +424,7 @@ ChartConfig _mixedTyped() => const ChartConfig(
       label: 'Bar Dataset',
       data: [10, 20, 30, 40],
       borderColor: _red,
-      backgroundColor: Color.fromRGBO(255, 99, 132, 0.2),
+      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 0.2)),
     ),
     LineDataset(
       label: 'Line Dataset',
@@ -467,7 +467,13 @@ ChartConfig _polarAreaTyped() => const ChartConfig(
     PolarAreaDataset(
       label: 'My First Dataset',
       data: [11, 16, 7, 3, 14],
-      backgroundColors: [_red, _green, _yellow, _grey, _blue],
+      backgroundColor: ChartValue.indexed([
+        _red,
+        _green,
+        _yellow,
+        _grey,
+        _blue,
+      ]),
     ),
   ],
 );
@@ -565,7 +571,7 @@ ChartConfig _radarTyped() => const ChartConfig(
       label: 'My First Dataset',
       data: [65, 59, 90, 81, 56, 55, 40],
       fill: .origin,
-      backgroundColor: Color.fromRGBO(255, 99, 132, 0.2),
+      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 0.2)),
       borderColor: _red,
       pointBackgroundColor: _red,
       pointBorderColor: _white,
@@ -576,7 +582,7 @@ ChartConfig _radarTyped() => const ChartConfig(
       label: 'My Second Dataset',
       data: [28, 48, 40, 19, 96, 27, 100],
       fill: .origin,
-      backgroundColor: Color.fromRGBO(54, 162, 235, 0.2),
+      backgroundColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 0.2)),
       borderColor: _blue,
       pointBackgroundColor: _blue,
       pointBorderColor: _white,
@@ -637,7 +643,7 @@ ChartConfig _scatterTyped() => ChartConfig(
         DataPoint(10, 5),
         DataPoint(0.5, 5.5),
       ],
-      backgroundColor: _red,
+      backgroundColor: const ChartValue.constant(_red),
     ),
   ],
   scales: const {'x': LinearAxis(position: .bottom)},
@@ -704,7 +710,9 @@ ChartConfig _areaTyped(ChartFill fill, String title) => ChartConfig(
       label: 'Dataset',
       data: _areaData,
       borderColor: _red,
-      backgroundColor: const Color.fromRGBO(255, 99, 132, 0.5),
+      backgroundColor: const ChartValue.constant(
+        Color.fromRGBO(255, 99, 132, 0.5),
+      ),
       fill: fill,
     ),
   ],
@@ -826,7 +834,7 @@ ChartConfig _barTyped() => const ChartConfig(
     BarDataset(
       label: 'North',
       data: [12, 19, 3, 5],
-      backgroundColor: _blue,
+      backgroundColor: ChartValue.constant(_blue),
       borderColor: _navy,
       borderWidth: 2,
       hoverBackgroundColor: _green,
@@ -839,7 +847,7 @@ ChartConfig _barTyped() => const ChartConfig(
     BarDataset(
       label: 'South',
       data: [7, 11, 5, 8],
-      backgroundColors: [_red, _orange, _yellow, _green],
+      backgroundColor: ChartValue.indexed([_red, _orange, _yellow, _green]),
       stack: 'sales',
       maxBarThickness: 40,
       minBarLength: 2,
@@ -1038,7 +1046,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
     LineDataset(
       label: 'This week',
       data: [3, 5, null, 8, 6, 9, 7],
-      backgroundColor: Color.fromRGBO(255, 99, 132, 0.25),
+      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 0.25)),
       borderColor: _red,
       borderWidth: 2,
       fill: .origin,
@@ -1056,7 +1064,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
     LineDataset(
       label: 'Last week',
       data: [2, 4, 6, 5, 4, 6, 5],
-      backgroundColor: Color.fromRGBO(54, 162, 235, 0.25),
+      backgroundColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 0.25)),
       borderColor: _blue,
       fill: ChartFill.relative(-1),
       borderDash: [6, 4],
@@ -1207,7 +1215,9 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
         DataPoint.time(DateTime.utc(2026, 3, 4), 40),
         DataPoint.time(DateTime.utc(2026, 3, 5), 25),
       ],
-      backgroundColor: const Color.fromRGBO(153, 102, 255, 0.3),
+      backgroundColor: const ChartValue.constant(
+        Color.fromRGBO(153, 102, 255, 0.3),
+      ),
       borderColor: _purple,
       borderWidth: 1,
       showLine: true,
@@ -1311,7 +1321,9 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
         DataPoint.bubble(25, 12, 14),
         DataPoint.bubble(32, 28, 5),
       ],
-      backgroundColor: const Color.fromRGBO(75, 192, 192, 0.5),
+      backgroundColor: const ChartValue.constant(
+        Color.fromRGBO(75, 192, 192, 0.5),
+      ),
       borderColor: _green,
       borderWidth: 2,
       hoverRadius: 6,
@@ -1321,7 +1333,7 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
       label: 'Towns',
       points: [DataPoint(15, 8), DataPoint(28, 22)],
       radius: 4,
-      backgroundColors: const [_orange, _yellow],
+      backgroundColor: const ChartValue.indexed([_orange, _yellow]),
       hoverBackgroundColor: _red,
     ),
   ],
@@ -1418,7 +1430,7 @@ ChartConfig _pieTypeTyped() => const ChartConfig(
     PieDataset(
       label: 'Budget',
       data: [1200, 450, 300, 150],
-      backgroundColors: [_blue, _red, _yellow, _grey],
+      backgroundColor: ChartValue.indexed([_blue, _red, _yellow, _grey]),
       borderColor: _white,
       borderWidth: 2,
       offset: 4,
@@ -1491,7 +1503,7 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
     DoughnutDataset(
       label: 'Sprint 1',
       data: [8, 3, 1],
-      backgroundColors: [_green, _blue, _red],
+      backgroundColor: ChartValue.indexed([_green, _blue, _red]),
       hoverBorderColor: _navy,
       hoverBorderWidth: 3,
       spacing: 2,
@@ -1501,7 +1513,7 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
     DoughnutDataset(
       label: 'Sprint 2',
       data: [5, 6, 2],
-      backgroundColors: [_green, _blue, _red],
+      backgroundColor: ChartValue.indexed([_green, _blue, _red]),
       weight: 1,
       radius: ChartLength.pixels(150),
     ),
@@ -1590,13 +1602,13 @@ ChartConfig _polarAreaTypeTyped() => const ChartConfig(
     PolarAreaDataset(
       label: 'Wind',
       data: [11, 16, 7, 3, 14],
-      backgroundColors: [
+      backgroundColor: ChartValue.indexed([
         Color.fromRGBO(255, 99, 132, 0.5),
         Color.fromRGBO(75, 192, 192, 0.5),
         Color.fromRGBO(255, 205, 86, 0.5),
         Color.fromRGBO(201, 203, 207, 0.5),
         Color.fromRGBO(54, 162, 235, 0.5),
-      ],
+      ]),
       borderColor: _white,
       borderWidth: 1,
       offset: 2,
@@ -1689,7 +1701,7 @@ ChartConfig _radarTypeTyped() => const ChartConfig(
     RadarDataset(
       label: 'Model A',
       data: [7, 8, 5, 6, 4, 9],
-      backgroundColor: Color.fromRGBO(54, 162, 235, 0.2),
+      backgroundColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 0.2)),
       borderColor: _blue,
       fill: .origin,
       tension: 0.1,
@@ -1700,7 +1712,7 @@ ChartConfig _radarTypeTyped() => const ChartConfig(
     RadarDataset(
       label: 'Model B',
       data: [5, 6, 8, 7, 7, 6],
-      backgroundColor: Color.fromRGBO(255, 159, 64, 0.2),
+      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 159, 64, 0.2)),
       borderColor: _orange,
       fill: ChartFill.dataset(0),
       borderDash: [4, 4],

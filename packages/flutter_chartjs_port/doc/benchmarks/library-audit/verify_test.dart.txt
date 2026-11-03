@@ -1,0 +1,41 @@
+// Original code, not ported from Chart.js: verify controlled audit cases.
+import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'extra.dart';
+Object? plain(Object? v) {
+ if(v is Undefined) return '#undefined';
+ if(v is double && !v.isFinite) return v.toString();
+ if(v is JsObjectFace) return {for(final k in v.jsKeys()) if(k!=r'$shared' && k!=r'$animations') k:plain(v.jsRead(k))};
+ if(v is Map) return {for(final e in v.entries) e.key:plain(e.value)};
+ if(v is List) return v.map(plain).toList();
+ return v;
+}
+void main() {
+ test('same-color controls preserve geometry and resolved point/bar styles',() {
+  animator.refresh=(){};
+  final reference=<String,String>{};
+  for(final c in controlledCases()) {
+   final s=c.scene(5000);
+   final chart=Chart(UiCanvasElement(width:800,height:480),s.config);
+   try {
+    for(var i=0;i<3;i++){s.change?.call();chart.update('none');}
+    final meta=chart.getDatasetMeta(0);
+    final result=jsonEncode([
+     plain(meta.parsed),
+     for(final element in meta.data) [
+      for(final key in ['x','y','base','width','height','skip','stop','cp1x','cp1y','cp2x','cp2y'])
+       plain((element as types.ElementPropertyRead)[key]),
+      for(final key in ['backgroundColor','borderColor','radius','borderWidth'])
+       (element.options as JsObjectFace).jsRead(key).toString(),
+     ],
+    ]);
+    final type=c.keys['type'] as String;
+    if(reference.containsKey(type)){expect(result,reference[type],reason:c.name);}
+    else {reference[type]=result;}
+   } finally {chart.destroy();}
+  }
+ });
+}

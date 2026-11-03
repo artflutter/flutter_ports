@@ -130,12 +130,16 @@ ChartConfig(
   type: .bar,
   labels: const ['Jan', 'Feb', 'Mar', 'Apr'],
   datasets: [
-    BarDataset(label: 'Orders', data: orders, backgroundColor: Colors.orange),
+    BarDataset(
+      label: 'Orders',
+      data: orders,
+      backgroundColor: ChartValue.constant(Colors.orange),
+    ),
     LineDataset(
       label: 'Visitors',
       data: visitors,
       borderColor: Colors.blue,
-      backgroundColor: Colors.blue.withValues(alpha: 0.2),
+      backgroundColor: ChartValue.constant(Colors.blue.withValues(alpha: 0.2)),
       fill: .origin,
       tension: 0.3,
       pointStyle: .rectRot,
@@ -168,9 +172,11 @@ LineDataset(
 
 The values of the options are Dart and Flutter values:
 
-- Colors are `Color` values. A dataset also takes one color for each data item
-  (`backgroundColors: [...]`) or a function of the context (`backgroundColorFor`), and the same
-  for the border.
+- A dataset's `backgroundColor` is a `ChartValue<Color>`: `ChartValue.constant(color)`
+  for one color, `ChartValue.indexed(colors)` for a repeating list, or
+  `ChartValue.resolver(callback)` for a color calculated from each item's context.
+  Other single-color parameters continue to take `Color`. Dataset borders keep the
+  three parameters `borderColor`, `borderColors` and `borderColorFor`.
 - Fonts are `TextStyle` values: the chart reads the family, the size, the style, the weight and
   the height. It does not read the color of a `TextStyle`: each font parameter has a color
   parameter next to it, for example `labelFont` and `labelColor`.
@@ -180,6 +186,20 @@ The values of the options are Dart and Flutter values:
 - Names are dot shorthands: `position: .bottom`, `easing: .easeOutQuart`, `pointStyle: .star`,
   `fill: .origin`. `ChartFill.dataset(0)`, `ChartFill.relative(-1)` and `ChartFill.value(10)` give
   the other fill targets.
+
+Dataset background-color migration:
+
+| Previous parameter | Replacement |
+|---|---|
+| `backgroundColor: color` | `backgroundColor: ChartValue.constant(color)` |
+| `backgroundColors: colors` | `backgroundColor: ChartValue.indexed(colors)` |
+| `backgroundColorFor: callback` | `backgroundColor: ChartValue.resolver(callback)` |
+
+This change is limited to dataset background colors. Omit `backgroundColor` to
+inherit the default. `copyWith(backgroundColor: ...)` can switch between the three
+forms; a `null` copy argument retains the current form. Indexed style lists are
+copied when lowered, and callbacks should use a stable tear-off when possible.
+The raw Map API keeps its existing `backgroundColor` value/list/function forms.
 
 ### Axes
 
@@ -292,7 +312,7 @@ class _VotesPageState extends State<VotesPage> {
           BarDataset(
             label: '# of Votes',
             data: _votes,
-            backgroundColorFor: _barColor,
+            backgroundColor: ChartValue.resolver(_barColor),
           ),
         ],
         onClick: _onClick,
@@ -312,8 +332,9 @@ class _VotesPageState extends State<VotesPage> {
   default text.
 - `AxisTicks.format` gives the tick label, and `ChartAnimation.onProgress` and `onComplete` get
   `ChartAnimationDetails`.
-- `backgroundColorFor` and `borderColorFor` get a `ChartContext` (`dataIndex`, `datasetIndex`,
-  `raw`, `parsed`, `active`, `chart`) for each element.
+- A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColorFor` get a
+  `ChartContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `chart`)
+  for each element.
 
 The chart methods take `int` indexes: `chart.hide(hit.datasetIndex)`,
 `chart.isDatasetVisible(index)`, `chart.getDatasetMeta(index)`. The callbacks run in the phases of
@@ -383,9 +404,9 @@ class _ScoresState extends State<Scores> {
   ```
 - The event and text callbacks (`onClick`, `onHover`, the legend handlers, the tooltip texts and
   the animation callbacks) can be new closures in each build: the chart calls the callback of the
-  newest config. A scriptable color (`backgroundColorFor`) and a tick format are values of the
-  config: give a method tear-off or a top-level function, because a new closure in each build is
-  a new value and updates the chart.
+  newest config. A scriptable color (`ChartValue.resolver(...)`) and a tick format
+  are values of the config: give a method tear-off or a top-level function, because
+  a new closure in each build is a new value and updates the chart.
 - Change the config, not the Maps of the chart (`chart.data`, `chart.options`): the next config
   writes its options again. A change of `chart.options` in place lasts until a config with other
   options.

@@ -1,0 +1,451 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.config.dart b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+index dde3717..1b5ab37 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+@@ -812,17 +812,81 @@ class Config implements types.ChartConfiguration {
+     Object Function() context,
+     List<String> prefixes,
+     ElementOptions into,
+-  ) {
++  ) => _resolveElementNamedOptions(
++    scopes,
++    keys,
++    context,
++    prefixes,
++    into,
++    nativeInputs: false,
++  );
++
++  /// Resolves the controller's owned key, prefix and scope lists. Custom Config
++  /// classes receive their original virtual option-resolution call.
++  @internal
++  // DIVERGES(chartjs): adapt-indexed-element-options, owned containers.
++  ElementOptions resolveNativeElementNamedOptions(
++    List<Object?> scopes,
++    List<Object> keys,
++    Object Function() context,
++    List<String> prefixes,
++    ElementOptions into,
++  ) => runtimeType == Config
++      ? _resolveElementNamedOptions(
++          scopes,
++          keys,
++          context,
++          prefixes,
++          into,
++          nativeInputs: true,
++        )
++      : resolveElementNamedOptions(scopes, keys, context, prefixes, into);
++
++  ElementOptions _resolveElementNamedOptions(
++    List<Object?> scopes,
++    List<Object> keys,
++    Object Function() context,
++    List<String> prefixes,
++    ElementOptions into, {
++    required bool nativeInputs,
++  }) {
+     into.storeKey(OptionKey.dollarShared, true);
+     final (:resolver, :subPrefixes) = _getResolver(
+       _resolverCache,
+       scopes,
+       prefixes,
+     );
++    // Only equal prefix sets reuse the same already-resolved descriptors for
++    // the scriptable subresolver. Hover resolution keeps its ordinary reads.
++    final samePrefixes =
++        helpers.OptionResolver.nativeIndexedResult(into) &&
++        (nativeInputs ||
++            (helpers.OptionResolver.nativeIndexedList(prefixes) &&
++                helpers.OptionResolver.nativeIndexedList(scopes))) &&
++        prefixes.length == subPrefixes.length &&
++        Iterable<int>.generate(prefixes.length).every(
++          (i) => prefixes[i] == subPrefixes[i],
++        );
++    // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
++    final indexed = runtimeType == Config && samePrefixes
++        ? resolver.resolveIndexedElementOptions(
++            keys,
++            context,
++            into,
++            Defaults.nativeElementDescriptors,
++            () => identical(
++              _resolverCache[scopes]?[prefixes.join(',')]?.resolver,
++              resolver,
++            ),
++            nativeInputs: nativeInputs,
++          )
++        : null;
++    if (indexed?.resolved ?? false) return into;
+     helpers.OptionView? view;
+-    if (_needContextKeys(resolver, keys)) {
+-      into.storeKey(OptionKey.dollarShared, false);
+-      final ctx = context();
++    if (indexed != null || _needContextKeys(resolver, keys)) {
++      // A declined native fill already stored $shared before its context call.
++      if (indexed == null) into.storeKey(OptionKey.dollarShared, false);
++      final ctx = indexed?.context ?? context();
+       // subResolver is passed to scriptable options. It should not resolve to
+       // hover options.
+       final subResolver = createResolver(scopes, ctx, subPrefixes);
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+index 341e831..fb8787b 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -83,7 +83,7 @@ import 'package:flutter_chartjs_port/src/options/parsed.dart'
+ import 'package:flutter_chartjs_port/src/options/props.dart'
+     show PointProperties;
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+-    show GenericDatasetOptionsScope;
++    show BarOptionsScope, GenericDatasetOptionsScope, PointOptionsScope;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/data_item.dart'
+     show TypedDataItem;
+@@ -947,6 +947,10 @@ class DatasetController
+   String? _lastElementMode;
+   String _lastElementCacheKey = '';
+ 
++  // Container implementation is immutable; keys and option values stay live.
++  Object? _lastElementDefaults;
++  bool _nativeElementDefaultKeys = false;
++
+   /// core.datasetController.js:259 `_cachedDataOpts`, the part of the
+   /// animations: the frozen [Animations] of [resolveAnimations] by the
+   /// transition of the key `animation-transition` (:844).
+@@ -1957,17 +1961,34 @@ class DatasetController
+         ? elementDefaults.jsOwnKeys()
+         // A user object in the defaults gives its keys.
+         : <Object>[...jsObjectKeys(elementDefaults)];
++    // DIVERGES(chartjs): adapt-indexed-element-options, classify only the
++    // producer of the key list. Never cache its keys or skip a custom getter.
++    if (!identical(elementDefaults, _lastElementDefaults)) {
++      _lastElementDefaults = elementDefaults;
++      _nativeElementDefaultKeys =
++          elementDefaults is! OptionScope ||
++          elementDefaults.runtimeType == PointOptionsScope ||
++          elementDefaults.runtimeType == BarOptionsScope;
++    }
+     // context is provided as a function, and is called only if needed,
+     // so we don't create a context for each element if not needed.
+     ContextObject context() => getContext(index, active, resolvedMode);
+     // DIVERGES(chartjs): adapt-typed-element-options, a typed result object.
+-    final values = config.resolveElementNamedOptions(
+-      scopes,
+-      keys,
+-      context,
+-      prefixes,
+-      createElementOptions(elementType),
+-    );
++    final values = _nativeElementDefaultKeys
++        ? config.resolveNativeElementNamedOptions(
++            scopes,
++            keys,
++            context,
++            prefixes,
++            createElementOptions(elementType),
++          )
++        : config.resolveElementNamedOptions(
++            scopes,
++            keys,
++            context,
++            prefixes,
++            createElementOptions(elementType),
++          );
+ 
+     if (jsTruthy(values.$sharedValue)) {
+       // `$shared` indicates this set of options can be shared between
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.defaults.dart b/packages/flutter_chartjs_port/lib/src/core/core.defaults.dart
+index 0792200..4aca89c 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.defaults.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.defaults.dart
+@@ -41,6 +41,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
++import 'package:meta/meta.dart';
+ 
+ /// core.defaults.js:7 `overrides`, `Object.create(null)`.
+ ///
+@@ -208,6 +209,17 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
+     apply(appliers);
+   }
+ 
++  /// Recognizes side-effect-free built-in element descriptor predicates.
++  @internal
++  // DIVERGES(chartjs): adapt-indexed-element-options, exact predicate identity.
++  static bool nativeElementDescriptors(Object? scriptable, Object? indexable) =>
++      (scriptable is bool ||
++          scriptable is Undefined ||
++          identical(scriptable, _scriptableDefault)) &&
++      (indexable is bool ||
++          indexable is Undefined ||
++          identical(indexable, _indexableDefault));
++
+   /// core.defaults.js:90 `set`.
+   ///
+   /// @param {string|object} scope
+diff --git a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+index 684623f..e8b67f2 100644
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -61,13 +61,14 @@ library;
+ import 'dart:core' as core;
+ import 'dart:core';
+ import 'dart:typed_data' show Uint16List;
++import 'dart:ui' show Color;
+ 
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+     show capitalize, isArray, isFunction, isObject, resolveObjectKey;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+-    show ContextObject;
++    show ContextObject, ScriptableContext;
+ import 'package:flutter_chartjs_port/src/js/js_array.dart';
+ import 'package:flutter_chartjs_port/src/js/js_function.dart';
+ import 'package:flutter_chartjs_port/src/js/js_number.dart';
+@@ -77,6 +78,8 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+     show ElementOptions;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+ import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
++import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
++    show BarOptions, PointOptions;
+ import 'package:flutter_chartjs_port/src/options/static_font.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart';
+ import 'package:meta/meta.dart';
+@@ -202,6 +205,118 @@ final class _Cache {
+   );
+ }
+ 
++// Exact SDK container types only: never probe a user List getter. Values and
++// lengths remain live; this is not the data-update source stability contract.
++Set<Type> _indexedListTypes<T>() => {
++  <T>[].runtimeType,
++  List<T>.empty().runtimeType,
++  List<T>.unmodifiable(const <Never>[]).runtimeType,
++};
++
++final _nativeIndexedLists = <Type>{
++  ..._indexedListTypes<Object?>(),
++  ..._indexedListTypes<Object>(),
++  ..._indexedListTypes<dynamic>(),
++  ..._indexedListTypes<Color>(),
++  ..._indexedListTypes<Color?>(),
++  ..._indexedListTypes<String>(),
++  ..._indexedListTypes<String?>(),
++  ..._indexedListTypes<num>(),
++  ..._indexedListTypes<num?>(),
++  ..._indexedListTypes<double>(),
++  ..._indexedListTypes<double?>(),
++  ..._indexedListTypes<int>(),
++  ..._indexedListTypes<int?>(),
++  ..._indexedListTypes<bool>(),
++  ..._indexedListTypes<bool?>(),
++  const <Object?>[].runtimeType,
++  const <Object>[].runtimeType,
++  const <dynamic>[].runtimeType,
++  const <Color>[].runtimeType,
++  const <Color?>[].runtimeType,
++  const <String>[].runtimeType,
++  const <String?>[].runtimeType,
++  const <num>[].runtimeType,
++  const <num?>[].runtimeType,
++  const <double>[].runtimeType,
++  const <double?>[].runtimeType,
++  const <int>[].runtimeType,
++  const <int?>[].runtimeType,
++  const <bool>[].runtimeType,
++  const <bool?>[].runtimeType,
++};
++
++bool _indexedScalar(Object? value) =>
++    value == null ||
++    value is Undefined ||
++    value is num ||
++    value is bool ||
++    value is String ||
++    (value is Color && !isObject(value));
++
++final class _IndexedElementPlan {
++  _IndexedElementPlan(this.keys, this.values);
++  final List<OptionKey> keys;
++  final List<Object?> values;
++
++  bool matches(List<Object> other) {
++    if (keys.length != other.length) return false;
++    for (var i = 0; i < keys.length; i++) {
++      if (!identical(keys[i], other[i])) return false;
++    }
++    return true;
++  }
++
++  bool fill(Object context, ElementOptions into) {
++    if (context is! ScriptableContext || !context.jsHas('index')) return false;
++    final rawIndex = context.index;
++    if (rawIndex is! num) return false;
++    // Match jsToNumber before remainder, including VM integers above 2^53.
++    final index = rawIndex.toDouble();
++    if (!index.isFinite || index < 0 || index != index.truncateToDouble()) {
++      return false;
++    }
++    // No stores before preflight: unsupported selected values must follow the
++    // original path, including nested resolvers and empty-array semantics.
++    for (var i = 0; i < values.length; i++) {
++      var value = values[i];
++      if (value is List<Object?>) {
++        if (value.isEmpty) return false;
++        value = value[index.remainder(value.length).toInt()];
++      }
++      if (!_indexedScalar(value)) return false;
++      // Native stores only. Foreign numeric conversions can invoke the debug
++      // audit hook; those keep the ordinary observable read/write order too.
++      final native = switch (keys[i]) {
++        OptionKey.borderWidth ||
++        OptionKey.hitRadius ||
++        OptionKey.hoverBorderWidth ||
++        OptionKey.hoverRadius ||
++        OptionKey.radius ||
++        OptionKey.rotation => value is num,
++        OptionKey.backgroundColor ||
++        OptionKey.borderColor ||
++        OptionKey.pointStyle ||
++        OptionKey.borderSkipped ||
++        OptionKey.borderRadius ||
++        OptionKey.inflateAmount => true,
++        _ => false,
++      };
++      if (!native) return false;
++    }
++    for (var i = 0; i < keys.length; i++) {
++      final value = values[i];
++      into.storeKey(
++        keys[i],
++        value is List<Object?>
++            ? value[index.remainder(value.length).toInt()]
++            : value,
++      );
++    }
++    return true;
++  }
++}
++
+ /// helpers.config.ts:27 `_createResolver`.
+ ///
+ /// Creates a Proxy for resolving raw values for options.
+@@ -287,6 +402,98 @@ final class OptionResolver implements ResolverProxy {
+   /// that the `set` trap writes.
+   final _Cache _cache = _Cache();
+ 
++  _IndexedElementPlan? _indexedElementPlan;
++  int _indexedRejectedSize = -1;
++
++  /// True only for ordinary SDK lists supported by indexed option probing.
++  @internal
++  static bool nativeIndexedList(Object? value) =>
++      _nativeIndexedLists.contains(value.runtimeType);
++
++  /// Exact native result classes, both final. Other kinds skip all list guards.
++  @internal
++  static bool nativeIndexedResult(ElementOptions into) =>
++      into is PointOptions || into is BarOptions;
++
++  /// Resolves native indexed scalar options from already cached raw values.
++  /// Null means that context was not called. A failed result retains the one
++  /// context call so the ordinary path can continue at attachContext.
++  @internal
++  // DIVERGES(chartjs): adapt-indexed-element-options, guarded cached plan.
++  ({bool resolved, Object context})? resolveIndexedElementOptions(
++    List<Object> keys,
++    Object Function() context,
++    ElementOptions into,
++    bool Function(Object?, Object?) descriptorGuard,
++    bool Function() stillCached, {
++    bool nativeInputs = false,
++  }) {
++    if (_slotsTouched ||
++        (!nativeInputs && !nativeIndexedList(keys)) ||
++        !nativeIndexedResult(into)) {
++      return null;
++    }
++    var plan = _indexedElementPlan;
++    if (plan == null || !plan.matches(keys)) {
++      // Rejection is conservative across key shapes. Rechecking when the
++      // cache grows lets an initially cold resolver qualify after ordinary
++      // resolution, without taxing every scriptable element with a key scan.
++      final size = _cache._keys?.length ?? 0;
++      if (_indexedRejectedSize == size) return null;
++      ({bool resolved, Object context})? reject() {
++        _indexedRejectedSize = size;
++        return null;
++      }
++
++      final scriptable = _cache.get(OptionKey.descScriptable);
++      final indexable = _cache.get(OptionKey.descIndexable);
++      if (!descriptorGuard(scriptable, indexable) ||
++          identical(_cache.get(OptionKey.descAllKeys), _absent)) {
++        return reject();
++      }
++      final desc = _Descriptor(
++        allKeys: false,
++        scriptable: scriptable is Undefined ? true : scriptable,
++        indexable: indexable is Undefined ? true : indexable,
++      );
++      final planKeys = <OptionKey>[];
++      final values = <Object?>[];
++      var indexed = false;
++      for (final key in keys) {
++        if (key is! OptionKey ||
++            key.jsName.startsWith('_') ||
++            !into.knownKeyList.contains(key.jsName)) {
++          return reject();
++        }
++        final value = _cache.get(key);
++        if (!_indexedScalar(value)) {
++          if (value is! List<Object?> ||
++              !_nativeIndexedLists.contains(value.runtimeType) ||
++              !desc.isIndexable(key.jsName)) {
++            return reject();
++          }
++          indexed = true;
++        }
++        planKeys.add(key);
++        values.add(value);
++      }
++      if (!indexed) return reject();
++      plan = _indexedElementPlan = _IndexedElementPlan(planKeys, values);
++    }
++    // The context factory can observe or mutate the result supplied by its
++    // caller. Preserve the upstream $shared store before invoking it.
++    into.storeKey(OptionKey.dollarShared, false);
++    final ctx = context();
++    // An overridden controller/context factory can write/delete resolver keys.
++    // Continue with its original context if it invalidates this snapshot.
++    final resolved =
++        stillCached() &&
++        identical(plan, _indexedElementPlan) &&
++        plan.matches(keys) &&
++        plan.fill(ctx, into);
++    return (resolved: resolved, context: ctx);
++  }
++
+   /// `_keys` of the target (helpers.config.ts:419-425), or Dart `null`.
+   List<String>? _keys;
+ 
+@@ -384,6 +591,8 @@ final class OptionResolver implements ResolverProxy {
+ 
+   /// `delete target[name]` of the cache object.
+   void _removeOwn(String name) {
++    _indexedElementPlan = null;
++    _indexedRejectedSize = -1;
+     _cache.remove(_keyOf(name));
+     switch (name) {
+       case '_keys':
+@@ -478,6 +687,8 @@ final class OptionResolver implements ResolverProxy {
+   /// A trap for setting property values.
+   @core.override
+   void operator []=(String key, Object? value) {
++    _indexedElementPlan = null;
++    _indexedRejectedSize = -1;
+     final current = _ownOrUndefined('_storage');
+     final Object? storage;
+     if (jsTruthy(current)) {

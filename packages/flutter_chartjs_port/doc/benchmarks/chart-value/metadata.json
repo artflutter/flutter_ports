@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-03",
+  "candidateLibrarySha256": "bbb41ab8b12d7203af8c0cc89e479ab4b611a052ee5bebd01db627cdb827d968",
+  "mode": "macOS 27.0.1 arm64 profile AOT",
+  "toolchain": {
+    "frameworkVersion": "3.47.8",
+    "channel": "stable",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "737ba8f885dc774b53b442759999a312c9461e4e",
+    "frameworkCommitDate": "2026-10-22 21:37:31 -0700",
+    "engineRevision": "cf636b1dfb818dd6a3ff16e390e93b1a036969c8",
+    "engineCommitDate": "2026-10-23 02:13:38.000Z",
+    "engineContentHash": "dfd2e6cb7d319db05e3bf1503f3e2ac60f6288a2",
+    "engineBuildDate": "2026-10-23 05:34:48.330",
+    "dartSdkVersion": "3.13.7",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.8"
+  },
+  "canvas": "800x480 DPR1",
+  "points": 5000,
+  "protocol": "A/B/B/A, reversed case order in B2/A2, 800ms warmup and seven 200ms batches per stage. No simultaneous builds/tests. Arithmetic mean of two process medians.",
+  "stages": {
+    "constructLower": "Construct typed Dataset, call lowerDataset, consume ownKeyCount in checksum. Does not execute callback.",
+    "updatePaint": "Repeated full update(none), draw, native paint into recorder and completion/disposal. Includes no data mutation, lowering, widget rebuild, raster or vsync."
+  },
+  "limits": "Isolated construction microbenchmark; tiny absolute differences. No additional hot-path speedup established. The colors field uses diagnostic Color.toString in profile and is not a correctness oracle; actual values are checked by typed/raw twins and focused tests."
+}

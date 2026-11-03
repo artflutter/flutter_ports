@@ -1,0 +1,69 @@
+// Original code, not ported from Chart.js: typed background-value comparison.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
+import 'package:flutter_chartjs_port/src/typed/lower.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+
+const blue=ui.Color(0xff36a2eb),red=ui.Color(0xffff6384);
+ui.Color choose(ChartContext c)=>(c.dataIndex??0)%2==0?blue:red;
+Dataset dataset(String type,String form,List<num?> data) {
+ final color=form=='static'?blue:null;
+ final colors=form=='indexed'?<ui.Color>[blue,red]:null;
+ final script=form=='resolver'?choose:null;
+ return type=='line'
+ ? LineDataset(data:data,backgroundColor:color,backgroundColors:colors,backgroundColorFor:script,
+   borderColor:blue,borderWidth:1,showLine:false,pointRadius:3)
+ : BarDataset(data:data,backgroundColor:color,backgroundColors:colors,backgroundColorFor:script,
+   borderColor:blue,borderWidth:1);
+}
+double median(List<double> x){x.sort();return x[x.length~/2];}
+Map<String,Object?> measure(void Function() action,{int warmup=800,int batches=7,int batch=200}) {
+ final warm=Stopwatch()..start();var warmCount=0;
+ while(warm.elapsedMilliseconds<warmup){action();warmCount++;}
+ final count=(batch*warmCount/warm.elapsedMilliseconds).round().clamp(1,1000000);
+ final samples=<double>[];
+ for(var i=0;i<batches;i++) {
+  final w=Stopwatch()..start();for(var j=0;j<count;j++)action();w.stop();
+  samples.add(w.elapsedMicroseconds/count/1000);
+ }
+ return {'medianMs':median([...samples]),'samplesMs':samples,'iterations':count};
+}
+Future<void> run() async {
+ await Future<void>.delayed(const Duration(seconds:2));
+ registerGalleryComponents();animator.refresh=(){};
+ final env=Platform.environment;
+ var cases=[for(final type in ['line','bar']) for(final form in ['static','indexed','resolver']) (type,form)];
+ if(env['REVERSE']=='1') cases=cases.reversed.toList();
+ final n=int.parse(env['N']??'5000');
+ for(final (type,form) in cases) {
+  final data=<num?>[for(var i=0;i<n;i++) (i%100).toDouble()];
+  final kind=type=='line'?ChartKind.line:ChartKind.bar;
+  var sink=0;
+  final lower=measure((){sink+=lowerDataset(dataset(type,form,data),kind).ownKeyCount;});
+  print('VALUE ${jsonEncode({'case':'$type.$form','stage':'constructLower',...lower,'sink':sink,'n':n})}');
+  final config=ChartConfig(type:kind,labels:[for(var i=0;i<n;i++) '$i'],datasets:[dataset(type,form,data)],
+   scales:const {'x':CategoryAxis(display:false),'y':LinearAxis(display:false,min:0,max:100)},
+   animation:ChartAnimation.none,legend:const ChartLegend(display:false),responsive:false,
+   maintainAspectRatio:false,extra:const {'devicePixelRatio':1.0,'events':<String>[],'layout':{'autoPadding':false}});
+  final root=ChartConfigLowering(config).lower();
+  final canvas=UiCanvasElement(width:800,height:480);
+  final chart=Chart(canvas,root);final ctx=canvas.getContext2d();
+  final result=measure((){
+    chart.update('none');
+    final r=ui.PictureRecorder();ctx.paint(ui.Canvas(r),ui.Offset.zero,1,1);r.endRecording().dispose();
+  });
+  final elements=chart.getDatasetMeta(0).data;
+  final observed=[for(var i=0;i<3;i++) (elements[i].options as JsObjectFace).jsRead('backgroundColor').toString()];
+  print('VALUE ${jsonEncode({'case':'$type.$form','stage':'updatePaint',...result,'n':n,'colors':observed})}');
+  chart.destroy();
+ }
+ exit(0);
+}
+void main(){WidgetsFlutterBinding.ensureInitialized();runApp(const MaterialApp(home:Scaffold(body:Text('ChartValue prototype'))));unawaited(run().catchError((Object e,StackTrace s){print('$e\n$s');exit(1);}));}

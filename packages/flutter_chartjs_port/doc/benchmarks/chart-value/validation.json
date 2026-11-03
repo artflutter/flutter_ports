@@ -1,0 +1,20 @@
+{
+  "typedTests": 442,
+  "workspacePasses": 10867,
+  "chartJsPasses": 10322,
+  "chartJsSkips": 84,
+  "focusedValueTests": {
+    "vm": 20,
+    "javascript": 20,
+    "wasm": 20
+  },
+  "readmeAndCallerTests": 27,
+  "publicApi": "four added exports verified; 54 typed names, no collisions",
+  "analysis": "workspace --fatal-infos passed",
+  "format": "782 files; 0 changes",
+  "portChecks": "all seven passed; no typed-read baseline increases",
+  "parity": "regenerated, 0 errors/warnings",
+  "runtimeScope": "No core resolver, canvas, schema, border/hover/element/raw API behavior changes in this prototype",
+  "temporaryBrowserProbe": "removed after successful JS/Wasm runs",
+  "performance": "A/B/B/A complete. Construction/lowering isolated and sub-microsecond; no meaningful extra chart-update/paint gain."
+}

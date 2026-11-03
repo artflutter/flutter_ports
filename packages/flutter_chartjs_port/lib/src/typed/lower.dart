@@ -17,7 +17,7 @@
 ///    parameter that is `null` writes no key.
 /// 2. A List of the app goes by reference: `data`, `points`, `labels`,
 ///    `CategoryAxis.labels` and `plugins`. A small style List
-///    (`backgroundColors`, `borderColors`, `borderDash`) lowers to a new
+///    (`ChartValue.indexed`, `borderColors`, `borderDash`) lowers to a new
 ///    List.
 /// 3. A `Color` lowers through [colorValue], a `TextStyle` through
 ///    `fontScopeOf` of `css.dart` (a `FontSpecScope`), a `Duration` through
@@ -27,8 +27,8 @@
 ///    `{value}` of `ChartFill.value`) becomes a typed scope of the kind of
 ///    its key ([put]).
 /// 4. A plain value never lowers to a closure. Only a function parameter
-///    does: [colorScript] for the scriptable colors, a `JsFunction` for the
-///    tick format, and a trampoline for each event and text callback.
+///    does: a ChartValue bridge or [colorScript] for colors, a `JsFunction`
+///    for the tick format, and a trampoline for each event and text callback.
 /// 5. A trampoline reads the callback of the newest config of its
 ///    [ChartConfigLowering] at each call ([eventTrampoline],
 ///    [legendTrampoline], [tooltipItemsTrampoline], [tooltipItemTrampoline]
@@ -473,10 +473,9 @@ Object? Function(Object?) animationTrampoline(
 /// Keeps the native [color] unchanged, including null for an unset option.
 Color? colorValue(Color? color) => color;
 
-/// A native color, a mutable indexable color list, or a color callback.
-/// Dart `null` when the three are `null`.
-///
-/// The constructors of the typed classes assert that at most one is set.
+/// The remaining border-color companion parameters: a native color, mutable
+/// indexed list or callback. Dart null when all three are null.
+/// Constructors assert that at most one border-color form is set.
 Object? colorOption(
   Color? color,
   List<Color>? colors,

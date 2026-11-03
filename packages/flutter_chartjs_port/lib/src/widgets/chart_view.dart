@@ -93,7 +93,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 ///   datasets. The key keeps the state of the dataset: its hidden state and
 ///   its animations.
 /// * Give a method tear-off or a function in a field for a scriptable color
-///   (`backgroundColorFor`) and for a tick format: a new closure in each
+///   (`ChartValue.resolver`) and for a tick format: a new closure in each
 ///   `build` is a new value, and the chart then updates. The event and
 ///   tooltip callbacks (`onClick`, `onHover`, the legend handlers, the
 ///   tooltip texts and the animation callbacks) can be new closures: the

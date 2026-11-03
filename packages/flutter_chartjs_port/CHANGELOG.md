@@ -1,5 +1,9 @@
 ## 0.1.0
 
+- Prototype a sealed `ChartValue<Color>` for typed dataset `backgroundColor`.
+  Migrate plain colors to `.constant(...)`, `backgroundColors` to `.indexed(...)`,
+  and `backgroundColorFor` to `.resolver(...)`. Border and raw APIs are unchanged.
+
 - Add `Chart.updateData()` for incremental native data updates across all eight
   chart types, with metadata/interaction refresh and conservative full fallback.
 

@@ -1,0 +1,74 @@
+[
+  {
+    "case": "line.static",
+    "runs": 2,
+    "update": 0.571,
+    "draw": 0.632,
+    "end": 0.2,
+    "full": 1.403
+  },
+  {
+    "case": "line.indexed",
+    "runs": 2,
+    "update": 12.3285,
+    "draw": 0.723,
+    "end": 0.212,
+    "full": 13.2635
+  },
+  {
+    "case": "line.callback",
+    "runs": 2,
+    "update": 12.227,
+    "draw": 0.776,
+    "end": 0.214,
+    "full": 13.217
+  },
+  {
+    "case": "bar.static",
+    "runs": 2,
+    "update": 1.2765,
+    "draw": 1.9955,
+    "end": 0.7335,
+    "full": 4.0055
+  },
+  {
+    "case": "bar.indexed",
+    "runs": 2,
+    "update": 15.1695,
+    "draw": 2.2489999999999997,
+    "end": 0.7444999999999999,
+    "full": 18.163
+  },
+  {
+    "case": "bar.callback",
+    "runs": 2,
+    "update": 14.927,
+    "draw": 2.1405000000000003,
+    "end": 0.729,
+    "full": 17.796499999999998
+  },
+  {
+    "case": "radar.static",
+    "runs": 2,
+    "update": 1.7534999999999998,
+    "draw": 1.8845,
+    "end": 0.2015,
+    "full": 3.8395
+  },
+  {
+    "case": "radar.indexed",
+    "runs": 2,
+    "update": 14.1435,
+    "draw": 2.113,
+    "end": 0.217,
+    "full": 16.473499999999998
+  },
+  {
+    "case": "radar.callback",
+    "runs": 2,
+    "update": 13.741499999999998,
+    "draw": 2.062,
+    "end": 0.2115,
+    "full": 16.014999999999997
+  }
+]

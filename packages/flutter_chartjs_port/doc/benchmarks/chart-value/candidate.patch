@@ -1,0 +1,449 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/typed/datasets.dart b/packages/flutter_chartjs_port/lib/src/typed/datasets.dart
+index e68f464..c1209b1 100644
+--- a/packages/flutter_chartjs_port/lib/src/typed/datasets.dart
++++ b/packages/flutter_chartjs_port/lib/src/typed/datasets.dart
+@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+         PolarAreaControllerDatasetOptionsScope,
+         RadarControllerDatasetOptionsScope;
+ import 'package:flutter_chartjs_port/src/typed/callbacks.dart' show ChartScript;
++import 'package:flutter_chartjs_port/src/typed/chart_value.dart'
++    show ChartValue;
+ import 'package:flutter_chartjs_port/src/typed/config.dart'
+     show ChartKind, IndexAxis;
+ import 'package:flutter_chartjs_port/src/typed/lower.dart';
+@@ -49,23 +51,20 @@ import 'package:meta/meta.dart' show internal;
+ /// A parameter that is `null` is not set: the chart uses the default of
+ /// Chart.js. Each parameter names its Chart.js option in its doc.
+ ///
+-/// The background and the border colors have three forms. Give at most one
+-/// of the three:
+-/// - [backgroundColor]: one color for all data items;
+-/// - [backgroundColors]: one color for each data item, in data order;
+-/// - [backgroundColorFor]: a function of the context of each data item.
++/// [backgroundColor] is one explicit [ChartValue]: constant, indexed or
++/// resolved by a callback. The border color retains its three companion
++/// parameters: [borderColor], [borderColors] and [borderColorFor].
+ ///
+-/// The List and the function forms make the chart resolve the options of
+-/// each data item, as the same Chart.js option does. Thus give the plain
+-/// form when one color is enough.
++/// Indexed and callback values resolve per data item. Prefer a constant
++/// value when the whole dataset uses one color.
+ ///
+ /// The keys that this class does not have go through [extra].
+ ///
+ /// A dataset is immutable. `==` compares the parameters: a List of data
+ /// items by identity, a small List of style values by its items, and a
+ /// function with `==`. Use a method tear-off or a function in a field for
+-/// [backgroundColorFor] and [borderColorFor]: a new closure in each build
+-/// is a new value, and the chart then updates.
++/// a resolver in [backgroundColor] and for [borderColorFor]: a new closure
++/// in each build is a new value, and the chart then updates.
+ @immutable
+ abstract final class Dataset with Diagnosticable {
+   /// The parameters of each dataset class.
+@@ -75,8 +74,6 @@ abstract final class Dataset with Diagnosticable {
+     this.hidden,
+     this.order,
+     this.backgroundColor,
+-    this.backgroundColors,
+-    this.backgroundColorFor,
+     this.borderColor,
+     this.borderColors,
+     this.borderColorFor,
+@@ -86,17 +83,6 @@ abstract final class Dataset with Diagnosticable {
+     this.hoverBorderWidth,
+     this.extra,
+   }) : assert(
+-         backgroundColor == null ||
+-             (backgroundColors == null && backgroundColorFor == null),
+-         'Give at most one of backgroundColor, backgroundColors and '
+-         'backgroundColorFor.',
+-       ),
+-       assert(
+-         backgroundColors == null || backgroundColorFor == null,
+-         'Give at most one of backgroundColor, backgroundColors and '
+-         'backgroundColorFor.',
+-       ),
+-       assert(
+          borderColor == null ||
+              (borderColors == null && borderColorFor == null),
+          'Give at most one of borderColor, borderColors and borderColorFor.',
+@@ -129,16 +115,9 @@ abstract final class Dataset with Diagnosticable {
+   /// is 0.
+   final int? order;
+ 
+-  /// The fill color of the data items: `backgroundColor`.
+-  final Color? backgroundColor;
+-
+-  /// The fill color of each data item, in data order: `backgroundColor` as
+-  /// an array. The colors repeat when the dataset has more items.
+-  final List<Color>? backgroundColors;
+-
+-  /// The fill color of each data item as a function of its context:
+-  /// `backgroundColor` as a scriptable option.
+-  final ChartScript<Color>? backgroundColorFor;
++  /// The data-item fill: a constant, indexed list or typed callback.
++  /// A null parameter inherits the default. This lowers to `backgroundColor`.
++  final ChartValue<Color>? backgroundColor;
+ 
+   /// The border color of the data items: `borderColor`.
+   final Color? borderColor;
+@@ -177,16 +156,14 @@ abstract final class Dataset with Diagnosticable {
+ 
+   /// A copy of this dataset with the given parameters.
+   ///
+-  /// A parameter that is `null` keeps its value. A copy that sets a second
+-  /// form of a color fails the assert of the constructor.
++  /// A null parameter keeps its value. A new [backgroundColor] replaces its
++  /// previous variant; the border-color companion parameters remain exclusive.
+   Dataset copyWith({
+     Key? key,
+     String? label,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -215,8 +192,6 @@ abstract final class Dataset with Diagnosticable {
+     ('hidden', hidden),
+     ('order', order),
+     ('backgroundColor', backgroundColor),
+-    ('backgroundColors', byItems(backgroundColors)),
+-    ('backgroundColorFor', backgroundColorFor),
+     ('borderColor', borderColor),
+     ('borderColors', byItems(borderColors)),
+     ('borderColorFor', borderColorFor),
+@@ -274,15 +249,10 @@ OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
+   put(scope, OptionKey.data, dataset._data);
+   put(scope, OptionKey.hidden, dataset.hidden);
+   put(scope, OptionKey.order, dataset.order);
+-  put(
+-    scope,
+-    OptionKey.backgroundColor,
+-    colorOption(
+-      dataset.backgroundColor,
+-      dataset.backgroundColors,
+-      dataset.backgroundColorFor,
+-    ),
+-  );
++  if (dataset.backgroundColor case final value?) {
++    // Preserve the public variant directly, without raw value classification.
++    scope.store(OptionKey.backgroundColor, value.toOptionCell());
++  }
+   put(
+     scope,
+     OptionKey.borderColor,
+@@ -336,8 +306,6 @@ final class BarDataset extends Dataset {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -440,9 +408,7 @@ final class BarDataset extends Dataset {
+     List<DataPoint>? points,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -470,8 +436,6 @@ final class BarDataset extends Dataset {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+@@ -620,8 +584,6 @@ final class LineDataset extends Dataset with _LineStyle {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -769,9 +731,7 @@ final class LineDataset extends Dataset with _LineStyle {
+     List<DataPoint>? points,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -806,8 +766,6 @@ final class LineDataset extends Dataset with _LineStyle {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+@@ -883,8 +841,6 @@ final class ScatterDataset extends Dataset with _LineStyle {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -993,9 +949,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
+     List<DataPoint>? points,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -1029,8 +983,6 @@ final class ScatterDataset extends Dataset with _LineStyle {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+@@ -1101,8 +1053,6 @@ final class BubbleDataset extends Dataset {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -1147,9 +1097,7 @@ final class BubbleDataset extends Dataset {
+     List<DataPoint>? points,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -1170,8 +1118,6 @@ final class BubbleDataset extends Dataset {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+@@ -1269,8 +1215,6 @@ final class PieDataset extends Dataset with _ArcStyle {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -1361,9 +1305,7 @@ final class PieDataset extends Dataset with _ArcStyle {
+     List<num?>? data,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -1387,8 +1329,6 @@ final class PieDataset extends Dataset with _ArcStyle {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+@@ -1441,8 +1381,6 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -1505,9 +1443,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
+     List<num?>? data,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -1531,8 +1467,6 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+@@ -1585,8 +1519,6 @@ final class PolarAreaDataset extends Dataset {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -1619,9 +1551,7 @@ final class PolarAreaDataset extends Dataset {
+     List<num?>? data,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -1640,8 +1570,6 @@ final class PolarAreaDataset extends Dataset {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+@@ -1695,8 +1623,6 @@ final class RadarDataset extends Dataset with _LineStyle {
+     super.hidden,
+     super.order,
+     super.backgroundColor,
+-    super.backgroundColors,
+-    super.backgroundColorFor,
+     super.borderColor,
+     super.borderColors,
+     super.borderColorFor,
+@@ -1787,9 +1713,7 @@ final class RadarDataset extends Dataset with _LineStyle {
+     List<num?>? data,
+     bool? hidden,
+     int? order,
+-    Color? backgroundColor,
+-    List<Color>? backgroundColors,
+-    ChartScript<Color>? backgroundColorFor,
++    ChartValue<Color>? backgroundColor,
+     Color? borderColor,
+     List<Color>? borderColors,
+     ChartScript<Color>? borderColorFor,
+@@ -1819,8 +1743,6 @@ final class RadarDataset extends Dataset with _LineStyle {
+     hidden: hidden ?? this.hidden,
+     order: order ?? this.order,
+     backgroundColor: backgroundColor ?? this.backgroundColor,
+-    backgroundColors: backgroundColors ?? this.backgroundColors,
+-    backgroundColorFor: backgroundColorFor ?? this.backgroundColorFor,
+     borderColor: borderColor ?? this.borderColor,
+     borderColors: borderColors ?? this.borderColors,
+     borderColorFor: borderColorFor ?? this.borderColorFor,
+diff --git a/packages/flutter_chartjs_port/lib/src/typed/lower.dart b/packages/flutter_chartjs_port/lib/src/typed/lower.dart
+index a738926..4ffef55 100644
+--- a/packages/flutter_chartjs_port/lib/src/typed/lower.dart
++++ b/packages/flutter_chartjs_port/lib/src/typed/lower.dart
+@@ -17,7 +17,7 @@
+ ///    parameter that is `null` writes no key.
+ /// 2. A List of the app goes by reference: `data`, `points`, `labels`,
+ ///    `CategoryAxis.labels` and `plugins`. A small style List
+-///    (`backgroundColors`, `borderColors`, `borderDash`) lowers to a new
++///    (`ChartValue.indexed`, `borderColors`, `borderDash`) lowers to a new
+ ///    List.
+ /// 3. A `Color` lowers through [colorValue], a `TextStyle` through
+ ///    `fontScopeOf` of `css.dart` (a `FontSpecScope`), a `Duration` through
+@@ -27,8 +27,8 @@
+ ///    `{value}` of `ChartFill.value`) becomes a typed scope of the kind of
+ ///    its key ([put]).
+ /// 4. A plain value never lowers to a closure. Only a function parameter
+-///    does: [colorScript] for the scriptable colors, a `JsFunction` for the
+-///    tick format, and a trampoline for each event and text callback.
++///    does: a ChartValue bridge or [colorScript] for colors, a `JsFunction`
++///    for the tick format, and a trampoline for each event and text callback.
+ /// 5. A trampoline reads the callback of the newest config of its
+ ///    [ChartConfigLowering] at each call ([eventTrampoline],
+ ///    [legendTrampoline], [tooltipItemsTrampoline], [tooltipItemTrampoline]
+@@ -473,10 +473,9 @@ Object? Function(Object?) animationTrampoline(
+ /// Keeps the native [color] unchanged, including null for an unset option.
+ Color? colorValue(Color? color) => color;
+ 
+-/// A native color, a mutable indexable color list, or a color callback.
+-/// Dart `null` when the three are `null`.
+-///
+-/// The constructors of the typed classes assert that at most one is set.
++/// The remaining border-color companion parameters: a native color, mutable
++/// indexed list or callback. Dart null when all three are null.
++/// Constructors assert that at most one border-color form is set.
+ Object? colorOption(
+   Color? color,
+   List<Color>? colors,
+diff --git a/packages/flutter_chartjs_port/lib/src/typed/props.dart b/packages/flutter_chartjs_port/lib/src/typed/props.dart
+index f88d73b..6c7c669 100644
+--- a/packages/flutter_chartjs_port/lib/src/typed/props.dart
++++ b/packages/flutter_chartjs_port/lib/src/typed/props.dart
+@@ -14,7 +14,7 @@
+ ///   compares with Dart `==`: a tear-off of a method of one object is `==`
+ ///   to the same tear-off.
+ /// - [byItems]: the items of a List compare by `==`, in order. The small
+-///   style Lists (`backgroundColors`, `borderDash`) and the dataset List
++///   style Lists (`borderColors`, `borderDash`) and the dataset List
+ ///   use it.
+ /// - [byEntries]: the entries of a Map compare by `==`, in key order, and a
+ ///   value that is a Map compares by its entries too. The `scales` Map and
+diff --git a/packages/flutter_chartjs_port/lib/src/typed/typed.dart b/packages/flutter_chartjs_port/lib/src/typed/typed.dart
+index 58c6d26..670adf8 100644
+--- a/packages/flutter_chartjs_port/lib/src/typed/typed.dart
++++ b/packages/flutter_chartjs_port/lib/src/typed/typed.dart
+@@ -32,6 +32,8 @@ export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
+         ChartLegendItem,
+         ChartScript,
+         ChartTooltipItem;
++export 'package:flutter_chartjs_port/src/typed/chart_value.dart'
++    show ChartConstant, ChartIndexed, ChartResolver, ChartValue;
+ export 'package:flutter_chartjs_port/src/typed/config.dart'
+     show ChartConfig, ChartKind, IndexAxis;
+ export 'package:flutter_chartjs_port/src/typed/datasets.dart'
+diff --git a/packages/flutter_chartjs_port/lib/src/widgets/chart_view.dart b/packages/flutter_chartjs_port/lib/src/widgets/chart_view.dart
+index 169c2e7..91c0757 100644
+--- a/packages/flutter_chartjs_port/lib/src/widgets/chart_view.dart
++++ b/packages/flutter_chartjs_port/lib/src/widgets/chart_view.dart
+@@ -93,7 +93,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
+ ///   datasets. The key keeps the state of the dataset: its hidden state and
+ ///   its animations.
+ /// * Give a method tear-off or a function in a field for a scriptable color
+-///   (`backgroundColorFor`) and for a tick format: a new closure in each
++///   (`ChartValue.resolver`) and for a tick format: a new closure in each
+ ///   `build` is a new value, and the chart then updates. The event and
+ ///   tooltip callbacks (`onClick`, `onHover`, the legend handlers, the
+ ///   tooltip texts and the animation callbacks) can be new closures: the

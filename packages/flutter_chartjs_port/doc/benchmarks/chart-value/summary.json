@@ -1,0 +1,134 @@
+[
+  {
+    "case": "line.static",
+    "stage": "constructLower",
+    "baselineMs": 0.0004618295201077745,
+    "candidateMs": 0.000436504489618273,
+    "changePercent": -5.483631813659617,
+    "pairChangesPercent": [
+      -4.100391019413374,
+      -6.799166329767492
+    ]
+  },
+  {
+    "case": "line.static",
+    "stage": "updatePaint",
+    "baselineMs": 1.80777002002002,
+    "candidateMs": 1.8578256880733945,
+    "changePercent": 2.7689179209211767,
+    "pairChangesPercent": [
+      0.5830969171785938,
+      4.941371219481083
+    ]
+  },
+  {
+    "case": "line.indexed",
+    "stage": "constructLower",
+    "baselineMs": 0.0004769517185597722,
+    "candidateMs": 0.0004417613089193691,
+    "changePercent": -7.378191181838256,
+    "pairChangesPercent": [
+      -7.342617466551071,
+      -7.4134336282676845
+    ]
+  },
+  {
+    "case": "line.indexed",
+    "stage": "updatePaint",
+    "baselineMs": 8.1203,
+    "candidateMs": 8.207169166666667,
+    "changePercent": 1.0697777996707902,
+    "pairChangesPercent": [
+      3.1020121431080128,
+      -0.8893659047849223
+    ]
+  },
+  {
+    "case": "line.resolver",
+    "stage": "constructLower",
+    "baselineMs": 0.000462731484109672,
+    "candidateMs": 0.0004415536503755381,
+    "changePercent": -4.576700410796897,
+    "pairChangesPercent": [
+      -3.7794101207988873,
+      -5.351089842535073
+    ]
+  },
+  {
+    "case": "line.resolver",
+    "stage": "updatePaint",
+    "baselineMs": 14.944085164835165,
+    "candidateMs": 14.903923076923078,
+    "changePercent": -0.26874905669429516,
+    "pairChangesPercent": [
+      0.05674546325051821,
+      -0.5857608795049596
+    ]
+  },
+  {
+    "case": "bar.static",
+    "stage": "constructLower",
+    "baselineMs": 0.0003081917095281323,
+    "candidateMs": 0.00027459462045366975,
+    "changePercent": -10.901360431110408,
+    "pairChangesPercent": [
+      -10.846058032103556,
+      -10.955478010991781
+    ]
+  },
+  {
+    "case": "bar.static",
+    "stage": "updatePaint",
+    "baselineMs": 3.6558425925925926,
+    "candidateMs": 3.6543392255892257,
+    "changePercent": -0.041122312169916686,
+    "pairChangesPercent": [
+      0.1372207474820364,
+      -0.21912511892472342
+    ]
+  },
+  {
+    "case": "bar.indexed",
+    "stage": "constructLower",
+    "baselineMs": 0.00032080091666171354,
+    "candidateMs": 0.0002885427862748028,
+    "changePercent": -10.055498195763313,
+    "pairChangesPercent": [
+      -10.78591276158658,
+      -9.326589009644803
+    ]
+  },
+  {
+    "case": "bar.indexed",
+    "stage": "updatePaint",
+    "baselineMs": 12.5505,
+    "candidateMs": 12.45953125,
+    "changePercent": -0.7248217202501905,
+    "pairChangesPercent": [
+      -1.2779961965571962,
+      -0.1595835724569894
+    ]
+  },
+  {
+    "case": "bar.resolver",
+    "stage": "constructLower",
+    "baselineMs": 0.00031286135127274044,
+    "candidateMs": 0.00027917739067163054,
+    "changePercent": -10.766417924132,
+    "pairChangesPercent": [
+      -10.696521474923193,
+      -10.838626185929067
+    ]
+  },
+  {
+    "case": "bar.resolver",
+    "stage": "updatePaint",
+    "baselineMs": 17.544818181818183,
+    "candidateMs": 17.629045454545455,
+    "changePercent": 0.4800692253086769,
+    "pairChangesPercent": [
+      1.2026448852586524,
+      -0.2412495275961657
+    ]
+  }
+]

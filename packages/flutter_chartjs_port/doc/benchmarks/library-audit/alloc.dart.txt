@@ -1,0 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:vm_service/vm_service_io.dart';
+Future<void> main(List<String> args) async {
+ final s=await vmServiceConnectUri(args[0]);
+ final vm=await s.getVM();final id=vm.isolates!.firstWhere((i)=>i.name=='main').id!;
+ final before=await s.getAllocationProfile(id,reset:true,gc:true);
+ final step=await s.callServiceExtension('ext.audit.step',isolateId:id);
+ final after=await s.getAllocationProfile(id);
+ await File(args[1]).writeAsString(jsonEncode({'before':before.toJson(),'step':step.json,'after':after.toJson()}));
+ await s.dispose();
+}

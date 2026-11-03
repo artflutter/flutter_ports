@@ -1,0 +1,16 @@
+import os,subprocess,json
+from pathlib import Path
+root=Path(__file__).resolve().parents[2];out=root/'.dart_tool/indexed_options'
+for label,app,reverse in [('a1','/tmp/chart-library-audit-extra.app','0'),('b1','/tmp/chart-indexed-options.app','0'),('b2','/tmp/chart-indexed-options.app','1'),('a2','/tmp/chart-library-audit-extra.app','1')]:
+ with (out/(label+'.log')).open('w') as log:
+  p=subprocess.run([app+'/Contents/MacOS/chartjs_gallery'],env={**os.environ,'EXTRA':'1','N':'5000','REVERSE':reverse},stdout=log,stderr=subprocess.STDOUT,timeout=180)
+ if p.returncode:raise RuntimeError((out/(label+'.log')).read_text())
+ rows=[json.loads(l.split('AUDIT ',1)[1]) for l in (out/(label+'.log')).read_text().splitlines() if 'AUDIT {' in l]
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2));print(label,len(rows),flush=True)
+# Theme switching exercises indexed arc options, an unsupported result kind.
+for label,app in [('arc-a1','/tmp/chart-library-audit-extra.app'),('arc-b1','/tmp/chart-indexed-options.app'),('arc-b2','/tmp/chart-indexed-options.app'),('arc-a2','/tmp/chart-library-audit-extra.app')]:
+ with (out/(label+'.log')).open('w') as log:
+  p=subprocess.run([app+'/Contents/MacOS/chartjs_gallery'],env={**os.environ,'EXTRA':'','CASES':'theme.switch','TYPE':'doughnut','N':'1000'},stdout=log,stderr=subprocess.STDOUT,timeout=90)
+ if p.returncode:raise RuntimeError((out/(label+'.log')).read_text())
+ rows=[json.loads(l.split('AUDIT ',1)[1]) for l in (out/(label+'.log')).read_text().splitlines() if 'AUDIT {' in l]
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2));print(label,len(rows),flush=True)

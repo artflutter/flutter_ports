@@ -1,0 +1,10 @@
+import os,subprocess,json
+from pathlib import Path
+root=Path(__file__).resolve().parents[2];out=root/'.dart_tool/chart_value'
+for label,app,rev in [('a1','/tmp/chart-value-a.app','0'),('b1','/tmp/chart-value-b.app','0'),('b2','/tmp/chart-value-b.app','1'),('a2','/tmp/chart-value-a.app','1')]:
+ with (out/(label+'.log')).open('w') as log:
+  p=subprocess.run([app+'/Contents/MacOS/chartjs_gallery'],env={**os.environ,'N':'5000','REVERSE':rev},stdout=log,stderr=subprocess.STDOUT,timeout=180)
+ if p.returncode:raise RuntimeError((out/(label+'.log')).read_text())
+ rows=[json.loads(l.split('VALUE ',1)[1]) for l in (out/(label+'.log')).read_text().splitlines() if 'VALUE {' in l]
+ if len(rows)!=12:raise RuntimeError((label,len(rows)))
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2));print(label,len(rows),flush=True)

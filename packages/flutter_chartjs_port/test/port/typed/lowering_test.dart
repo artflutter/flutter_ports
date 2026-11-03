@@ -70,17 +70,17 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
   'hidden': ((d) => d.copyWith(hidden: true), {'hidden': true}),
   'order': ((d) => d.copyWith(order: 2), {'order': 2}),
   'backgroundColor': (
-    (d) => d.copyWith(backgroundColor: _red),
+    (d) => d.copyWith(backgroundColor: const ChartValue.constant(_red)),
     {'backgroundColor': _redValue},
   ),
-  'backgroundColors': (
-    (d) => d.copyWith(backgroundColors: [_red, _blue]),
+  'backgroundColor indexed': (
+    (d) => d.copyWith(backgroundColor: const ChartValue.indexed([_red, _blue])),
     {
       'backgroundColor': [_redValue, _blueValue],
     },
   ),
-  'backgroundColorFor': (
-    (d) => d.copyWith(backgroundColorFor: _colorFor),
+  'backgroundColor resolver': (
+    (d) => d.copyWith(backgroundColor: const ChartValue.resolver(_colorFor)),
     {'backgroundColor': (Object? context, Object? options) => _redValue},
   ),
   'borderColor': (
@@ -1161,7 +1161,7 @@ void main() {
       for (final dataset in _empty.values) {
         final lowered = _lower(
           dataset.copyWith(
-            backgroundColorFor: _colorFor,
+            backgroundColor: const ChartValue.resolver(_colorFor),
             borderColorFor: _colorFor,
           ),
         );
@@ -1233,7 +1233,10 @@ void main() {
       final dash = [4.0, 2.0];
       final colors = [_red];
       final lowered = _lower(
-        LineDataset(borderDash: dash, backgroundColors: colors),
+        LineDataset(
+          borderDash: dash,
+          backgroundColor: ChartValue.indexed(colors),
+        ),
       );
       expect(lowered['borderDash'], isNot(same(dash)));
       expect(lowered['borderDash'], isA<List<Object?>>());
@@ -1311,7 +1314,7 @@ void main() {
         expectTwin(
           _lower(
             const LineDataset(
-              backgroundColor: _red,
+              backgroundColor: ChartValue.constant(_red),
               extra: {
                 'backgroundColor': native_ui.Color.fromRGBO(255, 0, 0, 1),
               },
@@ -1402,7 +1405,7 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColor: _red,
+            backgroundColor: const ChartValue.constant(_red),
             borderColor: _blue,
             borderWidth: 2,
             hoverBackgroundColor: _blue,
@@ -1473,7 +1476,7 @@ void main() {
             points: points,
             hidden: true,
             order: 2,
-            backgroundColors: const [_red],
+            backgroundColor: const ChartValue.indexed([_red]),
             borderColorFor: _colorFor,
             borderWidth: 2,
             hoverBackgroundColor: _blue,
@@ -1527,7 +1530,7 @@ void main() {
             points: points,
             hidden: true,
             order: 2,
-            backgroundColor: _red,
+            backgroundColor: const ChartValue.constant(_red),
             borderColor: _blue,
             borderWidth: 2,
             hoverBackgroundColor: _blue,
@@ -1580,7 +1583,7 @@ void main() {
             points: bubbles,
             hidden: false,
             order: 1,
-            backgroundColor: _red,
+            backgroundColor: const ChartValue.constant(_red),
             borderColor: _blue,
             borderWidth: 2,
             hoverBackgroundColor: _blue,
@@ -1643,7 +1646,7 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColors: const [_red, _blue],
+            backgroundColor: const ChartValue.indexed([_red, _blue]),
             borderColor: _blue,
             borderWidth: 2,
             hoverBackgroundColor: _blue,
@@ -1670,7 +1673,7 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColors: const [_red, _blue],
+            backgroundColor: const ChartValue.indexed([_red, _blue]),
             borderColor: _blue,
             borderWidth: 2,
             hoverBackgroundColor: _blue,
@@ -1697,7 +1700,7 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColor: _red,
+            backgroundColor: const ChartValue.constant(_red),
             borderColor: _blue,
             borderWidth: 2,
             hoverBackgroundColor: _blue,
@@ -1734,7 +1737,7 @@ void main() {
             data: data,
             hidden: true,
             order: 2,
-            backgroundColor: _red,
+            backgroundColor: const ChartValue.constant(_red),
             borderColor: _blue,
             borderWidth: 2,
             hoverBackgroundColor: _blue,

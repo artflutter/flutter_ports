@@ -1,0 +1,30 @@
+import os,sys,subprocess,re,time,json
+from pathlib import Path
+root=Path(__file__).resolve().parents[2]; out=root/'.dart_tool/library_audit'
+app='/tmp/chart-library-audit-extra.app/Contents/MacOS/chartjs_gallery'
+def run(label,env,alloc=False):
+ with (out/(label+'.log')).open('w') as log:
+  p=subprocess.Popen([app],env={**os.environ,**env},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   if alloc:
+    for _ in range(300):
+     t=(out/(label+'.log')).read_text();m=re.search(r'http://127.0.0.1:(\d+)/(\S+)',t)
+     if m and 'ALLOC READY' in t:break
+     time.sleep(.1)
+    else:raise RuntimeError(t)
+    subprocess.run(['dart','--packages='+str(root/'.dart_tool/package_config.json'),str(out/'alloc.dart'),f'ws://127.0.0.1:{m[1]}/{m[2]}ws',str(out/(label+'.json'))],check=True,timeout=60)
+   else:
+    p.wait(timeout=180)
+    if p.returncode:raise RuntimeError((out/(label+'.log')).read_text())
+    rows=[json.loads(l.split('AUDIT ',1)[1]) for l in (out/(label+'.log')).read_text().splitlines() if 'AUDIT {' in l]
+    (out/(label+'.json')).write_text(json.dumps(rows,indent=2))
+    print(label,len(rows),flush=True)
+  finally:
+   if p.poll() is None:p.terminate();p.wait(timeout=10)
+if sys.argv[1]=='measure':
+ for reverse in ['0','1']:
+  run('controlled-'+reverse,{'EXTRA':'1','N':'5000','REVERSE':reverse})
+  run('datasets-'+reverse,{'EXTRA':'datasets','N':'5000','REVERSE':reverse})
+else:
+ for label,case,type_ in [('static','chart.b','line'),('indexed','chart.c.indexable','line'),('scriptable','chart.c','line'),('scatter','chart.b','scatter'),('bubble','chart.bubble','bubble'),('primitive','chart.line.primitive','line')]:
+  run('alloc-'+label,{'N':'5000','CASES':case,'TYPE':type_,'CALL':'update','ALLOC':'1'},True)

@@ -41,6 +41,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// core.defaults.js:7 `overrides`, `Object.create(null)`.
 ///
@@ -207,6 +208,17 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
     describe(descriptorValues);
     apply(appliers);
   }
+
+  /// Recognizes side-effect-free built-in element descriptor predicates.
+  @internal
+  // DIVERGES(chartjs): adapt-indexed-element-options, exact predicate identity.
+  static bool nativeElementDescriptors(Object? scriptable, Object? indexable) =>
+      (scriptable is bool ||
+          scriptable is Undefined ||
+          identical(scriptable, _scriptableDefault)) &&
+      (indexable is bool ||
+          indexable is Undefined ||
+          identical(indexable, _indexableDefault));
 
   /// core.defaults.js:90 `set`.
   ///

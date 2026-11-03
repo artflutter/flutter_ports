@@ -44,3 +44,12 @@ The existing stress tests cover behavior and the phone viewport for every plugin
 scene. New tests cover readable labels, navigation, remembered drawing choice,
 expandable controls/diagnostics and large-text wrapping. Desktop and phone
 screenshots were inspected with real fonts; preview-only helpers were removed.
+
+## Indexed-color follow-up
+
+Chart Options includes Indexed colors beside Scriptable colors. Enabling either
+clears the other; neither selected means static colors. Switching color forms
+recreates the host for both canvas and ChartView while retaining the operation
+and item count. Indexed colors use a native Color list with the same alternating
+blue/pink values as the scriptable case. The profiling entry accepts INDEXED=1
+and identifies indexed runs without changing existing default benchmark cases.

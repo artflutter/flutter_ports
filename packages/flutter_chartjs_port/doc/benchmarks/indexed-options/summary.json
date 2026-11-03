@@ -1,0 +1,221 @@
+{
+  "cases": [
+    {
+      "case": "line.static",
+      "baselineUpdateMs": 0.592,
+      "candidateUpdateMs": 0.565,
+      "baselineFullMs": 1.4340000000000002,
+      "candidateFullMs": 1.388,
+      "fullGainPercent": 3.207810320781046,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 1.7543859649122862,
+          "updateGainPercent": 2.8911564625850317
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": 4.643104643104634,
+          "updateGainPercent": 6.2080536912751505
+        }
+      ]
+    },
+    {
+      "case": "line.indexed",
+      "baselineUpdateMs": 12.3475,
+      "candidateUpdateMs": 6.066000000000001,
+      "baselineFullMs": 13.2905,
+      "candidateFullMs": 7.018000000000001,
+      "fullGainPercent": 47.19536511041721,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 46.35267520723436,
+          "updateGainPercent": 50.23880838662673
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": 48.035459394485756,
+          "updateGainPercent": 51.50704910063199
+        }
+      ]
+    },
+    {
+      "case": "line.callback",
+      "baselineUpdateMs": 12.3475,
+      "candidateUpdateMs": 12.487,
+      "baselineFullMs": 13.340499999999999,
+      "candidateFullMs": 13.4825,
+      "fullGainPercent": -1.0644278700198795,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": -2.2168963451168366,
+          "updateGainPercent": -2.270340147046923
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": 0.09002925950932772,
+          "updateGainPercent": 0.01623640201330323
+        }
+      ]
+    },
+    {
+      "case": "bar.static",
+      "baselineUpdateMs": 1.2610000000000001,
+      "candidateUpdateMs": 1.2445,
+      "baselineFullMs": 3.971,
+      "candidateFullMs": 3.9595000000000002,
+      "fullGainPercent": 0.28959959707881566,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 0.17650025214321907,
+          "updateGainPercent": -0.24077046548958148
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": 0.4024144869215318,
+          "updateGainPercent": 2.8213166144200663
+        }
+      ]
+    },
+    {
+      "case": "bar.indexed",
+      "baselineUpdateMs": 14.9605,
+      "candidateUpdateMs": 9.6865,
+      "baselineFullMs": 17.913,
+      "candidateFullMs": 12.546,
+      "fullGainPercent": 29.96148048903031,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 31.238640744616408,
+          "updateGainPercent": 36.30783446637186
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": 28.649046352368547,
+          "updateGainPercent": 34.17061611374407
+        }
+      ]
+    },
+    {
+      "case": "bar.callback",
+      "baselineUpdateMs": 15.0915,
+      "candidateUpdateMs": 14.8225,
+      "baselineFullMs": 17.997999999999998,
+      "candidateFullMs": 17.767,
+      "fullGainPercent": 1.2834759417712949,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 1.7164974476916894,
+          "updateGainPercent": 1.6291907903594915
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": 0.8586053167483176,
+          "updateGainPercent": 1.9309804944875775
+        }
+      ]
+    },
+    {
+      "case": "radar.static",
+      "baselineUpdateMs": 1.733,
+      "candidateUpdateMs": 1.742,
+      "baselineFullMs": 3.7925,
+      "candidateFullMs": 3.819,
+      "fullGainPercent": -0.6987475280158195,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 0.15739769150051597,
+          "updateGainPercent": 0.6845407872218878
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": -1.563742380068911,
+          "updateGainPercent": -1.7513134851138368
+        }
+      ]
+    },
+    {
+      "case": "radar.indexed",
+      "baselineUpdateMs": 13.61,
+      "candidateUpdateMs": 7.2989999999999995,
+      "baselineFullMs": 15.8735,
+      "candidateFullMs": 9.436499999999999,
+      "fullGainPercent": 40.55186316817338,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 40.81632653061226,
+          "updateGainPercent": 46.28711038720663
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": 40.29056296574613,
+          "updateGainPercent": 46.45227156712608
+        }
+      ]
+    },
+    {
+      "case": "radar.callback",
+      "baselineUpdateMs": 13.816500000000001,
+      "candidateUpdateMs": 13.899000000000001,
+      "baselineFullMs": 16.1175,
+      "candidateFullMs": 16.1485,
+      "fullGainPercent": -0.19233752132774562,
+      "pairs": [
+        {
+          "baseline": "a1",
+          "candidate": "b1",
+          "fullGainPercent": 2.145071295722256,
+          "updateGainPercent": 1.108615317730599
+        },
+        {
+          "baseline": "a2",
+          "candidate": "b2",
+          "fullGainPercent": -2.53337472834525,
+          "updateGainPercent": -2.2990167727009903
+        }
+      ]
+    }
+  ],
+  "arcControl": {
+    "arc-a1": {
+      "updateMs": "33.378",
+      "fullMs": 55.21
+    },
+    "arc-b1": {
+      "updateMs": "32.908",
+      "fullMs": 55.284
+    },
+    "arc-b2": {
+      "updateMs": "32.937",
+      "fullMs": 55.092999999999996
+    },
+    "arc-a2": {
+      "updateMs": "32.409",
+      "fullMs": 53.796
+    }
+  },
+  "note": "All process results are retained; use paired gains rather than claiming a precise universal percentage."
+}

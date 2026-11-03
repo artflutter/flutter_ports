@@ -1,0 +1,17 @@
+import json,statistics
+from pathlib import Path
+out=Path(__file__).resolve().parent
+runs={k:json.loads((out/(k+'.json')).read_text()) for k in ['a1','b1','b2','a2']}
+summary=[]
+for case in [r['case'] for r in runs['a1']]:
+ rows={k:next(r for r in rs if r['case']==case) for k,rs in runs.items()}
+ full=lambda r:sum(float(r[p+'MedianMs']) for p in ['update','draw','end'])
+ a=statistics.mean(full(rows[k]) for k in ['a1','a2']);b=statistics.mean(full(rows[k]) for k in ['b1','b2'])
+ au=statistics.mean(float(rows[k]['updateMedianMs']) for k in ['a1','a2']);bu=statistics.mean(float(rows[k]['updateMedianMs']) for k in ['b1','b2'])
+ pairs=[{'baseline':x,'candidate':y,'fullGainPercent':(1-full(rows[y])/full(rows[x]))*100,'updateGainPercent':(1-float(rows[y]['updateMedianMs'])/float(rows[x]['updateMedianMs']))*100} for x,y in [('a1','b1'),('a2','b2')]]
+ summary.append({'case':case,'baselineUpdateMs':au,'candidateUpdateMs':bu,'baselineFullMs':a,'candidateFullMs':b,'fullGainPercent':(1-b/a)*100,'pairs':pairs})
+arc={k:json.loads((out/(k+'.json')).read_text())[0] for k in ['arc-a1','arc-b1','arc-b2','arc-a2']}
+result={'cases':summary,'arcControl':{k:{'updateMs':r['updateMedianMs'],'fullMs':full(r)} for k,r in arc.items()},'note':'All process results are retained; use paired gains rather than claiming a precise universal percentage.'}
+(out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
+for r in summary:print(r['case'],round(r['baselineUpdateMs'],3),round(r['candidateUpdateMs'],3),'full',round(r['fullGainPercent'],1),'pairs',[(round(p['updateGainPercent'],1),round(p['fullGainPercent'],1)) for p in r['pairs']])
+print(result['arcControl'])

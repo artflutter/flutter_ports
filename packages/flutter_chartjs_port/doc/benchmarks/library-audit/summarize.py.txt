@@ -1,0 +1,47 @@
+import json,gzip,statistics
+from pathlib import Path
+out=Path(__file__).resolve().parent
+runs={}
+for label in ['forward','reverse']:
+ rows=[json.loads(l.split('AUDIT ',1)[1]) for l in (out/(label+'.log')).read_text().splitlines() if 'AUDIT {' in l]
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2))
+ for r in rows:
+  key=(r['case'],r.get('type'),r['n'])
+  runs.setdefault(key,[]).append(r)
+summary=[]
+for key,rs in runs.items():
+ row=dict(zip(['case','type','n'],key))
+ for part in ['update','draw','end','elements','layout','datasetsUpdate']:
+  row[part]=statistics.mean(float(r[part+'MedianMs']) for r in rs)
+ row['full']=statistics.mean(sum(float(r[p+'MedianMs']) for p in ['update','draw','end']) for r in rs)
+ summary.append(row)
+(out/'summary.json').write_text(json.dumps(summary,indent=2))
+for r in summary:
+ if r['n']==5000:print(r)
+for p in out.glob('profile-*.json.gz'):
+ d=json.loads(gzip.decompress(p.read_bytes())); print(p.name,'samples',d['sampleCount'])
+ fs=[]
+ for f in d['functions']:
+  fn=f.get('function',{}); own=fn.get('owner',{});loc=fn.get('location',{});script=loc.get('script',{}).get('uri','')
+  if not f.get('inclusiveTicks',0) and not f.get('exclusiveTicks',0): continue
+  fs.append({'name':own.get('name','')+'.'+fn.get('name',''),'url':script,'inclusive':f.get('inclusiveTicks',0),'self':f.get('exclusiveTicks',0)})
+ (out/(p.name.replace('.json.gz','-summary.json'))).write_text(json.dumps({'samples':d['sampleCount'],'functions':sorted(fs,key=lambda f:-f['inclusive'])},indent=2))
+ for f in sorted(fs,key=lambda f:-f['self'])[:14]: print(f['name'],round(f['self']/d['sampleCount']*100,1),round(f['inclusive']/d['sampleCount']*100,1))
+
+# Controlled and fixed-total-point sweeps.
+for prefix in ['controlled', 'datasets']:
+ grouped={}
+ for order in ['0','1']:
+  path=out/(prefix+'-'+order+'.json')
+  if not path.exists(): continue
+  for row in json.loads(path.read_text()): grouped.setdefault(row['case'],[]).append(row)
+ result=[]
+ for name,rows in grouped.items():
+  item={'case':name,'runs':len(rows)}
+  for part in ['update','draw','end']:
+   item[part]=statistics.mean(float(row[part+'MedianMs']) for row in rows)
+  item['full']=sum(item[part] for part in ['update','draw','end'])
+  if 'lookupSweepUs' in rows[0]:
+   item['lookupSweepUs']=statistics.mean(row['lookupSweepUs'] for row in rows)
+  result.append(item)
+ (out/(prefix+'-summary.json')).write_text(json.dumps(result,indent=2))

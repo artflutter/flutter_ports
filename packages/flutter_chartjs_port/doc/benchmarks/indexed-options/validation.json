@@ -1,0 +1,14 @@
+{
+  "workspace": "10838 passed, including 10302 Chart.js passes and 84 skips; other-port upstream skips as logged",
+  "focused": "24 passed on VM, JavaScript and WebAssembly on final source",
+  "fullBrowser": "4020 Chart.js and 55 utility cases per backend passed before final guard hardening; all final changes covered by the 24-case three-backend run",
+  "observationAndApi": "1776 tests passed in controller/resolver/observation/public API selection; full workspace subsequently passed",
+  "geometry": "5000 elements x three synchronized updates for nine same-color scenes; parsed values, geometry and selected styles match; line/bar/radar indexed activation confirmed",
+  "fixtures": "26 files, 0 errors, 0 warnings",
+  "cases": "53 files, 958 passed, 78 skipped, 0 missing, 0 failures",
+  "analysis": "workspace passes --fatal-infos",
+  "format": "780 files, 0 changes; subsequent changed files formatted",
+  "portChecks": "all seven pass, no typed-read baseline increase or generated option changes",
+  "publicApiChanged": false,
+  "goldensChanged": false
+}
