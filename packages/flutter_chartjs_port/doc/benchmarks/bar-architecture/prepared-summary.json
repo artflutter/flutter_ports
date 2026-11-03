@@ -1,0 +1,35 @@
+[
+  {
+    "case": "full_frame",
+    "n": 20000,
+    "parts": {
+      "update": 7.830500000000001,
+      "draw": 8.9195,
+      "end": 2.2525
+    },
+    "totalCpuMs": 19.0025,
+    "geometryVerified": null
+  },
+  {
+    "case": "prepared_map",
+    "n": 20000,
+    "parts": {
+      "update": 17.506500000000003,
+      "draw": 9.1445,
+      "end": 2.266
+    },
+    "totalCpuMs": 28.917,
+    "geometryVerified": true
+  },
+  {
+    "case": "prepared_native",
+    "n": 20000,
+    "parts": {
+      "update": 5.8725000000000005,
+      "draw": 9.0465,
+      "end": 2.2735
+    },
+    "totalCpuMs": 17.1925,
+    "geometryVerified": true
+  }
+]

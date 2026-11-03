@@ -1,0 +1,6 @@
+sandbox_extension_issue_file_to_process failed for /tmp/bar-architecture-prepared.app: 1 (Operation not permitted)
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+flutter: The Dart VM service is listening on http://127.0.0.1:65148/J-uedQ4Ltwg=/
+flutter: ARCH 20000 prepared_native
+flutter: ARCH 20000 prepared_map
+flutter: ARCH 20000 full_frame

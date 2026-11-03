@@ -1,0 +1,1535 @@
+diff --git a/apps/chartjs_gallery/lib/bench/chart_bench.dart b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+index cca6214..d89e307 100644
+--- a/apps/chartjs_gallery/lib/bench/chart_bench.dart
++++ b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+@@ -1553,6 +1553,9 @@ final class _BenchChart extends Chart {
+   @override
+   bool get supportsNativeCategoryLabels => true;
+ 
++  @override
++  bool get supportsDataUpdates => true;
++
+   @override
+   bool get supportsNativeBarIndexReads => true;
+ 
+diff --git a/apps/chartjs_gallery/lib/demo/demo_chart.dart b/apps/chartjs_gallery/lib/demo/demo_chart.dart
+index 85d5f42..6322878 100644
+--- a/apps/chartjs_gallery/lib/demo/demo_chart.dart
++++ b/apps/chartjs_gallery/lib/demo/demo_chart.dart
+@@ -232,6 +232,12 @@ final class DemoChart implements types.Chart {
+   @override
+   void update([Object? mode]) => render();
+ 
++  @override
++  bool updateData() {
++    render();
++    return false;
++  }
++
+   /// index.d.ts:543 `legend`. The demo chart has no legend plugin, so it
+   /// stays `null`.
+   @override
+diff --git a/apps/chartjs_gallery/lib/demo/stress_demo.dart b/apps/chartjs_gallery/lib/demo/stress_demo.dart
+index 3d2d589..fe1c6a1 100644
+--- a/apps/chartjs_gallery/lib/demo/stress_demo.dart
++++ b/apps/chartjs_gallery/lib/demo/stress_demo.dart
+@@ -131,6 +131,9 @@ enum StressChartCall {
+   /// case (c).
+   update,
+ 
++  /// Data values only; reports whether the incremental lifecycle was used.
++  data,
++
+   /// The animation cost (step 8 of the phase 5 prompt): the chart has
+   /// `animation: {duration: 1000, loop: true}`. Its first update starts an
+   /// animation of `x` and `y` of each point, which loops without end. In
+@@ -158,6 +161,7 @@ List<StressChartCall> stressCallsOf(
+   _ => const [
+     StressChartCall.draw,
+     StressChartCall.update,
++    StressChartCall.data,
+     StressChartCall.animate,
+   ],
+ };
+@@ -409,6 +413,8 @@ final class StressStats {
+     required this.rasterMaxMs,
+     required this.timings,
+     this.tooltipDrawMs = 0,
++    this.lastDataUpdateFast = false,
++    this.canvasSize = '',
+   });
+ 
+   /// The mode.
+@@ -475,6 +481,12 @@ final class StressStats {
+   /// [StressMode.plugins].
+   final double tooltipDrawMs;
+ 
++  /// Whether the last explicit data update used the incremental lifecycle.
++  final bool lastDataUpdateFast;
++
++  /// Logical canvas dimensions and device pixel ratio for comparable runs.
++  final String canvasSize;
++
+   @override
+   bool operator ==(Object other) =>
+       other is StressStats &&
+@@ -498,7 +510,9 @@ final class StressStats {
+       rasterMs == other.rasterMs &&
+       rasterMaxMs == other.rasterMaxMs &&
+       timings == other.timings &&
+-      tooltipDrawMs == other.tooltipDrawMs;
++      tooltipDrawMs == other.tooltipDrawMs &&
++      lastDataUpdateFast == other.lastDataUpdateFast &&
++      canvasSize == other.canvasSize;
+ 
+   // Object.hash takes at most 20 values.
+   @override
+@@ -524,6 +538,8 @@ final class StressStats {
+     rasterMaxMs,
+     timings,
+     tooltipDrawMs,
++    lastDataUpdateFast,
++    canvasSize,
+   ]);
+ }
+ 
+@@ -1266,6 +1282,7 @@ class StressDemoState extends State<StressDemo> {
+   /// draw of the chart.
+   Map<String, Object?> get _labelsPlugin => <String, Object?>{
+     'id': 'stressLabels',
++    'supportsDataUpdates': true,
+     'afterDraw': (Object? chart, Object? args, Object? options) {
+       final stressChart = chart! as Chart;
+       final ctx = stressChart.ctx;
+@@ -1387,6 +1404,8 @@ class StressDemoState extends State<StressDemo> {
+   /// parts count only the hooks of this call, as the draw time does: not the
+   /// update at the construction of a chart, and not the update of a resize
+   /// of its host.
++  bool _lastDataUpdateFast = false;
++
+   void _chartFrame(Chart chart) {
+     if (_mode == StressMode.plugins) {
+       _pluginFrame(chart);
+@@ -1396,7 +1415,7 @@ class StressDemoState extends State<StressDemo> {
+       _animateFrame(chart);
+       return;
+     }
+-    if (_call == StressChartCall.update) {
++    if (_call == StressChartCall.update || _call == StressChartCall.data) {
+       if (_mode == StressMode.axes) {
+         _axesScene?.write(_field);
+       } else {
+@@ -1411,6 +1430,8 @@ class StressDemoState extends State<StressDemo> {
+         chart.draw();
+       case StressChartCall.update:
+         chart.update('none');
++      case StressChartCall.data:
++        _lastDataUpdateFast = chart.updateData();
+       case StressChartCall.animate || StressChartCall.frame:
+         // [_animateFrame] handles the call animate. Only the mode plugins
+         // has the call frame ([_pluginFrame]).
+@@ -1504,7 +1525,7 @@ class StressDemoState extends State<StressDemo> {
+         chart.update('none');
+       case StressChartCall.frame:
+         if (event != null) _sendPluginEvent(chart, event);
+-      case StressChartCall.animate:
++      case StressChartCall.data || StressChartCall.animate:
+         // The mode plugins has no call animate (stressCallsOf).
+         break;
+     }
+@@ -1632,6 +1653,11 @@ class StressDemoState extends State<StressDemo> {
+       rasterMaxMs: max(raster),
+       timings: _timings.length,
+       tooltipDrawMs: _tooltipDrawMs,
++      lastDataUpdateFast: _lastDataUpdateFast,
++      canvasSize: stressChart == null
++          ? ''
++          : '${stressChart.width}x${stressChart.height}'
++                '@${stressChart.currentDevicePixelRatio}',
+     );
+     widget.onStats?.call(_stats.value);
+   }
+@@ -1904,6 +1930,7 @@ class StressDemoState extends State<StressDemo> {
+     const callText = {
+       StressChartCall.draw: 'draw',
+       StressChartCall.update: 'upd',
++      StressChartCall.data: 'data',
+       StressChartCall.animate: 'anim',
+       StressChartCall.frame: 'frame',
+     };
+@@ -2033,7 +2060,9 @@ class StressDemoState extends State<StressDemo> {
+                   key: 'stress.chart.call.${call.name}',
+                   text: callText[call]!,
+                   icon: null,
+-                  tooltip: call.name,
++                  tooltip: call == StressChartCall.data
++                      ? 'Data-only update; unsupported inputs use the full path'
++                      : call.name,
+                   value: call,
+                 ),
+             ],
+@@ -2262,6 +2291,7 @@ class StressDemoState extends State<StressDemo> {
+           '${switch (_call) {
+             StressChartCall.draw => 'chart.draw()',
+             StressChartCall.update => _updateCall,
++            StressChartCall.data => 'chart.updateData()',
+             StressChartCall.animate => 'core.animator: the tick of N looping '
+                 'animations and chart.draw()',
+             // The mode chart has no call frame (stressCallsOf).
+@@ -2387,6 +2417,13 @@ class StressDemoState extends State<StressDemo> {
+                         ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
+                         ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
+                         ('sharing', '${stats.sharing}'),
++                        if (_call == StressChartCall.data)
++                          (
++                            'data path',
++                            stats.lastDataUpdateFast
++                                ? 'incremental'
++                                : 'full fallback',
++                          ),
+                       ],
+                       if (stats.mode == StressMode.axes) ...[
+                         ('update', '${ms(stats.updateMs)} ms'),
+@@ -2519,6 +2556,9 @@ final class _StressChart extends Chart with _TickMark implements _StressMeter {
+   @override
+   bool get supportsNativeCategoryLabels => true;
+ 
++  @override
++  bool get supportsDataUpdates => true;
++
+   @override
+   bool get supportsNativeBarIndexReads => true;
+ 
+@@ -2553,6 +2593,7 @@ final class _PluginMeter with _TickMark implements _StressMeter {
+   /// The first inline plugin of the chart.
+   late final Map<String, Object?> first = <String, Object?>{
+     'id': 'stressDrawStart',
++    'supportsDataUpdates': true,
+     'beforeDraw': (Object? chart, Object? args, Object? options) {
+       _takeMark();
+       _drawStart = _meterWatch.elapsedMicroseconds;
+@@ -2562,6 +2603,7 @@ final class _PluginMeter with _TickMark implements _StressMeter {
+   /// The last inline plugin of the chart.
+   late final Map<String, Object?> last = <String, Object?>{
+     'id': 'stressDrawEnd',
++    'supportsDataUpdates': true,
+     'afterDraw': (Object? chart, Object? args, Object? options) {
+       final start = _drawStart;
+       if (start != null) {
+diff --git a/apps/chartjs_gallery/lib/demo/stress_timing.dart b/apps/chartjs_gallery/lib/demo/stress_timing.dart
+index 7239839..377e1a8 100644
+--- a/apps/chartjs_gallery/lib/demo/stress_timing.dart
++++ b/apps/chartjs_gallery/lib/demo/stress_timing.dart
+@@ -59,6 +59,7 @@ final class StressChartTiming {
+   /// (JS `undefined`): it cancels nothing.
+   late final Map<String, Object?> plugin = <String, Object?>{
+     'id': 'stressChartTiming',
++    'supportsDataUpdates': true,
+     'beforeElementsUpdate': (Object? chart, Object? args, Object? options) {
+       _elementsStart = _watch.elapsedTicks;
+     },
+@@ -74,6 +75,10 @@ final class StressChartTiming {
+       layoutTicks += _watch.elapsedTicks - _layoutStart;
+     },
+     'beforeDatasetsUpdate': (Object? chart, Object? args, Object? options) {
++      if (_elementsStart >= 0) {
++        elementsTicks += _watch.elapsedTicks - _elementsStart;
++        _elementsStart = -1;
++      }
+       _datasetsUpdateStart = _watch.elapsedTicks;
+     },
+     'afterDatasetsUpdate': (Object? chart, Object? args, Object? options) {
+diff --git a/apps/chartjs_gallery/lib/main_stress.dart b/apps/chartjs_gallery/lib/main_stress.dart
+index c29f5dd..94cdc39 100644
+--- a/apps/chartjs_gallery/lib/main_stress.dart
++++ b/apps/chartjs_gallery/lib/main_stress.dart
+@@ -825,8 +825,11 @@ class _StressProfileAppState extends State<StressProfileApp> {
+         if (_mode == StressMode.chart) ...{
+           'animatorMs': avg((s) => s.animatorMs),
+           'call': _call.name,
++          if (_call == StressChartCall.data)
++            'lastDataUpdateFast': last?.lastDataUpdateFast,
+           'type': _type.name,
+           'sharing': last?.sharing ?? _type.sharing,
++          'canvas': last?.canvasSize,
+           'scriptable': stressScriptable,
+           if (_showLine) 'showLine': true,
+           'elementsMs': avg((s) => s.elementsMs),
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 43f5869..1e02a21 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -44,6 +44,7 @@ import 'dart:typed_data';
+ 
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
++import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show
+@@ -56,6 +57,8 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+         setStackValue,
+         stacksOf,
+         visualValuesOf;
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show nativeDataUpdateList;
+ import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show BarOptions;
+@@ -138,21 +141,11 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
+     // `values.concat(...)`: a new List.
+     values = values + visibleMetas[i].controller!.getAllParsedValues(scale);
+   }
+-  // DIVERGES(chartjs): adapt-live-bar-layout, owned numeric sorted input.
+-  // Concatenation above owns this list even if a custom controller supplied
+-  // its source. No user comparator/getter is omitted by this numeric scan.
+-  var ordered = true;
+-  var previous = double.negativeInfinity;
+-  for (final value in values) {
+-    if (!value.isFinite || value < previous) {
+-      ordered = false;
+-      break;
+-    }
+-    previous = value;
+-  }
+-  final unique = arrayUnique(
+-    ordered ? values : jsSort(values, (a, b) => a - b),
+-  );
++  // DIVERGES(chartjs): adapt-sorted-bar-values, owned numeric sorted input.
++  // Concatenation owns this list; no user getters or comparator are omitted.
++  final unique =
++      uniqueSortedBarValues(values) ??
++      arrayUnique(jsSort(values, (a, b) => a - b));
+   scale.cache.bar = unique;
+   return unique;
+ }
+@@ -619,7 +612,13 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+   /// 0020, section 4).
+   BarController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == BarController;
++
+   /// controller.bar.js:260 `static id = 'bar'`.
++
+   static const String id = 'bar';
+ 
+   /// controller.bar.js:265 `static defaults`, a typed scope of the kind
+@@ -1012,7 +1011,10 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+       return false;
+     }
+     final parsed = cachedMeta.parsed;
+-    if (!nativeBulkBarLists(bars, parsed) ||
++    if ((!nativeBulkBarLists(bars, parsed) &&
++            !(updatingData &&
++                nativeBulkBarElements(bars) &&
++                nativeDataUpdateList(parsed))) ||
+         !first.isFinite ||
+         !end.isFinite ||
+         first < 0 ||
+@@ -1032,14 +1034,18 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+       final element = bars[i];
+       final item = parsed[i];
+       if (element is! BulkBarElement ||
+-          !(element as BulkBarElement).supportsBulkBarWrites ||
+-          item is! ParsedItem ||
+-          item.hasForeign ||
+-          item.hasSlot(3) ||
+-          item.hasSlot(4)) {
++          !(element as BulkBarElement).supportsBulkBarWrites) {
+         return false;
+       }
+-      final value = item.valueOf(key);
++      if (item is ParsedItem) {
++        if (item.hasForeign || item.hasSlot(3) || item.hasSlot(4)) return false;
++      } else if (!updatingData ||
++          jsTruthy(_customOf(item)) ||
++          jsTruthy(stacksOf(item))) {
++        return false;
++      }
++      // Data-only updates preflight native prepared values before these reads.
++      final value = parsedValueOf(item, key, valueAxis);
+       if (value is! num || !value.isFinite) return false;
+       values[i - begin] = value.toDouble();
+     }
+@@ -1303,7 +1309,21 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+   ///
+   /// `pixels` is a [Float64List]: an internal array of numbers that no user
+   /// code reaches (Chart.js ADR 0054 §8).
++  _Ruler? _dataUpdateRuler;
++
+   _Ruler _getRuler() {
++    if (!updatingData) _dataUpdateRuler = null;
++    final cached = _dataUpdateRuler;
++    if (updatingData &&
++        reuseDataLayout &&
++        primitiveDataUpdate &&
++        parsing != false &&
++        cached != null &&
++        cached.scale.type == 'category' &&
++        !jsTruthy(options.readKey(OptionKey.skipNull))) {
++      return cached;
++    }
++
+     final opts = options;
+     final meta = cachedMeta;
+     final iScale = meta.iScale;
+@@ -1324,7 +1344,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+         ? barThickness
+         : _computeMinSampleSize(meta);
+ 
+-    return (
++    final ruler = (
+       min: min,
+       pixels: pixels,
+       start: iScale!.startPixel,
+@@ -1338,6 +1358,15 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+           : jsToNumber(opts.readKey(OptionKey.categoryPercentage)) *
+                 jsToNumber(opts.readKey(OptionKey.barPercentage)),
+     );
++    _dataUpdateRuler =
++        updatingData &&
++            reuseDataLayout &&
++            primitiveDataUpdate &&
++            parsing != false &&
++            ruler.scale.type == 'category'
++        ? ruler
++        : null;
++    return ruler;
+   }
+ 
+   /// controller.bar.js:563 `_calculateBarValuePixels(index)`.
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bubble.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bubble.dart
+index 1b80f74..bb3a80c 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bubble.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bubble.dart
+@@ -36,6 +36,8 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show DataUpdateShape;
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show ElementOptions, PointOptions;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+@@ -80,7 +82,16 @@ class BubbleController extends DatasetController {
+   /// 0020, section 4).
+   BubbleController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == BubbleController;
++
++  @override
++  DataUpdateShape get dataUpdateShape => DataUpdateShape.bubble;
++
+   /// controller.bubble.js:6 `static id = 'bubble'`.
++
+   static const String id = 'bubble';
+ 
+   /// controller.bubble.js:11 `static defaults`, a typed scope of the kind
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.doughnut.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.doughnut.dart
+index 04b74d3..7250a97 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.doughnut.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.doughnut.dart
+@@ -40,6 +40,8 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show DatasetController, controllerArgs;
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show DataUpdateShape;
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show ElementOptions;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+@@ -147,7 +149,16 @@ class DoughnutController extends DatasetController {
+     offsetY = null;
+   }
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == DoughnutController;
++
++  @override
++  DataUpdateShape get dataUpdateShape => DataUpdateShape.scalar;
++
+   /// controller.doughnut.js:39 `static id = 'doughnut'`.
++
+   static const String id = 'doughnut';
+ 
+   /// controller.doughnut.js:44 `static defaults`, a typed scope of the kind
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
+index c5ff626..f8bae81 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
+@@ -215,7 +215,13 @@ class LineController extends DatasetController {
+   /// 0020, section 4).
+   LineController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == LineController;
++
+   /// controller.line.js:8 `static id = 'line'`.
++
+   static const String id = 'line';
+ 
+   /// controller.line.js:13 `static defaults`, a typed scope of the kind
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.pie.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.pie.dart
+index 2e5ca11..cd93a35 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.pie.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.pie.dart
+@@ -45,7 +45,13 @@ class PieController extends DoughnutController {
+   /// [newTarget] is `new.target` (Chart.js ADR 0020, section 4).
+   PieController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == PieController;
++
+   /// controller.pie.js:6 `static id = 'pie'`.
++
+   static const String id = 'pie';
+ 
+   /// controller.pie.js:11 `static defaults`.
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.polarArea.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.polarArea.dart
+index d225c93..f1a02dd 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.polarArea.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.polarArea.dart
+@@ -39,6 +39,8 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show DatasetController, controllerArgs, parsedValueOf;
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show DataUpdateShape;
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show ArcOptions, ElementOptions;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+@@ -164,7 +166,16 @@ class PolarAreaController extends DatasetController {
+   /// of :93-94.
+   PolarAreaController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == PolarAreaController;
++
++  @override
++  DataUpdateShape get dataUpdateShape => DataUpdateShape.radial;
++
+   /// controller.polarArea.js:6 `static id = 'polarArea'`.
++
+   static const String id = 'polarArea';
+ 
+   /// controller.polarArea.js:11 `static defaults`, a typed scope of the kind
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.radar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.radar.dart
+index 50ce598..e9d035d 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.radar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.radar.dart
+@@ -35,6 +35,8 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show DatasetController, controllerArgs, parsedValueOf;
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show DataUpdateShape;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     show OptionView, parseObjectDataRadialScaleOf;
+ import 'package:flutter_chartjs_port/src/js/js_class.dart';
+@@ -64,7 +66,16 @@ class RadarController extends DatasetController {
+   /// 0020, section 4).
+   RadarController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == RadarController;
++
++  @override
++  DataUpdateShape get dataUpdateShape => DataUpdateShape.radial;
++
+   /// controller.radar.js:6 `static id = 'radar'`.
++
+   static const String id = 'radar';
+ 
+   /// controller.radar.js:11 `static defaults`, a typed scope of the kind
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart
+index e8d64bb..3e4552a 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart
+@@ -220,7 +220,13 @@ class ScatterController extends DatasetController {
+   /// 0020, section 4).
+   ScatterController(super.chart, super.datasetIndex, [super.newTarget]);
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates => super.runtimeType == ScatterController;
++
+   /// controller.scatter.js:8 `static id = 'scatter'`.
++
+   static const String id = 'scatter';
+ 
+   /// controller.scatter.js:13 `static defaults`, a typed scope of the kind
+diff --git a/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart b/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
+index 6014d02..f5e267b 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
+@@ -64,5 +64,8 @@ final _parsedLists = <Type>{
+ 
+ /// Only native arrays are preflighted; unknown List getters are never probed.
+ bool nativeBulkBarLists(List<types.Element> bars, List<Object?> parsed) =>
+-    _elementLists.contains(bars.runtimeType) &&
+-    _parsedLists.contains(parsed.runtimeType);
++    nativeBulkBarElements(bars) && _parsedLists.contains(parsed.runtimeType);
++
++/// Native element containers; prepared inputs are qualified by updateData.
++bool nativeBulkBarElements(List<types.Element> bars) =>
++    _elementLists.contains(bars.runtimeType);
+diff --git a/packages/flutter_chartjs_port/lib/src/core/category_label_source.dart b/packages/flutter_chartjs_port/lib/src/core/category_label_source.dart
+index f9d6b66..6c996ce 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/category_label_source.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/category_label_source.dart
+@@ -2,6 +2,8 @@
+ 
+ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
+ import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
++import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
++    show ChartConfigurationScope, ChartDataScope;
+ 
+ /// Internal host contract: its data/config getters have ordinary read behavior.
+ /// Unknown Chart subclasses do not opt in, preserving effectful getter reads.
+@@ -52,16 +54,38 @@ List<Object?>? nativeCategoryLabels(
+   Object? explicitLabels, {
+   required bool horizontal,
+ }) {
+-  if (!_mapTypes.contains(config.runtimeType)) return null;
+-  final data = RawScope(config as Map<String, Object?>).jsRead('data');
+-  if (!_mapTypes.contains(data.runtimeType)) return null;
+-  final raw = RawScope(data! as Map<String, Object?>);
+-  final axisLabels = raw.jsRead(horizontal ? 'xLabels' : 'yLabels');
++  final Object? data;
++  if (config.runtimeType == ChartConfigurationScope) {
++    final root = config as ChartConfigurationScope;
++    if (root.routeOf('data') != null) return null;
++    data = root.dataCell?.raw;
++  } else if (_mapTypes.contains(config.runtimeType)) {
++    data = RawScope(config as Map<String, Object?>).jsRead('data');
++  } else {
++    return null;
++  }
++  final Object? axisLabels;
++  final Object? ordinary;
++  if (data.runtimeType == ChartDataScope) {
++    final scope = data! as ChartDataScope;
++    if (scope.routeOf(horizontal ? 'xLabels' : 'yLabels') != null ||
++        scope.routeOf('labels') != null) {
++      return null;
++    }
++    axisLabels = horizontal ? scope.xLabelsCell?.raw : scope.yLabelsCell?.raw;
++    ordinary = scope.labelsCell?.raw;
++  } else if (_mapTypes.contains(data.runtimeType)) {
++    final raw = RawScope(data! as Map<String, Object?>);
++    axisLabels = raw.jsRead(horizontal ? 'xLabels' : 'yLabels');
++    ordinary = raw.jsRead('labels');
++  } else {
++    return null;
++  }
+   final labels = jsTruthy(explicitLabels)
+       ? explicitLabels
+       : jsTruthy(axisLabels)
+       ? axisLabels
+-      : raw.jsRead('labels');
++      : ordinary;
+   return _listTypes.contains(labels.runtimeType)
+       ? labels! as List<Object?>
+       : null;
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.config.dart b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+index 4f0da86..dde3717 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+@@ -35,6 +35,7 @@ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ 
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
++import 'package:flutter_chartjs_port/src/core/data_update.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     as helpers;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+@@ -505,6 +506,11 @@ class Config implements types.ChartConfiguration {
+     return _isConfigObject(options) ? options! : throw TypeError();
+   }
+ 
++  /// Native root reads only; unknown configuration objects keep full updates.
++  @internal
++  bool get supportsDataUpdates =>
++      super.runtimeType == Config && nativeDataUpdateRoot(_config);
++
+   /// core.config.js:189 `set options(options)`.
+   set options(Object? options) {
+     jsSet(_config, 'options', options);
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+index 2fb801b..86c18d4 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+@@ -51,6 +51,7 @@ import 'package:flutter_chartjs_port/src/core/core.plugins.dart';
+ import 'package:flutter_chartjs_port/src/core/core.registry.dart'
+     as core_registry;
+ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
++import 'package:flutter_chartjs_port/src/core/data_update.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     show OptionView, readOption;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+@@ -1101,6 +1102,7 @@ class Chart
+ 
+   /// core.controller.js:217 `set data(data)`.
+   set data(Object? data) {
++    _invalidateDataUpdate();
+     config.data = data;
+   }
+ 
+@@ -1112,6 +1114,7 @@ class Chart
+ 
+   /// core.controller.js:225 `set options(options)`.
+   set options(Object? options) {
++    _invalidateDataUpdate();
+     config.options = options;
+   }
+ 
+@@ -1191,6 +1194,7 @@ class Chart
+   /// for a falsy option. `newSize` is the record of `getMaximumSize`. The
+   /// hook `resize` and `onResize` get it as `size`.
+   void _resize(double? width, double? height) {
++    _invalidateDataUpdate();
+     final options = _options;
+     final canvas = this.canvas;
+     final aspectRatio = jsTruthy(options.readKey(OptionKey.maintainAspectRatio))
+@@ -1478,6 +1482,7 @@ class Chart
+   ///
+   /// Resets the chart back to its state before the initial animation
+   void reset() {
++    _invalidateDataUpdate();
+     _resetElements();
+     notifyPlugins('reset');
+   }
+@@ -1489,6 +1494,20 @@ class Chart
+   /// The hooks get it as it is.
+   @override
+   void update([Object? mode = undefined]) {
++    if (_updatingData) {
++      throw StateError('update cannot run inside updateData hooks');
++    }
++    _fullUpdateDepth++;
++    try {
++      _updateFull(mode);
++    } finally {
++      _fullUpdateDepth--;
++    }
++  }
++
++  void _updateFull(Object? mode) {
++    _invalidateDataUpdate();
++    final generation = _dataUpdateGeneration;
+     final config = this.config..update();
+     final options = _options = config.createResolver(
+       config.chartOptionScopes(),
+@@ -1549,7 +1568,7 @@ class Chart
+       });
+     }
+ 
+-    _updateDatasets(mode);
++    final datasetsUpdated = _updateDatasets(mode);
+ 
+     // Do this before render so that any plugins that need final scale
+     // updates can use it
+@@ -1571,6 +1590,203 @@ class Chart
+     }
+ 
+     render();
++    if (generation == _dataUpdateGeneration) {
++      _dataUpdateReady = datasetsUpdated;
++      if (datasetsUpdated &&
++          supportsDataUpdates &&
++          config.supportsDataUpdates) {
++        _dataUpdateSnapshot = DataUpdateSnapshot.capture(data, config.options);
++        _dataUpdateEnvironment = (
++          width: width,
++          height: height,
++          dpr: currentDevicePixelRatio,
++          fonts: _dataUpdateFonts,
++        );
++      }
++    }
++  }
++
++  int _fullUpdateDepth = 0;
++  bool _dataUpdateFallback = false;
++  int _dataUpdateGeneration = 0;
++  void _invalidateDataUpdate() {
++    _dataUpdateGeneration++;
++    _dataUpdateReady = false;
++    _dataUpdateSnapshot = null;
++    _dataUpdateEnvironment = null;
++  }
++
++  bool _dataUpdateReady = false;
++  bool _updatingData = false;
++  DataUpdateSnapshot? _dataUpdateSnapshot;
++  ({double width, double height, double dpr, Object? fonts})?
++  _dataUpdateEnvironment;
++
++  Object? get _dataUpdateFonts => ctx is CanvasTextMetricsSource
++      ? (ctx! as CanvasTextMetricsSource).textMetricsGeneration
++      : null;
++
++  /// Timing-only chart wrappers may opt in if all metadata/config reads remain
++  /// ordinary. Unknown subclasses retain their virtual full update behavior.
++  @internal
++  bool get supportsDataUpdates => super.runtimeType == Chart;
++
++  /// Update numeric data while retaining unchanged settings, ticks and layout.
++  ///
++  /// Within an existing array, only numeric values/nulls may change; keep
++  /// record implementations, parsing keys and value kinds unchanged. Replace
++  /// the array (same length) to validate a new native source, or call [update]
++  /// for structural/type changes. Options/defaults/theme, labels (including
++  /// in-place edits), dataset identities/order, stacking and visibility must
++  /// stay unchanged; call [update] for those changes. Numeric scales require
++  /// explicit numeric min/max. Category, linear and radial-linear scales and
++  /// all built-in controllers are supported. Indexed/scriptable styles,
++  /// unknown components, active animations and unapproved plugins fall back
++  /// to `update('none')`. Native numeric lists/buffers and point data qualify.
++  ///
++  /// Parsing, stacks, hover/event replay and update/draw hooks stay live.
++  /// Scale/layout hooks run only when overflow requires a new layout. Use a
++  /// full update for data-dependent scale/configuration callbacks. Plugins
++  /// must opt in and must not mutate configuration or data during these hooks.
++  /// Neither update method may re-enter synchronously from these callbacks.
++  ///
++  /// Returns true when the data-only lifecycle was selected, even if a hook
++  /// cancelled it; false when this call delegated to the full lifecycle.
++  // DIVERGES(chartjs): adapt-incremental-data-update, data-only lifecycle.
++  @override
++  bool updateData() {
++    if (_updatingData || _fullUpdateDepth > 0 || _dataUpdateFallback) {
++      throw StateError('updateData cannot be called from update hooks');
++    }
++    bool full() {
++      _dataUpdateFallback = true;
++      try {
++        update('none');
++        return false;
++      } finally {
++        _dataUpdateFallback = false;
++      }
++    }
++
++    if (!_dataUpdateReady ||
++        !supportsDataUpdates ||
++        !config.supportsDataUpdates ||
++        dataChanges.isNotEmpty ||
++        animator.has(this) ||
++        !plugins.supportsDataUpdates) {
++      return full();
++    }
++    final snapshot = _dataUpdateSnapshot;
++    final environment = _dataUpdateEnvironment;
++    if (environment == null ||
++        environment.width != width ||
++        environment.height != height ||
++        environment.dpr != currentDevicePixelRatio ||
++        environment.fonts == null ||
++        !identical(environment.fonts, _dataUpdateFonts)) {
++      return full();
++    }
++
++    final newSnapshot = !(snapshot?.settingsValidated ?? false);
++    if (snapshot == null ||
++        !snapshot.matches(data, config.options) ||
++        snapshot.datasets.length != _datasets.length) {
++      return full();
++    }
++    for (final scale in scales.values) {
++      if (!scale.supportsDataUpdates) return full();
++    }
++    final controllers = <DatasetController>[];
++    for (var i = 0; i < snapshot.datasets.length; i++) {
++      final meta = getDatasetMeta(i.toDouble());
++      final controller = meta.controller;
++      if (controller == null ||
++          !controller.supportsDataUpdates ||
++          !controller.hasStaticDataUpdateOptions ||
++          (controller.parsing is! bool && controller.parsing is! Undefined) ||
++          meta.data.length != snapshot.counts[i]) {
++        return full();
++      }
++      controllers.add(controller);
++    }
++    if (!snapshot.validateSettings()) return full();
++    for (var i = 0; i < controllers.length; i++) {
++      final controller = controllers[i];
++      final meta = controller.cachedMeta;
++      if (newSnapshot &&
++          (meta.data.any((e) => e is! Element || !e.typedWrites) ||
++              (meta.dataset != null &&
++                  (meta.dataset is! Element ||
++                      !(meta.dataset! as Element).typedWrites)))) {
++        return full();
++      }
++      final primitive = snapshot.validateValues(
++        i,
++        controller.dataUpdateShape,
++        prepared: controller.parsing == false,
++      );
++      if (primitive == null) return full();
++      controller.primitiveDataUpdate = primitive;
++    }
++    _updatingData = true;
++    try {
++      if (notifyPlugins(
++            'beforeUpdate',
++            UpdateHookArgs(mode: 'none', cancelable: true),
++          ) ==
++          false) {
++        return true;
++      }
++      notifyPlugins('beforeElementsUpdate');
++      var padding = 0.0;
++      for (final controller in controllers) {
++        controller.buildOrUpdateElements(false);
++        padding = jsMax(jsToNumber(controller.getMaxOverflow()), padding);
++      }
++      padding =
++          jsTruthy(
++            readOption(
++              _options.readKey(OptionKey.layout),
++              OptionKey.autoPadding,
++            ),
++          )
++          ? padding
++          : 0;
++      final reuseLayout = padding == _minPadding;
++      if (!reuseLayout) {
++        _minPadding = padding;
++        _updateLayout(padding);
++      }
++      // Invalidate data-derived caches while preserving scale layout and ticks.
++      for (final scale in scales.values) {
++        scale.cache = types.ScaleCache();
++      }
++      for (final controller in controllers) {
++        controller
++          ..updatingData = true
++          ..reuseDataLayout = reuseLayout && controllers.length == 1;
++      }
++      if (!_updateDatasets('none', configure: false)) _invalidateDataUpdate();
++      notifyPlugins('afterUpdate', UpdateHookArgs(mode: 'none'));
++      final event = lastEvent;
++      if (event != null) {
++        eventHandler(event, true);
++      } else if (active.isNotEmpty) {
++        _updateHoverStyles(active, active, true);
++      }
++      render();
++      return true;
++    } on Object {
++      _invalidateDataUpdate();
++      rethrow;
++    } finally {
++      _updatingData = false;
++      for (final controller in controllers) {
++        controller
++          ..updatingData = false
++          ..reuseDataLayout = false;
++      }
++    }
+   }
+ 
+   /// core.controller.js:542 `_updateScales()`.
+@@ -1710,31 +1926,36 @@ class Chart
+   /// @private
+   ///
+   /// `mode({datasetIndex: i})` is [jsCall] of the function value.
+-  void _updateDatasets(Object? mode) {
++  bool _updateDatasets(Object? mode, {bool configure = true}) {
+     if (notifyPlugins(
+           'beforeDatasetsUpdate',
+           UpdateHookArgs(mode: mode, cancelable: true),
+         ) ==
+         false) {
+-      return;
++      return false;
+     }
+ 
+-    for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
+-      getDatasetMeta(i.toDouble()).controller!.configure();
++    if (configure) {
++      for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
++        getDatasetMeta(i.toDouble()).controller!.configure();
++      }
+     }
+-
++    var completed = true;
+     for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
+-      _updateDataset(
+-        i,
+-        isFunction(mode)
+-            ? jsCall(mode, [
+-                <String, Object?>{'datasetIndex': i.toDouble()},
+-              ])
+-            : mode,
+-      );
++      completed =
++          _updateDataset(
++            i,
++            isFunction(mode)
++                ? jsCall(mode, [
++                    <String, Object?>{'datasetIndex': i.toDouble()},
++                  ])
++                : mode,
++          ) &&
++          completed;
+     }
+ 
+     notifyPlugins('afterDatasetsUpdate', UpdateHookArgs(mode: mode));
++    return completed;
+   }
+ 
+   /// core.controller.js:669 `_updateDataset(index, mode)`.
+@@ -1746,7 +1967,7 @@ class Chart
+   ///
+   /// `meta.controller._update(mode)` is `update_` (Chart.js ADR 0023). It
+   /// takes a `String`: [_modeArg] gives the falsy modes as Dart `null`.
+-  void _updateDataset(int index, Object? mode) {
++  bool _updateDataset(int index, Object? mode) {
+     final meta = getDatasetMeta(index.toDouble());
+     final args = DatasetUpdateHookArgs(
+       meta: meta,
+@@ -1756,13 +1977,14 @@ class Chart
+     );
+ 
+     if (notifyPlugins('beforeDatasetUpdate', args) == false) {
+-      return;
++      return false;
+     }
+ 
+     meta.controller!.update_(_modeArg(mode));
+ 
+     args.cancelable = false;
+     notifyPlugins('afterDatasetUpdate', args);
++    return true;
+   }
+ 
+   /// core.controller.js:683 `render()`.
+@@ -2021,6 +2243,7 @@ class Chart
+     // ignore: avoid_positional_boolean_parameters
+     bool visible,
+   ) {
++    _invalidateDataUpdate();
+     getDatasetMeta(datasetIndex.toDouble()).hidden = !visible;
+   }
+ 
+@@ -2033,6 +2256,7 @@ class Chart
+   /// `'01'` after a data insert or remove, as upstream (core.controller.js:72).
+   @override
+   void toggleDataVisibility(Object? index) {
++    _invalidateDataUpdate();
+     final key = jsToString(index);
+     _hiddenIndices[key] = !jsTruthy(_hiddenIndices[key]);
+   }
+@@ -2139,6 +2363,7 @@ class Chart
+   /// that no `update()` reaches a destroyed chart and no `Timer` stays
+   /// pending (Chart.js ADR 0016, decision 4).
+   void destroy() {
++    _invalidateDataUpdate();
+     notifyPlugins('beforeDestroy');
+     final canvas = this.canvas;
+     final ctx = this.ctx;
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+index 7e10558..341e831 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -50,6 +50,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
+     as core_defaults;
+ import 'package:flutter_chartjs_port/src/core/core.element.dart';
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show DataUpdateShape;
+ import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show ElementOptions, createElementOptions;
+@@ -1008,6 +1010,41 @@ class DatasetController
+   /// core.datasetController.js:270 `enableOptionSharing`.
+   bool enableOptionSharing = false;
+ 
++  /// Unknown controllers keep the full lifecycle.
++  @internal
++  bool get supportsDataUpdates => false;
++
++  /// Default native point fields used by the incremental input preflight.
++  @internal
++  DataUpdateShape get dataUpdateShape => DataUpdateShape.cartesian;
++
++  /// True only while the chart runs its explicit data-only lifecycle.
++  @internal
++  bool updatingData = false;
++
++  /// A stable layout and primitive index sequence permit controller reuse.
++  @internal
++  bool reuseDataLayout = false;
++
++  /// The current source is an ordinary numeric array.
++  @internal
++  bool primitiveDataUpdate = false;
++
++  /// Whether the ordinary full update resolved context-independent styles.
++  /// The cache records this even for controllers that do not share options.
++  @internal
++  bool get hasStaticDataUpdateOptions {
++    bool cached(Object? type) {
++      final prefix = '${jsToString(_idOf(type))}-';
++      return _cachedElementOptions.keys.any(
++        (key) => key.startsWith(prefix) && key != '${prefix}active',
++      );
++    }
++
++    return cached(dataElementType) &&
++        (cachedMeta.dataset == null || cached(datasetElementType));
++  }
++
+   /// core.datasetController.js:271 `supportsDecimation`.
+   @override
+   bool supportsDecimation = false;
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.plugins.dart b/packages/flutter_chartjs_port/lib/src/core/core.plugins.dart
+index b2c8c73..be2540c 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.plugins.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.plugins.dart
+@@ -32,6 +32,7 @@ library;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+ import 'package:flutter_chartjs_port/src/core/core.registry.dart';
++import 'package:flutter_chartjs_port/src/core/data_update.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     show DescriptorDefaults, readOption;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+@@ -85,6 +86,30 @@ final class PluginService {
+   @internal
+   List<PluginDescriptor>? cache;
+ 
++  /// Unknown plugins use the full lifecycle unless they explicitly opt in.
++  /// A registry/config invalidation must first rebuild the descriptors normally.
++  @internal
++  bool get supportsDataUpdates {
++    final descriptors = cache;
++    if (descriptors == null) return false;
++    for (final descriptor in descriptors) {
++      final plugin = descriptor.plugin;
++      if (plugin is Plugin) {
++        if (!plugin.supportsDataUpdates ||
++            !(plugin.dataUpdateGuard?.call(descriptor.options) ?? true)) {
++          return false;
++        }
++      } else if (plugin is Map<String, Object?> &&
++          nativeDataUpdateObject(plugin)) {
++        // User plugin objects declare their partial-lifecycle compatibility.
++        if (plugin['supportsDataUpdates'] != true) return false;
++      } else {
++        return false;
++      }
++    }
++    return true;
++  }
++
+   /// core.plugins.js:80 `_oldCache`: the descriptors before the last
+   /// [invalidate]. Dart `null` stands for `undefined`.
+   List<PluginDescriptor>? _oldCache;
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+index dcee1bc..9eef7f3 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -1043,6 +1043,10 @@ class Scale extends _ScalePrototype
+   @internal
+   bool get supportsBulkBarUpdate => false;
+ 
++  /// Only native category or explicitly bounded numeric scales opt in.
++  @internal
++  bool get supportsDataUpdates => false;
++
+   static final _bulkTickLists = <Type>{
+     <Tick>[].runtimeType,
+     List<Tick>.empty().runtimeType,
+diff --git a/packages/flutter_chartjs_port/lib/src/core/primitive_parse.dart b/packages/flutter_chartjs_port/lib/src/core/primitive_parse.dart
+index 1ace4c7..e3d6ef3 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/primitive_parse.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/primitive_parse.dart
+@@ -1,5 +1,7 @@
+ // Original code, not ported from Chart.js: guarded numeric category parsing.
+ 
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show nativeDataUpdateList;
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/parsed.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+@@ -18,23 +20,6 @@ abstract interface class NativeNumericParseScale {
+   bool get supportsNativeNumericParse;
+ }
+ 
+-final _nativeLists = <Type>{
+-  <Object?>[].runtimeType,
+-  <Object>[].runtimeType,
+-  <num>[].runtimeType,
+-  <double>[].runtimeType,
+-  <int>[].runtimeType,
+-  List<Object?>.empty().runtimeType,
+-  List<Object>.empty().runtimeType,
+-  List<num>.empty().runtimeType,
+-  List<double>.empty().runtimeType,
+-  List<int>.empty().runtimeType,
+-  const <Object?>[].runtimeType,
+-  const <num>[].runtimeType,
+-  const <double>[].runtimeType,
+-  const <int>[].runtimeType,
+-};
+-
+ /// Parse a callback-free primitive range, or decline before creating records.
+ /// The caller has already performed its ordinary initial getLabels read.
+ /// No result or qualification is cached between calls, and records stay fresh.
+@@ -49,7 +34,7 @@ List<ParsedItem>? tryParseNumericCategories(
+   if (iScale is! NativeCategoryParseScale ||
+       vScale is! NativeNumericParseScale ||
+       !(vScale! as NativeNumericParseScale).supportsNativeNumericParse ||
+-      !_nativeLists.contains(data.runtimeType) ||
++      !nativeDataUpdateList(data) ||
+       !(iScale as NativeCategoryParseScale).supportsNativeCategoryParse(
+         labels,
+       ) ||
+diff --git a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+index 48a869b..684623f 100644
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -838,6 +838,34 @@ final class OptionView implements ContextProxy {
+     return position is String ? (labels: labels, position: position) : null;
+   }
+ 
++  /// A fixed numeric range must come from numeric inputs, not a callback that
++  /// happened to resolve to a number in the preceding full update.
++  @internal
++  bool get cachedFixedDataBounds {
++    final proxy = _proxy;
++    if (proxy is! OptionResolver || _removedSlots != null) return false;
++    final min = proxy._cache.get(OptionKey.min);
++    final max = proxy._cache.get(OptionKey.max);
++    return min is num && max is num && min.isFinite && max.isFinite;
++  }
++
++  /// Category bounds/source may be absent, but cannot be scriptable inputs.
++  @internal
++  bool get cachedCategoryDataInputs {
++    final proxy = _proxy;
++    if (proxy is! OptionResolver || _removedSlots != null) return false;
++    bool bound(Object? value) =>
++        value == null ||
++        identical(value, undefined) ||
++        value is String ||
++        (value is num && value.isFinite);
++    final labels = proxy._cache.get(OptionKey.labels);
++    return bound(proxy._cache.get(OptionKey.min)) &&
++        bound(proxy._cache.get(OptionKey.max)) &&
++        !identical(labels, _absent) &&
++        !jsIsFunction(labels);
++  }
++
+   /// The own property [name] of the target, or [_absent].
+   Object? _own(String name) {
+     final cached = _cache.get(_keyOf(name));
+diff --git a/packages/flutter_chartjs_port/lib/src/plugins/plugin.colors.dart b/packages/flutter_chartjs_port/lib/src/plugins/plugin.colors.dart
+index 0171d85..a1b4bf6 100644
+--- a/packages/flutter_chartjs_port/lib/src/plugins/plugin.colors.dart
++++ b/packages/flutter_chartjs_port/lib/src/plugins/plugin.colors.dart
+@@ -359,7 +359,8 @@ void _beforeLayout(types.Chart chart, Object _, Object options) {
+ /// src/plugins/index.js:1.
+ ///
+ /// A typed [Plugin] with the upstream keys in the upstream order.
+-final Plugin colors = Plugin()
++// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
++final Plugin colors = Plugin(supportsDataUpdates: true)
+   ..id = 'colors'
+   // A typed scope of the kind `ColorsOptions` (Chart.js ADR 0054 §3).
+   ..defaults = (ColorsOptionsScope()
+diff --git a/packages/flutter_chartjs_port/lib/src/plugins/plugin.decimation.dart b/packages/flutter_chartjs_port/lib/src/plugins/plugin.decimation.dart
+index 5f3c834..4182032 100644
+--- a/packages/flutter_chartjs_port/lib/src/plugins/plugin.decimation.dart
++++ b/packages/flutter_chartjs_port/lib/src/plugins/plugin.decimation.dart
+@@ -627,11 +627,17 @@ void _destroy(types.Chart chart) {
+ /// src/plugins/index.js:2.
+ ///
+ /// A typed [Plugin] with the upstream keys in the upstream order.
+-final Plugin decimation = Plugin()
+-  ..id = 'decimation'
+-  // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
+-  ..defaults = (DecimationOptionsScope()
+-    ..algorithm = 'min-max'
+-    ..enabled = false)
+-  ..beforeElementsUpdate = _beforeElementsUpdate
+-  ..jsWrite('destroy', _destroy);
++// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
++final Plugin decimation =
++    Plugin(
++        supportsDataUpdates: true,
++        dataUpdateGuard: (options) =>
++            !jsTruthy(DecimationOptions(options).enabled),
++      )
++      ..id = 'decimation'
++      // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
++      ..defaults = (DecimationOptionsScope()
++        ..algorithm = 'min-max'
++        ..enabled = false)
++      ..beforeElementsUpdate = _beforeElementsUpdate
++      ..jsWrite('destroy', _destroy);
+diff --git a/packages/flutter_chartjs_port/lib/src/plugins/plugin.filler/index.dart b/packages/flutter_chartjs_port/lib/src/plugins/plugin.filler/index.dart
+index caf0ccb..d0a8452 100644
+--- a/packages/flutter_chartjs_port/lib/src/plugins/plugin.filler/index.dart
++++ b/packages/flutter_chartjs_port/lib/src/plugins/plugin.filler/index.dart
+@@ -202,7 +202,8 @@ void _beforeDatasetDraw(
+ /// (Chart.js ADR 0038, section 1).
+ ///
+ /// A typed [Plugin] with the upstream keys in the upstream order.
+-final Plugin filler = Plugin()
++// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
++final Plugin filler = Plugin(supportsDataUpdates: true)
+   ..id = 'filler'
+   ..afterDatasetsUpdate = _afterDatasetsUpdate
+   ..beforeDraw = _beforeDraw
+diff --git a/packages/flutter_chartjs_port/lib/src/plugins/plugin.legend.dart b/packages/flutter_chartjs_port/lib/src/plugins/plugin.legend.dart
+index 7899183..c9ebd21 100644
+--- a/packages/flutter_chartjs_port/lib/src/plugins/plugin.legend.dart
++++ b/packages/flutter_chartjs_port/lib/src/plugins/plugin.legend.dart
+@@ -1487,7 +1487,8 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
+ /// `src/plugins/index.js:4` (Chart.js ADR 0038, section 1).
+ ///
+ /// A typed [Plugin] with the upstream keys in the upstream order.
+-final Plugin legend = Plugin()
++// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
++final Plugin legend = Plugin(supportsDataUpdates: true)
+   ..id = 'legend'
+   // For tests
+   // @private
+diff --git a/packages/flutter_chartjs_port/lib/src/plugins/plugin.subtitle.dart b/packages/flutter_chartjs_port/lib/src/plugins/plugin.subtitle.dart
+index bb188a7..e79db5e 100644
+--- a/packages/flutter_chartjs_port/lib/src/plugins/plugin.subtitle.dart
++++ b/packages/flutter_chartjs_port/lib/src/plugins/plugin.subtitle.dart
+@@ -68,7 +68,8 @@ void _beforeUpdate(types.Chart chart, Object _, Object options) {
+ ///
+ /// A typed [Plugin] with the upstream keys in the upstream order. The hooks
+ /// read no args, so they take any args object.
+-final Plugin subTitle = Plugin()
++// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
++final Plugin subTitle = Plugin(supportsDataUpdates: true)
+   ..id = 'subtitle'
+   ..start = _start
+   ..stop = _stop
+diff --git a/packages/flutter_chartjs_port/lib/src/plugins/plugin.title.dart b/packages/flutter_chartjs_port/lib/src/plugins/plugin.title.dart
+index 9a5b014..51ff43e 100644
+--- a/packages/flutter_chartjs_port/lib/src/plugins/plugin.title.dart
++++ b/packages/flutter_chartjs_port/lib/src/plugins/plugin.title.dart
+@@ -387,7 +387,8 @@ void _beforeUpdate(types.Chart chart, Object _, Object options) {
+ /// upstream order. Each hook is a private function of the hook type
+ /// `(chart, args, options)`: the hooks of the title read no args, so they
+ /// take any args object.
+-final Plugin title = Plugin()
++// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
++final Plugin title = Plugin(supportsDataUpdates: true)
+   ..id = 'title'
+   // For tests
+   // @private
+diff --git a/packages/flutter_chartjs_port/lib/src/plugins/plugin.tooltip.dart b/packages/flutter_chartjs_port/lib/src/plugins/plugin.tooltip.dart
+index f361e1a..f8829a4 100644
+--- a/packages/flutter_chartjs_port/lib/src/plugins/plugin.tooltip.dart
++++ b/packages/flutter_chartjs_port/lib/src/plugins/plugin.tooltip.dart
+@@ -2518,7 +2518,8 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
+ /// `src/plugins/index.js:7` (Chart.js ADR 0038, section 1).
+ ///
+ /// A typed [Plugin] with the upstream keys in the upstream order.
+-final Plugin tooltip = Plugin()
++// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
++final Plugin tooltip = Plugin(supportsDataUpdates: true)
+   ..id = 'tooltip'
+   ..jsWrite('_element', Tooltip.jsClass)
+   ..jsWrite('positioners', _positioners)
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+index 0fdc5cb..8ee194f 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+@@ -234,6 +234,27 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
+     );
+   }
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates {
++    if (super.runtimeType != CategoryScale ||
++        !options.cachedCategoryDataInputs ||
++        chart is! CategoryLabelSource) {
++      return false;
++    }
++    final cached = options.cachedCategoryLabelSource();
++    return cached != null &&
++        (chart as CategoryLabelSource).categoryLabels(
++              cached.labels,
++              horizontal:
++                  cached.position == 'top' ||
++                  cached.position == 'bottom' ||
++                  axis == 'x',
++            ) !=
++            null;
++  }
++
+   static final Type _nativeTickListType = <Tick>[].runtimeType;
+ 
+   @override
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+index 04e58e6..8ca42e5 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+@@ -52,6 +52,15 @@ class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
+   // scale.linear.js:8 `static id = 'linear'`. Scale has the instance field
+   // `id`. Thus the value is only in the statics of jsClass.
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates =>
++      super.runtimeType == LinearScale &&
++      getUserBounds().minDefined &&
++      getUserBounds().maxDefined &&
++      options.cachedFixedDataBounds;
++
+   /// scale.linear.js:13 `static defaults`.
+   ///
+   /// The tick callback is the function object of `Ticks.formatters.numeric`
+@@ -60,6 +69,7 @@ class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
+   /// of the library. Thus the callback is the value of
+   /// `formatters['numeric']` at the first read of [defaults]. The object is
+   /// a typed scope of the kind `ScaleOptions` (Chart.js ADR 0054 §3).
++
+   static final ScaleOptionsScope defaults = ScaleOptionsScope()
+     ..ticks = (TickOptionsScope()..callback = formatters['numeric']!);
+ 
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.radialLinear.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.radialLinear.dart
+index b71a3d0..6eaa887 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.radialLinear.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.radialLinear.dart
+@@ -775,8 +775,18 @@ class RadialLinearScale extends LinearScaleBase
+   // scale.radialLinear.js:340 `static id = 'radialLinear'`. Scale has the
+   // instance field `id`. Thus the value is only in the statics of jsClass.
+ 
++  /// Native support for the explicit data-only lifecycle.
++  @override
++  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
++  bool get supportsDataUpdates =>
++      super.runtimeType == RadialLinearScale &&
++      getUserBounds().minDefined &&
++      getUserBounds().maxDefined &&
++      options.cachedFixedDataBounds;
++
+   /// scale.radialLinear.js:345 `static defaults`, a typed scope of the kind
+   /// `ScaleOptions` (Chart.js ADR 0054 §3).
++
+   static final ScaleOptionsScope defaults = ScaleOptionsScope()
+     ..display = true
+     // Boolean - Whether to animate scaling the chart from the centre
+diff --git a/packages/flutter_chartjs_port/lib/src/typed/datasets.dart b/packages/flutter_chartjs_port/lib/src/typed/datasets.dart
+index 2846571..e68f464 100644
+--- a/packages/flutter_chartjs_port/lib/src/typed/datasets.dart
++++ b/packages/flutter_chartjs_port/lib/src/typed/datasets.dart
+@@ -13,6 +13,8 @@ import 'dart:ui' show Color;
+ 
+ import 'package:flutter/foundation.dart'
+     show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show registerDataUpdateTypes;
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+     show OptionKey, OptionScope;
+@@ -254,6 +256,17 @@ abstract final class Dataset with Diagnosticable {
+ /// merges last. [Dataset.key] does not lower.
+ @internal
+ OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
++  if (!_dataUpdateTypesRegistered) {
++    registerDataUpdateTypes(
++      [
++        <DataPoint>[].runtimeType,
++        List<DataPoint>.empty().runtimeType,
++        const <DataPoint>[].runtimeType,
++      ],
++      [DataPoint],
++    );
++    _dataUpdateTypesRegistered = true;
++  }
+   final kind = dataset._kind;
+   final scope = _datasetScopeOf(kind);
+   if (kind != chartType) put(scope, OptionKey.type, kind.name);
+@@ -291,6 +304,8 @@ OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
+   return mergeExtra(scope, dataset.extra);
+ }
+ 
++bool _dataUpdateTypesRegistered = false;
++
+ /// A new dataset scope of the controller [kind] (Chart.js ADR 0054 §3): the
+ /// dataset kind of `index.d.ts` of each controller (`line` and `scatter`
+ /// share `LineControllerDatasetOptions`, `pie` and `doughnut` share
+diff --git a/packages/flutter_chartjs_port/lib/src/types/index.dart b/packages/flutter_chartjs_port/lib/src/types/index.dart
+index c9a9a6d..b6d5cf9 100644
+--- a/packages/flutter_chartjs_port/lib/src/types/index.dart
++++ b/packages/flutter_chartjs_port/lib/src/types/index.dart
+@@ -499,6 +499,10 @@ abstract interface class Chart {
+   /// index.d.ts:559 `update(mode?)`. controller.doughnut.js:127 calls it.
+   void update([Object? mode]);
+ 
++  /// Explicit data-only lifecycle; false means a full update was selected.
++  /// Configuration, labels and dataset structure must stay unchanged.
++  bool updateData();
++
+   /// index.d.ts:568 `getVisibleDatasetCount()`.
+   /// controller.polarArea.js:155 calls it.
+   double getVisibleDatasetCount();
+diff --git a/packages/flutter_chartjs_port/lib/src/types/plugin.dart b/packages/flutter_chartjs_port/lib/src/types/plugin.dart
+index 8d2eea0..c3a3d3e 100644
+--- a/packages/flutter_chartjs_port/lib/src/types/plugin.dart
++++ b/packages/flutter_chartjs_port/lib/src/types/plugin.dart
+@@ -854,7 +854,17 @@ final class TooltipDrawHookArgs extends PluginHookArgs {
+ /// face reads and writes the fields by name. A plugin is not a `Map`.
+ final class Plugin implements JsObjectFace {
+   /// A plugin without own keys.
+-  Plugin();
++  Plugin({this.supportsDataUpdates = false, this.dataUpdateGuard});
++
++  /// Opt into Chart.updateData's data/update/draw hooks without layout hooks.
++  /// Such hooks must not mutate configuration, source/parsed data or structure.
++  /// They may refresh their own derived state from the committed chart data.
++  /// This Dart capability is deliberately outside the JavaScript own keys.
++  final bool supportsDataUpdates;
++
++  /// Optional additional eligibility check of the resolved plugin options.
++  /// It must be observational only and must not modify the chart or options.
++  final bool Function(Object options)? dataUpdateGuard;
+ 
+   /// The JS names of the fields, by slot.
+   static const List<String> fieldNames = [
+diff --git a/packages/flutter_chartjs_port/lib/src/widgets/chart_view_plugin.dart b/packages/flutter_chartjs_port/lib/src/widgets/chart_view_plugin.dart
+index ff0fc73..3d3b68c 100644
+--- a/packages/flutter_chartjs_port/lib/src/widgets/chart_view_plugin.dart
++++ b/packages/flutter_chartjs_port/lib/src/widgets/chart_view_plugin.dart
+@@ -32,6 +32,7 @@ const String chartViewPluginId = r'$chartView';
+ AnyObject createChartViewPlugin(ChartThemeSwitch theme, ChartKeyboard keys) =>
+     <String, Object?>{
+       'id': chartViewPluginId,
++      'supportsDataUpdates': true,
+ 
+       /// core.controller.js:490 `notifyPlugins('beforeUpdate', ...)`.
+       'beforeUpdate': (types.Chart chart, Object? args, Object? options) {

@@ -35,6 +35,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show DataUpdateShape;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, parseObjectDataRadialScaleOf;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -64,7 +66,16 @@ class RadarController extends DatasetController {
   /// 0020, section 4).
   RadarController(super.chart, super.datasetIndex, [super.newTarget]);
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == RadarController;
+
+  @override
+  DataUpdateShape get dataUpdateShape => DataUpdateShape.radial;
+
   /// controller.radar.js:6 `static id = 'radar'`.
+
   static const String id = 'radar';
 
   /// controller.radar.js:11 `static defaults`, a typed scope of the kind

@@ -1,0 +1,29 @@
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+flutter: The Dart VM service is listening on http://127.0.0.1:64069/RiqplIsWyDw=/
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":1,"frames":56,"fps":"56.00","buildMs":"16.252","rasterMs":"9.234"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":2,"frames":60,"fps":"60.00","buildMs":"15.565","rasterMs":"8.584"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":3,"frames":59,"fps":"59.00","buildMs":"16.062","rasterMs":"8.720"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":4,"frames":60,"fps":"60.00","buildMs":"16.026","rasterMs":"8.701"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":5,"frames":60,"fps":"60.00","buildMs":"15.745","rasterMs":"8.745"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":6,"frames":58,"fps":"58.00","buildMs":"16.149","rasterMs":"8.705"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":7,"frames":60,"fps":"60.00","buildMs":"16.071","rasterMs":"8.751"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":8,"frames":60,"fps":"60.00","buildMs":"16.043","rasterMs":"8.742"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":9,"frames":60,"fps":"60.00","buildMs":"16.019","rasterMs":"8.651"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":10,"frames":60,"fps":"60.00","buildMs":"15.973","rasterMs":"8.582"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":11,"frames":59,"fps":"59.00","buildMs":"16.247","rasterMs":"8.819"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":12,"frames":60,"fps":"60.00","buildMs":"16.048","rasterMs":"8.739"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":13,"frames":59,"fps":"59.00","buildMs":"16.441","rasterMs":"8.769"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":14,"frames":60,"fps":"60.00","buildMs":"16.027","rasterMs":"8.636"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":15,"frames":59,"fps":"59.00","buildMs":"16.390","rasterMs":"8.712"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":16,"frames":54,"fps":"54.00","buildMs":"16.608","rasterMs":"8.897"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":17,"frames":54,"fps":"54.00","buildMs":"17.311","rasterMs":"9.136"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":18,"frames":58,"fps":"58.00","buildMs":"16.640","rasterMs":"8.902"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":19,"frames":59,"fps":"59.00","buildMs":"15.987","rasterMs":"8.776"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":20,"frames":60,"fps":"60.00","buildMs":"16.329","rasterMs":"8.736"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":21,"frames":60,"fps":"60.00","buildMs":"16.056","rasterMs":"8.839"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":22,"frames":59,"fps":"59.00","buildMs":"16.576","rasterMs":"8.781"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":23,"frames":59,"fps":"59.00","buildMs":"16.208","rasterMs":"8.743"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":24,"frames":60,"fps":"60.00","buildMs":"16.127","rasterMs":"8.583"}
+flutter: STRESS_WINDOW {"mode":"chart","n":20000,"m":0,"window":25,"frames":60,"fps":"60.00","buildMs":"15.836","rasterMs":"8.695"}
+flutter: STRESS {"mode":"chart","n":20000,"m":0,"fps":"59.05","drawMs":"9.06","updateMs":"4.44","animatorMs":"0.00","call":"data","lastDataUpdateFast":true,"type":"bar","sharing":true,"canvas":"736.0x441.6@2.0","scriptable":false,"elementsMs":"2.13","layoutMs":"0.00","datasetsUpdateMs":"2.29","datasetsDrawMs":"8.87","host":"canvas","buildMs":"16.19","buildMaxMs":"20.85","rasterMs":"8.79","rasterMaxMs":"9.59","batches":15,"batchFrames":1442,"buildP50Ms":"15.45","buildP90Ms":"19.09","rasterP50Ms":"8.69","rasterP90Ms":"9.02","windows":25}
+flutter: STRESS done

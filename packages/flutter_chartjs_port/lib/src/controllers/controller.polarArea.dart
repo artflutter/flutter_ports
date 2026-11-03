@@ -39,6 +39,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show DataUpdateShape;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -164,7 +166,16 @@ class PolarAreaController extends DatasetController {
   /// of :93-94.
   PolarAreaController(super.chart, super.datasetIndex, [super.newTarget]);
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == PolarAreaController;
+
+  @override
+  DataUpdateShape get dataUpdateShape => DataUpdateShape.radial;
+
   /// controller.polarArea.js:6 `static id = 'polarArea'`.
+
   static const String id = 'polarArea';
 
   /// controller.polarArea.js:11 `static defaults`, a typed scope of the kind

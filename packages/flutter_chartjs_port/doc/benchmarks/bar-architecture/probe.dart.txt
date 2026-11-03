@@ -1,0 +1,84 @@
+// Original code, not ported from Chart.js: architectural performance diagnosis.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Animation;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import '../bar_update/native.dart';
+import '../bar_update/probe.dart' as old;
+
+ChartBenchCase makeCase(String name) => ChartBenchCase(
+  mode: 'architecture', name: name, call: ChartBenchCall.frame,
+  scene: (n) {
+    registerGalleryComponents();
+    final field = StressPointField(n);
+    final scene = StressChartScene(StressChartType.bar, n, field);
+    final config = stressChartConfig(scene: scene, scriptable: false,
+      options: chartBenchOptions);
+    return ChartBenchScene(config: config, frame: (chart) {
+      if (name != 'unchanged_update') {
+        field.step(n, chartBenchStep);
+        scene.write(field);
+      }
+      if (name != 'values_only') {
+        chart.update('none');
+        return;
+      }
+      // Restricted experiment: fixed axes/layout/styles, positive values.
+      // Omits parsing/update hooks and parsed-data synchronization.
+      // This is not a production update implementation.
+      final meta = chart.getDatasetMeta(0);
+      final scale = meta.vScale!;
+      for (var i = 0; i < n; i++) {
+        final bar = meta.data[i] as BarElement;
+        final head = scale.getPixelForValue(scene.data[i]);
+        bar.y = head;
+        bar.height = (bar.base - head).abs();
+      }
+      chart.draw();
+    });
+  },
+);
+Object geometry(Chart chart) => [
+  for (final e in chart.getDatasetMeta(0).data)
+    [for (final key in ['x','y','base','width','height'])
+      (e as types.ElementPropertyRead)[key]],
+];
+Future<void> run() async {
+  await Future<void>.delayed(const Duration(seconds: 1));
+  animator.refresh = () {};
+  final env = Platform.environment;
+  final file = File('/tmp/architecture-${env['ARCH_RUN'] ?? 'a'}.jsonl');
+  var cases = ['full_frame','values_only','unchanged_update','draw','native_chunk'];
+  if (env['ARCH_REVERSE'] == '1') cases = cases.reversed.toList();
+  for (final n in [800,20000]) {
+    for (final name in cases) {
+      var verified = false;
+      final Map<String,Object?> result;
+      if (name == 'native_chunk') {
+        result = nativeCase(n, name);
+      } else {
+        result = runChartBenchCase(name == 'draw' ? old.makeCase(name) : makeCase(name),n,
+          const ChartBenchSettings(batches: 7,batchMs: 200,warmupMs: 800),
+          onChart: name != 'values_only' ? null : (chart) {
+            final before = jsonEncode(geometry(chart));
+            chart.update('none');
+            verified = before == jsonEncode(geometry(chart));
+            if (!verified) throw StateError('Geometry mismatch at N=$n');
+          });
+      }
+      file.writeAsStringSync('${jsonEncode({...result, if(name=='values_only') 'allBarGeometryMatchesFullUpdate': verified})}\n',mode: FileMode.append,flush: true);
+      print('ARCH $n $name');
+    }
+  }
+  exit(0);
+}
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MaterialApp(home: Scaffold(body: Text('Architecture diagnosis'))));
+  unawaited(run());
+}

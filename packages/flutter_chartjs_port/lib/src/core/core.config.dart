@@ -35,6 +35,7 @@ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -504,6 +505,11 @@ class Config implements types.ChartConfiguration {
     final options = jsGet(_config, 'options');
     return _isConfigObject(options) ? options! : throw TypeError();
   }
+
+  /// Native root reads only; unknown configuration objects keep full updates.
+  @internal
+  bool get supportsDataUpdates =>
+      super.runtimeType == Config && nativeDataUpdateRoot(_config);
 
   /// core.config.js:189 `set options(options)`.
   set options(Object? options) {

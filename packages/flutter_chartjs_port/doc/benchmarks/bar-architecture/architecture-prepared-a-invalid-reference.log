@@ -1,0 +1,21 @@
+sandbox_extension_issue_file_to_process failed for /tmp/bar-architecture-prepared.app: 1 (Operation not permitted)
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+flutter: The Dart VM service is listening on http://127.0.0.1:63221/2jfCrXT1c-g=/
+flutter: ARCH 20000 full_frame
+[ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: Converting object to an encodable object failed: NaN
+#0      _JsonStringifier.writeObject (dart:convert/json.dart:826)
+#1      _JsonStringifier.writeList (dart:convert/json.dart:877)
+#2      _JsonStringifier.writeJsonValue (dart:convert/json.dart:859)
+#3      _JsonStringifier.writeObject (dart:convert/json.dart:817)
+#4      _JsonStringifier.writeList (dart:convert/json.dart:877)
+#5      _JsonStringifier.writeJsonValue (dart:convert/json.dart:859)
+#6      _JsonStringifier.writeObject (dart:convert/json.dart:817)
+#7      _JsonStringStringifier.printOn (dart:convert/json.dart:1026)
+#8      _JsonStringStringifier.stringify (dart:convert/json.dart:1007)
+#9      JsonEncoder.convert (dart:convert/json.dart:352)
+#10     JsonCodec.encode (dart:convert/json.dart:237)
+#11     jsonEncode (dart:convert/json.dart:118)
+#12     run.<anonymous closure> (file:///Users/vasilich/IdeaProjects/flutter_ports/.dart_tool/bar_architecture/prepared.dart:93)
+#13     runChartBenchCase (package:chartjs_gallery/bench/chart_bench.dart:1750)
+#14     run (file:///Users/vasilich/IdeaProjects/flutter_ports/.dart_tool/bar_architecture/prepared.dart:83)
+<asynchronous suspension>

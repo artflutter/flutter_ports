@@ -1,0 +1,100 @@
+// Original code, not ported from Chart.js: per-ruler numeric pixel reuse.
+
+import 'dart:typed_data';
+
+import 'package:flutter_chartjs_port/src/options/parsed.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+
+/// Complete numeric projection inputs for an unaligned native scale.
+typedef BarPixelState = ({
+  double origin,
+  double range,
+  double start,
+  double length,
+  bool reverse,
+});
+
+/// Pure numeric projections, independent of the optional data index.
+abstract interface class BarPixelScale {
+  /// Null for custom scales or unsupported projection settings.
+  BarPixelState? get barPixelState;
+}
+
+/// Native metadata with an ordinary parsed-array field read.
+abstract interface class BarPixelMeta {
+  /// The live array; its container and items still need validation.
+  List<Object?> get barPixelParsed;
+}
+
+final _parsedLists = <Type>{
+  <Object?>[].runtimeType,
+  List<Object?>.empty().runtimeType,
+  <ParsedItem>[].runtimeType,
+  List<ParsedItem>.empty().runtimeType,
+};
+final _valueLists = <Type>{
+  <double>[].runtimeType,
+  List<double>.empty().runtimeType,
+};
+
+/// A snapshot confined to one ruler calculation, never retained across updates.
+final class BarPixelReuse {
+  BarPixelReuse._(this._scale, this._state, this.pixels);
+
+  final types.Scale _scale;
+  final BarPixelState _state;
+
+  /// The ruler's existing destination for projections of indexes 0..N-1.
+  final Float64List pixels;
+
+  /// Preflight without invoking custom list/item getters or conversions.
+  static BarPixelReuse? capture(
+    types.Scale? scale,
+    types.ChartMeta meta,
+    Float64List pixels,
+  ) {
+    if (scale is! BarPixelScale || meta is! BarPixelMeta) return null;
+    final state = (scale! as BarPixelScale).barPixelState;
+    if (state == null) return null;
+    final parsed = (meta as BarPixelMeta).barPixelParsed;
+    if (!_parsedLists.contains(parsed.runtimeType) ||
+        parsed.length != pixels.length) {
+      return null;
+    }
+    final key = AxisKey.of(scale.axis);
+    if (key == AxisKey.other) return null;
+    for (var i = 0; i < pixels.length; i++) {
+      final item = parsed[i];
+      if (item is! ParsedItem) return null;
+      final value = item.valueOf(key);
+      if (value is! double || value != i || (value == 0 && value.isNegative)) {
+        return null;
+      }
+      pixels[i] = scale.getPixelForValue(value, i.toDouble());
+    }
+    return BarPixelReuse._(scale, state, pixels);
+  }
+
+  /// Revalidate after options and value collection may have run callbacks.
+  /// Any mismatch retains every ordinary value projection.
+  double? minimumFor(List<double> scaleValues) {
+    if ((_scale as BarPixelScale).barPixelState != _state ||
+        !_valueLists.contains(scaleValues.runtimeType) ||
+        scaleValues.length != pixels.length) {
+      return null;
+    }
+    var min = _state.length;
+    double? previous;
+    for (var i = 0; i < pixels.length; i++) {
+      if (scaleValues[i] != i) return null;
+      final pixel = pixels[i];
+      if (pixel == 32767 || pixel == -32768) continue;
+      if (previous != null) {
+        final difference = (pixel - previous).abs();
+        if (difference > 0 && difference < min) min = difference;
+      }
+      previous = pixel;
+    }
+    return min;
+  }
+}

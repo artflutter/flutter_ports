@@ -854,7 +854,17 @@ final class TooltipDrawHookArgs extends PluginHookArgs {
 /// face reads and writes the fields by name. A plugin is not a `Map`.
 final class Plugin implements JsObjectFace {
   /// A plugin without own keys.
-  Plugin();
+  Plugin({this.supportsDataUpdates = false, this.dataUpdateGuard});
+
+  /// Opt into Chart.updateData's data/update/draw hooks without layout hooks.
+  /// Such hooks must not mutate configuration, source/parsed data or structure.
+  /// They may refresh their own derived state from the committed chart data.
+  /// This Dart capability is deliberately outside the JavaScript own keys.
+  final bool supportsDataUpdates;
+
+  /// Optional additional eligibility check of the resolved plugin options.
+  /// It must be observational only and must not modify the chart or options.
+  final bool Function(Object options)? dataUpdateGuard;
 
   /// The JS names of the fields, by slot.
   static const List<String> fieldNames = [

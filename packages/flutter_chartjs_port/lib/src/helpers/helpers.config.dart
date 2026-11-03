@@ -838,6 +838,34 @@ final class OptionView implements ContextProxy {
     return position is String ? (labels: labels, position: position) : null;
   }
 
+  /// A fixed numeric range must come from numeric inputs, not a callback that
+  /// happened to resolve to a number in the preceding full update.
+  @internal
+  bool get cachedFixedDataBounds {
+    final proxy = _proxy;
+    if (proxy is! OptionResolver || _removedSlots != null) return false;
+    final min = proxy._cache.get(OptionKey.min);
+    final max = proxy._cache.get(OptionKey.max);
+    return min is num && max is num && min.isFinite && max.isFinite;
+  }
+
+  /// Category bounds/source may be absent, but cannot be scriptable inputs.
+  @internal
+  bool get cachedCategoryDataInputs {
+    final proxy = _proxy;
+    if (proxy is! OptionResolver || _removedSlots != null) return false;
+    bool bound(Object? value) =>
+        value == null ||
+        identical(value, undefined) ||
+        value is String ||
+        (value is num && value.isFinite);
+    final labels = proxy._cache.get(OptionKey.labels);
+    return bound(proxy._cache.get(OptionKey.min)) &&
+        bound(proxy._cache.get(OptionKey.max)) &&
+        !identical(labels, _absent) &&
+        !jsIsFunction(labels);
+  }
+
   /// The own property [name] of the target, or [_absent].
   Object? _own(String name) {
     final cached = _cache.get(_keyOf(name));

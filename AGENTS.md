@@ -361,6 +361,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
       its type. A getter gives the raw JS value, and the readers keep their JS operators. A
       nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
+    - Chart.js ADR 0074: `Chart.updateData()` is an explicit data-only lifecycle
+      with fixed native ranges, stable configuration, metadata refresh and full
+      fallback. `data_update.dart` owns native source/settings checks and
+      full-update generation snapshots. Plugins must opt in; enabled decimation
+      declines. The typed facade registers immutable point containers through
+      this framework-free contract. Font/size/DPR and structural changes
+      invalidate the retained layout. Ordinary update keeps the full lifecycle.
+    - Chart.js ADR 0073: owned finite sorted bar indexes use a linear duplicate
+      scan (`bar_sorted_values.dart`). Unique lists keep identity and zero signs;
+      duplicate results are growable and normalize zero as the original Set does.
+      The helper is an explicit framework-free import-check root so its tests
+      remain in the automatic JavaScript and WebAssembly suites.
     - Chart.js ADR 0071: `primitive_parse.dart` shares guarded numeric/category
       parsing between bars and the base controller. Native source/type preflight
       is local to each call; parsed records stay fresh and custom inputs retain

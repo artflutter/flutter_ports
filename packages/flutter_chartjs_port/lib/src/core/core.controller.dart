@@ -51,6 +51,7 @@ import 'package:flutter_chartjs_port/src/core/core.plugins.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart'
     as core_registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -1101,6 +1102,7 @@ class Chart
 
   /// core.controller.js:217 `set data(data)`.
   set data(Object? data) {
+    _invalidateDataUpdate();
     config.data = data;
   }
 
@@ -1112,6 +1114,7 @@ class Chart
 
   /// core.controller.js:225 `set options(options)`.
   set options(Object? options) {
+    _invalidateDataUpdate();
     config.options = options;
   }
 
@@ -1191,6 +1194,7 @@ class Chart
   /// for a falsy option. `newSize` is the record of `getMaximumSize`. The
   /// hook `resize` and `onResize` get it as `size`.
   void _resize(double? width, double? height) {
+    _invalidateDataUpdate();
     final options = _options;
     final canvas = this.canvas;
     final aspectRatio = jsTruthy(options.readKey(OptionKey.maintainAspectRatio))
@@ -1478,6 +1482,7 @@ class Chart
   ///
   /// Resets the chart back to its state before the initial animation
   void reset() {
+    _invalidateDataUpdate();
     _resetElements();
     notifyPlugins('reset');
   }
@@ -1489,6 +1494,20 @@ class Chart
   /// The hooks get it as it is.
   @override
   void update([Object? mode = undefined]) {
+    if (_updatingData) {
+      throw StateError('update cannot run inside updateData hooks');
+    }
+    _fullUpdateDepth++;
+    try {
+      _updateFull(mode);
+    } finally {
+      _fullUpdateDepth--;
+    }
+  }
+
+  void _updateFull(Object? mode) {
+    _invalidateDataUpdate();
+    final generation = _dataUpdateGeneration;
     final config = this.config..update();
     final options = _options = config.createResolver(
       config.chartOptionScopes(),
@@ -1549,7 +1568,7 @@ class Chart
       });
     }
 
-    _updateDatasets(mode);
+    final datasetsUpdated = _updateDatasets(mode);
 
     // Do this before render so that any plugins that need final scale
     // updates can use it
@@ -1571,6 +1590,203 @@ class Chart
     }
 
     render();
+    if (generation == _dataUpdateGeneration) {
+      _dataUpdateReady = datasetsUpdated;
+      if (datasetsUpdated &&
+          supportsDataUpdates &&
+          config.supportsDataUpdates) {
+        _dataUpdateSnapshot = DataUpdateSnapshot.capture(data, config.options);
+        _dataUpdateEnvironment = (
+          width: width,
+          height: height,
+          dpr: currentDevicePixelRatio,
+          fonts: _dataUpdateFonts,
+        );
+      }
+    }
+  }
+
+  int _fullUpdateDepth = 0;
+  bool _dataUpdateFallback = false;
+  int _dataUpdateGeneration = 0;
+  void _invalidateDataUpdate() {
+    _dataUpdateGeneration++;
+    _dataUpdateReady = false;
+    _dataUpdateSnapshot = null;
+    _dataUpdateEnvironment = null;
+  }
+
+  bool _dataUpdateReady = false;
+  bool _updatingData = false;
+  DataUpdateSnapshot? _dataUpdateSnapshot;
+  ({double width, double height, double dpr, Object? fonts})?
+  _dataUpdateEnvironment;
+
+  Object? get _dataUpdateFonts => ctx is CanvasTextMetricsSource
+      ? (ctx! as CanvasTextMetricsSource).textMetricsGeneration
+      : null;
+
+  /// Timing-only chart wrappers may opt in if all metadata/config reads remain
+  /// ordinary. Unknown subclasses retain their virtual full update behavior.
+  @internal
+  bool get supportsDataUpdates => super.runtimeType == Chart;
+
+  /// Update numeric data while retaining unchanged settings, ticks and layout.
+  ///
+  /// Within an existing array, only numeric values/nulls may change; keep
+  /// record implementations, parsing keys and value kinds unchanged. Replace
+  /// the array (same length) to validate a new native source, or call [update]
+  /// for structural/type changes. Options/defaults/theme, labels (including
+  /// in-place edits), dataset identities/order, stacking and visibility must
+  /// stay unchanged; call [update] for those changes. Numeric scales require
+  /// explicit numeric min/max. Category, linear and radial-linear scales and
+  /// all built-in controllers are supported. Indexed/scriptable styles,
+  /// unknown components, active animations and unapproved plugins fall back
+  /// to `update('none')`. Native numeric lists/buffers and point data qualify.
+  ///
+  /// Parsing, stacks, hover/event replay and update/draw hooks stay live.
+  /// Scale/layout hooks run only when overflow requires a new layout. Use a
+  /// full update for data-dependent scale/configuration callbacks. Plugins
+  /// must opt in and must not mutate configuration or data during these hooks.
+  /// Neither update method may re-enter synchronously from these callbacks.
+  ///
+  /// Returns true when the data-only lifecycle was selected, even if a hook
+  /// cancelled it; false when this call delegated to the full lifecycle.
+  // DIVERGES(chartjs): adapt-incremental-data-update, data-only lifecycle.
+  @override
+  bool updateData() {
+    if (_updatingData || _fullUpdateDepth > 0 || _dataUpdateFallback) {
+      throw StateError('updateData cannot be called from update hooks');
+    }
+    bool full() {
+      _dataUpdateFallback = true;
+      try {
+        update('none');
+        return false;
+      } finally {
+        _dataUpdateFallback = false;
+      }
+    }
+
+    if (!_dataUpdateReady ||
+        !supportsDataUpdates ||
+        !config.supportsDataUpdates ||
+        dataChanges.isNotEmpty ||
+        animator.has(this) ||
+        !plugins.supportsDataUpdates) {
+      return full();
+    }
+    final snapshot = _dataUpdateSnapshot;
+    final environment = _dataUpdateEnvironment;
+    if (environment == null ||
+        environment.width != width ||
+        environment.height != height ||
+        environment.dpr != currentDevicePixelRatio ||
+        environment.fonts == null ||
+        !identical(environment.fonts, _dataUpdateFonts)) {
+      return full();
+    }
+
+    final newSnapshot = !(snapshot?.settingsValidated ?? false);
+    if (snapshot == null ||
+        !snapshot.matches(data, config.options) ||
+        snapshot.datasets.length != _datasets.length) {
+      return full();
+    }
+    for (final scale in scales.values) {
+      if (!scale.supportsDataUpdates) return full();
+    }
+    final controllers = <DatasetController>[];
+    for (var i = 0; i < snapshot.datasets.length; i++) {
+      final meta = getDatasetMeta(i.toDouble());
+      final controller = meta.controller;
+      if (controller == null ||
+          !controller.supportsDataUpdates ||
+          !controller.hasStaticDataUpdateOptions ||
+          (controller.parsing is! bool && controller.parsing is! Undefined) ||
+          meta.data.length != snapshot.counts[i]) {
+        return full();
+      }
+      controllers.add(controller);
+    }
+    if (!snapshot.validateSettings()) return full();
+    for (var i = 0; i < controllers.length; i++) {
+      final controller = controllers[i];
+      final meta = controller.cachedMeta;
+      if (newSnapshot &&
+          (meta.data.any((e) => e is! Element || !e.typedWrites) ||
+              (meta.dataset != null &&
+                  (meta.dataset is! Element ||
+                      !(meta.dataset! as Element).typedWrites)))) {
+        return full();
+      }
+      final primitive = snapshot.validateValues(
+        i,
+        controller.dataUpdateShape,
+        prepared: controller.parsing == false,
+      );
+      if (primitive == null) return full();
+      controller.primitiveDataUpdate = primitive;
+    }
+    _updatingData = true;
+    try {
+      if (notifyPlugins(
+            'beforeUpdate',
+            UpdateHookArgs(mode: 'none', cancelable: true),
+          ) ==
+          false) {
+        return true;
+      }
+      notifyPlugins('beforeElementsUpdate');
+      var padding = 0.0;
+      for (final controller in controllers) {
+        controller.buildOrUpdateElements(false);
+        padding = jsMax(jsToNumber(controller.getMaxOverflow()), padding);
+      }
+      padding =
+          jsTruthy(
+            readOption(
+              _options.readKey(OptionKey.layout),
+              OptionKey.autoPadding,
+            ),
+          )
+          ? padding
+          : 0;
+      final reuseLayout = padding == _minPadding;
+      if (!reuseLayout) {
+        _minPadding = padding;
+        _updateLayout(padding);
+      }
+      // Invalidate data-derived caches while preserving scale layout and ticks.
+      for (final scale in scales.values) {
+        scale.cache = types.ScaleCache();
+      }
+      for (final controller in controllers) {
+        controller
+          ..updatingData = true
+          ..reuseDataLayout = reuseLayout && controllers.length == 1;
+      }
+      if (!_updateDatasets('none', configure: false)) _invalidateDataUpdate();
+      notifyPlugins('afterUpdate', UpdateHookArgs(mode: 'none'));
+      final event = lastEvent;
+      if (event != null) {
+        eventHandler(event, true);
+      } else if (active.isNotEmpty) {
+        _updateHoverStyles(active, active, true);
+      }
+      render();
+      return true;
+    } on Object {
+      _invalidateDataUpdate();
+      rethrow;
+    } finally {
+      _updatingData = false;
+      for (final controller in controllers) {
+        controller
+          ..updatingData = false
+          ..reuseDataLayout = false;
+      }
+    }
   }
 
   /// core.controller.js:542 `_updateScales()`.
@@ -1710,31 +1926,36 @@ class Chart
   /// @private
   ///
   /// `mode({datasetIndex: i})` is [jsCall] of the function value.
-  void _updateDatasets(Object? mode) {
+  bool _updateDatasets(Object? mode, {bool configure = true}) {
     if (notifyPlugins(
           'beforeDatasetsUpdate',
           UpdateHookArgs(mode: mode, cancelable: true),
         ) ==
         false) {
-      return;
+      return false;
     }
 
-    for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
-      getDatasetMeta(i.toDouble()).controller!.configure();
+    if (configure) {
+      for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
+        getDatasetMeta(i.toDouble()).controller!.configure();
+      }
     }
-
+    var completed = true;
     for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
-      _updateDataset(
-        i,
-        isFunction(mode)
-            ? jsCall(mode, [
-                <String, Object?>{'datasetIndex': i.toDouble()},
-              ])
-            : mode,
-      );
+      completed =
+          _updateDataset(
+            i,
+            isFunction(mode)
+                ? jsCall(mode, [
+                    <String, Object?>{'datasetIndex': i.toDouble()},
+                  ])
+                : mode,
+          ) &&
+          completed;
     }
 
     notifyPlugins('afterDatasetsUpdate', UpdateHookArgs(mode: mode));
+    return completed;
   }
 
   /// core.controller.js:669 `_updateDataset(index, mode)`.
@@ -1746,7 +1967,7 @@ class Chart
   ///
   /// `meta.controller._update(mode)` is `update_` (Chart.js ADR 0023). It
   /// takes a `String`: [_modeArg] gives the falsy modes as Dart `null`.
-  void _updateDataset(int index, Object? mode) {
+  bool _updateDataset(int index, Object? mode) {
     final meta = getDatasetMeta(index.toDouble());
     final args = DatasetUpdateHookArgs(
       meta: meta,
@@ -1756,13 +1977,14 @@ class Chart
     );
 
     if (notifyPlugins('beforeDatasetUpdate', args) == false) {
-      return;
+      return false;
     }
 
     meta.controller!.update_(_modeArg(mode));
 
     args.cancelable = false;
     notifyPlugins('afterDatasetUpdate', args);
+    return true;
   }
 
   /// core.controller.js:683 `render()`.
@@ -2021,6 +2243,7 @@ class Chart
     // ignore: avoid_positional_boolean_parameters
     bool visible,
   ) {
+    _invalidateDataUpdate();
     getDatasetMeta(datasetIndex.toDouble()).hidden = !visible;
   }
 
@@ -2033,6 +2256,7 @@ class Chart
   /// `'01'` after a data insert or remove, as upstream (core.controller.js:72).
   @override
   void toggleDataVisibility(Object? index) {
+    _invalidateDataUpdate();
     final key = jsToString(index);
     _hiddenIndices[key] = !jsTruthy(_hiddenIndices[key]);
   }
@@ -2139,6 +2363,7 @@ class Chart
   /// that no `update()` reaches a destroyed chart and no `Timer` stays
   /// pending (Chart.js ADR 0016, decision 4).
   void destroy() {
+    _invalidateDataUpdate();
     notifyPlugins('beforeDestroy');
     final canvas = this.canvas;
     final ctx = this.ctx;

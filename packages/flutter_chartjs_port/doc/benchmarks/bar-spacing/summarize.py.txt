@@ -1,0 +1,30 @@
+import json, gzip, statistics
+from pathlib import Path
+import sys
+stage=sys.argv[1]
+root=Path('packages/flutter_chartjs_port/doc/benchmarks/bar-spacing')/stage
+root.mkdir(exist_ok=True)
+runs={}
+for run in ['a1','b1','b2','a2']:
+ rows=[]
+ for group in ['primary','controls','guards']:
+  rows.extend(json.loads(l) for l in Path('/tmp/bar-'+stage+'-'+run+'-'+group+'.jsonl').read_text().splitlines())
+ runs[run]={(r['case'],r['n']):r for r in rows}
+with gzip.GzipFile(filename=str(root/'measurements.json.gz'),mode='wb',mtime=0) as f:
+ f.write(json.dumps({k:list(v.values()) for k,v in runs.items()},indent=2).encode())
+summary=[]
+for key in runs['a1']:
+ full={run:sum(float(rows[key][k+'MedianMs']) for k in ['update','draw','end'] if k+'MedianMs' in rows[key]) for run,rows in runs.items()}
+ a=statistics.mean([full['a1'],full['a2']]);b=statistics.mean([full['b1'],full['b2']])
+ r={'case':key[0],'n':key[1],'baselineFullMs':a,'candidateFullMs':b,'changePercent':(b/a-1)*100,'fullCalls':full,'pairChangesPercent':[(full['b1']/full['a1']-1)*100,(full['b2']/full['a2']-1)*100],'components':{}}
+ for side in ['a','b']:
+  r['components'][side]={k:statistics.mean(float(runs[side+str(n)][key][k+'MedianMs']) for n in [1,2]) for k in ['update','draw','end','elements','layout','datasetsUpdate','datasetsDraw'] if k+'MedianMs' in runs[side+'1'][key]}
+ summary.append(r)
+ print(key,round(a,3),round(b,3),round(r['changePercent'],1),[round(x,1) for x in r['pairChangesPercent']])
+(root/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+regressions=[]
+for r in summary:
+ v=r['fullCalls']
+ if all(v[b]-v[a]>.1 and v[b]/v[a]>1.05 for a,b in [('a1','b1'),('a2','b2')]):regressions.append([r['case'],r['n']])
+p=next(r for r in summary if r['case']=='update' and r['n']==20000)
+print('primary gate',all(x<=-2 for x in p['pairChangesPercent']),'control regressions',regressions)

@@ -2,6 +2,8 @@
 import 'dart:collection';
 
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:test/test.dart';
 
 final class _ObservedMap extends MapBase<String, Object?> {
@@ -137,5 +139,42 @@ void main() {
       nativeCategoryLabels(config, null, horizontal: true),
       same(replacement),
     );
+  });
+  test(
+    'exact typed roots and data scopes preserve the native label source',
+    () {
+      final labels = <String>['a', 'b'];
+      final data = ChartDataScope()..labels = labels;
+      final root = ChartConfigurationScope()..data = data;
+      expect(nativeCategoryLabels(root, null, horizontal: true), same(labels));
+      data.xLabels = <String>['x', 'y'];
+      expect(
+        nativeCategoryLabels(root, null, horizontal: true),
+        same(data.xLabelsCell!.raw),
+      );
+      expect(
+        nativeCategoryLabels(root, labels, horizontal: true),
+        same(labels),
+      );
+    },
+  );
+  test('typed routes never run merely to qualify label reuse', () {
+    var calls = 0;
+    final data = ChartDataScope()..labels = <String>['a'];
+    final root = ChartConfigurationScope()..data = data;
+    data.addRoute(
+      'labels',
+      ScopeRoute(
+        (value) {
+          calls++;
+          return value;
+        },
+        targetScope: null,
+        targetName: 'labels',
+      ),
+    );
+    calls = 0;
+    expect(nativeCategoryLabels(root, null, horizontal: true), isNull);
+    expect(calls, 0);
   });
 }

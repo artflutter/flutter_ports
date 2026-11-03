@@ -499,6 +499,10 @@ abstract interface class Chart {
   /// index.d.ts:559 `update(mode?)`. controller.doughnut.js:127 calls it.
   void update([Object? mode]);
 
+  /// Explicit data-only lifecycle; false means a full update was selected.
+  /// Configuration, labels and dataset structure must stay unchanged.
+  bool updateData();
+
   /// index.d.ts:568 `getVisibleDatasetCount()`.
   /// controller.polarArea.js:155 calls it.
   double getVisibleDatasetCount();

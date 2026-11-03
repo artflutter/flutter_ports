@@ -13,6 +13,8 @@ import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show registerDataUpdateTypes;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
@@ -254,6 +256,17 @@ abstract final class Dataset with Diagnosticable {
 /// merges last. [Dataset.key] does not lower.
 @internal
 OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
+  if (!_dataUpdateTypesRegistered) {
+    registerDataUpdateTypes(
+      [
+        <DataPoint>[].runtimeType,
+        List<DataPoint>.empty().runtimeType,
+        const <DataPoint>[].runtimeType,
+      ],
+      [DataPoint],
+    );
+    _dataUpdateTypesRegistered = true;
+  }
   final kind = dataset._kind;
   final scope = _datasetScopeOf(kind);
   if (kind != chartType) put(scope, OptionKey.type, kind.name);
@@ -290,6 +303,8 @@ OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
   dataset._lowerOwn(scope);
   return mergeExtra(scope, dataset.extra);
 }
+
+bool _dataUpdateTypesRegistered = false;
 
 /// A new dataset scope of the controller [kind] (Chart.js ADR 0054 §3): the
 /// dataset kind of `index.d.ts` of each controller (`line` and `scatter`

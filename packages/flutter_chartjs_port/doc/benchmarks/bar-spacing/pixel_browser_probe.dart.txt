@@ -1,0 +1,311 @@
+// Original code, not ported from Chart.js: guarded bar position reuse twins.
+/// Temporary browser validation.
+library;
+
+import 'dart:collection';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/bar_pixel_reuse.dart';
+import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+    show controllerArgs;
+import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/parsed.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_test/flutter_test.dart';
+
+class _ReferenceController extends BarController {
+  _ReferenceController(super.chart, super.datasetIndex, super.newTarget);
+  static final value = JsClass(
+    'SpacingReference',
+    superclass: BarController.jsClass,
+    statics: {'id': 'spacing-reference'},
+    construct: (target, args) {
+      final (:chart, :datasetIndex) = controllerArgs(args);
+      return _ReferenceController(chart, datasetIndex, target);
+    },
+  );
+}
+
+class _ObservedValues extends ListBase<double> {
+  int reads = 0;
+  @override
+  int get length {
+    reads++;
+    return 6;
+  }
+
+  @override
+  set length(int value) => throw UnimplementedError();
+  @override
+  double operator [](int index) {
+    reads++;
+    return index.toDouble();
+  }
+
+  @override
+  void operator []=(int index, double value) => throw UnimplementedError();
+}
+
+class _ObservedCategory extends CategoryScale {
+  _ObservedCategory(super.cfg);
+  int projections = 0;
+  static final value = JsClass(
+    'SpacingObservedCategory',
+    superclass: CategoryScale.jsClass,
+    statics: {'id': 'spacing-observed-category'},
+    construct: (_, args) => _ObservedCategory(scaleCfgArg(args)),
+  );
+  @override
+  double getPixelForValue(Object? value, [double? index]) {
+    projections++;
+    return super.getPixelForValue(value, index);
+  }
+}
+
+BarPixelReuse? _capture(Chart chart) {
+  final meta = chart.getDatasetMeta(0);
+  final result = BarPixelReuse.capture(
+    meta.iScale,
+    meta,
+    Float64List(meta.data.length),
+  );
+  return result;
+}
+
+Map<String, Object?> _config({
+  bool horizontal = false,
+  bool reference = false,
+  bool visible = false,
+  List<Object?>? values,
+  Map<String, Object?> extra = const {},
+}) => {
+  'type': reference ? 'spacing-reference' : 'bar',
+  'data': <String, Object?>{
+    'labels': <String>['a', 'b', 'c', 'd', 'e', 'f'],
+    'datasets': <Object?>[
+      <String, Object?>{
+        'data': values ?? <Object?>[1.0, 0.0, -0.0, -2.0, 3.0, 4.0],
+        'backgroundColor': const ui.Color(0x803366AA),
+        'borderWidth': 1.0,
+        ...extra,
+      },
+    ],
+  },
+  'options': <String, Object?>{
+    'responsive': false,
+    'animation': false,
+    'indexAxis': horizontal ? 'y' : 'x',
+    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+    'scales': <String, Object?>{
+      'x': <String, Object?>{
+        'type': horizontal ? 'linear' : 'category',
+        'display': visible,
+        if (horizontal) ...{'min': -4.0, 'max': 10.0},
+      },
+      'y': <String, Object?>{
+        'type': horizontal ? 'category' : 'linear',
+        'display': visible,
+        if (!horizontal) ...{'min': -4.0, 'max': 10.0},
+      },
+    },
+  },
+};
+Map<String, Object?> _axis(Map<String, Object?> cfg, String key) =>
+    ((cfg['options']! as Map<String, Object?>)['scales']!
+            as Map<String, Object?>)[key]!
+        as Map<String, Object?>;
+Chart _chart(Object cfg) {
+  final chart = Chart(UiCanvasElement(width: 640, height: 400), cfg);
+  addTearDown(chart.destroy);
+  return chart;
+}
+
+Object? _plain(Object? value) {
+  if (value is double) {
+    if (!value.isFinite) return value.toString();
+    if (value == 0 && value.isNegative) return '-0';
+  }
+  if (value is JsObjectFace) {
+    return {for (final key in value.jsKeys()) key: _plain(value.jsRead(key))};
+  }
+  return value;
+}
+
+Object _observe(Chart chart) => [
+  for (final e in chart.getDatasetMeta(0).data)
+    [
+      for (final key in [
+        'x',
+        'y',
+        'base',
+        'width',
+        'height',
+        'horizontal',
+        'enableBorderRadius',
+        'borderSkipped',
+        'inflateAmount',
+      ])
+        _plain((e as types.ElementPropertyRead)[key]),
+    ],
+];
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  Chart.register([
+    BarController.jsClass,
+    BarElement.jsClass,
+    CategoryScale.jsClass,
+    LinearScale.jsClass,
+    _ReferenceController.value,
+    _ObservedCategory.value,
+  ]);
+
+  for (final horizontal in [false, true]) {
+    for (final reverse in [false, true]) {
+      test('native activation, geometry and reverse $horizontal/$reverse', () {
+        Map<String, Object?> config({required bool reference}) {
+          final cfg = _config(
+            horizontal: horizontal,
+            visible: true,
+            reference: reference,
+          );
+          _axis(cfg, horizontal ? 'y' : 'x')['reverse'] = reverse;
+          return cfg;
+        }
+
+        final a = _chart(config(reference: false));
+        final b = _chart(config(reference: true));
+        final reuse = _capture(a)!;
+        expect(reuse.minimumFor(<double>[0, 1, 2, 3, 4, 5]), isNotNull);
+        for (var step = 0; step < 3; step++) {
+          if (step == 1) {
+            a.resize(420, 300);
+            b.resize(420, 300);
+          }
+          a.update('none');
+          b.update('none');
+          expect(_observe(a), _observe(b));
+        }
+      });
+    }
+  }
+
+  test('state changes and custom cached value lists decline reuse', () {
+    final chart = _chart(_config());
+    final reuse = _capture(chart)!;
+    final scale = chart.getDatasetMeta(0).iScale! as Scale;
+    final observed = _ObservedValues();
+    expect(reuse.minimumFor(observed), isNull);
+    expect(observed.reads, 0);
+    expect(reuse.minimumFor(<double>[0, 1, 2, 3, 4, 6]), isNull);
+    expect(reuse.minimumFor(<double>[0, 1, 2]), isNull);
+    scale.startPixel += 1;
+    expect(reuse.minimumFor(<double>[0, 1, 2, 3, 4, 5]), isNull);
+  });
+
+  test('custom scales retain every virtual projection call', () {
+    Map<String, Object?> config({required bool reference}) {
+      final cfg = _config(reference: reference);
+      _axis(cfg, 'x')['type'] = 'spacing-observed-category';
+      return cfg;
+    }
+
+    final a = _chart(config(reference: false));
+    final b = _chart(config(reference: true));
+    final sa = a.getDatasetMeta(0).iScale! as _ObservedCategory;
+    final sb = b.getDatasetMeta(0).iScale! as _ObservedCategory;
+    expect(_capture(a), isNull);
+    sa.projections = sb.projections = 0;
+    a.update('none');
+    b.update('none');
+    expect(sa.projections, sb.projections);
+    expect(_observe(a), _observe(b));
+  });
+
+  test('alignment and unsupported parsed values keep ordinary projection', () {
+    final aligned = _config();
+    _axis(aligned, 'x')['alignToPixels'] = true;
+    expect(_capture(_chart(aligned)), isNull);
+    final chart = _chart(_config());
+    final meta = chart.getDatasetMeta(0);
+    final first = meta.parsed[0]! as ParsedItem;
+    for (final value in <Object?>[
+      null,
+      double.nan,
+      double.infinity,
+      -0.0,
+      '0',
+    ]) {
+      first.x = value;
+      expect(_capture(chart), isNull);
+    }
+    meta.parsed[0] = <String, Object?>{'x': 0.0, 'y': 1.0};
+    expect(_capture(chart), isNull);
+  });
+
+  test(
+    'option callbacks changing projection or data retain ordinary widths',
+    () {
+      for (final mutateData in [false, true]) {
+        Map<String, Object?> config({required bool reference}) => _config(
+          reference: reference,
+          extra: {
+            'barThickness': (Object? context) {
+              final chart = jsGet(context, 'chart')! as Chart;
+              final meta = chart.getDatasetMeta(0);
+              if (mutateData) {
+                (meta.parsed.last! as ParsedItem).x = 8.0;
+              } else {
+                (meta.iScale! as Scale).length += 23;
+              }
+              return null;
+            },
+          },
+        );
+        final a = _chart(config(reference: false));
+        final b = _chart(config(reference: true));
+        a.update('none');
+        b.update('none');
+        expect(_observe(a), _observe(b));
+      }
+    },
+  );
+
+  test(
+    'linear ticks, duplicates, unsorted values and clipped pixels match',
+    () {
+      for (final xs in <List<double>>[
+        [0, 1, 1, 2, 8, 9],
+        [3, 2, 1, 0, 9, 8],
+        [-1e9, 0, 1, 2, 3, 1e9],
+      ]) {
+        Map<String, Object?> config({required bool reference}) {
+          final cfg = _config(
+            reference: reference,
+            values: [
+              for (final x in xs) <String, Object?>{'x': x, 'y': 2.0},
+            ],
+          );
+          _axis(cfg, 'x').addAll({
+            'type': 'linear',
+            'min': 0.0,
+            'max': 10.0,
+            'ticks': <String, Object?>{'stepSize': 0.5},
+          });
+          return cfg;
+        }
+
+        final a = _chart(config(reference: false));
+        final b = _chart(config(reference: true));
+        expect(_observe(a), _observe(b));
+        a.update('none');
+        b.update('none');
+        expect(_observe(a), _observe(b));
+      }
+    },
+  );
+}

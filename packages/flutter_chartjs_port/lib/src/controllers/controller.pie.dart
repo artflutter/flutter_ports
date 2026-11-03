@@ -45,7 +45,13 @@ class PieController extends DoughnutController {
   /// [newTarget] is `new.target` (Chart.js ADR 0020, section 4).
   PieController(super.chart, super.datasetIndex, [super.newTarget]);
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == PieController;
+
   /// controller.pie.js:6 `static id = 'pie'`.
+
   static const String id = 'pie';
 
   /// controller.pie.js:11 `static defaults`.

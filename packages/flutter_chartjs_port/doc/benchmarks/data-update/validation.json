@@ -1,0 +1,59 @@
+{
+  "workspaceTests": {
+    "passed": 10812,
+    "chartjsPassed": 10278,
+    "chartjsSkipped": 84
+  },
+  "targetedDataTests": 31,
+  "targetedCategoryTests": 8,
+  "targetedJsPassed": 39,
+  "targetedWasmPassed": 39,
+  "fullWeb": {
+    "chartjsPassedPerBackend": 4000,
+    "chartjsSkippedPerBackend": 2,
+    "utilsPassedPerBackend": 55
+  },
+  "fixtures": {
+    "files": 26,
+    "errors": 0,
+    "warnings": 0
+  },
+  "analyze": "passed",
+  "format": "passed, 778 files, zero changes",
+  "publicApi": "passed, export names unchanged",
+  "parity": "passed, zero errors/warnings",
+  "portChecks": "passed",
+  "performanceGate": "passed, both 20k numeric bar pairs exceed 15%",
+  "fullUpdateRegressionGate": "passed",
+  "allMeasuredIncrementalCallsActivated": true,
+  "allMeasuredReferencesMatch": true,
+  "foregroundFps": {
+    "status": "validated after unlock",
+    "full": 43.17,
+    "incremental": 56.29,
+    "allActivityChecksPassed": true,
+    "canvas": "736.0x441.6@2.0",
+    "completeWindows": {
+      "full": 24,
+      "incremental": 25
+    },
+    "lastIncrementalPathActive": true,
+    "stable60fps": false,
+    "evidence": "foreground-unlocked.json"
+  },
+  "sourceHashesMatch": true,
+  "goldensChanged": false,
+  "logs": {
+    "workspace": "workspace.log.gz",
+    "web": "web.log.gz",
+    "targetedJs": "targetedJs.log.gz",
+    "targetedWasm": "targetedWasm.log.gz",
+    "fixtures": "fixtures.log.gz",
+    "analyze": "analyze.log.gz",
+    "format": "format.log.gz",
+    "parity": "parity.log.gz",
+    "portChecks": "portChecks.log.gz",
+    "publicApi": "publicApi.log.gz",
+    "gallery": "gallery.log.gz"
+  }
+}

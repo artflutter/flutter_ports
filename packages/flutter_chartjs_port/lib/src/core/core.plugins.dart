@@ -32,6 +32,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show DescriptorDefaults, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -84,6 +85,30 @@ final class PluginService {
   /// underscore (Chart.js ADR 0012).
   @internal
   List<PluginDescriptor>? cache;
+
+  /// Unknown plugins use the full lifecycle unless they explicitly opt in.
+  /// A registry/config invalidation must first rebuild the descriptors normally.
+  @internal
+  bool get supportsDataUpdates {
+    final descriptors = cache;
+    if (descriptors == null) return false;
+    for (final descriptor in descriptors) {
+      final plugin = descriptor.plugin;
+      if (plugin is Plugin) {
+        if (!plugin.supportsDataUpdates ||
+            !(plugin.dataUpdateGuard?.call(descriptor.options) ?? true)) {
+          return false;
+        }
+      } else if (plugin is Map<String, Object?> &&
+          nativeDataUpdateObject(plugin)) {
+        // User plugin objects declare their partial-lifecycle compatibility.
+        if (plugin['supportsDataUpdates'] != true) return false;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
 
   /// core.plugins.js:80 `_oldCache`: the descriptors before the last
   /// [invalidate]. Dart `null` stands for `undefined`.

@@ -1,0 +1,116 @@
+[
+  {
+    "case": "full_frame",
+    "n": 800,
+    "parts": {
+      "updateMedianMs": 0.36,
+      "drawMedianMs": 0.321,
+      "endMedianMs": 0.8265
+    },
+    "totalCpuMs": 1.5075,
+    "geometryVerified": null
+  },
+  {
+    "case": "values_only",
+    "n": 800,
+    "parts": {
+      "updateMedianMs": 0.009,
+      "drawMedianMs": 0.3195,
+      "endMedianMs": 0.8035000000000001
+    },
+    "totalCpuMs": 1.1320000000000001,
+    "geometryVerified": true
+  },
+  {
+    "case": "unchanged_update",
+    "n": 800,
+    "parts": {
+      "updateMedianMs": 0.3505,
+      "drawMedianMs": 0.3215,
+      "endMedianMs": 0.813
+    },
+    "totalCpuMs": 1.4849999999999999,
+    "geometryVerified": null
+  },
+  {
+    "case": "draw",
+    "n": 800,
+    "parts": {
+      "updateMedianMs": 0.0,
+      "drawMedianMs": 0.3235,
+      "endMedianMs": 0.819
+    },
+    "totalCpuMs": 1.1425,
+    "geometryVerified": null
+  },
+  {
+    "case": "native_chunk",
+    "n": 800,
+    "parts": {
+      "record": 0.14572767857142857,
+      "innerEnd": 0.0009151785714285715,
+      "drawPicture": 1.4785308549304679,
+      "outerEnd": 0.15492533185840707,
+      "dispose": 0.0017256637168141594
+    },
+    "totalCpuMs": 1.7818247076485463,
+    "geometryVerified": null
+  },
+  {
+    "case": "full_frame",
+    "n": 20000,
+    "parts": {
+      "updateMedianMs": 8.613,
+      "drawMedianMs": 9.3445,
+      "endMedianMs": 2.2405
+    },
+    "totalCpuMs": 20.198,
+    "geometryVerified": null
+  },
+  {
+    "case": "values_only",
+    "n": 20000,
+    "parts": {
+      "updateMedianMs": 0.23349999999999999,
+      "drawMedianMs": 8.1005,
+      "endMedianMs": 2.1865
+    },
+    "totalCpuMs": 10.5205,
+    "geometryVerified": true
+  },
+  {
+    "case": "unchanged_update",
+    "n": 20000,
+    "parts": {
+      "updateMedianMs": 7.9,
+      "drawMedianMs": 8.3645,
+      "endMedianMs": 2.2735
+    },
+    "totalCpuMs": 18.538,
+    "geometryVerified": null
+  },
+  {
+    "case": "draw",
+    "n": 20000,
+    "parts": {
+      "updateMedianMs": 0.0,
+      "drawMedianMs": 8.0145,
+      "endMedianMs": 2.0665
+    },
+    "totalCpuMs": 10.081,
+    "geometryVerified": null
+  },
+  {
+    "case": "native_chunk",
+    "n": 20000,
+    "parts": {
+      "record": 3.6180689655172413,
+      "innerEnd": 0.0009482758620689655,
+      "drawPicture": 3.3280862068965518,
+      "outerEnd": 0.011620689655172413,
+      "dispose": 0.030741379310344825
+    },
+    "totalCpuMs": 6.9894655172413795,
+    "geometryVerified": null
+  }
+]

@@ -220,7 +220,13 @@ class ScatterController extends DatasetController {
   /// 0020, section 4).
   ScatterController(super.chart, super.datasetIndex, [super.newTarget]);
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == ScatterController;
+
   /// controller.scatter.js:8 `static id = 'scatter'`.
+
   static const String id = 'scatter';
 
   /// controller.scatter.js:13 `static defaults`, a typed scope of the kind

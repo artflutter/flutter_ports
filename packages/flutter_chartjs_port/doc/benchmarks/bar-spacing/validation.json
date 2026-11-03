@@ -1,0 +1,48 @@
+{
+  "positionReuse": {
+    "retained": false,
+    "reason": "Failed full-workload performance gate; production prototype and test removed.",
+    "finalVmTargetedPassed": 97,
+    "chromePassedPerBackend": 9
+  },
+  "sortedScan": {
+    "retained": true,
+    "newTests": 16,
+    "chromeJavaScriptPassed": 16,
+    "chromeWebAssemblyPassed": 16,
+    "full20kImprovementPercent": 2.4,
+    "pairGatesPassed": true
+  },
+  "workspaceTests": {
+    "status": "passed",
+    "passed": 10779,
+    "chartjsPassed": 10245,
+    "chartjsSkipped": 84
+  },
+  "fixtures": {
+    "files": 26,
+    "errors": 0,
+    "warnings": 0
+  },
+  "analyze": "passed, no issues",
+  "format": "passed, 776 files, zero changes",
+  "parity": "passed, zero errors/warnings",
+  "portChecks": "passed",
+  "sourceHashesMatchBenchmark": true,
+  "controlRegressions": [],
+  "fullWebSuiteRun": false,
+  "goldensChanged": false,
+  "logs": {
+    "workspaceTests": "workspaceTests.log.gz",
+    "chromeJavaScript": "chromeJavaScript.log.gz",
+    "chromeWebAssembly": "chromeWebAssembly.log.gz",
+    "fixtures": "fixtures.log.gz",
+    "analyze": "analyze.log.gz",
+    "format": "format.log.gz",
+    "parity": "parity.log.gz",
+    "portChecks": "portChecks.log.gz",
+    "positionReuseVm": "positionReuseVm.log.gz",
+    "positionReuseJs": "positionReuseJs.log.gz",
+    "positionReuseWasm": "positionReuseWasm.log.gz"
+  }
+}

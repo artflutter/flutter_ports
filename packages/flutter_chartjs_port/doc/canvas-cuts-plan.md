@@ -2363,3 +2363,21 @@ and base dataset controllers. It leaves the canvas operations, renderer shapes,
 recording limit and bulk element writes unchanged. Reference/activation tests
 are in `test/port/core/primitive_parse_test.dart`; performance.md §38 and
 benchmarks/primitive-parse/ record measurements and fallback controls.
+
+### 7.14 Bar spacing preparation
+
+ADR 0072 evaluated per-ruler position reuse but failed the full-workload gate;
+its prototypes were removed. ADR 0073 replaces hashing of owned finite sorted
+bar indexes with linear duplicate removal. Renderer shapes, draw calls, native
+recordings and scale projection order remain unchanged. Tests are in
+`test/port/core/bar_sorted_values_test.dart`; performance.md §39 and
+benchmarks/bar-spacing/ retain the sequential experiments and decisions.
+
+### 7.15 Incremental data lifecycle
+
+ADR 0074 changes update granularity, not the native renderer. The explicit
+Chart.updateData path retains stable layout and category index geometry while
+refreshing parsed data, controller geometry and compatible plugin state. It
+keeps all bars/points/arcs and the existing draw order and recording boundaries.
+Source/metadata/interaction twins are in `test/port/core/data_update_test.dart`;
+measurements are in performance.md §41 and benchmarks/data-update/.

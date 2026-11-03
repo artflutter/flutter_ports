@@ -1,5 +1,11 @@
 ## 0.1.0
 
+- Add `Chart.updateData()` for incremental native data updates across all eight
+  chart types, with metadata/interaction refresh and conservative full fallback.
+
+- Reduce bar spacing preparation overhead with a linear duplicate scan for
+  finite sorted indexes, preserving list identity and signed-zero behavior.
+
 - Reduce numeric category parsing overhead for bars and base-controller primitive
   data while preserving live labels, fresh parsed records and custom fallbacks.
 

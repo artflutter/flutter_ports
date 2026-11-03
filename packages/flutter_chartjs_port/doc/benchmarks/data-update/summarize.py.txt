@@ -1,0 +1,27 @@
+import json,statistics,gzip
+from pathlib import Path
+root=Path('packages/flutter_chartjs_port/doc/benchmarks/data-update')
+runs={}
+for run in ['a','b']:
+ rows=[]
+ for group in ['types','dense']:
+  rows += [json.loads(l) for l in Path('/tmp/data-update-cached-final-'+run+'-'+group+'.jsonl').read_text().splitlines()]
+ runs[run]={(r['case'],r['n']):r for r in rows}
+with gzip.GzipFile(filename=str(root/'measurements.json.gz'),mode='wb',mtime=0) as f:
+ f.write(json.dumps({k:list(v.values()) for k,v in runs.items()},indent=2).encode())
+summary=[]
+for case,n in runs['a']:
+ if not case.startswith('full_'):continue
+ name=case[5:];full={};data={};parts={};fast={}
+ for run in ['a','b']:
+  a=runs[run][(case,n)];b=runs[run][('data_'+name,n)]
+  full[run]=sum(float(a[k+'MedianMs']) for k in ['update','draw','end'])
+  data[run]=sum(float(b[k+'MedianMs']) for k in ['update','draw','end'])
+  fast[run]={'incrementalCalls':b['incrementalCalls'],'fullCalls':b['fullCalls'],'referenceMatches':b['referenceMatches']}
+ for variant in ['full','data']:
+  parts[variant]={k:statistics.mean(float(runs[run][(variant+'_'+name,n)].get(k+'MedianMs',0)) for run in ['a','b']) for k in ['update','draw','end','elements','layout','datasetsUpdate','datasetsDraw']}
+ a=statistics.mean(full.values());b=statistics.mean(data.values())
+ row={'type':name,'n':n,'fullCpuMs':a,'dataCpuMs':b,'improvementPercent':100*(1-b/a),'pairImprovementsPercent':[100*(1-data[r]/full[r]) for r in ['a','b']],'fullRuns':full,'dataRuns':data,'parts':parts,'activation':fast}
+ summary.append(row)
+ print(name,n,round(a,3),round(b,3),round(row['improvementPercent'],1),[round(x,1) for x in row['pairImprovementsPercent']],fast)
+(root/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')

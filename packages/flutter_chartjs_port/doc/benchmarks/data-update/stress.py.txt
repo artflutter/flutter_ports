@@ -1,0 +1,23 @@
+import os,subprocess,time
+from pathlib import Path
+app='/tmp/chart-data-update.app/Contents/MacOS/chartjs_gallery'
+for call in ['full','data']:
+ path=Path('/tmp/data-update-stress-'+call+'.log')
+ with path.open('w') as log:
+  proc=subprocess.Popen([app],env={**os.environ,'MODE':'stress','CALL':call},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   time.sleep(2)
+   r=subprocess.run(['osascript','-l','JavaScript','-e',f'ObjC.import("AppKit"); var app=$.NSRunningApplication.runningApplicationWithProcessIdentifier({proc.pid}); app.activateWithOptions(2); delay(0.2); console.log(app.active);'],check=True,capture_output=True,text=True)
+   print('foreground',call,r.stderr.strip(),flush=True)
+   for i in range(180):
+    if i%12==0:
+     r=subprocess.run(['osascript','-l','JavaScript','-e',f'ObjC.import("AppKit"); console.log($.NSRunningApplication.runningApplicationWithProcessIdentifier({proc.pid}).active);'],check=True,capture_output=True,text=True)
+     print('active',call,i,r.stderr.strip(),flush=True)
+    txt=path.read_text()
+    if 'STRESS {' in txt:
+     print(call,next(l for l in txt.splitlines() if 'STRESS {' in l),flush=True);break
+    if proc.poll() is not None:raise RuntimeError(txt)
+    time.sleep(.25)
+   else:raise RuntimeError('No summary: '+txt)
+  finally:
+   proc.terminate();proc.wait()

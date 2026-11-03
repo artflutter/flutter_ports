@@ -1,0 +1,913 @@
+[
+  {
+    "case": "update",
+    "n": 1000,
+    "baselineFullMs": 1.33,
+    "candidateFullMs": 1.2795,
+    "changePercent": -3.79699248120301,
+    "fullCalls": {
+      "a1": 1.306,
+      "b1": 1.27,
+      "b2": 1.289,
+      "a2": 1.3539999999999999
+    },
+    "pairChangesPercent": [
+      -2.7565084226646275,
+      -4.80059084194977
+    ],
+    "components": {
+      "a": {
+        "update": 0.4645,
+        "draw": 0.40249999999999997,
+        "end": 0.46299999999999997,
+        "elements": 0.07050000000000001,
+        "layout": 0.086,
+        "datasetsUpdate": 0.1955,
+        "datasetsDraw": 0.398
+      },
+      "b": {
+        "update": 0.4105,
+        "draw": 0.40800000000000003,
+        "end": 0.461,
+        "elements": 0.062,
+        "layout": 0.091,
+        "datasetsUpdate": 0.1475,
+        "datasetsDraw": 0.4035
+      }
+    }
+  },
+  {
+    "case": "draw",
+    "n": 1000,
+    "baselineFullMs": 0.8320000000000001,
+    "candidateFullMs": 0.8254999999999999,
+    "changePercent": -0.7812500000000222,
+    "fullCalls": {
+      "a1": 0.8160000000000001,
+      "b1": 0.826,
+      "b2": 0.825,
+      "a2": 0.848
+    },
+    "pairChangesPercent": [
+      1.225490196078427,
+      -2.7122641509434
+    ],
+    "components": {
+      "a": {
+        "draw": 0.40900000000000003,
+        "end": 0.423,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 0.40549999999999997
+      },
+      "b": {
+        "draw": 0.4075,
+        "end": 0.418,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 0.4035
+      }
+    }
+  },
+  {
+    "case": "anim",
+    "n": 1000,
+    "baselineFullMs": 0.8445,
+    "candidateFullMs": 0.8415,
+    "changePercent": -0.3552397868561319,
+    "fullCalls": {
+      "a1": 0.8280000000000001,
+      "b1": 0.852,
+      "b2": 0.8310000000000001,
+      "a2": 0.861
+    },
+    "pairChangesPercent": [
+      2.898550724637672,
+      -3.4843205574912828
+    ],
+    "components": {
+      "a": {
+        "update": 0.044,
+        "draw": 0.406,
+        "end": 0.3945,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 0.402
+      },
+      "b": {
+        "update": 0.044,
+        "draw": 0.40549999999999997,
+        "end": 0.392,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 0.402
+      }
+    }
+  },
+  {
+    "case": "update",
+    "n": 5000,
+    "baselineFullMs": 4.3665,
+    "candidateFullMs": 4.092499999999999,
+    "changePercent": -6.275048665979643,
+    "fullCalls": {
+      "a1": 4.29,
+      "b1": 4.173,
+      "b2": 4.012,
+      "a2": 4.443
+    },
+    "pairChangesPercent": [
+      -2.7272727272727226,
+      -9.700652712131442
+    ],
+    "components": {
+      "a": {
+        "update": 1.643,
+        "draw": 2.0060000000000002,
+        "end": 0.7175,
+        "elements": 0.4915,
+        "layout": 0.18,
+        "datasetsUpdate": 0.852,
+        "datasetsDraw": 1.99
+      },
+      "b": {
+        "update": 1.303,
+        "draw": 2.0700000000000003,
+        "end": 0.7195,
+        "elements": 0.261,
+        "layout": 0.23399999999999999,
+        "datasetsUpdate": 0.6855,
+        "datasetsDraw": 2.0545
+      }
+    }
+  },
+  {
+    "case": "draw",
+    "n": 5000,
+    "baselineFullMs": 2.645,
+    "candidateFullMs": 2.6425,
+    "changePercent": -0.0945179584120992,
+    "fullCalls": {
+      "a1": 2.6,
+      "b1": 2.642,
+      "b2": 2.6430000000000002,
+      "a2": 2.69
+    },
+    "pairChangesPercent": [
+      1.6153846153846185,
+      -1.7472118959107719
+    ],
+    "components": {
+      "a": {
+        "draw": 2.035,
+        "end": 0.61,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 2.0205
+      },
+      "b": {
+        "draw": 2.032,
+        "end": 0.6105,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 2.0185
+      }
+    }
+  },
+  {
+    "case": "anim",
+    "n": 5000,
+    "baselineFullMs": 2.8345000000000002,
+    "candidateFullMs": 2.878,
+    "changePercent": 1.5346621979184905,
+    "fullCalls": {
+      "a1": 2.826,
+      "b1": 2.867,
+      "b2": 2.8890000000000002,
+      "a2": 2.843
+    },
+    "pairChangesPercent": [
+      1.4508138711960328,
+      1.6180091452690837
+    ],
+    "components": {
+      "a": {
+        "update": 0.2255,
+        "draw": 2.0060000000000002,
+        "end": 0.603,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 1.9925000000000002
+      },
+      "b": {
+        "update": 0.238,
+        "draw": 2.027,
+        "end": 0.613,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 2.013
+      }
+    }
+  },
+  {
+    "case": "update",
+    "n": 20000,
+    "baselineFullMs": 20.1,
+    "candidateFullMs": 19.619500000000002,
+    "changePercent": -2.390547263681586,
+    "fullCalls": {
+      "a1": 19.646,
+      "b1": 19.193,
+      "b2": 20.046,
+      "a2": 20.554000000000002
+    },
+    "pairChangesPercent": [
+      -2.305812888119718,
+      -2.471538386688732
+    ],
+    "components": {
+      "a": {
+        "update": 8.816500000000001,
+        "draw": 8.999,
+        "end": 2.2845,
+        "elements": 1.609,
+        "layout": 1.944,
+        "datasetsUpdate": 5.232,
+        "datasetsDraw": 8.913
+      },
+      "b": {
+        "update": 8.32,
+        "draw": 9.02,
+        "end": 2.2794999999999996,
+        "elements": 1.775,
+        "layout": 1.6285,
+        "datasetsUpdate": 4.6145,
+        "datasetsDraw": 8.941500000000001
+      }
+    }
+  },
+  {
+    "case": "draw",
+    "n": 20000,
+    "baselineFullMs": 10.104,
+    "candidateFullMs": 10.23,
+    "changePercent": 1.2470308788598672,
+    "fullCalls": {
+      "a1": 10.17,
+      "b1": 10.166,
+      "b2": 10.294,
+      "a2": 10.038
+    },
+    "pairChangesPercent": [
+      -0.03933136676499416,
+      2.5503088264594576
+    ],
+    "components": {
+      "a": {
+        "draw": 8.0175,
+        "end": 2.0865,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 7.9665
+      },
+      "b": {
+        "draw": 8.139,
+        "end": 2.091,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 8.0815
+      }
+    }
+  },
+  {
+    "case": "anim",
+    "n": 20000,
+    "baselineFullMs": 11.441500000000001,
+    "candidateFullMs": 11.9625,
+    "changePercent": 4.553598741423759,
+    "fullCalls": {
+      "a1": 11.438,
+      "b1": 12.067,
+      "b2": 11.858,
+      "a2": 11.445
+    },
+    "pairChangesPercent": [
+      5.499213149151938,
+      3.6085626911315005
+    ],
+    "components": {
+      "a": {
+        "update": 1.1225,
+        "draw": 8.244,
+        "end": 2.075,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 8.181000000000001
+      },
+      "b": {
+        "update": 1.3365,
+        "draw": 8.498999999999999,
+        "end": 2.127,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 8.422
+      }
+    }
+  },
+  {
+    "case": "draw_rounded",
+    "n": 1000,
+    "baselineFullMs": 1.2925,
+    "candidateFullMs": 1.2965,
+    "changePercent": 0.3094777562862694,
+    "fullCalls": {
+      "a1": 1.286,
+      "b1": 1.279,
+      "b2": 1.314,
+      "a2": 1.299
+    },
+    "pairChangesPercent": [
+      -0.5443234836703059,
+      1.1547344110854674
+    ],
+    "components": {
+      "a": {
+        "draw": 0.8734999999999999,
+        "end": 0.419,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 0.8694999999999999
+      },
+      "b": {
+        "draw": 0.8775,
+        "end": 0.419,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 0.8734999999999999
+      }
+    }
+  },
+  {
+    "case": "thickness",
+    "n": 1000,
+    "baselineFullMs": 2.1315,
+    "candidateFullMs": 2.1849999999999996,
+    "changePercent": 2.5099695050433857,
+    "fullCalls": {
+      "a1": 2.115,
+      "b1": 2.1399999999999997,
+      "b2": 2.23,
+      "a2": 2.148
+    },
+    "pairChangesPercent": [
+      1.1820330969266823,
+      3.8175046554934644
+    ],
+    "components": {
+      "a": {
+        "update": 0.3525,
+        "draw": 1.2565,
+        "end": 0.5225,
+        "elements": 0.0595,
+        "layout": 0.0905,
+        "datasetsUpdate": 0.091,
+        "datasetsDraw": 1.2429999999999999
+      },
+      "b": {
+        "update": 0.3655,
+        "draw": 1.2839999999999998,
+        "end": 0.5355000000000001,
+        "elements": 0.0605,
+        "layout": 0.0925,
+        "datasetsUpdate": 0.095,
+        "datasetsDraw": 1.2695
+      }
+    }
+  },
+  {
+    "case": "update_line",
+    "n": 1000,
+    "baselineFullMs": 0.45949999999999996,
+    "candidateFullMs": 0.46199999999999997,
+    "changePercent": 0.5440696409140466,
+    "fullCalls": {
+      "a1": 0.45999999999999996,
+      "b1": 0.45799999999999996,
+      "b2": 0.46599999999999997,
+      "a2": 0.45899999999999996
+    },
+    "pairChangesPercent": [
+      -0.43478260869564966,
+      1.5250544662309462
+    ],
+    "components": {
+      "a": {
+        "update": 0.2875,
+        "draw": 0.1285,
+        "end": 0.0435,
+        "elements": 0.004,
+        "layout": 0.0755,
+        "datasetsUpdate": 0.104,
+        "datasetsDraw": 0.127
+      },
+      "b": {
+        "update": 0.2895,
+        "draw": 0.129,
+        "end": 0.0435,
+        "elements": 0.004,
+        "layout": 0.0765,
+        "datasetsUpdate": 0.104,
+        "datasetsDraw": 0.127
+      }
+    }
+  },
+  {
+    "case": "update_bubble",
+    "n": 1000,
+    "baselineFullMs": 1.814,
+    "candidateFullMs": 1.8455,
+    "changePercent": 1.7364939360529075,
+    "fullCalls": {
+      "a1": 1.807,
+      "b1": 1.831,
+      "b2": 1.8599999999999999,
+      "a2": 1.821
+    },
+    "pairChangesPercent": [
+      1.3281682346430568,
+      2.1416803953871355
+    ],
+    "components": {
+      "a": {
+        "update": 0.823,
+        "draw": 0.5125,
+        "end": 0.4785,
+        "elements": 0.321,
+        "layout": 0.08,
+        "datasetsUpdate": 0.311,
+        "datasetsDraw": 0.508
+      },
+      "b": {
+        "update": 0.8365,
+        "draw": 0.5215000000000001,
+        "end": 0.4875,
+        "elements": 0.326,
+        "layout": 0.0825,
+        "datasetsUpdate": 0.3125,
+        "datasetsDraw": 0.5165
+      }
+    }
+  },
+  {
+    "case": "draw_doughnut",
+    "n": 1000,
+    "baselineFullMs": 2.0534999999999997,
+    "candidateFullMs": 2.0595,
+    "changePercent": 0.29218407596787177,
+    "fullCalls": {
+      "a1": 2.074,
+      "b1": 2.063,
+      "b2": 2.056,
+      "a2": 2.033
+    },
+    "pairChangesPercent": [
+      -0.5303760848601624,
+      1.1313330054107285
+    ],
+    "components": {
+      "a": {
+        "draw": 1.8425,
+        "end": 0.211,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 1.8125
+      },
+      "b": {
+        "draw": 1.846,
+        "end": 0.2135,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 1.8155000000000001
+      }
+    }
+  },
+  {
+    "case": "multi",
+    "n": 1000,
+    "baselineFullMs": 5.8405000000000005,
+    "candidateFullMs": 6.0095,
+    "changePercent": 2.893587877750181,
+    "fullCalls": {
+      "a1": 5.808,
+      "b1": 5.862,
+      "b2": 6.157,
+      "a2": 5.873
+    },
+    "pairChangesPercent": [
+      0.9297520661156966,
+      4.835688745104716
+    ],
+    "components": {
+      "a": {
+        "update": 3.74,
+        "draw": 0.8105,
+        "end": 1.29,
+        "elements": 0.1125,
+        "layout": 0.096,
+        "datasetsUpdate": 3.386,
+        "datasetsDraw": 0.802
+      },
+      "b": {
+        "update": 3.841,
+        "draw": 0.842,
+        "end": 1.3265,
+        "elements": 0.1155,
+        "layout": 0.10250000000000001,
+        "datasetsUpdate": 3.4530000000000003,
+        "datasetsDraw": 0.831
+      }
+    }
+  },
+  {
+    "case": "draw_rounded",
+    "n": 5000,
+    "baselineFullMs": 4.983499999999999,
+    "candidateFullMs": 5.0275,
+    "changePercent": 0.8829136149292705,
+    "fullCalls": {
+      "a1": 5.068,
+      "b1": 5.018,
+      "b2": 5.037000000000001,
+      "a2": 4.899
+    },
+    "pairChangesPercent": [
+      -0.9865824782951838,
+      2.8169014084507227
+    ],
+    "components": {
+      "a": {
+        "draw": 4.348,
+        "end": 0.6355,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 4.3335
+      },
+      "b": {
+        "draw": 4.3870000000000005,
+        "end": 0.6405000000000001,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 4.371
+      }
+    }
+  },
+  {
+    "case": "thickness",
+    "n": 5000,
+    "baselineFullMs": 9.124500000000001,
+    "candidateFullMs": 9.279,
+    "changePercent": 1.6932434653953443,
+    "fullCalls": {
+      "a1": 9.105,
+      "b1": 9.145999999999999,
+      "b2": 9.412,
+      "a2": 9.144
+    },
+    "pairChangesPercent": [
+      0.45030203185061346,
+      2.9308836395450566
+    ],
+    "components": {
+      "a": {
+        "update": 1.0105,
+        "draw": 6.4485,
+        "end": 1.6655,
+        "elements": 0.2595,
+        "layout": 0.1855,
+        "datasetsUpdate": 0.4275,
+        "datasetsDraw": 6.381
+      },
+      "b": {
+        "update": 1.0554999999999999,
+        "draw": 6.5415,
+        "end": 1.682,
+        "elements": 0.264,
+        "layout": 0.194,
+        "datasetsUpdate": 0.4355,
+        "datasetsDraw": 6.468999999999999
+      }
+    }
+  },
+  {
+    "case": "update_line",
+    "n": 5000,
+    "baselineFullMs": 1.4049999999999998,
+    "candidateFullMs": 1.415,
+    "changePercent": 0.7117437722420128,
+    "fullCalls": {
+      "a1": 1.408,
+      "b1": 1.413,
+      "b2": 1.417,
+      "a2": 1.402
+    },
+    "pairChangesPercent": [
+      0.35511363636364646,
+      1.0699001426533572
+    ],
+    "components": {
+      "a": {
+        "update": 0.568,
+        "draw": 0.6375,
+        "end": 0.1995,
+        "elements": 0.004,
+        "layout": 0.077,
+        "datasetsUpdate": 0.3795,
+        "datasetsDraw": 0.6355
+      },
+      "b": {
+        "update": 0.5754999999999999,
+        "draw": 0.6395,
+        "end": 0.2,
+        "elements": 0.004,
+        "layout": 0.0795,
+        "datasetsUpdate": 0.383,
+        "datasetsDraw": 0.6375
+      }
+    }
+  },
+  {
+    "case": "update_bubble",
+    "n": 5000,
+    "baselineFullMs": 8.1065,
+    "candidateFullMs": 8.3265,
+    "changePercent": 2.7138715845309136,
+    "fullCalls": {
+      "a1": 8.065,
+      "b1": 8.376999999999999,
+      "b2": 8.276,
+      "a2": 8.148
+    },
+    "pairChangesPercent": [
+      3.8685678859268435,
+      1.5709376534118746
+    ],
+    "components": {
+      "a": {
+        "update": 3.5995,
+        "draw": 2.6205,
+        "end": 1.8864999999999998,
+        "elements": 1.7715,
+        "layout": 0.091,
+        "datasetsUpdate": 1.577,
+        "datasetsDraw": 2.6029999999999998
+      },
+      "b": {
+        "update": 3.6864999999999997,
+        "draw": 2.705,
+        "end": 1.935,
+        "elements": 1.8375,
+        "layout": 0.1035,
+        "datasetsUpdate": 1.591,
+        "datasetsDraw": 2.6845
+      }
+    }
+  },
+  {
+    "case": "draw_doughnut",
+    "n": 5000,
+    "baselineFullMs": 9.702,
+    "candidateFullMs": 9.862000000000002,
+    "changePercent": 1.6491445062873922,
+    "fullCalls": {
+      "a1": 9.796,
+      "b1": 9.999,
+      "b2": 9.725000000000001,
+      "a2": 9.608
+    },
+    "pairChangesPercent": [
+      2.0722743977133584,
+      1.217735220649474
+    ],
+    "components": {
+      "a": {
+        "draw": 9.19,
+        "end": 0.512,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 9.026
+      },
+      "b": {
+        "draw": 9.328,
+        "end": 0.534,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0,
+        "datasetsDraw": 9.1425
+      }
+    }
+  },
+  {
+    "case": "multi",
+    "n": 5000,
+    "baselineFullMs": 26.852,
+    "candidateFullMs": 27.503,
+    "changePercent": 2.424400417101147,
+    "fullCalls": {
+      "a1": 27.198,
+      "b1": 27.983,
+      "b2": 27.023,
+      "a2": 26.506
+    },
+    "pairChangesPercent": [
+      2.886241635414377,
+      1.9505017731834329
+    ],
+    "components": {
+      "a": {
+        "update": 21.1635,
+        "draw": 4.1905,
+        "end": 1.498,
+        "elements": 0.555,
+        "layout": 0.2235,
+        "datasetsUpdate": 19.712,
+        "datasetsDraw": 4.144
+      },
+      "b": {
+        "update": 21.581000000000003,
+        "draw": 4.3885000000000005,
+        "end": 1.5335,
+        "elements": 0.543,
+        "layout": 0.23049999999999998,
+        "datasetsUpdate": 20.271,
+        "datasetsDraw": 4.330500000000001
+      }
+    }
+  },
+  {
+    "case": "indexed",
+    "n": 100,
+    "baselineFullMs": 0.8015000000000001,
+    "candidateFullMs": 0.794,
+    "changePercent": -0.9357454772301987,
+    "fullCalls": {
+      "a1": 0.81,
+      "b1": 0.783,
+      "b2": 0.805,
+      "a2": 0.793
+    },
+    "pairChangesPercent": [
+      -3.3333333333333326,
+      1.5132408575031508
+    ],
+    "components": {
+      "a": {
+        "update": 0.457,
+        "draw": 0.0885,
+        "end": 0.256,
+        "elements": 0.010499999999999999,
+        "layout": 0.0655,
+        "datasetsUpdate": 0.272,
+        "datasetsDraw": 0.0865
+      },
+      "b": {
+        "update": 0.4495,
+        "draw": 0.089,
+        "end": 0.2555,
+        "elements": 0.010499999999999999,
+        "layout": 0.065,
+        "datasetsUpdate": 0.2655,
+        "datasetsDraw": 0.087
+      }
+    }
+  },
+  {
+    "case": "scriptable",
+    "n": 100,
+    "baselineFullMs": 0.8305,
+    "candidateFullMs": 0.813,
+    "changePercent": -2.1071643588200017,
+    "fullCalls": {
+      "a1": 0.8099999999999999,
+      "b1": 0.816,
+      "b2": 0.81,
+      "a2": 0.851
+    },
+    "pairChangesPercent": [
+      0.7407407407407307,
+      -4.81786133960046
+    ],
+    "components": {
+      "a": {
+        "update": 0.484,
+        "draw": 0.0915,
+        "end": 0.255,
+        "elements": 0.010499999999999999,
+        "layout": 0.0665,
+        "datasetsUpdate": 0.295,
+        "datasetsDraw": 0.0895
+      },
+      "b": {
+        "update": 0.46950000000000003,
+        "draw": 0.09,
+        "end": 0.2535,
+        "elements": 0.01,
+        "layout": 0.065,
+        "datasetsUpdate": 0.286,
+        "datasetsDraw": 0.088
+      }
+    }
+  },
+  {
+    "case": "indexed",
+    "n": 1000,
+    "baselineFullMs": 10.8375,
+    "candidateFullMs": 10.7425,
+    "changePercent": -0.8765859284890487,
+    "fullCalls": {
+      "a1": 10.651,
+      "b1": 10.836,
+      "b2": 10.649,
+      "a2": 11.024000000000001
+    },
+    "pairChangesPercent": [
+      1.7369261102244016,
+      -3.4016690856313647
+    ],
+    "components": {
+      "a": {
+        "update": 9.902000000000001,
+        "draw": 0.45799999999999996,
+        "end": 0.47750000000000004,
+        "elements": 0.0605,
+        "layout": 0.1075,
+        "datasetsUpdate": 9.5715,
+        "datasetsDraw": 0.445
+      },
+      "b": {
+        "update": 9.8295,
+        "draw": 0.4425,
+        "end": 0.47050000000000003,
+        "elements": 0.058499999999999996,
+        "layout": 0.0995,
+        "datasetsUpdate": 9.526499999999999,
+        "datasetsDraw": 0.4325
+      }
+    }
+  },
+  {
+    "case": "scriptable",
+    "n": 1000,
+    "baselineFullMs": 3.9465000000000003,
+    "candidateFullMs": 3.844,
+    "changePercent": -2.5972380590396638,
+    "fullCalls": {
+      "a1": 3.914,
+      "b1": 3.8499999999999996,
+      "b2": 3.838,
+      "a2": 3.979
+    },
+    "pairChangesPercent": [
+      -1.635155850792036,
+      -3.5436039205830605
+    ],
+    "components": {
+      "a": {
+        "update": 3.04,
+        "draw": 0.454,
+        "end": 0.4525,
+        "elements": 0.063,
+        "layout": 0.0925,
+        "datasetsUpdate": 2.759,
+        "datasetsDraw": 0.448
+      },
+      "b": {
+        "update": 2.9555,
+        "draw": 0.439,
+        "end": 0.4495,
+        "elements": 0.0595,
+        "layout": 0.093,
+        "datasetsUpdate": 2.692,
+        "datasetsDraw": 0.433
+      }
+    }
+  }
+]

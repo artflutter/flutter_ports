@@ -1,0 +1,665 @@
+[
+  {
+    "type": "bar",
+    "n": 1000,
+    "fullCpuMs": 1.25,
+    "dataCpuMs": 0.9655,
+    "improvementPercent": 22.76,
+    "pairImprovementsPercent": [
+      23.3787029623699,
+      22.142286171063162
+    ],
+    "fullRuns": {
+      "a": 1.249,
+      "b": 1.2510000000000001
+    },
+    "dataRuns": {
+      "a": 0.9570000000000001,
+      "b": 0.974
+    },
+    "parts": {
+      "full": {
+        "update": 0.402,
+        "draw": 0.3945,
+        "end": 0.4535,
+        "elements": 0.055999999999999994,
+        "layout": 0.0995,
+        "datasetsUpdate": 0.138,
+        "datasetsDraw": 0.3905
+      },
+      "data": {
+        "update": 0.1225,
+        "draw": 0.395,
+        "end": 0.448,
+        "elements": 0.059,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0545,
+        "datasetsDraw": 0.3915
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 2287,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 2309,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "line",
+    "n": 1000,
+    "fullCpuMs": 0.4925,
+    "dataCpuMs": 0.277,
+    "improvementPercent": 43.75634517766497,
+    "pairImprovementsPercent": [
+      43.711340206185554,
+      43.8
+    ],
+    "fullRuns": {
+      "a": 0.485,
+      "b": 0.5
+    },
+    "dataRuns": {
+      "a": 0.273,
+      "b": 0.281
+    },
+    "parts": {
+      "full": {
+        "update": 0.313,
+        "draw": 0.132,
+        "end": 0.0475,
+        "elements": 0.004,
+        "layout": 0.076,
+        "datasetsUpdate": 0.0965,
+        "datasetsDraw": 0.1305
+      },
+      "data": {
+        "update": 0.1,
+        "draw": 0.1305,
+        "end": 0.0465,
+        "elements": 0.001,
+        "layout": 0.0,
+        "datasetsUpdate": 0.0645,
+        "datasetsDraw": 0.1295
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 8064,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 7866,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "scatter",
+    "n": 1000,
+    "fullCpuMs": 0.591,
+    "dataCpuMs": 0.3955,
+    "improvementPercent": 33.079526226734345,
+    "pairImprovementsPercent": [
+      33.72881355932202,
+      32.43243243243242
+    ],
+    "fullRuns": {
+      "a": 0.59,
+      "b": 0.592
+    },
+    "dataRuns": {
+      "a": 0.391,
+      "b": 0.4
+    },
+    "parts": {
+      "full": {
+        "update": 0.4115,
+        "draw": 0.1325,
+        "end": 0.047,
+        "elements": 0.0415,
+        "layout": 0.0775,
+        "datasetsUpdate": 0.1545,
+        "datasetsDraw": 0.131
+      },
+      "data": {
+        "update": 0.218,
+        "draw": 0.1305,
+        "end": 0.047,
+        "elements": 0.0415,
+        "layout": 0.0,
+        "datasetsUpdate": 0.142,
+        "datasetsDraw": 0.1295
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 5644,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 5632,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "bubble",
+    "n": 1000,
+    "fullCpuMs": 1.8139999999999998,
+    "dataCpuMs": 1.6164999999999998,
+    "improvementPercent": 10.887541345093721,
+    "pairImprovementsPercent": [
+      11.123348017621149,
+      10.651214128035313
+    ],
+    "fullRuns": {
+      "a": 1.8159999999999998,
+      "b": 1.8119999999999998
+    },
+    "dataRuns": {
+      "a": 1.6139999999999999,
+      "b": 1.619
+    },
+    "parts": {
+      "full": {
+        "update": 0.8345,
+        "draw": 0.5065,
+        "end": 0.473,
+        "elements": 0.321,
+        "layout": 0.078,
+        "datasetsUpdate": 0.304,
+        "datasetsDraw": 0.502
+      },
+      "data": {
+        "update": 0.641,
+        "draw": 0.5045,
+        "end": 0.471,
+        "elements": 0.326,
+        "layout": 0.0,
+        "datasetsUpdate": 0.292,
+        "datasetsDraw": 0.5
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 1341,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 1331,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "doughnut",
+    "n": 1000,
+    "fullCpuMs": 2.4065000000000003,
+    "dataCpuMs": 2.33,
+    "improvementPercent": 3.1788905048826144,
+    "pairImprovementsPercent": [
+      1.9246861924686276,
+      4.4160132067684765
+    ],
+    "fullRuns": {
+      "a": 2.39,
+      "b": 2.423
+    },
+    "dataRuns": {
+      "a": 2.344,
+      "b": 2.316
+    },
+    "parts": {
+      "full": {
+        "update": 0.371,
+        "draw": 1.824,
+        "end": 0.2115,
+        "elements": 0.014,
+        "layout": 0.007,
+        "datasetsUpdate": 0.305,
+        "datasetsDraw": 1.793
+      },
+      "data": {
+        "update": 0.3025,
+        "draw": 1.8170000000000002,
+        "end": 0.2105,
+        "elements": 0.0115,
+        "layout": 0.0,
+        "datasetsUpdate": 0.28200000000000003,
+        "datasetsDraw": 1.787
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 924,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 948,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "pie",
+    "n": 1000,
+    "fullCpuMs": 2.059,
+    "dataCpuMs": 1.9695,
+    "improvementPercent": 4.346770276833423,
+    "pairImprovementsPercent": [
+      4.215116279069775,
+      4.479065238558899
+    ],
+    "fullRuns": {
+      "a": 2.064,
+      "b": 2.054
+    },
+    "dataRuns": {
+      "a": 1.9769999999999999,
+      "b": 1.962
+    },
+    "parts": {
+      "full": {
+        "update": 0.374,
+        "draw": 1.5179999999999998,
+        "end": 0.167,
+        "elements": 0.014,
+        "layout": 0.007,
+        "datasetsUpdate": 0.308,
+        "datasetsDraw": 1.489
+      },
+      "data": {
+        "update": 0.303,
+        "draw": 1.5005,
+        "end": 0.166,
+        "elements": 0.011,
+        "layout": 0.0,
+        "datasetsUpdate": 0.283,
+        "datasetsDraw": 1.473
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 1101,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 1113,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "radar",
+    "n": 1000,
+    "fullCpuMs": 0.858,
+    "dataCpuMs": 0.6435,
+    "improvementPercent": 25.0,
+    "pairImprovementsPercent": [
+      24.85549132947976,
+      25.14688601645123
+    ],
+    "fullRuns": {
+      "a": 0.865,
+      "b": 0.851
+    },
+    "dataRuns": {
+      "a": 0.65,
+      "b": 0.637
+    },
+    "parts": {
+      "full": {
+        "update": 0.4595,
+        "draw": 0.3545,
+        "end": 0.044,
+        "elements": 0.0395,
+        "layout": 0.0985,
+        "datasetsUpdate": 0.2365,
+        "datasetsDraw": 0.3525
+      },
+      "data": {
+        "update": 0.246,
+        "draw": 0.354,
+        "end": 0.0435,
+        "elements": 0.032,
+        "layout": 0.0,
+        "datasetsUpdate": 0.206,
+        "datasetsDraw": 0.353
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 3291,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 3476,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "polarArea",
+    "n": 1000,
+    "fullCpuMs": 2.3485,
+    "dataCpuMs": 2.0925000000000002,
+    "improvementPercent": 10.900574835001054,
+    "pairImprovementsPercent": [
+      11.349306431273643,
+      10.440034512510788
+    ],
+    "fullRuns": {
+      "a": 2.379,
+      "b": 2.318
+    },
+    "dataRuns": {
+      "a": 2.109,
+      "b": 2.076
+    },
+    "parts": {
+      "full": {
+        "update": 0.5705,
+        "draw": 1.513,
+        "end": 0.265,
+        "elements": 0.0405,
+        "layout": 0.102,
+        "datasetsUpdate": 0.3325,
+        "datasetsDraw": 1.4835
+      },
+      "data": {
+        "update": 0.34950000000000003,
+        "draw": 1.482,
+        "end": 0.261,
+        "elements": 0.043,
+        "layout": 0.0,
+        "datasetsUpdate": 0.2985,
+        "datasetsDraw": 1.454
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 1033,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 1044,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "preparedBar",
+    "n": 1000,
+    "fullCpuMs": 1.7235,
+    "dataCpuMs": 1.05,
+    "improvementPercent": 39.07745865970409,
+    "pairImprovementsPercent": [
+      38.84393063583814,
+      39.31275480489226
+    ],
+    "fullRuns": {
+      "a": 1.73,
+      "b": 1.717
+    },
+    "dataRuns": {
+      "a": 1.058,
+      "b": 1.042
+    },
+    "parts": {
+      "full": {
+        "update": 0.8594999999999999,
+        "draw": 0.413,
+        "end": 0.451,
+        "elements": 0.003,
+        "layout": 0.082,
+        "datasetsUpdate": 0.6495,
+        "datasetsDraw": 0.40900000000000003
+      },
+      "data": {
+        "update": 0.185,
+        "draw": 0.4165,
+        "end": 0.4485,
+        "elements": 0.0,
+        "layout": 0.0,
+        "datasetsUpdate": 0.16799999999999998,
+        "datasetsDraw": 0.4125
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 2080,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 2101,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "bar",
+    "n": 5000,
+    "fullCpuMs": 4.0120000000000005,
+    "dataCpuMs": 3.2815000000000003,
+    "improvementPercent": 18.207876370887345,
+    "pairImprovementsPercent": [
+      18.610421836228287,
+      17.801702553830744
+    ],
+    "fullRuns": {
+      "a": 4.03,
+      "b": 3.9939999999999998
+    },
+    "dataRuns": {
+      "a": 3.2800000000000002,
+      "b": 3.283
+    },
+    "parts": {
+      "full": {
+        "update": 1.2774999999999999,
+        "draw": 2.029,
+        "end": 0.7055,
+        "elements": 0.2475,
+        "layout": 0.228,
+        "datasetsUpdate": 0.6635,
+        "datasetsDraw": 2.0155000000000003
+      },
+      "data": {
+        "update": 0.6295,
+        "draw": 1.9515,
+        "end": 0.7004999999999999,
+        "elements": 0.2945,
+        "layout": 0.0,
+        "datasetsUpdate": 0.3065,
+        "datasetsDraw": 1.9385
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 662,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 661,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "preparedBar",
+    "n": 5000,
+    "fullCpuMs": 6.3875,
+    "dataCpuMs": 3.6639999999999997,
+    "improvementPercent": 42.63796477495109,
+    "pairImprovementsPercent": [
+      42.81927335100577,
+      42.45520276642565
+    ],
+    "fullRuns": {
+      "a": 6.413,
+      "b": 6.362
+    },
+    "dataRuns": {
+      "a": 3.667,
+      "b": 3.661
+    },
+    "parts": {
+      "full": {
+        "update": 3.615,
+        "draw": 2.0735,
+        "end": 0.699,
+        "elements": 0.004,
+        "layout": 0.1945,
+        "datasetsUpdate": 3.225,
+        "datasetsDraw": 2.0585
+      },
+      "data": {
+        "update": 0.9025000000000001,
+        "draw": 2.0665,
+        "end": 0.695,
+        "elements": 0.001,
+        "layout": 0.0,
+        "datasetsUpdate": 0.831,
+        "datasetsDraw": 2.053
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 585,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 595,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "bar",
+    "n": 20000,
+    "fullCpuMs": 19.8825,
+    "dataCpuMs": 15.5505,
+    "improvementPercent": 21.788004526593742,
+    "pairImprovementsPercent": [
+      20.616209652939375,
+      22.946147307365372
+    ],
+    "fullRuns": {
+      "a": 19.766,
+      "b": 19.999000000000002
+    },
+    "dataRuns": {
+      "a": 15.691,
+      "b": 15.41
+    },
+    "parts": {
+      "full": {
+        "update": 8.8515,
+        "draw": 8.7995,
+        "end": 2.2315,
+        "elements": 1.7895,
+        "layout": 1.8465,
+        "datasetsUpdate": 4.687,
+        "datasetsDraw": 8.7265
+      },
+      "data": {
+        "update": 4.656000000000001,
+        "draw": 8.682500000000001,
+        "end": 2.2119999999999997,
+        "elements": 1.792,
+        "layout": 0.0,
+        "datasetsUpdate": 1.687,
+        "datasetsDraw": 8.6175
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 144,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 142,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  },
+  {
+    "type": "preparedBar",
+    "n": 20000,
+    "fullCpuMs": 28.2125,
+    "dataCpuMs": 15.111,
+    "improvementPercent": 46.43863535666814,
+    "pairImprovementsPercent": [
+      46.18526674717624,
+      46.69095539598882
+    ],
+    "fullRuns": {
+      "a": 28.154,
+      "b": 28.271
+    },
+    "dataRuns": {
+      "a": 15.151,
+      "b": 15.071
+    },
+    "parts": {
+      "full": {
+        "update": 17.123,
+        "draw": 8.893,
+        "end": 2.1965,
+        "elements": 0.0055,
+        "layout": 0.8815,
+        "datasetsUpdate": 15.5735,
+        "datasetsDraw": 8.818999999999999
+      },
+      "data": {
+        "update": 4.4655000000000005,
+        "draw": 8.488,
+        "end": 2.1574999999999998,
+        "elements": 0.001,
+        "layout": 0.0,
+        "datasetsUpdate": 4.173,
+        "datasetsDraw": 8.4275
+      }
+    },
+    "activation": {
+      "a": {
+        "incrementalCalls": 143,
+        "fullCalls": 0,
+        "referenceMatches": true
+      },
+      "b": {
+        "incrementalCalls": 143,
+        "fullCalls": 0,
+        "referenceMatches": true
+      }
+    }
+  }
+]

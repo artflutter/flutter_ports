@@ -232,6 +232,12 @@ final class DemoChart implements types.Chart {
   @override
   void update([Object? mode]) => render();
 
+  @override
+  bool updateData() {
+    render();
+    return false;
+  }
+
   /// index.d.ts:543 `legend`. The demo chart has no legend plugin, so it
   /// stays `null`.
   @override

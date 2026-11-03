@@ -52,6 +52,15 @@ class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
   // scale.linear.js:8 `static id = 'linear'`. Scale has the instance field
   // `id`. Thus the value is only in the statics of jsClass.
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates =>
+      super.runtimeType == LinearScale &&
+      getUserBounds().minDefined &&
+      getUserBounds().maxDefined &&
+      options.cachedFixedDataBounds;
+
   /// scale.linear.js:13 `static defaults`.
   ///
   /// The tick callback is the function object of `Ticks.formatters.numeric`
@@ -60,6 +69,7 @@ class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
   /// of the library. Thus the callback is the value of
   /// `formatters['numeric']` at the first read of [defaults]. The object is
   /// a typed scope of the kind `ScaleOptions` (Chart.js ADR 0054 §3).
+
   static final ScaleOptionsScope defaults = ScaleOptionsScope()
     ..ticks = (TickOptionsScope()..callback = formatters['numeric']!);
 

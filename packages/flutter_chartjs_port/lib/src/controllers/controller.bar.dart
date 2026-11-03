@@ -44,6 +44,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show
@@ -56,6 +57,8 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
         setStackValue,
         stacksOf,
         visualValuesOf;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show nativeDataUpdateList;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show BarOptions;
@@ -138,21 +141,11 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
     // `values.concat(...)`: a new List.
     values = values + visibleMetas[i].controller!.getAllParsedValues(scale);
   }
-  // DIVERGES(chartjs): adapt-live-bar-layout, owned numeric sorted input.
-  // Concatenation above owns this list even if a custom controller supplied
-  // its source. No user comparator/getter is omitted by this numeric scan.
-  var ordered = true;
-  var previous = double.negativeInfinity;
-  for (final value in values) {
-    if (!value.isFinite || value < previous) {
-      ordered = false;
-      break;
-    }
-    previous = value;
-  }
-  final unique = arrayUnique(
-    ordered ? values : jsSort(values, (a, b) => a - b),
-  );
+  // DIVERGES(chartjs): adapt-sorted-bar-values, owned numeric sorted input.
+  // Concatenation owns this list; no user getters or comparator are omitted.
+  final unique =
+      uniqueSortedBarValues(values) ??
+      arrayUnique(jsSort(values, (a, b) => a - b));
   scale.cache.bar = unique;
   return unique;
 }
@@ -619,7 +612,13 @@ class BarController extends DatasetController implements NativeBarIndexReads {
   /// 0020, section 4).
   BarController(super.chart, super.datasetIndex, [super.newTarget]);
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == BarController;
+
   /// controller.bar.js:260 `static id = 'bar'`.
+
   static const String id = 'bar';
 
   /// controller.bar.js:265 `static defaults`, a typed scope of the kind
@@ -1012,7 +1011,10 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       return false;
     }
     final parsed = cachedMeta.parsed;
-    if (!nativeBulkBarLists(bars, parsed) ||
+    if ((!nativeBulkBarLists(bars, parsed) &&
+            !(updatingData &&
+                nativeBulkBarElements(bars) &&
+                nativeDataUpdateList(parsed))) ||
         !first.isFinite ||
         !end.isFinite ||
         first < 0 ||
@@ -1032,14 +1034,18 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       final element = bars[i];
       final item = parsed[i];
       if (element is! BulkBarElement ||
-          !(element as BulkBarElement).supportsBulkBarWrites ||
-          item is! ParsedItem ||
-          item.hasForeign ||
-          item.hasSlot(3) ||
-          item.hasSlot(4)) {
+          !(element as BulkBarElement).supportsBulkBarWrites) {
         return false;
       }
-      final value = item.valueOf(key);
+      if (item is ParsedItem) {
+        if (item.hasForeign || item.hasSlot(3) || item.hasSlot(4)) return false;
+      } else if (!updatingData ||
+          jsTruthy(_customOf(item)) ||
+          jsTruthy(stacksOf(item))) {
+        return false;
+      }
+      // Data-only updates preflight native prepared values before these reads.
+      final value = parsedValueOf(item, key, valueAxis);
       if (value is! num || !value.isFinite) return false;
       values[i - begin] = value.toDouble();
     }
@@ -1303,7 +1309,21 @@ class BarController extends DatasetController implements NativeBarIndexReads {
   ///
   /// `pixels` is a [Float64List]: an internal array of numbers that no user
   /// code reaches (Chart.js ADR 0054 §8).
+  _Ruler? _dataUpdateRuler;
+
   _Ruler _getRuler() {
+    if (!updatingData) _dataUpdateRuler = null;
+    final cached = _dataUpdateRuler;
+    if (updatingData &&
+        reuseDataLayout &&
+        primitiveDataUpdate &&
+        parsing != false &&
+        cached != null &&
+        cached.scale.type == 'category' &&
+        !jsTruthy(options.readKey(OptionKey.skipNull))) {
+      return cached;
+    }
+
     final opts = options;
     final meta = cachedMeta;
     final iScale = meta.iScale;
@@ -1324,7 +1344,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
         ? barThickness
         : _computeMinSampleSize(meta);
 
-    return (
+    final ruler = (
       min: min,
       pixels: pixels,
       start: iScale!.startPixel,
@@ -1338,6 +1358,15 @@ class BarController extends DatasetController implements NativeBarIndexReads {
           : jsToNumber(opts.readKey(OptionKey.categoryPercentage)) *
                 jsToNumber(opts.readKey(OptionKey.barPercentage)),
     );
+    _dataUpdateRuler =
+        updatingData &&
+            reuseDataLayout &&
+            primitiveDataUpdate &&
+            parsing != false &&
+            ruler.scale.type == 'category'
+        ? ruler
+        : null;
+    return ruler;
   }
 
   /// controller.bar.js:563 `_calculateBarValuePixels(index)`.

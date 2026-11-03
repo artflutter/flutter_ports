@@ -64,5 +64,8 @@ final _parsedLists = <Type>{
 
 /// Only native arrays are preflighted; unknown List getters are never probed.
 bool nativeBulkBarLists(List<types.Element> bars, List<Object?> parsed) =>
-    _elementLists.contains(bars.runtimeType) &&
-    _parsedLists.contains(parsed.runtimeType);
+    nativeBulkBarElements(bars) && _parsedLists.contains(parsed.runtimeType);
+
+/// Native element containers; prepared inputs are qualified by updateData.
+bool nativeBulkBarElements(List<types.Element> bars) =>
+    _elementLists.contains(bars.runtimeType);

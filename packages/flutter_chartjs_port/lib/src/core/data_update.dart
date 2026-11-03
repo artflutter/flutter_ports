@@ -1,0 +1,338 @@
+// Original code, not ported from Chart.js: incremental data-update contracts.
+
+import 'dart:collection';
+import 'dart:typed_data';
+import 'dart:ui' show Color;
+
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/options/parsed.dart';
+import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
+import 'package:flutter_chartjs_port/src/types/data_item.dart';
+import 'package:meta/meta.dart';
+
+final _maps = <Type>{
+  <String, Object?>{}.runtimeType, <String, Object>{}.runtimeType,
+  <String, dynamic>{}.runtimeType, <String, double>{}.runtimeType,
+  <String, num>{}.runtimeType, <String, int>{}.runtimeType,
+  <String, bool>{}.runtimeType, <String, String>{}.runtimeType,
+  // DDC has distinct constructor implementations.
+  // ignore: prefer_collection_literals
+  Map<String, Object?>().runtimeType,
+  // Include the dynamic constructor representation on DDC too.
+  // ignore: prefer_collection_literals
+  Map<String, dynamic>().runtimeType,
+};
+final Set<Type> _scopes = {
+  for (final kind in ScopeKind.values) kind.create().runtimeType,
+};
+final _lists = <Type>{
+  <Object?>[].runtimeType,
+  <dynamic>[].runtimeType,
+  <Object>[].runtimeType,
+  <num>[].runtimeType,
+  <num?>[].runtimeType,
+  <double>[].runtimeType,
+  <double?>[].runtimeType,
+  <int>[].runtimeType,
+  <int?>[].runtimeType,
+  <String>[].runtimeType,
+  <Color>[].runtimeType,
+  <Map<String, Object?>>[].runtimeType,
+  <Map<String, double>>[].runtimeType,
+  <ParsedItem>[].runtimeType,
+  List<Object?>.empty().runtimeType,
+  List<dynamic>.empty().runtimeType,
+  List<Object>.empty().runtimeType,
+  List<num?>.empty().runtimeType,
+  List<int?>.empty().runtimeType,
+  List<Map<String, Object?>>.empty().runtimeType,
+  List<Map<String, double>>.empty().runtimeType,
+  List<ParsedItem>.empty().runtimeType,
+  List<double>.empty().runtimeType,
+  List<double?>.empty().runtimeType,
+  List<num>.empty().runtimeType,
+  List<int>.empty().runtimeType,
+  List<String>.empty().runtimeType,
+  const <Object?>[].runtimeType,
+  const <dynamic>[].runtimeType,
+  const <num?>[].runtimeType,
+  const <double?>[].runtimeType,
+  const <int?>[].runtimeType,
+  const <double>[].runtimeType,
+  const <num>[].runtimeType,
+  const <int>[].runtimeType,
+  const <String>[].runtimeType,
+};
+final _points = <Type>{};
+
+/// Typed lowering registers only standard containers and immutable point types.
+@internal
+void registerDataUpdateTypes(Iterable<Type> lists, Iterable<Type> points) {
+  _lists.addAll(lists);
+  _points.addAll(points);
+}
+
+/// No custom Map/scope getters run merely to qualify the new lifecycle.
+@internal
+bool nativeDataUpdateObject(Object? value) =>
+    _maps.contains(value.runtimeType) || _scopes.contains(value.runtimeType);
+
+/// Root routes could run callbacks during metadata checks.
+@internal
+bool nativeDataUpdateRoot(Object value) =>
+    nativeDataUpdateObject(value) &&
+    (value is! OptionScope ||
+        [
+          'data',
+          'options',
+          'plugins',
+        ].every((key) => value.routeOf(key) == null));
+
+/// Native container eligibility, including the typed facade's point lists.
+@internal
+bool nativeDataUpdateList(Object? value) =>
+    _lists.contains(value.runtimeType) || value is TypedDataList<num>;
+
+/// Read only after native object qualification; routes cannot qualify.
+@internal
+Object? dataUpdateField(Object object, String key) {
+  if (object is OptionScope) {
+    if (object.routeOf(key) != null) return undefined;
+    final cell = object.ownCell(key);
+    return cell == null ? undefined : cell.raw;
+  }
+  return RawScope(object as Map<String, Object?>).jsRead(key);
+}
+
+Iterable<String> _keys(Object object) => object is OptionScope
+    ? object.ownKeys.map((key) => key is OptionKey ? key.jsName : key as String)
+    : (object as Map<String, Object?>).keys;
+
+/// Static user settings only. Scale settings are frozen by the separate native
+/// scale contract; event handlers remain live and are not layout/style inputs.
+@internal
+bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
+  final seen = HashSet<Object>.identity();
+  bool visit(Object? node, Set<String> skip) {
+    if (node == null ||
+        node is Undefined ||
+        node is num ||
+        node is bool ||
+        node is String ||
+        node.runtimeType == Color) {
+      return true;
+    }
+    if (!seen.add(node)) return false;
+    try {
+      if (nativeDataUpdateList(node)) {
+        return (node as List<Object?>).every((v) => visit(v, const {}));
+      }
+      if (!nativeDataUpdateObject(node)) return false;
+      for (final key in _keys(node)) {
+        if (skip.contains(key) || key == 'onClick' || key == 'onHover') {
+          continue;
+        }
+        if (node is OptionScope && node.routeOf(key) != null) return false;
+        if (!visit(dataUpdateField(node, key), const {})) return false;
+      }
+      return true;
+    } finally {
+      seen.remove(node);
+    }
+  }
+
+  return visit(value, dataset ? const {'data'} : const {'scales'});
+}
+
+bool _number(Object? value) =>
+    value == null || value is Undefined || value is num;
+
+/// The fields read by native default parsers. Custom parsing keys fall back.
+@internal
+enum DataUpdateShape { cartesian, bubble, radial, scalar }
+
+/// Preflight values without executing user conversions. Null means fallback;
+/// true means primitive numeric data, false means supported structured data.
+@internal
+bool? dataUpdateValues(
+  Object? source, {
+  DataUpdateShape shape = DataUpdateShape.cartesian,
+  bool prepared = false,
+}) {
+  if (!nativeDataUpdateList(source)) return null;
+  var primitive = true;
+  Type? mapType;
+  for (final item in source! as List<Object?>) {
+    if (_number(item)) continue;
+    primitive = false;
+    if (item is ParsedItem) {
+      if (item.hasForeign ||
+          item.hasSlot(3) ||
+          item.hasSlot(4) ||
+          !_number(item.x) ||
+          !_number(item.y) ||
+          !_number(item.r)) {
+        return null;
+      }
+    } else if (item.runtimeType == mapType ||
+        _maps.contains(item.runtimeType)) {
+      mapType = item.runtimeType;
+      // The map is native. Read only fields consumed by default parsers;
+      // unrelated attributes need not be walked or converted.
+      final map = item! as Map<String, Object?>;
+      final valid = switch (shape) {
+        DataUpdateShape.cartesian => _number(map['x']) && _number(map['y']),
+        DataUpdateShape.bubble =>
+          _number(map['x']) &&
+              _number(map['y']) &&
+              _number(map[prepared ? '_custom' : 'r']),
+        DataUpdateShape.radial => _number(map['r']),
+        DataUpdateShape.scalar => _number(map['value']),
+      };
+      if (!valid ||
+          (prepared &&
+              (!_number(map['_custom']) || !_number(map['_stacks'])))) {
+        return null;
+      }
+    } else if (_points.contains(item.runtimeType)) {
+      final point = item! as TypedDataItem;
+      if (!_number(point.x) || !_number(point.y) || !_number(point.r)) {
+        return null;
+      }
+    } else if (nativeDataUpdateList(item)) {
+      if (!(item! as List<Object?>).every(_number)) return null;
+    } else {
+      return null;
+    }
+  }
+  return primitive;
+}
+
+/// The last full configuration generation. Data arrays may be replaced while
+/// dataset identities, counts and label containers stay stable. In-place edits
+/// to options/labels are explicitly outside updateData's caller contract.
+@internal
+final class DataUpdateSnapshot {
+  DataUpdateSnapshot._(
+    this.data,
+    this.options,
+    this.datasets,
+    this.labels,
+    this.counts,
+  );
+  final Object data;
+  final Object options;
+  final List<Object> datasets;
+  final List<({Object? source, int length})> labels;
+  final List<int> counts;
+
+  List<Object?>? _validatedSources;
+  List<bool?>? _primitiveSources;
+
+  /// The API declares numeric-value-only mutation within an existing source.
+  /// A replacement array is checked again; record/key/type changes in place
+  /// require a full update, just like configuration and label changes.
+  bool? validateValues(
+    int index,
+    DataUpdateShape shape, {
+    required bool prepared,
+  }) {
+    final source = dataUpdateField(datasets[index], 'data');
+    final sources = _validatedSources ??= List<Object?>.filled(
+      datasets.length,
+      null,
+    );
+    final primitive = _primitiveSources ??= List<bool?>.filled(
+      datasets.length,
+      null,
+    );
+    if (identical(source, sources[index])) return primitive[index];
+    final result = dataUpdateValues(source, shape: shape, prepared: prepared);
+    if (result != null) {
+      sources[index] = source;
+      primitive[index] = result;
+    }
+    return result;
+  }
+
+  bool settingsValidated = false;
+
+  /// Full updates record identity/count tokens; settings are checked lazily.
+  bool validateSettings() {
+    if (settingsValidated) return true;
+    if (!staticDataUpdateOptions(options) ||
+        !datasets.every((d) => staticDataUpdateOptions(d, dataset: true))) {
+      return false;
+    }
+    settingsValidated = true;
+    return true;
+  }
+
+  static DataUpdateSnapshot? capture(Object data, Object options) {
+    if (!nativeDataUpdateObject(data) || !nativeDataUpdateObject(options)) {
+      return null;
+    }
+    if (data is OptionScope &&
+        [
+          'datasets',
+          'labels',
+          'xLabels',
+          'yLabels',
+        ].any((key) => data.routeOf(key) != null)) {
+      return null;
+    }
+    final raw = dataUpdateField(data, 'datasets');
+    if (!nativeDataUpdateList(raw)) return null;
+    final datasets = <Object>[];
+    final counts = <int>[];
+    for (final dataset in raw! as List<Object?>) {
+      if (!nativeDataUpdateObject(dataset)) {
+        return null;
+      }
+      final values = dataUpdateField(dataset!, 'data');
+      if (!nativeDataUpdateList(values)) return null;
+      datasets.add(dataset);
+      counts.add((values! as List<Object?>).length);
+    }
+    final labels = <({Object? source, int length})>[];
+    for (final key in ['labels', 'xLabels', 'yLabels']) {
+      final value = dataUpdateField(data, key);
+      if (value != null &&
+          value is! Undefined &&
+          !nativeDataUpdateList(value)) {
+        return null;
+      }
+      labels.add((source: value, length: value is List ? value.length : 0));
+    }
+    return DataUpdateSnapshot._(data, options, datasets, labels, counts);
+  }
+
+  bool matches(Object currentData, Object currentOptions) {
+    if (!identical(data, currentData) || !identical(options, currentOptions)) {
+      return false;
+    }
+    final raw = dataUpdateField(data, 'datasets');
+    if (!nativeDataUpdateList(raw)) return false;
+    final current = raw! as List<Object?>;
+    if (current.length != datasets.length) return false;
+    for (var i = 0; i < current.length; i++) {
+      if (!identical(current[i], datasets[i])) return false;
+      final values = dataUpdateField(datasets[i], 'data');
+      if (!nativeDataUpdateList(values) ||
+          (values! as List).length != counts[i]) {
+        return false;
+      }
+    }
+    var i = 0;
+    for (final key in ['labels', 'xLabels', 'yLabels']) {
+      final value = dataUpdateField(data, key);
+      final saved = labels[i++];
+      if (!identical(value, saved.source) ||
+          (value is List && value.length != saved.length)) {
+        return false;
+      }
+    }
+    return true;
+  }
+}

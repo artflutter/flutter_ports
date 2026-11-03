@@ -36,6 +36,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show DataUpdateShape;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -80,7 +82,16 @@ class BubbleController extends DatasetController {
   /// 0020, section 4).
   BubbleController(super.chart, super.datasetIndex, [super.newTarget]);
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == BubbleController;
+
+  @override
+  DataUpdateShape get dataUpdateShape => DataUpdateShape.bubble;
+
   /// controller.bubble.js:6 `static id = 'bubble'`.
+
   static const String id = 'bubble';
 
   /// controller.bubble.js:11 `static defaults`, a typed scope of the kind

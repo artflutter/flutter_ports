@@ -1043,6 +1043,10 @@ class Scale extends _ScalePrototype
   @internal
   bool get supportsBulkBarUpdate => false;
 
+  /// Only native category or explicitly bounded numeric scales opt in.
+  @internal
+  bool get supportsDataUpdates => false;
+
   static final _bulkTickLists = <Type>{
     <Tick>[].runtimeType,
     List<Tick>.empty().runtimeType,

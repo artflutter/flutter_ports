@@ -1,0 +1,11 @@
+import subprocess,os
+from pathlib import Path
+app='/tmp/chart-data-update.app/Contents/MacOS/chartjs_gallery'
+alltypes=','.join(mode+'_'+kind for kind in ['bar','line','scatter','bubble','doughnut','pie','radar','polarArea','preparedBar'] for mode in ['full','data'])
+for run,reverse in [('a','0'),('b','1')]:
+ for group,counts,cases in [('types','1000',alltypes),('dense','5000,20000','full_bar,data_bar,full_preparedBar,data_preparedBar')]:
+  label='cached-final-'+run+'-'+group
+  assert not Path('/tmp/data-update-'+label+'.jsonl').exists()
+  with open('/tmp/data-update-'+label+'.log','w') as log:
+   subprocess.run([app],env={**os.environ,'RUN':label,'REVERSE':reverse,'N':counts,'CASES':cases},stdout=log,stderr=subprocess.STDOUT,check=True,timeout=300)
+  print(label,'complete',flush=True)

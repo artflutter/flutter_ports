@@ -1,0 +1,8 @@
+import subprocess,os,json
+from pathlib import Path
+for run,side in [('a1','old'),('b1','new'),('b2','new'),('a2','old')]:
+ tag='data-full-control-'+run
+ app=('/tmp/bar-spacing-two.app' if side=='old' else '/tmp/chart-data-update.app')+'/Contents/MacOS/chartjs_gallery'
+ env={**os.environ,**({'BAR_RUN':tag,'BAR_VARIANTS':'update','BAR_N':'1000,5000,20000'} if side=='old' else {'RUN':tag,'CASES':'legacy','N':'1000,5000,20000'})}
+ with open('/tmp/'+tag+'.log','w') as log:subprocess.run([app],env=env,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=120)
+ print(tag,'complete',flush=True)

@@ -1,0 +1,224 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 43f5869..a79d26e 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -44,6 +44,7 @@ import 'dart:typed_data';
+ 
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
++import 'package:flutter_chartjs_port/src/core/bar_pixel_reuse.dart';
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show
+@@ -165,10 +166,12 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
+ ///
+ /// `curr` is Dart `null` for the JS `null` of `getPixelForTick`. `prev`
+ /// starts as [undefined]. `curr - prev` applies `ToNumber` to both.
+-double _computeMinSampleSize(types.ChartMeta meta) {
++double _computeMinSampleSize(types.ChartMeta meta, [BarPixelReuse? reuse]) {
+   final scale = meta.iScale!;
+   final values = _getAllScaleValues(scale, meta.type);
+-  var min = scale.length;
++  // DIVERGES(chartjs): adapt-bar-pixel-reuse, recheck after observable reads.
++  final reusedMinimum = reuse?.minimumFor(values);
++  var min = reusedMinimum ?? scale.length;
+   double? curr;
+   Object? prev = undefined;
+   void updateMinAndPrev() {
+@@ -184,9 +187,11 @@ double _computeMinSampleSize(types.ChartMeta meta) {
+     prev = curr;
+   }
+ 
+-  for (var i = 0, ilen = values.length; i < ilen; ++i) {
+-    curr = scale.getPixelForValue(values[i]);
+-    updateMinAndPrev();
++  if (reusedMinimum == null) {
++    for (var i = 0, ilen = values.length; i < ilen; ++i) {
++      curr = scale.getPixelForValue(values[i]);
++      updateMinAndPrev();
++    }
+   }
+ 
+   prev = undefined;
+@@ -1309,20 +1314,25 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+     final iScale = meta.iScale;
+     final ilen = meta.data.length;
+     final pixels = Float64List(ilen);
++    final reuse = super.runtimeType == BarController
++        ? BarPixelReuse.capture(iScale, meta, pixels)
++        : null;
+     // Upstream reads `iScale.axis` in the loop: no read for no element.
+     final iKey = iScale == null ? AxisKey.other : AxisKey.of(iScale.axis);
+ 
+-    for (var i = 0; i < ilen; ++i) {
+-      pixels[i] = iScale!.getPixelForValue(
+-        parsedValueOf(getParsed(i.toDouble()), iKey, iScale.axis),
+-        i.toDouble(),
+-      );
++    if (reuse == null) {
++      for (var i = 0; i < ilen; ++i) {
++        pixels[i] = iScale!.getPixelForValue(
++          parsedValueOf(getParsed(i.toDouble()), iKey, iScale.axis),
++          i.toDouble(),
++        );
++      }
+     }
+ 
+     final barThickness = opts.readKey(OptionKey.barThickness);
+     final min = jsTruthy(barThickness)
+         ? barThickness
+-        : _computeMinSampleSize(meta);
++        : _computeMinSampleSize(meta, reuse);
+ 
+     return (
+       min: min,
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+index 2fb801b..89a31fc 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+@@ -37,6 +37,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
++import 'package:flutter_chartjs_port/src/core/bar_pixel_reuse.dart';
+ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+ import 'package:flutter_chartjs_port/src/core/core.config.dart'
+@@ -300,7 +301,11 @@ types.ChartEvent? _determineLastEvent(
+ /// (core.controller.js:903, Chart.js ADR 0019, section 9). A name that the
+ /// meta does not declare goes to a Map of extra properties.
+ final class ChartMeta
+-    implements types.ChartMeta, types.ChartMetaFiller, types.PropertyAccess {
++    implements
++        types.ChartMeta,
++        types.ChartMetaFiller,
++        types.PropertyAccess,
++        BarPixelMeta {
+   ChartMeta._({
+     required this.order,
+     required this.index,
+@@ -367,6 +372,10 @@ final class ChartMeta
+   @override
+   List<Object?> parsed = <Object?>[];
+ 
++  @override
++  @internal
++  List<Object?> get barPixelParsed => parsed;
++
+   /// core.controller.js:847 `_sorted: false`.
+   @internal
+   @override
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+index dcee1bc..28b8031 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -50,6 +50,7 @@ import 'dart:math' as math;
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
++import 'package:flutter_chartjs_port/src/core/bar_pixel_reuse.dart';
+ import 'package:flutter_chartjs_port/src/core/core.element.dart';
+ import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
+ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+@@ -1043,6 +1044,30 @@ class Scale extends _ScalePrototype
+   @internal
+   bool get supportsBulkBarUpdate => false;
+ 
++  /// Snapshot only callback-free, finite projection settings. Signed-zero
++  /// settings decline so record equality cannot hide a sign-changing mutation.
++  @internal
++  BarPixelState? captureBarPixelState(double origin, double range) {
++    if (jsTruthy(_alignToPixels) ||
++        !origin.isFinite ||
++        (origin == 0 && origin.isNegative) ||
++        !range.isFinite ||
++        range <= 0 ||
++        !startPixel.isFinite ||
++        (startPixel == 0 && startPixel.isNegative) ||
++        !length.isFinite ||
++        length <= 0) {
++      return null;
++    }
++    return (
++      origin: origin,
++      range: range,
++      start: startPixel,
++      length: length,
++      reverse: reversePixels,
++    );
++  }
++
+   static final _bulkTickLists = <Type>{
+     <Tick>[].runtimeType,
+     List<Tick>.empty().runtimeType,
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+index 0fdc5cb..70ac7ec 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.category.dart
+@@ -23,6 +23,7 @@
+ /// Thus this library is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/bar_pixel_reuse.dart';
+ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+ import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+@@ -206,13 +207,21 @@ int _relativeIndex(double value, int length) {
+ /// scale.category.js:34 `CategoryScale`.
+ ///
+ /// The scale of the labels: the value of a label is its index.
+-class CategoryScale extends Scale implements NativeCategoryParseScale {
++class CategoryScale extends Scale
++    implements NativeCategoryParseScale, BarPixelScale {
+   /// scale.category.js:47 `constructor(cfg)`.
+   ///
+   /// The fields `_startValue`, `_valueRange` and `_addedLabels` get their
+   /// start values in their declarations (scale.category.js:51-53).
+   CategoryScale(super.cfg);
+ 
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-bar-pixel-reuse, exact native projection inputs.
++  BarPixelState? get barPixelState => super.runtimeType == CategoryScale
++      ? captureBarPixelState(_startValue, _valueRange)
++      : null;
++
+   @override
+   @internal
+   // DIVERGES(chartjs): adapt-numeric-category-parse, same native label source.
+diff --git a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+index 04e58e6..3b1b6c8 100644
+--- a/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
++++ b/packages/flutter_chartjs_port/lib/src/scales/scale.linear.dart
+@@ -24,6 +24,7 @@
+ /// Thus this library is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/bar_pixel_reuse.dart';
+ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+ import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+ import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+@@ -42,7 +43,8 @@ import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
+ import 'package:meta/meta.dart';
+ 
+ /// scale.linear.js:6 `LinearScale extends LinearScaleBase`.
+-class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
++class LinearScale extends LinearScaleBase
++    implements NativeNumericParseScale, BarPixelScale {
+   /// The constructor of LinearScaleBase (scale.linearbase.js:156). Upstream
+   /// declares no constructor in this class.
+   ///
+@@ -94,6 +96,13 @@ class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
+   // DIVERGES(chartjs): adapt-numeric-category-parse, exact numeric semantics.
+   bool get supportsNativeNumericParse => super.runtimeType == LinearScale;
+ 
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-bar-pixel-reuse, exact native projection inputs.
++  BarPixelState? get barPixelState => super.runtimeType == LinearScale
++      ? captureBarPixelState(startValue, valueRange)
++      : null;
++
+   late final bool _nativeBarIndexReads = runtimeType == LinearScale;
+ 
+   /// The options of the scale, through the facade of the linear scale

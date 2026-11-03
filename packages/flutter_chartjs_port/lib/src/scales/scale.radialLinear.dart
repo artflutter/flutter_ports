@@ -775,8 +775,18 @@ class RadialLinearScale extends LinearScaleBase
   // scale.radialLinear.js:340 `static id = 'radialLinear'`. Scale has the
   // instance field `id`. Thus the value is only in the statics of jsClass.
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates =>
+      super.runtimeType == RadialLinearScale &&
+      getUserBounds().minDefined &&
+      getUserBounds().maxDefined &&
+      options.cachedFixedDataBounds;
+
   /// scale.radialLinear.js:345 `static defaults`, a typed scope of the kind
   /// `ScaleOptions` (Chart.js ADR 0054 §3).
+
   static final ScaleOptionsScope defaults = ScaleOptionsScope()
     ..display = true
     // Boolean - Whether to animate scaling the chart from the centre

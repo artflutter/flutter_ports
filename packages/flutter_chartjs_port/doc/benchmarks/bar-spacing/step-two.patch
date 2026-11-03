@@ -1,0 +1,38 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 43f5869..7d5c8b9 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -44,6 +44,7 @@ import 'dart:typed_data';
+ 
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
++import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show
+@@ -138,21 +139,12 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
+     // `values.concat(...)`: a new List.
+     values = values + visibleMetas[i].controller!.getAllParsedValues(scale);
+   }
+-  // DIVERGES(chartjs): adapt-live-bar-layout, owned numeric sorted input.
++  // DIVERGES(chartjs): adapt-sorted-bar-values, owned numeric sorted input.
+   // Concatenation above owns this list even if a custom controller supplied
+   // its source. No user comparator/getter is omitted by this numeric scan.
+-  var ordered = true;
+-  var previous = double.negativeInfinity;
+-  for (final value in values) {
+-    if (!value.isFinite || value < previous) {
+-      ordered = false;
+-      break;
+-    }
+-    previous = value;
+-  }
+-  final unique = arrayUnique(
+-    ordered ? values : jsSort(values, (a, b) => a - b),
+-  );
++  final unique =
++      uniqueSortedBarValues(values) ??
++      arrayUnique(jsSort(values, (a, b) => a - b));
+   scale.cache.bar = unique;
+   return unique;
+ }

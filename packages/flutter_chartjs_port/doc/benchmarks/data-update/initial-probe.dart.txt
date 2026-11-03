@@ -1,0 +1,96 @@
+// Original code, not ported from Chart.js: production data-update measurement.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:chartjs_gallery/demo/stress_demo.dart';
+import 'package:chartjs_gallery/demo/stress_timing.dart';
+import 'package:chartjs_gallery/main_stress.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Animation;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import '../bar_update/probe.dart' as legacy;
+
+Object? plain(Object? value) {
+  if(value is Undefined) return "#undefined";
+  if(value is Color) return [value.a,value.r,value.g,value.b,value.colorSpace.name];
+  if(value is double && !value.isFinite) return value.toString();
+  if(value is JsObjectFace) return {for(final key in value.jsKeys()) key:plain(value.jsRead(key))};
+  if(value is Map) return {for(final e in value.entries) e.key:plain(e.value)};
+  if(value is List) return value.map(plain).toList();
+  return value;
+}
+Object observe(Chart chart) => [
+  plain(chart.getDatasetMeta(0).parsed),
+  for(final e in chart.getDatasetMeta(0).data)
+    [for(final k in ['x','y','base','width','height','startAngle','endAngle',
+      'circumference','innerRadius','outerRadius','skip','stop','cp1x','cp1y','cp2x','cp2y'])
+      plain((e as types.ElementPropertyRead)[k]),
+      for(final k in ['radius','borderWidth','backgroundColor','borderColor','borderRadius'])
+        plain((e.options as JsObjectFace).jsRead(k))],
+];
+ChartBenchCase makeCase(String variant) {
+  final incremental=variant.startsWith('data_');
+  final name=variant.substring(variant.indexOf('_')+1);
+  final type=StressChartType.values.byName(name=='preparedBar'?'bar':name);
+  return ChartBenchCase(mode:'dataUpdate',name:variant,call:ChartBenchCall.frame,scene:(n) {
+    registerGalleryComponents();
+    final field=StressPointField(n);
+    final scene=StressChartScene(type,n,field);
+    final timing=StressChartTiming();
+    final cfg=stressChartConfig(scene:scene,scriptable:false,
+      options:chartBenchOptions,plugins:[timing.plugin]);
+    List<Map<String,Object?>>? prepared;
+    if(name=='preparedBar') {
+      prepared=[for(var i=0;i<n;i++) <String,Object?>{'x':i.toDouble(),'y':scene.data[i]}];
+      final dataset=((cfg['data'] as Map)['datasets'] as List).first as Map;
+      dataset['data']=prepared;
+      dataset['parsing']=false;
+    }
+    var fast=0,full=0;
+    return ChartBenchScene(config:cfg,takeParts:timing.take,frame:(chart) {
+      field.step(n,chartBenchStep);scene.write(field);
+      if(prepared!=null) for(var i=0;i<n;i++) prepared![i]['y']=scene.data[i];
+      if(incremental) {
+        if(chart.updateData()) fast++; else full++;
+      } else { chart.update('none');full++; }
+    },describe:(chart)=>{'incrementalCalls':fast,'fullCalls':full,
+      'ticks':chart.scales['x']?.ticks?.length});
+  });
+}
+Future<void> run() async {
+  await Future<void>.delayed(const Duration(seconds:1));
+  animator.refresh=() {};
+  final env=Platform.environment;
+  final file=File('/tmp/data-update-${env['RUN']??'a'}.jsonl');
+  var cases=(env['CASES']??'full_bar,data_bar,full_line,data_line,full_scatter,data_scatter,full_bubble,data_bubble,full_doughnut,data_doughnut,full_pie,data_pie,full_radar,data_radar,full_polarArea,data_polarArea,full_preparedBar,data_preparedBar').split(',');
+  if(env['REVERSE']=='1') cases=cases.reversed.toList();
+  for(final n in (env['N']??'1000').split(',').map(int.parse)) {
+    for(final variant in cases) {
+      var verified=false;
+      final result=runChartBenchCase(variant=='legacy'?legacy.makeCase('update'):makeCase(variant),n,
+        const ChartBenchSettings(batches:7,batchMs:200,warmupMs:800),
+        onChart:variant.startsWith('data_')?(chart){
+          final before=jsonEncode(observe(chart));chart.update('none');
+          verified=before==jsonEncode(observe(chart));
+          if(!verified) throw StateError('Reference mismatch $variant/$n');
+        }:null);
+      file.writeAsStringSync('${jsonEncode({...result,if(variant.startsWith('data_')) 'referenceMatches':verified})}\n',mode:FileMode.append,flush:true);
+      print('$variant/$n ${result['updateMedianMs']} ${result['drawMedianMs']} fast=${result['incrementalCalls']} full=${result['fullCalls']}');
+    }
+  }
+  exit(0);
+}
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final env=Platform.environment;
+  if(env['MODE']=='stress') {
+    runApp(StressProfileApp(mode:StressMode.chart,type:StressChartType.bar,
+      scenarios:const [(20000,0)],call:env['CALL']=='data'?StressChartCall.data:StressChartCall.update,windows:true));
+    return;
+  }
+  runApp(const MaterialApp(home:Scaffold(body:Text('Incremental data updates'))));
+  unawaited(run().catchError((Object e,StackTrace st){print('$e\n$st');exit(1);}));
+}
