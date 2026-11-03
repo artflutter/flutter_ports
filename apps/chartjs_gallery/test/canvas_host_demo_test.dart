@@ -301,7 +301,7 @@ void main() {
     expect(await stressSelected(tester, 'stress.n.1000'), isFalse);
     expect(await stressSelected(tester, 'stress.m.200'), isTrue);
 
-    await stressTap(tester, 'stress.start');
+    expect(find.text('Pause test'), findsOneWidget);
     await _frames(tester, 10);
     final renders = _renders(tester);
     await _frames(tester, 5);
@@ -423,7 +423,7 @@ void main() {
 
     // The stress loop stops while the Canvas tab shows.
     await _openTab(tester, 'stress');
-    await tester.tap(find.byKey(const ValueKey('stress.start')));
+    expect(find.text('Pause test'), findsOneWidget);
     await _frames(tester, 5);
     await _openTab(tester, 'canvas');
     final stress = _renders(tester);
@@ -518,7 +518,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('stress: autoStart and onStats drive the tab', (tester) async {
+  testWidgets('stress: starts by default and publishes stats on pause', (
+    tester,
+  ) async {
     final stats = <StressStats>[];
     await tester.pumpWidget(
       MaterialApp(
@@ -526,7 +528,6 @@ void main() {
           body: StressDemo(
             initialN: 500,
             initialM: 10,
-            autoStart: true,
             onStats: stats.add,
           ),
         ),

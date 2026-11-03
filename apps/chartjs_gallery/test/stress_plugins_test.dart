@@ -491,8 +491,9 @@ void main() {
     expect(await stressSelected(tester, 'stress.plugins.scene.legend'), isTrue);
     expect(await stressControlExists(tester, 'stress.n.100'), isTrue);
     expect(await stressControlExists(tester, 'stress.n.1000'), isTrue);
-    expect(await stressControlExists(tester, 'stress.n.5000'), isFalse);
-    expect(await stressSelected(tester, 'stress.plugins.legend'), isTrue);
+    expect(await stressControlExists(tester, 'stress.n.5000'), isTrue);
+    expect(await stressControlExists(tester, 'stress.n.20000'), isTrue);
+    expect(await stressControlExists(tester, 'stress.plugins.legend'), isFalse);
     expect(
       await stressControlExists(tester, 'stress.plugins.tooltip'),
       isFalse,
@@ -512,11 +513,15 @@ void main() {
     var chart = _chart(tester);
     expect(chart.legend, isNotNull);
 
-    // The legend off: the base, on a new chart.
-    await stressTap(tester, 'stress.plugins.legend');
+    // Selecting Legend enables its subject without a redundant toggle.
+    await stressTap(tester, 'stress.plugins.scene.title');
     await _frames(tester);
     expect(_chart(tester), isNot(same(chart)));
     expect(_chart(tester).legend, isNull);
+    await stressTap(tester, 'stress.plugins.scene.legend');
+    await _frames(tester);
+    expect(_chart(tester).legend, isNotNull);
+    expect(await stressControlExists(tester, 'stress.options'), isFalse);
 
     // The call update keeps the chart.
     chart = _chart(tester);
@@ -535,19 +540,29 @@ void main() {
       isFalse,
     );
     expect(await stressControlExists(tester, 'stress.plugins.legend'), isFalse);
-    expect(await stressSelected(tester, 'stress.plugins.tooltip'), isTrue);
+    expect(
+      await stressControlExists(tester, 'stress.plugins.tooltip'),
+      isFalse,
+    );
+    expect(await stressControlExists(tester, 'stress.options'), isFalse);
+    expect(_chart(tester).tooltip, isNotNull);
     expect(await stressSelected(tester, 'stress.plugins.datasets.10'), isTrue);
     expect(readByName(_chart(tester).data, 'datasets'), hasLength(10));
     await stressTap(tester, 'stress.plugins.datasets.3');
     await _frames(tester);
     expect(readByName(_chart(tester).data, 'datasets'), hasLength(3));
-    await stressTap(tester, 'stress.plugins.tooltip');
+    await stressTap(tester, 'stress.plugins.scene.still');
     await _frames(tester);
-    expect(_chart(tester).tooltip, isNull);
+    expect(_chart(tester).tooltip, isNotNull);
+    expect(
+      await stressControlExists(tester, 'stress.plugins.tooltip'),
+      isFalse,
+    );
+    expect(await stressControlExists(tester, 'stress.options'), isFalse);
 
     // A new N makes a new chart.
     chart = _chart(tester);
-    await stressTap(tester, 'stress.n.100');
+    await stressTap(tester, 'stress.n.1000');
     await _frames(tester);
     expect(_chart(tester), isNot(same(chart)));
     expect(
@@ -555,7 +570,7 @@ void main() {
         (readByName(_chart(tester).data, 'datasets')! as List<Object?>).first,
         'data',
       ),
-      hasLength(100),
+      hasLength(1000),
     );
 
     // The scene fade keeps the datasets, and has no tooltip toggle.

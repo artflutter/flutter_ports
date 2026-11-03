@@ -173,11 +173,24 @@ class SegmentChoice<T> extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.label,
+    this.showLabels = false,
+    this.labelAbove = false,
+    this.minItemWidth,
     super.key,
   });
 
   /// The short name of the value, or `null` for none.
   final String? label;
+
+  /// Show names alongside icons, hiding icons when space is tight.
+  final bool showLabels;
+
+  /// Put the field label above the choices instead of in the left gutter.
+  final bool labelAbove;
+
+  /// Wrap choices into aligned rows at this minimum logical width.
+  /// Null retains the original single-row presentation.
+  final double? minItemWidth;
 
   /// The segments.
   final List<SegmentChoiceItem<T>> items;
@@ -195,6 +208,59 @@ class SegmentChoice<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final choices = _segmentRows<T>(
+      context: context,
+      count: items.length,
+      minItemWidth: minItemWidth,
+      selected: {value},
+      onChanged: (selected) {
+        if (selected.isNotEmpty) onChanged(selected.single);
+      },
+      segments: (width) => [
+        for (final item in items)
+          ButtonSegment<T>(
+            value: item.value,
+            tooltip: item.tooltip,
+            icon:
+                item.icon != null &&
+                    (!showLabels ||
+                        width >=
+                            112 *
+                                MediaQuery.textScalerOf(context).scale(12) /
+                                12)
+                ? Icon(item.icon, key: ValueKey(item.key))
+                : null,
+            label: item.icon == null || showLabels
+                ? Text(
+                    item.text,
+                    key:
+                        item.icon != null &&
+                            width >=
+                                112 *
+                                    MediaQuery.textScalerOf(context).scale(12) /
+                                    12
+                        ? null
+                        : ValueKey(item.key),
+                    style: showLabels ? theme.textTheme.labelMedium : null,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                : null,
+          ),
+      ],
+    );
+    if (labelAbove) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (label != null) ...[
+            Text(label!, style: theme.textTheme.labelMedium),
+            const SizedBox(height: 4),
+          ],
+          choices,
+        ],
+      );
+    }
     return Row(
       children: [
         if (label != null)
@@ -202,33 +268,7 @@ class SegmentChoice<T> extends StatelessWidget {
             width: 44,
             child: Text(label!, style: theme.textTheme.labelLarge),
           ),
-        Expanded(
-          child: SegmentedButton<T>(
-            style: _segmentStyle,
-            showSelectedIcon: false,
-            expandedInsets: EdgeInsets.zero,
-            segments: [
-              for (final item in items)
-                ButtonSegment<T>(
-                  value: item.value,
-                  tooltip: item.tooltip,
-                  icon: item.icon == null
-                      ? null
-                      : Icon(item.icon, key: ValueKey(item.key)),
-                  label: item.icon != null
-                      ? null
-                      : Text(
-                          item.text,
-                          key: ValueKey(item.key),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                ),
-            ],
-            selected: {value},
-            onSelectionChanged: (selected) => onChanged(selected.single),
-          ),
-        ),
+        Expanded(child: choices),
       ],
     );
   }
@@ -251,7 +291,18 @@ typedef SegmentToggleItem = ({
 /// tap on a segment switches its option.
 class SegmentToggles extends StatelessWidget {
   /// Creates the control.
-  const SegmentToggles({required this.items, super.key});
+  const SegmentToggles({
+    required this.items,
+    this.labels,
+    this.minItemWidth,
+    super.key,
+  });
+
+  /// Optional readable names for controls that otherwise show only icons.
+  final Map<String, String>? labels;
+
+  /// Optional minimum width before choices wrap to another aligned row.
+  final double? minItemWidth;
 
   /// The segments.
   final List<SegmentToggleItem> items;
@@ -261,25 +312,30 @@ class SegmentToggles extends StatelessWidget {
       items.any((item) => item.key == key && item.value);
 
   @override
-  Widget build(BuildContext context) => SegmentedButton<String>(
-    style: _segmentStyle,
-    showSelectedIcon: false,
-    multiSelectionEnabled: true,
-    emptySelectionAllowed: true,
-    expandedInsets: EdgeInsets.zero,
-    segments: [
+  Widget build(BuildContext context) => _segmentRows<String>(
+    context: context,
+    count: items.length,
+    minItemWidth: minItemWidth,
+    multiSelection: true,
+    segments: (_) => [
       for (final item in items)
         ButtonSegment<String>(
           value: item.key,
           tooltip: item.tooltip,
           icon: Icon(item.icon, key: ValueKey(item.key)),
+          label: labels?[item.key] == null
+              ? null
+              : Text(
+                  labels![item.key]!,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
         ),
     ],
     selected: {
       for (final item in items)
         if (item.value) item.key,
     },
-    onSelectionChanged: (selected) {
+    onChanged: (selected) {
       for (final item in items) {
         final on = selected.contains(item.key);
         if (on != item.value) item.onChanged(on);
@@ -287,6 +343,58 @@ class SegmentToggles extends StatelessWidget {
     },
   );
 }
+
+Widget _segmentRows<T>({
+  required BuildContext context,
+  required int count,
+  required List<ButtonSegment<T>> Function(double width) segments,
+  required Set<T> selected,
+  required ValueChanged<Set<T>> onChanged,
+  double? minItemWidth,
+  bool multiSelection = false,
+}) => LayoutBuilder(
+  builder: (context, constraints) {
+    final scale = MediaQuery.textScalerOf(context).scale(12) / 12;
+    final columns = minItemWidth == null || !constraints.hasBoundedWidth
+        ? count
+        : (constraints.maxWidth / (minItemWidth * scale)).floor().clamp(
+            1,
+            count,
+          );
+    final width = constraints.maxWidth / columns;
+    final all = segments(width);
+    final rows = <Widget>[];
+    for (var i = 0; i < count; i += columns) {
+      final row = all.sublist(i, (i + columns).clamp(0, count));
+      final values = {for (final segment in row) segment.value};
+      if (i > 0) rows.add(const SizedBox(height: 4));
+      rows.add(
+        Align(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: width * row.length,
+            child: SegmentedButton<T>(
+              style: _segmentStyle,
+              showSelectedIcon: false,
+              expandedInsets: EdgeInsets.zero,
+              multiSelectionEnabled: multiSelection,
+              emptySelectionAllowed: multiSelection || minItemWidth != null,
+              segments: row,
+              selected: minItemWidth == null
+                  ? selected
+                  : selected.intersection(values),
+              onSelectionChanged: onChanged,
+            ),
+          ),
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: rows,
+    );
+  },
+);
 
 /// A list of `name: value` lines in monospace.
 class ReadoutTable extends StatelessWidget {

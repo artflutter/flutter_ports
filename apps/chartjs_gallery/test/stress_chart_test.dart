@@ -625,10 +625,10 @@ void main() {
     expect(await _selected(tester, 'stress.chart.showLine'), isFalse);
     expect(await stressControlExists(tester, 'stress.layer.points'), isFalse);
     expect(find.byKey(const ValueKey('stress.host')), findsNothing);
-    // The type segments show their icons, with the key on the icon.
+    // Compact layouts show readable chart names instead of icon-only choices.
     expect(
       tester.widget(find.byKey(const ValueKey('stress.chart.type.radar'))),
-      isA<Icon>().having((i) => i.icon, 'icon', Icons.radar),
+      isA<Text>().having((t) => t.data, 'name', 'Radar'),
     );
     final first = _chart(tester);
 
@@ -667,7 +667,7 @@ void main() {
   ) async {
     await _pumpChart(tester, autoStart: false, m: 0);
     await _frames(tester);
-    // The first N of the point counts. A new type keeps the index of N.
+    // A new type keeps the selected count, including radial charts.
     await _tap(tester, 'stress.n.1000');
     var chart = _chart(tester);
     for (final type in [
@@ -687,22 +687,22 @@ void main() {
         _controllerClass[type],
         reason: key,
       );
-      // The N line shows the counts of the type, and the index of N stays.
+      // Every type offers the same counts and preserves the selection.
       for (final count in {...stressPointCounts, ...stressArcCounts}) {
         expect(
           await stressControlExists(tester, 'stress.n.$count'),
-          type.counts.contains(count),
+          stressItemCounts.contains(count),
           reason: '$key $count',
         );
       }
       expect(
-        await _selected(tester, 'stress.n.${type.counts.first}'),
+        await _selected(tester, 'stress.n.1000'),
         isTrue,
         reason: key,
       );
       expect(
         chart.getDatasetMeta(0).data,
-        hasLength(type.counts.first),
+        hasLength(1000),
         reason: key,
       );
       expect(
@@ -786,7 +786,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('chart: a new mode takes the count at the index of N', (
+  testWidgets('chart: target changes preserve custom and selected counts', (
     tester,
   ) async {
     await _pumpChart(
@@ -796,18 +796,17 @@ void main() {
       autoStart: false,
     );
     await _frames(tester);
-    expect(await _selected(tester, 'stress.n.100'), isTrue);
-    // 100 is the first count of a doughnut, and 1000 the first of the bars.
+    expect(_chart(tester).getDatasetMeta(0).data, hasLength(100));
+    // Custom benchmark counts also survive target changes.
     await _tap(tester, 'stress.mode.bars');
-    expect(await _selected(tester, 'stress.n.1000'), isTrue);
-    expect(_state(tester).debugElements, hasLength(1000));
+    expect(_state(tester).debugElements, hasLength(100));
     expect(_state(tester).debugElements, everyElement(isA<BarElement>()));
-    // 1000 is a count of the arcs too: N stays.
+    await _tap(tester, 'stress.n.5000');
     await _tap(tester, 'stress.mode.arcs');
-    expect(await _selected(tester, 'stress.n.1000'), isTrue);
-    await _tap(tester, 'stress.n.100');
+    expect(await _selected(tester, 'stress.n.5000'), isTrue);
+    expect(_state(tester).debugElements, hasLength(5000));
     await _tap(tester, 'stress.mode.primitives');
-    expect(await _selected(tester, 'stress.n.1000'), isTrue);
+    expect(await _selected(tester, 'stress.n.5000'), isTrue);
     expect(tester.takeException(), isNull);
   });
 

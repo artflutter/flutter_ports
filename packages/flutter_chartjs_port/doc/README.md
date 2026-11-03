@@ -35,6 +35,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   Bar position reuse evaluation (rejected): [ADR 0072](adr/0072-bar-position-reuse.md).
   Sorted bar-value deduplication: [ADR 0073](adr/0073-sorted-bar-values.md).
   Incremental data updates: [ADR 0074](adr/0074-incremental-data-updates.md).
+  Stress-screen layout: [ADR 0075](adr/0075-stress-screen-layout.md).
 - **Axis pipeline options:** [measured alternatives and proposed structure](axis-pipeline-options.md)
   for reducing steady-state category-axis layout below 1 ms, with compatibility
   constraints and invalidation probes.

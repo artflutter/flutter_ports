@@ -44,6 +44,9 @@ export 'package:chartjs_gallery/demo/stress_chart_config.dart'
 /// The label counts of the stress tab.
 const List<int> stressLabelCounts = [0, 50, 200];
 
+/// The interactive item choices, shared by every stress target and type.
+const List<int> stressItemCounts = [100, 1000, 5000, 20000];
+
 /// The scenes of the stress tab.
 ///
 /// Each mode draws N items and M labels in each frame. The chips
@@ -67,7 +70,7 @@ enum StressMode {
   /// N items of a real `Chart` with the ported controller of a
   /// [StressChartType] (Chart.js ADR 0031, sections 3 and 5): `line` and
   /// `scatter` draw the points of phase 5 (Chart.js ADR 0021, section 8) on
-  /// two hidden unit scales. The N choices are the counts of the type.
+  /// two hidden unit scales. Interactive N choices use [stressItemCounts].
   /// [StressChartCall] selects the call of each frame.
   chart(stressPointCounts, 'chart items'),
 
@@ -86,7 +89,7 @@ enum StressMode {
 
   const StressMode(this.counts, this.items);
 
-  /// The N choices of the mode, in ascending order.
+  /// The scripted benchmark counts, independent of [stressItemCounts].
   final List<int> counts;
 
   /// The name of the N items in the title of the chart.
@@ -131,6 +134,9 @@ enum StressChartCall {
   /// case (c).
   update,
 
+  /// Data values only; reports whether the incremental lifecycle was used.
+  data,
+
   /// The animation cost (step 8 of the phase 5 prompt): the chart has
   /// `animation: {duration: 1000, loop: true}`. Its first update starts an
   /// animation of `x` and `y` of each point, which loops without end. In
@@ -158,6 +164,7 @@ List<StressChartCall> stressCallsOf(
   _ => const [
     StressChartCall.draw,
     StressChartCall.update,
+    StressChartCall.data,
     StressChartCall.animate,
   ],
 };
@@ -409,6 +416,8 @@ final class StressStats {
     required this.rasterMaxMs,
     required this.timings,
     this.tooltipDrawMs = 0,
+    this.lastDataUpdateFast = false,
+    this.canvasSize = '',
   });
 
   /// The mode.
@@ -475,6 +484,12 @@ final class StressStats {
   /// [StressMode.plugins].
   final double tooltipDrawMs;
 
+  /// Whether the last explicit data update used the incremental lifecycle.
+  final bool lastDataUpdateFast;
+
+  /// Logical canvas dimensions and device pixel ratio for comparable runs.
+  final String canvasSize;
+
   @override
   bool operator ==(Object other) =>
       other is StressStats &&
@@ -498,7 +513,9 @@ final class StressStats {
       rasterMs == other.rasterMs &&
       rasterMaxMs == other.rasterMaxMs &&
       timings == other.timings &&
-      tooltipDrawMs == other.tooltipDrawMs;
+      tooltipDrawMs == other.tooltipDrawMs &&
+      lastDataUpdateFast == other.lastDataUpdateFast &&
+      canvasSize == other.canvasSize;
 
   // Object.hash takes at most 20 values.
   @override
@@ -524,6 +541,8 @@ final class StressStats {
     rasterMaxMs,
     timings,
     tooltipDrawMs,
+    lastDataUpdateFast,
+    canvasSize,
   ]);
 }
 
@@ -623,7 +642,7 @@ class StressDemo extends StatefulWidget {
     this.initialYScale = StressAxisType.linear,
     this.initialAutoSkip = true,
     this.initialPluginCase = const StressPluginCase(StressPluginScene.legend),
-    this.autoStart = false,
+    this.autoStart = true,
     this.onStats,
     this.host = StressHost.canvas,
     this.chartSemanticsOnly = false,
@@ -633,7 +652,7 @@ class StressDemo extends StatefulWidget {
   /// The first mode.
   final StressMode initialMode;
 
-  /// The first item count, or the first count of [initialMode].
+  /// The first item count, or 1000.
   final int? initialN;
 
   /// The first label count, or 50.
@@ -674,7 +693,7 @@ class StressDemo extends StatefulWidget {
   /// The first case of the mode [StressMode.plugins].
   final StressPluginCase initialPluginCase;
 
-  /// Whether the loop starts as soon as the chart exists.
+  /// Whether the loop starts as soon as the chart exists. Defaults to true.
   final bool autoStart;
 
   /// Receives the figures each time the readout updates.
@@ -702,7 +721,7 @@ class StressDemoState extends State<StressDemo> {
 
   late StressMode _mode = widget.initialMode;
   late StressChartType _type = widget.initialType;
-  late int _n = widget.initialN ?? _countsOf(_mode).first;
+  late int _n = widget.initialN ?? 1000;
   late int _m = widget.initialM ?? stressLabelCounts[1];
   bool _points = true;
   late bool _line = widget.initialLine;
@@ -720,6 +739,10 @@ class StressDemoState extends State<StressDemo> {
   late StressAxisType _scale = widget.initialScale;
   late StressAxisType _yScale = widget.initialYScale;
   late bool _autoSkip = widget.initialAutoSkip;
+  bool _showOptions = false;
+  late StressMode _drawingMode = widget.initialMode.runsChart
+      ? StressMode.primitives
+      : widget.initialMode;
   bool _running = false;
   bool _muted = false;
   bool _autoStarted = false;
@@ -841,11 +864,6 @@ class StressDemoState extends State<StressDemo> {
   @visibleForTesting
   List<Object?> get debugChartData => _chartData;
 
-  /// The N choices of [mode]: the counts of the chart type in the mode
-  /// [StressMode.chart], else the counts of the mode.
-  List<int> _countsOf(StressMode mode) =>
-      mode == StressMode.chart ? _type.counts : mode.counts;
-
   /// Whether the chart of the mode [StressMode.chart] shows its line: only a
   /// `line` or `scatter` chart has one.
   bool get _effectiveShowLine => _showLine && _type.points;
@@ -902,11 +920,8 @@ class StressDemoState extends State<StressDemo> {
     }
   }
 
-  /// Sets the mode and N. A change of the mode keeps N when N is one of the
-  /// counts of the new mode. Else it takes the count of the new mode at the
-  /// index of N in the counts of the old mode, as a new chart type does. An
-  /// N that is not one of the old counts (an `initialN` of a test) stays,
-  /// but not above the largest count of the new mode. An explicit [n] wins.
+  /// Sets the mode and N. A mode change preserves N; only an explicit [n]
+  /// changes the workload, including a custom `initialN` from a benchmark.
   /// A change of either makes the elements again. In the modes
   /// [StressMode.chart] and [StressMode.axes], a change of N makes a new
   /// chart. The new mode takes the first of its calls for a call that it
@@ -914,7 +929,8 @@ class StressDemoState extends State<StressDemo> {
   /// call [StressChartCall.animate] to [StressChartCall.draw].
   void _setScene({StressMode? mode, int? n}) {
     final newMode = mode ?? _mode;
-    final newN = n ?? (mode == null ? _n : _countForMode(newMode));
+    if (!newMode.runsChart) _drawingMode = newMode;
+    final newN = n ?? _n;
     if (newMode == _mode && newN == _n) return;
     // The modes of the demo chart share one host. The modes chart and axes
     // have a host of their own, and a new host for each N. A new host gives
@@ -929,15 +945,6 @@ class StressDemoState extends State<StressDemo> {
     _mode = newMode;
     _n = newN;
     _buildScene();
-  }
-
-  /// The N of [mode] after a change from the current mode (see [_setScene]).
-  int _countForMode(StressMode mode) {
-    final counts = _countsOf(mode);
-    if (counts.contains(_n)) return _n;
-    final index = _countsOf(_mode).indexOf(_n);
-    if (index < 0) return math.min(_n, counts.last);
-    return index < counts.length ? counts[index] : counts.first;
   }
 
   /// Sets the case of the mode [StressMode.axes]. A change makes a new
@@ -974,7 +981,7 @@ class StressDemoState extends State<StressDemo> {
   /// Sets the case of the mode [StressMode.chart]. A change of the chart
   /// type, of `showLine`, of the `backgroundColor` form, or to or from
   /// [StressChartCall.animate] (another `animation` option) makes a new
-  /// chart. A new type keeps the index of N in the counts of the type.
+  /// chart. A new type preserves the selected item count.
   void _setChartCase({
     StressChartCall? call,
     StressChartType? type,
@@ -993,10 +1000,6 @@ class StressDemoState extends State<StressDemo> {
         newScriptable == _scriptable &&
         !animatedChanged) {
       return;
-    }
-    if (newType != _type) {
-      final index = _type.counts.indexOf(_n);
-      if (index >= 0) _n = newType.counts[index];
     }
     _type = newType;
     _showLine = newShowLine;
@@ -1266,6 +1269,7 @@ class StressDemoState extends State<StressDemo> {
   /// draw of the chart.
   Map<String, Object?> get _labelsPlugin => <String, Object?>{
     'id': 'stressLabels',
+    'supportsDataUpdates': true,
     'afterDraw': (Object? chart, Object? args, Object? options) {
       final stressChart = chart! as Chart;
       final ctx = stressChart.ctx;
@@ -1387,6 +1391,8 @@ class StressDemoState extends State<StressDemo> {
   /// parts count only the hooks of this call, as the draw time does: not the
   /// update at the construction of a chart, and not the update of a resize
   /// of its host.
+  bool _lastDataUpdateFast = false;
+
   void _chartFrame(Chart chart) {
     if (_mode == StressMode.plugins) {
       _pluginFrame(chart);
@@ -1396,7 +1402,7 @@ class StressDemoState extends State<StressDemo> {
       _animateFrame(chart);
       return;
     }
-    if (_call == StressChartCall.update) {
+    if (_call == StressChartCall.update || _call == StressChartCall.data) {
       if (_mode == StressMode.axes) {
         _axesScene?.write(_field);
       } else {
@@ -1411,6 +1417,8 @@ class StressDemoState extends State<StressDemo> {
         chart.draw();
       case StressChartCall.update:
         chart.update('none');
+      case StressChartCall.data:
+        _lastDataUpdateFast = chart.updateData();
       case StressChartCall.animate || StressChartCall.frame:
         // [_animateFrame] handles the call animate. Only the mode plugins
         // has the call frame ([_pluginFrame]).
@@ -1504,7 +1512,7 @@ class StressDemoState extends State<StressDemo> {
         chart.update('none');
       case StressChartCall.frame:
         if (event != null) _sendPluginEvent(chart, event);
-      case StressChartCall.animate:
+      case StressChartCall.data || StressChartCall.animate:
         // The mode plugins has no call animate (stressCallsOf).
         break;
     }
@@ -1632,6 +1640,11 @@ class StressDemoState extends State<StressDemo> {
       rasterMaxMs: max(raster),
       timings: _timings.length,
       tooltipDrawMs: _tooltipDrawMs,
+      lastDataUpdateFast: _lastDataUpdateFast,
+      canvasSize: stressChart == null
+          ? ''
+          : '${stressChart.width}x${stressChart.height}'
+                '@${stressChart.currentDevicePixelRatio}',
     );
     widget.onStats?.call(_stats.value);
   }
@@ -1885,218 +1898,378 @@ class StressDemoState extends State<StressDemo> {
     );
   }
 
-  /// The controls: the start button, a segmented button for each choice and
-  /// one segmented button of icons for the options. They wrap to the next
-  /// line on a narrow screen. The chart comes after them.
+  /// Consistent configuration order across all stress targets.
   Widget _toolbar(ThemeData theme) {
     final layers =
         _mode == StressMode.primitives || _mode == StressMode.elements;
+    final hasOptions =
+        layers || _mode == StressMode.chart || _mode == StressMode.axes;
     String count(int v) => v >= 1000 ? '${v ~/ 1000}k' : '$v';
-    const modeText = {
-      StressMode.primitives: 'prim',
-      StressMode.elements: 'elem',
-      StressMode.bars: 'bars',
-      StressMode.arcs: 'arcs',
-      StressMode.chart: 'chart',
-      StressMode.axes: 'axes',
-      StressMode.plugins: 'plug',
+    Widget choice<T>(
+      String label,
+      List<SegmentChoiceItem<T>> items,
+      T value,
+      ValueChanged<T> onChanged, {
+      double itemWidth = 72,
+    }) => SegmentChoice<T>(
+      label: label,
+      labelAbove: true,
+      showLabels: true,
+      minItemWidth: itemWidth,
+      items: items,
+      value: value,
+      onChanged: onChanged,
+    );
+    const gap = SizedBox(height: 8);
+    const drawingNames = <StressMode, String>{
+      StressMode.primitives: 'Primitives',
+      StressMode.elements: 'Points',
+      StressMode.bars: 'Bars',
+      StressMode.arcs: 'Arcs',
     };
-    const callText = {
-      StressChartCall.draw: 'draw',
-      StressChartCall.update: 'upd',
-      StressChartCall.animate: 'anim',
-      StressChartCall.frame: 'frame',
+    const sceneNames = <StressPluginScene, String>{
+      StressPluginScene.legend: 'Legend',
+      StressPluginScene.title: 'Title',
+      StressPluginScene.hover: 'Hover',
+      StressPluginScene.still: 'Tooltip',
+      StressPluginScene.fade: 'Fade',
+      StressPluginScene.gaps: 'Gaps',
+      StressPluginScene.stack: 'Stack',
+      StressPluginScene.radar: 'Radar',
     };
-    const axisText = {
-      StressAxisType.linear: 'lin',
-      StressAxisType.logarithmic: 'log',
-      StressAxisType.category: 'cat',
-      StressAxisType.time: 'time',
+    const axisNames = <StressAxisType, String>{
+      StressAxisType.linear: 'Linear',
+      StressAxisType.logarithmic: 'Log',
+      StressAxisType.category: 'Category',
+      StressAxisType.time: 'Time',
     };
-    const gap = SizedBox(height: 6);
+    const callNames = <StressChartCall, String>{
+      StressChartCall.draw: 'Redraw',
+      StressChartCall.update: 'Full update',
+      StressChartCall.data: 'Data only',
+      StressChartCall.animate: 'Animate',
+      StressChartCall.frame: 'Interact',
+    };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          alignment: WrapAlignment.spaceBetween,
           children: [
-            SizedBox(
-              width: 88,
-              child: SegmentToggles(
-                items: [
-                  (
-                    key: 'stress.start',
-                    icon: _running ? Icons.pause : Icons.play_arrow,
-                    tooltip: _running ? 'Stop' : 'Start',
-                    value: _running,
-                    onChanged: _setRunning,
-                  ),
-                ],
-              ),
+            FilledButton.icon(
+              key: const ValueKey('stress.start'),
+              icon: Icon(_running ? Icons.pause : Icons.play_arrow),
+              label: Text(_running ? 'Pause test' : 'Run test'),
+              onPressed: () => _setRunning(!_running),
             ),
-            const SizedBox(width: 12),
-            Expanded(child: _optionToggles(layers)),
+            if (hasOptions)
+              TextButton.icon(
+                key: const ValueKey('stress.options'),
+                icon: Icon(_showOptions ? Icons.expand_less : Icons.tune),
+                label: const Text('Options'),
+                onPressed: () => setState(() => _showOptions = !_showOptions),
+              ),
           ],
         ),
         gap,
-        SegmentChoice<StressMode>(
-          label: 'mode',
-          items: [
-            for (final mode in StressMode.values)
-              (
-                key: 'stress.mode.${mode.name}',
-                text: modeText[mode]!,
-                icon: null,
-                tooltip: mode.name,
-                value: mode,
-              ),
+        choice<StressMode>(
+          'Test target',
+          [
+            (
+              key: 'stress.mode.chart',
+              text: 'Charts',
+              icon: null,
+              tooltip: 'Complete chart pipeline',
+              value: StressMode.chart,
+            ),
+            (
+              key: 'stress.target.drawing',
+              text: 'Drawing',
+              icon: null,
+              tooltip: 'Drawing helpers and individual elements',
+              value: StressMode.primitives,
+            ),
+            (
+              key: 'stress.mode.axes',
+              text: 'Axes',
+              icon: null,
+              tooltip: 'Chart with visible scales',
+              value: StressMode.axes,
+            ),
+            (
+              key: 'stress.mode.plugins',
+              text: 'Plugins',
+              icon: null,
+              tooltip: 'Plugin-specific scenes',
+              value: StressMode.plugins,
+            ),
           ],
-          value: _mode,
-          onChanged: (mode) => setState(() => _setScene(mode: mode)),
+          _mode.runsChart ? _mode : StressMode.primitives,
+          (mode) => setState(
+            () => _setScene(
+              mode: mode == StressMode.primitives ? _drawingMode : mode,
+            ),
+          ),
+        ),
+        Offstage(
+          offstage: _mode.runsChart,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              gap,
+              choice<StressMode>(
+                'Drawing test',
+                [
+                  for (final mode in drawingNames.keys)
+                    (
+                      key: 'stress.mode.${mode.name}',
+                      text: drawingNames[mode]!,
+                      icon: null,
+                      tooltip: mode == StressMode.primitives
+                          ? 'Canvas drawing helpers'
+                          : '${drawingNames[mode]} elements only',
+                      value: mode,
+                    ),
+                ],
+                _drawingMode,
+                (mode) => setState(() => _setScene(mode: mode)),
+              ),
+            ],
+          ),
         ),
         if (_mode == StressMode.chart) ...[
           gap,
-          SegmentChoice<StressChartType>(
-            label: 'type',
-            items: [
+          choice<StressChartType>(
+            'Chart type',
+            [
               for (final type in StressChartType.values)
                 (
                   key: 'stress.chart.type.${type.name}',
-                  text: type.name,
+                  text: _chartNames[type]!,
                   icon: _typeIcons[type],
-                  tooltip: type.name,
+                  tooltip: _chartNames[type]!,
                   value: type,
                 ),
             ],
-            value: _type,
-            onChanged: (type) => setState(() => _setChartCase(type: type)),
+            _type,
+            (type) => setState(() => _setChartCase(type: type)),
           ),
         ],
         if (_mode == StressMode.plugins) ...[
           gap,
-          SegmentChoice<StressPluginScene>(
-            label: 'scene',
-            items: [
+          choice<StressPluginScene>(
+            'Plugin scene',
+            [
               for (final scene in StressPluginScene.values)
                 (
                   key: 'stress.plugins.scene.${scene.name}',
-                  text: scene.name,
+                  text: sceneNames[scene]!,
                   icon: _sceneIcons[scene],
                   tooltip: scene.benchId,
                   value: scene,
                 ),
             ],
-            value: _pluginCase.scene,
-            onChanged: (scene) => setState(
-              () => _setPluginCase(_pluginCase.copyWith(scene: scene)),
-            ),
-          ),
-        ],
-        gap,
-        SegmentChoice<int>(
-          label: 'N',
-          items: [
-            for (final v in _countsOf(_mode))
-              (
-                key: 'stress.n.$v',
-                text: count(v),
-                icon: null,
-                tooltip: '$v',
-                value: v,
-              ),
-          ],
-          value: _n,
-          onChanged: (v) => setState(() => _setScene(n: v)),
-        ),
-        gap,
-        SegmentChoice<int>(
-          label: 'M',
-          items: [
-            for (final v in stressLabelCounts)
-              (
-                key: 'stress.m.$v',
-                text: count(v),
-                icon: null,
-                tooltip: '$v labels',
-                value: v,
-              ),
-          ],
-          value: _m,
-          onChanged: (v) => setState(() => _m = v),
-        ),
-        if (_mode.runsChart) ...[
-          gap,
-          SegmentChoice<StressChartCall>(
-            label: 'call',
-            items: [
-              for (final call in stressCallsOf(_mode, _pluginCase.scene))
-                (
-                  key: 'stress.chart.call.${call.name}',
-                  text: callText[call]!,
-                  icon: null,
-                  tooltip: call.name,
-                  value: call,
+            _pluginCase.scene,
+            (scene) => setState(
+              () => _setPluginCase(
+                _pluginCase.copyWith(
+                  scene: scene,
+                  legend: scene == StressPluginScene.legend ? true : null,
+                  tooltip: scene.tooltip ? true : null,
                 ),
-            ],
-            value: _call,
-            onChanged: (call) => setState(() => _setChartCase(call: call)),
-          ),
-        ],
-        if (_mode == StressMode.plugins && _pluginCase.scene.tooltip) ...[
-          gap,
-          SegmentChoice<int>(
-            label: 'sets',
-            items: [
-              for (final datasets in stressPluginDatasets)
-                (
-                  key: 'stress.plugins.datasets.$datasets',
-                  text: '$datasets',
-                  icon: null,
-                  tooltip: '$datasets datasets',
-                  value: datasets,
-                ),
-            ],
-            value: _pluginCase.datasets,
-            onChanged: (datasets) => setState(
-              () => _setPluginCase(_pluginCase.copyWith(datasets: datasets)),
+              ),
             ),
           ),
         ],
         if (_mode == StressMode.axes) ...[
           gap,
-          SegmentChoice<StressAxisType>(
-            label: 'x',
-            items: [
+          choice<StressAxisType>(
+            'X scale',
+            [
               for (final type in StressAxisType.values)
                 (
                   key: 'stress.axes.scale.${type.name}',
-                  text: axisText[type]!,
+                  text: axisNames[type]!,
                   icon: null,
                   tooltip: type.name,
                   value: type,
                 ),
             ],
-            value: _scale,
-            onChanged: (type) => setState(() => _setAxesCase(scale: type)),
+            _scale,
+            (type) => setState(() => _setAxesCase(scale: type)),
           ),
           gap,
-          SegmentChoice<StressAxisType>(
-            label: 'y',
-            items: [
+          choice<StressAxisType>(
+            'Y scale',
+            [
               for (final type in stressAxesValueTypes)
                 (
                   key: 'stress.axes.yScale.${type.name}',
-                  text: axisText[type]!,
+                  text: axisNames[type]!,
                   icon: null,
                   tooltip: type.name,
                   value: type,
                 ),
             ],
-            value: _yScale,
-            onChanged: (type) => setState(() => _setAxesCase(yScale: type)),
+            _yScale,
+            (type) => setState(() => _setAxesCase(yScale: type)),
           ),
         ],
+        gap,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: choice<int>(
+                _mode == StressMode.plugins ? 'Items / dataset' : 'Items',
+                [
+                  for (final v in stressItemCounts)
+                    (
+                      key: 'stress.n.$v',
+                      text: count(v),
+                      icon: null,
+                      tooltip: '$v items',
+                      value: v,
+                    ),
+                ],
+                _n,
+                (v) => setState(() => _setScene(n: v)),
+                itemWidth: 36,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text('Overlay labels', style: theme.textTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SegmentChoice<int>(
+                          showLabels: true,
+                          items: [
+                            for (final v in stressLabelCounts)
+                              (
+                                key: 'stress.m.$v',
+                                text: count(v),
+                                icon: null,
+                                tooltip: '$v extra text labels',
+                                value: v,
+                              ),
+                          ],
+                          value: _m,
+                          onChanged: (v) => setState(() => _m = v),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      SizedBox(
+                        width: 40,
+                        child: SegmentToggles(
+                          items: [
+                            (
+                              key: 'stress.spin',
+                              icon: Icons.rotate_right,
+                              tooltip: 'Rotate overlay labels',
+                              value: _spin,
+                              onChanged: (v) => setState(() => _spin = v),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        if (_mode == StressMode.plugins && _pluginCase.scene.tooltip) ...[
+          gap,
+          choice<int>(
+            'Datasets',
+            [
+              for (final n in stressPluginDatasets)
+                (
+                  key: 'stress.plugins.datasets.$n',
+                  text: '$n',
+                  icon: null,
+                  tooltip: '$n datasets',
+                  value: n,
+                ),
+            ],
+            _pluginCase.datasets,
+            (n) => setState(
+              () => _setPluginCase(_pluginCase.copyWith(datasets: n)),
+            ),
+          ),
+        ],
+        gap,
+        if (_mode.runsChart)
+          choice<StressChartCall>(
+            'Operation',
+            [
+              for (final call in stressCallsOf(_mode, _pluginCase.scene))
+                (
+                  key: 'stress.chart.call.${call.name}',
+                  text: callNames[call]!,
+                  icon: null,
+                  tooltip: callNames[call]!,
+                  value: call,
+                ),
+            ],
+            _call,
+            (call) => setState(() => _setChartCase(call: call)),
+          )
+        else
+          Text(
+            'Operation: animate drawing',
+            style: theme.textTheme.labelMedium,
+          ),
+        const SizedBox(height: 4),
+        Text(_operationDescription, style: theme.textTheme.bodySmall),
+        if (hasOptions)
+          Offstage(
+            offstage: !_showOptions,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: _optionToggles(layers),
+            ),
+          ),
       ],
     );
+  }
+
+  static const Map<StressChartType, String> _chartNames = {
+    StressChartType.line: 'Line',
+    StressChartType.scatter: 'Scatter',
+    StressChartType.bar: 'Bar',
+    StressChartType.bubble: 'Bubble',
+    StressChartType.doughnut: 'Doughnut',
+    StressChartType.pie: 'Pie',
+    StressChartType.polarArea: 'Polar area',
+    StressChartType.radar: 'Radar',
+  };
+
+  String get _operationDescription {
+    if (!_mode.runsChart) {
+      return 'Draw the selected helpers or elements directly.';
+    }
+    return switch (_call) {
+      StressChartCall.draw =>
+        'Redraw existing geometry without changing the data.',
+      StressChartCall.update =>
+        'Change values and recalculate the complete chart.',
+      StressChartCall.data => 'Change values; reuse layout when supported.',
+      StressChartCall.animate => 'Run the chart’s looping animations.',
+      StressChartCall.frame =>
+        _pluginCase.scene == StressPluginScene.fade
+            ? 'Move the pointer and animate tooltip fading.'
+            : 'Move the pointer to exercise tooltip interactions.',
+    };
   }
 
   /// The icon of each chart type on the line `type` of the mode
@@ -2152,6 +2325,14 @@ class StressDemoState extends State<StressDemo> {
   /// The on/off options of the mode, as one segmented button of icons.
   Widget _optionToggles(bool layers) {
     return SegmentToggles(
+      minItemWidth: 140,
+      labels: const {
+        'stress.layer.points': 'Points',
+        'stress.layer.line': 'Polyline',
+        'stress.chart.showLine': 'Connect points',
+        'stress.chart.scriptable': 'Scriptable colors',
+        'stress.axes.autoSkip': 'Skip crowded ticks',
+      },
       items: [
         if (layers) ...[
           (
@@ -2169,13 +2350,6 @@ class StressDemoState extends State<StressDemo> {
             onChanged: (v) => setState(() => _line = v),
           ),
         ],
-        (
-          key: 'stress.spin',
-          icon: Icons.rotate_right,
-          tooltip: 'spin labels',
-          value: _spin,
-          onChanged: (v) => setState(() => _spin = v),
-        ),
         if (_mode == StressMode.chart) ...[
           if (_type.points)
             (
@@ -2200,29 +2374,6 @@ class StressDemoState extends State<StressDemo> {
             tooltip: 'ticks.autoSkip',
             value: _autoSkip,
             onChanged: (v) => setState(() => _setAxesCase(autoSkip: v)),
-          ),
-        if (_mode == StressMode.plugins &&
-            _pluginCase.scene == StressPluginScene.legend)
-          (
-            key: 'stress.plugins.legend',
-            icon: Icons.list,
-            tooltip: 'legend (off: the base of the legend and the title)',
-            value: _pluginCase.legend,
-            onChanged: (v) => setState(
-              () => _setPluginCase(_pluginCase.copyWith(legend: v)),
-            ),
-          ),
-        if (_mode == StressMode.plugins &&
-            (_pluginCase.scene == StressPluginScene.hover ||
-                _pluginCase.scene == StressPluginScene.still))
-          (
-            key: 'stress.plugins.tooltip',
-            icon: Icons.chat_bubble_outline,
-            tooltip: 'tooltip plugin (off: the base)',
-            value: _pluginCase.tooltip,
-            onChanged: (v) => setState(
-              () => _setPluginCase(_pluginCase.copyWith(tooltip: v)),
-            ),
           ),
       ],
     );
@@ -2262,6 +2413,7 @@ class StressDemoState extends State<StressDemo> {
           '${switch (_call) {
             StressChartCall.draw => 'chart.draw()',
             StressChartCall.update => _updateCall,
+            StressChartCall.data => 'chart.updateData()',
             StressChartCall.animate => 'core.animator: the tick of N looping '
                 'animations and chart.draw()',
             // The mode chart has no call frame (stressCallsOf).
@@ -2283,6 +2435,15 @@ class StressDemoState extends State<StressDemo> {
           '(rotated)',
   };
 
+  static const String _measurementNotes =
+      'Update and draw are CPU timings; draw includes picture recording. '
+      'UI frame and raster times come from Flutter frame timings. They '
+      'overlap and should not be added together. Elements measures '
+      'parsing/preparation. Layout covers scales and fitting. Dataset '
+      'update/draw isolate controller work. Overlay labels add text- '
+      'rendering work independently of chart labels. Use profile mode on '
+      'a device for meaningful performance results.';
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -2291,7 +2452,6 @@ class StressDemoState extends State<StressDemo> {
       children: [
         DemoCard(
           title: 'Stress test',
-          source: _source,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -2373,78 +2533,140 @@ class StressDemoState extends State<StressDemo> {
                 valueListenable: _stats,
                 builder: (context, stats, _) => ExcludeSemantics(
                   excluding: widget.chartSemanticsOnly,
-                  child: ReadoutTable(
-                    key: const ValueKey('stress.stats'),
-                    rows: [
-                      ('FPS', stats.fps.toStringAsFixed(1)),
-                      ('frames', '${stats.frames}'),
-                      ('draw', '${ms(stats.drawMs)} ms'),
-                      if (stats.mode == StressMode.chart) ...[
-                        ('update', '${ms(stats.updateMs)} ms'),
-                        ('animator', '${ms(stats.animatorMs)} ms'),
-                        ('elements', '${ms(stats.elementsMs)} ms'),
-                        ('layout', '${ms(stats.layoutMs)} ms'),
-                        ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
-                        ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
-                        ('sharing', '${stats.sharing}'),
-                      ],
-                      if (stats.mode == StressMode.axes) ...[
-                        ('update', '${ms(stats.updateMs)} ms'),
-                        ('elements', '${ms(stats.elementsMs)} ms'),
-                        ('layout', '${ms(stats.layoutMs)} ms'),
-                        ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
-                        ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
-                        ('x ticks', '${stats.ticks}'),
-                        ('rotation', stats.rotation.toStringAsFixed(1)),
-                      ],
-                      if (stats.mode == StressMode.plugins) ...[
-                        ('update', '${ms(stats.updateMs)} ms'),
-                        ('animator', '${ms(stats.animatorMs)} ms'),
-                        ('elements', '${ms(stats.elementsMs)} ms'),
-                        ('layout', '${ms(stats.layoutMs)} ms'),
-                        ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
-                        ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
-                        ('tooltip draw', '${ms(stats.tooltipDrawMs)} ms'),
-                      ],
-                      (
-                        'build avg/max',
-                        stats.timings == 0
-                            ? 'n/a'
-                            : '${ms(stats.buildMs)} / '
-                                  '${ms(stats.buildMaxMs)} ms',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ReadoutTable(
+                        key: const ValueKey('stress.stats'),
+                        rows: [
+                          ('FPS', stats.fps.toStringAsFixed(1)),
+                          (
+                            'UI frame',
+                            stats.timings == 0
+                                ? '—'
+                                : '${ms(stats.buildMs)} ms',
+                          ),
+                          (
+                            'Raster',
+                            stats.timings == 0
+                                ? '—'
+                                : '${ms(stats.rasterMs)} ms',
+                          ),
+                        ],
                       ),
-                      (
-                        'raster avg/max',
-                        stats.timings == 0
-                            ? 'n/a'
-                            : '${ms(stats.rasterMs)} / '
-                                  '${ms(stats.rasterMaxMs)} ms',
+                      if (_call == StressChartCall.data)
+                        Text(
+                          stats.lastDataUpdateFast
+                              ? 'Using the incremental data path'
+                              : 'Using a full update fallback',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ExpansionTile(
+                        key: const ValueKey('stress.diagnostics'),
+                        tilePadding: EdgeInsets.zero,
+                        title: const Text('Diagnostics'),
+                        subtitle: const Text(
+                          'Timing breakdown and rendering details',
+                        ),
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              _source,
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ReadoutTable(
+                            key: const ValueKey('stress.diagnostics.timings'),
+                            rows: [
+                              ('FPS', stats.fps.toStringAsFixed(1)),
+                              ('frames', '${stats.frames}'),
+                              ('draw', '${ms(stats.drawMs)} ms'),
+                              if (stats.mode == StressMode.chart) ...[
+                                ('update', '${ms(stats.updateMs)} ms'),
+                                ('animator', '${ms(stats.animatorMs)} ms'),
+                                ('elements', '${ms(stats.elementsMs)} ms'),
+                                ('layout', '${ms(stats.layoutMs)} ms'),
+                                (
+                                  'datasets update',
+                                  '${ms(stats.datasetsUpdateMs)} ms',
+                                ),
+                                (
+                                  'datasets draw',
+                                  '${ms(stats.datasetsDrawMs)} ms',
+                                ),
+                                ('sharing', '${stats.sharing}'),
+                                if (_call == StressChartCall.data)
+                                  (
+                                    'data path',
+                                    stats.lastDataUpdateFast
+                                        ? 'incremental'
+                                        : 'full fallback',
+                                  ),
+                              ],
+                              if (stats.mode == StressMode.axes) ...[
+                                ('update', '${ms(stats.updateMs)} ms'),
+                                ('elements', '${ms(stats.elementsMs)} ms'),
+                                ('layout', '${ms(stats.layoutMs)} ms'),
+                                (
+                                  'datasets update',
+                                  '${ms(stats.datasetsUpdateMs)} ms',
+                                ),
+                                (
+                                  'datasets draw',
+                                  '${ms(stats.datasetsDrawMs)} ms',
+                                ),
+                                ('x ticks', '${stats.ticks}'),
+                                ('rotation', stats.rotation.toStringAsFixed(1)),
+                              ],
+                              if (stats.mode == StressMode.plugins) ...[
+                                ('update', '${ms(stats.updateMs)} ms'),
+                                ('animator', '${ms(stats.animatorMs)} ms'),
+                                ('elements', '${ms(stats.elementsMs)} ms'),
+                                ('layout', '${ms(stats.layoutMs)} ms'),
+                                (
+                                  'datasets update',
+                                  '${ms(stats.datasetsUpdateMs)} ms',
+                                ),
+                                (
+                                  'datasets draw',
+                                  '${ms(stats.datasetsDrawMs)} ms',
+                                ),
+                                (
+                                  'tooltip draw',
+                                  '${ms(stats.tooltipDrawMs)} ms',
+                                ),
+                              ],
+                              (
+                                'build avg/max',
+                                stats.timings == 0
+                                    ? 'n/a'
+                                    : '${ms(stats.buildMs)} / '
+                                          '${ms(stats.buildMaxMs)} ms',
+                              ),
+                              (
+                                'raster avg/max',
+                                stats.timings == 0
+                                    ? 'n/a'
+                                    : '${ms(stats.rasterMs)} / '
+                                          '${ms(stats.rasterMaxMs)} ms',
+                              ),
+                              ('timings', '${stats.timings} frames'),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _measurementNotes,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
                       ),
-                      ('timings', '${stats.timings} frames'),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'draw: the Dart time of the draw calls of one frame '
-                '(recording into a ui.Picture). In the element modes, it '
-                'also has the writes of the element properties. update: the '
-                'time of chart.update() without its draw. animator: the tick '
-                'of the animations before their draw (call animate, scene '
-                'fade). '
-                'elements, layout, datasets update and datasets draw (modes '
-                'chart, axes and plugins): the parts between the plugin '
-                'hooks, in the draw and update calls of the frames only (mode '
-                'plugins: also in the animator frames). tooltip draw: '
-                'beforeTooltipDraw to afterTooltipDraw. elements is the '
-                'parse and the first getMaxOverflow. Draw minus datasets '
-                'draw is the draw of the scales, the labels and the title. '
-                'sharing: enableOptionSharing of the controller. build and '
-                'raster: FrameTiming of the last 120 '
-                'frames. Profile on a device with flutter run --profile.',
-                style: theme.textTheme.bodySmall,
-              ),
             ],
           ),
         ),
@@ -2520,6 +2742,9 @@ final class _StressChart extends Chart with _TickMark implements _StressMeter {
   bool get supportsNativeCategoryLabels => true;
 
   @override
+  bool get supportsDataUpdates => true;
+
+  @override
   bool get supportsNativeBarIndexReads => true;
 
   @override
@@ -2553,6 +2778,7 @@ final class _PluginMeter with _TickMark implements _StressMeter {
   /// The first inline plugin of the chart.
   late final Map<String, Object?> first = <String, Object?>{
     'id': 'stressDrawStart',
+    'supportsDataUpdates': true,
     'beforeDraw': (Object? chart, Object? args, Object? options) {
       _takeMark();
       _drawStart = _meterWatch.elapsedMicroseconds;
@@ -2562,6 +2788,7 @@ final class _PluginMeter with _TickMark implements _StressMeter {
   /// The last inline plugin of the chart.
   late final Map<String, Object?> last = <String, Object?>{
     'id': 'stressDrawEnd',
+    'supportsDataUpdates': true,
     'afterDraw': (Object? chart, Object? args, Object? options) {
       final start = _drawStart;
       if (start != null) {

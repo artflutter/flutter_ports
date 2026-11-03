@@ -2381,3 +2381,11 @@ refreshing parsed data, controller geometry and compatible plugin state. It
 keeps all bars/points/arcs and the existing draw order and recording boundaries.
 Source/metadata/interaction twins are in `test/port/core/data_update_test.dart`;
 measurements are in performance.md §41 and benchmarks/data-update/.
+
+### 7.16 Stress-screen presentation
+
+ADR 0075 reorganizes the Stress controls and readout without changing benchmark
+loops, workloads, canvas-size calculation or renderer calls. Named targets and
+operations replace abbreviations; detailed source/timing information remains
+available under Diagnostics. The performance experiments above remain comparable
+at the same canvas dimensions and configuration.
