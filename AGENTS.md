@@ -906,7 +906,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`packages/flutter_chartjs_port/doc/performance.md` §6). Its mode `motion` (`motion.line` and
     `motion.bar`) times an animated `update`, and its mode `theme` (`theme.switch`, `theme.anim`
     and `theme.equal`) runs the internal theme switch of `ChartView`.
-  - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the Stress,
+  - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
     `SegmentChoice` item with an `icon` shows the icon only, else its short text. No chip, slider,
@@ -920,6 +920,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the data of legend item 0. It pins the help text and the semantics label of each variant, the
     keys of the host, the readout, the help text and each variant segment, and the title and the
     filler source of each Area variant.
+  - Stress follows Chart.js ADR 0075: Charts / Drawing / Axes / Plugins targets,
+    readable wrapping choices, paired Items / Overlay labels fields, explicit
+    operation names and Run/Pause actions. Interactive item choices are always
+    100 / 1k / 5k / 20k; target and type changes preserve the selected count.
+    Named optional controls expand from
+    Options; rendering traces and detailed timings live under Diagnostics.
+    Preserve control keys, benchmark behavior and the 412 x 915 host viewport.
   - Each control has a `ValueKey`. A test finds a segment by its key.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.

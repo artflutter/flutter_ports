@@ -825,8 +825,11 @@ class _StressProfileAppState extends State<StressProfileApp> {
         if (_mode == StressMode.chart) ...{
           'animatorMs': avg((s) => s.animatorMs),
           'call': _call.name,
+          if (_call == StressChartCall.data)
+            'lastDataUpdateFast': last?.lastDataUpdateFast,
           'type': _type.name,
           'sharing': last?.sharing ?? _type.sharing,
+          'canvas': last?.canvasSize,
           'scriptable': stressScriptable,
           if (_showLine) 'showLine': true,
           'elementsMs': avg((s) => s.elementsMs),
@@ -906,7 +909,6 @@ class _StressProfileAppState extends State<StressProfileApp> {
           initialYScale: _yScale,
           initialAutoSkip: _autoSkip,
           initialPluginCase: _pluginCase,
-          autoStart: true,
           host: _host,
           // The frame after the timer of a scenario runs the old StressDemo
           // once more, before the build that disposes it. Its last figures

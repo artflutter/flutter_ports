@@ -7,6 +7,14 @@
       "request": "launch",
       "cwd": "apps/chartjs_gallery",
       "program": "lib/main.dart"
+    },
+    {
+      "name": "chartjs_gallery (profile)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/chartjs_gallery",
+      "program": "lib/main.dart",
+      "flutterMode": "profile"
     }
   ]
 }

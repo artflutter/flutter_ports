@@ -118,7 +118,7 @@ void main() {
     }
     expect(await _selected(tester, 'stress.mode.primitives'), isTrue);
     expect(await stressControlExists(tester, 'stress.n.20000'), isTrue);
-    expect(await stressControlExists(tester, 'stress.n.100'), isFalse);
+    expect(await stressControlExists(tester, 'stress.n.100'), isTrue);
     expect(await stressControlExists(tester, 'stress.layer.points'), isTrue);
 
     await _tap(tester, 'stress.mode.bars');
@@ -132,16 +132,16 @@ void main() {
     expect(await _selected(tester, 'stress.n.20000'), isTrue);
     expect(_state(tester).debugElements, hasLength(20000));
 
-    // The arcs go up to 5000: N becomes 5000.
+    // Drawing types preserve the same choices and the selected 20k items.
     await _tap(tester, 'stress.mode.arcs');
     expect(await _selected(tester, 'stress.mode.arcs'), isTrue);
     expect(await stressControlExists(tester, 'stress.n.100'), isTrue);
-    expect(await stressControlExists(tester, 'stress.n.20000'), isFalse);
-    expect(await _selected(tester, 'stress.n.5000'), isTrue);
-    expect(_state(tester).debugElements, hasLength(5000));
+    expect(await stressControlExists(tester, 'stress.n.20000'), isTrue);
+    expect(await _selected(tester, 'stress.n.20000'), isTrue);
+    expect(_state(tester).debugElements, hasLength(20000));
 
     await _tap(tester, 'stress.mode.elements');
-    expect(await _selected(tester, 'stress.n.5000'), isTrue);
+    expect(await _selected(tester, 'stress.n.20000'), isTrue);
     expect(await stressControlExists(tester, 'stress.layer.line'), isTrue);
     expect(tester.takeException(), isNull);
   });
