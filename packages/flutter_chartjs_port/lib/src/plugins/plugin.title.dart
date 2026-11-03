@@ -387,7 +387,8 @@ void _beforeUpdate(types.Chart chart, Object _, Object options) {
 /// upstream order. Each hook is a private function of the hook type
 /// `(chart, args, options)`: the hooks of the title read no args, so they
 /// take any args object.
-final Plugin title = Plugin()
+// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+final Plugin title = Plugin(supportsDataUpdates: true)
   ..id = 'title'
   // For tests
   // @private

@@ -68,7 +68,8 @@ void _beforeUpdate(types.Chart chart, Object _, Object options) {
 ///
 /// A typed [Plugin] with the upstream keys in the upstream order. The hooks
 /// read no args, so they take any args object.
-final Plugin subTitle = Plugin()
+// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+final Plugin subTitle = Plugin(supportsDataUpdates: true)
   ..id = 'subtitle'
   ..start = _start
   ..stop = _stop

@@ -32,6 +32,7 @@ const String chartViewPluginId = r'$chartView';
 AnyObject createChartViewPlugin(ChartThemeSwitch theme, ChartKeyboard keys) =>
     <String, Object?>{
       'id': chartViewPluginId,
+      'supportsDataUpdates': true,
 
       /// core.controller.js:490 `notifyPlugins('beforeUpdate', ...)`.
       'beforeUpdate': (types.Chart chart, Object? args, Object? options) {

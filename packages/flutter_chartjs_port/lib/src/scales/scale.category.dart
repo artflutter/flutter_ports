@@ -234,6 +234,27 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
     );
   }
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates {
+    if (super.runtimeType != CategoryScale ||
+        !options.cachedCategoryDataInputs ||
+        chart is! CategoryLabelSource) {
+      return false;
+    }
+    final cached = options.cachedCategoryLabelSource();
+    return cached != null &&
+        (chart as CategoryLabelSource).categoryLabels(
+              cached.labels,
+              horizontal:
+                  cached.position == 'top' ||
+                  cached.position == 'bottom' ||
+                  axis == 'x',
+            ) !=
+            null;
+  }
+
   static final Type _nativeTickListType = <Tick>[].runtimeType;
 
   @override

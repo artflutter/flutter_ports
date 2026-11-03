@@ -215,7 +215,13 @@ class LineController extends DatasetController {
   /// 0020, section 4).
   LineController(super.chart, super.datasetIndex, [super.newTarget]);
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == LineController;
+
   /// controller.line.js:8 `static id = 'line'`.
+
   static const String id = 'line';
 
   /// controller.line.js:13 `static defaults`, a typed scope of the kind

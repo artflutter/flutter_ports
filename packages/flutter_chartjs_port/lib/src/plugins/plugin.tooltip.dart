@@ -2518,7 +2518,8 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
 /// `src/plugins/index.js:7` (Chart.js ADR 0038, section 1).
 ///
 /// A typed [Plugin] with the upstream keys in the upstream order.
-final Plugin tooltip = Plugin()
+// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+final Plugin tooltip = Plugin(supportsDataUpdates: true)
   ..id = 'tooltip'
   ..jsWrite('_element', Tooltip.jsClass)
   ..jsWrite('positioners', _positioners)

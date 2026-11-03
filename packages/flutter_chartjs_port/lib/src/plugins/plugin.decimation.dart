@@ -627,11 +627,17 @@ void _destroy(types.Chart chart) {
 /// src/plugins/index.js:2.
 ///
 /// A typed [Plugin] with the upstream keys in the upstream order.
-final Plugin decimation = Plugin()
-  ..id = 'decimation'
-  // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
-  ..defaults = (DecimationOptionsScope()
-    ..algorithm = 'min-max'
-    ..enabled = false)
-  ..beforeElementsUpdate = _beforeElementsUpdate
-  ..jsWrite('destroy', _destroy);
+// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+final Plugin decimation =
+    Plugin(
+        supportsDataUpdates: true,
+        dataUpdateGuard: (options) =>
+            !jsTruthy(DecimationOptions(options).enabled),
+      )
+      ..id = 'decimation'
+      // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
+      ..defaults = (DecimationOptionsScope()
+        ..algorithm = 'min-max'
+        ..enabled = false)
+      ..beforeElementsUpdate = _beforeElementsUpdate
+      ..jsWrite('destroy', _destroy);

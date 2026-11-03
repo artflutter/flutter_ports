@@ -6451,3 +6451,221 @@ scale guards. The proposed follow-up has no measured speedup yet.
 Pre-push checks also pass the complete Chrome JavaScript and WebAssembly suites
 (3,982 Chart.js tests and 55 utility tests per backend) and the upstream case
 check (958 passed, 78 skipped, zero failures).
+
+## 39. Sequential bar spacing experiments
+
+The two proposals were implemented and evaluated separately against `3d10094`.
+[ADR 0072](adr/0072-bar-position-reuse.md) records the rejected position-reuse
+experiments. Native projection/value guards passed correctness tests, but copied
+indexes added overhead; an allocation-free version also failed the gate. The
+final fused version improved its isolated pilot but regressed the first complete
+full-workload pair, 20.511 → 20.898ms. It was removed before step 2. No projection
+reuse or cross-update geometry cache remains in the library.
+
+[ADR 0073](adr/0073-sorted-bar-values.md) is retained. It replaces hash-based
+uniqueness checks only for owned finite sorted bar values. Unique input lists
+retain identity and signed zero; duplicate results remain growable and normalize
+zero exactly like the old Set. Unsorted/nonfinite values retain sort/arrayUnique.
+User controller calls and source enumeration still run before the owned scan.
+
+M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7, arm64 profile AOT,
+Impeller, 800 × 480 DPR 1. A/B/B/A, seven 200ms batches after 800ms warmup;
+no builds/tests run alongside measurements. Full calls sum per-process update,
+draw and host-completion medians before averaging the two process results.
+
+| N | Full update before → after | Improvement |
+| ---: | ---: | ---: |
+| 1000 | 1.330 → 1.280 ms | 3.8% |
+| 5000 | 4.367 → 4.092 ms | 6.3% |
+| 20000 | 20.100 → 19.620 ms | 2.4% |
+
+Both 20k pairs pass the predeclared 2% gate (2.3%, 2.5%). Dataset update CPU
+falls 5.232 → 4.615ms (11.8%); total update CPU falls 8.817 → 8.320ms (5.6%).
+No control exceeds both 5% and 0.1ms in both pairs. The animation CPU control
+moves 11.442 → 11.963ms (+4.6% overall, +5.5%/+3.6% per pair); all these
+component shifts are retained, without attributing each shift to this change.
+
+Separate foreground 25-second update runs improve **39.06 → 42.87 FPS** at
+N=20000, M=0. Average build falls 22.13 → 20.90ms; raster is 13.76 → 13.91ms.
+Both stay active at every check and retain 24 complete one-second windows.
+These are local measurements, not a mobile/web or 60-FPS guarantee.
+
+[Protocol, every attempt, exact sources, measurements and validation](benchmarks/bar-spacing/README.md)
+retain the unsuccessful position-reuse work as well as the accepted scan.
+
+Monitored animation remains 59.92 → 59.96 FPS, with average build
+13.77 → 14.12ms and raster 14.09 → 13.71ms; both runs remain active for all
+24 windows. This provides no evidence of a display-rate regression on this host.
+
+Validation: all 10,779 workspace tests pass (10,245 Chart.js passes and 84 skips).
+All 16 new helper cases pass in Chrome JavaScript and WebAssembly. Fixtures
+pass 26 files with zero errors/warnings; analysis, format, generated parity and
+all port checks pass. The helper is registered as a framework-free root so its
+tests stay in the regular web suites. No golden files change.
+
+## 40. Architectural review: lifecycle, representation and display resolution
+
+This investigation changes no production runtime or gallery source. The current
+worktree includes ADR 0073. Diagnostic probes run in separate temporary profile
+apps on M3 Max / macOS 27.0.1 / Flutter 3.47.8 / Dart 3.13.7, Impeller,
+800 × 480 DPR1, seven 200ms batches after 800ms warmup. Two runs reverse the case
+order; no builds/tests run during timing. These are isolation experiments, not
+shipping candidates or measured foreground FPS.
+
+### Full update versus restricted values-only work
+
+| Work at 20k bars | CPU update/draw/record completion |
+| --- | ---: |
+| Change data and call full update | 20.198 ms |
+| Restricted values-only geometry and ordinary draw | 10.521 ms |
+| Call full update without changing data | 18.538 ms |
+| Existing-chart draw only | 10.081 ms |
+
+Both changing cases include simulation and data writes in the timed call. The
+values-only prototype fixes axes, layout, index positions and styles, and only
+updates y/height for one positive numeric dataset. It deliberately omits parsing,
+update hooks and parsed-data synchronization. After each case, every bar's
+x/y/base/width/height matches a full update of that current data. This verifies
+geometry only for this restricted scene; it is not a production update API or a
+promise of 60 FPS. Implementing a real contract must preserve data, interactions,
+metadata, plugin behavior and invalidation rules within its documented scope.
+
+`core.controller.dart` update still refreshes configuration/resolvers, scales,
+event bindings, plugin state, parsing/elements, layout and datasets before draw.
+Mode none is an animation mode, not a values-only change declaration. The typed
+facade reconciles scopes in `typed/lower.dart`, but ChartView still ends in the
+same full update path. Raw mutable Maps and callbacks prevent reliable cheap
+inference of unchanged configuration. This explains why additional guards and
+per-point validation can consume the benefit of local reuse.
+
+The hidden category axis still reports 20,000 ticks. CategoryScale.buildTicks
+constructs that list, and Scale.update rebuilds ticks and invalidates layout
+caches. Primitive parsing constructs fresh ParsedItems. Those are specific
+allocation/lifecycle costs even when labels, domain and layout are stable; GC's
+share has not been separately measured here.
+
+### Prepared-data performance cliff
+
+A second independent sweep compares data representations, with all three cases
+including simulation and writes. Prepared inputs update their existing objects;
+all geometry is checked against a fresh ordinary numeric chart of the same data.
+
+| Representation at 20k bars | Full-frame CPU |
+| --- | ---: |
+| Ordinary numeric input with parsing | 19.003 ms |
+| parsing:false, ordinary x/y Maps | 28.917 ms |
+| parsing:false, internal ParsedItem records | 17.193 ms |
+
+All prepared geometry checks pass. The internal-record case is diagnostic only,
+not a recommendation to import private types. The bulk numeric updater explicitly
+requires ParsedItem; ordinary prepared Maps keep generic reads and the ordinary
+per-element update path. Thus skipping parsing can disable another optimization.
+A coherent public native data representation is a more useful direction than
+adding unrelated type-specific fast paths. Earlier reference checks that toggled
+parsing mode in the existing chart produced invalid geometry and were excluded;
+only the fresh-reference sweeps are summarized.
+
+### Resolution, rendering and scheduling
+
+The 20k/800px scene draws 25 bars per horizontal physical pixel at DPR1. Full
+frames at N=800 cost 1.508ms. This is a complexity comparison, not an equivalent
+aggregation: an overview mode needs an explicit binning/selection policy and
+must retain full data for zoom and interaction. Chart.js's decimation plugin is
+for lines, not a ready-made bar aggregation feature.
+
+A raw native control with opaque, borderless prebuilt rectangles costs 6.989ms
+at 20k, including recording/completion. It is not visually equivalent to the
+chart and does not include raster timing. It shows that per-shape native work
+has a cost even without the port. Existing foreground results put UI/build near
+21ms and raster near 14ms, with looping animation already near 60 FPS. These
+thread durations overlap and must not be added as a single frame budget.
+
+The host is already a canvas repaint boundary. Canvas change notifications and
+scheduled frame requests are coalesced; the stress stats update at half-second
+intervals. There is no evidence here of a 20k-widget rebuild or duplicate-frame
+storm. Stress-mode simulation/data writes are outside the displayed update/draw
+stopwatches, so FPS and full-frame measurements remain necessary. ChartView's
+post-frame update scheduling also warrants end-to-end latency measurement.
+
+### Recommended direction
+
+Prioritize an explicit incremental/streaming update contract: declare values,
+indexes, styles/options and viewport changes separately; version stable inputs;
+reuse layout/ticks/index geometry when those versions are unchanged; and use a
+consistent typed numeric data path. Keep the full Chart.js-compatible update for
+raw arbitrary mutation and unsupported hooks. Define metadata/plugin/interaction
+semantics before treating the 10.5ms prototype as a shipping implementation.
+Resolution-aware overview rendering is a separate opt-in feature. A general GPU
+rewrite is not the first recommendation from these results.
+
+[Probe sources, raw runs, reference checks and metadata](benchmarks/bar-architecture/README.md)
+retain both comparisons. Supporting upstream guidance: [Chart.js updates](https://www.chartjs.org/docs/latest/developers/updates.html),
+[Chart.js performance](https://www.chartjs.org/docs/latest/general/performance.html),
+[decimation scope](https://www.chartjs.org/docs/latest/configuration/decimation.html),
+and [Flutter profiling](https://docs.flutter.dev/perf/ui-performance).
+
+## 41. Production incremental data updates
+
+[ADR 0074](adr/0074-incremental-data-updates.md) adds Chart.updateData as an
+explicit shared lifecycle across the eight native controllers. Parsing,
+metadata/stacks, geometry, compatible hooks and interaction replay remain live;
+unchanged settings, ranges, ticks and layout are retained. A completed full
+update defines the generation. Each native source is preflighted once per
+generation/replacement; callers keep record implementations/keys and numeric
+value kinds stable within an existing source. Known unsupported conditions use
+update('none'). In-place configuration/label/metadata edits require full update.
+
+Two forward/reverse profile-AOT sweeps, M3 Max / macOS 27.0.1 / Flutter 3.47.8 /
+Dart 3.13.7 / Impeller, 800×480 DPR1. Seven 200ms batches after 800ms warmup, no
+concurrent builds/tests. Both cases include identical simulation and data writes.
+Full CPU calls sum per-process update/draw/record completion before aggregation.
+Line/scatter use explicitly bounded, sorted fixed x indexes; the original
+suggested-bound stress presets correctly select full fallback.
+
+| Chart/input | N | Full → incremental CPU | Improvement |
+| --- | ---: | ---: | ---: |
+| Bar, numeric | 20000 | 19.883 → 15.550 ms | 21.8% |
+| Bar, prepared Maps | 20000 | 28.212 → 15.111 ms | 46.4% |
+| Bar, numeric | 5000 | 4.012 → 3.282 ms | 18.2% |
+| Bar, prepared Maps | 5000 | 6.388 → 3.664 ms | 42.6% |
+| Bar | 1000 | 1.250 → 0.966 ms | 22.8% |
+| Line | 1000 | 0.492 → 0.277 ms | 43.8% |
+| Scatter | 1000 | 0.591 → 0.396 ms | 33.1% |
+| Bubble | 1000 | 1.814 → 1.616 ms | 10.9% |
+| Doughnut | 1000 | 2.407 → 2.330 ms | 3.2% |
+| Pie | 1000 | 2.059 → 1.970 ms | 4.3% |
+| Radar | 1000 | 0.858 → 0.643 ms | 25.0% |
+| Polar area | 1000 | 2.349 → 2.093 ms | 10.9% |
+
+Numeric bars pass the 15% full-call gate in both 20k pairs (20.6%, 22.9%). Every
+final incremental case selects the intended path with zero fallback calls and
+matches complete parsed state, geometry and selected styles against a subsequent
+full update. These are restricted supported configurations, not a guarantee for
+all options/plugins. Pie/doughnut remain drawing-dominated.
+
+An A/B/B/A control of ordinary full updates against the pre-feature binary shows
+no repeatable regression above both 5% and 0.1ms: 20k pair shifts are -1.2% and
+-2.5%; smaller cases remain within the gate. Initial regressions from repeated
+record preflight and a narrow prepared-list guard were corrected, with their
+sources and measurements retained rather than discarded.
+
+After the desktop was unlocked, monitored foreground runs at N=20000, M=0
+improve **43.17 → 56.29 FPS** (+30.4%). Both use the same logical canvas,
+736.0 × 441.6 at DPR 2; every activity check is true and the incremental route
+is confirmed. The runs retain 24 and 25 complete one-second windows respectively
+(window-mean FPS: 42.92 and 55.92).
+
+Average UI/build falls 20.70 → 16.89ms; its p50 is 20.85 → 15.95ms and p90
+23.09 → 19.68ms. Raster is 12.77 → 13.13ms. This is a substantial foreground
+gain, but not steady 60 FPS: UI frame-time spikes still exceed 16.67ms. These
+are local observations from one process per case. Earlier locked-desktop runs
+remain retained and excluded; foreground-unlocked.json records the valid runs.
+
+[Source snapshots, full/partial controls, raw runs and validation](benchmarks/data-update/README.md)
+retain the production comparison separately from the §40 upper-bound prototype.
+
+Validation: 10,812 workspace tests pass (10,278 Chart.js passes, 84 skips).
+All 31 incremental lifecycle tests and eight category-source tests pass on both
+browser backends. The complete web suites pass 4,000 Chart.js cases and 55 utility
+cases per backend. Fixtures pass 26 files with zero errors/warnings. Public API,
+analysis, format, generated parity and all port checks pass. No golden changed.

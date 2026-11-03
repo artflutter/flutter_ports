@@ -1554,6 +1554,9 @@ final class _BenchChart extends Chart {
   bool get supportsNativeCategoryLabels => true;
 
   @override
+  bool get supportsDataUpdates => true;
+
+  @override
   bool get supportsNativeBarIndexReads => true;
 
   @override

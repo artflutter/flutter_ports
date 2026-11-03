@@ -12,6 +12,23 @@ run the JavaScript Chart.js in a WebView on Android and iOS, or in a DOM canvas 
 [prior-art survey](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/prior-art/README.md)
 compares the existing Chart.js packages.
 
+## Incremental data updates
+
+For frequently changing values, retain the data list used by the dataset, change
+its values, and call `chart.updateData()` through the chart supplied to
+`onChartCreated`. Keep record implementations, keys and numeric value kinds unchanged within an
+existing array. Same-length replacement arrays are checked again. The method
+returns true when it selected the incremental lifecycle, or false when it used
+`update('none')`. Cancellation by plugins is separate from that return value.
+
+Keep options, labels, dataset structure and visibility unchanged. Use explicit
+numeric scale bounds and reusable styles; call the normal `update()` when other
+inputs change. Native numeric buffers and prepared numeric points are supported.
+Unsupported scales/components/styles or unapproved plugins fall back. Layout,
+interaction and plugin details are in
+[ADR 0074](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/adr/0074-incremental-data-updates.md).
+Widget configuration changes still use the normal full update by default.
+
 ## Features
 
 - The eight chart types of Chart.js: bar, bubble, doughnut, line, pie, polar area, radar and

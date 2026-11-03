@@ -40,6 +40,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show DataUpdateShape;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -147,7 +149,16 @@ class DoughnutController extends DatasetController {
     offsetY = null;
   }
 
+  /// Native support for the explicit data-only lifecycle.
+  @override
+  // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
+  bool get supportsDataUpdates => super.runtimeType == DoughnutController;
+
+  @override
+  DataUpdateShape get dataUpdateShape => DataUpdateShape.scalar;
+
   /// controller.doughnut.js:39 `static id = 'doughnut'`.
+
   static const String id = 'doughnut';
 
   /// controller.doughnut.js:44 `static defaults`, a typed scope of the kind

@@ -202,7 +202,8 @@ void _beforeDatasetDraw(
 /// (Chart.js ADR 0038, section 1).
 ///
 /// A typed [Plugin] with the upstream keys in the upstream order.
-final Plugin filler = Plugin()
+// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+final Plugin filler = Plugin(supportsDataUpdates: true)
   ..id = 'filler'
   ..afterDatasetsUpdate = _afterDatasetsUpdate
   ..beforeDraw = _beforeDraw

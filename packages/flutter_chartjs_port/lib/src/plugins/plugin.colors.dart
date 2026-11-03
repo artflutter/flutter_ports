@@ -359,7 +359,8 @@ void _beforeLayout(types.Chart chart, Object _, Object options) {
 /// src/plugins/index.js:1.
 ///
 /// A typed [Plugin] with the upstream keys in the upstream order.
-final Plugin colors = Plugin()
+// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+final Plugin colors = Plugin(supportsDataUpdates: true)
   ..id = 'colors'
   // A typed scope of the kind `ColorsOptions` (Chart.js ADR 0054 §3).
   ..defaults = (ColorsOptionsScope()

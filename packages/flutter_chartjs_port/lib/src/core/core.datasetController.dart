@@ -50,6 +50,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show DataUpdateShape;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, createElementOptions;
@@ -1007,6 +1009,41 @@ class DatasetController
 
   /// core.datasetController.js:270 `enableOptionSharing`.
   bool enableOptionSharing = false;
+
+  /// Unknown controllers keep the full lifecycle.
+  @internal
+  bool get supportsDataUpdates => false;
+
+  /// Default native point fields used by the incremental input preflight.
+  @internal
+  DataUpdateShape get dataUpdateShape => DataUpdateShape.cartesian;
+
+  /// True only while the chart runs its explicit data-only lifecycle.
+  @internal
+  bool updatingData = false;
+
+  /// A stable layout and primitive index sequence permit controller reuse.
+  @internal
+  bool reuseDataLayout = false;
+
+  /// The current source is an ordinary numeric array.
+  @internal
+  bool primitiveDataUpdate = false;
+
+  /// Whether the ordinary full update resolved context-independent styles.
+  /// The cache records this even for controllers that do not share options.
+  @internal
+  bool get hasStaticDataUpdateOptions {
+    bool cached(Object? type) {
+      final prefix = '${jsToString(_idOf(type))}-';
+      return _cachedElementOptions.keys.any(
+        (key) => key.startsWith(prefix) && key != '${prefix}active',
+      );
+    }
+
+    return cached(dataElementType) &&
+        (cachedMeta.dataset == null || cached(datasetElementType));
+  }
 
   /// core.datasetController.js:271 `supportsDecimation`.
   @override

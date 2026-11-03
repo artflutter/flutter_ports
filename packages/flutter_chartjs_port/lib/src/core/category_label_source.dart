@@ -2,6 +2,8 @@
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartConfigurationScope, ChartDataScope;
 
 /// Internal host contract: its data/config getters have ordinary read behavior.
 /// Unknown Chart subclasses do not opt in, preserving effectful getter reads.
@@ -52,16 +54,38 @@ List<Object?>? nativeCategoryLabels(
   Object? explicitLabels, {
   required bool horizontal,
 }) {
-  if (!_mapTypes.contains(config.runtimeType)) return null;
-  final data = RawScope(config as Map<String, Object?>).jsRead('data');
-  if (!_mapTypes.contains(data.runtimeType)) return null;
-  final raw = RawScope(data! as Map<String, Object?>);
-  final axisLabels = raw.jsRead(horizontal ? 'xLabels' : 'yLabels');
+  final Object? data;
+  if (config.runtimeType == ChartConfigurationScope) {
+    final root = config as ChartConfigurationScope;
+    if (root.routeOf('data') != null) return null;
+    data = root.dataCell?.raw;
+  } else if (_mapTypes.contains(config.runtimeType)) {
+    data = RawScope(config as Map<String, Object?>).jsRead('data');
+  } else {
+    return null;
+  }
+  final Object? axisLabels;
+  final Object? ordinary;
+  if (data.runtimeType == ChartDataScope) {
+    final scope = data! as ChartDataScope;
+    if (scope.routeOf(horizontal ? 'xLabels' : 'yLabels') != null ||
+        scope.routeOf('labels') != null) {
+      return null;
+    }
+    axisLabels = horizontal ? scope.xLabelsCell?.raw : scope.yLabelsCell?.raw;
+    ordinary = scope.labelsCell?.raw;
+  } else if (_mapTypes.contains(data.runtimeType)) {
+    final raw = RawScope(data! as Map<String, Object?>);
+    axisLabels = raw.jsRead(horizontal ? 'xLabels' : 'yLabels');
+    ordinary = raw.jsRead('labels');
+  } else {
+    return null;
+  }
   final labels = jsTruthy(explicitLabels)
       ? explicitLabels
       : jsTruthy(axisLabels)
       ? axisLabels
-      : raw.jsRead('labels');
+      : ordinary;
   return _listTypes.contains(labels.runtimeType)
       ? labels! as List<Object?>
       : null;

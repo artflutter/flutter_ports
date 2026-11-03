@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: guarded numeric category parsing.
 
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show nativeDataUpdateList;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -18,23 +20,6 @@ abstract interface class NativeNumericParseScale {
   bool get supportsNativeNumericParse;
 }
 
-final _nativeLists = <Type>{
-  <Object?>[].runtimeType,
-  <Object>[].runtimeType,
-  <num>[].runtimeType,
-  <double>[].runtimeType,
-  <int>[].runtimeType,
-  List<Object?>.empty().runtimeType,
-  List<Object>.empty().runtimeType,
-  List<num>.empty().runtimeType,
-  List<double>.empty().runtimeType,
-  List<int>.empty().runtimeType,
-  const <Object?>[].runtimeType,
-  const <num>[].runtimeType,
-  const <double>[].runtimeType,
-  const <int>[].runtimeType,
-};
-
 /// Parse a callback-free primitive range, or decline before creating records.
 /// The caller has already performed its ordinary initial getLabels read.
 /// No result or qualification is cached between calls, and records stay fresh.
@@ -49,7 +34,7 @@ List<ParsedItem>? tryParseNumericCategories(
   if (iScale is! NativeCategoryParseScale ||
       vScale is! NativeNumericParseScale ||
       !(vScale! as NativeNumericParseScale).supportsNativeNumericParse ||
-      !_nativeLists.contains(data.runtimeType) ||
+      !nativeDataUpdateList(data) ||
       !(iScale as NativeCategoryParseScale).supportsNativeCategoryParse(
         labels,
       ) ||

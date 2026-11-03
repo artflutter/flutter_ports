@@ -59,6 +59,7 @@ final class StressChartTiming {
   /// (JS `undefined`): it cancels nothing.
   late final Map<String, Object?> plugin = <String, Object?>{
     'id': 'stressChartTiming',
+    'supportsDataUpdates': true,
     'beforeElementsUpdate': (Object? chart, Object? args, Object? options) {
       _elementsStart = _watch.elapsedTicks;
     },
@@ -74,6 +75,10 @@ final class StressChartTiming {
       layoutTicks += _watch.elapsedTicks - _layoutStart;
     },
     'beforeDatasetsUpdate': (Object? chart, Object? args, Object? options) {
+      if (_elementsStart >= 0) {
+        elementsTicks += _watch.elapsedTicks - _elementsStart;
+        _elementsStart = -1;
+      }
       _datasetsUpdateStart = _watch.elapsedTicks;
     },
     'afterDatasetsUpdate': (Object? chart, Object? args, Object? options) {

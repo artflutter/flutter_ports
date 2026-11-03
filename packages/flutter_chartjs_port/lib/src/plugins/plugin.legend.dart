@@ -1487,7 +1487,8 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
 /// `src/plugins/index.js:4` (Chart.js ADR 0038, section 1).
 ///
 /// A typed [Plugin] with the upstream keys in the upstream order.
-final Plugin legend = Plugin()
+// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+final Plugin legend = Plugin(supportsDataUpdates: true)
   ..id = 'legend'
   // For tests
   // @private
