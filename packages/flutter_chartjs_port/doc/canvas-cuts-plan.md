@@ -2399,3 +2399,7 @@ at the same canvas dimensions and configuration.
   The typed API and its widget documentation change; canvas operations, host
   behavior, native recordings, cut inventory, pinning tests and estimates do not.
   No canvas-cut trigger occurred.
+
+- ADR 0077 border-color follow-up: the remaining typed dataset color triplet
+  now uses ChartValue and direct Opt lowering. Canvas operations, the cut
+  inventory, rendering pinning tests and estimates are unchanged. No trigger.

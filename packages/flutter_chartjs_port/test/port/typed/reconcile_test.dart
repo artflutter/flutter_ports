@@ -556,7 +556,14 @@ void main() {
       const themeA = ChartThemeData(palette: [_green]);
       const themeB = ChartThemeData(palette: [_blue]);
       ChartConfig config(List<num?> data, {Color? borderColor}) => _bars(
-        [BarDataset(data: data, borderColor: borderColor)],
+        [
+          BarDataset(
+            data: data,
+            borderColor: borderColor == null
+                ? null
+                : ChartValue.constant(borderColor),
+          ),
+        ],
         extra: _colorsOn,
       );
       await tester.pumpWidget(_Host(config: config([1, 2, 3]), theme: themeA));

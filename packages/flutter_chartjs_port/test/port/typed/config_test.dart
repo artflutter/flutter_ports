@@ -136,9 +136,9 @@ void main() {
               backgroundColor: ChartValue.indexed([
                 for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 0.2),
               ]),
-              borderColors: [
+              borderColor: ChartValue.indexed([
                 for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 1),
-              ],
+              ]),
               borderWidth: 1,
             ),
           ],
@@ -186,7 +186,7 @@ void main() {
             BarDataset(
               label: 'Bar Dataset',
               data: [10, 20, 30, 40],
-              borderColor: Color.fromRGBO(255, 99, 132, 1),
+              borderColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 1)),
               backgroundColor: ChartValue.constant(
                 Color.fromRGBO(255, 99, 132, 0.2),
               ),
@@ -194,7 +194,7 @@ void main() {
             LineDataset(
               label: 'Line Dataset',
               data: [50, 50, 50, 50],
-              borderColor: Color.fromRGBO(54, 162, 235, 1),
+              borderColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 1)),
               fill: .none,
             ),
           ],

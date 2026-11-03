@@ -27,7 +27,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LineControllerDatasetOptionsScope,
         PolarAreaControllerDatasetOptionsScope,
         RadarControllerDatasetOptionsScope;
-import 'package:flutter_chartjs_port/src/typed/callbacks.dart' show ChartScript;
 import 'package:flutter_chartjs_port/src/typed/chart_value.dart'
     show ChartValue;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
@@ -51,9 +50,8 @@ import 'package:meta/meta.dart' show internal;
 /// A parameter that is `null` is not set: the chart uses the default of
 /// Chart.js. Each parameter names its Chart.js option in its doc.
 ///
-/// [backgroundColor] is one explicit [ChartValue]: constant, indexed or
-/// resolved by a callback. The border color retains its three companion
-/// parameters: [borderColor], [borderColors] and [borderColorFor].
+/// [backgroundColor] and [borderColor] each accept one explicit [ChartValue]:
+/// constant, indexed or resolved by a callback.
 ///
 /// Indexed and callback values resolve per data item. Prefer a constant
 /// value when the whole dataset uses one color.
@@ -63,7 +61,7 @@ import 'package:meta/meta.dart' show internal;
 /// A dataset is immutable. `==` compares the parameters: a List of data
 /// items by identity, a small List of style values by its items, and a
 /// function with `==`. Use a method tear-off or a function in a field for
-/// a resolver in [backgroundColor] and for [borderColorFor]: a new closure
+/// resolvers in [backgroundColor] and [borderColor]: a new closure
 /// in each build is a new value, and the chart then updates.
 @immutable
 abstract final class Dataset with Diagnosticable {
@@ -75,22 +73,12 @@ abstract final class Dataset with Diagnosticable {
     this.order,
     this.backgroundColor,
     this.borderColor,
-    this.borderColors,
-    this.borderColorFor,
     this.borderWidth,
     this.hoverBackgroundColor,
     this.hoverBorderColor,
     this.hoverBorderWidth,
     this.extra,
-  }) : assert(
-         borderColor == null ||
-             (borderColors == null && borderColorFor == null),
-         'Give at most one of borderColor, borderColors and borderColorFor.',
-       ),
-       assert(
-         borderColors == null || borderColorFor == null,
-         'Give at most one of borderColor, borderColors and borderColorFor.',
-       );
+  });
 
   /// The identity of the dataset when the app gives a new config.
   ///
@@ -119,16 +107,9 @@ abstract final class Dataset with Diagnosticable {
   /// A null parameter inherits the default. This lowers to `backgroundColor`.
   final ChartValue<Color>? backgroundColor;
 
-  /// The border color of the data items: `borderColor`.
-  final Color? borderColor;
-
-  /// The border color of each data item, in data order: `borderColor` as an
-  /// array. The colors repeat when the dataset has more items.
-  final List<Color>? borderColors;
-
-  /// The border color of each data item as a function of its context:
-  /// `borderColor` as a scriptable option.
-  final ChartScript<Color>? borderColorFor;
+  /// The data-item border: a constant, indexed list or typed callback.
+  /// A null parameter inherits the default. This lowers to `borderColor`.
+  final ChartValue<Color>? borderColor;
 
   /// The border width in pixels: `borderWidth`.
   final double? borderWidth;
@@ -156,17 +137,15 @@ abstract final class Dataset with Diagnosticable {
 
   /// A copy of this dataset with the given parameters.
   ///
-  /// A null parameter keeps its value. A new [backgroundColor] replaces its
-  /// previous variant; the border-color companion parameters remain exclusive.
+  /// A null parameter keeps its value. A new [backgroundColor] or [borderColor]
+  /// replaces that color's previous variant independently.
   Dataset copyWith({
     Key? key,
     String? label,
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -193,8 +172,6 @@ abstract final class Dataset with Diagnosticable {
     ('order', order),
     ('backgroundColor', backgroundColor),
     ('borderColor', borderColor),
-    ('borderColors', byItems(borderColors)),
-    ('borderColorFor', borderColorFor),
     ('borderWidth', borderWidth),
     ('hoverBackgroundColor', hoverBackgroundColor),
     ('hoverBorderColor', hoverBorderColor),
@@ -253,15 +230,9 @@ OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
     // Preserve the public variant directly, without raw value classification.
     scope.store(OptionKey.backgroundColor, value.toOptionCell());
   }
-  put(
-    scope,
-    OptionKey.borderColor,
-    colorOption(
-      dataset.borderColor,
-      dataset.borderColors,
-      dataset.borderColorFor,
-    ),
-  );
+  if (dataset.borderColor case final value?) {
+    scope.store(OptionKey.borderColor, value.toOptionCell());
+  }
   put(scope, OptionKey.borderWidth, dataset.borderWidth);
   put(
     scope,
@@ -307,8 +278,6 @@ final class BarDataset extends Dataset {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -409,9 +378,7 @@ final class BarDataset extends Dataset {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -437,8 +404,6 @@ final class BarDataset extends Dataset {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
@@ -585,8 +550,6 @@ final class LineDataset extends Dataset with _LineStyle {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -732,9 +695,7 @@ final class LineDataset extends Dataset with _LineStyle {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -767,8 +728,6 @@ final class LineDataset extends Dataset with _LineStyle {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
@@ -842,8 +801,6 @@ final class ScatterDataset extends Dataset with _LineStyle {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -950,9 +907,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -984,8 +939,6 @@ final class ScatterDataset extends Dataset with _LineStyle {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
@@ -1054,8 +1007,6 @@ final class BubbleDataset extends Dataset {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -1098,9 +1049,7 @@ final class BubbleDataset extends Dataset {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -1119,8 +1068,6 @@ final class BubbleDataset extends Dataset {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
@@ -1216,8 +1163,6 @@ final class PieDataset extends Dataset with _ArcStyle {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -1306,9 +1251,7 @@ final class PieDataset extends Dataset with _ArcStyle {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -1330,8 +1273,6 @@ final class PieDataset extends Dataset with _ArcStyle {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
@@ -1382,8 +1323,6 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -1444,9 +1383,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -1468,8 +1405,6 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
@@ -1520,8 +1455,6 @@ final class PolarAreaDataset extends Dataset {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -1552,9 +1485,7 @@ final class PolarAreaDataset extends Dataset {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -1571,8 +1502,6 @@ final class PolarAreaDataset extends Dataset {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
@@ -1624,8 +1553,6 @@ final class RadarDataset extends Dataset with _LineStyle {
     super.order,
     super.backgroundColor,
     super.borderColor,
-    super.borderColors,
-    super.borderColorFor,
     super.borderWidth,
     super.hoverBackgroundColor,
     super.hoverBorderColor,
@@ -1714,9 +1641,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     bool? hidden,
     int? order,
     ChartValue<Color>? backgroundColor,
-    Color? borderColor,
-    List<Color>? borderColors,
-    ChartScript<Color>? borderColorFor,
+    ChartValue<Color>? borderColor,
     double? borderWidth,
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
@@ -1744,8 +1669,6 @@ final class RadarDataset extends Dataset with _LineStyle {
     order: order ?? this.order,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
-    borderColors: borderColors ?? this.borderColors,
-    borderColorFor: borderColorFor ?? this.borderColorFor,
     borderWidth: borderWidth ?? this.borderWidth,
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
