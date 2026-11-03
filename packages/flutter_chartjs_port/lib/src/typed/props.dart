@@ -14,7 +14,7 @@
 ///   compares with Dart `==`: a tear-off of a method of one object is `==`
 ///   to the same tear-off.
 /// - [byItems]: the items of a List compare by `==`, in order. The small
-///   style Lists (`backgroundColors`, `borderDash`) and the dataset List
+///   style Lists (`borderColors`, `borderDash`) and the dataset List
 ///   use it.
 /// - [byEntries]: the entries of a Map compare by `==`, in key order, and a
 ///   value that is a Map compares by its entries too. The `scales` Map and

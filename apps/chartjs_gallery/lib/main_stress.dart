@@ -454,6 +454,22 @@ final bool stressScriptable = _flag(
   ),
 );
 
+/// Alternating indexed colors in chart mode: `--dart-define=INDEXED=1`.
+/// The default is 0; INDEXED and SCRIPTABLE cannot both be enabled.
+final bool stressIndexed = parseStressIndexed(
+  const String.fromEnvironment('INDEXED', defaultValue: '0'),
+  scriptable: stressScriptable,
+);
+
+/// Parses INDEXED and rejects conflicting color modes.
+bool parseStressIndexed(String value, {bool scriptable = false}) {
+  final indexed = _flag('INDEXED', value);
+  if (indexed && scriptable) {
+    throw ArgumentError('INDEXED and SCRIPTABLE cannot both be 1.');
+  }
+  return indexed;
+}
+
 /// The value of a define that is `0` or `1`. Another value throws an
 /// [ArgumentError] at the start.
 bool _flag(String name, String value) => switch (value) {
@@ -831,6 +847,7 @@ class _StressProfileAppState extends State<StressProfileApp> {
           'sharing': last?.sharing ?? _type.sharing,
           'canvas': last?.canvasSize,
           'scriptable': stressScriptable,
+          if (stressIndexed) 'indexed': true,
           if (_showLine) 'showLine': true,
           'elementsMs': avg((s) => s.elementsMs),
           'layoutMs': avg((s) => s.layoutMs),
@@ -905,6 +922,7 @@ class _StressProfileAppState extends State<StressProfileApp> {
           initialType: _type,
           initialShowLine: _showLine,
           initialScriptable: stressScriptable,
+          initialIndexed: stressIndexed,
           initialScale: _scale,
           initialYScale: _yScale,
           initialAutoSkip: _autoSkip,

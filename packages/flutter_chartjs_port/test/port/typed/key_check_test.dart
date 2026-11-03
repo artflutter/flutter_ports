@@ -166,7 +166,7 @@ List<ChartConfig> _configs() {
           data: data,
           hidden: false,
           order: 1,
-          backgroundColor: _red,
+          backgroundColor: const ChartValue.constant(_red),
           borderColor: _red,
           borderWidth: 1,
           hoverBackgroundColor: _red,
@@ -186,7 +186,7 @@ List<ChartConfig> _configs() {
         ),
         LineDataset(
           points: points,
-          backgroundColors: const [_red],
+          backgroundColor: const ChartValue.indexed([_red]),
           borderColorFor: _colorFor,
           xAxisID: 'x',
           yAxisID: 'y',

@@ -51,6 +51,8 @@ Future<List<StressStats>> _pumpChart(
   StressChartType type = StressChartType.line,
   bool showLine = false,
   bool scriptable = false,
+  bool indexed = false,
+  StressHost host = StressHost.canvas,
   bool autoStart = true,
   int n = _n,
   int m = 10,
@@ -67,6 +69,8 @@ Future<List<StressStats>> _pumpChart(
           initialType: type,
           initialShowLine: showLine,
           initialScriptable: scriptable,
+          initialIndexed: indexed,
+          host: host,
           autoStart: autoStart,
           onStats: stats.add,
         ),
@@ -596,6 +600,106 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final host in StressHost.values) {
+    for (final type in [
+      StressChartType.line,
+      StressChartType.bar,
+      StressChartType.radar,
+    ]) {
+      testWidgets('indexed colors stay live on ${host.name}/${type.name}', (
+        tester,
+      ) async {
+        await _pumpChart(
+          tester,
+          host: host,
+          type: type,
+          indexed: true,
+          call: StressChartCall.update,
+          n: 100,
+          m: 0,
+        );
+        await _frames(tester, 10);
+        final elements = _chart(tester).getDatasetMeta(0).data;
+        void checkColors() {
+          for (var i = 0; i < elements.length; i++) {
+            final options = elements[i].options! as JsObjectFace;
+            expect(options['backgroundColor'], stressIndexedBackground[i % 2]);
+            expect(options[r'$shared'], isFalse);
+          }
+        }
+
+        checkColors();
+        final before = elements[1].options;
+        await _frames(tester, 3);
+        checkColors();
+        expect(identical(before, elements[1].options), isFalse);
+        await _tap(tester, 'stress.start');
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets(
+      'indexed/scriptable color switches are exclusive on ${host.name}',
+      (tester) async {
+        await _pumpChart(
+          tester,
+          host: host,
+          autoStart: false,
+          call: StressChartCall.update,
+          n: 100,
+          m: 0,
+        );
+        await _frames(tester);
+        final original = _chart(tester);
+        await _tap(tester, 'stress.chart.indexed');
+        final indexed = _chart(tester);
+        expect(identical(indexed, original), isFalse);
+        expect(original.canvas, isNull);
+        expect(await _selected(tester, 'stress.chart.indexed'), isTrue);
+        expect(await _selected(tester, 'stress.chart.scriptable'), isFalse);
+        expect(
+          (_points(tester)[1].options! as JsObjectFace)['backgroundColor'],
+          stressChartBackgroundOdd,
+        );
+        await _tap(tester, 'stress.chart.scriptable');
+        expect(indexed.canvas, isNull);
+        expect(await _selected(tester, 'stress.chart.indexed'), isFalse);
+        expect(await _selected(tester, 'stress.chart.scriptable'), isTrue);
+        await _tap(tester, 'stress.chart.indexed');
+        expect(await _selected(tester, 'stress.chart.scriptable'), isFalse);
+        await _tap(tester, 'stress.chart.indexed');
+        expect(await _selected(tester, 'stress.chart.indexed'), isFalse);
+        expect(
+          (_points(tester)[1].options! as JsObjectFace)['backgroundColor'],
+          stressChartBackground,
+        );
+        expect(_points(tester), hasLength(100));
+        expect(await _selected(tester, 'stress.chart.call.update'), isTrue);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  test('indexed profiling flag validates mutually exclusive color modes', () {
+    expect(parseStressIndexed('0'), isFalse);
+    expect(parseStressIndexed('1'), isTrue);
+    expect(() => parseStressIndexed('yes'), throwsArgumentError);
+    expect(
+      () => parseStressIndexed('1', scriptable: true),
+      throwsArgumentError,
+    );
+    expect(parseStressIndexed('0', scriptable: true), isFalse);
+    final scene = StressChartScene(
+      StressChartType.line,
+      2,
+      StressPointField(2),
+    );
+    expect(
+      () => stressChartConfig(scene: scene, scriptable: true, indexed: true),
+      throwsArgumentError,
+    );
+  });
+
   testWidgets('chart: the controls have keys and make a new chart', (
     tester,
   ) async {
@@ -610,6 +714,7 @@ void main() {
         'stress.chart.type.${type.name}',
       'stress.chart.showLine',
       'stress.chart.scriptable',
+      'stress.chart.indexed',
       'stress.n.1000',
       'stress.m.0',
       'stress.spin',

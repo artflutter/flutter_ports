@@ -812,17 +812,81 @@ class Config implements types.ChartConfiguration {
     Object Function() context,
     List<String> prefixes,
     ElementOptions into,
-  ) {
+  ) => _resolveElementNamedOptions(
+    scopes,
+    keys,
+    context,
+    prefixes,
+    into,
+    nativeInputs: false,
+  );
+
+  /// Resolves the controller's owned key, prefix and scope lists. Custom Config
+  /// classes receive their original virtual option-resolution call.
+  @internal
+  // DIVERGES(chartjs): adapt-indexed-element-options, owned containers.
+  ElementOptions resolveNativeElementNamedOptions(
+    List<Object?> scopes,
+    List<Object> keys,
+    Object Function() context,
+    List<String> prefixes,
+    ElementOptions into,
+  ) => runtimeType == Config
+      ? _resolveElementNamedOptions(
+          scopes,
+          keys,
+          context,
+          prefixes,
+          into,
+          nativeInputs: true,
+        )
+      : resolveElementNamedOptions(scopes, keys, context, prefixes, into);
+
+  ElementOptions _resolveElementNamedOptions(
+    List<Object?> scopes,
+    List<Object> keys,
+    Object Function() context,
+    List<String> prefixes,
+    ElementOptions into, {
+    required bool nativeInputs,
+  }) {
     into.storeKey(OptionKey.dollarShared, true);
     final (:resolver, :subPrefixes) = _getResolver(
       _resolverCache,
       scopes,
       prefixes,
     );
+    // Only equal prefix sets reuse the same already-resolved descriptors for
+    // the scriptable subresolver. Hover resolution keeps its ordinary reads.
+    final samePrefixes =
+        helpers.OptionResolver.nativeIndexedResult(into) &&
+        (nativeInputs ||
+            (helpers.OptionResolver.nativeIndexedList(prefixes) &&
+                helpers.OptionResolver.nativeIndexedList(scopes))) &&
+        prefixes.length == subPrefixes.length &&
+        Iterable<int>.generate(prefixes.length).every(
+          (i) => prefixes[i] == subPrefixes[i],
+        );
+    // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
+    final indexed = runtimeType == Config && samePrefixes
+        ? resolver.resolveIndexedElementOptions(
+            keys,
+            context,
+            into,
+            Defaults.nativeElementDescriptors,
+            () => identical(
+              _resolverCache[scopes]?[prefixes.join(',')]?.resolver,
+              resolver,
+            ),
+            nativeInputs: nativeInputs,
+          )
+        : null;
+    if (indexed?.resolved ?? false) return into;
     helpers.OptionView? view;
-    if (_needContextKeys(resolver, keys)) {
-      into.storeKey(OptionKey.dollarShared, false);
-      final ctx = context();
+    if (indexed != null || _needContextKeys(resolver, keys)) {
+      // A declined native fill already stored $shared before its context call.
+      if (indexed == null) into.storeKey(OptionKey.dollarShared, false);
+      final ctx = indexed?.context ?? context();
       // subResolver is passed to scriptable options. It should not resolve to
       // hover options.
       final subResolver = createResolver(scopes, ctx, subPrefixes);

@@ -14,7 +14,7 @@ import 'package:test/test.dart';
 
 import '../../../tool/src/js_semantics.dart' show dartSdkPath;
 
-// The name rules of Chart.js ADR 0052, section 8, over the 50 names of the
+// The name rules of Chart.js ADR 0052, section 8, over the 54 names of the
 // typed API (probe J5 of the design panel checked 43 of them; the details
 // class ChartAnimationDetails came with the typed animation callbacks, and
 // the 6 names of the filler and the element options with the keys of the
@@ -39,7 +39,7 @@ import '../../../tool/src/js_semantics.dart' show dartSdkPath;
 // library exports it. A new typed name thus joins the list and passes the
 // rules.
 
-/// The 50 public names of the typed API (Chart.js ADR 0052, section 8).
+/// The 54 public names of the typed API (Chart.js ADR 0052, section 8).
 const List<String> _typedNames = [
   // Config.
   'ChartConfig', 'ChartKind', 'IndexAxis',
@@ -57,6 +57,7 @@ const List<String> _typedNames = [
   'ChartElements', 'PointElementStyle', 'LineElementStyle', 'BarElementStyle',
   'ArcElementStyle',
   // Values.
+  'ChartValue', 'ChartConstant', 'ChartIndexed', 'ChartResolver',
   'ChartPosition', 'ChartAlign', 'ChartInteractionMode', 'ChartEasing',
   'ChartPointStyle', 'ChartFill', 'ChartLength',
   // Callbacks and views.
@@ -120,8 +121,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 50 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(50));
+  test('the list has 54 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(54));
   });
 
   test(

@@ -100,7 +100,9 @@ class _ParentState extends State<_Parent> {
                   BarDataset(
                     label: 'votes',
                     data: data,
-                    backgroundColorFor: colorFor,
+                    backgroundColor: colorFor == null
+                        ? null
+                        : ChartValue.resolver(colorFor!),
                   ),
                 ],
                 title: title == null

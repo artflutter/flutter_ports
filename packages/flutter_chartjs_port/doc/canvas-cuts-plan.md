@@ -2389,3 +2389,13 @@ loops, workloads, canvas-size calculation or renderer calls. Named targets and
 operations replace abbreviations; detailed source/timing information remains
 available under Diagnostics. The performance experiments above remain comparable
 at the same canvas dimensions and configuration.
+- 2026-11-03, ADR 0076 adds cached native indexed element-option resolution in
+  core.config/helpers.config and a descriptor identity guard in core.defaults.
+  It changes no canvas operation, host, platform, theme hunk or cut boundary.
+  The inventory, pinning tests and estimates of this deferred plan remain valid;
+  no canvas-cut trigger occurred.
+
+- 2026-11-03, ADR 0077 prototypes a sealed typed dataset backgroundColor value.
+  The typed API and its widget documentation change; canvas operations, host
+  behavior, native recordings, cut inventory, pinning tests and estimates do not.
+  No canvas-cut trigger occurred.

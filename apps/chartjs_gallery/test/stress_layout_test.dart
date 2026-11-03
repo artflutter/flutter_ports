@@ -117,5 +117,15 @@ void main() {
       expect(rect.left, greaterThanOrEqualTo(0));
       expect(rect.right, lessThanOrEqualTo(360));
     }
+    await stressTap(tester, 'stress.chart.indexed');
+    await tester.pumpAndSettle();
+    expect(find.text('Indexed colors'), findsOneWidget);
+    expect(await stressSelected(tester, 'stress.chart.indexed'), isTrue);
+    final indexed = tester.getRect(
+      find.byKey(const ValueKey('stress.chart.indexed')),
+    );
+    expect(indexed.left, greaterThanOrEqualTo(0));
+    expect(indexed.right, lessThanOrEqualTo(360));
+    expect(tester.takeException(), isNull);
   });
 }

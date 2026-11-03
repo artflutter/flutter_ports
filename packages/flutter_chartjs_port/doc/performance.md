@@ -6669,3 +6669,106 @@ All 31 incremental lifecycle tests and eight category-source tests pass on both
 browser backends. The complete web suites pass 4,000 Chart.js cases and 55 utility
 cases per backend. Fixtures pass 26 files with zero errors/warnings. Public API,
 analysis, format, generated parity and all port checks pass. No golden changed.
+
+## 42. Cached native indexed element options
+
+[ADR 0076](adr/0076-indexed-element-options.md) reuses already-cached scalar and
+indexed element-option inputs for native PointOptions and BarOptions. The common
+options no longer require fresh contextual resolver views and caches per element.
+Lists remain live; each result is fresh and normally unshared. Context refresh,
+including the original pre-context `$shared` store, remains observable. Custom
+callbacks, descriptors, containers, nested/empty values and unsupported result
+classes retain ordinary resolution. Numeric indices convert to JavaScript numbers
+before remainder, including VM integers above 2^53.
+
+The controller qualifies key-list producers by identity and declares its own
+containers. This avoids expensive generic runtime-type probes per element. A
+conservative rejected-plan memo avoids taxing scriptable fallback. Preliminary
+versions with callback regressions and the profiles that located them are retained.
+
+macOS 27.0.1 arm64, Flutter 3.47.8 / Dart 3.13.7, native profile AOT, 800×480/DPR1.
+A/B/B/A processes, forward/reverse case order, 800ms warmup and seven 200ms batches.
+All scenes have 5000 elements and the same color supplied as a static value,
+a one-entry list or a constant callback. No builds/tests run during measurement.
+The table compares baseline and final indexed scenes:
+
+| Chart | Update CPU | Update reduction | Full CPU estimate | Full reduction |
+| --- | ---: | ---: | ---: | ---: |
+| Line | 12.348 → 6.066 ms | 50.9% | 13.290 → 7.018 ms | 47.2% |
+| Bar | 14.960 → 9.687 ms | 35.3% | 17.913 → 12.546 ms | 30.0% |
+| Radar | 13.610 → 7.299 ms | 46.4% | 15.873 → 9.436 ms | 40.6% |
+
+Full CPU sums update/draw/paint-end phase medians per process, then averages the
+two processes; it is not a full-call percentile. Data simulation is outside the
+phase timers. Per-process values and paired gains are retained; local variation
+is visible in the raw results. This is not FPS, raster or mobile/web performance.
+
+Static and constant-callback controls have no repeated full-call regression above
+both 5% and 0.1ms. A separate A/B/B/A `theme.switch` doughnut control at N=1000
+exercises the unsupported indexed-arc path and remains within that gate.
+The indexed path remains slower than shared static options: it retains fresh
+options, context refresh and the controller's ordinary key/scope discovery.
+
+The native list allowlist includes ordinary SDK Color/Object/primitive list
+instantiations. Color subclasses inside a `List<Color>` are accepted. For raw
+Flutter swatches, `<Color>[Colors.red, Colors.blue]` selects the supported native
+container type; a list inferred as `List<MaterialColor>` retains ordinary fallback.
+No new public configuration option is required.
+
+Validation: 10,838 workspace tests pass; all 24 final focused regressions pass on
+VM, JS and Wasm. The complete browser suites passed 4,020 Chart.js and 55 utility
+cases per backend before the final guard hardening; the final three-backend run
+covers the new rounding, color-subclass/opaque-value and context/store-order cases.
+The 5000-element same-color geometry/style comparison confirms activation and
+matches all three chart types. Fixtures, case coverage, analysis, formatting,
+parity and all port checks pass. No public export, generated schema/output,
+golden image or upstream pin changes.
+
+[Source patch, raw paired measurements, profiles and verification](benchmarks/indexed-options/README.md).
+
+## 43. Sealed background-color API prototype
+
+[ADR 0077](adr/0077-background-chart-value.md) changes only the typed dataset
+background color to ChartValue<Color>, with constant/indexed/resolver variants.
+The old backgroundColors/backgroundColorFor companions are removed. Border,
+hover, element-style and raw APIs retain their existing forms. The variants
+write OptValue/OptList/OptFunction cells directly; the indexed engine list is a
+mutable copy, and the callback bridge stays lazy and preserves typed context.
+
+This is a source-breaking API experiment, not a second resolution engine. Both
+baseline and candidate include ADR 0076's optimized indexed core. The runtime
+resolver's raw-value compatibility path remains. The experiment separately times
+Dataset construction plus lowerDataset and full update plus native paint.
+
+macOS 27.0.1 arm64, Flutter 3.47.8 / Dart 3.13.7, profile AOT, 800×480/DPR1,
+5000 numeric items, hidden category/linear axes, fixed y bounds, no animation or
+legend. A/B/B/A processes reverse case order in B2/A2. Each stage warms for 800ms
+and measures seven 200ms batches. No builds or tests overlap measurement.
+Each number below is the mean of two process medians:
+
+| Case | Construct + lower | Update + paint |
+| --- | ---: | ---: |
+| line.static | 0.462 → 0.437 µs | 1.808 → 1.858 ms |
+| line.indexed | 0.477 → 0.442 µs | 8.120 → 8.207 ms |
+| line.resolver | 0.463 → 0.442 µs | 14.944 → 14.904 ms |
+| bar.static | 0.308 → 0.275 µs | 3.656 → 3.654 ms |
+| bar.indexed | 0.321 → 0.289 µs | 12.550 → 12.460 ms |
+| bar.resolver | 0.313 → 0.279 µs | 17.545 → 17.629 ms |
+
+Construction/lowering is 5–11% lower in this microbenchmark, but the absolute
+saving is only about 0.02–0.04 microseconds per dataset. Its checksum consumes
+ownKeyCount, so this isolated result is not an application-level saving. Full
+chart-call changes range from -0.7% to +2.8%; there is no meaningful additional
+rendering/update speedup. Static line's +0.050ms is below the material regression
+gate. The value of this prototype is the single typed choice, compile-time
+exclusion of conflicting forms, and simpler copyWith variant switching.
+
+The update loop does not mutate data or rebuild the widget. No raster, FPS,
+mobile or web performance claim is made. The diagnostic color strings in the
+profile logs are not an output oracle; typed/raw chart twins and focused tests
+validate the actual values and callback behavior.
+
+Validation includes 442 typed API tests, 20 new value cases on VM/JS/Wasm, 10,867
+workspace tests, public exports/name collisions, and executed README snippets.
+[Raw measurements, source snapshots and verification](benchmarks/chart-value/README.md)
+record the prototype and its limits.

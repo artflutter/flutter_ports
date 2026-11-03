@@ -22,8 +22,9 @@ longer supported. No global color installer or intermediate option color exists.
 - `dart run melos run format` / `format:check`
 - `dart run melos run analyze`: `dart analyze --fatal-infos` over the workspace.
 - `dart run melos run test --no-select`: `flutter test --exclude-tags fixtures,golden` in every
-  package with a `test/` dir. `--no-select` skips the interactive package picker. Options after
-  `--` go to each `flutter test` call, for example
+  package with a `test/` dir, with up to two packages running in parallel. Flutter keeps its
+  default test-file concurrency within each package. `--no-select` skips the interactive package
+  picker. Options after `--` go to each `flutter test` call, for example
   `dart run melos run test --no-select -- --experimental-faster-testing --total-shards=3 --shard-index=0`.
   Without `--`, melos stops with an error. The CI job `test` runs this command with the shard
   indexes 0, 1 and 2 on each OS, in bash. `--experimental-faster-testing` compiles the test files of a package into one test app and runs
@@ -603,9 +604,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 50 names. `config.dart` has `ChartConfig`, `ChartKind` and
+    `typed.dart` is its export list of 54 names. `config.dart` has `ChartConfig`, `ChartKind` and
     `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
-    and `DataPoint`, a final class that implements `TypedDataItem`. `axes.dart` has the 6 axes,
+    and `DataPoint`, a final class that implements `TypedDataItem`.
+    `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver
+    variants. Only `Dataset.backgroundColor` uses it in the ADR 0077 prototype;
+    lowering writes the corresponding `Opt` cell directly. Border, hover, element
+    and raw color APIs retain their existing types. `axes.dart` has the 6 axes,
     `AxisTicks`, `AxisGrid` and `AxisTitle`.
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element

@@ -616,7 +616,7 @@ class StressDemo extends StatefulWidget {
   /// [initialMode], [initialN] and [initialM] set the first mode, item count
   /// and label count. [initialSpin] and [initialLine] set the first state of
   /// two layer switches. [initialCall], [initialType], [initialShowLine] and
-  /// [initialScriptable] set the case of the mode [StressMode.chart].
+  /// [initialScriptable] and [initialIndexed] select the chart case.
   /// [initialCall], [initialScale], [initialYScale] and [initialAutoSkip]
   /// set the case of the mode [StressMode.axes]. [initialPluginCase] sets
   /// the case of the mode [StressMode.plugins]. Each mode takes the first
@@ -638,6 +638,7 @@ class StressDemo extends StatefulWidget {
     this.initialType = StressChartType.line,
     this.initialShowLine = false,
     this.initialScriptable = false,
+    this.initialIndexed = false,
     this.initialScale = StressAxisType.linear,
     this.initialYScale = StressAxisType.linear,
     this.initialAutoSkip = true,
@@ -647,7 +648,10 @@ class StressDemo extends StatefulWidget {
     this.host = StressHost.canvas,
     this.chartSemanticsOnly = false,
     super.key,
-  });
+  }) : assert(
+         !(initialIndexed && initialScriptable),
+         'Choose indexed or scriptable colors, not both.',
+       );
 
   /// The first mode.
   final StressMode initialMode;
@@ -678,6 +682,10 @@ class StressDemo extends StatefulWidget {
 
   /// Whether the chart items start with a scriptable `backgroundColor`.
   final bool initialScriptable;
+
+  /// Whether chart items start with indexed colors.
+  /// Mutually exclusive with [initialScriptable].
+  final bool initialIndexed;
 
   /// The first scale type of the x axis in the mode [StressMode.axes].
   final StressAxisType initialScale;
@@ -736,6 +744,7 @@ class StressDemoState extends State<StressDemo> {
   );
   late bool _showLine = widget.initialShowLine;
   late bool _scriptable = widget.initialScriptable;
+  late bool _indexed = widget.initialIndexed;
   late StressAxisType _scale = widget.initialScale;
   late StressAxisType _yScale = widget.initialYScale;
   late bool _autoSkip = widget.initialAutoSkip;
@@ -987,6 +996,7 @@ class StressDemoState extends State<StressDemo> {
     StressChartType? type,
     bool? showLine,
     bool? scriptable,
+    bool? indexed,
   }) {
     final newCall = call ?? _call;
     final animated = newCall == StressChartCall.animate;
@@ -994,16 +1004,19 @@ class StressDemoState extends State<StressDemo> {
     _call = newCall;
     final newType = type ?? _type;
     final newShowLine = showLine ?? _showLine;
-    final newScriptable = scriptable ?? _scriptable;
+    final newScriptable = indexed != true && (scriptable ?? _scriptable);
+    final newIndexed = scriptable != true && (indexed ?? _indexed);
     if (newType == _type &&
         newShowLine == _showLine &&
         newScriptable == _scriptable &&
+        newIndexed == _indexed &&
         !animatedChanged) {
       return;
     }
     _type = newType;
     _showLine = newShowLine;
     _scriptable = newScriptable;
+    _indexed = newIndexed;
     _stressChart = null;
   }
 
@@ -1152,6 +1165,7 @@ class StressDemoState extends State<StressDemo> {
     return stressChartConfig(
       scene: scene,
       scriptable: _scriptable,
+      indexed: _indexed,
       showLine: _effectiveShowLine,
       animate: _call == StressChartCall.animate,
       plugins: [_labelsPlugin, _timing.plugin],
@@ -2331,6 +2345,7 @@ class StressDemoState extends State<StressDemo> {
         'stress.layer.line': 'Polyline',
         'stress.chart.showLine': 'Connect points',
         'stress.chart.scriptable': 'Scriptable colors',
+        'stress.chart.indexed': 'Indexed colors',
         'stress.axes.autoSkip': 'Skip crowded ticks',
       },
       items: [
@@ -2359,6 +2374,13 @@ class StressDemoState extends State<StressDemo> {
               value: _showLine,
               onChanged: (v) => setState(() => _setChartCase(showLine: v)),
             ),
+          (
+            key: 'stress.chart.indexed',
+            icon: Icons.palette_outlined,
+            tooltip: 'Alternate colors by item',
+            value: _indexed,
+            onChanged: (v) => setState(() => _setChartCase(indexed: v)),
+          ),
           (
             key: 'stress.chart.scriptable',
             icon: Icons.functions,
@@ -2498,6 +2520,7 @@ class StressDemoState extends State<StressDemo> {
                             _n,
                             _type,
                             _scriptable,
+                            _indexed,
                             _effectiveShowLine,
                             _call == StressChartCall.animate,
                           );

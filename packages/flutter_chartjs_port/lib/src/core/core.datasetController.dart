@@ -83,7 +83,7 @@ import 'package:flutter_chartjs_port/src/options/parsed.dart'
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show GenericDatasetOptionsScope;
+    show BarOptionsScope, GenericDatasetOptionsScope, PointOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
@@ -946,6 +946,10 @@ class DatasetController
   String? _lastElementTypeName;
   String? _lastElementMode;
   String _lastElementCacheKey = '';
+
+  // Container implementation is immutable; keys and option values stay live.
+  Object? _lastElementDefaults;
+  bool _nativeElementDefaultKeys = false;
 
   /// core.datasetController.js:259 `_cachedDataOpts`, the part of the
   /// animations: the frozen [Animations] of [resolveAnimations] by the
@@ -1957,17 +1961,34 @@ class DatasetController
         ? elementDefaults.jsOwnKeys()
         // A user object in the defaults gives its keys.
         : <Object>[...jsObjectKeys(elementDefaults)];
+    // DIVERGES(chartjs): adapt-indexed-element-options, classify only the
+    // producer of the key list. Never cache its keys or skip a custom getter.
+    if (!identical(elementDefaults, _lastElementDefaults)) {
+      _lastElementDefaults = elementDefaults;
+      _nativeElementDefaultKeys =
+          elementDefaults is! OptionScope ||
+          elementDefaults.runtimeType == PointOptionsScope ||
+          elementDefaults.runtimeType == BarOptionsScope;
+    }
     // context is provided as a function, and is called only if needed,
     // so we don't create a context for each element if not needed.
     ContextObject context() => getContext(index, active, resolvedMode);
     // DIVERGES(chartjs): adapt-typed-element-options, a typed result object.
-    final values = config.resolveElementNamedOptions(
-      scopes,
-      keys,
-      context,
-      prefixes,
-      createElementOptions(elementType),
-    );
+    final values = _nativeElementDefaultKeys
+        ? config.resolveNativeElementNamedOptions(
+            scopes,
+            keys,
+            context,
+            prefixes,
+            createElementOptions(elementType),
+          )
+        : config.resolveElementNamedOptions(
+            scopes,
+            keys,
+            context,
+            prefixes,
+            createElementOptions(elementType),
+          );
 
     if (jsTruthy(values.$sharedValue)) {
       // `$shared` indicates this set of options can be shared between

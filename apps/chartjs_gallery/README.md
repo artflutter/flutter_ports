@@ -29,3 +29,25 @@ dart run melos run gallery:build:ios      # iOS build without code signing
 CI builds the web, Android and iOS targets on every push and pull request.
 
 Not published (`publish_to: none`).
+
+## Indexed-color stress test
+
+Open **Phase 3: canvas and host → Stress → Charts**, select **Line**, **Bar** or
+**Radar**, choose **5k** items and **Full update**, then expand **Options** and
+turn on **Indexed colors**. The colors alternate blue/pink, matching **Scriptable
+colors**. These switches are mutually exclusive; turn both off for a static color.
+Use **Run test** if paused, and expand **Diagnostics** to compare update timings.
+Use a profile or release build for performance comparisons.
+
+From this directory, launch the profile directly:
+
+```sh
+flutter run -d macos --profile -t lib/main_stress.dart \
+  --dart-define=MODE=chart --dart-define=TYPE=line \
+  --dart-define=CALL=update --dart-define=SCENARIO=5000x0 \
+  --dart-define=INDEXED=1
+```
+
+`INDEXED` defaults to 0 and cannot be combined with `SCRIPTABLE=1`. Indexed runs
+add `indexed: true` to their `STRESS` output; existing benchmark cases and default
+profiling configurations keep their previous colors.

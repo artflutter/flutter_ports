@@ -25,6 +25,12 @@ const ui.Color stressChartBackground = ui.Color.fromRGBO(54, 162, 235, 0.45);
 /// `backgroundColor`.
 const ui.Color stressChartBackgroundOdd = ui.Color.fromRGBO(255, 99, 132, 0.45);
 
+/// Alternating native colors, matching the scriptable point colors.
+const List<ui.Color> stressIndexedBackground = [
+  stressChartBackground,
+  stressChartBackgroundOdd,
+];
+
 /// The scriptable `backgroundColor` of case (c). It reads the data index of
 /// its context, as the scriptable option of a user does. The option needs
 /// the context. Thus the resolver gives `$shared` false, and each update
@@ -315,6 +321,8 @@ Map<String, Object?>? _stressScales(StressChartType type) => switch (type) {
 ///
 /// - [scriptable]: the scriptable `backgroundColor` of case (c),
 ///   [stressScriptableBackground].
+/// - [indexed]: alternating colors from [stressIndexedBackground]. Mutually
+///   exclusive with [scriptable]; false preserves the existing benchmark cases.
 /// - [showLine]: the dataset option `showLine` of line and scatter.
 ///   Another type throws an [ArgumentError] when it is true.
 /// - [animate]: the looping animation of the call `animate`. Without it,
@@ -351,11 +359,15 @@ Map<String, Object?>? _stressScales(StressChartType type) => switch (type) {
 Map<String, Object?> stressChartConfig({
   required StressChartScene scene,
   required bool scriptable,
+  bool indexed = false,
   bool showLine = false,
   bool animate = false,
   Map<String, Object?> options = const {},
   List<Object?> plugins = const [],
 }) {
+  if (indexed && scriptable) {
+    throw ArgumentError('Choose indexed or scriptable colors, not both.');
+  }
   final type = scene.type;
   if (showLine && !type.points) {
     throw ArgumentError.value(showLine, 'showLine', 'Not line or scatter');
@@ -368,7 +380,9 @@ Map<String, Object?> stressChartConfig({
       'datasets': <Object?>[
         <String, Object?>{
           'data': scene.data,
-          'backgroundColor': scriptable
+          'backgroundColor': indexed
+              ? stressIndexedBackground
+              : scriptable
               ? stressScriptableBackground
               : stressChartBackground,
           'borderColor': const ui.Color(0xFF36A2EB),

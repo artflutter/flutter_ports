@@ -246,7 +246,10 @@ void main() {
       final typed = acquireChart(
         _chartOf('bar', [
           lowerDataset(
-            const BarDataset(data: [1, 2, 3], backgroundColor: _red),
+            const BarDataset(
+              data: [1, 2, 3],
+              backgroundColor: ChartValue.constant(_red),
+            ),
             .bar,
           ),
         ]),
@@ -273,7 +276,10 @@ void main() {
       final typed = acquireChart(
         _chartOf('bar', [
           lowerDataset(
-            const BarDataset(data: [1, 2, 3], backgroundColors: [_red, _blue]),
+            const BarDataset(
+              data: [1, 2, 3],
+              backgroundColor: ChartValue.indexed([_red, _blue]),
+            ),
             .bar,
           ),
         ]),
@@ -300,7 +306,10 @@ void main() {
       final typed = acquireChart(
         _chartOf('bar', [
           lowerDataset(
-            const BarDataset(data: [1, 2, 3], backgroundColorFor: _colorFor),
+            const BarDataset(
+              data: [1, 2, 3],
+              backgroundColor: ChartValue.resolver(_colorFor),
+            ),
             .bar,
           ),
         ]),

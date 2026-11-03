@@ -32,6 +32,8 @@ export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartLegendItem,
         ChartScript,
         ChartTooltipItem;
+export 'package:flutter_chartjs_port/src/typed/chart_value.dart'
+    show ChartConstant, ChartIndexed, ChartResolver, ChartValue;
 export 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind, IndexAxis;
 export 'package:flutter_chartjs_port/src/typed/datasets.dart'
