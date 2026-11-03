@@ -1,5 +1,8 @@
 ## 0.1.0
 
+- Reduce numeric category parsing overhead for bars and base-controller primitive
+  data while preserving live labels, fresh parsed records and custom fallbacks.
+
 - Draw supported rectangular bars through a guarded native canvas operation,
   preserving pixels, canvas state, callbacks and the existing fallback.
 

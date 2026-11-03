@@ -56,6 +56,7 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
         setStackValue,
         stacksOf,
         visualValuesOf;
+import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show BarOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
@@ -350,6 +351,16 @@ List<ParsedItem> _parseArrayOrPrimitive(
   final iScale = meta.iScale;
   final vScale = meta.vScale;
   final labels = iScale!.getLabels();
+  // DIVERGES(chartjs): adapt-numeric-category-parse, guarded native range.
+  final numeric = tryParseNumericCategories(
+    iScale,
+    vScale,
+    labels,
+    data,
+    start,
+    count,
+  );
+  if (numeric != null) return numeric;
   final singleScale = identical(iScale, vScale);
   final iKey = AxisKey.of(iScale.axis);
   // Upstream reads `vScale.axis` in the loop: no read for no item.

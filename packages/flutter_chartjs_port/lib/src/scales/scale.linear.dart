@@ -26,6 +26,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFinite;
@@ -41,7 +42,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:meta/meta.dart';
 
 /// scale.linear.js:6 `LinearScale extends LinearScaleBase`.
-class LinearScale extends LinearScaleBase {
+class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
   /// The constructor of LinearScaleBase (scale.linearbase.js:156). Upstream
   /// declares no constructor in this class.
   ///
@@ -87,6 +88,11 @@ class LinearScale extends LinearScaleBase {
   @internal
   // DIVERGES(chartjs): adapt-bulk-bar-update, native linear projection.
   bool get supportsBulkBarUpdate => super.runtimeType == LinearScale;
+
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-numeric-category-parse, exact numeric semantics.
+  bool get supportsNativeNumericParse => super.runtimeType == LinearScale;
 
   late final bool _nativeBarIndexReads = runtimeType == LinearScale;
 

@@ -50,6 +50,7 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, createElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
@@ -1373,6 +1374,16 @@ class DatasetController
     final vKey = AxisKey.of(vAxis);
     final labels = iScale.getLabels();
     final singleScale = identical(iScale, vScale);
+    // DIVERGES(chartjs): adapt-numeric-category-parse, shared primitive path.
+    final numeric = tryParseNumericCategories(
+      iScale,
+      vScale,
+      labels,
+      data,
+      start,
+      count,
+    );
+    if (numeric != null) return numeric;
     final parsed = <ParsedItem>[];
     double index;
 
