@@ -54,9 +54,15 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey;
+    show OptionKey, OptionScope;
+import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
+    show BarOptions;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ScaleOptionsByIdScope, ScaleOptionsScope;
+    show
+        BarOptionsScope,
+        ElementOptionsByTypeScope,
+        ScaleOptionsByIdScope,
+        ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -511,6 +517,49 @@ class Config implements types.ChartConfiguration {
   bool get supportsDataUpdates =>
       super.runtimeType == Config && nativeDataUpdateRoot(_config);
 
+  /// A cached color-only plan for the exact native single-dataset bar loop.
+  /// All reads used by context refresh must be ordinary native reads too.
+  @internal
+  // DIVERGES(chartjs): adapt-prepared-indexed-options, native qualification.
+  BarOptions Function(int)? prepareIndexedBarColors() {
+    if (super.runtimeType != Config ||
+        !supportsDataUpdates ||
+        (_config is OptionScope && _config.routeOf('type') != null)) {
+      return null;
+    }
+    final data = dataUpdateField(_config, 'data');
+    if (!nativeDataUpdateObject(data)) return null;
+    final datasets = dataUpdateField(data!, 'datasets');
+    if (!nativeDataUpdateList(datasets) || (datasets! as List).length != 1) {
+      return null;
+    }
+    final dataset = (datasets as List<Object?>)[0];
+    if (!nativeDataUpdateObject(dataset) ||
+        !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
+      return null;
+    }
+    final scopeKeys = datasetElementScopeKeys('bar', 'bar');
+    final scopes = _scopeCache[dataset]?[scopeKeys];
+    if (scopes == null) return null;
+    final cached = _resolverCache[scopes]?['bar,'];
+    if (cached == null ||
+        cached.subPrefixes.length != 2 ||
+        cached.subPrefixes[0] != 'bar' ||
+        cached.subPrefixes[1] != '') {
+      return null;
+    }
+    if (defaults.routeOf('elements') != null) return null;
+    final elements = defaults.elementsCell?.raw;
+    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
+    final elementScopes = elements! as ElementOptionsByTypeScope;
+    if (elementScopes.routeOf('bar') != null) return null;
+    final bar = elementScopes.barCell?.raw;
+    if (bar.runtimeType != BarOptionsScope) return null;
+    return cached.resolver.prepareIndexedBarColors(
+      (bar! as BarOptionsScope).jsOwnKeys(),
+    );
+  }
+
   /// core.config.js:189 `set options(options)`.
   set options(Object? options) {
     jsSet(_config, 'options', options);
@@ -823,6 +872,8 @@ class Config implements types.ChartConfiguration {
 
   /// Resolves the controller's owned key, prefix and scope lists. Custom Config
   /// classes receive their original virtual option-resolution call.
+  /// With [allowReplacement], the caller owns [into] without exposing it to
+  /// [context]; a prepared result may replace it.
   @internal
   // DIVERGES(chartjs): adapt-indexed-element-options, owned containers.
   ElementOptions resolveNativeElementNamedOptions(
@@ -830,8 +881,9 @@ class Config implements types.ChartConfiguration {
     List<Object> keys,
     Object Function() context,
     List<String> prefixes,
-    ElementOptions into,
-  ) => runtimeType == Config
+    ElementOptions into, {
+    bool allowReplacement = false,
+  }) => runtimeType == Config
       ? _resolveElementNamedOptions(
           scopes,
           keys,
@@ -839,6 +891,7 @@ class Config implements types.ChartConfiguration {
           prefixes,
           into,
           nativeInputs: true,
+          allowReplacement: allowReplacement,
         )
       : resolveElementNamedOptions(scopes, keys, context, prefixes, into);
 
@@ -849,6 +902,7 @@ class Config implements types.ChartConfiguration {
     List<String> prefixes,
     ElementOptions into, {
     required bool nativeInputs,
+    bool allowReplacement = false,
   }) {
     into.storeKey(OptionKey.dollarShared, true);
     final (:resolver, :subPrefixes) = _getResolver(
@@ -879,9 +933,10 @@ class Config implements types.ChartConfiguration {
               resolver,
             ),
             nativeInputs: nativeInputs,
+            allowReplacement: allowReplacement,
           )
         : null;
-    if (indexed?.resolved ?? false) return into;
+    if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
     helpers.OptionView? view;
     if (indexed != null || _needContextKeys(resolver, keys)) {
       // A declined native fill already stored $shared before its context call.

@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -114,6 +115,47 @@ class _MutationBar extends BarElement {
   }
 }
 
+class _ObservedData extends ListBase<Object?> {
+  _ObservedData(this.values);
+  final List<Object?> values;
+  final List<String> reads = [];
+  @override
+  int get length {
+    reads.add('length');
+    return values.length;
+  }
+
+  @override
+  set length(int value) => values.length = value;
+  @override
+  Object? operator [](int index) {
+    reads.add('$index');
+    return values[index];
+  }
+
+  @override
+  void operator []=(int index, Object? value) => values[index] = value;
+}
+
+class _ObservedElementClass extends MapBase<String, Object?> {
+  final fields = <String, Object?>{'id': 'bar'};
+  int reads = 0;
+  @override
+  Object? operator [](Object? key) {
+    reads++;
+    return fields[key];
+  }
+
+  @override
+  void operator []=(String key, Object? value) => fields[key] = value;
+  @override
+  Iterable<String> get keys => fields.keys;
+  @override
+  void clear() => fields.clear();
+  @override
+  Object? remove(Object? key) => fields.remove(key);
+}
+
 Map<String, Object?> _config({
   bool horizontal = false,
   bool visible = false,
@@ -205,6 +247,22 @@ Object _observe(Chart chart) => [
     ],
 ];
 
+Object _stylesAndContexts(Chart chart) => [
+  for (final e in chart.getDatasetMeta(0).data.cast<BarElement>())
+    [
+      _plain(e.options),
+      for (final key in [
+        'index',
+        'dataIndex',
+        'raw',
+        'parsed',
+        'mode',
+        'active',
+      ])
+        _plain(jsGet(e.$context, key)),
+    ],
+];
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
@@ -213,6 +271,113 @@ void main() {
     CategoryScale.jsClass,
     LinearScale.jsClass,
   ]);
+
+  for (final horizontal in [false, true]) {
+    test(
+      'indexed colors retain independent options and live contexts $horizontal',
+      () {
+        Map<String, Object?> config() => _config(
+          horizontal: horizontal,
+          visible: true,
+          extra: {
+            'backgroundColor': <ui.Color>[
+              const ui.Color(0xffff0000),
+              const ui.Color(0xff0000ff),
+            ],
+            'borderColor': <ui.Color>[const ui.Color(0xff00ff00)],
+          },
+        );
+        final ca = config();
+        final cb = config();
+        final a = _chart(ca);
+        final b = _chart(cb, reference: true);
+        final probes = _probes(a);
+        for (var step = 0; step < 3; step++) {
+          for (final cfg in [ca, cb]) {
+            final dataset = _dataset(cfg);
+            (dataset['data']! as List<Object?>)[2] = step.toDouble();
+            (dataset['backgroundColor']! as List<ui.Color>)[0] = ui.Color(
+              0xff556600 + step,
+            );
+          }
+          if (step == 1) {
+            a.toggleDataVisibility(3);
+            b.toggleDataVisibility(3);
+          }
+          a.update('none');
+          b.update('none');
+          expect(_observe(a), _observe(b));
+          expect(_stylesAndContexts(a), _stylesAndContexts(b));
+          expect(identical(probes[1].options, probes[2].options), isFalse);
+          expect(jsGet(probes[1].options, r'$shared'), isFalse);
+          expect(
+            identical(probes[1].borderSkipped, probes[2].borderSkipped),
+            isFalse,
+          );
+          (probes[1].options! as JsObjectFace).jsWrite('borderWidth', 77);
+        }
+        expect(probes.first.bulkWrites, 0);
+        expect(probes.skip(1).every((p) => p.bulkWrites == 3), isTrue);
+      },
+    );
+  }
+
+  test(
+    'indexed geometry fields and active bars decline the color-only loop',
+    () {
+      for (final active in [false, true]) {
+        Map<String, Object?> config() => _config(
+          extra: {
+            'backgroundColor': <ui.Color>[
+              const ui.Color(0xffff0000),
+              const ui.Color(0xff0000ff),
+            ],
+            if (!active) 'inflateAmount': <double>[0, 0.4],
+          },
+        );
+        final a = _chart(config());
+        final b = _chart(config(), reference: true);
+        final probes = _probes(a);
+        if (active) {
+          (a.getDatasetMeta(0).data.last as BarElement).active = true;
+          (b.getDatasetMeta(0).data.last as BarElement).active = true;
+        }
+        a.update('none');
+        b.update('none');
+        expect(probes.every((p) => p.bulkWrites == 0), isTrue);
+        expect(_observe(a), _observe(b));
+        expect(_stylesAndContexts(a), _stylesAndContexts(b));
+      }
+    },
+  );
+
+  test(
+    'indexed colors do not skip custom data getters during context refresh',
+    () {
+      final da = _ObservedData([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+      final db = _ObservedData([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+      Map<String, Object?> config(List<Object?> data) => _config(
+        values: data,
+        extra: {
+          'backgroundColor': <ui.Color>[
+            const ui.Color(0xffff0000),
+            const ui.Color(0xff0000ff),
+          ],
+        },
+      );
+      final a = _chart(config(da));
+      final b = _chart(config(db), reference: true);
+      final probes = _probes(a);
+      da.reads.clear();
+      db.reads.clear();
+      a.update('none');
+      b.update('none');
+      expect(probes.every((p) => p.bulkWrites == 0), isTrue);
+      expect(da.reads, db.reads);
+      expect(_observe(a), _observe(b));
+      expect(_stylesAndContexts(a), _stylesAndContexts(b));
+    },
+  );
 
   for (final horizontal in [false, true]) {
     for (final visible in [false, true]) {
@@ -244,6 +409,31 @@ void main() {
       });
     }
   }
+
+  test('indexed bulk does not skip a custom element class id getter', () {
+    Map<String, Object?> config() => _config(
+      extra: {
+        'backgroundColor': <ui.Color>[const ui.Color(0xffff0000)],
+      },
+    );
+    final a = _chart(config());
+    final b = _chart(config(), reference: true);
+    final probes = _probes(a);
+    final counts = <int>[];
+    for (final chart in [a, b]) {
+      final meta = chart.getDatasetMeta(0);
+      final elementClass = _ObservedElementClass();
+      (meta.controller! as BarController)
+        ..dataElementType = elementClass
+        ..updateElements(meta.data, 0, 6, 'none');
+      counts.add(elementClass.reads);
+    }
+    expect(counts[0], counts[1]);
+    expect(counts[0], greaterThan(1));
+    expect(probes.every((p) => p.bulkWrites == 0), isTrue);
+    expect(_observe(a), _observe(b));
+    expect(_stylesAndContexts(a), _stylesAndContexts(b));
+  });
 
   test('numeric bases, border edges, dimensions and reversal match', () {
     for (final horizontal in [false, true]) {
@@ -338,6 +528,10 @@ void main() {
         final cfg = _config(visible: grid);
         final calls = <Object?>[];
         if (grid) {
+          _dataset(cfg)['backgroundColor'] = <ui.Color>[
+            const ui.Color(0xffff0000),
+            const ui.Color(0xff0000ff),
+          ];
           double lineWidth(Object? context) {
             calls.add(jsGet(context, 'index'));
             return 1;

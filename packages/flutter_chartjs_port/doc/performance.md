@@ -6772,3 +6772,58 @@ Validation includes 442 typed API tests, 20 new value cases on VM/JS/Wasm, 10,86
 workspace tests, public exports/name collisions, and executed README snippets.
 [Raw measurements, source snapshots and verification](benchmarks/chart-value/README.md)
 record the prototype and its limits.
+
+## 44. Controlled estimates for further option/update improvements
+
+An isolated checkout of ba58aa8 compares per-update option setup caching,
+prepared color-only style templates, bulk bar geometry with individual colors,
+and a diagnostic indexed-style extension of updateData. Production library
+source is unchanged. Every measured case compares its parsed data, geometry and
+selected styles against a subsequent ordinary update; callback counts match.
+
+At 5000 items, setup caching alone saves 9–15% of full CPU for indexed line/bar
+and 5–9% for their simple color callbacks. Prepared styles reduce indexed line
+update CPU 6.189 → 1.671ms and callback line 12.976 → 2.175ms; their full-call
+reductions are 62.3% and 76.9%. Bulk geometry alone saves 20.6% for indexed bars.
+Prepared styles plus bulk geometry saves 58.6% for indexed bars and 68.7% for
+callback bars. Indexed radar's prepared-style full-call reduction is 49.4%.
+The separately measured indexed-bar data-only gate bypass saves 6.3% full CPU.
+
+At 20000 indexed bars, the combined style/bulk prototype reduces update CPU
+43.340 → 14.348ms and full CPU 54.140 → 25.754ms. This remains over a 16.67ms CPU
+budget; no 60-FPS claim follows. These are controlled-case estimates with
+incomplete production guards, not accepted optimizations or guaranteed gains.
+The static controls, instrumented baseline, reverse runs, callback counts,
+reference checks and fresh CPU profiles are retained.
+
+[Full matrix, scope, limitations and reproduction](benchmarks/update-estimates/README.md).
+
+## 45. Prepared indexed styles and color-only bulk bars
+
+ADR 0078 implements private static style templates inside the existing native
+indexed plan, with fresh copies and live indexed selections. General scope/key
+discovery, context refresh and ordinary fallbacks remain. The native numeric bar
+remainder additionally accepts indexed background/border colors after proving
+that no user callbacks or custom reads can run in that synchronous loop.
+
+Final A/B/B/A macOS profile measurements against ba58aa8, moving data at
+800×480/DPR1:
+
+| Case | N | Update before → after | Full CPU before → after | Full reduction |
+| --- | ---: | ---: | ---: | ---: |
+| Indexed line | 5000 | 6.325 → 5.669ms | 7.575 → 6.890ms | 9.0% |
+| Indexed bar | 5000 | 10.231 → 2.467ms | 13.249 → 5.266ms | 60.2% |
+| Indexed bar | 20000 | 47.624 → 16.178ms | 59.316 → 28.512ms | 51.9% |
+
+Both pairs reproduce the line and bar gains. Indexed radar averages 3.0% full
+CPU improvement but its pairs disagree (-0.7%/+6.6%); no reliable full-call radar
+gain is claimed. Static/scriptable control means range from 2.4% slower to 1.9%
+faster. The scriptable-line control is 0.349ms/2.4% slower in this final matrix;
+callback counts are unchanged. These controls remain in the evidence.
+
+All 10,886 workspace tests pass, as do 230 focused tests on each browser backend,
+analysis, formatting and port checks. General prepared styles do not reproduce
+the earlier unguarded prototype's line/radar gains. No callback, raster, FPS,
+mobile or browser-performance claim follows. There is no public API change.
+
+[Raw results, checks and reproduction](benchmarks/prepared-options/README.md).

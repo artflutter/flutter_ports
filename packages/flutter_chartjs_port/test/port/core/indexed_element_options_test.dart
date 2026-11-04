@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:test/test.dart';
 
 const _red = Color(0xffff0000);
@@ -99,16 +100,19 @@ class _Fixture {
   final prefixes = <String>['point', ''];
   int contexts = 0;
   Object Function()? makeContext;
-  PointOptions resolve([double index = 0]) => config.resolveElementNamedOptions(
-    scopes,
-    keys,
-    () {
-      contexts++;
-      return makeContext?.call() ?? ScriptableContext.data(null, index, null);
-    },
-    prefixes,
-    PointOptions(),
-  ) as PointOptions;
+  PointOptions resolve([double index = 0]) =>
+      config.resolveNativeElementNamedOptions(
+        scopes,
+        keys,
+        () {
+          contexts++;
+          return makeContext?.call() ??
+              ScriptableContext.data(null, index, null);
+        },
+        prefixes,
+        PointOptions(),
+        allowReplacement: true,
+      ) as PointOptions;
 
   helpers.OptionResolver get resolver =>
       config.createResolver(scopes, null, prefixes) as helpers.OptionResolver;
@@ -163,6 +167,7 @@ void main() {
         () => ScriptableContext.data(null, 1, null),
         f.prefixes,
         PointOptions(),
+        allowReplacement: true,
       );
       expect(result.valueOf(OptionKey.backgroundColor), _blue);
     }
@@ -182,6 +187,135 @@ void main() {
     first.storeKey(OptionKey.radius, 42.0);
     expect(f.resolve().radius, 3);
     expect(f.contexts, 3);
+  });
+
+  test('prepared template is private and copies raw static numeric fields', () {
+    final f = _Fixture();
+    f.scope['radius'] = -0.0;
+    f.resolve();
+    final into = PointOptions();
+    final hit = f.resolver.resolveIndexedElementOptions(
+      f.keys,
+      () => ScriptableContext.data(null, 1, null),
+      into,
+      Defaults.nativeElementDescriptors,
+      () => true,
+      allowReplacement: true,
+    );
+    expect(hit?.resolved, isTrue);
+    final result = hit!.prepared! as PointOptions;
+    expect(identical(result, into), isFalse);
+    expect((result.radiusValue! as double).isNegative, isTrue);
+    result
+      ..storeKey(OptionKey.radius, 77)
+      ..storeKey(OptionKey.dollarShared, true)
+      ..storeKey('extra', 'local')
+      ..freeze();
+    final next = f.resolve();
+    expect((next.radiusValue! as double).isNegative, isTrue);
+    expect(next.$sharedValue, isFalse);
+    expect(next.jsHas('extra'), isFalse);
+    expect(next.isFrozen, isFalse);
+    f.resolver.jsWrite('radius', 9);
+    expect(f.resolve().radiusValue, isA<int>());
+    expect(f.resolve().radiusValue, 9);
+  });
+
+  test('several indexed fields preflight before any foreign audit stores', () {
+    final fast = _Fixture();
+    final full = _Fixture(ordinary: true);
+    for (final f in [fast, full]) {
+      f.scope['radius'] = <Object?>[2, 4];
+      f.scope['borderColor'] = <Object?>[_blue, null];
+      f.resolve();
+    }
+    for (final value in <Object?>[8, -0.0, '5', undefined, 3.0]) {
+      for (final f in [fast, full]) {
+        (f.scope['radius']! as List<Object?>)[1] = value;
+      }
+      _same(fast.resolve(1), full.resolve(1));
+    }
+  });
+
+  test('bar prepared options match ordinary with both colors indexed', () {
+    final fast = _Fixture();
+    final full = _Fixture(ordinary: true);
+    ElementOptions resolve(_Fixture f, double index) =>
+        f.config.resolveNativeElementNamedOptions(
+          f.scopes,
+          f.keys,
+          () => ScriptableContext.data(null, index, null),
+          const ['bar', ''],
+          BarOptions(),
+          allowReplacement: true,
+        );
+    for (final f in [fast, full]) {
+      f.keys
+        ..remove(OptionKey.radius)
+        ..addAll([OptionKey.borderSkipped, OptionKey.inflateAmount]);
+      f.scope
+        ..['borderColor'] = <Color>[_blue, _red]
+        ..['borderSkipped'] = 'start'
+        ..['inflateAmount'] = 'auto';
+    }
+    for (var i = 0; i < 4; i++) {
+      _same(resolve(fast, i.toDouble()), resolve(full, i.toDouble()));
+    }
+  });
+
+  test('native bulk color plan qualifies on the VM, JS and Wasm', () {
+    final saved = defaults.saveState();
+    addTearDown(() => defaults.restoreState(saved));
+    final bar = BarOptionsScope()
+      ..backgroundColor = _red
+      ..borderColor = _blue
+      ..borderWidth = 1.0
+      ..borderSkipped = 'start'
+      ..inflateAmount = 'auto';
+    defaults.elements = ElementOptionsByTypeScope()..bar = bar;
+    final colors = <Object?>[_red, _blue];
+    final dataset = <String, Object?>{
+      '_scriptable': true,
+      '_indexable': true,
+      'backgroundColor': colors,
+      'data': <double>[1, 2, 3],
+    };
+    final config = Config({
+      'type': 'bar',
+      'data': <String, Object?>{
+        'datasets': <Object?>[dataset],
+      },
+    });
+    final scopes = config.getOptionScopes(
+      dataset,
+      config.datasetElementScopeKeys('bar', 'bar'),
+    );
+    BarOptions resolve(int index) => config.resolveNativeElementNamedOptions(
+      scopes,
+      bar.jsOwnKeys(),
+      () => ScriptableContext.data(null, index.toDouble(), null),
+      const ['bar', ''],
+      BarOptions(),
+      allowReplacement: true,
+    ) as BarOptions;
+    resolve(0);
+    resolve(1);
+    final prepared = config.prepareIndexedBarColors();
+    expect(prepared, isNotNull);
+    for (var i = 0; i < 4; i++) {
+      _same(prepared!(i), resolve(i));
+    }
+    prepared!(0).storeKey(OptionKey.borderWidth, 50.0);
+    expect(prepared(0).borderWidth, 1.0);
+    colors[0] = <Object?>[_red];
+    expect(config.prepareIndexedBarColors(), isNull);
+    colors[0] = _red;
+    expect(config.prepareIndexedBarColors(), isNotNull);
+    bar.jsWrite('extra', 4.0);
+    expect(config.prepareIndexedBarColors(), isNull);
+    bar.jsDelete('extra');
+    config.clearCache();
+    expect(config.prepareIndexedBarColors(), isNull);
   });
 
   for (final colors in <List<Object?>>[

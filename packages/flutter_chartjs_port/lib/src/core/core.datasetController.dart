@@ -1981,6 +1981,9 @@ class DatasetController
             context,
             prefixes,
             createElementOptions(elementType),
+            // DIVERGES(chartjs): adapt-prepared-indexed-options, this result
+            // is owned here and cannot be observed by the context factory.
+            allowReplacement: true,
           )
         : config.resolveElementNamedOptions(
             scopes,
