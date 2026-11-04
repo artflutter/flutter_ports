@@ -6827,3 +6827,60 @@ the earlier unguarded prototype's line/radar gains. No callback, raster, FPS,
 mobile or browser-performance claim follows. There is no public API change.
 
 [Raw results, checks and reproduction](benchmarks/prepared-options/README.md).
+
+## 46. Remaining point, context and drawing estimates
+
+Controlled prototypes compare against the current ADR 0078 implementation.
+Without whole-input scans, prepared indexed point options plus cheaper context
+writes reduce 5000-point line full CPU 7.111 → 2.546ms (64.2%) and scatter
+17.474 → 3.691ms (78.9%). The point/template and context costs were also measured
+separately, with static/scriptable and instrumented mode-0 controls.
+
+Validation work can consume that headroom. Four full native input/element scans
+per update add about 7.1ms: line becomes 32.9% slower than production, while
+scatter retains 38.7% improvement. A separate one-scan cost experiment gives:
+
+| Indexed case | N | Current → prototype full CPU | Reduction |
+| --- | ---: | ---: | ---: |
+| Line | 5000 | 7.021 → 4.160ms | 40.7% |
+| Scatter | 5000 | 17.221 → 5.400ms | 68.6% |
+
+These are conditional planning targets: reusing one qualification across modes
+and observation points needs a production proof. The scan experiment does not
+establish arbitrary mutation, route, callback or subclass compatibility.
+
+Context refresh alone saves about 4–6% at N=5000. Deferring intermediate native
+bar path bookkeeping preserves the tested pixels but gives no repeatable
+drawing-only full-call gain. Dense-bar results and their controls are noisy;
+no dependable additional 20000-bar gain is claimed. The current profiles place
+much of bar drawing in native drawRect/drawPicture calls.
+
+Across three A/B/B/A matrices, all 76 candidate geometry/options/context/path
+and exact-pixel comparisons pass (104 timing cells); callback counts match.
+Production library source is unchanged. No general speed, raster or FPS claim
+follows. [Evidence, limits and reproduction](benchmarks/next-estimates/README.md).
+
+## 47. Native scatter option loops
+
+ADR 0079 prepares indexed point colors within scatter update/overflow loops.
+Each plan is local to one synchronous loop, with native chart/element/source
+guards. Coordinate eligibility is checked at the original iteration rather
+than by rescanning the dataset. Custom reads, active callbacks and custom points
+end reuse before user code runs. Context setters and fresh options remain.
+
+Final macOS profile A/B/B/A results over the current ADR 0078 implementation:
+
+| Indexed scatter | Update before → after | Full CPU before → after | Full reduction |
+| --- | ---: | ---: | ---: |
+| 5000 points | 16.249 → 4.503ms | 17.531 → 5.644ms | 67.8% |
+| 20000 points | 66.780 → 18.299ms | 71.233 → 23.855ms | 66.5% |
+
+Both run orders agree within 0.04 percentage points. Static/scriptable and
+line/bar control means range from 1.6% slower to 2.9% faster; all are retained.
+Callback counts match. The implementation avoids the repeated full-input scans
+that erased gains in §46 and retains ordinary context writes. No public API or
+callback optimization is introduced; no raster, mobile/web speed or FPS claim
+follows. The 20000-point CPU time still exceeds a 16.67ms frame budget.
+
+All 10,899 workspace tests, 233 focused tests on each browser backend, analysis,
+formatting and port checks pass. [Raw results and reproduction](benchmarks/scatter-options/README.md).

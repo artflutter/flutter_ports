@@ -2403,3 +2403,8 @@ at the same canvas dimensions and configuration.
 - ADR 0077 border-color follow-up: the remaining typed dataset color triplet
   now uses ChartValue and direct Opt lowering. Canvas operations, the cut
   inventory, rendering pinning tests and estimates are unchanged. No trigger.
+
+- 2026-11-03, ADR 0079 adds native chart/point capabilities and prepares options
+  within scatter controller loops. Point drawing, canvas operations, the cut
+  inventory and rendering pinning tests remain unchanged. New update timings
+  belong to performance.md §47; no deferred canvas work is brought forward.

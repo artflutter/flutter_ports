@@ -52,6 +52,7 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart'
     as core_registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
+import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -634,7 +635,8 @@ class Chart
         types.Chart,
         CategoryLabelSource,
         SingleBarIndexSource,
-        BulkBarChart {
+        BulkBarChart,
+        NativePointChart {
   /// core.controller.js:123 `constructor(item, userConfig)`.
   ///
   /// [item] is a canvas element, a context, an object with a `canvas`, or
@@ -1015,6 +1017,12 @@ class Chart
   @internal
   // DIVERGES(chartjs): adapt-bulk-bar-update, ordinary native chart reads.
   bool get supportsBulkBarUpdate => super.runtimeType == Chart;
+
+  /// Ordinary data/config/context and DPR reads for a native point loop.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-scatter-point-options, native chart contract.
+  bool get supportsNativePointOptions => super.runtimeType == Chart;
 
   final _barScaleKeys = BarScaleKeys();
   static final Type _nativeMetaListType = <ChartMeta?>[].runtimeType;

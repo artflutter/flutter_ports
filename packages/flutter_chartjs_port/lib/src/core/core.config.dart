@@ -56,11 +56,12 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
-    show BarOptions;
+    show BarOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         BarOptionsScope,
         ElementOptionsByTypeScope,
+        PointOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -557,6 +558,49 @@ class Config implements types.ChartConfiguration {
     if (bar.runtimeType != BarOptionsScope) return null;
     return cached.resolver.prepareIndexedBarColors(
       (bar! as BarOptionsScope).jsOwnKeys(),
+    );
+  }
+
+  /// A warmed scatter resolver over native context sources. No option getter
+  /// or context callback runs merely to qualify this synchronous loop.
+  @internal
+  // DIVERGES(chartjs): adapt-scatter-point-options, cached point inputs.
+  PointOptions Function(int)? prepareIndexedPointColors(int datasetIndex) {
+    if (super.runtimeType != Config ||
+        !supportsDataUpdates ||
+        (_config is OptionScope && _config.routeOf('type') != null)) {
+      return null;
+    }
+    final data = dataUpdateField(_config, 'data');
+    if (!nativeDataUpdateObject(data)) return null;
+    final datasets = dataUpdateField(data!, 'datasets');
+    if (!nativeDataUpdateList(datasets)) return null;
+    final list = datasets! as List<Object?>;
+    if (datasetIndex < 0 || datasetIndex >= list.length) return null;
+    final dataset = list[datasetIndex];
+    if (!nativeDataUpdateObject(dataset) ||
+        !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
+      return null;
+    }
+    final scopeKeys = datasetElementScopeKeys('scatter', 'point');
+    final scopes = _scopeCache[dataset]?[scopeKeys];
+    if (scopes == null) return null;
+    final cached = _resolverCache[scopes]?['point,'];
+    if (cached == null ||
+        cached.subPrefixes.length != 2 ||
+        cached.subPrefixes[0] != 'point' ||
+        cached.subPrefixes[1] != '') {
+      return null;
+    }
+    if (defaults.routeOf('elements') != null) return null;
+    final elements = defaults.elementsCell?.raw;
+    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
+    final elementScopes = elements! as ElementOptionsByTypeScope;
+    if (elementScopes.routeOf('point') != null) return null;
+    final point = elementScopes.pointCell?.raw;
+    if (point.runtimeType != PointOptionsScope) return null;
+    return cached.resolver.prepareIndexedPointColors(
+      (point! as PointOptionsScope).jsOwnKeys(),
     );
   }
 

@@ -94,6 +94,11 @@ bool nativeDataUpdateRoot(Object value) =>
 bool nativeDataUpdateList(Object? value) =>
     _lists.contains(value.runtimeType) || value is TypedDataList<num>;
 
+/// Immutable point implementations registered by the typed facade.
+@internal
+bool nativeDataUpdatePoint(TypedDataItem value) =>
+    _points.contains(value.runtimeType);
+
 /// Read only after native object qualification; routes cannot qualify.
 @internal
 Object? dataUpdateField(Object object, String key) {

@@ -325,6 +325,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     numeric bulk-bar remainder also accepts indexed background/border colors
     under native source/class guards, with no active bars or user callbacks in
     the remainder. Indexed geometry and custom reads keep ordinary resolution.
+    Chart.js ADR 0079 prepares indexed point colors within scatter update and
+    overflow loops. Plans end before custom reads/points or active callbacks;
+    coordinate guards run at their original iteration, without a whole-data
+    scan. Context setters, fresh options and ordinary fallback order remain.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
