@@ -714,6 +714,14 @@ final class Path2D implements CanvasPath {
   Uint8List? _kinds;
   Float64List? _coordinates;
   int _length = 0;
+  // DIVERGES(chartjs): adapt-chunked-path-storage, retain full chunks instead
+  // of recopying their commands. Each path owns all of its buffers.
+  int _chunkLength = 0;
+  List<Uint8List>? _kindChunks;
+  List<Float64List>? _coordinateChunks;
+  // Small paths retain the original 16-entry start. Only the first chunk
+  // grows; subsequent chunks have a bounded payload and never copy old chunks.
+  static const _chunkCapacity = 1024;
 
   // DIVERGES(chartjs): adapt-compact-path-storage, private scalar commands.
   // Compact only unobserved move/line/close commands. Curves and inspection
@@ -729,19 +737,41 @@ final class Path2D implements CanvasPath {
     final existing = _commands;
     if (existing != null) return existing;
     final result = <PathCommand>[];
-    final kinds = _kinds;
-    final coordinates = _coordinates;
-    for (var i = 0; i < _length; i++) {
-      result.add(switch (kinds![i]) {
-        _close => const ClosePathCommand(),
-        _move => MoveToCommand(coordinates![i * 2], coordinates[i * 2 + 1]),
-        _ => LineToCommand(coordinates![i * 2], coordinates[i * 2 + 1]),
-      });
+    final chunks = _kindChunks;
+    if (chunks != null) {
+      for (var j = 0; j < chunks.length; j++) {
+        _materializeChunk(
+          result,
+          chunks[j],
+          _coordinateChunks![j],
+          _chunkCapacity,
+        );
+      }
     }
+    if (_chunkLength > 0) {
+      _materializeChunk(result, _kinds!, _coordinates!, _chunkLength);
+    }
+    _kindChunks = null;
+    _coordinateChunks = null;
     _commands = result;
     _kinds = null;
     _coordinates = null;
     return result;
+  }
+
+  void _materializeChunk(
+    List<PathCommand> result,
+    Uint8List kinds,
+    Float64List coordinates,
+    int length,
+  ) {
+    for (var i = 0; i < length; i++) {
+      result.add(switch (kinds[i]) {
+        _close => const ClosePathCommand(),
+        _move => MoveToCommand(coordinates[i * 2], coordinates[i * 2 + 1]),
+        _ => LineToCommand(coordinates[i * 2], coordinates[i * 2 + 1]),
+      });
+    }
   }
 
   void _append(int kind, double x, double y) {
@@ -756,22 +786,32 @@ final class Path2D implements CanvasPath {
     }
     var kinds = _kinds;
     var coordinates = _coordinates;
-    if (kinds == null || _length == kinds.length) {
-      final capacity = kinds == null ? 16 : kinds.length * 2;
+    if (kinds == null || _chunkLength == kinds.length) {
+      final grow = kinds != null && kinds.length < _chunkCapacity;
+      final capacity = kinds == null
+          ? 16
+          : grow
+          ? kinds.length * 2
+          : _chunkCapacity;
       final nextKinds = Uint8List(capacity);
       final nextCoordinates = Float64List(capacity * 2);
-      if (kinds != null) {
-        nextKinds.setRange(0, _length, kinds);
-        nextCoordinates.setRange(0, _length * 2, coordinates!);
+      if (grow) {
+        nextKinds.setRange(0, _chunkLength, kinds);
+        nextCoordinates.setRange(0, _chunkLength * 2, coordinates!);
+      } else if (kinds != null) {
+        (_kindChunks ??= []).add(kinds);
+        (_coordinateChunks ??= []).add(coordinates!);
+        _chunkLength = 0;
       }
       _kinds = kinds = nextKinds;
       _coordinates = coordinates = nextCoordinates;
     }
-    kinds[_length] = kind;
+    kinds[_chunkLength] = kind;
     if (kind != _close) {
-      coordinates![_length * 2] = x;
-      coordinates[_length * 2 + 1] = y;
+      coordinates![_chunkLength * 2] = x;
+      coordinates[_chunkLength * 2 + 1] = y;
     }
+    _chunkLength++;
     _length++;
   }
 
@@ -898,16 +938,31 @@ final class Path2D implements CanvasPath {
       replay(target);
       return;
     }
-    final kinds = _kinds;
-    final coordinates = _coordinates;
-    for (var i = 0; i < _length; i++) {
-      switch (kinds![i]) {
+    final chunks = _kindChunks;
+    if (chunks != null) {
+      for (var j = 0; j < chunks.length; j++) {
+        _replayChunk(target, chunks[j], _coordinateChunks![j], _chunkCapacity);
+      }
+    }
+    if (_chunkLength > 0) {
+      _replayChunk(target, _kinds!, _coordinates!, _chunkLength);
+    }
+  }
+
+  void _replayChunk(
+    CanvasPath target,
+    Uint8List kinds,
+    Float64List coordinates,
+    int length,
+  ) {
+    for (var i = 0; i < length; i++) {
+      switch (kinds[i]) {
         case _close:
           target.closePath();
         case _move:
-          target.moveTo(coordinates![i * 2], coordinates[i * 2 + 1]);
+          target.moveTo(coordinates[i * 2], coordinates[i * 2 + 1]);
         default:
-          target.lineTo(coordinates![i * 2], coordinates[i * 2 + 1]);
+          target.lineTo(coordinates[i * 2], coordinates[i * 2 + 1]);
       }
     }
   }

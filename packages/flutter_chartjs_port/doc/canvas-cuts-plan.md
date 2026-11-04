@@ -2450,3 +2450,10 @@ at the same canvas dimensions and configuration.
   recording boundaries remain. This is a storage/transport change within the
   existing N1–N5 behavior, not a new draw cut. Exact-pixel, mutable-path and
   lifecycle pinning tests validate it. See performance.md §55 and its evidence.
+
+- 2026-11-04, ADR 0085 bounds Path2D compact storage to chunks, retaining
+  completed chunks rather than copying them on growth. It preserves native
+  replay order, public command-list behavior, recording boundaries and the
+  existing N1–N5 drawing operations. No new canvas cut or data-only change.
+  Boundary/ownership and native pixel tests pin this storage-only change;
+  performance.md §57 records production verification.
