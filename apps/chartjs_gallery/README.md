@@ -51,3 +51,60 @@ flutter run -d macos --profile -t lib/main_stress.dart \
 `INDEXED` defaults to 0 and cannot be combined with `SCRIPTABLE=1`. Indexed runs
 add `indexed: true` to their `STRESS` output; existing benchmark cases and default
 profiling configurations keep their previous colors.
+
+## Official-site design drafts
+
+Three Flutter-only directions for the broader flutter_ports initiative:
+**Signal** (blue and white), **Workbench** (dark and lime), and **Fieldnotes**
+(warm editorial). Switch designs in the preview toolbar. Chart.js is the first
+live demo, not the scope of the initiative.
+
+Run from this directory:
+
+```sh
+flutter run -d web-server --web-port 8791 --target lib/main_site_drafts.dart
+```
+
+Open `http://localhost:8791` in VS Code's built-in browser. Direct selections use
+`?design=signal`, `?design=workbench`, or `?design=fieldnotes`.
+
+For a release preview with WebAssembly and Flutter's JavaScript fallback:
+
+```sh
+flutter build web --wasm --target lib/main_site_drafts.dart --output build/site_drafts
+python3 -m http.server 8791 --directory build/site_drafts
+```
+
+The **Awesome Flutter Ports** section credits independent community projects.
+Its initial entries were checked against their maintainers' package descriptions:
+[highlighting](https://pub.dev/packages/highlighting),
+[turf](https://pub.dev/packages/turf), and
+[supercluster](https://pub.dev/packages/supercluster).
+Project and suggestion buttons show copyable destinations in these design drafts;
+they do not submit suggestions. Community packages are not bundled in the demo.
+
+Validate the layouts and interactions with
+`flutter test test/site_drafts_test.dart`. These are local design drafts, not a
+published official site.
+
+### Package activity snapshots
+
+Every port and community entry shows its last default-branch commit, commits in
+the trailing 90 days, latest pub.dev release, and separate open issue and PR
+counts (draft PRs included). Our monorepo activity is filtered by package path;
+issue/PR totals are shared repository counts. Community activity is repository
+wide. Commits include docs and maintenance, not only features.
+
+Refresh the public metadata before building the preview:
+
+```sh
+python3 tool/refresh_site_stats.py
+```
+
+The tool uses `gh api` for GitHub and the public pub.dev API for releases. It
+writes `assets/site_drafts/package_stats.json`, which Flutter bundles for offline
+rendering. API failures become unknown values, not zero counts; the command exits
+nonzero if any lookup failed. Only a pub.dev 404 means unpublished. No API token
+or runtime network request is included in the app. The checked timestamp is shown
+in UTC; snapshots older than seven days are labeled "Older snapshot". This draft
+has a manual refresh, not a scheduled background service.
