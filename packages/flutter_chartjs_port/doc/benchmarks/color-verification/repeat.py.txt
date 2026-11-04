@@ -1,0 +1,27 @@
+import json,os,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+
+def run(label,app,extra,expected,frames=False):
+ print('START',label,flush=True)
+ result=out/(label+'.results');result.unlink(missing_ok=True)
+ env={**os.environ,'FRAMES':'0','CALLS':'update','STYLES':'static,indexed,scriptable','CONNECTED':'0,1','LABELS':'0','SPIN':'0','N':'20000','TYPE':'line','VARIANTS':'baseline' if app=='baseline' else 'production','SECONDS':'8',**extra,'OUTPUT':str(result)}
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([f'/tmp/color-verification-{app}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=240,check=True)
+ marker='LINE_FRAME ' if frames else 'LINE_CPU '
+ rows=[json.loads(l.split(marker,1)[1]) for l in result.read_text().splitlines() if l.startswith(marker)]
+ assert len(rows)==expected,(label,len(rows),expected)
+ if frames:assert all(r['samples']>=4 and r['frameTimings']>=25 and r['canvas']=='1036.0x520.0@2.0' for r in rows),(label,'invalid frame window')
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,len(rows),flush=True);return rows
+
+rows=run('repeat-data-static','production',{'FRAMES':'1','CALLS':'data','STYLES':'static','LABELS':'0,50,200'},6,True)
+visibility=[json.loads(s) for s in (out/'repeat-data-static.results.window').read_text().splitlines()]
+prepared=next(r for r in visibility if r['event']=='prepared')
+assert prepared['width']==1100 and prepared['height']==900 and prepared['dpr']==2
+assert not any(r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or r['width']!=1100 or r['height']!=900 or r['dpr']!=2) for r in visibility)
+prod=json.loads((out/'production.json').read_text())
+keys=lambda r:(r['call'],r['style'],r['connected'],r['labels'],r['spin'])
+replace={keys(r):r for r in rows}
+prod=[replace.get(keys(r),r) for r in prod]
+(out/'production.json').write_text(json.dumps(prod,indent=2)+'\n')
+(out/'replacements.json').write_text(json.dumps({'rejected':'matrix-data-static','accepted':'repeat-data-static','reason':'Window occluded and height changed after startup; six-case group repeated.'},indent=2)+'\n')

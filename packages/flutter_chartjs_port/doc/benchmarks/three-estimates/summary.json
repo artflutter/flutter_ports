@@ -1,0 +1,194 @@
+[
+  {
+    "variant": "baseline",
+    "connected": false,
+    "cpuMs": 22.207,
+    "savedMs": 0.0,
+    "reductionPercent": 0.0,
+    "runs": [
+      21.605999999999998,
+      22.808
+    ],
+    "components": {
+      "update": 14.245,
+      "draw": 7.048,
+      "end": 0.914
+    }
+  },
+  {
+    "variant": "baseline",
+    "connected": true,
+    "cpuMs": 26.177,
+    "savedMs": 0.0,
+    "reductionPercent": 0.0,
+    "runs": [
+      26.443,
+      25.911
+    ],
+    "components": {
+      "update": 13.988,
+      "draw": 11.256,
+      "end": 0.933
+    }
+  },
+  {
+    "variant": "varying",
+    "connected": false,
+    "cpuMs": 19.8155,
+    "savedMs": 2.3915000000000006,
+    "reductionPercent": 10.769126851893551,
+    "runs": [
+      20.948999999999998,
+      18.682000000000002
+    ],
+    "components": {
+      "update": 11.68,
+      "draw": 7.2195,
+      "end": 0.916
+    }
+  },
+  {
+    "variant": "varying",
+    "connected": true,
+    "cpuMs": 24.601,
+    "savedMs": 1.5760000000000005,
+    "reductionPercent": 6.020552393322387,
+    "runs": [
+      23.388,
+      25.814
+    ],
+    "components": {
+      "update": 11.846,
+      "draw": 11.746500000000001,
+      "end": 1.0085000000000002
+    }
+  },
+  {
+    "variant": "scalar",
+    "connected": false,
+    "cpuMs": 18.456000000000003,
+    "savedMs": 3.7509999999999977,
+    "reductionPercent": 16.891070383212494,
+    "runs": [
+      18.844,
+      18.068
+    ],
+    "components": {
+      "update": 12.1765,
+      "draw": 5.3675,
+      "end": 0.912
+    }
+  },
+  {
+    "variant": "scalar",
+    "connected": true,
+    "cpuMs": 24.241,
+    "savedMs": 1.936,
+    "reductionPercent": 7.3958054780914555,
+    "runs": [
+      25.212,
+      23.27
+    ],
+    "components": {
+      "update": 13.5025,
+      "draw": 9.8215,
+      "end": 0.917
+    }
+  },
+  {
+    "variant": "entry",
+    "connected": false,
+    "cpuMs": 16.999499999999998,
+    "savedMs": 5.207500000000003,
+    "reductionPercent": 23.449813121988573,
+    "runs": [
+      17.303,
+      16.695999999999998
+    ],
+    "components": {
+      "update": 12.773499999999999,
+      "draw": 3.314,
+      "end": 0.912
+    }
+  },
+  {
+    "variant": "entry",
+    "connected": true,
+    "cpuMs": 24.5985,
+    "savedMs": 1.5784999999999982,
+    "reductionPercent": 6.030102761966605,
+    "runs": [
+      24.389,
+      24.808
+    ],
+    "components": {
+      "update": 16.0735,
+      "draw": 7.6105,
+      "end": 0.9145000000000001
+    }
+  },
+  {
+    "variant": "packing",
+    "connected": false,
+    "cpuMs": 21.9495,
+    "savedMs": 0.2575000000000003,
+    "reductionPercent": 1.1595442878371665,
+    "runs": [
+      22.113,
+      21.786
+    ],
+    "components": {
+      "update": 14.242,
+      "draw": 6.837,
+      "end": 0.8705
+    }
+  },
+  {
+    "variant": "packing",
+    "connected": true,
+    "cpuMs": 25.792,
+    "savedMs": 0.384999999999998,
+    "reductionPercent": 1.4707567712113567,
+    "runs": [
+      25.976,
+      25.608
+    ],
+    "components": {
+      "update": 13.7335,
+      "draw": 11.1785,
+      "end": 0.88
+    }
+  },
+  {
+    "variant": "best",
+    "connected": false,
+    "cpuMs": 13.7315,
+    "savedMs": 8.4755,
+    "reductionPercent": 38.165893637141444,
+    "runs": [
+      13.353,
+      14.11
+    ],
+    "components": {
+      "update": 10.4575,
+      "draw": 2.357,
+      "end": 0.917
+    }
+  },
+  {
+    "variant": "best",
+    "connected": true,
+    "cpuMs": 19.615499999999997,
+    "savedMs": 6.561500000000002,
+    "reductionPercent": 25.0658975436452,
+    "runs": [
+      19.637999999999998,
+      19.593
+    ],
+    "components": {
+      "update": 12.003,
+      "draw": 6.6975,
+      "end": 0.915
+    }
+  }
+]

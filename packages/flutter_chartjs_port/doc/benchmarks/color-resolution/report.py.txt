@@ -1,0 +1,29 @@
+from pathlib import Path
+import json,gzip,shutil
+w=Path(__file__).resolve().parent
+out=Path('packages/flutter_chartjs_port/doc/benchmarks/color-resolution')
+allrows={p.stem:json.loads(p.read_text()) for p in w.glob('prod-*.json')}
+full=lambda r:sum(float(r[k]) for k in ['updateMedianMs','drawMedianMs','endMedianMs'])
+cpu=[]
+for kind in ['line','scatter','bar']:
+ suffix='' if kind=='line' else '-'+kind
+ groups={k:allrows['prod-'+k+suffix] for k in ['a1','b1','b2','a2']}
+ for i,source in enumerate(groups['a1']):
+  pair={k:full(rows[i]) for k,rows in groups.items()}
+  a=(pair['a1']+pair['a2'])/2;b=(pair['b1']+pair['b2'])/2
+  cpu.append({'type':kind,'n':source['n'],'style':source['style'],'connected':source['connected'],'before':a,'after':b,'reductionPct':(1-b/a)*100,'processMedians':pair,'pairedReductionPct':[(1-pair['b1']/pair['a1'])*100,(1-pair['b2']/pair['a2'])*100]})
+frames={p.stem:json.loads(p.read_text()) for p in w.glob('frames-*.json')}
+(out/'summary.json').write_text(json.dumps({'cpu':cpu,'frames':frames},indent=2)+'\n')
+with gzip.open(out/'measurements.json.gz','wt') as f:json.dump({'cpu':allrows,'frames':frames},f,indent=2)
+for p in w.glob('*.log'):
+ with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+for p in w.glob('*.results'):
+ with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+shutil.copyfile(__file__,out/'report.py.txt')
+print('| Type / items | Colors | Connected | Before ms | After ms | Reduction |\n| --- | --- | --- | ---: | ---: | ---: |')
+for r in cpu:print(f"| {r['type']} / {r['n']} | {r['style']} | {'on' if r['connected'] else 'off'} | {r['before']:.2f} | {r['after']:.2f} | {r['reductionPct']:.1f}% |")
+if 'frames-a' in frames and 'frames-b' in frames:
+ print('\n| Operation | Colors | Connected | Labels | FPS before → after | UI p90 before → after ms |\n| --- | --- | --- | ---: | ---: | ---: |')
+ for a,b in zip(frames['frames-a'],frames['frames-b']):
+  assert (a['call'],a['style'],a['connected'],a['labels'])==(b['call'],b['style'],b['connected'],b['labels'])
+  print(f"| {a['call']} | {a['style']} | {'on' if a['connected'] else 'off'} | {a['labels']} | {a['fps']:.1f} → {b['fps']:.1f} | {a['buildP90Ms']:.2f} → {b['buildP90Ms']:.2f} |")

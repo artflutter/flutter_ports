@@ -1,0 +1,37 @@
+import json,os,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+
+def run(label,app,extra,expected,frames=False):
+ print('START',label,flush=True)
+ result=out/(label+'.results');result.unlink(missing_ok=True)
+ env={**os.environ,'FRAMES':'0','CALLS':'update','STYLES':'static,indexed,scriptable','CONNECTED':'0,1','LABELS':'0','SPIN':'0','N':'20000','TYPE':'line','VARIANTS':'baseline' if app=='baseline' else 'production','SECONDS':'8',**extra,'OUTPUT':str(result)}
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([f'/tmp/color-verification-{app}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=240,check=True)
+ marker='LINE_FRAME ' if frames else 'LINE_CPU '
+ rows=[json.loads(l.split(marker,1)[1]) for l in result.read_text().splitlines() if l.startswith(marker)]
+ assert len(rows)==expected,(label,len(rows),expected)
+ if frames:assert all(r['samples']>=4 and r['frameTimings']>=25 and r['canvas']=='1036.0x520.0@2.0' for r in rows),(label,'invalid frame window')
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,len(rows),flush=True);return rows
+
+production=[]
+baseline=[]
+for call in ['update','data']:
+ for style in ['indexed','scriptable']:
+  for tag,app in [('a','baseline'),('b','production')]:
+   rows=run(f'paired-{tag}-{call}-{style}',app,{'FRAMES':'1','CALLS':call,'STYLES':style,'LABELS':'0,200'},4,True)
+   (baseline if tag=='a' else production).extend(rows)
+(out/'baseline.json').write_text(json.dumps(baseline,indent=2)+'\n')
+(out/'paired-production.json').write_text(json.dumps(production,indent=2)+'\n')
+for call in ['draw','update','data','animate']:
+ for style in ['static','indexed','scriptable']:
+  ms='50' if call in ['update','data'] and style in ['indexed','scriptable'] else '0,50,200'
+  rows=run(f'matrix-{call}-{style}', 'production',{'FRAMES':'1','CALLS':call,'STYLES':style,'LABELS':ms},2*len(ms.split(',')),True)
+  production.extend(rows)
+for call in ['draw','update','data','animate']:
+ for style in ['static','indexed','scriptable']:
+  production.extend(run(f'spin-{call}-{style}','production',{'FRAMES':'1','CALLS':call,'STYLES':style,'LABELS':'200','SPIN':'1'},2,True))
+assert len(production)==96
+assert len({(r['call'],r['style'],r['connected'],r['labels'],r['spin']) for r in production})==96
+(out/'production.json').write_text(json.dumps(production,indent=2)+'\n')
+print('VERIFIED 96 production cases and 16 matched baseline cases',flush=True)

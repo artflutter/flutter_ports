@@ -1,0 +1,40 @@
+from pathlib import Path
+import json,gzip,shutil,hashlib
+w=Path(__file__).resolve().parent
+out=Path('packages/flutter_chartjs_port/doc/benchmarks/color-verification')
+prod=json.loads((w/'production.json').read_text());base=json.loads((w/'baseline.json').read_text());paired=json.loads((w/'paired-production.json').read_text())
+key=lambda r:(r['call'],r['style'],r['connected'],r['labels'],r['spin'])
+assert len(prod)==96 and len({key(r) for r in prod})==96
+assert all(r['samples']>=4 and r['frameTimings']>=25 and r['canvas']=='1036.0x520.0@2.0' for r in prod+base)
+bykey={key(r):r for r in paired};comparison=[]
+for a in base:
+ b=bykey[key(a)];comparison.append({'call':a['call'],'style':a['style'],'connected':a['connected'],'labels':a['labels'],'before':a,'after':b})
+summary=[]
+for spin in [False,True]:
+ for call in ['draw','update','data','animate']:
+  rows=[r for r in prod if r['spin']==spin and r['call']==call]
+  summary.append({'call':call,'spin':spin,'cases':len(rows),'minFps':min(r['fps'] for r in rows),'maxFps':max(r['fps'] for r in rows),'maxBuildP90Ms':max(r['buildP90Ms'] for r in rows),'maxRasterP90Ms':max(r['rasterP90Ms'] for r in rows),'near60WithP90Budget':sum(r['fps']>=59 and r['buildP90Ms']<=1000/60 and r['rasterP90Ms']<=1000/60 for r in rows)})
+accepted=[p for p in w.glob('*.results.window') if p.name.startswith(('paired-','matrix-','spin-','repeat-')) and p.name!='matrix-data-static.results.window']
+assert len(accepted)==32,len(accepted)
+for p in accepted:
+ rows=[json.loads(line) for line in p.read_text().splitlines()]
+ prepared=next(r for r in rows if r['event']=='prepared')
+ assert (prepared['width'],prepared['height'],prepared['dpr'])==(1100,900,2),p
+ assert not any(r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or r['width']!=1100 or r['height']!=900 or r['dpr']!=2) for r in rows),p
+result={'summary':summary,'comparison':comparison,'production':prod,'baseline':base,'worstByFps':sorted(prod,key=lambda r:r['fps'])[:8],'validFrameTimings':sum(r['frameTimings'] for r in prod+base),'acceptedWindowLogs':[p.name for p in accepted],'minReadouts':min(r['samples'] for r in prod+base),'minFrameTimings':min(r['frameTimings'] for r in prod+base)}
+result['controlRepeat']=json.loads((w/'control-repeat.json').read_text())
+(out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
+for p in w.glob('*.log'):
+ with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+for p in list(w.glob('*.results'))+list(w.glob('*.window')):
+ with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+with gzip.open(out/'measurements.json.gz','wt') as f:json.dump({p.stem:json.loads(p.read_text()) for p in w.glob('*.json')},f,indent=2)
+shutil.copyfile(__file__,out/'report.py.txt')
+m=json.loads((out/'metadata.json').read_text());assert all(hashlib.sha256(Path(p).read_bytes()).hexdigest()==h for p,h in m['productionSourceSha256'].items())
+print('| Labels | Operation | Cases | FPS range | Worst UI p90 ms | Worst raster p90 ms |\n| --- | --- | ---: | ---: | ---: | ---: |')
+for r in summary:print(f"| {'200 rotating' if r['spin'] else '0/50/200 static'} | {r['call']} | {r['cases']} | {r['minFps']:.1f}–{r['maxFps']:.1f} | {r['maxBuildP90Ms']:.2f} | {r['maxRasterP90Ms']:.2f} |")
+print('\n| Operation | Colors | Connected | Labels | FPS before → after | UI p90 before → after ms |\n| --- | --- | --- | ---: | ---: | ---: |')
+for r in comparison:
+ a,b=r['before'],r['after'];print(f"| {r['call']} | {r['style']} | {'on' if r['connected'] else 'off'} | {r['labels']} | {a['fps']:.1f} → {b['fps']:.1f} | {a['buildP90Ms']:.2f} → {b['buildP90Ms']:.2f} |")
+print('\n| Operation | Colors | Connected | Labels | Rotating | FPS | UI p90 ms |\n| --- | --- | --- | ---: | --- | ---: | ---: |')
+for r in sorted(prod,key=lambda r:(r['spin'],r['call'],r['style'],r['connected'],r['labels'])):print(f"| {r['call']} | {r['style']} | {'on' if r['connected'] else 'off'} | {r['labels']} | {r['spin']} | {r['fps']:.1f} | {r['buildP90Ms']:.2f} |")

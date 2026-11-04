@@ -1,0 +1,12 @@
+{
+  "resolverVariantTestsPassed": 114,
+  "additionalTwoColorTestsPassed": 15,
+  "callbackCountPerUpdate": 20006,
+  "nativePixelComparisonsAfterWarmup": 300,
+  "nativePixelMismatchesAfterWarmup": 0,
+  "coldStartPixelDifferences": "First small-circle case differed for all three drawing variants; retained, not treated as a production pass.",
+  "packingCoordinates": "matched original arithmetic during pixel checks",
+  "atlasCommands": "identity-transform variant buffers matched during warmed checks",
+  "frameCheck": "rejected; no frame callbacks or valid samples",
+  "scope": "Isolated estimation only. No full correctness matrix or production implementation."
+}

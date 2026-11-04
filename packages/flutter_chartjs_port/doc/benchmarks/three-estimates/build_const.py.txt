@@ -1,0 +1,27 @@
+import subprocess,shutil,json,hashlib,re
+from pathlib import Path
+root=Path('/tmp/three-estimates-work');out=Path(__file__).resolve().parent
+module=root/'packages/flutter_chartjs_port/lib/src/core/color_estimates.dart'
+(out/'runtime_flags.dart').write_bytes(module.read_bytes())
+s=module.read_text()
+for name,key in [('Varying','VARYING'),('Scalar','SCALAR'),('Drawing','DRAWING'),('Packing','PACKING')]:s=s.replace(f'bool estimate{name} = false;',f"const bool estimate{name} = bool.fromEnvironment('{key}');")
+s=s.replace('bool estimateCheckPixels = false;','const bool estimateCheckPixels = false;');module.write_text(s)
+p=root/'.dart_tool/three_estimates/probe.dart';s=p.read_text();(out/'pixel_probe.dart').write_text(s)
+s=s.replace("import 'pixels.dart';\n",'')
+a=s.index("  if (env['PIXEL_CHECK'] == '1') {");b=s.index("  } else if (env['FRAMES'] == '1') {",a)
+s=s[:a]+"  if (env['FRAMES'] == '1') {"+s[b+len("  } else if (env['FRAMES'] == '1') {"):]
+s=re.sub(r'\s*estimate(?:Varying|Scalar|Drawing|Packing)\s*=[^;]+;', '', s)
+p=root/'.dart_tool/three_estimates/const_probe.dart';p.write_text(s);(out/'const_probe.dart').write_text(s)
+variants={'baseline':[],'varying':['VARYING'],'scalar':['SCALAR'],'entry':['DRAWING'],'packing':['PACKING'],'best':['VARYING','SCALAR','DRAWING']}
+meta={}
+for name,flags in variants.items():
+ print('BUILD',name,flush=True)
+ with (out/('const-build-'+name+'.log')).open('w') as log:
+  subprocess.run(['flutter','build','macos','--profile','--no-pub','--target','../../.dart_tool/three_estimates/const_probe.dart',*[f'--dart-define={f}=true' for f in flags]],cwd=root/'apps/chartjs_gallery',stdout=log,stderr=subprocess.STDOUT,check=True)
+ dst=Path('/tmp/three-const-'+name+'.app')
+ subprocess.run(['ditto',str(root/'apps/chartjs_gallery/build/macos/Build/Products/Profile/chartjs_gallery.app'),str(dst)],check=True)
+ subprocess.run(['codesign','--force','--sign','-','--entitlements',str(Path('/Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/doc/benchmarks/category-layout/probe.entitlements')),str(dst)],check=True,capture_output=True)
+ binary=dst/'Contents/Frameworks/App.framework/Versions/A/App'
+ meta[name]={'defines':flags,'sha256':hashlib.sha256(binary.read_bytes()).hexdigest()}
+ (out/'const-binaries.json').write_text(json.dumps(meta,indent=2)+'\n')
+ print('DONE',name,flush=True)

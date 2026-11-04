@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-04",
+  "gitHead": "ba58aa8a918f3d078c15f833abdb0337a96b271a",
+  "baseline": "Existing working tree after ADR 0082; production library sources were not changed by this investigation.",
+  "hardware": "Apple M3 Max",
+  "os": "macOS 27.0.1",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "build": "profile AOT arm64",
+  "renderer": "Impeller MetalSDF",
+  "cpuCanvas": "800x480 DPR1",
+  "definesAndBinaries": {
+    "baseline": {
+      "defines": [],
+      "sha256": "17dfede8aeee6764a7327f6649de1f14a31c0d6ee82898156a345c8179c74733"
+    },
+    "varying": {
+      "defines": [
+        "VARYING"
+      ],
+      "sha256": "e6e0faa525b6b6ed4d6564ec74391061490cc079cabd6accf8abab46f9b48374"
+    },
+    "scalar": {
+      "defines": [
+        "SCALAR"
+      ],
+      "sha256": "fc0d0937d9955df077678b8630375d8330d36daa92b852713dd9765fc04edcd1"
+    },
+    "entry": {
+      "defines": [
+        "DRAWING"
+      ],
+      "sha256": "209e7ac7baf7f71b2de3f5b0d8471edddd26284234934c31eeb5d605d90b083b"
+    },
+    "packing": {
+      "defines": [
+        "PACKING"
+      ],
+      "sha256": "b962b7bf50149cb3f230f395804623ba3cca2b5b7024a1a4423c5211436cf7e2"
+    },
+    "best": {
+      "defines": [
+        "VARYING",
+        "SCALAR",
+        "DRAWING"
+      ],
+      "sha256": "aeadd16db0d9455aae6ac23f12eb0a0700cfc28d1e7f50526ed67061c1816f99"
+    }
+  },
+  "sources": {
+    "packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart": {
+      "baseline": "d31c255b2eda803e7fedeaf8abb780fb34be6d27f9b4e6c9af8d07799fe01e3a",
+      "prototype": "555caf442773ccf2f1c25e4ac4cf5a38e587391a86a27a59b611eac1dd86a007"
+    },
+    "packages/flutter_chartjs_port/lib/src/elements/element.point.dart": {
+      "baseline": "0fa0ddfd9c3032291b29803455c24d955007cb05f0ab2e8550d90a0b13d27f00",
+      "prototype": "72f4495ec1c4067b5e3ae3e16c72d4bea097de47d7aa3c730618fb801e25dbe5"
+    },
+    "packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart": {
+      "baseline": "9ad3588dd697b27d178e2254e9256269b6c08c346500f775eec7a6a03eaa264f",
+      "prototype": "210d60b7798a4e0f7de71bfd529c5eddc3db9706e80155f2d3989eefa884142c"
+    },
+    "packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart": {
+      "baseline": "cfd9a575ec3aedf007278fd71d29af0c01515e8563557aa049ad0af6d95e5575",
+      "prototype": "c019e01baad7d91bdd6a07289e15d5e9223b34616a374dc9410f03f5d77b3565"
+    }
+  }
+}

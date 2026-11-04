@@ -1,0 +1,152 @@
+// Original code, not ported from Chart.js: isolated native pixel equivalence.
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter_chartjs_port/src/core/color_estimates.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+
+Future<Uint8List> render(
+  int variant,
+  int dpr,
+  double radius,
+  double width,
+  int alpha,
+  bool indexed,
+  int transform,
+) async {
+  estimateDrawing = variant == 1 || variant == 3;
+  estimatePacking = variant == 2 || variant == 3;
+  final element = UiCanvasElement(width: 128 * dpr, height: 128 * dpr);
+  final ctx = element.getContext2d();
+  ctx.scale(dpr.toDouble(), dpr.toDouble());
+  if (transform == 1) {
+    ctx.translate(20, 10);
+    ctx.rotate(.3);
+  }
+  if (transform == 2) {
+    ctx.scale(1.2, .8);
+  }
+  for (var i = 0; i < 600; i++) {
+    final point = PointElement()
+      ..x = -5 + (i * 7.371) % 140
+      ..y = -3 + (i * 5.127) % 136;
+    point.options = PointOptions(<String, Object?>{
+      'radius': radius,
+      'hoverRadius': radius,
+      'borderWidth': width,
+      'pointStyle': 'circle',
+      'rotation': 0.0,
+      'backgroundColor': ui.Color.fromARGB(
+        alpha,
+        indexed && i.isOdd ? 255 : 30,
+        90,
+        200,
+      ),
+      'borderColor': const ui.Color(0xff2499ff),
+    });
+    point.draw(ctx);
+  }
+  // The fast entry must retain the last path and the observable paint state.
+  ctx.fill();
+  ctx.stroke();
+  final recorder = ui.PictureRecorder();
+  ctx.paint(ui.Canvas(recorder), ui.Offset.zero, 1, 1);
+  final picture = recorder.endRecording();
+  final image = picture.toImageSync(128 * dpr, 128 * dpr);
+  final bytes = (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!
+      .buffer
+      .asUint8List();
+  image.dispose();
+  picture.dispose();
+  element.width = element.width;
+  return bytes;
+}
+
+Future<Map<String, Object?>> checkPixels() async {
+  estimateCheckPixels = true;
+  var comparisons = 0;
+  final mismatches = <Map<String, Object?>>[];
+  void compare(Uint8List a, Uint8List b, Map<String, Object?> scene) {
+    var count = 0, max = 0;
+    for (var i = 0; i < a.length; i++) {
+      final d = (a[i] - b[i]).abs();
+      if (d > 0) {
+        count++;
+        if (d > max) max = d;
+      }
+    }
+    if (count > 0)
+      mismatches.add({
+        ...scene,
+        'changedBytes': count,
+        'maxDelta': max,
+        'bytes': a.length,
+      });
+    comparisons++;
+  }
+
+  for (final dpr in [1, 2])
+    for (final radius in [1.0, 3.0, 12.0])
+      for (final width in [.5, 1.0, 3.0])
+        for (final alpha in [64, 255])
+          for (final indexed in [false, true]) {
+            final a = await render(0, dpr, radius, width, alpha, indexed, 0);
+            final repeated = await render(
+              0,
+              dpr,
+              radius,
+              width,
+              alpha,
+              indexed,
+              0,
+            );
+            compare(a, repeated, {
+              'variant': 0,
+              'dpr': dpr,
+              'radius': radius,
+              'width': width,
+              'alpha': alpha,
+              'indexed': indexed,
+              'transform': 0,
+            });
+            for (var v = 1; v <= 3; v++) {
+              final b = await render(v, dpr, radius, width, alpha, indexed, 0);
+              compare(a, b, {
+                'variant': v,
+                'dpr': dpr,
+                'radius': radius,
+                'width': width,
+                'alpha': alpha,
+                'indexed': indexed,
+                'transform': 0,
+              });
+            }
+          }
+  for (final dpr in [1, 2])
+    for (final t in [1, 2]) {
+      final a = await render(0, dpr, 3, 1, 64, true, t);
+      for (var v = 1; v <= 3; v++) {
+        final b = await render(v, dpr, 3, 1, 64, true, t);
+        compare(a, b, {
+          'variant': v,
+          'dpr': dpr,
+          'radius': 3,
+          'width': 1,
+          'alpha': 64,
+          'indexed': true,
+          'transform': t,
+        });
+      }
+    }
+  estimateDrawing = false;
+  estimatePacking = false;
+  estimateCheckPixels = false;
+  return {
+    'comparisons': comparisons,
+    'mismatches': mismatches,
+    'dpr': [1, 2],
+    'packingCoordinatesExact': true,
+  };
+}

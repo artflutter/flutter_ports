@@ -1,0 +1,8 @@
+import subprocess,os,json
+from pathlib import Path
+out=Path(__file__).resolve().parent
+for label,draw in [('a1','0'),('b1','1'),('b2','1'),('a2','0')]:
+ target=out/('cold-'+label+'.json');target.unlink(missing_ok=True)
+ with (out/('cold-'+label+'.log')).open('w') as log:
+  subprocess.run(['/tmp/color-cold-probe.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'DRAW':draw,'OUTPUT':str(target)},stdout=log,stderr=subprocess.STDOUT,timeout=60,check=True)
+ rows=json.loads(target.read_text());print(label,[(x['iteration'],x['frameBefore'],x['pixels'][:12],x['commands'][:12]) for x in rows],flush=True)

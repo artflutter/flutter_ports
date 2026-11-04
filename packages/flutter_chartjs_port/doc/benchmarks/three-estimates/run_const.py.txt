@@ -1,0 +1,26 @@
+import json,os,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+
+def run(label,variant,extra,expected,frames=False):
+ print('START',label,flush=True)
+ target=out/(label+'.results');target.unlink(missing_ok=True)
+ env={**os.environ,'FRAMES':'0','CALLS':'update','STYLES':'scriptable','CONNECTED':'0,1','LABELS':'0','SPIN':'0','N':'20000','TYPE':'line','VARIANTS':variant,'SECONDS':'8','TRACE':'0',**extra,'OUTPUT':str(target)}
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([('/tmp/three-estimates-baseline.app/Contents/MacOS/chartjs_gallery' if variant=='clean' else f'/tmp/three-const-{variant}.app/Contents/MacOS/chartjs_gallery'),'-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=100,check=True)
+ marker='LINE_FRAME ' if frames else 'LINE_CPU '
+ rows=[json.loads(l.split(marker,1)[1]) for l in target.read_text().splitlines() if l.startswith(marker)]
+ assert len(rows)==expected,(label,len(rows))
+ if frames:assert all(r['samples']>=4 and r['frameTimings']>=25 and r['canvas']=='1036.0x520.0@2.0' for r in rows)
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,len(rows),flush=True)
+run('const-clean-a1','clean',{},2)
+for repeat,variants in [('1',['baseline','varying','scalar','entry','packing','best']),('2',['best','packing','entry','scalar','varying','baseline'])]:
+ for variant in variants:
+  run('const-'+variant+'-'+repeat,variant,{},2)
+  if variant in ['baseline','entry','packing','best']:
+   run('const-draw-'+variant+'-'+repeat,variant,{'CALLS':'draw','STYLES':'static,indexed,scriptable','CONNECTED':'0'},3)
+  if variant in ['baseline','entry','best']:
+   run('const-control-'+variant+'-'+repeat,variant,{'STYLES':'static,indexed'},4)
+run('const-clean-a2','clean',{},2)
+for variant in ['baseline','best']:
+ run('const-frames-'+variant,variant,{'FRAMES':'1','LABELS':'0,200'},4,True)

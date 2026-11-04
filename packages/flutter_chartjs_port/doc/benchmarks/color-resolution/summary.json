@@ -1,0 +1,233 @@
+{
+  "cpu": [
+    {
+      "type": "line",
+      "n": 20000,
+      "style": "static",
+      "connected": false,
+      "before": 5.0135000000000005,
+      "after": 5.058999999999999,
+      "reductionPct": -0.9075496160366736,
+      "processMedians": {
+        "a1": 5.065,
+        "b1": 5.084,
+        "b2": 5.034,
+        "a2": 4.962
+      },
+      "pairedReductionPct": [
+        -0.37512339585388244,
+        -1.45102781136639
+      ]
+    },
+    {
+      "type": "line",
+      "n": 20000,
+      "style": "static",
+      "connected": true,
+      "before": 6.703,
+      "after": 6.7795000000000005,
+      "reductionPct": -1.1412800238699061,
+      "processMedians": {
+        "a1": 6.7170000000000005,
+        "b1": 6.781,
+        "b2": 6.7780000000000005,
+        "a2": 6.689
+      },
+      "pairedReductionPct": [
+        -0.9528063123418029,
+        -1.3305426820152455
+      ]
+    },
+    {
+      "type": "line",
+      "n": 20000,
+      "style": "indexed",
+      "connected": false,
+      "before": 12.2315,
+      "after": 12.080000000000002,
+      "reductionPct": 1.2386052405673809,
+      "processMedians": {
+        "a1": 11.943999999999999,
+        "b1": 12.200000000000001,
+        "b2": 11.96,
+        "a2": 12.519
+      },
+      "pairedReductionPct": [
+        -2.143335565974569,
+        4.4652128764278265
+      ]
+    },
+    {
+      "type": "line",
+      "n": 20000,
+      "style": "indexed",
+      "connected": true,
+      "before": 13.788499999999999,
+      "after": 13.985,
+      "reductionPct": -1.4251006273343858,
+      "processMedians": {
+        "a1": 13.848,
+        "b1": 13.95,
+        "b2": 14.02,
+        "a2": 13.729
+      },
+      "pairedReductionPct": [
+        -0.7365684575389775,
+        -2.1196008449267945
+      ]
+    },
+    {
+      "type": "line",
+      "n": 20000,
+      "style": "scriptable",
+      "connected": false,
+      "before": 16.3315,
+      "after": 12.7685,
+      "reductionPct": 21.816734531426995,
+      "processMedians": {
+        "a1": 16.105999999999998,
+        "b1": 12.592,
+        "b2": 12.945,
+        "a2": 16.557000000000002
+      },
+      "pairedReductionPct": [
+        21.81795604122686,
+        21.815546294618603
+      ]
+    },
+    {
+      "type": "line",
+      "n": 20000,
+      "style": "scriptable",
+      "connected": true,
+      "before": 18.308,
+      "after": 15.1445,
+      "reductionPct": 17.279331439807734,
+      "processMedians": {
+        "a1": 18.395,
+        "b1": 15.206000000000001,
+        "b2": 15.083,
+        "a2": 18.221
+      },
+      "pairedReductionPct": [
+        17.336232671921714,
+        17.221886833873
+      ]
+    },
+    {
+      "type": "scatter",
+      "n": 5000,
+      "style": "static",
+      "connected": false,
+      "before": 2.0165,
+      "after": 1.9874999999999998,
+      "reductionPct": 1.4381353830895338,
+      "processMedians": {
+        "a1": 2.0100000000000002,
+        "b1": 1.9769999999999999,
+        "b2": 1.998,
+        "a2": 2.023
+      },
+      "pairedReductionPct": [
+        1.641791044776142,
+        1.2357884330202684
+      ]
+    },
+    {
+      "type": "scatter",
+      "n": 5000,
+      "style": "indexed",
+      "connected": false,
+      "before": 4.399,
+      "after": 4.3545,
+      "reductionPct": 1.011593543987277,
+      "processMedians": {
+        "a1": 4.543,
+        "b1": 4.412,
+        "b2": 4.297,
+        "a2": 4.255
+      },
+      "pairedReductionPct": [
+        2.8835571208452593,
+        -0.9870740305522929
+      ]
+    },
+    {
+      "type": "scatter",
+      "n": 5000,
+      "style": "scriptable",
+      "connected": false,
+      "before": 11.96,
+      "after": 10.1985,
+      "reductionPct": 14.728260869565235,
+      "processMedians": {
+        "a1": 12.041,
+        "b1": 10.107,
+        "b2": 10.290000000000001,
+        "a2": 11.879000000000001
+      },
+      "pairedReductionPct": [
+        16.061788887966124,
+        13.376546847377725
+      ]
+    },
+    {
+      "type": "bar",
+      "n": 5000,
+      "style": "static",
+      "connected": false,
+      "before": 3.944,
+      "after": 3.947,
+      "reductionPct": -0.07606490872211769,
+      "processMedians": {
+        "a1": 3.974,
+        "b1": 3.96,
+        "b2": 3.934,
+        "a2": 3.9139999999999997
+      },
+      "pairedReductionPct": [
+        0.3522898842476141,
+        -0.5109862033725099
+      ]
+    },
+    {
+      "type": "bar",
+      "n": 5000,
+      "style": "indexed",
+      "connected": false,
+      "before": 4.778499999999999,
+      "after": 4.7669999999999995,
+      "reductionPct": 0.24066129538558023,
+      "processMedians": {
+        "a1": 4.766,
+        "b1": 4.718,
+        "b2": 4.816,
+        "a2": 4.7909999999999995
+      },
+      "pairedReductionPct": [
+        1.0071338648762085,
+        -0.5218117303277037
+      ]
+    },
+    {
+      "type": "bar",
+      "n": 5000,
+      "style": "scriptable",
+      "connected": false,
+      "before": 10.469,
+      "after": 9.802,
+      "reductionPct": 6.371191135734067,
+      "processMedians": {
+        "a1": 10.309,
+        "b1": 9.772,
+        "b2": 9.831999999999999,
+        "a2": 10.629
+      },
+      "pairedReductionPct": [
+        5.209040644097385,
+        7.498353561012328
+      ]
+    }
+  ],
+  "frames": {}
+}

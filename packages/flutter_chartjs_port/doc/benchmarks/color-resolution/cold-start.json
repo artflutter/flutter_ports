@@ -1,0 +1,202 @@
+{
+  "a1": [
+    {
+      "iteration": 0,
+      "variant": 0,
+      "frameBefore": false,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 1,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 2,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 3,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 4,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 5,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    }
+  ],
+  "b1": [
+    {
+      "iteration": 0,
+      "variant": 1,
+      "frameBefore": false,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 1,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 2,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 3,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 4,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 5,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    }
+  ],
+  "b2": [
+    {
+      "iteration": 0,
+      "variant": 1,
+      "frameBefore": false,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 1,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 2,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 3,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 4,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 5,
+      "variant": 1,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    }
+  ],
+  "a2": [
+    {
+      "iteration": 0,
+      "variant": 0,
+      "frameBefore": false,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 1,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "ca2d360b621c4ed5f532d45e401fd0a6f2b31b9d7c7586490625241f59352a3d",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 2,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 3,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 4,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    },
+    {
+      "iteration": 5,
+      "variant": 0,
+      "frameBefore": true,
+      "frameAfter": true,
+      "pixels": "412a6bcaebbaa570b972b8cbdd2e1125869bf212327acbc64b6e94e185b7888c",
+      "commands": "d4c06d9d900047595200b824024a0272e780fd5e063cf187b22bb24791c767bb"
+    }
+  ]
+}

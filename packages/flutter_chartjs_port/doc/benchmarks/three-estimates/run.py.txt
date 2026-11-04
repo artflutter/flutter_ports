@@ -1,0 +1,23 @@
+import json,os,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+
+def run(label,app,extra,expected):
+ print('START',label,flush=True)
+ result=out/(label+'.results');result.unlink(missing_ok=True)
+ env={**os.environ,'FRAMES':'0','CALLS':'update','STYLES':'static,indexed,scriptable','CONNECTED':'0,1','LABELS':'0','SPIN':'0','N':'20000','TYPE':'line','VARIANTS':'baseline','SECONDS':'8','TRACE':'0','PIXEL_CHECK':'0',**extra,'OUTPUT':str(result)}
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([f'/tmp/three-estimates-{app}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=300,check=True)
+ marker='PIXELS ' if env['PIXEL_CHECK']=='1' else 'LINE_CPU '
+ rows=[json.loads(l.split(marker,1)[1]) for l in result.read_text().splitlines() if l.startswith(marker)]
+ assert len(rows)==expected,(label,len(rows),expected)
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,len(rows),flush=True)
+
+run('pixels','candidate',{'PIXEL_CHECK':'1'},1)
+run('trace','candidate',{'TRACE':'1','STYLES':'scriptable','CONNECTED':'0','VARIANTS':'baseline,varying,scalar,resolution,drawing,all'},6)
+run('clean-a1','baseline',{'CALLS':'draw,update'},12)
+for label,variants,controls in [('b1','baseline,varying,scalar,entry,packing,drawing,resolution,all','baseline,drawing,all'),('b2','all,resolution,drawing,packing,entry,scalar,varying,baseline','all,drawing,baseline')]:
+ run(label+'-update','candidate',{'STYLES':'scriptable','VARIANTS':variants},16)
+ run(label+'-controls','candidate',{'STYLES':'static,indexed','VARIANTS':controls},12)
+ run(label+'-draw','candidate',{'CALLS':'draw','VARIANTS':controls},18)
+run('clean-a2','baseline',{'CALLS':'draw,update'},12)

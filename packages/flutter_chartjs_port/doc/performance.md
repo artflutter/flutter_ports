@@ -7052,3 +7052,119 @@ UI p90 remains about 30.7 ms versus a 16.67 ms budget.
 Validation: 10,988 workspace VM tests, 61 focused regressions, 168 tests on each
 of JavaScript and WebAssembly, analysis, formatting, parity generation and all
 seven port checks. No full browser, fixture, golden or mobile suite was run.
+
+## 51. Estimates for varying fields, scalar callbacks and native point drawing
+
+2026-11-04. [Detailed estimates, prototype sources and checks](benchmarks/three-estimates/README.md).
+This investigation leaves production library sources unchanged. Baseline is the
+ADR 0082 working tree; native M3 Max, profile AOT, 20k items, 800×480/DPR1.
+
+Runtime-switch overhead was large enough to obscure small gains, so the primary
+comparison uses separate binaries with switches compiled out. Each value is the
+mean of two process medians of update + draw + paint-end, not a combined-call
+percentile or a measured frame time. Data generation is outside the stopwatches.
+
+| Proposal | Connections off: CPU ms | Saved | Connections on: CPU ms | Saved |
+| --- | ---: | ---: | ---: | ---: |
+| Specialized all-off baseline | 22.21 | — | 26.18 | — |
+| Visit only varying color fields | 19.82 | 2.39 ms / 10.8% | 24.60 | 1.58 ms / 6.0% |
+| Separate scalar callback path | 18.46 | 3.75 ms / 16.9% | 24.24 | 1.94 ms / 7.4% |
+| Direct native-circle entry | 17.00 | 5.21 ms / 23.4% | 24.60 | 1.58 ms / 6.0% |
+| Reuse fill/stroke packing centers | 21.95 | 0.26 ms / 1.2% | 25.79 | 0.39 ms / 1.5% |
+| First three combined, without packing | 13.73 | 8.48 ms / 38.2% | 19.62 | 6.56 ms / 25.1% |
+
+The unchanged-library controls averaged 22.34/27.63 ms. The table uses the
+specialized all-off baseline, with all original rows retained. Native-circle
+entry reduces draw-only CPU by about 0.7–0.8 ms in these scenes. Packing alone
+has no meaningful draw-only gain. Full-update phases can shift as allocation
+and GC costs interact; combined gains are measured, not added.
+
+129 focused resolver tests pass across the variants, including two varying
+callbacks and mutation order. Counted updates retain 20,006 color calls. After
+a two-second startup warmup, 300 native RGBA comparisons match at DPR1/2, and
+checked atlas command buffers and packing coordinates match. An earlier
+cold-start small-circle scene differed; it remains a renderer-validation issue
+before any drawing change is shipped. These prototypes have not passed the
+complete production validation matrix.
+
+The optional frame probe produced no frame callbacks and its zero-sample rows
+are rejected. **These are CPU estimates, not a 60 FPS claim.** The combined
+unconnected estimate approaches the budget, but omits host/data-motion/raster
+costs. The connected estimate still exceeds 16.67 ms before host overhead.
+
+## 52. Ordered varying colors and scalar callback production path
+
+2026-11-04. [Evidence and reproduction](benchmarks/color-resolution/README.md),
+[ADR 0083](adr/0083-ordered-color-resolution.md). This implements proposals 1 and
+2 from §51: ordered varying-color operations and a separate scalar callback loop.
+Fresh options, live callbacks, context timing and ordinary mutation continuation
+remain. This pass changes one production runtime file, helpers.config.dart.
+
+Native macOS profile AOT, 20k line points, 800×480/DPR1, A/B/B/A. Full CPU is
+update + draw + paint-end component medians, averaged across two processes.
+Data movement is excluded; these are not measured frame times.
+
+| Colors | Connections | Before ms | After ms | Reduction |
+| --- | --- | ---: | ---: | ---: |
+| Scriptable | off | 16.33 | 12.77 | 21.8% |
+| Scriptable | on | 18.31 | 15.14 | 17.3% |
+
+Static/indexed line controls vary within about 1.5%. Scriptable scatter/bar 5k
+controls improve 14.7%/6.4%. All original rows and both pairs are retained.
+Absolute timings differ from prior sessions; only matched comparisons apply.
+
+The frame comparison could not be completed: the baseline process stopped
+receiving callbacks, and the shorter retry also had no callbacks. Raw rejected
+runs are retained. **There is no fresh FPS claim, and every-mode 60 FPS remains
+unverified.** The CPU sums exclude host/data-motion work and do not prove it.
+
+The separate renderer startup check reproduces the original cold pixel transition
+in both unchanged baseline and native-circle prototype. Four independent
+six-render sequences have identical pixels at matched stages and identical
+commands throughout. This clears that specific differential concern; the engine
+startup cause is not identified. No renderer change is included in this pass.
+
+Validation: 11,021 VM tests, 195 focused tests each on JavaScript and WebAssembly,
+analysis, formatting, parity generation and all seven port checks. No full
+browser, fixture, golden or mobile suite was run.
+
+## 53. Native frame verification after ordered-color resolution
+
+2026-11-04. [Full results and raw evidence](benchmarks/color-verification/README.md).
+This closes the missing frame comparison of §52. The unchanged ADR 0082/0083
+profile chart binaries run in identical temporary native hosts that keep their
+benchmark windows visible and record occlusion. No production runtime changes.
+
+The accepted matrix has 96 production cases: all four operations, three color
+modes, connections off/on, 0/50/200 static labels and 200 rotating labels. Sixteen
+matched baseline cases cover indexed/scriptable full/data-only updates with
+0/200 labels. Each case runs eight seconds, excluding two seconds of warmup,
+at 1036×520/DPR2. All accepted processes pass visibility checks. One interrupted
+six-case group was repeated; original attempts are retained.
+
+| Operation | Observed FPS range | Worst UI p90 ms | Worst raster p90 ms |
+| --- | ---: | ---: | ---: |
+| Redraw | 58.2–120.0 | 10.29 | 2.96 |
+| Full update | 35.6–118.6 | 28.36 | 3.13 |
+| Data-only request | 34.9–60.0 | 29.12 | 2.94 |
+| Animation | 53.2–60.0 | 25.36 | 2.99 |
+
+Matched scriptable full-update FPS rises from 35.8–37.6 to 49.9–54.2 without
+connections and from 31.9–32.0 to 40.3–40.7 with them. Every data-only scene
+falls back to the full lifecycle. Indexed controls have mixed/regressive results
+in the first comparison; the evidence preserves them and a targeted repeat.
+The largest indexed control drop (57.2 → 47.9 FPS) does not reproduce in a
+12-second A/B/B/A repeat: baseline 57.9/54.7, production 53.7/55.8. The repeat
+averages differ by 2.7%, with opposite pair signs; a small regression is not
+ruled out and no indexed gain is claimed.
+
+**Every-mode 60 FPS remains unmet.** The worst case has UI p90 29.123 ms versus
+a 16.67 ms budget, a gap of 12.46 ms / 42.8%. Raster p90 stays below 3.2 ms.
+These short local measurements locate the remaining UI-thread budget gap; they
+do not establish sustained or cross-device performance. Some observed rates
+exceed 60 because the measurements do not impose a 60 FPS cap.
+
+All 112 accepted rows have at least 11 readouts and 174 captured timings;
+39,228 timings in total. Runtime source/framework hashes match the implementation
+evidence. Earlier correctness suites were not repeated because this pass changes
+only benchmark infrastructure and documentation.

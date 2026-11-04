@@ -1,0 +1,26 @@
+{
+  "vm": {
+    "chartjs_test_utils": 175,
+    "flutter_chartjs_plugin_zoom_port": 6,
+    "chartjs_gallery": 322,
+    "flutter_d3_port": 38,
+    "flutter_echarts_port": 6,
+    "flutter_chartjs_port": 10474
+  },
+  "vmTotalPassed": 11021,
+  "newOrderedColorTests": 33,
+  "focusedJavaScriptPassed": 195,
+  "focusedWasmPassed": 195,
+  "analysis": "passed",
+  "format": "passed, 796 files unchanged",
+  "parity": "passed, regenerated",
+  "portChecks": "all seven passed",
+  "notRun": [
+    "full browser suite",
+    "fixture suite",
+    "golden suite",
+    "mobile suite",
+    "repeat of redraw/animation matrix"
+  ],
+  "nativeFrames": "incomplete; missing callbacks in baseline long run and short retry, no matched matrix"
+}

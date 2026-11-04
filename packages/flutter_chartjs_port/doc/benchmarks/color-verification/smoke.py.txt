@@ -1,0 +1,18 @@
+import json,os,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+
+def run(label,app,extra,expected,frames=False):
+ print('START',label,flush=True)
+ result=out/(label+'.results');result.unlink(missing_ok=True)
+ env={**os.environ,'FRAMES':'0','CALLS':'update','STYLES':'static,indexed,scriptable','CONNECTED':'0,1','LABELS':'0','SPIN':'0','N':'20000','TYPE':'line','VARIANTS':'baseline' if app=='baseline' else 'production','SECONDS':'8',**extra,'OUTPUT':str(result)}
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([f'/tmp/color-verification-{app}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=240,check=True)
+ marker='LINE_FRAME ' if frames else 'LINE_CPU '
+ rows=[json.loads(l.split(marker,1)[1]) for l in result.read_text().splitlines() if l.startswith(marker)]
+ assert len(rows)==expected,(label,len(rows),expected)
+ if frames:assert all(r['samples']>=4 and r['frameTimings']>=25 and r['canvas']=='1036.0x520.0@2.0' for r in rows),(label,'invalid frame window')
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,len(rows),flush=True)
+
+for label,app in [('smoke-a','baseline'),('smoke-b','production')]:
+ run(label,app,{'FRAMES':'1','CALLS':'update','STYLES':'scriptable','CONNECTED':'0','LABELS':'0'},1,True)

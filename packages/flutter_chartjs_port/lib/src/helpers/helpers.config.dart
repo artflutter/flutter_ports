@@ -256,17 +256,46 @@ bool _indexedScalar(Object? value) =>
 
 // Static values are already cached by the raw resolver. The two contextual
 // views remain fresh: callbacks can retain the subview or change the resolver.
+typedef _ScriptableColor = ({OptionKey key, Object? callback, int position});
+
+// DIVERGES(chartjs): adapt-varying-color-resolution, ordered varying operations
+// and immutable references to the already-cached descriptor inputs.
 final class _ScriptableElementPlan {
-  _ScriptableElementPlan(this.keys, this.varying, this.template)
-    : contextOnly = varying.values.every(
-        (f) =>
-            f is Object? Function(Never) &&
-            f is! Object? Function(Never, Never),
+  _ScriptableElementPlan(
+    this.keys,
+    this.colors,
+    this.template,
+    this.scriptable,
+    this.indexable,
+    this.allKeys,
+  ) : contextOnly = colors.every(
+        (color) =>
+            color.callback is Object? Function(Never) &&
+            color.callback is! Object? Function(Never, Never),
       );
   final List<OptionKey> keys;
-  final Map<OptionKey, Object?> varying;
+  final List<_ScriptableColor> colors;
   final ElementOptions template;
   final bool contextOnly;
+  final Object? scriptable;
+  final Object? indexable;
+  final Object? allKeys;
+
+  _Descriptor _descriptors() => _Descriptor(
+    scriptable: identical(scriptable, undefined) ? true : scriptable,
+    indexable: identical(indexable, undefined) ? true : indexable,
+    allKeys: allKeys,
+  );
+
+  // Both views and descriptor objects remain fresh. No callback receives a
+  // retained view, and setContext/override keep their original live behavior.
+  OptionView view(OptionResolver resolver, Object context) => OptionView._(
+    resolver,
+    context,
+    OptionView._(resolver, context, undefined, _descriptors(), null),
+    _descriptors(),
+    null,
+  );
 
   // DIVERGES(chartjs): adapt-option-resolution-setup, explicit immutable input.
   List<Object>? _immutableKeySource;
@@ -637,7 +666,7 @@ final class OptionResolver implements ResolverProxy {
       final template = (into is PointOptions ? PointOptions() : BarOptions())
         ..storeKey(OptionKey.dollarShared, false);
       final planKeys = <OptionKey>[];
-      final varying = <OptionKey, Object?>{};
+      final colors = <_ScriptableColor>[];
       for (final key in keys) {
         if (key is! OptionKey ||
             key.jsName.startsWith('_') ||
@@ -652,18 +681,21 @@ final class OptionResolver implements ResolverProxy {
               key != OptionKey.borderColor) {
             return reject();
           }
-          varying[key] = value;
+          colors.add((key: key, callback: value, position: planKeys.length));
         } else {
           if (!_nativeIndexedValue(key, value)) return reject();
           template.storeKey(key, value);
         }
         planKeys.add(key);
       }
-      if (varying.isEmpty) return reject();
+      if (colors.isEmpty) return reject();
       plan = _scriptableElementPlan = _ScriptableElementPlan(
         planKeys,
-        varying,
+        colors,
         template,
+        _cache.get(OptionKey.descScriptable),
+        _cache.get(OptionKey.descIndexable),
+        _cache.get(OptionKey.descAllKeys),
       );
     }
     // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
@@ -675,50 +707,86 @@ final class OptionResolver implements ResolverProxy {
         !plan.matches(keys, immutable: immutableKeys)) {
       return (resolved: false, context: ctx, prepared: null);
     }
-    // Same prefixes and an exact Config mean createResolver would retrieve
-    // this raw resolver. Descriptor reads and both view identities stay fresh.
-    // All three descriptor inputs are already cached. Snapshot before any
-    // callback, even when the callback does not accept the second argument.
-    final scriptable = _cache.get(OptionKey.descScriptable);
-    final indexable = _cache.get(OptionKey.descIndexable);
-    final allKeys = _cache.get(OptionKey.descAllKeys);
-    _Descriptor freshDescriptors() => _Descriptor(
-      scriptable: identical(scriptable, undefined) ? true : scriptable,
-      indexable: identical(indexable, undefined) ? true : indexable,
-      allKeys: allKeys,
+    return (
+      resolved: true,
+      context: ctx,
+      prepared: plan.contextOnly
+          ? _resolveScalarColors(plan, ctx)
+          : _resolveContextualColors(plan, ctx),
     );
-    OptionView? current;
-    OptionView view() => current ??= OptionView._(
-      this,
-      ctx,
-      OptionView._(this, ctx, undefined, freshDescriptors(), null),
-      freshDescriptors(),
-      null,
-    );
-    if (!plan.contextOnly) view();
+  }
+
+  // DIVERGES(chartjs): adapt-scalar-color-resolution, keep the common path
+  // outside the closure/view environment needed only by exceptional results.
+  ElementOptions _resolveScalarColors(_ScriptableElementPlan plan, Object ctx) {
     final result = plan.template.clone();
-    for (final key in plan.keys) {
-      // A callback can write/delete through this or a retained subresolver.
-      // Once that happens, resolve every remaining key on the original view.
+    for (final color in plan.colors) {
+      final value = jsCall1(color.callback, ctx);
+      if (!_indexedScalar(value)) {
+        return _finishScalarColors(plan, ctx, result, color.position, value);
+      }
+      result.storeKey(color.key, value);
+      // A callback or a foreign-audit store may invalidate the raw resolver.
+      // Resume at the next original key, including intervening static fields.
       if (!identical(plan, _scriptableElementPlan)) {
-        result.storeKey(key, view().readKey(key));
-      } else if (plan.varying.containsKey(key)) {
-        if (plan.contextOnly) {
-          // Arity is proven by the runtime's function-type rule: this closure
-          // cannot observe a second argument. Keep the JS call/type checks.
-          final value = jsCall1(plan.varying[key], ctx);
-          result.storeKey(
-            key,
-            _indexedScalar(value)
-                ? value
-                : _resolveWithContext(view(), key.jsName, key, value),
-          );
-        } else {
-          result.storeKey(key, view().readKey(key));
-        }
+        return _finishScalarColors(
+          plan,
+          ctx,
+          result,
+          color.position + 1,
+          _absent,
+        );
       }
     }
-    return (resolved: true, context: ctx, prepared: result);
+    return result;
+  }
+
+  ElementOptions _resolveContextualColors(
+    _ScriptableElementPlan plan,
+    Object ctx,
+  ) {
+    final view = plan.view(this, ctx);
+    final result = plan.template.clone();
+    for (final color in plan.colors) {
+      result.storeKey(color.key, view.readKey(color.key));
+      if (!identical(plan, _scriptableElementPlan)) {
+        _resolveColorTail(plan, view, result, color.position + 1);
+        break;
+      }
+    }
+    return result;
+  }
+
+  ElementOptions _finishScalarColors(
+    _ScriptableElementPlan plan,
+    Object ctx,
+    ElementOptions result,
+    int start,
+    Object? returned,
+  ) {
+    final view = plan.view(this, ctx);
+    var next = start;
+    if (!identical(returned, _absent)) {
+      final key = plan.keys[next++];
+      result.storeKey(
+        key,
+        _resolveWithContext(view, key.jsName, key, returned),
+      );
+    }
+    _resolveColorTail(plan, view, result, next);
+    return result;
+  }
+
+  void _resolveColorTail(
+    _ScriptableElementPlan plan,
+    OptionView view,
+    ElementOptions result,
+    int start,
+  ) {
+    for (var i = start; i < plan.keys.length; i++) {
+      final key = plan.keys[i];
+      result.storeKey(key, view.readKey(key));
+    }
   }
 
   /// Resolves native indexed scalar options from already cached raw values.

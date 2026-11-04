@@ -1,0 +1,345 @@
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -63,6 +63,7 @@
+ import 'dart:typed_data' show Uint16List;
+ import 'dart:ui' show Color;
+ 
++import 'package:flutter_chartjs_port/src/core/color_estimates.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+@@ -257,8 +258,15 @@
+ // Static values are already cached by the raw resolver. The two contextual
+ // views remain fresh: callbacks can retain the subview or change the resolver.
+ final class _ScriptableElementPlan {
+-  _ScriptableElementPlan(this.keys, this.varying, this.template)
+-    : contextOnly = varying.values.every(
++  _ScriptableElementPlan(
++    this.keys,
++    this.varying,
++    this.template,
++    this.scriptable,
++    this.indexable,
++    this.allKeys,
++  ) : varyingKeys = keys.where(varying.containsKey).toList(growable: false),
++      contextOnly = varying.values.every(
+         (f) =>
+             f is Object? Function(Never) &&
+             f is! Object? Function(Never, Never),
+@@ -266,6 +274,10 @@
+   final List<OptionKey> keys;
+   final Map<OptionKey, Object?> varying;
+   final ElementOptions template;
++  final List<OptionKey> varyingKeys;
++  final Object? scriptable;
++  final Object? indexable;
++  final Object? allKeys;
+   final bool contextOnly;
+ 
+   // DIVERGES(chartjs): adapt-option-resolution-setup, explicit immutable input.
+@@ -664,6 +676,9 @@
+         planKeys,
+         varying,
+         template,
++        _cache.get(OptionKey.descScriptable),
++        _cache.get(OptionKey.descIndexable),
++        _cache.get(OptionKey.descAllKeys),
+       );
+     }
+     // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
+@@ -674,6 +689,13 @@
+         !identical(plan, _scriptableElementPlan) ||
+         !plan.matches(keys, immutable: immutableKeys)) {
+       return (resolved: false, context: ctx, prepared: null);
++    }
++    if (estimateScalar && plan.contextOnly) {
++      return (
++        resolved: true,
++        context: ctx,
++        prepared: _scalarEstimate(plan, ctx),
++      );
+     }
+     // Same prefixes and an exact Config mean createResolver would retrieve
+     // this raw resolver. Descriptor reads and both view identities stay fresh.
+@@ -697,7 +719,7 @@
+     );
+     if (!plan.contextOnly) view();
+     final result = plan.template.clone();
+-    for (final key in plan.keys) {
++    for (final key in estimateVarying ? plan.varyingKeys : plan.keys) {
+       // A callback can write/delete through this or a retained subresolver.
+       // Once that happens, resolve every remaining key on the original view.
+       if (!identical(plan, _scriptableElementPlan)) {
+@@ -717,8 +739,75 @@
+           result.storeKey(key, view().readKey(key));
+         }
+       }
++      if (estimateVarying && !identical(plan, _scriptableElementPlan)) {
++        for (var i = plan.keys.indexOf(key) + 1; i < plan.keys.length; i++) {
++          final next = plan.keys[i];
++          result.storeKey(next, view().readKey(next));
++        }
++        break;
++      }
+     }
+     return (resolved: true, context: ctx, prepared: result);
++  }
++
++  // Keep the common scalar path free of closures that capture per-point state.
++  ElementOptions _scalarEstimate(_ScriptableElementPlan plan, Object ctx) {
++    final result = plan.template.clone();
++    for (final key in estimateVarying ? plan.varyingKeys : plan.keys) {
++      if (!plan.varying.containsKey(key)) continue;
++      final value = jsCall1(plan.varying[key], ctx);
++      if (!_indexedScalar(value)) {
++        return _finishScalarEstimate(
++          plan,
++          ctx,
++          result,
++          plan.keys.indexOf(key),
++          value,
++        );
++      }
++      result.storeKey(key, value);
++      if (!identical(plan, _scriptableElementPlan)) {
++        return _finishScalarEstimate(
++          plan,
++          ctx,
++          result,
++          plan.keys.indexOf(key) + 1,
++          _absent,
++        );
++      }
++    }
++    return result;
++  }
++
++  ElementOptions _finishScalarEstimate(
++    _ScriptableElementPlan plan,
++    Object ctx,
++    ElementOptions result,
++    int start,
++    Object? returned,
++  ) {
++    _Descriptor desc() => _Descriptor(
++      scriptable: identical(plan.scriptable, undefined)
++          ? true
++          : plan.scriptable,
++      indexable: identical(plan.indexable, undefined) ? true : plan.indexable,
++      allKeys: plan.allKeys,
++    );
++    final sub = OptionView._(this, ctx, undefined, desc(), null);
++    final view = OptionView._(this, ctx, sub, desc(), null);
++    var i = start;
++    if (!identical(returned, _absent)) {
++      final key = plan.keys[i++];
++      result.storeKey(
++        key,
++        _resolveWithContext(view, key.jsName, key, returned),
++      );
++    }
++    for (; i < plan.keys.length; i++) {
++      final key = plan.keys[i];
++      result.storeKey(key, view.readKey(key));
++    }
++    return result;
+   }
+ 
+   /// Resolves native indexed scalar options from already cached raw values.
+--- a/packages/flutter_chartjs_port/lib/src/elements/element.point.dart
++++ b/packages/flutter_chartjs_port/lib/src/elements/element.point.dart
+@@ -26,6 +26,9 @@
+ /// neither `dart:ui` nor `package:flutter`.
+ library;
+ 
++import 'dart:ui' show Color;
++
++import 'package:flutter_chartjs_port/src/core/color_estimates.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+     show CanvasRenderingContext2D;
+ import 'package:flutter_chartjs_port/src/core/core.element.dart';
+@@ -646,6 +649,27 @@
+ 
+     // _number threw a TypeError above when options is null.
+     final opts = options!;
++    if (estimateDrawing &&
++        super.runtimeType == PointElement &&
++        opts is PointOptions &&
++        opts.pointStyle is String &&
++        opts.pointStyle == 'circle' &&
++        plainOption(opts, OptionKey.radius) &&
++        plainOption(opts, OptionKey.borderWidth) &&
++        opts.backgroundColor is Color &&
++        opts.backgroundColor.runtimeType == Color &&
++        opts.borderColor is Color &&
++        opts.borderColor.runtimeType == Color &&
++        ctx is EstimateCircleContext &&
++        (ctx as EstimateCircleContext).estimateCircle(
++          x,
++          y,
++          opts.radius,
++          opts.borderWidth,
++          opts.backgroundColor! as Color,
++          opts.borderColor! as Color,
++        ))
++      return;
+     if (opts is PointOptions) {
+       // A color field holds the raw value: Dart `null` for an absent key,
+       // which the canvas ignores as it ignores `undefined`.
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+@@ -43,6 +43,7 @@
+ import 'dart:typed_data';
+ import 'dart:ui' as ui;
+ 
++import 'package:flutter_chartjs_port/src/core/color_estimates.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
+@@ -510,7 +511,8 @@
+     implements
+         CanvasRenderingContext2D,
+         CanvasTextMetricsSource,
+-        RectBarCanvas {
++        RectBarCanvas,
++        EstimateCircleContext {
+   UiCanvasContext._(this._element) {
+     _s = _states[0];
+     _path = UiPathBuilder(_s.transform);
+@@ -663,6 +665,54 @@
+   /// Draws the pending circles of [_batch].
+   void _flushBatch() {
+     _batch.flush(_canvas ?? _begin());
++  }
++
++  // Estimation only: same path/state effects and the existing ordered batch.
++  @override
++  bool estimateCircle(
++    double x,
++    double y,
++    double radius,
++    double width,
++    ui.Color fillColor,
++    ui.Color strokeColor,
++  ) {
++    final t = _s.transform;
++    if (fillColor.colorSpace != ui.ColorSpace.sRGB ||
++        strokeColor.colorSpace != ui.ColorSpace.sRGB)
++      return false;
++    if (!t.isInvertible ||
++        !t.isSimilarity ||
++        _s.globalAlpha != 1 ||
++        _s.blendMode != ui.BlendMode.srcOver ||
++        _s.lineDash.isNotEmpty ||
++        !radius.isFinite ||
++        radius <= 0 ||
++        !width.isFinite ||
++        width <= 0 ||
++        !x.isFinite ||
++        !y.isFinite)
++      return false;
++    final px = t.mapX(x, y), py = t.mapY(x, y);
++    final r = radius * t.scaleFactor, w = width * t.scaleFactor;
++    if (!px.isFinite ||
++        !py.isFinite ||
++        !r.isFinite ||
++        !w.isFinite ||
++        r + w / 2 > maxBatchRadius ||
++        px.abs() > maxBatchCenter ||
++        py.abs() > maxBatchCenter)
++      return false;
++    strokeStyle = strokeColor;
++    lineWidth = width;
++    fillStyle = fillColor;
++    beginPath();
++    arc(x, y, radius, 0, 6.283185307179586);
++    closePath();
++    final circle = _path.singleCircle!;
++    _batchCircle(circle, fillColor, stroke: false);
++    _batchCircle(circle, strokeColor, stroke: true, width: w);
++    return true;
+   }
+ 
+   /// Adds a fill or a stroke of [circle] in [color] to [_batch]. The
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart
+@@ -31,7 +31,10 @@
+ /// sprites.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/color_estimates.dart';
++
+ import 'dart:collection';
++import 'dart:convert';
+ import 'dart:typed_data';
+ import 'dart:ui' as ui;
+ 
+@@ -251,13 +254,34 @@
+     final rects = _rects;
+     final colors = _atlasColors;
+     var j = 0;
++    var lastX = double.nan, lastY = double.nan;
++    var qx = 0.0, qy = 0.0, bx = 0.0, by = 0.0;
+     for (var i = 0; i < n; i++) {
+       // The center in steps of 1 / subpixelSteps pixel: a whole pixel and
+       // the offset inside it.
+-      final qx = (_xs[i] * steps).roundToDouble();
+-      final qy = (_ys[i] * steps).roundToDouble();
+-      final bx = (qx / steps).floorToDouble();
+-      final by = (qy / steps).floorToDouble();
++      final x = _xs[i], y = _ys[i];
++      if (!estimatePacking || x != lastX || y != lastY) {
++        qx = (x * steps).roundToDouble();
++        qy = (y * steps).roundToDouble();
++        bx = (qx / steps).floorToDouble();
++        by = (qy / steps).floorToDouble();
++        lastX = x;
++        lastY = y;
++      }
++      if (estimateCheckPixels) {
++        final expectedX = (_xs[i] * steps).roundToDouble();
++        final expectedY = (_ys[i] * steps).roundToDouble();
++        final expectedBx = (expectedX / steps).floorToDouble();
++        final expectedBy = (expectedY / steps).floorToDouble();
++        if (qx != expectedX ||
++            qy != expectedY ||
++            bx != expectedBx ||
++            by != expectedBy) {
++          throw StateError(
++            'Packing mismatch at $i: $qx $qy $bx $by / $expectedX $expectedY $expectedBx $expectedBy',
++          );
++        }
++      }
+       final left = (_kinds[i] * steps + (qx - bx * steps)) * size;
+       final top = (qy - by * steps) * size;
+       transforms
+@@ -274,6 +298,29 @@
+       j += 4;
+       if (j == transforms.length || i == n - 1) {
+         final full = j == transforms.length;
++        if (estimateCheckPixels) {
++          estimateAtlasTrace.add([
++            _radius,
++            fill,
++            stroke,
++            width,
++            base64Encode(
++              Uint8List.view(
++                transforms.buffer,
++                transforms.offsetInBytes,
++                j * 4,
++              ),
++            ),
++            base64Encode(
++              Uint8List.view(rects.buffer, rects.offsetInBytes, j * 4),
++            ),
++            colored
++                ? base64Encode(
++                    Uint8List.view(colors.buffer, colors.offsetInBytes, j),
++                  )
++                : null,
++          ]);
++        }
+         canvas.drawRawAtlas(
+           image,
+           full ? transforms : Float32List.sublistView(transforms, 0, j),

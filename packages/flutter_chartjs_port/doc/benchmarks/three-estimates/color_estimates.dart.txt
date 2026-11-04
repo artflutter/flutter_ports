@@ -1,0 +1,12 @@
+// Original code, not ported from Chart.js: isolated three-way estimates.
+import 'dart:ui' show Color;
+const bool estimateVarying = bool.fromEnvironment('VARYING');
+const bool estimateScalar = bool.fromEnvironment('SCALAR');
+const bool estimateDrawing = bool.fromEnvironment('DRAWING');
+const bool estimatePacking = bool.fromEnvironment('PACKING');
+const bool estimateCheckPixels = false;
+abstract interface class EstimateCircleContext {
+  bool estimateCircle(double x,double y,double radius,double width,Color fill,Color stroke);
+}
+
+final List<Object?> estimateAtlasTrace = [];

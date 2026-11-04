@@ -1,0 +1,48 @@
+[
+  {
+    "comparisons": 300,
+    "mismatches": [
+      {
+        "variant": 1,
+        "dpr": 1,
+        "radius": 1.0,
+        "width": 0.5,
+        "alpha": 64,
+        "indexed": false,
+        "transform": 0,
+        "changedBytes": 15603,
+        "maxDelta": 16,
+        "bytes": 65536
+      },
+      {
+        "variant": 2,
+        "dpr": 1,
+        "radius": 1.0,
+        "width": 0.5,
+        "alpha": 64,
+        "indexed": false,
+        "transform": 0,
+        "changedBytes": 15603,
+        "maxDelta": 16,
+        "bytes": 65536
+      },
+      {
+        "variant": 3,
+        "dpr": 1,
+        "radius": 1.0,
+        "width": 0.5,
+        "alpha": 64,
+        "indexed": false,
+        "transform": 0,
+        "changedBytes": 15603,
+        "maxDelta": 16,
+        "bytes": 65536
+      }
+    ],
+    "dpr": [
+      1,
+      2
+    ],
+    "packingCoordinatesExact": true
+  }
+]
