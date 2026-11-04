@@ -1,0 +1,16 @@
+{
+  "workspaceTestsPassed": 10899,
+  "focusedTestsPassed": 13,
+  "browserTestsPassed": {
+    "javascript": 233,
+    "webassembly": 233
+  },
+  "analyze": "passed",
+  "formatCheck": "passed",
+  "portChecks": "passed",
+  "parityGeneration": "passed",
+  "scope": "Full workspace VM suite and focused browser config/resolver/point-guard matrix. Full browser/fixtures/goldens not run. Differential chart tests compare geometry, options, selected context fields and call traces with a chart that disables point-plan eligibility.",
+  "timingCells": 40,
+  "allRepeatedUpdateSmokeChecksMatch": true,
+  "allCallbackCountsUnchanged": true
+}

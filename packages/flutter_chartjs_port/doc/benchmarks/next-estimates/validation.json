@@ -1,0 +1,19 @@
+{
+  "timingCells": 76,
+  "candidateDifferentialChecks": 56,
+  "allGeometryOptionsContextAndPathChecksMatch": true,
+  "allPixelByteComparisonsExact": true,
+  "allCallbackCountsMatch": true,
+  "activationCountersChecked": true,
+  "scope": "Controlled scenes only; no arbitrary mutation, custom subclass, route or callback semantic proof. Production source unchanged.",
+  "supplementalTimingCells": 28,
+  "supplementalDifferentialChecks": 20,
+  "scansPerUpdateVerified": [
+    1,
+    4
+  ],
+  "totalTimingCells": 104,
+  "totalDifferentialChecks": 76,
+  "productionLibraryUnchanged": true,
+  "fullTestsRun": false
+}

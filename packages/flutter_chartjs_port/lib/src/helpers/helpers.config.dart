@@ -475,13 +475,47 @@ final class OptionResolver implements ResolverProxy {
   @internal
   // DIVERGES(chartjs): adapt-prepared-indexed-options, native bulk color plan.
   BarOptions Function(int)? prepareIndexedBarColors(List<Object> keys) {
+    final template = BarOptions()..storeKey(OptionKey.dollarShared, false);
+    final varying = _prepareIndexedColors(keys, template);
+    if (varying == null) return null;
+    return (index) {
+      final result = template.clone();
+      for (final item in varying) {
+        // js-ok: nonnegative index and positive length (bulk preflight).
+        result.storeKey(item.key, item.values[index % item.values.length]);
+      }
+      return result;
+    };
+  }
+
+  /// A fresh options copy per native point, with static fields prepared once.
+  /// The caller must stop using it before any user code can run.
+  @internal
+  // DIVERGES(chartjs): adapt-scatter-point-options, loop-local color plan.
+  PointOptions Function(int)? prepareIndexedPointColors(List<Object> keys) {
+    final template = PointOptions()..storeKey(OptionKey.dollarShared, false);
+    final varying = _prepareIndexedColors(keys, template);
+    if (varying == null) return null;
+    return (index) {
+      final result = template.clone();
+      for (final item in varying) {
+        // js-ok: native loop indices are nonnegative and lengths positive.
+        result.storeKey(item.key, item.values[index % item.values.length]);
+      }
+      return result;
+    };
+  }
+
+  List<({OptionKey key, List<Object?> values})>? _prepareIndexedColors(
+    List<Object> keys,
+    ElementOptions template,
+  ) {
     final plan = _indexedElementPlan;
     if (_slotsTouched || plan == null || !plan.matches(keys)) return null;
-    final template = BarOptions()..storeKey(OptionKey.dollarShared, false);
     final varying = <({OptionKey key, List<Object?> values})>[];
     for (var i = 0; i < plan.keys.length; i++) {
       final key = plan.keys[i];
-      if (!BarOptions.knownKeys.contains(key.jsName)) return null;
+      if (!template.knownKeyList.contains(key.jsName)) return null;
       final value = plan.values[i];
       if (value is List<Object?>) {
         if ((key != OptionKey.backgroundColor &&
@@ -501,15 +535,7 @@ final class OptionResolver implements ResolverProxy {
         template.storeKey(key, value);
       }
     }
-    if (varying.isEmpty) return null;
-    return (index) {
-      final result = template.clone();
-      for (final item in varying) {
-        // js-ok: nonnegative index and positive length (bulk preflight).
-        result.storeKey(item.key, item.values[index % item.values.length]);
-      }
-      return result;
-    };
+    return varying.isEmpty ? null : varying;
   }
 
   /// Resolves native indexed scalar options from already cached raw values.

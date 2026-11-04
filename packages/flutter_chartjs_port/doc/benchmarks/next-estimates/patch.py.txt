@@ -1,0 +1,103 @@
+from pathlib import Path
+root=Path.cwd();lib=root/'packages/flutter_chartjs_port/lib/src'
+(lib/'core/next_estimate.dart').write_text('int mode = 0;\nint pointHits = 0;\nint contextHits = 0;\nint drawHits = 0;\n')
+def edit(file, fn):
+ p=lib/file;s=p.read_text();p.write_text(fn(s))
+def controller(s):
+ s=s.replace("import 'package:flutter_chartjs_port/src/core/core.config.dart';", "import 'package:flutter_chartjs_port/src/core/core.config.dart';\nimport 'package:flutter_chartjs_port/src/core/next_estimate.dart' as probe;\nimport 'package:flutter_chartjs_port/src/options/resolved.g.dart' show PointOptions;")
+ s=s.replace('  final Map<String, ElementOptions> _cachedElementOptions = {};','''  final Map<String, ElementOptions> _cachedElementOptions = {};
+  final _estimatePoints = <String, ({PointOptions template, List<Object?> colors})>{};
+  bool _estimatePointRejected = false;''')
+ s=s.replace('  void configure() {','''  void configure() {
+    _estimatePoints.clear();
+    _estimatePointRejected = false;''')
+ old='''  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+    return _resolveElementOptions(_idOf(dataElementType), mode, index);
+  }'''
+ new='''  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+    final key = mode ?? 'default';
+    if ((probe.mode & 1) != 0 && !_estimatePointRejected && key != 'active') {
+      final plan = _estimatePoints[key];
+      if (plan != null) {
+        getContext(index, false, key);
+        probe.pointHits++;
+        return plan.template.clone()
+          ..storeKey(OptionKey.backgroundColor, plan.colors[index.toInt() % plan.colors.length]);
+      }
+      final result = _resolveElementOptions(_idOf(dataElementType), mode, index);
+      final colors = jsGet(getDataset(), 'backgroundColor');
+      if (result is PointOptions && colors is List<Object?> && colors.isNotEmpty) {
+        _estimatePoints[key] = (template: result.clone(), colors: colors);
+      } else {
+        _estimatePointRejected = true;
+      }
+      return result;
+    }
+    return _resolveElementOptions(_idOf(dataElementType), mode, index);
+  }'''
+ assert old in s;s=s.replace(old,new)
+ old='''      if (elementContext is ScriptableContext) {
+        return elementContext'''
+ new='''      if (elementContext is ScriptableContext) {
+        if ((probe.mode & 2) != 0) {
+          probe.contextHits++;
+          return elementContext.estimateRefresh(getParsed(index), raw, index,
+              jsTruthy(active), mode ?? undefined);
+        }
+        return elementContext'''
+ assert old in s;s=s.replace(old,new);return s
+edit(Path('core/core.datasetController.dart'),controller)
+def contexts(s):
+ start=s.index('final class ScriptableContext extends ContextObject')
+ at=s.index('  Object? _active = _unset;',start)
+ return s[:at]+'''  ScriptableContext estimateRefresh(Object? parsed, Object? Function() raw,
+      double index, bool active, Object? mode) {
+    _parsed = parsed;
+    _raw = raw();
+    _dataIndex = index;
+    _index = index;
+    _active = active;
+    _mode = mode;
+    return this;
+  }
+
+'''+s[at:]
+edit(Path('helpers/helpers.options.dart'),contexts)
+def canvas(s):
+ pos=s.index("import '")
+ s=s[:pos]+"import 'package:flutter_chartjs_port/src/core/next_estimate.dart' as probe;\n"+s[pos:]
+ pos=s.index('  ui.Color? _rectBarBorder;')
+ s=s[:pos]+'''  bool _estimatePendingPath = false;
+  double _estimateX=0, _estimateY=0, _estimateW=0, _estimateH=0;
+  void _estimateFlushPath() {
+    if (!_estimatePendingPath) return;
+    _estimatePendingPath = false;
+    _path..reset()..rect(_estimateX, _estimateY, _estimateW, _estimateH);
+  }
+
+'''+s[pos:]
+ old='''    _path
+      ..reset()
+      ..rect(innerX, innerY, innerWidth, innerHeight);'''
+ new='''    if ((probe.mode & 4) != 0) {
+      probe.drawHits++;
+      _estimatePendingPath = true;
+      _estimateX=innerX; _estimateY=innerY; _estimateW=innerWidth; _estimateH=innerHeight;
+    } else {
+      _estimateFlushPath();
+      _path..reset()..rect(innerX, innerY, innerWidth, innerHeight);
+    }'''
+ assert old in s;s=s.replace(old,new)
+ for name in ['save','restore']:
+  s=s.replace('  void '+name+'() {','  void '+name+'() {\n    _estimateFlushPath();')
+ s=s.replace('  UiPathBuilder get debugPath => _path;', '  UiPathBuilder get debugPath { _estimateFlushPath(); return _path; }')
+ old='  void beginPath() => _path.reset();'
+ assert old in s;s=s.replace(old,'  void beginPath() { _estimateFlushPath(); _path.reset(); }')
+ s=s.replace('''    _notified = false;
+    if (_disposed) return;
+    _endRecording();''','''    _estimateFlushPath();
+    _notified = false;
+    if (_disposed) return;
+    _endRecording();''')
+ return s
+edit(Path('canvas/canvas_ui.dart'),canvas)

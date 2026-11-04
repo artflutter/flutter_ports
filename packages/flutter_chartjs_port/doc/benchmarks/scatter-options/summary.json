@@ -1,0 +1,132 @@
+[
+  {
+    "case": "line.static.baseline",
+    "n": 5000,
+    "updateBeforeMs": 0.587,
+    "updateAfterMs": 0.596,
+    "fullBeforeMs": 1.5375,
+    "fullAfterMs": 1.5525,
+    "fullReductionPercent": -0.9756097560975618,
+    "pairedFullReductionPercent": [
+      -0.9186351706036655,
+      -1.0315925209542165
+    ]
+  },
+  {
+    "case": "line.indexed.baseline",
+    "n": 5000,
+    "updateBeforeMs": 5.7075,
+    "updateAfterMs": 5.7275,
+    "fullBeforeMs": 6.9239999999999995,
+    "fullAfterMs": 7.0024999999999995,
+    "fullReductionPercent": -1.1337377238590518,
+    "pairedFullReductionPercent": [
+      0.7159221076746825,
+      -3.015734265734271
+    ]
+  },
+  {
+    "case": "line.callback.baseline",
+    "n": 5000,
+    "updateBeforeMs": 13.1565,
+    "updateAfterMs": 13.359,
+    "fullBeforeMs": 14.411999999999999,
+    "fullAfterMs": 14.648499999999999,
+    "fullReductionPercent": -1.6409936164307526,
+    "pairedFullReductionPercent": [
+      0.06948304613674239,
+      -3.346729490022171
+    ]
+  },
+  {
+    "case": "scatter.static.baseline",
+    "n": 5000,
+    "updateBeforeMs": 1.194,
+    "updateAfterMs": 1.2149999999999999,
+    "fullBeforeMs": 2.1785,
+    "fullAfterMs": 2.2,
+    "fullReductionPercent": -0.9869176038558747,
+    "pairedFullReductionPercent": [
+      -1.7617060732498802,
+      -0.2272727272727204
+    ]
+  },
+  {
+    "case": "scatter.indexed.baseline",
+    "n": 5000,
+    "updateBeforeMs": 16.249000000000002,
+    "updateAfterMs": 4.503,
+    "fullBeforeMs": 17.531,
+    "fullAfterMs": 5.6435,
+    "fullReductionPercent": 67.80845359648622,
+    "pairedFullReductionPercent": [
+      67.82728209827053,
+      67.78977272727272
+    ]
+  },
+  {
+    "case": "scatter.callback.baseline",
+    "n": 5000,
+    "updateBeforeMs": 37.479,
+    "updateAfterMs": 37.712999999999994,
+    "fullBeforeMs": 38.7355,
+    "fullAfterMs": 38.986999999999995,
+    "fullReductionPercent": -0.6492752126602053,
+    "pairedFullReductionPercent": [
+      1.147617082731589,
+      -2.4499289313864914
+    ]
+  },
+  {
+    "case": "bar.static.baseline",
+    "n": 5000,
+    "updateBeforeMs": 1.298,
+    "updateAfterMs": 1.3014999999999999,
+    "fullBeforeMs": 4.029999999999999,
+    "fullAfterMs": 4.0215,
+    "fullReductionPercent": 0.21091811414390982,
+    "pairedFullReductionPercent": [
+      2.8189910979228405,
+      -2.415338645418319
+    ]
+  },
+  {
+    "case": "bar.indexed.baseline",
+    "n": 5000,
+    "updateBeforeMs": 2.474,
+    "updateAfterMs": 2.5170000000000003,
+    "fullBeforeMs": 5.3035,
+    "fullAfterMs": 5.3565000000000005,
+    "fullReductionPercent": -0.9993400584519918,
+    "pairedFullReductionPercent": [
+      1.0700206495212972,
+      -3.0871212121212244
+    ]
+  },
+  {
+    "case": "bar.callback.baseline",
+    "n": 5000,
+    "updateBeforeMs": 16.4465,
+    "updateAfterMs": 15.971,
+    "fullBeforeMs": 19.450499999999998,
+    "fullAfterMs": 18.8785,
+    "fullReductionPercent": 2.9407984370581675,
+    "pairedFullReductionPercent": [
+      5.61172901921132,
+      0.17781496783640938
+    ]
+  },
+  {
+    "case": "scatter.indexed.baseline",
+    "n": 20000,
+    "updateBeforeMs": 66.78049999999999,
+    "updateAfterMs": 18.299,
+    "fullBeforeMs": 71.2325,
+    "fullAfterMs": 23.855,
+    "fullReductionPercent": 66.51107289509703,
+    "pairedFullReductionPercent": [
+      66.49767698021549,
+      66.52431195221348
+    ]
+  }
+]

@@ -156,6 +156,7 @@ const List<String> pureRoots = [
   'lib/src/core/reduced_motion.dart',
   'lib/src/core/tick_font_cache.dart',
   'lib/src/core/bar_sorted_values.dart',
+  'lib/src/core/point_options.dart',
   'lib/src/core/core.typedRegistry.dart',
   'lib/src/elements/**',
   'lib/src/plugins/plugin.decimation.dart',

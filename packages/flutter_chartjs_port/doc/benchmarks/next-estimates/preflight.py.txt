@@ -1,0 +1,38 @@
+from pathlib import Path
+p=Path('packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart');s=p.read_text()
+s=s.replace("import 'package:flutter_chartjs_port/src/core/next_estimate.dart' as probe;","import 'package:flutter_chartjs_port/src/core/next_estimate.dart' as probe;\nimport 'package:flutter_chartjs_port/src/core/data_update.dart' as preflight;\nimport 'package:flutter_chartjs_port/src/elements/element.point.dart' show PointElement;")
+old="""      if (result is PointOptions && colors is List<Object?> && colors.isNotEmpty) {
+        _estimatePoints[key] = (template: result.clone(), colors: colors);"""
+new="""      if (result is PointOptions && colors is List<Object?> && colors.isNotEmpty) {
+        if ((probe.mode & 8) != 0) {
+          final dataset = getDataset();
+          if (!preflight.nativeDataUpdateObject(dataset)) {
+            _estimatePointRejected = true; return result;
+          }
+          final raw = preflight.dataUpdateField(dataset!, 'data');
+          // Deliberately repeat the scans twice per prepared mode: four full
+          // scans per configure for default/none, to budget native loop checks.
+          for (var pass=0;pass<2;pass++) {
+            if (preflight.dataUpdateValues(raw, prepared:true) == null) {
+              _estimatePointRejected = true; return result;
+            }
+            for (final point in cachedMeta.data) {
+              if (point.runtimeType != PointElement || point.active) {
+                _estimatePointRejected = true; return result;
+              }
+              final context = (point as PointElement).\u0024context;
+              if (context != null && !context.jsHas('index')) {
+                _estimatePointRejected = true; return result;
+              }
+            }
+            probe.preflightScans++;
+          }
+        }
+        _estimatePoints[key] = (template: result.clone(), colors: colors);"""
+assert old in s;s=s.replace(old,new);p.write_text(s)
+p=Path('packages/flutter_chartjs_port/lib/src/core/next_estimate.dart');p.write_text(p.read_text()+'int preflightScans = 0;\n')
+p=Path('.dart_tool/next_estimates/probe.dart');s=p.read_text().replace("'context_draw':6}","'context_draw':6,'points_preflight_context':11}")
+s=s.replace('probe.drawHits=0;','probe.drawHits=0;probe.preflightScans=0;').replace("'drawHits':probe.drawHits}","'drawHits':probe.drawHits,'preflightScans':probe.preflightScans}")
+s=s.replace("['baseline','points','context',combined]","['baseline','points','context',combined,'points_preflight_context']")
+s=s.replace("for(final variant in variants)specs.add((type:type,style:style,variant:variant));", "for(final variant in variants) {\n     if(env['SELECT']!=null && !env['SELECT']!.split(',').contains(variant))continue;\n     specs.add((type:type,style:style,variant:variant));\n   }")
+p.write_text(s)

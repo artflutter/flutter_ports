@@ -1,0 +1,1477 @@
+diff --git a/apps/chartjs_gallery/lib/bench/chart_bench.dart b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+index d89e307..871c1bb 100644
+--- a/apps/chartjs_gallery/lib/bench/chart_bench.dart
++++ b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+@@ -1562,6 +1562,9 @@ final class _BenchChart extends Chart {
+   @override
+   bool get supportsBulkBarUpdate => true;
+ 
++  @override
++  bool get supportsNativePointOptions => true;
++
+   /// The ticks of the draws since the last reset.
+   int drawTicks = 0;
+ 
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 1e02a21..6d33e7a 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -45,6 +45,7 @@ import 'dart:typed_data';
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
++import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show
+@@ -955,6 +956,26 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+           )) {
+         return;
+       }
++      // DIVERGES(chartjs): adapt-prepared-indexed-options, varying colors do
++      // not prevent native geometry when every remaining read is effect-free.
++      if (i == start &&
++          mode == 'none' &&
++          includeOptions &&
++          sharedOptions == null &&
++          options is BarOptions &&
++          _updateBulk(
++            bars,
++            i + 1,
++            start + count,
++            ruler,
++            vScale,
++            vAxis,
++            horizontal,
++            options,
++            individualOptions: true,
++          )) {
++        return;
++      }
+     }
+   }
+ 
+@@ -968,9 +989,18 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+     types.Scale valueScale,
+     String valueAxis,
+     bool horizontal,
+-    BarOptions shared,
+-  ) {
++    BarOptions shared, {
++    bool individualOptions = false,
++  }) {
+     if (super.runtimeType != BarController) return false;
++    final elementClass = dataElementType;
++    if (individualOptions &&
++        (type != 'bar' ||
++            elementClass is! JsClass ||
++            elementClass.id is! String ||
++            elementClass.id != 'bar')) {
++      return false;
++    }
+     final owner = chart;
+     if (owner is! BulkBarChart ||
+         !(owner as BulkBarChart).supportsBulkBarUpdate ||
+@@ -994,14 +1024,19 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+         !(valueScale as BulkBarScale).hasStaticBulkBarGrid) {
+       return false;
+     }
+-    final edge = shared.borderSkippedValue;
++    final resolveColors = individualOptions
++        ? (chart.config as Config).prepareIndexedBarColors()
++        : null;
++    if (individualOptions && resolveColors == null) return false;
++    final representative = resolveColors?.call(0) ?? shared;
++    final edge = representative.borderSkippedValue;
+     if (!(edge == null ||
+         identical(edge, undefined) ||
+         edge is bool ||
+         edge is String)) {
+       return false;
+     }
+-    final amount = shared.inflateAmountValue;
++    final amount = representative.inflateAmountValue;
+     final double inflate;
+     if (amount is String && amount == 'auto') {
+       inflate = ruler.ratio == 1 ? 0.33 : 0;
+@@ -1037,6 +1072,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+           !(element as BulkBarElement).supportsBulkBarWrites) {
+         return false;
+       }
++      if (individualOptions && element.active) return false;
+       if (item is ParsedItem) {
+         if (item.hasForeign || item.hasSlot(3) || item.hasSlot(4)) return false;
+       } else if (!updatingData ||
+@@ -1086,6 +1122,15 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+       // Keep upstream operation order, including the zero stack-index term.
+       final rangeStart = ruler.pixels[i] - size / 2;
+       final center = rangeStart + chunk * 0.0 + chunk / 2;
++      // Context refresh remains after geometry and before the option stores.
++      // Eligibility proved native config/data/element reads and no callbacks.
++      final BarOptions elementOptions;
++      if (resolveColors != null) {
++        getContext(i.toDouble(), false, 'none');
++        elementOptions = resolveColors(i);
++      } else {
++        elementOptions = shared;
++      }
+       final BorderSkipped skipped;
+       if (identical(edge, true)) {
+         skipped = BorderSkipped.all();
+@@ -1110,7 +1155,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+         y: horizontal ? center : head,
+         height: horizontal ? breadth : length.abs(),
+         width: horizontal ? length.abs() : breadth,
+-        options: shared,
++        options: elementOptions,
+         skipped: skipped,
+         inflate: inflate,
+       );
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart
+index 3e4552a..4185677 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.scatter.dart
+@@ -39,11 +39,17 @@
+ /// `core.animations.dart`. Thus it is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
++    show BulkBarScale;
++import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
+ import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
++import 'package:flutter_chartjs_port/src/core/data_update.dart'
++    show nativeDataUpdateList;
++import 'package:flutter_chartjs_port/src/core/point_options.dart';
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+-    show ElementOptions, LineOptions;
++    show ElementOptions, LineOptions, PointOptions;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     show OptionView, readOption;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+@@ -445,9 +451,34 @@ class ScatterController extends DatasetController {
+     var prevParsed = start > 0 ? getParsed(start - 1) : false;
+     final writes = _PointWrites(direct: directUpdate);
+ 
++    // DIVERGES(chartjs): adapt-scatter-point-options, prepare only within this
++    // synchronous loop. Unknown geometry drops the plan before invoking it.
++    PointOptions Function(int)? colors;
++    final coordinates = NativePointCoordinates();
++    final tryColors =
++        mode == 'none' &&
++        sharedOptions == null &&
++        includeOptions &&
++        !jsTruthy(stacked) &&
++        !jsTruthy(segment) &&
++        (iAxis == 'x' || iAxis == 'y') &&
++        (vAxis == 'x' || vAxis == 'y') &&
++        start.isFinite &&
++        start >= 0 &&
++        start == start.truncateToDouble() &&
++        count.isFinite &&
++        count > 2 &&
++        count == count.truncateToDouble();
++
+     for (var i = start; i < start + count; ++i) {
+       final point = points[i.toInt()];
+       final parsed = getParsed(i);
++      if (colors != null &&
++          (!_nativePoint(point) ||
++              point.active ||
++              !coordinates.accepts(parsed))) {
++        colors = null;
++      }
+       writes.begin(point);
+       // :128, also :130 (one-read rule).
+       final vValue = parsedValueOf(parsed, vKey, vAxis);
+@@ -485,10 +516,16 @@ class ScatterController extends DatasetController {
+       if (includeOptions) {
+         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
+         // shared options.
+-        writes.options(
+-          sharedOptions ??
+-              resolveDataElementOptions(i, point.active ? 'active' : mode),
+-        );
++        final prepared = colors;
++        if (prepared != null) {
++          getContext(i, false, mode);
++          writes.options(prepared(i.toInt()));
++        } else {
++          writes.options(
++            sharedOptions ??
++                resolveDataElementOptions(i, point.active ? 'active' : mode),
++          );
++        }
+       }
+ 
+       if (!directUpdate) {
+@@ -496,6 +533,15 @@ class ScatterController extends DatasetController {
+       }
+ 
+       prevParsed = parsed;
++      // Two ordinary resolutions populate the cached raw indexed plan. There
++      // is one preparation attempt, never another after custom code runs.
++      if (tryColors &&
++          i == start + 1 &&
++          coordinates.accepts(parsed) &&
++          _nativeProjection(iScale) &&
++          _nativeProjection(vScale)) {
++        colors = _preparePointColors(points);
++      }
+     }
+ 
+     updateSharedOptions(sharedOptions, mode, firstOpts);
+@@ -524,14 +570,26 @@ class ScatterController extends DatasetController {
+ 
+     if (!jsTruthy(options.readKey(OptionKey.showLine))) {
+       var max = 0.0;
+-      for (var i = data.length - 1; i >= 0; --i) {
++      PointOptions Function(int)? colors;
++      final last = data.length - 1;
++      for (var i = last; i >= 0; --i) {
++        final point = data[i] as types.PointElement;
++        if (colors != null && !_nativePoint(point)) colors = null;
++        final prepared = colors;
++        final ElementOptions pointOptions;
++        if (prepared != null) {
++          getContext(i.toDouble(), false, 'default');
++          pointOptions = prepared(i);
++        } else {
++          pointOptions = resolveDataElementOptions(i.toDouble());
++        }
+         max = jsMax(
+           max,
+-          (data[i] as types.PointElement).size(
+-                resolveDataElementOptions(i.toDouble()),
+-              ) /
+-              2,
++          point.size(pointOptions) / 2,
+         );
++        // No coordinate conversion occurs here: parsed/raw values are only
++        // copied into contexts, so qualifying their containers is sufficient.
++        if (i == last - 1) colors = _preparePointColors(data);
+       }
+       return max > 0 ? max : false;
+     }
+@@ -558,4 +616,42 @@ class ScatterController extends DatasetController {
+     );
+     return jsMax(jsMax(jsToNumber(border), firstPoint), lastPoint) / 2;
+   }
++
++  // The existing numeric-scale capability guarantees built-in projection and
++  // base-pixel reads. The scale's chart must provide the same native DPR reads.
++  bool _nativeProjection(types.Scale scale) =>
++      scale is BulkBarScale &&
++      (scale as BulkBarScale).supportsBulkBarUpdate &&
++      identical(scale.chart, chart);
++
++  bool _nativePoint(types.Element point) =>
++      point is NativePointElement &&
++      (point as NativePointElement).supportsNativePointOptions;
++
++  PointOptions Function(int)? _preparePointColors(List<types.Element> points) {
++    if (super.runtimeType != ScatterController || type != 'scatter') {
++      return null;
++    }
++    final owner = chart;
++    if (owner is! NativePointChart ||
++        !(owner as NativePointChart).supportsNativePointOptions ||
++        !identical(points, cachedMeta.data) ||
++        !nativePointList(points) ||
++        !nativeDataUpdateList(cachedMeta.parsed)) {
++      return null;
++    }
++    final elementClass = dataElementType;
++    if (elementClass is! JsClass ||
++        elementClass.id is! String ||
++        elementClass.id != 'point' ||
++        !index.isFinite ||
++        index < 0 ||
++        index != index.truncateToDouble()) {
++      return null;
++    }
++    final config = chart.config;
++    return config is Config && config.runtimeType == Config
++        ? config.prepareIndexedPointColors(index.toInt())
++        : null;
++  }
+ }
+diff --git a/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart b/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
+index f5e267b..25aa586 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
+@@ -24,7 +24,8 @@ abstract interface class BulkBarScale {
+ /// The direct write contract for exact native bar elements. Custom elements
+ /// retain DatasetController.updateElement and their property interception.
+ abstract interface class BulkBarElement {
+-  /// True only for the exact built-in element.
++  /// True only for the exact built-in element. An explicit test opt-in must
++  /// preserve ordinary active/context reads as well as native property writes.
+   bool get supportsBulkBarWrites;
+ 
+   /// Assign the same fields, in the same order, as the controller's ordinary
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.config.dart b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+index 1b5ab37..1ece172 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+@@ -54,9 +54,16 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+     show ElementOptions;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+-    show OptionKey;
++    show OptionKey, OptionScope;
++import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
++    show BarOptions, PointOptions;
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+-    show ScaleOptionsByIdScope, ScaleOptionsScope;
++    show
++        BarOptionsScope,
++        ElementOptionsByTypeScope,
++        PointOptionsScope,
++        ScaleOptionsByIdScope,
++        ScaleOptionsScope;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+ import 'package:meta/meta.dart';
+@@ -511,6 +518,92 @@ class Config implements types.ChartConfiguration {
+   bool get supportsDataUpdates =>
+       super.runtimeType == Config && nativeDataUpdateRoot(_config);
+ 
++  /// A cached color-only plan for the exact native single-dataset bar loop.
++  /// All reads used by context refresh must be ordinary native reads too.
++  @internal
++  // DIVERGES(chartjs): adapt-prepared-indexed-options, native qualification.
++  BarOptions Function(int)? prepareIndexedBarColors() {
++    if (super.runtimeType != Config ||
++        !supportsDataUpdates ||
++        (_config is OptionScope && _config.routeOf('type') != null)) {
++      return null;
++    }
++    final data = dataUpdateField(_config, 'data');
++    if (!nativeDataUpdateObject(data)) return null;
++    final datasets = dataUpdateField(data!, 'datasets');
++    if (!nativeDataUpdateList(datasets) || (datasets! as List).length != 1) {
++      return null;
++    }
++    final dataset = (datasets as List<Object?>)[0];
++    if (!nativeDataUpdateObject(dataset) ||
++        !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
++      return null;
++    }
++    final scopeKeys = datasetElementScopeKeys('bar', 'bar');
++    final scopes = _scopeCache[dataset]?[scopeKeys];
++    if (scopes == null) return null;
++    final cached = _resolverCache[scopes]?['bar,'];
++    if (cached == null ||
++        cached.subPrefixes.length != 2 ||
++        cached.subPrefixes[0] != 'bar' ||
++        cached.subPrefixes[1] != '') {
++      return null;
++    }
++    if (defaults.routeOf('elements') != null) return null;
++    final elements = defaults.elementsCell?.raw;
++    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
++    final elementScopes = elements! as ElementOptionsByTypeScope;
++    if (elementScopes.routeOf('bar') != null) return null;
++    final bar = elementScopes.barCell?.raw;
++    if (bar.runtimeType != BarOptionsScope) return null;
++    return cached.resolver.prepareIndexedBarColors(
++      (bar! as BarOptionsScope).jsOwnKeys(),
++    );
++  }
++
++  /// A warmed scatter resolver over native context sources. No option getter
++  /// or context callback runs merely to qualify this synchronous loop.
++  @internal
++  // DIVERGES(chartjs): adapt-scatter-point-options, cached point inputs.
++  PointOptions Function(int)? prepareIndexedPointColors(int datasetIndex) {
++    if (super.runtimeType != Config ||
++        !supportsDataUpdates ||
++        (_config is OptionScope && _config.routeOf('type') != null)) {
++      return null;
++    }
++    final data = dataUpdateField(_config, 'data');
++    if (!nativeDataUpdateObject(data)) return null;
++    final datasets = dataUpdateField(data!, 'datasets');
++    if (!nativeDataUpdateList(datasets)) return null;
++    final list = datasets! as List<Object?>;
++    if (datasetIndex < 0 || datasetIndex >= list.length) return null;
++    final dataset = list[datasetIndex];
++    if (!nativeDataUpdateObject(dataset) ||
++        !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
++      return null;
++    }
++    final scopeKeys = datasetElementScopeKeys('scatter', 'point');
++    final scopes = _scopeCache[dataset]?[scopeKeys];
++    if (scopes == null) return null;
++    final cached = _resolverCache[scopes]?['point,'];
++    if (cached == null ||
++        cached.subPrefixes.length != 2 ||
++        cached.subPrefixes[0] != 'point' ||
++        cached.subPrefixes[1] != '') {
++      return null;
++    }
++    if (defaults.routeOf('elements') != null) return null;
++    final elements = defaults.elementsCell?.raw;
++    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
++    final elementScopes = elements! as ElementOptionsByTypeScope;
++    if (elementScopes.routeOf('point') != null) return null;
++    final point = elementScopes.pointCell?.raw;
++    if (point.runtimeType != PointOptionsScope) return null;
++    return cached.resolver.prepareIndexedPointColors(
++      (point! as PointOptionsScope).jsOwnKeys(),
++    );
++  }
++
+   /// core.config.js:189 `set options(options)`.
+   set options(Object? options) {
+     jsSet(_config, 'options', options);
+@@ -823,6 +916,8 @@ class Config implements types.ChartConfiguration {
+ 
+   /// Resolves the controller's owned key, prefix and scope lists. Custom Config
+   /// classes receive their original virtual option-resolution call.
++  /// With [allowReplacement], the caller owns [into] without exposing it to
++  /// [context]; a prepared result may replace it.
+   @internal
+   // DIVERGES(chartjs): adapt-indexed-element-options, owned containers.
+   ElementOptions resolveNativeElementNamedOptions(
+@@ -830,8 +925,9 @@ class Config implements types.ChartConfiguration {
+     List<Object> keys,
+     Object Function() context,
+     List<String> prefixes,
+-    ElementOptions into,
+-  ) => runtimeType == Config
++    ElementOptions into, {
++    bool allowReplacement = false,
++  }) => runtimeType == Config
+       ? _resolveElementNamedOptions(
+           scopes,
+           keys,
+@@ -839,6 +935,7 @@ class Config implements types.ChartConfiguration {
+           prefixes,
+           into,
+           nativeInputs: true,
++          allowReplacement: allowReplacement,
+         )
+       : resolveElementNamedOptions(scopes, keys, context, prefixes, into);
+ 
+@@ -849,6 +946,7 @@ class Config implements types.ChartConfiguration {
+     List<String> prefixes,
+     ElementOptions into, {
+     required bool nativeInputs,
++    bool allowReplacement = false,
+   }) {
+     into.storeKey(OptionKey.dollarShared, true);
+     final (:resolver, :subPrefixes) = _getResolver(
+@@ -879,9 +977,10 @@ class Config implements types.ChartConfiguration {
+               resolver,
+             ),
+             nativeInputs: nativeInputs,
++            allowReplacement: allowReplacement,
+           )
+         : null;
+-    if (indexed?.resolved ?? false) return into;
++    if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
+     helpers.OptionView? view;
+     if (indexed != null || _needContextKeys(resolver, keys)) {
+       // A declined native fill already stored $shared before its context call.
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+index 86c18d4..13215fa 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+@@ -52,6 +52,7 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart'
+     as core_registry;
+ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+ import 'package:flutter_chartjs_port/src/core/data_update.dart';
++import 'package:flutter_chartjs_port/src/core/point_options.dart';
+ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+     show OptionView, readOption;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+@@ -634,7 +635,8 @@ class Chart
+         types.Chart,
+         CategoryLabelSource,
+         SingleBarIndexSource,
+-        BulkBarChart {
++        BulkBarChart,
++        NativePointChart {
+   /// core.controller.js:123 `constructor(item, userConfig)`.
+   ///
+   /// [item] is a canvas element, a context, an object with a `canvas`, or
+@@ -1016,6 +1018,12 @@ class Chart
+   // DIVERGES(chartjs): adapt-bulk-bar-update, ordinary native chart reads.
+   bool get supportsBulkBarUpdate => super.runtimeType == Chart;
+ 
++  /// Ordinary data/config/context and DPR reads for a native point loop.
++  @override
++  @internal
++  // DIVERGES(chartjs): adapt-scatter-point-options, native chart contract.
++  bool get supportsNativePointOptions => super.runtimeType == Chart;
++
+   final _barScaleKeys = BarScaleKeys();
+   static final Type _nativeMetaListType = <ChartMeta?>[].runtimeType;
+   List<ChartMeta?>? _barMetaList;
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+index fb8787b..2930dbe 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -1981,6 +1981,9 @@ class DatasetController
+             context,
+             prefixes,
+             createElementOptions(elementType),
++            // DIVERGES(chartjs): adapt-prepared-indexed-options, this result
++            // is owned here and cannot be observed by the context factory.
++            allowReplacement: true,
+           )
+         : config.resolveElementNamedOptions(
+             scopes,
+diff --git a/packages/flutter_chartjs_port/lib/src/core/data_update.dart b/packages/flutter_chartjs_port/lib/src/core/data_update.dart
+index 5e4b86a..b9b7467 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/data_update.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/data_update.dart
+@@ -94,6 +94,11 @@ bool nativeDataUpdateRoot(Object value) =>
+ bool nativeDataUpdateList(Object? value) =>
+     _lists.contains(value.runtimeType) || value is TypedDataList<num>;
+ 
++/// Immutable point implementations registered by the typed facade.
++@internal
++bool nativeDataUpdatePoint(TypedDataItem value) =>
++    _points.contains(value.runtimeType);
++
+ /// Read only after native object qualification; routes cannot qualify.
+ @internal
+ Object? dataUpdateField(Object object, String key) {
+diff --git a/packages/flutter_chartjs_port/lib/src/elements/element.point.dart b/packages/flutter_chartjs_port/lib/src/elements/element.point.dart
+index 49dfbca..7749cf2 100644
+--- a/packages/flutter_chartjs_port/lib/src/elements/element.point.dart
++++ b/packages/flutter_chartjs_port/lib/src/elements/element.point.dart
+@@ -29,6 +29,7 @@ library;
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+     show CanvasRenderingContext2D;
+ import 'package:flutter_chartjs_port/src/core/core.element.dart';
++import 'package:flutter_chartjs_port/src/core/point_options.dart';
+ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+     show PointOptions, numberOption, plainOption, rawOption;
+ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+@@ -153,7 +154,8 @@ class PointElement extends Element
+     implements
+         types.RadialPointElement,
+         types.VisualElementRange,
+-        types.PointElementWrites {
++        types.PointElementWrites,
++        NativePointElement {
+   /// element.point.ts:49 `constructor(cfg)`.
+   ///
+   /// element.point.ts:52-55 set `options`, `parsed`, `skip` and `stop` to
+@@ -390,6 +392,12 @@ class PointElement extends Element
+   @override
+   bool get typedWrites => _builtIn;
+ 
++  /// Native size/context reads as well as property writes (ADR 0079).
++  @internal
++  @override
++  // DIVERGES(chartjs): adapt-scatter-point-options, native element contract.
++  bool get supportsNativePointOptions => super.runtimeType == PointElement;
++
+   /// [Element.takesProperties]: a [PointProperties], for an element of the
+   /// class [PointElement] itself.
+   @internal
+diff --git a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+index e8b67f2..e42a999 100644
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -258,6 +258,58 @@ final class _IndexedElementPlan {
+   _IndexedElementPlan(this.keys, this.values);
+   final List<OptionKey> keys;
+   final List<Object?> values;
++  ElementOptions? _template;
++  late List<int> _varying;
++
++  // DIVERGES(chartjs): adapt-prepared-indexed-options, copy native static
++  // fields when the caller owns the result. Never retain a returned object.
++  ElementOptions? prepared(Object context, ElementOptions into) {
++    if (context is! ScriptableContext || !context.jsHas('index')) return null;
++    final rawIndex = context.index;
++    if (rawIndex is! num) return null;
++    final index = rawIndex.toDouble();
++    if (!index.isFinite || index < 0 || index != index.truncateToDouble()) {
++      return null;
++    }
++    var template = _template;
++    if (template == null || template.runtimeType != into.runtimeType) {
++      // The constructor/type and scalar checks are the same as fill. Preparing
++      // from cached inputs avoids retaining mutations of any previous result.
++      template = (into is PointOptions ? PointOptions() : BarOptions())
++        ..storeKey(OptionKey.dollarShared, false);
++      final varying = <int>[];
++      for (var i = 0; i < keys.length; i++) {
++        final value = values[i];
++        if (value is List<Object?>) {
++          varying.add(i);
++        } else {
++          if (!_nativeIndexedValue(keys[i], value)) return null;
++          template.storeKey(keys[i], value);
++        }
++      }
++      _template = template;
++      _varying = varying;
++    }
++    final varying = _varying;
++    // Only the varying inputs need preflight on each element. Lists remain live
++    // after context refresh, including length changes and unsupported entries.
++    for (final i in varying) {
++      final list = values[i]! as List<Object?>;
++      if (list.isEmpty ||
++          !_nativeIndexedValue(
++            keys[i],
++            list[index.remainder(list.length).toInt()],
++          )) {
++        return null;
++      }
++    }
++    final result = template.clone();
++    for (final i in varying) {
++      final list = values[i]! as List<Object?>;
++      result.storeKey(keys[i], list[index.remainder(list.length).toInt()]);
++    }
++    return result;
++  }
+ 
+   bool matches(List<Object> other) {
+     if (keys.length != other.length) return false;
+@@ -284,25 +336,9 @@ final class _IndexedElementPlan {
+         if (value.isEmpty) return false;
+         value = value[index.remainder(value.length).toInt()];
+       }
+-      if (!_indexedScalar(value)) return false;
+       // Native stores only. Foreign numeric conversions can invoke the debug
+       // audit hook; those keep the ordinary observable read/write order too.
+-      final native = switch (keys[i]) {
+-        OptionKey.borderWidth ||
+-        OptionKey.hitRadius ||
+-        OptionKey.hoverBorderWidth ||
+-        OptionKey.hoverRadius ||
+-        OptionKey.radius ||
+-        OptionKey.rotation => value is num,
+-        OptionKey.backgroundColor ||
+-        OptionKey.borderColor ||
+-        OptionKey.pointStyle ||
+-        OptionKey.borderSkipped ||
+-        OptionKey.borderRadius ||
+-        OptionKey.inflateAmount => true,
+-        _ => false,
+-      };
+-      if (!native) return false;
++      if (!_nativeIndexedValue(keys[i], value)) return false;
+     }
+     for (var i = 0; i < keys.length; i++) {
+       final value = values[i];
+@@ -317,6 +353,24 @@ final class _IndexedElementPlan {
+   }
+ }
+ 
++bool _nativeIndexedValue(OptionKey key, Object? value) =>
++    _indexedScalar(value) &&
++    switch (key) {
++      OptionKey.borderWidth ||
++      OptionKey.hitRadius ||
++      OptionKey.hoverBorderWidth ||
++      OptionKey.hoverRadius ||
++      OptionKey.radius ||
++      OptionKey.rotation => value is num,
++      OptionKey.backgroundColor ||
++      OptionKey.borderColor ||
++      OptionKey.pointStyle ||
++      OptionKey.borderSkipped ||
++      OptionKey.borderRadius ||
++      OptionKey.inflateAmount => true,
++      _ => false,
++    };
++
+ /// helpers.config.ts:27 `_createResolver`.
+ ///
+ /// Creates a Proxy for resolving raw values for options.
+@@ -415,18 +469,89 @@ final class OptionResolver implements ResolverProxy {
+   static bool nativeIndexedResult(ElementOptions into) =>
+       into is PointOptions || into is BarOptions;
+ 
++  /// Captures a color-only bar plan for a synchronous native loop. The caller
++  /// must prove that no user code or mutation can run until the loop finishes.
++  /// This reads cached values only and never invokes a descriptor or resolver.
++  @internal
++  // DIVERGES(chartjs): adapt-prepared-indexed-options, native bulk color plan.
++  BarOptions Function(int)? prepareIndexedBarColors(List<Object> keys) {
++    final template = BarOptions()..storeKey(OptionKey.dollarShared, false);
++    final varying = _prepareIndexedColors(keys, template);
++    if (varying == null) return null;
++    return (index) {
++      final result = template.clone();
++      for (final item in varying) {
++        // js-ok: nonnegative index and positive length (bulk preflight).
++        result.storeKey(item.key, item.values[index % item.values.length]);
++      }
++      return result;
++    };
++  }
++
++  /// A fresh options copy per native point, with static fields prepared once.
++  /// The caller must stop using it before any user code can run.
++  @internal
++  // DIVERGES(chartjs): adapt-scatter-point-options, loop-local color plan.
++  PointOptions Function(int)? prepareIndexedPointColors(List<Object> keys) {
++    final template = PointOptions()..storeKey(OptionKey.dollarShared, false);
++    final varying = _prepareIndexedColors(keys, template);
++    if (varying == null) return null;
++    return (index) {
++      final result = template.clone();
++      for (final item in varying) {
++        // js-ok: native loop indices are nonnegative and lengths positive.
++        result.storeKey(item.key, item.values[index % item.values.length]);
++      }
++      return result;
++    };
++  }
++
++  List<({OptionKey key, List<Object?> values})>? _prepareIndexedColors(
++    List<Object> keys,
++    ElementOptions template,
++  ) {
++    final plan = _indexedElementPlan;
++    if (_slotsTouched || plan == null || !plan.matches(keys)) return null;
++    final varying = <({OptionKey key, List<Object?> values})>[];
++    for (var i = 0; i < plan.keys.length; i++) {
++      final key = plan.keys[i];
++      if (!template.knownKeyList.contains(key.jsName)) return null;
++      final value = plan.values[i];
++      if (value is List<Object?>) {
++        if ((key != OptionKey.backgroundColor &&
++                key != OptionKey.borderColor) ||
++            value.isEmpty ||
++            !value.every(
++              (entry) =>
++                  entry == null ||
++                  entry is Undefined ||
++                  (entry is Color && !isObject(entry)),
++            )) {
++          return null;
++        }
++        varying.add((key: key, values: value));
++      } else {
++        if (!_nativeIndexedValue(key, value)) return null;
++        template.storeKey(key, value);
++      }
++    }
++    return varying.isEmpty ? null : varying;
++  }
++
+   /// Resolves native indexed scalar options from already cached raw values.
+   /// Null means that context was not called. A failed result retains the one
+   /// context call so the ordinary path can continue at attachContext.
+   @internal
+   // DIVERGES(chartjs): adapt-indexed-element-options, guarded cached plan.
+-  ({bool resolved, Object context})? resolveIndexedElementOptions(
++  ({bool resolved, Object context, ElementOptions? prepared})?
++  resolveIndexedElementOptions(
+     List<Object> keys,
+     Object Function() context,
+     ElementOptions into,
+     bool Function(Object?, Object?) descriptorGuard,
+     bool Function() stillCached, {
+     bool nativeInputs = false,
++    bool allowReplacement = false,
+   }) {
+     if (_slotsTouched ||
+         (!nativeInputs && !nativeIndexedList(keys)) ||
+@@ -440,7 +565,7 @@ final class OptionResolver implements ResolverProxy {
+       // resolution, without taxing every scriptable element with a key scan.
+       final size = _cache._keys?.length ?? 0;
+       if (_indexedRejectedSize == size) return null;
+-      ({bool resolved, Object context})? reject() {
++      ({bool resolved, Object context, ElementOptions? prepared})? reject() {
+         _indexedRejectedSize = size;
+         return null;
+       }
+@@ -486,12 +611,15 @@ final class OptionResolver implements ResolverProxy {
+     final ctx = context();
+     // An overridden controller/context factory can write/delete resolver keys.
+     // Continue with its original context if it invalidates this snapshot.
+-    final resolved =
++    final valid =
+         stillCached() &&
+         identical(plan, _indexedElementPlan) &&
+-        plan.matches(keys) &&
+-        plan.fill(ctx, into);
+-    return (resolved: resolved, context: ctx);
++        plan.matches(keys);
++    final prepared = valid && allowReplacement
++        ? plan.prepared(ctx, into)
++        : null;
++    final resolved = prepared != null || (valid && plan.fill(ctx, into));
++    return (resolved: resolved, context: ctx, prepared: prepared);
+   }
+ 
+   /// `_keys` of the target (helpers.config.ts:419-425), or Dart `null`.
+diff --git a/packages/flutter_chartjs_port/tool/src/lib_imports.dart b/packages/flutter_chartjs_port/tool/src/lib_imports.dart
+index 7f9070e..4dd14da 100644
+--- a/packages/flutter_chartjs_port/tool/src/lib_imports.dart
++++ b/packages/flutter_chartjs_port/tool/src/lib_imports.dart
+@@ -156,6 +156,7 @@ const List<String> pureRoots = [
+   'lib/src/core/reduced_motion.dart',
+   'lib/src/core/tick_font_cache.dart',
+   'lib/src/core/bar_sorted_values.dart',
++  'lib/src/core/point_options.dart',
+   'lib/src/core/core.typedRegistry.dart',
+   'lib/src/elements/**',
+   'lib/src/plugins/plugin.decimation.dart',
+diff --git a/packages/flutter_chartjs_port/lib/src/core/point_options.dart b/packages/flutter_chartjs_port/lib/src/core/point_options.dart
+new file mode 100644
+index 0000000..ff588fd
+--- /dev/null
++++ b/packages/flutter_chartjs_port/lib/src/core/point_options.dart
+@@ -0,0 +1,67 @@
++// Original code, not ported from Chart.js: native point-option loop contracts.
++
++import 'package:flutter_chartjs_port/src/core/data_update.dart';
++import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
++import 'package:flutter_chartjs_port/src/options/option_scope.dart';
++import 'package:flutter_chartjs_port/src/options/parsed.dart';
++import 'package:flutter_chartjs_port/src/types/data_item.dart';
++import 'package:flutter_chartjs_port/src/types/index.dart' as types;
++
++/// A chart whose config/data/context, metadata and DPR reads run no user code.
++/// Unknown subclasses retain ordinary option resolution.
++abstract interface class NativePointChart {
++  /// True only for the built-in chart, or an explicit equivalent wrapper.
++  bool get supportsNativePointOptions;
++}
++
++/// Native point size/context/property reads and writes, without user callbacks.
++abstract interface class NativePointElement {
++  /// Unknown subclasses must retain ordinary resolution, even if their typed
++  /// property writes are enabled independently.
++  bool get supportsNativePointOptions;
++}
++
++final _pointLists = <Type>{
++  <types.Element>[].runtimeType,
++  List<types.Element>.empty().runtimeType,
++  <types.PointElement>[].runtimeType,
++  List<types.PointElement>.empty().runtimeType,
++};
++
++/// Only native list indexing may occur between prepared option reads.
++bool nativePointList(List<types.Element> points) =>
++    _pointLists.contains(points.runtimeType);
++
++/// Qualifies each parsed item at its original iteration, before any conversion
++/// can run user code. It never validates the whole dataset a second time.
++/// Container implementation is cached by type; coordinate values stay live.
++final class NativePointCoordinates {
++  Type? _lastType;
++  bool _nativeObject = false;
++
++  /// True when x/y reads and their numeric conversions cannot call user code.
++  bool accepts(Object? value) {
++    if (value is ParsedItem) {
++      return !value.hasForeign && _number(value.x) && _number(value.y);
++    }
++    if (value is TypedDataItem && nativeDataUpdatePoint(value)) {
++      return _number(value.x) && _number(value.y);
++    }
++    if (value is! Map<String, Object?> && value is! OptionScope) return false;
++    final type = value.runtimeType;
++    if (type != _lastType) {
++      _lastType = type;
++      _nativeObject = nativeDataUpdateObject(value);
++    }
++    if (!_nativeObject) return false;
++    if (value is OptionScope &&
++        (value.routeOf('x') != null || value.routeOf('y') != null)) {
++      return false;
++    }
++    return _number(dataUpdateField(value!, 'x')) &&
++        _number(dataUpdateField(value, 'y'));
++  }
++}
++
++bool _number(Object? value) =>
++    value == null || value is Undefined || value is num;
+diff --git a/packages/flutter_chartjs_port/test/port/core/point_options_test.dart b/packages/flutter_chartjs_port/test/port/core/point_options_test.dart
+new file mode 100644
+index 0000000..d74b606
+--- /dev/null
++++ b/packages/flutter_chartjs_port/test/port/core/point_options_test.dart
+@@ -0,0 +1,149 @@
++// Original code, not ported from Chart.js: point-loop regressions.
++import 'dart:collection';
++import 'dart:ui' show Color;
++
++import 'package:flutter_chartjs_port/src/core/core.config.dart';
++import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
++import 'package:flutter_chartjs_port/src/core/point_options.dart';
++import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
++import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
++import 'package:flutter_chartjs_port/src/options/option_scope.dart';
++import 'package:flutter_chartjs_port/src/options/parsed.dart';
++import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
++import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
++import 'package:test/test.dart';
++
++class _ObservedMap extends MapBase<String, Object?> {
++  int reads = 0;
++  @override
++  Object? operator [](Object? key) {
++    reads++;
++    return 1.0;
++  }
++
++  @override
++  void operator []=(String key, Object? value) {}
++  @override
++  Iterable<String> get keys => ['x', 'y'];
++  @override
++  void clear() {}
++  @override
++  Object? remove(Object? key) => null;
++}
++
++void main() {
++  test(
++    'coordinate checks retain live values without touching custom getters',
++    () {
++      final guard = NativePointCoordinates();
++      final raw = <String, Object?>{'x': 1.0, 'y': 2.0};
++      expect(guard.accepts(raw), isTrue);
++      raw['y'] = Object();
++      expect(guard.accepts(raw), isFalse);
++      raw['y'] = null;
++      expect(guard.accepts(raw), isTrue);
++      final custom = _ObservedMap();
++      expect(guard.accepts(custom), isFalse);
++      expect(custom.reads, 0);
++      final parsed = ParsedItem()
++        ..x = 1.0
++        ..y = double.nan;
++      expect(guard.accepts(parsed), isTrue);
++      parsed.y = undefined;
++      expect(guard.accepts(parsed), isTrue);
++      expect(guard.accepts(Object()), isFalse);
++    },
++  );
++
++  test('coordinate routes are rejected without running them', () {
++    var calls = 0;
++    final scope = PointOptionsScope()
++      ..store('x', const OptValue<double>(1))
++      ..store('y', const OptValue<double>(2));
++    expect(NativePointCoordinates().accepts(scope), isTrue);
++    scope.addRoute(
++      'x',
++      ScopeRoute(
++        (local) {
++          calls++;
++          return local;
++        },
++        targetScope: null,
++        targetName: 'x',
++      ),
++    );
++    expect(NativePointCoordinates().accepts(scope), isFalse);
++    expect(calls, 0);
++  });
++
++  test(
++    'point plans preserve dataset selection, ownership and invalidation',
++    () {
++      const red = Color(0xffff0000);
++      const blue = Color(0xff0000ff);
++      final saved = defaults.saveState();
++      addTearDown(() => defaults.restoreState(saved));
++      final point = PointOptionsScope()
++        ..radius = 3
++        ..hoverRadius = 4
++        ..borderWidth = 1
++        ..backgroundColor = red
++        ..borderColor = blue;
++      defaults.elements = ElementOptionsByTypeScope()..point = point;
++      final datasets = <Object?>[
++        for (final colors in [
++          <Color>[red, blue],
++          <Color>[blue, red],
++        ])
++          <String, Object?>{
++            '_scriptable': true,
++            '_indexable': true,
++            'backgroundColor': colors,
++            'data': <Object?>[
++              <String, double>{'x': 1, 'y': 2},
++            ],
++          },
++      ];
++      final config = Config({
++        'type': 'scatter',
++        'data': <String, Object?>{'datasets': datasets},
++      });
++      void warm(int index) {
++        final scopes = config.getOptionScopes(
++          datasets[index],
++          config.datasetElementScopeKeys('scatter', 'point'),
++        );
++        for (var i = 0; i < 2; i++) {
++          config.resolveNativeElementNamedOptions(
++            scopes,
++            point.jsOwnKeys(),
++            () => ScriptableContext.data(null, 0, null),
++            const ['point', ''],
++            PointOptions(),
++            allowReplacement: true,
++          );
++        }
++      }
++
++      warm(0);
++      warm(1);
++      final a = config.prepareIndexedPointColors(0);
++      final b = config.prepareIndexedPointColors(1);
++      expect(a, isNotNull);
++      expect(b, isNotNull);
++      expect(a!(0).backgroundColor, red);
++      expect(b!(0).backgroundColor, blue);
++      final first = a(0)..storeKey(OptionKey.radius, 99.0);
++      expect(a(0).radius, 3);
++      expect(first.$sharedValue, isFalse);
++      expect(identical(a(0), a(0)), isFalse);
++      expect(config.prepareIndexedPointColors(-1), isNull);
++      expect(config.prepareIndexedPointColors(2), isNull);
++      final ds = datasets[0]! as Map<String, Object?>;
++      (ds['backgroundColor']! as List<Color>).clear();
++      expect(config.prepareIndexedPointColors(0), isNull);
++      config.clearCache();
++      expect(config.prepareIndexedPointColors(1), isNull);
++    },
++  );
++}
+diff --git a/packages/flutter_chartjs_port/test/port/controllers/scatter_point_options_test.dart b/packages/flutter_chartjs_port/test/port/controllers/scatter_point_options_test.dart
+new file mode 100644
+index 0000000..d71cad0
+--- /dev/null
++++ b/packages/flutter_chartjs_port/test/port/controllers/scatter_point_options_test.dart
+@@ -0,0 +1,418 @@
++// Original code, not ported from Chart.js: native scatter option-loop twins.
++@TestOn('vm')
++library;
++
++import 'dart:collection';
++import 'dart:ui' as ui;
++
++import 'package:flutter_chartjs_port/chartjs.dart';
++import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
++import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
++import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
++import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
++import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++const red = ui.Color(0xffff0000);
++const blue = ui.Color(0xff0000ff);
++const green = ui.Color(0xff00ff00);
++
++class _ReferenceChart extends Chart {
++  _ReferenceChart(super.item, super.userConfig);
++  @override
++  bool get supportsNativePointOptions => false;
++}
++
++// Explicit test opt-in: counters only, with native size/context/property behavior.
++class _ProbePoint extends PointElement {
++  int planReads = 0;
++  @override
++  bool get supportsNativePointOptions {
++    planReads++;
++    return true;
++  }
++
++  @override
++  bool get typedWrites => true;
++}
++
++class _CustomSize extends PointElement {
++  void Function()? afterSize;
++  int calls = 0;
++  @override
++  double size([Object? options]) {
++    final result = super.size(options);
++    calls++;
++    afterSize?.call();
++    return result;
++  }
++}
++
++class _CustomScale extends LinearScale {
++  _CustomScale(super.cfg);
++  int calls = 0;
++  static final value = JsClass(
++    'ScatterCustomScale',
++    superclass: LinearScale.jsClass,
++    statics: {'id': 'scatter-custom-scale'},
++    construct: (_, args) => _CustomScale(scaleCfgArg(args)),
++  );
++  @override
++  double getPixelForValue(Object? value, [double? index]) {
++    calls++;
++    return super.getPixelForValue(value, index);
++  }
++}
++
++class _ObservedMap extends MapBase<String, Object?> {
++  _ObservedMap(this.fields);
++  final Map<String, Object?> fields;
++  final List<Object?> reads = [];
++  void Function(Object?)? onRead;
++  @override
++  Object? operator [](Object? key) {
++    reads.add(key);
++    onRead?.call(key);
++    return fields[key];
++  }
++
++  @override
++  void operator []=(String key, Object? value) => fields[key] = value;
++  @override
++  Iterable<String> get keys => fields.keys;
++  @override
++  Object? remove(Object? key) => fields.remove(key);
++  @override
++  void clear() => fields.clear();
++}
++
++Map<String, Object?> _config({bool line = false, int datasets = 1}) => {
++  'type': 'scatter',
++  'data': <String, Object?>{
++    'datasets': <Object?>[
++      for (var d = 0; d < datasets; d++)
++        <String, Object?>{
++          'data': <Object?>[
++            for (var i = 0; i < 8; i++)
++              <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
++          ],
++          'backgroundColor': <ui.Color>[if (d == 0) red else green, blue],
++          'borderColor': blue,
++          'radius': 3.0,
++          'borderWidth': 1.0,
++          'showLine': line,
++        },
++    ],
++  },
++  'options': <String, Object?>{
++    'responsive': false,
++    'animation': false,
++    'parsing': false,
++    'events': <String>[],
++    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
++    'scales': <String, Object?>{
++      'x': <String, Object?>{
++        'type': 'linear',
++        'display': false,
++        'min': 0.0,
++        'max': 8.0,
++      },
++      'y': <String, Object?>{
++        'type': 'linear',
++        'display': false,
++        'min': -5.0,
++        'max': 10.0,
++      },
++    },
++  },
++};
++Map<String, Object?> _dataset(Map<String, Object?> cfg, [int index = 0]) =>
++    ((cfg['data']! as Map<String, Object?>)['datasets']!
++            as List<Object?>)[index]!
++        as Map<String, Object?>;
++Chart _chart(Object cfg, {bool reference = false}) {
++  final canvas = UiCanvasElement(width: 640, height: 400);
++  final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
++  addTearDown(chart.destroy);
++  return chart;
++}
++
++List<_ProbePoint> _probes(Chart chart, [int dataset = 0]) {
++  final points = chart.getDatasetMeta(dataset).data;
++  return [
++    for (var i = 0; i < points.length; i++) points[i] = _ProbePoint(),
++  ];
++}
++
++Object? _plain(Object? value) {
++  if (value is double && !value.isFinite) return value.toString();
++  if (value is JsObjectFace) {
++    return {for (final k in value.jsKeys()) k: _plain(value.jsRead(k))};
++  }
++  if (value is Map) {
++    return {for (final e in value.entries) e.key: _plain(e.value)};
++  }
++  return value;
++}
++
++Object _observe(Chart chart, [int dataset = 0]) => [
++  for (final point in chart.getDatasetMeta(dataset).data.cast<PointElement>())
++    [
++      _plain(point.x),
++      _plain(point.y),
++      point.skip,
++      point.stop,
++      _plain(point.options),
++      point.$context?.jsKeys(),
++      for (final key in [
++        'index',
++        'dataIndex',
++        'mode',
++        'active',
++        'parsed',
++        'raw',
++      ])
++        _plain(point.$context?.jsRead(key)),
++    ],
++];
++
++void main() {
++  TestWidgetsFlutterBinding.ensureInitialized();
++  Chart.register([
++    ScatterController.jsClass,
++    PointElement.jsClass,
++    LineElement.jsClass,
++    LinearScale.jsClass,
++  ]);
++
++  for (final line in [false, true]) {
++    test(
++      'fresh indexed options and contexts across updates, showLine=$line',
++      () {
++        final ca = _config(line: line, datasets: 2);
++        final cb = _config(line: line, datasets: 2);
++        final a = _chart(ca);
++        final b = _chart(cb, reference: true);
++        final probes = [_probes(a), _probes(a, 1)];
++        for (var step = 0; step < 3; step++) {
++          for (final cfg in [ca, cb]) {
++            for (var d = 0; d < 2; d++) {
++              final ds = _dataset(cfg, d);
++              (ds['backgroundColor']! as List<ui.Color>)[0] = ui.Color(
++                0xff001100 + step + d,
++              );
++              ((ds['data']! as List<Object?>)[3]!
++                  as Map<String, Object?>)['y'] = step
++                  .toDouble();
++            }
++          }
++          a.update('none');
++          b.update('none');
++          for (var d = 0; d < 2; d++) {
++            expect(_observe(a, d), _observe(b, d));
++            expect(
++              identical(probes[d][3].options, probes[d][4].options),
++              isFalse,
++            );
++            expect(jsGet(probes[d][3].options, r'$shared'), isFalse);
++            (probes[d][3].options! as ElementOptions).storeKey(
++              OptionKey.radius,
++              77.0,
++            );
++          }
++        }
++        expect(probes.expand((x) => x).any((p) => p.planReads > 0), isTrue);
++      },
++    );
++  }
++
++  test('overflow drops the plan before a custom size mutates options', () {
++    final values = <Object?>[];
++    final states = <Object>[];
++    for (final reference in [false, true]) {
++      final cfg = _config();
++      final chart = _chart(cfg, reference: reference);
++      final probes = _probes(chart);
++      final custom = _CustomSize()
++        ..afterSize = () {
++          _dataset(cfg)['radius'] = 7.0;
++          (_dataset(cfg)['backgroundColor']! as List<ui.Color>)[0] = green;
++          chart.config.clearCache();
++        };
++      chart.getDatasetMeta(0).data[4] = custom;
++      values.add(chart.getDatasetMeta(0).controller!.getMaxOverflow());
++      states.add(_observe(chart));
++      expect(custom.calls, 1);
++      if (!reference) {
++        expect(probes[5].planReads, greaterThan(0));
++        expect(probes[3].planReads, 0);
++      }
++    }
++    expect(values[0], values[1]);
++    expect(states[0], states[1]);
++  });
++
++  test('effectful parsed reads terminate reuse before conversion', () {
++    final states = <Object>[];
++    final logs = <List<Object?>>[];
++    for (final reference in [false, true]) {
++      final cfg = _config();
++      final chart = _chart(cfg, reference: reference);
++      final probes = _probes(chart);
++      final observed = _ObservedMap({'x': 3.0, 'y': 4.0});
++      var changed = false;
++      observed.onRead = (key) {
++        if (key == 'y' && !changed) {
++          changed = true;
++          _dataset(cfg)['radius'] = 7.0;
++          (_dataset(cfg)['backgroundColor']! as List<ui.Color>)[0] = green;
++          chart.config.clearCache();
++        }
++      };
++      final meta = chart.getDatasetMeta(0);
++      meta.parsed[3] = observed;
++      meta.controller!.updateElements(meta.data, 0, 8, 'none');
++      logs.add(List.of(observed.reads));
++      states.add(_observe(chart));
++      if (!reference) {
++        expect(probes[2].planReads, greaterThan(0));
++        expect(probes[5].planReads, 0);
++      }
++    }
++    expect(logs[0], logs[1]);
++    expect(states[0], states[1]);
++  });
++
++  test('active point callback sees geometry and ends prepared resolution', () {
++    final states = <Object>[];
++    final logs = <List<Object?>>[];
++    for (final reference in [false, true]) {
++      final cfg = _config();
++      final calls = <Object?>[];
++      ui.Color hover(Object? ctx) {
++        final e = jsGet(ctx, 'element')! as PointElement;
++        calls.add([jsGet(ctx, 'dataIndex'), e.x, e.y]);
++        return green;
++      }
++
++      _dataset(cfg)['hoverBackgroundColor'] = hover;
++      final chart = _chart(cfg, reference: reference);
++      final probes = _probes(chart);
++      probes[4].active = true;
++      final meta = chart.getDatasetMeta(0);
++      meta.controller!.updateElements(meta.data, 0, 8, 'none');
++      logs.add(calls);
++      states.add(_observe(chart));
++      if (!reference) {
++        expect(probes[3].planReads, greaterThan(0));
++        expect(probes[6].planReads, 0);
++      }
++    }
++    expect(logs[0], isNotEmpty);
++    expect(logs[0], logs[1]);
++    expect(states[0], states[1]);
++  });
++
++  test('scriptable and indexed numeric options preserve ordinary calls', () {
++    for (final callback in [false, true]) {
++      final states = <Object>[];
++      final counts = <int>[];
++      for (final reference in [false, true]) {
++        final cfg = _config();
++        var calls = 0;
++        double radius(Object? ctx) {
++          calls++;
++          return 2 + (jsGet(ctx, 'dataIndex')! as num).toDouble();
++        }
++
++        _dataset(cfg)['radius'] = callback ? radius : <double>[2, 4];
++        final chart = _chart(cfg, reference: reference);
++        final probes = _probes(chart);
++        calls = 0;
++        chart.update('none');
++        states.add(_observe(chart));
++        counts.add(calls);
++        expect(probes.every((p) => p.planReads == 0), isTrue);
++      }
++      expect(states[0], states[1]);
++      expect(counts[0], counts[1]);
++    }
++  });
++
++  test('partial updates keep absolute indices and untouched points', () {
++    final a = _chart(_config());
++    final b = _chart(_config(), reference: true);
++    final probes = _probes(a);
++    _probes(b);
++    for (final chart in [a, b]) {
++      final meta = chart.getDatasetMeta(0);
++      meta.controller!.updateElements(meta.data, 2, 5, 'none');
++    }
++    expect(_observe(a), _observe(b));
++    expect(probes[4].planReads, greaterThan(0));
++    expect(probes[0].$context, isNull);
++    expect(probes[7].$context, isNull);
++  });
++
++  test('custom class id getters retain their ordinary read count', () {
++    final states = <Object>[];
++    final counts = <int>[];
++    for (final reference in [false, true]) {
++      final chart = _chart(_config(), reference: reference);
++      final probes = _probes(chart);
++      final cls = _ObservedMap({'id': 'point'});
++      final meta = chart.getDatasetMeta(0);
++      (meta.controller! as ScatterController)
++        ..dataElementType = cls
++        ..getMaxOverflow()
++        ..updateElements(meta.data, 0, 8, 'none');
++      counts.add(cls.reads.length);
++      states.add(_observe(chart));
++      expect(probes.every((p) => p.planReads == 0), isTrue);
++    }
++    expect(counts[0], counts[1]);
++    expect(states[0], states[1]);
++  });
++
++  test('custom scale projections retain ordinary option resolution', () {
++    Chart.register([_CustomScale.value]);
++    addTearDown(() => Chart.unregister([_CustomScale.value]));
++    final states = <Object>[];
++    final calls = <int>[];
++    for (final reference in [false, true]) {
++      final cfg = _config();
++      final scales = (cfg['options']! as Map)['scales']! as Map;
++      (scales['y']! as Map)['type'] = 'scatter-custom-scale';
++      final chart = _chart(cfg, reference: reference);
++      final probes = _probes(chart);
++      final scale = (chart.scales['y']! as _CustomScale)..calls = 0;
++      final meta = chart.getDatasetMeta(0);
++      meta.controller!.updateElements(meta.data, 0, 8, 'none');
++      expect(probes.every((p) => p.planReads == 0), isTrue);
++      calls.add(scale.calls);
++      states.add(_observe(chart));
++    }
++    expect(calls[0], greaterThan(0));
++    expect(calls[0], calls[1]);
++    expect(states[0], states[1]);
++  });
++
++  test('invalid point cast occurs before resolving its options', () {
++    for (final reference in [false, true]) {
++      final cfg = _config();
++      var calls = 0;
++      double radius(Object? _) {
++        calls++;
++        return 3;
++      }
++
++      _dataset(cfg)['radius'] = radius;
++      final chart = _chart(cfg, reference: reference);
++      final meta = chart.getDatasetMeta(0);
++      meta.data.last = BarElement();
++      calls = 0;
++      expect(meta.controller!.getMaxOverflow, throwsA(isA<TypeError>()));
++      expect(calls, 0);
++    }
++  });
++}

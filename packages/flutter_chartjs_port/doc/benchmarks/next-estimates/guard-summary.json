@@ -1,0 +1,144 @@
+[
+  {
+    "round": "guard",
+    "case": "line.indexed.baseline",
+    "n": 5000,
+    "baselineFullMs": 7.196,
+    "candidateFullMs": 7.1745,
+    "fullGainPercent": 0.29877709838799227,
+    "pairFullGains": [
+      -0.5357878829509444,
+      1.1528187825108893
+    ],
+    "preflightScansPerUpdate": []
+  },
+  {
+    "round": "guard",
+    "case": "line.indexed.points_context",
+    "n": 5000,
+    "baselineFullMs": 7.196,
+    "candidateFullMs": 2.4225000000000003,
+    "fullGainPercent": 66.33546414674818,
+    "pairFullGains": [
+      66.17667261986536,
+      66.49796147898215
+    ],
+    "preflightScansPerUpdate": []
+  },
+  {
+    "round": "guard",
+    "case": "line.indexed.points_preflight_context",
+    "n": 5000,
+    "baselineFullMs": 7.196,
+    "candidateFullMs": 9.563,
+    "fullGainPercent": -32.89327404113398,
+    "pairFullGains": [
+      -29.962906992718796,
+      -35.892028679881925
+    ],
+    "preflightScansPerUpdate": [
+      4.0,
+      4.0
+    ]
+  },
+  {
+    "round": "guard",
+    "case": "scatter.indexed.baseline",
+    "n": 5000,
+    "baselineFullMs": 17.387500000000003,
+    "candidateFullMs": 17.475499999999997,
+    "fullGainPercent": -0.5061107117181551,
+    "pairFullGains": [
+      -0.4942812805333485,
+      -0.5179558011049412
+    ],
+    "preflightScansPerUpdate": []
+  },
+  {
+    "round": "guard",
+    "case": "scatter.indexed.points_context",
+    "n": 5000,
+    "baselineFullMs": 17.387500000000003,
+    "candidateFullMs": 3.5595,
+    "fullGainPercent": 79.52839683680806,
+    "pairFullGains": [
+      79.65400310362665,
+      79.40262430939227
+    ],
+    "preflightScansPerUpdate": []
+  },
+  {
+    "round": "guard",
+    "case": "scatter.indexed.points_preflight_context",
+    "n": 5000,
+    "baselineFullMs": 17.387500000000003,
+    "candidateFullMs": 10.665,
+    "fullGainPercent": 38.66283249460821,
+    "pairFullGains": [
+      38.70912121386287,
+      38.616482504604065
+    ],
+    "preflightScansPerUpdate": [
+      4.0,
+      4.0
+    ]
+  },
+  {
+    "round": "one",
+    "case": "line.indexed.baseline",
+    "n": 5000,
+    "baselineFullMs": 7.0205,
+    "candidateFullMs": 6.92,
+    "fullGainPercent": 1.4315219713695648,
+    "pairFullGains": [
+      -0.31897926634767426,
+      3.1215005599104173
+    ],
+    "preflightScansPerUpdate": []
+  },
+  {
+    "round": "one",
+    "case": "line.indexed.points_one_scan",
+    "n": 5000,
+    "baselineFullMs": 7.0205,
+    "candidateFullMs": 4.16,
+    "fullGainPercent": 40.74496118510078,
+    "pairFullGains": [
+      39.11845730027549,
+      42.31522956326989
+    ],
+    "preflightScansPerUpdate": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "round": "one",
+    "case": "scatter.indexed.baseline",
+    "n": 5000,
+    "baselineFullMs": 17.221,
+    "candidateFullMs": 17.4215,
+    "fullGainPercent": -1.1642761744381946,
+    "pairFullGains": [
+      -0.18002322880370514,
+      -2.1484148182557172
+    ],
+    "preflightScansPerUpdate": []
+  },
+  {
+    "round": "one",
+    "case": "scatter.indexed.points_one_scan",
+    "n": 5000,
+    "baselineFullMs": 17.221,
+    "candidateFullMs": 5.4,
+    "fullGainPercent": 68.64293595029325,
+    "pairFullGains": [
+      68.45528455284553,
+      68.83056555568459
+    ],
+    "preflightScansPerUpdate": [
+      1.0,
+      1.0
+    ]
+  }
+]

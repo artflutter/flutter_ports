@@ -29,6 +29,7 @@ library;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions, numberOption, plainOption, rawOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
@@ -153,7 +154,8 @@ class PointElement extends Element
     implements
         types.RadialPointElement,
         types.VisualElementRange,
-        types.PointElementWrites {
+        types.PointElementWrites,
+        NativePointElement {
   /// element.point.ts:49 `constructor(cfg)`.
   ///
   /// element.point.ts:52-55 set `options`, `parsed`, `skip` and `stop` to
@@ -389,6 +391,12 @@ class PointElement extends Element
   @internal
   @override
   bool get typedWrites => _builtIn;
+
+  /// Native size/context reads as well as property writes (ADR 0079).
+  @internal
+  @override
+  // DIVERGES(chartjs): adapt-scatter-point-options, native element contract.
+  bool get supportsNativePointOptions => super.runtimeType == PointElement;
 
   /// [Element.takesProperties]: a [PointProperties], for an element of the
   /// class [PointElement] itself.

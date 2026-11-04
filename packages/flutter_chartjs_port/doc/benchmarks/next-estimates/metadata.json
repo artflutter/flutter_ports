@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-03",
+  "baselineCommit": "ba58aa8a918f3d078c15f833abdb0337a96b271a",
+  "toolchain": {
+    "frameworkVersion": "3.47.8",
+    "channel": "stable",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "737ba8f885dc774b53b442759999a312c9461e4e",
+    "frameworkCommitDate": "2026-10-22 21:37:31 -0700",
+    "engineRevision": "cf636b1dfb818dd6a3ff16e390e93b1a036969c8",
+    "engineCommitDate": "2026-10-23 02:13:38.000Z",
+    "engineContentHash": "dfd2e6cb7d319db05e3bf1503f3e2ac60f6288a2",
+    "engineBuildDate": "2026-10-23 05:34:48.330",
+    "dartSdkVersion": "3.13.7",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.8"
+  },
+  "platform": "macOS 27.0.1 arm64, profile AOT, native canvas",
+  "canvas": "800x480 DPR1",
+  "baselineNote": "Current ADR 0078 implementation, not ba58aa8 alone; apply baseline.patch to that commit. Production library diff is byte-identical before and after this investigation.",
+  "baselinePatchSha256": "84438a5726ab77e2637d6662089513f446d87d7fd8d0929dc48b1095652402bb",
+  "binaries": {
+    "baseline": "53f5547a43fac3b68d155a0ee7706f5c1f3471ecb4ff8442b96162cb285094aa",
+    "main": "d0916d9a2262c185c638c97da990b23dcad23cecfcc376a3903f57d98fcf38d9",
+    "fourScan": "44916614934fb1a4e5b2cf5b0805596048da57bf1ad622376200c57bf441a948",
+    "oneScan": "867de4da6a429b01ed5018f116cb57c3c55cdfdf5fb0bc9bef9b6fb4e50643d4"
+  },
+  "protocol": "Three A/B/B/A matrices, reverse case order in B2/A2; 800ms warmup and seven 200ms batches; no builds/tests alongside timing. Full CPU sums update/draw/end medians per process, then averages two processes. Untimed comparisons against mode 0 include selected geometry/contexts, complete element options, current-path bounds/metrics, and exact 800x480 RGBA bytes.",
+  "profiles": "Current baseline binary: five-second VM attach settling, cleared samples, ten-second captures for line/scatter N5000 and bar N20000. Inclusive samples overlap and include simulation outside phase stopwatches.",
+  "modes": {
+    "baseline": 0,
+    "points": 1,
+    "context": 2,
+    "points_context": 3,
+    "draw": 4,
+    "context_draw": 6,
+    "fourScansWithPointsAndContext": 11,
+    "oneScanWithPointsAndContext": 27
+  }
+}

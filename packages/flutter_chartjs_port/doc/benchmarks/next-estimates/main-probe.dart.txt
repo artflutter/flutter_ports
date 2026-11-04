@@ -1,0 +1,99 @@
+// Original code, not ported from Chart.js: isolated next-step estimates.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Animation;
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/next_estimate.dart' as probe;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+
+Object? plain(Object? v) {
+ if(v is Undefined)return '#undefined';
+ if(v is ui.Color)return v.toARGB32();
+ if(v is double&&!v.isFinite)return v.toString();
+ if(v is JsObjectFace)return {for(final k in v.jsKeys()) k:plain(v.jsRead(k))};
+ if(v is Map)return {for(final e in v.entries)e.key:plain(e.value)};
+ if(v is List)return v.map(plain).toList();
+ return v;
+}
+Object observeContext(dynamic e) {
+ final c=e.$context as JsObjectFace?;
+ return c==null ? '#none' : [c.jsKeys(),for(final k in ['parsed','raw','index','dataIndex','active','mode']) plain(c.jsRead(k))];
+}
+Object observe(Chart chart)=>[
+ plain(chart.getDatasetMeta(0).parsed),
+ for(final e in chart.getDatasetMeta(0).data) [
+  for(final k in ['x','y','base','width','height','skip','stop','cp1x','cp1y','cp2x','cp2y','borderSkipped','inflateAmount','enableBorderRadius'])
+   plain((e as types.ElementPropertyRead)[k]),
+  plain(e.options), observeContext(e),
+ ],
+];
+UiCanvasContext contextOf(Chart chart)=>(chart.canvas as UiCanvasElement).getContext('2d')!;
+Object observePath(Chart chart) {
+ final path=contextOf(chart).debugPath.path;final r=path.getBounds();
+ return [[r.left,r.top,r.right,r.bottom],for(final m in path.computeMetrics()) [m.length,m.isClosed]];
+}
+ui.Image pixels(Chart chart) {
+ final recorder=ui.PictureRecorder();contextOf(chart).paint(ui.Canvas(recorder),ui.Offset.zero,1,1);
+ final pic=recorder.endRecording();final result=pic.toImageSync(800,480);pic.dispose();return result;
+}
+const modes={'baseline':0,'points':1,'context':2,'points_context':3,'draw':4,'context_draw':6};
+ChartBenchCase make(String typeName,String style,String variant) => ChartBenchCase(
+ mode:'next-estimate',name:'$typeName.$style.$variant',call:ChartBenchCall.update,
+ keys:{'type':typeName,'style':style,'variant':variant},scene:(n){
+  probe.mode=modes[variant]!;probe.pointHits=0;probe.contextHits=0;probe.drawHits=0;
+  registerGalleryComponents();
+  final type=StressChartType.values.byName(typeName);
+  final field=StressPointField(n);final scene=StressChartScene(type,n,field);
+  final cfg=stressChartConfig(scene:scene,scriptable:false,options:chartBenchOptions);
+  final ds=((cfg['data'] as Map)['datasets'] as List).first as Map;
+  var frames=0,calls=0;
+  ds['backgroundColor']=switch(style){
+   'indexed'=><Object?>[stressChartBackground,stressChartBackgroundOdd],
+   'callback'=>(Object? ctx){calls++;return stressScriptableBackground(ctx);},
+   _=>stressChartBackground,
+  };
+  return ChartBenchScene(config:cfg,change:(){field.step(n,chartBenchStep);scene.write(field);frames++;},
+   describe:(chart)=>{'frames':frames,'callbackCalls':calls,'callbacksPerFrame':calls/(frames+1),
+    'pointHits':probe.pointHits,'contextHits':probe.contextHits,'drawHits':probe.drawHits});
+ });
+Future<void> run()async{
+ await Future<void>.delayed(const Duration(seconds:2));animator.refresh=(){};
+ final env=Platform.environment;final n=int.parse(env['N']??'5000');
+ var specs=<({String type,String style,String variant})>[];
+ for(final type in (env['TYPES']??'line,scatter,bar').split(',')) {
+  for(final style in (env['STYLES']??'static,indexed,callback').split(',')) {
+   final combined=type=='bar'?'context_draw':'points_context';
+   final variants=style=='indexed'
+    ? (type=='bar'?['baseline','context','draw',combined]:['baseline','points','context',combined])
+    : ['baseline',combined];
+   for(final variant in variants)specs.add((type:type,style:style,variant:variant));
+  }
+ }
+ if(env['REVERSE']=='1')specs=specs.reversed.toList();
+ for(final s in specs){
+  print('START ${s.type}.${s.style}.${s.variant}/$n');
+  var same=true,pathSame=true;ui.Image? beforeImage,afterImage;
+  final result=runChartBenchCase(make(s.type,s.style,s.variant),n,
+   const ChartBenchSettings(warmupMs:800,batches:7,batchMs:200),
+   onChart:(chart){
+    final before=jsonEncode(observe(chart));final path=jsonEncode(observePath(chart));beforeImage=pixels(chart);
+    final mode=probe.mode;probe.mode=0;chart.update('none');
+    same=before==jsonEncode(observe(chart));pathSame=path==jsonEncode(observePath(chart));afterImage=pixels(chart);probe.mode=mode;
+    if(!same||!pathSame)throw StateError('State mismatch ${s.type}.${s.style}.${s.variant}/$n: state=$same path=$pathSame');
+   });
+  final a=(await beforeImage!.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List();
+  final b=(await afterImage!.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List();
+  var mismatches=0;for(var i=0;i<a.length;i++){if(a[i]!=b[i])mismatches++;}
+  beforeImage!.dispose();afterImage!.dispose();
+  print('ESTIMATE ${jsonEncode({...result,'referenceMatches':same,'pathMatches':pathSame,'pixelByteMismatches':mismatches})}');
+  if(mismatches!=0)throw StateError('Pixel mismatch ${s.type}.${s.style}.${s.variant}/$n: $mismatches');
+ }
+ exit(0);
+}
+void main(){WidgetsFlutterBinding.ensureInitialized();runApp(const MaterialApp(home:Scaffold(body:Text('Next performance estimates'))));unawaited(run().catchError((Object e,StackTrace st){print('$e\n$st');exit(1);}));}

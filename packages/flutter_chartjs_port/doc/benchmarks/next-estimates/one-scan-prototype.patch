@@ -1,0 +1,675 @@
+diff --git a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+index 223a46f..8fa628f 100644
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui.dart
+@@ -38,6 +38,7 @@
+ /// clip is part of the state.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/next_estimate.dart' as probe;
+ import 'dart:convert';
+ import 'dart:math' as math;
+ import 'dart:typed_data';
+@@ -582,7 +583,7 @@ final class UiCanvasContext
+   /// `singleCircle` and `singleRRect` select the fast paths of [fill] and
+   /// [clip].
+   @visibleForTesting
+-  UiPathBuilder get debugPath => _path;
++  UiPathBuilder get debugPath { _estimateFlushPath(); return _path; }
+ 
+   /// The outer and the inner shape that `fill('evenodd')` of the current
+   /// path draws with `drawDRRect`, or `null` when it draws another shape or
+@@ -625,6 +626,7 @@ final class UiCanvasContext
+     double scaleX,
+     double scaleY,
+   ) {
++    _estimateFlushPath();
+     _notified = false;
+     if (_disposed) return;
+     _endRecording();
+@@ -1023,6 +1025,7 @@ final class UiCanvasContext
+   /// state makes it ([clip]).
+   @override
+   void save() {
++    _estimateFlushPath();
+     if (_states.length == _depth + 1) _states.add(_State());
+     final next = _states[_depth + 1]..copyFrom(_s);
+     _depth++;
+@@ -1034,6 +1037,7 @@ final class UiCanvasContext
+   /// circles under its clip and restores the recording canvas.
+   @override
+   void restore() {
++    _estimateFlushPath();
+     if (_depth == 0) return;
+     if (_ownsClips) {
+       if (_batch.length > 0) _flushBatch();
+@@ -1229,6 +1233,14 @@ final class UiCanvasContext
+     _drew();
+   }
+ 
++  bool _estimatePendingPath = false;
++  double _estimateX=0, _estimateY=0, _estimateW=0, _estimateH=0;
++  void _estimateFlushPath() {
++    if (!_estimatePendingPath) return;
++    _estimatePendingPath = false;
++    _path..reset()..rect(_estimateX, _estimateY, _estimateW, _estimateH);
++  }
++
+   ui.Color? _rectBarBorder;
+   ui.Color? _rectBarBackground;
+ 
+@@ -1316,9 +1328,14 @@ final class UiCanvasContext
+     }
+     // Paths are outside save/restore. Retain the exact rect commands and
+     // direction for a later stroke, clip, append or inspection by a plugin.
+-    _path
+-      ..reset()
+-      ..rect(innerX, innerY, innerWidth, innerHeight);
++    if ((probe.mode & 4) != 0) {
++      probe.drawHits++;
++      _estimatePendingPath = true;
++      _estimateX=innerX; _estimateY=innerY; _estimateW=innerWidth; _estimateH=innerHeight;
++    } else {
++      _estimateFlushPath();
++      _path..reset()..rect(innerX, innerY, innerWidth, innerHeight);
++    }
+     if (inner.isEmpty) {
+       // Empty fills still count/notify and may start the next recording.
+       // With guarded solid colors their private paint mutation is unobserved.
+@@ -1349,7 +1366,7 @@ final class UiCanvasContext
+   // Paths.
+ 
+   @override
+-  void beginPath() => _path.reset();
++  void beginPath() { _estimateFlushPath(); _path.reset(); }
+ 
+   @override
+   void closePath() => _path.closePath();
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 1e02a21..6d33e7a 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -45,6 +45,7 @@ import 'dart:typed_data';
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
++import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+ 
+ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+     show
+@@ -955,6 +956,26 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+           )) {
+         return;
+       }
++      // DIVERGES(chartjs): adapt-prepared-indexed-options, varying colors do
++      // not prevent native geometry when every remaining read is effect-free.
++      if (i == start &&
++          mode == 'none' &&
++          includeOptions &&
++          sharedOptions == null &&
++          options is BarOptions &&
++          _updateBulk(
++            bars,
++            i + 1,
++            start + count,
++            ruler,
++            vScale,
++            vAxis,
++            horizontal,
++            options,
++            individualOptions: true,
++          )) {
++        return;
++      }
+     }
+   }
+ 
+@@ -968,9 +989,18 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+     types.Scale valueScale,
+     String valueAxis,
+     bool horizontal,
+-    BarOptions shared,
+-  ) {
++    BarOptions shared, {
++    bool individualOptions = false,
++  }) {
+     if (super.runtimeType != BarController) return false;
++    final elementClass = dataElementType;
++    if (individualOptions &&
++        (type != 'bar' ||
++            elementClass is! JsClass ||
++            elementClass.id is! String ||
++            elementClass.id != 'bar')) {
++      return false;
++    }
+     final owner = chart;
+     if (owner is! BulkBarChart ||
+         !(owner as BulkBarChart).supportsBulkBarUpdate ||
+@@ -994,14 +1024,19 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+         !(valueScale as BulkBarScale).hasStaticBulkBarGrid) {
+       return false;
+     }
+-    final edge = shared.borderSkippedValue;
++    final resolveColors = individualOptions
++        ? (chart.config as Config).prepareIndexedBarColors()
++        : null;
++    if (individualOptions && resolveColors == null) return false;
++    final representative = resolveColors?.call(0) ?? shared;
++    final edge = representative.borderSkippedValue;
+     if (!(edge == null ||
+         identical(edge, undefined) ||
+         edge is bool ||
+         edge is String)) {
+       return false;
+     }
+-    final amount = shared.inflateAmountValue;
++    final amount = representative.inflateAmountValue;
+     final double inflate;
+     if (amount is String && amount == 'auto') {
+       inflate = ruler.ratio == 1 ? 0.33 : 0;
+@@ -1037,6 +1072,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+           !(element as BulkBarElement).supportsBulkBarWrites) {
+         return false;
+       }
++      if (individualOptions && element.active) return false;
+       if (item is ParsedItem) {
+         if (item.hasForeign || item.hasSlot(3) || item.hasSlot(4)) return false;
+       } else if (!updatingData ||
+@@ -1086,6 +1122,15 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+       // Keep upstream operation order, including the zero stack-index term.
+       final rangeStart = ruler.pixels[i] - size / 2;
+       final center = rangeStart + chunk * 0.0 + chunk / 2;
++      // Context refresh remains after geometry and before the option stores.
++      // Eligibility proved native config/data/element reads and no callbacks.
++      final BarOptions elementOptions;
++      if (resolveColors != null) {
++        getContext(i.toDouble(), false, 'none');
++        elementOptions = resolveColors(i);
++      } else {
++        elementOptions = shared;
++      }
+       final BorderSkipped skipped;
+       if (identical(edge, true)) {
+         skipped = BorderSkipped.all();
+@@ -1110,7 +1155,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+         y: horizontal ? center : head,
+         height: horizontal ? breadth : length.abs(),
+         width: horizontal ? length.abs() : breadth,
+-        options: shared,
++        options: elementOptions,
+         skipped: skipped,
+         inflate: inflate,
+       );
+diff --git a/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart b/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
+index f5e267b..25aa586 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/bar_bulk_update.dart
+@@ -24,7 +24,8 @@ abstract interface class BulkBarScale {
+ /// The direct write contract for exact native bar elements. Custom elements
+ /// retain DatasetController.updateElement and their property interception.
+ abstract interface class BulkBarElement {
+-  /// True only for the exact built-in element.
++  /// True only for the exact built-in element. An explicit test opt-in must
++  /// preserve ordinary active/context reads as well as native property writes.
+   bool get supportsBulkBarWrites;
+ 
+   /// Assign the same fields, in the same order, as the controller's ordinary
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.config.dart b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+index 1b5ab37..fe0c276 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+@@ -54,9 +54,15 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+     show ElementOptions;
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+-    show OptionKey;
++    show OptionKey, OptionScope;
++import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
++    show BarOptions;
+ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+-    show ScaleOptionsByIdScope, ScaleOptionsScope;
++    show
++        BarOptionsScope,
++        ElementOptionsByTypeScope,
++        ScaleOptionsByIdScope,
++        ScaleOptionsScope;
+ import 'package:flutter_chartjs_port/src/types/basic.dart';
+ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+ import 'package:meta/meta.dart';
+@@ -511,6 +517,49 @@ class Config implements types.ChartConfiguration {
+   bool get supportsDataUpdates =>
+       super.runtimeType == Config && nativeDataUpdateRoot(_config);
+ 
++  /// A cached color-only plan for the exact native single-dataset bar loop.
++  /// All reads used by context refresh must be ordinary native reads too.
++  @internal
++  // DIVERGES(chartjs): adapt-prepared-indexed-options, native qualification.
++  BarOptions Function(int)? prepareIndexedBarColors() {
++    if (super.runtimeType != Config ||
++        !supportsDataUpdates ||
++        (_config is OptionScope && _config.routeOf('type') != null)) {
++      return null;
++    }
++    final data = dataUpdateField(_config, 'data');
++    if (!nativeDataUpdateObject(data)) return null;
++    final datasets = dataUpdateField(data!, 'datasets');
++    if (!nativeDataUpdateList(datasets) || (datasets! as List).length != 1) {
++      return null;
++    }
++    final dataset = (datasets as List<Object?>)[0];
++    if (!nativeDataUpdateObject(dataset) ||
++        !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
++      return null;
++    }
++    final scopeKeys = datasetElementScopeKeys('bar', 'bar');
++    final scopes = _scopeCache[dataset]?[scopeKeys];
++    if (scopes == null) return null;
++    final cached = _resolverCache[scopes]?['bar,'];
++    if (cached == null ||
++        cached.subPrefixes.length != 2 ||
++        cached.subPrefixes[0] != 'bar' ||
++        cached.subPrefixes[1] != '') {
++      return null;
++    }
++    if (defaults.routeOf('elements') != null) return null;
++    final elements = defaults.elementsCell?.raw;
++    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
++    final elementScopes = elements! as ElementOptionsByTypeScope;
++    if (elementScopes.routeOf('bar') != null) return null;
++    final bar = elementScopes.barCell?.raw;
++    if (bar.runtimeType != BarOptionsScope) return null;
++    return cached.resolver.prepareIndexedBarColors(
++      (bar! as BarOptionsScope).jsOwnKeys(),
++    );
++  }
++
+   /// core.config.js:189 `set options(options)`.
+   set options(Object? options) {
+     jsSet(_config, 'options', options);
+@@ -823,6 +872,8 @@ class Config implements types.ChartConfiguration {
+ 
+   /// Resolves the controller's owned key, prefix and scope lists. Custom Config
+   /// classes receive their original virtual option-resolution call.
++  /// With [allowReplacement], the caller owns [into] without exposing it to
++  /// [context]; a prepared result may replace it.
+   @internal
+   // DIVERGES(chartjs): adapt-indexed-element-options, owned containers.
+   ElementOptions resolveNativeElementNamedOptions(
+@@ -830,8 +881,9 @@ class Config implements types.ChartConfiguration {
+     List<Object> keys,
+     Object Function() context,
+     List<String> prefixes,
+-    ElementOptions into,
+-  ) => runtimeType == Config
++    ElementOptions into, {
++    bool allowReplacement = false,
++  }) => runtimeType == Config
+       ? _resolveElementNamedOptions(
+           scopes,
+           keys,
+@@ -839,6 +891,7 @@ class Config implements types.ChartConfiguration {
+           prefixes,
+           into,
+           nativeInputs: true,
++          allowReplacement: allowReplacement,
+         )
+       : resolveElementNamedOptions(scopes, keys, context, prefixes, into);
+ 
+@@ -849,6 +902,7 @@ class Config implements types.ChartConfiguration {
+     List<String> prefixes,
+     ElementOptions into, {
+     required bool nativeInputs,
++    bool allowReplacement = false,
+   }) {
+     into.storeKey(OptionKey.dollarShared, true);
+     final (:resolver, :subPrefixes) = _getResolver(
+@@ -879,9 +933,10 @@ class Config implements types.ChartConfiguration {
+               resolver,
+             ),
+             nativeInputs: nativeInputs,
++            allowReplacement: allowReplacement,
+           )
+         : null;
+-    if (indexed?.resolved ?? false) return into;
++    if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
+     helpers.OptionView? view;
+     if (indexed != null || _needContextKeys(resolver, keys)) {
+       // A declined native fill already stored $shared before its context call.
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+index fb8787b..6fb27aa 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -45,6 +45,10 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+     show CanvasRenderingContext2D;
+ import 'package:flutter_chartjs_port/src/core/core.animations.dart';
+ import 'package:flutter_chartjs_port/src/core/core.config.dart';
++import 'package:flutter_chartjs_port/src/core/next_estimate.dart' as probe;
++import 'package:flutter_chartjs_port/src/core/data_update.dart' as preflight;
++import 'package:flutter_chartjs_port/src/elements/element.point.dart' show PointElement;
++import 'package:flutter_chartjs_port/src/options/resolved.g.dart' show PointOptions;
+ // DatasetController has a static `defaults`. Inside the class, upstream
+ // `defaults` is the import of core.defaults.js.
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
+@@ -940,6 +944,9 @@ class DatasetController
+   /// one object. The two typed Maps have the same keys. [configure] clears
+   /// both, as `this._cachedDataOpts = {}` (:445) does.
+   final Map<String, ElementOptions> _cachedElementOptions = {};
++  final _estimatePoints = <String, ({PointOptions template, List<Object?> colors})>{};
++  bool _estimatePointRejected = false;
++  bool _estimatePreflightDone = false;
+ 
+   // DIVERGES(chartjs): adapt-element-option-cache-key, reuse only the last
+   // joined string. The option cache and its invalidation stay unchanged.
+@@ -1312,6 +1319,9 @@ class DatasetController
+   /// Merges user-supplied and default dataset-level options
+   /// @private
+   void configure() {
++    _estimatePoints.clear();
++    _estimatePointRejected = false;
++    _estimatePreflightDone = false;
+     final config = chart.config as Config;
+     final scopeKeys = config.datasetScopeKeys(type);
+     final scopes = config.getOptionScopes(getDataset(), scopeKeys, true);
+@@ -1864,6 +1874,11 @@ class DatasetController
+       // read after the write of `parsed`, as upstream.
+       Object? raw() => jsGetIndex(jsGet(dataset, 'data'), index);
+       if (elementContext is ScriptableContext) {
++        if ((probe.mode & 2) != 0) {
++          probe.contextHits++;
++          return elementContext.estimateRefresh(getParsed(index), raw, index,
++              jsTruthy(active), mode ?? undefined);
++        }
+         return elementContext
+           ..parsed = getParsed(index)
+           ..raw = raw()
+@@ -1907,6 +1922,49 @@ class DatasetController
+   /// Dart `null` for [mode] stands for JS `undefined`.
+   @override
+   ElementOptions resolveDataElementOptions(double index, [String? mode]) {
++    final key = mode ?? 'default';
++    if ((probe.mode & 1) != 0 && !_estimatePointRejected && key != 'active') {
++      final plan = _estimatePoints[key];
++      if (plan != null) {
++        getContext(index, false, key);
++        probe.pointHits++;
++        return plan.template.clone()
++          ..storeKey(OptionKey.backgroundColor, plan.colors[index.toInt() % plan.colors.length]);
++      }
++      final result = _resolveElementOptions(_idOf(dataElementType), mode, index);
++      final colors = jsGet(getDataset(), 'backgroundColor');
++      if (result is PointOptions && colors is List<Object?> && colors.isNotEmpty) {
++        if ((probe.mode & 8) != 0 && ((probe.mode & 16) == 0 || !_estimatePreflightDone)) {
++          final dataset = getDataset();
++          if (!preflight.nativeDataUpdateObject(dataset)) {
++            _estimatePointRejected = true; return result;
++          }
++          final raw = preflight.dataUpdateField(dataset!, 'data');
++          // Deliberately repeat the scans twice per prepared mode: four full
++          // scans per configure for default/none, to budget native loop checks.
++          for (var pass=0;pass<((probe.mode & 16) != 0 ? 1 : 2);pass++) {
++            if (preflight.dataUpdateValues(raw, prepared:true) == null) {
++              _estimatePointRejected = true; return result;
++            }
++            for (final point in cachedMeta.data) {
++              if (point.runtimeType != PointElement || point.active) {
++                _estimatePointRejected = true; return result;
++              }
++              final context = (point as PointElement).$context;
++              if (context != null && !context.jsHas('index')) {
++                _estimatePointRejected = true; return result;
++              }
++            }
++            probe.preflightScans++;
++            _estimatePreflightDone = true;
++          }
++        }
++        _estimatePoints[key] = (template: result.clone(), colors: colors);
++      } else {
++        _estimatePointRejected = true;
++      }
++      return result;
++    }
+     return _resolveElementOptions(_idOf(dataElementType), mode, index);
+   }
+ 
+@@ -1981,6 +2039,9 @@ class DatasetController
+             context,
+             prefixes,
+             createElementOptions(elementType),
++            // DIVERGES(chartjs): adapt-prepared-indexed-options, this result
++            // is owned here and cannot be observed by the context factory.
++            allowReplacement: true,
+           )
+         : config.resolveElementNamedOptions(
+             scopes,
+diff --git a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+index e8b67f2..d6039e4 100644
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -258,6 +258,58 @@ final class _IndexedElementPlan {
+   _IndexedElementPlan(this.keys, this.values);
+   final List<OptionKey> keys;
+   final List<Object?> values;
++  ElementOptions? _template;
++  late List<int> _varying;
++
++  // DIVERGES(chartjs): adapt-prepared-indexed-options, copy native static
++  // fields when the caller owns the result. Never retain a returned object.
++  ElementOptions? prepared(Object context, ElementOptions into) {
++    if (context is! ScriptableContext || !context.jsHas('index')) return null;
++    final rawIndex = context.index;
++    if (rawIndex is! num) return null;
++    final index = rawIndex.toDouble();
++    if (!index.isFinite || index < 0 || index != index.truncateToDouble()) {
++      return null;
++    }
++    var template = _template;
++    if (template == null || template.runtimeType != into.runtimeType) {
++      // The constructor/type and scalar checks are the same as fill. Preparing
++      // from cached inputs avoids retaining mutations of any previous result.
++      template = (into is PointOptions ? PointOptions() : BarOptions())
++        ..storeKey(OptionKey.dollarShared, false);
++      final varying = <int>[];
++      for (var i = 0; i < keys.length; i++) {
++        final value = values[i];
++        if (value is List<Object?>) {
++          varying.add(i);
++        } else {
++          if (!_nativeIndexedValue(keys[i], value)) return null;
++          template.storeKey(keys[i], value);
++        }
++      }
++      _template = template;
++      _varying = varying;
++    }
++    final varying = _varying;
++    // Only the varying inputs need preflight on each element. Lists remain live
++    // after context refresh, including length changes and unsupported entries.
++    for (final i in varying) {
++      final list = values[i]! as List<Object?>;
++      if (list.isEmpty ||
++          !_nativeIndexedValue(
++            keys[i],
++            list[index.remainder(list.length).toInt()],
++          )) {
++        return null;
++      }
++    }
++    final result = template.clone();
++    for (final i in varying) {
++      final list = values[i]! as List<Object?>;
++      result.storeKey(keys[i], list[index.remainder(list.length).toInt()]);
++    }
++    return result;
++  }
+ 
+   bool matches(List<Object> other) {
+     if (keys.length != other.length) return false;
+@@ -284,25 +336,9 @@ final class _IndexedElementPlan {
+         if (value.isEmpty) return false;
+         value = value[index.remainder(value.length).toInt()];
+       }
+-      if (!_indexedScalar(value)) return false;
+       // Native stores only. Foreign numeric conversions can invoke the debug
+       // audit hook; those keep the ordinary observable read/write order too.
+-      final native = switch (keys[i]) {
+-        OptionKey.borderWidth ||
+-        OptionKey.hitRadius ||
+-        OptionKey.hoverBorderWidth ||
+-        OptionKey.hoverRadius ||
+-        OptionKey.radius ||
+-        OptionKey.rotation => value is num,
+-        OptionKey.backgroundColor ||
+-        OptionKey.borderColor ||
+-        OptionKey.pointStyle ||
+-        OptionKey.borderSkipped ||
+-        OptionKey.borderRadius ||
+-        OptionKey.inflateAmount => true,
+-        _ => false,
+-      };
+-      if (!native) return false;
++      if (!_nativeIndexedValue(keys[i], value)) return false;
+     }
+     for (var i = 0; i < keys.length; i++) {
+       final value = values[i];
+@@ -317,6 +353,24 @@ final class _IndexedElementPlan {
+   }
+ }
+ 
++bool _nativeIndexedValue(OptionKey key, Object? value) =>
++    _indexedScalar(value) &&
++    switch (key) {
++      OptionKey.borderWidth ||
++      OptionKey.hitRadius ||
++      OptionKey.hoverBorderWidth ||
++      OptionKey.hoverRadius ||
++      OptionKey.radius ||
++      OptionKey.rotation => value is num,
++      OptionKey.backgroundColor ||
++      OptionKey.borderColor ||
++      OptionKey.pointStyle ||
++      OptionKey.borderSkipped ||
++      OptionKey.borderRadius ||
++      OptionKey.inflateAmount => true,
++      _ => false,
++    };
++
+ /// helpers.config.ts:27 `_createResolver`.
+ ///
+ /// Creates a Proxy for resolving raw values for options.
+@@ -415,18 +469,63 @@ final class OptionResolver implements ResolverProxy {
+   static bool nativeIndexedResult(ElementOptions into) =>
+       into is PointOptions || into is BarOptions;
+ 
++  /// Captures a color-only bar plan for a synchronous native loop. The caller
++  /// must prove that no user code or mutation can run until the loop finishes.
++  /// This reads cached values only and never invokes a descriptor or resolver.
++  @internal
++  // DIVERGES(chartjs): adapt-prepared-indexed-options, native bulk color plan.
++  BarOptions Function(int)? prepareIndexedBarColors(List<Object> keys) {
++    final plan = _indexedElementPlan;
++    if (_slotsTouched || plan == null || !plan.matches(keys)) return null;
++    final template = BarOptions()..storeKey(OptionKey.dollarShared, false);
++    final varying = <({OptionKey key, List<Object?> values})>[];
++    for (var i = 0; i < plan.keys.length; i++) {
++      final key = plan.keys[i];
++      if (!BarOptions.knownKeys.contains(key.jsName)) return null;
++      final value = plan.values[i];
++      if (value is List<Object?>) {
++        if ((key != OptionKey.backgroundColor &&
++                key != OptionKey.borderColor) ||
++            value.isEmpty ||
++            !value.every(
++              (entry) =>
++                  entry == null ||
++                  entry is Undefined ||
++                  (entry is Color && !isObject(entry)),
++            )) {
++          return null;
++        }
++        varying.add((key: key, values: value));
++      } else {
++        if (!_nativeIndexedValue(key, value)) return null;
++        template.storeKey(key, value);
++      }
++    }
++    if (varying.isEmpty) return null;
++    return (index) {
++      final result = template.clone();
++      for (final item in varying) {
++        // js-ok: nonnegative index and positive length (bulk preflight).
++        result.storeKey(item.key, item.values[index % item.values.length]);
++      }
++      return result;
++    };
++  }
++
+   /// Resolves native indexed scalar options from already cached raw values.
+   /// Null means that context was not called. A failed result retains the one
+   /// context call so the ordinary path can continue at attachContext.
+   @internal
+   // DIVERGES(chartjs): adapt-indexed-element-options, guarded cached plan.
+-  ({bool resolved, Object context})? resolveIndexedElementOptions(
++  ({bool resolved, Object context, ElementOptions? prepared})?
++  resolveIndexedElementOptions(
+     List<Object> keys,
+     Object Function() context,
+     ElementOptions into,
+     bool Function(Object?, Object?) descriptorGuard,
+     bool Function() stillCached, {
+     bool nativeInputs = false,
++    bool allowReplacement = false,
+   }) {
+     if (_slotsTouched ||
+         (!nativeInputs && !nativeIndexedList(keys)) ||
+@@ -440,7 +539,7 @@ final class OptionResolver implements ResolverProxy {
+       // resolution, without taxing every scriptable element with a key scan.
+       final size = _cache._keys?.length ?? 0;
+       if (_indexedRejectedSize == size) return null;
+-      ({bool resolved, Object context})? reject() {
++      ({bool resolved, Object context, ElementOptions? prepared})? reject() {
+         _indexedRejectedSize = size;
+         return null;
+       }
+@@ -486,12 +585,15 @@ final class OptionResolver implements ResolverProxy {
+     final ctx = context();
+     // An overridden controller/context factory can write/delete resolver keys.
+     // Continue with its original context if it invalidates this snapshot.
+-    final resolved =
++    final valid =
+         stillCached() &&
+         identical(plan, _indexedElementPlan) &&
+-        plan.matches(keys) &&
+-        plan.fill(ctx, into);
+-    return (resolved: resolved, context: ctx);
++        plan.matches(keys);
++    final prepared = valid && allowReplacement
++        ? plan.prepared(ctx, into)
++        : null;
++    final resolved = prepared != null || (valid && plan.fill(ctx, into));
++    return (resolved: resolved, context: ctx, prepared: prepared);
+   }
+ 
+   /// `_keys` of the target (helpers.config.ts:419-425), or Dart `null`.
+diff --git a/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart b/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
+index 41ef3b9..801ad63 100644
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart
+@@ -775,6 +775,17 @@ final class ScriptableContext extends ContextObject {
+       .._setType('data');
+   }
+ 
++  ScriptableContext estimateRefresh(Object? parsed, Object? Function() raw,
++      double index, bool active, Object? mode) {
++    _parsed = parsed;
++    _raw = raw();
++    _dataIndex = index;
++    _index = index;
++    _active = active;
++    _mode = mode;
++    return this;
++  }
++
+   Object? _active = _unset;
+   Object? _dataset = _unset;
+   Object? _datasetIndex = _unset;

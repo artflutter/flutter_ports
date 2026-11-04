@@ -1,0 +1,29 @@
+import json,statistics
+from pathlib import Path
+out=Path(__file__).resolve().parent
+full=lambda r:sum(float(r[p+'MedianMs']) for p in ['update','draw','end'])
+rows=[];cells=0;checks=0
+for prefix in ['', 'dense-']:
+ runs={k:json.loads((out/(prefix+k+'.json')).read_text()) for k in ['a1','b1','b2','a2']}
+ cells+=sum(len(r) for r in runs.values())
+ for r in runs['b1']:
+  case=r['case'];key=case.rsplit('.',1)[0]+'.baseline'
+  a=[next(x for x in runs[k] if x['case']==key) for k in ['a1','a2']]
+  b=[next(x for x in runs[k] if x['case']==case) for k in ['b1','b2']]
+  instrumented=[next(x for x in runs[k] if x['case']==key) for k in ['b1','b2']]
+  for x,base in zip(b,a):
+   assert x['referenceMatches'] and x['pathMatches'] and x['pixelByteMismatches']==0
+   assert abs(x['callbacksPerFrame']-base['callbacksPerFrame'])<1e-9
+   if x['variant'] in ['points','points_context'] and x['style']=='indexed':assert x['pointHits']>0
+   if 'context' in x['variant'] and x['style']!='static':assert x['contextHits']>0
+   if 'draw' in x['variant']:assert x['drawHits']>0
+   checks+=1
+  ua=statistics.mean(float(x['updateMedianMs']) for x in a);ub=statistics.mean(float(x['updateMedianMs']) for x in b)
+  fa=statistics.mean(map(full,a));fb=statistics.mean(map(full,b));fi=statistics.mean(map(full,instrumented))
+  row={'case':case,'n':r['n'],'baselineUpdateMs':ua,'candidateUpdateMs':ub,'updateGainPercent':100*(1-ub/ua),'baselineDrawMs':statistics.mean(float(x['drawMedianMs']) for x in a),'candidateDrawMs':statistics.mean(float(x['drawMedianMs']) for x in b),'baselineFullMs':fa,'candidateFullMs':fb,'fullGainPercent':100*(1-fb/fa),'pairFullGains':[100*(1-full(y)/full(x)) for x,y in zip(a,b)],'instrumentedBaselineFullMs':fi,'gainVsInstrumentedBaselinePercent':100*(1-fb/fi),'referenceMatches':True,'pathMatches':True,'pixelByteMismatches':0}
+  if r['style']=='callback':row['callbacksPerFrame']={'baseline':[x['callbacksPerFrame'] for x in a],'candidate':[x['callbacksPerFrame'] for x in b]}
+  rows.append(row)
+assert cells==76 and checks==56
+(out/'summary.json').write_text(json.dumps(rows,indent=2)+'\n')
+(out/'validation.json').write_text(json.dumps({'timingCells':cells,'candidateDifferentialChecks':checks,'allGeometryOptionsContextAndPathChecksMatch':True,'allPixelByteComparisonsExact':True,'allCallbackCountsMatch':True,'activationCountersChecked':True,'scope':'Controlled scenes only; no arbitrary mutation, custom subclass, route or callback semantic proof. Production source unchanged.'},indent=2)+'\n')
+for r in rows:print(r['n'],r['case'],'full',round(r['baselineFullMs'],3),'->',round(r['candidateFullMs'],3),round(r['fullGainPercent'],1),'pairs',[round(x,1) for x in r['pairFullGains']])

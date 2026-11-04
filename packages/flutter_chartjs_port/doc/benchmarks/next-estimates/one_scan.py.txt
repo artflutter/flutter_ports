@@ -1,0 +1,10 @@
+from pathlib import Path
+p=Path('packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart');s=p.read_text().replace('  bool _estimatePointRejected = false;', '  bool _estimatePointRejected = false;\n  bool _estimatePreflightDone = false;')
+s=s.replace('    _estimatePointRejected = false;','    _estimatePointRejected = false;\n    _estimatePreflightDone = false;')
+s=s.replace('        if ((probe.mode & 8) != 0) {','        if ((probe.mode & 8) != 0 && ((probe.mode & 16) == 0 || !_estimatePreflightDone)) {')
+s=s.replace('for (var pass=0;pass<2;pass++) {','for (var pass=0;pass<((probe.mode & 16) != 0 ? 1 : 2);pass++) {')
+s=s.replace('            probe.preflightScans++;','            probe.preflightScans++;\n            _estimatePreflightDone = true;')
+p.write_text(s)
+p=Path('.dart_tool/next_estimates/probe.dart');s=p.read_text().replace("'points_preflight_context':11}","'points_preflight_context':11,'points_one_scan':27}")
+s=s.replace("combined,'points_preflight_context']","combined,'points_preflight_context','points_one_scan']")
+p.write_text(s)

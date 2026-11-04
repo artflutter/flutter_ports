@@ -1,0 +1,5 @@
+int mode = 0;
+int pointHits = 0;
+int contextHits = 0;
+int drawHits = 0;
+int preflightScans = 0;
