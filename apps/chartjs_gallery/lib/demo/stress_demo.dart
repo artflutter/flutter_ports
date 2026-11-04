@@ -1918,6 +1918,7 @@ class StressDemoState extends State<StressDemo> {
         _mode == StressMode.primitives || _mode == StressMode.elements;
     final hasOptions =
         layers || _mode == StressMode.chart || _mode == StressMode.axes;
+    final calls = stressCallsOf(_mode, _pluginCase.scene);
     String count(int v) => v >= 1000 ? '${v ~/ 1000}k' : '$v';
     Widget choice<T>(
       String label,
@@ -2222,11 +2223,11 @@ class StressDemoState extends State<StressDemo> {
           ),
         ],
         gap,
-        if (_mode.runsChart)
+        if (_mode.runsChart && calls.length > 1)
           choice<StressChartCall>(
             'Operation',
             [
-              for (final call in stressCallsOf(_mode, _pluginCase.scene))
+              for (final call in calls)
                 (
                   key: 'stress.chart.call.${call.name}',
                   text: callNames[call]!,
@@ -2238,7 +2239,7 @@ class StressDemoState extends State<StressDemo> {
             _call,
             (call) => setState(() => _setChartCase(call: call)),
           )
-        else
+        else if (!_mode.runsChart)
           Text(
             'Operation: animate drawing',
             style: theme.textTheme.labelMedium,
@@ -2271,6 +2272,16 @@ class StressDemoState extends State<StressDemo> {
   String get _operationDescription {
     if (!_mode.runsChart) {
       return 'Draw the selected helpers or elements directly.';
+    }
+    if (_mode == StressMode.plugins && _pluginCase.scene.tooltip) {
+      return switch (_pluginCase.scene) {
+        StressPluginScene.hover =>
+          'Automatically move the pointer across data points.',
+        StressPluginScene.still =>
+          'Redraw the chart with a stationary tooltip.',
+        _ =>
+          'Automatically alternate pointer entry and exit to fade the tooltip.',
+      };
     }
     return switch (_call) {
       StressChartCall.draw =>

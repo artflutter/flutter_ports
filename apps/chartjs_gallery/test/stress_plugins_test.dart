@@ -534,7 +534,12 @@ void main() {
     // datasets.
     await stressTap(tester, 'stress.plugins.scene.hover');
     await _frames(tester);
-    expect(await stressSelected(tester, 'stress.chart.call.frame'), isTrue);
+    expect(find.text('Operation'), findsNothing);
+    expect(find.text('Interact'), findsNothing);
+    expect(
+      await stressControlExists(tester, 'stress.chart.call.frame'),
+      isFalse,
+    );
     expect(
       await stressControlExists(tester, 'stress.chart.call.draw'),
       isFalse,
@@ -553,6 +558,11 @@ void main() {
     expect(readByName(_chart(tester).data, 'datasets'), hasLength(3));
     await stressTap(tester, 'stress.plugins.scene.still');
     await _frames(tester);
+    expect(find.text('Operation'), findsNothing);
+    expect(
+      await stressControlExists(tester, 'stress.chart.call.draw'),
+      isFalse,
+    );
     expect(_chart(tester).tooltip, isNotNull);
     expect(
       await stressControlExists(tester, 'stress.plugins.tooltip'),
@@ -576,6 +586,8 @@ void main() {
     // The scene fade keeps the datasets, and has no tooltip toggle.
     await stressTap(tester, 'stress.plugins.scene.fade');
     await _frames(tester);
+    expect(find.text('Operation'), findsNothing);
+    expect(find.text('Interact'), findsNothing);
     expect(
       await stressControlExists(tester, 'stress.plugins.tooltip'),
       isFalse,

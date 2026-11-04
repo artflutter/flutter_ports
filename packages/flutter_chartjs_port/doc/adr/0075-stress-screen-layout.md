@@ -21,6 +21,9 @@ retain their original single-row/icon presentation by default. Keep Items and
 Overlay labels together, with a compact icon-only rotation toggle beside
 the overlay count on the same row, and name Redraw, Full update, Data only, Animate and
 Interact explicitly. The short operation description explains what changes.
+Show the operation selector only when multiple operations are available.
+Hover, Tooltip and Fade use their scene's fixed operation automatically and
+show its description without a redundant single-choice control.
 
 The test starts automatically when its chart is ready; the initial action is
 Pause test. Explicit `autoStart: false` remains available to controlled tests.
@@ -44,6 +47,7 @@ The existing stress tests cover behavior and the phone viewport for every plugin
 scene. New tests cover readable labels, navigation, remembered drawing choice,
 expandable controls/diagnostics and large-text wrapping. Desktop and phone
 screenshots were inspected with real fonts; preview-only helpers were removed.
+
 
 ## Indexed-color follow-up
 
