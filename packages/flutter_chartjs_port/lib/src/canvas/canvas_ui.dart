@@ -665,27 +665,30 @@ final class UiCanvasContext
     _batch.flush(_canvas ?? _begin());
   }
 
-  /// Adds a fill or a stroke of [circle] in [color] to [_batch]. The
+  /// Adds a fill or a stroke of the scalar circle in [color] to [_batch]. The
   /// caller checked that the paint has no shader and the `srcOver` mode.
   /// Returns false for a circle that the batch does not take.
+  // DIVERGES(chartjs): adapt-scalar-circle-inputs, no temporary circle record.
   bool _batchCircle(
-    ({double x, double y, double radius}) circle,
+    double x,
+    double y,
+    double radius,
     ui.Color color, {
     required bool stroke,
     double width = 0,
   }) {
-    if (circle.radius + width / 2 > maxBatchRadius ||
-        circle.x.abs() > maxBatchCenter ||
-        circle.y.abs() > maxBatchCenter) {
+    if (radius + width / 2 > maxBatchRadius ||
+        x.abs() > maxBatchCenter ||
+        y.abs() > maxBatchCenter) {
       return false;
     }
-    if (!_batch.accepts(circle.radius, color, stroke: stroke, width: width)) {
+    if (!_batch.accepts(radius, color, stroke: stroke, width: width)) {
       _flushBatch();
     }
     _batch.add(
-      circle.x,
-      circle.y,
-      circle.radius,
+      x,
+      y,
+      radius,
       color,
       stroke: stroke,
       width: width,
@@ -924,7 +927,9 @@ final class UiCanvasContext
       final color = _batchColor(s.strokeColor!);
       if (color == null) return;
       if (_batchCircle(
-        (x: x, y: y, radius: radius),
+        x,
+        y,
+        radius,
         color,
         stroke: true,
         width: s.lineWidth * scale,
@@ -1444,14 +1449,25 @@ final class UiCanvasContext
         ..restore();
     } else {
       if (_path.isEmpty) return;
-      final circle = _path.singleCircle;
+      final circle = _path.hasSingleCircle;
+      final circleX = circle ? _path.circleX : 0.0;
+      final circleY = circle ? _path.circleY : 0.0;
+      final circleRadius = circle ? _path.circleRadius : 0.0;
       // A transform that overflowed to a center of NaN: the path has a NaN
       // point, and Skia draws nothing.
-      if (circle != null && (circle.x.isNaN || circle.y.isNaN)) return;
-      if (circle != null && _batchable(s.fillColor, s.fillShader)) {
+      if (circle && (circleX.isNaN || circleY.isNaN)) return;
+      if (circle && _batchable(s.fillColor, s.fillShader)) {
         final color = _batchColor(s.fillColor!);
         if (color == null) return;
-        if (_batchCircle(circle, color, stroke: false)) return;
+        if (_batchCircle(
+          circleX,
+          circleY,
+          circleRadius,
+          color,
+          stroke: false,
+        )) {
+          return;
+        }
       }
       if (!_setupPaint(
         _fillPaint,
@@ -1468,10 +1484,10 @@ final class UiCanvasContext
       // inner rectangle of a bar that is narrower than its two borders.
       if (rect != null) {
         if (!rect.isEmpty) canvas.drawRect(rect, _fillPaint);
-      } else if (circle != null) {
+      } else if (circle) {
         canvas.drawCircle(
-          ui.Offset(circle.x, circle.y),
-          circle.radius,
+          ui.Offset(circleX, circleY),
+          circleRadius,
           _fillPaint,
         );
       } else {
@@ -1585,9 +1601,13 @@ final class UiCanvasContext
     } else if (_path.isEmpty) {
       return;
     } else if (t.isSimilarity) {
-      final circle = _path.singleCircle;
-      if (circle != null && _s.lineDash.isEmpty) {
-        _strokeCircle(circle.x, circle.y, circle.radius, t.scaleFactor);
+      if (_path.hasSingleCircle && _s.lineDash.isEmpty) {
+        _strokeCircle(
+          _path.circleX,
+          _path.circleY,
+          _path.circleRadius,
+          t.scaleFactor,
+        );
       } else {
         _strokeMapped(_path.path, t.scaleFactor);
       }

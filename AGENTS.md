@@ -352,6 +352,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     See performance.md §§52–53 and varying_color_resolution_test.dart. The
     96-case native frame verification still misses every-mode 60 FPS; data-only
     stress cases fall back to the full lifecycle.
+    performance.md §54 identifies suggested x bounds as the first data-only
+    blocker. Do not replace them with fixed bounds under unsorted parsing:false
+    input: binary visible-range selection can omit points. GC timeline evidence
+    prioritizes temporary circle/path objects; the diagnostics change no runtime.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
@@ -601,6 +605,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     context operation. It preserves the final path, state and fill accounting,
     and declines callbacks, unsupported colors/transforms and complex geometry.
     `test/port/canvas/canvas_rect_bar_test.dart` pins pixel/state equivalence.
+    Chart.js ADR 0084 passes native circle geometry as scalars and packs
+    unobserved Path2D move/line/close commands. Reading commands materializes
+    one stable mutable list; public/custom replay retains the original loop.
+    Only native uiPathOf uses scalar replay before observation. Complex paths
+    retain ordinary commands, and version/cache and drawing order stay intact.
     Chart.js ADR 0066 bounds native recordings at 256 non-batched paint calls.
     Internal picture chunks share one paint generation; more than eight completed
     generations flatten. Circle runs keep their existing batching. The pixel and
