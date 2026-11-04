@@ -659,7 +659,7 @@ class StressDemo extends StatefulWidget {
   /// The first item count, or 1000.
   final int? initialN;
 
-  /// The first label count, or 50.
+  /// The first label count, or 0.
   final int? initialM;
 
   /// Whether the labels start with a new angle in each frame.
@@ -730,7 +730,7 @@ class StressDemoState extends State<StressDemo> {
   late StressMode _mode = widget.initialMode;
   late StressChartType _type = widget.initialType;
   late int _n = widget.initialN ?? 1000;
-  late int _m = widget.initialM ?? stressLabelCounts[1];
+  late int _m = widget.initialM ?? 0;
   bool _points = true;
   late bool _line = widget.initialLine;
   late bool _spin = widget.initialSpin;
