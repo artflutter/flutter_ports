@@ -1,0 +1,3 @@
+from pathlib import Path
+exec((Path(__file__).parent/'run_remaining.py').read_text().split('original=')[0])
+run('animation-repeat','final',{'FRAMES':'1','CALLS':'animate','STYLES':'scriptable','CONNECTED':'0','LABELS':'200','SECONDS':'10'},1,True)

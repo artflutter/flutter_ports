@@ -1,0 +1,505 @@
+{
+  "samples": 7102,
+  "functions": [
+    {
+      "name": "dart.ui._beginFrame",
+      "inclusive": 6657,
+      "self": 1
+    },
+    {
+      "name": "PlatformDispatcher._beginFrame",
+      "inclusive": 6655,
+      "self": 0
+    },
+    {
+      "name": "dart.ui._invoke1",
+      "inclusive": 6654,
+      "self": 0
+    },
+    {
+      "name": "_MixinApplication151&BindingBase&GestureBinding&SchedulerBinding._handleBeginFrame",
+      "inclusive": 6653,
+      "self": 0
+    },
+    {
+      "name": "_MixinApplication151&BindingBase&GestureBinding&SchedulerBinding.handleBeginFrame",
+      "inclusive": 6650,
+      "self": 3
+    },
+    {
+      "name": "_MixinApplication151&BindingBase&GestureBinding&SchedulerBinding._invokeFrameCallback",
+      "inclusive": 6642,
+      "self": 0
+    },
+    {
+      "name": "handleBeginFrame.<anonymous closure>",
+      "inclusive": 6628,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.forEach",
+      "inclusive": 6628,
+      "self": 0
+    },
+    {
+      "name": "requestAnimFrame.<anonymous closure>",
+      "inclusive": 6625,
+      "self": 5
+    },
+    {
+      "name": "StressDemoState._onFrame",
+      "inclusive": 6620,
+      "self": 2
+    },
+    {
+      "name": "StressDemoState._chartFrame",
+      "inclusive": 6582,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateFull",
+      "inclusive": 6484,
+      "self": 0
+    },
+    {
+      "name": "Chart.update",
+      "inclusive": 6484,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateDatasets",
+      "inclusive": 5179,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.update_",
+      "inclusive": 5173,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateDataset",
+      "inclusive": 5173,
+      "self": 0
+    },
+    {
+      "name": "LineController.update",
+      "inclusive": 5171,
+      "self": 0
+    },
+    {
+      "name": "LineController.updateElements",
+      "inclusive": 5089,
+      "self": 137
+    },
+    {
+      "name": "DatasetController.resolveDataElementOptions",
+      "inclusive": 4557,
+      "self": 0
+    },
+    {
+      "name": "DatasetController._resolveElementOptions",
+      "inclusive": 4478,
+      "self": 51
+    },
+    {
+      "name": "Config.resolveNativeElementNamedOptions",
+      "inclusive": 2815,
+      "self": 17
+    },
+    {
+      "name": "Config._resolveElementNamedOptions",
+      "inclusive": 2747,
+      "self": 54
+    },
+    {
+      "name": "OptionResolver.resolveScriptableElementOptions",
+      "inclusive": 1950,
+      "self": 303
+    },
+    {
+      "name": "Chart.render",
+      "inclusive": 1246,
+      "self": 0
+    },
+    {
+      "name": "_StressChart.draw",
+      "inclusive": 1245,
+      "self": 0
+    },
+    {
+      "name": "Chart.draw",
+      "inclusive": 1245,
+      "self": 0
+    },
+    {
+      "name": "Chart._drawDatasets",
+      "inclusive": 949,
+      "self": 0
+    },
+    {
+      "name": "Chart._drawDataset",
+      "inclusive": 949,
+      "self": 0
+    },
+    {
+      "name": "LineController.draw",
+      "inclusive": 948,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.draw",
+      "inclusive": 948,
+      "self": 16
+    },
+    {
+      "name": "PointElement.draw",
+      "inclusive": 915,
+      "self": 23
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._getValueOrData",
+      "inclusive": 886,
+      "self": 784
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.[]",
+      "inclusive": 866,
+      "self": 56
+    },
+    {
+      "name": "drawPoint",
+      "inclusive": 711,
+      "self": 2
+    },
+    {
+      "name": "drawPointLegend",
+      "inclusive": 633,
+      "self": 59
+    },
+    {
+      "name": "jsGet",
+      "inclusive": 568,
+      "self": 252
+    },
+    {
+      "name": "_resolveElementOptions.context",
+      "inclusive": 557,
+      "self": 6
+    },
+    {
+      "name": "DatasetController.getContext",
+      "inclusive": 532,
+      "self": 47
+    },
+    {
+      "name": "DatasetController.getDataset",
+      "inclusive": 481,
+      "self": 14
+    },
+    {
+      "name": "Config.datasetElementScopeKeys",
+      "inclusive": 462,
+      "self": 3
+    },
+    {
+      "name": "_StringBase._interpolate",
+      "inclusive": 395,
+      "self": 141
+    },
+    {
+      "name": "_OneByteString.==",
+      "inclusive": 352,
+      "self": 352
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.containsKey",
+      "inclusive": 346,
+      "self": 0
+    },
+    {
+      "name": "PluginService.notify",
+      "inclusive": 304,
+      "self": 1
+    },
+    {
+      "name": "Chart.notifyPlugins",
+      "inclusive": 303,
+      "self": 0
+    },
+    {
+      "name": "jsCall",
+      "inclusive": 301,
+      "self": 0
+    },
+    {
+      "name": "[Stub] Subtype1TestCache",
+      "inclusive": 301,
+      "self": 301
+    },
+    {
+      "name": "_invoke",
+      "inclusive": 300,
+      "self": 0
+    },
+    {
+      "name": "PluginService._notify",
+      "inclusive": 298,
+      "self": 2
+    },
+    {
+      "name": "_apply",
+      "inclusive": 294,
+      "self": 0
+    },
+    {
+      "name": "StressDemoState._drawTitle",
+      "inclusive": 292,
+      "self": 0
+    },
+    {
+      "name": "_labelsPlugin.<anonymous closure>",
+      "inclusive": 292,
+      "self": 0
+    },
+    {
+      "name": "MapPlugin.invokeHook",
+      "inclusive": 292,
+      "self": 0
+    },
+    {
+      "name": "Config.getOptionScopes",
+      "inclusive": 283,
+      "self": 7
+    },
+    {
+      "name": "renderText",
+      "inclusive": 249,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext.stroke",
+      "inclusive": 248,
+      "self": 34
+    },
+    {
+      "name": "CircleBatch.flush",
+      "inclusive": 234,
+      "self": 92
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode._hashCode",
+      "inclusive": 234,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext.fillRect",
+      "inclusive": 233,
+      "self": 0
+    },
+    {
+      "name": "_drawBackdrop",
+      "inclusive": 233,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._flushBatch",
+      "inclusive": 232,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._c",
+      "inclusive": 232,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._batchCircle",
+      "inclusive": 232,
+      "self": 42
+    },
+    {
+      "name": "jsCall1",
+      "inclusive": 232,
+      "self": 0
+    },
+    {
+      "name": "parsedValueOf",
+      "inclusive": 220,
+      "self": 0
+    },
+    {
+      "name": "PointOptions.storeKey",
+      "inclusive": 214,
+      "self": 32
+    },
+    {
+      "name": "Chart.data",
+      "inclusive": 213,
+      "self": 3
+    },
+    {
+      "name": "jsGetKey",
+      "inclusive": 204,
+      "self": 73
+    },
+    {
+      "name": "OptionScope.lookup",
+      "inclusive": 201,
+      "self": 11
+    },
+    {
+      "name": "Config.data",
+      "inclusive": 195,
+      "self": 16
+    },
+    {
+      "name": "fmod",
+      "inclusive": 191,
+      "self": 191
+    },
+    {
+      "name": "stressScriptableBackground",
+      "inclusive": 185,
+      "self": 5
+    },
+    {
+      "name": "UiCanvasContext._strokeCircle",
+      "inclusive": 182,
+      "self": 29
+    },
+    {
+      "name": "UiCanvasContext.fill",
+      "inclusive": 175,
+      "self": 46
+    },
+    {
+      "name": "ElementOptions.storeKey",
+      "inclusive": 175,
+      "self": 11
+    },
+    {
+      "name": "ElementOptions.jsWrite",
+      "inclusive": 164,
+      "self": 16
+    },
+    {
+      "name": "_GrowableList._GrowableList.of",
+      "inclusive": 162,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.jsOwnKeys",
+      "inclusive": 162,
+      "self": 4
+    },
+    {
+      "name": "List.List.of",
+      "inclusive": 162,
+      "self": 0
+    },
+    {
+      "name": "_OneByteString._concatAll",
+      "inclusive": 156,
+      "self": 150
+    },
+    {
+      "name": "_ScriptableElementPlan.matches",
+      "inclusive": 151,
+      "self": 151
+    },
+    {
+      "name": "OptionScope.jsRead",
+      "inclusive": 143,
+      "self": 8
+    },
+    {
+      "name": "_NativeCanvas.drawRawAtlas",
+      "inclusive": 142,
+      "self": 1
+    },
+    {
+      "name": "_NativeCanvas.__drawAtlas$Method$FfiNative",
+      "inclusive": 141,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._drawAtlas",
+      "inclusive": 141,
+      "self": 0
+    },
+    {
+      "name": "CircleBatch.add",
+      "inclusive": 137,
+      "self": 57
+    },
+    {
+      "name": "_getResolver",
+      "inclusive": 137,
+      "self": 19
+    },
+    {
+      "name": "OptionScope._normalize",
+      "inclusive": 135,
+      "self": 36
+    },
+    {
+      "name": "_GrowableList._GrowableList._ofGrowableList",
+      "inclusive": 129,
+      "self": 117
+    },
+    {
+      "name": "jsTruthy",
+      "inclusive": 113,
+      "self": 113
+    },
+    {
+      "name": "_OneByteString.hashCode",
+      "inclusive": 113,
+      "self": 113
+    },
+    {
+      "name": "getContext.raw",
+      "inclusive": 112,
+      "self": 0
+    },
+    {
+      "name": "_resolveElementNamedOptions.<anonymous closure>",
+      "inclusive": 109,
+      "self": 13
+    },
+    {
+      "name": "jsToString",
+      "inclusive": 105,
+      "self": 105
+    },
+    {
+      "name": "jsGetIndex",
+      "inclusive": 102,
+      "self": 102
+    },
+    {
+      "name": "DatasetController.getParsed",
+      "inclusive": 102,
+      "self": 5
+    },
+    {
+      "name": "ContextObject.jsRead",
+      "inclusive": 102,
+      "self": 1
+    },
+    {
+      "name": "[Stub] AllocateArray",
+      "inclusive": 101,
+      "self": 57
+    },
+    {
+      "name": "Config.options",
+      "inclusive": 100,
+      "self": 14
+    },
+    {
+      "name": "ContextObject._own",
+      "inclusive": 99,
+      "self": 13
+    }
+  ]
+}

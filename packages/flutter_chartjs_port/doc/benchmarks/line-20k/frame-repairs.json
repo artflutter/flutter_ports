@@ -1,0 +1,401 @@
+{
+  "frame-repair-52": [
+    {
+      "spin": false,
+      "frameTimings": 78,
+      "buildP90Ms": 34.025,
+      "rasterP90Ms": 2.066,
+      "call": "data",
+      "style": "scriptable",
+      "connected": true,
+      "labels": 50,
+      "samples": 6,
+      "fps": 29.80107261261965,
+      "buildMs": 31.276692304699655,
+      "rasterMs": 2.5593627165681085,
+      "updateMs": 22.886496527777776,
+      "drawMs": 7.161195833333334,
+      "animatorMs": 0.0,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-53": [
+    {
+      "spin": false,
+      "frameTimings": 82,
+      "buildP90Ms": 33.662,
+      "rasterP90Ms": 2.399,
+      "call": "data",
+      "style": "scriptable",
+      "connected": true,
+      "labels": 200,
+      "samples": 6,
+      "fps": 29.676683731058986,
+      "buildMs": 32.06123917753495,
+      "rasterMs": 2.6108877157347465,
+      "updateMs": 22.58572638888889,
+      "drawMs": 7.693786805555555,
+      "animatorMs": 0.0,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-54": [
+    {
+      "spin": false,
+      "frameTimings": 161,
+      "buildP90Ms": 6.203,
+      "rasterP90Ms": 0.841,
+      "call": "animate",
+      "style": "static",
+      "connected": false,
+      "labels": 0,
+      "samples": 6,
+      "fps": 60.004207299959354,
+      "buildMs": 6.210373290598291,
+      "rasterMs": 0.797418376068376,
+      "updateMs": 0.0,
+      "drawMs": 4.272485483870967,
+      "animatorMs": 1.3159801075268815,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-55": [
+    {
+      "spin": false,
+      "frameTimings": 162,
+      "buildP90Ms": 6.332,
+      "rasterP90Ms": 0.858,
+      "call": "animate",
+      "style": "static",
+      "connected": false,
+      "labels": 50,
+      "samples": 6,
+      "fps": 60.00057324953004,
+      "buildMs": 6.232631517094017,
+      "rasterMs": 0.8500600427350427,
+      "updateMs": 0.0,
+      "drawMs": 4.374182437275985,
+      "animatorMs": 1.3146385304659496,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-56": [
+    {
+      "spin": false,
+      "frameTimings": 162,
+      "buildP90Ms": 6.421,
+      "rasterP90Ms": 1.025,
+      "call": "animate",
+      "style": "static",
+      "connected": false,
+      "labels": 200,
+      "samples": 6,
+      "fps": 60.00056480581168,
+      "buildMs": 6.396003952991453,
+      "rasterMs": 0.9995191239316239,
+      "updateMs": 0.0,
+      "drawMs": 4.570178315412186,
+      "animatorMs": 1.3237928315412189,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-57": [
+    {
+      "spin": false,
+      "frameTimings": 162,
+      "buildP90Ms": 6.896,
+      "rasterP90Ms": 1.617,
+      "call": "animate",
+      "style": "static",
+      "connected": true,
+      "labels": 0,
+      "samples": 6,
+      "fps": 60.0008325122785,
+      "buildMs": 7.038198732470335,
+      "rasterMs": 1.5998716019417474,
+      "updateMs": 0.0,
+      "drawMs": 5.242166666666666,
+      "animatorMs": 1.2508279569892473,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-58": [
+    {
+      "spin": false,
+      "frameTimings": 164,
+      "buildP90Ms": 7.59,
+      "rasterP90Ms": 1.733,
+      "call": "animate",
+      "style": "static",
+      "connected": true,
+      "labels": 50,
+      "samples": 6,
+      "fps": 59.996008075290355,
+      "buildMs": 7.433028101402372,
+      "rasterMs": 1.6744949163969796,
+      "updateMs": 0.0,
+      "drawMs": 5.403834408602151,
+      "animatorMs": 1.3586571684587814,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-59": [
+    {
+      "spin": false,
+      "frameTimings": 165,
+      "buildP90Ms": 7.173,
+      "rasterP90Ms": 1.899,
+      "call": "animate",
+      "style": "static",
+      "connected": true,
+      "labels": 200,
+      "samples": 6,
+      "fps": 59.9997798113129,
+      "buildMs": 7.487808012820513,
+      "rasterMs": 1.8637074786324785,
+      "updateMs": 0.0,
+      "drawMs": 5.49548458781362,
+      "animatorMs": 1.2287679211469533,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-60": [
+    {
+      "spin": false,
+      "frameTimings": 159,
+      "buildP90Ms": 8.072,
+      "rasterP90Ms": 1.112,
+      "call": "animate",
+      "style": "indexed",
+      "connected": false,
+      "labels": 0,
+      "samples": 6,
+      "fps": 59.99996552419797,
+      "buildMs": 7.915536458333334,
+      "rasterMs": 1.0807340277777777,
+      "updateMs": 0.0,
+      "drawMs": 4.7625390681003585,
+      "animatorMs": 2.405750537634409,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-61": [
+    {
+      "spin": false,
+      "frameTimings": 157,
+      "buildP90Ms": 7.894,
+      "rasterP90Ms": 1.169,
+      "call": "animate",
+      "style": "indexed",
+      "connected": false,
+      "labels": 50,
+      "samples": 6,
+      "fps": 60.00065408632907,
+      "buildMs": 7.5975294117647065,
+      "rasterMs": 1.0904249183006536,
+      "updateMs": 0.0,
+      "drawMs": 4.8041559139784935,
+      "animatorMs": 2.146671146953405,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-62": [
+    {
+      "spin": false,
+      "frameTimings": 159,
+      "buildP90Ms": 8.516,
+      "rasterP90Ms": 1.566,
+      "call": "animate",
+      "style": "indexed",
+      "connected": false,
+      "labels": 200,
+      "samples": 6,
+      "fps": 60.00095732732726,
+      "buildMs": 8.352453819444444,
+      "rasterMs": 1.4424510416666665,
+      "updateMs": 0.0,
+      "drawMs": 5.371916666666667,
+      "animatorMs": 2.2089317204301078,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-64": [
+    {
+      "spin": false,
+      "frameTimings": 162,
+      "buildP90Ms": 12.933,
+      "rasterP90Ms": 1.989,
+      "call": "animate",
+      "style": "indexed",
+      "connected": true,
+      "labels": 50,
+      "samples": 6,
+      "fps": 60.00034715153196,
+      "buildMs": 10.817231691919192,
+      "rasterMs": 1.9861264309764308,
+      "updateMs": 0.0,
+      "drawMs": 6.815608064516129,
+      "animatorMs": 3.146368458781362,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-65": [
+    {
+      "spin": false,
+      "frameTimings": 160,
+      "buildP90Ms": 14.141,
+      "rasterP90Ms": 2.435,
+      "call": "animate",
+      "style": "indexed",
+      "connected": true,
+      "labels": 200,
+      "samples": 6,
+      "fps": 59.99925635407504,
+      "buildMs": 11.669464183501683,
+      "rasterMs": 2.3573410353535356,
+      "updateMs": 0.0,
+      "drawMs": 7.580753046594983,
+      "animatorMs": 3.218310573476703,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-66": [
+    {
+      "spin": false,
+      "frameTimings": 158,
+      "buildP90Ms": 7.312,
+      "rasterP90Ms": 1.033,
+      "call": "animate",
+      "style": "scriptable",
+      "connected": false,
+      "labels": 0,
+      "samples": 6,
+      "fps": 60.00043921671324,
+      "buildMs": 7.465717483660131,
+      "rasterMs": 1.0314407679738562,
+      "updateMs": 0.0,
+      "drawMs": 4.725894444444444,
+      "animatorMs": 1.9758704301075267,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-67": [
+    {
+      "spin": false,
+      "frameTimings": 105,
+      "buildP90Ms": 8.015,
+      "rasterP90Ms": 1.157,
+      "call": "animate",
+      "style": "scriptable",
+      "connected": false,
+      "labels": 50,
+      "samples": 4,
+      "fps": 60.00463738479225,
+      "buildMs": 7.95304350490196,
+      "rasterMs": 1.1678426470588235,
+      "updateMs": 0.0,
+      "drawMs": 4.785006182795699,
+      "animatorMs": 2.085956451612903,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-68": [
+    {
+      "spin": false,
+      "frameTimings": 89,
+      "buildP90Ms": 8.564,
+      "rasterP90Ms": 1.496,
+      "call": "animate",
+      "style": "scriptable",
+      "connected": false,
+      "labels": 200,
+      "samples": 4,
+      "fps": 45.70477343054381,
+      "buildMs": 11.345279711538462,
+      "rasterMs": 1.6723310147556845,
+      "updateMs": 0.0,
+      "drawMs": 5.333974462365592,
+      "animatorMs": 2.206029569892473,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-69": [
+    {
+      "spin": false,
+      "frameTimings": 160,
+      "buildP90Ms": 12.755,
+      "rasterP90Ms": 1.948,
+      "call": "animate",
+      "style": "scriptable",
+      "connected": true,
+      "labels": 0,
+      "samples": 6,
+      "fps": 59.9983033141425,
+      "buildMs": 10.781757777777779,
+      "rasterMs": 1.9290100000000001,
+      "updateMs": 0.0,
+      "drawMs": 6.5769508960573475,
+      "animatorMs": 3.2812792114695344,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-70": [
+    {
+      "spin": false,
+      "frameTimings": 157,
+      "buildP90Ms": 13.241,
+      "rasterP90Ms": 1.996,
+      "call": "animate",
+      "style": "scriptable",
+      "connected": true,
+      "labels": 50,
+      "samples": 6,
+      "fps": 60.00051609148199,
+      "buildMs": 10.661399444444445,
+      "rasterMs": 1.9873872222222222,
+      "updateMs": 0.0,
+      "drawMs": 6.736546774193549,
+      "animatorMs": 3.101975806451614,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "frame-repair-71": [
+    {
+      "spin": false,
+      "frameTimings": 159,
+      "buildP90Ms": 14.272,
+      "rasterP90Ms": 2.401,
+      "call": "animate",
+      "style": "scriptable",
+      "connected": true,
+      "labels": 200,
+      "samples": 6,
+      "fps": 59.96777382707739,
+      "buildMs": 11.596414251207731,
+      "rasterMs": 2.3268413647342996,
+      "updateMs": 0.0,
+      "drawMs": 7.578351254480286,
+      "animatorMs": 3.193449462365591,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ]
+}

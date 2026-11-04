@@ -2408,3 +2408,10 @@ at the same canvas dimensions and configuration.
   within scatter controller loops. Point drawing, canvas operations, the cut
   inventory and rendering pinning tests remain unchanged. New update timings
   belong to performance.md §47; no deferred canvas work is brought forward.
+
+- 2026-11-03, ADR 0080 adds guarded indexed line options, private static
+  scriptable-option templates and context membership masks. All 20k points,
+  callback results, canvas operations, recording boundaries and draw order
+  remain live. Existing rendering pinning tests and cut inventory remain valid;
+  the native line measurements are recorded separately in performance.md §48.
+  This does not activate deferred canvas work or establish 60 FPS for every mode.

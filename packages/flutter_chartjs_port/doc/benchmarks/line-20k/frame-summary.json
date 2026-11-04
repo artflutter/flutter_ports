@@ -1,0 +1,110 @@
+[
+  {
+    "call": "draw",
+    "style": "static",
+    "fpsMin": 59.99887762934235,
+    "fpsMax": 60.00369226878112,
+    "buildMeanMaxMs": 5.169290513182674,
+    "buildP90MaxMs": 5.49,
+    "rasterP90MaxMs": 1.987
+  },
+  {
+    "call": "draw",
+    "style": "indexed",
+    "fpsMin": 59.9971514178008,
+    "fpsMax": 60.00235404462122,
+    "buildMeanMaxMs": 5.952668055555555,
+    "buildP90MaxMs": 6.494,
+    "rasterP90MaxMs": 2.407
+  },
+  {
+    "call": "draw",
+    "style": "scriptable",
+    "fpsMin": 59.998518828326006,
+    "fpsMax": 60.00029102791064,
+    "buildMeanMaxMs": 6.041627777777777,
+    "buildP90MaxMs": 6.291,
+    "rasterP90MaxMs": 2.32
+  },
+  {
+    "call": "update",
+    "style": "static",
+    "fpsMin": 59.99808094287587,
+    "fpsMax": 60.00220922231742,
+    "buildMeanMaxMs": 8.318346939736346,
+    "buildP90MaxMs": 8.785,
+    "rasterP90MaxMs": 1.989
+  },
+  {
+    "call": "update",
+    "style": "indexed",
+    "fpsMin": 49.66904474439327,
+    "fpsMax": 60.015393751277294,
+    "buildMeanMaxMs": 19.104593055555558,
+    "buildP90MaxMs": 21.977,
+    "rasterP90MaxMs": 2.518
+  },
+  {
+    "call": "update",
+    "style": "scriptable",
+    "fpsMin": 27.388688751748305,
+    "fpsMax": 30.000187699492987,
+    "buildMeanMaxMs": 32.28489418878044,
+    "buildP90MaxMs": 35.819,
+    "rasterP90MaxMs": 2.483
+  },
+  {
+    "call": "data",
+    "style": "static",
+    "fpsMin": 60.00008664436799,
+    "fpsMax": 60.000749189861864,
+    "buildMeanMaxMs": 8.4751875,
+    "buildP90MaxMs": 9.039,
+    "rasterP90MaxMs": 2.023
+  },
+  {
+    "call": "data",
+    "style": "indexed",
+    "fpsMin": 50.19899372992078,
+    "fpsMax": 59.99988815043431,
+    "buildMeanMaxMs": 18.7856351210121,
+    "buildP90MaxMs": 21.425,
+    "rasterP90MaxMs": 2.568
+  },
+  {
+    "call": "data",
+    "style": "scriptable",
+    "fpsMin": 29.61365924390994,
+    "fpsMax": 29.998177834671342,
+    "buildMeanMaxMs": 32.06123917753495,
+    "buildP90MaxMs": 34.025,
+    "rasterP90MaxMs": 2.399
+  },
+  {
+    "call": "animate",
+    "style": "static",
+    "fpsMin": 59.996008075290355,
+    "fpsMax": 60.004207299959354,
+    "buildMeanMaxMs": 7.487808012820513,
+    "buildP90MaxMs": 7.59,
+    "rasterP90MaxMs": 1.899
+  },
+  {
+    "call": "animate",
+    "style": "indexed",
+    "fpsMin": 59.99925635407504,
+    "fpsMax": 60.00095732732726,
+    "buildMeanMaxMs": 11.669464183501683,
+    "buildP90MaxMs": 14.16,
+    "rasterP90MaxMs": 2.435
+  },
+  {
+    "call": "animate",
+    "style": "scriptable",
+    "fpsMin": 45.70477343054381,
+    "fpsMax": 60.00463738479225,
+    "buildMeanMaxMs": 11.596414251207731,
+    "buildP90MaxMs": 14.272,
+    "rasterP90MaxMs": 2.401
+  }
+]

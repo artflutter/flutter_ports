@@ -1,0 +1,21 @@
+import subprocess
+from pathlib import Path
+# Run this saved script from <isolated-root>/.dart_tool/line_20k/.
+root=Path(__file__).resolve().parents[2]
+p=root/'apps/chartjs_gallery/macos/Runner/MainFlutterWindow.swift'
+s=p.read_text();(root/'.dart_tool/line_20k/MainFlutterWindow.swift.before').write_text(s)
+new=s.replace('    super.awakeFromNib()', '''    super.awakeFromNib()
+    // Temporary benchmark runner: establish the viewport before warmup ends.
+    if ProcessInfo.processInfo.environment["FRAMES"] == "1" {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        self.setContentSize(NSSize(width: 1100, height: 900))
+        self.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+      }
+    }''')
+(root/'.dart_tool/line_20k/MainFlutterWindow.swift.benchmark').write_text(new)
+try:
+ p.write_text(new)
+ with (root/'.dart_tool/line_20k/build-fixed.log').open('w') as log:
+  subprocess.run(['flutter','build','macos','--profile','--no-pub','-t','../../.dart_tool/line_20k/probe.dart'],cwd=root/'apps/chartjs_gallery',stdout=log,stderr=subprocess.STDOUT,check=True)
+finally:p.write_text(s)

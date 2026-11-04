@@ -37,10 +37,16 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
+    show BulkBarScale;
+import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions, LineOptions;
+    show ElementOptions, LineOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -394,6 +400,24 @@ class LineController extends DatasetController {
     final pointsCount = points.length;
     var prevParsed = start > 0 ? getParsed(start - 1) : false;
     final writes = _PointWrites(direct: directUpdate);
+    // DIVERGES(chartjs): adapt-line-point-options, reuse native indexed colors
+    // only inside this loop, with guards at each original observation point.
+    PointOptions Function(int)? colors;
+    final coordinates = NativePointCoordinates();
+    final tryColors =
+        mode == 'none' &&
+        sharedOptions == null &&
+        includeOptions &&
+        !jsTruthy(stacked) &&
+        !jsTruthy(segment) &&
+        (iAxis == 'x' || iAxis == 'y') &&
+        (vAxis == 'x' || vAxis == 'y') &&
+        start.isFinite &&
+        start >= 0 &&
+        start == start.truncateToDouble() &&
+        count.isFinite &&
+        count > 2 &&
+        count == count.truncateToDouble();
 
     for (var i = 0; i < pointsCount; ++i) {
       final point = points[i];
@@ -408,8 +432,12 @@ class LineController extends DatasetController {
         continue;
       }
 
+      if (colors != null && (!_nativePoint(point) || point.active)) {
+        colors = null;
+      }
       writes.begin(point);
       final parsed = getParsed(index);
+      if (colors != null && !coordinates.accepts(parsed)) colors = null;
       // :99, also :101 (one-read rule).
       final vValue = parsedValueOf(parsed, vKey, vAxis);
       final nullData = isNullOrUndef(vValue);
@@ -446,10 +474,19 @@ class LineController extends DatasetController {
       if (includeOptions) {
         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
         // shared options.
-        writes.options(
-          sharedOptions ??
-              resolveDataElementOptions(index, point.active ? 'active' : mode),
-        );
+        final prepared = colors;
+        if (prepared != null) {
+          getContext(index, false, mode);
+          writes.options(prepared(i));
+        } else {
+          writes.options(
+            sharedOptions ??
+                resolveDataElementOptions(
+                  index,
+                  point.active ? 'active' : mode,
+                ),
+          );
+        }
       }
 
       if (!directUpdate) {
@@ -457,7 +494,51 @@ class LineController extends DatasetController {
       }
 
       prevParsed = parsed;
+      if (tryColors &&
+          i == start + 1 &&
+          coordinates.accepts(parsed) &&
+          _nativeProjection(iScale) &&
+          _nativeProjection(vScale)) {
+        colors = _preparePointColors(points);
+      }
     }
+  }
+
+  bool _nativeProjection(types.Scale scale) =>
+      scale is BulkBarScale &&
+      (scale as BulkBarScale).supportsBulkBarUpdate &&
+      identical(scale.chart, chart);
+
+  bool _nativePoint(types.Element point) =>
+      point is NativePointElement &&
+      (point as NativePointElement).supportsNativePointOptions;
+
+  PointOptions Function(int)? _preparePointColors(List<types.Element> points) {
+    if (super.runtimeType != LineController || type != 'line') return null;
+    final owner = chart;
+    if (owner is! NativePointChart ||
+        !(owner as NativePointChart).supportsNativePointOptions ||
+        !identical(points, cachedMeta.data) ||
+        !nativePointList(points) ||
+        !nativeDataUpdateList(cachedMeta.parsed)) {
+      return null;
+    }
+    final elementClass = dataElementType;
+    if (elementClass is! JsClass ||
+        elementClass.id is! String ||
+        elementClass.id != 'point' ||
+        !index.isFinite ||
+        index < 0 ||
+        index != index.truncateToDouble()) {
+      return null;
+    }
+    final config = chart.config;
+    return config is Config && config.runtimeType == Config
+        ? config.prepareIndexedPointColors(
+            index.toInt(),
+            controllerType: 'line',
+          )
+        : null;
   }
 
   /// controller.line.js:125 `getMaxOverflow()`.

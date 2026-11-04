@@ -254,6 +254,29 @@ bool _indexedScalar(Object? value) =>
     value is String ||
     (value is Color && !isObject(value));
 
+// Static values are already cached by the raw resolver. The two contextual
+// views remain fresh: callbacks can retain the subview or change the resolver.
+final class _ScriptableElementPlan {
+  _ScriptableElementPlan(this.keys, this.varying, this.template)
+    : contextOnly = varying.values.every(
+        (f) =>
+            f is Object? Function(Never) &&
+            f is! Object? Function(Never, Never),
+      );
+  final List<OptionKey> keys;
+  final Map<OptionKey, Object?> varying;
+  final ElementOptions template;
+  final bool contextOnly;
+
+  bool matches(List<Object> other) {
+    if (keys.length != other.length) return false;
+    for (var i = 0; i < keys.length; i++) {
+      if (!identical(keys[i], other[i])) return false;
+    }
+    return true;
+  }
+}
+
 final class _IndexedElementPlan {
   _IndexedElementPlan(this.keys, this.values);
   final List<OptionKey> keys;
@@ -456,6 +479,8 @@ final class OptionResolver implements ResolverProxy {
   /// that the `set` trap writes.
   final _Cache _cache = _Cache();
 
+  _ScriptableElementPlan? _scriptableElementPlan;
+  int _scriptableRejectedSize = -1;
   _IndexedElementPlan? _indexedElementPlan;
   int _indexedRejectedSize = -1;
 
@@ -536,6 +561,122 @@ final class OptionResolver implements ResolverProxy {
       }
     }
     return varying.isEmpty ? null : varying;
+  }
+
+  /// Copies already-resolved static fields while keeping each scriptable read
+  /// at its original position, with fresh contextual views and live callbacks.
+  @internal
+  // DIVERGES(chartjs): adapt-scriptable-element-template, static fields.
+  ({bool resolved, Object context, ElementOptions? prepared})?
+  resolveScriptableElementOptions(
+    List<Object> keys,
+    Object Function() context,
+    ElementOptions into,
+    bool Function(Object?, Object?) descriptorGuard,
+    bool Function() stillCached,
+  ) {
+    if (_slotsTouched || !nativeIndexedResult(into)) return null;
+    var plan = _scriptableElementPlan;
+    if (plan == null ||
+        !plan.matches(keys) ||
+        plan.template.runtimeType != into.runtimeType) {
+      final size = _cache._keys?.length ?? 0;
+      if (_scriptableRejectedSize == size) return null;
+      ({bool resolved, Object context, ElementOptions? prepared})? reject() {
+        _scriptableRejectedSize = size;
+        return null;
+      }
+
+      if (!descriptorGuard(
+            _cache.get(OptionKey.descScriptable),
+            _cache.get(OptionKey.descIndexable),
+          ) ||
+          identical(_cache.get(OptionKey.descAllKeys), _absent)) {
+        return reject();
+      }
+      final template = (into is PointOptions ? PointOptions() : BarOptions())
+        ..storeKey(OptionKey.dollarShared, false);
+      final planKeys = <OptionKey>[];
+      final varying = <OptionKey, Object?>{};
+      for (final key in keys) {
+        if (key is! OptionKey ||
+            key.jsName.startsWith('_') ||
+            !into.knownKeyList.contains(key.jsName)) {
+          return reject();
+        }
+        final value = _cache.get(key);
+        if (isFunction(value)) {
+          // Only colors use the arbitrary-value slot without conversion or
+          // foreign auditing. Other callbacks keep ordinary resolution.
+          if (key != OptionKey.backgroundColor &&
+              key != OptionKey.borderColor) {
+            return reject();
+          }
+          varying[key] = value;
+        } else {
+          if (!_nativeIndexedValue(key, value)) return reject();
+          template.storeKey(key, value);
+        }
+        planKeys.add(key);
+      }
+      if (varying.isEmpty) return reject();
+      plan = _scriptableElementPlan = _ScriptableElementPlan(
+        planKeys,
+        varying,
+        template,
+      );
+    }
+    into.storeKey(OptionKey.dollarShared, false);
+    final ctx = context();
+    if (!stillCached() ||
+        !identical(plan, _scriptableElementPlan) ||
+        !plan.matches(keys)) {
+      return (resolved: false, context: ctx, prepared: null);
+    }
+    // Same prefixes and an exact Config mean createResolver would retrieve
+    // this raw resolver. Descriptor reads and both view identities stay fresh.
+    // All three descriptor inputs are already cached. Snapshot before any
+    // callback, even when the callback does not accept the second argument.
+    final scriptable = _cache.get(OptionKey.descScriptable);
+    final indexable = _cache.get(OptionKey.descIndexable);
+    final allKeys = _cache.get(OptionKey.descAllKeys);
+    _Descriptor freshDescriptors() => _Descriptor(
+      scriptable: identical(scriptable, undefined) ? true : scriptable,
+      indexable: identical(indexable, undefined) ? true : indexable,
+      allKeys: allKeys,
+    );
+    OptionView? current;
+    OptionView view() => current ??= OptionView._(
+      this,
+      ctx,
+      OptionView._(this, ctx, undefined, freshDescriptors(), null),
+      freshDescriptors(),
+      null,
+    );
+    if (!plan.contextOnly) view();
+    final result = plan.template.clone();
+    for (final key in plan.keys) {
+      // A callback can write/delete through this or a retained subresolver.
+      // Once that happens, resolve every remaining key on the original view.
+      if (!identical(plan, _scriptableElementPlan)) {
+        result.storeKey(key, view().readKey(key));
+      } else if (plan.varying.containsKey(key)) {
+        if (plan.contextOnly) {
+          // Arity is proven by the runtime's function-type rule: this closure
+          // cannot observe a second argument. Keep the JS call/type checks.
+          final value = jsCall1(plan.varying[key], ctx);
+          result.storeKey(
+            key,
+            _indexedScalar(value)
+                ? value
+                : _resolveWithContext(view(), key.jsName, key, value),
+          );
+        } else {
+          result.storeKey(key, view().readKey(key));
+        }
+      }
+    }
+    return (resolved: true, context: ctx, prepared: result);
   }
 
   /// Resolves native indexed scalar options from already cached raw values.
@@ -719,6 +860,8 @@ final class OptionResolver implements ResolverProxy {
 
   /// `delete target[name]` of the cache object.
   void _removeOwn(String name) {
+    _scriptableElementPlan = null;
+    _scriptableRejectedSize = -1;
     _indexedElementPlan = null;
     _indexedRejectedSize = -1;
     _cache.remove(_keyOf(name));
@@ -815,6 +958,8 @@ final class OptionResolver implements ResolverProxy {
   /// A trap for setting property values.
   @core.override
   void operator []=(String key, Object? value) {
+    _scriptableElementPlan = null;
+    _scriptableRejectedSize = -1;
     _indexedElementPlan = null;
     _indexedRejectedSize = -1;
     final current = _ownOrUndefined('_storage');
@@ -1522,20 +1667,31 @@ bool _needsSubResolver(String prop, Object? value) =>
 /// helpers.config.ts:233 `_resolveWithContext`. The receiver is [view].
 /// [key] is the [OptionKey] of [prop] for the typed read of the proxy, or
 /// Dart `null`.
-Object? _resolveWithContext(OptionView view, String prop, OptionKey? key) {
+Object? _resolveWithContext(
+  OptionView view,
+  String prop,
+  OptionKey? key, [
+  Object? returned = _absent,
+]) {
   final proxy = view._slot('_proxy');
   final context = view._slot('_context');
   final subProxy = view._slot('_subProxy');
   final descriptors = view._slot('_descriptors')! as Descriptor;
   // resolve from proxy
-  var value = proxy is OptionResolver
+  final alreadyCalled = !identical(returned, _absent);
+  var value = alreadyCalled
+      ? returned
+      : proxy is OptionResolver
       ? key == null
             ? proxy._get(prop)
             : proxy.readKey(key)
       : jsGet(proxy, prop);
+  if (alreadyCalled) value = _resolveScriptableReturn(prop, value, proxy);
 
   // resolve with context
-  if (isFunction(value) && _isScriptableMethod(descriptors, prop)) {
+  if (!alreadyCalled &&
+      isFunction(value) &&
+      _isScriptableMethod(descriptors, prop)) {
     value = _resolveScriptable(prop, value, view, view);
   }
   if (isArray(value) && (value! as List<Object?>).isNotEmpty) {
@@ -1592,11 +1748,15 @@ Object? _resolveScriptable(
   }
   stack.add(prop);
   final options = jsTruthy(subProxy) ? subProxy : receiver;
-  var value = jsCall(getValue, [context, options]);
+  final value = jsCall(getValue, [context, options]);
   stack.remove(prop);
+  return _resolveScriptableReturn(prop, value, proxy);
+}
+
+Object? _resolveScriptableReturn(String prop, Object? value, Object? proxy) {
   if (_needsSubResolver(prop, value)) {
     // When scriptable option returns an object, create a resolver on that.
-    value = _createSubResolver(
+    return _createSubResolver(
       jsGet(proxy, '_scopes')! as List<Object?>,
       proxy,
       prop,

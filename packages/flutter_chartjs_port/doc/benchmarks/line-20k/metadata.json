@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-03",
+  "gitHead": "ba58aa8a918f3d078c15f833abdb0337a96b271a",
+  "baseline": "Existing working tree including ADRs 0078/0079; baseline-overlay.patch reverts only this task runtime changes from delivered source.",
+  "hardware": "Apple M3 Max",
+  "os": "macOS 27.0.1 (26A434)",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "build": "profile AOT arm64",
+  "renderer": "Impeller MetalSDF",
+  "cpuCanvas": "800x480 DPR1",
+  "frameCanvas": "1036x520 DPR2; temporary runner explicitly sets 1100x900 content size before the 2s warmup ends; saved window state ignored",
+  "sourceSha256": {
+    "packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart": {
+      "baseline": "de9c9f518427665fb34bead7c0e2f9dd85290e817d7c21ea7760616d884f0c40",
+      "candidate": "90082128132339ba1d53f425f3ba2dc01eba7d9ce31f6ef477b3ad77ccafa6b4",
+      "delivered": "90082128132339ba1d53f425f3ba2dc01eba7d9ce31f6ef477b3ad77ccafa6b4"
+    },
+    "packages/flutter_chartjs_port/lib/src/core/core.config.dart": {
+      "baseline": "6cec56847e932e841790a6950e8c4cd2c98561db08ad46ff8833174881d36410",
+      "candidate": "3b05ba17629e1e092f9dbdbf79cd7d96832141c501856361d40bd90f768e0dfe",
+      "delivered": "3b05ba17629e1e092f9dbdbf79cd7d96832141c501856361d40bd90f768e0dfe"
+    },
+    "packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart": {
+      "baseline": "b79bd41acdf1d1fcc75f41ab494271ba00589828ae68dbfced9f8764a1d8fbdd",
+      "candidate": "61d90a72de29873552b2231620d1b3c55e24cf5efc0213eb37a9b15156b390af",
+      "delivered": "6a5bc1922453d407707ed6969555a08f206fa26cc9c09e85563c88539f36daa5"
+    },
+    "packages/flutter_chartjs_port/lib/src/helpers/helpers.options.dart": {
+      "baseline": "b3a9c0715d86cb5765b8fa6a13d16ee1fb7069173a230f8918693b41536bab1d",
+      "candidate": "19ed026ff4f3f0489db9915cf923e8738cae7a705738af343c53de89b28f855c",
+      "delivered": "19ed026ff4f3f0489db9915cf923e8738cae7a705738af343c53de89b28f855c"
+    }
+  },
+  "artifacts": {
+    "a/Contents/MacOS/chartjs_gallery": "10b3eb5bb72391a14a95fc6f38bc1c95b1bdaccbabd446ad5f9e6d95d9e1a56f",
+    "a/Contents/Frameworks/App.framework/Versions/A/App": "afe8daeac08613738bb556da7abf1638178eee3bcda2e3df7b059b2b78ab2e44",
+    "final/Contents/MacOS/chartjs_gallery": "5e21afc306073e3dd56c327daada4ac4d226b7b3f8cf66a2a4a1a534446cca59",
+    "final/Contents/Frameworks/App.framework/Versions/A/App": "e0cf5bd552d33c4d7be55487503edd15f30d947f685c2c6355b6db0e7294185e"
+  },
+  "measurementDates": [
+    "2026-11-03",
+    "2026-11-04"
+  ],
+  "runtimeFinal": true,
+  "repeatedFrameCells": 19,
+  "probeSha256": "99746f805e2136b2820175410ba149eb860dfa89915715a79609ed8aaf0c1639",
+  "pubspecLockSha256": "359e10da5ec6ddde550d7fbf185fdeccd1b9e42c21fdb623d989fd08c25cb1de",
+  "rotatingLabelRepeatedCells": 2,
+  "rotatingLabelRepeatSeconds": 8,
+  "supplementalAnimationRepeatSeconds": 10,
+  "postMeasurementChanges": [
+    "Lint-only cleanup in _resolveScriptableReturn: return the created subresolver directly instead of assigning the parameter and then returning it. Branches, callbacks and returned values are unchanged."
+  ]
+}

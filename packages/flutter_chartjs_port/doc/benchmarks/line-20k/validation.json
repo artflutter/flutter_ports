@@ -1,0 +1,12 @@
+{
+  "workspaceVmPassed": 10929,
+  "focusedJavaScriptPassed": 179,
+  "focusedWebAssemblyPassed": 179,
+  "analyze": "pass",
+  "format": "pass",
+  "portChecks": "pass",
+  "parity": "pass; 163 files; zero errors/warnings",
+  "scope": "Full workspace VM tests; focused browser resolver/context tests. No full browser, fixture, golden, or mobile suite. Full workspace run precedes the final lint-only helper return cleanup; 28 focused VM regressions and analysis passed after it.",
+  "benchmarks": "12 CPU cells in each of two baseline and two final processes; 24 baseline frame cells; 72 final frame cells plus 24 rotating-label cells.",
+  "finalFocusedVmPassed": 28
+}

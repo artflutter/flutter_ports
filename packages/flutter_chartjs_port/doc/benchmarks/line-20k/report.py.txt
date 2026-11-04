@@ -1,0 +1,99 @@
+import difflib,gzip,hashlib,json,statistics,subprocess
+from pathlib import Path
+root=Path(__file__).resolve().parents[2];work=root/'.dart_tool/line_20k';out=root/'packages/flutter_chartjs_port/doc/benchmarks/line-20k'
+def read(name,marker):
+ return [json.loads(l.split(marker,1)[1]) for l in (work/(name+'.log')).read_text().splitlines() if marker+'{' in l]
+runs={n:read(n,'LINE_CPU ') for n in ['cpu-a1','cpu-final1','cpu-final2','cpu-a2']}
+lookup={n:{r['case']:r for r in rows} for n,rows in runs.items()}
+summary=[]
+for case,r in lookup['cpu-a1'].items():
+ def cost(label,part=None):
+  row=lookup[label][case]
+  return float(row.get(part+'MedianMs',0)) if part else sum(float(row.get(k+'MedianMs',0)) for k in ['update','draw','end'])
+ a=statistics.mean(cost(n) for n in ['cpu-a1','cpu-a2']);b=statistics.mean(cost(n) for n in ['cpu-final1','cpu-final2'])
+ summary.append({'case':case,'call':r['call'],'style':r['style'],'connected':r['connected'],'baselineCpuMs':a,'candidateCpuMs':b,'reductionPercent':(1-b/a)*100,'individualCpuMs':{n:cost(n) for n in runs},'components':{side:{k:statistics.mean(cost(n,k) for n in names) for k in ['update','draw','end']} for side,names in [('baseline',['cpu-a1','cpu-a2']),('candidate',['cpu-final1','cpu-final2'])]}})
+frames=read('frames-final','LINE_FRAME ');spin=read('frames-spin','LINE_FRAME ');baseline=read('frames-a1','LINE_FRAME ')
+assert len(frames)==72 and len(spin)==24 and len(baseline)==24
+assert all(r['canvas']=='1036.0x520.0@2.0' for r in frames+spin+baseline)
+framesSummary=[]
+for call in ['draw','update','data','animate']:
+ for style in ['static','indexed','scriptable']:
+  group=[r for r in frames if r['call']==call and r['style']==style]
+  framesSummary.append({'call':call,'style':style,'fpsMin':min(r['fps'] for r in group),'fpsMax':max(r['fps'] for r in group),'buildMeanMaxMs':max(r['buildMs'] for r in group),'buildP90MaxMs':max(r['buildP90Ms'] for r in group),'rasterP90MaxMs':max(r['rasterP90Ms'] for r in group)})
+(out/'cpu-summary.json').write_text(json.dumps(summary,indent=2)+'\n');(out/'frame-summary.json').write_text(json.dumps(framesSummary,indent=2)+'\n')
+measurements={'cpu':runs,'framesBaseline':baseline,'framesCandidate':frames,'framesSpinCandidate':spin}
+(out/'measurements.json.gz').write_bytes(gzip.compress(json.dumps(measurements,indent=2).encode()))
+for name in ['cpu-a1','cpu-a2','cpu-final1','cpu-final2','frames-a1','frames-final','frames-spin','tests','web-js','web-wasm','check-port','format','analyze-final','parity-final']:
+ (out/(name+'.log.gz')).write_bytes(gzip.compress((work/(name+'.log')).read_bytes()))
+for name in ['probe.dart','run_final.py','run_remaining.py','finish.py','animation_repeat.py','build_fixed.py','report.py','MainFlutterWindow.swift.benchmark']:
+ (out/(name+'.txt')).write_bytes((work/name).read_bytes())
+meta=json.loads((out/'metadata.json').read_text());meta['frameCanvas']='1036x520 DPR2; temporary runner explicitly sets 1100x900 content size before the 2s warmup ends; saved window state ignored';meta['measurementDates']=['2026-11-03','2026-11-04'];meta['runtimeFinal']=True
+for v in ['a','final']:
+ for rel in ['Contents/MacOS/chartjs_gallery','Contents/Frameworks/App.framework/Versions/A/App']:
+  p=Path('/tmp/line-20k-'+v+'.app')/rel
+  if p.exists():meta['artifacts'][v+'/'+rel]=hashlib.sha256(p.read_bytes()).hexdigest()
+(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+validation={'workspaceVmPassed':10929,'focusedJavaScriptPassed':179,'focusedWebAssemblyPassed':179,'analyze':'pass','format':'pass','portChecks':'pass','parity':'pass; 163 files; zero errors/warnings','scope':'Full workspace VM tests; focused browser resolver/context tests. No full browser, fixture, golden, or mobile suite.','benchmarks':'12 CPU cells in each of two baseline and two final processes; 24 baseline frame cells; 72 final frame cells plus 24 rotating-label cells.'}
+(out/'validation.json').write_text(json.dumps(validation,indent=2)+'\n')
+print('CPU')
+for r in summary:print(r['case'],round(r['baselineCpuMs'],3),round(r['candidateCpuMs'],3),round(r['reductionPercent'],1))
+print('FRAMES')
+for r in framesSummary:print(r['call'],r['style'],round(r['fpsMin'],1),round(r['fpsMax'],1),round(r['buildP90MaxMs'],2),round(r['rasterP90MaxMs'],2))
+print('SPIN',min(r['fps'] for r in spin),max(r['buildP90Ms'] for r in spin))
+
+original=work/'frames-initial.results'
+if original.exists():
+ (out/'frames-initial.log.gz').write_bytes(gzip.compress(original.read_bytes()))
+repairs={f.stem:json.loads(f.read_text()) for f in sorted(work.glob('frame-repair-*.json'))}
+(out/'frame-repairs.json').write_text(json.dumps(repairs,indent=2)+'\n')
+meta['repeatedFrameCells']=len(repairs)
+meta['probeSha256']=hashlib.sha256((work/'probe.dart').read_bytes()).hexdigest()
+meta['pubspecLockSha256']=hashlib.sha256((root/'pubspec.lock').read_bytes()).hexdigest()
+(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+cpu_table=['| Full update | Connected | Before CPU ms | After CPU ms | Reduction |','| --- | --- | ---: | ---: | ---: |']
+for r in summary:
+ if r['call']=='update':cpu_table.append(f"| {r['style']} | {'on' if r['connected'] else 'off'} | {r['baselineCpuMs']:.2f} | {r['candidateCpuMs']:.2f} | {r['reductionPercent']:.1f}% |")
+frame_table=['| Operation | Colors | FPS range | Worst UI p90 ms | Worst raster p90 ms |','| --- | --- | ---: | ---: | ---: |']
+for r in framesSummary:frame_table.append(f"| {r['call']} | {r['style']} | {r['fpsMin']:.1f}–{r['fpsMax']:.1f} | {r['buildP90MaxMs']:.2f} | {r['rasterP90MaxMs']:.2f} |")
+spin_text='With 200 rotating labels, observed FPS ranges were '+', '.join(f"{call} {min(r['fps'] for r in spin if r['call']==call):.1f}–{max(r['fps'] for r in spin if r['call']==call):.1f}" for call in ['draw','update','data','animate'])+'. The full rotating-label rows are retained in the measurements.'
+body=(work/'README.template').read_text().replace('{{CPU_TABLE}}','\n'.join(cpu_table)).replace('{{FRAME_TABLE}}','\n'.join(frame_table)).replace('{{SPIN_SUMMARY}}',spin_text)
+body=body.replace('Another **24 cases**',f"{len(repairs)} cells with absent or insufficient frame samples were repeated with the display kept awake; the accepted matrix contains 72 valid cells. Another **24 cases**")
+body=body.replace('`run_final.py` runs the\nmatrix sequentially', '`caffeinate -diu python3 .dart_tool/line_20k/run_final.py` runs the\nmatrix sequentially with temporary display-sleep prevention')
+(out/'README.md').write_text(body)
+
+spin_repairs={f.stem:json.loads(f.read_text()) for f in sorted(work.glob('spin-repair-*.json'))}
+(out/'spin-repairs.json').write_text(json.dumps(spin_repairs,indent=2)+'\n')
+repeat=json.loads((work/'animation-repeat.json').read_text())[0]
+(out/'animation-repeat.json').write_text(json.dumps(repeat,indent=2)+'\n')
+(out/'animation-repeat.log.gz').write_bytes(gzip.compress((work/'animation-repeat.log').read_bytes()))
+(out/'final-focused.log.gz').write_bytes(gzip.compress((work/'final-focused.log').read_bytes()))
+for name in ['profile.py','profile.dart']:(out/(name+'.txt')).write_bytes((work/name).read_bytes())
+body=(out/'README.md').read_text()
+body=body.replace('These short local measurements do not establish sustained or cross-device FPS.',
+ 'These short local measurements do not establish sustained or cross-device FPS.\nTwo rotating-label cells used eight-second replacement runs after insufficient samples.\nThe original animation matrix includes a 45.7 FPS outlier (scriptable, no line,\n200 labels; four readouts, 89 captured frames, UI p90 8.56 ms). A separate\nten-second repeat measured 60.0 FPS, with 16 readouts and UI p90 8.69 ms. The\nrepeat is supplemental: the lower original result remains in the matrix.')
+body=body.replace('1. Reduce repeated per-point resolver setup and allocations further.',
+ 'The final diagnostic profile contains 7,102 samples: 63.1% include\nDatasetController._resolveElementOptions, 27.5% include the prepared scriptable\nresolver, and 17.5% include Chart.draw. These inclusive shares overlap and must\nnot be added. It confirms that per-point option work remains the main target;\nskipping layout alone cannot close the gap. The worst measured UI p90 needs\nabout 5.3 ms less work for indexed full updates and 19.1 ms less for scriptable\nfull updates to reach 16.67 ms.\n\n1. Reduce repeated per-point resolver setup and allocations further.')
+body=body.replace('used for timing claims.', 'used for timing claims. The separate final profile and its summary identify\nthe remaining costs; no profiler was attached during timing runs.')
+(out/'README.md').write_text(body)
+meta=json.loads((out/'metadata.json').read_text())
+meta['rotatingLabelRepeatedCells']=len(spin_repairs)
+meta['rotatingLabelRepeatSeconds']=8
+meta['supplementalAnimationRepeatSeconds']=10
+(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+
+patch=[]
+for rel in ['controllers/controller.line.dart','core/core.config.dart','helpers/helpers.config.dart','helpers/helpers.options.dart']:
+ path=Path('packages/flutter_chartjs_port/lib/src')/rel
+ before=(work/(rel.replace('/','_')+'.before')).read_text()
+ delivered=(root/path).read_text()
+ patch.extend(difflib.unified_diff(delivered.splitlines(True),before.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path)))
+ meta['sourceSha256'][str(path)]['delivered']=hashlib.sha256(delivered.encode()).hexdigest()
+(out/'baseline-overlay.patch').write_text(''.join(patch))
+meta['postMeasurementChanges']=['Lint-only cleanup in _resolveScriptableReturn: return the created subresolver directly instead of assigning the parameter and then returning it. Branches, callbacks and returned values are unchanged.']
+(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+validation['finalFocusedVmPassed']=28
+validation['scope']+=' Full workspace run precedes the final lint-only helper return cleanup; 28 focused VM regressions and analysis passed after it.'
+(out/'validation.json').write_text(json.dumps(validation,indent=2)+'\n')
+body=(out/'README.md').read_text().replace('`metadata.json` records source and executable hashes.', '`metadata.json` records measured/delivered source and executable hashes. The only\npost-measurement runtime edit is a lint-only helper return cleanup; 28 focused\nVM regressions and analysis passed after it.')
+body=body.replace('and rejects missing rows or mismatched chart dimensions.', 'and rejects missing rows, undersampled cases or mismatched chart dimensions.\n`run_remaining.py` and `finish.py` rerun undersampled cells; the original and\naccepted rows remain separately available.')
+(out/'README.md').write_text(body)

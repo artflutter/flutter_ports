@@ -1,0 +1,10 @@
+from pathlib import Path
+exec((Path(__file__).parent/'run_remaining.py').read_text().split('original=')[0])
+rows=read(out/'frames-spin.results','LINE_FRAME ')
+for index,r in enumerate(rows):
+ if r['samples']>=4 and r['frameTimings']>=25 and r['canvas']=='1036.0x520.0@2.0':continue
+ rows[index]=run(f'spin-repair-{index}','final',{'FRAMES':'1','CALLS':r['call'],'STYLES':r['style'],'CONNECTED':'1' if r['connected'] else '0','LABELS':'200','SPIN':'1','SECONDS':'8'},1,True)[0]
+(out/'frames-spin.log').write_text(''.join('LINE_FRAME '+json.dumps(r)+'\n' for r in rows))
+(out/'frames-spin.json').write_text(json.dumps(rows,indent=2)+'\n')
+run('cpu-final2','final',{},12)
+run('cpu-a2','a',{},12)

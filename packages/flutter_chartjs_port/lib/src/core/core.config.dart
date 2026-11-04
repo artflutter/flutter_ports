@@ -561,11 +561,14 @@ class Config implements types.ChartConfiguration {
     );
   }
 
-  /// A warmed scatter resolver over native context sources. No option getter
+  /// A warmed point resolver over native context sources. No option getter
   /// or context callback runs merely to qualify this synchronous loop.
   @internal
   // DIVERGES(chartjs): adapt-scatter-point-options, cached point inputs.
-  PointOptions Function(int)? prepareIndexedPointColors(int datasetIndex) {
+  PointOptions Function(int)? prepareIndexedPointColors(
+    int datasetIndex, {
+    String controllerType = 'scatter',
+  }) {
     if (super.runtimeType != Config ||
         !supportsDataUpdates ||
         (_config is OptionScope && _config.routeOf('type') != null)) {
@@ -582,7 +585,7 @@ class Config implements types.ChartConfiguration {
         !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
       return null;
     }
-    final scopeKeys = datasetElementScopeKeys('scatter', 'point');
+    final scopeKeys = datasetElementScopeKeys(controllerType, 'point');
     final scopes = _scopeCache[dataset]?[scopeKeys];
     if (scopes == null) return null;
     final cached = _resolverCache[scopes]?['point,'];
@@ -949,10 +952,18 @@ class Config implements types.ChartConfiguration {
     bool allowReplacement = false,
   }) {
     into.storeKey(OptionKey.dollarShared, true);
+    // Owned prefixes contain strings and have no observable indexing. Reuse
+    // their key for the post-context cache check instead of joining twice.
+    final cacheKey = !nativeInputs
+        ? null
+        : prefixes.length == 2
+        ? '${prefixes[0]},${prefixes[1]}'
+        : prefixes.join(',');
     final (:resolver, :subPrefixes) = _getResolver(
       _resolverCache,
       scopes,
       prefixes,
+      cacheKey: cacheKey,
     );
     // Only equal prefix sets reuse the same already-resolved descriptors for
     // the scriptable subresolver. Hover resolution keeps its ordinary reads.
@@ -967,18 +978,32 @@ class Config implements types.ChartConfiguration {
         );
     // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
     final indexed = runtimeType == Config && samePrefixes
-        ? resolver.resolveIndexedElementOptions(
-            keys,
-            context,
-            into,
-            Defaults.nativeElementDescriptors,
-            () => identical(
-              _resolverCache[scopes]?[prefixes.join(',')]?.resolver,
-              resolver,
-            ),
-            nativeInputs: nativeInputs,
-            allowReplacement: allowReplacement,
-          )
+        ? (nativeInputs && allowReplacement
+                  ? resolver.resolveScriptableElementOptions(
+                      keys,
+                      context,
+                      into,
+                      Defaults.nativeElementDescriptors,
+                      () => identical(
+                        _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
+                            ?.resolver,
+                        resolver,
+                      ),
+                    )
+                  : null) ??
+              resolver.resolveIndexedElementOptions(
+                keys,
+                context,
+                into,
+                Defaults.nativeElementDescriptors,
+                () => identical(
+                  _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
+                      ?.resolver,
+                  resolver,
+                ),
+                nativeInputs: nativeInputs,
+                allowReplacement: allowReplacement,
+              )
         : null;
     if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
     helpers.OptionView? view;
@@ -1053,14 +1078,15 @@ typedef _CachedResolver = ({
 _CachedResolver _getResolver(
   Map<List<Object?>, Map<String, _CachedResolver>> resolverCache,
   List<Object?> scopes,
-  List<String> prefixes,
-) {
+  List<String> prefixes, {
+  String? cacheKey,
+}) {
   var cache = resolverCache[scopes];
   if (cache == null) {
     cache = {};
     resolverCache[scopes] = cache;
   }
-  final cacheKey = prefixes.join(',');
+  cacheKey ??= prefixes.join(',');
   var cached = cache[cacheKey];
   if (cached == null) {
     final resolver = helpers.createResolver(scopes, prefixes);

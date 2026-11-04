@@ -1,0 +1,12 @@
+import os,re,subprocess,time
+from pathlib import Path
+p=Path('.dart_tool/line_20k')
+with (p/'profile-final.log').open('w') as log:
+ app=subprocess.Popen(['/tmp/line-20k-final.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'FRAMES':'1','CALLS':'update','STYLES':'scriptable','CONNECTED':'0','SECONDS':'30'},stdout=log,stderr=subprocess.STDOUT)
+ try:
+  for i in range(100):
+   m=re.search(r'http://127.0.0.1:(\d+)/(\S+)',(p/'profile-final.log').read_text())
+   if m:break
+   time.sleep(.1)
+  subprocess.run(['/Users/vasilich/fvm/versions/3.47.8/bin/cache/dart-sdk/bin/dart','--packages=.dart_tool/package_config.json',str(p/'profile.dart'),f'ws://127.0.0.1:{m[1]}/{m[2]}ws',str(p/'profile-final.json')],check=True)
+ finally:app.terminate();app.wait(timeout=10)

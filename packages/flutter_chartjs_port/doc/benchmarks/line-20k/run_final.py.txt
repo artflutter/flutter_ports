@@ -1,0 +1,31 @@
+import json,os,subprocess,time
+from pathlib import Path
+root=Path(__file__).resolve().parents[2];out=root/'.dart_tool/line_20k'
+runs=[
+ ('cpu-final1','final',{}),
+ ('frames-final','final',{'FRAMES':'1','LABELS':'0,50,200','SECONDS':'5'}),
+ ('frames-spin','final',{'FRAMES':'1','LABELS':'200','SPIN':'1','SECONDS':'5'}),
+ ('cpu-final2','final',{}),
+ ('cpu-a2','a',{}),
+]
+for label,variant,extra in runs:
+ print('START',label,flush=True)
+ result_file=out/(label+'.results')
+ result_file.unlink(missing_ok=True)
+ with (out/(label+'.log')).open('w') as log:
+  p=subprocess.run([f'/tmp/line-20k-{variant}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,**extra,'OUTPUT':str(result_file)},stdout=log,stderr=subprocess.STDOUT,timeout=700)
+  if p.returncode:raise RuntimeError((label,p.returncode,(out/(label+'.log')).read_text()[-2000:]))
+ rows=[]
+ source=result_file if result_file.exists() else out/(label+'.log')
+ if result_file.exists():
+  logfile=out/(label+'.log')
+  header='\n'.join(l for l in logfile.read_text().splitlines() if 'LINE_CPU {' not in l and 'LINE_FRAME {' not in l)
+  logfile.write_text(header+'\n'+result_file.read_text())
+ for line in source.read_text().splitlines():
+  for marker in ['LINE_CPU ','LINE_FRAME ']:
+   if marker+'{' in line:rows.append(json.loads(line.split(marker,1)[1]))
+ expected=72 if label=='frames-final' else 24 if label=='frames-spin' else 12
+ if len(rows)!=expected:raise RuntimeError(('Missing benchmark results',label,len(rows),expected))
+ if label.startswith('frames') and any(r.get('canvas')!='1036.0x520.0@2.0' or r['samples']<4 or r['frameTimings']<25 for r in rows):raise RuntimeError('Mismatched chart viewport')
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n')
+ print('DONE',label,len(rows),flush=True)

@@ -1,0 +1,44 @@
+{
+  "spin-repair-18": [
+    {
+      "spin": true,
+      "frameTimings": 347,
+      "buildP90Ms": 6.571,
+      "rasterP90Ms": 1.058,
+      "call": "animate",
+      "style": "static",
+      "connected": false,
+      "labels": 200,
+      "samples": 12,
+      "fps": 59.99990078805724,
+      "buildMs": 6.332906404320987,
+      "rasterMs": 1.0168608796296297,
+      "updateMs": 0.0,
+      "drawMs": 4.560791487455196,
+      "animatorMs": 1.3733082437275987,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "spin-repair-21": [
+    {
+      "spin": true,
+      "frameTimings": 337,
+      "buildP90Ms": 14.808,
+      "rasterP90Ms": 2.423,
+      "call": "animate",
+      "style": "indexed",
+      "connected": true,
+      "labels": 200,
+      "samples": 12,
+      "fps": 60.00025436003162,
+      "buildMs": 11.538513664874552,
+      "rasterMs": 2.360022535842294,
+      "updateMs": 0.0,
+      "drawMs": 7.5858602150537635,
+      "animatorMs": 3.1745123655913985,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ]
+}

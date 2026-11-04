@@ -6884,3 +6884,61 @@ follows. The 20000-point CPU time still exceeds a 16.67ms frame budget.
 
 All 10,899 workspace tests, 233 focused tests on each browser backend, analysis,
 formatting and port checks pass. [Raw results and reproduction](benchmarks/scatter-options/README.md).
+
+## 48. Native line charts at 20,000 items
+
+2026-11-03–04; [ADR 0080](adr/0080-line-20k-options.md). Apple M3 Max,
+macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7, profile AOT and Impeller MetalSDF.
+The baseline includes the existing ADR 0078/0079 working-tree optimizations.
+[Evidence, complete matrix and reproduction](benchmarks/line-20k/README.md).
+
+**60 FPS in every mode remains unachieved.** This pass preserves all 20,000
+points, callback execution, geometry, drawing order and operation semantics.
+It adds guarded indexed preparation in the native line loop, private static
+point/bar templates around live scriptable color calls, lazy unused second
+arguments under exact arity guards, one prefix-key construction per resolution,
+and synchronized context-key membership masks. Unsupported inputs keep ordinary
+resolution; resolver mutation invalidates scriptable preparation immediately.
+
+Full CPU below is update + draw + paint-end component medians at 800×480/DPR1,
+averaged across two baseline and two final processes. It is not a combined-call
+percentile. Data movement is outside these CPU stopwatches.
+
+| Full update, 20k | Connected | Before ms | After ms | Reduction |
+| --- | --- | ---: | ---: | ---: |
+| Static colors | off | 5.15 | 5.37 | -4.3% |
+| Static colors | on | 7.03 | 7.21 | -2.5% |
+| Indexed colors | off | 30.21 | 13.90 | 54.0% |
+| Indexed colors | on | 31.97 | 16.50 | 48.4% |
+| Scriptable colors | off | 59.86 | 28.25 | 52.8% |
+| Scriptable colors | on | 60.48 | 29.66 | 51.0% |
+
+Static and redraw are controls, with no improvement claimed. The actual frame
+run includes data motion and Flutter work: 1036×520/DPR2, four operations × three
+color modes × connections off/on × 0/50/200 labels (72 accepted cells), plus
+24 cells with 200 rotating labels. Undersampled cells were repeated with the
+display kept awake; rejected samples are retained separately.
+
+Redraw and static full/data updates measured approximately 60 FPS. Indexed
+full/data updates ranged about 50–60 FPS; scriptable full updates 27–30 FPS and
+data-only fallback about 30 FPS. Most animation cells measured 60 FPS. One
+short scriptable animation cell measured 45.7 FPS despite UI p90 8.56 ms; its
+separate ten-second repeat measured 60 FPS. The original result remains in the
+matrix. These are short local observations, not sustained frame-rate guarantees.
+Data-only selected full-update fallback in these scenes. Looping animation
+measures ticks after initialization, not a new animated update every frame.
+
+Worst measured UI p90 was 21.98 ms for indexed full updates and 35.82 ms for
+scriptable full updates: approximately 5.3 ms and 19.1 ms above a 16.67 ms budget.
+Raster p90 stayed below 2.6 ms in the non-rotating matrix. A separate final CPU
+profile had 63.1% of its 7,102 sampled stacks inside element-option resolution.
+The next work is reducing repeated key/prefix/scope setup and temporary objects,
+with mutation-safe preparation; skipping layout alone will not close the gap.
+Arbitrary callbacks have no bounded execution time, so a universal every-custom-
+configuration 60 FPS promise is not possible.
+
+Validation: 10,929 workspace VM tests; 179 focused tests on each of JavaScript
+and WebAssembly; workspace analysis, formatting, parity generation and all port
+checks. The final focused VM regressions also pass. No full browser, fixture,
+golden or mobile suite was run. Raw results, source/binary hashes, profiles,
+ordinary-path twins and validation scope are retained with the evidence.

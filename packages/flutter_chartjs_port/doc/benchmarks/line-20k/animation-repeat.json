@@ -1,0 +1,19 @@
+{
+  "spin": false,
+  "frameTimings": 458,
+  "buildP90Ms": 8.686,
+  "rasterP90Ms": 1.508,
+  "call": "animate",
+  "style": "scriptable",
+  "connected": false,
+  "labels": 200,
+  "samples": 16,
+  "fps": 60.00021592699588,
+  "buildMs": 8.037973020833332,
+  "rasterMs": 1.3772415624999998,
+  "updateMs": 0.0,
+  "drawMs": 5.360489919354838,
+  "animatorMs": 2.2733967069892467,
+  "dataFast": false,
+  "canvas": "1036.0x520.0@2.0"
+}
