@@ -1,0 +1,11 @@
+import json,os,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+runs=[('baseline-a1','baseline','baseline'),('estimate-b1','estimate','baseline,scope,context,both'),('estimate-b2','estimate','both,context,scope,baseline'),('baseline-a2','baseline','baseline')]
+for label,app,variants in runs:
+ print('START',label,flush=True);target=out/(label+'.results');target.unlink(missing_ok=True)
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([f'/tmp/line-resolution-{app}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'FRAMES':'0','CALLS':'update','STYLES':'static,indexed,scriptable','CONNECTED':'0,1','LABELS':'0','OUTPUT':str(target),'VARIANTS':variants},stdout=log,stderr=subprocess.STDOUT,check=True,timeout=200)
+ rows=[json.loads(l.split('LINE_CPU ',1)[1]) for l in target.read_text().splitlines() if l.startswith('LINE_CPU ')]
+ assert len(rows)==6*len(variants.split(',')),(label,len(rows))
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,len(rows),flush=True)

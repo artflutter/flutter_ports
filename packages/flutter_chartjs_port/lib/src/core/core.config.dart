@@ -36,6 +36,8 @@ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
+import 'package:flutter_chartjs_port/src/core/point_options.dart'
+    show NativePointResolution;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -434,6 +436,9 @@ class Config implements types.ChartConfiguration {
   /// core.config.js:160 `_config`: the raw configuration.
   final Object _config;
 
+  // DIVERGES(chartjs): adapt-native-line-resolution, lookup generation.
+  int _resolutionGeneration = 0;
+
   String? _lastScopeType;
   String? _lastScopeElement;
   String _lastScopeKey = '';
@@ -611,6 +616,97 @@ class Config implements types.ChartConfiguration {
     );
   }
 
+  /// Captures a warmed point resolver for one native line loop. Every use
+  /// checks the source identities, key snapshot and cache generation again.
+  @internal
+  // DIVERGES(chartjs): adapt-native-line-resolution, guarded cached sources.
+  NativePointResolution? prepareLineResolution(int datasetIndex) {
+    final root = _config;
+    if (super.runtimeType != Config ||
+        root is! Map<String, Object?> ||
+        !nativeDataUpdateObject(root)) {
+      return null;
+    }
+    final data = root['data'];
+    if (data is! Map<String, Object?> || !nativeDataUpdateObject(data)) {
+      return null;
+    }
+    final datasets = data['datasets'];
+    if (datasets is! List<Object?> ||
+        !nativeDataUpdateList(datasets) ||
+        datasetIndex < 0 ||
+        datasetIndex >= datasets.length) {
+      return null;
+    }
+    final dataset = datasets[datasetIndex];
+    if (dataset is! Map<String, Object?> || !nativeDataUpdateObject(dataset)) {
+      return null;
+    }
+    final raw = dataset['data'];
+    if (raw is! List<Object?> || !nativeDataUpdateList(raw)) return null;
+    final settings = root['options'];
+    if (!_isConfigObject(settings)) return null;
+    final scopeKeys = datasetElementScopeKeys('line', 'point');
+    final scopes = _scopeCache[dataset]?[scopeKeys];
+    if (scopes == null) return null;
+    final cached = _resolverCache[scopes]?['point,'];
+    if (cached == null ||
+        cached.subPrefixes.length != 2 ||
+        cached.subPrefixes[0] != 'point' ||
+        cached.subPrefixes[1] != '') {
+      return null;
+    }
+    if (defaults.routeOf('elements') != null) return null;
+    final elements = defaults.elementsCell?.raw;
+    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
+    final elementScopes = elements! as ElementOptionsByTypeScope;
+    if (elementScopes.routeOf('point') != null) return null;
+    final point = elementScopes.pointCell?.raw;
+    if (point.runtimeType != PointOptionsScope) return null;
+    final pointDefaults = point! as PointOptionsScope;
+    final keys = pointDefaults.nativeOwnKeySnapshot;
+    if (!cached.resolver.hasPreparedPointOptions(keys)) return null;
+    final generation = _resolutionGeneration;
+    bool current() => generation == _resolutionGeneration;
+    bool valid() =>
+        current() &&
+        identical(root['data'], data) &&
+        identical(root['options'], settings) &&
+        identical(data['datasets'], datasets) &&
+        datasetIndex < datasets.length &&
+        identical(datasets[datasetIndex], dataset) &&
+        identical(dataset['data'], raw) &&
+        defaults.routeOf('elements') == null &&
+        identical(defaults.elementsCell?.raw, elements) &&
+        elementScopes.routeOf('point') == null &&
+        identical(elementScopes.pointCell?.raw, pointDefaults) &&
+        identical(pointDefaults.nativeOwnKeySnapshot, keys) &&
+        cached.resolver.hasPreparedPointOptions(keys);
+    final prefixes = <String>['point', ''];
+    return NativePointResolution(
+      data: data,
+      raw: raw,
+      valid: valid,
+      resolve: (context, preparedContext) {
+        if (!valid()) return null;
+        return _resolveElementNamedOptions(
+          scopes,
+          keys,
+          context,
+          prefixes,
+          _pointResultKind,
+          nativeInputs: true,
+          allowReplacement: true,
+          immutableKeys: true,
+          ownedPoint: true,
+          preparedResolver: cached,
+          preparedCacheCheck: current,
+          preparedContext: preparedContext,
+        );
+      },
+    );
+  }
+
   /// core.config.js:189 `set options(options)`.
   set options(Object? options) {
     jsSet(_config, 'options', options);
@@ -631,6 +727,7 @@ class Config implements types.ChartConfiguration {
 
   /// core.config.js:203 `clearCache()`.
   void clearCache() {
+    _resolutionGeneration++;
     _scopeCache.clear();
     _resolverCache.clear();
   }
@@ -756,6 +853,7 @@ class Config implements types.ChartConfiguration {
     Object? mainScope,
     bool resetCache,
   ) {
+    if (resetCache) _resolutionGeneration++;
     final scopeCache = _scopeCache;
     var cache = scopeCache[mainScope];
     if (cache == null || resetCache) {
@@ -1002,32 +1100,40 @@ class Config implements types.ChartConfiguration {
     bool allowReplacement = false,
     bool immutableKeys = false,
     bool? ownedPoint,
+    _CachedResolver? preparedResolver,
+    bool Function()? preparedCacheCheck,
+    Object Function()? preparedContext,
   }) {
     if (ownedPoint == null) into.storeKey(OptionKey.dollarShared, true);
     // Owned prefixes contain strings and have no observable indexing. Reuse
     // their key for the post-context cache check instead of joining twice.
-    final cacheKey = !nativeInputs
+    final cacheKey = preparedResolver != null
+        ? 'point,'
+        : !nativeInputs
         ? null
         : prefixes.length == 2
         ? '${prefixes[0]},${prefixes[1]}'
         : prefixes.join(',');
-    final (:resolver, :subPrefixes) = _getResolver(
-      _resolverCache,
-      scopes,
-      prefixes,
-      cacheKey: cacheKey,
-    );
+    final (:resolver, :subPrefixes) =
+        preparedResolver ??
+        _getResolver(
+          _resolverCache,
+          scopes,
+          prefixes,
+          cacheKey: cacheKey,
+        );
     // Only equal prefix sets reuse the same already-resolved descriptors for
     // the scriptable subresolver. Hover resolution keeps its ordinary reads.
     final samePrefixes =
+        preparedResolver != null ||
         helpers.OptionResolver.nativeIndexedResult(into) &&
-        (nativeInputs ||
-            (helpers.OptionResolver.nativeIndexedList(prefixes) &&
-                helpers.OptionResolver.nativeIndexedList(scopes))) &&
-        prefixes.length == subPrefixes.length &&
-        Iterable<int>.generate(prefixes.length).every(
-          (i) => prefixes[i] == subPrefixes[i],
-        );
+            (nativeInputs ||
+                (helpers.OptionResolver.nativeIndexedList(prefixes) &&
+                    helpers.OptionResolver.nativeIndexedList(scopes))) &&
+            prefixes.length == subPrefixes.length &&
+            Iterable<int>.generate(prefixes.length).every(
+              (i) => prefixes[i] == subPrefixes[i],
+            );
     // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
     final indexed = runtimeType == Config && samePrefixes
         ? (nativeInputs && allowReplacement
@@ -1036,13 +1142,16 @@ class Config implements types.ChartConfiguration {
                       context,
                       into,
                       Defaults.nativeElementDescriptors,
-                      () => identical(
-                        _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
-                            ?.resolver,
-                        resolver,
-                      ),
+                      preparedCacheCheck ??
+                          () => identical(
+                            _resolverCache[scopes]?[cacheKey ??
+                                    prefixes.join(',')]
+                                ?.resolver,
+                            resolver,
+                          ),
                       immutableKeys: immutableKeys,
                       replacementOnly: ownedPoint != null,
+                      preparedContext: preparedContext,
                     )
                   : null) ??
               resolver.resolveIndexedElementOptions(
@@ -1050,15 +1159,17 @@ class Config implements types.ChartConfiguration {
                 context,
                 into,
                 Defaults.nativeElementDescriptors,
-                () => identical(
-                  _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
-                      ?.resolver,
-                  resolver,
-                ),
+                preparedCacheCheck ??
+                    () => identical(
+                      _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
+                          ?.resolver,
+                      resolver,
+                    ),
                 nativeInputs: nativeInputs,
                 allowReplacement: allowReplacement,
                 immutableKeys: immutableKeys,
                 replacementOnly: ownedPoint != null,
+                preparedContext: preparedContext,
               )
         : null;
     if (indexed?.resolved ?? false) return indexed?.prepared ?? into;

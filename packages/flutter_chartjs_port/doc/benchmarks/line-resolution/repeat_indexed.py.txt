@@ -1,0 +1,4 @@
+from pathlib import Path
+exec((Path(__file__).parent/'production_run.py').read_text().split('for label,app in')[0])
+for label,app in [('repeat-a1','baseline'),('repeat-b1','production'),('repeat-b2','production'),('repeat-a2','baseline')]:
+ run(label,app,{'FRAMES':'1','CALLS':'update','STYLES':'indexed','CONNECTED':'1','LABELS':'0','SECONDS':'10'},1,True)

@@ -1,0 +1,18 @@
+[
+  {
+    "connected": false,
+    "clean baseline": 26.648,
+    "instrumented baseline": 26.4125,
+    "scope": 18.5415,
+    "context": 25.938000000000002,
+    "both": 17.3675
+  },
+  {
+    "connected": true,
+    "clean baseline": 28.4435,
+    "instrumented baseline": 28.207,
+    "scope": 21.0245,
+    "context": 28.6545,
+    "both": 20.652
+  }
+]

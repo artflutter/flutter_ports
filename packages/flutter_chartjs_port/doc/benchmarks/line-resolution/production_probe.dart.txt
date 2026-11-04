@@ -1,0 +1,229 @@
+// Original code, not ported from Chart.js: line 20k native performance matrix.
+
+
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' show FrameTiming, FramePhase;
+
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:chartjs_gallery/demo/stress_demo.dart';
+import 'package:chartjs_gallery/demo/stress_timing.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Animation;
+
+final env = Platform.environment;
+
+void record(String marker, Map<String, Object?> result) {
+  final line = '$marker ${jsonEncode(result)}';
+  final path = env['OUTPUT'];
+  if (path != null) {
+    File(path).writeAsStringSync('$line\n', mode: FileMode.append);
+  }
+  print(line);
+}
+
+final typeName = env['TYPE'] ?? 'line';
+final itemCount = int.parse(env['N'] ?? '20000');
+
+final styles = (env['STYLES'] ?? 'static,indexed,scriptable').split(',');
+final connected = (env['CONNECTED'] ?? '0,1').split(',');
+final calls = (env['CALLS'] ?? 'draw,update,data,animate').split(',');
+final labels = (env['LABELS'] ?? '0').split(',').map(int.parse);
+final specs = [
+  for (final call in calls)
+    for (final style in styles)
+      for (final line in connected)
+        for (final m in labels)
+          (call: call, style: style, line: line == '1', m: m),
+];
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (env['FRAMES'] == '1') {
+    runApp(const MaterialApp(home: Frames()));
+  } else {
+    runApp(const MaterialApp(home: Scaffold(body: Text('Line 20k benchmark'))));
+    unawaited(
+      cpu().catchError((Object e, StackTrace s) {
+        print('$e\n$s');
+        exit(1);
+      }),
+    );
+  }
+}
+
+Future<void> cpu() async {
+  await Future<void>.delayed(const Duration(seconds: 2));
+  animator.refresh = () {};
+  for (final variant
+      in (env['VARIANTS'] ?? 'production').split(',')) {
+    for (final s in specs) {
+      if (s.call == 'animate' || s.call == 'data') continue;
+      final result = runChartBenchCase(
+        ChartBenchCase(
+          mode: 'line20k',
+          name: '${s.call}.${s.style}.${s.line}.$variant',
+          call: s.call == 'draw' ? ChartBenchCall.draw : ChartBenchCall.update,
+          keys: {
+            'type': typeName,
+            'style': s.style,
+            'connected': s.line,
+            'variant': variant,
+          },
+          scene: (n) {
+            registerGalleryComponents();
+            final field = StressPointField(n);
+            final scene = StressChartScene(
+              StressChartType.values.byName(typeName),
+              n,
+              field,
+            );
+            final timing = StressChartTiming();
+            final config = stressChartConfig(
+              scene: scene,
+              scriptable: s.style == 'scriptable',
+              indexed: s.style == 'indexed',
+              showLine: s.line,
+              options: chartBenchOptions,
+              plugins: [timing.plugin],
+            );
+            return ChartBenchScene(
+              config: config,
+              change: () {
+                field.step(n, chartBenchStep);
+                scene.write(field);
+              },
+              takeParts: timing.take,
+            );
+          },
+        ),
+        itemCount,
+        const ChartBenchSettings(warmupMs: 700, batches: 7, batchMs: 160),
+      );
+      record('LINE_CPU', result);
+    }
+  }
+  exit(0);
+}
+
+class Frames extends StatefulWidget {
+  const Frames({super.key});
+  @override
+  State<Frames> createState() => _FramesState();
+}
+
+class _FramesState extends State<Frames> {
+  int index = 0;
+  final rows = <StressStats>[];
+  Timer? timer;
+  final watch = Stopwatch();
+  final timings = <FrameTiming>[];
+  int? startMicros;
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addTimingsCallback(takeTimings);
+    start();
+  }
+
+  void takeTimings(List<FrameTiming> values) {
+    timings.addAll(values);
+  }
+
+  void start() {
+    rows.clear();
+    timings.clear();
+    startMicros = null;
+    watch
+      ..reset()
+      ..start();
+    timer = Timer(Duration(seconds: int.parse(env['SECONDS'] ?? '7')), finish);
+  }
+
+  void finish() {
+    final s = specs[index];
+    final data = List<StressStats>.of(rows);
+    double avg(double Function(StressStats) f) =>
+        data.isEmpty ? 0 : data.map(f).reduce((a, b) => a + b) / data.length;
+    final frames = timings
+        .where(
+          (f) =>
+              startMicros != null &&
+              f.timestampInMicroseconds(FramePhase.vsyncStart) >= startMicros!,
+        )
+        .toList();
+    double p90(List<double> values) {
+      if (values.isEmpty) return 0;
+      values.sort();
+      return values[(values.length * .9).ceil() - 1];
+    }
+
+    record('LINE_FRAME', {
+      'spin': env['SPIN'] == '1',
+      'frameTimings': frames.length,
+      'buildP90Ms': p90(
+        frames.map((f) => f.buildDuration.inMicroseconds / 1000).toList(),
+      ),
+      'rasterP90Ms': p90(
+        frames.map((f) => f.rasterDuration.inMicroseconds / 1000).toList(),
+      ),
+      'call': s.call,
+      'type': typeName,
+      'style': s.style,
+      'connected': s.line,
+      'labels': s.m,
+      'samples': data.length,
+      'fps': avg((s) => s.fps),
+      'buildMs': avg((s) => s.buildMs),
+      'rasterMs': avg((s) => s.rasterMs),
+      'updateMs': avg((s) => s.updateMs),
+      'drawMs': avg((s) => s.drawMs),
+      'animatorMs': avg((s) => s.animatorMs),
+      'dataFast': data.isNotEmpty && data.last.lastDataUpdateFast,
+      'canvas': data.isEmpty ? '' : data.last.canvasSize,
+    });
+    if (++index == specs.length) {
+      exit(0);
+    }
+    setState(start);
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    SchedulerBinding.instance.removeTimingsCallback(takeTimings);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = specs[index];
+    final current = index;
+    return Scaffold(
+      body: StressDemo(
+        key: ValueKey(index),
+        initialMode: StressMode.chart,
+        initialN: 20000,
+        initialM: s.m,
+        initialSpin: env['SPIN'] == '1',
+        initialType: StressChartType.line,
+        initialCall: StressChartCall.values.byName(s.call),
+        initialShowLine: s.line,
+        initialIndexed: s.style == 'indexed',
+        initialScriptable: s.style == 'scriptable',
+        onStats: (s) {
+          if (current == index && watch.elapsedMilliseconds > 2000) {
+            startMicros ??= SchedulerBinding
+                .instance
+                .currentSystemFrameTimeStamp
+                .inMicroseconds;
+            rows.add(s);
+          }
+        },
+      ),
+    );
+  }
+}

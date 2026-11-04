@@ -1914,6 +1914,12 @@ class DatasetController
     return _resolveElementOptions(_idOf(dataElementType), mode, index);
   }
 
+  /// Existing per-mode cache entries must retain priority over a loop plan.
+  @internal
+  // DIVERGES(chartjs): adapt-native-line-resolution, retain cache precedence.
+  bool get hasCachedPointNoneOptions =>
+      _cachedElementOptions.containsKey('point-none');
+
   /// core.datasetController.js:804 `_resolveElementOptions(elementType, mode
   /// = 'default', index)`.
   /// @private

@@ -403,6 +403,24 @@ class LineController extends DatasetController {
     // DIVERGES(chartjs): adapt-line-point-options, reuse native indexed colors
     // only inside this loop, with guards at each original observation point.
     PointOptions Function(int)? colors;
+    // DIVERGES(chartjs): adapt-native-line-resolution, loop-local source plan.
+    NativePointResolution? resolution;
+    NativePointContextReader? contextReader;
+    JsClass? resolutionClass;
+    Config? resolutionConfig;
+    var resolutionDataset = index;
+    var resolutionIndex = 0;
+    Object context() => getContext(resolutionIndex.toDouble(), false, mode);
+    Object preparedContext() =>
+        contextReader?.read(resolutionIndex) ?? context();
+    bool resolutionOwnerValid() =>
+        !hasCachedPointNoneOptions &&
+        identical(dataElementType, resolutionClass) &&
+        resolutionClass?.id is String &&
+        resolutionClass!.id == 'point' &&
+        index == resolutionDataset &&
+        identical(chart.config, resolutionConfig) &&
+        identical(chart.data, resolution?.data);
     final coordinates = NativePointCoordinates();
     final tryColors =
         mode == 'none' &&
@@ -476,15 +494,27 @@ class LineController extends DatasetController {
         // shared options.
         final prepared = colors;
         if (prepared != null) {
-          getContext(index, false, mode);
+          if (contextReader?.read(i) == null) {
+            getContext(index, false, mode);
+          }
           writes.options(prepared(i));
+        } else if (sharedOptions != null) {
+          writes.options(sharedOptions);
         } else {
+          final optionMode = point.active ? 'active' : mode;
+          resolutionIndex = i;
+          ElementOptions? result;
+          final plan = resolution;
+          if (plan != null) {
+            if (optionMode != 'none' || !resolutionOwnerValid()) {
+              resolution = null;
+            } else {
+              result = plan.resolve(context, preparedContext);
+              if (result == null) resolution = null;
+            }
+          }
           writes.options(
-            sharedOptions ??
-                resolveDataElementOptions(
-                  index,
-                  point.active ? 'active' : mode,
-                ),
+            result ?? resolveDataElementOptions(index, optionMode),
           );
         }
       }
@@ -500,8 +530,42 @@ class LineController extends DatasetController {
           _nativeProjection(iScale) &&
           _nativeProjection(vScale)) {
         colors = _preparePointColors(points);
+        resolution = _prepareLineResolution();
+        if (resolution != null) {
+          resolutionConfig = chart.config as Config;
+          resolutionClass = dataElementType! as JsClass;
+          resolutionDataset = this.index;
+          contextReader = NativePointContextReader.prepare(
+            meta,
+            resolution.raw,
+            mode,
+          );
+        }
       }
     }
+  }
+
+  NativePointResolution? _prepareLineResolution() {
+    if (super.runtimeType != LineController ||
+        type != 'line' ||
+        chart is! NativePointChart ||
+        !(chart as NativePointChart).supportsNativePointOptions ||
+        hasCachedPointNoneOptions) {
+      return null;
+    }
+    final cls = dataElementType;
+    if (cls is! JsClass ||
+        cls.id is! String ||
+        cls.id != 'point' ||
+        !index.isFinite ||
+        index < 0 ||
+        index != index.truncateToDouble()) {
+      return null;
+    }
+    final config = chart.config;
+    return config is Config && config.runtimeType == Config
+        ? config.prepareLineResolution(index.toInt())
+        : null;
   }
 
   bool _nativeProjection(types.Scale scale) =>

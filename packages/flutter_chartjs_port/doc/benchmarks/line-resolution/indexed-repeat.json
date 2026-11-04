@@ -1,0 +1,90 @@
+{
+  "repeat-a1": [
+    {
+      "spin": false,
+      "frameTimings": 369,
+      "buildP90Ms": 23.103,
+      "rasterP90Ms": 1.959,
+      "call": "update",
+      "type": "line",
+      "style": "indexed",
+      "connected": true,
+      "labels": 0,
+      "samples": 16,
+      "fps": 47.90602192798162,
+      "buildMs": 19.467012393707485,
+      "rasterMs": 1.919996821853742,
+      "updateMs": 9.915777423200794,
+      "drawMs": 8.754955832055927,
+      "animatorMs": 0.0,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "repeat-b1": [
+    {
+      "spin": false,
+      "frameTimings": 391,
+      "buildP90Ms": 22.04,
+      "rasterP90Ms": 2.051,
+      "call": "update",
+      "type": "line",
+      "style": "indexed",
+      "connected": true,
+      "labels": 0,
+      "samples": 16,
+      "fps": 50.49431714627201,
+      "buildMs": 18.444431490384616,
+      "rasterMs": 2.0124294070512816,
+      "updateMs": 8.905329339691608,
+      "drawMs": 8.159978450473137,
+      "animatorMs": 0.0,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "repeat-b2": [
+    {
+      "spin": false,
+      "frameTimings": 424,
+      "buildP90Ms": 20.573,
+      "rasterP90Ms": 2.016,
+      "call": "update",
+      "type": "line",
+      "style": "indexed",
+      "connected": true,
+      "labels": 0,
+      "samples": 16,
+      "fps": 54.2351878795842,
+      "buildMs": 17.696295817225085,
+      "rasterMs": 1.9791290216924398,
+      "updateMs": 8.38637664531669,
+      "drawMs": 7.758648982481438,
+      "animatorMs": 0.0,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ],
+  "repeat-a2": [
+    {
+      "spin": false,
+      "frameTimings": 398,
+      "buildP90Ms": 21.767,
+      "rasterP90Ms": 2.027,
+      "call": "update",
+      "type": "line",
+      "style": "indexed",
+      "connected": true,
+      "labels": 0,
+      "samples": 16,
+      "fps": 50.364911631715046,
+      "buildMs": 18.93931692040598,
+      "rasterMs": 1.9947615117521373,
+      "updateMs": 9.499652400527713,
+      "drawMs": 8.25565311059311,
+      "animatorMs": 0.0,
+      "dataFast": false,
+      "canvas": "1036.0x520.0@2.0"
+    }
+  ]
+}

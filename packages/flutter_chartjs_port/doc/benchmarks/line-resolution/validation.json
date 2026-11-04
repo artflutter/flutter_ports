@@ -1,0 +1,11 @@
+{
+  "workspaceVmPassed": 10988,
+  "focusedVmPassed": 61,
+  "focusedJavaScriptPassed": 168,
+  "focusedWebAssemblyPassed": 168,
+  "analyze": "pass",
+  "format": "pass; 795 Dart files unchanged",
+  "parity": "pass; 163 files; zero errors/warnings",
+  "portChecks": "pass",
+  "scope": "Full workspace VM suite and focused browser option/scope tests. No full browser, fixture, golden or mobile suite."
+}

@@ -1,0 +1,3 @@
+// Original code, not ported from Chart.js: isolated scope/context estimates.
+bool estimateScope = false;
+bool estimateContext = false;

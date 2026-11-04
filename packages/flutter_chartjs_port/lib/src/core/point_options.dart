@@ -1,11 +1,18 @@
 // Original code, not ported from Chart.js: native point-option loop contracts.
 
+import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableContext;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+    show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// A chart whose config/data/context, metadata and DPR reads run no user code.
 /// Unknown subclasses retain ordinary option resolution.
@@ -65,3 +72,78 @@ final class NativePointCoordinates {
 
 bool _number(Object? value) =>
     value == null || value is Undefined || value is num;
+
+/// A loop-local resolution over native sources. The validator must run before
+/// every scope shortcut. Its context shortcut is used only in a proven native
+/// resolver window; ordinary fallback keeps the ordinary context factory.
+@internal
+final class NativePointResolution {
+  NativePointResolution({
+    required this.data,
+    required this.raw,
+    required this.valid,
+    required this.resolve,
+  });
+  final Object data;
+  final List<Object?> raw;
+  final bool Function() valid;
+  final ElementOptions? Function(Object Function(), Object Function()?) resolve;
+}
+
+/// Existing context refresh over captured native arrays. It never creates a
+/// context, reads coordinate properties, or skips the ordinary typed setters.
+@internal
+final class NativePointContextReader {
+  NativePointContextReader._(
+    this._meta,
+    this._points,
+    this._parsed,
+    this._raw,
+    this._mode,
+  );
+  final types.ChartMeta _meta;
+  final List<types.Element> _points;
+  final List<Object?> _parsed;
+  final List<Object?> _raw;
+  final String _mode;
+
+  static NativePointContextReader? prepare(
+    types.ChartMeta meta,
+    List<Object?> raw,
+    String mode,
+  ) {
+    final points = meta.data;
+    final parsed = meta.parsed;
+    if (!nativePointList(points) ||
+        !nativeDataUpdateList(parsed) ||
+        !nativeDataUpdateList(raw)) {
+      return null;
+    }
+    return NativePointContextReader._(meta, points, parsed, raw, mode);
+  }
+
+  ScriptableContext? read(int index) {
+    if (!identical(_meta.data, _points) ||
+        !identical(_meta.parsed, _parsed) ||
+        index < 0 ||
+        index >= _points.length) {
+      return null;
+    }
+    final element = _points[index];
+    if (element is! Element ||
+        element is! NativePointElement ||
+        !(element as NativePointElement).supportsNativePointOptions) {
+      return null;
+    }
+    final context = element.$context;
+    if (context is! ScriptableContext) return null;
+    final value = index.toDouble();
+    return context
+      ..parsed = jsGetIndex(_parsed, value)
+      ..raw = jsGetIndex(_raw, value)
+      ..dataIndex = value
+      ..index = value
+      ..active = false
+      ..mode = _mode;
+  }
+}

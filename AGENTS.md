@@ -340,6 +340,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     key producers retain their original calls. Private frozen point/bar type
     tokens eliminate discarded temporary options through the owned-result entry;
     fallback preserves context calls. Values and scope reads remain live.
+    Chart.js ADR 0082 prepares native Map-based point-color resolution within
+    one mode-none line loop. Cache generations, source/default identities, routes,
+    keys and existing point-none cache entries guard reuse. A native context
+    reader uses live array items and ordinary setter order; generic fallbacks
+    keep their original context factory. See performance.md §50.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).

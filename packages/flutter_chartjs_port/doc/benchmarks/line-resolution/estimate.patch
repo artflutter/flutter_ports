@@ -1,0 +1,610 @@
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
+@@ -37,6 +37,7 @@
+ /// `core.animations.dart`. Thus it is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/resolution_experiment.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
+     show BulkBarScale;
+ import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+@@ -403,6 +404,23 @@
+     // DIVERGES(chartjs): adapt-line-point-options, reuse native indexed colors
+     // only inside this loop, with guards at each original observation point.
+     PointOptions Function(int)? colors;
++    NativePointResolution? resolution;
++    NativePointContextReader? contextReader;
++    JsClass? resolutionClass;
++    Config? resolutionConfig;
++    var resolutionDataset = this.index;
++    var resolutionIndex = 0;
++    Object context() => getContext(resolutionIndex.toDouble(), false, mode);
++    Object preparedContext() =>
++        contextReader?.read(resolutionIndex) ?? context();
++    bool resolutionOwnerValid() =>
++        !hasCachedPointNoneOptions &&
++        identical(dataElementType, resolutionClass) &&
++        resolutionClass?.id is String &&
++        resolutionClass!.id == 'point' &&
++        this.index == resolutionDataset &&
++        identical(chart.config, resolutionConfig) &&
++        identical(chart.data, resolution?.data);
+     final coordinates = NativePointCoordinates();
+     final tryColors =
+         mode == 'none' &&
+@@ -476,15 +494,34 @@
+         // shared options.
+         final prepared = colors;
+         if (prepared != null) {
+-          getContext(index, false, mode);
++          if (!estimateContext || contextReader?.read(i) == null) {
++            getContext(index, false, mode);
++          }
+           writes.options(prepared(i));
++        } else if (sharedOptions != null) {
++          writes.options(sharedOptions);
+         } else {
++          final optionMode = point.active ? 'active' : mode;
++          resolutionIndex = i;
++          ElementOptions? result;
++          final plan = resolution;
++          if (plan != null) {
++            if (optionMode != 'none' || !resolutionOwnerValid()) {
++              resolution = null;
++            } else if (estimateScope) {
++              result = plan.resolve(
++                context,
++                estimateContext ? preparedContext : null,
++              );
++              if (result == null) resolution = null;
++            } else if (estimateContext && plan.valid()) {
++              result = resolvePointOptionsWithContext(index, preparedContext);
++            } else {
++              resolution = null;
++            }
++          }
+           writes.options(
+-            sharedOptions ??
+-                resolveDataElementOptions(
+-                  index,
+-                  point.active ? 'active' : mode,
+-                ),
++            result ?? resolveDataElementOptions(index, optionMode),
+           );
+         }
+       }
+@@ -500,8 +537,44 @@
+           _nativeProjection(iScale) &&
+           _nativeProjection(vScale)) {
+         colors = _preparePointColors(points);
++        if (estimateScope || estimateContext) {
++          resolution = _prepareLineResolution();
++          if (resolution != null) {
++            resolutionConfig = chart.config as Config;
++            resolutionClass = dataElementType as JsClass;
++            resolutionDataset = this.index;
++            if (estimateContext) {
++              contextReader = NativePointContextReader.prepare(
++                meta,
++                resolution.raw,
++                mode,
++              );
++            }
++          }
++        }
+       }
+     }
++  }
++
++  NativePointResolution? _prepareLineResolution() {
++    if (super.runtimeType != LineController ||
++        type != 'line' ||
++        chart is! NativePointChart ||
++        !(chart as NativePointChart).supportsNativePointOptions ||
++        hasCachedPointNoneOptions)
++      return null;
++    final cls = dataElementType;
++    if (cls is! JsClass ||
++        cls.id is! String ||
++        cls.id != 'point' ||
++        !index.isFinite ||
++        index < 0 ||
++        index != index.truncateToDouble())
++      return null;
++    final config = chart.config;
++    return config is Config && config.runtimeType == Config
++        ? config.prepareLineResolution(index.toInt())
++        : null;
+   }
+ 
+   bool _nativeProjection(types.Scale scale) =>
+--- a/packages/flutter_chartjs_port/lib/src/core/core.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.config.dart
+@@ -31,6 +31,8 @@
+ /// options, as upstream imports no element module.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/point_options.dart'
++    show NativePointResolution;
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+ 
+@@ -434,6 +436,8 @@
+   /// core.config.js:160 `_config`: the raw configuration.
+   final Object _config;
+ 
++  int _resolutionGeneration = 0;
++
+   String? _lastScopeType;
+   String? _lastScopeElement;
+   String _lastScopeKey = '';
+@@ -611,6 +615,91 @@
+     );
+   }
+ 
++  /// Captures a warmed point resolver for one native line loop. Every use
++  /// checks the source identities, key snapshot and cache generation again.
++  @internal
++  NativePointResolution? prepareLineResolution(int datasetIndex) {
++    final root = _config;
++    if (super.runtimeType != Config ||
++        root is! Map<String, Object?> ||
++        !nativeDataUpdateObject(root))
++      return null;
++    final data = root['data'];
++    if (data is! Map<String, Object?> || !nativeDataUpdateObject(data))
++      return null;
++    final datasets = data['datasets'];
++    if (datasets is! List<Object?> ||
++        !nativeDataUpdateList(datasets) ||
++        datasetIndex < 0 ||
++        datasetIndex >= datasets.length)
++      return null;
++    final dataset = datasets[datasetIndex];
++    if (dataset is! Map<String, Object?> || !nativeDataUpdateObject(dataset))
++      return null;
++    final raw = dataset['data'];
++    if (raw is! List<Object?> || !nativeDataUpdateList(raw)) return null;
++    final settings = root['options'];
++    if (!_isConfigObject(settings)) return null;
++    final scopeKeys = datasetElementScopeKeys('line', 'point');
++    final scopes = _scopeCache[dataset]?[scopeKeys];
++    if (scopes == null) return null;
++    final cached = _resolverCache[scopes]?['point,'];
++    if (cached == null ||
++        cached.subPrefixes.length != 2 ||
++        cached.subPrefixes[0] != 'point' ||
++        cached.subPrefixes[1] != '')
++      return null;
++    if (defaults.routeOf('elements') != null) return null;
++    final elements = defaults.elementsCell?.raw;
++    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
++    final elementScopes = elements! as ElementOptionsByTypeScope;
++    if (elementScopes.routeOf('point') != null) return null;
++    final point = elementScopes.pointCell?.raw;
++    if (point.runtimeType != PointOptionsScope) return null;
++    final pointDefaults = point! as PointOptionsScope;
++    final keys = pointDefaults.nativeOwnKeySnapshot;
++    if (!cached.resolver.hasPreparedPointOptions(keys)) return null;
++    final generation = _resolutionGeneration;
++    bool current() => generation == _resolutionGeneration;
++    bool valid() =>
++        current() &&
++        identical(root['data'], data) &&
++        identical(root['options'], settings) &&
++        identical(data['datasets'], datasets) &&
++        datasetIndex < datasets.length &&
++        identical(datasets[datasetIndex], dataset) &&
++        identical(dataset['data'], raw) &&
++        defaults.routeOf('elements') == null &&
++        identical(defaults.elementsCell?.raw, elements) &&
++        elementScopes.routeOf('point') == null &&
++        identical(elementScopes.pointCell?.raw, pointDefaults) &&
++        identical(pointDefaults.nativeOwnKeySnapshot, keys) &&
++        cached.resolver.hasPreparedPointOptions(keys);
++    final prefixes = <String>['point', ''];
++    return NativePointResolution(
++      data: data,
++      raw: raw,
++      valid: valid,
++      resolve: (context, preparedContext) {
++        if (!valid()) return null;
++        return _resolveElementNamedOptions(
++          scopes,
++          keys,
++          context,
++          prefixes,
++          _pointResultKind,
++          nativeInputs: true,
++          allowReplacement: true,
++          immutableKeys: true,
++          ownedPoint: true,
++          preparedResolver: cached,
++          preparedCacheCheck: current,
++          preparedContext: preparedContext,
++        );
++      },
++    );
++  }
++
+   /// core.config.js:189 `set options(options)`.
+   set options(Object? options) {
+     jsSet(_config, 'options', options);
+@@ -631,6 +720,7 @@
+ 
+   /// core.config.js:203 `clearCache()`.
+   void clearCache() {
++    _resolutionGeneration++;
+     _scopeCache.clear();
+     _resolverCache.clear();
+   }
+@@ -756,6 +846,7 @@
+     Object? mainScope,
+     bool resetCache,
+   ) {
++    if (resetCache) _resolutionGeneration++;
+     final scopeCache = _scopeCache;
+     var cache = scopeCache[mainScope];
+     if (cache == null || resetCache) {
+@@ -992,6 +1083,38 @@
+           point ? PointOptions() : BarOptions(),
+         );
+ 
++  /// Ordinary owned resolution with a native-only context alternative.
++  @internal
++  ElementOptions resolveOwnedElementWithContext(
++    List<Object?> scopes,
++    List<Object> keys,
++    Object Function() context,
++    List<String> prefixes,
++    Object Function() preparedContext, {
++    required bool point,
++    bool immutableKeys = false,
++  }) => runtimeType == Config
++      ? _resolveElementNamedOptions(
++          scopes,
++          keys,
++          context,
++          prefixes,
++          point ? _pointResultKind : _barResultKind,
++          nativeInputs: true,
++          allowReplacement: true,
++          immutableKeys: immutableKeys,
++          ownedPoint: point,
++          preparedContext: preparedContext,
++        )
++      : resolveOwnedElementNamedOptions(
++          scopes,
++          keys,
++          context,
++          prefixes,
++          point: point,
++          immutableKeys: immutableKeys,
++        );
++
+   ElementOptions _resolveElementNamedOptions(
+     List<Object?> scopes,
+     List<Object> keys,
+@@ -1002,32 +1125,40 @@
+     bool allowReplacement = false,
+     bool immutableKeys = false,
+     bool? ownedPoint,
++    _CachedResolver? preparedResolver,
++    bool Function()? preparedCacheCheck,
++    Object Function()? preparedContext,
+   }) {
+     if (ownedPoint == null) into.storeKey(OptionKey.dollarShared, true);
+     // Owned prefixes contain strings and have no observable indexing. Reuse
+     // their key for the post-context cache check instead of joining twice.
+-    final cacheKey = !nativeInputs
++    final cacheKey = preparedResolver != null
++        ? 'point,'
++        : !nativeInputs
+         ? null
+         : prefixes.length == 2
+         ? '${prefixes[0]},${prefixes[1]}'
+         : prefixes.join(',');
+-    final (:resolver, :subPrefixes) = _getResolver(
+-      _resolverCache,
+-      scopes,
+-      prefixes,
+-      cacheKey: cacheKey,
+-    );
++    final (:resolver, :subPrefixes) =
++        preparedResolver ??
++        _getResolver(
++          _resolverCache,
++          scopes,
++          prefixes,
++          cacheKey: cacheKey,
++        );
+     // Only equal prefix sets reuse the same already-resolved descriptors for
+     // the scriptable subresolver. Hover resolution keeps its ordinary reads.
+     final samePrefixes =
++        preparedResolver != null ||
+         helpers.OptionResolver.nativeIndexedResult(into) &&
+-        (nativeInputs ||
+-            (helpers.OptionResolver.nativeIndexedList(prefixes) &&
+-                helpers.OptionResolver.nativeIndexedList(scopes))) &&
+-        prefixes.length == subPrefixes.length &&
+-        Iterable<int>.generate(prefixes.length).every(
+-          (i) => prefixes[i] == subPrefixes[i],
+-        );
++            (nativeInputs ||
++                (helpers.OptionResolver.nativeIndexedList(prefixes) &&
++                    helpers.OptionResolver.nativeIndexedList(scopes))) &&
++            prefixes.length == subPrefixes.length &&
++            Iterable<int>.generate(prefixes.length).every(
++              (i) => prefixes[i] == subPrefixes[i],
++            );
+     // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
+     final indexed = runtimeType == Config && samePrefixes
+         ? (nativeInputs && allowReplacement
+@@ -1036,13 +1167,16 @@
+                       context,
+                       into,
+                       Defaults.nativeElementDescriptors,
+-                      () => identical(
+-                        _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
+-                            ?.resolver,
+-                        resolver,
+-                      ),
++                      preparedCacheCheck ??
++                          () => identical(
++                            _resolverCache[scopes]?[cacheKey ??
++                                    prefixes.join(',')]
++                                ?.resolver,
++                            resolver,
++                          ),
+                       immutableKeys: immutableKeys,
+                       replacementOnly: ownedPoint != null,
++                      preparedContext: preparedContext,
+                     )
+                   : null) ??
+               resolver.resolveIndexedElementOptions(
+@@ -1050,15 +1184,17 @@
+                 context,
+                 into,
+                 Defaults.nativeElementDescriptors,
+-                () => identical(
+-                  _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
+-                      ?.resolver,
+-                  resolver,
+-                ),
++                preparedCacheCheck ??
++                    () => identical(
++                      _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
++                          ?.resolver,
++                      resolver,
++                    ),
+                 nativeInputs: nativeInputs,
+                 allowReplacement: allowReplacement,
+                 immutableKeys: immutableKeys,
+                 replacementOnly: ownedPoint != null,
++                preparedContext: preparedContext,
+               )
+         : null;
+     if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -1914,6 +1914,24 @@
+     return _resolveElementOptions(_idOf(dataElementType), mode, index);
+   }
+ 
++  /// Existing per-mode cache entries must retain priority over a loop plan.
++  @internal
++  bool get hasCachedPointNoneOptions =>
++      _cachedElementOptions.containsKey('point-none');
++
++  /// Ordinary resolution with a native context factory reserved for a proven
++  /// pure resolver window. A declined native probe uses ordinary getContext.
++  @internal
++  ElementOptions resolvePointOptionsWithContext(
++    double index,
++    Object Function() preparedContext,
++  ) => _resolveElementOptions(
++    _idOf(dataElementType),
++    'none',
++    index,
++    preparedContext,
++  );
++
+   /// core.datasetController.js:804 `_resolveElementOptions(elementType, mode
+   /// = 'default', index)`.
+   /// @private
+@@ -1928,6 +1946,7 @@
+     Object? elementType, [
+     String? mode,
+     double? index,
++    Object Function()? preparedContext,
+   ]) {
+     final resolvedMode = mode ?? 'default';
+     final active = resolvedMode == 'active';
+@@ -2006,14 +2025,24 @@
+             config.runtimeType == Config &&
+             elementType is String &&
+             (elementType == 'point' || elementType == 'bar')
+-        ? config.resolveOwnedElementNamedOptions(
+-            scopes,
+-            keys,
+-            context,
+-            prefixes,
+-            point: elementType == 'point',
+-            immutableKeys: immutableKeys,
+-          )
++        ? preparedContext == null
++              ? config.resolveOwnedElementNamedOptions(
++                  scopes,
++                  keys,
++                  context,
++                  prefixes,
++                  point: elementType == 'point',
++                  immutableKeys: immutableKeys,
++                )
++              : config.resolveOwnedElementWithContext(
++                  scopes,
++                  keys,
++                  context,
++                  prefixes,
++                  preparedContext,
++                  point: elementType == 'point',
++                  immutableKeys: immutableKeys,
++                )
+         : _nativeElementDefaultKeys
+         ? config.resolveNativeElementNamedOptions(
+             scopes,
+--- a/packages/flutter_chartjs_port/lib/src/core/point_options.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/point_options.dart
+@@ -1,6 +1,13 @@
+ // Original code, not ported from Chart.js: native point-option loop contracts.
+ 
+ import 'package:flutter_chartjs_port/src/core/data_update.dart';
++import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
++import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
++    show ScriptableContext;
++import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
++import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
++    show ElementOptions;
++import 'package:meta/meta.dart';
+ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+ import 'package:flutter_chartjs_port/src/options/parsed.dart';
+@@ -65,3 +72,72 @@
+ 
+ bool _number(Object? value) =>
+     value == null || value is Undefined || value is num;
++
++/// A loop-local resolution over native sources. The validator must run before
++/// every scope shortcut. Its context shortcut is used only in a proven native
++/// resolver window; ordinary fallback keeps the ordinary context factory.
++@internal
++final class NativePointResolution {
++  NativePointResolution({
++    required this.data,
++    required this.raw,
++    required this.valid,
++    required this.resolve,
++  });
++  final Object data;
++  final List<Object?> raw;
++  final bool Function() valid;
++  final ElementOptions? Function(Object Function(), Object Function()?) resolve;
++}
++
++/// Existing context refresh over captured native arrays. It never creates a
++/// context, reads coordinate properties, or skips the ordinary typed setters.
++@internal
++final class NativePointContextReader {
++  NativePointContextReader._(
++    this._meta,
++    this._points,
++    this._parsed,
++    this._raw,
++    this._mode,
++  );
++  final types.ChartMeta _meta;
++  final List<types.Element> _points;
++  final List<Object?> _parsed;
++  final List<Object?> _raw;
++  final String _mode;
++
++  static NativePointContextReader? prepare(
++    types.ChartMeta meta,
++    List<Object?> raw,
++    String mode,
++  ) {
++    final points = meta.data;
++    final parsed = meta.parsed;
++    if (!nativePointList(points) || !nativeDataUpdateList(parsed) || !nativeDataUpdateList(raw)) return null;
++    return NativePointContextReader._(meta, points, parsed, raw, mode);
++  }
++
++  ScriptableContext? read(int index) {
++    if (!identical(_meta.data, _points) ||
++        !identical(_meta.parsed, _parsed) ||
++        index < 0 ||
++        index >= _points.length)
++      return null;
++    final element = _points[index];
++    if (element is! Element ||
++        element is! NativePointElement ||
++        !(element as NativePointElement).supportsNativePointOptions)
++      return null;
++    final context = element.$context;
++    if (context is! ScriptableContext) return null;
++    final value = index.toDouble();
++    return context
++      ..parsed = jsGetIndex(_parsed, value)
++      ..raw = jsGetIndex(_raw, value)
++      ..dataIndex = value
++      ..index = value
++      ..active = false
++      ..mode = _mode;
++  }
++}
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -504,6 +504,29 @@
+   static bool nativeIndexedResult(ElementOptions into) =>
+       into is PointOptions || into is BarOptions;
+ 
++  /// True only for an already-prepared, unshared point plan. No raw option,
++  /// custom descriptor or context is evaluated to qualify a loop.
++  @internal
++  bool hasPreparedPointOptions(List<Object> keys) {
++    if (_slotsTouched) return false;
++    final scriptable = _scriptableElementPlan;
++    if (scriptable != null &&
++        scriptable.template is PointOptions &&
++        identical(scriptable.template.$sharedValue, false) &&
++        scriptable.matches(keys, immutable: true))
++      return true;
++    final indexed = _indexedElementPlan;
++    return indexed != null &&
++        indexed._template is PointOptions &&
++        identical(indexed._template!.$sharedValue, false) &&
++        indexed.matches(keys, immutable: true) &&
++        indexed._varying.every(
++          (i) =>
++              indexed.keys[i] == OptionKey.backgroundColor ||
++              indexed.keys[i] == OptionKey.borderColor,
++        );
++  }
++
+   /// Captures a color-only bar plan for a synchronous native loop. The caller
+   /// must prove that no user code or mutation can run until the loop finishes.
+   /// This reads cached values only and never invokes a descriptor or resolver.
+@@ -588,6 +611,7 @@
+     bool Function() stillCached, {
+     bool immutableKeys = false,
+     bool replacementOnly = false,
++    Object Function()? preparedContext,
+   }) {
+     if (_slotsTouched || !nativeIndexedResult(into)) return null;
+     var plan = _scriptableElementPlan;
+@@ -642,7 +666,7 @@
+     }
+     // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
+     if (!replacementOnly) into.storeKey(OptionKey.dollarShared, false);
+-    final ctx = context();
++    final ctx = (preparedContext ?? context)();
+     if (!stillCached() ||
+         !identical(plan, _scriptableElementPlan) ||
+         !plan.matches(keys, immutable: immutableKeys)) {
+@@ -712,6 +736,7 @@
+     bool allowReplacement = false,
+     bool immutableKeys = false,
+     bool replacementOnly = false,
++    Object Function()? preparedContext,
+   }) {
+     if (_slotsTouched ||
+         (!nativeInputs && !nativeIndexedList(keys)) ||
+@@ -769,7 +794,7 @@
+     // caller. Preserve the upstream $shared store before invoking it.
+     // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
+     if (!replacementOnly) into.storeKey(OptionKey.dollarShared, false);
+-    final ctx = context();
++    final ctx = (preparedContext ?? context)();
+     // An overridden controller/context factory can write/delete resolver keys.
+     // Continue with its original context if it invalidates this snapshot.
+     final valid =

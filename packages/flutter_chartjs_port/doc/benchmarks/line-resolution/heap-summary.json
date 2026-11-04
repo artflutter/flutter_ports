@@ -1,0 +1,155 @@
+{
+  "interpretation": "The returned accumulated counters equal current counters for all classes. These are snapshots, not allocation rates or per-frame counts.",
+  "classes": [
+    {
+      "name": "PointOptions",
+      "instances": 66048,
+      "bytes": 9510912
+    },
+    {
+      "name": "_List",
+      "instances": 65788,
+      "bytes": 8166192
+    },
+    {
+      "name": "InstructionsSection",
+      "instances": 1,
+      "bytes": 4460576
+    },
+    {
+      "name": "PointElement",
+      "instances": 20000,
+      "bytes": 3520000
+    },
+    {
+      "name": "_Double",
+      "instances": 195208,
+      "bytes": 3123328
+    },
+    {
+      "name": "Code",
+      "instances": 18925,
+      "bytes": 3028000
+    },
+    {
+      "name": "ScriptableContext",
+      "instances": 20001,
+      "bytes": 2560128
+    },
+    {
+      "name": "_OneByteString",
+      "instances": 33114,
+      "bytes": 1942768
+    },
+    {
+      "name": "_Closure",
+      "instances": 37166,
+      "bytes": 1786256
+    },
+    {
+      "name": "CodeSourceMap",
+      "instances": 15250,
+      "bytes": 1771216
+    },
+    {
+      "name": "_Float64List",
+      "instances": 24,
+      "bytes": 1693408
+    },
+    {
+      "name": "Context",
+      "instances": 23423,
+      "bytes": 1662560
+    },
+    {
+      "name": "_Map",
+      "instances": 24293,
+      "bytes": 1554752
+    },
+    {
+      "name": "Function",
+      "instances": 19187,
+      "bytes": 1534960
+    },
+    {
+      "name": "_Uint32List",
+      "instances": 21269,
+      "bytes": 1382368
+    },
+    {
+      "name": "_GrowableList",
+      "instances": 27568,
+      "bytes": 882176
+    },
+    {
+      "name": "Field",
+      "instances": 8550,
+      "bytes": 820800
+    },
+    {
+      "name": "Class",
+      "instances": 3575,
+      "bytes": 686400
+    },
+    {
+      "name": "WeakArray",
+      "instances": 2,
+      "bytes": 524576
+    },
+    {
+      "name": "SemanticsConfiguration",
+      "instances": 973,
+      "bytes": 373632
+    },
+    {
+      "name": "_Record",
+      "instances": 8034,
+      "bytes": 357264
+    },
+    {
+      "name": "_Int32List",
+      "instances": 11,
+      "bytes": 265984
+    },
+    {
+      "name": "_Type",
+      "instances": 4661,
+      "bytes": 223728
+    },
+    {
+      "name": "_ImmutableList",
+      "instances": 1974,
+      "bytes": 207232
+    },
+    {
+      "name": "TextStyle",
+      "instances": 841,
+      "bytes": 188384
+    },
+    {
+      "name": "_GeneratorIterable",
+      "instances": 5669,
+      "bytes": 181408
+    },
+    {
+      "name": "ObjectPool",
+      "instances": 2,
+      "bytes": 177344
+    },
+    {
+      "name": "AttributedString",
+      "instances": 4866,
+      "bytes": 155712
+    },
+    {
+      "name": "_FunctionType",
+      "instances": 1917,
+      "bytes": 153360
+    },
+    {
+      "name": "SemanticsProperties",
+      "instances": 225,
+      "bytes": 144000
+    }
+  ]
+}
