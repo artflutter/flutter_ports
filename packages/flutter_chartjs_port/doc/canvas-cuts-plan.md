@@ -2426,3 +2426,18 @@ at the same canvas dimensions and configuration.
   sources within a line update loop. Geometry, drawing, point counts and
   recording boundaries are unchanged. Rendering pinning tests and the cut
   inventory remain valid; performance.md §50 records the measurements.
+
+- 2026-11-04, performance.md §51 investigates varying-color/scalar resolution
+  and a direct native-circle entry in an isolated copy. Existing atlas batching
+  is retained; a separate packing probe has little measured benefit. Warmed
+  pixel/command comparisons pass, but a cold-start discrepancy remains open.
+  No production canvas implementation, cut inventory or pinning test changes
+  are made by this estimation-only investigation.
+
+- 2026-11-04, ADR 0083 implements only ordered varying-color resolution and
+  the scalar callback path from the §51 investigation. No drawing primitive,
+  batch, canvas call, cut boundary or renderer implementation changes. Existing
+  pinning tests remain valid. Separate startup probes reproduce the cold pixel
+  transition in both baseline and prototype, with identical pixels and commands
+  at matched stages. This clears that specific differential concern; production
+  renderer integration and validation remain separate work.

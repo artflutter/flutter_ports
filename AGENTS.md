@@ -345,6 +345,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     keys and existing point-none cache entries guard reuse. A native context
     reader uses live array items and ordinary setter order; generic fallbacks
     keep their original context factory. See performance.md §50.
+    Chart.js ADR 0083 visits only ordered varying colors on a valid scriptable
+    plan and separates one-argument scalar callbacks from view setup. Non-scalar
+    returns retain original post-call processing; invalidation resumes at the
+    next original key with fresh views and the original descriptor snapshot.
+    See performance.md §§52–53 and varying_color_resolution_test.dart. The
+    96-case native frame verification still misses every-mode 60 FPS; data-only
+    stress cases fall back to the full lifecycle.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
