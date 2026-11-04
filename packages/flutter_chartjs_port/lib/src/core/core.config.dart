@@ -434,6 +434,10 @@ class Config implements types.ChartConfiguration {
   /// core.config.js:160 `_config`: the raw configuration.
   final Object _config;
 
+  String? _lastScopeType;
+  String? _lastScopeElement;
+  String _lastScopeKey = '';
+
   /// core.config.js:161 `_scopeCache`: the scope lists of
   /// [getOptionScopes], by main scope and by key lists.
   final Map<Object?, Map<List<List<String>>, List<Object?>>> _scopeCache = {};
@@ -693,8 +697,19 @@ class Config implements types.ChartConfiguration {
   ) {
     final type = jsToString(datasetType);
     final element = jsToString(elementType);
+    // DIVERGES(chartjs): adapt-option-resolution-setup, conversions stay live;
+    // only the joined string is retained, including upstream key collisions.
+    final String key;
+    if (type == _lastScopeType && element == _lastScopeElement) {
+      key = _lastScopeKey;
+    } else {
+      key = '$type-$element';
+      _lastScopeType = type;
+      _lastScopeElement = element;
+      _lastScopeKey = key;
+    }
     return _cachedKeys(
-      '$type-$element',
+      key,
       () => [
         [
           'datasets.$type.elements.$element',
@@ -942,6 +957,41 @@ class Config implements types.ChartConfiguration {
         )
       : resolveElementNamedOptions(scopes, keys, context, prefixes, into);
 
+  // DIVERGES(chartjs): adapt-owned-option-result, private type tokens.
+  static final _pointResultKind = PointOptions()..freeze();
+  static final _barResultKind = BarOptions()..freeze();
+
+  /// Resolves a controller-owned point/bar result without allocating a temporary
+  /// result when a native template can return the final fresh options directly.
+  /// [immutableKeys] is reserved for native immutable own-key snapshots.
+  @internal
+  ElementOptions resolveOwnedElementNamedOptions(
+    List<Object?> scopes,
+    List<Object> keys,
+    Object Function() context,
+    List<String> prefixes, {
+    required bool point,
+    bool immutableKeys = false,
+  }) => runtimeType == Config
+      ? _resolveElementNamedOptions(
+          scopes,
+          keys,
+          context,
+          prefixes,
+          point ? _pointResultKind : _barResultKind,
+          nativeInputs: true,
+          allowReplacement: true,
+          immutableKeys: immutableKeys,
+          ownedPoint: point,
+        )
+      : resolveElementNamedOptions(
+          scopes,
+          keys,
+          context,
+          prefixes,
+          point ? PointOptions() : BarOptions(),
+        );
+
   ElementOptions _resolveElementNamedOptions(
     List<Object?> scopes,
     List<Object> keys,
@@ -950,8 +1000,10 @@ class Config implements types.ChartConfiguration {
     ElementOptions into, {
     required bool nativeInputs,
     bool allowReplacement = false,
+    bool immutableKeys = false,
+    bool? ownedPoint,
   }) {
-    into.storeKey(OptionKey.dollarShared, true);
+    if (ownedPoint == null) into.storeKey(OptionKey.dollarShared, true);
     // Owned prefixes contain strings and have no observable indexing. Reuse
     // their key for the post-context cache check instead of joining twice.
     final cacheKey = !nativeInputs
@@ -989,6 +1041,8 @@ class Config implements types.ChartConfiguration {
                             ?.resolver,
                         resolver,
                       ),
+                      immutableKeys: immutableKeys,
+                      replacementOnly: ownedPoint != null,
                     )
                   : null) ??
               resolver.resolveIndexedElementOptions(
@@ -1003,13 +1057,23 @@ class Config implements types.ChartConfiguration {
                 ),
                 nativeInputs: nativeInputs,
                 allowReplacement: allowReplacement,
+                immutableKeys: immutableKeys,
+                replacementOnly: ownedPoint != null,
               )
         : null;
     if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
+    final result = ownedPoint == null
+        ? into
+        : ownedPoint
+        ? PointOptions()
+        : BarOptions();
+    if (ownedPoint != null) result.storeKey(OptionKey.dollarShared, true);
     helpers.OptionView? view;
     if (indexed != null || _needContextKeys(resolver, keys)) {
       // A declined native fill already stored $shared before its context call.
-      if (indexed == null) into.storeKey(OptionKey.dollarShared, false);
+      if (indexed == null || ownedPoint != null) {
+        result.storeKey(OptionKey.dollarShared, false);
+      }
       final ctx = indexed?.context ?? context();
       // subResolver is passed to scriptable options. It should not resolve to
       // hover options.
@@ -1025,9 +1089,9 @@ class Config implements types.ChartConfiguration {
         final name = key as String;
         value = view == null ? resolver[name] : view[name];
       }
-      into.storeKey(key, value);
+      result.storeKey(key, value);
     }
-    return into;
+    return result;
   }
 
   /// core.config.js:375 `createResolver`.

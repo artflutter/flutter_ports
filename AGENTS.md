@@ -335,6 +335,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     avoid unused contextual views. Context membership masks retain key order
     and deletion/reinsertion. The 20k native matrix still misses 60 FPS in the
     connected indexed and scriptable update cases (performance.md §48).
+    Chart.js ADR 0081 reuses immutable native default-key snapshots and private
+    prefixes. Key mutation and restore invalidate snapshots; custom Configs and
+    key producers retain their original calls. Private frozen point/bar type
+    tokens eliminate discarded temporary options through the owned-result entry;
+    fallback preserves context calls. Values and scope reads remain live.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).

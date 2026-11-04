@@ -2415,3 +2415,9 @@ at the same canvas dimensions and configuration.
   remain live. Existing rendering pinning tests and cut inventory remain valid;
   the native line measurements are recorded separately in performance.md §48.
   This does not activate deferred canvas work or establish 60 FPS for every mode.
+
+- 2026-11-04, ADR 0081 reuses native option-key/prefix metadata and removes
+  temporary point/bar results when an owned prepared result is available.
+  Canvas operations, point counts, recordings and draw order remain unchanged.
+  The cut inventory and rendering pinning tests remain valid. Measurements are
+  in performance.md §49; no deferred canvas work is activated.

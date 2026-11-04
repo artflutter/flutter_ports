@@ -6942,3 +6942,57 @@ and WebAssembly; workspace analysis, formatting, parity generation and all port
 checks. The final focused VM regressions also pass. No full browser, fixture,
 golden or mobile suite was run. Raw results, source/binary hashes, profiles,
 ordinary-path twins and validation scope are retained with the evidence.
+
+## 49. Native option setup and owned results
+
+2026-11-04; [ADR 0081](adr/0081-option-resolution-setup.md). This pass starts
+from the ADR 0080 working tree. [Estimation, production comparison, frame data
+and reproduction](benchmarks/option-setup/README.md). Apple M3 Max, macOS 27.0.1,
+Flutter 3.47.8 / Dart 3.13.7, native profile AOT, Impeller MetalSDF.
+
+The isolated experiment separates setup reuse, allocation removal and their
+combination, and includes a clean baseline to expose instrumentation overhead.
+At 20k scriptable line items, setup alone reduces full CPU cost by about 3–4%;
+allocation alone has no clear standalone gain. Together they reduce it by about
+9–10%. These are measured combinations, not added percentages or allocation counts.
+
+Production reuses immutable native default-key snapshots, private native prefix
+lists and the last joined scope-key string. Key mutation and restore invalidate
+snapshots; conversions, cache lookup, scope/value reads and custom getters remain
+live. Native plan matching uses identity only for an explicitly immutable input.
+The new internal owned-result entry uses private frozen point/bar type tokens;
+prepared results remain fresh, and fallback allocates its real result while
+preserving an already-created context. Legacy virtual signatures are unchanged.
+
+Production A/B/B/A CPU comparison, 800×480/DPR1. Figures average two process
+medians of update + draw + paint-end, not a combined-call percentile:
+
+| Scriptable chart | Items | Connected | Before ms | After ms | Reduction |
+| --- | ---: | --- | ---: | ---: | ---: |
+| Line | 20000 | off | 27.13 | 24.45 | 9.9% |
+| Line | 20000 | on | 28.37 | 26.01 | 8.3% |
+| Scatter control | 5000 | off | 14.26 | 11.99 | 15.9% |
+| Bar control | 5000 | — | 11.12 | 10.34 | 7.0% |
+
+The disconnected scriptable line has noticeable process variation; individual
+runs and paired reductions are retained. Static/indexed controls are reported
+in full, with no speed claim. The indexed disconnected line averaged 2.7% slower;
+static scatter 2.6% slower and indexed bar 1.6% slower. Other controls varied too.
+
+Matched real-frame runs use a 1036×520/DPR2 chart, eight seconds per cell with
+first-two-second readouts excluded. Each build runs 16 cells: full/data-only ×
+indexed/scriptable × connections off/on × 0/200 labels. Scriptable full updates
+measure about 30–33 FPS after the change, and data-only fallback about 31–35 FPS.
+Indexed frame performance is largely unchanged. Data-only remains full-update
+fallback in these scenes. These short observations are not sustained FPS claims.
+
+**The every-mode 60 FPS target remains unmet.** Worst scriptable full-update UI
+p90 in this comparison moves from 33.84 ms to 31.71 ms. The work retained for
+observable behavior—scope/value lookup, context refresh, final options and
+rendering—still exceeds the 16.67 ms budget. No points or callback results are
+sampled, omitted or memoized.
+
+Validation: 10,955 workspace VM tests, 72 focused regressions, 164 focused tests
+on each of JavaScript and WebAssembly, workspace analysis/formatting, parity
+regeneration and all seven port checks. No full browser, fixture, golden or
+mobile suite was run. Runtime source hashes match the isolated measured build.
