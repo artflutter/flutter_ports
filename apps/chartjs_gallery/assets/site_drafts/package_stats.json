@@ -1,0 +1,75 @@
+{
+  "checked_at": "2026-11-02T14:12:13.119168+00:00",
+  "activity_window_days": 90,
+  "packages": {
+    "flutter_chartjs_port": {
+      "repository": "artflutter/flutter_ports",
+      "activity_path": "packages/flutter_chartjs_port",
+      "open_issues": 0,
+      "open_prs": 2,
+      "last_commit": "2026-11-02T09:25:41Z",
+      "commits_90d": 175,
+      "release_status": "unpublished"
+    },
+    "flutter_d3_port": {
+      "repository": "artflutter/flutter_ports",
+      "activity_path": "packages/flutter_d3_port",
+      "open_issues": 0,
+      "open_prs": 2,
+      "last_commit": "2026-10-22T15:48:27Z",
+      "commits_90d": 6,
+      "release_status": "unpublished"
+    },
+    "flutter_echarts_port": {
+      "repository": "artflutter/flutter_ports",
+      "activity_path": "packages/flutter_echarts_port",
+      "open_issues": 0,
+      "open_prs": 2,
+      "last_commit": "2026-10-29T04:39:32Z",
+      "commits_90d": 5,
+      "release_status": "unpublished"
+    },
+    "flutter_chartjs_plugin_zoom_port": {
+      "repository": "artflutter/flutter_ports",
+      "activity_path": "packages/flutter_chartjs_plugin_zoom_port",
+      "open_issues": 0,
+      "open_prs": 2,
+      "last_commit": "2026-10-31T03:38:13Z",
+      "commits_90d": 3,
+      "release_status": "unpublished"
+    },
+    "highlighting": {
+      "repository": "akvelon/dart-highlighting",
+      "activity_path": "",
+      "open_issues": 22,
+      "open_prs": 5,
+      "last_commit": "2023-05-11T09:13:36Z",
+      "commits_90d": 0,
+      "release_status": "published",
+      "release_version": "0.9.0+11.8.0",
+      "release_date": "2023-05-05T13:25:58.149102Z"
+    },
+    "turf": {
+      "repository": "dartclub/turf_dart",
+      "activity_path": "",
+      "open_issues": 22,
+      "open_prs": 10,
+      "last_commit": "2026-09-24T00:08:40Z",
+      "commits_90d": 4,
+      "release_status": "published",
+      "release_version": "0.0.14",
+      "release_date": "2026-09-24T00:10:02.821340Z"
+    },
+    "supercluster": {
+      "repository": "rorystephenson/supercluster_dart",
+      "activity_path": "",
+      "open_issues": 1,
+      "open_prs": 0,
+      "last_commit": "2025-08-28T15:34:43Z",
+      "commits_90d": 0,
+      "release_status": "published",
+      "release_version": "3.2.0",
+      "release_date": "2025-08-28T15:34:53.373580Z"
+    }
+  }
+}

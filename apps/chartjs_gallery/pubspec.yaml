@@ -23,3 +23,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/site_drafts/package_stats.json
