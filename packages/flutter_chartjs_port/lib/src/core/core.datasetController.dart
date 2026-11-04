@@ -950,6 +950,10 @@ class DatasetController
   // Container implementation is immutable; keys and option values stay live.
   Object? _lastElementDefaults;
   bool _nativeElementDefaultKeys = false;
+  bool _nativeSnapshotKeys = false;
+  String? _nativePrefixType;
+  bool _nativePrefixActive = false;
+  late List<String> _nativePrefixes;
 
   /// core.datasetController.js:259 `_cachedDataOpts`, the part of the
   /// animations: the frozen [Animations] of [resolveAnimations] by the
@@ -1946,9 +1950,22 @@ class DatasetController
     }
     final config = chart.config as Config;
     final scopeKeys = config.datasetElementScopeKeys(type, elementType);
-    final prefixes = active
-        ? ['${typeName}Hover', 'hover', typeName, '']
-        : [typeName, ''];
+    // DIVERGES(chartjs): adapt-option-resolution-setup, native prefixes.
+    final List<String> prefixes;
+    if (config.runtimeType == Config &&
+        _nativePrefixType == typeName &&
+        _nativePrefixActive == active) {
+      prefixes = _nativePrefixes;
+    } else {
+      prefixes = active
+          ? ['${typeName}Hover', 'hover', typeName, '']
+          : [typeName, ''];
+      if (config.runtimeType == Config) {
+        _nativePrefixType = typeName;
+        _nativePrefixActive = active;
+        _nativePrefixes = prefixes;
+      }
+    }
     final scopes = config.getOptionScopes(getDataset(), scopeKeys);
     // The names are the own keys of the typed scope (Chart.js ADR 0054 §4):
     // `defaults.elements[elementType]`.
@@ -1957,24 +1974,47 @@ class DatasetController
         ? elements.jsRead(typeName)
         // A user object in the defaults reads by name.
         : jsGet(elements ?? undefined, elementType);
-    final keys = elementDefaults is OptionScope
+    final immutableKeys =
+        config.runtimeType == Config &&
+        identical(elementDefaults, _lastElementDefaults) &&
+        _nativeSnapshotKeys;
+    final keys = immutableKeys
+        ? (elementDefaults! as OptionScope).nativeOwnKeySnapshot
+        : elementDefaults is OptionScope
         ? elementDefaults.jsOwnKeys()
         // A user object in the defaults gives its keys.
         : <Object>[...jsObjectKeys(elementDefaults)];
     // DIVERGES(chartjs): adapt-indexed-element-options, classify only the
-    // producer of the key list. Never cache its keys or skip a custom getter.
+    // producer of the key list. Native immutable snapshots invalidate on key
+    // changes; a custom producer retains its live virtual enumeration.
     if (!identical(elementDefaults, _lastElementDefaults)) {
       _lastElementDefaults = elementDefaults;
       _nativeElementDefaultKeys =
           elementDefaults is! OptionScope ||
           elementDefaults.runtimeType == PointOptionsScope ||
           elementDefaults.runtimeType == BarOptionsScope;
+      _nativeSnapshotKeys =
+          elementDefaults is OptionScope && _nativeElementDefaultKeys;
     }
     // context is provided as a function, and is called only if needed,
     // so we don't create a context for each element if not needed.
     ContextObject context() => getContext(index, active, resolvedMode);
     // DIVERGES(chartjs): adapt-typed-element-options, a typed result object.
-    final values = _nativeElementDefaultKeys
+    // DIVERGES(chartjs): adapt-owned-option-result, final results only.
+    final values =
+        _nativeElementDefaultKeys &&
+            config.runtimeType == Config &&
+            elementType is String &&
+            (elementType == 'point' || elementType == 'bar')
+        ? config.resolveOwnedElementNamedOptions(
+            scopes,
+            keys,
+            context,
+            prefixes,
+            point: elementType == 'point',
+            immutableKeys: immutableKeys,
+          )
+        : _nativeElementDefaultKeys
         ? config.resolveNativeElementNamedOptions(
             scopes,
             keys,

@@ -1,0 +1,374 @@
+[
+  {
+    "type": "line",
+    "n": 20000,
+    "style": "static",
+    "connected": false,
+    "baselineCpuMs": 5.4035,
+    "productionCpuMs": 4.9350000000000005,
+    "reductionPercent": 8.670306282964734,
+    "individualCpuMs": {
+      "prod-a1": 5.474,
+      "prod-b1": 4.942,
+      "prod-b2": 4.928,
+      "prod-a2": 5.333
+    },
+    "pairReductionPercent": [
+      9.718670076726344,
+      7.594224639039949
+    ],
+    "components": {
+      "baseline": {
+        "update": 1.8485,
+        "draw": 2.7465,
+        "end": 0.8085
+      },
+      "production": {
+        "update": 1.6315,
+        "draw": 2.5540000000000003,
+        "end": 0.7495
+      }
+    }
+  },
+  {
+    "type": "line",
+    "n": 20000,
+    "style": "static",
+    "connected": true,
+    "baselineCpuMs": 6.7135,
+    "productionCpuMs": 6.6635,
+    "reductionPercent": 0.7447680047665162,
+    "individualCpuMs": {
+      "prod-a1": 6.672,
+      "prod-b1": 6.673,
+      "prod-b2": 6.654,
+      "prod-a2": 6.755000000000001
+    },
+    "pairReductionPercent": [
+      -0.014988009592320495,
+      1.4951887490747717
+    ],
+    "components": {
+      "baseline": {
+        "update": 1.679,
+        "draw": 4.265000000000001,
+        "end": 0.7695000000000001
+      },
+      "production": {
+        "update": 1.6720000000000002,
+        "draw": 4.224500000000001,
+        "end": 0.767
+      }
+    }
+  },
+  {
+    "type": "line",
+    "n": 20000,
+    "style": "indexed",
+    "connected": false,
+    "baselineCpuMs": 13.299499999999998,
+    "productionCpuMs": 13.663499999999999,
+    "reductionPercent": -2.736944997932267,
+    "individualCpuMs": {
+      "prod-a1": 13.687,
+      "prod-b1": 14.148,
+      "prod-b2": 13.179,
+      "prod-a2": 12.911999999999999
+    },
+    "pairReductionPercent": [
+      -3.3681595674727838,
+      -2.067843866171004
+    ],
+    "components": {
+      "baseline": {
+        "update": 8.567,
+        "draw": 3.8680000000000003,
+        "end": 0.8645
+      },
+      "production": {
+        "update": 8.6395,
+        "draw": 4.1514999999999995,
+        "end": 0.8725
+      }
+    }
+  },
+  {
+    "type": "line",
+    "n": 20000,
+    "style": "indexed",
+    "connected": true,
+    "baselineCpuMs": 15.718,
+    "productionCpuMs": 15.511,
+    "reductionPercent": 1.3169614454765277,
+    "individualCpuMs": {
+      "prod-a1": 15.841,
+      "prod-b1": 15.533,
+      "prod-b2": 15.488999999999999,
+      "prod-a2": 15.594999999999999
+    },
+    "pairReductionPercent": [
+      1.944321696862572,
+      0.6797050336646349
+    ],
+    "components": {
+      "baseline": {
+        "update": 8.4605,
+        "draw": 6.252,
+        "end": 1.0055
+      },
+      "production": {
+        "update": 8.4465,
+        "draw": 6.1465,
+        "end": 0.918
+      }
+    }
+  },
+  {
+    "type": "line",
+    "n": 20000,
+    "style": "scriptable",
+    "connected": false,
+    "baselineCpuMs": 27.134,
+    "productionCpuMs": 24.447499999999998,
+    "reductionPercent": 9.900862386673559,
+    "individualCpuMs": {
+      "prod-a1": 26.384,
+      "prod-b1": 25.61,
+      "prod-b2": 23.285,
+      "prod-a2": 27.884
+    },
+    "pairReductionPercent": [
+      2.933596118859916,
+      16.49332950796155
+    ],
+    "components": {
+      "baseline": {
+        "update": 22.0415,
+        "draw": 4.204000000000001,
+        "end": 0.8885000000000001
+      },
+      "production": {
+        "update": 18.948999999999998,
+        "draw": 4.616,
+        "end": 0.8825000000000001
+      }
+    }
+  },
+  {
+    "type": "line",
+    "n": 20000,
+    "style": "scriptable",
+    "connected": true,
+    "baselineCpuMs": 28.366,
+    "productionCpuMs": 26.012,
+    "reductionPercent": 8.298667418740745,
+    "individualCpuMs": {
+      "prod-a1": 27.844,
+      "prod-b1": 25.517,
+      "prod-b2": 26.506999999999998,
+      "prod-a2": 28.887999999999998
+    },
+    "pairReductionPercent": [
+      8.357276253411872,
+      8.242176682359458
+    ],
+    "components": {
+      "baseline": {
+        "update": 22.016,
+        "draw": 5.471,
+        "end": 0.879
+      },
+      "production": {
+        "update": 18.932,
+        "draw": 6.2059999999999995,
+        "end": 0.874
+      }
+    }
+  },
+  {
+    "type": "scatter",
+    "n": 5000,
+    "style": "static",
+    "connected": false,
+    "baselineCpuMs": 1.9825,
+    "productionCpuMs": 2.0345000000000004,
+    "reductionPercent": -2.622950819672165,
+    "individualCpuMs": {
+      "prod-a1": 1.978,
+      "prod-b1": 2.0140000000000002,
+      "prod-b2": 2.055,
+      "prod-a2": 1.9869999999999999
+    },
+    "pairReductionPercent": [
+      -1.8200202224469386,
+      -3.4222445898339338
+    ],
+    "components": {
+      "baseline": {
+        "update": 1.1469999999999998,
+        "draw": 0.6445000000000001,
+        "end": 0.191
+      },
+      "production": {
+        "update": 1.1745,
+        "draw": 0.6635,
+        "end": 0.1965
+      }
+    }
+  },
+  {
+    "type": "scatter",
+    "n": 5000,
+    "style": "indexed",
+    "connected": false,
+    "baselineCpuMs": 4.3115,
+    "productionCpuMs": 4.212,
+    "reductionPercent": 2.307781514554097,
+    "individualCpuMs": {
+      "prod-a1": 4.233,
+      "prod-b1": 4.191,
+      "prod-b2": 4.2330000000000005,
+      "prod-a2": 4.39
+    },
+    "pairReductionPercent": [
+      0.99220411055988,
+      3.576309794988586
+    ],
+    "components": {
+      "baseline": {
+        "update": 3.3194999999999997,
+        "draw": 0.776,
+        "end": 0.216
+      },
+      "production": {
+        "update": 3.229,
+        "draw": 0.7725,
+        "end": 0.2105
+      }
+    }
+  },
+  {
+    "type": "scatter",
+    "n": 5000,
+    "style": "scriptable",
+    "connected": false,
+    "baselineCpuMs": 14.262,
+    "productionCpuMs": 11.992,
+    "reductionPercent": 15.916421259290415,
+    "individualCpuMs": {
+      "prod-a1": 14.556,
+      "prod-b1": 12.13,
+      "prod-b2": 11.854,
+      "prod-a2": 13.968
+    },
+    "pairReductionPercent": [
+      16.66666666666665,
+      15.134593356242842
+    ],
+    "components": {
+      "baseline": {
+        "update": 13.1875,
+        "draw": 0.848,
+        "end": 0.2265
+      },
+      "production": {
+        "update": 11.003,
+        "draw": 0.7665,
+        "end": 0.2225
+      }
+    }
+  },
+  {
+    "type": "bar",
+    "n": 5000,
+    "style": "static",
+    "connected": false,
+    "baselineCpuMs": 3.9085,
+    "productionCpuMs": 3.8625,
+    "reductionPercent": 1.1769220928745106,
+    "individualCpuMs": {
+      "prod-a1": 3.9,
+      "prod-b1": 3.843,
+      "prod-b2": 3.882,
+      "prod-a2": 3.917
+    },
+    "pairReductionPercent": [
+      1.4615384615384586,
+      0.8935409752361401
+    ],
+    "components": {
+      "baseline": {
+        "update": 1.2285,
+        "draw": 1.9835,
+        "end": 0.6964999999999999
+      },
+      "production": {
+        "update": 1.21,
+        "draw": 1.9620000000000002,
+        "end": 0.6905
+      }
+    }
+  },
+  {
+    "type": "bar",
+    "n": 5000,
+    "style": "indexed",
+    "connected": false,
+    "baselineCpuMs": 4.729,
+    "productionCpuMs": 4.8045,
+    "reductionPercent": -1.5965320363713342,
+    "individualCpuMs": {
+      "prod-a1": 4.735,
+      "prod-b1": 4.716,
+      "prod-b2": 4.893,
+      "prod-a2": 4.723
+    },
+    "pairReductionPercent": [
+      0.4012671594509021,
+      -3.599407156468337
+    ],
+    "components": {
+      "baseline": {
+        "update": 1.9855,
+        "draw": 2.043,
+        "end": 0.7004999999999999
+      },
+      "production": {
+        "update": 2.0305,
+        "draw": 2.0625,
+        "end": 0.7115
+      }
+    }
+  },
+  {
+    "type": "bar",
+    "n": 5000,
+    "style": "scriptable",
+    "connected": false,
+    "baselineCpuMs": 11.121500000000001,
+    "productionCpuMs": 10.343499999999999,
+    "reductionPercent": 6.995459245605373,
+    "individualCpuMs": {
+      "prod-a1": 11.076,
+      "prod-b1": 10.278,
+      "prod-b2": 10.408999999999999,
+      "prod-a2": 11.167
+    },
+    "pairReductionPercent": [
+      7.204767063921991,
+      6.787857078893178
+    ],
+    "components": {
+      "baseline": {
+        "update": 8.274000000000001,
+        "draw": 2.1455,
+        "end": 0.702
+      },
+      "production": {
+        "update": 7.541499999999999,
+        "draw": 2.104,
+        "end": 0.698
+      }
+    }
+  }
+]

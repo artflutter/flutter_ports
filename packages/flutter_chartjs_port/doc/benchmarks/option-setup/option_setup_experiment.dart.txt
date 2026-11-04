@@ -1,0 +1,3 @@
+// Original code, not ported from Chart.js: isolated optimization switches.
+bool estimateOptionSetup = false;
+bool estimateOptionAllocation = false;

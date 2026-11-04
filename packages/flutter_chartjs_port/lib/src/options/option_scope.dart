@@ -36,6 +36,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
+import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/options/opt.dart';
 export 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -92,6 +93,15 @@ abstract base class OptionScope
   /// The own keys in their order: an [OptionKey] for a declared key, a
   /// `String` for an extra.
   final List<Object> _order = <Object>[];
+
+  // ADR 0081: invalidate only when the own-key order changes.
+  List<Object>? _ownKeySnapshot;
+
+  /// Immutable own-key snapshot for exact native scope producers. Consumers
+  /// must retain virtual jsOwnKeys calls for custom scope implementations.
+  @internal
+  List<Object> get nativeOwnKeySnapshot =>
+      _ownKeySnapshot ??= List<Object>.unmodifiable(jsOwnKeys());
 
   /// The names of the extras, in their insertion order. Dart `null` before
   /// the first extra.
@@ -217,7 +227,10 @@ abstract base class OptionScope
     if (_frozen) throw TypeError();
     final k = _normalize(key);
     if (k is OptionKey) {
-      if (cellOf(k) == null) _order.add(k);
+      if (cellOf(k) == null) {
+        _ownKeySnapshot = null;
+        _order.add(k);
+      }
       setCell(k, cell);
       return;
     }
@@ -229,6 +242,7 @@ abstract base class OptionScope
     }
     (_extraNames ??= <String>[]).add(name);
     (_extraCells ??= <Opt<Object?>>[]).add(cell);
+    _ownKeySnapshot = null;
     _order.add(name);
   }
 
@@ -255,6 +269,7 @@ abstract base class OptionScope
     if (k is OptionKey) {
       if (cellOf(k) == null) return false;
       setCell(k, null);
+      _ownKeySnapshot = null;
       _order.remove(k);
       return true;
     }
@@ -263,6 +278,7 @@ abstract base class OptionScope
     if (index < 0) return false;
     _extraNames!.removeAt(index);
     _extraCells!.removeAt(index);
+    _ownKeySnapshot = null;
     _order.remove(name);
     return true;
   }
@@ -416,6 +432,7 @@ abstract base class OptionScope
   /// fields directly and does not test the frozen state, and a scope that a
   /// test froze is not frozen in the next test.
   void restoreState(ScopeState state) {
+    _ownKeySnapshot = null;
     _frozen = state._frozen;
     for (final key in _order) {
       if (key is OptionKey) setCell(key, null);

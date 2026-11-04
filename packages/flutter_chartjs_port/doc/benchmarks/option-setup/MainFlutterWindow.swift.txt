@@ -1,0 +1,23 @@
+import Cocoa
+import FlutterMacOS
+
+class MainFlutterWindow: NSWindow {
+  override func awakeFromNib() {
+    let flutterViewController = FlutterViewController()
+    let windowFrame = self.frame
+    self.contentViewController = flutterViewController
+    self.setFrame(windowFrame, display: true)
+
+    RegisterGeneratedPlugins(registry: flutterViewController)
+
+    super.awakeFromNib()
+    // Temporary benchmark runner: establish the viewport before warmup ends.
+    if ProcessInfo.processInfo.environment["FRAMES"] == "1" {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        self.setContentSize(NSSize(width: 1100, height: 900))
+        self.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+      }
+    }
+  }
+}

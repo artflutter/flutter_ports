@@ -1,0 +1,66 @@
+import difflib,gzip,hashlib,json,statistics,subprocess
+from pathlib import Path
+root=Path(__file__).resolve().parents[2];w=root/'.dart_tool/line_setup';out=root/'packages/flutter_chartjs_port/doc/benchmarks/option-setup'
+def load(label):return json.loads((w/(label+'.json')).read_text())
+def cpu(r):return sum(float(r.get(k+'MedianMs',0)) for k in ['update','draw','end'])
+est={n:load(n) for n in ['baseline-a1','estimate-b1','estimate-b2','baseline-a2']}
+est_summary=[]
+for connected in [False,True]:
+ values={}
+ for variant in ['clean baseline','instrumented baseline','setup','allocation','both']:
+  source=['baseline-a1','baseline-a2'] if variant=='clean baseline' else ['estimate-b1','estimate-b2']
+  v='baseline' if 'baseline' in variant else variant
+  rows=[r for n in source for r in est[n] if r['style']=='scriptable' and r['connected']==connected and r['variant']==v]
+  values[variant]=statistics.mean(map(cpu,rows))
+ est_summary.append({'connected':connected,**values})
+prod={}
+for n in ['prod-a1','prod-b1','prod-b2','prod-a2']:
+ prod[n]=load(n)+load(n+'-scatter')+load(n+'-bar')
+summary=[]
+for r in prod['prod-a1']:
+ key=(r['type'],r['n'],r['style'],r['connected'])
+ rows={n:next(x for x in values if (x['type'],x['n'],x['style'],x['connected'])==key) for n,values in prod.items()}
+ vals={n:cpu(row) for n,row in rows.items()}
+ a=(vals['prod-a1']+vals['prod-a2'])/2;b=(vals['prod-b1']+vals['prod-b2'])/2
+ summary.append({'type':key[0],'n':key[1],'style':key[2],'connected':key[3],'baselineCpuMs':a,'productionCpuMs':b,'reductionPercent':100*(1-b/a),'individualCpuMs':vals,'pairReductionPercent':[100*(1-vals['prod-b1']/vals['prod-a1']),100*(1-vals['prod-b2']/vals['prod-a2'])], 'components':{side:{k:statistics.mean(float(rows[n].get(k+'MedianMs',0)) for n in names) for k in ['update','draw','end']} for side,names in [('baseline',['prod-a1','prod-a2']),('production',['prod-b1','prod-b2'])]}})
+frames={'baseline':load('frames-a'),'production':load('frames-b')}
+frame_pairs=[]
+for a,b in zip(frames['baseline'],frames['production']):
+ assert (a['call'],a['style'],a['connected'],a['labels'])==(b['call'],b['style'],b['connected'],b['labels'])
+ frame_pairs.append({'call':a['call'],'style':a['style'],'connected':a['connected'],'labels':a['labels'],'baselineFps':a['fps'],'productionFps':b['fps'],'baselineUiMs':a['buildMs'],'productionUiMs':b['buildMs'],'baselineUiP90Ms':a['buildP90Ms'],'productionUiP90Ms':b['buildP90Ms'],'dataFast':b['dataFast']})
+(out/'estimates.json').write_text(json.dumps(est_summary,indent=2)+'\n')
+(out/'production-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+(out/'frame-summary.json').write_text(json.dumps(frame_pairs,indent=2)+'\n')
+(out/'measurements.json.gz').write_bytes(gzip.compress(json.dumps({'estimation':est,'production':prod,'frames':frames},indent=2).encode()))
+source_hashes={};revert=[];prototype=[]
+for rel in ['options/option_scope.dart','core/core.datasetController.dart','core/core.config.dart','helpers/helpers.config.dart']:
+ path=Path('packages/flutter_chartjs_port/lib/src')/rel
+ before=(w/(rel.replace('/','_')+'.before')).read_text();after=(root/path).read_text();proto=(w/'prototype'/rel.replace('/','_')).read_text()
+ source_hashes[str(path)]={label:hashlib.sha256(text.encode()).hexdigest() for label,text in [('baseline',before),('production',after),('estimate',proto)]}
+ revert+=list(difflib.unified_diff(after.splitlines(True),before.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path)))
+ prototype+=list(difflib.unified_diff(before.splitlines(True),proto.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path)))
+(out/'baseline-overlay.patch').write_text(''.join(revert));(out/'estimate.patch').write_text(''.join(prototype))
+meta={'date':'2026-11-04','gitHead':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'baseline':'Working tree after ADR 0080, including preceding uncommitted optimizations. Apply baseline-overlay.patch to the delivered tree to recover the four prior runtime files.','hardware':'Apple M3 Max','os':'macOS 27.0.1','flutter':'3.47.8','dart':'3.13.7','build':'profile AOT arm64','renderer':'Impeller MetalSDF','cpuCanvas':'800x480 DPR1','frameCanvas':'1036x520 DPR2; own temporary runner window 1100x900','sources':source_hashes,'binaries':{}}
+for app in ['baseline','estimate','production']:
+ for rel in ['Contents/MacOS/chartjs_gallery','Contents/Frameworks/App.framework/Versions/A/App']:
+  p=Path('/tmp/line-setup-'+app+'.app')/rel
+  if p.exists():meta['binaries'][app+'/'+rel]=hashlib.sha256(p.read_bytes()).hexdigest()
+(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+validation={'workspaceVmPassed':10955,'focusedVmPassed':72,'focusedJavaScriptPassed':164,'focusedWebAssemblyPassed':164,'analyze':'pass','format':'pass; 792 Dart files unchanged','parity':'pass; 163 files; zero errors/warnings','portChecks':'pass','scope':'Full workspace VM suite and focused browser option/scope tests. No full browser, fixture, golden or mobile suite.'}
+(out/'validation.json').write_text(json.dumps(validation,indent=2)+'\n')
+for n in ['tests','focused','analyze','format','parity','check-port','web-js','web-wasm','estimate-run','production-run']:
+ (out/(n+'.log.gz')).write_bytes(gzip.compress((w/(n+'.log')).read_bytes()))
+for name in ['probe.dart','production_probe.dart','estimate_run.py','production_run.py','report.py']:
+ (out/(name+'.txt')).write_bytes((w/name).read_bytes())
+(out/'option_setup_experiment.dart.txt').write_text('// Original code, not ported from Chart.js: isolated optimization switches.\nbool estimateOptionSetup = false;\nbool estimateOptionAllocation = false;\n')
+print('ESTIMATES',json.dumps(est_summary,indent=2))
+for r in summary:print(r['type'],r['style'],r['connected'],round(r['baselineCpuMs'],3),round(r['productionCpuMs'],3),round(r['reductionPercent'],1))
+# A report template is kept outside the package until all runs have completed.
+e=['| Variant | Disconnected ms | Connected ms |','| --- | ---: | ---: |']
+for v in ['clean baseline','instrumented baseline','setup','allocation','both']:e.append(f"| {v} | {est_summary[0][v]:.2f} | {est_summary[1][v]:.2f} |")
+p=['| Type / items | Colors | Connected | Before ms | After ms | Reduction |','| --- | --- | --- | ---: | ---: | ---: |']
+for r in summary:p.append(f"| {r['type']} / {r['n']} | {r['style']} | {'on' if r['connected'] else 'off'} | {r['baselineCpuMs']:.2f} | {r['productionCpuMs']:.2f} | {r['reductionPercent']:.1f}% |")
+f=['| Operation | Colors | Connected | Labels | FPS before → after | UI p90 before → after ms |','| --- | --- | --- | ---: | ---: | ---: |']
+for r in frame_pairs:f.append(f"| {r['call']} | {r['style']} | {'on' if r['connected'] else 'off'} | {r['labels']} | {r['baselineFps']:.1f} → {r['productionFps']:.1f} | {r['baselineUiP90Ms']:.2f} → {r['productionUiP90Ms']:.2f} |")
+body=(w/'README.template').read_text().replace('{{ESTIMATES}}','\n'.join(e)).replace('{{PRODUCTION}}','\n'.join(p)).replace('{{FRAMES}}','\n'.join(f))
+(out/'README.md').write_text(body)

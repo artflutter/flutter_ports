@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-04",
+  "gitHead": "ba58aa8a918f3d078c15f833abdb0337a96b271a",
+  "baseline": "Working tree after ADR 0080, including preceding uncommitted optimizations. Apply baseline-overlay.patch to the delivered tree to recover the four prior runtime files.",
+  "hardware": "Apple M3 Max",
+  "os": "macOS 27.0.1",
+  "flutter": "3.47.8",
+  "dart": "3.13.7",
+  "build": "profile AOT arm64",
+  "renderer": "Impeller MetalSDF",
+  "cpuCanvas": "800x480 DPR1",
+  "frameCanvas": "1036x520 DPR2; own temporary runner window 1100x900",
+  "sources": {
+    "packages/flutter_chartjs_port/lib/src/options/option_scope.dart": {
+      "baseline": "946a6d84b0c7a69834893d715dcdf12817c46442b1ebed37e0eb91d2916001c6",
+      "production": "659b88be580abff80f3eb6d2fd70d284ecd5411bc91f7d91e5be2a5a55a934ad",
+      "estimate": "cc71ecb7fbef54e7fe858f9da75c463a6be963fe6bc2668580af14771bd5864f"
+    },
+    "packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart": {
+      "baseline": "d207653545332b2493c2a2c294f3f08aa2dbf8a196f179b76e96db59266d67c9",
+      "production": "d98206cad72a05123ab591e18b503f7b1ad48d25c4d91de218c91698f8d11751",
+      "estimate": "b0949a23bcc774786e29555208efdb0fdada563ee2dd26ee07819af923cc241a"
+    },
+    "packages/flutter_chartjs_port/lib/src/core/core.config.dart": {
+      "baseline": "3b05ba17629e1e092f9dbdbf79cd7d96832141c501856361d40bd90f768e0dfe",
+      "production": "1572ed0c2bc4211af13448ce2adbfdb9e8c9da0dcc137aa4a5af25d0e2d4b904",
+      "estimate": "7f249d04a9d0631f078265a7b00f6017d52308aa40caab7d7dc57bc1e2bbc599"
+    },
+    "packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart": {
+      "baseline": "6a5bc1922453d407707ed6969555a08f206fa26cc9c09e85563c88539f36daa5",
+      "production": "020049557bc25730e372cd02ad1d6e63a38d70e149a3a1e39c8a130b53640525",
+      "estimate": "79840853b0e7a57683f9765143659ecd360d48132623f6381fb9beee7f8c7480"
+    }
+  },
+  "binaries": {
+    "baseline/Contents/MacOS/chartjs_gallery": "9c42a1f9662dff306c877a53e09bad235c4a817a9ab68ef1ddfef19d40194426",
+    "baseline/Contents/Frameworks/App.framework/Versions/A/App": "92f4275933c5ee17358baceadc9c8dbc3bcea685efb36a4d0b4c52129de60a81",
+    "estimate/Contents/MacOS/chartjs_gallery": "20d0e38d153609c98375f41dad661de61e35693ceae56bd2f9e114bbdcc56a50",
+    "estimate/Contents/Frameworks/App.framework/Versions/A/App": "812efb8f4defbf23c03b0c7f4a39cb3648f911f0c6e4c3b8d9f13b451da5675e",
+    "production/Contents/MacOS/chartjs_gallery": "025f7aad7c74181170fbf80d98b8fbeae49b06a46df5e23794b0157452b590d5",
+    "production/Contents/Frameworks/App.framework/Versions/A/App": "4fac98e1a2ae71d23fce076b448996bcf11d4d1adc2e9fc0a2b177eb488eeb04"
+  },
+  "probeSha256": {
+    "probe.dart": "87fd91e421587beca32cb183dc251034cf2bc541c36e7719c7dfd05ba3ae7156",
+    "baseline_control_probe.dart": "fa186ac6f60b717496d527d475cd2bc927c522968af3ebe84465cf8540762194",
+    "production_probe.dart": "52d6746fc21c0d2007ccea72908eda79be49cc5b6b0524696960d455fcdcf566"
+  }
+}

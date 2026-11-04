@@ -1,0 +1,18 @@
+[
+  {
+    "connected": false,
+    "clean baseline": 27.119500000000002,
+    "instrumented baseline": 28.024,
+    "setup": 26.1725,
+    "allocation": 27.28,
+    "both": 24.497
+  },
+  {
+    "connected": true,
+    "clean baseline": 29.0015,
+    "instrumented baseline": 29.2175,
+    "setup": 28.1035,
+    "allocation": 29.0565,
+    "both": 26.3625
+  }
+]

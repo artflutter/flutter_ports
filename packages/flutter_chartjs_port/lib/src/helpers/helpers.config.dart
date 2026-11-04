@@ -268,11 +268,16 @@ final class _ScriptableElementPlan {
   final ElementOptions template;
   final bool contextOnly;
 
-  bool matches(List<Object> other) {
+  // DIVERGES(chartjs): adapt-option-resolution-setup, explicit immutable input.
+  List<Object>? _immutableKeySource;
+
+  bool matches(List<Object> other, {bool immutable = false}) {
+    if (immutable && identical(_immutableKeySource, other)) return true;
     if (keys.length != other.length) return false;
     for (var i = 0; i < keys.length; i++) {
       if (!identical(keys[i], other[i])) return false;
     }
+    if (immutable) _immutableKeySource = other;
     return true;
   }
 }
@@ -334,11 +339,16 @@ final class _IndexedElementPlan {
     return result;
   }
 
-  bool matches(List<Object> other) {
+  // DIVERGES(chartjs): adapt-option-resolution-setup, explicit immutable input.
+  List<Object>? _immutableKeySource;
+
+  bool matches(List<Object> other, {bool immutable = false}) {
+    if (immutable && identical(_immutableKeySource, other)) return true;
     if (keys.length != other.length) return false;
     for (var i = 0; i < keys.length; i++) {
       if (!identical(keys[i], other[i])) return false;
     }
+    if (immutable) _immutableKeySource = other;
     return true;
   }
 
@@ -565,6 +575,8 @@ final class OptionResolver implements ResolverProxy {
 
   /// Copies already-resolved static fields while keeping each scriptable read
   /// at its original position, with fresh contextual views and live callbacks.
+  /// [replacementOnly] treats [into] only as a type token; it is never written
+  /// or returned. [immutableKeys] requires a native immutable key snapshot.
   @internal
   // DIVERGES(chartjs): adapt-scriptable-element-template, static fields.
   ({bool resolved, Object context, ElementOptions? prepared})?
@@ -573,12 +585,14 @@ final class OptionResolver implements ResolverProxy {
     Object Function() context,
     ElementOptions into,
     bool Function(Object?, Object?) descriptorGuard,
-    bool Function() stillCached,
-  ) {
+    bool Function() stillCached, {
+    bool immutableKeys = false,
+    bool replacementOnly = false,
+  }) {
     if (_slotsTouched || !nativeIndexedResult(into)) return null;
     var plan = _scriptableElementPlan;
     if (plan == null ||
-        !plan.matches(keys) ||
+        !plan.matches(keys, immutable: immutableKeys) ||
         plan.template.runtimeType != into.runtimeType) {
       final size = _cache._keys?.length ?? 0;
       if (_scriptableRejectedSize == size) return null;
@@ -626,11 +640,12 @@ final class OptionResolver implements ResolverProxy {
         template,
       );
     }
-    into.storeKey(OptionKey.dollarShared, false);
+    // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
+    if (!replacementOnly) into.storeKey(OptionKey.dollarShared, false);
     final ctx = context();
     if (!stillCached() ||
         !identical(plan, _scriptableElementPlan) ||
-        !plan.matches(keys)) {
+        !plan.matches(keys, immutable: immutableKeys)) {
       return (resolved: false, context: ctx, prepared: null);
     }
     // Same prefixes and an exact Config mean createResolver would retrieve
@@ -682,6 +697,8 @@ final class OptionResolver implements ResolverProxy {
   /// Resolves native indexed scalar options from already cached raw values.
   /// Null means that context was not called. A failed result retains the one
   /// context call so the ordinary path can continue at attachContext.
+  /// [replacementOnly] prevents writes/fill into a private type token. The
+  /// caller must allocate its final result if this method declines.
   @internal
   // DIVERGES(chartjs): adapt-indexed-element-options, guarded cached plan.
   ({bool resolved, Object context, ElementOptions? prepared})?
@@ -693,6 +710,8 @@ final class OptionResolver implements ResolverProxy {
     bool Function() stillCached, {
     bool nativeInputs = false,
     bool allowReplacement = false,
+    bool immutableKeys = false,
+    bool replacementOnly = false,
   }) {
     if (_slotsTouched ||
         (!nativeInputs && !nativeIndexedList(keys)) ||
@@ -700,7 +719,7 @@ final class OptionResolver implements ResolverProxy {
       return null;
     }
     var plan = _indexedElementPlan;
-    if (plan == null || !plan.matches(keys)) {
+    if (plan == null || !plan.matches(keys, immutable: immutableKeys)) {
       // Rejection is conservative across key shapes. Rechecking when the
       // cache grows lets an initially cold resolver qualify after ordinary
       // resolution, without taxing every scriptable element with a key scan.
@@ -748,18 +767,20 @@ final class OptionResolver implements ResolverProxy {
     }
     // The context factory can observe or mutate the result supplied by its
     // caller. Preserve the upstream $shared store before invoking it.
-    into.storeKey(OptionKey.dollarShared, false);
+    // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
+    if (!replacementOnly) into.storeKey(OptionKey.dollarShared, false);
     final ctx = context();
     // An overridden controller/context factory can write/delete resolver keys.
     // Continue with its original context if it invalidates this snapshot.
     final valid =
         stillCached() &&
         identical(plan, _indexedElementPlan) &&
-        plan.matches(keys);
+        plan.matches(keys, immutable: immutableKeys);
     final prepared = valid && allowReplacement
         ? plan.prepared(ctx, into)
         : null;
-    final resolved = prepared != null || (valid && plan.fill(ctx, into));
+    final resolved =
+        prepared != null || (!replacementOnly && valid && plan.fill(ctx, into));
     return (resolved: resolved, context: ctx, prepared: prepared);
   }
 
