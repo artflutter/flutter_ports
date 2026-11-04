@@ -329,6 +329,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     overflow loops. Plans end before custom reads/points or active callbacks;
     coordinate guards run at their original iteration, without a whole-data
     scan. Context setters, fresh options and ordinary fallback order remain.
+    Chart.js ADR 0080 applies guarded indexed preparation to line updates.
+    Scriptable color options copy private static fields while preserving live
+    calls, fresh results and resolver invalidation. Exact one-argument callbacks
+    avoid unused contextual views. Context membership masks retain key order
+    and deletion/reinsertion. The 20k native matrix still misses 60 FPS in the
+    connected indexed and scriptable update cases (performance.md §48).
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).

@@ -9,11 +9,13 @@
 #   of a scope, the override and _scopes of a proxy value), the index of an
 #   indexable option, readOption for an options object that is not a view
 #   (a Map of the user) and the parsing key of _parseObjectDataRadialScale.
-# - jsCall 6: the scriptable options, the user predicates of _scriptable and
+# - jsCall 7: the scriptable options, the user predicates of _scriptable and
 #   _indexable, a user _fallback function and the override of a proxy value
-#   of the user, with JS arity.
+#   of the user, with JS arity. The extra jsCall1 preserves the call of a
+#   proven one-argument scriptable color without constructing unused views
+#   (Chart.js ADR 0080).
 # - jsObjectKeys 2: Reflect.ownKeys and Object.keys of a scope of any kind.
 jsGet 18
 stringIndex 14
-jsCall 6
+jsCall 7
 jsObjectKeys 2

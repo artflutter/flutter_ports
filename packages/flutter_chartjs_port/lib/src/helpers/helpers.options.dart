@@ -557,7 +557,11 @@ base class ContextObject implements JsObjectFace {
   /// `null` is the `null` prototype.
   ContextObject(this.prototype) : _names = <String>[];
 
-  ContextObject._withNames(this.prototype, this._names);
+  ContextObject._withNames(this.prototype, this._names) {
+    for (final name in _names) {
+      _presentNames |= _nameBit(name);
+    }
+  }
 
   /// `Object.getPrototypeOf(this)`: the parent context, or Dart `null`. A
   /// parent is a [ContextObject] or a `Map` (a context object of user
@@ -566,6 +570,29 @@ base class ContextObject implements JsObjectFace {
 
   /// The own keys, in insertion order.
   final List<String> _names;
+
+  // DIVERGES(chartjs): adapt-context-key-presence, a mask for frequent names.
+  // The ordered list remains authoritative for enumeration and reinsertion.
+  int _presentNames = 0;
+
+  static int _nameBit(String name) => switch (name) {
+    'active' => 1,
+    'dataset' => 2,
+    'datasetIndex' => 4,
+    'dataIndex' => 8,
+    'parsed' => 16,
+    'raw' => 32,
+    'element' => 64,
+    'index' => 128,
+    'mode' => 256,
+    'type' => 512,
+    _ => 0,
+  };
+
+  bool _hasName(String name) {
+    final bit = _nameBit(name);
+    return bit == 0 ? _names.contains(name) : _presentNames & bit != 0;
+  }
 
   /// The own keys that are not typed fields, and their values.
   List<String>? _extraNames;
@@ -585,8 +612,14 @@ base class ContextObject implements JsObjectFace {
   /// Makes [name] an own key: a new name goes to the end of the own-key
   /// order, as [jsWrite] does. A typed setter of a subclass calls it
   /// before it sets its field.
-  void _claim(String name) {
-    if (!_names.contains(name)) _names.add(name);
+  void _claim(String name, [int bit = 0]) {
+    final mask = bit == 0 ? _nameBit(name) : bit;
+    if (mask == 0) {
+      if (!_names.contains(name)) _names.add(name);
+    } else if (_presentNames & mask == 0) {
+      _names.add(name);
+      _presentNames |= mask;
+    }
   }
 
   /// `this[name]` (`[[Get]]`) for a typed field: the own [field], else the
@@ -599,7 +632,7 @@ base class ContextObject implements JsObjectFace {
 
   /// The own value of [name], or [_unset].
   Object? _own(String name) {
-    if (!_names.contains(name)) return _unset;
+    if (!_hasName(name)) return _unset;
     final field = fieldGet(name);
     if (!identical(field, _unset)) return field;
     final index = _extraNames?.indexOf(name) ?? -1;
@@ -609,7 +642,7 @@ base class ContextObject implements JsObjectFace {
   /// `name in this` (`[[HasProperty]]`): an own key or a key of the
   /// [prototype] chain.
   bool hasProperty(String name) {
-    if (_names.contains(name)) return true;
+    if (_hasName(name)) return true;
     return switch (prototype) {
       final ContextObject parent => parent.hasProperty(name),
       final JsObjectFace parent => parent.jsHas(name),
@@ -619,7 +652,7 @@ base class ContextObject implements JsObjectFace {
   }
 
   /// `Object.prototype.hasOwnProperty.call(this, key)`.
-  bool hasOwnProperty(Object? key) => key is String && _names.contains(key);
+  bool hasOwnProperty(Object? key) => key is String && _hasName(key);
 
   /// The count of the own keys.
   int get ownKeyCount => _names.length;
@@ -641,7 +674,7 @@ base class ContextObject implements JsObjectFace {
 
   @override
   void jsWrite(String name, Object? value) {
-    if (!_names.contains(name)) _names.add(name);
+    _claim(name);
     if (fieldSet(name, value)) return;
     final names = _extraNames ??= <String>[];
     final values = _extraValues ??= <Object?>[];
@@ -681,12 +714,13 @@ base class ContextObject implements JsObjectFace {
   }
 
   @override
-  bool jsHas(String name) => _names.contains(name);
+  bool jsHas(String name) => _hasName(name);
 
   @override
   bool jsDelete(String name) {
-    if (!_names.contains(name)) return false;
+    if (!_hasName(name)) return false;
     _names.remove(name);
+    _presentNames &= ~_nameBit(name);
     if (!fieldSet(name, _unset)) {
       final index = _extraNames!.indexOf(name);
       _extraNames!.removeAt(index);
@@ -817,52 +851,52 @@ final class ScriptableContext extends ContextObject {
   // Each one makes its name an own key first, as `operator []=` does.
 
   set active(Object? value) {
-    _claim('active');
+    _claim('active', 1);
     _active = value;
   }
 
   set dataset(Object? value) {
-    _claim('dataset');
+    _claim('dataset', 2);
     _dataset = value;
   }
 
   set datasetIndex(Object? value) {
-    _claim('datasetIndex');
+    _claim('datasetIndex', 4);
     _datasetIndex = value;
   }
 
   set dataIndex(Object? value) {
-    _claim('dataIndex');
+    _claim('dataIndex', 8);
     _dataIndex = value;
   }
 
   set parsed(Object? value) {
-    _claim('parsed');
+    _claim('parsed', 16);
     _parsed = value;
   }
 
   set raw(Object? value) {
-    _claim('raw');
+    _claim('raw', 32);
     _raw = value;
   }
 
   set index(Object? value) {
-    _claim('index');
+    _claim('index', 128);
     _index = value;
   }
 
   set mode(Object? value) {
-    _claim('mode');
+    _claim('mode', 256);
     _mode = value;
   }
 
   void _setElement(Object? value) {
-    _claim('element');
+    _claim('element', 64);
     _element = value;
   }
 
   void _setType(Object? value) {
-    _claim('type');
+    _claim('type', 512);
     _type = value;
   }
 
