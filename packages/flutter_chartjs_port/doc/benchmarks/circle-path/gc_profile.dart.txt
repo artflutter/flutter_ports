@@ -1,0 +1,31 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:vm_service/vm_service_io.dart';
+Future<void> main(List<String> args) async {
+ final service=await vmServiceConnectUri(args[0]);
+ final path=args[1];
+ final gcOnly=Platform.environment['GC_ONLY']=='1';
+ await service.setFlag('profiler',gcOnly?'false':'true');
+ final vm=await service.getVM();
+ final isolate=vm.isolates!.firstWhere((i)=>i.name=='main');
+ final events=<Object?>[];
+ await service.streamListen('GC');
+ final sub=service.onGCEvent.listen((e)=>events.add(e.toJson()));
+ await service.setVMTimelineFlags(gcOnly?['Dart','GC']:['Dart','GC','Embedder']);
+ await Future<void>.delayed(const Duration(seconds:4));
+ await service.clearCpuSamples(isolate.id!);
+ await service.clearVMTimeline();
+ final start=await service.getVMTimelineMicros();
+ try {final a=await service.getAllocationProfile(isolate.id!,reset:true);await File('$path.heap-start').writeAsString(jsonEncode(a.toJson()));}catch(e){print('heap start: $e');}
+ await Future<void>.delayed(const Duration(seconds:16));
+ final end=await service.getVMTimelineMicros();
+ final samples=gcOnly?null:await service.getCpuSamples(isolate.id!,start.timestamp!,end.timestamp!-start.timestamp!);
+ await File(path).writeAsString(jsonEncode(samples?.toJson()??{'profilerDisabled':true,'sampleCount':0,'samplePeriod':0,'timeOriginMicros':start.timestamp,'timeExtentMicros':end.timestamp!-start.timestamp!,'functions':[],'samples':[]}));
+ try {final t=await service.getVMTimeline(timeOriginMicros:start.timestamp,timeExtentMicros:end.timestamp!-start.timestamp!);await File('$path.timeline').writeAsString(jsonEncode(t.toJson()));}catch(e){print('timeline: $e');}
+ try {final a=await service.getAllocationProfile(isolate.id!);await File('$path.heap-end').writeAsString(jsonEncode(a.toJson()));}catch(e){print('heap end: $e');}
+ await File('$path.gc').writeAsString(jsonEncode(events));
+ await File('$path.window').writeAsString(jsonEncode({'start':start.timestamp,'end':end.timestamp}));
+ print('samples: ${samples?.sampleCount ?? 0}, GC events: ${events.length}');
+ await sub.cancel();await service.dispose();
+}

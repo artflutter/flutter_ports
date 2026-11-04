@@ -1,0 +1,14 @@
+import os,json,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+for label,extra,n in [('fallback',{'CALLS':'data','STYLES':'static,indexed,scriptable','CONNECTED':'0,1','LABELS':'0'},6),('phases',{'CALLS':'draw,update,animate','STYLES':'scriptable','CONNECTED':'0,1','LABELS':'0,200','SPIN':'1'},12)]:
+ print('START',label,flush=True)
+ result=out/(label+'.results');result.unlink(missing_ok=True)
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run(['/tmp/ui-priorities-diagnostic.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'FRAMES':'1','SECONDS':'8','OUTPUT':str(result),**extra},stdout=log,stderr=subprocess.STDOUT,timeout=180,check=True)
+ rows=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+ diag=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('DIAGNOSTIC ')]
+ assert len(rows)==len(diag)==n
+ assert all(r['samples']>=4 and r['frameTimings']>=25 and r['canvas']=='1036.0x520.0@2.0' for r in rows)
+ (out/(label+'.json')).write_text(json.dumps({'frames':rows,'diagnostics':diag},indent=2)+'\n')
+ print('DONE',label,flush=True)

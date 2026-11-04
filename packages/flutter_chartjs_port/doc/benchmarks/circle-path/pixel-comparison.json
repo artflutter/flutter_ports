@@ -1,0 +1,3010 @@
+{
+  "comparisons": 300,
+  "differences": [],
+  "runs": {
+    "baseline": {
+      "circle-1-1.0-0.5-64-false-0": {
+        "scene": "circle-1-1.0-0.5-64-false-0",
+        "bytes": 102400,
+        "sha256": "8edac30b709429c88fbe3ee9da6109bc9e28592acbbcaa668a53e8097378aac1"
+      },
+      "circle-1-1.0-0.5-64-false-1": {
+        "scene": "circle-1-1.0-0.5-64-false-1",
+        "bytes": 102400,
+        "sha256": "6c083089f598f57730b05865b76172a4cf9fab0939676b10982f90aaadbf103a"
+      },
+      "circle-1-1.0-0.5-64-false-2": {
+        "scene": "circle-1-1.0-0.5-64-false-2",
+        "bytes": 102400,
+        "sha256": "aa305c4bafcab2eb2b032ddccd48b9642ba26d284626411da05583d8814f4ef3"
+      },
+      "circle-1-1.0-0.5-64-true-0": {
+        "scene": "circle-1-1.0-0.5-64-true-0",
+        "bytes": 102400,
+        "sha256": "eb99688c1257f3ce2d8f709597d23d780aec40e36160e822a3481ef0a86542eb"
+      },
+      "circle-1-1.0-0.5-64-true-1": {
+        "scene": "circle-1-1.0-0.5-64-true-1",
+        "bytes": 102400,
+        "sha256": "9c1e0c4a50e68995cb09adf143b01b58beb6ac2350ac50a4272ad6b06b556413"
+      },
+      "circle-1-1.0-0.5-64-true-2": {
+        "scene": "circle-1-1.0-0.5-64-true-2",
+        "bytes": 102400,
+        "sha256": "bdbe4265120245bb1d08850eb7067c0e2d4c2117a2fedc9904c2042078b6390d"
+      },
+      "circle-1-1.0-0.5-255-false-0": {
+        "scene": "circle-1-1.0-0.5-255-false-0",
+        "bytes": 102400,
+        "sha256": "f0987e18d26708c93427760ae8abb7d5bba38b2c0751524ee548377acb88a540"
+      },
+      "circle-1-1.0-0.5-255-false-1": {
+        "scene": "circle-1-1.0-0.5-255-false-1",
+        "bytes": 102400,
+        "sha256": "f0da5b357e7e71f18616bc9c817db37dc13bb670650022a754183d201fd76946"
+      },
+      "circle-1-1.0-0.5-255-false-2": {
+        "scene": "circle-1-1.0-0.5-255-false-2",
+        "bytes": 102400,
+        "sha256": "c62c44ad3056f7ea513b28033f0258409be60943e366a69d0b750c6dd0605610"
+      },
+      "circle-1-1.0-0.5-255-true-0": {
+        "scene": "circle-1-1.0-0.5-255-true-0",
+        "bytes": 102400,
+        "sha256": "e05e90ad2e3a52e214a303a9b7fdf96b1781211cfb549b86acb4c57d84548f45"
+      },
+      "circle-1-1.0-0.5-255-true-1": {
+        "scene": "circle-1-1.0-0.5-255-true-1",
+        "bytes": 102400,
+        "sha256": "8de7d1294a42ba97c19622a9ba528f8e264195279db72cd78e95664ee2717317"
+      },
+      "circle-1-1.0-0.5-255-true-2": {
+        "scene": "circle-1-1.0-0.5-255-true-2",
+        "bytes": 102400,
+        "sha256": "998ce3837295372fae036d550b8dcbd384b8a447595528ff8eb976e2b3a74d6b"
+      },
+      "circle-1-1.0-1.0-64-false-0": {
+        "scene": "circle-1-1.0-1.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "3b98d32c5a2e8ed65c5cb2541db5e371f0d365813a1d04a03328389c4653fab8"
+      },
+      "circle-1-1.0-1.0-64-false-1": {
+        "scene": "circle-1-1.0-1.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "fd6a0b054bd31fa9aaeaf8c07add5cde0e48df55dcb0eeb805c5b697bb0ae873"
+      },
+      "circle-1-1.0-1.0-64-false-2": {
+        "scene": "circle-1-1.0-1.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "6722147ea2dc563d4600d866828bd94e38d65849dd306fbdf5ea22f2fa90fd23"
+      },
+      "circle-1-1.0-1.0-64-true-0": {
+        "scene": "circle-1-1.0-1.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "7b94002e61bf9c7496759114b7f1b244c435070c8033b24b4cb2b2628e9cc158"
+      },
+      "circle-1-1.0-1.0-64-true-1": {
+        "scene": "circle-1-1.0-1.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "3a8cf77cacda3615ea1908ea7db1f86d5f4a607d05df81fec4292c6406979d4f"
+      },
+      "circle-1-1.0-1.0-64-true-2": {
+        "scene": "circle-1-1.0-1.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "3ddd44e74942852a0221924c16bb968688dab6b4d5b4a32e6ec94114ca241b7f"
+      },
+      "circle-1-1.0-1.0-255-false-0": {
+        "scene": "circle-1-1.0-1.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "c9af49760cf1d93efa9efd91a05d0bd5911e49b29a241082d17135569b781692"
+      },
+      "circle-1-1.0-1.0-255-false-1": {
+        "scene": "circle-1-1.0-1.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "70e347cd00f2a3dfd68edf0ae0023a084206c26d24251742060d1662bee39bf9"
+      },
+      "circle-1-1.0-1.0-255-false-2": {
+        "scene": "circle-1-1.0-1.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "eb6ef88f53f208125b3a28f725553ed30d9e69bd4d871ee20c2e612e354de461"
+      },
+      "circle-1-1.0-1.0-255-true-0": {
+        "scene": "circle-1-1.0-1.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "cac49fea1c4bb72cf13bff9b04799a30a4a5268cc3afd86c979976d779678354"
+      },
+      "circle-1-1.0-1.0-255-true-1": {
+        "scene": "circle-1-1.0-1.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "dba5008ba910167054aa7e9dd513667ba4ad847df6c9174a4a453df6aadaebdf"
+      },
+      "circle-1-1.0-1.0-255-true-2": {
+        "scene": "circle-1-1.0-1.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "83dc3331b845f33058ac9a163343481622715099267e5fd7cecc001990fb0a90"
+      },
+      "circle-1-1.0-3.0-64-false-0": {
+        "scene": "circle-1-1.0-3.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "333c54a0afed6af416bbbed7d669f372c88ddaaf58d9345a2d50471a5328418a"
+      },
+      "circle-1-1.0-3.0-64-false-1": {
+        "scene": "circle-1-1.0-3.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "1c56c6392a3a3483185d8b5b5b65e3372952752fe44451105dee8f6abc2dc04f"
+      },
+      "circle-1-1.0-3.0-64-false-2": {
+        "scene": "circle-1-1.0-3.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-1.0-3.0-64-true-0": {
+        "scene": "circle-1-1.0-3.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "5f3594167d669177960b2e6968dfd08f362b2566772935e77b0938acc4a02c5e"
+      },
+      "circle-1-1.0-3.0-64-true-1": {
+        "scene": "circle-1-1.0-3.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "4c9c5cdeadf9c49d53fab1fc63cbd4fd2b0dd4fea1d7d1e0f272187affe2b8c5"
+      },
+      "circle-1-1.0-3.0-64-true-2": {
+        "scene": "circle-1-1.0-3.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-1.0-3.0-255-false-0": {
+        "scene": "circle-1-1.0-3.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "a88dbc4ebcaa6252f4b23b567d6fdf1dbc0ec4f13f2f0b37724e44094111f955"
+      },
+      "circle-1-1.0-3.0-255-false-1": {
+        "scene": "circle-1-1.0-3.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "6639f2d25dc54b9e125d7532216e6f1deefd87780b87731e52a98016c50d4f2b"
+      },
+      "circle-1-1.0-3.0-255-false-2": {
+        "scene": "circle-1-1.0-3.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-1.0-3.0-255-true-0": {
+        "scene": "circle-1-1.0-3.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "ff47838a4275e9dcb064039f51a89d65d929e7e2fe38927851ba878b06f0fe4f"
+      },
+      "circle-1-1.0-3.0-255-true-1": {
+        "scene": "circle-1-1.0-3.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "d7cb088dd6e524ef563a9348e41b018a5783f9ccb4a5a61fa21bfe218132f083"
+      },
+      "circle-1-1.0-3.0-255-true-2": {
+        "scene": "circle-1-1.0-3.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-3.0-0.5-64-false-0": {
+        "scene": "circle-1-3.0-0.5-64-false-0",
+        "bytes": 102400,
+        "sha256": "6bfae7eb99362239f0e1bb40823a6872c65bad7c1c34c6f2be7d651f78442f5f"
+      },
+      "circle-1-3.0-0.5-64-false-1": {
+        "scene": "circle-1-3.0-0.5-64-false-1",
+        "bytes": 102400,
+        "sha256": "9e1ad26273c480e3ef9937d3d86ff1c97f9b9bb0b1cc6b14e318df00e431432d"
+      },
+      "circle-1-3.0-0.5-64-false-2": {
+        "scene": "circle-1-3.0-0.5-64-false-2",
+        "bytes": 102400,
+        "sha256": "b02be070a412cd3936ef0a1238484d9d088a7f91073c1d346c98e56b901c5429"
+      },
+      "circle-1-3.0-0.5-64-true-0": {
+        "scene": "circle-1-3.0-0.5-64-true-0",
+        "bytes": 102400,
+        "sha256": "9dbd70d6b68a4d4e58e527acc72b1c28650d1a65ce806be3f7893f0d85bf972e"
+      },
+      "circle-1-3.0-0.5-64-true-1": {
+        "scene": "circle-1-3.0-0.5-64-true-1",
+        "bytes": 102400,
+        "sha256": "fea9996349f381a56c480e68e98f6bc5afc18e74227c07444b931fccb1291dcd"
+      },
+      "circle-1-3.0-0.5-64-true-2": {
+        "scene": "circle-1-3.0-0.5-64-true-2",
+        "bytes": 102400,
+        "sha256": "467965989613376ffaa2faeb06394539473ef872e98c96b480f6f032ef6cbcbc"
+      },
+      "circle-1-3.0-0.5-255-false-0": {
+        "scene": "circle-1-3.0-0.5-255-false-0",
+        "bytes": 102400,
+        "sha256": "1032b006adb35de71624b6c850022c272feec48442802baf4411edae4776dfba"
+      },
+      "circle-1-3.0-0.5-255-false-1": {
+        "scene": "circle-1-3.0-0.5-255-false-1",
+        "bytes": 102400,
+        "sha256": "8a4358766b890164680e142da66494a4b3f9af153c9591e9a08bc9d734224997"
+      },
+      "circle-1-3.0-0.5-255-false-2": {
+        "scene": "circle-1-3.0-0.5-255-false-2",
+        "bytes": 102400,
+        "sha256": "32c6c7ac35aed2db71bf087902caa4a3a5a0b85185b7bf41926f1f967fde9bcd"
+      },
+      "circle-1-3.0-0.5-255-true-0": {
+        "scene": "circle-1-3.0-0.5-255-true-0",
+        "bytes": 102400,
+        "sha256": "d0a646e82b41ea041c6088cf178f2129b2bd5f27d8fdb78bd2210fc3b6916d93"
+      },
+      "circle-1-3.0-0.5-255-true-1": {
+        "scene": "circle-1-3.0-0.5-255-true-1",
+        "bytes": 102400,
+        "sha256": "c29c8303ddf28beaec8c7bdb00814f522c3ed8c1954bfd0c84555be5596381a7"
+      },
+      "circle-1-3.0-0.5-255-true-2": {
+        "scene": "circle-1-3.0-0.5-255-true-2",
+        "bytes": 102400,
+        "sha256": "8fbcd7ca8cb62d80ec33be20bd44ff554753e7057afe83285a051068359d6f67"
+      },
+      "circle-1-3.0-1.0-64-false-0": {
+        "scene": "circle-1-3.0-1.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "534c3453df2c57a73245327fc566feb01acc8b60bc65bdc8ab4b954aec70aacb"
+      },
+      "circle-1-3.0-1.0-64-false-1": {
+        "scene": "circle-1-3.0-1.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "1e0b0021d1d7a27a483447c0d46e288d86414f641d60b559e37b70e7a7dd61da"
+      },
+      "circle-1-3.0-1.0-64-false-2": {
+        "scene": "circle-1-3.0-1.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "9cb88039a947f5f5b768e680017efd5b1220678cc1158f3d1e5a64287c4840c8"
+      },
+      "circle-1-3.0-1.0-64-true-0": {
+        "scene": "circle-1-3.0-1.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "41bffb904f235a865df94f23713743632f0db8132a4bf2ea0c365f8cbfd1c77c"
+      },
+      "circle-1-3.0-1.0-64-true-1": {
+        "scene": "circle-1-3.0-1.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "678a783988abd9d99e770582a6988bcb289bd6d6507f02d1ca0170b2f5a07ef4"
+      },
+      "circle-1-3.0-1.0-64-true-2": {
+        "scene": "circle-1-3.0-1.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "25cc5f9a49263b88ce394e6fecb8150179e1c02859cc5df1faba59b22680c0f2"
+      },
+      "circle-1-3.0-1.0-255-false-0": {
+        "scene": "circle-1-3.0-1.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "28695af57d6c15675f9eef7aff55d57230c65d2388a69152ac2f1cf4517ffe02"
+      },
+      "circle-1-3.0-1.0-255-false-1": {
+        "scene": "circle-1-3.0-1.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "44074c840a57f2d2b10f6672fe0a37bf80375a75a46417ab19ed1aa4247f54df"
+      },
+      "circle-1-3.0-1.0-255-false-2": {
+        "scene": "circle-1-3.0-1.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "1cffdeeb77d252583600ed3c25b465e8b4c45c61870905d61d4ac4cbf6d64cb0"
+      },
+      "circle-1-3.0-1.0-255-true-0": {
+        "scene": "circle-1-3.0-1.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "dbabe7faa8241a1550cae5740df1105dcc9439d29fa10976b2c0ed186bc123c7"
+      },
+      "circle-1-3.0-1.0-255-true-1": {
+        "scene": "circle-1-3.0-1.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "28c51d225c4729e308b92e59e1873071d2196e245897bc9119d2152ea041d762"
+      },
+      "circle-1-3.0-1.0-255-true-2": {
+        "scene": "circle-1-3.0-1.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "16ce6d11565f745cedcf35608dd6abc460e8335e97336a514e7b2624f2d658d0"
+      },
+      "circle-1-3.0-3.0-64-false-0": {
+        "scene": "circle-1-3.0-3.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "642bc2923931cccf29b2cac85c5e8fe56bc6e8f23e9faf2f296540f4e8ccd957"
+      },
+      "circle-1-3.0-3.0-64-false-1": {
+        "scene": "circle-1-3.0-3.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "d453a5b54dc7f037415d6ec68f6ac803dc3b8ee7ad3066232fb74235718749d9"
+      },
+      "circle-1-3.0-3.0-64-false-2": {
+        "scene": "circle-1-3.0-3.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "a7ceb31058fe313bbc02968884a01ed0dccd216238693ca31ce37e666f7a7c8b"
+      },
+      "circle-1-3.0-3.0-64-true-0": {
+        "scene": "circle-1-3.0-3.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "156e146b700799030bb981537184c4299dca146c04d6c66228e8044685232f43"
+      },
+      "circle-1-3.0-3.0-64-true-1": {
+        "scene": "circle-1-3.0-3.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "64d5361db4d8dccbe64555c6e6b8762b090b20eca9c3b91a9bcf3d7b2f91923a"
+      },
+      "circle-1-3.0-3.0-64-true-2": {
+        "scene": "circle-1-3.0-3.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "bcedf5d19071195ab0148025b656bb67a0f037e40210d1f05bebd758e6134658"
+      },
+      "circle-1-3.0-3.0-255-false-0": {
+        "scene": "circle-1-3.0-3.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "16354b85bf3339fdab0801b5a3ce08ac54b07237768cbca02d3e14515a53838c"
+      },
+      "circle-1-3.0-3.0-255-false-1": {
+        "scene": "circle-1-3.0-3.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "712902de45fd28cc122f4c6b65953f24a9e215edfbaa119f55633f21d62e01c3"
+      },
+      "circle-1-3.0-3.0-255-false-2": {
+        "scene": "circle-1-3.0-3.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "e0fdfb4d3989e0531e16da13bd96e31c44fbf271576d5a85314d37910291d7ac"
+      },
+      "circle-1-3.0-3.0-255-true-0": {
+        "scene": "circle-1-3.0-3.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "8910fb3a145df8f934cc0bb7bf6cd3eafc7cfc0b37cb1dc165f4c68916ef097e"
+      },
+      "circle-1-3.0-3.0-255-true-1": {
+        "scene": "circle-1-3.0-3.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "b127eab2ed81217f635547a4abd25f127e930ded0656d8e2eee68ee42fc26b02"
+      },
+      "circle-1-3.0-3.0-255-true-2": {
+        "scene": "circle-1-3.0-3.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "9a724086c2b94262e57fd105319e005fb673f94faacfa225fba9c89356c4441d"
+      },
+      "circle-1-12.0-0.5-64-false-0": {
+        "scene": "circle-1-12.0-0.5-64-false-0",
+        "bytes": 102400,
+        "sha256": "f9812028c9973dcd68971f35f53a55373ee100776d518b1b9d058a2e3d3fd3e4"
+      },
+      "circle-1-12.0-0.5-64-false-1": {
+        "scene": "circle-1-12.0-0.5-64-false-1",
+        "bytes": 102400,
+        "sha256": "22cd77733e2505ac5eea9b10f03443c21c53a3f2d3e4c816fe169997df1bcecf"
+      },
+      "circle-1-12.0-0.5-64-false-2": {
+        "scene": "circle-1-12.0-0.5-64-false-2",
+        "bytes": 102400,
+        "sha256": "b5458f2b9bfc83fdabc75985b47ac2564f11be41203025e7c2be3f36b05dabcf"
+      },
+      "circle-1-12.0-0.5-64-true-0": {
+        "scene": "circle-1-12.0-0.5-64-true-0",
+        "bytes": 102400,
+        "sha256": "ca4202469ca45144a4e092b368eec633453562ce5fb977d2686ba84afd78ba47"
+      },
+      "circle-1-12.0-0.5-64-true-1": {
+        "scene": "circle-1-12.0-0.5-64-true-1",
+        "bytes": 102400,
+        "sha256": "b9a5bd059a223a9920dd3e5a9c11c1603a943c1103b54db44223356fd0cfc5e9"
+      },
+      "circle-1-12.0-0.5-64-true-2": {
+        "scene": "circle-1-12.0-0.5-64-true-2",
+        "bytes": 102400,
+        "sha256": "cbcdc2d7d28ad789cc4fe3c3f151732e0a18525b78576772459c633a01adb25b"
+      },
+      "circle-1-12.0-0.5-255-false-0": {
+        "scene": "circle-1-12.0-0.5-255-false-0",
+        "bytes": 102400,
+        "sha256": "0e6146e43056d0b9a2a04245678c31e5c148c3d3b222d7f6599f8481ef8d4807"
+      },
+      "circle-1-12.0-0.5-255-false-1": {
+        "scene": "circle-1-12.0-0.5-255-false-1",
+        "bytes": 102400,
+        "sha256": "fb7212f6c28fa7e94df00c9a8e327e8f9a08d1fa6290bcbfe08dac535113bab5"
+      },
+      "circle-1-12.0-0.5-255-false-2": {
+        "scene": "circle-1-12.0-0.5-255-false-2",
+        "bytes": 102400,
+        "sha256": "90a49c7ef5464e09e296edbc015208302fc604452853e8f7afb05ebc88ea162b"
+      },
+      "circle-1-12.0-0.5-255-true-0": {
+        "scene": "circle-1-12.0-0.5-255-true-0",
+        "bytes": 102400,
+        "sha256": "d9ff0a85cb0c195068e55dbf54031ef764ae014494e1e38c11e850f8333baf74"
+      },
+      "circle-1-12.0-0.5-255-true-1": {
+        "scene": "circle-1-12.0-0.5-255-true-1",
+        "bytes": 102400,
+        "sha256": "47efa4f8c36d674ceadde541dafa0844935168ddf1f6715344fb74d1f6707931"
+      },
+      "circle-1-12.0-0.5-255-true-2": {
+        "scene": "circle-1-12.0-0.5-255-true-2",
+        "bytes": 102400,
+        "sha256": "fafe30c78f4bc4da0c2127b22ac6774736c1ed8c1b3db71b221cfbc9c3bf87a1"
+      },
+      "circle-1-12.0-1.0-64-false-0": {
+        "scene": "circle-1-12.0-1.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "553bc8da21dc2186784915b9d1fc377afa5037a3f59f783f2776be156e6a3dc8"
+      },
+      "circle-1-12.0-1.0-64-false-1": {
+        "scene": "circle-1-12.0-1.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "09a527bcc49972dee551cc65fcb124c0661e32ec336cdcc0f104037ff7282c8a"
+      },
+      "circle-1-12.0-1.0-64-false-2": {
+        "scene": "circle-1-12.0-1.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "b0ffcc74bc8aa9bc53c2952c0143072505f1ab142db926727bfe36e0505e62f3"
+      },
+      "circle-1-12.0-1.0-64-true-0": {
+        "scene": "circle-1-12.0-1.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "1d4a478726a73ba27d71baa17809b8b43189d72f592d97d2f53d53afa715f1ca"
+      },
+      "circle-1-12.0-1.0-64-true-1": {
+        "scene": "circle-1-12.0-1.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "1c6b64d54b4d43ff3c899899bca8ecd4ef0afb70d9c898de4f1f61ee042222e3"
+      },
+      "circle-1-12.0-1.0-64-true-2": {
+        "scene": "circle-1-12.0-1.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "a6014aee7a2d941481d73bc9210c6013ad21643091a64dbe34c6b3b2e28aba8a"
+      },
+      "circle-1-12.0-1.0-255-false-0": {
+        "scene": "circle-1-12.0-1.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "4bfd7d7aea978fbe982bc6ba86a1bae27da369faa3c5f57c052d01fa271b645b"
+      },
+      "circle-1-12.0-1.0-255-false-1": {
+        "scene": "circle-1-12.0-1.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "079bbf22b79cb268608f0e1e585942ebbb9ab204ec0792adbf27e9dbe36bec57"
+      },
+      "circle-1-12.0-1.0-255-false-2": {
+        "scene": "circle-1-12.0-1.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "1adf2c336279f78330932b619c2fe6debed57357056f3c0f77a89aca37766feb"
+      },
+      "circle-1-12.0-1.0-255-true-0": {
+        "scene": "circle-1-12.0-1.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "54f2c915c5578fde6f2d4ffc39257ce94bccf0b812ecd80b0f8b7cef284fda67"
+      },
+      "circle-1-12.0-1.0-255-true-1": {
+        "scene": "circle-1-12.0-1.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "6b1b9792cb14cd645692b7506d704aa8b8ab8debbf5826589d5f8fd89c94fa29"
+      },
+      "circle-1-12.0-1.0-255-true-2": {
+        "scene": "circle-1-12.0-1.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "6a9da07df67c3b08b1b96ffdf82ffcf31455519e16b392e5d1c2fcb5c293e83d"
+      },
+      "circle-1-12.0-3.0-64-false-0": {
+        "scene": "circle-1-12.0-3.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "21a4016eebcb406769931721e88ace02fd2684606c070d173c7cbf91f67c3abc"
+      },
+      "circle-1-12.0-3.0-64-false-1": {
+        "scene": "circle-1-12.0-3.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "cf062547dfecff2b5ec11f98d9d0a03a1368283fd6649a11485b36989095e140"
+      },
+      "circle-1-12.0-3.0-64-false-2": {
+        "scene": "circle-1-12.0-3.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "0fbe87698b7637e4dde853b233588253a368434091397ab969ba4a46dce69a83"
+      },
+      "circle-1-12.0-3.0-64-true-0": {
+        "scene": "circle-1-12.0-3.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "b4a6a401edbec16defb8d052f939ca36d8767d3ca0b72c4fc703a26ac8725302"
+      },
+      "circle-1-12.0-3.0-64-true-1": {
+        "scene": "circle-1-12.0-3.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "a03da6b3a05ebfb3f7e93ecf57417bb63264c4c35de79f86f7712e108f36c45d"
+      },
+      "circle-1-12.0-3.0-64-true-2": {
+        "scene": "circle-1-12.0-3.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "ffe6e26d14649ace4758ebe1d3ea138abc6dce9248e67b7ba835de1debafaea4"
+      },
+      "circle-1-12.0-3.0-255-false-0": {
+        "scene": "circle-1-12.0-3.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "48f51aebfb6984a8ba5559f5fbb649f22a31e08c1bff11b89334ee4216ed916e"
+      },
+      "circle-1-12.0-3.0-255-false-1": {
+        "scene": "circle-1-12.0-3.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "510b6377a6f3f58e75ee8320c4ad3590a7f3f56beacf14f090631cdb1aa7d599"
+      },
+      "circle-1-12.0-3.0-255-false-2": {
+        "scene": "circle-1-12.0-3.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "667db9fe0e5736b1f58b8123bceb7706603cb4af2ad2ab220b7b55010b607956"
+      },
+      "circle-1-12.0-3.0-255-true-0": {
+        "scene": "circle-1-12.0-3.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "ad2457a93460d8a37a84f213907da32aa8ff62f87617719985f9049c5156e46f"
+      },
+      "circle-1-12.0-3.0-255-true-1": {
+        "scene": "circle-1-12.0-3.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "281899a207e75709e09bb7afa06d17087b2f64e5bccffb859fd6d15736186801"
+      },
+      "circle-1-12.0-3.0-255-true-2": {
+        "scene": "circle-1-12.0-3.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "7e4ddc2fe7b66fcdac38655190ee049ca1aca0f94cc01155e818ba4a8c887452"
+      },
+      "circle-2-1.0-0.5-64-false-0": {
+        "scene": "circle-2-1.0-0.5-64-false-0",
+        "bytes": 409600,
+        "sha256": "a2407910e5c054b3228c20aef9fe51900109860784eb623577deef10de054df1"
+      },
+      "circle-2-1.0-0.5-64-false-1": {
+        "scene": "circle-2-1.0-0.5-64-false-1",
+        "bytes": 409600,
+        "sha256": "6584d2d425418967de2438f8f5ac1ba035e46a2cc20e11a57a31b374d4702bbf"
+      },
+      "circle-2-1.0-0.5-64-false-2": {
+        "scene": "circle-2-1.0-0.5-64-false-2",
+        "bytes": 409600,
+        "sha256": "fa1e42f62b9e736562ee764f0ef1b02913f9fd3593800322427b1179abd28e5f"
+      },
+      "circle-2-1.0-0.5-64-true-0": {
+        "scene": "circle-2-1.0-0.5-64-true-0",
+        "bytes": 409600,
+        "sha256": "81ff985f8fd30b0f1662e19f82baba98e8ef233da350c0afee4a441368abd9c2"
+      },
+      "circle-2-1.0-0.5-64-true-1": {
+        "scene": "circle-2-1.0-0.5-64-true-1",
+        "bytes": 409600,
+        "sha256": "006df8c5fe2eed91db745d668835efe6c219944dd0eb4e293073941b0f4cd3b2"
+      },
+      "circle-2-1.0-0.5-64-true-2": {
+        "scene": "circle-2-1.0-0.5-64-true-2",
+        "bytes": 409600,
+        "sha256": "7f48f467e8803422cf134b44ce90b70330f4bbc10f090510ff2a4c1ca62cdcf0"
+      },
+      "circle-2-1.0-0.5-255-false-0": {
+        "scene": "circle-2-1.0-0.5-255-false-0",
+        "bytes": 409600,
+        "sha256": "479922fcdcf0c5b93af1de51bf8db8fb0892c00846f71a65e0dbc3129cb8f2df"
+      },
+      "circle-2-1.0-0.5-255-false-1": {
+        "scene": "circle-2-1.0-0.5-255-false-1",
+        "bytes": 409600,
+        "sha256": "669e2e9113fba31a262ccea6b06ce99181ad46d2652685dfe658bd35f0822633"
+      },
+      "circle-2-1.0-0.5-255-false-2": {
+        "scene": "circle-2-1.0-0.5-255-false-2",
+        "bytes": 409600,
+        "sha256": "a0679c6a3252eab2d581fdf671f38724b411f9bfd12d3c0ffe2c48085efe7a31"
+      },
+      "circle-2-1.0-0.5-255-true-0": {
+        "scene": "circle-2-1.0-0.5-255-true-0",
+        "bytes": 409600,
+        "sha256": "4857fbe2bf7bac77e63ddc7fd7b6f7e87c6e5b752ae3399647e2648df47653f6"
+      },
+      "circle-2-1.0-0.5-255-true-1": {
+        "scene": "circle-2-1.0-0.5-255-true-1",
+        "bytes": 409600,
+        "sha256": "5f16ca6e51d93dfe10d257a95a8677f42772d88be00ad6183aca02dfffb34291"
+      },
+      "circle-2-1.0-0.5-255-true-2": {
+        "scene": "circle-2-1.0-0.5-255-true-2",
+        "bytes": 409600,
+        "sha256": "18ebabb81040d4c34731f7d3a7e7158caaaac070d95effe26f95601078fc111f"
+      },
+      "circle-2-1.0-1.0-64-false-0": {
+        "scene": "circle-2-1.0-1.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "0559d56f759d919683b4c80306d743e1dc266f15c43d144e55539a6ff13b31fb"
+      },
+      "circle-2-1.0-1.0-64-false-1": {
+        "scene": "circle-2-1.0-1.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "5021340a0ea8698fa855541d97aaf375694fba1013af6dc9b5239354a793516f"
+      },
+      "circle-2-1.0-1.0-64-false-2": {
+        "scene": "circle-2-1.0-1.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "f22f4b25594ef0170fc8a5bfb844bb1672fc0149c1b69ebfac20376648bc8b50"
+      },
+      "circle-2-1.0-1.0-64-true-0": {
+        "scene": "circle-2-1.0-1.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "6995f8c710ac2436650f340dc4afdc6cf328e02a4b8108e2aa3d74697555e039"
+      },
+      "circle-2-1.0-1.0-64-true-1": {
+        "scene": "circle-2-1.0-1.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "e62b9ff7276c91a15e1019b8c4093d597cbaf44fff02a82f23b71f36ca0373d3"
+      },
+      "circle-2-1.0-1.0-64-true-2": {
+        "scene": "circle-2-1.0-1.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "4864fcedc3581c51efc5ebc64c6f61916e7a5a74f9b0f7e02b185d80c1f93ffc"
+      },
+      "circle-2-1.0-1.0-255-false-0": {
+        "scene": "circle-2-1.0-1.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "94de993b071dbf5ef309aa3c7d2765fb5df63824637f2417d2a729e296944359"
+      },
+      "circle-2-1.0-1.0-255-false-1": {
+        "scene": "circle-2-1.0-1.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "94203767c1a97d99a2696d53b6e1ae1603984d26d417821616e1af5344d20c15"
+      },
+      "circle-2-1.0-1.0-255-false-2": {
+        "scene": "circle-2-1.0-1.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "0dc6a83e680262998d646558365c77c405ed4eded5bdbc61d89c39249270c978"
+      },
+      "circle-2-1.0-1.0-255-true-0": {
+        "scene": "circle-2-1.0-1.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "6084c92063ea0406b273f4c55f4444214bea7ff4903dbe639e905b2f8b43cfd1"
+      },
+      "circle-2-1.0-1.0-255-true-1": {
+        "scene": "circle-2-1.0-1.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "0b0b96adb71cdda925eaf215ce687eb2a2bc44e5f7096caf28f3e3832edf11d7"
+      },
+      "circle-2-1.0-1.0-255-true-2": {
+        "scene": "circle-2-1.0-1.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "cc0ba599353a4943868d33efdc98d017bde84220106d2a29781aa1b71fb28976"
+      },
+      "circle-2-1.0-3.0-64-false-0": {
+        "scene": "circle-2-1.0-3.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "0103254bc8970912303450ca78edabc07676448e67a6729c83572cdfb13c8d46"
+      },
+      "circle-2-1.0-3.0-64-false-1": {
+        "scene": "circle-2-1.0-3.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "aa4bc4f199a4b58678d64603a11930e252ef86cfa00757917428732df8713bdb"
+      },
+      "circle-2-1.0-3.0-64-false-2": {
+        "scene": "circle-2-1.0-3.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-1.0-3.0-64-true-0": {
+        "scene": "circle-2-1.0-3.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "f3d2e0db58e6d70dba7d668d6ef7d792a2a916bef3c0fa4d9e0b4bf89d35b9f3"
+      },
+      "circle-2-1.0-3.0-64-true-1": {
+        "scene": "circle-2-1.0-3.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "d5e42fab4f69b3fb2986d73dd8bee9f371d5e27012fd0a8d92e491e804aea994"
+      },
+      "circle-2-1.0-3.0-64-true-2": {
+        "scene": "circle-2-1.0-3.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-1.0-3.0-255-false-0": {
+        "scene": "circle-2-1.0-3.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "4715afd2fe2ee732a252f1a98ecb4b252be47d561f00cbf2d8e71e6b1577b9bd"
+      },
+      "circle-2-1.0-3.0-255-false-1": {
+        "scene": "circle-2-1.0-3.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "20a75d784a9e577c9d69fac8203743c870364db5e114571794a107b3d20d3374"
+      },
+      "circle-2-1.0-3.0-255-false-2": {
+        "scene": "circle-2-1.0-3.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-1.0-3.0-255-true-0": {
+        "scene": "circle-2-1.0-3.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "f3d2e0db58e6d70dba7d668d6ef7d792a2a916bef3c0fa4d9e0b4bf89d35b9f3"
+      },
+      "circle-2-1.0-3.0-255-true-1": {
+        "scene": "circle-2-1.0-3.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "d5e42fab4f69b3fb2986d73dd8bee9f371d5e27012fd0a8d92e491e804aea994"
+      },
+      "circle-2-1.0-3.0-255-true-2": {
+        "scene": "circle-2-1.0-3.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-3.0-0.5-64-false-0": {
+        "scene": "circle-2-3.0-0.5-64-false-0",
+        "bytes": 409600,
+        "sha256": "955078ea3a7a264bf0d7defc29b034fc7663048f7556c4d919ae2ac7e46cddbf"
+      },
+      "circle-2-3.0-0.5-64-false-1": {
+        "scene": "circle-2-3.0-0.5-64-false-1",
+        "bytes": 409600,
+        "sha256": "1f061cca4364d6dd05ab8968a872a2ad414b232814849a2db4fad678bd33469e"
+      },
+      "circle-2-3.0-0.5-64-false-2": {
+        "scene": "circle-2-3.0-0.5-64-false-2",
+        "bytes": 409600,
+        "sha256": "ef3d4f2f859807faf65789d2c9c568c8b3447b3f06515dc7bfb508be7407062e"
+      },
+      "circle-2-3.0-0.5-64-true-0": {
+        "scene": "circle-2-3.0-0.5-64-true-0",
+        "bytes": 409600,
+        "sha256": "f0652a2af02b67f3188249c2255e9050f4e3f98ca49d43ddf40f04fd3c4f9b89"
+      },
+      "circle-2-3.0-0.5-64-true-1": {
+        "scene": "circle-2-3.0-0.5-64-true-1",
+        "bytes": 409600,
+        "sha256": "36f108064991713ccf6121d03722a30f99cc649ed209080321dbc5be062ef67e"
+      },
+      "circle-2-3.0-0.5-64-true-2": {
+        "scene": "circle-2-3.0-0.5-64-true-2",
+        "bytes": 409600,
+        "sha256": "2e7744b207563ba00aa8f811ed7ab142b2b56304e2a84f39aa6a35cfc92df0b2"
+      },
+      "circle-2-3.0-0.5-255-false-0": {
+        "scene": "circle-2-3.0-0.5-255-false-0",
+        "bytes": 409600,
+        "sha256": "6f4315fa53d0f8dbb922373a1dfde71109c0fd96b33a24d333726f65950b9a4c"
+      },
+      "circle-2-3.0-0.5-255-false-1": {
+        "scene": "circle-2-3.0-0.5-255-false-1",
+        "bytes": 409600,
+        "sha256": "31de92d4bf2cad4e989af83aa3ceb87a23badf37ef6512932d52030db336b14d"
+      },
+      "circle-2-3.0-0.5-255-false-2": {
+        "scene": "circle-2-3.0-0.5-255-false-2",
+        "bytes": 409600,
+        "sha256": "41829bf41edd9d6e6f03602197a55952ab5b65657b79bef3c27ad84da20d2404"
+      },
+      "circle-2-3.0-0.5-255-true-0": {
+        "scene": "circle-2-3.0-0.5-255-true-0",
+        "bytes": 409600,
+        "sha256": "6c5e8f267fda44904735285ba8a77d1352b65ec6fd2fd0a8d5eea052f39204a2"
+      },
+      "circle-2-3.0-0.5-255-true-1": {
+        "scene": "circle-2-3.0-0.5-255-true-1",
+        "bytes": 409600,
+        "sha256": "a9aa6a5019c87632777d0db966e35651e8d022a71206db50ad0d3d86ef32c50a"
+      },
+      "circle-2-3.0-0.5-255-true-2": {
+        "scene": "circle-2-3.0-0.5-255-true-2",
+        "bytes": 409600,
+        "sha256": "0d90dd2789c8076ea8756f9655e379640c8b2bbdb956804f15f457315c14d90f"
+      },
+      "circle-2-3.0-1.0-64-false-0": {
+        "scene": "circle-2-3.0-1.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "111ec67050e6f2c7592196cf02ab4131d436ab7eb34b6a5ba57492d6cddbf8e1"
+      },
+      "circle-2-3.0-1.0-64-false-1": {
+        "scene": "circle-2-3.0-1.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "68d7ce98ffb3233a4362599ce5fe55949184a4b2a431304cfd59dcff15a34d01"
+      },
+      "circle-2-3.0-1.0-64-false-2": {
+        "scene": "circle-2-3.0-1.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "239052c5c80ad96a229211e6ec19e5f0fb550263cc6d5b0fdfe2977ac24edfcf"
+      },
+      "circle-2-3.0-1.0-64-true-0": {
+        "scene": "circle-2-3.0-1.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "9f0faa095a3c58893896504f30e608560b4614c25da9c9443f23cea6cff7350b"
+      },
+      "circle-2-3.0-1.0-64-true-1": {
+        "scene": "circle-2-3.0-1.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "c6b04253a4c5bd9d8e7e75fd50851e8339924f24bb18f6f82698d7a4653947ce"
+      },
+      "circle-2-3.0-1.0-64-true-2": {
+        "scene": "circle-2-3.0-1.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "eacc6bcb8d748f368bfd9d93fd56fab9fb8517cf60f9b07b09d545f8640b717c"
+      },
+      "circle-2-3.0-1.0-255-false-0": {
+        "scene": "circle-2-3.0-1.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "9977bde4d5a1309266ddb21a8a6d7a82a5aba1aa8076af8543ba2384afc1a934"
+      },
+      "circle-2-3.0-1.0-255-false-1": {
+        "scene": "circle-2-3.0-1.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "69abe028f605d57b24dc06d1085124075a6c1f0851d2223615c505dba5cdccd2"
+      },
+      "circle-2-3.0-1.0-255-false-2": {
+        "scene": "circle-2-3.0-1.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "41345b8e29124d5747c022d4be19fbf8c00a20813f044392623e79de62760ac4"
+      },
+      "circle-2-3.0-1.0-255-true-0": {
+        "scene": "circle-2-3.0-1.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "a54349514d81ddfdbd8eb5ee02f8ac960189ab1b7bc4dd76e6ef2bd08e76f313"
+      },
+      "circle-2-3.0-1.0-255-true-1": {
+        "scene": "circle-2-3.0-1.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "5c23a6dcbde1cdd1ffc3574bb6f8ce5c81c9416804a04f1ca44ec1e7467f694d"
+      },
+      "circle-2-3.0-1.0-255-true-2": {
+        "scene": "circle-2-3.0-1.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "11aa5412904c0001b82df83771f3115326673ebc96f5c7158e4810c9ea18267e"
+      },
+      "circle-2-3.0-3.0-64-false-0": {
+        "scene": "circle-2-3.0-3.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "daf372b93f34b850f7e50b464380240ed0feb25e1cd4ffaf9373cac1815615c0"
+      },
+      "circle-2-3.0-3.0-64-false-1": {
+        "scene": "circle-2-3.0-3.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "e929873215754dcbc71f8f0b2a2f28af1ae3e99ce5f96ccfd3c12b72dabdaebf"
+      },
+      "circle-2-3.0-3.0-64-false-2": {
+        "scene": "circle-2-3.0-3.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "c1adb8c6f11a34624006ca09bf1a86351703ad17a6f306629ff8b3d9e353aa0a"
+      },
+      "circle-2-3.0-3.0-64-true-0": {
+        "scene": "circle-2-3.0-3.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "173686ad717044d2aac9698ceee378b9068c687f7734d1f2f6c46a2bffb65fd2"
+      },
+      "circle-2-3.0-3.0-64-true-1": {
+        "scene": "circle-2-3.0-3.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "0d54eb56790038c30cd8f0203b3177e66ef8b8496a696c69010f314d5755186b"
+      },
+      "circle-2-3.0-3.0-64-true-2": {
+        "scene": "circle-2-3.0-3.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "16eb4fac29c991e0c4fd670659e7527bee38f2625fa816dff3cecf83e3a2105c"
+      },
+      "circle-2-3.0-3.0-255-false-0": {
+        "scene": "circle-2-3.0-3.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "2787ed86378e4952d5e29e93d55e1a6ecdbbf16addad1b711c2f6e021cb6d8bd"
+      },
+      "circle-2-3.0-3.0-255-false-1": {
+        "scene": "circle-2-3.0-3.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "142812bd11b348247fa8c5425a7561f74c62aabda8236bcab31ad04d31550c25"
+      },
+      "circle-2-3.0-3.0-255-false-2": {
+        "scene": "circle-2-3.0-3.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "b8df6663597f9342c18b26bdffe552c431ef7dccd2482b02cdea153b1628ea58"
+      },
+      "circle-2-3.0-3.0-255-true-0": {
+        "scene": "circle-2-3.0-3.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "52ac3aace608fdfd054096a33aa3c5675cfe08b81045543645f06b427e3432a4"
+      },
+      "circle-2-3.0-3.0-255-true-1": {
+        "scene": "circle-2-3.0-3.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "39da705b3970dcec66dcadea222c4affaaf1568418656883c982bd5c7de07938"
+      },
+      "circle-2-3.0-3.0-255-true-2": {
+        "scene": "circle-2-3.0-3.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "78cc2c1d7cfe8410d64fae020cfec50e3af88d7523039cc2e1f3de3f1e5bc74d"
+      },
+      "circle-2-12.0-0.5-64-false-0": {
+        "scene": "circle-2-12.0-0.5-64-false-0",
+        "bytes": 409600,
+        "sha256": "02d0536de2a672655860c2ac2456769c945593b4a7099004a480d63fc4bbba83"
+      },
+      "circle-2-12.0-0.5-64-false-1": {
+        "scene": "circle-2-12.0-0.5-64-false-1",
+        "bytes": 409600,
+        "sha256": "9652eff29b40fc07d82b9d16ed41099ff6d0182801695ca1861c0476de60d35f"
+      },
+      "circle-2-12.0-0.5-64-false-2": {
+        "scene": "circle-2-12.0-0.5-64-false-2",
+        "bytes": 409600,
+        "sha256": "93a1975322f10220521f72f2a19a904207e558497531c3e70b887166f68310bf"
+      },
+      "circle-2-12.0-0.5-64-true-0": {
+        "scene": "circle-2-12.0-0.5-64-true-0",
+        "bytes": 409600,
+        "sha256": "85b60edf77c3b23a5dbb2f517a8463e2754b7da801d8258d9644b6d5d55c4a4d"
+      },
+      "circle-2-12.0-0.5-64-true-1": {
+        "scene": "circle-2-12.0-0.5-64-true-1",
+        "bytes": 409600,
+        "sha256": "e67b6c5590fb5f14f3447e5ef4326dab1b2f52d53a69336340dd4c8ee389f1db"
+      },
+      "circle-2-12.0-0.5-64-true-2": {
+        "scene": "circle-2-12.0-0.5-64-true-2",
+        "bytes": 409600,
+        "sha256": "4ae23355246b44712200d805b5ee30821345e602a2503c79c02a03566ab3a1c2"
+      },
+      "circle-2-12.0-0.5-255-false-0": {
+        "scene": "circle-2-12.0-0.5-255-false-0",
+        "bytes": 409600,
+        "sha256": "4ae5903267a4a20a9240f76a825af2753ede92181d0f845859c800cfb9b144f1"
+      },
+      "circle-2-12.0-0.5-255-false-1": {
+        "scene": "circle-2-12.0-0.5-255-false-1",
+        "bytes": 409600,
+        "sha256": "bb661d6e979ec26dda74246e439bcd0af27626f35df413238f12be0e2a4d1d2a"
+      },
+      "circle-2-12.0-0.5-255-false-2": {
+        "scene": "circle-2-12.0-0.5-255-false-2",
+        "bytes": 409600,
+        "sha256": "7e57e577b6b5eb4ccb38e371ce238411ec31daa727f2fe9811c2df07f157c2eb"
+      },
+      "circle-2-12.0-0.5-255-true-0": {
+        "scene": "circle-2-12.0-0.5-255-true-0",
+        "bytes": 409600,
+        "sha256": "0d6a4c0a65204bc7c841640d0dabc4d94586dae149e22166280464d48277c286"
+      },
+      "circle-2-12.0-0.5-255-true-1": {
+        "scene": "circle-2-12.0-0.5-255-true-1",
+        "bytes": 409600,
+        "sha256": "525f5649139a11c4f6c9f60090635bd9d9e800d07655a4b39b1d09c699ebeb81"
+      },
+      "circle-2-12.0-0.5-255-true-2": {
+        "scene": "circle-2-12.0-0.5-255-true-2",
+        "bytes": 409600,
+        "sha256": "bf4384f880519be8a53dc737a25d876899dc622ac9fc524bec3d63bcfb96defc"
+      },
+      "circle-2-12.0-1.0-64-false-0": {
+        "scene": "circle-2-12.0-1.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "c03062895196357c07c196dba44871e7436d6ea75a9cb05bd7f4ea1a7ee30832"
+      },
+      "circle-2-12.0-1.0-64-false-1": {
+        "scene": "circle-2-12.0-1.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "160fc5bf481a4e79f8f4621fef58e6fb3e0d915fc71769cbe3f794b96ba83c43"
+      },
+      "circle-2-12.0-1.0-64-false-2": {
+        "scene": "circle-2-12.0-1.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "7f17b1ec50a9a15b00c52c917cc77422db08a4248f65de0c53b6c6c8e3c54933"
+      },
+      "circle-2-12.0-1.0-64-true-0": {
+        "scene": "circle-2-12.0-1.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "da78bc80705cdb9eb1c7998356116d49c1aff56c445423a17b03b41e12a7aef4"
+      },
+      "circle-2-12.0-1.0-64-true-1": {
+        "scene": "circle-2-12.0-1.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "588d39bdfa931839963d317332142ac5104d56d8ec9b22f279b3e594c54de707"
+      },
+      "circle-2-12.0-1.0-64-true-2": {
+        "scene": "circle-2-12.0-1.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "2aaa5e31dad01ffd7e70b88bac267779c78bc69cbd388a68485e1b03e168ff6a"
+      },
+      "circle-2-12.0-1.0-255-false-0": {
+        "scene": "circle-2-12.0-1.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "b43a413cc5fe62000d5254dfcae08c97a62f246819059eaa44e6d9c4c0316d8a"
+      },
+      "circle-2-12.0-1.0-255-false-1": {
+        "scene": "circle-2-12.0-1.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "6e756b1072d38b5f9e639cde9dec456216685a5ff789e3ac4e546f903d1f9038"
+      },
+      "circle-2-12.0-1.0-255-false-2": {
+        "scene": "circle-2-12.0-1.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "8e0973b5c8e4aff8bc1d03926530f2453ae995570ef9c8f411c5dc481adbc281"
+      },
+      "circle-2-12.0-1.0-255-true-0": {
+        "scene": "circle-2-12.0-1.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "5d32fa150cb2b59eee1025220d8e14b21bcbd3f562d6c719698407246844ef60"
+      },
+      "circle-2-12.0-1.0-255-true-1": {
+        "scene": "circle-2-12.0-1.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "e9272fc1e35b569a4af74a8a0f9975e7f4076ebb5234734d75d3ab1feb068673"
+      },
+      "circle-2-12.0-1.0-255-true-2": {
+        "scene": "circle-2-12.0-1.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "ea6a224c39f88e3ec85201366ce60b8e30b14c3be5760776d0a47101b76bfb4e"
+      },
+      "circle-2-12.0-3.0-64-false-0": {
+        "scene": "circle-2-12.0-3.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "4b80b4124df72828fbdde9472c58e9649087e72c2e48f9fcbae2be9b3086e315"
+      },
+      "circle-2-12.0-3.0-64-false-1": {
+        "scene": "circle-2-12.0-3.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "98039432347138775bb8e458ff888b3b020018ff027aee683f63b1541c0c6ef1"
+      },
+      "circle-2-12.0-3.0-64-false-2": {
+        "scene": "circle-2-12.0-3.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "ca9156bf9c2bc2e5a264b7c7081351a98069a367e367166b61421c42a95b1e38"
+      },
+      "circle-2-12.0-3.0-64-true-0": {
+        "scene": "circle-2-12.0-3.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "04175a74bf9db9061b0f1d0b9e99ba341750bf8fc3f15bf04ebd187a140ebc04"
+      },
+      "circle-2-12.0-3.0-64-true-1": {
+        "scene": "circle-2-12.0-3.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "44d2a0b4bf07b3db79b7a5a72432752cef16bea1ec126c3f69f733b3aa59b8fc"
+      },
+      "circle-2-12.0-3.0-64-true-2": {
+        "scene": "circle-2-12.0-3.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "83bac2c355d6a211c488ade53dd002026875a2fe521ea95ae4d294f16e08df57"
+      },
+      "circle-2-12.0-3.0-255-false-0": {
+        "scene": "circle-2-12.0-3.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "33835aea8d63ce424f8bcf2ff9d658f1b36b1112c8a5dd1e68c639174b86baca"
+      },
+      "circle-2-12.0-3.0-255-false-1": {
+        "scene": "circle-2-12.0-3.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "9c13a49bbacec44fd9359da6e5602cbdc266d2b72c032c8fbca5b96b85a442c4"
+      },
+      "circle-2-12.0-3.0-255-false-2": {
+        "scene": "circle-2-12.0-3.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "c792160f0892a7e605c2dded4b5fd794030d87ac0b1937c93c0946f406106785"
+      },
+      "circle-2-12.0-3.0-255-true-0": {
+        "scene": "circle-2-12.0-3.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "069ac7c179bb6dbd9091f50e6e103116ea4efe7474c80119c92c013f7f6eaf23"
+      },
+      "circle-2-12.0-3.0-255-true-1": {
+        "scene": "circle-2-12.0-3.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "f076f0a7d6f23d0d43a8c735a87472215d7b30ae1bbdfcc97815c3155e2e4067"
+      },
+      "circle-2-12.0-3.0-255-true-2": {
+        "scene": "circle-2-12.0-3.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "1546dee5cd1edbdffbd86f7be852d6fb1419f474d7be9406eb3366d9831c085c"
+      },
+      "path-1-0-open-false": {
+        "scene": "path-1-0-open-false",
+        "bytes": 102400,
+        "sha256": "7bb560a7bc8aab0894480b31779f87674dd98efb3ef20fc2e44c977a95a2de07"
+      },
+      "path-1-0-open-true": {
+        "scene": "path-1-0-open-true",
+        "bytes": 102400,
+        "sha256": "7bb560a7bc8aab0894480b31779f87674dd98efb3ef20fc2e44c977a95a2de07"
+      },
+      "path-1-0-closed-false": {
+        "scene": "path-1-0-closed-false",
+        "bytes": 102400,
+        "sha256": "ed5e21d38a22a0ca20d6fbcf383ab0e6ad1c5f874662361875753b5753d100f5"
+      },
+      "path-1-0-closed-true": {
+        "scene": "path-1-0-closed-true",
+        "bytes": 102400,
+        "sha256": "ed5e21d38a22a0ca20d6fbcf383ab0e6ad1c5f874662361875753b5753d100f5"
+      },
+      "path-1-0-mixed-false": {
+        "scene": "path-1-0-mixed-false",
+        "bytes": 102400,
+        "sha256": "e90a2f7e11e1ada7cc22f508bd65e5c100ec7265954ee616d1d169ec50074a3d"
+      },
+      "path-1-0-mixed-true": {
+        "scene": "path-1-0-mixed-true",
+        "bytes": 102400,
+        "sha256": "e90a2f7e11e1ada7cc22f508bd65e5c100ec7265954ee616d1d169ec50074a3d"
+      },
+      "path-1-0-dash-false": {
+        "scene": "path-1-0-dash-false",
+        "bytes": 102400,
+        "sha256": "a1aedc937fe71619135f4aec12998ee05122c7fd979d740635ed4f614acc975a"
+      },
+      "path-1-0-dash-true": {
+        "scene": "path-1-0-dash-true",
+        "bytes": 102400,
+        "sha256": "a1aedc937fe71619135f4aec12998ee05122c7fd979d740635ed4f614acc975a"
+      },
+      "path-1-0-clip-false": {
+        "scene": "path-1-0-clip-false",
+        "bytes": 102400,
+        "sha256": "2f457257642d200a6f975c2f3305b611a4c567af52c161c4adb544c3a2ad13f4"
+      },
+      "path-1-0-clip-true": {
+        "scene": "path-1-0-clip-true",
+        "bytes": 102400,
+        "sha256": "2f457257642d200a6f975c2f3305b611a4c567af52c161c4adb544c3a2ad13f4"
+      },
+      "path-1-0-mutate-false": {
+        "scene": "path-1-0-mutate-false",
+        "bytes": 102400,
+        "sha256": "37d1e4ef61f2f424c07c5fad6b24e2303bf831de821ab0ea73d6c346bde60546"
+      },
+      "path-1-0-mutate-true": {
+        "scene": "path-1-0-mutate-true",
+        "bytes": 102400,
+        "sha256": "37d1e4ef61f2f424c07c5fad6b24e2303bf831de821ab0ea73d6c346bde60546"
+      },
+      "path-1-0-long-false": {
+        "scene": "path-1-0-long-false",
+        "bytes": 102400,
+        "sha256": "2e64a8c4a733ab7b9bc97de73d2896042ae17f78e8bc6147a5fdfd3691aff8fb"
+      },
+      "path-1-0-long-true": {
+        "scene": "path-1-0-long-true",
+        "bytes": 102400,
+        "sha256": "2e64a8c4a733ab7b9bc97de73d2896042ae17f78e8bc6147a5fdfd3691aff8fb"
+      },
+      "path-1-1-open-false": {
+        "scene": "path-1-1-open-false",
+        "bytes": 102400,
+        "sha256": "8b2b61f4cd99dc4d7872e50732bba4146d753ab56f8aae7fa07b8039d1e06e4c"
+      },
+      "path-1-1-open-true": {
+        "scene": "path-1-1-open-true",
+        "bytes": 102400,
+        "sha256": "8b2b61f4cd99dc4d7872e50732bba4146d753ab56f8aae7fa07b8039d1e06e4c"
+      },
+      "path-1-1-closed-false": {
+        "scene": "path-1-1-closed-false",
+        "bytes": 102400,
+        "sha256": "7a764ad9bf23a3f4adf5780a1b680ea79c6b4871e7681f470ce23c862c045ab2"
+      },
+      "path-1-1-closed-true": {
+        "scene": "path-1-1-closed-true",
+        "bytes": 102400,
+        "sha256": "7a764ad9bf23a3f4adf5780a1b680ea79c6b4871e7681f470ce23c862c045ab2"
+      },
+      "path-1-1-mixed-false": {
+        "scene": "path-1-1-mixed-false",
+        "bytes": 102400,
+        "sha256": "e674ad300e6c46fc13d9e4916baf22630f7645508316a952b122589afc747ba6"
+      },
+      "path-1-1-mixed-true": {
+        "scene": "path-1-1-mixed-true",
+        "bytes": 102400,
+        "sha256": "e674ad300e6c46fc13d9e4916baf22630f7645508316a952b122589afc747ba6"
+      },
+      "path-1-1-dash-false": {
+        "scene": "path-1-1-dash-false",
+        "bytes": 102400,
+        "sha256": "62e889712f5d3c5c444230a69734b7edd62119a6f3b8629c942bbaef23550a32"
+      },
+      "path-1-1-dash-true": {
+        "scene": "path-1-1-dash-true",
+        "bytes": 102400,
+        "sha256": "62e889712f5d3c5c444230a69734b7edd62119a6f3b8629c942bbaef23550a32"
+      },
+      "path-1-1-clip-false": {
+        "scene": "path-1-1-clip-false",
+        "bytes": 102400,
+        "sha256": "d06635bde2defb664db48b94834f848a386d3d37fef553fe4b3c48a2be68002f"
+      },
+      "path-1-1-clip-true": {
+        "scene": "path-1-1-clip-true",
+        "bytes": 102400,
+        "sha256": "d06635bde2defb664db48b94834f848a386d3d37fef553fe4b3c48a2be68002f"
+      },
+      "path-1-1-mutate-false": {
+        "scene": "path-1-1-mutate-false",
+        "bytes": 102400,
+        "sha256": "308a458ab1539b1f1698cbdd21a0ad8ac453fd8c33f657514e8427d36496acce"
+      },
+      "path-1-1-mutate-true": {
+        "scene": "path-1-1-mutate-true",
+        "bytes": 102400,
+        "sha256": "308a458ab1539b1f1698cbdd21a0ad8ac453fd8c33f657514e8427d36496acce"
+      },
+      "path-1-1-long-false": {
+        "scene": "path-1-1-long-false",
+        "bytes": 102400,
+        "sha256": "120783b68292cf56894c7250f35f303eb431601b7147b690c78f9056b72cc221"
+      },
+      "path-1-1-long-true": {
+        "scene": "path-1-1-long-true",
+        "bytes": 102400,
+        "sha256": "120783b68292cf56894c7250f35f303eb431601b7147b690c78f9056b72cc221"
+      },
+      "path-1-2-open-false": {
+        "scene": "path-1-2-open-false",
+        "bytes": 102400,
+        "sha256": "76f9c85249d46a65883067be7e3a01bda69f403005f48006b1cac7787acab5bf"
+      },
+      "path-1-2-open-true": {
+        "scene": "path-1-2-open-true",
+        "bytes": 102400,
+        "sha256": "76f9c85249d46a65883067be7e3a01bda69f403005f48006b1cac7787acab5bf"
+      },
+      "path-1-2-closed-false": {
+        "scene": "path-1-2-closed-false",
+        "bytes": 102400,
+        "sha256": "1e259b4f49879c1e0ba0df83161201a8bf3ccf7676dbf338490765bcd9190f96"
+      },
+      "path-1-2-closed-true": {
+        "scene": "path-1-2-closed-true",
+        "bytes": 102400,
+        "sha256": "1e259b4f49879c1e0ba0df83161201a8bf3ccf7676dbf338490765bcd9190f96"
+      },
+      "path-1-2-mixed-false": {
+        "scene": "path-1-2-mixed-false",
+        "bytes": 102400,
+        "sha256": "3f2d9c885875e03d2809d5968887860754cc8c01582eca22e3a52e4d36cd9a69"
+      },
+      "path-1-2-mixed-true": {
+        "scene": "path-1-2-mixed-true",
+        "bytes": 102400,
+        "sha256": "3f2d9c885875e03d2809d5968887860754cc8c01582eca22e3a52e4d36cd9a69"
+      },
+      "path-1-2-dash-false": {
+        "scene": "path-1-2-dash-false",
+        "bytes": 102400,
+        "sha256": "c485b561ec091843bf57884a6eae8babd170bde0949f16ef1b520dbc3fdb90fe"
+      },
+      "path-1-2-dash-true": {
+        "scene": "path-1-2-dash-true",
+        "bytes": 102400,
+        "sha256": "c485b561ec091843bf57884a6eae8babd170bde0949f16ef1b520dbc3fdb90fe"
+      },
+      "path-1-2-clip-false": {
+        "scene": "path-1-2-clip-false",
+        "bytes": 102400,
+        "sha256": "7c4b9b61726e463c156796d4f42a8e3268525897a0b3ef6668f3d02b9c242a28"
+      },
+      "path-1-2-clip-true": {
+        "scene": "path-1-2-clip-true",
+        "bytes": 102400,
+        "sha256": "7c4b9b61726e463c156796d4f42a8e3268525897a0b3ef6668f3d02b9c242a28"
+      },
+      "path-1-2-mutate-false": {
+        "scene": "path-1-2-mutate-false",
+        "bytes": 102400,
+        "sha256": "03a27e295fd212063819a51b8c676c590d80402de126115e0b1a323e6342e23d"
+      },
+      "path-1-2-mutate-true": {
+        "scene": "path-1-2-mutate-true",
+        "bytes": 102400,
+        "sha256": "03a27e295fd212063819a51b8c676c590d80402de126115e0b1a323e6342e23d"
+      },
+      "path-1-2-long-false": {
+        "scene": "path-1-2-long-false",
+        "bytes": 102400,
+        "sha256": "a9eb90be3d64b374a0d316632f6c5b440fafe08a1f2b8883a4ed0db03ba8de4b"
+      },
+      "path-1-2-long-true": {
+        "scene": "path-1-2-long-true",
+        "bytes": 102400,
+        "sha256": "a9eb90be3d64b374a0d316632f6c5b440fafe08a1f2b8883a4ed0db03ba8de4b"
+      },
+      "path-2-0-open-false": {
+        "scene": "path-2-0-open-false",
+        "bytes": 409600,
+        "sha256": "65fa7ff778bc7bb7eec3a057045bc3763faba9f769e0afffef273b61215bca1e"
+      },
+      "path-2-0-open-true": {
+        "scene": "path-2-0-open-true",
+        "bytes": 409600,
+        "sha256": "65fa7ff778bc7bb7eec3a057045bc3763faba9f769e0afffef273b61215bca1e"
+      },
+      "path-2-0-closed-false": {
+        "scene": "path-2-0-closed-false",
+        "bytes": 409600,
+        "sha256": "25b4e407248c191c33603cf8b0155160f0387b0bc5b4c96989963c74491b7b8a"
+      },
+      "path-2-0-closed-true": {
+        "scene": "path-2-0-closed-true",
+        "bytes": 409600,
+        "sha256": "25b4e407248c191c33603cf8b0155160f0387b0bc5b4c96989963c74491b7b8a"
+      },
+      "path-2-0-mixed-false": {
+        "scene": "path-2-0-mixed-false",
+        "bytes": 409600,
+        "sha256": "82da460f361a71a17ac349ae7c80a1ca6bd70ab8f9592238b5b3003f4601481e"
+      },
+      "path-2-0-mixed-true": {
+        "scene": "path-2-0-mixed-true",
+        "bytes": 409600,
+        "sha256": "82da460f361a71a17ac349ae7c80a1ca6bd70ab8f9592238b5b3003f4601481e"
+      },
+      "path-2-0-dash-false": {
+        "scene": "path-2-0-dash-false",
+        "bytes": 409600,
+        "sha256": "6e430d24f2b7a72a5934ddda842771ab92ebe4c6b4ea2ef89ce3b30554378e24"
+      },
+      "path-2-0-dash-true": {
+        "scene": "path-2-0-dash-true",
+        "bytes": 409600,
+        "sha256": "6e430d24f2b7a72a5934ddda842771ab92ebe4c6b4ea2ef89ce3b30554378e24"
+      },
+      "path-2-0-clip-false": {
+        "scene": "path-2-0-clip-false",
+        "bytes": 409600,
+        "sha256": "5e810331195dfa42b0de79965ef815ed535c28604ebf39b43d37cb94d0f8331e"
+      },
+      "path-2-0-clip-true": {
+        "scene": "path-2-0-clip-true",
+        "bytes": 409600,
+        "sha256": "5e810331195dfa42b0de79965ef815ed535c28604ebf39b43d37cb94d0f8331e"
+      },
+      "path-2-0-mutate-false": {
+        "scene": "path-2-0-mutate-false",
+        "bytes": 409600,
+        "sha256": "94b0fd11dff9ae70eef1f2a033575405a29bc615e7555fc6e7f7055bedce5bf6"
+      },
+      "path-2-0-mutate-true": {
+        "scene": "path-2-0-mutate-true",
+        "bytes": 409600,
+        "sha256": "94b0fd11dff9ae70eef1f2a033575405a29bc615e7555fc6e7f7055bedce5bf6"
+      },
+      "path-2-0-long-false": {
+        "scene": "path-2-0-long-false",
+        "bytes": 409600,
+        "sha256": "f6c88cc7d1b0517a5b85d5b9eaf07353d2a74767662ed24530d0c341d6285500"
+      },
+      "path-2-0-long-true": {
+        "scene": "path-2-0-long-true",
+        "bytes": 409600,
+        "sha256": "f6c88cc7d1b0517a5b85d5b9eaf07353d2a74767662ed24530d0c341d6285500"
+      },
+      "path-2-1-open-false": {
+        "scene": "path-2-1-open-false",
+        "bytes": 409600,
+        "sha256": "db9824db320f75a5e3236fc1b42b36d9143221a71706b50679fc01ff047e300f"
+      },
+      "path-2-1-open-true": {
+        "scene": "path-2-1-open-true",
+        "bytes": 409600,
+        "sha256": "db9824db320f75a5e3236fc1b42b36d9143221a71706b50679fc01ff047e300f"
+      },
+      "path-2-1-closed-false": {
+        "scene": "path-2-1-closed-false",
+        "bytes": 409600,
+        "sha256": "ec926a1ab30fbff93a2da0bb7124f99dfd4eb845674665da60ce92950a71df6c"
+      },
+      "path-2-1-closed-true": {
+        "scene": "path-2-1-closed-true",
+        "bytes": 409600,
+        "sha256": "ec926a1ab30fbff93a2da0bb7124f99dfd4eb845674665da60ce92950a71df6c"
+      },
+      "path-2-1-mixed-false": {
+        "scene": "path-2-1-mixed-false",
+        "bytes": 409600,
+        "sha256": "648f484d1c1c2dee63fbd042c44d7fbaf7116dea4c94ba4f2fe113d9f9a174ef"
+      },
+      "path-2-1-mixed-true": {
+        "scene": "path-2-1-mixed-true",
+        "bytes": 409600,
+        "sha256": "648f484d1c1c2dee63fbd042c44d7fbaf7116dea4c94ba4f2fe113d9f9a174ef"
+      },
+      "path-2-1-dash-false": {
+        "scene": "path-2-1-dash-false",
+        "bytes": 409600,
+        "sha256": "ce208d7506cf973d06e0b3fdb87421a21689124e1814247d78a6d72e35e77445"
+      },
+      "path-2-1-dash-true": {
+        "scene": "path-2-1-dash-true",
+        "bytes": 409600,
+        "sha256": "ce208d7506cf973d06e0b3fdb87421a21689124e1814247d78a6d72e35e77445"
+      },
+      "path-2-1-clip-false": {
+        "scene": "path-2-1-clip-false",
+        "bytes": 409600,
+        "sha256": "10c4539bc68a24215585583b924271e27f8073639a49b7dfa7396a1cae8104f6"
+      },
+      "path-2-1-clip-true": {
+        "scene": "path-2-1-clip-true",
+        "bytes": 409600,
+        "sha256": "10c4539bc68a24215585583b924271e27f8073639a49b7dfa7396a1cae8104f6"
+      },
+      "path-2-1-mutate-false": {
+        "scene": "path-2-1-mutate-false",
+        "bytes": 409600,
+        "sha256": "dee1ac5ecb687405bd17f73881c57c4c4124ec3bca6cf0220d88cd8812f2972d"
+      },
+      "path-2-1-mutate-true": {
+        "scene": "path-2-1-mutate-true",
+        "bytes": 409600,
+        "sha256": "dee1ac5ecb687405bd17f73881c57c4c4124ec3bca6cf0220d88cd8812f2972d"
+      },
+      "path-2-1-long-false": {
+        "scene": "path-2-1-long-false",
+        "bytes": 409600,
+        "sha256": "bbea00a6d3d963a9c8f9a88df5080aa5acffea37bc4f203adc305cf2fed8d69b"
+      },
+      "path-2-1-long-true": {
+        "scene": "path-2-1-long-true",
+        "bytes": 409600,
+        "sha256": "bbea00a6d3d963a9c8f9a88df5080aa5acffea37bc4f203adc305cf2fed8d69b"
+      },
+      "path-2-2-open-false": {
+        "scene": "path-2-2-open-false",
+        "bytes": 409600,
+        "sha256": "4a35db82d2dc793b70c87d87be00a57507021115525e4ef0008a758395d67f9f"
+      },
+      "path-2-2-open-true": {
+        "scene": "path-2-2-open-true",
+        "bytes": 409600,
+        "sha256": "4a35db82d2dc793b70c87d87be00a57507021115525e4ef0008a758395d67f9f"
+      },
+      "path-2-2-closed-false": {
+        "scene": "path-2-2-closed-false",
+        "bytes": 409600,
+        "sha256": "88518da9cc99c315b4751eb45821a00101405cea6d340d0df4ed7398a6616f2c"
+      },
+      "path-2-2-closed-true": {
+        "scene": "path-2-2-closed-true",
+        "bytes": 409600,
+        "sha256": "88518da9cc99c315b4751eb45821a00101405cea6d340d0df4ed7398a6616f2c"
+      },
+      "path-2-2-mixed-false": {
+        "scene": "path-2-2-mixed-false",
+        "bytes": 409600,
+        "sha256": "4eaa561e61bf048f0bcba4dfb1043490641c07bb66871943ad726cc6700f48f7"
+      },
+      "path-2-2-mixed-true": {
+        "scene": "path-2-2-mixed-true",
+        "bytes": 409600,
+        "sha256": "4eaa561e61bf048f0bcba4dfb1043490641c07bb66871943ad726cc6700f48f7"
+      },
+      "path-2-2-dash-false": {
+        "scene": "path-2-2-dash-false",
+        "bytes": 409600,
+        "sha256": "629e9c9529744f54510c6765d22fb4288422c92ade4fa853b2c261b287dc63a2"
+      },
+      "path-2-2-dash-true": {
+        "scene": "path-2-2-dash-true",
+        "bytes": 409600,
+        "sha256": "629e9c9529744f54510c6765d22fb4288422c92ade4fa853b2c261b287dc63a2"
+      },
+      "path-2-2-clip-false": {
+        "scene": "path-2-2-clip-false",
+        "bytes": 409600,
+        "sha256": "c60e7fcc9da41b6ca21702409f0408f0ce0b02fa88abd488b47b1943b822c384"
+      },
+      "path-2-2-clip-true": {
+        "scene": "path-2-2-clip-true",
+        "bytes": 409600,
+        "sha256": "c60e7fcc9da41b6ca21702409f0408f0ce0b02fa88abd488b47b1943b822c384"
+      },
+      "path-2-2-mutate-false": {
+        "scene": "path-2-2-mutate-false",
+        "bytes": 409600,
+        "sha256": "241363c52e6e23ff6bc2b074b74b5c042dd5e672e6877bd8d18276e4e9b3f72e"
+      },
+      "path-2-2-mutate-true": {
+        "scene": "path-2-2-mutate-true",
+        "bytes": 409600,
+        "sha256": "241363c52e6e23ff6bc2b074b74b5c042dd5e672e6877bd8d18276e4e9b3f72e"
+      },
+      "path-2-2-long-false": {
+        "scene": "path-2-2-long-false",
+        "bytes": 409600,
+        "sha256": "5d018d57b8cfa6fa838e1347501e4a1e2ec7e5888cb69508d34082b6ab33cd4d"
+      },
+      "path-2-2-long-true": {
+        "scene": "path-2-2-long-true",
+        "bytes": 409600,
+        "sha256": "5d018d57b8cfa6fa838e1347501e4a1e2ec7e5888cb69508d34082b6ab33cd4d"
+      }
+    },
+    "production": {
+      "circle-1-1.0-0.5-64-false-0": {
+        "scene": "circle-1-1.0-0.5-64-false-0",
+        "bytes": 102400,
+        "sha256": "8edac30b709429c88fbe3ee9da6109bc9e28592acbbcaa668a53e8097378aac1"
+      },
+      "circle-1-1.0-0.5-64-false-1": {
+        "scene": "circle-1-1.0-0.5-64-false-1",
+        "bytes": 102400,
+        "sha256": "6c083089f598f57730b05865b76172a4cf9fab0939676b10982f90aaadbf103a"
+      },
+      "circle-1-1.0-0.5-64-false-2": {
+        "scene": "circle-1-1.0-0.5-64-false-2",
+        "bytes": 102400,
+        "sha256": "aa305c4bafcab2eb2b032ddccd48b9642ba26d284626411da05583d8814f4ef3"
+      },
+      "circle-1-1.0-0.5-64-true-0": {
+        "scene": "circle-1-1.0-0.5-64-true-0",
+        "bytes": 102400,
+        "sha256": "eb99688c1257f3ce2d8f709597d23d780aec40e36160e822a3481ef0a86542eb"
+      },
+      "circle-1-1.0-0.5-64-true-1": {
+        "scene": "circle-1-1.0-0.5-64-true-1",
+        "bytes": 102400,
+        "sha256": "9c1e0c4a50e68995cb09adf143b01b58beb6ac2350ac50a4272ad6b06b556413"
+      },
+      "circle-1-1.0-0.5-64-true-2": {
+        "scene": "circle-1-1.0-0.5-64-true-2",
+        "bytes": 102400,
+        "sha256": "bdbe4265120245bb1d08850eb7067c0e2d4c2117a2fedc9904c2042078b6390d"
+      },
+      "circle-1-1.0-0.5-255-false-0": {
+        "scene": "circle-1-1.0-0.5-255-false-0",
+        "bytes": 102400,
+        "sha256": "f0987e18d26708c93427760ae8abb7d5bba38b2c0751524ee548377acb88a540"
+      },
+      "circle-1-1.0-0.5-255-false-1": {
+        "scene": "circle-1-1.0-0.5-255-false-1",
+        "bytes": 102400,
+        "sha256": "f0da5b357e7e71f18616bc9c817db37dc13bb670650022a754183d201fd76946"
+      },
+      "circle-1-1.0-0.5-255-false-2": {
+        "scene": "circle-1-1.0-0.5-255-false-2",
+        "bytes": 102400,
+        "sha256": "c62c44ad3056f7ea513b28033f0258409be60943e366a69d0b750c6dd0605610"
+      },
+      "circle-1-1.0-0.5-255-true-0": {
+        "scene": "circle-1-1.0-0.5-255-true-0",
+        "bytes": 102400,
+        "sha256": "e05e90ad2e3a52e214a303a9b7fdf96b1781211cfb549b86acb4c57d84548f45"
+      },
+      "circle-1-1.0-0.5-255-true-1": {
+        "scene": "circle-1-1.0-0.5-255-true-1",
+        "bytes": 102400,
+        "sha256": "8de7d1294a42ba97c19622a9ba528f8e264195279db72cd78e95664ee2717317"
+      },
+      "circle-1-1.0-0.5-255-true-2": {
+        "scene": "circle-1-1.0-0.5-255-true-2",
+        "bytes": 102400,
+        "sha256": "998ce3837295372fae036d550b8dcbd384b8a447595528ff8eb976e2b3a74d6b"
+      },
+      "circle-1-1.0-1.0-64-false-0": {
+        "scene": "circle-1-1.0-1.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "3b98d32c5a2e8ed65c5cb2541db5e371f0d365813a1d04a03328389c4653fab8"
+      },
+      "circle-1-1.0-1.0-64-false-1": {
+        "scene": "circle-1-1.0-1.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "fd6a0b054bd31fa9aaeaf8c07add5cde0e48df55dcb0eeb805c5b697bb0ae873"
+      },
+      "circle-1-1.0-1.0-64-false-2": {
+        "scene": "circle-1-1.0-1.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "6722147ea2dc563d4600d866828bd94e38d65849dd306fbdf5ea22f2fa90fd23"
+      },
+      "circle-1-1.0-1.0-64-true-0": {
+        "scene": "circle-1-1.0-1.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "7b94002e61bf9c7496759114b7f1b244c435070c8033b24b4cb2b2628e9cc158"
+      },
+      "circle-1-1.0-1.0-64-true-1": {
+        "scene": "circle-1-1.0-1.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "3a8cf77cacda3615ea1908ea7db1f86d5f4a607d05df81fec4292c6406979d4f"
+      },
+      "circle-1-1.0-1.0-64-true-2": {
+        "scene": "circle-1-1.0-1.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "3ddd44e74942852a0221924c16bb968688dab6b4d5b4a32e6ec94114ca241b7f"
+      },
+      "circle-1-1.0-1.0-255-false-0": {
+        "scene": "circle-1-1.0-1.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "c9af49760cf1d93efa9efd91a05d0bd5911e49b29a241082d17135569b781692"
+      },
+      "circle-1-1.0-1.0-255-false-1": {
+        "scene": "circle-1-1.0-1.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "70e347cd00f2a3dfd68edf0ae0023a084206c26d24251742060d1662bee39bf9"
+      },
+      "circle-1-1.0-1.0-255-false-2": {
+        "scene": "circle-1-1.0-1.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "eb6ef88f53f208125b3a28f725553ed30d9e69bd4d871ee20c2e612e354de461"
+      },
+      "circle-1-1.0-1.0-255-true-0": {
+        "scene": "circle-1-1.0-1.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "cac49fea1c4bb72cf13bff9b04799a30a4a5268cc3afd86c979976d779678354"
+      },
+      "circle-1-1.0-1.0-255-true-1": {
+        "scene": "circle-1-1.0-1.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "dba5008ba910167054aa7e9dd513667ba4ad847df6c9174a4a453df6aadaebdf"
+      },
+      "circle-1-1.0-1.0-255-true-2": {
+        "scene": "circle-1-1.0-1.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "83dc3331b845f33058ac9a163343481622715099267e5fd7cecc001990fb0a90"
+      },
+      "circle-1-1.0-3.0-64-false-0": {
+        "scene": "circle-1-1.0-3.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "333c54a0afed6af416bbbed7d669f372c88ddaaf58d9345a2d50471a5328418a"
+      },
+      "circle-1-1.0-3.0-64-false-1": {
+        "scene": "circle-1-1.0-3.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "1c56c6392a3a3483185d8b5b5b65e3372952752fe44451105dee8f6abc2dc04f"
+      },
+      "circle-1-1.0-3.0-64-false-2": {
+        "scene": "circle-1-1.0-3.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-1.0-3.0-64-true-0": {
+        "scene": "circle-1-1.0-3.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "5f3594167d669177960b2e6968dfd08f362b2566772935e77b0938acc4a02c5e"
+      },
+      "circle-1-1.0-3.0-64-true-1": {
+        "scene": "circle-1-1.0-3.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "4c9c5cdeadf9c49d53fab1fc63cbd4fd2b0dd4fea1d7d1e0f272187affe2b8c5"
+      },
+      "circle-1-1.0-3.0-64-true-2": {
+        "scene": "circle-1-1.0-3.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-1.0-3.0-255-false-0": {
+        "scene": "circle-1-1.0-3.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "a88dbc4ebcaa6252f4b23b567d6fdf1dbc0ec4f13f2f0b37724e44094111f955"
+      },
+      "circle-1-1.0-3.0-255-false-1": {
+        "scene": "circle-1-1.0-3.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "6639f2d25dc54b9e125d7532216e6f1deefd87780b87731e52a98016c50d4f2b"
+      },
+      "circle-1-1.0-3.0-255-false-2": {
+        "scene": "circle-1-1.0-3.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-1.0-3.0-255-true-0": {
+        "scene": "circle-1-1.0-3.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "ff47838a4275e9dcb064039f51a89d65d929e7e2fe38927851ba878b06f0fe4f"
+      },
+      "circle-1-1.0-3.0-255-true-1": {
+        "scene": "circle-1-1.0-3.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "d7cb088dd6e524ef563a9348e41b018a5783f9ccb4a5a61fa21bfe218132f083"
+      },
+      "circle-1-1.0-3.0-255-true-2": {
+        "scene": "circle-1-1.0-3.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "05c3bd5b89c55ebed60accf1eda1f07b7f87a4fc44ed38f56e6d0490c5234d0c"
+      },
+      "circle-1-3.0-0.5-64-false-0": {
+        "scene": "circle-1-3.0-0.5-64-false-0",
+        "bytes": 102400,
+        "sha256": "6bfae7eb99362239f0e1bb40823a6872c65bad7c1c34c6f2be7d651f78442f5f"
+      },
+      "circle-1-3.0-0.5-64-false-1": {
+        "scene": "circle-1-3.0-0.5-64-false-1",
+        "bytes": 102400,
+        "sha256": "9e1ad26273c480e3ef9937d3d86ff1c97f9b9bb0b1cc6b14e318df00e431432d"
+      },
+      "circle-1-3.0-0.5-64-false-2": {
+        "scene": "circle-1-3.0-0.5-64-false-2",
+        "bytes": 102400,
+        "sha256": "b02be070a412cd3936ef0a1238484d9d088a7f91073c1d346c98e56b901c5429"
+      },
+      "circle-1-3.0-0.5-64-true-0": {
+        "scene": "circle-1-3.0-0.5-64-true-0",
+        "bytes": 102400,
+        "sha256": "9dbd70d6b68a4d4e58e527acc72b1c28650d1a65ce806be3f7893f0d85bf972e"
+      },
+      "circle-1-3.0-0.5-64-true-1": {
+        "scene": "circle-1-3.0-0.5-64-true-1",
+        "bytes": 102400,
+        "sha256": "fea9996349f381a56c480e68e98f6bc5afc18e74227c07444b931fccb1291dcd"
+      },
+      "circle-1-3.0-0.5-64-true-2": {
+        "scene": "circle-1-3.0-0.5-64-true-2",
+        "bytes": 102400,
+        "sha256": "467965989613376ffaa2faeb06394539473ef872e98c96b480f6f032ef6cbcbc"
+      },
+      "circle-1-3.0-0.5-255-false-0": {
+        "scene": "circle-1-3.0-0.5-255-false-0",
+        "bytes": 102400,
+        "sha256": "1032b006adb35de71624b6c850022c272feec48442802baf4411edae4776dfba"
+      },
+      "circle-1-3.0-0.5-255-false-1": {
+        "scene": "circle-1-3.0-0.5-255-false-1",
+        "bytes": 102400,
+        "sha256": "8a4358766b890164680e142da66494a4b3f9af153c9591e9a08bc9d734224997"
+      },
+      "circle-1-3.0-0.5-255-false-2": {
+        "scene": "circle-1-3.0-0.5-255-false-2",
+        "bytes": 102400,
+        "sha256": "32c6c7ac35aed2db71bf087902caa4a3a5a0b85185b7bf41926f1f967fde9bcd"
+      },
+      "circle-1-3.0-0.5-255-true-0": {
+        "scene": "circle-1-3.0-0.5-255-true-0",
+        "bytes": 102400,
+        "sha256": "d0a646e82b41ea041c6088cf178f2129b2bd5f27d8fdb78bd2210fc3b6916d93"
+      },
+      "circle-1-3.0-0.5-255-true-1": {
+        "scene": "circle-1-3.0-0.5-255-true-1",
+        "bytes": 102400,
+        "sha256": "c29c8303ddf28beaec8c7bdb00814f522c3ed8c1954bfd0c84555be5596381a7"
+      },
+      "circle-1-3.0-0.5-255-true-2": {
+        "scene": "circle-1-3.0-0.5-255-true-2",
+        "bytes": 102400,
+        "sha256": "8fbcd7ca8cb62d80ec33be20bd44ff554753e7057afe83285a051068359d6f67"
+      },
+      "circle-1-3.0-1.0-64-false-0": {
+        "scene": "circle-1-3.0-1.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "534c3453df2c57a73245327fc566feb01acc8b60bc65bdc8ab4b954aec70aacb"
+      },
+      "circle-1-3.0-1.0-64-false-1": {
+        "scene": "circle-1-3.0-1.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "1e0b0021d1d7a27a483447c0d46e288d86414f641d60b559e37b70e7a7dd61da"
+      },
+      "circle-1-3.0-1.0-64-false-2": {
+        "scene": "circle-1-3.0-1.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "9cb88039a947f5f5b768e680017efd5b1220678cc1158f3d1e5a64287c4840c8"
+      },
+      "circle-1-3.0-1.0-64-true-0": {
+        "scene": "circle-1-3.0-1.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "41bffb904f235a865df94f23713743632f0db8132a4bf2ea0c365f8cbfd1c77c"
+      },
+      "circle-1-3.0-1.0-64-true-1": {
+        "scene": "circle-1-3.0-1.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "678a783988abd9d99e770582a6988bcb289bd6d6507f02d1ca0170b2f5a07ef4"
+      },
+      "circle-1-3.0-1.0-64-true-2": {
+        "scene": "circle-1-3.0-1.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "25cc5f9a49263b88ce394e6fecb8150179e1c02859cc5df1faba59b22680c0f2"
+      },
+      "circle-1-3.0-1.0-255-false-0": {
+        "scene": "circle-1-3.0-1.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "28695af57d6c15675f9eef7aff55d57230c65d2388a69152ac2f1cf4517ffe02"
+      },
+      "circle-1-3.0-1.0-255-false-1": {
+        "scene": "circle-1-3.0-1.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "44074c840a57f2d2b10f6672fe0a37bf80375a75a46417ab19ed1aa4247f54df"
+      },
+      "circle-1-3.0-1.0-255-false-2": {
+        "scene": "circle-1-3.0-1.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "1cffdeeb77d252583600ed3c25b465e8b4c45c61870905d61d4ac4cbf6d64cb0"
+      },
+      "circle-1-3.0-1.0-255-true-0": {
+        "scene": "circle-1-3.0-1.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "dbabe7faa8241a1550cae5740df1105dcc9439d29fa10976b2c0ed186bc123c7"
+      },
+      "circle-1-3.0-1.0-255-true-1": {
+        "scene": "circle-1-3.0-1.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "28c51d225c4729e308b92e59e1873071d2196e245897bc9119d2152ea041d762"
+      },
+      "circle-1-3.0-1.0-255-true-2": {
+        "scene": "circle-1-3.0-1.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "16ce6d11565f745cedcf35608dd6abc460e8335e97336a514e7b2624f2d658d0"
+      },
+      "circle-1-3.0-3.0-64-false-0": {
+        "scene": "circle-1-3.0-3.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "642bc2923931cccf29b2cac85c5e8fe56bc6e8f23e9faf2f296540f4e8ccd957"
+      },
+      "circle-1-3.0-3.0-64-false-1": {
+        "scene": "circle-1-3.0-3.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "d453a5b54dc7f037415d6ec68f6ac803dc3b8ee7ad3066232fb74235718749d9"
+      },
+      "circle-1-3.0-3.0-64-false-2": {
+        "scene": "circle-1-3.0-3.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "a7ceb31058fe313bbc02968884a01ed0dccd216238693ca31ce37e666f7a7c8b"
+      },
+      "circle-1-3.0-3.0-64-true-0": {
+        "scene": "circle-1-3.0-3.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "156e146b700799030bb981537184c4299dca146c04d6c66228e8044685232f43"
+      },
+      "circle-1-3.0-3.0-64-true-1": {
+        "scene": "circle-1-3.0-3.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "64d5361db4d8dccbe64555c6e6b8762b090b20eca9c3b91a9bcf3d7b2f91923a"
+      },
+      "circle-1-3.0-3.0-64-true-2": {
+        "scene": "circle-1-3.0-3.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "bcedf5d19071195ab0148025b656bb67a0f037e40210d1f05bebd758e6134658"
+      },
+      "circle-1-3.0-3.0-255-false-0": {
+        "scene": "circle-1-3.0-3.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "16354b85bf3339fdab0801b5a3ce08ac54b07237768cbca02d3e14515a53838c"
+      },
+      "circle-1-3.0-3.0-255-false-1": {
+        "scene": "circle-1-3.0-3.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "712902de45fd28cc122f4c6b65953f24a9e215edfbaa119f55633f21d62e01c3"
+      },
+      "circle-1-3.0-3.0-255-false-2": {
+        "scene": "circle-1-3.0-3.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "e0fdfb4d3989e0531e16da13bd96e31c44fbf271576d5a85314d37910291d7ac"
+      },
+      "circle-1-3.0-3.0-255-true-0": {
+        "scene": "circle-1-3.0-3.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "8910fb3a145df8f934cc0bb7bf6cd3eafc7cfc0b37cb1dc165f4c68916ef097e"
+      },
+      "circle-1-3.0-3.0-255-true-1": {
+        "scene": "circle-1-3.0-3.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "b127eab2ed81217f635547a4abd25f127e930ded0656d8e2eee68ee42fc26b02"
+      },
+      "circle-1-3.0-3.0-255-true-2": {
+        "scene": "circle-1-3.0-3.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "9a724086c2b94262e57fd105319e005fb673f94faacfa225fba9c89356c4441d"
+      },
+      "circle-1-12.0-0.5-64-false-0": {
+        "scene": "circle-1-12.0-0.5-64-false-0",
+        "bytes": 102400,
+        "sha256": "f9812028c9973dcd68971f35f53a55373ee100776d518b1b9d058a2e3d3fd3e4"
+      },
+      "circle-1-12.0-0.5-64-false-1": {
+        "scene": "circle-1-12.0-0.5-64-false-1",
+        "bytes": 102400,
+        "sha256": "22cd77733e2505ac5eea9b10f03443c21c53a3f2d3e4c816fe169997df1bcecf"
+      },
+      "circle-1-12.0-0.5-64-false-2": {
+        "scene": "circle-1-12.0-0.5-64-false-2",
+        "bytes": 102400,
+        "sha256": "b5458f2b9bfc83fdabc75985b47ac2564f11be41203025e7c2be3f36b05dabcf"
+      },
+      "circle-1-12.0-0.5-64-true-0": {
+        "scene": "circle-1-12.0-0.5-64-true-0",
+        "bytes": 102400,
+        "sha256": "ca4202469ca45144a4e092b368eec633453562ce5fb977d2686ba84afd78ba47"
+      },
+      "circle-1-12.0-0.5-64-true-1": {
+        "scene": "circle-1-12.0-0.5-64-true-1",
+        "bytes": 102400,
+        "sha256": "b9a5bd059a223a9920dd3e5a9c11c1603a943c1103b54db44223356fd0cfc5e9"
+      },
+      "circle-1-12.0-0.5-64-true-2": {
+        "scene": "circle-1-12.0-0.5-64-true-2",
+        "bytes": 102400,
+        "sha256": "cbcdc2d7d28ad789cc4fe3c3f151732e0a18525b78576772459c633a01adb25b"
+      },
+      "circle-1-12.0-0.5-255-false-0": {
+        "scene": "circle-1-12.0-0.5-255-false-0",
+        "bytes": 102400,
+        "sha256": "0e6146e43056d0b9a2a04245678c31e5c148c3d3b222d7f6599f8481ef8d4807"
+      },
+      "circle-1-12.0-0.5-255-false-1": {
+        "scene": "circle-1-12.0-0.5-255-false-1",
+        "bytes": 102400,
+        "sha256": "fb7212f6c28fa7e94df00c9a8e327e8f9a08d1fa6290bcbfe08dac535113bab5"
+      },
+      "circle-1-12.0-0.5-255-false-2": {
+        "scene": "circle-1-12.0-0.5-255-false-2",
+        "bytes": 102400,
+        "sha256": "90a49c7ef5464e09e296edbc015208302fc604452853e8f7afb05ebc88ea162b"
+      },
+      "circle-1-12.0-0.5-255-true-0": {
+        "scene": "circle-1-12.0-0.5-255-true-0",
+        "bytes": 102400,
+        "sha256": "d9ff0a85cb0c195068e55dbf54031ef764ae014494e1e38c11e850f8333baf74"
+      },
+      "circle-1-12.0-0.5-255-true-1": {
+        "scene": "circle-1-12.0-0.5-255-true-1",
+        "bytes": 102400,
+        "sha256": "47efa4f8c36d674ceadde541dafa0844935168ddf1f6715344fb74d1f6707931"
+      },
+      "circle-1-12.0-0.5-255-true-2": {
+        "scene": "circle-1-12.0-0.5-255-true-2",
+        "bytes": 102400,
+        "sha256": "fafe30c78f4bc4da0c2127b22ac6774736c1ed8c1b3db71b221cfbc9c3bf87a1"
+      },
+      "circle-1-12.0-1.0-64-false-0": {
+        "scene": "circle-1-12.0-1.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "553bc8da21dc2186784915b9d1fc377afa5037a3f59f783f2776be156e6a3dc8"
+      },
+      "circle-1-12.0-1.0-64-false-1": {
+        "scene": "circle-1-12.0-1.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "09a527bcc49972dee551cc65fcb124c0661e32ec336cdcc0f104037ff7282c8a"
+      },
+      "circle-1-12.0-1.0-64-false-2": {
+        "scene": "circle-1-12.0-1.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "b0ffcc74bc8aa9bc53c2952c0143072505f1ab142db926727bfe36e0505e62f3"
+      },
+      "circle-1-12.0-1.0-64-true-0": {
+        "scene": "circle-1-12.0-1.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "1d4a478726a73ba27d71baa17809b8b43189d72f592d97d2f53d53afa715f1ca"
+      },
+      "circle-1-12.0-1.0-64-true-1": {
+        "scene": "circle-1-12.0-1.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "1c6b64d54b4d43ff3c899899bca8ecd4ef0afb70d9c898de4f1f61ee042222e3"
+      },
+      "circle-1-12.0-1.0-64-true-2": {
+        "scene": "circle-1-12.0-1.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "a6014aee7a2d941481d73bc9210c6013ad21643091a64dbe34c6b3b2e28aba8a"
+      },
+      "circle-1-12.0-1.0-255-false-0": {
+        "scene": "circle-1-12.0-1.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "4bfd7d7aea978fbe982bc6ba86a1bae27da369faa3c5f57c052d01fa271b645b"
+      },
+      "circle-1-12.0-1.0-255-false-1": {
+        "scene": "circle-1-12.0-1.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "079bbf22b79cb268608f0e1e585942ebbb9ab204ec0792adbf27e9dbe36bec57"
+      },
+      "circle-1-12.0-1.0-255-false-2": {
+        "scene": "circle-1-12.0-1.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "1adf2c336279f78330932b619c2fe6debed57357056f3c0f77a89aca37766feb"
+      },
+      "circle-1-12.0-1.0-255-true-0": {
+        "scene": "circle-1-12.0-1.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "54f2c915c5578fde6f2d4ffc39257ce94bccf0b812ecd80b0f8b7cef284fda67"
+      },
+      "circle-1-12.0-1.0-255-true-1": {
+        "scene": "circle-1-12.0-1.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "6b1b9792cb14cd645692b7506d704aa8b8ab8debbf5826589d5f8fd89c94fa29"
+      },
+      "circle-1-12.0-1.0-255-true-2": {
+        "scene": "circle-1-12.0-1.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "6a9da07df67c3b08b1b96ffdf82ffcf31455519e16b392e5d1c2fcb5c293e83d"
+      },
+      "circle-1-12.0-3.0-64-false-0": {
+        "scene": "circle-1-12.0-3.0-64-false-0",
+        "bytes": 102400,
+        "sha256": "21a4016eebcb406769931721e88ace02fd2684606c070d173c7cbf91f67c3abc"
+      },
+      "circle-1-12.0-3.0-64-false-1": {
+        "scene": "circle-1-12.0-3.0-64-false-1",
+        "bytes": 102400,
+        "sha256": "cf062547dfecff2b5ec11f98d9d0a03a1368283fd6649a11485b36989095e140"
+      },
+      "circle-1-12.0-3.0-64-false-2": {
+        "scene": "circle-1-12.0-3.0-64-false-2",
+        "bytes": 102400,
+        "sha256": "0fbe87698b7637e4dde853b233588253a368434091397ab969ba4a46dce69a83"
+      },
+      "circle-1-12.0-3.0-64-true-0": {
+        "scene": "circle-1-12.0-3.0-64-true-0",
+        "bytes": 102400,
+        "sha256": "b4a6a401edbec16defb8d052f939ca36d8767d3ca0b72c4fc703a26ac8725302"
+      },
+      "circle-1-12.0-3.0-64-true-1": {
+        "scene": "circle-1-12.0-3.0-64-true-1",
+        "bytes": 102400,
+        "sha256": "a03da6b3a05ebfb3f7e93ecf57417bb63264c4c35de79f86f7712e108f36c45d"
+      },
+      "circle-1-12.0-3.0-64-true-2": {
+        "scene": "circle-1-12.0-3.0-64-true-2",
+        "bytes": 102400,
+        "sha256": "ffe6e26d14649ace4758ebe1d3ea138abc6dce9248e67b7ba835de1debafaea4"
+      },
+      "circle-1-12.0-3.0-255-false-0": {
+        "scene": "circle-1-12.0-3.0-255-false-0",
+        "bytes": 102400,
+        "sha256": "48f51aebfb6984a8ba5559f5fbb649f22a31e08c1bff11b89334ee4216ed916e"
+      },
+      "circle-1-12.0-3.0-255-false-1": {
+        "scene": "circle-1-12.0-3.0-255-false-1",
+        "bytes": 102400,
+        "sha256": "510b6377a6f3f58e75ee8320c4ad3590a7f3f56beacf14f090631cdb1aa7d599"
+      },
+      "circle-1-12.0-3.0-255-false-2": {
+        "scene": "circle-1-12.0-3.0-255-false-2",
+        "bytes": 102400,
+        "sha256": "667db9fe0e5736b1f58b8123bceb7706603cb4af2ad2ab220b7b55010b607956"
+      },
+      "circle-1-12.0-3.0-255-true-0": {
+        "scene": "circle-1-12.0-3.0-255-true-0",
+        "bytes": 102400,
+        "sha256": "ad2457a93460d8a37a84f213907da32aa8ff62f87617719985f9049c5156e46f"
+      },
+      "circle-1-12.0-3.0-255-true-1": {
+        "scene": "circle-1-12.0-3.0-255-true-1",
+        "bytes": 102400,
+        "sha256": "281899a207e75709e09bb7afa06d17087b2f64e5bccffb859fd6d15736186801"
+      },
+      "circle-1-12.0-3.0-255-true-2": {
+        "scene": "circle-1-12.0-3.0-255-true-2",
+        "bytes": 102400,
+        "sha256": "7e4ddc2fe7b66fcdac38655190ee049ca1aca0f94cc01155e818ba4a8c887452"
+      },
+      "circle-2-1.0-0.5-64-false-0": {
+        "scene": "circle-2-1.0-0.5-64-false-0",
+        "bytes": 409600,
+        "sha256": "a2407910e5c054b3228c20aef9fe51900109860784eb623577deef10de054df1"
+      },
+      "circle-2-1.0-0.5-64-false-1": {
+        "scene": "circle-2-1.0-0.5-64-false-1",
+        "bytes": 409600,
+        "sha256": "6584d2d425418967de2438f8f5ac1ba035e46a2cc20e11a57a31b374d4702bbf"
+      },
+      "circle-2-1.0-0.5-64-false-2": {
+        "scene": "circle-2-1.0-0.5-64-false-2",
+        "bytes": 409600,
+        "sha256": "fa1e42f62b9e736562ee764f0ef1b02913f9fd3593800322427b1179abd28e5f"
+      },
+      "circle-2-1.0-0.5-64-true-0": {
+        "scene": "circle-2-1.0-0.5-64-true-0",
+        "bytes": 409600,
+        "sha256": "81ff985f8fd30b0f1662e19f82baba98e8ef233da350c0afee4a441368abd9c2"
+      },
+      "circle-2-1.0-0.5-64-true-1": {
+        "scene": "circle-2-1.0-0.5-64-true-1",
+        "bytes": 409600,
+        "sha256": "006df8c5fe2eed91db745d668835efe6c219944dd0eb4e293073941b0f4cd3b2"
+      },
+      "circle-2-1.0-0.5-64-true-2": {
+        "scene": "circle-2-1.0-0.5-64-true-2",
+        "bytes": 409600,
+        "sha256": "7f48f467e8803422cf134b44ce90b70330f4bbc10f090510ff2a4c1ca62cdcf0"
+      },
+      "circle-2-1.0-0.5-255-false-0": {
+        "scene": "circle-2-1.0-0.5-255-false-0",
+        "bytes": 409600,
+        "sha256": "479922fcdcf0c5b93af1de51bf8db8fb0892c00846f71a65e0dbc3129cb8f2df"
+      },
+      "circle-2-1.0-0.5-255-false-1": {
+        "scene": "circle-2-1.0-0.5-255-false-1",
+        "bytes": 409600,
+        "sha256": "669e2e9113fba31a262ccea6b06ce99181ad46d2652685dfe658bd35f0822633"
+      },
+      "circle-2-1.0-0.5-255-false-2": {
+        "scene": "circle-2-1.0-0.5-255-false-2",
+        "bytes": 409600,
+        "sha256": "a0679c6a3252eab2d581fdf671f38724b411f9bfd12d3c0ffe2c48085efe7a31"
+      },
+      "circle-2-1.0-0.5-255-true-0": {
+        "scene": "circle-2-1.0-0.5-255-true-0",
+        "bytes": 409600,
+        "sha256": "4857fbe2bf7bac77e63ddc7fd7b6f7e87c6e5b752ae3399647e2648df47653f6"
+      },
+      "circle-2-1.0-0.5-255-true-1": {
+        "scene": "circle-2-1.0-0.5-255-true-1",
+        "bytes": 409600,
+        "sha256": "5f16ca6e51d93dfe10d257a95a8677f42772d88be00ad6183aca02dfffb34291"
+      },
+      "circle-2-1.0-0.5-255-true-2": {
+        "scene": "circle-2-1.0-0.5-255-true-2",
+        "bytes": 409600,
+        "sha256": "18ebabb81040d4c34731f7d3a7e7158caaaac070d95effe26f95601078fc111f"
+      },
+      "circle-2-1.0-1.0-64-false-0": {
+        "scene": "circle-2-1.0-1.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "0559d56f759d919683b4c80306d743e1dc266f15c43d144e55539a6ff13b31fb"
+      },
+      "circle-2-1.0-1.0-64-false-1": {
+        "scene": "circle-2-1.0-1.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "5021340a0ea8698fa855541d97aaf375694fba1013af6dc9b5239354a793516f"
+      },
+      "circle-2-1.0-1.0-64-false-2": {
+        "scene": "circle-2-1.0-1.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "f22f4b25594ef0170fc8a5bfb844bb1672fc0149c1b69ebfac20376648bc8b50"
+      },
+      "circle-2-1.0-1.0-64-true-0": {
+        "scene": "circle-2-1.0-1.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "6995f8c710ac2436650f340dc4afdc6cf328e02a4b8108e2aa3d74697555e039"
+      },
+      "circle-2-1.0-1.0-64-true-1": {
+        "scene": "circle-2-1.0-1.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "e62b9ff7276c91a15e1019b8c4093d597cbaf44fff02a82f23b71f36ca0373d3"
+      },
+      "circle-2-1.0-1.0-64-true-2": {
+        "scene": "circle-2-1.0-1.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "4864fcedc3581c51efc5ebc64c6f61916e7a5a74f9b0f7e02b185d80c1f93ffc"
+      },
+      "circle-2-1.0-1.0-255-false-0": {
+        "scene": "circle-2-1.0-1.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "94de993b071dbf5ef309aa3c7d2765fb5df63824637f2417d2a729e296944359"
+      },
+      "circle-2-1.0-1.0-255-false-1": {
+        "scene": "circle-2-1.0-1.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "94203767c1a97d99a2696d53b6e1ae1603984d26d417821616e1af5344d20c15"
+      },
+      "circle-2-1.0-1.0-255-false-2": {
+        "scene": "circle-2-1.0-1.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "0dc6a83e680262998d646558365c77c405ed4eded5bdbc61d89c39249270c978"
+      },
+      "circle-2-1.0-1.0-255-true-0": {
+        "scene": "circle-2-1.0-1.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "6084c92063ea0406b273f4c55f4444214bea7ff4903dbe639e905b2f8b43cfd1"
+      },
+      "circle-2-1.0-1.0-255-true-1": {
+        "scene": "circle-2-1.0-1.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "0b0b96adb71cdda925eaf215ce687eb2a2bc44e5f7096caf28f3e3832edf11d7"
+      },
+      "circle-2-1.0-1.0-255-true-2": {
+        "scene": "circle-2-1.0-1.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "cc0ba599353a4943868d33efdc98d017bde84220106d2a29781aa1b71fb28976"
+      },
+      "circle-2-1.0-3.0-64-false-0": {
+        "scene": "circle-2-1.0-3.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "0103254bc8970912303450ca78edabc07676448e67a6729c83572cdfb13c8d46"
+      },
+      "circle-2-1.0-3.0-64-false-1": {
+        "scene": "circle-2-1.0-3.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "aa4bc4f199a4b58678d64603a11930e252ef86cfa00757917428732df8713bdb"
+      },
+      "circle-2-1.0-3.0-64-false-2": {
+        "scene": "circle-2-1.0-3.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-1.0-3.0-64-true-0": {
+        "scene": "circle-2-1.0-3.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "f3d2e0db58e6d70dba7d668d6ef7d792a2a916bef3c0fa4d9e0b4bf89d35b9f3"
+      },
+      "circle-2-1.0-3.0-64-true-1": {
+        "scene": "circle-2-1.0-3.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "d5e42fab4f69b3fb2986d73dd8bee9f371d5e27012fd0a8d92e491e804aea994"
+      },
+      "circle-2-1.0-3.0-64-true-2": {
+        "scene": "circle-2-1.0-3.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-1.0-3.0-255-false-0": {
+        "scene": "circle-2-1.0-3.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "4715afd2fe2ee732a252f1a98ecb4b252be47d561f00cbf2d8e71e6b1577b9bd"
+      },
+      "circle-2-1.0-3.0-255-false-1": {
+        "scene": "circle-2-1.0-3.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "20a75d784a9e577c9d69fac8203743c870364db5e114571794a107b3d20d3374"
+      },
+      "circle-2-1.0-3.0-255-false-2": {
+        "scene": "circle-2-1.0-3.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-1.0-3.0-255-true-0": {
+        "scene": "circle-2-1.0-3.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "f3d2e0db58e6d70dba7d668d6ef7d792a2a916bef3c0fa4d9e0b4bf89d35b9f3"
+      },
+      "circle-2-1.0-3.0-255-true-1": {
+        "scene": "circle-2-1.0-3.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "d5e42fab4f69b3fb2986d73dd8bee9f371d5e27012fd0a8d92e491e804aea994"
+      },
+      "circle-2-1.0-3.0-255-true-2": {
+        "scene": "circle-2-1.0-3.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "c1037a34b46222d92dd067be2cf808f55f82dca058b25667901e6da07a65a8ef"
+      },
+      "circle-2-3.0-0.5-64-false-0": {
+        "scene": "circle-2-3.0-0.5-64-false-0",
+        "bytes": 409600,
+        "sha256": "955078ea3a7a264bf0d7defc29b034fc7663048f7556c4d919ae2ac7e46cddbf"
+      },
+      "circle-2-3.0-0.5-64-false-1": {
+        "scene": "circle-2-3.0-0.5-64-false-1",
+        "bytes": 409600,
+        "sha256": "1f061cca4364d6dd05ab8968a872a2ad414b232814849a2db4fad678bd33469e"
+      },
+      "circle-2-3.0-0.5-64-false-2": {
+        "scene": "circle-2-3.0-0.5-64-false-2",
+        "bytes": 409600,
+        "sha256": "ef3d4f2f859807faf65789d2c9c568c8b3447b3f06515dc7bfb508be7407062e"
+      },
+      "circle-2-3.0-0.5-64-true-0": {
+        "scene": "circle-2-3.0-0.5-64-true-0",
+        "bytes": 409600,
+        "sha256": "f0652a2af02b67f3188249c2255e9050f4e3f98ca49d43ddf40f04fd3c4f9b89"
+      },
+      "circle-2-3.0-0.5-64-true-1": {
+        "scene": "circle-2-3.0-0.5-64-true-1",
+        "bytes": 409600,
+        "sha256": "36f108064991713ccf6121d03722a30f99cc649ed209080321dbc5be062ef67e"
+      },
+      "circle-2-3.0-0.5-64-true-2": {
+        "scene": "circle-2-3.0-0.5-64-true-2",
+        "bytes": 409600,
+        "sha256": "2e7744b207563ba00aa8f811ed7ab142b2b56304e2a84f39aa6a35cfc92df0b2"
+      },
+      "circle-2-3.0-0.5-255-false-0": {
+        "scene": "circle-2-3.0-0.5-255-false-0",
+        "bytes": 409600,
+        "sha256": "6f4315fa53d0f8dbb922373a1dfde71109c0fd96b33a24d333726f65950b9a4c"
+      },
+      "circle-2-3.0-0.5-255-false-1": {
+        "scene": "circle-2-3.0-0.5-255-false-1",
+        "bytes": 409600,
+        "sha256": "31de92d4bf2cad4e989af83aa3ceb87a23badf37ef6512932d52030db336b14d"
+      },
+      "circle-2-3.0-0.5-255-false-2": {
+        "scene": "circle-2-3.0-0.5-255-false-2",
+        "bytes": 409600,
+        "sha256": "41829bf41edd9d6e6f03602197a55952ab5b65657b79bef3c27ad84da20d2404"
+      },
+      "circle-2-3.0-0.5-255-true-0": {
+        "scene": "circle-2-3.0-0.5-255-true-0",
+        "bytes": 409600,
+        "sha256": "6c5e8f267fda44904735285ba8a77d1352b65ec6fd2fd0a8d5eea052f39204a2"
+      },
+      "circle-2-3.0-0.5-255-true-1": {
+        "scene": "circle-2-3.0-0.5-255-true-1",
+        "bytes": 409600,
+        "sha256": "a9aa6a5019c87632777d0db966e35651e8d022a71206db50ad0d3d86ef32c50a"
+      },
+      "circle-2-3.0-0.5-255-true-2": {
+        "scene": "circle-2-3.0-0.5-255-true-2",
+        "bytes": 409600,
+        "sha256": "0d90dd2789c8076ea8756f9655e379640c8b2bbdb956804f15f457315c14d90f"
+      },
+      "circle-2-3.0-1.0-64-false-0": {
+        "scene": "circle-2-3.0-1.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "111ec67050e6f2c7592196cf02ab4131d436ab7eb34b6a5ba57492d6cddbf8e1"
+      },
+      "circle-2-3.0-1.0-64-false-1": {
+        "scene": "circle-2-3.0-1.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "68d7ce98ffb3233a4362599ce5fe55949184a4b2a431304cfd59dcff15a34d01"
+      },
+      "circle-2-3.0-1.0-64-false-2": {
+        "scene": "circle-2-3.0-1.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "239052c5c80ad96a229211e6ec19e5f0fb550263cc6d5b0fdfe2977ac24edfcf"
+      },
+      "circle-2-3.0-1.0-64-true-0": {
+        "scene": "circle-2-3.0-1.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "9f0faa095a3c58893896504f30e608560b4614c25da9c9443f23cea6cff7350b"
+      },
+      "circle-2-3.0-1.0-64-true-1": {
+        "scene": "circle-2-3.0-1.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "c6b04253a4c5bd9d8e7e75fd50851e8339924f24bb18f6f82698d7a4653947ce"
+      },
+      "circle-2-3.0-1.0-64-true-2": {
+        "scene": "circle-2-3.0-1.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "eacc6bcb8d748f368bfd9d93fd56fab9fb8517cf60f9b07b09d545f8640b717c"
+      },
+      "circle-2-3.0-1.0-255-false-0": {
+        "scene": "circle-2-3.0-1.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "9977bde4d5a1309266ddb21a8a6d7a82a5aba1aa8076af8543ba2384afc1a934"
+      },
+      "circle-2-3.0-1.0-255-false-1": {
+        "scene": "circle-2-3.0-1.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "69abe028f605d57b24dc06d1085124075a6c1f0851d2223615c505dba5cdccd2"
+      },
+      "circle-2-3.0-1.0-255-false-2": {
+        "scene": "circle-2-3.0-1.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "41345b8e29124d5747c022d4be19fbf8c00a20813f044392623e79de62760ac4"
+      },
+      "circle-2-3.0-1.0-255-true-0": {
+        "scene": "circle-2-3.0-1.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "a54349514d81ddfdbd8eb5ee02f8ac960189ab1b7bc4dd76e6ef2bd08e76f313"
+      },
+      "circle-2-3.0-1.0-255-true-1": {
+        "scene": "circle-2-3.0-1.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "5c23a6dcbde1cdd1ffc3574bb6f8ce5c81c9416804a04f1ca44ec1e7467f694d"
+      },
+      "circle-2-3.0-1.0-255-true-2": {
+        "scene": "circle-2-3.0-1.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "11aa5412904c0001b82df83771f3115326673ebc96f5c7158e4810c9ea18267e"
+      },
+      "circle-2-3.0-3.0-64-false-0": {
+        "scene": "circle-2-3.0-3.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "daf372b93f34b850f7e50b464380240ed0feb25e1cd4ffaf9373cac1815615c0"
+      },
+      "circle-2-3.0-3.0-64-false-1": {
+        "scene": "circle-2-3.0-3.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "e929873215754dcbc71f8f0b2a2f28af1ae3e99ce5f96ccfd3c12b72dabdaebf"
+      },
+      "circle-2-3.0-3.0-64-false-2": {
+        "scene": "circle-2-3.0-3.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "c1adb8c6f11a34624006ca09bf1a86351703ad17a6f306629ff8b3d9e353aa0a"
+      },
+      "circle-2-3.0-3.0-64-true-0": {
+        "scene": "circle-2-3.0-3.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "173686ad717044d2aac9698ceee378b9068c687f7734d1f2f6c46a2bffb65fd2"
+      },
+      "circle-2-3.0-3.0-64-true-1": {
+        "scene": "circle-2-3.0-3.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "0d54eb56790038c30cd8f0203b3177e66ef8b8496a696c69010f314d5755186b"
+      },
+      "circle-2-3.0-3.0-64-true-2": {
+        "scene": "circle-2-3.0-3.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "16eb4fac29c991e0c4fd670659e7527bee38f2625fa816dff3cecf83e3a2105c"
+      },
+      "circle-2-3.0-3.0-255-false-0": {
+        "scene": "circle-2-3.0-3.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "2787ed86378e4952d5e29e93d55e1a6ecdbbf16addad1b711c2f6e021cb6d8bd"
+      },
+      "circle-2-3.0-3.0-255-false-1": {
+        "scene": "circle-2-3.0-3.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "142812bd11b348247fa8c5425a7561f74c62aabda8236bcab31ad04d31550c25"
+      },
+      "circle-2-3.0-3.0-255-false-2": {
+        "scene": "circle-2-3.0-3.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "b8df6663597f9342c18b26bdffe552c431ef7dccd2482b02cdea153b1628ea58"
+      },
+      "circle-2-3.0-3.0-255-true-0": {
+        "scene": "circle-2-3.0-3.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "52ac3aace608fdfd054096a33aa3c5675cfe08b81045543645f06b427e3432a4"
+      },
+      "circle-2-3.0-3.0-255-true-1": {
+        "scene": "circle-2-3.0-3.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "39da705b3970dcec66dcadea222c4affaaf1568418656883c982bd5c7de07938"
+      },
+      "circle-2-3.0-3.0-255-true-2": {
+        "scene": "circle-2-3.0-3.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "78cc2c1d7cfe8410d64fae020cfec50e3af88d7523039cc2e1f3de3f1e5bc74d"
+      },
+      "circle-2-12.0-0.5-64-false-0": {
+        "scene": "circle-2-12.0-0.5-64-false-0",
+        "bytes": 409600,
+        "sha256": "02d0536de2a672655860c2ac2456769c945593b4a7099004a480d63fc4bbba83"
+      },
+      "circle-2-12.0-0.5-64-false-1": {
+        "scene": "circle-2-12.0-0.5-64-false-1",
+        "bytes": 409600,
+        "sha256": "9652eff29b40fc07d82b9d16ed41099ff6d0182801695ca1861c0476de60d35f"
+      },
+      "circle-2-12.0-0.5-64-false-2": {
+        "scene": "circle-2-12.0-0.5-64-false-2",
+        "bytes": 409600,
+        "sha256": "93a1975322f10220521f72f2a19a904207e558497531c3e70b887166f68310bf"
+      },
+      "circle-2-12.0-0.5-64-true-0": {
+        "scene": "circle-2-12.0-0.5-64-true-0",
+        "bytes": 409600,
+        "sha256": "85b60edf77c3b23a5dbb2f517a8463e2754b7da801d8258d9644b6d5d55c4a4d"
+      },
+      "circle-2-12.0-0.5-64-true-1": {
+        "scene": "circle-2-12.0-0.5-64-true-1",
+        "bytes": 409600,
+        "sha256": "e67b6c5590fb5f14f3447e5ef4326dab1b2f52d53a69336340dd4c8ee389f1db"
+      },
+      "circle-2-12.0-0.5-64-true-2": {
+        "scene": "circle-2-12.0-0.5-64-true-2",
+        "bytes": 409600,
+        "sha256": "4ae23355246b44712200d805b5ee30821345e602a2503c79c02a03566ab3a1c2"
+      },
+      "circle-2-12.0-0.5-255-false-0": {
+        "scene": "circle-2-12.0-0.5-255-false-0",
+        "bytes": 409600,
+        "sha256": "4ae5903267a4a20a9240f76a825af2753ede92181d0f845859c800cfb9b144f1"
+      },
+      "circle-2-12.0-0.5-255-false-1": {
+        "scene": "circle-2-12.0-0.5-255-false-1",
+        "bytes": 409600,
+        "sha256": "bb661d6e979ec26dda74246e439bcd0af27626f35df413238f12be0e2a4d1d2a"
+      },
+      "circle-2-12.0-0.5-255-false-2": {
+        "scene": "circle-2-12.0-0.5-255-false-2",
+        "bytes": 409600,
+        "sha256": "7e57e577b6b5eb4ccb38e371ce238411ec31daa727f2fe9811c2df07f157c2eb"
+      },
+      "circle-2-12.0-0.5-255-true-0": {
+        "scene": "circle-2-12.0-0.5-255-true-0",
+        "bytes": 409600,
+        "sha256": "0d6a4c0a65204bc7c841640d0dabc4d94586dae149e22166280464d48277c286"
+      },
+      "circle-2-12.0-0.5-255-true-1": {
+        "scene": "circle-2-12.0-0.5-255-true-1",
+        "bytes": 409600,
+        "sha256": "525f5649139a11c4f6c9f60090635bd9d9e800d07655a4b39b1d09c699ebeb81"
+      },
+      "circle-2-12.0-0.5-255-true-2": {
+        "scene": "circle-2-12.0-0.5-255-true-2",
+        "bytes": 409600,
+        "sha256": "bf4384f880519be8a53dc737a25d876899dc622ac9fc524bec3d63bcfb96defc"
+      },
+      "circle-2-12.0-1.0-64-false-0": {
+        "scene": "circle-2-12.0-1.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "c03062895196357c07c196dba44871e7436d6ea75a9cb05bd7f4ea1a7ee30832"
+      },
+      "circle-2-12.0-1.0-64-false-1": {
+        "scene": "circle-2-12.0-1.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "160fc5bf481a4e79f8f4621fef58e6fb3e0d915fc71769cbe3f794b96ba83c43"
+      },
+      "circle-2-12.0-1.0-64-false-2": {
+        "scene": "circle-2-12.0-1.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "7f17b1ec50a9a15b00c52c917cc77422db08a4248f65de0c53b6c6c8e3c54933"
+      },
+      "circle-2-12.0-1.0-64-true-0": {
+        "scene": "circle-2-12.0-1.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "da78bc80705cdb9eb1c7998356116d49c1aff56c445423a17b03b41e12a7aef4"
+      },
+      "circle-2-12.0-1.0-64-true-1": {
+        "scene": "circle-2-12.0-1.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "588d39bdfa931839963d317332142ac5104d56d8ec9b22f279b3e594c54de707"
+      },
+      "circle-2-12.0-1.0-64-true-2": {
+        "scene": "circle-2-12.0-1.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "2aaa5e31dad01ffd7e70b88bac267779c78bc69cbd388a68485e1b03e168ff6a"
+      },
+      "circle-2-12.0-1.0-255-false-0": {
+        "scene": "circle-2-12.0-1.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "b43a413cc5fe62000d5254dfcae08c97a62f246819059eaa44e6d9c4c0316d8a"
+      },
+      "circle-2-12.0-1.0-255-false-1": {
+        "scene": "circle-2-12.0-1.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "6e756b1072d38b5f9e639cde9dec456216685a5ff789e3ac4e546f903d1f9038"
+      },
+      "circle-2-12.0-1.0-255-false-2": {
+        "scene": "circle-2-12.0-1.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "8e0973b5c8e4aff8bc1d03926530f2453ae995570ef9c8f411c5dc481adbc281"
+      },
+      "circle-2-12.0-1.0-255-true-0": {
+        "scene": "circle-2-12.0-1.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "5d32fa150cb2b59eee1025220d8e14b21bcbd3f562d6c719698407246844ef60"
+      },
+      "circle-2-12.0-1.0-255-true-1": {
+        "scene": "circle-2-12.0-1.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "e9272fc1e35b569a4af74a8a0f9975e7f4076ebb5234734d75d3ab1feb068673"
+      },
+      "circle-2-12.0-1.0-255-true-2": {
+        "scene": "circle-2-12.0-1.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "ea6a224c39f88e3ec85201366ce60b8e30b14c3be5760776d0a47101b76bfb4e"
+      },
+      "circle-2-12.0-3.0-64-false-0": {
+        "scene": "circle-2-12.0-3.0-64-false-0",
+        "bytes": 409600,
+        "sha256": "4b80b4124df72828fbdde9472c58e9649087e72c2e48f9fcbae2be9b3086e315"
+      },
+      "circle-2-12.0-3.0-64-false-1": {
+        "scene": "circle-2-12.0-3.0-64-false-1",
+        "bytes": 409600,
+        "sha256": "98039432347138775bb8e458ff888b3b020018ff027aee683f63b1541c0c6ef1"
+      },
+      "circle-2-12.0-3.0-64-false-2": {
+        "scene": "circle-2-12.0-3.0-64-false-2",
+        "bytes": 409600,
+        "sha256": "ca9156bf9c2bc2e5a264b7c7081351a98069a367e367166b61421c42a95b1e38"
+      },
+      "circle-2-12.0-3.0-64-true-0": {
+        "scene": "circle-2-12.0-3.0-64-true-0",
+        "bytes": 409600,
+        "sha256": "04175a74bf9db9061b0f1d0b9e99ba341750bf8fc3f15bf04ebd187a140ebc04"
+      },
+      "circle-2-12.0-3.0-64-true-1": {
+        "scene": "circle-2-12.0-3.0-64-true-1",
+        "bytes": 409600,
+        "sha256": "44d2a0b4bf07b3db79b7a5a72432752cef16bea1ec126c3f69f733b3aa59b8fc"
+      },
+      "circle-2-12.0-3.0-64-true-2": {
+        "scene": "circle-2-12.0-3.0-64-true-2",
+        "bytes": 409600,
+        "sha256": "83bac2c355d6a211c488ade53dd002026875a2fe521ea95ae4d294f16e08df57"
+      },
+      "circle-2-12.0-3.0-255-false-0": {
+        "scene": "circle-2-12.0-3.0-255-false-0",
+        "bytes": 409600,
+        "sha256": "33835aea8d63ce424f8bcf2ff9d658f1b36b1112c8a5dd1e68c639174b86baca"
+      },
+      "circle-2-12.0-3.0-255-false-1": {
+        "scene": "circle-2-12.0-3.0-255-false-1",
+        "bytes": 409600,
+        "sha256": "9c13a49bbacec44fd9359da6e5602cbdc266d2b72c032c8fbca5b96b85a442c4"
+      },
+      "circle-2-12.0-3.0-255-false-2": {
+        "scene": "circle-2-12.0-3.0-255-false-2",
+        "bytes": 409600,
+        "sha256": "c792160f0892a7e605c2dded4b5fd794030d87ac0b1937c93c0946f406106785"
+      },
+      "circle-2-12.0-3.0-255-true-0": {
+        "scene": "circle-2-12.0-3.0-255-true-0",
+        "bytes": 409600,
+        "sha256": "069ac7c179bb6dbd9091f50e6e103116ea4efe7474c80119c92c013f7f6eaf23"
+      },
+      "circle-2-12.0-3.0-255-true-1": {
+        "scene": "circle-2-12.0-3.0-255-true-1",
+        "bytes": 409600,
+        "sha256": "f076f0a7d6f23d0d43a8c735a87472215d7b30ae1bbdfcc97815c3155e2e4067"
+      },
+      "circle-2-12.0-3.0-255-true-2": {
+        "scene": "circle-2-12.0-3.0-255-true-2",
+        "bytes": 409600,
+        "sha256": "1546dee5cd1edbdffbd86f7be852d6fb1419f474d7be9406eb3366d9831c085c"
+      },
+      "path-1-0-open-false": {
+        "scene": "path-1-0-open-false",
+        "bytes": 102400,
+        "sha256": "7bb560a7bc8aab0894480b31779f87674dd98efb3ef20fc2e44c977a95a2de07"
+      },
+      "path-1-0-open-true": {
+        "scene": "path-1-0-open-true",
+        "bytes": 102400,
+        "sha256": "7bb560a7bc8aab0894480b31779f87674dd98efb3ef20fc2e44c977a95a2de07"
+      },
+      "path-1-0-closed-false": {
+        "scene": "path-1-0-closed-false",
+        "bytes": 102400,
+        "sha256": "ed5e21d38a22a0ca20d6fbcf383ab0e6ad1c5f874662361875753b5753d100f5"
+      },
+      "path-1-0-closed-true": {
+        "scene": "path-1-0-closed-true",
+        "bytes": 102400,
+        "sha256": "ed5e21d38a22a0ca20d6fbcf383ab0e6ad1c5f874662361875753b5753d100f5"
+      },
+      "path-1-0-mixed-false": {
+        "scene": "path-1-0-mixed-false",
+        "bytes": 102400,
+        "sha256": "e90a2f7e11e1ada7cc22f508bd65e5c100ec7265954ee616d1d169ec50074a3d"
+      },
+      "path-1-0-mixed-true": {
+        "scene": "path-1-0-mixed-true",
+        "bytes": 102400,
+        "sha256": "e90a2f7e11e1ada7cc22f508bd65e5c100ec7265954ee616d1d169ec50074a3d"
+      },
+      "path-1-0-dash-false": {
+        "scene": "path-1-0-dash-false",
+        "bytes": 102400,
+        "sha256": "a1aedc937fe71619135f4aec12998ee05122c7fd979d740635ed4f614acc975a"
+      },
+      "path-1-0-dash-true": {
+        "scene": "path-1-0-dash-true",
+        "bytes": 102400,
+        "sha256": "a1aedc937fe71619135f4aec12998ee05122c7fd979d740635ed4f614acc975a"
+      },
+      "path-1-0-clip-false": {
+        "scene": "path-1-0-clip-false",
+        "bytes": 102400,
+        "sha256": "2f457257642d200a6f975c2f3305b611a4c567af52c161c4adb544c3a2ad13f4"
+      },
+      "path-1-0-clip-true": {
+        "scene": "path-1-0-clip-true",
+        "bytes": 102400,
+        "sha256": "2f457257642d200a6f975c2f3305b611a4c567af52c161c4adb544c3a2ad13f4"
+      },
+      "path-1-0-mutate-false": {
+        "scene": "path-1-0-mutate-false",
+        "bytes": 102400,
+        "sha256": "37d1e4ef61f2f424c07c5fad6b24e2303bf831de821ab0ea73d6c346bde60546"
+      },
+      "path-1-0-mutate-true": {
+        "scene": "path-1-0-mutate-true",
+        "bytes": 102400,
+        "sha256": "37d1e4ef61f2f424c07c5fad6b24e2303bf831de821ab0ea73d6c346bde60546"
+      },
+      "path-1-0-long-false": {
+        "scene": "path-1-0-long-false",
+        "bytes": 102400,
+        "sha256": "2e64a8c4a733ab7b9bc97de73d2896042ae17f78e8bc6147a5fdfd3691aff8fb"
+      },
+      "path-1-0-long-true": {
+        "scene": "path-1-0-long-true",
+        "bytes": 102400,
+        "sha256": "2e64a8c4a733ab7b9bc97de73d2896042ae17f78e8bc6147a5fdfd3691aff8fb"
+      },
+      "path-1-1-open-false": {
+        "scene": "path-1-1-open-false",
+        "bytes": 102400,
+        "sha256": "8b2b61f4cd99dc4d7872e50732bba4146d753ab56f8aae7fa07b8039d1e06e4c"
+      },
+      "path-1-1-open-true": {
+        "scene": "path-1-1-open-true",
+        "bytes": 102400,
+        "sha256": "8b2b61f4cd99dc4d7872e50732bba4146d753ab56f8aae7fa07b8039d1e06e4c"
+      },
+      "path-1-1-closed-false": {
+        "scene": "path-1-1-closed-false",
+        "bytes": 102400,
+        "sha256": "7a764ad9bf23a3f4adf5780a1b680ea79c6b4871e7681f470ce23c862c045ab2"
+      },
+      "path-1-1-closed-true": {
+        "scene": "path-1-1-closed-true",
+        "bytes": 102400,
+        "sha256": "7a764ad9bf23a3f4adf5780a1b680ea79c6b4871e7681f470ce23c862c045ab2"
+      },
+      "path-1-1-mixed-false": {
+        "scene": "path-1-1-mixed-false",
+        "bytes": 102400,
+        "sha256": "e674ad300e6c46fc13d9e4916baf22630f7645508316a952b122589afc747ba6"
+      },
+      "path-1-1-mixed-true": {
+        "scene": "path-1-1-mixed-true",
+        "bytes": 102400,
+        "sha256": "e674ad300e6c46fc13d9e4916baf22630f7645508316a952b122589afc747ba6"
+      },
+      "path-1-1-dash-false": {
+        "scene": "path-1-1-dash-false",
+        "bytes": 102400,
+        "sha256": "62e889712f5d3c5c444230a69734b7edd62119a6f3b8629c942bbaef23550a32"
+      },
+      "path-1-1-dash-true": {
+        "scene": "path-1-1-dash-true",
+        "bytes": 102400,
+        "sha256": "62e889712f5d3c5c444230a69734b7edd62119a6f3b8629c942bbaef23550a32"
+      },
+      "path-1-1-clip-false": {
+        "scene": "path-1-1-clip-false",
+        "bytes": 102400,
+        "sha256": "d06635bde2defb664db48b94834f848a386d3d37fef553fe4b3c48a2be68002f"
+      },
+      "path-1-1-clip-true": {
+        "scene": "path-1-1-clip-true",
+        "bytes": 102400,
+        "sha256": "d06635bde2defb664db48b94834f848a386d3d37fef553fe4b3c48a2be68002f"
+      },
+      "path-1-1-mutate-false": {
+        "scene": "path-1-1-mutate-false",
+        "bytes": 102400,
+        "sha256": "308a458ab1539b1f1698cbdd21a0ad8ac453fd8c33f657514e8427d36496acce"
+      },
+      "path-1-1-mutate-true": {
+        "scene": "path-1-1-mutate-true",
+        "bytes": 102400,
+        "sha256": "308a458ab1539b1f1698cbdd21a0ad8ac453fd8c33f657514e8427d36496acce"
+      },
+      "path-1-1-long-false": {
+        "scene": "path-1-1-long-false",
+        "bytes": 102400,
+        "sha256": "120783b68292cf56894c7250f35f303eb431601b7147b690c78f9056b72cc221"
+      },
+      "path-1-1-long-true": {
+        "scene": "path-1-1-long-true",
+        "bytes": 102400,
+        "sha256": "120783b68292cf56894c7250f35f303eb431601b7147b690c78f9056b72cc221"
+      },
+      "path-1-2-open-false": {
+        "scene": "path-1-2-open-false",
+        "bytes": 102400,
+        "sha256": "76f9c85249d46a65883067be7e3a01bda69f403005f48006b1cac7787acab5bf"
+      },
+      "path-1-2-open-true": {
+        "scene": "path-1-2-open-true",
+        "bytes": 102400,
+        "sha256": "76f9c85249d46a65883067be7e3a01bda69f403005f48006b1cac7787acab5bf"
+      },
+      "path-1-2-closed-false": {
+        "scene": "path-1-2-closed-false",
+        "bytes": 102400,
+        "sha256": "1e259b4f49879c1e0ba0df83161201a8bf3ccf7676dbf338490765bcd9190f96"
+      },
+      "path-1-2-closed-true": {
+        "scene": "path-1-2-closed-true",
+        "bytes": 102400,
+        "sha256": "1e259b4f49879c1e0ba0df83161201a8bf3ccf7676dbf338490765bcd9190f96"
+      },
+      "path-1-2-mixed-false": {
+        "scene": "path-1-2-mixed-false",
+        "bytes": 102400,
+        "sha256": "3f2d9c885875e03d2809d5968887860754cc8c01582eca22e3a52e4d36cd9a69"
+      },
+      "path-1-2-mixed-true": {
+        "scene": "path-1-2-mixed-true",
+        "bytes": 102400,
+        "sha256": "3f2d9c885875e03d2809d5968887860754cc8c01582eca22e3a52e4d36cd9a69"
+      },
+      "path-1-2-dash-false": {
+        "scene": "path-1-2-dash-false",
+        "bytes": 102400,
+        "sha256": "c485b561ec091843bf57884a6eae8babd170bde0949f16ef1b520dbc3fdb90fe"
+      },
+      "path-1-2-dash-true": {
+        "scene": "path-1-2-dash-true",
+        "bytes": 102400,
+        "sha256": "c485b561ec091843bf57884a6eae8babd170bde0949f16ef1b520dbc3fdb90fe"
+      },
+      "path-1-2-clip-false": {
+        "scene": "path-1-2-clip-false",
+        "bytes": 102400,
+        "sha256": "7c4b9b61726e463c156796d4f42a8e3268525897a0b3ef6668f3d02b9c242a28"
+      },
+      "path-1-2-clip-true": {
+        "scene": "path-1-2-clip-true",
+        "bytes": 102400,
+        "sha256": "7c4b9b61726e463c156796d4f42a8e3268525897a0b3ef6668f3d02b9c242a28"
+      },
+      "path-1-2-mutate-false": {
+        "scene": "path-1-2-mutate-false",
+        "bytes": 102400,
+        "sha256": "03a27e295fd212063819a51b8c676c590d80402de126115e0b1a323e6342e23d"
+      },
+      "path-1-2-mutate-true": {
+        "scene": "path-1-2-mutate-true",
+        "bytes": 102400,
+        "sha256": "03a27e295fd212063819a51b8c676c590d80402de126115e0b1a323e6342e23d"
+      },
+      "path-1-2-long-false": {
+        "scene": "path-1-2-long-false",
+        "bytes": 102400,
+        "sha256": "a9eb90be3d64b374a0d316632f6c5b440fafe08a1f2b8883a4ed0db03ba8de4b"
+      },
+      "path-1-2-long-true": {
+        "scene": "path-1-2-long-true",
+        "bytes": 102400,
+        "sha256": "a9eb90be3d64b374a0d316632f6c5b440fafe08a1f2b8883a4ed0db03ba8de4b"
+      },
+      "path-2-0-open-false": {
+        "scene": "path-2-0-open-false",
+        "bytes": 409600,
+        "sha256": "65fa7ff778bc7bb7eec3a057045bc3763faba9f769e0afffef273b61215bca1e"
+      },
+      "path-2-0-open-true": {
+        "scene": "path-2-0-open-true",
+        "bytes": 409600,
+        "sha256": "65fa7ff778bc7bb7eec3a057045bc3763faba9f769e0afffef273b61215bca1e"
+      },
+      "path-2-0-closed-false": {
+        "scene": "path-2-0-closed-false",
+        "bytes": 409600,
+        "sha256": "25b4e407248c191c33603cf8b0155160f0387b0bc5b4c96989963c74491b7b8a"
+      },
+      "path-2-0-closed-true": {
+        "scene": "path-2-0-closed-true",
+        "bytes": 409600,
+        "sha256": "25b4e407248c191c33603cf8b0155160f0387b0bc5b4c96989963c74491b7b8a"
+      },
+      "path-2-0-mixed-false": {
+        "scene": "path-2-0-mixed-false",
+        "bytes": 409600,
+        "sha256": "82da460f361a71a17ac349ae7c80a1ca6bd70ab8f9592238b5b3003f4601481e"
+      },
+      "path-2-0-mixed-true": {
+        "scene": "path-2-0-mixed-true",
+        "bytes": 409600,
+        "sha256": "82da460f361a71a17ac349ae7c80a1ca6bd70ab8f9592238b5b3003f4601481e"
+      },
+      "path-2-0-dash-false": {
+        "scene": "path-2-0-dash-false",
+        "bytes": 409600,
+        "sha256": "6e430d24f2b7a72a5934ddda842771ab92ebe4c6b4ea2ef89ce3b30554378e24"
+      },
+      "path-2-0-dash-true": {
+        "scene": "path-2-0-dash-true",
+        "bytes": 409600,
+        "sha256": "6e430d24f2b7a72a5934ddda842771ab92ebe4c6b4ea2ef89ce3b30554378e24"
+      },
+      "path-2-0-clip-false": {
+        "scene": "path-2-0-clip-false",
+        "bytes": 409600,
+        "sha256": "5e810331195dfa42b0de79965ef815ed535c28604ebf39b43d37cb94d0f8331e"
+      },
+      "path-2-0-clip-true": {
+        "scene": "path-2-0-clip-true",
+        "bytes": 409600,
+        "sha256": "5e810331195dfa42b0de79965ef815ed535c28604ebf39b43d37cb94d0f8331e"
+      },
+      "path-2-0-mutate-false": {
+        "scene": "path-2-0-mutate-false",
+        "bytes": 409600,
+        "sha256": "94b0fd11dff9ae70eef1f2a033575405a29bc615e7555fc6e7f7055bedce5bf6"
+      },
+      "path-2-0-mutate-true": {
+        "scene": "path-2-0-mutate-true",
+        "bytes": 409600,
+        "sha256": "94b0fd11dff9ae70eef1f2a033575405a29bc615e7555fc6e7f7055bedce5bf6"
+      },
+      "path-2-0-long-false": {
+        "scene": "path-2-0-long-false",
+        "bytes": 409600,
+        "sha256": "f6c88cc7d1b0517a5b85d5b9eaf07353d2a74767662ed24530d0c341d6285500"
+      },
+      "path-2-0-long-true": {
+        "scene": "path-2-0-long-true",
+        "bytes": 409600,
+        "sha256": "f6c88cc7d1b0517a5b85d5b9eaf07353d2a74767662ed24530d0c341d6285500"
+      },
+      "path-2-1-open-false": {
+        "scene": "path-2-1-open-false",
+        "bytes": 409600,
+        "sha256": "db9824db320f75a5e3236fc1b42b36d9143221a71706b50679fc01ff047e300f"
+      },
+      "path-2-1-open-true": {
+        "scene": "path-2-1-open-true",
+        "bytes": 409600,
+        "sha256": "db9824db320f75a5e3236fc1b42b36d9143221a71706b50679fc01ff047e300f"
+      },
+      "path-2-1-closed-false": {
+        "scene": "path-2-1-closed-false",
+        "bytes": 409600,
+        "sha256": "ec926a1ab30fbff93a2da0bb7124f99dfd4eb845674665da60ce92950a71df6c"
+      },
+      "path-2-1-closed-true": {
+        "scene": "path-2-1-closed-true",
+        "bytes": 409600,
+        "sha256": "ec926a1ab30fbff93a2da0bb7124f99dfd4eb845674665da60ce92950a71df6c"
+      },
+      "path-2-1-mixed-false": {
+        "scene": "path-2-1-mixed-false",
+        "bytes": 409600,
+        "sha256": "648f484d1c1c2dee63fbd042c44d7fbaf7116dea4c94ba4f2fe113d9f9a174ef"
+      },
+      "path-2-1-mixed-true": {
+        "scene": "path-2-1-mixed-true",
+        "bytes": 409600,
+        "sha256": "648f484d1c1c2dee63fbd042c44d7fbaf7116dea4c94ba4f2fe113d9f9a174ef"
+      },
+      "path-2-1-dash-false": {
+        "scene": "path-2-1-dash-false",
+        "bytes": 409600,
+        "sha256": "ce208d7506cf973d06e0b3fdb87421a21689124e1814247d78a6d72e35e77445"
+      },
+      "path-2-1-dash-true": {
+        "scene": "path-2-1-dash-true",
+        "bytes": 409600,
+        "sha256": "ce208d7506cf973d06e0b3fdb87421a21689124e1814247d78a6d72e35e77445"
+      },
+      "path-2-1-clip-false": {
+        "scene": "path-2-1-clip-false",
+        "bytes": 409600,
+        "sha256": "10c4539bc68a24215585583b924271e27f8073639a49b7dfa7396a1cae8104f6"
+      },
+      "path-2-1-clip-true": {
+        "scene": "path-2-1-clip-true",
+        "bytes": 409600,
+        "sha256": "10c4539bc68a24215585583b924271e27f8073639a49b7dfa7396a1cae8104f6"
+      },
+      "path-2-1-mutate-false": {
+        "scene": "path-2-1-mutate-false",
+        "bytes": 409600,
+        "sha256": "dee1ac5ecb687405bd17f73881c57c4c4124ec3bca6cf0220d88cd8812f2972d"
+      },
+      "path-2-1-mutate-true": {
+        "scene": "path-2-1-mutate-true",
+        "bytes": 409600,
+        "sha256": "dee1ac5ecb687405bd17f73881c57c4c4124ec3bca6cf0220d88cd8812f2972d"
+      },
+      "path-2-1-long-false": {
+        "scene": "path-2-1-long-false",
+        "bytes": 409600,
+        "sha256": "bbea00a6d3d963a9c8f9a88df5080aa5acffea37bc4f203adc305cf2fed8d69b"
+      },
+      "path-2-1-long-true": {
+        "scene": "path-2-1-long-true",
+        "bytes": 409600,
+        "sha256": "bbea00a6d3d963a9c8f9a88df5080aa5acffea37bc4f203adc305cf2fed8d69b"
+      },
+      "path-2-2-open-false": {
+        "scene": "path-2-2-open-false",
+        "bytes": 409600,
+        "sha256": "4a35db82d2dc793b70c87d87be00a57507021115525e4ef0008a758395d67f9f"
+      },
+      "path-2-2-open-true": {
+        "scene": "path-2-2-open-true",
+        "bytes": 409600,
+        "sha256": "4a35db82d2dc793b70c87d87be00a57507021115525e4ef0008a758395d67f9f"
+      },
+      "path-2-2-closed-false": {
+        "scene": "path-2-2-closed-false",
+        "bytes": 409600,
+        "sha256": "88518da9cc99c315b4751eb45821a00101405cea6d340d0df4ed7398a6616f2c"
+      },
+      "path-2-2-closed-true": {
+        "scene": "path-2-2-closed-true",
+        "bytes": 409600,
+        "sha256": "88518da9cc99c315b4751eb45821a00101405cea6d340d0df4ed7398a6616f2c"
+      },
+      "path-2-2-mixed-false": {
+        "scene": "path-2-2-mixed-false",
+        "bytes": 409600,
+        "sha256": "4eaa561e61bf048f0bcba4dfb1043490641c07bb66871943ad726cc6700f48f7"
+      },
+      "path-2-2-mixed-true": {
+        "scene": "path-2-2-mixed-true",
+        "bytes": 409600,
+        "sha256": "4eaa561e61bf048f0bcba4dfb1043490641c07bb66871943ad726cc6700f48f7"
+      },
+      "path-2-2-dash-false": {
+        "scene": "path-2-2-dash-false",
+        "bytes": 409600,
+        "sha256": "629e9c9529744f54510c6765d22fb4288422c92ade4fa853b2c261b287dc63a2"
+      },
+      "path-2-2-dash-true": {
+        "scene": "path-2-2-dash-true",
+        "bytes": 409600,
+        "sha256": "629e9c9529744f54510c6765d22fb4288422c92ade4fa853b2c261b287dc63a2"
+      },
+      "path-2-2-clip-false": {
+        "scene": "path-2-2-clip-false",
+        "bytes": 409600,
+        "sha256": "c60e7fcc9da41b6ca21702409f0408f0ce0b02fa88abd488b47b1943b822c384"
+      },
+      "path-2-2-clip-true": {
+        "scene": "path-2-2-clip-true",
+        "bytes": 409600,
+        "sha256": "c60e7fcc9da41b6ca21702409f0408f0ce0b02fa88abd488b47b1943b822c384"
+      },
+      "path-2-2-mutate-false": {
+        "scene": "path-2-2-mutate-false",
+        "bytes": 409600,
+        "sha256": "241363c52e6e23ff6bc2b074b74b5c042dd5e672e6877bd8d18276e4e9b3f72e"
+      },
+      "path-2-2-mutate-true": {
+        "scene": "path-2-2-mutate-true",
+        "bytes": 409600,
+        "sha256": "241363c52e6e23ff6bc2b074b74b5c042dd5e672e6877bd8d18276e4e9b3f72e"
+      },
+      "path-2-2-long-false": {
+        "scene": "path-2-2-long-false",
+        "bytes": 409600,
+        "sha256": "5d018d57b8cfa6fa838e1347501e4a1e2ec7e5888cb69508d34082b6ab33cd4d"
+      },
+      "path-2-2-long-true": {
+        "scene": "path-2-2-long-true",
+        "bytes": 409600,
+        "sha256": "5d018d57b8cfa6fa838e1347501e4a1e2ec7e5888cb69508d34082b6ab33cd4d"
+      }
+    }
+  }
+}

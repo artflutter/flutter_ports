@@ -1,0 +1,39 @@
+import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart';
+
+void main(){
+ TestWidgetsFlutterBinding.ensureInitialized();
+ registerGalleryComponents();
+ for(final style in ['static','indexed','scriptable']) for(final parsing in [false,true]){
+  test('fixed bound eligibility and unsorted boundary: $style parsing=$parsing',(){
+   final observations=<Map<String,Object?>>[];
+   for(final fixed in [false,true]){
+    final field=StressPointField(20000);
+    field.x.fillRange(0,20000,.5);field.y.fillRange(0,20000,.5);
+    field.x[9999]=1;
+    final scene=StressChartScene(StressChartType.line,20000,field);
+    final config=stressChartConfig(scene:scene,scriptable:style=='scriptable',indexed:style=='indexed',showLine:true,options:{'responsive':false,'parsing':parsing});
+    final options=config['options']! as Map<String,Object?>;
+    if(fixed){final x=(options['scales']! as Map<String,Object?>)['x']! as Map<String,Object?>;x['min']=0.0;x['max']=1.0;}
+    final canvas=UiCanvasElement(width:1036,height:520);final chart=Chart(canvas,config);
+    try{
+     chart.update('none');
+     final meta=chart.getDatasetMeta(0);final c=meta.controller!;
+     final dataset=((config['data']! as Map<String,Object?>)['datasets']! as List).first;
+     final obs=<String,Object?>{'fixed':fixed,'style':style,'scaleSupports':chart.scales['x']!.supportsDataUpdates,'controllerSupports':c.supportsDataUpdates,'staticOptions':c.hasStaticDataUpdateOptions,'parsing':c.parsing,'pointCount':meta.data.length,'drawStart':c.drawStart,'drawCount':c.drawCount,'sorted':meta.sorted,'settingsStatic':staticDataUpdateOptions(options)&&staticDataUpdateOptions(dataset,dataset:true)};
+     obs['fast']=chart.updateData();observations.add(obs);
+     expect(c.supportsDataUpdates,isTrue);expect(c.parsing,parsing);expect(meta.data.length,20000);
+     expect(c.hasStaticDataUpdateOptions,style=='static');
+     if(fixed){if(parsing){expect(c.drawCount,20000);expect(meta.sorted,isFalse);}else{expect(c.drawCount,lessThan(20000));}expect(obs['fast'],style=='static');}
+     else{expect(c.drawCount,20000);expect(obs['fast'],isFalse);}
+    }finally{chart.destroy();canvas.getContext2d().dispose();}
+   }
+   print('ELIGIBILITY ${jsonEncode(observations)}');
+  });
+ }
+}

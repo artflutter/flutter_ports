@@ -23,7 +23,10 @@
 /// - A path method with a non-finite argument does nothing, as in the DOM.
 library;
 
+import 'dart:typed_data';
+
 import 'package:flutter_chartjs_port/src/types/color.dart';
+import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/color.dart'
     show CanvasGradient, CanvasPattern;
@@ -707,8 +710,70 @@ final class Path2D implements CanvasPath {
   /// `new Path2D()`: an empty path.
   Path2D();
 
-  /// The recorded commands, in order.
-  final List<PathCommand> commands = [];
+  List<PathCommand>? _commands;
+  Uint8List? _kinds;
+  Float64List? _coordinates;
+  int _length = 0;
+
+  // DIVERGES(chartjs): adapt-compact-path-storage, private scalar commands.
+  // Compact only unobserved move/line/close commands. Curves and inspection
+  // materialize the ordinary list once; subsequent writes stay on that list.
+  // The numeric buffers preserve doubles, including NaN and signed zero.
+  static const _close = 0;
+  static const _move = 1;
+  static const _line = 2;
+
+  /// The recorded commands, in order, as one stable mutable growable list.
+  /// Inspecting it materializes any private compact commands exactly once.
+  List<PathCommand> get commands {
+    final existing = _commands;
+    if (existing != null) return existing;
+    final result = <PathCommand>[];
+    final kinds = _kinds;
+    final coordinates = _coordinates;
+    for (var i = 0; i < _length; i++) {
+      result.add(switch (kinds![i]) {
+        _close => const ClosePathCommand(),
+        _move => MoveToCommand(coordinates![i * 2], coordinates[i * 2 + 1]),
+        _ => LineToCommand(coordinates![i * 2], coordinates[i * 2 + 1]),
+      });
+    }
+    _commands = result;
+    _kinds = null;
+    _coordinates = null;
+    return result;
+  }
+
+  void _append(int kind, double x, double y) {
+    final exposed = _commands;
+    if (exposed != null) {
+      exposed.add(switch (kind) {
+        _close => const ClosePathCommand(),
+        _move => MoveToCommand(x, y),
+        _ => LineToCommand(x, y),
+      });
+      return;
+    }
+    var kinds = _kinds;
+    var coordinates = _coordinates;
+    if (kinds == null || _length == kinds.length) {
+      final capacity = kinds == null ? 16 : kinds.length * 2;
+      final nextKinds = Uint8List(capacity);
+      final nextCoordinates = Float64List(capacity * 2);
+      if (kinds != null) {
+        nextKinds.setRange(0, _length, kinds);
+        nextCoordinates.setRange(0, _length * 2, coordinates!);
+      }
+      _kinds = kinds = nextKinds;
+      _coordinates = coordinates = nextCoordinates;
+    }
+    kinds[_length] = kind;
+    if (kind != _close) {
+      coordinates![_length * 2] = x;
+      coordinates[_length * 2 + 1] = y;
+    }
+    _length++;
+  }
 
   /// A slot for the converted form of this path, for the context that drew
   /// it last.
@@ -716,16 +781,16 @@ final class Path2D implements CanvasPath {
 
   /// The count of changes. A context compares it with the version of its
   /// [cache].
-  int get version => commands.length;
+  int get version => _commands?.length ?? _length;
 
   @override
-  void closePath() => commands.add(const ClosePathCommand());
+  void closePath() => _append(_close, 0, 0);
 
   @override
-  void moveTo(double x, double y) => commands.add(MoveToCommand(x, y));
+  void moveTo(double x, double y) => _append(_move, x, y);
 
   @override
-  void lineTo(double x, double y) => commands.add(LineToCommand(x, y));
+  void lineTo(double x, double y) => _append(_line, x, y);
 
   @override
   void bezierCurveTo(
@@ -819,6 +884,31 @@ final class Path2D implements CanvasPath {
   void replay(CanvasPath target) {
     for (final command in commands) {
       command.applyTo(target);
+    }
+  }
+
+  /// Replays private scalar storage to a synchronous native path builder.
+  ///
+  /// The caller must ensure [target] cannot run user code or inspect this path.
+  /// Public/custom replay uses [replay], preserving live-list iteration and
+  /// callback mutation behavior. Exposed or mixed paths also use that path.
+  @internal
+  void replayNative(CanvasPath target) {
+    if (_commands != null) {
+      replay(target);
+      return;
+    }
+    final kinds = _kinds;
+    final coordinates = _coordinates;
+    for (var i = 0; i < _length; i++) {
+      switch (kinds![i]) {
+        case _close:
+          target.closePath();
+        case _move:
+          target.moveTo(coordinates![i * 2], coordinates[i * 2 + 1]);
+        default:
+          target.lineTo(coordinates![i * 2], coordinates[i * 2 + 1]);
+      }
     }
   }
 }

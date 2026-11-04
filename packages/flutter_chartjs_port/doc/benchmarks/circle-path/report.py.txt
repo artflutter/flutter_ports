@@ -1,0 +1,42 @@
+from pathlib import Path
+import json,gzip,shutil,hashlib,statistics,math
+w=Path(__file__).resolve().parent
+out=Path('packages/flutter_chartjs_port/doc/benchmarks/circle-path')
+pairs=json.loads((w/'paired-frames.json').read_text());repeat=json.loads((w/'repeat-frames.json').read_text());indexed=json.loads((w/'indexed-repeat.json').read_text())
+key=lambda r:(r['call'],r['style'],r['connected'],r['labels'],r['spin'])
+bykey={key(r):r for r in pairs['production']};comparisons=[]
+for a in pairs['baseline']:
+ b=bykey[key(a)];comparisons.append({'case':key(a),'before':a,'after':b,'meanUiReductionPct':100*(1-b['buildMs']/a['buildMs'])})
+repeats=[]
+for call in ['update','animate']:
+ rows={k:next(r for r in v if r['call']==call) for k,v in repeat.items()}
+ a=statistics.mean(rows[k]['buildMs'] for k in ['a1','a2']);b=statistics.mean(rows[k]['buildMs'] for k in ['b1','b2']);repeats.append({'call':call,'beforeMeanUiMs':a,'afterMeanUiMs':b,'meanUiReductionPct':100*(1-b/a),'runs':rows,'pairedReductionPct':[100*(1-rows['b1']['buildMs']/rows['a1']['buildMs']),100*(1-rows['b2']['buildMs']/rows['a2']['buildMs'])]})
+gc=json.loads((w/'gc-summary.json').read_text())
+# Compare complete frames from the same final three seconds of each capture,
+# in addition to the full retained trace. UI Frame spans, not raster timings.
+for name,r in gc.items():
+ end=json.loads((w/(name+'.json.window')).read_text())['end'];start=end-3000000
+ assert min(f['start'] for f in r['frames'])<=start,(name,'insufficient timeline retention')
+ fs=[f for f in r['frames'] if f['start']>=start and f['end']<=end];assert len(fs)>=30
+ p90=sorted(f['uiMs'] for f in fs)[math.ceil(len(fs)*.9)-1];slow=[f for f in fs if f['uiMs']>=p90];rest=[f for f in fs if f['uiMs']<p90]
+ r['lastThreeSeconds']={'frames':len(fs),'meanUiMs':statistics.mean(f['uiMs'] for f in fs),'uiP90Ms':p90,'meanGcMs':statistics.mean(f['gcMs'] for f in fs),'slowFrameMeanGcMs':statistics.mean(f['gcMs'] for f in slow),'otherFrameMeanGcMs':statistics.mean(f['gcMs'] for f in rest)}
+result={'comparisons':comparisons,'heavyRepeats':repeats,'indexedRepeat':indexed,'gc':gc,'pixelComparison':json.loads((w/'pixel-comparison.json').read_text())['differences']}
+(out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
+(out/'pixel-comparison.json').write_bytes((w/'pixel-comparison.json').read_bytes())
+for p in w.iterdir():
+ if p.is_file():
+  if p.suffix in ['.py','.dart']:shutil.copyfile(p,out/(p.name+'.txt'))
+  elif p.name not in ['baseline-source.json','production-source.json','pixel-comparison.json','summary.json'] and not p.name.endswith('.before'):
+   with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+meta=json.loads((out/'metadata.json').read_text());assert all(hashlib.sha256(Path(p).read_bytes()).hexdigest()==h for p,h in meta['productionSourceSha256'].items())
+print('| Operation | Colors | Connected | Labels | Mean UI ms before → after | UI p90 ms before → after | FPS before → after |\n| --- | --- | --- | ---: | ---: | ---: | ---: |')
+for r in comparisons:
+ a,b=r['before'],r['after'];print(f"| {a['call']} | {a['style']} | {'on' if a['connected'] else 'off'} | {a['labels']} | {a['buildMs']:.2f} → {b['buildMs']:.2f} | {a['buildP90Ms']:.2f} → {b['buildP90Ms']:.2f} | {a['fps']:.1f} → {b['fps']:.1f} |")
+print('\n| Operation | Run | Mean UI ms | UI p90 ms | FPS |\n| --- | --- | ---: | ---: | ---: |')
+for r in repeats:
+ for tag,s in r['runs'].items():print(f"| {r['call']} | {tag} | {s['buildMs']:.2f} | {s['buildP90Ms']:.2f} | {s['fps']:.1f} |")
+print('\n| GC-only trace | Retained seconds / frames | Mean UI Frame ms | Mean GC ms/frame | Slowest-decile mean GC ms | UI Frame p90 ms |\n| --- | ---: | ---: | ---: | ---: | ---: |')
+for name,r in gc.items():print(f"| {name} | {r['timelineSeconds']:.2f} / {r['completeUiFrames']} | {r['uiMeanMs']:.2f} | {r['gcMeanPerFrameMs']:.2f} | {r['slowFramesMeanGcMs']:.2f} | {r['uiP90Ms']:.2f} |")
+print('\n| Final three seconds | Frames | Mean GC ms/frame | Slowest-decile mean GC ms | UI Frame p90 ms |\n| --- | ---: | ---: | ---: | ---: |')
+for name,v in gc.items():
+ r=v['lastThreeSeconds'];print(f"| {name} | {r['frames']} | {r['meanGcMs']:.2f} | {r['slowFrameMeanGcMs']:.2f} | {r['uiP90Ms']:.2f} |")

@@ -1,0 +1,53 @@
+import Cocoa
+import FlutterMacOS
+
+class MainFlutterWindow: NSWindow {
+  private var visibilityObserver: NSObjectProtocol?
+
+  private func recordVisibility(_ event: String) {
+    guard let path = ProcessInfo.processInfo.environment["OUTPUT"] else { return }
+    let value: [String: Any] = [
+      "event": event, "time": Date().timeIntervalSince1970,
+      "visible": isVisible, "occluded": !occlusionState.contains(.visible),
+      "miniaturized": isMiniaturized, "appHidden": NSApp.isHidden,
+      "width": contentView?.bounds.width ?? 0,
+      "height": contentView?.bounds.height ?? 0,
+      "dpr": backingScaleFactor
+    ]
+    guard var data = try? JSONSerialization.data(withJSONObject: value, options: [.sortedKeys]) else { return }
+    data.append(0x0a)
+    let target = path + ".window"
+    if !FileManager.default.fileExists(atPath: target) {
+      FileManager.default.createFile(atPath: target, contents: nil)
+    }
+    if let file = FileHandle(forWritingAtPath: target) {
+      file.seekToEndOfFile()
+      file.write(data)
+      try? file.close()
+    }
+  }
+
+  override func awakeFromNib() {
+    let flutterViewController = FlutterViewController()
+    let windowFrame = self.frame
+    self.contentViewController = flutterViewController
+    self.setFrame(windowFrame, display: true)
+    RegisterGeneratedPlugins(registry: flutterViewController)
+    super.awakeFromNib()
+    if ProcessInfo.processInfo.environment["FRAMES"] == "1" {
+      visibilityObserver = NotificationCenter.default.addObserver(
+        forName: NSWindow.didChangeOcclusionStateNotification,
+        object: self, queue: .main
+      ) { [weak self] _ in self?.recordVisibility("occlusion") }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        self.setContentSize(NSSize(width: 1100, height: 900))
+        self.level = .floating
+        self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        self.center()
+        self.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        self.recordVisibility("prepared")
+      }
+    }
+  }
+}

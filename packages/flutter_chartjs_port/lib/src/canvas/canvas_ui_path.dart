@@ -677,6 +677,22 @@ final class UiPathBuilder implements CanvasPath {
   ({double x, double y, double radius})? get singleCircle =>
       _circle ? (x: _circleX, y: _circleY, radius: _circleR) : null;
 
+  /// Whether scalar circle geometry is available without creating a record.
+  @internal
+  bool get hasSingleCircle => _circle;
+
+  /// Bitmap-space center x; read only when [hasSingleCircle] is true.
+  @internal
+  double get circleX => _circleX;
+
+  /// Bitmap-space center y; read only when [hasSingleCircle] is true.
+  @internal
+  double get circleY => _circleY;
+
+  /// Bitmap-space radius; read only when [hasSingleCircle] is true.
+  @internal
+  double get circleRadius => _circleR;
+
   /// The circular sector of the path in bitmap space, when the deferred
   /// commands are one subpath that fills a wedge with its center or a ring
   /// sector (canvas-cuts-plan.md §7, N4). The context fills it with
@@ -1548,7 +1564,7 @@ ui.Path uiPathOf(Path2D path2d) {
   }
   final builder = UiPathBuilder(_identity);
   path2d
-    ..replay(builder)
+    ..replayNative(builder)
     ..cache = _CachedPath(path2d.version, builder.path);
   return builder.path;
 }

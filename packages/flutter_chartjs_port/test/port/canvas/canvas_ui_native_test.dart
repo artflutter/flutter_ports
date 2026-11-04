@@ -119,6 +119,92 @@ typedef _Dot = ({
 ui.Color _css(ui.Color color) => color;
 
 void main() {
+  group('compact native Path2D', () {
+    for (final exposed in [false, true]) {
+      test('VM self replay retains list length checks: exposed=$exposed', () {
+        final path = Path2D();
+        if (exposed) expect(path.commands, isEmpty);
+        path
+          ..moveTo(1, 2)
+          ..lineTo(3, 4);
+        expect(
+          () => path.replay(path),
+          throwsA(isA<ConcurrentModificationError>()),
+        );
+        expect(path.version, 3);
+      });
+    }
+
+    for (final mixed in [false, true]) {
+      test(
+        'matches materialized path pixels and contours: mixed=$mixed',
+        () async {
+          void build(Path2D p) {
+            p.moveTo(3.25, 4.5);
+            for (var i = 0; i < 2048; i++) {
+              p.lineTo(
+                8 + (i * 7 % 140).toDouble(),
+                9 + (i * 11 % 140).toDouble(),
+              );
+              if (i % 129 == 0) {
+                p
+                  ..closePath()
+                  ..moveTo(12, 14);
+              }
+            }
+            if (mixed) {
+              p
+                ..bezierCurveTo(20, 30, 40, 50, 70, 80)
+                ..arc(50, 50, 12, 0, math.pi)
+                ..roundRect(20, 20, 35, 40, [3, 7]);
+            }
+            p.closePath();
+          }
+
+          final compact = Path2D();
+          final eager = Path2D();
+          final commands = eager.commands;
+          build(compact);
+          build(eager);
+          final a = uiPathOf(compact);
+          final b = uiPathOf(eager);
+          expect(a.getBounds(), b.getBounds());
+          expect(_contours(a), _contours(b));
+          final diff = comparePixels(
+            await _renderPath(a),
+            await _renderPath(b),
+          );
+          expect(diff.differing, 0, reason: '$diff');
+          expect(identical(a, uiPathOf(compact)), isTrue);
+          expect(compact.commands.length, commands.length);
+          expect(identical(a, uiPathOf(compact)), isTrue);
+          compact.lineTo(4, 5);
+          eager.lineTo(4, 5);
+          final next = uiPathOf(compact);
+          expect(identical(next, a), isFalse);
+          expect(_contours(next), _contours(uiPathOf(eager)));
+        },
+      );
+    }
+
+    test('scalar circle access follows transforms and path invalidation', () {
+      final transform = _retina();
+      final builder = UiPathBuilder(transform);
+      expect(builder.hasSingleCircle, isFalse);
+      builder.arc(10, 11, 3, 0, 2 * math.pi);
+      final circle = builder.singleCircle!;
+      expect(builder.hasSingleCircle, isTrue);
+      expect(builder.circleX, circle.x);
+      expect(builder.circleY, circle.y);
+      expect(builder.circleRadius, circle.radius);
+      builder.closePath();
+      expect(builder.hasSingleCircle, isTrue);
+      builder.lineTo(19, 20);
+      expect(builder.hasSingleCircle, isFalse);
+      expect(builder.singleCircle, isNull);
+    });
+  });
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('N1: a native save only for a state with a clip of its own', () {

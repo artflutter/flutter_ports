@@ -1,0 +1,29 @@
+from pathlib import Path
+import json,hashlib,gzip,shutil,difflib,subprocess
+root=Path.cwd();w=root/'.dart_tool/ui_priorities';out=root/'packages/flutter_chartjs_port/doc/benchmarks/ui-priorities';isolated=Path('/tmp/ui-priorities-work')
+baseline=json.loads((w/'baseline-source.json').read_text());assert all(hashlib.sha256((root/p).read_bytes()).hexdigest()==h for p,h in baseline.items()),'Production runtime changed'
+paths=['packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart','packages/flutter_chartjs_port/lib/src/core/core.controller.dart','packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart','packages/flutter_chartjs_port/lib/src/core/ui_diagnostic.dart','apps/chartjs_gallery/lib/demo/stress_demo.dart']
+patch=''
+for p in paths:
+ a=(root/p).read_text() if (root/p).exists() else '';b=(isolated/p).read_text();patch+=''.join(difflib.unified_diff(a.splitlines(True),b.splitlines(True),fromfile='a/'+p if a else '/dev/null',tofile='b/'+p))
+(out/'isolated-diagnostic.patch').write_text(patch)
+for p in w.iterdir():
+ if p.is_file() and p.name not in ['archive.py']:
+  if p.suffix in ['.py','.dart']:shutil.copyfile(p,out/(p.name+'.txt'))
+  elif p.name not in ['baseline-source.json','profile-summary.json']:
+   with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+shutil.copyfile(w/'profile-summary.json',out/'profile-summary.json')
+for src,name in [(isolated/'.dart_tool/ui_priorities/probe.dart','diagnostic_probe.dart.txt'),(isolated/'apps/chartjs_gallery/macos/Runner/MainFlutterWindow.swift','MainFlutterWindow.swift.txt')]:shutil.copyfile(src,out/name)
+metadata={'date':'2026-11-04','baseline':'ADR 0083 production, unchanged since native verification','hardware':'Apple M3 Max, macOS 27.0.1','sdk':'Flutter 3.47.8 / Dart 3.13.7','build':'native profile AOT','canvas':'1036x520 DPR2','items':20000,'productionSourceSha256':baseline,'binaries':{label:hashlib.sha256(Path(path+'/Contents/Frameworks/App.framework/App').read_bytes()).hexdigest() for label,path in [('production','/tmp/color-verification-production.app'),('diagnostic','/tmp/ui-priorities-diagnostic.app'),('boundsDiagnostic','/tmp/ui-priorities-fixed.app')]},'scope':'Investigation only. No production runtime changes. Fixed-bound/parsing-false shortcut rejected by a 20k-point boundary regression.','validation':{'eligibilityCases':6,'profileScenes':4,'phaseAndFallbackCases':18,'boundsExperimentCases':12,'gcOnlyRepeats':2}}
+(out/'metadata.json').write_text(json.dumps(metadata,indent=2)+'\n')
+ph=json.loads((w/'phases.json').read_text());summary=[]
+for r,d in zip(ph['frames'],ph['diagnostics']):summary.append({'call':r['call'],'connected':r['connected'],'labels':r['labels'],'spin':r['spin'],'meanPhaseMs':{k:v/d['frequency']*1000/d['counts'][k] for k,v in d['ticks'].items()},'counts':d['counts'],'frame':r})
+a=json.loads((w/'bounds-original.json').read_text());b=json.loads((w/'bounds-fixed.json').read_text());bounds=[]
+for r,d,s,e in zip(a['frames'],a['diagnostics'],b['frames'],b['diagnostics']):bounds.append({'style':r['style'],'connected':r['connected'],'original':r,'fixed':s,'originalReject':d['fallback'],'fixedReject':e['fallback'],'acceptedAsOptimization':False,'reason':'Unsafely combines explicit bounds with unsorted parsing:false data; can omit half the points at a boundary.'})
+(out/'phase-summary.json').write_text(json.dumps(summary,indent=2)+'\n');(out/'bounds-summary.json').write_text(json.dumps(bounds,indent=2)+'\n')
+# Retain startup and final visibility observations, with no unrelated desktop state.
+visibility={}
+for p in w.glob('*.results.window'):
+ rows=[json.loads(s) for s in p.read_text().splitlines()];prepared=next(r for r in rows if r['event']=='prepared');bad=[r for r in rows if r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or r['width']!=1100 or r['height']!=900 or r['dpr']!=2)];assert not bad,(p,bad);visibility[p.name]=rows
+(out/'visibility.json').write_text(json.dumps(visibility,indent=2)+'\n');shutil.copyfile(__file__,out/'archive.py.txt')
+print('Archived diagnostics; production source hashes unchanged.')

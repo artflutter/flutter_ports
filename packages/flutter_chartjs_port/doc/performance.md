@@ -7168,3 +7168,99 @@ All 112 accepted rows have at least 11 readouts and 174 captured timings;
 39,228 timings in total. Runtime source/framework hashes match the implementation
 evidence. Earlier correctness suites were not repeated because this pass changes
 only benchmark infrastructure and documentation.
+
+## 54. Drawing, data-only fallback and slow-frame investigation
+
+2026-11-04. [Detailed evidence and reproduction](benchmarks/ui-priorities/README.md).
+Unchanged ADR 0083 production build, native macOS profile AOT, 20k points,
+1036×520/DPR2. Timers and configuration experiments stay in an isolated copy;
+this pass changes no production library/gallery behavior.
+
+In the heavy connected scriptable update with 200 rotating labels, coarse
+phase timers measure point drawing 6.18 ms, connected-line work 2.18 ms,
+labels/title 1.97 ms and whole Chart.draw 10.35 ms. The 0.96 ms circle-batch
+flush is nested inside labels/title and must not be added again. Cached line
+draw costs about 0.02 ms on redraw, while moving updates rebuild/replay paths.
+Circle records/boxed numeric work and connected Path2D command objects are
+allocation-related candidates; this is not a new renderer speedup claim.
+
+The original data-only cases all reject at x-scale bounds: x uses suggested
+bounds, while data-only requires explicit finite min/max. An explicit-bound
+experiment enables static data-only updates, but is rejected as an optimization.
+The scene is unsorted with parsing:false; fixed bounds trigger sorted binary
+visible-range selection. A 20k-point boundary case draws only 10k points.
+Six unchanged-library tests reproduce that omission and show that parsing:true
+preserves all points. Indexed colors additionally lack static cached element
+options; scriptable colors also fail static-settings validation. A safe extension
+needs range/order correctness and a separate color-option contract.
+
+Fresh CPU profiles still show substantial element update, source checks,
+context refresh and callback work. The VM timeline identifies GC-labelled UI
+work as a major contributor to slow frames. In the heavy-update trace, it
+averages 4.70 ms/frame, rising from 4.39 ms in other frames to 7.40 ms in the
+slowest decile. With CPU sampling disabled, a repeat measures 4.53 ms/frame,
+with 4.25 versus 7.07 ms. Higher GC time accounts for 88.3% of that repeat's
+slow-frame mean duration gap; an animation repeat gives 82.2%.
+
+These are short retained timelines (2.37–6.78 seconds), with overlapping GC
+spans unioned on the UI thread and background GC excluded. Heap accumulated
+counters equal current counters, so no allocation-rate claim is made. Diagnostic
+costs must not be subtracted from §53 timings to predict FPS. The next measured
+candidate should reduce temporary marker/path objects, then verify both average
+UI cost and slow frames. No guard removal or callback-result memoization is
+justified by these results.
+
+Evidence: four CPU profiles, two GC-only repeats, 18 phase/fallback cases,
+12 bound experiment cases, six focused eligibility tests and matching production
+source hashes. Full correctness suites were not repeated for this diagnostics-only
+pass; no 60 FPS achievement is claimed.
+
+## 55. Scalar circles and compact native Path2D storage
+
+2026-11-04. [ADR 0084](adr/0084-scalar-circles-and-compact-paths.md),
+[full evidence and reproduction](benchmarks/circle-path/README.md).
+Three runtime files remove native circle records/boxing and pack unobserved
+move/line/close commands before native path conversion. Command inspection and
+complex operations materialize one stable mutable list; public/custom replay
+keeps the original platform-specific loop behavior. Cache/version semantics,
+canvas operations, batching/quantization and data-only guards stay intact.
+
+Native macOS profile AOT, 20k items, 1036×520/DPR2. The comparison covers 20
+cases per build across scriptable redraw/update/animation and static/indexed
+update/animation controls. All use 0 or 200 rotating labels, with connections
+on/off. Twelve-second A/B/B/A repeats target connected scriptable updates and
+animation with 200 labels:
+
+| Operation | Mean UI before ms | Mean UI after ms | Reduction | UI p90 before → after ms |
+| --- | ---: | ---: | ---: | --- |
+| Full update | 19.04 | 16.44 | 13.7% | 21.26–21.32 → 18.13–18.48 |
+| Animation | 11.44 | 10.53 | 8.0% | 14.91–16.09 → 13.20–14.83 |
+
+Means average two process means; p90 ranges list their individual results and
+are not combined percentiles. The full-update pairs both improve (about 12–15%).
+All initial mean UI pairs improve except one indexed-animation control. Its
+separate A/B/B/A repeat gives baseline 11.79/12.33 and production 10.31/10.17 ms;
+the initial regression does not reproduce. Original and repeat data are retained.
+
+GC-only traces disable CPU sampling. In heavy updates, mean GC-labelled UI time
+falls 5.16→3.74 ms/frame (about 28%); the slowest-decile mean falls 9.49→7.96 ms.
+Because bounded timeline retention differs, a matched final-three-second check
+is also retained: mean GC 5.38→3.83, slowest-decile GC 10.68→6.74 ms/frame.
+Animation mean GC is nearly unchanged in matched windows (1.64→1.62 ms), so no
+substantial animation-GC improvement is claimed. GC intervals are unioned on the
+UI thread, excluding background workers. Heap snapshots are not allocation rates.
+
+**Every-mode 60 FPS remains unmet.** Connected full-update FPS reaches about
+58–59 in the repeats, but UI p90 remains above 16.67 ms; the initial matrix has
+21.89 ms for that heavy candidate case. These short local runs do not establish
+sustained/cross-device FPS. Diagnostic GC timelines are separate from ordinary
+frame readouts and must not be subtracted from them to predict gains.
+
+Validation: 11,034 workspace VM tests, 58 finalized focused canvas/path tests,
+247 tests each on JavaScript and WebAssembly, fixture validation across 26 files,
+analysis, formatting, parity and all seven port checks. All 300 native RGBA
+comparisons are identical, including transformed circles, mixed/mutable paths
+and 20k-segment lines. Forty paired frame cells, eight heavy-repeat cells and
+four indexed-repeat cells pass viewport/sample/visibility checks. Four GC
+captures are retained. No full browser, golden or mobile suite was run. The
+previous 96-case matrix was not repeated; data-only remains separate work.

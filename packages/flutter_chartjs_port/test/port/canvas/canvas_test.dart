@@ -2,12 +2,19 @@
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:test/test.dart';
 
+// Parse at runtime: some JavaScript constant paths canonicalize negative zero.
+final double _negativeZero = double.parse('-0.0');
+
 /// A [CanvasPath] that records the calls, as `{name, args}` maps.
 final class _Recorder implements CanvasPath {
   final List<Map<String, Object?>> calls = [];
 
-  void _record(String name, List<Object?> args) =>
-      calls.add({'name': name, 'args': args});
+  void Function(String)? onCall;
+
+  void _record(String name, List<Object?> args) {
+    calls.add({'name': name, 'args': args});
+    onCall?.call(name);
+  }
 
   @override
   void closePath() => _record('closePath', []);
@@ -74,6 +81,21 @@ final class _Recorder implements CanvasPath {
   @override
   void roundRect(double x, double y, double w, double h, [Object? radii]) =>
       _record('roundRect', [x, y, w, h, radii]);
+}
+
+// Original public replay loop, used as an oracle for platform-specific list
+// iteration behavior when a callback changes the command count.
+final class _ReplayReference {
+  final List<PathCommand> commands = [];
+
+  void moveTo(double x, double y) => commands.add(MoveToCommand(x, y));
+  void lineTo(double x, double y) => commands.add(LineToCommand(x, y));
+
+  void replay(CanvasPath target) {
+    for (final command in commands) {
+      command.applyTo(target);
+    }
+  }
 }
 
 /// The geometry of `roundRect(x, y, w, h, radii)` as a list: left, top,
@@ -174,6 +196,117 @@ void main() {
         {'name': 'closePath', 'args': <Object?>[]},
       ]);
     });
+
+    test('a long unobserved path materializes one live command list', () {
+      final path = Path2D()..moveTo(_negativeZero, 0);
+      for (var i = 0; i < 20000; i++) {
+        path.lineTo(i.toDouble(), -i.toDouble());
+        if (i % 257 == 0) path.closePath();
+      }
+      final before = path.version;
+      final commands = path.commands;
+      expect(identical(commands, path.commands), isTrue);
+      expect(commands.length, before);
+      expect((commands.first as MoveToCommand).x.isNegative, isTrue);
+      final firstLine = commands[1];
+      path.lineTo(123, 456);
+      expect(identical(commands[1], firstLine), isTrue);
+      expect((commands.last as LineToCommand).y, 456);
+      commands.removeLast();
+      expect(path.version, before);
+      commands.clear();
+      path.moveTo(7, 8);
+      expect(identical(commands, path.commands), isTrue);
+      expect(path.version, 1);
+      expect((commands.single as MoveToCommand).x, 7);
+    });
+
+    test('compact coordinates retain non-finite values and signed zero', () {
+      final path = Path2D()
+        ..moveTo(_negativeZero, double.infinity)
+        ..lineTo(double.nan, double.negativeInfinity)
+        ..lineTo(0, _negativeZero);
+      final a = path.commands[0] as MoveToCommand;
+      final b = path.commands[1] as LineToCommand;
+      final c = path.commands[2] as LineToCommand;
+      expect(a.x.isNegative, isTrue);
+      expect(a.y, double.infinity);
+      expect(b.x.isNaN, isTrue);
+      expect(b.y, double.negativeInfinity);
+      expect(c.x.isNegative, isFalse);
+      expect(c.y.isNegative, isTrue);
+    });
+
+    for (final exposed in [false, true]) {
+      test('custom replay reads replacements live: exposed=$exposed', () {
+        final path = Path2D();
+        if (exposed) expect(path.commands, isEmpty);
+        path
+          ..moveTo(1, 2)
+          ..lineTo(3, 4)
+          ..closePath();
+        final recorder = _Recorder()
+          ..onCall = (name) {
+            if (name == 'moveTo') {
+              path.commands[1] = const LineToCommand(8, 9);
+            }
+          };
+        path.replay(recorder);
+        expect(recorder.calls[1], {
+          'name': 'lineTo',
+          'args': [8.0, 9.0],
+        });
+        expect(path.version, 3);
+      });
+      for (final remove in [false, true]) {
+        test(
+          'custom replay matches original count mutation: $exposed/$remove',
+          () {
+            Object observe({required bool reference}) {
+              final path = Path2D();
+              if (exposed) expect(path.commands, isEmpty);
+              final original = _ReplayReference();
+              path
+                ..moveTo(1, 2)
+                ..lineTo(3, 4);
+              original
+                ..moveTo(1, 2)
+                ..lineTo(3, 4);
+              var changed = false;
+              final recorder = _Recorder()
+                ..onCall = (name) {
+                  if (changed) return;
+                  changed = true;
+                  if (remove) {
+                    (reference ? original.commands : path.commands).clear();
+                  } else if (reference) {
+                    original.lineTo(5, 6);
+                  } else {
+                    path.lineTo(5, 6);
+                  }
+                };
+              Object? error;
+              try {
+                if (reference) {
+                  original.replay(recorder);
+                } else {
+                  path.replay(recorder);
+                }
+              } on Object catch (e) {
+                error = e.runtimeType.toString();
+              }
+              return {
+                'calls': recorder.calls,
+                'error': error,
+                'length': reference ? original.commands.length : path.version,
+              };
+            }
+
+            expect(observe(reference: false), observe(reference: true));
+          },
+        );
+      }
+    }
 
     test('the version counts the changes', () {
       final path = Path2D();

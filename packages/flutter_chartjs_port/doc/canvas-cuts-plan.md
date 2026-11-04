@@ -2441,3 +2441,12 @@ at the same canvas dimensions and configuration.
   transition in both baseline and prototype, with identical pixels and commands
   at matched stages. This clears that specific differential concern; production
   renderer integration and validation remain separate work.
+
+
+- 2026-11-04, ADR 0084 removes temporary circle records inside the native layer
+  and packs unobserved Path2D move/line/close commands before native conversion.
+  The command list materializes on observation and custom replay; native path
+  operations, cache versions, fill/stroke order, atlas quantization, flush and
+  recording boundaries remain. This is a storage/transport change within the
+  existing N1–N5 behavior, not a new draw cut. Exact-pixel, mutable-path and
+  lifecycle pinning tests validate it. See performance.md §55 and its evidence.

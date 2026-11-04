@@ -1,0 +1,242 @@
+{
+  "gc-update-heavy.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793806596.389241,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793806596.8531199,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "phases.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793805843.9259338,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793805843.9959412,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "animate-heavy.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793805502.161669,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793805502.201106,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "update-heavy.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793805417.456383,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793805417.5347009,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "draw-heavy.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793805473.927586,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793805473.9854999,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "bounds-original.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793806069.061472,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793806069.117568,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "fallback.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793805795.62817,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793805795.6838179,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "update-points.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793805445.7222052,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793805445.778985,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "bounds-fixed.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793806117.360781,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793806117.4128451,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "gc-animate-heavy.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793806624.798873,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793806625.0446758,
+      "visible": true,
+      "width": 1100
+    }
+  ]
+}

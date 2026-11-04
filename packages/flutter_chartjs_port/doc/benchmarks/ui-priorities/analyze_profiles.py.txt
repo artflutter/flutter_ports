@@ -1,0 +1,51 @@
+from pathlib import Path
+import json,collections,statistics,math
+w=Path(__file__).resolve().parent
+
+def spans(events):
+ active=collections.defaultdict(list);out=[]
+ for e in sorted(events,key=lambda x:x.get('ts',0)):
+  ph=e.get('ph');key=(e.get('tid'),e.get('name'),e.get('id') if ph in ['b','e'] else None)
+  if ph in ['B','b']:active[key].append(e)
+  elif ph in ['E','e'] and active[key]:
+   a=active[key].pop();out.append({'name':a.get('name'),'cat':a.get('cat'),'tid':a.get('tid'),'start':a['ts'],'end':e['ts']})
+  elif ph=='X':out.append({'name':e.get('name'),'cat':e.get('cat'),'tid':e.get('tid'),'start':e['ts'],'end':e['ts']+e['dur']})
+ return out
+
+def union(sp):
+ out=[]
+ for a,b in sorted(sp):
+  if out and a<=out[-1][1]:out[-1]=(out[-1][0],max(out[-1][1],b))
+  else:out.append((a,b))
+ return out
+
+def pct(xs,q):return sorted(xs)[math.ceil(len(xs)*q)-1] if xs else 0
+
+def fn(f):
+ n=f['function'];return (n.get('owner',{}).get('name','')+'.'+n['name']).lstrip('.')
+allresults={}
+for name in ['update-heavy','update-points','draw-heavy','animate-heavy','gc-update-heavy','gc-animate-heavy']:
+ p=json.loads((w/(name+'.json')).read_text());t=json.loads((w/(name+'.json.timeline')).read_text());sp=spans(t['traceEvents']);frames=[s for s in sp if s['name']=='Frame' and s['cat']=='Dart'];tid=collections.Counter(s['tid'] for s in frames).most_common(1)[0][0];frames=[s for s in frames if s['tid']==tid]
+ gc=union((s['start'],s['end']) for s in sp if s['cat']=='GC' and s['tid']==tid)
+ fs=[]
+ for f in frames:
+  gcus=sum(max(0,min(b,f['end'])-max(a,f['start'])) for a,b in gc)
+  fs.append({'start':f['start'],'end':f['end'],'uiMs':(f['end']-f['start'])/1000,'gcMs':gcus/1000})
+ ui=[f['uiMs'] for f in fs];p90=pct(ui,.9);slow=[f for f in fs if f['uiMs']>=p90];normal=[f for f in fs if f['uiMs']<p90]
+ sc=[(s['end']-s['start'])/1000 for s in sp if s['name']=='Scavenge' and s['tid']==tid]
+ tags=collections.Counter(s.get('vmTag') for s in p['samples']);functions=[{'name':fn(f),'inclusivePct':100*f['inclusiveTicks']/p['sampleCount'],'selfPct':100*f['exclusiveTicks']/p['sampleCount']} for f in sorted(p['functions'],key=lambda f:f['inclusiveTicks'],reverse=True) if f['inclusiveTicks']]
+ # Categories are disjoint: assign each sample to its first matching major phase.
+ cats=collections.Counter();slowcats=collections.Counter();normalcats=collections.Counter()
+ for sample in p['samples']:
+  names=[fn(p['functions'][i]) for i in sample['stack']];category='other'
+  for c,match in [('labels','StressDemoState._drawLabels'),('points','PointElement.draw'),('line','LineElement.draw'),('batch','CircleBatch.flush'),('drawingOther','Chart.draw'),('resolverGuards','prepareLineResolution.valid'),('scalarResolution','OptionResolver._resolveScalarColors'),('optionResolutionOther','Config._resolveElementNamedOptions'),('context','NativePointContextReader.read'),('elementUpdateOther','LineController.updateElements'),('updateOther','Chart._updateFull'),('animation','Animation._tickNumber')]:
+   if match in names:category=c;break
+  cats[category]+=1
+  f=next((f for f in fs if f['start']<=sample['timestamp']<=f['end']),None)
+  if f:(slowcats if f['uiMs']>=p90 else normalcats)[category]+=1
+ heap=json.loads((w/(name+'.json.heap-end')).read_text());members=heap.get('members',[])
+ result={'profilerDisabled':p.get('profilerDisabled',False),'samples':p['sampleCount'],'samplePeriod':p['samplePeriod'],'sampleWindowSeconds':p['timeExtentMicros']/1e6,'timelineSeconds':(max(s['end'] for s in sp)-min(s['start'] for s in sp))/1e6,'completeUiFrames':len(fs),'uiMeanMs':statistics.mean(ui),'uiP90Ms':p90,'gcMeanPerFrameMs':statistics.mean(f['gcMs'] for f in fs),'gcShareOfFrameTimePct':100*sum(f['gcMs'] for f in fs)/sum(ui),'slowFramesMeanGcMs':statistics.mean(f['gcMs'] for f in slow),'otherFramesMeanGcMs':statistics.mean(f['gcMs'] for f in normal),'slowFrameMeanUiMs':statistics.mean(f['uiMs'] for f in slow),'otherFrameMeanUiMs':statistics.mean(f['uiMs'] for f in normal),'uiScavengeCount':len(sc),'scavengeMedianMs':pct(sc,.5),'scavengeP90Ms':pct(sc,.9),'disjointSamples':dict(cats),'slowFrameSampleCategories':dict(slowcats),'otherFrameSampleCategories':dict(normalcats),'vmTags':dict(tags),'functions':functions[:100],'frames':fs,'heapCountersEqualCurrent':all(m.get('instancesCurrent')==m.get('instancesAccumulated') and m.get('bytesCurrent')==m.get('accumulatedSize') for m in members),'topLiveClasses':[{'name':m['class']['name'],'bytes':m.get('bytesCurrent'),'instances':m.get('instancesCurrent')} for m in sorted(members,key=lambda m:m.get('bytesCurrent',0),reverse=True)[:30]]}
+ allresults[name]=result
+ print(name,'samples',result['samples'],'timeline',round(result['timelineSeconds'],2),'frames',len(fs),'UI mean/p90',round(result['uiMeanMs'],2),round(p90,2),'GC/frame',round(result['gcMeanPerFrameMs'],2),'GC slow/other',round(result['slowFramesMeanGcMs'],2),round(result['otherFramesMeanGcMs'],2))
+ print({k:round(v/p['sampleCount']*100,1) for k,v in cats.items()})
+(w/'profile-summary.json').write_text(json.dumps(allresults,indent=2)+'\n')

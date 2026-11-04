@@ -1,0 +1,24 @@
+{
+  "workspaceVmPassed": 11034,
+  "finalFocusedVmPassed": 58,
+  "focusedJavaScriptPassed": 247,
+  "focusedWasmPassed": 247,
+  "fixtureFiles": 26,
+  "fixtureValidation": "passed",
+  "nativePixelComparisons": 300,
+  "nativePixelMismatches": 0,
+  "pairedFrameCells": 40,
+  "heavyRepeatCells": 8,
+  "indexedRepeatCells": 4,
+  "gcCaptures": 4,
+  "analysis": "passed, no issues",
+  "format": "passed",
+  "parity": "regenerated, 163 files, 0 errors/warnings",
+  "portChecks": "all seven passed",
+  "notRun": [
+    "full browser suite",
+    "golden suite",
+    "mobile suite",
+    "new full 96-cell matrix"
+  ]
+}

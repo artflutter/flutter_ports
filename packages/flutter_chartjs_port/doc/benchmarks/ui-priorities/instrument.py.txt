@@ -1,0 +1,57 @@
+from pathlib import Path
+root=Path('/tmp/ui-priorities-work');src=root/'packages/flutter_chartjs_port/lib/src'
+(src/'core/ui_diagnostic.dart').write_text('''// Original code: isolated UI cost diagnostic, never production.
+class UiDiagnostic {
+ static final clock=Stopwatch()..start();
+ static bool enabled=false;
+ static final ticks=<String,int>{};
+ static final counts=<String,int>{};
+ static final reasons=<String,int>{};
+ static int get now=>clock.elapsedTicks;
+ static void add(String key,int start){if(enabled){ticks.update(key,(v)=>v+clock.elapsedTicks-start,ifAbsent:()=>clock.elapsedTicks-start);counts.update(key,(v)=>v+1,ifAbsent:()=>1);}}
+ static void reason(String key){if(enabled)reasons.update(key,(v)=>v+1,ifAbsent:()=>1);}
+ static void reset(){enabled=false;ticks.clear();counts.clear();reasons.clear();}
+ static Map<String,Object> result()=>{'frequency':clock.frequency,'ticks':Map.of(ticks),'counts':Map.of(counts),'fallback':Map.of(reasons)};
+}
+''')
+imp="import 'package:flutter_chartjs_port/src/core/ui_diagnostic.dart';\n"
+def load(path):
+ p=src/path;s=p.read_text();pos=s.index("\nimport '")+1;s=s[:pos]+imp+s[pos:];return p,s
+def wrap(s,signature,key):
+ start=s.index(signature);opening=s.index('{',start);depth=1;i=opening+1
+ # signatures below use no default object literals; braces in these bodies are balanced.
+ while depth:
+  if s[i]=='{':depth+=1
+  elif s[i]=='}':depth-=1
+  i+=1
+ return s[:opening+1]+f"\nfinal diagnosticStart=UiDiagnostic.now;\ntry {{"+s[opening+1:i-1]+f"\n}} finally {{UiDiagnostic.add('{key}',diagnosticStart);}}\n"+s[i-1:]
+p,s=load('core/core.datasetController.dart')
+a=s.index('  void draw() {');b=s.index('  /// core.datasetController.js:752',a);chunk=s[a:b]
+chunk=chunk.replace("      jsCall((dataset as types.VisualElement).draw, [ctx, area, start, count]);","      final lineStart=UiDiagnostic.now;\n      jsCall((dataset as types.VisualElement).draw, [ctx, area, start, count]);\n      UiDiagnostic.add('lineDraw',lineStart);")
+chunk=chunk.replace('    for (i = start;', '    final pointsStart=UiDiagnostic.now;\n    for (i = start;').replace("    for (var k = 0; k < active.length; ++k)","    UiDiagnostic.add('pointLoop',pointsStart);\n    for (var k = 0; k < active.length; ++k)")
+s=s[:a]+chunk+s[b:];p.write_text(s)
+p,s=load('canvas/canvas_ui_batch.dart');s=wrap(s,'  void flush(ui.Canvas canvas)', 'batchFlush');p.write_text(s)
+p,s=load('core/core.controller.dart');a=s.index('  bool updateData() {');b=s.index('    final snapshot = _dataUpdateSnapshot;',a);part=s[a:b]
+part=part.replace('bool full() {','bool full([String reason="unspecified"]) {\n      UiDiagnostic.reason(reason);')
+start=part.index('    if (!_dataUpdateReady ||')
+part=part[:start]+'''    if (!_dataUpdateReady) return full('notReady');
+    if (!supportsDataUpdates) return full('chartClass');
+    if (!config.supportsDataUpdates) return full('configClass');
+    if (dataChanges.isNotEmpty) return full('dataChanges');
+    if (animator.has(this)) return full('animator');
+    if (!plugins.supportsDataUpdates) return full('plugins');
+'''
+s=s[:a]+part+s[b:];a=s.index('  bool updateData() {');b=s.index('    _updatingData = true;',a);part=s[a:b]
+part=part.replace('return full();',"return full('environment');",1).replace('return full();',"return full('snapshot');",1).replace('if (!scale.supportsDataUpdates) return full();',"if (!scale.supportsDataUpdates) return full('scale:${scale.id}');")
+part=part.replace('return full();',"return full('controllerStaticOrShape');",1).replace('if (!snapshot.validateSettings()) return full();',"if (!snapshot.validateSettings()) return full('settings');")
+part=part.replace('return full();',"return full('elementClass');",1).replace('if (primitive == null) return full();',"if (primitive == null) return full('values');")
+s=s[:a]+part+s[b:];s=wrap(s,'  void draw() {','chartDraw');p.write_text(s)
+p=root/'apps/chartjs_gallery/lib/demo/stress_demo.dart';s=p.read_text();pos=s.index("\nimport '")+1;s=s[:pos]+imp+s[pos:];s=wrap(s,'  void _drawLabels(CanvasRenderingContext2D ctx, double w, double h)', 'labels');s=wrap(s,'  void _drawTitle(CanvasRenderingContext2D ctx)', 'title');p.write_text(s)
+# Probe reuses the ordinary StressDemo and records phase aggregates separately.
+p=root/'.dart_tool/ui_priorities/probe.dart';p.parent.mkdir(parents=True,exist_ok=True)
+s=Path('/tmp/color-resolution-work/.dart_tool/color_resolution/probe.dart').read_text();pos=s.index("\nimport '")+1;s=s[:pos]+imp+s[pos:]
+s=s.replace('    rows.clear();','    UiDiagnostic.reset();\n    rows.clear();')
+s=s.replace('            rows.add(s);','            UiDiagnostic.enabled=true;\n            rows.add(s);')
+s=s.replace('    if (++index == specs.length) {',"    record('DIAGNOSTIC',{'call':s.call,'style':s.style,'connected':s.line,'labels':s.m,...UiDiagnostic.result()});\n    if (++index == specs.length) {")
+p.write_text(s)
+print('Isolated diagnostics installed.')

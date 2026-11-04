@@ -1,0 +1,262 @@
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -41,6 +41,7 @@
+ /// `core.animator.dart`. Thus it is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/ui_diagnostic.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+     show CanvasRenderingContext2D;
+ import 'package:flutter_chartjs_port/src/core/core.animations.dart';
+@@ -1792,9 +1793,12 @@
+ 
+     final dataset = meta.dataset;
+     if (dataset != null) {
++      final lineStart=UiDiagnostic.now;
+       jsCall((dataset as types.VisualElement).draw, [ctx, area, start, count]);
+-    }
+-
++      UiDiagnostic.add('lineDraw',lineStart);
++    }
++
++    final pointsStart=UiDiagnostic.now;
+     for (i = start; i < start + count; ++i) {
+       final element = _at(elements, i)! as Element;
+       if (jsTruthy(element.hidden)) {
+@@ -1807,6 +1811,7 @@
+       }
+     }
+ 
++    UiDiagnostic.add('pointLoop',pointsStart);
+     for (var k = 0; k < active.length; ++k) {
+       (active[k] as types.VisualElement).draw(ctx!, area);
+     }
+--- a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+@@ -33,6 +33,7 @@
+ /// a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/ui_diagnostic.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+@@ -1666,7 +1667,8 @@
+     if (_updatingData || _fullUpdateDepth > 0 || _dataUpdateFallback) {
+       throw StateError('updateData cannot be called from update hooks');
+     }
+-    bool full() {
++    bool full([String reason="unspecified"]) {
++      UiDiagnostic.reason(reason);
+       _dataUpdateFallback = true;
+       try {
+         update('none');
+@@ -1676,14 +1678,12 @@
+       }
+     }
+ 
+-    if (!_dataUpdateReady ||
+-        !supportsDataUpdates ||
+-        !config.supportsDataUpdates ||
+-        dataChanges.isNotEmpty ||
+-        animator.has(this) ||
+-        !plugins.supportsDataUpdates) {
+-      return full();
+-    }
++    if (!_dataUpdateReady) return full('notReady');
++    if (!supportsDataUpdates) return full('chartClass');
++    if (!config.supportsDataUpdates) return full('configClass');
++    if (dataChanges.isNotEmpty) return full('dataChanges');
++    if (animator.has(this)) return full('animator');
++    if (!plugins.supportsDataUpdates) return full('plugins');
+     final snapshot = _dataUpdateSnapshot;
+     final environment = _dataUpdateEnvironment;
+     if (environment == null ||
+@@ -1692,17 +1692,17 @@
+         environment.dpr != currentDevicePixelRatio ||
+         environment.fonts == null ||
+         !identical(environment.fonts, _dataUpdateFonts)) {
+-      return full();
++      return full('environment');
+     }
+ 
+     final newSnapshot = !(snapshot?.settingsValidated ?? false);
+     if (snapshot == null ||
+         !snapshot.matches(data, config.options) ||
+         snapshot.datasets.length != _datasets.length) {
+-      return full();
++      return full('snapshot');
+     }
+     for (final scale in scales.values) {
+-      if (!scale.supportsDataUpdates) return full();
++      if (!scale.supportsDataUpdates) return full('scale:${scale.id}');
+     }
+     final controllers = <DatasetController>[];
+     for (var i = 0; i < snapshot.datasets.length; i++) {
+@@ -1713,11 +1713,11 @@
+           !controller.hasStaticDataUpdateOptions ||
+           (controller.parsing is! bool && controller.parsing is! Undefined) ||
+           meta.data.length != snapshot.counts[i]) {
+-        return full();
++        return full('controllerStaticOrShape');
+       }
+       controllers.add(controller);
+     }
+-    if (!snapshot.validateSettings()) return full();
++    if (!snapshot.validateSettings()) return full('settings');
+     for (var i = 0; i < controllers.length; i++) {
+       final controller = controllers[i];
+       final meta = controller.cachedMeta;
+@@ -1726,14 +1726,14 @@
+               (meta.dataset != null &&
+                   (meta.dataset is! Element ||
+                       !(meta.dataset! as Element).typedWrites)))) {
+-        return full();
++        return full('elementClass');
+       }
+       final primitive = snapshot.validateValues(
+         i,
+         controller.dataUpdateShape,
+         prepared: controller.parsing == false,
+       );
+-      if (primitive == null) return full();
++      if (primitive == null) return full('values');
+       controller.primitiveDataUpdate = primitive;
+     }
+     _updatingData = true;
+@@ -2015,6 +2015,8 @@
+   /// core.controller.js:698 `draw()`.
+   @override
+   void draw() {
++final diagnosticStart=UiDiagnostic.now;
++try {
+     int i;
+     final resizeBeforeDraw = _resizeBeforeDraw;
+     if (resizeBeforeDraw != null) {
+@@ -2051,7 +2053,9 @@
+     }
+ 
+     notifyPlugins('afterDraw');
+-  }
++  
++} finally {UiDiagnostic.add('chartDraw',diagnosticStart);}
++}
+ 
+   /// core.controller.js:737 `_getSortedDatasetMetas(filterVisible)`.
+   /// @private
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas_ui_batch.dart
+@@ -31,6 +31,7 @@
+ /// sprites.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/core/ui_diagnostic.dart';
+ import 'dart:collection';
+ import 'dart:typed_data';
+ import 'dart:ui' as ui;
+@@ -226,6 +227,8 @@
+ 
+   /// Draws the run on [canvas], in order, and empties it.
+   void flush(ui.Canvas canvas) {
++final diagnosticStart=UiDiagnostic.now;
++try {
+     final n = length;
+     if (n == 0) return;
+     length = 0;
+@@ -288,7 +291,9 @@
+         j = 0;
+       }
+     }
+-  }
++  
++} finally {UiDiagnostic.add('batchFlush',diagnosticStart);}
++}
+ 
+   void _drawDirect(ui.Canvas canvas, int n) {
+     final colored = _colored;
+--- /dev/null
++++ b/packages/flutter_chartjs_port/lib/src/core/ui_diagnostic.dart
+@@ -0,0 +1,14 @@
++// Original code: isolated UI cost diagnostic, never production.
++class UiDiagnostic {
++ static final clock=Stopwatch()..start();
++ static bool enabled=false;
++ static bool fixedBounds=false;
++ static final ticks=<String,int>{};
++ static final counts=<String,int>{};
++ static final reasons=<String,int>{};
++ static int get now=>clock.elapsedTicks;
++ static void add(String key,int start){if(enabled){ticks.update(key,(v)=>v+clock.elapsedTicks-start,ifAbsent:()=>clock.elapsedTicks-start);counts.update(key,(v)=>v+1,ifAbsent:()=>1);}}
++ static void reason(String key){if(enabled)reasons.update(key,(v)=>v+1,ifAbsent:()=>1);}
++ static void reset(){enabled=false;ticks.clear();counts.clear();reasons.clear();}
++ static Map<String,Object> result()=>{'frequency':clock.frequency,'ticks':Map.of(ticks),'counts':Map.of(counts),'fallback':Map.of(reasons)};
++}
+--- a/apps/chartjs_gallery/lib/demo/stress_demo.dart
++++ b/apps/chartjs_gallery/lib/demo/stress_demo.dart
+@@ -1,6 +1,7 @@
+ // The reason of each import of lib/src is the comment above it.
+ // ignore_for_file: implementation_imports
+ 
++import 'package:flutter_chartjs_port/src/core/ui_diagnostic.dart';
+ import 'dart:math' as math;
+ import 'dart:typed_data';
+ import 'dart:ui' as ui;
+@@ -1162,7 +1163,7 @@
+     registerGalleryComponents();
+     final scene = _chartScene = StressChartScene(_type, _n, _field);
+     _chartData = scene.data;
+-    return stressChartConfig(
++    final config=stressChartConfig(
+       scene: scene,
+       scriptable: _scriptable,
+       indexed: _indexed,
+@@ -1170,6 +1171,13 @@
+       animate: _call == StressChartCall.animate,
+       plugins: [_labelsPlugin, _timing.plugin],
+     );
++    if(UiDiagnostic.fixedBounds){
++      final options=config['options']! as Map<String,Object?>;
++      final scales=options['scales']! as Map<String,Object?>;
++      final x=scales['x']! as Map<String,Object?>;
++      x['min']=0.0;x['max']=1.0;
++    }
++    return config;
+   }
+ 
+   /// The config of `new Chart(canvas, config)` of the mode
+@@ -1853,6 +1861,8 @@
+ 
+   /// The M labels of every mode.
+   void _drawLabels(CanvasRenderingContext2D ctx, double w, double h) {
++final diagnosticStart=UiDiagnostic.now;
++try {
+     if (_m > 0) {
+       // A grid of labels, each rotated as an axis tick label is
+       // (core.scale.js:1325 passes translation and rotation).
+@@ -1885,10 +1895,14 @@
+         );
+       }
+     }
+-  }
++  
++} finally {UiDiagnostic.add('labels',diagnosticStart);}
++}
+ 
+   /// The title with the counts and the frame number.
+   void _drawTitle(CanvasRenderingContext2D ctx) {
++final diagnosticStart=UiDiagnostic.now;
++try {
+     final title = '$_n ${_mode.items} · $_m labels · frame $_frames';
+     ctx.font = _titleFont.string;
+     final titleWidth = ctx.measureText(title).width;
+@@ -1910,7 +1924,9 @@
+         ),
+       ),
+     );
+-  }
++  
++} finally {UiDiagnostic.add('title',diagnosticStart);}
++}
+ 
+   /// Consistent configuration order across all stress targets.
+   Widget _toolbar(ThemeData theme) {

@@ -1,0 +1,19 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart' as now;
+import 'baseline_canvas.dart' as old;
+class Target implements now.CanvasPath,old.CanvasPath {
+ void Function()? change;
+ final calls=<Object>[];
+ @override void moveTo(double x,double y){calls.add([x,y]);change?.call();}
+ @override void lineTo(double x,double y){calls.add([x,y]);}
+ @override dynamic noSuchMethod(Invocation invocation)=>super.noSuchMethod(invocation);
+}
+void main(){test('original versus compact public replay mutation',(){
+ Object run(bool original){
+  final dynamic path=original?old.Path2D():now.Path2D();path.moveTo(1.0,2.0);path.lineTo(3.0,4.0);
+  final target=Target()..change=(){path.lineTo(5.0,6.0);};
+  Object? error;try{path.replay(target);}catch(e){error=e.runtimeType.toString();}
+  return {'calls':target.calls,'error':error};
+ }
+ final a=run(true),b=run(false);print('ORIGINAL $a');print('CURRENT $b');expect(b,a);
+});}

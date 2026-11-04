@@ -1,0 +1,20 @@
+import os,re,subprocess,time
+os.environ['GC_ONLY']='1'
+from pathlib import Path
+p=Path(__file__).resolve().parent
+for name,call,style,connected,labels,spin in [('gc-update-heavy','update','scriptable','1','200','1'),('gc-animate-heavy','animate','scriptable','1','200','1')]:
+ print('START',name,flush=True)
+ with (p/(name+'.log')).open('w') as log:
+  app=subprocess.Popen(['/tmp/color-verification-production.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'FRAMES':'1','CALLS':call,'STYLES':style,'CONNECTED':connected,'LABELS':labels,'SPIN':spin,'SECONDS':'28','OUTPUT':str(p/(name+'.results'))},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   m=None
+   for i in range(150):
+    m=re.search(r'http://127.0.0.1:(\d+)/(\S+)',(p/(name+'.log')).read_text())
+    if m:break
+    time.sleep(.1)
+   assert m,'VM service unavailable'
+   subprocess.run(['/Users/vasilich/fvm/versions/3.47.8/bin/cache/dart-sdk/bin/dart','--packages=.dart_tool/package_config.json',str(p/'profile.dart'),f'ws://127.0.0.1:{m[1]}/{m[2]}ws',str(p/(name+'.json'))],check=True,timeout=35)
+   app.wait(timeout=15)
+   print('DONE',name,flush=True)
+  finally:
+   if app.poll() is None:app.terminate();app.wait(timeout=10)
