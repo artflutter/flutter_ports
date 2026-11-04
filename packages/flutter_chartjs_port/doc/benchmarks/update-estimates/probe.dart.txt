@@ -1,0 +1,86 @@
+// Original code, not ported from Chart.js: isolated update-cost estimates.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:chartjs_gallery/bench/chart_bench.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Animation;
+import 'package:flutter_chartjs_port/src/core/perf_estimate.dart' as probe;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+
+Object? plain(Object? v) {
+ if(v is Undefined)return '#undefined';
+ if(v is ui.Color)return v.toARGB32();
+ if(v is double&&!v.isFinite)return v.toString();
+ if(v is JsObjectFace)return {for(final k in v.jsKeys()) k:plain(v.jsRead(k))};
+ if(v is Map)return {for(final e in v.entries)e.key:plain(e.value)};
+ if(v is List)return v.map(plain).toList();
+ return v;
+}
+Object observe(Chart chart)=>[
+ plain(chart.getDatasetMeta(0).parsed),
+ for(final e in chart.getDatasetMeta(0).data) [
+  for(final k in ['x','y','base','width','height','skip','stop','cp1x','cp1y','cp2x','cp2y','borderSkipped','inflateAmount','enableBorderRadius'])
+   plain((e as types.ElementPropertyRead)[k]),
+  for(final k in ['backgroundColor','borderColor','borderWidth','radius','borderRadius',r'$shared'])
+   plain((e.options as JsObjectFace).jsRead(k)),
+ ],
+];
+const modes={'baseline':0,'setup':1,'styles':2,'bulk':4,'setup_bulk':5,'styles_bulk':6,'data':8};
+ChartBenchCase make(String typeName,String style,String variant) => ChartBenchCase(
+ mode:'estimate',name:'$typeName.$style.$variant',call:variant=='data'?ChartBenchCall.frame:ChartBenchCall.update,
+ keys:{'type':typeName,'style':style,'variant':variant},scene:(n){
+  probe.estimateMode=modes[variant]!;probe.setupHits=0;probe.styleHits=0;probe.bulkHits=0;
+  registerGalleryComponents();
+  final type=StressChartType.values.byName(typeName);
+  final field=StressPointField(n);final scene=StressChartScene(type,n,field);
+  final cfg=stressChartConfig(scene:scene,scriptable:false,options:chartBenchOptions);
+  final ds=((cfg['data'] as Map)['datasets'] as List).first as Map;
+  var frames=0,calls=0,fast=0,fallback=0;
+  ds['backgroundColor']=switch(style){
+   'indexed'=><Object?>[stressChartBackground,stressChartBackgroundOdd],
+   'callback'=>(Object? ctx){calls++;return stressScriptableBackground(ctx);},
+   _=>stressChartBackground,
+  };
+  return ChartBenchScene(config:cfg,change:(){field.step(n,chartBenchStep);scene.write(field);frames++;},
+   frame:variant=='data'?(chart){if(chart.updateData())fast++;else fallback++;}:null,
+   describe:(chart)=>{'setupHits':probe.setupHits,'styleHits':probe.styleHits,'bulkHits':probe.bulkHits,
+    'frames':frames,'callbackCalls':calls,'callbacksPerFrame':calls/(frames+1),'dataCalls':fast,'fallbackCalls':fallback});
+ });
+Future<void> run()async{
+ await Future<void>.delayed(const Duration(seconds:2));animator.refresh=(){};
+ final env=Platform.environment;final profile=env['PROFILE']=='1';
+ var specs=<({String type,String style,String variant,int n})>[];
+ final variants=(env['VARIANTS']??'baseline,setup,styles,bulk,setup_bulk,styles_bulk,data').split(',');
+ for(final n in (env['N']??'5000').split(',').map(int.parse)) {
+  for(final type in (env['TYPES']??'line,bar,radar').split(',')) {
+   for(final style in (env['STYLES']??'static,indexed,callback').split(',')) {
+    for(final variant in variants) {
+     if(variant.contains('bulk')&&type!='bar')continue;
+     if(variant=='data'&&(style!='indexed'||type!='bar'))continue;
+     if(style=='static'&&!['baseline',type=='bar'?'styles_bulk':'styles'].contains(variant))continue;
+     if(type=='radar'&&!['baseline','styles'].contains(variant))continue;
+     specs.add((type:type,style:style,variant:variant,n:n));
+    }
+   }
+  }
+ }
+ if(env['REVERSE']=='1')specs=specs.reversed.toList();
+ for(final s in specs){
+  print('START ${s.type}.${s.style}.${s.variant}/${s.n}');
+  var same=true;
+  final result=runChartBenchCase(make(s.type,s.style,s.variant),s.n,
+   ChartBenchSettings(warmupMs:800,batches:profile?100:7,batchMs:200),
+   onChart:profile?null:(chart){
+    final before=jsonEncode(observe(chart));final mode=probe.estimateMode;probe.estimateMode=0;
+    chart.update('none');same=before==jsonEncode(observe(chart));probe.estimateMode=mode;
+    if(!same)throw StateError('Geometry/style mismatch ${s.type}.${s.style}.${s.variant}/${s.n}');
+   });
+  print('ESTIMATE ${jsonEncode({...result,'referenceMatches':same})}');
+ }
+ exit(0);
+}
+void main(){WidgetsFlutterBinding.ensureInitialized();runApp(const MaterialApp(home:Scaffold(body:Text('Performance estimate'))));unawaited(run().catchError((Object e,StackTrace st){print('$e\n$st');exit(1);}));}

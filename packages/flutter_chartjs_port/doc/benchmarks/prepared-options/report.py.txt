@@ -1,0 +1,34 @@
+import json, gzip
+from pathlib import Path
+src=Path('.dart_tool/prepared_options')
+out=Path('packages/flutter_chartjs_port/doc/benchmarks/prepared-options')
+summary=[]; count=0
+for prefix in ['', 'dense-']:
+    runs={}
+    for name in ['a1','b1','b2','a2']:
+        path=src/(prefix+name+'.json')
+        rows=json.loads(path.read_text())
+        count+=len(rows)
+        for row in rows:
+            assert row['referenceMatches']
+            expected=(5006 if row['type']=='line' else 5001) if row['style']=='callback' else 0
+            assert row['callbacksPerFrame']==expected
+        runs[name]={row['case']:row for row in rows}
+        (out/path.name).write_bytes(path.read_bytes())
+        log=src/(prefix+name+'.log')
+        (out/(log.name+'.gz')).write_bytes(gzip.compress(log.read_bytes()))
+    def full(row):
+        return sum(float(row[key]) for key in ['updateMedianMs','drawMedianMs','endMedianMs'])
+    for case in runs['a1']:
+        a=[runs[k][case] for k in ['a1','a2']]
+        b=[runs[k][case] for k in ['b1','b2']]
+        before=sum(map(full,a))/2; after=sum(map(full,b))/2
+        row={'case':case,'n':a[0]['n'],'updateBeforeMs':sum(float(r['updateMedianMs']) for r in a)/2,'updateAfterMs':sum(float(r['updateMedianMs']) for r in b)/2,'fullBeforeMs':before,'fullAfterMs':after,'fullReductionPercent':100*(1-after/before),'pairedFullReductionPercent':[100*(1-full(y)/full(x)) for x,y in zip(a,b)]}
+        summary.append(row)
+        print(case,a[0]['n'],f'{before:.3f} -> {after:.3f}',f"{row['fullReductionPercent']:.1f}%",[round(x,1) for x in row['pairedFullReductionPercent']])
+assert count==40
+(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+validation=json.loads((out/'validation.json').read_text())
+validation.update({'timingCells':count,'allRepeatedUpdateSmokeChecksMatch':True,'allCallbackCountsUnchanged':True})
+(out/'validation.json').write_text(json.dumps(validation,indent=2)+'\n')
+(out/'report.py.txt').write_bytes(Path(__file__).read_bytes())

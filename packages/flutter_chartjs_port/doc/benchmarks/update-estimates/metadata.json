@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-03",
+  "commit": "ba58aa8a918f3d078c15f833abdb0337a96b271a",
+  "productionLibrarySha256": "a75e8c9e161495bc245c2d364aacbb136c81d1c8b3df0ea708cdfd2f84cbe0b0",
+  "toolchain": {
+    "frameworkVersion": "3.47.8",
+    "channel": "stable",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "737ba8f885dc774b53b442759999a312c9461e4e",
+    "frameworkCommitDate": "2026-10-22 21:37:31 -0700",
+    "engineRevision": "cf636b1dfb818dd6a3ff16e390e93b1a036969c8",
+    "engineCommitDate": "2026-10-23 02:13:38.000Z",
+    "engineContentHash": "dfd2e6cb7d319db05e3bf1503f3e2ac60f6288a2",
+    "engineBuildDate": "2026-10-23 05:34:48.330",
+    "dartSdkVersion": "3.13.7",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.8"
+  },
+  "platform": "macOS 27.0.1 arm64, profile AOT, native canvas",
+  "canvas": "800x480 DPR1",
+  "protocol": "A1/B1/B2/A2. 800ms warmup, seven 200ms batches; reverse case order for B2/A2. Separate production and prototype binaries, mode-0 controls inside prototype. No builds/tests during timing. Full CPU sums phase medians per process then averages the two processes.",
+  "profile": "Three production-baseline CPU captures, five seconds after VM-service connection then ten seconds of cleared samples. CPU samples include simulation/data writes that phase timers exclude.",
+  "prototypeFlags": {
+    "baseline": 0,
+    "setup": 1,
+    "styles": 2,
+    "bulk": 4,
+    "setup_bulk": 5,
+    "styles_bulk": 6,
+    "data": 8
+  },
+  "normalization": "Scene data changes are outside phase timers for both full and data-only cases. The local harness calls change before frame cases too. All cases retain every item."
+}

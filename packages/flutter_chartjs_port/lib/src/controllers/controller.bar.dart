@@ -45,6 +45,7 @@ import 'dart:typed_data';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
+import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show
@@ -955,6 +956,26 @@ class BarController extends DatasetController implements NativeBarIndexReads {
           )) {
         return;
       }
+      // DIVERGES(chartjs): adapt-prepared-indexed-options, varying colors do
+      // not prevent native geometry when every remaining read is effect-free.
+      if (i == start &&
+          mode == 'none' &&
+          includeOptions &&
+          sharedOptions == null &&
+          options is BarOptions &&
+          _updateBulk(
+            bars,
+            i + 1,
+            start + count,
+            ruler,
+            vScale,
+            vAxis,
+            horizontal,
+            options,
+            individualOptions: true,
+          )) {
+        return;
+      }
     }
   }
 
@@ -968,9 +989,18 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     types.Scale valueScale,
     String valueAxis,
     bool horizontal,
-    BarOptions shared,
-  ) {
+    BarOptions shared, {
+    bool individualOptions = false,
+  }) {
     if (super.runtimeType != BarController) return false;
+    final elementClass = dataElementType;
+    if (individualOptions &&
+        (type != 'bar' ||
+            elementClass is! JsClass ||
+            elementClass.id is! String ||
+            elementClass.id != 'bar')) {
+      return false;
+    }
     final owner = chart;
     if (owner is! BulkBarChart ||
         !(owner as BulkBarChart).supportsBulkBarUpdate ||
@@ -994,14 +1024,19 @@ class BarController extends DatasetController implements NativeBarIndexReads {
         !(valueScale as BulkBarScale).hasStaticBulkBarGrid) {
       return false;
     }
-    final edge = shared.borderSkippedValue;
+    final resolveColors = individualOptions
+        ? (chart.config as Config).prepareIndexedBarColors()
+        : null;
+    if (individualOptions && resolveColors == null) return false;
+    final representative = resolveColors?.call(0) ?? shared;
+    final edge = representative.borderSkippedValue;
     if (!(edge == null ||
         identical(edge, undefined) ||
         edge is bool ||
         edge is String)) {
       return false;
     }
-    final amount = shared.inflateAmountValue;
+    final amount = representative.inflateAmountValue;
     final double inflate;
     if (amount is String && amount == 'auto') {
       inflate = ruler.ratio == 1 ? 0.33 : 0;
@@ -1037,6 +1072,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
           !(element as BulkBarElement).supportsBulkBarWrites) {
         return false;
       }
+      if (individualOptions && element.active) return false;
       if (item is ParsedItem) {
         if (item.hasForeign || item.hasSlot(3) || item.hasSlot(4)) return false;
       } else if (!updatingData ||
@@ -1086,6 +1122,15 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       // Keep upstream operation order, including the zero stack-index term.
       final rangeStart = ruler.pixels[i] - size / 2;
       final center = rangeStart + chunk * 0.0 + chunk / 2;
+      // Context refresh remains after geometry and before the option stores.
+      // Eligibility proved native config/data/element reads and no callbacks.
+      final BarOptions elementOptions;
+      if (resolveColors != null) {
+        getContext(i.toDouble(), false, 'none');
+        elementOptions = resolveColors(i);
+      } else {
+        elementOptions = shared;
+      }
       final BorderSkipped skipped;
       if (identical(edge, true)) {
         skipped = BorderSkipped.all();
@@ -1110,7 +1155,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
         y: horizontal ? center : head,
         height: horizontal ? breadth : length.abs(),
         width: horizontal ? length.abs() : breadth,
-        options: shared,
+        options: elementOptions,
         skipped: skipped,
         inflate: inflate,
       );

@@ -1,0 +1,16 @@
+{
+  "workspaceTests": 10886,
+  "focusedTests": 46,
+  "browserTests": {
+    "javascript": 230,
+    "webassembly": 230
+  },
+  "analyze": "passed",
+  "formatCheck": "passed",
+  "portChecks": "passed",
+  "parityGeneration": "passed",
+  "scope": "Full workspace VM tests; focused browser resolver/native-plan matrix, not the full browser or fixture suites. No pixel/FPS claim.",
+  "timingCells": 40,
+  "allRepeatedUpdateSmokeChecksMatch": true,
+  "allCallbackCountsUnchanged": true
+}

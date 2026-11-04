@@ -1,0 +1,88 @@
+from pathlib import Path
+root=Path(__file__).resolve().parents[2]
+p=root/'packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart'
+s=p.read_text().replace("import 'package:flutter_chartjs_port/src/core/core.config.dart';", "import 'package:flutter_chartjs_port/src/core/core.config.dart';\nimport 'package:flutter_chartjs_port/src/core/perf_estimate.dart' as probe;")
+s=s.replace('  final Map<String, ElementOptions> _cachedElementOptions = {};', '''  final Map<String, ElementOptions> _cachedElementOptions = {};
+  final _estimatePreparation = <String, ({List<String> prefixes, List<Object?> scopes, List<Object> keys})>{};
+  final _estimateStyles = <String, ({ElementOptions options, Object? background})>{};
+  bool _estimateStyleRejected = false;''')
+s=s.replace('  void configure() {\n', '''  void configure() {
+    _estimatePreparation.clear();
+    _estimateStyles.clear();
+    _estimateStyleRejected = false;
+''',1)
+s=s.replace('  bool get hasStaticDataUpdateOptions {\n', '''  bool get hasStaticDataUpdateOptions {
+    if ((probe.estimateMode & 8) != 0) return true; // Known indexed test inputs only.
+''',1)
+old='''  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+    return _resolveElementOptions(_idOf(dataElementType), mode, index);
+  }'''
+new='''  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+    final modeKey = mode ?? 'default';
+    if ((probe.estimateMode & 2) != 0 && !_estimateStyleRejected && modeKey != 'active') {
+      final prepared = _estimateStyles[modeKey];
+      if (prepared != null) {
+        probe.styleHits++;
+        final context = getContext(index, false, modeKey);
+        final source = prepared.background;
+        final color = source is List<Object?>
+            ? source[index.toInt() % source.length]
+            : jsCall(source, [context, null]);
+        return prepared.options.clone()..storeKey(OptionKey.backgroundColor, color);
+      }
+      final values = _resolveElementOptions(_idOf(dataElementType), mode, index);
+      final background = jsGet(getDataset(), 'backgroundColor');
+      if (background is List<Object?> || background is Function) {
+        _estimateStyles[modeKey] = (options: values.clone(), background: background);
+      } else {
+        _estimateStyleRejected = true;
+      }
+      return values;
+    }
+    return _resolveElementOptions(_idOf(dataElementType), mode, index);
+  }'''
+assert old in s;s=s.replace(old,new)
+a=s.index('    final scopeKeys = config.datasetElementScopeKeys(type, elementType);',s.index('  ElementOptions _resolveElementOptions('))
+b=s.index('    // context is provided as a function',a)
+block=s[a:b]
+# Original discovery is retained in the miss path; the hit skips it entirely.
+block=block.replace('    final prefixes = active','    prefixes = active').replace('    final scopes = config.getOptionScopes','    scopes = config.getOptionScopes').replace('    final keys = elementDefaults is OptionScope','    keys = elementDefaults is OptionScope')
+new='''    final prepared = (probe.estimateMode & 1) != 0 ? _estimatePreparation[cacheKey] : null;
+    final List<String> prefixes;
+    final List<Object?> scopes;
+    final List<Object> keys;
+    if (prepared != null) {
+      probe.setupHits++;
+      prefixes = prepared.prefixes;
+      scopes = prepared.scopes;
+      keys = prepared.keys;
+    } else {
+'''+block+'''      if ((probe.estimateMode & 1) != 0) {
+        _estimatePreparation[cacheKey] = (prefixes: prefixes, scopes: scopes, keys: keys);
+      }
+    }
+'''
+s=s[:a]+new+s[b:];p.write_text(s)
+p=root/'packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart';s=p.read_text().replace("import 'dart:typed_data';", "import 'dart:typed_data';\nimport 'package:flutter_chartjs_port/src/core/perf_estimate.dart' as probe;")
+if "as probe;" not in s:
+ i=s.index("import 'package:flutter_chartjs_port/");s=s[:i]+"import 'package:flutter_chartjs_port/src/core/perf_estimate.dart' as probe;\n"+s[i:]
+needle='''    BarOptions shared,
+  ) {''';assert needle in s;s=s.replace(needle,'''    BarOptions shared, {
+    bool individualOptions = false,
+  }) {''',1)
+needle='''            sharedOptions,
+          )) {
+        return;
+      }
+''';assert needle in s;s=s.replace(needle,needle+'''      if ((probe.estimateMode & 4) != 0 && i == start && mode == 'none' &&
+          includeOptions && sharedOptions == null && options is BarOptions &&
+          _updateBulk(bars, i + 1, start + count, ruler, vScale, vAxis,
+              horizontal, options, individualOptions: true)) {
+        probe.bulkHits++;
+        return;
+      }
+''',1)
+s=s.replace('''        options: shared,
+        skipped: skipped,''','''        options: individualOptions ? resolveDataElementOptions(i.toDouble(), 'none') as BarOptions : shared,
+        skipped: skipped,''',1)
+p.write_text(s)

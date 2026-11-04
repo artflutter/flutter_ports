@@ -258,6 +258,58 @@ final class _IndexedElementPlan {
   _IndexedElementPlan(this.keys, this.values);
   final List<OptionKey> keys;
   final List<Object?> values;
+  ElementOptions? _template;
+  late List<int> _varying;
+
+  // DIVERGES(chartjs): adapt-prepared-indexed-options, copy native static
+  // fields when the caller owns the result. Never retain a returned object.
+  ElementOptions? prepared(Object context, ElementOptions into) {
+    if (context is! ScriptableContext || !context.jsHas('index')) return null;
+    final rawIndex = context.index;
+    if (rawIndex is! num) return null;
+    final index = rawIndex.toDouble();
+    if (!index.isFinite || index < 0 || index != index.truncateToDouble()) {
+      return null;
+    }
+    var template = _template;
+    if (template == null || template.runtimeType != into.runtimeType) {
+      // The constructor/type and scalar checks are the same as fill. Preparing
+      // from cached inputs avoids retaining mutations of any previous result.
+      template = (into is PointOptions ? PointOptions() : BarOptions())
+        ..storeKey(OptionKey.dollarShared, false);
+      final varying = <int>[];
+      for (var i = 0; i < keys.length; i++) {
+        final value = values[i];
+        if (value is List<Object?>) {
+          varying.add(i);
+        } else {
+          if (!_nativeIndexedValue(keys[i], value)) return null;
+          template.storeKey(keys[i], value);
+        }
+      }
+      _template = template;
+      _varying = varying;
+    }
+    final varying = _varying;
+    // Only the varying inputs need preflight on each element. Lists remain live
+    // after context refresh, including length changes and unsupported entries.
+    for (final i in varying) {
+      final list = values[i]! as List<Object?>;
+      if (list.isEmpty ||
+          !_nativeIndexedValue(
+            keys[i],
+            list[index.remainder(list.length).toInt()],
+          )) {
+        return null;
+      }
+    }
+    final result = template.clone();
+    for (final i in varying) {
+      final list = values[i]! as List<Object?>;
+      result.storeKey(keys[i], list[index.remainder(list.length).toInt()]);
+    }
+    return result;
+  }
 
   bool matches(List<Object> other) {
     if (keys.length != other.length) return false;
@@ -284,25 +336,9 @@ final class _IndexedElementPlan {
         if (value.isEmpty) return false;
         value = value[index.remainder(value.length).toInt()];
       }
-      if (!_indexedScalar(value)) return false;
       // Native stores only. Foreign numeric conversions can invoke the debug
       // audit hook; those keep the ordinary observable read/write order too.
-      final native = switch (keys[i]) {
-        OptionKey.borderWidth ||
-        OptionKey.hitRadius ||
-        OptionKey.hoverBorderWidth ||
-        OptionKey.hoverRadius ||
-        OptionKey.radius ||
-        OptionKey.rotation => value is num,
-        OptionKey.backgroundColor ||
-        OptionKey.borderColor ||
-        OptionKey.pointStyle ||
-        OptionKey.borderSkipped ||
-        OptionKey.borderRadius ||
-        OptionKey.inflateAmount => true,
-        _ => false,
-      };
-      if (!native) return false;
+      if (!_nativeIndexedValue(keys[i], value)) return false;
     }
     for (var i = 0; i < keys.length; i++) {
       final value = values[i];
@@ -316,6 +352,24 @@ final class _IndexedElementPlan {
     return true;
   }
 }
+
+bool _nativeIndexedValue(OptionKey key, Object? value) =>
+    _indexedScalar(value) &&
+    switch (key) {
+      OptionKey.borderWidth ||
+      OptionKey.hitRadius ||
+      OptionKey.hoverBorderWidth ||
+      OptionKey.hoverRadius ||
+      OptionKey.radius ||
+      OptionKey.rotation => value is num,
+      OptionKey.backgroundColor ||
+      OptionKey.borderColor ||
+      OptionKey.pointStyle ||
+      OptionKey.borderSkipped ||
+      OptionKey.borderRadius ||
+      OptionKey.inflateAmount => true,
+      _ => false,
+    };
 
 /// helpers.config.ts:27 `_createResolver`.
 ///
@@ -415,18 +469,63 @@ final class OptionResolver implements ResolverProxy {
   static bool nativeIndexedResult(ElementOptions into) =>
       into is PointOptions || into is BarOptions;
 
+  /// Captures a color-only bar plan for a synchronous native loop. The caller
+  /// must prove that no user code or mutation can run until the loop finishes.
+  /// This reads cached values only and never invokes a descriptor or resolver.
+  @internal
+  // DIVERGES(chartjs): adapt-prepared-indexed-options, native bulk color plan.
+  BarOptions Function(int)? prepareIndexedBarColors(List<Object> keys) {
+    final plan = _indexedElementPlan;
+    if (_slotsTouched || plan == null || !plan.matches(keys)) return null;
+    final template = BarOptions()..storeKey(OptionKey.dollarShared, false);
+    final varying = <({OptionKey key, List<Object?> values})>[];
+    for (var i = 0; i < plan.keys.length; i++) {
+      final key = plan.keys[i];
+      if (!BarOptions.knownKeys.contains(key.jsName)) return null;
+      final value = plan.values[i];
+      if (value is List<Object?>) {
+        if ((key != OptionKey.backgroundColor &&
+                key != OptionKey.borderColor) ||
+            value.isEmpty ||
+            !value.every(
+              (entry) =>
+                  entry == null ||
+                  entry is Undefined ||
+                  (entry is Color && !isObject(entry)),
+            )) {
+          return null;
+        }
+        varying.add((key: key, values: value));
+      } else {
+        if (!_nativeIndexedValue(key, value)) return null;
+        template.storeKey(key, value);
+      }
+    }
+    if (varying.isEmpty) return null;
+    return (index) {
+      final result = template.clone();
+      for (final item in varying) {
+        // js-ok: nonnegative index and positive length (bulk preflight).
+        result.storeKey(item.key, item.values[index % item.values.length]);
+      }
+      return result;
+    };
+  }
+
   /// Resolves native indexed scalar options from already cached raw values.
   /// Null means that context was not called. A failed result retains the one
   /// context call so the ordinary path can continue at attachContext.
   @internal
   // DIVERGES(chartjs): adapt-indexed-element-options, guarded cached plan.
-  ({bool resolved, Object context})? resolveIndexedElementOptions(
+  ({bool resolved, Object context, ElementOptions? prepared})?
+  resolveIndexedElementOptions(
     List<Object> keys,
     Object Function() context,
     ElementOptions into,
     bool Function(Object?, Object?) descriptorGuard,
     bool Function() stillCached, {
     bool nativeInputs = false,
+    bool allowReplacement = false,
   }) {
     if (_slotsTouched ||
         (!nativeInputs && !nativeIndexedList(keys)) ||
@@ -440,7 +539,7 @@ final class OptionResolver implements ResolverProxy {
       // resolution, without taxing every scriptable element with a key scan.
       final size = _cache._keys?.length ?? 0;
       if (_indexedRejectedSize == size) return null;
-      ({bool resolved, Object context})? reject() {
+      ({bool resolved, Object context, ElementOptions? prepared})? reject() {
         _indexedRejectedSize = size;
         return null;
       }
@@ -486,12 +585,15 @@ final class OptionResolver implements ResolverProxy {
     final ctx = context();
     // An overridden controller/context factory can write/delete resolver keys.
     // Continue with its original context if it invalidates this snapshot.
-    final resolved =
+    final valid =
         stillCached() &&
         identical(plan, _indexedElementPlan) &&
-        plan.matches(keys) &&
-        plan.fill(ctx, into);
-    return (resolved: resolved, context: ctx);
+        plan.matches(keys);
+    final prepared = valid && allowReplacement
+        ? plan.prepared(ctx, into)
+        : null;
+    final resolved = prepared != null || (valid && plan.fill(ctx, into));
+    return (resolved: resolved, context: ctx, prepared: prepared);
   }
 
   /// `_keys` of the target (helpers.config.ts:419-425), or Dart `null`.

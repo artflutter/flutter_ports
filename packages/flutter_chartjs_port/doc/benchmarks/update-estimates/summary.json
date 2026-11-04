@@ -1,0 +1,600 @@
+[
+  {
+    "case": "line.static.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 0.5655,
+    "candidateUpdateMs": 0.58,
+    "updateGainPercent": -2.564102564102555,
+    "baselineFullMs": 1.5075,
+    "candidateFullMs": 1.5259999999999998,
+    "fullGainPercent": -1.227197346600306,
+    "pairFullGains": [
+      2.2875816993464193,
+      -4.848484848484835
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "line.static.styles",
+    "n": 5000,
+    "baselineUpdateMs": 0.5655,
+    "candidateUpdateMs": 0.5934999999999999,
+    "updateGainPercent": -4.9513704686118265,
+    "baselineFullMs": 1.5075,
+    "candidateFullMs": 1.5695000000000001,
+    "fullGainPercent": -4.112769485903822,
+    "pairFullGains": [
+      2.2222222222222254,
+      -10.639730639730626
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "line.indexed.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 6.189,
+    "candidateUpdateMs": 6.1935,
+    "updateGainPercent": -0.07270964614638498,
+    "baselineFullMs": 7.37,
+    "candidateFullMs": 7.3345,
+    "fullGainPercent": 0.48168249660787144,
+    "pairFullGains": [
+      2.8780812791472377,
+      -2.0041465100207434
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "line.indexed.setup",
+    "n": 5000,
+    "baselineUpdateMs": 6.189,
+    "candidateUpdateMs": 5.1895,
+    "updateGainPercent": 16.149620294070132,
+    "baselineFullMs": 7.37,
+    "candidateFullMs": 6.259,
+    "fullGainPercent": 15.074626865671636,
+    "pairFullGains": [
+      15.269820119920052,
+      14.872149274360758
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "line.indexed.styles",
+    "n": 5000,
+    "baselineUpdateMs": 6.189,
+    "candidateUpdateMs": 1.6709999999999998,
+    "updateGainPercent": 73.0004847309743,
+    "baselineFullMs": 7.37,
+    "candidateFullMs": 2.7809999999999997,
+    "fullGainPercent": 62.265943012211665,
+    "pairFullGains": [
+      63.09127248500999,
+      61.40981340704907
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "line.callback.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 12.9765,
+    "candidateUpdateMs": 12.963000000000001,
+    "updateGainPercent": 0.10403421569760152,
+    "baselineFullMs": 14.216,
+    "candidateFullMs": 14.2025,
+    "fullGainPercent": 0.0949634214968964,
+    "pairFullGains": [
+      -1.2234156056618595,
+      1.3845404578028186
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5006.0,
+        5006.0
+      ],
+      "candidate": [
+        5006.0,
+        5006.0
+      ]
+    }
+  },
+  {
+    "case": "line.callback.setup",
+    "n": 5000,
+    "baselineUpdateMs": 12.9765,
+    "candidateUpdateMs": 11.7615,
+    "updateGainPercent": 9.363079412784646,
+    "baselineFullMs": 14.216,
+    "candidateFullMs": 12.965,
+    "fullGainPercent": 8.799943725379855,
+    "pairFullGains": [
+      7.411622448253786,
+      10.15793501704586
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5006.0,
+        5006.0
+      ],
+      "candidate": [
+        5006.0,
+        5006.0
+      ]
+    }
+  },
+  {
+    "case": "line.callback.styles",
+    "n": 5000,
+    "baselineUpdateMs": 12.9765,
+    "candidateUpdateMs": 2.1745,
+    "updateGainPercent": 83.24278503448541,
+    "baselineFullMs": 14.216,
+    "candidateFullMs": 3.2889999999999997,
+    "fullGainPercent": 76.86409679234664,
+    "pairFullGains": [
+      76.64129738957251,
+      77.08202880400752
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5006.0,
+        5006.0
+      ],
+      "candidate": [
+        5006.0,
+        5006.0
+      ]
+    }
+  },
+  {
+    "case": "bar.static.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 1.2530000000000001,
+    "candidateUpdateMs": 1.29,
+    "updateGainPercent": -2.9529130087789346,
+    "baselineFullMs": 3.956,
+    "candidateFullMs": 3.995,
+    "fullGainPercent": -0.9858442871587547,
+    "pairFullGains": [
+      -1.0037641154328814,
+      -0.9676597911892015
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.static.styles_bulk",
+    "n": 5000,
+    "baselineUpdateMs": 1.2530000000000001,
+    "candidateUpdateMs": 1.307,
+    "updateGainPercent": -4.309656823623298,
+    "baselineFullMs": 3.956,
+    "candidateFullMs": 4.009,
+    "fullGainPercent": -1.3397371081901088,
+    "pairFullGains": [
+      -0.677540777917196,
+      -2.0117137764196658
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 9.7975,
+    "candidateUpdateMs": 9.939499999999999,
+    "updateGainPercent": -1.449349323807092,
+    "baselineFullMs": 12.714,
+    "candidateFullMs": 12.832,
+    "fullGainPercent": -0.928110744061672,
+    "pairFullGains": [
+      0.07743534148987319,
+      -1.9657983058974038
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.setup",
+    "n": 5000,
+    "baselineUpdateMs": 9.7975,
+    "candidateUpdateMs": 8.664,
+    "updateGainPercent": 11.569277877009442,
+    "baselineFullMs": 12.714,
+    "candidateFullMs": 11.5455,
+    "fullGainPercent": 9.190655969797067,
+    "pairFullGains": [
+      10.972587889112607,
+      7.351766022055295
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.styles",
+    "n": 5000,
+    "baselineUpdateMs": 9.7975,
+    "candidateUpdateMs": 5.0275,
+    "updateGainPercent": 48.685889257463636,
+    "baselineFullMs": 12.714,
+    "candidateFullMs": 7.816,
+    "fullGainPercent": 38.52446122384773,
+    "pairFullGains": [
+      39.20551339631408,
+      37.82163976346492
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.bulk",
+    "n": 5000,
+    "baselineUpdateMs": 9.7975,
+    "candidateUpdateMs": 7.205,
+    "updateGainPercent": 26.46083184485838,
+    "baselineFullMs": 12.714,
+    "candidateFullMs": 10.0925,
+    "fullGainPercent": 20.619002674217402,
+    "pairFullGains": [
+      21.317949512157362,
+      19.897714559693146
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.setup_bulk",
+    "n": 5000,
+    "baselineUpdateMs": 9.7975,
+    "candidateUpdateMs": 5.7955000000000005,
+    "updateGainPercent": 40.84715488645062,
+    "baselineFullMs": 12.714,
+    "candidateFullMs": 8.609,
+    "fullGainPercent": 32.2872424099418,
+    "pairFullGains": [
+      32.809354189251984,
+      31.748441745245316
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.styles_bulk",
+    "n": 5000,
+    "baselineUpdateMs": 9.7975,
+    "candidateUpdateMs": 2.5025,
+    "updateGainPercent": 74.4577698392447,
+    "baselineFullMs": 12.714,
+    "candidateFullMs": 5.2684999999999995,
+    "fullGainPercent": 58.561428346704425,
+    "pairFullGains": [
+      58.57983583707605,
+      58.542432475627294
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.data",
+    "n": 5000,
+    "baselineUpdateMs": 9.7975,
+    "candidateUpdateMs": 9.0105,
+    "updateGainPercent": 8.032661393212548,
+    "baselineFullMs": 12.714,
+    "candidateFullMs": 11.9105,
+    "fullGainPercent": 6.319804939436835,
+    "pairFullGains": [
+      6.171596716741523,
+      6.472750519418247
+    ],
+    "referenceMatches": true,
+    "dataCalls": [
+      186,
+      188
+    ],
+    "fallbackCalls": [
+      0,
+      0
+    ]
+  },
+  {
+    "case": "bar.callback.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 15.473,
+    "candidateUpdateMs": 15.628499999999999,
+    "updateGainPercent": -1.004976410521552,
+    "baselineFullMs": 18.3005,
+    "candidateFullMs": 18.521,
+    "fullGainPercent": -1.204885112428622,
+    "pairFullGains": [
+      -0.7032801846781345,
+      -1.724713475019457
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "bar.callback.setup",
+    "n": 5000,
+    "baselineUpdateMs": 15.473,
+    "candidateUpdateMs": 14.3795,
+    "updateGainPercent": 7.067149227686942,
+    "baselineFullMs": 18.3005,
+    "candidateFullMs": 17.374499999999998,
+    "fullGainPercent": 5.059971039042654,
+    "pairFullGains": [
+      4.4773715574166655,
+      5.663736508289752
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "bar.callback.styles",
+    "n": 5000,
+    "baselineUpdateMs": 15.473,
+    "candidateUpdateMs": 5.521,
+    "updateGainPercent": 64.31849027337944,
+    "baselineFullMs": 18.3005,
+    "candidateFullMs": 8.344000000000001,
+    "fullGainPercent": 54.405617332859755,
+    "pairFullGains": [
+      55.02227948676652,
+      53.766551685768334
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "bar.callback.bulk",
+    "n": 5000,
+    "baselineUpdateMs": 15.473,
+    "candidateUpdateMs": 12.8755,
+    "updateGainPercent": 16.787306921734636,
+    "baselineFullMs": 18.3005,
+    "candidateFullMs": 15.822000000000003,
+    "fullGainPercent": 13.54334581022375,
+    "pairFullGains": [
+      13.920652815805013,
+      13.152331144987194
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "bar.callback.setup_bulk",
+    "n": 5000,
+    "baselineUpdateMs": 15.473,
+    "candidateUpdateMs": 11.2965,
+    "updateGainPercent": 26.992179926323278,
+    "baselineFullMs": 18.3005,
+    "candidateFullMs": 14.1455,
+    "fullGainPercent": 22.704297696784238,
+    "pairFullGains": [
+      22.44591184839213,
+      22.972070768888386
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "bar.callback.styles_bulk",
+    "n": 5000,
+    "baselineUpdateMs": 15.473,
+    "candidateUpdateMs": 2.9895,
+    "updateGainPercent": 80.67924772183804,
+    "baselineFullMs": 18.3005,
+    "candidateFullMs": 5.725,
+    "fullGainPercent": 68.71670172946094,
+    "pairFullGains": [
+      68.79261287378537,
+      68.63803271392011
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "radar.static.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 1.758,
+    "candidateUpdateMs": 1.75,
+    "updateGainPercent": 0.4550625711035261,
+    "baselineFullMs": 3.9465000000000003,
+    "candidateFullMs": 3.907,
+    "fullGainPercent": 1.0008868617762623,
+    "pairFullGains": [
+      0.6794162053346819,
+      1.3268690992600196
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "radar.static.styles",
+    "n": 5000,
+    "baselineUpdateMs": 1.758,
+    "candidateUpdateMs": 1.783,
+    "updateGainPercent": -1.4220705346985163,
+    "baselineFullMs": 3.9465000000000003,
+    "candidateFullMs": 3.9640000000000004,
+    "fullGainPercent": -0.44343088812872633,
+    "pairFullGains": [
+      -1.8117765475591296,
+      0.9441183975503975
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "radar.indexed.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 7.3645,
+    "candidateUpdateMs": 7.569,
+    "updateGainPercent": -2.776834815669771,
+    "baselineFullMs": 9.8035,
+    "candidateFullMs": 10.09,
+    "fullGainPercent": -2.922425664303563,
+    "pairFullGains": [
+      -4.40497692153321,
+      -1.3898973135566983
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "radar.indexed.styles",
+    "n": 5000,
+    "baselineUpdateMs": 7.3645,
+    "candidateUpdateMs": 2.417,
+    "updateGainPercent": 67.18039242311087,
+    "baselineFullMs": 9.8035,
+    "candidateFullMs": 4.9645,
+    "fullGainPercent": 49.3599224766665,
+    "pairFullGains": [
+      49.418021272325895,
+      49.29986515921585
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "radar.callback.baseline",
+    "n": 5000,
+    "baselineUpdateMs": 14.4285,
+    "candidateUpdateMs": 14.510000000000002,
+    "updateGainPercent": -0.5648542814568502,
+    "baselineFullMs": 17.1385,
+    "candidateFullMs": 17.043,
+    "fullGainPercent": 0.5572249613443492,
+    "pairFullGains": [
+      0.42045454545455163,
+      0.7015650296815834
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "radar.callback.styles",
+    "n": 5000,
+    "baselineUpdateMs": 14.4285,
+    "candidateUpdateMs": 3.2115,
+    "updateGainPercent": 77.74196901964861,
+    "baselineFullMs": 17.1385,
+    "candidateFullMs": 5.675000000000001,
+    "fullGainPercent": 66.88741721854305,
+    "pairFullGains": [
+      67.63636363636363,
+      66.09701984769443
+    ],
+    "referenceMatches": true,
+    "callbacksPerFrame": {
+      "baseline": [
+        5001.0,
+        5001.0
+      ],
+      "candidate": [
+        5001.0,
+        5001.0
+      ]
+    }
+  },
+  {
+    "case": "bar.indexed.baseline",
+    "n": 20000,
+    "baselineUpdateMs": 43.3405,
+    "candidateUpdateMs": 43.715,
+    "updateGainPercent": -0.8640878623920045,
+    "baselineFullMs": 54.14,
+    "candidateFullMs": 54.441,
+    "fullGainPercent": -0.5559660140376899,
+    "pairFullGains": [
+      4.030176692475673,
+      -5.361904942030926
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.setup_bulk",
+    "n": 20000,
+    "baselineUpdateMs": 43.3405,
+    "candidateUpdateMs": 28.021,
+    "updateGainPercent": 35.34684648308164,
+    "baselineFullMs": 54.14,
+    "candidateFullMs": 39.3595,
+    "fullGainPercent": 27.300517177687478,
+    "pairFullGains": [
+      28.608298590430813,
+      25.930058820191782
+    ],
+    "referenceMatches": true
+  },
+  {
+    "case": "bar.indexed.styles_bulk",
+    "n": 20000,
+    "baselineUpdateMs": 43.3405,
+    "candidateUpdateMs": 14.3475,
+    "updateGainPercent": 66.89585953092373,
+    "baselineFullMs": 54.14,
+    "candidateFullMs": 25.753999999999998,
+    "fullGainPercent": 52.43073513114149,
+    "pairFullGains": [
+      53.00413305178046,
+      51.82985644847087
+    ],
+    "referenceMatches": true
+  }
+]

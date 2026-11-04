@@ -1,0 +1,31 @@
+import os,sys,json,gzip,re,subprocess,time
+from pathlib import Path
+root=Path(__file__).resolve().parents[2];out=root/'.dart_tool/perf_estimate'
+def run(label,app,env,profile=False):
+ with (out/(label+'.log')).open('w') as log:
+  p=subprocess.Popen([app+'/Contents/MacOS/chartjs_gallery'],env={**os.environ,**env},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   if profile:
+    for _ in range(150):
+     text=(out/(label+'.log')).read_text();m=re.search(r'http://127.0.0.1:(\d+)/(\S+)',text)
+     if m:break
+     time.sleep(.1)
+    else:raise RuntimeError(text)
+    subprocess.run(['dart','--packages='+str(root/'.dart_tool/package_config.json'),str(out/'capture.dart'),f'ws://127.0.0.1:{m[1]}/{m[2]}ws',str(out/label)],check=True)
+    raw=out/(label+'.json');(out/(label+'.json.gz')).write_bytes(gzip.compress(raw.read_bytes()));raw.unlink()
+   else:
+    p.wait(timeout=300)
+    if p.returncode:raise RuntimeError((out/(label+'.log')).read_text()[-4000:])
+    rows=[json.loads(l.split('ESTIMATE ',1)[1]) for l in (out/(label+'.log')).read_text().splitlines() if 'ESTIMATE {' in l]
+    (out/(label+'.json')).write_text(json.dumps(rows,indent=2));print(label,len(rows),flush=True)
+  finally:
+   if p.poll() is None:p.terminate();p.wait(timeout=10)
+if sys.argv[1]=='measure':
+ for label,app,rev in [('a1','/tmp/options-estimate-a.app','0'),('b1','/tmp/options-estimate-b.app','0'),('b2','/tmp/options-estimate-b.app','1'),('a2','/tmp/options-estimate-a.app','1')]:
+  run(label,app,{'N':'5000','REVERSE':rev,**({'VARIANTS':'baseline'} if label.startswith('a') else {})})
+elif sys.argv[1]=='dense':
+ for label,app,rev in [('dense-a1','/tmp/options-estimate-a.app','0'),('dense-b1','/tmp/options-estimate-b.app','0'),('dense-b2','/tmp/options-estimate-b.app','1'),('dense-a2','/tmp/options-estimate-a.app','1')]:
+  run(label,app,{'N':'20000','TYPES':'bar','STYLES':'indexed','REVERSE':rev,'VARIANTS':'baseline' if 'a' in label.split('-')[-1] else 'baseline,setup_bulk,styles_bulk'})
+else:
+ for label,type_,style in [('line-indexed','line','indexed'),('line-callback','line','callback'),('bar-indexed','bar','indexed')]:
+  run('profile-'+label,'/tmp/options-estimate-a.app',{'N':'5000','TYPES':type_,'STYLES':style,'VARIANTS':'baseline','PROFILE':'1'},True)

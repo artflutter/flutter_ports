@@ -1,0 +1,20 @@
+import json,statistics,gzip
+from pathlib import Path
+out=Path(__file__).resolve().parent
+full=lambda r:sum(float(r[p+'MedianMs']) for p in ['update','draw','end'])
+rows=[]
+for prefix in ['', 'dense-']:
+ if not (out/(prefix+'a2.json')).exists():continue
+ runs={k:json.loads((out/(prefix+k+'.json')).read_text()) for k in ['a1','b1','b2','a2']}
+ for r in runs['b1']:
+  case=r['case'];key=case.rsplit('.',1)[0]+'.baseline'
+  a=[next(x for x in runs[k] if x['case']==key) for k in ['a1','a2']]
+  b=[next(x for x in runs[k] if x['case']==case) for k in ['b1','b2']]
+  ua=statistics.mean(float(x['updateMedianMs']) for x in a);ub=statistics.mean(float(x['updateMedianMs']) for x in b)
+  fa=statistics.mean(map(full,a));fb=statistics.mean(map(full,b))
+  row={'case':case,'n':r['n'],'baselineUpdateMs':ua,'candidateUpdateMs':ub,'updateGainPercent':100*(1-ub/ua),'baselineFullMs':fa,'candidateFullMs':fb,'fullGainPercent':100*(1-fb/fa),'pairFullGains':[100*(1-full(y)/full(x)) for x,y in zip(a,b)],'referenceMatches':all(x['referenceMatches'] for x in b)}
+  if r['style']=='callback':row['callbacksPerFrame']={'baseline':[x['callbacksPerFrame'] for x in a],'candidate':[x['callbacksPerFrame'] for x in b]}
+  if r['variant']=='data':row['dataCalls']=[x['dataCalls'] for x in b];row['fallbackCalls']=[x['fallbackCalls'] for x in b]
+  rows.append(row)
+(out/'summary.json').write_text(json.dumps(rows,indent=2)+'\n')
+for r in rows:print(r['n'],r['case'],'update',round(r['baselineUpdateMs'],3),'->',round(r['candidateUpdateMs'],3),round(r['updateGainPercent'],1),'full',round(r['baselineFullMs'],3),'->',round(r['candidateFullMs'],3),round(r['fullGainPercent'],1),'pairs',[round(x,1) for x in r['pairFullGains']])

@@ -1,0 +1,13 @@
+{
+  "timingCells": 84,
+  "allParsedGeometryStyleComparisonsPass": true,
+  "callbackCallsPerUpdateIncludingInitialChart": {
+    "line5000": 5006,
+    "bar5000": 5001,
+    "radar5000": 5001
+  },
+  "callbackCountsMatchAcrossVariants": true,
+  "dataOnlyIndexedBar": "selected in both runs, no fallback",
+  "productionLibraryUnchanged": true,
+  "limits": "Controlled native stress configs only. No mutation/subclass/plugin equivalence, complete option/context identity oracle, pixel comparison, raster/FPS or mobile/web performance validation."
+}

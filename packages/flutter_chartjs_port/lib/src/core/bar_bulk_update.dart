@@ -24,7 +24,8 @@ abstract interface class BulkBarScale {
 /// The direct write contract for exact native bar elements. Custom elements
 /// retain DatasetController.updateElement and their property interception.
 abstract interface class BulkBarElement {
-  /// True only for the exact built-in element.
+  /// True only for the exact built-in element. An explicit test opt-in must
+  /// preserve ordinary active/context reads as well as native property writes.
   bool get supportsBulkBarWrites;
 
   /// Assign the same fields, in the same order, as the controller's ordinary

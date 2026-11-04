@@ -320,6 +320,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     cached scalar/grid settings are required. Direct writes preserve field order,
     fresh skipped-edge objects, visibility and contexts. All unsupported cases
     retain the ordinary path; see `core/bar_bulk_update.dart` and its regressions.
+    Chart.js ADR 0078 copies private static templates for native indexed point/bar
+    options, preserving fresh results, live list reads and context refresh. The
+    numeric bulk-bar remainder also accepts indexed background/border colors
+    under native source/class guards, with no active bars or user callbacks in
+    the remainder. Indexed geometry and custom reads keep ordinary resolution.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).

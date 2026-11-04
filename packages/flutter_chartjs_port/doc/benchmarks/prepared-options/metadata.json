@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-03",
+  "toolchain": {
+    "frameworkVersion": "3.47.8",
+    "channel": "stable",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "737ba8f885dc774b53b442759999a312c9461e4e",
+    "frameworkCommitDate": "2026-10-22 21:37:31 -0700",
+    "engineRevision": "cf636b1dfb818dd6a3ff16e390e93b1a036969c8",
+    "engineCommitDate": "2026-10-23 02:13:38.000Z",
+    "engineContentHash": "dfd2e6cb7d319db05e3bf1503f3e2ac60f6288a2",
+    "engineBuildDate": "2026-10-23 05:34:48.330",
+    "dartSdkVersion": "3.13.7",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.8"
+  },
+  "platform": "macOS 27.0.1 arm64, profile AOT, native canvas",
+  "canvas": "800x480 DPR1",
+  "baselineCommit": "ba58aa8a918f3d078c15f833abdb0337a96b271a",
+  "baselineLibrarySha256": "a75e8c9e161495bc245c2d364aacbb136c81d1c8b3df0ea708cdfd2f84cbe0b0",
+  "candidatePatchSha256": "928f701c4b1f69a1bfec4f3d39232aac547e1342e082b23631d0864ca8642565",
+  "binaries": {
+    "baseline": "376b42bb1d3b10cff948eedb314ce031021204fb1167ecc1e0e36808f67d2c01",
+    "candidate": "53f5547a43fac3b68d155a0ee7706f5c1f3471ecb4ff8442b96162cb285094aa"
+  },
+  "candidateNote": "Executable includes the final native class-id guard. Only a js-ok explanatory comment was added to library source after its build.",
+  "protocol": "Separate native profile AOT apps; A1/B1/B2/A2, reverse case order in B2/A2; 800ms warmup, seven 200ms batches. No tests/builds concurrent with timing. Full CPU sums phase medians within a process, then averages the two processes.",
+  "baselineNote": "Reuse the ba58aa8 app from update-estimates; diagnostic module unused and frame-only harness adjustment does not affect these update cases."
+}

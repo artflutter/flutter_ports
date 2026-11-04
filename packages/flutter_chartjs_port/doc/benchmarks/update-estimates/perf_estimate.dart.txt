@@ -1,0 +1,6 @@
+// Original code, not ported from Chart.js: temporary performance estimates.
+// Diagnostic only: controlled native inputs; not a compatibility-safe feature.
+int estimateMode = 0;
+int setupHits = 0;
+int styleHits = 0;
+int bulkHits = 0;

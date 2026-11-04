@@ -1,0 +1,2980 @@
+{
+  "samples": 6165,
+  "functions": [
+    {
+      "name": ".runChartBenchCase",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_Timer._handleMessage",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_Timer._runTimers",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_createTimer.<anonymous closure>",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "Future.delayed.<anonymous closure>",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_Future._complete",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_Future._propagateToListeners",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_propagateToListeners.handleValueCallback",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_Loop.iterate",
+      "inclusive": 5995,
+      "self": 1
+    },
+    {
+      "name": ".run",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "_RawReceivePort._handleMessage",
+      "inclusive": 5995,
+      "self": 0
+    },
+    {
+      "name": "Chart.update",
+      "inclusive": 5602,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateFull",
+      "inclusive": 5602,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateDatasets",
+      "inclusive": 4177,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.update_",
+      "inclusive": 4175,
+      "self": 0
+    },
+    {
+      "name": "Chart._updateDataset",
+      "inclusive": 4175,
+      "self": 0
+    },
+    {
+      "name": "BarController.update",
+      "inclusive": 4174,
+      "self": 0
+    },
+    {
+      "name": "BarController.updateElements",
+      "inclusive": 4151,
+      "self": 22
+    },
+    {
+      "name": "DatasetController.resolveDataElementOptions",
+      "inclusive": 2581,
+      "self": 0
+    },
+    {
+      "name": "DatasetController._resolveElementOptions",
+      "inclusive": 2547,
+      "self": 17
+    },
+    {
+      "name": "Config.resolveNativeElementNamedOptions",
+      "inclusive": 1805,
+      "self": 1
+    },
+    {
+      "name": "Config._resolveElementNamedOptions",
+      "inclusive": 1787,
+      "self": 20
+    },
+    {
+      "name": "OptionResolver.resolveIndexedElementOptions",
+      "inclusive": 1295,
+      "self": 15
+    },
+    {
+      "name": "Chart.render",
+      "inclusive": 1102,
+      "self": 1
+    },
+    {
+      "name": "_BenchChart.draw",
+      "inclusive": 1101,
+      "self": 0
+    },
+    {
+      "name": "Chart.draw",
+      "inclusive": 1100,
+      "self": 0
+    },
+    {
+      "name": "Chart._drawDatasets",
+      "inclusive": 1090,
+      "self": 0
+    },
+    {
+      "name": "Chart._drawDataset",
+      "inclusive": 1089,
+      "self": 0
+    },
+    {
+      "name": "BarController.draw",
+      "inclusive": 1087,
+      "self": 12
+    },
+    {
+      "name": "BarElement.draw",
+      "inclusive": 1014,
+      "self": 29
+    },
+    {
+      "name": "BarElement._drawRectangular",
+      "inclusive": 932,
+      "self": 25
+    },
+    {
+      "name": "UiCanvasContext.tryDrawRectBar",
+      "inclusive": 876,
+      "self": 23
+    },
+    {
+      "name": "BarController._calculateBarIndexPixels",
+      "inclusive": 627,
+      "self": 24
+    },
+    {
+      "name": "_NativeCanvas.drawRect",
+      "inclusive": 605,
+      "self": 13
+    },
+    {
+      "name": "_NativeCanvas.__drawRect$Method$FfiNative",
+      "inclusive": 590,
+      "self": 17
+    },
+    {
+      "name": "_NativeCanvas._drawRect",
+      "inclusive": 590,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.join",
+      "inclusive": 563,
+      "self": 5
+    },
+    {
+      "name": "_GrowableList._joinWithSeparator",
+      "inclusive": 539,
+      "self": 10
+    },
+    {
+      "name": "_resolveElementOptions.context",
+      "inclusive": 472,
+      "self": 1
+    },
+    {
+      "name": "DatasetController.getContext",
+      "inclusive": 467,
+      "self": 13
+    },
+    {
+      "name": "Chart.hasSingleBarIndexLayout",
+      "inclusive": 414,
+      "self": 36
+    },
+    {
+      "name": "StringBuffer.toString",
+      "inclusive": 381,
+      "self": 7
+    },
+    {
+      "name": "UiCanvasContext.paint",
+      "inclusive": 366,
+      "self": 0
+    },
+    {
+      "name": "_StringBase._concatRange",
+      "inclusive": 364,
+      "self": 9
+    },
+    {
+      "name": "_NativeCanvas.__drawPicture$Method$FfiNative",
+      "inclusive": 364,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.forEach",
+      "inclusive": 364,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._drawPicture",
+      "inclusive": 364,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.drawPicture",
+      "inclusive": 364,
+      "self": 0
+    },
+    {
+      "name": "_StringBase._concatRangeNative",
+      "inclusive": 356,
+      "self": 7
+    },
+    {
+      "name": "._getResolver",
+      "inclusive": 348,
+      "self": 5
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.[]",
+      "inclusive": 339,
+      "self": 16
+    },
+    {
+      "name": "_resolveElementNamedOptions.<anonymous closure>",
+      "inclusive": 324,
+      "self": 5
+    },
+    {
+      "name": "_IndexedElementPlan.fill",
+      "inclusive": 292,
+      "self": 195
+    },
+    {
+      "name": "ContextObject._claim",
+      "inclusive": 264,
+      "self": 16
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._getValueOrData",
+      "inclusive": 257,
+      "self": 242
+    },
+    {
+      "name": "DatasetController.getDataset",
+      "inclusive": 239,
+      "self": 3
+    },
+    {
+      "name": ".[Stub] Subtype1TestCache",
+      "inclusive": 239,
+      "self": 239
+    },
+    {
+      "name": "DatasetController.updateElement",
+      "inclusive": 233,
+      "self": 0
+    },
+    {
+      "name": ".jsGet",
+      "inclusive": 225,
+      "self": 121
+    },
+    {
+      "name": "Element.assign",
+      "inclusive": 223,
+      "self": 27
+    },
+    {
+      "name": "Config.datasetElementScopeKeys",
+      "inclusive": 221,
+      "self": 2
+    },
+    {
+      "name": "_OneByteString.==",
+      "inclusive": 221,
+      "self": 217
+    },
+    {
+      "name": "BarController._calculateBarValuePixels",
+      "inclusive": 192,
+      "self": 42
+    },
+    {
+      "name": "BarController._getRuler",
+      "inclusive": 189,
+      "self": 3
+    },
+    {
+      "name": "BarElement.writePropertyAt",
+      "inclusive": 182,
+      "self": 85
+    },
+    {
+      "name": "_Cache.get",
+      "inclusive": 172,
+      "self": 62
+    },
+    {
+      "name": "_GrowableList.[]",
+      "inclusive": 164,
+      "self": 164
+    },
+    {
+      "name": "._computeMinSampleSize",
+      "inclusive": 152,
+      "self": 10
+    },
+    {
+      "name": "BarOptions.storeKey",
+      "inclusive": 152,
+      "self": 34
+    },
+    {
+      "name": "Config.hasNativeSingleBarDataset",
+      "inclusive": 150,
+      "self": 6
+    },
+    {
+      "name": "OptionView.readKey",
+      "inclusive": 149,
+      "self": 27
+    },
+    {
+      "name": ".fmod",
+      "inclusive": 141,
+      "self": 141
+    },
+    {
+      "name": "ListBase.contains",
+      "inclusive": 136,
+      "self": 136
+    },
+    {
+      "name": "Config.getOptionScopes",
+      "inclusive": 135,
+      "self": 4
+    },
+    {
+      "name": "._setBorderSkipped",
+      "inclusive": 134,
+      "self": 16
+    },
+    {
+      "name": "DatasetController._resyncElements",
+      "inclusive": 132,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.buildOrUpdateElements",
+      "inclusive": 132,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.parse",
+      "inclusive": 132,
+      "self": 7
+    },
+    {
+      "name": "DatasetController.getParsed",
+      "inclusive": 123,
+      "self": 3
+    },
+    {
+      "name": "Chart.data",
+      "inclusive": 120,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer.write",
+      "inclusive": 118,
+      "self": 21
+    },
+    {
+      "name": "_Cache._index",
+      "inclusive": 115,
+      "self": 115
+    },
+    {
+      "name": "Config.data",
+      "inclusive": 112,
+      "self": 21
+    },
+    {
+      "name": "SingleBarDatasetSource.read",
+      "inclusive": 110,
+      "self": 38
+    },
+    {
+      "name": "Chart._updateLayout",
+      "inclusive": 109,
+      "self": 0
+    },
+    {
+      "name": ".jsTruthy",
+      "inclusive": 106,
+      "self": 106
+    },
+    {
+      "name": "._update",
+      "inclusive": 101,
+      "self": 0
+    },
+    {
+      "name": "_StringBase._interpolate",
+      "inclusive": 99,
+      "self": 26
+    },
+    {
+      "name": "StringBuffer._writeString",
+      "inclusive": 98,
+      "self": 7
+    },
+    {
+      "name": "OptionScope.lookup",
+      "inclusive": 96,
+      "self": 5
+    },
+    {
+      "name": "ElementOptions.storeKey",
+      "inclusive": 94,
+      "self": 10
+    },
+    {
+      "name": "._fitBoxes",
+      "inclusive": 88,
+      "self": 0
+    },
+    {
+      "name": "._parseArrayOrPrimitive",
+      "inclusive": 87,
+      "self": 0
+    },
+    {
+      "name": "BarController.parsePrimitiveData",
+      "inclusive": 87,
+      "self": 0
+    },
+    {
+      "name": "Scale.update",
+      "inclusive": 86,
+      "self": 0
+    },
+    {
+      "name": "UiPathBuilder.rect",
+      "inclusive": 85,
+      "self": 20
+    },
+    {
+      "name": "ElementOptions.jsWrite",
+      "inclusive": 84,
+      "self": 10
+    },
+    {
+      "name": "TypedRecord.slotAt",
+      "inclusive": 83,
+      "self": 83
+    },
+    {
+      "name": "BarScaleKeys.read",
+      "inclusive": 78,
+      "self": 19
+    },
+    {
+      "name": ".[Stub] AllocateObject",
+      "inclusive": 77,
+      "self": 77
+    },
+    {
+      "name": "OptionScope.jsOwnKeys",
+      "inclusive": 76,
+      "self": 4
+    },
+    {
+      "name": "List.List.of",
+      "inclusive": 75,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._GrowableList.of",
+      "inclusive": 74,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer._addPart",
+      "inclusive": 74,
+      "self": 37
+    },
+    {
+      "name": ".RawScope.jsRead",
+      "inclusive": 72,
+      "self": 13
+    },
+    {
+      "name": "getContext.raw",
+      "inclusive": 72,
+      "self": 0
+    },
+    {
+      "name": ".jsToString",
+      "inclusive": 70,
+      "self": 70
+    },
+    {
+      "name": "ScriptableContext.mode=",
+      "inclusive": 70,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateArray",
+      "inclusive": 66,
+      "self": 55
+    },
+    {
+      "name": "OptionScope._normalize",
+      "inclusive": 65,
+      "self": 12
+    },
+    {
+      "name": ".jsGetIndex",
+      "inclusive": 63,
+      "self": 63
+    },
+    {
+      "name": ".tryParseNumericCategories",
+      "inclusive": 63,
+      "self": 13
+    },
+    {
+      "name": "_GrowableList.add",
+      "inclusive": 62,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord.touchSlot",
+      "inclusive": 61,
+      "self": 23
+    },
+    {
+      "name": "ScriptableContext.index=",
+      "inclusive": 60,
+      "self": 0
+    },
+    {
+      "name": "ScriptableContext.parsed=",
+      "inclusive": 59,
+      "self": 1
+    },
+    {
+      "name": "OptionScope.jsRead",
+      "inclusive": 58,
+      "self": 4
+    },
+    {
+      "name": "OptionView.hasCachedStaticBarTraits",
+      "inclusive": 57,
+      "self": 9
+    },
+    {
+      "name": "_GrowableList._GrowableList._ofGrowableList",
+      "inclusive": 55,
+      "self": 54
+    },
+    {
+      "name": "Config.options",
+      "inclusive": 54,
+      "self": 5
+    },
+    {
+      "name": "_GrowableList.length",
+      "inclusive": 54,
+      "self": 54
+    },
+    {
+      "name": "_IndexedElementPlan.matches",
+      "inclusive": 53,
+      "self": 53
+    },
+    {
+      "name": "_computeMinSampleSize.updateMinAndPrev",
+      "inclusive": 51,
+      "self": 19
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode._hashCode",
+      "inclusive": 51,
+      "self": 0
+    },
+    {
+      "name": "._resolveWithContext",
+      "inclusive": 49,
+      "self": 1
+    },
+    {
+      "name": ".readOption",
+      "inclusive": 47,
+      "self": 8
+    },
+    {
+      "name": "._computeFitCategoryTraits",
+      "inclusive": 47,
+      "self": 13
+    },
+    {
+      "name": "_Array.[]",
+      "inclusive": 47,
+      "self": 47
+    },
+    {
+      "name": "._skipEdge",
+      "inclusive": 46,
+      "self": 6
+    },
+    {
+      "name": "Scale.getLineWidthForValue",
+      "inclusive": 46,
+      "self": 8
+    },
+    {
+      "name": "_Double.isFinite",
+      "inclusive": 45,
+      "self": 3
+    },
+    {
+      "name": "_GrowableList._grow",
+      "inclusive": 44,
+      "self": 33
+    },
+    {
+      "name": ".[Stub] Subtype2TestCache",
+      "inclusive": 44,
+      "self": 44
+    },
+    {
+      "name": "_Type.==",
+      "inclusive": 43,
+      "self": 43
+    },
+    {
+      "name": "UiCanvasContext._setupPaint",
+      "inclusive": 42,
+      "self": 2
+    },
+    {
+      "name": "OptionScope.keyOf",
+      "inclusive": 42,
+      "self": 6
+    },
+    {
+      "name": "_GrowableList._growToNextCapacity",
+      "inclusive": 42,
+      "self": 0
+    },
+    {
+      "name": "ScriptableContext.raw=",
+      "inclusive": 41,
+      "self": 1
+    },
+    {
+      "name": ".parsedValueOf",
+      "inclusive": 41,
+      "self": 14
+    },
+    {
+      "name": "._initOptions",
+      "inclusive": 41,
+      "self": 0
+    },
+    {
+      "name": "._getAllScaleValues",
+      "inclusive": 41,
+      "self": 0
+    },
+    {
+      "name": "Config.update",
+      "inclusive": 41,
+      "self": 0
+    },
+    {
+      "name": "_OneByteString._concatAll",
+      "inclusive": 41,
+      "self": 39
+    },
+    {
+      "name": "ContextObject.jsHas",
+      "inclusive": 41,
+      "self": 1
+    },
+    {
+      "name": "._mergeScaleConfig",
+      "inclusive": 40,
+      "self": 1
+    },
+    {
+      "name": "Config.type",
+      "inclusive": 40,
+      "self": 4
+    },
+    {
+      "name": "._resolveWithPrefixes",
+      "inclusive": 39,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] AllocateObjectParameterized",
+      "inclusive": 39,
+      "self": 39
+    },
+    {
+      "name": "TypedRecord._append",
+      "inclusive": 37,
+      "self": 19
+    },
+    {
+      "name": ".[Stub] AllocateObjectSlow",
+      "inclusive": 37,
+      "self": 0
+    },
+    {
+      "name": "_NativePictureRecorder.endRecording",
+      "inclusive": 36,
+      "self": 0
+    },
+    {
+      "name": "_NativePictureRecorder.__endRecording$Method$FfiNative",
+      "inclusive": 36,
+      "self": 0
+    },
+    {
+      "name": "_NativePictureRecorder._endRecording",
+      "inclusive": 36,
+      "self": 0
+    },
+    {
+      "name": "._cachedKeys",
+      "inclusive": 35,
+      "self": 1
+    },
+    {
+      "name": "Scale.getPixelForDecimal",
+      "inclusive": 35,
+      "self": 18
+    },
+    {
+      "name": "Scale._convertTicksToLabels",
+      "inclusive": 35,
+      "self": 2
+    },
+    {
+      "name": "_OneByteString.hashCode",
+      "inclusive": 35,
+      "self": 35
+    },
+    {
+      "name": "parse.isNotInOrderComparedToPrev",
+      "inclusive": 35,
+      "self": 3
+    },
+    {
+      "name": "_GrowableList._GrowableList.withCapacity",
+      "inclusive": 34,
+      "self": 5
+    },
+    {
+      "name": "ParsedItem.ParsedItem.of",
+      "inclusive": 34,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._drew",
+      "inclusive": 33,
+      "self": 6
+    },
+    {
+      "name": ".optionKeyOf",
+      "inclusive": 33,
+      "self": 3
+    },
+    {
+      "name": "ParsedItem.setValue",
+      "inclusive": 33,
+      "self": 15
+    },
+    {
+      "name": ".merge",
+      "inclusive": 33,
+      "self": 1
+    },
+    {
+      "name": ".mergeIf",
+      "inclusive": 33,
+      "self": 0
+    },
+    {
+      "name": "CategoryScale.getPixelForValue",
+      "inclusive": 33,
+      "self": 11
+    },
+    {
+      "name": "StringBuffer.StringBuffer",
+      "inclusive": 32,
+      "self": 10
+    },
+    {
+      "name": ".mergerIf",
+      "inclusive": 32,
+      "self": 1
+    },
+    {
+      "name": "_CompactKeysIterable.iterator",
+      "inclusive": 32,
+      "self": 21
+    },
+    {
+      "name": "OptionResolver.readKey",
+      "inclusive": 31,
+      "self": 0
+    },
+    {
+      "name": "OptionView.cachedBarIndexAxis",
+      "inclusive": 31,
+      "self": 6
+    },
+    {
+      "name": "DatasetController.getAllParsedValues",
+      "inclusive": 31,
+      "self": 7
+    },
+    {
+      "name": ".[Stub] AllocateContext",
+      "inclusive": 31,
+      "self": 25
+    },
+    {
+      "name": ".stacksOf",
+      "inclusive": 30,
+      "self": 1
+    },
+    {
+      "name": "._setInflateAmount",
+      "inclusive": 30,
+      "self": 7
+    },
+    {
+      "name": "TypedRecord._own",
+      "inclusive": 29,
+      "self": 5
+    },
+    {
+      "name": "TypedRecord.jsRead",
+      "inclusive": 29,
+      "self": 0
+    },
+    {
+      "name": "_Double.==",
+      "inclusive": 29,
+      "self": 29
+    },
+    {
+      "name": "._indexedScalar",
+      "inclusive": 29,
+      "self": 0
+    },
+    {
+      "name": "StringBuffer._consumeBuffer",
+      "inclusive": 28,
+      "self": 27
+    },
+    {
+      "name": "UiPathBuilder._pathLineTo",
+      "inclusive": 28,
+      "self": 20
+    },
+    {
+      "name": "UiCanvasContext._endRecording",
+      "inclusive": 28,
+      "self": 0
+    },
+    {
+      "name": "CategoryScale.generateTickLabels",
+      "inclusive": 28,
+      "self": 4
+    },
+    {
+      "name": "LinearScale.getPixelForValue",
+      "inclusive": 28,
+      "self": 5
+    },
+    {
+      "name": ".[Stub] AllocateRecord",
+      "inclusive": 27,
+      "self": 25
+    },
+    {
+      "name": "CategoryScale.buildTicks",
+      "inclusive": 26,
+      "self": 6
+    },
+    {
+      "name": "UiCanvasContext._c",
+      "inclusive": 25,
+      "self": 4
+    },
+    {
+      "name": "OptionScope._own",
+      "inclusive": 25,
+      "self": 7
+    },
+    {
+      "name": "ScriptableContext.dataIndex=",
+      "inclusive": 25,
+      "self": 0
+    },
+    {
+      "name": "UiPathBuilder._moveToMapped",
+      "inclusive": 24,
+      "self": 3
+    },
+    {
+      "name": "ParsedItem.valueOf",
+      "inclusive": 24,
+      "self": 24
+    },
+    {
+      "name": ".rawOption",
+      "inclusive": 24,
+      "self": 11
+    },
+    {
+      "name": "ListIterable.every",
+      "inclusive": 24,
+      "self": 9
+    },
+    {
+      "name": ".[Stub] Type Test Type: Map<String, Object?>",
+      "inclusive": 23,
+      "self": 23
+    },
+    {
+      "name": "._resolve",
+      "inclusive": 23,
+      "self": 2
+    },
+    {
+      "name": ".each",
+      "inclusive": 22,
+      "self": 1
+    },
+    {
+      "name": "CategoryScale.getPixelForTick",
+      "inclusive": 22,
+      "self": 13
+    },
+    {
+      "name": "_StringBase.isEmpty",
+      "inclusive": 21,
+      "self": 21
+    },
+    {
+      "name": "UiPathBuilder._pathMoveTo",
+      "inclusive": 21,
+      "self": 16
+    },
+    {
+      "name": "Scale._isVisible",
+      "inclusive": 21,
+      "self": 6
+    },
+    {
+      "name": "UiCanvasContext._begin",
+      "inclusive": 20,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._finite4",
+      "inclusive": 20,
+      "self": 20
+    },
+    {
+      "name": "BarOptions.storeRaw",
+      "inclusive": 20,
+      "self": 10
+    },
+    {
+      "name": "Paint.color=",
+      "inclusive": 19,
+      "self": 19
+    },
+    {
+      "name": ".jsCall",
+      "inclusive": 19,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord._appendGroup",
+      "inclusive": 19,
+      "self": 19
+    },
+    {
+      "name": "TypedRecord.isForeignSlot",
+      "inclusive": 19,
+      "self": 0
+    },
+    {
+      "name": ".jsToNumber",
+      "inclusive": 18,
+      "self": 18
+    },
+    {
+      "name": "OptionView.hasCachedBarGrouping",
+      "inclusive": 18,
+      "self": 8
+    },
+    {
+      "name": "Chart._updateScales",
+      "inclusive": 18,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateClosure1",
+      "inclusive": 18,
+      "self": 14
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode._equals",
+      "inclusive": 18,
+      "self": 0
+    },
+    {
+      "name": "UiPathBuilder._direct",
+      "inclusive": 17,
+      "self": 17
+    },
+    {
+      "name": "BorderSkipped.bottom=",
+      "inclusive": 17,
+      "self": 1
+    },
+    {
+      "name": "OptionResolver._get",
+      "inclusive": 17,
+      "self": 0
+    },
+    {
+      "name": "_CompactIterator.moveNext",
+      "inclusive": 17,
+      "self": 17
+    },
+    {
+      "name": "UiCanvasContext._mappedRect",
+      "inclusive": 16,
+      "self": 16
+    },
+    {
+      "name": "._invoke",
+      "inclusive": 16,
+      "self": 0
+    },
+    {
+      "name": ".dart::Zone::Reset()",
+      "inclusive": 15,
+      "self": 15
+    },
+    {
+      "name": "_GrowableList._allocateData",
+      "inclusive": 15,
+      "self": 5
+    },
+    {
+      "name": ".TickOptions.callback",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "Config._cachedScopes",
+      "inclusive": 15,
+      "self": 3
+    },
+    {
+      "name": ".isObject",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "._borderColor",
+      "inclusive": 15,
+      "self": 2
+    },
+    {
+      "name": "PluginService.notify",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "_BenchChart.notifyPlugins",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "Chart.notifyPlugins",
+      "inclusive": 15,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._rectBarColor",
+      "inclusive": 14,
+      "self": 14
+    },
+    {
+      "name": "._apply",
+      "inclusive": 14,
+      "self": 2
+    },
+    {
+      "name": "._createSubResolver",
+      "inclusive": 14,
+      "self": 0
+    },
+    {
+      "name": "BarOptions.borderRadiusValue",
+      "inclusive": 14,
+      "self": 14
+    },
+    {
+      "name": "._backgroundColor",
+      "inclusive": 14,
+      "self": 3
+    },
+    {
+      "name": "_StringBase.toString",
+      "inclusive": 14,
+      "self": 14
+    },
+    {
+      "name": "ListIterator.moveNext",
+      "inclusive": 14,
+      "self": 11
+    },
+    {
+      "name": "BarOptions.valueOf",
+      "inclusive": 14,
+      "self": 9
+    },
+    {
+      "name": "_List.[]=",
+      "inclusive": 14,
+      "self": 14
+    },
+    {
+      "name": "<anonymous closure>.<anonymous closure>",
+      "inclusive": 14,
+      "self": 0
+    },
+    {
+      "name": "OptionView.hasCachedBarStacking",
+      "inclusive": 13,
+      "self": 2
+    },
+    {
+      "name": "ScriptableContext.active=",
+      "inclusive": 13,
+      "self": 0
+    },
+    {
+      "name": "Iterable.Iterable.generate",
+      "inclusive": 13,
+      "self": 12
+    },
+    {
+      "name": "UiTransform.mapY",
+      "inclusive": 13,
+      "self": 0
+    },
+    {
+      "name": "_Double._Double.fromInteger",
+      "inclusive": 12,
+      "self": 12
+    },
+    {
+      "name": "._addScopesFromKey",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": "._addScopes",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": "BarProperties.inflateAmount=",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": "BarProperties.borderSkipped=",
+      "inclusive": 12,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] Subtype6TestCache",
+      "inclusive": 12,
+      "self": 12
+    },
+    {
+      "name": "BarProperties.options=",
+      "inclusive": 12,
+      "self": 0
+    },
+    {
+      "name": "Rect.isFinite",
+      "inclusive": 11,
+      "self": 11
+    },
+    {
+      "name": "Paint.blendMode=",
+      "inclusive": 11,
+      "self": 11
+    },
+    {
+      "name": "_NativePictureRecorder.__constructor$Method$FfiNative",
+      "inclusive": 11,
+      "self": 0
+    },
+    {
+      "name": ".descriptors",
+      "inclusive": 11,
+      "self": 0
+    },
+    {
+      "name": "._isFloatBar",
+      "inclusive": 11,
+      "self": 7
+    },
+    {
+      "name": "OptionResolver.jsRead",
+      "inclusive": 11,
+      "self": 0
+    },
+    {
+      "name": "Object.==",
+      "inclusive": 11,
+      "self": 11
+    },
+    {
+      "name": "_NativePictureRecorder._constructor",
+      "inclusive": 11,
+      "self": 0
+    },
+    {
+      "name": "_NativePictureRecorder._NativePictureRecorder",
+      "inclusive": 11,
+      "self": 0
+    },
+    {
+      "name": "Paint.shader=",
+      "inclusive": 10,
+      "self": 2
+    },
+    {
+      "name": "_NativePicture.dispose",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "_NativePicture.__dispose$Method$FfiNative",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext.clearRect",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext._dropPictures",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": ".clearCanvas",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": ".attachContext",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.x=",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.y=",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.grid",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "Chart.clear",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "PluginService._createDescriptors",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "PluginService._descriptors",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateDouble",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "_NativePicture._dispose",
+      "inclusive": 10,
+      "self": 0
+    },
+    {
+      "name": "UiPathBuilder._pathClose",
+      "inclusive": 9,
+      "self": 5
+    },
+    {
+      "name": ".resolveObjectKey",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "._cloneFor",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "._getProp",
+      "inclusive": 9,
+      "self": 3
+    },
+    {
+      "name": "BarOptions.borderWidthValue",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": "._pluginOpts",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": ".createDescriptors",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "Chart.ensureScalesHaveIDs",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "Config.createResolver",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "ChartOptionsScope.cellOf",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": "ElementOptions.storeRaw",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": "_Array.length",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": ".[Stub] OptimizedIdenticalWithNumberCheck",
+      "inclusive": 9,
+      "self": 9
+    },
+    {
+      "name": ".[Stub] AllocateRecord3Named",
+      "inclusive": 9,
+      "self": 4
+    },
+    {
+      "name": "._isConfigObject",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord._groupAt",
+      "inclusive": 9,
+      "self": 0
+    },
+    {
+      "name": "dart.core._getHash",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "_getKeyResolver.<anonymous closure>",
+      "inclusive": 8,
+      "self": 2
+    },
+    {
+      "name": "._cloneToScope",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "BarOptions._store3",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "_resolveElementNamedOptions.<anonymous closure>",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "._borderProps",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "Scale._layers",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "_updateLayout.<anonymous closure>",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "StressPointField.step",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "ChartOptionsScope.hasField",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "LinearScale.options",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "Scale.options",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "BarOptions.isForeign",
+      "inclusive": 8,
+      "self": 8
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.[]=",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "_HashBase._hashPattern",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": "._getScope",
+      "inclusive": 8,
+      "self": 0
+    },
+    {
+      "name": ".jsObjectKeys",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": "_NativeCanvas.clipRect",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "_CompactIterator._CompactIterator",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "._isNumberFinite",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": ".CoreScaleOptions.display",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "_Cache.set",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": "ElementOptionsByTypeScope.hasField",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "Object.hashCode",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "CategoryScale.options",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin.containsKey",
+      "inclusive": 7,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] AllocateGrowableArray",
+      "inclusive": 7,
+      "self": 7
+    },
+    {
+      "name": "Element.y=",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._clipRect",
+      "inclusive": 7,
+      "self": 0
+    },
+    {
+      "name": "OptionScope._extraIndex",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "OptionView._get",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "BarOptions._store2",
+      "inclusive": 6,
+      "self": 6
+    },
+    {
+      "name": "._buildLayoutBoxes",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "BarElement.borderSkipped=",
+      "inclusive": 6,
+      "self": 6
+    },
+    {
+      "name": "DatasetController.getSharedOptions_",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "StressChartScene.write",
+      "inclusive": 6,
+      "self": 6
+    },
+    {
+      "name": "_GeneratorIterable.elementAt",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.jsWrite",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "OptionView.jsRead",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "Scale.fit",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "_RectClip.applyTo",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "_Double.abs",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": "BarOptions._raw1",
+      "inclusive": 6,
+      "self": 0
+    },
+    {
+      "name": ".dart::Thread::ExitApiScope()",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "dart._internal.allocateOneByteString",
+      "inclusive": 5,
+      "self": 3
+    },
+    {
+      "name": ".jsLessThan",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "BorderSkipped.BorderSkipped",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": ".CoreScaleOptions.border",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "._labelAt",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "PluginService._notify",
+      "inclusive": 5,
+      "self": 1
+    },
+    {
+      "name": "Chart.buildOrUpdateScales",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "ListBase.+",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "Object.runtimeType",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "BarProperties.fieldNames",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "_GrowableList.addAll",
+      "inclusive": 5,
+      "self": 4
+    },
+    {
+      "name": "BarOptions.isPresent",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "_Double.toDouble",
+      "inclusive": 5,
+      "self": 5
+    },
+    {
+      "name": "_IntegerImplementation.toDouble",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] SlowTypeTest",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] AllocateRecord2Named",
+      "inclusive": 5,
+      "self": 4
+    },
+    {
+      "name": "AxisKey.of",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": ".jsSetIndex",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": "._at",
+      "inclusive": 5,
+      "self": 0
+    },
+    {
+      "name": ".[Native] e",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "IndexError.check",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashSetMixin._add",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "ListBase.indexOf",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "_NativeCanvas._NativeCanvas",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.__constructor$Method$FfiNative",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "_PathPoint.set",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "._applyThis",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.store",
+      "inclusive": 4,
+      "self": 1
+    },
+    {
+      "name": "._keyOf",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "._isValidKey",
+      "inclusive": 4,
+      "self": 1
+    },
+    {
+      "name": ".int16Range",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "BarOptions._store6",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "BarOptions._store0",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": ".CoreScaleOptions.title",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "._numeric",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": ".callback",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "._customOf",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "Plugin.invokeHook",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "_StringBase.==",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "_GrowableList.elementAt",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "Scale.generateTickLabels",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.slotOf",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "BorderSkipped.fieldNames",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashSetMixin.add",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "Color.r",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "OptScope.raw",
+      "inclusive": 4,
+      "self": 4
+    },
+    {
+      "name": "Rect.isEmpty",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "_Double.remainder",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._constructor",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": "ElementOptions.isFrozen",
+      "inclusive": 4,
+      "self": 0
+    },
+    {
+      "name": ".operator new[](unsigned long, std::align_val_t)",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "OptionResolver._own",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "ParsedItem.x",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "OptionView.objectKeys",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.owns",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "._idOf",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "._isDirectUpdateMode",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": ".createElementOptions",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "BarOptions.inflateAmountValue",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "BarOptions._store4",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": ".formatNumber",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "._wrapBoxes",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "Chart.getDataVisibility",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "._parseEdge",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "Scale._callHooks",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "._configure",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "buildOrUpdateScales.<anonymous closure>",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._set",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.jsHas",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "OptionView.jsKeys",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.jsKeys",
+      "inclusive": 3,
+      "self": 2
+    },
+    {
+      "name": "BarElement.$context",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "Element.$context",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "Scale.init",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "Iterable.toList",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "_CompactIterator.current",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "_Double.<",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": ".[Stub] CallBootstrapNative",
+      "inclusive": 3,
+      "self": 3
+    },
+    {
+      "name": "._addIfFound",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "BarOptions._raw2",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "BarProperties.horizontal",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "._isMapObject",
+      "inclusive": 3,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList._GrowableList._ofOther",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas._sorted",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "UiPathBuilder.reset",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".jsAdd",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".clone",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "OptionScope.classifyName",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._getKeysFromAllScopes",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._resolveKeysFromAllScopes",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "ScriptableContext.index",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "._setProp",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_Double.clamp",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "BarProperties.options",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "BarOptions._store5",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "BarOptions.borderSkippedValue",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "BarOptions._store1",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".CoreScaleOptions.ticks",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.afterCalculateLabelRotation",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "NumberFormat._formatNumber",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "JsNumberFormat.format",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._needContextKeys",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".getIndexAxis",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._orObject",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "._hasOwn",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "BarElement.inflateAmount=",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "Scale.afterCalculateLabelRotation",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Scale.afterBuildTicks",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".toTRBL",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".readValueToProps",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".toPadding",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Chart.buildOrUpdateControllers",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "._reflectOwnKeys",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_keyResolvers.<anonymous closure>",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "TypedRecord.initializeSlots",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "Map.Map._fromLiteral",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "._beforeUpdate",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "ScaleOptionsScope.hasField",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "ElementOptionsByTypeScope.cellOf",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "BarElement.takesProperties",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "LinearScaleBase.buildTicks",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "CategoryScale.init",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Title.update",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "__Set&_LinkedHashBase&SetMixin.addAll",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "CategoryScale.supportsNativeBarIndexReads",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "WhereIterator.moveNext",
+      "inclusive": 2,
+      "self": 1
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase._isModifiedSince",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "_Set.addAll",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_Double.compareTo",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionResolver.ownKeys",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "OptionView.ownKeys",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "NumberFormat.format",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.[]=",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "_Double.isNaN",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".[Stub] TopTypeTypeTest",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".[Stub] AllocateFloat64Array",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] WriteBarrierWrappers",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".__psynch_mutexwait",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": ".trunc",
+      "inclusive": 2,
+      "self": 2
+    },
+    {
+      "name": "BarProperties.BarProperties.geometry",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "BarOptions._raw0",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Paint.style",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "BarOptions._raw3",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "Float64List.Float64List",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": "_OneByteString._allocate",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".isNullOrUndef",
+      "inclusive": 2,
+      "self": 0
+    },
+    {
+      "name": ".DLRT_EnterHandleScope",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_StringBase.+",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._mapKeys",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Stopwatch.elapsedTicks",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Stopwatch._now",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_StringBase._substringMatches",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_GrowableList._GrowableList._literal1",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".[Stub] Allocate Rect",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Paint._ensureObjectsInitialized",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] Allocate ListIterator",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "UiPathBuilder._trackShape",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "UiCanvasContext._changed",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "UiCanvasContext.rect",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "UiCanvasContext.fill",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".clipArea",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_Cache._buildPositions",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._resolveArray",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".createResolver",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._has",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._needsSubResolver",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ParsedItem.y",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".jsSet",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._getOwnProperty",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "OptionView.hasOwnProperty",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "OptionResolver.hasOwnProperty",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._beforeUpdate",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".getDatasetClipArea",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._getSizeForArea",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._edgeOf",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".BorderOptions.z",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.suggestedMax",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.max",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.z",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.beforeSetDimensions",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.beforeUpdate",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.beforeFit",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.precision",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TickOptions.stepSize",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".CoreScaleOptions.suggestedMin",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._cacheKey",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "NumberFormat._formatFixed",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "NumberFormat._decimalSeparator",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "NumberFormat._add",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._getNumberFormat",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._addBox",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._filterByPosition",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._getDatasetArea",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._startEnd",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".uniqueSortedBarValues",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "BarController._getStacks",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_getStacks.<anonymous closure>",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "BarController.getStackCount",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "LinearScaleBase.getTickLimit",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.beforeFit",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.beforeSetDimensions",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.afterDataLimits",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "readValueToProps.<anonymous closure>",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.getMinMax",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Scale.afterSetDimensions",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Scale.beforeUpdate",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "DataUpdateSnapshot.capture",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".jsSort",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".mergeSort",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".insertionSort",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "jsSort.<anonymous closure>",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".capitalize",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "UpdateHookArgs.UpdateHookArgs",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._allPlugins",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Chart._checkEventBindings",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "buildOrUpdateScales.<anonymous closure>",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._afterDatasetsUpdate",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._insert",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._rehash",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase&_OperatorEqualsAndHashCode&_LinkedHashMapMixin._findValueOrInsertPoint",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_GrowableList._GrowableList",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "InteractionOptionsScope.hasField",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "GridLineOptionsScope.hasField",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ScaleTitleOptionsScope.hasField",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "DescriptorsScope.hasField",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "PaddingScope.cellOf",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ScaleOptionsScope.cellOf",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ScaleOptionsScope.classify",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "Title.isHorizontal",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "DatasetController.getMinMax",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "CategoryScale.determineDataLimits",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_GrowableList.isEmpty",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ParsedItem.fieldNames",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "BarController.updateRangeFromParsed",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "DatasetController.updateRangeFromParsed",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "ListIterator.current",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "__Map&_LinkedHashBase&MapMixin&_HashBase._checkSum",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Color.g",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "Color.a",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_GrowableList.iterator",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "OptValue.raw",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "_Double.>",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".[Stub] WriteBarrier",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": "._pthread_mutex_firstfit_lock_slow",
+      "inclusive": 1,
+      "self": 1
+    },
+    {
+      "name": ".optionOf",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".TitleOptions.display",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "dart.ui._colorSpaceToIndex",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "BorderSkipped.left",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._readKey",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord.ownKeyCount",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "BorderSkipped.top",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".defined",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "ChartMeta.type",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_Double.sign",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": ".sign",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_StringBase.isNotEmpty",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "UpdateHookArgs.mode=",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "TypedRecord.hasSlot",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "OptionResolver.nativeIndexedResult",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "JsClass.id",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "OptionScope.[]",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "_NativeCanvas.save",
+      "inclusive": 1,
+      "self": 0
+    },
+    {
+      "name": "._takes",
+      "inclusive": 1,
+      "self": 0
+    }
+  ]
+}

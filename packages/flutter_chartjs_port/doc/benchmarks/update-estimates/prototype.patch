@@ -1,0 +1,172 @@
+diff --git a/apps/chartjs_gallery/lib/bench/chart_bench.dart b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+index d89e307..83b1c3c 100644
+--- a/apps/chartjs_gallery/lib/bench/chart_bench.dart
++++ b/apps/chartjs_gallery/lib/bench/chart_bench.dart
+@@ -1621,7 +1621,7 @@ final class _Loop {
+   /// and the end of the recording. The notify count of the chart starts at
+   /// 0: after the last iteration, it is the count of one iteration.
+   void iterate() {
+-    if (call == ChartBenchCall.update) change?.call();
++    if (call == ChartBenchCall.update || call == ChartBenchCall.frame) change?.call();
+     // The animations of the last motion update end, outside the timing.
+     if (call == ChartBenchCall.motion) chart.stop();
+     chart
+diff --git a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+index 1e02a21..7f00fa4 100644
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.bar.dart
+@@ -41,6 +41,7 @@
+ library;
+ 
+ import 'dart:typed_data';
++import 'package:flutter_chartjs_port/src/core/perf_estimate.dart' as probe;
+ 
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+@@ -955,6 +956,13 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+           )) {
+         return;
+       }
++      if ((probe.estimateMode & 4) != 0 && i == start && mode == 'none' &&
++          includeOptions && sharedOptions == null && options is BarOptions &&
++          _updateBulk(bars, i + 1, start + count, ruler, vScale, vAxis,
++              horizontal, options, individualOptions: true)) {
++        probe.bulkHits++;
++        return;
++      }
+     }
+   }
+ 
+@@ -968,8 +976,9 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+     types.Scale valueScale,
+     String valueAxis,
+     bool horizontal,
+-    BarOptions shared,
+-  ) {
++    BarOptions shared, {
++    bool individualOptions = false,
++  }) {
+     if (super.runtimeType != BarController) return false;
+     final owner = chart;
+     if (owner is! BulkBarChart ||
+@@ -1110,7 +1119,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
+         y: horizontal ? center : head,
+         height: horizontal ? breadth : length.abs(),
+         width: horizontal ? length.abs() : breadth,
+-        options: shared,
++        options: individualOptions ? resolveDataElementOptions(i.toDouble(), 'none') as BarOptions : shared,
+         skipped: skipped,
+         inflate: inflate,
+       );
+diff --git a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+index fb8787b..8a7b493 100644
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -45,6 +45,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+     show CanvasRenderingContext2D;
+ import 'package:flutter_chartjs_port/src/core/core.animations.dart';
+ import 'package:flutter_chartjs_port/src/core/core.config.dart';
++import 'package:flutter_chartjs_port/src/core/perf_estimate.dart' as probe;
+ // DatasetController has a static `defaults`. Inside the class, upstream
+ // `defaults` is the import of core.defaults.js.
+ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
+@@ -940,6 +941,9 @@ class DatasetController
+   /// one object. The two typed Maps have the same keys. [configure] clears
+   /// both, as `this._cachedDataOpts = {}` (:445) does.
+   final Map<String, ElementOptions> _cachedElementOptions = {};
++  final _estimatePreparation = <String, ({List<String> prefixes, List<Object?> scopes, List<Object> keys})>{};
++  final _estimateStyles = <String, ({ElementOptions options, Object? background})>{};
++  bool _estimateStyleRejected = false;
+ 
+   // DIVERGES(chartjs): adapt-element-option-cache-key, reuse only the last
+   // joined string. The option cache and its invalidation stay unchanged.
+@@ -1038,6 +1042,7 @@ class DatasetController
+   /// The cache records this even for controllers that do not share options.
+   @internal
+   bool get hasStaticDataUpdateOptions {
++    if ((probe.estimateMode & 8) != 0) return true; // Known indexed test inputs only.
+     bool cached(Object? type) {
+       final prefix = '${jsToString(_idOf(type))}-';
+       return _cachedElementOptions.keys.any(
+@@ -1312,6 +1317,9 @@ class DatasetController
+   /// Merges user-supplied and default dataset-level options
+   /// @private
+   void configure() {
++    _estimatePreparation.clear();
++    _estimateStyles.clear();
++    _estimateStyleRejected = false;
+     final config = chart.config as Config;
+     final scopeKeys = config.datasetScopeKeys(type);
+     final scopes = config.getOptionScopes(getDataset(), scopeKeys, true);
+@@ -1907,6 +1915,27 @@ class DatasetController
+   /// Dart `null` for [mode] stands for JS `undefined`.
+   @override
+   ElementOptions resolveDataElementOptions(double index, [String? mode]) {
++    final modeKey = mode ?? 'default';
++    if ((probe.estimateMode & 2) != 0 && !_estimateStyleRejected && modeKey != 'active') {
++      final prepared = _estimateStyles[modeKey];
++      if (prepared != null) {
++        probe.styleHits++;
++        final context = getContext(index, false, modeKey);
++        final source = prepared.background;
++        final color = source is List<Object?>
++            ? source[index.toInt() % source.length]
++            : jsCall(source, [context, null]);
++        return prepared.options.clone()..storeKey(OptionKey.backgroundColor, color);
++      }
++      final values = _resolveElementOptions(_idOf(dataElementType), mode, index);
++      final background = jsGet(getDataset(), 'backgroundColor');
++      if (background is List<Object?> || background is Function) {
++        _estimateStyles[modeKey] = (options: values.clone(), background: background);
++      } else {
++        _estimateStyleRejected = true;
++      }
++      return values;
++    }
+     return _resolveElementOptions(_idOf(dataElementType), mode, index);
+   }
+ 
+@@ -1945,11 +1974,21 @@ class DatasetController
+       return _cloneIfNotShared(cached, sharing);
+     }
+     final config = chart.config as Config;
++    final prepared = (probe.estimateMode & 1) != 0 ? _estimatePreparation[cacheKey] : null;
++    final List<String> prefixes;
++    final List<Object?> scopes;
++    final List<Object> keys;
++    if (prepared != null) {
++      probe.setupHits++;
++      prefixes = prepared.prefixes;
++      scopes = prepared.scopes;
++      keys = prepared.keys;
++    } else {
+     final scopeKeys = config.datasetElementScopeKeys(type, elementType);
+-    final prefixes = active
++    prefixes = active
+         ? ['${typeName}Hover', 'hover', typeName, '']
+         : [typeName, ''];
+-    final scopes = config.getOptionScopes(getDataset(), scopeKeys);
++    scopes = config.getOptionScopes(getDataset(), scopeKeys);
+     // The names are the own keys of the typed scope (Chart.js ADR 0054 §4):
+     // `defaults.elements[elementType]`.
+     final elements = core_defaults.defaults.lookup(OptionKey.elements)?.raw;
+@@ -1957,7 +1996,7 @@ class DatasetController
+         ? elements.jsRead(typeName)
+         // A user object in the defaults reads by name.
+         : jsGet(elements ?? undefined, elementType);
+-    final keys = elementDefaults is OptionScope
++    keys = elementDefaults is OptionScope
+         ? elementDefaults.jsOwnKeys()
+         // A user object in the defaults gives its keys.
+         : <Object>[...jsObjectKeys(elementDefaults)];
+@@ -1969,6 +2008,10 @@ class DatasetController
+           elementDefaults is! OptionScope ||
+           elementDefaults.runtimeType == PointOptionsScope ||
+           elementDefaults.runtimeType == BarOptionsScope;
++    }
++      if ((probe.estimateMode & 1) != 0) {
++        _estimatePreparation[cacheKey] = (prefixes: prefixes, scopes: scopes, keys: keys);
++      }
+     }
+     // context is provided as a function, and is called only if needed,
+     // so we don't create a context for each element if not needed.
