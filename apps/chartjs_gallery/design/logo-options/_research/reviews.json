@@ -1,0 +1,605 @@
+[
+  {
+    "id": "01b-portal-no-triangle",
+    "title": "Portal without triangle",
+    "references": [
+      "office"
+    ],
+    "assessment": "Close structural resemblance",
+    "comparison": "Removing the center triangle makes the shared angled-frame/open-door motif easier to see. Two separate colored frames distinguish it from Office's single closed outer frame, but the visual family is close.",
+    "provenance": "Edited from 01 at the user's request to remove the triangle.",
+    "parents": [
+      "01-portal"
+    ],
+    "queries": [
+      "Microsoft Office 2013 logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "02-folded-fp",
+    "title": "Folded FP",
+    "references": [
+      "flutter",
+      "fp"
+    ],
+    "assessment": "Known requested style; related monogram",
+    "comparison": "Flutter shares the blue folded 45-degree ribbon vocabulary; the FP reference shares interwoven initials. Our sharp double-letter silhouette differs from both. Neither comparison proves a copied source.",
+    "provenance": "The text prompt explicitly requested Flutter-like geometry while asking for a distinct FP symbol. No external image was passed for this initial concept.",
+    "parents": [],
+    "queries": [
+      "Flutter logo official",
+      "FP monogram logo rounded"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "02b-flutter-inspired-fp",
+    "title": "Flutter-inspired FP",
+    "references": [
+      "flutter"
+    ],
+    "assessment": "Known requested style; close geometric vocabulary",
+    "comparison": "The cyan diagonal stroke, separated lower fold and blue planes are deliberately close to Flutter's visual language. The lower P-shaped return changes the silhouette. This is a requested stylistic reference, not a discovered hidden source.",
+    "provenance": "User explicitly requested greater similarity to Flutter. Generated as an edit of 02.",
+    "parents": [
+      "02-folded-fp"
+    ],
+    "queries": [
+      "Flutter logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "03-common-ground",
+    "title": "Common Ground",
+    "references": [
+      "fp"
+    ],
+    "assessment": "Related monogram structure",
+    "comparison": "Both use a rounded FP monogram with intertwined or shared visual space. The reference is an outlined continuous construction; ours is two heavy separated filled letter shapes. This is an existing design family, not an exact match.",
+    "provenance": "Text-generated FP connection concept; no external logo image input.",
+    "parents": [],
+    "queries": [
+      "FP monogram logo rounded"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "04-through",
+    "title": "Through",
+    "references": [
+      "portal",
+      "flutter"
+    ],
+    "assessment": "Known conceptual and stylistic references",
+    "comparison": "Portal supplies the passage-through-an-oval idea; Flutter supplies angular blue ribbons. Our horizontal ribbon crossing a vertical ring is not either source's logo silhouette. The saved Portal wordmark is a franchise comparison, not the exact screenshot supplied by the user.",
+    "provenance": "The user supplied a Portal-game image as thematic inspiration. The prompt also requested Flutter-like ribbon geometry.",
+    "parents": [],
+    "queries": [
+      "Portal game logo aperture",
+      "Flutter logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "05-twin-portals",
+    "title": "Twin Portals",
+    "references": [
+      "portal"
+    ],
+    "assessment": "Known conceptual reference",
+    "comparison": "The blue oval passage motif comes from the requested Portal theme. Our paired tilted rings and connecting ribbon are different from the game's wordmark. No close full-logo match was established in this bounded search.",
+    "provenance": "The user-supplied Portal-game image was a conceptual reference. This saved official wordmark is not the identical input screenshot.",
+    "parents": [],
+    "queries": [
+      "Portal game logo aperture"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "06-emergence",
+    "title": "Emergence",
+    "references": [
+      "flutter",
+      "portal"
+    ],
+    "assessment": "Known conceptual and stylistic references",
+    "comparison": "The full upright F over a horizontal ellipse differs from Flutter's split diagonal F and from Portal's wordmark. Shared references are Flutter's blue folded letter vocabulary and the requested portal-emergence idea; neither is an exact source for this composition.",
+    "provenance": "Portal-game reference supplied by the user; readable F and Flutter-like cut ends specified in the prompt.",
+    "parents": [],
+    "queries": [
+      "Portal game logo aperture",
+      "Flutter logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "07-aperture-p",
+    "title": "Aperture P",
+    "references": [
+      "p-door"
+    ],
+    "assessment": "Close structural resemblance",
+    "comparison": "Both make an open doorway out of a capital P's counter. The stock design uses a blockier P and a simpler diagonal opening; ours adds an inner dark plane. This is a concrete pre-existing negative-space idea worth reviewing closely.",
+    "provenance": "Text-generated from a P-with-portal-counter brief. Pixasquare's design was discovered during this review, not provided to generation.",
+    "parents": [],
+    "queries": [
+      "portal letter P logo negative space"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "08-threshold-fp",
+    "title": "Threshold FP",
+    "references": [
+      "fp"
+    ],
+    "assessment": "Shared initials; no close match found",
+    "comparison": "The reference establishes existing FP monogram work, but is a curved outline sharing strokes. Ours is two upright bold letters divided by a diagonal cut. Similar initials alone do not establish copying, and this is not a close contour match.",
+    "provenance": "Text-generated from a readable FP/shared-cut brief; no external logo image input.",
+    "parents": [],
+    "queries": [
+      "FP monogram logo rounded"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "09-open-o",
+    "title": "Open O",
+    "references": [
+      "portal",
+      "opera"
+    ],
+    "assessment": "Related letter-as-symbol device",
+    "comparison": "Portal replaces O with a blue oval; Opera uses an O/ring as its mark. Our cut cyan lowercase o uses the same broad device but different contour, cut and full wordmark. Neither reference establishes an exact match.",
+    "provenance": "Text-generated wordmark concept; the brief carried the earlier portal theme. No external logo image input for this asset.",
+    "parents": [],
+    "queries": [
+      "Portal game logo aperture",
+      "Opera logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "10-pixel-fold",
+    "title": "Pixel to Fold",
+    "references": [
+      "scanmarker",
+      "flutter"
+    ],
+    "assessment": "Shared primitives; no close match found",
+    "comparison": "Scanmarker uses an outlined parallelogram; ours uses a filled plane beside a square. Flutter is another angular blue geometric comparison. These are weak visual-family comparisons, not evidence of the same mark.",
+    "provenance": "Text-generated pixel-to-plane brief; no external image input.",
+    "parents": [],
+    "queries": [
+      "square parallelogram logo",
+      "Flutter logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "11-impossible-door",
+    "title": "Impossible Door",
+    "references": [
+      "office",
+      "autodesk"
+    ],
+    "assessment": "Close structural resemblance",
+    "comparison": "The hollow faceted doorway is close to Office's historical doorway family. Autodesk's historical folded A also shares broad folded colored planes. Our three-piece perimeter and cut differ, but the reference family is visibly similar.",
+    "provenance": "Text-generated impossible-geometry brief. The prompt explicitly asked to avoid Office-like shapes; the result still resembles that family.",
+    "parents": [],
+    "queries": [
+      "Microsoft Office 2013 logo",
+      "folded gate logo Autodesk"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "12-folded-gate",
+    "title": "Folded Gate",
+    "references": [
+      "autodesk",
+      "office"
+    ],
+    "assessment": "Close structural resemblance",
+    "comparison": "The historical Autodesk mark uses a colored ribbon folded into an open A-shaped arch. Our gateway has different legs and no full lower cross-ribbon, but the slanted top and folded blue planes are related. Office is a secondary doorway comparison.",
+    "provenance": "Text-generated origami-gateway brief. Neither reference image was supplied during generation.",
+    "parents": [],
+    "queries": [
+      "folded gate logo Autodesk",
+      "Microsoft Office 2013 logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "13-portal-sprite",
+    "title": "Portal Sprite",
+    "references": [
+      "phantombuster"
+    ],
+    "assessment": "Related mascot silhouette",
+    "comparison": "Both use a rounded ghost-like body with simple eyes. PhantomBuster has a white scalloped ghost and headphone-like dots; ours is a dark face inside a cyan arch with one stepping foot. Related mascot archetype, not an exact match.",
+    "provenance": "Text-generated doorway-creature concept. PhantomBuster was found afterward.",
+    "parents": [],
+    "queries": [
+      "ghost mascot logo phantombuster"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "14-woven-f",
+    "title": "Woven F",
+    "references": [
+      "ribbon-f"
+    ],
+    "assessment": "Close structural resemblance",
+    "comparison": "Both form F from broad curled ribbon strips with layered gaps. The stock mark is slimmer, magenta and more pointed; ours has rounder terminals, a straighter base and a green middle arm. The ribbon-F construction itself is notably close.",
+    "provenance": "Text-generated woven-F brief. This stock design was not a generation input.",
+    "parents": [],
+    "queries": [
+      "ribbon letter F logo flow"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "15-kinetic-bloom",
+    "title": "Kinetic Bloom",
+    "references": [
+      "cj",
+      "peel"
+    ],
+    "assessment": "Related three-part organic motif",
+    "comparison": "CJ shares three separate soft colored petals, but lacks our concave rotating blades. Youth of Peel shares rotational curved segments and a two-blue/red palette, but has sharper points and a larger circular center. Neither is an exact contour match.",
+    "provenance": "Text-generated three-petal motion concept; no external image input. CJ and Youth of Peel were found afterward.",
+    "parents": [],
+    "queries": [
+      "three petal pinwheel logo cyan blue coral",
+      "three rounded blades pinwheel logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "15b-bloom-refined",
+    "title": "Bloom Refined",
+    "references": [
+      "cj",
+      "peel"
+    ],
+    "assessment": "Related three-part organic motif",
+    "comparison": "Refining 15 preserves the same resemblance to CJ's separate petals and Youth of Peel's rotating segments. Shape, gaps and color differ from both. No exact match was established.",
+    "provenance": "Refinement using our concept 15 as the sole image reference.",
+    "parents": [
+      "15-kinetic-bloom"
+    ],
+    "queries": [
+      "three petal pinwheel logo cyan blue coral"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "16-code-spark",
+    "title": "Code Spark",
+    "references": [
+      "gemini"
+    ],
+    "assessment": "Related spark category",
+    "comparison": "Both have a four-point spark concept and blue color. Gemini is a single smooth symmetric concave star; ours splits into two angular diagonal strokes with strongly unequal points. The category is common; this is not an exact silhouette match.",
+    "provenance": "Text-generated asymmetric code-spark brief. Gemini was not supplied as an input.",
+    "parents": [],
+    "queries": [
+      "blue four point spark logo Gemini"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "17-type-play",
+    "title": "Type Play",
+    "references": [
+      "tt-seoul",
+      "tasktango"
+    ],
+    "assessment": "Related TT motif",
+    "comparison": "TT Seoul shares heavy lowercase tt with rightward feet; TaskTango shares a double-T diagonal arrangement. Ours joins a rising blue crossbar and integrates it inside the full flutter ports wordmark. The full wordmark is more differentiated than the standalone tt avatar.",
+    "provenance": "Text-generated custom shared-tt-crossbar brief; no external logo image input.",
+    "parents": [],
+    "queries": [
+      "TypeType logo tt",
+      "tt logo joined t letters crossbar"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "17b-type-refined",
+    "title": "Type Refined",
+    "references": [
+      "tt-seoul",
+      "tasktango"
+    ],
+    "assessment": "Related TT motif",
+    "comparison": "The refinement retains the lowercase tt family and shared bar. TT Seoul's letters remain separate with straight bars; TaskTango uses tilted capitals. No exact full-wordmark match was identified.",
+    "provenance": "Refinement using our concept 17 as the image reference.",
+    "parents": [
+      "17-type-play"
+    ],
+    "queries": [
+      "TypeType logo tt",
+      "tt logo joined t letters crossbar"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "18-bloom-type",
+    "title": "Bloom + Type",
+    "references": [
+      "cj",
+      "peel",
+      "tt-seoul",
+      "tasktango"
+    ],
+    "assessment": "Combination of two related motifs",
+    "comparison": "The symbol retains Bloom's three-part organic similarities; the wordmark retains Type Play's TT similarities. Combining them does not remove those relationships, though no exact combined lockup was found.",
+    "provenance": "Generated from our concepts 15 and 17 as the two image references.",
+    "parents": [
+      "15-kinetic-bloom",
+      "17-type-play"
+    ],
+    "queries": [
+      "three petal pinwheel logo cyan blue coral",
+      "TypeType logo tt"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "19-hermit",
+    "title": "Hermit",
+    "references": [
+      "ferris"
+    ],
+    "assessment": "Shared mascot theme, different construction",
+    "comparison": "Both are friendly crab-like developer mascots with two eyes and prominent claws. Ferris is a bright orange spiky crab with thin legs; ours is a shelled hermit with a blue angular upper body and orange claws. The species/theme overlap is stronger than the contour resemblance.",
+    "provenance": "Text-generated hermit-crab brief. Ferris was not supplied as an input.",
+    "parents": [],
+    "queries": [
+      "Rust Ferris mascot official",
+      "Rustacean Ferris rustacean.net"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "20-mosaic",
+    "title": "Mosaic",
+    "references": [
+      "lemito"
+    ],
+    "assessment": "Related modular motif; no close match found",
+    "comparison": "Both assemble colored tiles into a stepped block. LEMITO uses many rounded cyan/blue squares; ours uses five unequal tiles including a quarter-circle, in several colors. This is a common modular vocabulary, not an exact match. MosaicML was inspected and rejected as a close comparator.",
+    "provenance": "Text-generated five-tile modular identity brief; no external image input.",
+    "parents": [],
+    "queries": [
+      "geometric modular mosaic logo squares",
+      "MosaicML logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "21-freehand",
+    "title": "Freehand",
+    "references": [
+      "pacifico"
+    ],
+    "assessment": "Typeface-family comparison, not a matched logo",
+    "comparison": "Pacifico demonstrates a pre-existing rounded connected brush-script style. Ours differs in individual letters, stacking and underline. This does not identify the generated lettering as Pacifico; it shows that the broad lettering idiom is familiar. No close branded lockup was found.",
+    "provenance": "Text-generated handwritten-wordmark brief. No font file or external specimen was supplied during generation.",
+    "parents": [],
+    "queries": [
+      "Pacifico font specimen"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "22-gecko",
+    "title": "Gecko",
+    "references": [
+      "geeko"
+    ],
+    "assessment": "Strong thematic and silhouette resemblance",
+    "comparison": "Both use a bright green side-profile reptile with a large eye and tightly curled tail in an open-source identity. Our full body, feet and expression differ, while Geeko is a more compact circular silhouette. This deserves particular review because of both mascot choice and software context.",
+    "provenance": "Text-generated gecko brief. openSUSE's Geeko was not supplied as an image reference.",
+    "parents": [],
+    "queries": [
+      "SUSE Geeko logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "23-magpie",
+    "title": "Magpie",
+    "references": [
+      "magpie"
+    ],
+    "assessment": "Shared mascot species and software context",
+    "comparison": "Both are black/white magpies with a blue wing. The pipeline reference has a long multicolor tail and no carried object; ours has a short tail, upright stance and square in its beak. These are natural magpie markings plus a shared mascot choice, not an exact drawing.",
+    "provenance": "Text-generated magpie-collecting-a-square brief; no external image input.",
+    "parents": [],
+    "queries": [
+      "Magpie software logo bird"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "24-octopus",
+    "title": "Octopus Maker",
+    "references": [
+      "octopus"
+    ],
+    "assessment": "Shared software mascot category",
+    "comparison": "Octopus Deploy uses a simple blue octopus silhouette. Ours is orange with a tilted head, expressive face and a held block. The animal and developer-tool context overlap, but the specific character geometry differs. No exact character match was found.",
+    "provenance": "Text-generated octopus-maker brief. The prompt mentioned avoiding GitHub's cat hybrid; Octopus Deploy was not supplied.",
+    "parents": [],
+    "queries": [
+      "Octopus Deploy logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "25-courier-bot",
+    "title": "Courier Bot",
+    "references": [
+      "asr-bot"
+    ],
+    "assessment": "Shared delivery-character theme",
+    "comparison": "ASR's mascot is a smiling helmeted delivery character holding a parcel; ours is a short robot with a face window and yellow parcel. The reference is thematically related, not a close silhouette match. Do not treat the search's robot description as proof that the ASR character is a robot.",
+    "provenance": "Text-generated delivery-robot brief; no external image input.",
+    "parents": [],
+    "queries": [
+      "friendly delivery robot mascot logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "26-mountain-goat",
+    "title": "Mountain Goat",
+    "references": [
+      "gnu"
+    ],
+    "assessment": "Shared horned software mascot theme",
+    "comparison": "GNU's gnu head and our goat both have prominent horns and a beard in a software context. GNU uses a line-drawn frontal head with curled horns; ours has a colored side profile and swept-back horns. Different animals and drawings; no exact match found.",
+    "provenance": "Text-generated mountain-goat brief. GNU was not supplied as an image reference.",
+    "parents": [],
+    "queries": [
+      "GNU goat logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "27-red-panda",
+    "title": "Red Panda",
+    "references": [
+      "redpanda"
+    ],
+    "assessment": "Shared species and coloring, different drawing",
+    "comparison": "Redpanda Data's face has angular facets and sharp eyes. Ours is a rounded seated full-body character with striped tail and blue square. Natural orange/cream markings and developer context overlap; the geometry and composition differ.",
+    "provenance": "Text-generated red-panda brief. Firefox was mentioned only as something to avoid; Redpanda Data was not an input.",
+    "parents": [],
+    "queries": [
+      "Redpanda data mascot logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "28-sea-otter",
+    "title": "Sea Otter",
+    "references": [
+      "otter"
+    ],
+    "assessment": "Shared mascot species and palette",
+    "comparison": "Otter Browser uses a brown otter peeking through a blue ring; ours reclines with a square on its tummy and no ring. The same animal, brown/cream coloring and blue accent are common ground, but pose and composition differ.",
+    "provenance": "Text-generated reclining sea-otter brief; no external image input.",
+    "parents": [],
+    "queries": [
+      "Otter Browser logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "29-axolotl",
+    "title": "Axolotl",
+    "references": [
+      "axolotl",
+      "estuary"
+    ],
+    "assessment": "Related mascot structure",
+    "comparison": "Axolotl Health has a pink smiling external-gill character; Estuary uses a teal outline face with side gills and a smile. Ours combines a full body, six broad gill branches and a blue square. These are close animal-character conventions, not evidence of the same asset.",
+    "provenance": "Text-generated axolotl brief; neither outside mascot was an input.",
+    "parents": [],
+    "queries": [
+      "Axolotl AI logo mascot"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "30-neural-weave",
+    "title": "Neural Weave",
+    "references": [
+      "n8n"
+    ],
+    "assessment": "Related node-and-path vocabulary",
+    "comparison": "n8n uses linked round nodes on branching paths. Ours uses crossing curved paths with three circular cutouts and a different overall silhouette. Both communicate connected computation, but this is a visual-family comparison rather than a close match.",
+    "provenance": "Text-generated AI-connections brief; known AI marks were mentioned as exclusions, not image inputs.",
+    "parents": [],
+    "queries": [
+      "Weaviate logo neural",
+      "n8n logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "31-translation-core",
+    "title": "Translation Core",
+    "references": [
+      "gysels"
+    ],
+    "assessment": "Shared geometric device; no close brand match found",
+    "comparison": "Gysels places a diamond between horizontal lines. Ours uses a filled diamond/chip with staggered input/output bars. Shared central-diamond-and-lines construction, otherwise different. Apache Beam was inspected for dataflow imagery but rejected as a close mark.",
+    "provenance": "Text-generated input-chip-output brief; no external image input.",
+    "parents": [],
+    "queries": [
+      "diamond microchip logo horizontal lines",
+      "Apache Beam logo",
+      "Cerebras logo"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  },
+  {
+    "id": "32-co-intelligence",
+    "title": "Co-Intelligence",
+    "references": [
+      "cohere"
+    ],
+    "assessment": "Related abstract AI-brand vocabulary",
+    "comparison": "Cohere combines rounded organic blobs in green, purple and coral. Ours combines one coral capsule and a cobalt stepped shape divided by a diagonal gap. Soft colored components and AI positioning overlap; the number, arrangement and contour differ.",
+    "provenance": "Text-generated human/machine abstract-pair brief; Cohere was not supplied as a reference.",
+    "parents": [],
+    "queries": [
+      "Paddle logo software",
+      "Cohere logo official"
+    ],
+    "reviewed_on": "2026-11-02",
+    "review_type": "Preliminary descriptive web/image search and direct visual comparison; not reverse-image search or proof of provenance."
+  }
+]

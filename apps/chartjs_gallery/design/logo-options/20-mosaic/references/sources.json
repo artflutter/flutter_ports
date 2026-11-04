@@ -1,0 +1,17 @@
+[
+  {
+    "id": "lemito",
+    "name": "LEMITO modular mark",
+    "owner": "LEMITO",
+    "page_url": "https://www.lemito.cz/",
+    "image_url": "https://www.lemito.cz/web/image/website/1/social_default_image?unique=e5a2c85",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://www.lemito.cz/web/image/website/1/social_default_image?unique=e5a2c85",
+    "file": "lemito.png",
+    "sha256": "ee774c7469e25c4de220a9d55e7300eea816d4c4b5e2b7de15ec78f342d79f55",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.953497+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

@@ -1,0 +1,15 @@
+External logo comparison references
+
+These files are unchanged third-party images collected for local visual
+comparison with Flutter Ports design concepts. The identifier is a repository
+classification for external reference material, not a license grant from the
+original rights holders and not a claim that every source has identical terms.
+
+Copyright, trademark rights and any source-specific licenses remain with their
+respective owners. Flutter Ports grants no rights to use the referenced marks as
+its own branding or to redistribute them under the project's MIT license.
+
+See the adjacent references/sources.json or the central
+apps/chartjs_gallery/design/logo-options/_research/references.json for per-image
+attribution, original source pages, image URLs, retrieval dates and hashes.
+Consult those original sources for any applicable permissions and terms.

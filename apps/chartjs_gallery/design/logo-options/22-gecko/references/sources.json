@@ -1,0 +1,17 @@
+[
+  {
+    "id": "geeko",
+    "name": "openSUSE Geeko",
+    "owner": "openSUSE / SUSE",
+    "page_url": "https://github.com/openSUSE/branding/issues/93",
+    "image_url": "https://user-images.githubusercontent.com/11618271/96879673-feeb3c80-1484-11eb-8a83-cef074595e2a.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://user-images.githubusercontent.com/11618271/96879673-feeb3c80-1484-11eb-8a83-cef074595e2a.png",
+    "file": "geeko.png",
+    "sha256": "10f36801a94fc47b0553401366485f42e117df2066aa5f51503439fa0eb508ec",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:46.544036+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

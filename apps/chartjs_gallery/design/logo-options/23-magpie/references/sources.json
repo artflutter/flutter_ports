@@ -1,0 +1,17 @@
+[
+  {
+    "id": "magpie",
+    "name": "MAGPIE Pipeline mascot",
+    "owner": "MAGPIE Pipeline contributors",
+    "page_url": "https://core-bioinformatics.github.io/magpie/intro.html",
+    "image_url": "https://core-bioinformatics.github.io/magpie/_static/magpie_logo.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://core-bioinformatics.github.io/magpie/_static/magpie_logo.png",
+    "file": "magpie.png",
+    "sha256": "72562df949a6d3a26425555beafcb51ab851af3cf3f938747d4c22a933f02691",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:46.479951+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

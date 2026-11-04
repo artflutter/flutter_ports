@@ -1,0 +1,17 @@
+[
+  {
+    "id": "n8n",
+    "name": "n8n",
+    "owner": "n8n",
+    "page_url": "https://orium.com/partners",
+    "image_url": "https://images.ctfassets.net/sh4yu0l0t3kv/1PB9MWLkyfVubTm54zGSO6/62ad7bfd4249c9d9d21166bcde0a6b98/Partner_Logo_-_n8n.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://images.ctfassets.net/sh4yu0l0t3kv/1PB9MWLkyfVubTm54zGSO6/62ad7bfd4249c9d9d21166bcde0a6b98/Partner_Logo_-_n8n.png",
+    "file": "n8n.png",
+    "sha256": "d72420ab49a7581fb0e1f424c5f681d7a5aaf696bc68601229c69bea5f031600",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:48.099073+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

@@ -1,0 +1,83 @@
+Flutter Ports shortlist: preliminary visual similarity review
+Checked: 2026-11-02
+
+Scope
+Reviewed Kinetic Bloom (15, 15B), Type Play (17, 17B), and their combination
+(18) using descriptive web/image searches and direct visual inspection of
+downloaded public reference artwork. This was NOT a reverse-image upload
+search or an exhaustive trademark/register search. It cannot identify the
+image generator's training influences or prove originality or copying.
+
+Conclusion
+No exact match was found in the reference artwork actually inspected.
+Both ideas have existing visual relatives. Neither is established as unique.
+The full Type Play wordmark is more differentiated in this sample than its
+standalone tt avatar. Bloom needs a more specific silhouette before selection.
+These are design judgments, not findings of infringement or legal clearance.
+
+Bloom comparisons
+1. CJ Group Blossom: three separate soft colored petals. Related number of
+   parts, organic shapes and multicolor arrangement. CJ's petals are fuller
+   teardrops without our inward-curving rotating blades. Not an exact match.
+   Official identity: https://www.cj.net/kr/en/cj-introduction
+   Official logo library: https://newsroom.cj.net/medialibrary/cj-logos/
+   Inspected image: https://framerusercontent.com/images/G9QWIiCvXor6iDj9sihNlCpniOc.png?height=486&width=798
+   That image was indexed against NdotLight, but it visibly depicts CJ, not
+   NdotLight's own brand. Do not propagate the image-search description.
+
+2. Youth of Peel: three rotating curved segments, with red and two blues.
+   Related radial structure, concave inner edges and color distribution.
+   Its segments are pointed, form a tighter triangular perimeter, and surround
+   a larger round center; ours are rounder and more separated. Not identical.
+   https://youthofpeel.ca/
+   Inspected image: https://youthofpeel.ca/assets/logo-icon-CYE5-yKF.png
+
+3. Image indexed as IDP Education: three leaf-shaped orange/green/blue parts
+   around a circular void. Broad three-part organic motif, different geometry.
+   Inspected image: https://cdncontent.halotechnologies.com.au/images/LOGOS-CORPORATE/mark_light/iel-au.png
+   This reference image came from a third-party market-data provider; do not
+   treat its identity or currency as independently established by this review.
+   Related first-party design discussion: https://www.ddg.com.tw/en/works/idp-education/
+
+4. Oxford Said Business School climate challenge windmill graphic: three
+   semicircles rotated around a point, orange on yellow. Demonstrates that
+   the pinwheel motif is common, but is not a close match in contour or color.
+   https://www.sbs.ox.ac.uk/climate-change-challenge/climate-change-challenge-2023
+   Inspected image: https://www.sbs.ox.ac.uk/sites/default/files/CCCIcon12windmill.png
+
+Type Play comparisons
+1. TT Seoul: heavy lowercase tt, two upright stems, rightward feet, horizontal
+   crossbars. Shares the basic standalone letter pair. Its letters are separate,
+   with flat horizontal bars and squared feet; our bar is joined, blue and
+   rising, and our lower terminals are curved. Not an exact match.
+   https://www.ttseoul.com/news
+   Inspected image: https://framerusercontent.com/images/PYAOtLdyjNb9alSMWofOjzO5v4.png?height=1080&width=1080
+
+2. TaskTango: a pair of tilted uppercase T shapes. Related double-T idea and
+   diagonal alignment; different case, endpoints and crossbar construction.
+   https://nordiclabs.dev/
+   Inspected image: https://nordiclabs.dev/TaskTango_Logo.png
+   The image was retrievable; the site's text was unavailable through web open.
+
+3. Sabuj Ali TT Monogram: mirrored uppercase outlined serif-like T forms.
+   A generic conceptual relative, not a close visual match on inspection.
+   https://dribbble.com/shots/20402231-TT-Monogram
+   Inspected image: https://cdn.dribbble.com/userupload/4290386/file/original-90fa9b93f619af5b72e9dfc326eba006.jpg?compress=1&resize=1200x900
+
+4. Tratos: serif uppercase T plus smaller lowercase t, one blue color.
+   A search hit rejected as a close match after inspecting the artwork.
+   https://x.com/TratosGroup
+   Inspected image: https://pbs.twimg.com/profile_images/884348443753316353/7xjhlMvD.jpg
+
+Limitations and excluded evidence
+Some stock-logo listings were inaccessible. A downloaded VectorStock image
+was an access-denied notice, not logo artwork, and was excluded. A TravelTime
+image URL returned 404 and was excluded. Search-generated image descriptions
+were not sufficient evidence of shape or attribution.
+
+Design recommendation
+Keep the complete flutter ports wordmark as the stronger candidate for further
+development. Do not treat the tt avatar as a distinctive identity by itself.
+Redraw Bloom with a brand-specific silhouette if retaining it; recoloring a
+three-petal pinwheel alone does not establish a distinctive mark. Review final
+vector artwork again before adopting it. Preserve existing files as drafts.

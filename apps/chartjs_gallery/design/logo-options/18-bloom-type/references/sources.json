@@ -1,0 +1,79 @@
+[
+  {
+    "id": "cj",
+    "name": "CJ Blossom",
+    "owner": "CJ Group",
+    "page_url": "https://www.cj.net/kr/en/cj-introduction",
+    "image_url": "https://framerusercontent.com/images/G9QWIiCvXor6iDj9sihNlCpniOc.png?height=486&width=798",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://framerusercontent.com/images/G9QWIiCvXor6iDj9sihNlCpniOc.png?height=486&width=798",
+    "file": "cj.png",
+    "sha256": "b007a653eef73005db2c52e4f97d1b9ce2b8320c75cabc11c1545a92375a8286",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.384739+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02",
+    "identification_note": "Image hosted on NdotLight depicts CJ; not NdotLight branding."
+  },
+  {
+    "id": "peel",
+    "name": "Youth of Peel",
+    "owner": "Youth of Peel",
+    "page_url": "https://youthofpeel.ca/",
+    "image_url": "https://youthofpeel.ca/assets/logo-icon-CYE5-yKF.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://youthofpeel.ca/assets/logo-icon-CYE5-yKF.png",
+    "file": "peel.png",
+    "sha256": "068d0d6a6aee5c8d58ae64c252a68121eab77841f66af18d387fc06da8c3735e",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.634153+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  },
+  {
+    "id": "tt-seoul",
+    "name": "TT Seoul",
+    "owner": "TT Seoul",
+    "page_url": "https://www.ttseoul.com/news",
+    "image_url": "https://framerusercontent.com/images/PYAOtLdyjNb9alSMWofOjzO5v4.png?height=1080&width=1080",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://framerusercontent.com/images/PYAOtLdyjNb9alSMWofOjzO5v4.png?height=1080&width=1080",
+    "file": "tt-seoul.png",
+    "sha256": "582565d20cc88e6fbaf493525bce634c74bb0e6363840451b2dd21bb4dbe0793",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.932777+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  },
+  {
+    "id": "tasktango",
+    "name": "TaskTango",
+    "owner": "NordicLabs",
+    "page_url": "https://nordiclabs.dev/",
+    "image_url": "https://nordiclabs.dev/TaskTango_Logo.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://nordiclabs.dev/TaskTango_Logo.png",
+    "file": "tasktango.png",
+    "sha256": "d6eb5e73ac38c27e32b098f028d1af45f69252d4e526d4c9d00e99dc2690ca1f",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.729674+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  },
+  {
+    "id": "15-kinetic-bloom",
+    "name": "Our earlier concept 15-kinetic-bloom",
+    "file": "input-15-kinetic-bloom.png",
+    "role": "Actual earlier concept used for the edit/refinement",
+    "source": "../../15-kinetic-bloom/concept.png",
+    "sha256": "6c0143776da04d6c76d76bd8c7731d97e87a7bb73c6a4d361f1248bf2edc0440"
+  },
+  {
+    "id": "17-type-play",
+    "name": "Our earlier concept 17-type-play",
+    "file": "input-17-type-play.png",
+    "role": "Actual earlier concept used for the edit/refinement",
+    "source": "../../17-type-play/concept.png",
+    "sha256": "fbab8372116a5bce0b50b556ae7420be05873909a6217c9df53b92d6a7494510"
+  }
+]

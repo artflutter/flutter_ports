@@ -1,0 +1,17 @@
+[
+  {
+    "id": "gysels",
+    "name": "Gysels diamond-and-lines emblem",
+    "owner": "Gysels Juwelier",
+    "page_url": "https://www.gysels.be/over-ons",
+    "image_url": "https://lirp.cdn-website.com/0fb8a56a/dms3rep/multi/opt/logo-juwelier-1920w.jpg",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://lirp.cdn-website.com/0fb8a56a/dms3rep/multi/opt/logo-juwelier-1920w.jpg",
+    "file": "gysels.jpg",
+    "sha256": "5436da4797761a05ca0d779b3c6b0da6eead25b7ce85efc199187c1f3cfc60b2",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:48.174363+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

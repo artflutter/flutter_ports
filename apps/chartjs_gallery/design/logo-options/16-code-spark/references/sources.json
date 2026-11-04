@@ -1,0 +1,18 @@
+[
+  {
+    "id": "gemini",
+    "name": "Gemini spark (blue/purple version)",
+    "owner": "Google",
+    "page_url": "https://k-tai.watch.impress.co.jp/docs/column/teppan/1641536.html",
+    "image_url": "https://asset.watch.impress.co.jp/img/ktw/docs/1641/536/icon_l.jpg",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://asset.watch.impress.co.jp/img/ktw/docs/1641/536/icon_l.jpg",
+    "file": "gemini.jpg",
+    "sha256": "557dbbf339c6ea38369cea6bcf60c2d53f464b79546d665a0df107bd576bf11b",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:46.221167+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02",
+    "version_note": "Specific historical/versioned artwork; not asserted to be the current logo."
+  }
+]

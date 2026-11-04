@@ -1,0 +1,26 @@
+[
+  {
+    "id": "office",
+    "name": "Microsoft Office (2013-era)",
+    "owner": "Microsoft",
+    "page_url": "https://www.wps.com/blog/how-to-install-and-use-microsoft-office-2013-on-linux-a-comprehensive-guide/",
+    "image_url": "https://res-academy.cache.wpscdn.com/images/seo_posts/20230926/1eb52ff7502f0e3d90c27892ac49e48f.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://res-academy.cache.wpscdn.com/images/seo_posts/20230926/1eb52ff7502f0e3d90c27892ac49e48f.png",
+    "file": "office.jpg",
+    "sha256": "e5b9b22bb4913b10a71b089e9bfa426c277f3929c44419113322b9a045053184",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:44.854514+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02",
+    "version_note": "Specific historical/versioned artwork; not asserted to be the current logo."
+  },
+  {
+    "id": "01-portal",
+    "name": "Our earlier concept 01-portal",
+    "file": "input-01-portal.png",
+    "role": "Actual earlier concept used for the edit/refinement",
+    "source": "Original generated output, recovered as lineage reference only",
+    "sha256": "dfb75e48431a339a65675ca69d521886d295527b93394d2de0c003e2b82c847c"
+  }
+]

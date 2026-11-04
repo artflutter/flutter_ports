@@ -1,0 +1,32 @@
+[
+  {
+    "id": "flutter",
+    "name": "Flutter",
+    "owner": "Google",
+    "page_url": "https://docs.flutter.dev/brand",
+    "image_url": "https://flutter.gskinner.com/flokk/assets/images/logo-flutter-lightmode.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://flutter.gskinner.com/flokk/assets/images/logo-flutter-lightmode.png",
+    "file": "flutter.png",
+    "sha256": "82d0b4c78215112a9047055d2c3c53752aa8a9886aabf76ea7506f66908abdad",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.354759+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  },
+  {
+    "id": "fp",
+    "name": "FP/PF monogram \u2014 proffartline",
+    "owner": "proffartline",
+    "page_url": "https://logopond.com/proffartline/showcase/detail/314319",
+    "image_url": "https://logopond.com/logos/350e756c4b50a4e3949bd01a44770c99.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://logopond.com/logos/350e756c4b50a4e3949bd01a44770c99.png",
+    "file": "fp.png",
+    "sha256": "7c162570c6c93c5f0e95c951face63ce08bbe54692d6a4744021932eab322818",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.483466+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]
