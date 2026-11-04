@@ -1,0 +1,32 @@
+[
+  {
+    "id": "axolotl",
+    "name": "Axolotl Health",
+    "owner": "Axolotl Health",
+    "page_url": "https://kr.axolotlhealth.com/",
+    "image_url": "https://kr.axolotlhealth.com/assets/logo-DePDvVFD.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://kr.axolotlhealth.com/assets/logo-DePDvVFD.png",
+    "file": "axolotl.png",
+    "sha256": "aef8f52e35b9ce1d0666143d9091769fa4e0e73ea09f8057b762b149d5536bba",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:48.835260+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  },
+  {
+    "id": "estuary",
+    "name": "Estuary AI",
+    "owner": "Estuary",
+    "page_url": "https://www.estuary-ai.com/pricing/",
+    "image_url": "https://www.estuary-ai.com/images/logos/Estuary_Logo_Transparent.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://www.estuary-ai.com/images/logos/Estuary_Logo_Transparent.png",
+    "file": "estuary.png",
+    "sha256": "d61d2a89592a80ea156e2bef29dc7437d28f7ac021823f927282574babb541f3",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:47.900787+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

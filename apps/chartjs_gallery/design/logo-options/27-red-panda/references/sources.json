@@ -1,0 +1,17 @@
+[
+  {
+    "id": "redpanda",
+    "name": "Redpanda Data mascot",
+    "owner": "Redpanda Data",
+    "page_url": "https://medium.com/@redpanda-data/about",
+    "image_url": "https://miro.medium.com/v2/resize%3Afit%3A2400/1%2ApV8ZFTptT-u3NnosIp4fRw.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://miro.medium.com/v2/resize%3Afit%3A2400/1%2ApV8ZFTptT-u3NnosIp4fRw.png",
+    "file": "redpanda.png",
+    "sha256": "0bf5dfdb364a76743e82efc59cf79b321d7f15328b90a6b6f0cb56dfde795227",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:47.473278+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "octopus",
+    "name": "Octopus Deploy",
+    "owner": "Octopus Deploy",
+    "page_url": "https://octopus.com/company/brand",
+    "image_url": "https://cdn.pulse2.com/cdn/2026/02/Octopus-Deploy-Logo.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://cdn.pulse2.com/cdn/2026/02/Octopus-Deploy-Logo.png",
+    "file": "octopus.png",
+    "sha256": "296062998f97b840788f54ebb6140ea6d2bf6d5b8b50db8ba15a8bf68c6bc0e0",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:47.474648+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

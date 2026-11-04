@@ -1,0 +1,19 @@
+[
+  {
+    "id": "asr-bot",
+    "name": "ASR Transportes delivery mascot",
+    "owner": "ASR Transportes",
+    "page_url": "https://www.asrtransportes.com.br/cidades_atendidas",
+    "image_url": "https://asrtransportes.com.br/botasr.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "download_status": "downloaded and visually verified",
+    "previous_fetch_error": "URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.asrtransportes.com.br'. (_ssl.c:1144)>",
+    "resolved_image_url": "https://asrtransportes.com.br/botasr.png",
+    "file": "asr-bot.png",
+    "sha256": "77cf016b9e4a45119d4433511505cb38994d590bdf91f08501472a8103ccbe21",
+    "downloaded_at": "2026-11-02T16:41:19.680702+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02",
+    "identification_note": "Helmeted delivery character; do not assume it is a robot."
+  }
+]

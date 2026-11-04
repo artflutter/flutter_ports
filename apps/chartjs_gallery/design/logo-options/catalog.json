@@ -1,0 +1,518 @@
+[
+  {
+    "id": "01b-portal-no-triangle",
+    "concept": "concept.png",
+    "sha256": "1e4e3d51f2ccbc1fcf4992ce7c42090eee9898b54642021c30646e7e8d2a0a71",
+    "prompt_archive": "01b-prompt.txt",
+    "title": "Portal without triangle",
+    "review": "README.md",
+    "references": [
+      "office"
+    ],
+    "assessment": "Close structural resemblance",
+    "reviewed_on": "2026-11-02",
+    "parents": [
+      "01-portal"
+    ]
+  },
+  {
+    "id": "02-folded-fp",
+    "concept": "concept.png",
+    "sha256": "f88256f7369ffb9815d340021329334c084165f4526ccebe500a76fe5c175019",
+    "prompt_archive": "prompts.txt",
+    "title": "Folded FP",
+    "review": "README.md",
+    "references": [
+      "flutter",
+      "fp"
+    ],
+    "assessment": "Known requested style; related monogram",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "02b-flutter-inspired-fp",
+    "concept": "concept.png",
+    "sha256": "93d3fabf83c5de2003a6b3a0b76fd9d253f33e29703653c58246511acf7a0e3a",
+    "prompt_archive": "02b-prompt.txt",
+    "title": "Flutter-inspired FP",
+    "review": "README.md",
+    "references": [
+      "flutter"
+    ],
+    "assessment": "Known requested style; close geometric vocabulary",
+    "reviewed_on": "2026-11-02",
+    "parents": [
+      "02-folded-fp"
+    ]
+  },
+  {
+    "id": "03-common-ground",
+    "concept": "concept.png",
+    "sha256": "8a62710c3d5229d61daba66ee07683878b91e6eaad9d574209a997b2d363c66a",
+    "prompt_archive": "prompts.txt",
+    "title": "Common Ground",
+    "review": "README.md",
+    "references": [
+      "fp"
+    ],
+    "assessment": "Related monogram structure",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "04-through",
+    "concept": "concept.png",
+    "sha256": "dc8afa3387f5d34aa398386962aa8dfd02c25eab96c008f5b56d7294410c8735",
+    "prompt_archive": "portal-theme-prompts.txt",
+    "title": "Through",
+    "review": "README.md",
+    "references": [
+      "portal",
+      "flutter"
+    ],
+    "assessment": "Known conceptual and stylistic references",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "05-twin-portals",
+    "concept": "concept.png",
+    "sha256": "6b18cd9fb707c076305bd8b371de753dc1e3b72163db7a3f45b252a7abe06d28",
+    "prompt_archive": "portal-theme-prompts.txt",
+    "title": "Twin Portals",
+    "review": "README.md",
+    "references": [
+      "portal"
+    ],
+    "assessment": "Known conceptual reference",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "06-emergence",
+    "concept": "concept.png",
+    "sha256": "ff23f1fa5ac9ff48b078f18c0f899c32f34d50bcd6efccc27891825e20649419",
+    "prompt_archive": "portal-theme-prompts.txt",
+    "title": "Emergence",
+    "review": "README.md",
+    "references": [
+      "flutter",
+      "portal"
+    ],
+    "assessment": "Known conceptual and stylistic references",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "07-aperture-p",
+    "concept": "concept.png",
+    "sha256": "88f5a4a029c563d9deb4a15526253a0970e83323dbdae9f20270b01d9abd6568",
+    "prompt_archive": "round4-prompts.txt",
+    "title": "Aperture P",
+    "review": "README.md",
+    "references": [
+      "p-door"
+    ],
+    "assessment": "Close structural resemblance",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "08-threshold-fp",
+    "concept": "concept.png",
+    "sha256": "4756ea630605e762e41127d0e5b9e997b8d0e35fb67f877d8d0a9655d660095b",
+    "prompt_archive": "round4-prompts.txt",
+    "title": "Threshold FP",
+    "review": "README.md",
+    "references": [
+      "fp"
+    ],
+    "assessment": "Shared initials; no close match found",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "09-open-o",
+    "concept": "concept.png",
+    "sha256": "a7d3435173afa92a3096187046a479488f1041312ff4ef0f92801480c460fa82",
+    "prompt_archive": "round4-prompts.txt",
+    "title": "Open O",
+    "review": "README.md",
+    "references": [
+      "portal",
+      "opera"
+    ],
+    "assessment": "Related letter-as-symbol device",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "10-pixel-fold",
+    "concept": "concept.png",
+    "sha256": "bc5a2aa9a49e44586f9d3830cf9c98bc01dfb023eadbf817475525e5c473cbd2",
+    "prompt_archive": "round5-prompts.txt",
+    "title": "Pixel to Fold",
+    "review": "README.md",
+    "references": [
+      "scanmarker",
+      "flutter"
+    ],
+    "assessment": "Shared primitives; no close match found",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "11-impossible-door",
+    "concept": "concept.png",
+    "sha256": "f2d36d678d86475229e9a872442d8ba4e5b0959e8845616d503c02beceb37f2e",
+    "prompt_archive": "round5-prompts.txt",
+    "title": "Impossible Door",
+    "review": "README.md",
+    "references": [
+      "office",
+      "autodesk"
+    ],
+    "assessment": "Close structural resemblance",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "12-folded-gate",
+    "concept": "concept.png",
+    "sha256": "e91066f322968e498c12f58d8b92af87d42088395c1038ea5000a1ece86437ec",
+    "prompt_archive": "round5-prompts.txt",
+    "title": "Folded Gate",
+    "review": "README.md",
+    "references": [
+      "autodesk",
+      "office"
+    ],
+    "assessment": "Close structural resemblance",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "13-portal-sprite",
+    "concept": "concept.png",
+    "sha256": "28b231ac6722375d69b93c9e94407f1af88986cd8276c17330c15a5bc26ad1b8",
+    "prompt_archive": "round5-prompts.txt",
+    "title": "Portal Sprite",
+    "review": "README.md",
+    "references": [
+      "phantombuster"
+    ],
+    "assessment": "Related mascot silhouette",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "14-woven-f",
+    "concept": "concept.png",
+    "sha256": "9088b93557c50b1e45064f49449c36019623c4fe4cd2f26eaae8a242a5db5924",
+    "prompt_archive": "round6-prompts.txt",
+    "title": "Woven F",
+    "review": "README.md",
+    "references": [
+      "ribbon-f"
+    ],
+    "assessment": "Close structural resemblance",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "15-kinetic-bloom",
+    "concept": "concept.png",
+    "sha256": "6c0143776da04d6c76d76bd8c7731d97e87a7bb73c6a4d361f1248bf2edc0440",
+    "prompt_archive": "round6-prompts.txt",
+    "title": "Kinetic Bloom",
+    "review": "README.md",
+    "references": [
+      "cj",
+      "peel"
+    ],
+    "assessment": "Related three-part organic motif",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "15b-bloom-refined",
+    "concept": "concept.png",
+    "sha256": "600dd45d9d706c393d2fcab6dcc9997fb0810de0047221335961a9687cf1e3ee",
+    "prompt_archive": "round7-prompts.txt",
+    "title": "Bloom Refined",
+    "review": "README.md",
+    "references": [
+      "cj",
+      "peel"
+    ],
+    "assessment": "Related three-part organic motif",
+    "reviewed_on": "2026-11-02",
+    "parents": [
+      "15-kinetic-bloom"
+    ]
+  },
+  {
+    "id": "16-code-spark",
+    "concept": "concept.png",
+    "sha256": "443427ea63c845fa0c135234ae5c537aed360e3fb51c9161293aa4d1e434f8d3",
+    "prompt_archive": "round6-prompts.txt",
+    "title": "Code Spark",
+    "review": "README.md",
+    "references": [
+      "gemini"
+    ],
+    "assessment": "Related spark category",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "17-type-play",
+    "concept": "concept.png",
+    "sha256": "fbab8372116a5bce0b50b556ae7420be05873909a6217c9df53b92d6a7494510",
+    "prompt_archive": "round6-prompts.txt",
+    "title": "Type Play",
+    "review": "README.md",
+    "references": [
+      "tt-seoul",
+      "tasktango"
+    ],
+    "assessment": "Related TT motif",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "17b-type-refined",
+    "concept": "concept.png",
+    "sha256": "84037aa0801261b4a2bf6e0498ec2e43a037f1118ad5ee0a7e5b9214b239d0fd",
+    "prompt_archive": "round7-prompts.txt",
+    "title": "Type Refined",
+    "review": "README.md",
+    "references": [
+      "tt-seoul",
+      "tasktango"
+    ],
+    "assessment": "Related TT motif",
+    "reviewed_on": "2026-11-02",
+    "parents": [
+      "17-type-play"
+    ]
+  },
+  {
+    "id": "18-bloom-type",
+    "concept": "concept.png",
+    "sha256": "ec1060ba01d59154a839ba332f9cee687a8358d7ea77e499e4acf336493e9e9b",
+    "prompt_archive": "round7-prompts.txt",
+    "title": "Bloom + Type",
+    "review": "README.md",
+    "references": [
+      "cj",
+      "peel",
+      "tt-seoul",
+      "tasktango"
+    ],
+    "assessment": "Combination of two related motifs",
+    "reviewed_on": "2026-11-02",
+    "parents": [
+      "15-kinetic-bloom",
+      "17-type-play"
+    ]
+  },
+  {
+    "id": "19-hermit",
+    "concept": "concept.png",
+    "sha256": "af8a834c700f6bed06690fd52a6d890606dfb5e9ffe14229d16d0d149d419468",
+    "prompt_archive": "round8-prompts.txt",
+    "title": "Hermit",
+    "review": "README.md",
+    "references": [
+      "ferris"
+    ],
+    "assessment": "Shared mascot theme, different construction",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "20-mosaic",
+    "concept": "concept.png",
+    "sha256": "ae15ba8c49bff607791509a358b7a5ba998bb6dfcd735ec4ed486318080d3f58",
+    "prompt_archive": "round8-prompts.txt",
+    "title": "Mosaic",
+    "review": "README.md",
+    "references": [
+      "lemito"
+    ],
+    "assessment": "Related modular motif; no close match found",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "21-freehand",
+    "concept": "concept.png",
+    "sha256": "1c9b7482dd2d4daba713cce24a39fff92551d249c4a3f3d2306ea6e5df145743",
+    "prompt_archive": "round8-prompts.txt",
+    "title": "Freehand",
+    "review": "README.md",
+    "references": [
+      "pacifico"
+    ],
+    "assessment": "Typeface-family comparison, not a matched logo",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "22-gecko",
+    "concept": "concept.png",
+    "sha256": "834348dad370b5460e1d5749ba8148c1180357f8aa04e332ec80a31bb4afe7c1",
+    "prompt_archive": "character-prompts.txt",
+    "title": "Gecko",
+    "review": "README.md",
+    "references": [
+      "geeko"
+    ],
+    "assessment": "Strong thematic and silhouette resemblance",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "23-magpie",
+    "concept": "concept.png",
+    "sha256": "33430ce6dd2cc865b2844d14b4ead30796ed85c78d7af4c6abfa150a60948366",
+    "prompt_archive": "character-prompts.txt",
+    "title": "Magpie",
+    "review": "README.md",
+    "references": [
+      "magpie"
+    ],
+    "assessment": "Shared mascot species and software context",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "24-octopus",
+    "concept": "concept.png",
+    "sha256": "430cfff27befe15188db944f58ea58bab0eb1c5a989927bee1a33e9bc87f946a",
+    "prompt_archive": "character-prompts.txt",
+    "title": "Octopus Maker",
+    "review": "README.md",
+    "references": [
+      "octopus"
+    ],
+    "assessment": "Shared software mascot category",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "25-courier-bot",
+    "concept": "concept.png",
+    "sha256": "4900c913b8102a586efb3d8a405c727df85d938c9a19902d6488150d50213c95",
+    "prompt_archive": "character-prompts.txt",
+    "title": "Courier Bot",
+    "review": "README.md",
+    "references": [
+      "asr-bot"
+    ],
+    "assessment": "Shared delivery-character theme",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "26-mountain-goat",
+    "concept": "concept.png",
+    "sha256": "91e65007c41d7054188cd1e533a198877cee7b4f31d144545b9e433477dc1cc0",
+    "prompt_archive": "character-prompts.txt",
+    "title": "Mountain Goat",
+    "review": "README.md",
+    "references": [
+      "gnu"
+    ],
+    "assessment": "Shared horned software mascot theme",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "27-red-panda",
+    "concept": "concept.png",
+    "sha256": "4dbd0991799cfc8af8657e42593d19efe4a2cbdb54e139243c035142a340a2c7",
+    "prompt_archive": "cute-animal-prompts.txt",
+    "title": "Red Panda",
+    "review": "README.md",
+    "references": [
+      "redpanda"
+    ],
+    "assessment": "Shared species and coloring, different drawing",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "28-sea-otter",
+    "concept": "concept.png",
+    "sha256": "73b9aa7d06fc2067fa642735cfd894405fb13c02d07c9da545dce005c3f9a168",
+    "prompt_archive": "cute-animal-prompts.txt",
+    "title": "Sea Otter",
+    "review": "README.md",
+    "references": [
+      "otter"
+    ],
+    "assessment": "Shared mascot species and palette",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "29-axolotl",
+    "concept": "concept.png",
+    "sha256": "6707e186933ed7f12b7ab5ebd3fdb0431065041278325a8324049c4f1ca3012c",
+    "prompt_archive": "cute-animal-prompts.txt",
+    "title": "Axolotl",
+    "review": "README.md",
+    "references": [
+      "axolotl",
+      "estuary"
+    ],
+    "assessment": "Related mascot structure",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "30-neural-weave",
+    "concept": "concept.png",
+    "sha256": "9c537a0df297269f33f3b75185d531bfb6137d7a6c5943013b935150ee3b8da7",
+    "prompt_archive": "ai-prompts.txt",
+    "title": "Neural Weave",
+    "review": "README.md",
+    "references": [
+      "n8n"
+    ],
+    "assessment": "Related node-and-path vocabulary",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "31-translation-core",
+    "concept": "concept.png",
+    "sha256": "a3f2de2a9574ac276aaf2b9fff070cf4b3901c2eaaf8f6a74d9ed1d5f725070a",
+    "prompt_archive": "ai-prompts.txt",
+    "title": "Translation Core",
+    "review": "README.md",
+    "references": [
+      "gysels"
+    ],
+    "assessment": "Shared geometric device; no close brand match found",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  },
+  {
+    "id": "32-co-intelligence",
+    "concept": "concept.png",
+    "sha256": "668d1e1651fa1d674964911acea09316c967ef2d3a55bc5a643b8cefd0af1321",
+    "prompt_archive": "ai-prompts.txt",
+    "title": "Co-Intelligence",
+    "review": "README.md",
+    "references": [
+      "cohere"
+    ],
+    "assessment": "Related abstract AI-brand vocabulary",
+    "reviewed_on": "2026-11-02",
+    "parents": []
+  }
+]

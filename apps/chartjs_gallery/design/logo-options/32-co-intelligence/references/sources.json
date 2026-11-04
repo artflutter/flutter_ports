@@ -1,0 +1,17 @@
+[
+  {
+    "id": "cohere",
+    "name": "Cohere",
+    "owner": "Cohere",
+    "page_url": "https://aws.amazon.com/ec2/instance-types/p5/",
+    "image_url": "https://d1.awsstatic.com/onedam/marketing-channels/website/aws/en_US/product-categories/compute/approved/images/c49188d1-be4c-4486-a028-250de8eb86b1.90405bc590b84324747f313cac1363ff8e42cb61.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://d1.awsstatic.com/onedam/marketing-channels/website/aws/en_US/product-categories/compute/approved/images/c49188d1-be4c-4486-a028-250de8eb86b1.90405bc590b84324747f313cac1363ff8e42cb61.png",
+    "file": "cohere.png",
+    "sha256": "b598c814afffedbb0bab012b1b3b4c4a464dbc5ba0f2987a7a472b90d5df50f4",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:48.461944+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

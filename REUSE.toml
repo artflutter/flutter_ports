@@ -123,3 +123,26 @@ path = "packages/chartjs_test_utils/lib/fonts/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2010 Google Corporation", "2012 Red Hat, Inc."]
 SPDX-License-Identifier = "OFL-1.1"
+
+
+# External logo reference images used only in the local comparison catalog.
+# Per-image attribution and original URLs are in the adjacent sources.json and
+# logo-options/_research/references.json. These are not MIT project artwork.
+[[annotations]]
+path = [
+  "apps/chartjs_gallery/design/logo-options/_research/assets/**",
+  "apps/chartjs_gallery/design/logo-options/**/references/*.png",
+  "apps/chartjs_gallery/design/logo-options/**/references/*.jpg",
+  "apps/chartjs_gallery/design/logo-options/**/references/*.webp",
+  "apps/chartjs_gallery/design/logo-options/**/references/*.gif",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "External rights holders; see the adjacent sources.json"
+SPDX-License-Identifier = "LicenseRef-External-Logo-Reference"
+
+# Earlier generated concept boards copied beside their refinements are ours.
+[[annotations]]
+path = "apps/chartjs_gallery/design/logo-options/**/references/input-*.png"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Vasiliy Ditsyak"
+SPDX-License-Identifier = "MIT"

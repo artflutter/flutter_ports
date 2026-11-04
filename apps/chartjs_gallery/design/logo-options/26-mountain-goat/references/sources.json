@@ -1,0 +1,17 @@
+[
+  {
+    "id": "gnu",
+    "name": "GNU head",
+    "owner": "GNU Project / see source attribution",
+    "page_url": "https://www.gnu.org/graphics/heckert_gnu.html",
+    "image_url": "https://www.gnu.org/graphics/heckert_gnu.small.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://www.gnu.org/graphics/heckert_gnu.small.png",
+    "file": "gnu.png",
+    "sha256": "f404f789e30d083eb89e27065beb60402018ff66b0c097c1e7cbb44582860a56",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:51.448984+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

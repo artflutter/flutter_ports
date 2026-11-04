@@ -1,0 +1,32 @@
+[
+  {
+    "id": "portal",
+    "name": "Portal wordmark",
+    "owner": "Valve",
+    "page_url": "https://store.steampowered.com/app/400/Portal/",
+    "image_url": "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/400/logo_2x.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://shared.steamstatic.com/store_item_assets/steam/apps/400/logo_2x.png",
+    "file": "portal.png",
+    "sha256": "d6a07540340a8c05663857f0a9cee411fe93ab38e7d5e5a37202b4942a27e5ba",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.077984+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  },
+  {
+    "id": "flutter",
+    "name": "Flutter",
+    "owner": "Google",
+    "page_url": "https://docs.flutter.dev/brand",
+    "image_url": "https://flutter.gskinner.com/flokk/assets/images/logo-flutter-lightmode.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "resolved_image_url": "https://flutter.gskinner.com/flokk/assets/images/logo-flutter-lightmode.png",
+    "file": "flutter.png",
+    "sha256": "82d0b4c78215112a9047055d2c3c53752aa8a9886aabf76ea7506f66908abdad",
+    "download_status": "downloaded and visually verified",
+    "downloaded_at": "2026-11-02T16:39:45.354759+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]

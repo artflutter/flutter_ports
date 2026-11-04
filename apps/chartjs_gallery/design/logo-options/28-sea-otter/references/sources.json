@@ -1,0 +1,18 @@
+[
+  {
+    "id": "otter",
+    "name": "Otter Browser",
+    "owner": "Otter Browser / see source attribution",
+    "page_url": "https://commons.wikimedia.org/wiki/File:Otter_Browser_Logo.svg",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Otter_Browser_Logo.svg/3840px-Otter_Browser_Logo.svg.png",
+    "checked_date": "2026-11-02",
+    "role": "Visual comparison; not known generation input",
+    "download_status": "downloaded and visually verified",
+    "previous_fetch_error": "HTTPError: HTTP Error 400: Use thumbnail sizes listed on https://w.wiki/GHai",
+    "resolved_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Otter_Browser_Logo.svg/3840px-Otter_Browser_Logo.svg.png",
+    "file": "otter.png",
+    "sha256": "aadaf22c1cccdf47089737d8b09d48a3fe5da4f9d25b0bcc5cb77b55942fe353",
+    "downloaded_at": "2026-11-02T16:41:18.038256+00:00",
+    "visual_review": "Inspected in local browser contact sheet on 2026-11-02"
+  }
+]
