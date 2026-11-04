@@ -2421,3 +2421,8 @@ at the same canvas dimensions and configuration.
   Canvas operations, point counts, recordings and draw order remain unchanged.
   The cut inventory and rendering pinning tests remain valid. Measurements are
   in performance.md §49; no deferred canvas work is activated.
+
+- 2026-11-04, ADR 0082 retains a guarded point-color resolver and native context
+  sources within a line update loop. Geometry, drawing, point counts and
+  recording boundaries are unchanged. Rendering pinning tests and the cut
+  inventory remain valid; performance.md §50 records the measurements.

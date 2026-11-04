@@ -504,6 +504,31 @@ final class OptionResolver implements ResolverProxy {
   static bool nativeIndexedResult(ElementOptions into) =>
       into is PointOptions || into is BarOptions;
 
+  /// True only for an already-prepared, unshared point plan. No raw option,
+  /// custom descriptor or context is evaluated to qualify a loop.
+  @internal
+  // DIVERGES(chartjs): adapt-native-line-resolution, inspect only warm plans.
+  bool hasPreparedPointOptions(List<Object> keys) {
+    if (_slotsTouched) return false;
+    final scriptable = _scriptableElementPlan;
+    if (scriptable != null &&
+        scriptable.template is PointOptions &&
+        identical(scriptable.template.$sharedValue, false) &&
+        scriptable.matches(keys, immutable: true)) {
+      return true;
+    }
+    final indexed = _indexedElementPlan;
+    return indexed != null &&
+        indexed._template is PointOptions &&
+        identical(indexed._template!.$sharedValue, false) &&
+        indexed.matches(keys, immutable: true) &&
+        indexed._varying.every(
+          (i) =>
+              indexed.keys[i] == OptionKey.backgroundColor ||
+              indexed.keys[i] == OptionKey.borderColor,
+        );
+  }
+
   /// Captures a color-only bar plan for a synchronous native loop. The caller
   /// must prove that no user code or mutation can run until the loop finishes.
   /// This reads cached values only and never invokes a descriptor or resolver.
@@ -588,6 +613,7 @@ final class OptionResolver implements ResolverProxy {
     bool Function() stillCached, {
     bool immutableKeys = false,
     bool replacementOnly = false,
+    Object Function()? preparedContext,
   }) {
     if (_slotsTouched || !nativeIndexedResult(into)) return null;
     var plan = _scriptableElementPlan;
@@ -642,7 +668,8 @@ final class OptionResolver implements ResolverProxy {
     }
     // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
     if (!replacementOnly) into.storeKey(OptionKey.dollarShared, false);
-    final ctx = context();
+    // DIVERGES(chartjs): adapt-native-point-context, a proven pure window.
+    final ctx = (preparedContext ?? context)();
     if (!stillCached() ||
         !identical(plan, _scriptableElementPlan) ||
         !plan.matches(keys, immutable: immutableKeys)) {
@@ -712,6 +739,7 @@ final class OptionResolver implements ResolverProxy {
     bool allowReplacement = false,
     bool immutableKeys = false,
     bool replacementOnly = false,
+    Object Function()? preparedContext,
   }) {
     if (_slotsTouched ||
         (!nativeInputs && !nativeIndexedList(keys)) ||
@@ -769,7 +797,8 @@ final class OptionResolver implements ResolverProxy {
     // caller. Preserve the upstream $shared store before invoking it.
     // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
     if (!replacementOnly) into.storeKey(OptionKey.dollarShared, false);
-    final ctx = context();
+    // DIVERGES(chartjs): adapt-native-point-context, a proven pure window.
+    final ctx = (preparedContext ?? context)();
     // An overridden controller/context factory can write/delete resolver keys.
     // Continue with its original context if it invalidates this snapshot.
     final valid =

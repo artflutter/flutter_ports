@@ -6996,3 +6996,59 @@ Validation: 10,955 workspace VM tests, 72 focused regressions, 164 focused tests
 on each of JavaScript and WebAssembly, workspace analysis/formatting, parity
 regeneration and all seven port checks. No full browser, fixture, golden or
 mobile suite was run. Runtime source hashes match the isolated measured build.
+
+## 50. Loop-local native line resolver and context sources
+
+2026-11-04; [ADR 0082](adr/0082-native-line-resolution.md). Baseline: the ADR 0081
+working tree. [Profiles, separate estimates, production runs and source hashes](benchmarks/line-resolution/README.md).
+Native M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7, profile AOT, Impeller.
+
+The refreshed baseline profile still places element-option resolution in 58.4%
+of 6,793 CPU samples, with context refresh in 8.7%. The shares overlap. Allocation
+RPC responses are retained as heap snapshots: accumulated/current counters are
+equal for every class, so they do not establish per-frame allocation rates.
+
+An isolated scope-only/context-only/combined experiment finds that prepared
+lookup provides most of the scriptable gain. Combined 20k scriptable full CPU
+moves from 26.65 to 17.37 ms without connections, and 28.44 to 20.65 ms with them.
+The production build removes the experiment switches and revalidates all guards.
+
+Production retains a warmed native color resolver within a single mode-none
+line loop. Source/default identities, route absence, key snapshot, cache
+invalidation, class/id/index and cached-result priority remain live. The native
+context reader uses current metadata elements and live array items, preserves
+the original six setters, and falls back before custom reads or context creation.
+Typed roots and unsupported geometry retain ordinary resolution. Callbacks and
+all points remain; no rendering or geometry substitution is introduced.
+
+Production A/B/B/A, 800×480/DPR1; full CPU is the sum of update/draw/paint-end
+component medians, averaged over two runs, not a combined-call percentile:
+
+| Line / 20k items | Connected | Before ms | After ms | Reduction |
+| --- | --- | ---: | ---: | ---: |
+| Indexed | off | 16.87 | 14.39 | 14.7% |
+| Indexed | on | 20.22 | 18.12 | 10.4% |
+| Scriptable | off | 32.48 | 20.60 | 36.6% |
+| Scriptable | on | 34.21 | 25.47 | 25.5% |
+
+Absolute costs vary across processes; both paired scriptable reductions remain
+positive (about 34–39% disconnected and 23–28% connected). Static line and
+scatter/bar controls are retained in full. No gain is claimed for controls;
+static connected line averages 3.2% slower, with inconsistent paired changes.
+
+Matched frame runs cover 16 full/data-only × indexed/scriptable × connections
+on/off × 0/200-label cases per build, at 1036×520/DPR2. Scriptable full update
+moves from about 29–30 FPS to 40–43 without connections and 33–34 with them;
+data-only fallback reaches about 42–44 and 35–36 respectively. Data-only remains
+full-update fallback. These short local runs do not establish sustained FPS.
+
+One connected indexed full-update cell moves from 52 to 45 FPS in the first
+matrix. A separate A/B/B/A ten-second repeat gives about 48/50 FPS for baseline
+and 50/54 FPS for production; original and repeat results are both retained.
+The evidence supports a CPU reduction, not an unconditional per-cell FPS gain.
+**The every-mode 60 FPS target remains unmet.** Worst scriptable full-update
+UI p90 remains about 30.7 ms versus a 16.67 ms budget.
+
+Validation: 10,988 workspace VM tests, 61 focused regressions, 168 tests on each
+of JavaScript and WebAssembly, analysis, formatting, parity generation and all
+seven port checks. No full browser, fixture, golden or mobile suite was run.
