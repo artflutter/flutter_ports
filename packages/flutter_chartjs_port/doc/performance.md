@@ -7264,3 +7264,89 @@ and 20k-segment lines. Forty paired frame cells, eight heavy-repeat cells and
 four indexed-repeat cells pass viewport/sample/visibility checks. Four GC
 captures are retained. No full browser, golden or mobile suite was run. The
 previous 96-case matrix was not repeated; data-only remains separate work.
+
+## 56. Path-buffer growth triage
+
+2026-11-04. [Isolated candidates, measurements and checks](benchmarks/path-growth/README.md).
+Production remains ADR 0084. Three native profile builds compare current doubling
+buffers, a delayed count-based reservation, and adaptive 1,024-command chunks.
+No old path storage is recycled, and no data-only/callback guard changes.
+
+At 20k unobserved commands, construction + native conversion + bounds query
+averages 0.750 ms baseline, 0.600 reserved and 0.498 chunked: about 20% and 34%
+less microbenchmark cost. Small and exposed-path controls are broadly similar.
+The payload model requests about 1.11 MB through baseline growth versus 348 KB
+reserved / 365 KB chunked, excluding headers and chunk lists; these are source
+calculations, not measured allocation rates.
+
+Balanced A/B/C/C/B/A frame runs use connected scriptable 20k points and 200
+rotating labels, twelve seconds per cell at 1036×520/DPR2. Full-update mean UI
+moves 15.61→15.26/15.41 ms, smaller than unconnected-control variation; no robust
+average-update gain is claimed. UI p90 is more promising: 17.40–17.55 baseline,
+16.15–16.66 reserved and 16.20–16.23 chunked. One baseline animation run changes
+from 60 to 117 FPS, so animation averages/FPS remain cadence-confounded.
+
+GC-only final-five-second windows show mean GC-labelled UI time 3.35→2.58/2.20
+ms per update frame, and slowest-decile GC 6.19→4.24/2.85 ms. Nested intervals
+are unioned on the UI thread; background GC is excluded. These diagnostics are
+separate from ordinary frame readouts. A new baseline CPU profile still places
+43.8% of sampled stacks in element updates and 39.1% in drawing (overlapping
+inclusive shares). The remaining work is broader than path buffers alone.
+
+**Recommend chunks for production hardening; do not declare every-mode 60 FPS.**
+Chunks avoid the count hint's sparse-path over-allocation and require no ported
+line-algorithm change. Their replay loop also differs, so gains are for the whole
+candidate, not allocation changes alone. Each variant passes 170 focused tests
+and 12 boundary/retention cases. Both candidates match 300 native pixel scenes
+exactly (600 comparisons total). Browser/full production regressions and a broader
+native matrix remain prerequisites to promotion. Production source hashes are
+unchanged; this pass adds evidence only.
+
+## 57. Production chunked path storage
+
+2026-11-04. [ADR 0085](adr/0085-chunked-path-storage.md),
+[complete production validation](benchmarks/path-chunks/README.md).
+Promote the adaptive chunk candidate from §56. The first private buffer grows
+from 16 to 1,024 commands, then full chunks are retained without copying or
+cross-path pooling. Public materialization, replay, native command order and
+cache/version semantics remain. Only canvas.dart changes in the runtime; no
+line algorithm, public API or data-only eligibility change.
+
+Validation passed: 11,060 workspace VM tests, 84 focused canvas/path tests,
+4,206 tests per backend in the full JavaScript and WebAssembly suites, cases,
+fixtures, formatting, analysis, parity and all port checks. All 300 native RGBA
+comparisons are identical. Boundary/ownership tests cover paths through 50k
+commands. No golden/mobile suite was run or macOS goldens updated.
+
+Native verification is complete on the user-selected built-in Retina display,
+DPR2 with a 120-Hz maximum, at 1036×520. It contains 96 production cells, eight
+fresh matched-repeat cells and four GC captures. Earlier fixed-60-Hz Studio
+Display repeats/controls remain a separate cohort. Display movement/minimization
+attempts are rejected and preserved. No display settings or runtime sources
+changed during the resumed verification.
+
+| Heavy scriptable case | Mean UI before → after ms | Reduction | UI p90 before → after ms |
+| --- | ---: | ---: | --- |
+| Connected full update, 200 rotating labels | 15.94 → 14.64 | 8.1% | 17.69–18.06 → 15.43–15.71 |
+| Connected animation, 200 rotating labels | 8.00 → 7.83 | 2.1% | 8.98–9.22 → 8.35–8.55 |
+
+Means average two process means; p90 ranges list individual results. In the
+complete matrix, redraw is about 120 FPS and animation 115–120; full update is
+57–120 and data-only requests 52–120. Every data-only cell still falls back to
+the full lifecycle. Seven cells exceed 16.67 ms UI p90, with one additional cell
+below 59 mean FPS. **Every-mode 60 FPS remains unmet.** The worst observed cell
+is connected scriptable data-only fallback with 200 static labels: 51.9 FPS and
+17.66 ms UI p90. Raster p90 remains below 2.46 ms.
+
+Separate GC-only final-five-second windows show update mean GC-labelled UI time
+3.46→2.20 ms/frame (36.5% lower), and slowest-decile mean GC 8.78→2.92 ms. Full
+retained traces support the direction (3.19→2.15 ms/frame). Animation also has
+lower GC time in these diagnostic captures, while its ordinary mean improves
+only modestly. CPU sampling is disabled, nested intervals are unioned on the UI
+thread and background workers excluded. Heap counters remain snapshots, not
+allocation rates. GC and ordinary frame figures must not be added/subtracted.
+
+All 104 built-in ordinary rows have at least eight readouts and 195 timings;
+43,545 timings total. These are short local observations with variable delivered
+cadence up to 120 Hz, not sustained/cross-device guarantees. Source hashes match
+the measured implementation. Raw rows, controls and rejected attempts are kept.

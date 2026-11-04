@@ -1,0 +1,25 @@
+import os,re,subprocess,time,json
+from pathlib import Path
+p=Path(__file__).resolve().parent
+for call in ['update','animate']:
+ for tag,appname in [('a','baseline'),('b','production')]:
+  name=f'gc-{tag}-{call}';print('START',name,flush=True)
+  result=p/(name+'.results');result.unlink(missing_ok=True);Path(str(result)+'.window').unlink(missing_ok=True)
+  with (p/(name+'.log')).open('w') as log:
+   app=subprocess.Popen([f'/tmp/path-chunks-{appname}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'BENCH_DISPLAY_ID':'1','N':'20000','SHAPE':'plain','GC_ONLY':'1','FRAMES':'1','PIXELS':'0','CALLS':call,'STYLES':'scriptable','CONNECTED':'1','LABELS':'200','SPIN':'1','SECONDS':'28','OUTPUT':str(result)},stdout=log,stderr=subprocess.STDOUT)
+   try:
+    m=None
+    for i in range(150):
+     m=re.search(r'http://127.0.0.1:(\d+)/(\S+)',(p/(name+'.log')).read_text())
+     if m:break
+     time.sleep(.1)
+    assert m,'VM service unavailable'
+    subprocess.run(['/Users/vasilich/fvm/versions/3.47.8/bin/cache/dart-sdk/bin/dart','--packages=.dart_tool/package_config.json',str(p/'gc_profile.dart'),f'ws://127.0.0.1:{m[1]}/{m[2]}ws',str(p/(name+'.json'))],env={**os.environ,'GC_ONLY':'1'},check=True,timeout=35)
+    app.wait(timeout=15)
+    rows=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+    assert len(rows)==1 and rows[0]['items']==20000 and rows[0]['samples']>=20 and rows[0]['frameTimings']>=100 and rows[0]['canvas']=='1036.0x520.0@2.0'
+    visibility=[json.loads(l) for l in Path(str(result)+'.window').read_text().splitlines()];prepared=next(r for r in visibility if r['event']=='prepared')
+    assert not any(r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or r['width']!=1100 or r['height']!=900 or r['dpr']!=2 or r['displayId']!=1 or r['maxFps']!=120) for r in visibility)
+    print('DONE',name,flush=True)
+   finally:
+    if app.poll() is None:app.terminate();app.wait(timeout=10)

@@ -610,6 +610,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     one stable mutable list; public/custom replay retains the original loop.
     Only native uiPathOf uses scalar replay before observation. Complex paths
     retain ordinary commands, and version/cache and drawing order stay intact.
+    Chart.js ADR 0085 grows the first compact path buffer from 16 to 1,024
+    commands, then retains full chunks without copying or cross-path pooling.
+    Public list exposure and complex commands materialize in original order.
+    Boundary/ownership tests cover this storage-only change; no capacity hint
+    or line algorithm/data-only guard changes are involved.
     Chart.js ADR 0066 bounds native recordings at 256 non-batched paint calls.
     Internal picture chunks share one paint generation; more than eight completed
     generations flatten. Circle runs keep their existing batching. The pixel and

@@ -1,0 +1,39 @@
+--- a/packages/flutter_chartjs_port/lib/src/canvas/canvas.dart
++++ b/packages/flutter_chartjs_port/lib/src/canvas/canvas.dart
+@@ -708,7 +708,9 @@
+ /// [cache] and reuse it while [version] does not change.
+ final class Path2D implements CanvasPath {
+   /// `new Path2D()`: an empty path.
+-  Path2D();
++  Path2D({int initialCapacityHint = 0}) : _initialCapacityHint = initialCapacityHint;
++
++  final int _initialCapacityHint;
+ 
+   List<PathCommand>? _commands;
+   Uint8List? _kinds;
+@@ -757,7 +759,10 @@
+     var kinds = _kinds;
+     var coordinates = _coordinates;
+     if (kinds == null || _length == kinds.length) {
+-      final capacity = kinds == null ? 16 : kinds.length * 2;
++      var capacity = kinds == null ? 16 : kinds.length * 2;
++      if (kinds != null && kinds.length == 16 && _initialCapacityHint > capacity) {
++        capacity = _initialCapacityHint;
++      }
+       final nextKinds = Uint8List(capacity);
+       final nextCoordinates = Float64List(capacity * 2);
+       if (kinds != null) {
+--- a/packages/flutter_chartjs_port/lib/src/elements/element.line.dart
++++ b/packages/flutter_chartjs_port/lib/src/elements/element.line.dart
+@@ -636,7 +636,10 @@
+ ) {
+   var path = line._path;
+   if (path == null) {
+-    path = line._path = Path2D();
++    final hint = count != null && count.isFinite && count >= 256 && count <= 1048576
++        ? ((count.ceil() + 1023) ~/ 1024) * 1024
++        : 0;
++    path = line._path = Path2D(initialCapacityHint: hint);
+     if (line.path(path, start, count)) {
+       path.closePath();
+     }

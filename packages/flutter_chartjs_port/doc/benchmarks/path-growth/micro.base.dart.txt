@@ -1,0 +1,24 @@
+import 'dart:io';
+import 'dart:convert';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+double sink=0;
+Future<void> runMicro() async {
+ await Future<void>.delayed(const Duration(seconds:2));
+ final rows=<Map<String,Object?>>[];
+ for(final n in [8,100,20000]) for(final exposed in [false,true]) {
+  void once(){
+   final p=PATH_FACTORY;if(exposed)p.commands.clear();p.moveTo(0,0);
+   for(var i=1;i<n;i++) p.lineTo((i%503).toDouble(),(i%389).toDouble());
+   final native=uiPathOf(p);sink+=native.getBounds().width+p.version;
+  }
+  var watch=Stopwatch()..start();while(watch.elapsedMilliseconds<400){once();}
+  watch=Stopwatch()..start();var count=0;while(watch.elapsedMilliseconds<80){once();count++;}
+  final samples=<double>[];
+  for(var batch=0;batch<7;batch++){
+   watch=Stopwatch()..start();for(var i=0;i<count;i++){once();}watch.stop();samples.add(watch.elapsedMicroseconds/count/1000);
+  }
+  samples.sort();rows.add({'commands':n,'exposed':exposed,'iterations':count,'medianMs':samples[3],'p10Ms':samples[0],'p90Ms':samples[6],'samplesMs':samples});
+ }
+ File(Platform.environment['OUTPUT']!).writeAsStringSync(jsonEncode({'rows':rows,'sink':sink}));exit(0);
+}

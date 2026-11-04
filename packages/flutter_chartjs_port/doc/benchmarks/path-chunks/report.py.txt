@@ -1,0 +1,31 @@
+from pathlib import Path
+import json,gzip,hashlib,shutil,statistics,difflib,math
+root=Path.cwd();w=root/'.dart_tool/path_chunks';out=root/'packages/flutter_chartjs_port/doc/benchmarks/path-chunks'
+load=lambda name:json.loads((w/name).read_text()) if (w/name).exists() else None
+repeat=load('repeat.json');controls=load('controls.json');production=load('production.json');long=load('long-repeat.json');gc=load('gc-summary.json')
+summary={'repeat':repeat,'controls':controls,'production':production,'longRepeat':long,'gc':gc,'matrixComplete':production is not None,'gcComplete':gc is not None}
+summary['repeatSummary']=[]
+for call in ['update','animate']:
+ rows={k:next(r for r in v if r['call']==call) for k,v in repeat.items()};a=statistics.mean(rows[k]['buildMs'] for k in ['a1','a2']);b=statistics.mean(rows[k]['buildMs'] for k in ['b1','b2'])
+ summary['repeatSummary'].append({'call':call,'baselineMeanUiMs':a,'productionMeanUiMs':b,'reductionPct':100*(1-b/a),'pairReductionPct':[100*(1-rows['b1']['buildMs']/rows['a1']['buildMs']),100*(1-rows['b2']['buildMs']/rows['a2']['buildMs'])]})
+(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+for p in w.rglob('*'):
+ if not p.is_file():continue
+ rel=p.relative_to(w);dest=out/rel
+ if p.suffix in ['.py','.dart']:dest=dest.with_name(dest.name+'.txt');dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,dest)
+ elif not any(part.startswith('pixels-') for part in rel.parts[:-1]) and not p.name.endswith('.before'):
+  dest=dest.with_name(dest.name+'.gz');dest.parent.mkdir(parents=True,exist_ok=True)
+  with gzip.open(dest,'wb') as f:f.write(p.read_bytes())
+meta=load('production-source.json');assert all(hashlib.sha256(Path(p).read_bytes()).hexdigest()==h for p,h in meta.items())
+(out/'pixel-comparison.json').write_bytes((w/'pixel-comparison.json').read_bytes())
+v={'workspaceVmPassed':11060,'focusedVmPassed':84,'browserPassedPerBackend':4206,'nativePixelComparisons':300,'nativePixelMismatches':0,'checks':load('checks.json'),'acceptedRepeatCells':8,'acceptedControlCells':sum(len(c['rows']) for c in controls),'matrixComplete':production is not None,'gcComplete':gc is not None,'pendingReason':None if production is not None else 'Native benchmark was minimized; remaining matrix and GC captures need a visible display.'}
+(out/'validation.json').write_text(json.dumps(v,indent=2)+'\n')
+print('| Operation | Run | Mean UI ms | UI p90 ms | FPS |\n| --- | --- | ---: | ---: | ---: |')
+for tag,rows in repeat.items():
+ for r in rows:print(f"| {r['call']} | {tag} | {r['buildMs']:.2f} | {r['buildP90Ms']:.2f} | {r['fps']:.1f} |")
+print('\n| Control | Operation | Baseline mean UI ms | Production mean UI ms | Baseline → production UI p90 ms |\n| --- | --- | ---: | ---: | ---: |')
+for c in controls:
+ if c['app']!='baseline':continue
+ name=c.get('shape',c.get('style'));d=next(x for x in controls if x['app']=='production' and x.get('shape',x.get('style'))==name)
+ for a,b in zip(c['rows'],d['rows']):print(f"| {name} | {a['call']} | {a['buildMs']:.2f} | {b['buildMs']:.2f} | {a['buildP90Ms']:.2f} → {b['buildP90Ms']:.2f} |")
+print('Production source hashes match the measured candidate.')

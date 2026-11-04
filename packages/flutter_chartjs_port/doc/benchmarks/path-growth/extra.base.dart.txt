@@ -1,0 +1,35 @@
+// Original code: isolated path-growth compatibility checks.
+@TestOn('vm')
+library;
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+import 'package:flutter_test/flutter_test.dart';
+Path2D make()=>FACTORY;
+void fill(Path2D path,int n,double shift){
+ path.moveTo(shift,0);
+ for(var i=1;i<n;i++)path.lineTo(shift+(i%503).toDouble(),(i%17).toDouble());
+}
+void main(){
+ TestWidgetsFlutterBinding.ensureInitialized();
+ for(final n in [15,16,17,1023,1024,1025,20479,20480,20481,50000]){
+  test('native/eager replay and exposure at $n commands',(){
+   final a=make();final b=Path2D();b.commands.clear();fill(a,n,0);fill(b,n,0);
+   final aa=uiPathOf(a),bb=uiPathOf(b);expect(aa.getBounds(),bb.getBounds());
+   expect(aa.computeMetrics().map((m)=>m.length).toList(),bb.computeMetrics().map((m)=>m.length).toList());
+   expect(a.version,n);expect(a.commands.length,n);expect(identical(a.commands,a.commands),isTrue);
+   a.commands.clear();a.lineTo(7,9);expect(a.version,1);expect((a.commands.single as LineToCommand).x,7);
+  });
+ }
+ test('retained unobserved paths survive other paths and later exposure',(){
+  final old=make();fill(old,5000,1);final native=uiPathOf(old);final bounds=native.getBounds();
+  for(var i=0;i<20;i++){final next=make();fill(next,6000,i+100.0);uiPathOf(next);}
+  expect(identical(native,uiPathOf(old)),isTrue);expect(native.getBounds(),bounds);
+  expect(old.commands.length,5000);expect((old.commands.first as MoveToCommand).x,1);
+  expect((old.commands[4096] as LineToCommand).x,1+(4096%503));
+ });
+ test('complex commands after several chunks retain order',(){
+  final p=make();fill(p,5000,0);p.bezierCurveTo(1,2,3,4,5,6);p.lineTo(8,9);
+  expect(p.commands[4999],isA<LineToCommand>());expect(p.commands[5000],isA<BezierCurveToCommand>());
+  expect((p.commands[5001] as LineToCommand).x,8);expect(p.version,5002);
+ });
+}

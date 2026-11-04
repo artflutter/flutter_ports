@@ -1,0 +1,9 @@
+from pathlib import Path
+import subprocess,json
+root=Path.cwd();out=root/'.dart_tool/path_chunks';results=[]
+for name in ['format:check','analyze','test','test:web','test:cases','test:fixtures','parity','check:port']:
+ print('START',name,flush=True)
+ with (out/(name.replace(':','-')+'.log')).open('w') as f:r=subprocess.run(['dart','run','melos','run',name]+(['--no-select'] if name=='test' else []),stdout=f,stderr=subprocess.STDOUT)
+ results.append({'check':name,'exitCode':r.returncode});(out/'checks.json').write_text(json.dumps(results,indent=2)+'\n')
+ if r.returncode:raise SystemExit(r.returncode)
+ print('PASS',name,flush=True)

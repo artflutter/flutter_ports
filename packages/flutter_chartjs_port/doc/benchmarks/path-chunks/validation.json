@@ -1,0 +1,52 @@
+{
+  "workspaceVmPassed": 11060,
+  "focusedVmPassed": 84,
+  "browserPassedPerBackend": 4206,
+  "nativePixelComparisons": 300,
+  "nativePixelMismatches": 0,
+  "checks": [
+    {
+      "check": "format:check",
+      "exitCode": 0
+    },
+    {
+      "check": "analyze",
+      "exitCode": 0
+    },
+    {
+      "check": "test",
+      "exitCode": 0
+    },
+    {
+      "check": "test:web",
+      "exitCode": 0
+    },
+    {
+      "check": "test:cases",
+      "exitCode": 0
+    },
+    {
+      "check": "test:fixtures",
+      "exitCode": 0
+    },
+    {
+      "check": "parity",
+      "exitCode": 0
+    },
+    {
+      "check": "check:port",
+      "exitCode": 0
+    }
+  ],
+  "acceptedRepeatCells": 8,
+  "acceptedControlCells": 18,
+  "matrixComplete": true,
+  "gcComplete": true,
+  "pendingReason": null,
+  "builtinProductionCells": 96,
+  "builtinMatchedRepeatCells": 8,
+  "builtinGcCaptures": 4,
+  "studioAcceptedRepeatCells": 8,
+  "studioAcceptedControlCells": 18,
+  "builtinCapturedTimings": 43545
+}

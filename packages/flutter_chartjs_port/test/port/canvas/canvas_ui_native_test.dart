@@ -119,6 +119,40 @@ typedef _Dot = ({
 ui.Color _css(ui.Color color) => color;
 
 void main() {
+  group('native chunk boundaries', () {
+    for (final count in [16, 17, 1023, 1024, 1025, 20480, 20481, 50000]) {
+      test('retained native path and materialized twin at $count commands', () {
+        void fill(Path2D path, double shift) {
+          path.moveTo(shift, 0);
+          for (var i = 1; i < count; i++) {
+            path.lineTo(shift + i % 503, (i % 17).toDouble());
+          }
+        }
+
+        final compact = Path2D();
+        final eager = Path2D();
+        eager.commands.clear();
+        fill(compact, 1);
+        fill(eager, 1);
+        final converted = uiPathOf(compact);
+        final expected = uiPathOf(eager);
+        expect(converted.getBounds(), expected.getBounds());
+        expect(_contours(converted), _contours(expected));
+        final other = Path2D();
+        fill(other, 1000);
+        uiPathOf(other);
+        expect(identical(converted, uiPathOf(compact)), isTrue);
+        expect(compact.commands.length, count);
+        expect((compact.commands.first as MoveToCommand).x, 1);
+        expect(identical(converted, uiPathOf(compact)), isTrue);
+        compact.lineTo(7, 8);
+        eager.lineTo(7, 8);
+        expect(identical(converted, uiPathOf(compact)), isFalse);
+        expect(_contours(uiPathOf(compact)), _contours(uiPathOf(eager)));
+      });
+    }
+  });
+
   group('compact native Path2D', () {
     for (final exposed in [false, true]) {
       test('VM self replay retains list length checks: exposed=$exposed', () {

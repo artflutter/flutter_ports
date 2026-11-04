@@ -1,0 +1,10 @@
+from pathlib import Path
+import subprocess
+root=Path.cwd();w=root/'.dart_tool/path_growth';iso=Path('/tmp/path-growth-work')
+for variant in ['baseline','reserve','chunks']:
+ subprocess.run(['python3',str(w/'variants.py'),variant],check=True)
+ text=(w/'extra.base.dart').read_text().replace('FACTORY','Path2D(initialCapacityHint:1024)' if variant=='reserve' else 'Path2D()')
+ (iso/'packages/flutter_chartjs_port/test/port/canvas/path_growth_triage_test.dart').write_text(text)
+ with (w/(variant+'-extra-tests.log')).open('w') as log:
+  subprocess.run(['flutter','test','--no-pub','test/port/canvas/path_growth_triage_test.dart','--reporter','expanded'],cwd=iso/'packages/flutter_chartjs_port',stdout=log,stderr=subprocess.STDOUT,check=True)
+ print('PASS',variant,flush=True)

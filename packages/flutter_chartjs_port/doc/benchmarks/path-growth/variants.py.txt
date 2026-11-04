@@ -1,0 +1,110 @@
+from pathlib import Path
+import sys,shutil
+w=Path(__file__).resolve().parent;root=Path('/tmp/path-growth-work');variant=sys.argv[1]
+a=(w/'canvas.dart.baseline').read_text();line=(w/'element.line.dart.baseline').read_text()
+if variant=='reserve':
+ a=a.replace('  Path2D();','  Path2D({int initialCapacityHint = 0}) : _initialCapacityHint = initialCapacityHint;\n\n  final int _initialCapacityHint;',1)
+ a=a.replace('final capacity = kinds == null ? 16 : kinds.length * 2;', '''var capacity = kinds == null ? 16 : kinds.length * 2;
+      if (kinds != null && kinds.length == 16 && _initialCapacityHint > capacity) {
+        capacity = _initialCapacityHint;
+      }''',1)
+ line=line.replace('path = line._path = Path2D();', '''final hint = count != null && count.isFinite && count >= 256 && count <= 1048576
+        ? ((count.ceil() + 1023) ~/ 1024) * 1024
+        : 0;
+    path = line._path = Path2D(initialCapacityHint: hint);''',1)
+elif variant=='chunks':
+ a=a.replace('  int _length = 0;', '''  int _length = 0;
+  int _chunkLength = 0;
+  List<Uint8List>? _kindChunks;
+  List<Float64List>? _coordinateChunks;
+  static const _chunkCapacity = 1024;''',1)
+ start=a.index('    final kinds = _kinds;',a.index('  List<PathCommand> get commands'))
+ end=a.index('    _commands = result;',start)
+ a=a[:start]+'''    final chunks = _kindChunks;
+    if (chunks != null) {
+      for (var j = 0; j < chunks.length; j++) {
+        _materializeChunk(result, chunks[j], _coordinateChunks![j], _chunkCapacity);
+      }
+    }
+    if (_chunkLength > 0) {
+      _materializeChunk(result, _kinds!, _coordinates!, _chunkLength);
+    }
+    _kindChunks = null;
+    _coordinateChunks = null;
+'''+a[end:]
+ pos=a.index('  void _append(')
+ a=a[:pos]+'''  void _materializeChunk(List<PathCommand> result, Uint8List kinds, Float64List coordinates, int length) {
+    for (var i = 0; i < length; i++) {
+      result.add(switch (kinds[i]) {
+        _close => const ClosePathCommand(),
+        _move => MoveToCommand(coordinates[i * 2], coordinates[i * 2 + 1]),
+        _ => LineToCommand(coordinates[i * 2], coordinates[i * 2 + 1]),
+      });
+    }
+  }
+
+'''+a[pos:]
+ start=a.index('    var kinds = _kinds;',a.index('  void _append('));end=a.index('\n  /// A slot for the converted',start)
+ a=a[:start]+'''    var kinds = _kinds;
+    var coordinates = _coordinates;
+    if (kinds == null || _chunkLength == kinds.length) {
+      final grow = kinds != null && kinds.length < _chunkCapacity;
+      final capacity = kinds == null ? 16 : grow ? kinds.length * 2 : _chunkCapacity;
+      final nextKinds = Uint8List(capacity);
+      final nextCoordinates = Float64List(capacity * 2);
+      if (grow) {
+        nextKinds.setRange(0, _chunkLength, kinds!);
+        nextCoordinates.setRange(0, _chunkLength * 2, coordinates!);
+      } else if (kinds != null) {
+        (_kindChunks ??= []).add(kinds);
+        (_coordinateChunks ??= []).add(coordinates!);
+        _chunkLength = 0;
+      }
+      _kinds = kinds = nextKinds;
+      _coordinates = coordinates = nextCoordinates;
+    }
+    kinds[_chunkLength] = kind;
+    if (kind != _close) {
+      coordinates![_chunkLength * 2] = x;
+      coordinates[_chunkLength * 2 + 1] = y;
+    }
+    _chunkLength++;
+    _length++;
+  }
+''' + a[end:]
+ start=a.index('    final kinds = _kinds;',a.index('  void replayNative('));end=a.index('\n}\n\n/// One recorded command',start)
+ a=a[:start]+'''    final chunks = _kindChunks;
+    if (chunks != null) {
+      for (var j = 0; j < chunks.length; j++) {
+        _replayChunk(target, chunks[j], _coordinateChunks![j], _chunkCapacity);
+      }
+    }
+    if (_chunkLength > 0) _replayChunk(target, _kinds!, _coordinates!, _chunkLength);
+  }
+
+  void _replayChunk(CanvasPath target, Uint8List kinds, Float64List coordinates, int length) {
+    for (var i = 0; i < length; i++) {
+      switch (kinds[i]) {
+        case _close:
+          target.closePath();
+        case _move:
+          target.moveTo(coordinates[i * 2], coordinates[i * 2 + 1]);
+        default:
+          target.lineTo(coordinates[i * 2], coordinates[i * 2 + 1]);
+      }
+    }
+  }
+'''+a[end:]
+else:assert variant=='baseline'
+(root/'packages/flutter_chartjs_port/lib/src/canvas/canvas.dart').write_text(a)
+(root/'packages/flutter_chartjs_port/lib/src/elements/element.line.dart').write_text(line)
+# All variants use identical probes apart from the explicit reservation factory.
+p=(w/'pixels.base.dart').read_text();p=p.replace('final path=Path2D();','final path=Path2D(initialCapacityHint:20480);') if variant=='reserve' else p
+(root/'.dart_tool/path_growth/pixels.dart').write_text(p)
+p=(w/'micro.base.dart').read_text().replace('PATH_FACTORY', 'Path2D(initialCapacityHint:n >=256 ? ((n+1023)~/1024)*1024 : 0)' if variant=='reserve' else 'Path2D()')
+(root/'.dart_tool/path_growth/micro.dart').write_text(p)
+for name in ['canvas_test.dart','canvas_ui_native_test.dart']:
+ src=Path('/Users/vasilich/IdeaProjects/flutter_ports/packages/flutter_chartjs_port/test/port/canvas')/name
+ text=src.read_text().replace('Path2D()', 'Path2D(initialCapacityHint:20480)') if variant=='reserve' else src.read_text()
+ (root/'packages/flutter_chartjs_port/test/port/canvas'/name).write_text(text)
+print('Prepared',variant)

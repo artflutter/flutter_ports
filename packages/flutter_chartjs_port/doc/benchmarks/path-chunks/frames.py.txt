@@ -1,0 +1,41 @@
+import os,json,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+
+def run(label,app,extra,expected):
+ saved=out/(label+'.json')
+ if saved.exists():return json.loads(saved.read_text())
+ print('START',label,flush=True)
+ result=out/(label+'.results');result.unlink(missing_ok=True);Path(str(result)+'.window').unlink(missing_ok=True)
+ env={**os.environ,'FRAMES':'1','PIXELS':'0','N':'20000','BENCH_DISPLAY_ID':'5','CALLS':'update','STYLES':'scriptable','CONNECTED':'0,1','LABELS':'0,50,200','SPIN':'0','SECONDS':'6','SHAPE':'plain',**extra,'OUTPUT':str(result)}
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([f'/tmp/path-chunks-{app}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=180,check=True)
+ rows=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+ assert len(rows)==expected and all(r['samples']>=6 and r['frameTimings']>=50 and r['canvas']=='1036.0x520.0@2.0' and r['items']==int(env['N']) for r in rows),(label,'invalid timings')
+ vis=[json.loads(l) for l in Path(str(result)+'.window').read_text().splitlines()];prep=next(r for r in vis if r['event']=='prepared')
+ assert (prep['width'],prep['height'],prep['dpr'],prep['displayId'],prep['maxFps'])==(1100,900,2,5,60),(label,prep)
+ assert not any(r['time']>prep['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or (r['width'],r['height'],r['dpr'],r['displayId'],r['maxFps'])!=(1100,900,2,5,60)) for r in vis),(label,'window changed')
+ saved.write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,len(rows),flush=True);return rows
+
+repeat={}
+for tag,app in [('a1','baseline'),('b1','production'),('b2','production'),('a2','baseline')]:
+ repeat[tag]=run('repeat-'+tag,app,{'CALLS':'update,animate','CONNECTED':'1','LABELS':'200','SPIN':'1','SECONDS':'12'},2)
+(out/'repeat.json').write_text(json.dumps(repeat,indent=2)+'\n')
+controls=[]
+for shape,n in [('small','100'),('sparse','20000'),('curved','20000'),('stepped','20000'),('observed','20000')]:
+ for app in ['baseline','production']:
+  controls.append({'app':app,'shape':shape,'rows':run(f'control-{shape}-{app}',app,{'N':n,'SHAPE':'plain' if shape=='small' else shape,'CONNECTED':'1','LABELS':'0','SECONDS':'8'},1)})
+for style in ['static','indexed']:
+ for app in ['baseline','production']:
+  controls.append({'app':app,'style':style,'rows':run(f'control-{style}-{app}',app,{'CALLS':'update,animate','STYLES':style,'CONNECTED':'1','LABELS':'200','SPIN':'1','SECONDS':'8'},2)})
+(out/'controls.json').write_text(json.dumps(controls,indent=2)+'\n')
+production=[]
+for call in ['draw','update','data','animate']:
+ for style in ['static','indexed','scriptable']:
+  production+=run(f'matrix-{call}-{style}','production',{'CALLS':call,'STYLES':style},6)
+for call in ['draw','update','data','animate']:
+ for style in ['static','indexed','scriptable']:
+  production+=run(f'spin-{call}-{style}','production',{'CALLS':call,'STYLES':style,'LABELS':'200','SPIN':'1'},2)
+assert len(production)==96
+(out/'production.json').write_text(json.dumps(production,indent=2)+'\n')
+print('DONE fixed-display verification',flush=True)

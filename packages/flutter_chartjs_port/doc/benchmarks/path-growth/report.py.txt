@@ -1,0 +1,54 @@
+from pathlib import Path
+import json,statistics,hashlib,gzip,difflib,shutil,math
+w=Path(__file__).resolve().parent;out=Path('packages/flutter_chartjs_port/doc/benchmarks/path-growth');root=Path.cwd()
+variants={'baseline':['a1','a2'],'reserve':['b1','b2'],'chunks':['c1','c2']}
+m=json.loads((w/'micro.json').read_text());f=json.loads((w/'frames.json').read_text());g=json.loads((w/'gc-summary.json').read_text());summary={'micro':[],'frames':[],'controls':json.loads((w/'controls.json').read_text()),'gc':g}
+for i,case in enumerate(m['a1']['rows']):
+ summary['micro'].append({'commands':case['commands'],'exposed':case['exposed'],'medianMs':{v:statistics.mean(m[t]['rows'][i]['medianMs'] for t in tags) for v,tags in variants.items()},'runs':{t:m[t]['rows'][i] for tags in variants.values() for t in tags}})
+for call in ['update','animate']:
+ for variant,tags in variants.items():
+  rows=[next(r for r in f[t] if r['call']==call) for t in tags]
+  summary['frames'].append({'call':call,'variant':variant,'meanUiMs':statistics.mean(r['buildMs'] for r in rows),'uiP90Ms':[r['buildP90Ms'] for r in rows],'fps':[r['fps'] for r in rows],'runs':rows})
+# Preserve the equal-duration GC comparison when regenerating the analysis.
+for name,r in g.items():
+ if name.startswith('cpu-'):continue
+ end=json.loads((w/(name+'.json.window')).read_text())['end'];start=end-5000000
+ assert min(x['start'] for x in r['frames'])<=start
+ rows=[x for x in r['frames'] if x['start']>=start and x['end']<=end]
+ p90=sorted(x['uiMs'] for x in rows)[math.ceil(len(rows)*.9)-1];slow=[x for x in rows if x['uiMs']>=p90]
+ r['lastFiveSeconds']={'frames':len(rows),'meanUiMs':statistics.mean(x['uiMs'] for x in rows),'meanGcMs':statistics.mean(x['gcMs'] for x in rows),'p90UiMs':p90,'slowMeanGcMs':statistics.mean(x['gcMs'] for x in slow)}
+visibility={}
+for p in w.glob('*.results.window'):
+ rows=[json.loads(l) for l in p.read_text().splitlines()];prepared=next(r for r in rows if r['event']=='prepared')
+ assert (prepared['width'],prepared['height'],prepared['dpr'])==(1100,900,2)
+ assert not any(r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or r['width']!=1100 or r['height']!=900 or r['dpr']!=2) for r in rows),p
+ visibility[p.name]=rows
+for p in w.glob('gc-*.results'):
+ rows=[json.loads(l.split(' ',1)[1]) for l in p.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+ assert len(rows)==1 and rows[0]['samples']>=20 and rows[0]['frameTimings']>=100 and rows[0]['canvas']=='1036.0x520.0@2.0'
+base=json.loads((w/'baseline-source.json').read_text());assert all(hashlib.sha256(Path(p).read_bytes()).hexdigest()==h for p,h in base.items())
+summary['bufferPayloadModel']={'baseline':{'allocated':1113840,'copied':556784,'retained':557056},'reserve':{'allocated':348432,'copied':272,'retained':348160},'chunks':{'allocated':365296,'copied':17136,'retained':348160},'note':'20,000 simple commands; excludes object/list overhead. Source arithmetic, not measured heap allocation rate.'}
+(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');(out/'visibility.json').write_text(json.dumps(visibility,indent=2)+'\n')
+for variant in ['reserve','chunks']:
+ patch=''
+ for name,rel in [('canvas.dart','packages/flutter_chartjs_port/lib/src/canvas/canvas.dart'),('element.line.dart','packages/flutter_chartjs_port/lib/src/elements/element.line.dart')]:
+  a=(w/(name+'.baseline')).read_text();b=(w/(variant+'-'+name+'.txt')).read_text();patch+=''.join(difflib.unified_diff(a.splitlines(True),b.splitlines(True),fromfile='a/'+rel,tofile='b/'+rel))
+ (out/(variant+'.patch')).write_text(patch)
+for p in w.iterdir():
+ if p.is_file():
+  if p.suffix in ['.py','.dart']:shutil.copyfile(p,out/(p.name+'.txt'))
+  elif not p.name.endswith('.baseline'):
+   with gzip.open(out/(p.name+'.gz'),'wb') as z:z.write(p.read_bytes())
+for name in ['probe.dart','pixels.dart','micro.dart']:shutil.copyfile(Path('/tmp/path-growth-work/.dart_tool/path_growth')/name,out/(name+'.txt'))
+meta={'date':'2026-11-04','head':__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip(),'platform':'Apple M3 Max, macOS 27.0.1; Flutter 3.47.8 / Dart 3.13.7; native profile AOT','productionSourceSha256':base,'builds':json.loads((w/'build-metadata.json').read_text()),'order':['baseline','reserve','chunks','chunks','reserve','baseline'],'frameSeconds':12,'frameViewport':'1036x520 DPR2','scope':'Isolated triage; no production runtime changes','validation':{'focusedTestsPerVariant':170,'additionalBoundaryTestsPerVariant':12,'pixelComparisonsPerCandidate':300,'pixelMismatches':0,'heavyFrameCells':12,'unconnectedControlCells':3,'gcOnlyCaptures':5,'freshCpuProfiles':1}}
+(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+print('| Commands | Observed list | Baseline ms | Reserved ms | Chunked ms |\n| ---: | --- | ---: | ---: | ---: |')
+for r in summary['micro']:
+ d=r['medianMs'];print(f"| {r['commands']} | {r['exposed']} | {d['baseline']:.6f} | {d['reserve']:.6f} | {d['chunks']:.6f} |")
+print('\n| Operation | Variant | Mean UI ms | Individual UI p90 ms | Individual FPS |\n| --- | --- | ---: | --- | --- |')
+for r in summary['frames']:print(f"| {r['call']} | {r['variant']} | {r['meanUiMs']:.3f} | {' / '.join(f'{x:.2f}' for x in r['uiP90Ms'])} | {' / '.join(f'{x:.1f}' for x in r['fps'])} |")
+print('\n| GC-only capture, final 5 seconds | Frames | Mean GC ms/frame | Slow-decile mean GC ms | UI Frame p90 ms |\n| --- | ---: | ---: | ---: | ---: |')
+for name,v in g.items():
+ if name.startswith('cpu-'):continue
+ r=v['lastFiveSeconds'];print(f"| {name} | {r['frames']} | {r['meanGcMs']:.2f} | {r['slowMeanGcMs']:.2f} | {r['p90UiMs']:.2f} |")
+print('Production source hashes unchanged.')

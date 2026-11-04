@@ -1,0 +1,38 @@
+import os,json,subprocess
+from pathlib import Path
+out=Path(__file__).resolve().parent
+
+def launch(label,variant,extra,timeout=180):
+ print('START',label,flush=True);result=out/(label+'.results');result.unlink(missing_ok=True);Path(str(result)+'.window').unlink(missing_ok=True)
+ with (out/(label+'.log')).open('w') as log:
+  subprocess.run([f'/tmp/path-growth-{variant}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'FRAMES':'0','PIXELS':'0','MICRO':'0','SPIN':'1','STYLES':'scriptable','LABELS':'200','CONNECTED':'1','SECONDS':'12','OUTPUT':str(result),**extra},stdout=log,stderr=subprocess.STDOUT,timeout=timeout,check=True)
+ return result
+pixels={}
+for variant in ['baseline','reserve','chunks']:
+ directory=out/('pixels-'+variant);directory.mkdir(exist_ok=True)
+ launch('pixels-'+variant,variant,{'PIXELS':'1','OUTDIR':str(directory)})
+ rows=json.loads((directory/'results.json').read_text());assert len(rows)==300
+ pixels[variant]={r['scene']:r['sha256'] for r in rows}
+assert pixels['baseline']==pixels['reserve']==pixels['chunks']
+(out/'pixels.json').write_text(json.dumps(pixels,indent=2)+'\n');print('PASS 600 candidate pixel comparisons',flush=True)
+micros={}
+order=[('a1','baseline'),('b1','reserve'),('c1','chunks'),('c2','chunks'),('b2','reserve'),('a2','baseline')]
+for label,variant in order:
+ result=launch('micro-'+label,variant,{'MICRO':'1'});micros[label]=json.loads(result.read_text())
+(out/'micro.json').write_text(json.dumps(micros,indent=2)+'\n')
+frames={}
+for label,variant in order:
+ result=launch('frames-'+label,variant,{'FRAMES':'1','CALLS':'update,animate'})
+ rows=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+ assert len(rows)==2 and all(r['samples']>=12 and r['frameTimings']>=50 and r['canvas']=='1036.0x520.0@2.0' for r in rows)
+ vis=[json.loads(l) for l in Path(str(result)+'.window').read_text().splitlines()];prep=next(r for r in vis if r['event']=='prepared')
+ assert not any(r['time']>prep['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or r['width']!=1100 or r['height']!=900 or r['dpr']!=2) for r in vis),label
+ frames[label]=rows;(out/'frames.json').write_text(json.dumps(frames,indent=2)+'\n');print('DONE',label,flush=True)
+controls={}
+for label,variant in [('a','baseline'),('b','reserve'),('c','chunks')]:
+ result=launch('control-'+label,variant,{'FRAMES':'1','CALLS':'update','CONNECTED':'0'})
+ rows=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+ assert len(rows)==1 and rows[0]['samples']>=12 and rows[0]['frameTimings']>=50 and rows[0]['canvas']=='1036.0x520.0@2.0'
+ controls[label]=rows[0]
+(out/'controls.json').write_text(json.dumps(controls,indent=2)+'\n')
+print('DONE triage measurements',flush=True)

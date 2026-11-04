@@ -1,0 +1,17 @@
+from pathlib import Path
+import subprocess,shutil,json,hashlib
+root=Path.cwd();w=root/'.dart_tool/path_growth';iso=Path('/tmp/path-growth-work');sdk=Path('/Users/vasilich/fvm/versions/3.47.8/bin');meta={}
+for variant in ['baseline','reserve','chunks']:
+ print('START',variant,flush=True)
+ subprocess.run(['python3',str(w/'variants.py'),variant],check=True)
+ with (w/(variant+'-tests.log')).open('w') as log:
+  subprocess.run([str(sdk/'flutter'),'test','--no-pub','test/port/canvas/canvas_test.dart','test/port/canvas/canvas_ui_native_test.dart','test/port/elements/element.line_test.dart','--reporter','expanded'],cwd=iso/'packages/flutter_chartjs_port',stdout=log,stderr=subprocess.STDOUT,check=True)
+ with (w/(variant+'-build.log')).open('w') as log:
+  subprocess.run([str(sdk/'flutter'),'build','macos','--profile','--no-pub','--target','../../.dart_tool/path_growth/probe.dart'],cwd=iso/'apps/chartjs_gallery',stdout=log,stderr=subprocess.STDOUT,check=True)
+ app=Path(f'/tmp/path-growth-{variant}.app');subprocess.run(['ditto',str(iso/'apps/chartjs_gallery/build/macos/Build/Products/Profile/chartjs_gallery.app'),str(app)],check=True)
+ subprocess.run(['codesign','--force','--sign','-','--entitlements',str(root/'packages/flutter_chartjs_port/doc/benchmarks/category-layout/probe.entitlements'),str(app)],check=True)
+ files={}
+ for rel in ['packages/flutter_chartjs_port/lib/src/canvas/canvas.dart','packages/flutter_chartjs_port/lib/src/elements/element.line.dart']:
+  p=iso/rel;files[rel]=hashlib.sha256(p.read_bytes()).hexdigest();shutil.copyfile(p,w/(variant+'-'+p.name+'.txt'))
+ meta[variant]={'sources':files,'framework':hashlib.sha256((app/'Contents/Frameworks/App.framework/App').read_bytes()).hexdigest()}
+ (w/'build-metadata.json').write_text(json.dumps(meta,indent=2)+'\n');print('DONE',variant,flush=True)

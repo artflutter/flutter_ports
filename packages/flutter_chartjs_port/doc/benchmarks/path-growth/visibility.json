@@ -1,0 +1,362 @@
+{
+  "gc-baseline.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823624.41073,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823624.8192291,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "frames-c1.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823358.7501268,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823359.166479,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "frames-b2.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823407.3192859,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823407.735869,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "control-a.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823455.884954,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823456.296297,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "gc-reserve.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": true,
+      "time": 1793823653.109058,
+      "visible": true,
+      "width": 1100
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823653.158401,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "control-c.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823480.3864012,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823480.81921,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "frames-c2.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823383.02478,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823383.4549088,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "control-b.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823468.141388,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823468.564492,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "frames-b1.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823334.463851,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823334.8718228,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "frames-a2.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823431.606422,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823432.019768,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "cpu-baseline.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823765.867425,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823766.2585359,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "frames-a1.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823310.147876,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823310.569345,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "gc-animate-chunks.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823737.759768,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823738.005219,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "gc-animate-baseline.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823709.461803,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823709.672785,
+      "visible": true,
+      "width": 1100
+    }
+  ],
+  "gc-chunks.results.window": [
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "occlusion",
+      "height": 600,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823680.995949,
+      "visible": true,
+      "width": 800
+    },
+    {
+      "appHidden": false,
+      "dpr": 2,
+      "event": "prepared",
+      "height": 900,
+      "miniaturized": false,
+      "occluded": false,
+      "time": 1793823681.367492,
+      "visible": true,
+      "width": 1100
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+from pathlib import Path
+import json,gzip,shutil,hashlib,statistics,math
+w=Path(__file__).resolve().parent;root=Path.cwd();out=root/'packages/flutter_chartjs_port/doc/benchmarks/path-chunks';b=out/'builtin';b.mkdir(exist_ok=True)
+prod=json.loads((w/'production.json').read_text());repeat=json.loads((w/'repeat.json').read_text());gc=json.loads((w/'gc-summary.json').read_text())
+assert len(prod)==96 and len({(r['call'],r['style'],r['connected'],r['labels'],r['spin']) for r in prod})==96
+allframes=prod+[r for rows in repeat.values() for r in rows]
+assert all(r['items']==20000 and r['samples']>=6 and r['frameTimings']>=50 and r['canvas']=='1036.0x520.0@2.0' for r in allframes)
+vis={}
+for p in w.glob('*.results.window'):
+ rows=[json.loads(l) for l in p.read_text().splitlines()];prep=next(r for r in rows if r['event']=='prepared');assert (prep['width'],prep['height'],prep['dpr'],prep['displayId'],prep['maxFps'])==(1100,900,2,1,120)
+ assert not any(r['time']>prep['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or (r['width'],r['height'],r['dpr'],r['displayId'],r['maxFps'])!=(1100,900,2,1,120)) for r in rows),p
+ vis[p.name]=rows
+summaries=[]
+for spin in [False,True]:
+ for call in ['draw','update','data','animate']:
+  rows=[r for r in prod if r['spin']==spin and r['call']==call]
+  summaries.append({'call':call,'spin':spin,'cases':len(rows),'minFps':min(r['fps'] for r in rows),'maxFps':max(r['fps'] for r in rows),'maxUiP90Ms':max(r['buildP90Ms'] for r in rows),'maxRasterP90Ms':max(r['rasterP90Ms'] for r in rows),'within60Budget':sum(r['fps']>=59 and r['buildP90Ms']<=1000/60 and r['rasterP90Ms']<=1000/60 for r in rows)})
+repeats=[]
+for call in ['update','animate']:
+ rows={tag:next(r for r in records if r['call']==call) for tag,records in repeat.items()};a=statistics.mean(rows[k]['buildMs'] for k in ['a1','a2']);c=statistics.mean(rows[k]['buildMs'] for k in ['b1','b2']);repeats.append({'call':call,'beforeMeanUiMs':a,'afterMeanUiMs':c,'reductionPct':100*(1-c/a),'runs':rows})
+for name,r in gc.items():
+ end=json.loads((w/(name+'.json.window')).read_text())['end'];window=min(5.0,(end-min(f['start'] for f in r['frames']))/1e6-0.05);r['availableMatchedSeconds']=window
+common=min(5.0,min(r['availableMatchedSeconds'] for r in gc.values()))
+for name,r in gc.items():
+ end=json.loads((w/(name+'.json.window')).read_text())['end'];rows=[f for f in r['frames'] if f['start']>=end-common*1e6 and f['end']<=end];assert len(rows)>=30
+ p90=sorted(f['uiMs'] for f in rows)[math.ceil(len(rows)*.9)-1];slow=[f for f in rows if f['uiMs']>=p90]
+ r['matchedWindow']={'seconds':common,'frames':len(rows),'meanUiMs':statistics.mean(f['uiMs'] for f in rows),'meanGcMs':statistics.mean(f['gcMs'] for f in rows),'uiP90Ms':p90,'slowMeanGcMs':statistics.mean(f['gcMs'] for f in slow)}
+summary={'matrixComplete':True,'gcComplete':True,'production':prod,'modeSummary':summaries,'heavyRepeat':repeats,'gc':gc,'worstByFps':sorted(prod,key=lambda r:r['fps'])[:8],'minReadouts':min(r['samples'] for r in allframes),'minTimings':min(r['frameTimings'] for r in allframes),'totalTimings':sum(r['frameTimings'] for r in allframes)}
+(b/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');(b/'visibility.json').write_text(json.dumps(vis,indent=2)+'\n')
+studio=json.loads((w.parent/'studio-summary.json').read_text());(out/'studio-summary.json').write_text(json.dumps(studio,indent=2)+'\n');(out/'summary.json').write_text(json.dumps({'studio':studio,'builtin':summary,'matrixComplete':True,'gcComplete':True},indent=2)+'\n')
+for p in w.iterdir():
+ if p.is_file():
+  if p.suffix in ['.py','.dart']:shutil.copyfile(p,b/(p.name+'.txt'))
+  else:
+   with gzip.open(b/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+meta=json.loads((out/'metadata.json').read_text());assert all(hashlib.sha256(Path(p).read_bytes()).hexdigest()==h for p,h in meta['productionSourceSha256'].items())
+print('| Labels | Operation | Cases | FPS range | Worst UI p90 ms | Worst raster p90 ms |\n| --- | --- | ---: | ---: | ---: | ---: |')
+for r in summaries:print(f"| {'200 rotating' if r['spin'] else '0/50/200 static'} | {r['call']} | {r['cases']} | {r['minFps']:.1f}–{r['maxFps']:.1f} | {r['maxUiP90Ms']:.2f} | {r['maxRasterP90Ms']:.2f} |")
+print('\n| Operation | Run | Mean UI ms | UI p90 ms | FPS |\n| --- | --- | ---: | ---: | ---: |')
+for r in repeats:
+ for tag,x in r['runs'].items():print(f"| {r['call']} | {tag} | {x['buildMs']:.2f} | {x['buildP90Ms']:.2f} | {x['fps']:.1f} |")
+print('\n| GC capture | Retained seconds / frames | Mean GC ms/frame | Slow-decile mean GC ms | UI Frame p90 ms |\n| --- | ---: | ---: | ---: | ---: |')
+for name,r in gc.items():print(f"| {name} | {r['timelineSeconds']:.2f} / {r['completeUiFrames']} | {r['gcMeanPerFrameMs']:.2f} | {r['slowFramesMeanGcMs']:.2f} | {r['uiP90Ms']:.2f} |")
+print('\n| Matched GC window | Seconds / frames | Mean GC ms/frame | Slow-decile mean GC ms | UI Frame p90 ms |\n| --- | ---: | ---: | ---: | ---: |')
+for name,v in gc.items():
+ r=v['matchedWindow'];print(f"| {name} | {r['seconds']:.2f} / {r['frames']} | {r['meanGcMs']:.2f} | {r['slowMeanGcMs']:.2f} | {r['uiP90Ms']:.2f} |")

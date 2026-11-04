@@ -1,0 +1,49 @@
+import Cocoa
+import FlutterMacOS
+
+class MainFlutterWindow: NSWindow {
+  private var observers: [NSObjectProtocol] = []
+  private func displayID(_ s: NSScreen?) -> NSNumber {
+    s?.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber ?? 0
+  }
+  private func recordVisibility(_ event: String) {
+    guard let path = ProcessInfo.processInfo.environment["OUTPUT"] else { return }
+    var value: [String: Any] = ["event": event, "time": Date().timeIntervalSince1970,
+      "visible": isVisible, "occluded": !occlusionState.contains(.visible),
+      "miniaturized": isMiniaturized, "appHidden": NSApp.isHidden,
+      "width": contentView?.bounds.width ?? 0, "height": contentView?.bounds.height ?? 0,
+      "dpr": backingScaleFactor, "displayId": displayID(screen)]
+    if #available(macOS 12.0, *) { value["maxFps"] = screen?.maximumFramesPerSecond ?? 0 }
+    guard var data = try? JSONSerialization.data(withJSONObject: value, options: [.sortedKeys]) else { return }
+    data.append(0x0a)
+    let target = path + ".window"
+    if !FileManager.default.fileExists(atPath: target) { FileManager.default.createFile(atPath: target, contents: nil) }
+    if let f = FileHandle(forWritingAtPath: target) { f.seekToEndOfFile(); f.write(data); try? f.close() }
+  }
+  override func awakeFromNib() {
+    let controller = FlutterViewController()
+    let original = frame
+    contentViewController = controller
+    setFrame(original, display: true)
+    RegisterGeneratedPlugins(registry: controller)
+    super.awakeFromNib()
+    if ProcessInfo.processInfo.environment["FRAMES"] == "1" {
+      for (notification, label) in [(NSWindow.didChangeOcclusionStateNotification,"occlusion"), (NSWindow.didChangeScreenNotification,"screen"), (NSWindow.didResizeNotification,"resize")] {
+        observers.append(NotificationCenter.default.addObserver(forName: notification, object: self, queue: .main) { [weak self] _ in self?.recordVisibility(label) })
+      }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        guard let screen = NSScreen.screens.first(where: { self.displayID($0).stringValue == ProcessInfo.processInfo.environment["BENCH_DISPLAY_ID"] }) else { self.recordVisibility("missingDisplay"); return }
+        self.setContentSize(NSSize(width: 1100, height: 900))
+        self.isMovable = false
+        self.styleMask.remove(.resizable)
+        self.level = .floating
+        self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        let area = screen.visibleFrame
+        self.setFrameOrigin(NSPoint(x: area.minX + 16, y: area.minY + 16))
+        self.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        self.recordVisibility("prepared")
+      }
+    }
+  }
+}
