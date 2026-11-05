@@ -15,6 +15,22 @@
       "cwd": "apps/chartjs_gallery",
       "program": "lib/main.dart",
       "flutterMode": "profile"
+    },
+    {
+      "name": "chart_benchmark_lab",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/chart_benchmark_lab",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "chart_benchmark_lab (profile)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/chart_benchmark_lab",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "deviceId": "macos"
     }
   ]
 }

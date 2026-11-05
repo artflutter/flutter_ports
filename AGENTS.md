@@ -1003,6 +1003,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Options; rendering traces and detailed timings live under Diagnostics.
     Preserve control keys, benchmark behavior and the 412 x 915 host viewport.
   - Each control has a `ValueKey`. A test finds a segment by its key.
+- `apps/chart_benchmark_lab`: the independent cross-library public-widget test
+  bed (line/bar/scatter/pie; Chart.js port, fl_chart, Graphic and Syncfusion).
+  Run `dart run melos run benchmark:macos` for profile measurements. Dependencies
+  are pinned; Syncfusion is included under the owner's confirmed eligible license.
+  Shared seeded data and controls live in `lib/benchmark`, adapters in
+  `lib/charts`, dashboard in `lib/ui`. One engine is mounted at a time.
+  Preserve warmup/timestamp filtering, viewport/visibility cancellation and
+  comparable-run keys. Engine build timing excludes some deferred work: retain
+  frame-interval metrics and full-window FPS. Do not silently downsample an engine.
+  `tool/smoke.dart` drives the real UI/controller in native profile mode.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.
   - `lib/flutter_d3_port.dart`: the public library. `lib/src/upstream.dart` has `d3Version`
