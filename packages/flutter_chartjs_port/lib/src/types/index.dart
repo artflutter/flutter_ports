@@ -1458,6 +1458,11 @@ abstract interface class TooltipModel implements Element {
   /// index.d.ts:2693 `opacity`. 0 is a hidden tooltip.
   double get opacity;
 
+  /// Port-only (Chart.js ADR 0091): ends the state that ignores replays after
+  /// `setActiveElements`. An update calls it when its replay is a new mouse
+  /// move, which `handleEvent` of upstream gets as a real event.
+  void endIgnoredReplays();
+
   /// index.d.ts:2698 `getActiveElements()`.
   List<ActiveElement> getActiveElements();
 

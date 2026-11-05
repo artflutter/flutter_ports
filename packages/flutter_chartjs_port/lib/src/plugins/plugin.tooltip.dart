@@ -2180,6 +2180,11 @@ class Tooltip extends Element implements types.TooltipModel {
     }
   }
 
+  // DIVERGES(chartjs): adapt-live-mouse-move, a held move is a real move.
+  @internal
+  @override
+  void endIgnoredReplays() => _ignoreReplayEvents = false;
+
   /// plugin.tooltip.js:1139 `handleEvent(e, replay, inChartArea = true)`.
   ///
   /// Handle an event

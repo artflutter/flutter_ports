@@ -468,6 +468,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `getScaleForId` reads `chart.scales[ToString(id)]`. `_lastEvent` is `lastEvent` with
       `@internal`: the input reference test reads it after each step. `Chart.legend` is a field that
       the legend plugin writes. It is not a pure layer: it imports the platform layer.
+    - Chart.js ADR 0090: `update` and `updateData` replay the last event through
+      `_replayLastEvent`. With no queued animation, the replay skips its render, and the render
+      after it draws once. Thus the draw hooks and `animation.onComplete` run once in such an
+      update. The pixels do not change. See `test/port/core/core.controller_replay_test.dart`.
+    - Chart.js ADR 0091: `ChartView` gives the chart `holdMouseMove`. A `mousemove` of a live chart
+      (a config update in the last 34 ms of frame time, no queued animation) waits for the update
+      of its frame, which replays it in place of the last event. `releaseHeldMove` handles a move
+      that no update takes. A `Chart` with no `ChartView` keeps the upstream path. See
+      `test/port/widgets/chart_view_live_mouse_test.dart`.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the port of
       `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of

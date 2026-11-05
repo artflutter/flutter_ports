@@ -1,0 +1,32 @@
+CASE hover=1 markers=1 move=0
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=119.9 frameP90=8.34 uiP90=1.71 rasterP90=1.14 over=0.0 msg="Capture saved · 1199 en
+  update  2.375ms max=7.63 n=1199
+  replay  0.931ms max=2.58 n=1199
+  draw    3.162ms max=6.59 n=1199
+  datasets 3.135ms max=6.59 n=1199
+  tooltip 0.078ms max=0.20 n=381
+  layouts=1199 drawn=1199 withActive=381 skipped=0
+CASE hover=1 markers=1 move=1
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=119.9 frameP90=8.34 uiP90=1.72 rasterP90=1.14 over=0.0 msg="Capture saved · 1199 en
+  update  2.359ms max=5.18 n=1201
+  replay  0.940ms max=2.49 n=1333
+  draw    3.167ms max=6.53 n=1251
+  datasets 3.134ms max=6.47 n=1251
+  tooltip 0.088ms max=0.79 n=434
+  layouts=1201 drawn=1251 withActive=434 skipped=0
+CASE hover=1 markers=1 move=0
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=1.68 rasterP90=1.13 over=0.0 msg="Capture saved · 1200 en
+  update  2.366ms max=4.34 n=1202
+  replay  0.935ms max=2.64 n=1202
+  draw    3.176ms max=6.25 n=1202
+  datasets 3.150ms max=6.25 n=1202
+  tooltip 0.075ms max=0.36 n=384
+  layouts=1202 drawn=1202 withActive=384 skipped=0
+CASE hover=1 markers=1 move=1
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=119.9 frameP90=8.34 uiP90=1.72 rasterP90=1.12 over=0.0 msg="Capture saved · 1199 en
+  update  2.313ms max=4.04 n=1201
+  replay  0.933ms max=2.69 n=1334
+  draw    3.107ms max=6.52 n=1249
+  datasets 3.077ms max=6.51 n=1249
+  tooltip 0.079ms max=0.27 n=432
+  layouts=1201 drawn=1249 withActive=432 skipped=0

@@ -7493,3 +7493,117 @@ Validation passes: 11,091 VM tests; 4,235 tests per browser backend; formatting,
 analysis, spec cases, fixtures, regenerated parity and all seven port checks.
 Eighteen new native-vs-ordinary cases exercise pre/post-context invalidation,
 replacement plans, callback mutation, non-scalar returns, exceptions and reentrancy.
+
+## 62. Dart-side partitioned baseline fill
+
+ADR 0089 adds a guarded compound fill for dense, repeatedly varying cubic lines
+against private horizontal origin/start/end boundaries. It retains all control
+points, the original current path and the stroke. One native nonzero fill draws
+32-cubic subcontours. Flat/gently varying and unsupported cases retain the
+ordinary renderer. Gradients, custom geometry and observable native lifecycle
+hooks decline. No engine patch or dataset reduction is involved.
+
+The real benchmark chart on Flutter 3.50.0-0.4.pre, M3 Max, built-in 120 Hz,
+DPR 2, 964 x 420 logical plot, live 20k smooth + fill, measured original /
+optimized / original after two-second warmups and four-second windows:
+
+| Metric | Original A | Partitioned | Original B |
+| --- | ---: | ---: | ---: |
+| Approximate engine FPS | 53.0 | 109.5 | 53.0 |
+| Median GPU command, ms | 23.903 | 2.560 | 25.206 |
+| Complete chart update median, ms | 6.460 | 7.226 | 6.378 |
+
+The extra CPU validation/path work costs about 0.8 ms in this sample, while
+GPU time drops by over 20 ms. UI-build timing alone excludes the post-frame
+chart update, so it is not used as the complete CPU measurement. Engine FPS is
+not presentation feedback. Native chart pixels matched exactly at a fixed
+frame; software-renderer twins explicitly bound small AA rounding differences.
+Actual emitted index bytes increased 968,548 to 981,028 (+1.29%), both within
+the same 1,024,000-byte native allocation block. The additional path and boundary
+vertices are separate costs. Sequential RSS was lower during the faster run,
+but this is not an isolated allocation measurement or a general RAM claim.
+
+See [the comparison report](../../../apps/chart_benchmark_lab/doc/dart-baseline-fill/comparison.txt)
+and its JSON records. The standalone diagnostic switch
+`CHARTJS_PARTITIONED_BASELINE_FILL=false` disables the optimization for a matched
+baseline build. It is recorded in benchmark exports. Correctness validation:
+485 filler/canvas/API tests, focused geometry/state/pixel tests, analyzer and
+port guards. Broader device-specific performance remains unmeasured.
+
+## 63. One draw for an update that replays an event
+
+[Chart.js ADR 0090](adr/0090-replay-single-draw.md) removes the first of two draws in an update
+that replays the last mouse event with no queued animation. Upstream has the same double draw. The
+second draw clears the first, so the pixels do not change.
+
+The chart was the Chart.js line of `apps/chart_benchmark_lab` on an Apple M3 Max: built-in 120 Hz
+display, DPR 2, Flutter 3.50.0-0.4.pre, native profile build, 964 x 420 logical plot, 20k live
+points, tooltips on, animation off. Each case has 2 runs of a 10-second capture. The mouse is a
+synthetic hover at the center of the chart. A moving mouse sends a new position every 8 ms.
+
+| Case | FPS before | FPS after |
+| --- | ---: | ---: |
+| Markers, mouse still | 101.0, 101.2 | 120.0, 120.0 |
+| Markers, mouse moving | 90.5, 89.9 | 112.1, 108.9 |
+| Markers, no mouse | 119.9, 120.0 | 119.9, 119.9 |
+| No markers, mouse still | 120.0, 120.0 | 120.0, 120.0 |
+| No markers, mouse moving | not measured | 120.0, 119.9 |
+
+The FPS values are engine frame timings, not presentation feedback. The FPS drop was large because
+a frame that misses 8.33 ms waits for the next display refresh.
+
+Mean chart work for each update with markers and a still mouse, from plugin hook timing:
+
+| Phase, ms | Before | After |
+| --- | ---: | ---: |
+| Update | 2.27 | 2.31 |
+| Replay: hover search and tooltip update | 0.97 | 0.94 |
+| Draw | 5.12 (2 draws of 2.56) | 3.19 (1 draw) |
+| Sum | 8.36 | 6.44 |
+
+The second draw costs almost nothing without markers (2 x 0.45 ms against 1 x 0.94 ms before the
+change). With markers, it costs about 2.1 ms. Thus only charts with markers reached the 8.33 ms
+limit. UI p90 did not show this cost: it stayed near 1.7 ms, because the chart work runs after the
+build phase that this metric times.
+
+A moving mouse stays below 120 FPS with markers, because each new mouse event can draw by itself.
+The driver and logs are in [`benchmarks/replay-single-draw/`](benchmarks/replay-single-draw/README.md).
+Broader device-specific performance remains unmeasured.
+
+## 64. One hover pass and one draw for each frame of a live chart
+
+[Chart.js ADR 0091](adr/0091-live-mouse-move.md) makes a mouse move of a live `ChartView` wait for
+the update of its frame. The setup is the setup of §63. The mouse is synthetic. "On the curve" follows
+the middle of the moving data, so it hits a point on almost every frame. "Wiggle" stays near the
+center of the chart. Each case has 2 runs of a 10-second capture, with Chart.js ADR 0090 in both
+columns.
+
+| Case | FPS before | FPS after |
+| --- | ---: | ---: |
+| Markers, mouse on the curve, every 8 ms | 89.8, 89.7 | 120.0, 120.0 |
+| Markers, mouse on the curve, every 2 ms | not measured | 120.0, 119.9 |
+| Markers, wiggle, every 8 ms | 112.1, 108.9 | 119.9, 119.9 |
+| Markers, mouse still | 120.0, 120.0 | 119.9, 120.0 |
+| No markers, mouse on the curve, every 8 ms | 120.0, 120.0 | 120.0, 119.9 |
+
+The FPS values are engine frame timings, not presentation feedback.
+
+Mean work for each update with markers and a mouse on the curve every 8 ms, from plugin hook timing:
+
+| Phase, ms | Before | After |
+| --- | ---: | ---: |
+| Mouse event: hover search and tooltip update | 1.10 | 0 |
+| Draw after the mouse event | 2.74 | 0 |
+| Update | 2.23 | 2.33 |
+| Replay: hover search and tooltip update | 1.09 | 1.12 |
+| Draw after the update | 2.96 | 3.15 |
+| Sum | 10.12 | 6.60 |
+
+The median time from the start of the frame callbacks to the end of the post-frame work went from
+10.4 ms to 7.3 ms. The margin is small: 17% of the frames still run past 8.33 ms in this measure, with
+no loss of engine FPS. Other load on the machine can reduce the FPS. Cheaper marker drawing would add
+margin: a CPU profile before this change gave `PointElement.draw` 43% of the time in port code.
+
+A move now appears one frame later in a live chart: about 8 ms at 120 Hz. The driver and logs are in
+[`benchmarks/live-mouse/`](benchmarks/live-mouse/README.md). Broader device-specific performance
+remains unmeasured.

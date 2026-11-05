@@ -1,0 +1,42 @@
+RESULT markers=true period=8 speed=0.04 skipMouseDraw=false fps=89.8 frameP90=16.67 uiP90=5.41 rasterP90=1.14 msg="Capture saved · 898 engine frames"
+  mouseEvent n=1039 mean=0.95ms perUpdate=1.10ms
+  mouseDraw n=994 mean=2.50ms perUpdate=2.76ms
+  update n=902 mean=2.22ms perUpdate=2.22ms
+  replayEvent n=902 mean=1.08ms perUpdate=1.08ms
+  updateDraw n=902 mean=2.94ms perUpdate=2.94ms
+  frameBusy p50=10.37 p90=11.71 over8.33=94.9% n=909 activeDraws=1892 skippedMouseDraws=0
+RESULT markers=false period=8 speed=0.04 skipMouseDraw=false fps=120.0 frameP90=8.33 uiP90=3.70 rasterP90=1.01 msg="Capture saved · 1200 engine frames"
+  mouseEvent n=1273 mean=1.05ms perUpdate=1.11ms
+  mouseDraw n=543 mean=0.21ms perUpdate=0.09ms
+  update n=1203 mean=2.31ms perUpdate=2.31ms
+  replayEvent n=1203 mean=0.95ms perUpdate=0.95ms
+  updateDraw n=1203 mean=0.77ms perUpdate=0.77ms
+  frameBusy p50=6.70 p90=7.58 over8.33=2.7% n=1206 activeDraws=831 skippedMouseDraws=0
+RESULT markers=true period=8 speed=0.04 skipMouseDraw=true fps=108.0 frameP90=16.66 uiP90=2.83 rasterP90=0.99 msg="Capture saved · 1080 engine frames"
+  mouseEvent n=1173 mean=1.02ms perUpdate=1.10ms
+  mouseDraw n=0 mean=0ms perUpdate=0.00ms
+  update n=1083 mean=2.34ms perUpdate=2.34ms
+  replayEvent n=1083 mean=1.12ms perUpdate=1.12ms
+  updateDraw n=1083 mean=3.23ms perUpdate=3.23ms
+  frameBusy p50=8.30 p90=10.36 over8.33=48.3% n=1090 activeDraws=1082 skippedMouseDraws=1134
+RESULT markers=true period=8 speed=0.04 skipMouseDraw=false fps=89.7 frameP90=16.67 uiP90=5.17 rasterP90=1.14 msg="Capture saved · 897 engine frames"
+  mouseEvent n=1028 mean=0.96ms perUpdate=1.09ms
+  mouseDraw n=973 mean=2.51ms perUpdate=2.71ms
+  update n=899 mean=2.24ms perUpdate=2.24ms
+  replayEvent n=899 mean=1.09ms perUpdate=1.09ms
+  updateDraw n=899 mean=2.98ms perUpdate=2.98ms
+  frameBusy p50=10.46 p90=11.58 over8.33=95.8% n=899 activeDraws=1870 skippedMouseDraws=0
+RESULT markers=false period=8 speed=0.04 skipMouseDraw=false fps=120.0 frameP90=8.34 uiP90=3.76 rasterP90=1.04 msg="Capture saved · 1200 engine frames"
+  mouseEvent n=1260 mean=1.05ms perUpdate=1.10ms
+  mouseDraw n=553 mean=0.21ms perUpdate=0.09ms
+  update n=1202 mean=2.40ms perUpdate=2.40ms
+  replayEvent n=1202 mean=0.96ms perUpdate=0.96ms
+  updateDraw n=1202 mean=0.84ms perUpdate=0.84ms
+  frameBusy p50=6.87 p90=7.89 over8.33=5.7% n=1202 activeDraws=831 skippedMouseDraws=0
+RESULT markers=true period=8 speed=0.04 skipMouseDraw=true fps=110.4 frameP90=8.34 uiP90=2.75 rasterP90=1.14 msg="Capture saved · 1104 engine frames"
+  mouseEvent n=1186 mean=0.99ms perUpdate=1.06ms
+  mouseDraw n=0 mean=0ms perUpdate=0.00ms
+  update n=1106 mean=2.32ms perUpdate=2.32ms
+  replayEvent n=1106 mean=1.09ms perUpdate=1.09ms
+  updateDraw n=1106 mean=3.19ms perUpdate=3.19ms
+  frameBusy p50=8.23 p90=10.06 over8.33=43.9% n=1105 activeDraws=1106 skippedMouseDraws=1130

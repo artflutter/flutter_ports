@@ -1,0 +1,220 @@
+// Temporary diagnostic: a mouse that follows the curve in native profile mode.
+// It splits each frame into mouse work and data update work.
+import 'dart:async';
+import 'dart:io';
+import 'dart:math' as math;
+
+import 'package:chart_benchmark_lab/benchmark/config.dart';
+import 'package:chart_benchmark_lab/benchmark/controller.dart';
+import 'package:chart_benchmark_lab/main.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
+
+final env = Platform.environment;
+bool flag(String name) => env[name] == '1';
+final watch = Stopwatch()..start();
+
+void out(String line) => stdout.writeln('PROBE $line');
+
+Element? findElement(bool Function(Element) test) {
+  Element? found;
+  void visit(Element e) {
+    if (found != null) return;
+    if (test(e)) {
+      found = e;
+      return;
+    }
+    e.visitChildren(visit);
+  }
+
+  WidgetsBinding.instance.rootElement?.visitChildren(visit);
+  return found;
+}
+
+class Phase {
+  Phase(this.name);
+  final String name;
+  double totalUs = 0;
+  int count = 0;
+  int? _start;
+  void begin() => _start = watch.elapsedMicroseconds;
+  void end() {
+    final start = _start;
+    if (start == null) return;
+    totalUs += (watch.elapsedMicroseconds - start).toDouble();
+    count++;
+    _start = null;
+  }
+
+  void reset() {
+    totalUs = 0;
+    count = 0;
+  }
+}
+
+final update = Phase('update');
+final replay = Phase('replayEvent');
+final mouse = Phase('mouseEvent');
+final updateDraw = Phase('updateDraw');
+final mouseDraw = Phase('mouseDraw');
+var drawBelongsToUpdate = false;
+var skippedMouseDraws = 0;
+var activeDraws = 0;
+var measuring = false;
+final frameBusyMs = <double>[];
+
+Phase eventPhase(Object? args) =>
+    (args! as dynamic).replay == true ? replay : mouse;
+
+Map<String, Object?> timingPlugin() {
+  Phase? event;
+  Phase? draw;
+  return <String, Object?>{
+    'id': 'labProbeTiming',
+    'supportsDataUpdates': true,
+    'beforeUpdate': (Object? c, Object? a, Object? o) {
+      drawBelongsToUpdate = true;
+      update.begin();
+    },
+    'afterUpdate': (Object? c, Object? a, Object? o) => update.end(),
+    'beforeEvent': (Object? c, Object? a, Object? o) {
+      event = eventPhase(a)..begin();
+    },
+    'afterEvent': (Object? c, Object? a, Object? o) {
+      event?.end();
+    },
+    'beforeDraw': (Object? c, Object? a, Object? o) {
+      if (drawBelongsToUpdate) {
+        drawBelongsToUpdate = false;
+        draw = updateDraw..begin();
+        return null;
+      }
+      if (flag('SKIP_MOUSE_DRAW')) {
+        skippedMouseDraws++;
+        return false;
+      }
+      draw = mouseDraw..begin();
+      return null;
+    },
+    'afterDraw': (Object? c, Object? a, Object? o) {
+      draw?.end();
+      if ((c! as cj.Chart).getActiveElements().isNotEmpty) activeDraws++;
+    },
+  };
+}
+
+void measureFrames() {
+  late void Function(Duration) onFrame;
+  onFrame = (_) {
+    final start = watch.elapsedMicroseconds;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Timer.run(() {
+        if (measuring) {
+          frameBusyMs.add((watch.elapsedMicroseconds - start) / 1000);
+        }
+      });
+      SchedulerBinding.instance.scheduleFrameCallback(onFrame);
+    });
+  };
+  SchedulerBinding.instance.scheduleFrameCallback(onFrame);
+}
+
+Future<void> run(BenchmarkController c) async {
+  final markers = !flag('NO_MARKERS');
+  final count = int.parse(env['COUNT'] ?? '20000');
+  await Future<void>.delayed(const Duration(milliseconds: 2500));
+  c.configure(BenchmarkConfig(count: count, markers: markers, tooltips: true));
+  await Future<void>.delayed(const Duration(milliseconds: 600));
+  c.start(capture: true);
+  measureFrames();
+  await Future<void>.delayed(const Duration(milliseconds: 600));
+  final box =
+      findElement((e) => e.widget is cj.ChartView)!.findRenderObject()!
+          as RenderBox;
+  final origin = box.localToGlobal(Offset.zero);
+  final chart = cj.Chart.instances.values.first;
+  const device = 4242;
+  final periodMs = int.parse(env['PERIOD_MS'] ?? '8');
+  final speed = double.parse(env['SPEED'] ?? '0.04');
+  var x = 10.0;
+  var direction = 1.0;
+  Offset position() {
+    final time = c.frames.value.step / 60;
+    final y = 50 + 26 * math.sin(x * .075 + time);
+    return origin +
+        Offset(
+          chart.scales['x']!.getPixelForValue(x),
+          chart.scales['y']!.getPixelForValue(y),
+        );
+  }
+
+  GestureBinding.instance.handlePointerEvent(
+    PointerAddedEvent(
+      kind: PointerDeviceKind.mouse,
+      device: device,
+      position: position(),
+    ),
+  );
+  Timer.periodic(Duration(milliseconds: periodMs), (_) {
+    x += direction * speed * periodMs;
+    if (x > 90 || x < 10) direction = -direction;
+    GestureBinding.instance.handlePointerEvent(
+      PointerHoverEvent(
+        kind: PointerDeviceKind.mouse,
+        device: device,
+        position: position(),
+      ),
+    );
+  });
+  await Future<void>.delayed(const Duration(milliseconds: 1400));
+  for (final p in [update, replay, mouse, updateDraw, mouseDraw]) {
+    p.reset();
+  }
+  skippedMouseDraws = 0;
+  activeDraws = 0;
+  frameBusyMs.clear();
+  measuring = true;
+  while (c.capturing && !c.finishing) {
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+  }
+  measuring = false;
+  while (c.controlsLocked) {
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+  }
+  final m = c.results.isEmpty ? null : c.results.first.metrics;
+  final frames = update.count == 0 ? 1 : update.count;
+  String perFrame(Phase p) =>
+      '${p.name} n=${p.count} mean=${p.count == 0 ? 0 : (p.totalUs / p.count / 1000).toStringAsFixed(2)}ms '
+      'perUpdate=${(p.totalUs / frames / 1000).toStringAsFixed(2)}ms';
+  final sorted = [...frameBusyMs]..sort();
+  double pct(double q) =>
+      sorted.isEmpty ? 0 : sorted[(sorted.length * q).floor().clamp(0, sorted.length - 1)];
+  final over = sorted.where((v) => v > 8.33).length;
+  out(
+    'RESULT markers=$markers period=$periodMs speed=$speed '
+    'skipMouseDraw=${flag('SKIP_MOUSE_DRAW')} '
+    'fps=${m?.fps.toStringAsFixed(1)} frameP90=${m?.intervalP90.toStringAsFixed(2)} '
+    'uiP90=${m?.uiP90.toStringAsFixed(2)} rasterP90=${m?.rasterP90.toStringAsFixed(2)} '
+    'msg="${c.message}"',
+  );
+  for (final p in [mouse, mouseDraw, update, replay, updateDraw]) {
+    out('  ${perFrame(p)}');
+  }
+  out(
+    '  frameBusy p50=${pct(.5).toStringAsFixed(2)} p90=${pct(.9).toStringAsFixed(2)} '
+    'over8.33=${sorted.isEmpty ? 0 : (over * 100 / sorted.length).toStringAsFixed(1)}% n=${sorted.length} '
+    'activeDraws=$activeDraws skippedMouseDraws=$skippedMouseDraws',
+  );
+  await stdout.flush();
+  exit(0);
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cj.Chart.register(cj.registerables);
+  cj.Chart.register([timingPlugin()]);
+  FlutterError.onError = (d) => out('FLUTTER_ERROR ${d.exceptionAsString()}');
+  runApp(ChartBenchmarkApp(onControllerReady: (c) => unawaited(run(c))));
+}

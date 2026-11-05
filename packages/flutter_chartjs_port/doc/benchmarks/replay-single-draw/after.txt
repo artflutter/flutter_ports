@@ -1,0 +1,80 @@
+CASE markers=1 hover=1 move=0
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=1.71 rasterP90=1.11 over=0.0 msg="Capture saved · 1200 en
+  update  2.326ms max=4.21 n=1202
+  replay  0.937ms max=2.49 n=1202
+  draw    3.217ms max=6.70 n=1202
+  datasets 3.190ms max=6.70 n=1202
+  tooltip 0.077ms max=0.21 n=385
+  layouts=1202 drawn=1202 withActive=385 skipped=0
+CASE markers=1 hover=1 move=1
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=112.1 frameP90=8.34 uiP90=4.07 rasterP90=1.10 over=0.0 msg="Capture saved · 1121 en
+  update  2.214ms max=3.79 n=1122
+  replay  0.905ms max=2.40 n=2313
+  draw    2.799ms max=5.67 n=1368
+  datasets 2.767ms max=5.14 n=1368
+  tooltip 0.066ms max=0.65 n=620
+  layouts=1122 drawn=1368 withActive=620 skipped=0
+CASE markers=1 hover=0 move=0
+RESULT markers=true hover=false tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=119.9 frameP90=8.34 uiP90=2.15 rasterP90=1.16 over=0.0 msg="Capture saved · 1199 e
+  update  2.475ms max=4.43 n=1201
+  replay  0ms max=0.00 n=0
+  draw    3.001ms max=4.96 n=1201
+  datasets 2.999ms max=4.96 n=1201
+  tooltip 0ms max=0.00 n=0
+  layouts=1201 drawn=1201 withActive=0 skipped=0
+CASE markers=0 hover=1 move=0
+RESULT markers=false hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=2.28 rasterP90=0.99 over=0.0 msg="Capture saved · 1200 e
+  update  2.425ms max=4.09 n=1202
+  replay  0.931ms max=2.33 n=1202
+  draw    0.809ms max=2.79 n=1202
+  datasets 0.799ms max=2.78 n=1202
+  tooltip 0.057ms max=0.13 n=162
+  layouts=1202 drawn=1202 withActive=162 skipped=0
+CASE markers=0 hover=1 move=1
+RESULT markers=false hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=3.45 rasterP90=0.99 over=0.0 msg="Capture saved · 1200 e
+  update  2.333ms max=7.53 n=1203
+  replay  0.953ms max=2.29 n=2477
+  draw    0.680ms max=2.15 n=1374
+  datasets 0.663ms max=2.15 n=1374
+  tooltip 0.061ms max=0.28 n=320
+  layouts=1203 drawn=1374 withActive=320 skipped=0
+CASE markers=1 hover=1 move=0
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=1.66 rasterP90=1.11 over=0.0 msg="Capture saved · 1200 en
+  update  2.291ms max=4.20 n=1202
+  replay  0.943ms max=2.98 n=1202
+  draw    3.162ms max=6.83 n=1202
+  datasets 3.139ms max=6.83 n=1202
+  tooltip 0.066ms max=0.21 n=381
+  layouts=1202 drawn=1202 withActive=381 skipped=0
+CASE markers=1 hover=1 move=1
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=108.9 frameP90=16.66 uiP90=4.26 rasterP90=1.13 over=0.1 msg="Capture saved · 1089 e
+  update  2.256ms max=4.50 n=1092
+  replay  0.921ms max=2.52 n=2269
+  draw    2.853ms max=5.64 n=1397
+  datasets 2.815ms max=5.64 n=1397
+  tooltip 0.075ms max=0.45 n=669
+  layouts=1092 drawn=1397 withActive=669 skipped=0
+CASE markers=1 hover=0 move=0
+RESULT markers=true hover=false tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=119.9 frameP90=8.34 uiP90=2.11 rasterP90=1.15 over=0.0 msg="Capture saved · 1199 e
+  update  2.411ms max=4.23 n=1200
+  replay  0ms max=0.00 n=0
+  draw    2.971ms max=5.06 n=1200
+  datasets 2.969ms max=5.06 n=1200
+  tooltip 0ms max=0.00 n=0
+  layouts=1200 drawn=1200 withActive=0 skipped=0
+CASE markers=0 hover=1 move=0
+RESULT markers=false hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=2.08 rasterP90=0.98 over=0.0 msg="Capture saved · 1200 e
+  update  2.361ms max=4.16 n=1202
+  replay  0.905ms max=2.02 n=1202
+  draw    0.808ms max=2.61 n=1202
+  datasets 0.799ms max=2.61 n=1202
+  tooltip 0.054ms max=0.11 n=162
+  layouts=1202 drawn=1202 withActive=162 skipped=0
+CASE markers=0 hover=1 move=1
+RESULT markers=false hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=119.9 frameP90=8.34 uiP90=3.37 rasterP90=0.98 over=0.0 msg="Capture saved · 1199 e
+  update  2.298ms max=4.55 n=1202
+  replay  0.934ms max=2.72 n=2479
+  draw    0.701ms max=2.50 n=1361
+  datasets 0.686ms max=2.50 n=1361
+  tooltip 0.057ms max=0.65 n=303
+  layouts=1202 drawn=1361 withActive=303 skipped=0

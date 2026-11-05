@@ -1,0 +1,56 @@
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=100.7 frameP90=16.67 uiP90=1.64 rasterP90=1.11 over=0.0 msg="Capture saved · 1007 e
+  update  2.290ms max=4.53 n=1010
+  replay  0.963ms max=2.06 n=1010
+  draw    2.572ms max=6.12 n=2020
+  datasets 2.555ms max=6.11 n=2020
+  tooltip 0.047ms max=0.18 n=636
+  layouts=1010 drawn=2020 withActive=636
+RESULT markers=true hover=false tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=119.9 frameP90=8.34 uiP90=2.12 rasterP90=1.13 over=0.0 msg="Capture saved · 1199 e
+  update  2.358ms max=3.98 n=1201
+  replay  0ms max=0.00 n=0
+  draw    3.000ms max=6.67 n=1201
+  datasets 2.998ms max=6.67 n=1201
+  tooltip 0ms max=0.00 n=0
+  layouts=1201 drawn=1201 withActive=0
+RESULT markers=false hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=2.19 rasterP90=0.97 over=0.0 msg="Capture saved · 1200 e
+  update  2.332ms max=4.40 n=1203
+  replay  0.906ms max=2.17 n=1203
+  draw    0.453ms max=2.28 n=2406
+  datasets 0.446ms max=2.27 n=2406
+  tooltip 0.034ms max=0.09 n=324
+  layouts=1203 drawn=2406 withActive=324
+RESULT markers=false hover=false tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=1.83 rasterP90=0.95 over=0.0 msg="Capture saved · 1200 
+  update  2.238ms max=4.79 n=1203
+  replay  0ms max=0.00 n=0
+  draw    0.940ms max=2.42 n=1203
+  datasets 0.937ms max=2.42 n=1203
+  tooltip 0ms max=0.00 n=0
+  layouts=1203 drawn=1203 withActive=0
+RESULT markers=true hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=100.8 frameP90=16.67 uiP90=1.66 rasterP90=1.09 over=0.0 msg="Capture saved · 1008 e
+  update  2.316ms max=4.73 n=1011
+  replay  0.972ms max=2.15 n=1011
+  draw    2.545ms max=4.91 n=2022
+  datasets 2.528ms max=4.90 n=2022
+  tooltip 0.049ms max=0.22 n=636
+  layouts=1011 drawn=2022 withActive=636
+RESULT markers=true hover=false tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=2.10 rasterP90=1.11 over=0.0 msg="Capture saved · 1200 e
+  update  2.371ms max=4.40 n=1202
+  replay  0ms max=0.00 n=0
+  draw    2.955ms max=4.33 n=1202
+  datasets 2.953ms max=4.33 n=1202
+  tooltip 0ms max=0.00 n=0
+  layouts=1202 drawn=1202 withActive=0
+RESULT markers=false hover=true tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=2.17 rasterP90=0.97 over=0.0 msg="Capture saved · 1200 e
+  update  2.344ms max=5.89 n=1202
+  replay  0.911ms max=2.44 n=1202
+  draw    0.455ms max=2.68 n=2404
+  datasets 0.449ms max=2.55 n=2404
+  tooltip 0.035ms max=0.12 n=324
+  layouts=1202 drawn=2404 withActive=324
+RESULT markers=false hover=false tooltips=true count=20000 view=964.0x420.0 hz=120.0 fps=120.0 frameP90=8.34 uiP90=1.98 rasterP90=0.97 over=0.0 msg="Capture saved · 1200 
+  update  2.289ms max=4.42 n=1203
+  replay  0ms max=0.00 n=0
+  draw    0.942ms max=2.19 n=1203
+  datasets 0.940ms max=2.19 n=1203
+  tooltip 0ms max=0.00 n=0
+  layouts=1203 drawn=1203 withActive=0
