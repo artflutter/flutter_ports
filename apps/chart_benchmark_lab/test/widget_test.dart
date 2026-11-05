@@ -47,12 +47,60 @@ void main() {
           await tester.pumpWidget(scene(1));
           await tester.pump(const Duration(milliseconds: 20));
           expect(tester.takeException(), isNull);
+          expect(
+            find.byKey(const ValueKey('chart.unsupported')),
+            library.supports(type) ? findsNothing : findsOneWidget,
+          );
           await tester.pumpWidget(const SizedBox());
           await tester.pump(const Duration(milliseconds: 20));
         },
       );
     }
   }
+
+  testWidgets('a type without a public chart stops only that library', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    late BenchmarkController c;
+    await tester.pumpWidget(
+      ChartBenchmarkApp(onControllerReady: (value) => c = value),
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.tap(find.byKey(const ValueKey('type.radar')));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.config.type, ChartType.radar);
+    expect(find.byKey(const ValueKey('chart.unsupported')), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('library.syncfusion')));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(find.byKey(const ValueKey('chart.unsupported')), findsOneWidget);
+    expect(find.text('No radar chart'), findsOneWidget);
+    expect(
+      tester
+          .widget<OutlinedButton>(find.byKey(const ValueKey('run')))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('capture')))
+          .onPressed,
+      isNull,
+    );
+    await tester.tap(find.byKey(const ValueKey('capture.all')));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.library, isNot(ChartLibrary.syncfusion));
+    expect(find.text('Cancel all (1/3)'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('capture.all')));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.batchCapturing, isFalse);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
 
   for (final size in [
     const Size(1400, 1000),

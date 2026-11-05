@@ -70,6 +70,44 @@ void main() {
     }
   });
 
+  testWidgets('bulk capture skips a library without the chart type', (
+    tester,
+  ) async {
+    final c = BenchmarkController(const TestVSync(), random: Random(_seed));
+    try {
+      c
+        ..setViewport(const Size(600, 400), 2, 120)
+        ..selectLibrary(ChartLibrary.syncfusion)
+        ..configure(const BenchmarkConfig(type: ChartType.radar, count: 100));
+      expect(c.canRun, isFalse);
+      expect(c.message, contains('has no radar chart'));
+      c.start(capture: true);
+      expect(c.running, isFalse);
+      expect(c.capturing, isFalse);
+      expect(c.message, contains('has no radar chart'));
+      c.captureAll();
+      expect(c.batchCapturing, isTrue);
+      expect(c.batchTotal, 3);
+      for (var i = 0; i < 3; i++) {
+        expect(c.library, isNot(ChartLibrary.syncfusion));
+        expect(c.batchPosition, i + 1);
+        await _captureOne(tester);
+      }
+      expect(c.batchCapturing, isFalse);
+      expect(
+        c.results.map((r) => r.library),
+        unorderedEquals([
+          ChartLibrary.chartjs,
+          ChartLibrary.flChart,
+          ChartLibrary.graphic,
+        ]),
+      );
+      expect(c.message, contains('3 captures saved'));
+    } finally {
+      c.dispose();
+    }
+  });
+
   testWidgets('bulk capture saves every engine with isolated timing windows', (
     tester,
   ) async {

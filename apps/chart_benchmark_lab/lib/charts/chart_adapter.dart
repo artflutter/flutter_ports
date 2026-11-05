@@ -31,22 +31,53 @@ class BenchmarkChart extends StatelessWidget {
   /// Identical outer viewport for every engine.
   final Size size;
 
+  /// The outer radius of a pie, doughnut or polar area, as a share of half of
+  /// the short side.
+  static const _sliceExtent = .9;
+
+  /// The outer radius of a radar. fl_chart fixes its radar radius at this
+  /// share, so the other engines take the same share.
+  static const _radarExtent = .8;
+
+  /// The space that the point labels of a Chart.js radar take from its radius,
+  /// in logical pixels, with the 10 px label font.
+  static const _radarLabelRoom = 24.0;
+
+  /// The inner radius of a doughnut, as a share of its outer radius.
+  static const _doughnutCutout = .5;
+
+  /// The number of labels around a radar stays controlled, as on an x axis. A
+  /// radar still has one spoke per item.
+  int get _radarLabelStep => math.max(1, (config.count / 8).ceil());
+
   @override
-  Widget build(BuildContext context) => switch (library) {
-    ChartLibrary.chartjs => _chartJs(),
-    ChartLibrary.flChart => _flChart(),
-    ChartLibrary.graphic => _graphic(),
-    ChartLibrary.syncfusion => _syncfusion(),
-  };
+  Widget build(BuildContext context) {
+    if (!library.supports(config.type)) {
+      return Center(
+        key: const ValueKey('chart.unsupported'),
+        child: Text(
+          library.unsupportedReason(config.type),
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Color(0xff64748b)),
+        ),
+      );
+    }
+    return switch (library) {
+      ChartLibrary.chartjs => _chartJs(),
+      ChartLibrary.flChart => _flChart(),
+      ChartLibrary.graphic => _graphic(),
+      ChartLibrary.syncfusion => _syncfusion(),
+    };
+  }
 
   Color _color(int index) =>
-      config.alternateColors && config.type != ChartType.line && index.isOdd
+      config.alternateColors && config.type.hasItemColors && index.isOdd
       ? chartTeal
       : chartBlue;
 
   Widget _chartJs() {
     final values = frame.values;
-    final color = config.alternateColors && config.type != ChartType.line
+    final color = config.alternateColors && config.type.hasItemColors
         ? const cj.ChartValue<Color>.indexed([chartBlue, chartTeal])
         : const cj.ChartValue<Color>.constant(chartBlue);
     final points =
@@ -86,13 +117,49 @@ class BenchmarkChart extends StatelessWidget {
         pointBorderWidth: 0,
         showLine: false,
       ),
+      ChartType.bubble => cj.BubbleDataset(
+        key: const ValueKey('series'),
+        label: 'Values',
+        points: [for (final p in values) cj.DataPoint.bubble(p.x, p.y, p.r)],
+        backgroundColor: color,
+        borderWidth: 0,
+      ),
       ChartType.pie => cj.PieDataset(
         key: const ValueKey('series'),
         label: 'Values',
         data: [for (final p in values) p.y],
         backgroundColor: color,
         borderWidth: 0,
-        radius: const cj.ChartLength.percent(90),
+        radius: const cj.ChartLength.percent(_sliceExtent * 100),
+      ),
+      ChartType.doughnut => cj.DoughnutDataset(
+        key: const ValueKey('series'),
+        label: 'Values',
+        data: [for (final p in values) p.y],
+        backgroundColor: color,
+        borderWidth: 0,
+        radius: const cj.ChartLength.percent(_sliceExtent * 100),
+        cutout: const cj.ChartLength.percent(_doughnutCutout * 100),
+      ),
+      ChartType.polarArea => cj.PolarAreaDataset(
+        key: const ValueKey('series'),
+        label: 'Values',
+        data: [for (final p in values) p.y],
+        backgroundColor: color,
+        borderWidth: 0,
+      ),
+      ChartType.radar => cj.RadarDataset(
+        key: const ValueKey('series'),
+        label: 'Values',
+        data: [for (final p in values) p.y],
+        borderColor: const cj.ChartValue.constant(chartBlue),
+        borderWidth: 2,
+        backgroundColor: const cj.ChartValue.constant(Color(0x264f6bed)),
+        pointBackgroundColor: chartBlue,
+        pointBorderWidth: 0,
+        pointRadius: config.markers ? 3 : 0,
+        pointHoverRadius: 3,
+        fill: config.fill ? cj.ChartFill.start : cj.ChartFill.none,
       ),
     };
     final grid = cj.AxisGrid(
@@ -108,50 +175,100 @@ class BenchmarkChart extends StatelessWidget {
       autoSkip: true,
       extra: const {'maxTicksLimit': 5},
     );
+    final step = _radarLabelStep;
     return cj.ChartView(
       config: cj.ChartConfig(
         type: switch (config.type) {
           ChartType.line => cj.ChartKind.line,
           ChartType.bar => cj.ChartKind.bar,
           ChartType.scatter => cj.ChartKind.scatter,
+          ChartType.bubble => cj.ChartKind.bubble,
           ChartType.pie => cj.ChartKind.pie,
+          ChartType.doughnut => cj.ChartKind.doughnut,
+          ChartType.polarArea => cj.ChartKind.polarArea,
+          ChartType.radar => cj.ChartKind.radar,
         },
         datasets: [dataset],
-        labels: config.type == ChartType.bar || config.type == ChartType.pie
-            ? [for (final p in values) '${p.index}']
-            : null,
-        scales: config.type == ChartType.pie
-            ? null
-            : {
-                'x': config.type == ChartType.bar
-                    ? cj.CategoryAxis(
-                        display: config.axes || config.grid,
-                        grid: grid,
-                        ticks: ticks,
-                      )
-                    : cj.LinearAxis(
-                        min: 0,
-                        max: 100,
-                        display: config.axes || config.grid,
-                        grid: grid,
-                        ticks: ticks,
-                      ),
-                'y': cj.LinearAxis(
-                  min: 0,
-                  max: 100,
-                  display: config.axes || config.grid,
-                  grid: grid,
-                  ticks: ticks,
-                ),
+        labels: switch (config.type) {
+          ChartType.line || ChartType.scatter || ChartType.bubble => null,
+          _ => [for (final p in values) '${p.index}'],
+        },
+        scales: switch (config.type) {
+          ChartType.pie || ChartType.doughnut => null,
+          ChartType.polarArea => const {
+            'r': cj.RadialLinearAxis(
+              min: 0,
+              max: 100,
+              display: false,
+              pointLabelsDisplay: false,
+              angleLinesDisplay: false,
+            ),
+          },
+          ChartType.radar => {
+            'r': cj.RadialLinearAxis(
+              min: 0,
+              max: 100,
+              display: config.axes || config.grid,
+              pointLabelsDisplay: config.axes,
+              pointLabelsFont: const TextStyle(fontSize: 10),
+              angleLinesDisplay: config.grid,
+              angleLinesColor: chartGrid,
+              angleLinesLineWidth: 1,
+              grid: grid.copyWith(extra: const {'circular': true}),
+              ticks: ticks,
+              extra: {
+                'pointLabels': {
+                  'callback': (Object? label, num index) =>
+                      index % step == 0 ? label : '',
+                },
               },
+            ),
+          },
+          _ => {
+            'x': config.type == ChartType.bar
+                ? cj.CategoryAxis(
+                    display: config.axes || config.grid,
+                    grid: grid,
+                    ticks: ticks,
+                  )
+                : cj.LinearAxis(
+                    min: 0,
+                    max: 100,
+                    display: config.axes || config.grid,
+                    grid: grid,
+                    ticks: ticks,
+                  ),
+            'y': cj.LinearAxis(
+              min: 0,
+              max: 100,
+              display: config.axes || config.grid,
+              grid: grid,
+              ticks: ticks,
+            ),
+          },
+        },
         animation: cj.ChartAnimation.none,
         legend: const cj.ChartLegend(display: false),
         tooltip: cj.ChartTooltip(enabled: config.tooltips),
         responsive: true,
         maintainAspectRatio: false,
-        padding: EdgeInsets.zero,
+        // A radial scale has no radius option: the padding gives its share.
+        padding: switch (config.type) {
+          ChartType.polarArea => EdgeInsets.all(
+            size.shortestSide * (1 - _sliceExtent) / 2,
+          ),
+          ChartType.radar => EdgeInsets.all(
+            math.max(
+              0,
+              size.shortestSide * (1 - _radarExtent) / 2 -
+                  (config.axes ? _radarLabelRoom : 0),
+            ),
+          ),
+          _ => EdgeInsets.zero,
+        },
         extra: {
-          // The generator supplies sorted, finite numeric XY points.
+          // The generator supplies sorted, finite numeric XY points. A bubble
+          // keeps its parsing: the radius of a bubble comes from that step.
           if (config.type == ChartType.line || config.type == ChartType.scatter)
             'parsing': false,
           'events': config.tooltips
@@ -295,6 +412,7 @@ class BenchmarkChart extends StatelessWidget {
           duration: Duration.zero,
         );
       case ChartType.scatter:
+      case ChartType.bubble:
         return fl.ScatterChart(
           fl.ScatterChartData(
             minX: 0,
@@ -311,7 +429,7 @@ class BenchmarkChart extends StatelessWidget {
                   p.x,
                   p.y,
                   dotPainter: fl.FlDotCirclePainter(
-                    radius: 3,
+                    radius: config.type == ChartType.bubble ? p.r : 3,
                     color: _color(p.index),
                   ),
                 ),
@@ -320,20 +438,68 @@ class BenchmarkChart extends StatelessWidget {
           duration: Duration.zero,
         );
       case ChartType.pie:
+      case ChartType.doughnut:
+      case ChartType.polarArea:
+        final outer = size.shortestSide / 2 * _sliceExtent;
+        final hole = config.type == ChartType.doughnut
+            ? outer * _doughnutCutout
+            : 0.0;
+        final polar = config.type == ChartType.polarArea;
         return fl.PieChart(
           fl.PieChartData(
-            centerSpaceRadius: 0,
+            centerSpaceRadius: hole,
             sectionsSpace: 0,
             startDegreeOffset: -90,
             pieTouchData: fl.PieTouchData(enabled: config.tooltips),
             sections: [
               for (final p in values)
                 fl.PieChartSectionData(
-                  value: p.y,
+                  value: polar ? 1 : p.y,
                   color: _color(p.index),
-                  radius: math.min(size.width, size.height) * .45,
+                  radius: polar ? outer * p.y / 100 : outer - hole,
                   showTitle: false,
                 ),
+            ],
+          ),
+          duration: Duration.zero,
+        );
+      case ChartType.radar:
+        final side = config.grid
+            ? const BorderSide(color: chartGrid)
+            : const BorderSide(color: Colors.transparent, width: 0);
+        final step = _radarLabelStep;
+        const label = TextStyle(fontSize: 10, color: Color(0xff677489));
+        return fl.RadarChart(
+          fl.RadarChartData(
+            radarBorderData: side,
+            tickBorderData: side,
+            gridBorderData: side,
+            tickCount: 4,
+            // The default offset puts the top and bottom labels outside a plot
+            // that fills its height.
+            titlePositionPercentageOffset: .1,
+            ticksTextStyle: config.axes
+                ? label
+                : const TextStyle(fontSize: 10, color: Colors.transparent),
+            titleTextStyle: label,
+            getTitle: config.axes
+                ? (index, _) => fl.RadarChartTitle(
+                    text: index % step == 0 ? '$index' : '',
+                  )
+                : null,
+            radarTouchData: fl.RadarTouchData(enabled: config.tooltips),
+            dataSets: [
+              fl.RadarDataSet(
+                dataEntries: [
+                  for (final p in values) fl.RadarEntry(value: p.y),
+                ],
+                fillColor: config.fill
+                    ? const Color(0x264f6bed)
+                    : Colors.transparent,
+                borderColor: chartBlue,
+                borderWidth: 2,
+                entryRadius: config.markers ? 3 : 0,
+              ),
             ],
           ),
           duration: Duration.zero,
@@ -342,8 +508,14 @@ class BenchmarkChart extends StatelessWidget {
   }
 
   Widget _graphic() {
+    final slices =
+        config.type == ChartType.pie || config.type == ChartType.doughnut;
+    final radial =
+        slices ||
+        config.type == ChartType.polarArea ||
+        config.type == ChartType.radar;
     final variables = <String, gr.Variable<Sample, dynamic>>{
-      if (config.type != ChartType.pie)
+      if (!radial)
         'x': gr.Variable(
           accessor: (p) => p.x,
           scale: gr.LinearScale(min: 0, max: 100, ticks: [0, 25, 50, 75, 100]),
@@ -352,12 +524,15 @@ class BenchmarkChart extends StatelessWidget {
         accessor: (p) => p.y,
         scale: gr.LinearScale(min: 0, max: 100, ticks: [0, 25, 50, 75, 100]),
       ),
-      if (config.type == ChartType.bar || config.type == ChartType.pie)
+      if (config.type == ChartType.bar || radial)
         'item': gr.Variable(
           accessor: (p) => '${p.index}',
-          scale: gr.OrdinalScale(tickCount: 5),
+          // A radar has one spoke per item, so one tick per item.
+          scale: gr.OrdinalScale(
+            tickCount: config.type == ChartType.radar ? null : 5,
+          ),
         ),
-      if (config.alternateColors && config.type != ChartType.line)
+      if (config.alternateColors && config.type.hasItemColors)
         'index': gr.Variable(accessor: (p) => p.index),
     };
     gr.ColorEncode color() => config.alternateColors
@@ -408,7 +583,17 @@ class BenchmarkChart extends StatelessWidget {
         );
       case ChartType.scatter:
         marks.add(gr.PointMark(color: color(), size: gr.SizeEncode(value: 6)));
+      case ChartType.bubble:
+        marks.add(
+          gr.PointMark(
+            color: color(),
+            size: gr.SizeEncode(
+              encoder: (tuple) => bubbleRadius(tuple['y'] as double) * 2,
+            ),
+          ),
+        );
       case ChartType.pie:
+      case ChartType.doughnut:
         marks.add(
           gr.IntervalMark(
             position: gr.Varset('share') / gr.Varset('item'),
@@ -416,29 +601,84 @@ class BenchmarkChart extends StatelessWidget {
             modifiers: [gr.StackModifier()],
           ),
         );
-    }
-    final axes = <gr.AxisGuide<dynamic>>[];
-    if (config.type != ChartType.pie && (config.axes || config.grid)) {
-      for (final variable in [
-        if (config.type == ChartType.bar) 'item' else 'x',
-        'y',
-      ]) {
-        axes.add(
-          gr.AxisGuide(
-            variable: variable,
-            label: config.axes
-                ? gr.LabelStyle(
-                    textStyle: const TextStyle(
-                      fontSize: 10,
-                      color: Color(0xff677489),
-                    ),
-                  )
-                : null,
-            grid: config.grid
-                ? gr.PaintStyle(strokeColor: chartGrid, strokeWidth: 1)
-                : null,
+      case ChartType.polarArea:
+        marks.add(
+          gr.IntervalMark(
+            position: gr.Varset('item') * gr.Varset('y'),
+            color: color(),
           ),
         );
+      case ChartType.radar:
+        gr.Varset position() => gr.Varset('item') * gr.Varset('y');
+        if (config.fill) {
+          marks.add(
+            gr.AreaMark(
+              position: position(),
+              color: gr.ColorEncode(value: const Color(0x264f6bed)),
+              shape: gr.ShapeEncode(value: gr.BasicAreaShape(loop: true)),
+            ),
+          );
+        }
+        marks.add(
+          gr.LineMark(
+            position: position(),
+            color: gr.ColorEncode(value: chartBlue),
+            size: gr.SizeEncode(value: 2),
+            shape: gr.ShapeEncode(value: gr.BasicLineShape(loop: true)),
+          ),
+        );
+        if (config.markers) {
+          marks.add(
+            gr.PointMark(
+              position: position(),
+              color: gr.ColorEncode(value: chartBlue),
+              size: gr.SizeEncode(value: 6),
+            ),
+          );
+        }
+    }
+    final axes = <gr.AxisGuide<dynamic>>[];
+    if (config.type.hasAxes && (config.axes || config.grid)) {
+      final labelStyle = config.axes
+          ? gr.LabelStyle(
+              textStyle: const TextStyle(
+                fontSize: 10,
+                color: Color(0xff677489),
+              ),
+            )
+          : null;
+      final gridStyle = config.grid
+          ? gr.PaintStyle(strokeColor: chartGrid, strokeWidth: 1)
+          : null;
+      if (config.type == ChartType.radar) {
+        final step = _radarLabelStep;
+        axes
+          ..add(
+            gr.AxisGuide(
+              variable: 'item',
+              position: 1,
+              labelMapper: config.axes
+                  ? (_, index, _) => index % step == 0 ? labelStyle : null
+                  : null,
+              grid: gridStyle,
+            ),
+          )
+          ..add(
+            gr.AxisGuide(variable: 'y', label: labelStyle, grid: gridStyle),
+          );
+      } else {
+        for (final variable in [
+          if (config.type == ChartType.bar) 'item' else 'x',
+          'y',
+        ]) {
+          axes.add(
+            gr.AxisGuide(
+              variable: variable,
+              label: labelStyle,
+              grid: gridStyle,
+            ),
+          );
+        }
       }
     }
     return gr.Chart<Sample>(
@@ -449,13 +689,25 @@ class BenchmarkChart extends StatelessWidget {
       // change data.
       rebuild: false,
       changeData: config.workload == Workload.live,
-      transforms: config.type == ChartType.pie
-          ? [gr.Proportion(variable: 'y', as: 'share')]
-          : null,
-      coord: config.type == ChartType.pie
-          ? gr.PolarCoord(transposed: true, dimCount: 1, radiusRange: [0, .9])
-          : null,
-      padding: (_) => config.axes && config.type != ChartType.pie
+      transforms: slices ? [gr.Proportion(variable: 'y', as: 'share')] : null,
+      coord: switch (config.type) {
+        ChartType.pie => gr.PolarCoord(
+          transposed: true,
+          dimCount: 1,
+          radiusRange: [0, _sliceExtent],
+        ),
+        ChartType.doughnut => gr.PolarCoord(
+          transposed: true,
+          dimCount: 1,
+          radiusRange: [_sliceExtent * _doughnutCutout, _sliceExtent],
+        ),
+        ChartType.polarArea => gr.PolarCoord(radiusRange: [0, _sliceExtent]),
+        // Unlike a radius range, this also limits the spokes and the labels.
+        ChartType.radar => gr.PolarCoord(endRadius: _radarExtent),
+        _ => null,
+      },
+      padding: (_) =>
+          config.axes && config.type.hasAxes && config.type != ChartType.radar
           ? const EdgeInsets.fromLTRB(30, 0, 0, 22)
           : EdgeInsets.zero,
       axes: axes,
@@ -478,19 +730,41 @@ class BenchmarkChart extends StatelessWidget {
       borderWidth: 0,
       color: chartBlue,
     );
-    if (config.type == ChartType.pie) {
+    if (!config.type.hasAxes) {
+      const radius = '${_sliceExtent * 100}%';
       return sf.SfCircularChart(
         margin: EdgeInsets.zero,
         tooltipBehavior: sf.TooltipBehavior(enable: config.tooltips),
         series: <sf.CircularSeries<Sample, int>>[
-          sf.PieSeries<Sample, int>(
-            dataSource: frame.values,
-            xValueMapper: (p, _) => p.index,
-            yValueMapper: (p, _) => p.y,
-            pointColorMapper: (p, _) => _color(p.index),
-            animationDuration: 0,
-            radius: '90%',
-          ),
+          switch (config.type) {
+            ChartType.doughnut => sf.DoughnutSeries<Sample, int>(
+              dataSource: frame.values,
+              xValueMapper: (p, _) => p.index,
+              yValueMapper: (p, _) => p.y,
+              pointColorMapper: (p, _) => _color(p.index),
+              animationDuration: 0,
+              radius: radius,
+              innerRadius: '${_doughnutCutout * 100}%',
+            ),
+            // The public form of a polar area: equal slices, a radius for each.
+            ChartType.polarArea => sf.PieSeries<Sample, int>(
+              dataSource: frame.values,
+              xValueMapper: (p, _) => p.index,
+              yValueMapper: (_, _) => 1,
+              pointColorMapper: (p, _) => _color(p.index),
+              pointRadiusMapper: (p, _) => '${p.y * _sliceExtent}%',
+              animationDuration: 0,
+              radius: radius,
+            ),
+            _ => sf.PieSeries<Sample, int>(
+              dataSource: frame.values,
+              xValueMapper: (p, _) => p.index,
+              yValueMapper: (p, _) => p.y,
+              pointColorMapper: (p, _) => _color(p.index),
+              animationDuration: 0,
+              radius: radius,
+            ),
+          },
         ],
       );
     }
@@ -554,6 +828,23 @@ class BenchmarkChart extends StatelessWidget {
           pointColorMapper: (p, _) => _color(p.index),
           color: chartBlue,
           width: .8,
+          animationDuration: 0,
+        ),
+      );
+    } else if (config.type == ChartType.bubble) {
+      series.add(
+        sf.BubbleSeries<Sample, num>(
+          dataSource: frame.values,
+          xValueMapper: (p, _) => p.x,
+          yValueMapper: (p, _) => p.y,
+          // The series divides each size by the largest size, then scales it
+          // into the range below, so y gives the shared radius formula. A
+          // segment draws at twice its radius, so the range is half of it.
+          sizeValueMapper: (p, _) => p.y,
+          minimumRadius: bubbleRadius(0) / 2,
+          maximumRadius: bubbleRadius(100) / 2,
+          pointColorMapper: (p, _) => _color(p.index),
+          color: chartBlue,
           animationDuration: 0,
         ),
       );

@@ -1004,7 +1004,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Preserve control keys, benchmark behavior and the 412 x 915 host viewport.
   - Each control has a `ValueKey`. A test finds a segment by its key.
 - `apps/chart_benchmark_lab`: the independent cross-library public-widget test
-  bed (line/bar/scatter/pie; Chart.js port, fl_chart, Graphic and Syncfusion).
+  bed (the eight Chart.js types; Chart.js port, fl_chart, Graphic and Syncfusion).
+  `ChartLibrary.supports` excludes the Syncfusion radar: that package has no radar
+  series, so the lab shows a message and a batch skips it. Do not draw a stand-in.
   Run `dart run melos run benchmark:macos` for profile measurements. Dependencies
   are pinned; Syncfusion is included under the owner's confirmed eligible license.
   Shared seeded data and controls live in `lib/benchmark`, adapters in

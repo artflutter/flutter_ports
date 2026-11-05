@@ -24,9 +24,21 @@ enum ChartLibrary {
 
   /// Engine identity color, independent of chart styling.
   final Color color;
+
+  /// Whether the public API of this library can draw [type].
+  ///
+  /// Syncfusion 35.1.43 has no radar or polar series. The harness does not
+  /// stand in another drawing for a missing chart, because that would measure
+  /// the stand-in and not the library.
+  bool supports(ChartType type) =>
+      !(this == syncfusion && type == ChartType.radar);
+
+  /// The reason that a chart of [type] does not run on this library.
+  String unsupportedReason(ChartType type) =>
+      '$label $version has no ${type.label.toLowerCase()} chart.';
 }
 
-/// Common chart types implemented by every adapter.
+/// The eight chart types of Chart.js, on every adapter that has them.
 enum ChartType {
   /// Ordered x/y line.
   line('Line', Icons.show_chart),
@@ -37,8 +49,20 @@ enum ChartType {
   /// Independent x/y points.
   scatter('Scatter', Icons.scatter_plot),
 
+  /// Independent x/y points with a radius for each point.
+  bubble('Bubble', Icons.bubble_chart),
+
   /// Positive values rendered as slices.
-  pie('Pie', Icons.pie_chart_outline);
+  pie('Pie', Icons.pie_chart_outline),
+
+  /// Positive values rendered as slices of a ring.
+  doughnut('Doughnut', Icons.donut_large),
+
+  /// Equal-angle slices with a radius for each value.
+  polarArea('Polar area', Icons.incomplete_circle),
+
+  /// A closed line around a center, with one spoke per value.
+  radar('Radar', Icons.radar);
 
   const ChartType(this.label, this.icon);
 
@@ -47,6 +71,18 @@ enum ChartType {
 
   /// Control icon.
   final IconData icon;
+
+  /// Whether the line settings for point markers and area fill apply.
+  bool get drawsLine => this == line || this == radar;
+
+  /// Whether the axis and grid settings apply on every library with this type.
+  ///
+  /// A polar area has no axes here: fl_chart and Syncfusion draw it with a pie
+  /// chart, which has no axis or grid.
+  bool get hasAxes => this != pie && this != doughnut && this != polarArea;
+
+  /// Whether the alternating item colors apply.
+  bool get hasItemColors => !drawsLine;
 }
 
 /// Public-widget workload; these are not internal renderer draw-only calls.
@@ -101,22 +137,22 @@ class BenchmarkConfig {
   /// Shared update workload.
   final Workload workload;
 
-  /// Line point markers.
+  /// Point markers of a line or a radar.
   final bool markers;
 
   /// Library-native smooth line geometry.
   final bool curved;
 
-  /// Fill under a line.
+  /// Fill under a line or inside a radar.
   final bool fill;
 
-  /// Cartesian axis labels.
+  /// Axis labels, of cartesian axes or around a radar.
   final bool axes;
 
-  /// Cartesian grid lines.
+  /// Grid lines, of cartesian axes or the rings and spokes of a radar.
   final bool grid;
 
-  /// Alternating colors for bars, scatter points and slices.
+  /// Alternating colors for bars, points, bubbles and slices.
   final bool alternateColors;
 
   /// Enable the selected library's pointer tooltip behavior.
@@ -168,12 +204,12 @@ class BenchmarkConfig {
     'items': count,
     'workload': workload.name,
     'seed': seed,
-    'markers': type == ChartType.line && markers,
+    'markers': type.drawsLine && markers,
     'curved': type == ChartType.line && curved,
-    'fill': type == ChartType.line && fill,
-    'axes': type != ChartType.pie && axes,
-    'grid': type != ChartType.pie && grid,
-    'alternateColors': type != ChartType.line && alternateColors,
+    'fill': type.drawsLine && fill,
+    'axes': type.hasAxes && axes,
+    'grid': type.hasAxes && grid,
+    'alternateColors': type.hasItemColors && alternateColors,
     'tooltips': tooltips,
     'overlayLabels': overlayLabels,
     'rotateLabels': overlayLabels > 0 && rotateLabels,

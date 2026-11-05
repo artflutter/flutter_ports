@@ -23,6 +23,61 @@ void main() {
       }
     },
   );
+  test('bubble radius grows with the value in a fixed range', () {
+    expect(bubbleRadius(0), 2);
+    expect(bubbleRadius(100), 8);
+    final frame = DatasetGenerator(100, 7).frame(0);
+    for (final p in frame.values) {
+      expect(p.r, inInclusiveRange(2, 8));
+    }
+  });
+  test('effective settings keep only what applies to each chart type', () {
+    Map<String, Object> effective(ChartType type) => BenchmarkConfig(
+      type: type,
+      markers: true,
+      curved: true,
+      fill: true,
+      axes: true,
+      grid: true,
+      alternateColors: true,
+    ).toJson();
+    for (final type in ChartType.values) {
+      final json = effective(type);
+      final expected = switch (type) {
+        ChartType.line => (true, true, true, true, false),
+        ChartType.bar ||
+        ChartType.scatter ||
+        ChartType.bubble => (false, false, false, true, true),
+        ChartType.pie ||
+        ChartType.doughnut ||
+        ChartType.polarArea => (false, false, false, false, true),
+        ChartType.radar => (true, false, true, true, false),
+      };
+      expect(
+        (
+          json['markers'],
+          json['curved'],
+          json['fill'],
+          json['axes'],
+          json['alternateColors'],
+        ),
+        expected,
+        reason: type.name,
+      );
+      expect(json['grid'], json['axes'], reason: type.name);
+    }
+  });
+  test('only the radar of Syncfusion has no public chart', () {
+    for (final library in ChartLibrary.values) {
+      for (final type in ChartType.values) {
+        expect(
+          library.supports(type),
+          !(library == ChartLibrary.syncfusion && type == ChartType.radar),
+          reason: '${library.name} ${type.name}',
+        );
+      }
+    }
+  });
   test(
     'capture excludes warmup, stale batches and frames at/after the end',
     () {

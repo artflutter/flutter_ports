@@ -213,10 +213,17 @@ class BenchmarkController extends ChangeNotifier {
   /// One-based progress within the active batch.
   int get batchPosition => (_batchIndex ?? 0) + 1;
 
+  /// Number of engines in the active or the last batch.
+  int get batchTotal => _batchOrder.length;
+
+  /// Whether the selected library can draw the selected chart type.
+  bool get canRun => library.supports(config.type);
+
   /// Settings stay fixed through warmup, capture and timing-batch draining.
   bool get controlsLocked => capturing || finishing || batchCapturing;
 
-  /// Capture every library using the current duration and unchanged settings.
+  /// Capture every library that has the selected chart type, using the current
+  /// duration and unchanged settings.
   /// Each pass takes a new random engine order, so no engine always runs first.
   /// Each engine gets its own reset, two-second warmup and timing window.
   void captureAll() {
@@ -227,11 +234,14 @@ class BenchmarkController extends ChangeNotifier {
       notifyListeners();
       return;
     }
-    _batchOrder = ChartLibrary.values.toList()..shuffle(_random);
+    _batchOrder = ChartLibrary.values.where(_supportsType).toList()
+      ..shuffle(_random);
     _batchIndex = 0;
     library = _batchOrder.first;
     _begin(capture: true);
   }
+
+  bool _supportsType(ChartLibrary value) => value.supports(config.type);
 
   /// Current comparable workload identifier.
   String get comparisonKey =>
@@ -268,7 +278,9 @@ class BenchmarkController extends ChangeNotifier {
     _generator = DatasetGenerator(config.count, config.seed);
     frames.value = _generator.frame(0);
     readout.value = const RunReadout(FrameMetrics(), 0, 0);
-    message = 'Ready. Measurements exclude the first 2 seconds.';
+    message = canRun
+        ? 'Ready. Measurements exclude the first 2 seconds.'
+        : library.unsupportedReason(config.type);
   }
 
   /// Start a fresh live or timed measurement, always from the same seed/step.
@@ -281,6 +293,11 @@ class BenchmarkController extends ChangeNotifier {
     if (running || finishing || viewport.isEmpty) return;
     if (!windowVisible) {
       message = 'Make the chart window visible before running.';
+      notifyListeners();
+      return;
+    }
+    if (!canRun) {
+      message = library.unsupportedReason(config.type);
       notifyListeners();
       return;
     }
@@ -417,8 +434,7 @@ class BenchmarkController extends ChangeNotifier {
           return;
         } else {
           _batchIndex = null;
-          message =
-              'Batch complete · ${ChartLibrary.values.length} captures saved';
+          message = 'Batch complete · ${_batchOrder.length} captures saved';
         }
       }
       notifyListeners();
