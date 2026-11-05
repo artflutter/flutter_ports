@@ -1,0 +1,9 @@
+import subprocess
+from pathlib import Path
+out=Path('.dart_tool/native_map_cache')
+for name in ['frames','capture','analyze']:
+ print('PHASE',name,flush=True)
+ args=['python3',str(out/(name+'.py'))]
+ if name in ['frames','capture']:args=['caffeinate','-dims',*args]
+ with (out/(name+'-run.log')).open('a') as f:subprocess.run(args,stdout=f,stderr=subprocess.STDOUT,check=True)
+ print('DONE',name,flush=True)

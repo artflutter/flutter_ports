@@ -1,0 +1,16 @@
+from pathlib import Path
+import subprocess,shutil,json,hashlib,sys
+root=Path.cwd();out=root/'.dart_tool/native_map_cache';iso=Path('/tmp/indexed-triage-work')
+variant=sys.argv[1] if len(sys.argv)>1 else 'production'
+if variant=='baseline':
+ source=subprocess.check_output(['git','archive','f87900a','packages/flutter_chartjs_port/lib'])
+ subprocess.run(['tar','-x','-C',str(iso)],input=source,check=True)
+else: subprocess.run(['rsync','-a',str(root/'packages/flutter_chartjs_port/lib')+'/',str(iso/'packages/flutter_chartjs_port/lib')+'/'],check=True)
+with (out/(variant+'-build.log')).open('w') as log:
+ subprocess.run(['flutter','build','macos','--profile','--no-pub','--target','../../.dart_tool/indexed_triage/probe.dart'],cwd=iso/'apps/chartjs_gallery',stdout=log,stderr=subprocess.STDOUT,check=True)
+app=Path('/tmp/native-map-cache-'+variant+'.app')
+subprocess.run(['ditto',str(iso/'apps/chartjs_gallery/build/macos/Build/Products/Profile/chartjs_gallery.app'),str(app)],check=True)
+subprocess.run(['codesign','--force','--sign','-','--entitlements',str(root/'packages/flutter_chartjs_port/doc/benchmarks/category-layout/probe.entitlements'),str(app)],check=True)
+metadata={'head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'librarySha256':{str(p.relative_to(iso)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (iso/'packages/flutter_chartjs_port/lib').rglob('*.dart')},'frameworkSha256':hashlib.sha256((app/'Contents/Frameworks/App.framework/App').read_bytes()).hexdigest()}
+(out/(variant+'-build.json')).write_text(json.dumps(metadata,indent=2)+'\n')
+print('Build complete',flush=True)

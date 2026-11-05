@@ -7386,3 +7386,44 @@ matrix. The six final variants pass 54 existing focused regressions each plus
 extra projection/cache/copy cases. Generator edits are regenerated rather than
 hand-editing .g.dart files. Production source hashes remain unchanged; this
 investigation changes no runtime behavior or data-only guard.
+
+## 59. Production bounded weak coordinate-map cache
+
+2026-11-05. [ADR 0086](adr/0086-weak-point-coordinate-cache.md),
+[complete verification](benchmarks/coordinate-cache/README.md).
+
+LineController retains weak identities of accepted SDK coordinate maps at
+absolute point indexes. Each prepared indexed-color loop fills at most 1,024 new
+entries. The classifier itself remains loop-local; values/routes, callbacks,
+geometry, fresh options and fallback guards remain live. Unsupported paths clear
+storage. Scatter and data-only eligibility are unchanged.
+
+Matched native macOS A/B/B/A runs on the built-in display (maximum 120 Hz, DPR2,
+1036×520 chart) measure 20k indexed points with 200 static labels. Mean UI falls
+13.22→9.21 ms without connections (30.3%) and 14.94→10.89 ms with connections
+(27.1%). Connected UI p90 changes 16.05/16.86→11.99/12.05 ms. Replacement-data
+means change 17.46→17.05 and 19.49→19.14 ms, with comparable tails; the uncapped
+prototype's churn regression is absent in this sample. Static/scriptable
+controls differ by about 0.05 ms, with no targeted speedup claimed.
+
+All 32 indexed cells meet the near-60 screen in the complete 96-case matrix.
+Overall 90/96 meet mean FPS ≥59 and UI/raster p90 ≤16.67 ms. The six misses are
+connected scriptable full updates or data-only fallbacks, at 57.2–58.6 FPS.
+The two slowest cells run around 60 FPS for both binaries in longer matched
+repeats. Every-mode sustained 60 FPS is not established. An occluded animation
+batch was rejected and rerun; all accepted window logs are valid.
+
+The final CPU profile has runtime-type retrieval at about 0.12% of sampled
+stacks, compared with 28.1% in the triage baseline. Equal five-second GC windows
+show mean GC-labelled UI time 1.72→1.61 ms/frame and slow-decile mean 2.66→2.58 ms.
+The main gain is CPU classification work. Heap snapshots show 19,998 additional
+weak entries (639,936 bytes) plus the cache and 20k-slot array; no old map is
+strongly retained by the cache. Initial 60-frame means also improve, but initial
+construction still has approximately 31 ms maximum UI frames.
+
+Validation: 11,068 workspace VM tests; 4,212 tests per browser backend; formatting,
+analysis, spec cases, fixtures, regenerated parity and all seven port checks.
+Regressions cover bounded fill, replacement/mixed input, constructor differences,
+growth/shrink, partial ranges, custom observations, routes, live values, active
+callback mutation, exceptions and recovery. Two early DDC test-fixture assumptions
+were corrected without widening the existing native-container allowlist.

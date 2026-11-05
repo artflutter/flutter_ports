@@ -1,0 +1,52 @@
+from pathlib import Path
+import json,statistics,hashlib,shutil,gzip
+w=Path(__file__).resolve().parent
+root=Path.cwd();out=root/'packages/flutter_chartjs_port/doc/benchmarks/coordinate-cache';out.mkdir(exist_ok=True)
+def load(name):return json.loads((w/name).read_text())
+def avg(xs):return statistics.mean(xs)
+repeat=load('repeats.json');comparison=[]
+for shape,runs in repeat.items():
+ for connected in [False,True]:
+  a=[r for k,rows in runs.items() if k.startswith('a') for r in rows if r['connected']==connected]
+  b=[r for k,rows in runs.items() if k.startswith('b') for r in rows if r['connected']==connected]
+  before=avg([r['buildMs'] for r in a]);after=avg([r['buildMs'] for r in b])
+  comparison.append(dict(shape=shape,connected=connected,beforeMeanUiMs=before,afterMeanUiMs=after,reductionPct=100*(1-after/before),beforeP90=[r['buildP90Ms'] for r in a],afterP90=[r['buildP90Ms'] for r in b],beforeFps=[r['fps'] for r in a],afterFps=[r['fps'] for r in b]))
+matrix=load('matrix.json');rows=[r for rs in matrix.values() for r in rs]
+misses=[r for r in rows if r['fps']<59 or r['buildP90Ms']>1000/60 or r['rasterP90Ms']>1000/60]
+summary={'worstRepeats':load('worst-repeats.json') if (w/'worst-repeats.json').exists() else {},'repeats':repeat,'comparison':comparison,'controls':{v:load('controls-'+v+'.json') for v in ['baseline','production']},'matrix':matrix,'near60Misses':misses,'frameTimings':sum(r['frameTimings'] for r in rows),'cold':{}}
+for p in w.glob('repeat-*.results'):
+ cold=[json.loads(l.split(' ',1)[1]) for l in p.read_text().splitlines() if l.startswith('COLD_FRAMES ')]
+ if cold:
+  r=cold[0];v=r['firstBuildMs'];r.update(uiMeanMs=avg(v),uiP90Ms=sorted(v)[int(len(v)*.9)-1],uiMaxMs=max(v));summary['cold'][p.stem]=r
+visibility={}
+for p in w.glob('*.results.window'):
+ events=[json.loads(l) for l in p.read_text().splitlines()];ready=next(e for e in events if e['event']=='prepared')
+ assert (ready['width'],ready['height'],ready['dpr'],ready['displayId'],ready['maxFps'])==(1100,900,2,1,120)
+ assert not any(e['time']>ready['time']+1 and (e['occluded'] or e['appHidden'] or e['miniaturized'] or (e['width'],e['height'],e['dpr'],e['displayId'],e['maxFps'])!=(1100,900,2,1,120)) for e in events),p
+ visibility[p.name]=events
+meta=load('production-build.json');assert all(hashlib.sha256((root/f).read_bytes()).hexdigest()==h for f,h in meta['librarySha256'].items())
+meta['baseline']=load('baseline-build.json');meta['date']='2026-11-05';meta['runtimeDelta']=[f for f,h in meta['librarySha256'].items() if meta['baseline']['librarySha256'][f]!=h]
+for name,obj in [('summary.json',summary),('metadata.json',meta),('visibility.json',visibility),('validation.json',load('production-results.json'))]:
+ (out/name).write_text(json.dumps(obj,indent=2)+'\n')
+for p in w.iterdir():
+ if not p.is_file() or p.name in ['implement.py','cache_tests.txt','controller_tests.txt']: continue
+ if p.suffix in ['.py','.dart']:shutil.copyfile(p,out/(p.name+'.txt'))
+ else:
+  with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+for p in (w/'rejected-occlusion').glob('*'):
+ if p.is_file():
+  with gzip.open(out/('rejected-occlusion-'+p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+for attempt in ['attempt1','attempt2']:
+ p=w/attempt/'production-test-web.log'
+ if p.exists():
+  with gzip.open(out/(attempt+'-web.log.gz'),'wb') as f:f.write(p.read_bytes())
+for name in ['probe.dart','pixels.dart']:shutil.copyfile(Path('/tmp/indexed-triage-work/.dart_tool/indexed_triage')/name,out/(name+'.txt'))
+shutil.copyfile(Path('/tmp/indexed-triage-work/apps/chartjs_gallery/macos/Runner/MainFlutterWindow.swift'),out/'MainFlutterWindow.swift.txt')
+shutil.copyfile(root/'packages/flutter_chartjs_port/doc/benchmarks/indexed-update-triage/churn-harness.patch',out/'churn-harness.patch')
+print('| Workload | Connected | Mean UI before → after | Reduction | UI p90 before → after |')
+print('| --- | --- | ---: | ---: | --- |')
+for r in comparison:
+ print(f"| {r['shape']} | {'on' if r['connected'] else 'off'} | {r['beforeMeanUiMs']:.2f} → {r['afterMeanUiMs']:.2f} ms | {r['reductionPct']:.1f}% | {' / '.join(f'{x:.2f}' for x in r['beforeP90'])} → {' / '.join(f'{x:.2f}' for x in r['afterP90'])} ms |")
+print('Matrix:',len(rows),'misses:',len(misses),'timings:',summary['frameTimings'])
+for r in misses: print({k:r[k] for k in ['call','style','connected','labels','spin','fps','buildP90Ms','rasterP90Ms']})
+print('Startup:',{k:{v:r[v] for v in ['uiMeanMs','uiP90Ms','uiMaxMs']} for k,r in summary['cold'].items()})

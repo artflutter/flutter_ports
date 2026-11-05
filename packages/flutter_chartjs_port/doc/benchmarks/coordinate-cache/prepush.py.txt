@@ -1,0 +1,11 @@
+import subprocess,time,json
+from pathlib import Path
+root=Path.cwd(); out=root/'.dart_tool/native_map_cache'; results=[]
+for args in [['format:check'],['analyze'],['test','--no-select'],['test:web'],['test:cases'],['test:fixtures'],['check:port']]:
+ name=args[0].replace(':','-'); start=time.time()
+ with (out/('prepush-'+name+'.log')).open('w') as f:
+  p=subprocess.run(['dart','run','melos','run',*args],stdout=f,stderr=subprocess.STDOUT)
+ results.append(dict(check=args[0],exit=p.returncode,seconds=time.time()-start))
+ (out/'prepush-results.json').write_text(json.dumps(results,indent=2))
+ print(name,p.returncode,round(time.time()-start,1),flush=True)
+ if p.returncode: raise SystemExit(p.returncode)

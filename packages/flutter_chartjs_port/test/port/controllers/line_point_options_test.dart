@@ -358,4 +358,105 @@ void main() {
     expect(calls[0], calls[1]);
     expect(states[0], states[1]);
   });
+  test(
+    'warm identity slots survive replacement, resizing and mode changes',
+    () {
+      final ca = _config(line: true);
+      final cb = _config(line: true);
+      final a = _chart(ca);
+      final b = _chart(cb, reference: true);
+      for (var step = 0; step < 9; step++) {
+        for (final cfg in [ca, cb]) {
+          final ds = _dataset(cfg);
+          final data = ds['data']! as List<Object?>;
+          switch (step) {
+            case 1:
+              (data[4]! as Map<String, Object?>)['y'] = null;
+            case 2:
+              (data[4]! as Map<String, Object?>)['y'] = '2';
+            case 3:
+              ds['data'] = <Object?>[
+                for (var i = 0; i < 12; i++)
+                  <String, double>{'x': i / 2, 'y': i / 3},
+              ];
+            case 4:
+              data.removeRange(5, data.length);
+            case 5:
+              ds['backgroundColor'] = green;
+            case 6:
+              ds['backgroundColor'] = <ui.Color>[green, red];
+              ds['data'] = <Object?>[
+                ...data,
+                for (var i = 5; i < 10; i++)
+                  <String, Object?>{'x': i / 2, 'y': -0.0},
+              ];
+            case 7:
+              for (var i = 0; i < data.length; i += 2) {
+                data[i] = Map<String, Object?>.of(
+                  data[i]! as Map<String, Object?>,
+                );
+              }
+            case 8:
+              data[3] = _ObservedMap({'x': 1.5, 'y': 2.0});
+          }
+        }
+        final mode = step == 5 ? 'reset' : 'none';
+        a.update(mode);
+        b.update(mode);
+        expect(_observe(a), _observe(b), reason: 'step $step');
+        for (final chart in [a, b]) {
+          final meta = chart.getDatasetMeta(0);
+          meta.controller!.updateElements(meta.data, 1, 4, 'none');
+        }
+        expect(_observe(a), _observe(b), reason: 'partial step $step');
+      }
+    },
+  );
+
+  test(
+    'warm cache preserves active callback mutation, failure and recovery',
+    () {
+      final states = <Object>[];
+      final logs = <List<Object?>>[];
+      for (final reference in [false, true]) {
+        final cfg = _config();
+        final ds = _dataset(cfg);
+        final calls = <Object?>[];
+        var fail = false;
+        ui.Color hover(Object? context) {
+          calls.add(jsGet(context, 'dataIndex'));
+          if (fail) throw StateError('hover failure');
+          ((ds['data']! as List<Object?>)[6]! as Map<String, Object?>)['y'] =
+              '3';
+          (ds['backgroundColor']! as List<ui.Color>)[0] = green;
+          return green;
+        }
+
+        ds['hoverBackgroundColor'] = hover;
+        final chart = _chart(cfg, reference: reference)
+          ..update('none')
+          ..update('none');
+        final meta = chart.getDatasetMeta(0);
+        final point = (meta.data[4] as PointElement)..active = true;
+        fail = true;
+        expect(
+          () => meta.controller!.updateElements(meta.data, 0, 8, 'none'),
+          throwsStateError,
+        );
+        fail = false;
+        meta.controller!.updateElements(meta.data, 0, 8, 'none');
+        states.add(_observe(chart));
+        point.active = false;
+        chart.update('none');
+        states.add(_observe(chart));
+        ((ds['data']! as List<Object?>)[6]! as Map<String, Object?>)['y'] = 3.0;
+        chart.update('none');
+        states.add(_observe(chart));
+        logs.add(calls);
+      }
+      expect(states.sublist(0, 3), states.sublist(3));
+      expect(logs[0], logs[1]);
+      expect(logs[0], [4.0, 4.0]);
+    },
+  );
 }
