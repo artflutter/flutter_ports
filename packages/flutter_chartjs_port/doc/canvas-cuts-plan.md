@@ -2457,3 +2457,8 @@ at the same canvas dimensions and configuration.
   existing N1–N5 drawing operations. No new canvas cut or data-only change.
   Boundary/ownership and native pixel tests pin this storage-only change;
   performance.md §57 records production verification.
+
+- 2026-11-05, ADR 0086 reuses weak native-map classification within the existing
+  line indexed-color path. It changes no canvas call or drawing cut. The line
+  controller's observation-order regressions now include warmed cache lifecycle,
+  partial ranges, active callback mutation and exception recovery.

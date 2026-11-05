@@ -356,6 +356,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     blocker. Do not replace them with fixed bounds under unsorted parsing:false
     input: binary visible-range selection can omit points. GC timeline evidence
     prioritizes temporary circle/path objects; the diagnostics change no runtime.
+    Chart.js ADR 0086 adds bounded weak coordinate-map identities for native
+    indexed line loops. Classifier state stays loop-local; live x/y checks,
+    routes, callbacks and data-only eligibility remain. Each prepared pass
+    creates at most 1,024 weak entries; replacement input falls back normally.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).

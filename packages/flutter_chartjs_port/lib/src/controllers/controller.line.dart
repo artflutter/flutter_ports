@@ -345,6 +345,9 @@ class LineController extends DatasetController {
     updateElements(points, start, count, mode);
   }
 
+  // DIVERGES(chartjs): adapt-line-coordinate-cache, weak native map identities.
+  final _coordinateCache = NativePointCoordinateCache();
+
   /// controller.line.js:76 `updateElements(points, start, count, mode)`.
   ///
   /// - `properties` is the point of a direct update and a new object in the
@@ -421,7 +424,7 @@ class LineController extends DatasetController {
         index == resolutionDataset &&
         identical(chart.config, resolutionConfig) &&
         identical(chart.data, resolution?.data);
-    final coordinates = NativePointCoordinates();
+    final coordinates = NativePointCoordinates(cache: _coordinateCache);
     final tryColors =
         mode == 'none' &&
         sharedOptions == null &&
@@ -437,6 +440,7 @@ class LineController extends DatasetController {
         count > 2 &&
         count == count.truncateToDouble();
 
+    if (!tryColors) _coordinateCache.clear();
     for (var i = 0; i < pointsCount; ++i) {
       final point = points[i];
       final index = i.toDouble();
@@ -455,7 +459,7 @@ class LineController extends DatasetController {
       }
       writes.begin(point);
       final parsed = getParsed(index);
-      if (colors != null && !coordinates.accepts(parsed)) colors = null;
+      if (colors != null && !coordinates.accepts(parsed, i)) colors = null;
       // :99, also :101 (one-read rule).
       final vValue = parsedValueOf(parsed, vKey, vAxis);
       final nullData = isNullOrUndef(vValue);
@@ -530,6 +534,7 @@ class LineController extends DatasetController {
           _nativeProjection(iScale) &&
           _nativeProjection(vScale)) {
         colors = _preparePointColors(points);
+        if (colors != null) _coordinateCache.prepare(pointsCount);
         resolution = _prepareLineResolution();
         if (resolution != null) {
           resolutionConfig = chart.config as Config;
@@ -543,6 +548,7 @@ class LineController extends DatasetController {
         }
       }
     }
+    if (colors == null) _coordinateCache.clear();
   }
 
   NativePointResolution? _prepareLineResolution() {
