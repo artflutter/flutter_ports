@@ -1,0 +1,23 @@
+from pathlib import Path
+import os,json,subprocess
+out=Path(__file__).resolve().parent
+
+def run(label,variant,extra,expected):
+ print('START',label,flush=True);result=out/(label+'.results');result.unlink(missing_ok=True);Path(str(result)+'.window').unlink(missing_ok=True)
+ env={**os.environ,'BENCH_DISPLAY_ID':'1','FRAMES':'1','PIXELS':'0','N':'20000','SHAPE':'plain','CALLS':'update','STYLES':'indexed','CONNECTED':'0,1','LABELS':'200','SPIN':'0','SECONDS':'8','OUTPUT':str(result),**extra}
+ with (out/(label+'.log')).open('w') as log:subprocess.run([f'/tmp/indexed-triage-{variant}.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=180,check=True)
+ rows=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+ assert len(rows)==expected and all(r['samples']>=8 and r['frameTimings']>=50 and r['items']==20000 and r['canvas']=='1036.0x520.0@2.0' for r in rows),(label,'invalid rows')
+ vis=[json.loads(l) for l in Path(str(result)+'.window').read_text().splitlines()];prepared=next(r for r in vis if r['event']=='prepared');assert (prepared['width'],prepared['height'],prepared['dpr'],prepared['displayId'],prepared['maxFps'])==(1100,900,2,1,120)
+ assert not any(r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or (r['width'],r['height'],r['dpr'],r['displayId'],r['maxFps'])!=(1100,900,2,1,120)) for r in vis),(label,'window changed')
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,flush=True);return rows
+order=[('a1','baseline'),('b1','guard'),('c1','numeric'),('d1','fresh'),('e1','combined'),('e2','combined'),('d2','fresh'),('c2','numeric'),('b2','guard'),('a2','baseline')]
+rows={}
+for label,variant in order:
+ rows[label]=run('frames-'+label,variant,{},2)
+ (out/'frames.json').write_text(json.dumps(rows,indent=2)+'\n')
+controls={}
+for label,variant in [('a','baseline'),('b','guard'),('e','combined')]:
+ controls[label]=run('control-'+label,variant,{'STYLES':'static,scriptable','CONNECTED':'1'},2)
+(out/'controls.json').write_text(json.dumps(controls,indent=2)+'\n')
+print('DONE indexed triage frame comparisons',flush=True)

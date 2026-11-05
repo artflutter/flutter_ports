@@ -1,0 +1,14 @@
+from pathlib import Path
+import subprocess,json,hashlib,shutil,sys
+root=Path.cwd();w=root/'.dart_tool/indexed_triage';iso=Path('/tmp/indexed-triage-work');metadata=json.loads((w/'churn-build-metadata.json').read_text()) if (w/'churn-build-metadata.json').exists() else {}
+for variant in (sys.argv[1:] or ['baseline','guard','numeric','fresh','combined']):
+ print('START',variant,flush=True);subprocess.run(['python3',str(w/'variants.py'),variant],check=True)
+ with (w/(variant+'-gen.log')).open('w') as log:subprocess.run(['dart','run','packages/flutter_chartjs_port/tool/options_gen.dart'],cwd=iso,stdout=log,stderr=subprocess.STDOUT,check=True)
+ with (w/(variant+'-churn-tests.log')).open('w') as log:subprocess.run(['flutter','test','--no-pub','test/port/core/point_options_test.dart','test/port/controllers/line_point_options_test.dart','test/port/controllers/line_resolution_test.dart','test/port/core/indexed_element_options_test.dart','--reporter','expanded'],cwd=iso/'packages/flutter_chartjs_port',stdout=log,stderr=subprocess.STDOUT,check=True)
+ with (w/(variant+'-churn-build.log')).open('w') as log:subprocess.run(['flutter','build','macos','--profile','--no-pub','--target','../../.dart_tool/indexed_triage/probe.dart'],cwd=iso/'apps/chartjs_gallery',stdout=log,stderr=subprocess.STDOUT,check=True)
+ app=Path(f'/tmp/indexed-churn-{variant}.app');subprocess.run(['ditto',str(iso/'apps/chartjs_gallery/build/macos/Build/Products/Profile/chartjs_gallery.app'),str(app)],check=True);subprocess.run(['codesign','--force','--sign','-','--entitlements',str(root/'packages/flutter_chartjs_port/doc/benchmarks/category-layout/probe.entitlements'),str(app)],check=True)
+ files=['lib/src/core/point_options.dart','lib/src/controllers/controller.line.dart','lib/src/core/core.scale.dart','lib/src/helpers/helpers.config.dart','tool/src/options_gen.dart','lib/src/options/resolved.g.dart']
+ hashes={}
+ for p in files:
+  file=iso/'packages/flutter_chartjs_port'/p;hashes[p]=hashlib.sha256(file.read_bytes()).hexdigest();shutil.copyfile(file,w/('churn-'+variant+'-'+p.replace('/','_')+'.txt'))
+ metadata[variant]={'sources':hashes,'framework':hashlib.sha256((app/'Contents/Frameworks/App.framework/App').read_bytes()).hexdigest()};(w/'churn-build-metadata.json').write_text(json.dumps(metadata,indent=2)+'\n');print('DONE',variant,flush=True)

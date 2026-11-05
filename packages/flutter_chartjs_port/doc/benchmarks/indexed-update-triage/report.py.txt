@@ -1,0 +1,52 @@
+from pathlib import Path
+import json,hashlib,gzip,shutil,difflib,statistics,math,subprocess
+root=Path.cwd();w=root/'.dart_tool/indexed_triage';out=root/'packages/flutter_chartjs_port/doc/benchmarks/indexed-update-triage'
+load=lambda n:json.loads((w/n).read_text())
+base=load('baseline-source.json');assert all(hashlib.sha256(Path(p).read_bytes()).hexdigest()==h for p,h in base.items())
+variants={'baseline':['a1','a2'],'guard':['b1','b2'],'numeric':['c1','c2'],'fresh':['d1','d2'],'combined':['e1','e2']}
+f=load('frames.json');rows=[]
+for name,tags in variants.items():
+ for conn in [False,True]:
+  rs=[next(r for r in f[t] if r['connected']==conn) for t in tags]
+  rows.append({'variant':name,'connected':conn,'meanUiMs':statistics.mean(r['buildMs'] for r in rs),'p90UiMs':[r['buildP90Ms'] for r in rs],'fps':[r['fps'] for r in rs]})
+profiles=load('gc-summary.json')
+for n in ['final-gc-baseline','final-gc-adaptive']:
+ r=profiles[n];end=load(n+'.json.window')['end'];fs=[x for x in r['frames'] if x['start']>=end-5000000 and x['end']<=end];assert len(fs)>=30
+ p90=sorted(x['uiMs'] for x in fs)[math.ceil(len(fs)*.9)-1];slow=[x for x in fs if x['uiMs']>=p90]
+ r['lastFiveSeconds']={'frames':len(fs),'meanGcMs':statistics.mean(x['gcMs'] for x in fs),'slowMeanGcMs':statistics.mean(x['gcMs'] for x in slow),'uiP90Ms':p90}
+summary={'variants':rows,'primaryRuns':f,'controls':load('controls.json'),'uncappedChurn':load('churn-frames.json'),'boundedRuns':load('adaptive-frames.json'),'profiles':profiles,'boundedSummary':[]}
+for workload,m in summary['boundedRuns'].items():
+ for conn in [False,True]:
+  a=[next(r for r in m[t] if r['connected']==conn) for t in ['a1','a2']];b=[next(r for r in m[t] if r['connected']==conn) for t in ['b1','b2']];before=statistics.mean(x['buildMs'] for x in a);after=statistics.mean(x['buildMs'] for x in b)
+  summary['boundedSummary'].append({'workload':workload,'connected':conn,'beforeMeanUiMs':before,'afterMeanUiMs':after,'reductionPct':100*(1-after/before),'beforeP90':[x['buildP90Ms'] for x in a],'afterP90':[x['buildP90Ms'] for x in b]})
+(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+for p in w.iterdir():
+ if not p.is_file():continue
+ if p.suffix in ['.py','.dart']:shutil.copyfile(p,out/(p.name+'.txt'))
+ elif not p.name.endswith('.before'):
+  with gzip.open(out/(p.name+'.gz'),'wb') as g:g.write(p.read_bytes())
+files=['lib/src/core/point_options.dart','lib/src/controllers/controller.line.dart','lib/src/core/core.scale.dart','lib/src/helpers/helpers.config.dart','tool/src/options_gen.dart']
+for variant in ['guard','numeric','fresh','combined','adaptive']:
+ patch=''
+ for rel in files:
+  a=(w/(rel.replace('/','_')+'.before')).read_text();name=('churn-adaptive-' if variant=='adaptive' else variant+'-')+rel.replace('/','_')+'.txt';b=(w/name).read_text();path='packages/flutter_chartjs_port/'+rel;patch+=''.join(difflib.unified_diff(a.splitlines(True),b.splitlines(True),fromfile='a/'+path,tofile='b/'+path))
+ (out/(variant+'.patch')).write_text(patch)
+vis={}
+for p in w.glob('*.results.window'):
+ events=[json.loads(l) for l in p.read_text().splitlines()];prepared=next(r for r in events if r['event']=='prepared');assert (prepared['width'],prepared['height'],prepared['dpr'],prepared['displayId'],prepared['maxFps'])==(1100,900,2,1,120)
+ assert not any(r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or (r['width'],r['height'],r['dpr'],r['displayId'],r['maxFps'])!=(1100,900,2,1,120)) for r in events),p
+ vis[p.name]=events
+(out/'visibility.json').write_text(json.dumps(vis,indent=2)+'\n')
+meta={'date':'2026-11-05','head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'platform':'Apple M3 Max, macOS 27.0.1; Flutter 3.47.8 / Dart 3.13.7; profile AOT','display':{'id':1,'maxHz':120,'dpr':2},'canvas':'1036x520','items':20000,'productionSourcesUnchanged':True,'baselineSourceSha256':base,'builds':load('build-metadata.json'),'churnBuilds':load('churn-build-metadata.json'),'scope':'Isolated triage; bounded classification reuse recommended for production hardening; no runtime edits in main workspace.'}
+(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+# Preserve the benchmark-only replacement hook and unchanged probe for reproduction.
+iso=Path('/tmp/indexed-triage-work');p='apps/chartjs_gallery/lib/demo/stress_demo.dart';a=Path(p).read_text();b=(iso/p).read_text();(out/'churn-harness.patch').write_text(''.join(difflib.unified_diff(a.splitlines(True),b.splitlines(True),fromfile='a/'+p,tofile='b/'+p)))
+for name in ['probe.dart','pixels.dart']:shutil.copyfile(iso/'.dart_tool/indexed_triage'/name,out/(name+'.txt'))
+shutil.copyfile(iso/'apps/chartjs_gallery/macos/Runner/MainFlutterWindow.swift',out/'MainFlutterWindow.swift.txt')
+print('| Candidate | Connections off: mean UI ms | Connections on: mean UI ms |\n| --- | ---: | ---: |')
+for name in variants:
+ a,b=[r for r in rows if r['variant']==name];print(f"| {name} | {a['meanUiMs']:.2f} | {b['meanUiMs']:.2f} |")
+print('\n| Bounded-cache workload | Connected | Baseline mean UI ms | Candidate mean UI ms | Reduction | UI p90 before → after ms |\n| --- | --- | ---: | ---: | ---: | --- |')
+for r in summary['boundedSummary']:print(f"| {r['workload']} | {'on' if r['connected'] else 'off'} | {r['beforeMeanUiMs']:.2f} | {r['afterMeanUiMs']:.2f} | {r['reductionPct']:.1f}% | {' / '.join(f'{v:.2f}' for v in r['beforeP90'])} → {' / '.join(f'{v:.2f}' for v in r['afterP90'])} |")
+print('\nGC equal windows:',{n:profiles[n]['lastFiveSeconds'] for n in ['final-gc-baseline','final-gc-adaptive']})
+print('All production source hashes unchanged.')

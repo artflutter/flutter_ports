@@ -1,0 +1,196 @@
+--- a/packages/flutter_chartjs_port/lib/src/core/point_options.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/point_options.dart
+@@ -43,11 +43,18 @@
+ /// can run user code. It never validates the whole dataset a second time.
+ /// Container implementation is cached by type; coordinate values stay live.
+ final class NativePointCoordinates {
++  List<WeakReference<Object>?> _knownMaps = [];
++  void prepare(int length) {
++    if (_knownMaps.length != length) _knownMaps = List<WeakReference<Object>?>.filled(length, null);
++  }
+   Type? _lastType;
+   bool _nativeObject = false;
+ 
+   /// True when x/y reads and their numeric conversions cannot call user code.
+-  bool accepts(Object? value) {
++  bool accepts(Object? value, [int? index]) {
++    final slot = index != null && index >= 0 && index < _knownMaps.length;
++    final known = slot && identical(_knownMaps[index]?.target, value) && value is Map<String, Object?>;
++    if (slot && !known) _knownMaps[index] = null;
+     if (value is ParsedItem) {
+       return !value.hasForeign && _number(value.x) && _number(value.y);
+     }
+@@ -55,12 +62,15 @@
+       return _number(value.x) && _number(value.y);
+     }
+     if (value is! Map<String, Object?> && value is! OptionScope) return false;
+-    final type = value.runtimeType;
+-    if (type != _lastType) {
+-      _lastType = type;
+-      _nativeObject = nativeDataUpdateObject(value);
++    if (!known) {
++      final type = value.runtimeType;
++      if (type != _lastType) {
++        _lastType = type;
++        _nativeObject = nativeDataUpdateObject(value);
++      }
++      if (!_nativeObject) return false;
++      if (slot && value is Map<String, Object?>) _knownMaps[index] = WeakReference<Object>(value);
+     }
+-    if (!_nativeObject) return false;
+     if (value is OptionScope &&
+         (value.routeOf('x') != null || value.routeOf('y') != null)) {
+       return false;
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
+@@ -37,6 +37,8 @@
+ /// `core.animations.dart`. Thus it is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/scales/scale.linear.dart' show LinearScale;
++import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show int16Range;
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
+     show BulkBarScale;
+ import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+@@ -92,6 +94,22 @@
+ /// [_setProperty], in the same order. The writes reach the point at once,
+ /// as upstream: the scriptable options of the user that run between two
+ /// writes see the earlier writes.
++final class _TriageProjection {
++  _TriageProjection(this.start,this.range,this.pixelStart,this.length,this.reverse);
++  final double start,range,pixelStart,length;
++  final bool reverse;
++  static _TriageProjection? prepare(types.Scale value) {
++    if (value is! LinearScale || !value.supportsBulkBarUpdate || value.runtimeType != LinearScale || !value.triageUnaligned) return null;
++    if (!value.startValue.isFinite || !value.valueRange.isFinite || value.valueRange==0 || !value.startPixel.isFinite || !value.length.isFinite) return null;
++    return _TriageProjection(value.startValue,value.valueRange,value.startPixel,value.length,value.reversePixels);
++  }
++  double pixel(double value) {
++    var decimal=(value-start)/range;
++    if(reverse)decimal=1-decimal;
++    return int16Range(pixelStart+decimal*length);
++  }
++}
++
+ final class _PointWrites {
+   _PointWrites({required this.direct});
+ 
+@@ -370,6 +388,8 @@
+   ///   ctx.parsed` shows the upstream result.
+   /// - A point out of the range takes `skip` only in a direct update: the
+   ///   new object of another mode goes to no element (:93-95).
++  final _nativeCoordinates = NativePointCoordinates();
++
+   @override
+   void updateElements(
+     List<types.Element> points,
+@@ -403,6 +423,7 @@
+     // DIVERGES(chartjs): adapt-line-point-options, reuse native indexed colors
+     // only inside this loop, with guards at each original observation point.
+     PointOptions Function(int)? colors;
++    _TriageProjection? iProjection, vProjection;
+     // DIVERGES(chartjs): adapt-native-line-resolution, loop-local source plan.
+     NativePointResolution? resolution;
+     NativePointContextReader? contextReader;
+@@ -421,7 +442,7 @@
+         index == resolutionDataset &&
+         identical(chart.config, resolutionConfig) &&
+         identical(chart.data, resolution?.data);
+-    final coordinates = NativePointCoordinates();
++    final coordinates = _nativeCoordinates;
+     final tryColors =
+         mode == 'none' &&
+         sharedOptions == null &&
+@@ -437,6 +458,7 @@
+         count > 2 &&
+         count == count.truncateToDouble();
+ 
++    if (!tryColors) coordinates.prepare(0);
+     for (var i = 0; i < pointsCount; ++i) {
+       final point = points[i];
+       final index = i.toDouble();
+@@ -455,12 +477,25 @@
+       }
+       writes.begin(point);
+       final parsed = getParsed(index);
+-      if (colors != null && !coordinates.accepts(parsed)) colors = null;
++      if (colors != null && !coordinates.accepts(parsed, i)) colors = null;
+       // :99, also :101 (one-read rule).
+       final vValue = parsedValueOf(parsed, vKey, vAxis);
+       final nullData = isNullOrUndef(vValue);
+       // :100, also :104 (one-read rule).
+       final iValue = parsedValueOf(parsed, iKey, iAxis);
++      final numericPoint = writes._element;
++      if (colors != null && iProjection != null && vProjection != null && numericPoint != null && iValue is double && vValue is double) {
++        final iPixel = iProjection.pixel(iValue);
++        if (iKey == AxisKey.x) { numericPoint.x = iPixel; } else { numericPoint.y = iPixel; }
++        final vPixel = vProjection.pixel(vValue);
++        if (vKey == AxisKey.x) { numericPoint.x = vPixel; } else { numericPoint.y = vPixel; }
++        numericPoint.skip = iPixel.isNaN || vPixel.isNaN;
++        numericPoint.stop = i > 0 && (iValue-jsToNumber(parsedValueOf(prevParsed,iKey,iAxis))).abs()>maxGapLength;
++        if (contextReader?.read(i) == null) getContext(index,false,mode);
++        numericPoint.options = colors(i);
++        prevParsed = parsed;
++        continue;
++      }
+       final iPixel = iScale.getPixelForValue(iValue, index);
+       writes.axis(iKey, iAxis, iPixel);
+       final vPixel = reset || nullData
+@@ -526,10 +561,15 @@
+       prevParsed = parsed;
+       if (tryColors &&
+           i == start + 1 &&
+-          coordinates.accepts(parsed) &&
++          coordinates.accepts(parsed, i) &&
+           _nativeProjection(iScale) &&
+           _nativeProjection(vScale)) {
+         colors = _preparePointColors(points);
++        if (colors != null) {
++          iProjection = _TriageProjection.prepare(iScale);
++          vProjection = _TriageProjection.prepare(vScale);
++        }
++        coordinates.prepare(colors == null ? 0 : pointsCount);
+         resolution = _prepareLineResolution();
+         if (resolution != null) {
+           resolutionConfig = chart.config as Config;
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -999,6 +999,8 @@
+   /// `configure` reads. The constructor does not declare it. It starts
+   /// absent.
+   Object? _alignToPixels = undefined;
++
++  bool get triageUnaligned => identical(_alignToPixels, false);
+ 
+   /// The `position` of the layout box (layout.d.ts:9). The constructor does
+   /// not declare it. `layouts.configure` writes the `position` option
+--- a/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
++++ b/packages/flutter_chartjs_port/lib/src/helpers/helpers.config.dart
+@@ -585,6 +585,10 @@
+     final template = PointOptions()..storeKey(OptionKey.dollarShared, false);
+     final varying = _prepareIndexedColors(keys, template);
+     if (varying == null) return null;
++    if (varying.length == 1 && varying[0].key == OptionKey.backgroundColor) {
++      final values = varying[0].values;
++      return (index) => template.cloneWithBackground(values[index % values.length]);
++    }
+     return (index) {
+       final result = template.clone();
+       for (final item in varying) {
+--- a/packages/flutter_chartjs_port/tool/src/options_gen.dart
++++ b/packages/flutter_chartjs_port/tool/src/options_gen.dart
+@@ -511,6 +511,14 @@
+         '    }\n'
+         '  }\n',
+       );
++    if (typed.contains('backgroundColor')) {
++      final slot = typed.indexOf('backgroundColor');
++      out.write('  /// Isolated fresh-copy specialization.\n'
++          '  $name cloneWithBackground(Object? value) {\n'
++          '    final result = $name._copy(this);\n'
++          '    result._store$slot(value);\n'
++          '    return result;\n  }\n');
++    }
+     for (final (slot, key) in typed.indexed) {
+       final id = keyIdentifier(key);
+       final type = _fieldType(kind.keys[key]!);

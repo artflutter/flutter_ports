@@ -1,0 +1,93 @@
+--- a/packages/flutter_chartjs_port/lib/src/core/point_options.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/point_options.dart
+@@ -43,11 +43,18 @@
+ /// can run user code. It never validates the whole dataset a second time.
+ /// Container implementation is cached by type; coordinate values stay live.
+ final class NativePointCoordinates {
++  List<WeakReference<Object>?> _knownMaps = [];
++  void prepare(int length) {
++    if (_knownMaps.length != length) _knownMaps = List<WeakReference<Object>?>.filled(length, null);
++  }
+   Type? _lastType;
+   bool _nativeObject = false;
+ 
+   /// True when x/y reads and their numeric conversions cannot call user code.
+-  bool accepts(Object? value) {
++  bool accepts(Object? value, [int? index]) {
++    final slot = index != null && index >= 0 && index < _knownMaps.length;
++    final known = slot && identical(_knownMaps[index]?.target, value) && value is Map<String, Object?>;
++    if (slot && !known) _knownMaps[index] = null;
+     if (value is ParsedItem) {
+       return !value.hasForeign && _number(value.x) && _number(value.y);
+     }
+@@ -55,12 +62,15 @@
+       return _number(value.x) && _number(value.y);
+     }
+     if (value is! Map<String, Object?> && value is! OptionScope) return false;
+-    final type = value.runtimeType;
+-    if (type != _lastType) {
+-      _lastType = type;
+-      _nativeObject = nativeDataUpdateObject(value);
++    if (!known) {
++      final type = value.runtimeType;
++      if (type != _lastType) {
++        _lastType = type;
++        _nativeObject = nativeDataUpdateObject(value);
++      }
++      if (!_nativeObject) return false;
++      if (slot && value is Map<String, Object?>) _knownMaps[index] = WeakReference<Object>(value);
+     }
+-    if (!_nativeObject) return false;
+     if (value is OptionScope &&
+         (value.routeOf('x') != null || value.routeOf('y') != null)) {
+       return false;
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
+@@ -370,6 +370,8 @@
+   ///   ctx.parsed` shows the upstream result.
+   /// - A point out of the range takes `skip` only in a direct update: the
+   ///   new object of another mode goes to no element (:93-95).
++  final _nativeCoordinates = NativePointCoordinates();
++
+   @override
+   void updateElements(
+     List<types.Element> points,
+@@ -421,7 +423,7 @@
+         index == resolutionDataset &&
+         identical(chart.config, resolutionConfig) &&
+         identical(chart.data, resolution?.data);
+-    final coordinates = NativePointCoordinates();
++    final coordinates = _nativeCoordinates;
+     final tryColors =
+         mode == 'none' &&
+         sharedOptions == null &&
+@@ -437,6 +439,7 @@
+         count > 2 &&
+         count == count.truncateToDouble();
+ 
++    if (!tryColors) coordinates.prepare(0);
+     for (var i = 0; i < pointsCount; ++i) {
+       final point = points[i];
+       final index = i.toDouble();
+@@ -455,7 +458,7 @@
+       }
+       writes.begin(point);
+       final parsed = getParsed(index);
+-      if (colors != null && !coordinates.accepts(parsed)) colors = null;
++      if (colors != null && !coordinates.accepts(parsed, i)) colors = null;
+       // :99, also :101 (one-read rule).
+       final vValue = parsedValueOf(parsed, vKey, vAxis);
+       final nullData = isNullOrUndef(vValue);
+@@ -526,10 +529,11 @@
+       prevParsed = parsed;
+       if (tryColors &&
+           i == start + 1 &&
+-          coordinates.accepts(parsed) &&
++          coordinates.accepts(parsed, i) &&
+           _nativeProjection(iScale) &&
+           _nativeProjection(vScale)) {
+         colors = _preparePointColors(points);
++        coordinates.prepare(colors == null ? 0 : pointsCount);
+         resolution = _prepareLineResolution();
+         if (resolution != null) {
+           resolutionConfig = chart.config as Config;

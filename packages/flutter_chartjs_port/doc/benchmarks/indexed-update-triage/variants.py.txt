@@ -1,0 +1,105 @@
+from pathlib import Path
+import sys
+w=Path(__file__).resolve().parent;root=Path('/tmp/indexed-triage-work/packages/flutter_chartjs_port');variant=sys.argv[1]
+paths=['lib/src/core/point_options.dart','lib/src/controllers/controller.line.dart','lib/src/core/core.scale.dart','lib/src/helpers/helpers.config.dart','tool/src/options_gen.dart']
+texts={p:(w/(p.replace('/','_')+'.before')).read_text() for p in paths}
+if variant in ['guard','combined','adaptive']:
+ p='lib/src/core/point_options.dart';s=texts[p];s=s.replace('final class NativePointCoordinates {','''final class NativePointCoordinates {
+  List<WeakReference<Object>?> _knownMaps = [];
+  void prepare(int length) {
+    if (_knownMaps.length != length) _knownMaps = List<WeakReference<Object>?>.filled(length, null);
+  }''',1)
+ s=s.replace('  bool accepts(Object? value) {','''  bool accepts(Object? value, [int? index]) {
+    final slot = index != null && index >= 0 && index < _knownMaps.length;
+    final known = slot && identical(_knownMaps[index]?.target, value) && value is Map<String, Object?>;
+    if (slot && !known) _knownMaps[index] = null;''',1)
+ old='''    final type = value.runtimeType;
+    if (type != _lastType) {
+      _lastType = type;
+      _nativeObject = nativeDataUpdateObject(value);
+    }
+    if (!_nativeObject) return false;'''
+ new='''    if (!known) {
+      final type = value.runtimeType;
+      if (type != _lastType) {
+        _lastType = type;
+        _nativeObject = nativeDataUpdateObject(value);
+      }
+      if (!_nativeObject) return false;
+      if (slot && value is Map<String, Object?>) _knownMaps[index] = WeakReference<Object>(value);
+    }''';assert old in s;s=s.replace(old,new);texts[p]=s
+ p='lib/src/controllers/controller.line.dart';s=texts[p];needle='  @override\n  void updateElements(';assert needle in s;s=s.replace(needle,'  final _nativeCoordinates = NativePointCoordinates();\n\n'+needle,1)
+ s=s.replace('final coordinates = NativePointCoordinates();','final coordinates = _nativeCoordinates;')
+ s=s.replace('''    for (var i = 0; i < pointsCount; ++i) {''','''    if (!tryColors) coordinates.prepare(0);
+    for (var i = 0; i < pointsCount; ++i) {''',1)
+ s=s.replace('coordinates.accepts(parsed)','coordinates.accepts(parsed, i)')
+ s=s.replace('colors = _preparePointColors(points);','colors = _preparePointColors(points);\n        coordinates.prepare(colors == null ? 0 : pointsCount);',1);texts[p]=s
+if variant in ['numeric','combined']:
+ p='lib/src/core/core.scale.dart';s=texts[p].replace('  Object? _alignToPixels = undefined;','  Object? _alignToPixels = undefined;\n\n  bool get triageUnaligned => identical(_alignToPixels, false);',1);texts[p]=s
+ p='lib/src/controllers/controller.line.dart';s=texts[p];i=s.index("\nimport '")+1;s=s[:i]+"import 'package:flutter_chartjs_port/src/scales/scale.linear.dart' show LinearScale;\nimport 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show int16Range;\n"+s[i:]
+ i=s.index('final class _PointWrites');s=s[:i]+'''final class _TriageProjection {
+  _TriageProjection(this.start,this.range,this.pixelStart,this.length,this.reverse);
+  final double start,range,pixelStart,length;
+  final bool reverse;
+  static _TriageProjection? prepare(types.Scale value) {
+    if (value is! LinearScale || !value.supportsBulkBarUpdate || value.runtimeType != LinearScale || !value.triageUnaligned) return null;
+    if (!value.startValue.isFinite || !value.valueRange.isFinite || value.valueRange==0 || !value.startPixel.isFinite || !value.length.isFinite) return null;
+    return _TriageProjection(value.startValue,value.valueRange,value.startPixel,value.length,value.reversePixels);
+  }
+  double pixel(double value) {
+    var decimal=(value-start)/range;
+    if(reverse)decimal=1-decimal;
+    return int16Range(pixelStart+decimal*length);
+  }
+}
+
+'''+s[i:]
+ s=s.replace('    PointOptions Function(int)? colors;', '    PointOptions Function(int)? colors;\n    _TriageProjection? iProjection, vProjection;',1)
+ marker='''      final iPixel = iScale.getPixelForValue(iValue, index);'''
+ fast='''      final numericPoint = writes._element;
+      if (colors != null && iProjection != null && vProjection != null && numericPoint != null && iValue is double && vValue is double) {
+        final iPixel = iProjection.pixel(iValue);
+        if (iKey == AxisKey.x) { numericPoint.x = iPixel; } else { numericPoint.y = iPixel; }
+        final vPixel = vProjection.pixel(vValue);
+        if (vKey == AxisKey.x) { numericPoint.x = vPixel; } else { numericPoint.y = vPixel; }
+        numericPoint.skip = iPixel.isNaN || vPixel.isNaN;
+        numericPoint.stop = i > 0 && (iValue-jsToNumber(parsedValueOf(prevParsed,iKey,iAxis))).abs()>maxGapLength;
+        if (contextReader?.read(i) == null) getContext(index,false,mode);
+        numericPoint.options = colors(i);
+        prevParsed = parsed;
+        continue;
+      }
+''';assert marker in s;s=s.replace(marker,fast+marker,1)
+ s=s.replace('colors = _preparePointColors(points);','''colors = _preparePointColors(points);
+        if (colors != null) {
+          iProjection = _TriageProjection.prepare(iScale);
+          vProjection = _TriageProjection.prepare(vScale);
+        }''',1);texts[p]=s
+if variant in ['fresh','combined']:
+ p='tool/src/options_gen.dart';s=texts[p];marker='''    for (final (slot, key) in typed.indexed) {
+      final id = keyIdentifier(key);
+      final type = _fieldType(kind.keys[key]!);''';assert marker in s
+ block='''    if (typed.contains('backgroundColor')) {
+      final slot = typed.indexOf('backgroundColor');
+      out.write('  /// Isolated fresh-copy specialization.\\n'
+          '  $name cloneWithBackground(Object? value) {\\n'
+          '    final result = $name._copy(this);\\n'
+          '    result._store$slot(value);\\n'
+          '    return result;\\n  }\\n');
+    }
+''';s=s.replace(marker,block+marker,1);texts[p]=s
+ p='lib/src/helpers/helpers.config.dart';s=texts[p];a=s.index('  PointOptions Function(int)? prepareIndexedPointColors');b=s.index('  List<({OptionKey key',a);part=s[a:b];marker='''    if (varying == null) return null;''';assert marker in part
+ part=part.replace(marker,marker+'''
+    if (varying.length == 1 && varying[0].key == OptionKey.backgroundColor) {
+      final values = varying[0].values;
+      return (index) => template.cloneWithBackground(values[index % values.length]);
+    }''',1);s=s[:a]+part+s[b:];texts[p]=s
+if variant == 'adaptive':
+ p='lib/src/core/point_options.dart';s=texts[p]
+ s=s.replace('  List<WeakReference<Object>?> _knownMaps = [];', '  List<WeakReference<Object>?> _knownMaps = [];\n  int _budget = 0;')
+ s=s.replace('    if (_knownMaps.length != length) _knownMaps = List<WeakReference<Object>?>.filled(length, null);', '    _knownMaps.length = length;\n    _budget = 1024;')
+ s=s.replace('if (slot && value is Map<String, Object?>) _knownMaps[index] = WeakReference<Object>(value);', 'if (slot && value is Map<String, Object?> && _budget > 0) {\n        _knownMaps[index] = WeakReference<Object>(value);\n        _budget--;\n      }')
+ texts[p]=s
+assert variant in ['baseline','guard','numeric','fresh','combined','adaptive']
+for p,s in texts.items():(root/p).write_text(s)
+print('Prepared',variant)

@@ -1,0 +1,18 @@
+from pathlib import Path
+import os,subprocess,re,time
+w=Path(__file__).resolve().parent
+for name,style,connected in [('indexed-connected','indexed','1'),('indexed-points','indexed','0'),('scriptable-connected','scriptable','1')]:
+ print('START',name,flush=True)
+ with (w/(name+'.log')).open('w') as log:
+  app=subprocess.Popen(['/tmp/path-chunks-production.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'BENCH_DISPLAY_ID':'1','GC_ONLY':'0','FRAMES':'1','PIXELS':'0','N':'20000','SHAPE':'plain','CALLS':'update','STYLES':style,'CONNECTED':connected,'LABELS':'200','SPIN':'0','SECONDS':'28','OUTPUT':str(w/(name+'.results'))},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   for i in range(150):
+    match=re.search(r'http://127.0.0.1:(\d+)/(\S+)',(w/(name+'.log')).read_text())
+    if match:break
+    time.sleep(.1)
+   assert match
+   subprocess.run(['/Users/vasilich/fvm/versions/3.47.8/bin/cache/dart-sdk/bin/dart','--packages=.dart_tool/package_config.json',str(w/'profile.dart'),f'ws://127.0.0.1:{match[1]}/{match[2]}ws',str(w/(name+'.json'))],env={**os.environ,'GC_ONLY':'0'},check=True,timeout=35)
+   app.wait(timeout=15)
+  finally:
+   if app.poll() is None:app.terminate();app.wait(timeout=10)
+ print('DONE',name,flush=True)

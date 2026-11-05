@@ -1,0 +1,84 @@
+--- a/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
++++ b/packages/flutter_chartjs_port/lib/src/controllers/controller.line.dart
+@@ -37,6 +37,8 @@
+ /// `core.animations.dart`. Thus it is not a pure layer.
+ library;
+ 
++import 'package:flutter_chartjs_port/src/scales/scale.linear.dart' show LinearScale;
++import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show int16Range;
+ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
+     show BulkBarScale;
+ import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+@@ -92,6 +94,22 @@
+ /// [_setProperty], in the same order. The writes reach the point at once,
+ /// as upstream: the scriptable options of the user that run between two
+ /// writes see the earlier writes.
++final class _TriageProjection {
++  _TriageProjection(this.start,this.range,this.pixelStart,this.length,this.reverse);
++  final double start,range,pixelStart,length;
++  final bool reverse;
++  static _TriageProjection? prepare(types.Scale value) {
++    if (value is! LinearScale || !value.supportsBulkBarUpdate || value.runtimeType != LinearScale || !value.triageUnaligned) return null;
++    if (!value.startValue.isFinite || !value.valueRange.isFinite || value.valueRange==0 || !value.startPixel.isFinite || !value.length.isFinite) return null;
++    return _TriageProjection(value.startValue,value.valueRange,value.startPixel,value.length,value.reversePixels);
++  }
++  double pixel(double value) {
++    var decimal=(value-start)/range;
++    if(reverse)decimal=1-decimal;
++    return int16Range(pixelStart+decimal*length);
++  }
++}
++
+ final class _PointWrites {
+   _PointWrites({required this.direct});
+ 
+@@ -403,6 +421,7 @@
+     // DIVERGES(chartjs): adapt-line-point-options, reuse native indexed colors
+     // only inside this loop, with guards at each original observation point.
+     PointOptions Function(int)? colors;
++    _TriageProjection? iProjection, vProjection;
+     // DIVERGES(chartjs): adapt-native-line-resolution, loop-local source plan.
+     NativePointResolution? resolution;
+     NativePointContextReader? contextReader;
+@@ -461,6 +480,19 @@
+       final nullData = isNullOrUndef(vValue);
+       // :100, also :104 (one-read rule).
+       final iValue = parsedValueOf(parsed, iKey, iAxis);
++      final numericPoint = writes._element;
++      if (colors != null && iProjection != null && vProjection != null && numericPoint != null && iValue is double && vValue is double) {
++        final iPixel = iProjection.pixel(iValue);
++        if (iKey == AxisKey.x) { numericPoint.x = iPixel; } else { numericPoint.y = iPixel; }
++        final vPixel = vProjection.pixel(vValue);
++        if (vKey == AxisKey.x) { numericPoint.x = vPixel; } else { numericPoint.y = vPixel; }
++        numericPoint.skip = iPixel.isNaN || vPixel.isNaN;
++        numericPoint.stop = i > 0 && (iValue-jsToNumber(parsedValueOf(prevParsed,iKey,iAxis))).abs()>maxGapLength;
++        if (contextReader?.read(i) == null) getContext(index,false,mode);
++        numericPoint.options = colors(i);
++        prevParsed = parsed;
++        continue;
++      }
+       final iPixel = iScale.getPixelForValue(iValue, index);
+       writes.axis(iKey, iAxis, iPixel);
+       final vPixel = reset || nullData
+@@ -530,6 +562,10 @@
+           _nativeProjection(iScale) &&
+           _nativeProjection(vScale)) {
+         colors = _preparePointColors(points);
++        if (colors != null) {
++          iProjection = _TriageProjection.prepare(iScale);
++          vProjection = _TriageProjection.prepare(vScale);
++        }
+         resolution = _prepareLineResolution();
+         if (resolution != null) {
+           resolutionConfig = chart.config as Config;
+--- a/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.scale.dart
+@@ -999,6 +999,8 @@
+   /// `configure` reads. The constructor does not declare it. It starts
+   /// absent.
+   Object? _alignToPixels = undefined;
++
++  bool get triageUnaligned => identical(_alignToPixels, false);
+ 
+   /// The `position` of the layout box (layout.d.ts:9). The constructor does
+   /// not declare it. `layouts.configure` writes the `position` option

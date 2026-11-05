@@ -1,0 +1,13 @@
+from pathlib import Path
+import subprocess,sys
+root=Path.cwd();w=root/'.dart_tool/indexed_triage';iso=Path('/tmp/indexed-triage-work');pkg=iso/'packages/flutter_chartjs_port';dest=pkg/'test/port/core'
+for variant in (sys.argv[1:] or ['baseline','guard','numeric','fresh','combined']):
+ subprocess.run(['python3',str(w/'variants.py'),variant],check=True)
+ with (w/(variant+'-extra-gen.log')).open('w') as log:subprocess.run(['dart','run','packages/flutter_chartjs_port/tool/options_gen.dart'],cwd=iso,stdout=log,stderr=subprocess.STDOUT,check=True)
+ names=['numeric']+(['cache'] if variant in ['guard','combined','adaptive'] else [])+(['fresh'] if variant in ['fresh','combined'] else [])
+ for name in ['numeric','cache','fresh']:
+  p=dest/(f'triage_{name}_test.dart')
+  if name in names:p.write_bytes((w/(name+'_test.dart.txt')).read_bytes())
+  else:p.unlink(missing_ok=True)
+ with (w/(variant+'-extra-tests.log')).open('w') as log:subprocess.run(['flutter','test','--no-pub',*[f'test/port/core/triage_{n}_test.dart' for n in names],'--reporter','expanded'],cwd=pkg,stdout=log,stderr=subprocess.STDOUT,check=True)
+ print('PASS',variant,flush=True)
