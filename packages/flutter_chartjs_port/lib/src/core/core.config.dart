@@ -683,11 +683,33 @@ class Config implements types.ChartConfiguration {
         identical(pointDefaults.nativeOwnKeySnapshot, keys) &&
         cached.resolver.hasPreparedPointOptions(keys);
     final prefixes = <String>['point', ''];
+    // DIVERGES(chartjs): adapt-prepared-scalar-point-resolution, preserve the
+    // observed context on failure; the ordinary continuation must not call it.
+    final scalar = cached.resolver.prepareScalarPointResolution(
+      keys,
+      current,
+      (ctx) => _resolveElementNamedOptions(
+        scopes,
+        keys,
+        () => ctx,
+        prefixes,
+        _pointResultKind,
+        nativeInputs: true,
+        allowReplacement: true,
+        immutableKeys: true,
+        ownedPoint: true,
+        preparedResolver: cached,
+        preparedCacheCheck: current,
+        resolved: (resolved: false, context: ctx, prepared: null),
+      ),
+    );
     return NativePointResolution(
       data: data,
       raw: raw,
       valid: valid,
       resolve: (context, preparedContext) {
+        final result = scalar?.call(context, preparedContext);
+        if (result != null) return result;
         return _resolveElementNamedOptions(
           scopes,
           keys,
@@ -1102,6 +1124,9 @@ class Config implements types.ChartConfiguration {
     _CachedResolver? preparedResolver,
     bool Function()? preparedCacheCheck,
     Object Function()? preparedContext,
+    // A failed prepared attempt already called its context. Resume at the
+    // ordinary post-context branch without attempting native resolution again.
+    ({bool resolved, Object context, ElementOptions? prepared})? resolved,
   }) {
     if (ownedPoint == null) into.storeKey(OptionKey.dollarShared, true);
     // Owned prefixes contain strings and have no observable indexing. Reuse
@@ -1134,43 +1159,46 @@ class Config implements types.ChartConfiguration {
               (i) => prefixes[i] == subPrefixes[i],
             );
     // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
-    final indexed = runtimeType == Config && samePrefixes
-        ? (nativeInputs && allowReplacement
-                  ? resolver.resolveScriptableElementOptions(
-                      keys,
-                      context,
-                      into,
-                      Defaults.nativeElementDescriptors,
-                      preparedCacheCheck ??
-                          () => identical(
-                            _resolverCache[scopes]?[cacheKey ??
-                                    prefixes.join(',')]
-                                ?.resolver,
-                            resolver,
-                          ),
-                      immutableKeys: immutableKeys,
-                      replacementOnly: ownedPoint != null,
-                      preparedContext: preparedContext,
-                    )
-                  : null) ??
-              resolver.resolveIndexedElementOptions(
-                keys,
-                context,
-                into,
-                Defaults.nativeElementDescriptors,
-                preparedCacheCheck ??
-                    () => identical(
-                      _resolverCache[scopes]?[cacheKey ?? prefixes.join(',')]
-                          ?.resolver,
-                      resolver,
-                    ),
-                nativeInputs: nativeInputs,
-                allowReplacement: allowReplacement,
-                immutableKeys: immutableKeys,
-                replacementOnly: ownedPoint != null,
-                preparedContext: preparedContext,
-              )
-        : null;
+    final indexed =
+        resolved ??
+        (runtimeType == Config && samePrefixes
+            ? (nativeInputs && allowReplacement
+                      ? resolver.resolveScriptableElementOptions(
+                          keys,
+                          context,
+                          into,
+                          Defaults.nativeElementDescriptors,
+                          preparedCacheCheck ??
+                              () => identical(
+                                _resolverCache[scopes]?[cacheKey ??
+                                        prefixes.join(',')]
+                                    ?.resolver,
+                                resolver,
+                              ),
+                          immutableKeys: immutableKeys,
+                          replacementOnly: ownedPoint != null,
+                          preparedContext: preparedContext,
+                        )
+                      : null) ??
+                  resolver.resolveIndexedElementOptions(
+                    keys,
+                    context,
+                    into,
+                    Defaults.nativeElementDescriptors,
+                    preparedCacheCheck ??
+                        () => identical(
+                          _resolverCache[scopes]?[cacheKey ??
+                                  prefixes.join(',')]
+                              ?.resolver,
+                          resolver,
+                        ),
+                    nativeInputs: nativeInputs,
+                    allowReplacement: allowReplacement,
+                    immutableKeys: immutableKeys,
+                    replacementOnly: ownedPoint != null,
+                    preparedContext: preparedContext,
+                  )
+            : null);
     if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
     final result = ownedPoint == null
         ? into

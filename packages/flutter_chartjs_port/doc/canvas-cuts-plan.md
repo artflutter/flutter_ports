@@ -2467,3 +2467,7 @@ at the same canvas dimensions and configuration.
   preparation without changing canvas calls or drawing cuts. Exact-class gates,
   activity/coordinate observations and callback-time invalidation remain at
   their existing sites. Shared-contract tests and existing chart twins pin them.
+
+- 2026-11-05, ADR 0088 removes repeated general option setup for prepared scalar
+  point colors. It changes no canvas operation or drawing cut. Existing and new
+  resolver twins preserve callback mutation, context fallback and fresh options.
