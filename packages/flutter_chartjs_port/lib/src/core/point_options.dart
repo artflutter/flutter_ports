@@ -1,9 +1,13 @@
 // Original code, not ported from Chart.js: native point-option loop contracts.
 
+import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
+    show BulkBarScale;
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
+import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
@@ -27,6 +31,64 @@ abstract interface class NativePointElement {
   /// property writes are enabled independently.
   bool get supportsNativePointOptions;
 }
+
+/// Read the chart capability at the current observation point. A previous
+/// result does not authorize new config, context or metadata reads.
+@internal
+bool nativePointChart(Object? chart) =>
+    chart is NativePointChart && chart.supportsNativePointOptions;
+
+/// Read the point capability where the ordinary loop would use the point.
+/// Active state is a separate live check: overflow does not require inactivity.
+@internal
+bool nativePointElement(Object? point) =>
+    point is NativePointElement && point.supportsNativePointOptions;
+
+/// The existing numeric-scale capability, without bar-specific grid checks.
+/// Callers must check scale/chart ownership afterward, in the original order.
+@internal
+bool nativePointProjection(types.Scale scale) =>
+    scale is BulkBarScale && (scale as BulkBarScale).supportsBulkBarUpdate;
+
+/// Native class metadata only. Keep the two id reads and their short circuit;
+/// unknown class objects are never inspected merely to qualify a shortcut.
+@internal
+bool nativePointClass(Object? value) =>
+    value is JsClass && value.id is String && value.id == 'point';
+
+/// A dataset index already read from an exact native controller.
+@internal
+bool nativePointDatasetIndex(double index) =>
+    index.isFinite && index >= 0 && index == index.truncateToDouble();
+
+/// Common line/scatter prerequisites over already-read loop inputs. This is
+/// permission to attempt preparation, not a reusable proof about the dataset.
+/// Point activity, coordinates, projections and source plans stay live.
+@internal
+bool canPrepareNativePointUpdate({
+  required String mode,
+  required Object? sharedOptions,
+  required bool includeOptions,
+  required Object? stacked,
+  required Object? segment,
+  required String iAxis,
+  required String vAxis,
+  required double start,
+  required double count,
+}) =>
+    mode == 'none' &&
+    sharedOptions == null &&
+    includeOptions &&
+    !jsTruthy(stacked) &&
+    !jsTruthy(segment) &&
+    (iAxis == 'x' || iAxis == 'y') &&
+    (vAxis == 'x' || vAxis == 'y') &&
+    start.isFinite &&
+    start >= 0 &&
+    start == start.truncateToDouble() &&
+    count.isFinite &&
+    count > 2 &&
+    count == count.truncateToDouble();
 
 final _pointLists = <Type>{
   <types.Element>[].runtimeType,
@@ -137,12 +199,25 @@ final class NativePointResolution {
     required this.data,
     required this.raw,
     required this.valid,
-    required this.resolve,
+    required this._resolve,
   });
   final Object data;
   final List<Object?> raw;
+
+  /// Diagnostic source check; [resolve] always invokes it itself.
   final bool Function() valid;
-  final ElementOptions? Function(Object Function(), Object Function()?) resolve;
+  final ElementOptions? Function(Object Function(), Object Function()?)
+  _resolve;
+
+  /// Revalidate before touching contexts or resolving options. The executor
+  /// still owns its finer-grained generation checks during user callbacks.
+  ElementOptions? resolve(
+    Object Function() context,
+    Object Function()? preparedContext,
+  ) {
+    if (!valid()) return null;
+    return _resolve(context, preparedContext);
+  }
 }
 
 /// Existing context refresh over captured native arrays. It never creates a
@@ -185,9 +260,7 @@ final class NativePointContextReader {
       return null;
     }
     final element = _points[index];
-    if (element is! Element ||
-        element is! NativePointElement ||
-        !(element as NativePointElement).supportsNativePointOptions) {
+    if (element is! Element || !nativePointElement(element)) {
       return null;
     }
     final context = element.$context;

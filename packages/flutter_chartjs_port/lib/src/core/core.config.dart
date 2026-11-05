@@ -688,7 +688,6 @@ class Config implements types.ChartConfiguration {
       raw: raw,
       valid: valid,
       resolve: (context, preparedContext) {
-        if (!valid()) return null;
         return _resolveElementNamedOptions(
           scopes,
           keys,

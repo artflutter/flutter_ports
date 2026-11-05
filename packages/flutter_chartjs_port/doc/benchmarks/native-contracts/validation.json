@@ -1,0 +1,37 @@
+[
+  {
+    "check": "format:check",
+    "exit": 0,
+    "seconds": 16.096374034881592
+  },
+  {
+    "check": "analyze",
+    "exit": 0,
+    "seconds": 9.367910861968994
+  },
+  {
+    "check": "test",
+    "exit": 0,
+    "seconds": 72.39176511764526
+  },
+  {
+    "check": "test:web",
+    "exit": 0,
+    "seconds": 157.5876522064209
+  },
+  {
+    "check": "test:cases",
+    "exit": 0,
+    "seconds": 12.387518167495728
+  },
+  {
+    "check": "test:fixtures",
+    "exit": 0,
+    "seconds": 8.889374017715454
+  },
+  {
+    "check": "check:port",
+    "exit": 0,
+    "seconds": 38.114818811416626
+  }
+]

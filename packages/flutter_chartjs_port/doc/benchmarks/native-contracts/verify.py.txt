@@ -1,0 +1,8 @@
+from pathlib import Path
+import subprocess
+out=Path('.dart_tool/native_contracts')
+for name,args in [('baseline build',['python3',str(out/'build.py'),'baseline']),('production build',['python3',str(out/'build.py'),'production']),('validate',['python3',str(out/'validate.py')]),('frames',['caffeinate','-dims','python3',str(out/'frames.py')])]:
+ print('START',name,flush=True)
+ with (out/(name.replace(' ','-')+'-run.log')).open('w') as f:
+  subprocess.run(args,stdout=f,stderr=subprocess.STDOUT,check=True)
+ print('DONE',name,flush=True)

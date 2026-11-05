@@ -360,6 +360,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     indexed line loops. Classifier state stays loop-local; live x/y checks,
     routes, callbacks and data-only eligibility remain. Each prepared pass
     creates at most 1,024 weak entries; replacement input falls back normally.
+    Chart.js ADR 0087 consolidates line/scatter point capabilities and update
+    prerequisites in point_options.dart, with controller orchestration in
+    point_option_preparation.dart. Exact-controller and per-item observation
+    points stay local. NativePointResolution validates before its private
+    executor; callback-time generation checks remain with Config/resolvers.
+    Reuse these predicates for equivalent guarantees. Keep narrower operation
+    requirements explicit; never widen eligibility merely to share a helper.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).

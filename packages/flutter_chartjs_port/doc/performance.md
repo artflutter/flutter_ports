@@ -7427,3 +7427,32 @@ Regressions cover bounded fill, replacement/mixed input, constructor differences
 growth/shrink, partial ranges, custom observations, routes, live values, active
 callback mutation, exceptions and recovery. Two early DDC test-fixture assumptions
 were corrected without widening the existing native-container allowlist.
+
+## 60. Shared native point contracts: regression verification
+
+2026-11-05. [ADR 0087](adr/0087-shared-native-point-contracts.md),
+[verification and reproduction](benchmarks/native-contracts/README.md).
+
+Line/scatter now share capability/class predicates, update prerequisites and
+indexed point preparation. Exact-controller gates and per-item observation
+points remain local. NativePointResolution validates sources before calling its
+private executor; callback-time generation checks remain with Config/resolvers.
+Weak identity facts, plan validity and live coordinate/capability checks retain
+their different lifetimes. No new cache, eligibility or public API is introduced.
+
+This is an architectural consolidation, with no speedup claim. Matched native
+A/B/B/A comparisons cover line/scatter full updates, 20k items, 200 static labels,
+three color modes and connections off/on: 48 cells and 20,706 captured timings.
+The built-in display remains at maximum 120 Hz, DPR2, with the same 1036×520 chart.
+Most mean UI changes are within approximately 0–2.5%; scriptable line means are
+lower in this sample but vary notably between baseline processes. A longer
+connected-indexed line repeat is effectively flat, 11.03→11.01 ms, with p90
+12.15/12.24→11.98/12.00 ms. No consistent regression is demonstrated. One occluded
+repeat was rejected and rerun; all accepted visibility logs pass.
+
+Validation passes: 11,073 VM tests; 4,217 tests per browser backend; formatting,
+analysis, spec cases, fixtures, regenerated parity and all seven port checks.
+Shared-contract tests pin capability liveness, projection/grid scope, class
+metadata changes and validation before contexts/execution. Existing line/scatter
+and resolver twins retain mutation, callback, fallback and cache-lifetime checks.
+The 96-case matrix of §59 is not rerun for this behavior-preserving refactor.
