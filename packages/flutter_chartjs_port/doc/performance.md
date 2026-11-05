@@ -7350,3 +7350,39 @@ All 104 built-in ordinary rows have at least eight readouts and 195 timings;
 43,545 timings total. These are short local observations with variable delivered
 cadence up to 120 Hz, not sustained/cross-device guarantees. Source hashes match
 the measured implementation. Raw rows, controls and rejected attempts are kept.
+
+## 58. Indexed-update classification and numeric-loop triage
+
+2026-11-05. [Full candidates, controls and raw evidence](benchmarks/indexed-update-triage/README.md).
+Production remains ADR 0085. A fresh 20k indexed profile places coordinate
+eligibility in 32.2% of sampled stacks and runtimeType in 28.1%, versus about
+0.8% for PointOptions.clone. The unconnected profile agrees; the scriptable
+control spends almost no time in coordinate qualification. Shares overlap.
+
+Separate baseline/guard/numeric/fresh/combined binaries are measured in forward
+and reverse order on the built-in display, 1036×520/DPR2, 200 static labels.
+Warm-map mean UI (off/on connections): baseline 14.39/16.71 ms; weak per-slot
+native classification cache 10.32/11.86; numeric projection/direct writes
+14.23/16.42; fresh background-copy specialization 14.29/16.46; combination
+10.08/12.42. Numeric/fresh gains are small and do not consistently add value.
+
+The uncapped weak cache regresses every-update map replacement by about 7–11%.
+A bounded-fill prototype creates at most 1,024 new weak entries per prepared
+pass and retains existing hits. Matched stable-data means become 13.64→9.48 ms
+off and 15.29→11.54 ms on (30.5%/24.5% lower). Replacement-data means are
+18.77→18.70 and 20.93→21.14 ms, approximately flat within this sample. No value,
+option or callback result is cached; x/y and route/fallback checks remain live.
+
+The bounded profile drops runtimeType to about 0.07% of samples. Matched GC-only
+windows change mean UI-thread GC from about 1.80→1.58 ms/frame, with slow-decile
+GC about 2.48→2.45 ms. The main improvement is CPU classification, not elimination
+of GC. Heap counters remain snapshots, not allocation rates.
+
+**Recommend bounded weak native-map classification reuse for production hardening.**
+Do not promote the uncapped cache or claim a universal 60 FPS result. Production
+review must address lifecycle/partial-range/custom-container semantics, cold and
+mixed/churning workloads, memory overhead, browser coverage and the full mode
+matrix. The six final variants pass 54 existing focused regressions each plus
+extra projection/cache/copy cases. Generator edits are regenerated rather than
+hand-editing .g.dart files. Production source hashes remain unchanged; this
+investigation changes no runtime behavior or data-only guard.
