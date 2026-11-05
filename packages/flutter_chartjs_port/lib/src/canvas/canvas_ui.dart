@@ -46,6 +46,7 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_partitioned_fill.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
@@ -510,7 +511,8 @@ final class UiCanvasContext
     implements
         CanvasRenderingContext2D,
         CanvasTextMetricsSource,
-        RectBarCanvas {
+        RectBarCanvas,
+        PartitionedFillCanvas {
   UiCanvasContext._(this._element) {
     _s = _states[0];
     _path = UiPathBuilder(_s.transform);
@@ -651,6 +653,7 @@ final class UiCanvasContext
     _onChanged = null;
     _rectBarBorder = null;
     _rectBarBackground = null;
+    _partitionedFillPath = null;
   }
 
   // The recording.
@@ -1420,6 +1423,34 @@ final class UiCanvasContext
   @override
   void roundRect(double x, double y, double w, double h, [Object? radii]) =>
       _path.roundRect(x, y, w, h, radii);
+
+  UiPathBuilder? _partitionedFillPath;
+
+  @override
+  bool tryFillPartitionedPath(void Function(CanvasPath path) writePath) {
+    if (_disposed ||
+        (!_notified && _onChanged != null) ||
+        ui.Picture.onCreate != null ||
+        ui.Picture.onDispose != null ||
+        ui.Image.onCreate != null ||
+        ui.Image.onDispose != null ||
+        _s.fillShader != null ||
+        _s.fillColor == null ||
+        _s.blendMode != ui.BlendMode.srcOver ||
+        !_s.transform.isAxisAligned ||
+        !_s.transform.isInvertible) {
+      return false;
+    }
+    final builder = (_partitionedFillPath ??= UiPathBuilder(_s.transform))
+      ..reset()
+      ..transform = _s.transform;
+    writePath(builder);
+    if (_setupPaint(_fillPaint, _s.fillColor, null, mapped: true)) {
+      _c.drawPath(builder.path, _fillPaint);
+      _drew();
+    }
+    return true;
+  }
 
   /// An unknown fill rule does nothing (the DOM throws a `TypeError`).
   @override

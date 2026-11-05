@@ -2471,3 +2471,25 @@ at the same canvas dimensions and configuration.
 - 2026-11-05, ADR 0088 removes repeated general option setup for prepared scalar
   point colors. It changes no canvas operation or drawing cut. Existing and new
   resolver twins preserve callback mutation, context fallback and fresh options.
+
+### Native partitioned baseline fill (2026-11-05)
+
+ADR 0089 adds `canvas_partitioned_fill.dart` and the private alternate builder in
+`canvas_ui.dart`. It preserves the original current path and draw order, rejects
+shaders/non-axis-aligned transforms/custom observations, and draws one equivalent
+compound nonzero path. Filler preflight remains in `partitioned_baseline_fill.dart`.
+Pixel/state/guard tests: `test/port/plugins/plugin.filler/partitioned_baseline_fill_test.dart`.
+Native comparison: performance.md §62. This does not bring other deferred cuts forward.
+
+### One draw for an update replay (2026-11-05)
+
+Chart.js ADR 0090 edits `lib/src/core/core.controller.dart`. An update that replays an event draws
+once when no animation is queued. This plan cites no line of that file, and no canvas operation or
+drawing cut changes. No trigger occurred.
+
+### One hover pass for each frame of a live chart (2026-11-05)
+
+Chart.js ADR 0091 edits `lib/src/core/core.controller.dart`, `lib/src/types/index.dart`,
+`lib/src/plugins/plugin.tooltip.dart` and `lib/src/widgets/chart_view.dart`. A mouse move of a live
+`ChartView` waits for the update of its frame. No canvas operation or drawing cut changes. No trigger
+occurred.

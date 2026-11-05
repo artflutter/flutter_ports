@@ -35,6 +35,8 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dar
     show getTarget;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
     show FillerSource;
+// DIVERGES(chartjs): adapt-partitioned-baseline-fill, native equivalent fill.
+import 'package:flutter_chartjs_port/src/plugins/plugin.filler/partitioned_baseline_fill.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show FillTargetOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -197,7 +199,8 @@ void _doFill(
   ctx.save();
 
   var fillColor = below;
-  if (below != above) {
+  final splitColors = below != above;
+  if (splitColors) {
     if (property == 'x') {
       _clipVertical(ctx, target, area.top);
       _fill(
@@ -209,6 +212,7 @@ void _doFill(
         property: property,
         clip: clip,
         boundarySearch: boundarySearch,
+        partitionBoundary: linearBoundary && !splitColors,
       );
       ctx
         ..restore()
@@ -225,6 +229,7 @@ void _doFill(
         property: property,
         clip: clip,
         boundarySearch: boundarySearch,
+        partitionBoundary: linearBoundary && !splitColors,
       );
       ctx
         ..restore()
@@ -242,6 +247,7 @@ void _doFill(
     property: property,
     clip: clip,
     boundarySearch: boundarySearch,
+    partitionBoundary: linearBoundary && !splitColors,
   );
 
   ctx.restore();
@@ -350,6 +356,7 @@ void _fill(
   required types.Scale? scale,
   required types.TRBL? clip,
   required BoundaryPointSearch? boundarySearch,
+  required bool partitionBoundary,
 }) {
   // DIVERGES(chartjs): adapt-boundary-segment-search, share the private target
   // lookup across source segments and the two color passes of this draw.
@@ -409,10 +416,23 @@ void _fill(
       }
     }
 
-    ctx
-      ..closePath()
-      ..fill((loop ?? false) ? 'evenodd' : 'nonzero')
-      ..restore();
+    ctx.closePath();
+    // DIVERGES(chartjs): adapt-partitioned-baseline-fill, preserve the original
+    // current path; only the native fill draw may use equivalent subcontours.
+    final partitioned =
+        partitionBoundary &&
+        property == 'x' &&
+        loop != true &&
+        tryPartitionedBaselineFill(
+          ctx,
+          line: line,
+          target: target,
+          source: src,
+          start: start,
+          end: end,
+        );
+    if (!partitioned) ctx.fill((loop ?? false) ? 'evenodd' : 'nonzero');
+    ctx.restore();
   }
 }
 

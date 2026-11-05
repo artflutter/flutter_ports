@@ -1590,9 +1590,9 @@ class Chart
     // Replay last event from before update, or set hover styles on active
     // elements
     final active = this.active;
-    final lastEvent = this.lastEvent;
+    final lastEvent = _eventToReplay();
     if (lastEvent != null) {
-      eventHandler(lastEvent, true);
+      _replayLastEvent(lastEvent);
     } else if (active.isNotEmpty) {
       _updateHoverStyles(active, active, true);
     }
@@ -1776,9 +1776,9 @@ class Chart
       }
       if (!_updateDatasets('none', configure: false)) _invalidateDataUpdate();
       notifyPlugins('afterUpdate', UpdateHookArgs(mode: 'none'));
-      final event = lastEvent;
+      final event = _eventToReplay();
       if (event != null) {
-        eventHandler(event, true);
+        _replayLastEvent(event);
       } else if (active.isNotEmpty) {
         _updateHoverStyles(active, active, true);
       }
@@ -2438,6 +2438,14 @@ class Chart
     }
 
     void listener(types.ChartEvent e) {
+      // DIVERGES(chartjs): adapt-live-mouse-move, the update handles the move.
+      if (e.type == 'mousemove' &&
+          !animator.has(this) &&
+          (holdMouseMove?.call() ?? false)) {
+        _heldMove = e;
+        return;
+      }
+      releaseHeldMove();
       eventHandler(e);
     }
 
@@ -2739,8 +2747,66 @@ class Chart
     args.cancelable = false;
     notifyPlugins('afterEvent', args, eventFilter);
 
-    if (changed || args.changed) {
+    // DIVERGES(chartjs): adapt-replay-single-draw, the caller draws next.
+    final drawFollows =
+        _drawFollowsReplay && replay == true && !animator.has(this);
+    if ((changed || args.changed) && !drawFollows) {
       render();
+    }
+  }
+
+  /// Whether the owner of a live chart holds this mouse move for the update
+  /// of its frame (Chart.js ADR 0091). The owner calls [releaseHeldMove] when
+  /// no update takes the move. Dart `null` never holds a move.
+  @internal
+  bool Function()? holdMouseMove;
+
+  /// The mouse move that waits for the update of its frame.
+  types.ChartEvent? _heldMove;
+
+  /// Handles a mouse move that no update took, as a real event. An event of
+  /// another type calls it first, so the events keep their order.
+  @internal
+  void releaseHeldMove() {
+    final held = _heldMove;
+    if (held == null) return;
+    _heldMove = null;
+    if (ctx != null) eventHandler(held);
+  }
+
+  /// The event that an update replays: a held mouse move, else the last event.
+  ///
+  /// The held move is new, so it takes the place of the last event and gets
+  /// the hover and tooltip work of the replay. Thus the frame has one pass of
+  /// that work and one draw. A real move also ends the state of the tooltip
+  /// that ignores replays after `setActiveElements`.
+  // DIVERGES(chartjs): adapt-live-mouse-move, one pass for each live frame.
+  types.ChartEvent? _eventToReplay() {
+    final held = _heldMove;
+    if (held == null) return lastEvent;
+    _heldMove = null;
+    tooltip?.endIgnoredReplays();
+    return held;
+  }
+
+  /// Whether the [render] of an update follows the event that it replays.
+  bool _drawFollowsReplay = false;
+
+  /// core.controller.js:531 `this._eventHandler(_lastEvent, true)` of an
+  /// update, which calls `this.render()` next (:536).
+  ///
+  /// With no queued animation, upstream draws in the replay and draws again in
+  /// the update, and the second draw clears the first. Thus the replay skips
+  /// its draw. With a queued animation, each render only starts the animator,
+  /// and the replay keeps its call.
+  // DIVERGES(chartjs): adapt-replay-single-draw, one draw for each update.
+  void _replayLastEvent(types.ChartEvent event) {
+    final outer = _drawFollowsReplay;
+    _drawFollowsReplay = true;
+    try {
+      eventHandler(event, true);
+    } finally {
+      _drawFollowsReplay = outer;
     }
   }
 

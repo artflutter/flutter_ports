@@ -34,6 +34,8 @@
 /// also not for the theme (Chart.js ADR 0050).
 library;
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -571,6 +573,7 @@ class _ChartViewState extends State<ChartView> {
       return;
     }
     _chart = chart;
+    chart.holdMouseMove = _holdMouseMove;
     if (!_tickerEnabled) animator.mute(chart);
     if (notify) {
       widget.onChartCreated?.call(chart);
@@ -606,6 +609,37 @@ class _ChartViewState extends State<ChartView> {
     SchedulerBinding.instance
       ..addPostFrameCallback(_update, debugLabel: 'ChartView.update')
       ..ensureVisualUpdate();
+  }
+
+  /// The frame time of the last update that a new config gave.
+  Duration? _lastConfigUpdate;
+
+  /// Chart.js ADR 0091: a chart with a config update in this time is live, so
+  /// a new config probably follows in the frame of a mouse move. It is two
+  /// frames at 60 Hz. A wrong guess only shows the hover one frame later.
+  static const _liveUpdateWindow = Duration(milliseconds: 34);
+
+  /// Whether a mouse move of the chart waits for the update of its frame.
+  ///
+  /// The move holds in the frame callbacks, before this frame builds. If no
+  /// update takes it, the microtask after the last post-frame callback
+  /// releases it, because the post-frame callback of the update can run after
+  /// the one of this function.
+  // DIVERGES(chartjs): adapt-live-mouse-move, the guess of a live chart.
+  bool _holdMouseMove() {
+    final last = _lastConfigUpdate;
+    final chart = _chart;
+    final binding = SchedulerBinding.instance;
+    if (last == null ||
+        chart == null ||
+        binding.schedulerPhase != SchedulerPhase.transientCallbacks ||
+        binding.currentSystemFrameTimeStamp - last > _liveUpdateWindow) {
+      return false;
+    }
+    binding.addPostFrameCallback((_) {
+      scheduleMicrotask(chart.releaseHeldMove);
+    }, debugLabel: 'ChartView.releaseHeldMove');
+    return true;
   }
 
   /// The update of Chart.js ADR 0049, section 4: the values of the last
@@ -671,6 +705,9 @@ class _ChartViewState extends State<ChartView> {
       return;
     }
     if (!configChanged && !motionUpdate) return;
+    if (configChanged) {
+      _lastConfigUpdate = SchedulerBinding.instance.currentSystemFrameTimeStamp;
+    }
     final mode = widget.updateMode;
     // Step 6: the default mode also when the preference turned on
     // (Chart.js ADR 0049, section 7): a running animation ends.
