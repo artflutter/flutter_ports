@@ -39,14 +39,10 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
-    show BulkBarScale;
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, LineOptions, PointOptions;
@@ -455,26 +451,23 @@ class ScatterController extends DatasetController {
     // synchronous loop. Unknown geometry drops the plan before invoking it.
     PointOptions Function(int)? colors;
     final coordinates = NativePointCoordinates();
-    final tryColors =
-        mode == 'none' &&
-        sharedOptions == null &&
-        includeOptions &&
-        !jsTruthy(stacked) &&
-        !jsTruthy(segment) &&
-        (iAxis == 'x' || iAxis == 'y') &&
-        (vAxis == 'x' || vAxis == 'y') &&
-        start.isFinite &&
-        start >= 0 &&
-        start == start.truncateToDouble() &&
-        count.isFinite &&
-        count > 2 &&
-        count == count.truncateToDouble();
+    final tryColors = canPrepareNativePointUpdate(
+      mode: mode,
+      sharedOptions: sharedOptions,
+      includeOptions: includeOptions,
+      stacked: stacked,
+      segment: segment,
+      iAxis: iAxis,
+      vAxis: vAxis,
+      start: start,
+      count: count,
+    );
 
     for (var i = start; i < start + count; ++i) {
       final point = points[i.toInt()];
       final parsed = getParsed(i);
       if (colors != null &&
-          (!_nativePoint(point) ||
+          (!nativePointElement(point) ||
               point.active ||
               !coordinates.accepts(parsed))) {
         colors = null;
@@ -574,7 +567,7 @@ class ScatterController extends DatasetController {
       final last = data.length - 1;
       for (var i = last; i >= 0; --i) {
         final point = data[i] as types.PointElement;
-        if (colors != null && !_nativePoint(point)) colors = null;
+        if (colors != null && !nativePointElement(point)) colors = null;
         final prepared = colors;
         final ElementOptions pointOptions;
         if (prepared != null) {
@@ -620,38 +613,13 @@ class ScatterController extends DatasetController {
   // The existing numeric-scale capability guarantees built-in projection and
   // base-pixel reads. The scale's chart must provide the same native DPR reads.
   bool _nativeProjection(types.Scale scale) =>
-      scale is BulkBarScale &&
-      (scale as BulkBarScale).supportsBulkBarUpdate &&
-      identical(scale.chart, chart);
+      nativePointProjection(scale) && identical(scale.chart, chart);
 
-  bool _nativePoint(types.Element point) =>
-      point is NativePointElement &&
-      (point as NativePointElement).supportsNativePointOptions;
-
+  // DIVERGES(chartjs): adapt-native-point-contracts, shared preparation rules.
   PointOptions Function(int)? _preparePointColors(List<types.Element> points) {
     if (super.runtimeType != ScatterController || type != 'scatter') {
       return null;
     }
-    final owner = chart;
-    if (owner is! NativePointChart ||
-        !(owner as NativePointChart).supportsNativePointOptions ||
-        !identical(points, cachedMeta.data) ||
-        !nativePointList(points) ||
-        !nativeDataUpdateList(cachedMeta.parsed)) {
-      return null;
-    }
-    final elementClass = dataElementType;
-    if (elementClass is! JsClass ||
-        elementClass.id is! String ||
-        elementClass.id != 'point' ||
-        !index.isFinite ||
-        index < 0 ||
-        index != index.truncateToDouble()) {
-      return null;
-    }
-    final config = chart.config;
-    return config is Config && config.runtimeType == Config
-        ? config.prepareIndexedPointColors(index.toInt())
-        : null;
+    return prepareNativePointColors(this, points, controllerType: 'scatter');
   }
 }

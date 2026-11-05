@@ -2462,3 +2462,8 @@ at the same canvas dimensions and configuration.
   line indexed-color path. It changes no canvas call or drawing cut. The line
   controller's observation-order regressions now include warmed cache lifecycle,
   partial ranges, active callback mutation and exception recovery.
+
+- 2026-11-05, ADR 0087 shares native point-option contracts and line/scatter
+  preparation without changing canvas calls or drawing cuts. Exact-class gates,
+  activity/coordinate observations and callback-time invalidation remain at
+  their existing sites. Shared-contract tests and existing chart twins pin them.
