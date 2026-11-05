@@ -1,0 +1,49 @@
+Beta area-fill slowdown — 2026-11-05
+
+User clarified the beta symptom is lower frame rate, not UI corruption.
+Test: Flutter 3.50.0-0.4.pre, native macOS profile, Impeller MetalSDF,
+built-in 120 Hz display, DPR 2, 964 x 420 logical chart viewport.
+Original Chart.js port runtime, live deterministic data, 5k and 20k points,
+smoothing/fill off/on, other features off. Two seconds warmup followed by four
+seconds of measurement per configuration. No Metal validation or blocking
+synchronization workaround. Original interactive beta application remained
+paused during the isolated probe and was foregrounded again afterward.
+
+At 20k with smoothing, enabling fill changed approximate engine throughput
+from 117 to 52 FPS. Median nontrivial Metal command execution time changed from
+1.389 ms to 24.694 ms; p90 changed from 1.626 ms to 36.665 ms. Submission-to-
+completion p90 reached 474.7 ms with fill. UI-build p90 stayed near 1.9 ms.
+The GPU is the dominant observed bottleneck in this configuration.
+
+Straight line + fill at 20k stayed near 120 engine FPS in this test. At 5k,
+smooth + fill also stayed near 120 engine FPS. These are short diagnostic runs,
+not a guarantee for every viewport, hardware or library.
+
+The filler currently constructs one closed path per source/target segment:
+packages/flutter_chartjs_port/lib/src/plugins/plugin.filler/filler.drawing.dart
+around lines 386-414. Smooth line options disable the pixel-column fast path
+in elements/element.line.dart around lines 583-600. The filled curved contour
+therefore retains the full curved boundary. Impeller processes non-convex fills
+through stencil-then-cover geometry. Overlapping triangles from the dense
+contour are a plausible cost source, not yet proven with per-draw GPU counters.
+
+Next candidate optimization: partition an eligible baseline fill into smaller
+contours in a single fill operation, retaining all curve segments and points.
+This needs visual/coverage verification (including antialiasing and winding)
+and conservative fallback for unsupported fill targets. It is not implemented.
+
+beta-fill-timings.json records all eight cases. FPS is measured FrameTiming
+sample count divided by the four-second window, not a display presentation
+counter. Metal timing uses GPUStartTime/GPUEndTime from completed command
+buffers via a temporary diagnostic shim. It adds a completion callback without
+waiting. Nontrivial command statistics exclude <=0.1 ms marker commands.
+GPU execution per engine frame is an estimate: completion-window totals divided
+by engine samples, not a one-to-one frame/command mapping. Completion lag can
+cross the measurement boundary. Median command duration independently confirms
+the large increase; do not interpret engine FPS as completed visible FPS when
+the GPU queue is deep.
+
+Full local data: .dart_tool/beta_fill/run.log and results.json.
+The first run lacked component registration and was discarded entirely;
+invalid-run.log is retained only to distinguish it from measured results.
+Probe workspace: /tmp/beta-fill-triage. No production runtime changes made.

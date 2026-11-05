@@ -1,0 +1,15 @@
+Iteration 2 verification, 2026-11-05
+
+Command:
+DEVELOPER_DIR=/Applications/Xcode-27.1.0.app/Contents/Developer python3 verify.py /Users/vasilich/fvm/versions/beta
+
+Compiler flags:
+-std=c++17 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer
+
+Output:
+PASS capacity=4099 polygons=170 winding_samples=34000 signed_area_max_error=0
+PASS patch applies; extracted writer and allocation tested with ASan/UBSan; SDK unchanged
+
+No sanitizer errors. Additional assertions cover uint16 boundaries, mixed
+contours, legacy mode and allocation arithmetic near the byte-capacity limit.
+This is extracted-code validation, not a full engine build.

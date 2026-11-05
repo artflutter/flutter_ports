@@ -1,0 +1,18 @@
+[
+  {
+    "review": "opus-5.5",
+    "actualModels": [
+      "claude-opus-5-5"
+    ],
+    "independent": true,
+    "reviewerUsedTools": false
+  },
+  {
+    "review": "fable-5.1",
+    "actualModels": [
+      "claude-fable-5-1"
+    ],
+    "independent": true,
+    "reviewerUsedTools": false
+  }
+]

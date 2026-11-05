@@ -1,0 +1,151 @@
+macOS hover corruption: buffer reuse before GPU completion
+2026-11-05
+
+Upstream status (checked 2026-11-05)
+
+ALREADY FIXED ON FLUTTER MAIN. PR #188965, merged 2026-07-10:
+https://github.com/flutter/flutter/pull/188965
+Commit: 1db664b87ca2bc632756637da23121436b8d6145
+Title: [Impeller] Recycle HostBuffer arena entries only after GPU completion
+
+Verified directly against main 53bff0892986e1c282f81d133d6cdf329ad257d8:
+HostBuffer::Reset uses GpuSubmissionTracker to retire in-flight allocations;
+ContentContext passes the tracker into HostBuffer; Metal records submissions
+and completion callbacks. This is the same four-entry reuse/backpressure bug
+identified below. The installed Flutter 3.47.8 source lacks this mechanism.
+
+Use the upstream implementation for the next live verification. The local
+conservative-engine-fix.patch and presentation shim below are diagnostic
+artifacts, superseded as proposed solutions by this upstream fix. Main has
+been inspected, but our native reproduction has not yet been run on main.
+
+Finding
+
+The reproduction exposes a synchronization defect between macOS presentation
+and Impeller's transient host-buffer reuse. Dense smooth filled paths make the
+GPU fall behind. The CPU continues preparing frames and reuses a buffer while
+commands from an earlier frame still consume its contents. Text, controls and
+chart geometry share these transient allocations, explaining corruption outside
+the chart. The chart's data and parser are not the source of this failure.
+
+Locations in the installed Flutter 3.47.8 source
+
+1. engine/src/flutter/shell/platform/darwin/macos/framework/Source/
+   FlutterSurfaceManager.mm:242-247, presentSurfaces:atTime:notify:
+   It commits a queue marker and calls waitUntilScheduled. This does not wait
+   for GPU completion and does not bound the number of unfinished frames.
+
+2. engine/src/flutter/impeller/core/host_buffer.h:21
+   kHostBufferArenaSize = 4. There are four rotating sets of transient buffers.
+
+3. engine/src/flutter/impeller/core/host_buffer.cc:229-238
+   HostBuffer::Reset advances frame_index_ modulo four, without checking a GPU
+   completion fence. EmplaceInternal then writes the selected allocation at
+   lines 196-200. A stack captured by the probe reaches this write path while
+   the prior frame's queue marker remains in status 3 (Scheduled, not Completed).
+
+4. engine/src/flutter/impeller/display_list/dl_dispatcher.cc:1329-1332
+   RenderToTarget resets the transient buffers after recording/submitting work.
+   CPU submission completion is not GPU execution completion.
+
+This is a lifetime/backpressure bug, not an allocation-size bug: the 1,024,000
+byte allocations themselves have the expected size. Stale/corrupted index and
+uniform contents cause later GPU reads to address outside them.
+
+Evidence
+
+- The original chart renderer, normal native profile mode, accumulated up to
+  18 unfinished presentation markers; severe whole-window corruption reproduced.
+- Metal GPU validation with direct Canvas drawing reported invalid loads in
+  imp_glyph_atlas_vertex_main, e.g. offset 1,042,480 in a 1,024,000-byte buffer.
+  See metal-error-excerpt.log. This control retained the spline calculation but
+  bypassed ChartView, controllers and the Canvas 2D bridge.
+- A second probe tracked shared Metal buffers touched by Impeller and their
+  previous frame's completion marker. It captured HostBuffer::EmplaceInternal
+  accessing those buffers while the previous marker was still Scheduled.
+  See reuse-observe.log. Logging was capped at five hazards, not five total.
+- The identical buffer probe with a bounded completion wait recorded no reuse
+  hazards. Its queue stayed bounded and the live chart/controls remained intact.
+  See reuse-bounded.log and bounded-port.png.
+- Bounded presentation with the original port and Metal GPU validation recorded
+  zero validation errors, 285 measured frames and 499 hover events in eight
+  seconds. The direct Canvas control also had zero validation errors with the
+  bounded wait, versus 1,513 diagnostic reports without the wait.
+- No data reduction, curve changes, fill changes or disabled hover handling
+  were used for these comparisons. All used the live 20k smooth filled chart.
+- The conservative completion wait, scoped to macOS presentation on the
+  original port, also stayed visually intact with zero GPU validation errors:
+  139 measured frames and 499 hover events. See complete-validation.log.
+
+Potential fixes
+
+A. Conservative macOS engine fix: replace waitUntilScheduled with
+   waitUntilCompleted at FlutterSurfaceManager.mm:247. The accompanying
+   conservative-engine-fix.patch makes that change. It prevents the next frame
+   from overwriting work still executing on this queue, but serializes CPU/GPU
+   frame preparation more than necessary. This is a correctness candidate, not
+   a performance optimization.
+
+B. Preferred engine design: associate transient buffer generations with GPU
+   completion, and wait only when reusing a generation whose work is unfinished.
+   This belongs at the context/allocator submission boundary so it also covers
+   multiple views, offscreen rendering and other submission paths. Merely making
+   the ring larger postpones the failure under sustained GPU overload.
+
+C. Verified diagnostic prototype: at macOS presentation keep queue markers,
+   retire completed ones, and wait for the oldest when three are outstanding.
+   This leaves at most two outstanding at return, keeping the next normal
+   single-view frame inside the four-buffer reuse window. The probe implements
+   this as PRESENT_MODE=bounded. It is not a general multi-view/engine fix and
+   must not be installed as a production method-swizzling workaround.
+
+Verification limits and performance
+
+Runs used the built-in 120 Hz display, DPR 2, a 1237 x 420 logical chart viewport,
+M3 Max, native profile, Flutter 3.47.8 / Impeller MetalSDF. Each measurement
+window lasted eight seconds with roughly 499 injected Flutter hover events.
+The original port's bounded normal run produced 317 frames in the window
+(about 40 engine frames/s). The unbounded run produced 647 but visibly corrupted
+output. Those invalid frames do not demonstrate correct rendering throughput.
+Validation slows GPU work; validation runs are correctness evidence, not speed
+comparisons. Longer runs and engine lifecycle/multi-view tests remain necessary
+before shipping an engine fix.
+
+The synchronization behavior was exercised through a temporary Objective-C
+diagnostic shim in isolated application copies. The source patch passes
+git apply --check against the installed SDK, but a rebuilt engine containing
+the patch has not been compiled or tested. Neither the installed Flutter SDK
+nor the app/port production runtime was changed.
+
+Installed framework revision: 737ba8f885dc774b53b442759999a312c9461e4e
+Engine artifact revision: cf636b1dfb818dd6a3ff16e390e93b1a036969c8
+
+Probe use (diagnostic application copies only)
+
+Compile presentation_probe.m with Apple's clang, Foundation and Metal:
+  xcrun clang -dynamiclib -fobjc-arc -framework Foundation -framework Metal \
+    presentation_probe.m -o /tmp/presentation_probe.dylib
+
+On this machine Xcode 27.1 must be selected for this command using
+DEVELOPER_DIR=/Applications/Xcode-27.1.0.app/Contents/Developer; the older
+selected Xcode compiler cannot link against the configured macOS 27 SDK.
+
+Launch a separately signed diagnostic app copy with:
+  DYLD_INSERT_LIBRARIES=/tmp/presentation_probe.dylib
+  PRESENT_MODE=observe  (original behavior plus diagnostics)
+  PRESENT_MODE=bounded  (bound queued presentation markers)
+  PRESENT_MODE=complete (wait for each presentation marker to complete)
+
+Optional GPU validation environment:
+  MTL_DEBUG_LAYER=1
+  MTL_SHADER_VALIDATION=1
+  MTL_SHADER_VALIDATION_REPORT_TO_STDERR=1
+
+Enable live line / 20k / smooth / fill and repeatedly hover controls. The probe
+must print its installation message. It touches only that child process and
+uses private engine classes for diagnosis; do not ship it in the application.
+The local automated drivers and full raw captures are in
+.dart_tool/smooth_hover/. synchronization-results.json records the run counts.
+
+Apple's distinction between scheduled and completed command buffers:
+https://developer.apple.com/documentation/metal/mtlcommandbuffer

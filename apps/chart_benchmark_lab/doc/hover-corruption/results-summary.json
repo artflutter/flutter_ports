@@ -1,0 +1,130 @@
+[
+  {
+    "run": "impeller",
+    "case": "paused-controls",
+    "runningAtEnd": false,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 302,
+    "updateSampleCount": 1,
+    "hoverSampleCount": 499
+  },
+  {
+    "run": "impeller",
+    "case": "both-controls",
+    "runningAtEnd": true,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 642,
+    "updateSampleCount": 643,
+    "hoverSampleCount": 494
+  },
+  {
+    "run": "skia",
+    "case": "paused-controls",
+    "runningAtEnd": false,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 243,
+    "updateSampleCount": 1,
+    "hoverSampleCount": 499
+  },
+  {
+    "run": "skia",
+    "case": "both-controls",
+    "runningAtEnd": true,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 1,
+    "updateSampleCount": 4,
+    "hoverSampleCount": 499
+  },
+  {
+    "run": "skia-live-only",
+    "case": "both-controls",
+    "runningAtEnd": true,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 1,
+    "updateSampleCount": 4,
+    "hoverSampleCount": 498
+  },
+  {
+    "run": "plain-flutter",
+    "case": "both-controls",
+    "runningAtEnd": true,
+    "stepAtEnd": 808,
+    "elapsedAtEnd": 8.994426,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 715,
+    "updateSampleCount": 0,
+    "hoverSampleCount": 499
+  },
+  {
+    "run": "control-smooth",
+    "case": "smooth",
+    "runningAtEnd": true,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 956,
+    "updateSampleCount": 957,
+    "hoverSampleCount": 499
+  },
+  {
+    "run": "control-fill",
+    "case": "fill",
+    "runningAtEnd": true,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 960,
+    "updateSampleCount": 961,
+    "hoverSampleCount": 499
+  },
+  {
+    "run": "control-both-1k",
+    "case": "both-1k",
+    "runningAtEnd": true,
+    "viewport": {
+      "width": 1237.0,
+      "height": 420.0
+    },
+    "displayHz": 120.0,
+    "errors": [],
+    "frameCount": 960,
+    "updateSampleCount": 961,
+    "hoverSampleCount": 499
+  }
+]

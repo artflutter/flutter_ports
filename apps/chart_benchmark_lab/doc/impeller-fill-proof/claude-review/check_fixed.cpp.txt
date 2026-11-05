@@ -1,0 +1,22 @@
+// Standalone tests for proposed balanced strip index construction.
+#include "fixed_strip.h"
+#include <vector>
+#include <array>
+#include <random>
+#include <algorithm>
+#include <iostream>
+#include <cassert>
+#include <cstdint>
+#include <cmath>
+using P=std::array<double,2>;
+using T=std::array<size_t,3>;
+double cross(P a,P b,P p){return (b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);}
+int winding(const std::vector<P>& pts,P q){int w=0;for(size_t i=0;i<pts.size();i++){P a=pts[i],b=pts[(i+1)%pts.size()];if(a[1]<=q[1]){if(b[1]>q[1]&&cross(a,b,q)>0)w++;}else if(b[1]<=q[1]&&cross(a,b,q)<0)w--;}return w;}
+std::vector<T> triangles(size_t n,size_t& indexCount){std::vector<T> out;std::vector<size_t> strip;indexCount=0;if(n<3)return out;EmitBalancedStrip(0,n-1,[&](size_t i){assert(i<n);strip.push_back(i);indexCount++;},[&](){for(size_t i=2;i<strip.size();i++){T t={strip[i-2],strip[i-1],strip[i]};if(i%2)std::swap(t[0],t[1]);out.push_back(t);}strip.clear();indexCount++;});assert(out.size()==n-2);assert(indexCount<=n+1+(n/32)*6); assert(indexCount==n+6*((n-1)/32+((n-1)%32!=0))-5);return out;}
+int main(){size_t capacityCases=0;for(size_t n=3;n<=4096;n++){size_t indices;triangles(n,indices);capacityCases++;}for(size_t n:{65534u,65535u,65536u,241583u,1000000u}){size_t indices;triangles(n,indices);capacityCases++;}
+std::mt19937 random(7);size_t cases=0,queries=0;double maximumError=0;
+for(size_t sample=0;sample<160;sample++){const size_t n=3+random()%200;std::vector<P> polygon;for(size_t i=0;i<n;i++)polygon.push_back({double(int(random()%201)-100),double(int(random()%201)-100)});if(sample%4==0)std::reverse(polygon.begin(),polygon.end());if(sample%5==0)polygon.push_back(polygon.front());if(sample%7==0)polygon[1]=polygon[0];if(sample%11==0)for(auto& p:polygon)p[1]=0;size_t count;auto ts=triangles(polygon.size(),count);
+double expectedArea=0,actualArea=0;for(size_t i=0;i<polygon.size();i++)expectedArea+=cross({0,0},polygon[i],polygon[(i+1)%polygon.size()]);for(auto t:ts)actualArea+=cross(polygon[t[0]],polygon[t[1]],polygon[t[2]]);maximumError=std::max(maximumError,std::abs(expectedArea-actualArea));assert(expectedArea==actualArea);
+for(size_t q=0;q<200;q++){P point={double(int(random()%241)-120)+.3125,double(int(random()%241)-120)+.1875};int expected=winding(polygon,point),actual=0;for(auto t:ts)actual+=winding({polygon[t[0]],polygon[t[1]],polygon[t[2]]},point);assert(expected==actual);assert((std::abs(expected)%2)==(std::abs(actual)%2));queries++;}cases++;}
+std::cout<<"PASS capacity="<<capacityCases<<" polygons="<<cases<<" winding_samples="<<queries<<" signed_area_max_error="<<maximumError<<"\n";
+}

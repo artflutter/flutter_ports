@@ -1,0 +1,25 @@
+#import <Foundation/Foundation.h>
+#import <Metal/Metal.h>
+#import <objc/runtime.h>
+#import <QuartzCore/QuartzCore.h>
+__attribute__((constructor)) static void installTiming(void) {
+ @autoreleasepool {
+  id<MTLDevice> device=MTLCreateSystemDefaultDevice();
+  id<MTLCommandQueue> queue=[device newCommandQueue];
+  id<MTLCommandBuffer> sample=[queue commandBuffer];
+  Class cls=object_getClass(sample);
+  Method method=class_getInstanceMethod(cls,@selector(commit));
+  IMP original=method_getImplementation(method);
+  IMP hook=imp_implementationWithBlock(^(id<MTLCommandBuffer> self){
+   const double submitted=CACurrentMediaTime();
+   const double epoch=NSDate.date.timeIntervalSince1970;
+   [self addCompletedHandler:^(id<MTLCommandBuffer> done){
+    double start=done.GPUStartTime,end=done.GPUEndTime;
+    if(start>0 && end>=start)fprintf(stderr,"GPU_TIME %.6f %.3f %.3f\n",epoch,(end-start)*1000,(CACurrentMediaTime()-submitted)*1000);
+   }];
+   ((void(*)(id,SEL))original)(self,@selector(commit));
+  });
+  class_replaceMethod(cls,@selector(commit),hook,method_getTypeEncoding(method));
+  fprintf(stderr,"GPU_TIME_PROBE installed %s\n",class_getName(cls));
+ }
+}

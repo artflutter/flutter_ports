@@ -1,0 +1,59 @@
+Dart-side baseline fill comparison — 2026-11-05
+
+Implemented: full original Canvas 2D path preserved; an eligible solid curved
+baseline fill draws one alternate compound path, with 32 cubics per contour.
+All points and existing control coordinates are retained. Unsupported cases
+fall back. ADR 0089 describes provenance, geometry and native canvas guards.
+Flat/monotone/slowly varying curves also fall back to avoid extra CPU work.
+
+Measured on the real chart: live line, 20k, smooth + fill, other features off,
+seed 7, 964 x 420 logical plot, DPR 2, built-in 120 Hz display, M3 Max,
+Flutter 3.50.0-0.4.pre, macOS profile / Impeller. Two seconds warmup and four
+seconds measurement per run, original / optimized / original.
+
+                                Original A   Dart compound   Original B
+Approximate engine FPS               53.0          109.5         53.0
+Median GPU command (ms)             23.903         2.560       25.206
+Median complete chart update (ms)    6.460         7.226        6.378
+Resident MiB at window end         387.688       292.266      411.844
+
+An earlier run reproduced ~53 versus ~112 engine FPS. CPU timing wraps the
+complete ChartView post-frame update in the diagnostic copy, not production.
+The additional CPU work is about 0.8 ms here; the GPU saves over 20 ms.
+Engine FPS is FrameTiming cadence, not display presentation feedback. GPU times
+come from Metal completion timestamps, selected by submission time. These are
+short diagnostic runs, not a guarantee for every device or configuration.
+
+A separate fixed-frame native probe measured emitted fill indices:
+  original:    242,137 indices, 968,548 bytes
+  partitioned: 245,257 indices, 981,028 bytes
+Extra: 12,480 bytes (1.29%). Both used a 1,024,000-byte native allocation block.
+This excludes additional boundary vertices, the extra native path and allocator
+costs. Sequential process RSS is not an isolated allocation comparison; fewer
+queued GPU frames can lower RSS despite larger per-frame geometry. Do not
+promise a general RAM reduction from these samples.
+
+Actual native chart pixel comparison: zero differing RGBA pixels across
+1,619,520 plot pixels. The enabled draw counter confirmed optimization ran.
+Software Skia twins with alpha, fractional transforms, clipping and a subsequent
+stroke of the current path differed only at 65-138 antialiased pixels, by at
+most 3/255 per channel, with no solid-area differences and ink error <0.0002.
+The explicit test tolerance preserves this distinction from native equality.
+
+485 filler/canvas/API tests and all port guards passed. Focused geometry,
+callback/custom-point and paint-state fallbacks passed as well. The standalone
+engine patch from the earlier investigation is separate and is not installed.
+
+comparison.json: final timings and resident samples.
+native-pixels.json: native chart pixel comparison.
+index-buffers.json: actual native index counts and allocation sizes.
+Raw local probes: .dart_tool/dart_baseline_fill/.
+
+Manual comparison from apps/chart_benchmark_lab, using the SAME beta executable:
+  flutter run -d macos --profile
+  flutter run -d macos --profile --dart-define=CHARTJS_PARTITIONED_BASELINE_FILL=false
+Exported results record this flag. It changes only this fill optimization.
+Use the same display/viewport/features and profile mode for both measurements.
+The repository SDK pin stays 3.47.8. Beta runs use an isolated copy because
+beta's flutter_test conflicts with the repository analyzer tooling dependency.
+Interactive beta copy: /tmp/flutter-beta50-benchmark.

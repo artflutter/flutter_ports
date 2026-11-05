@@ -1,0 +1,98 @@
+[
+  {
+    "case": "5000-smoothfalse-fillfalse",
+    "windowSeconds": 4,
+    "frames": 481,
+    "approxEngineFps": 120.25,
+    "uiP90Ms": 0.593,
+    "rasterP90Ms": 0.84,
+    "gpuExecutionMsPerEngineFrameEstimate": 1.050956340956341,
+    "nontrivialGpuCommandMedianMs": 1.076,
+    "nontrivialGpuCommandP90Ms": 1.155,
+    "submissionToCompletionP90Ms": 2.111
+  },
+  {
+    "case": "5000-smoothfalse-filltrue",
+    "windowSeconds": 4,
+    "frames": 468,
+    "approxEngineFps": 117.0,
+    "uiP90Ms": 0.531,
+    "rasterP90Ms": 0.851,
+    "gpuExecutionMsPerEngineFrameEstimate": 3.362252136752137,
+    "nontrivialGpuCommandMedianMs": 3.3440000000000003,
+    "nontrivialGpuCommandP90Ms": 3.778,
+    "submissionToCompletionP90Ms": 4.672
+  },
+  {
+    "case": "5000-smoothtrue-fillfalse",
+    "windowSeconds": 4,
+    "frames": 481,
+    "approxEngineFps": 120.25,
+    "uiP90Ms": 0.534,
+    "rasterP90Ms": 2.294,
+    "gpuExecutionMsPerEngineFrameEstimate": 1.0414178794178794,
+    "nontrivialGpuCommandMedianMs": 0.953,
+    "nontrivialGpuCommandP90Ms": 1.191,
+    "submissionToCompletionP90Ms": 2.015
+  },
+  {
+    "case": "5000-smoothtrue-filltrue",
+    "windowSeconds": 4,
+    "frames": 481,
+    "approxEngineFps": 120.25,
+    "uiP90Ms": 0.564,
+    "rasterP90Ms": 2.719,
+    "gpuExecutionMsPerEngineFrameEstimate": 5.270234927234927,
+    "nontrivialGpuCommandMedianMs": 5.5835,
+    "nontrivialGpuCommandP90Ms": 6.901,
+    "submissionToCompletionP90Ms": 7.408
+  },
+  {
+    "case": "20000-smoothfalse-fillfalse",
+    "windowSeconds": 4,
+    "frames": 476,
+    "approxEngineFps": 119.0,
+    "uiP90Ms": 2.085,
+    "rasterP90Ms": 0.766,
+    "gpuExecutionMsPerEngineFrameEstimate": 1.0226995798319327,
+    "nontrivialGpuCommandMedianMs": 1.067,
+    "nontrivialGpuCommandP90Ms": 1.088,
+    "submissionToCompletionP90Ms": 1.963
+  },
+  {
+    "case": "20000-smoothfalse-filltrue",
+    "windowSeconds": 4,
+    "frames": 479,
+    "approxEngineFps": 119.75,
+    "uiP90Ms": 2.112,
+    "rasterP90Ms": 0.798,
+    "gpuExecutionMsPerEngineFrameEstimate": 3.28543006263048,
+    "nontrivialGpuCommandMedianMs": 3.456,
+    "nontrivialGpuCommandP90Ms": 3.99,
+    "submissionToCompletionP90Ms": 4.765
+  },
+  {
+    "case": "20000-smoothtrue-fillfalse",
+    "windowSeconds": 4,
+    "frames": 469,
+    "approxEngineFps": 117.25,
+    "uiP90Ms": 1.929,
+    "rasterP90Ms": 6.465,
+    "gpuExecutionMsPerEngineFrameEstimate": 1.4901492537313432,
+    "nontrivialGpuCommandMedianMs": 1.389,
+    "nontrivialGpuCommandP90Ms": 1.626,
+    "submissionToCompletionP90Ms": 2.537
+  },
+  {
+    "case": "20000-smoothtrue-filltrue",
+    "windowSeconds": 4,
+    "frames": 209,
+    "approxEngineFps": 52.25,
+    "uiP90Ms": 1.852,
+    "rasterP90Ms": 41.019,
+    "gpuExecutionMsPerEngineFrameEstimate": 24.923665071770337,
+    "nontrivialGpuCommandMedianMs": 24.694,
+    "nontrivialGpuCommandP90Ms": 36.665,
+    "submissionToCompletionP90Ms": 474.7
+  }
+]

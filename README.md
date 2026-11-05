@@ -67,6 +67,18 @@ dart run melos run gallery:device   # Android/iOS device, emulator or simulator
 `melos` is a dev dependency, so `dart run melos …` works without a global install. With a
 global `melos` 8.x, plain `melos …` works too.
 
+## Chart benchmark lab
+
+[`apps/chart_benchmark_lab`](apps/chart_benchmark_lab) compares the native Chart.js
+port, fl_chart, Graphic and Syncfusion with shared datasets, feature controls,
+frame metrics and saved captures. It supports line, bar, scatter and pie charts.
+
+```sh
+dart run melos run benchmark:macos  # profile-mode comparison app
+```
+
+See its README for measurement semantics and the Syncfusion license requirement.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md).

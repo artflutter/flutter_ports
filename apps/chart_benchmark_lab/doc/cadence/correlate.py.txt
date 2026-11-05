@@ -1,0 +1,19 @@
+import json,statistics,bisect
+from pathlib import Path
+exec(Path('.dart_tool/cadence_diagnosis/analyze.py').read_text().split('summary={}')[0])
+w=Path('.dart_tool/cadence_diagnosis')
+d=json.loads((w/'port-trace.frames.json').read_text());fs=sorted(d['frames'],key=lambda f:f['buildStart']);sp=spans(json.loads((w/'port-trace.timeline.json').read_text())['traceEvents']);updates=[e for e in sp if e['name']=='CJ.postFrameUpdate'];ds=sorted([e for e in sp if e['name']=='LAB.data'],key=lambda e:e['end']);starts=[f['buildStart'] for f in fs];dataends=[e['end'] for e in ds];work={};after=[];before=[]
+for u in updates:
+ i=bisect.bisect_right(starts,u['start'])-1
+ if i<0 or i>=len(fs)-1:continue
+ f=fs[i];data=[e for e in ds if e['start']>=f['buildStart'] and e['end']<=f['buildEnd']]
+ if not data:continue
+ a=data[-1];work[i]={'total':((f['buildEnd']-f['buildStart'])+(u['end']-u['start']))/1000,'parse':sum((e['end']-e['start'])/1000 for e in sp if e['name']=='CJ.parse' and e['start']>=u['start'] and e['end']<=u['end'])}
+ after.append(u['start']-f['buildEnd']);before.append(a['start']-f['buildStart'])
+print('Matched work',len(work),'mean',statistics.mean(v['total'] for v in work.values()),'p90',pct([v['total'] for v in work.values()],.9));print('post update starts after build finish:',min(after),statistics.mean(after),max(after),'microseconds');print('generator starts after build start:',min(before),statistics.mean(before),max(before))
+for lag in [0,1,2]:
+ groups={False:[],True:[]}
+ for i,f in enumerate(fs[:-1]):
+  if i-lag not in work:continue
+  slow=fs[i+1]['vsync']-f['vsync']>=12000;groups[slow].append(work[i-lag])
+ print('lag',lag,{str(k):{'n':len(v),'total':statistics.mean(x['total'] for x in v),'parse':statistics.mean(x['parse'] for x in v)} for k,v in groups.items() if v})

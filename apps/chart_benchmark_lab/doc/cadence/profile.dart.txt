@@ -1,0 +1,19 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:vm_service/vm_service_io.dart';
+Future<void> main(List<String> args) async {
+ final s=await vmServiceConnectUri(args[0]); final name=args[1];final cpu=args[2]=='cpu';
+ await s.setFlag('profiler',cpu?'true':'false');
+ await s.setVMTimelineFlags(['Dart','GC']);
+ final vm=await s.getVM();final isolate=vm.isolates!.firstWhere((i)=>i.name=='main');
+ await Future<void>.delayed(const Duration(seconds:5));
+ await s.clearCpuSamples(isolate.id!);await s.clearVMTimeline();
+ final start=(await s.getVMTimelineMicros()).timestamp!;
+ await Future<void>.delayed(const Duration(seconds:8));
+ final end=(await s.getVMTimelineMicros()).timestamp!;
+ final timeline=await s.getVMTimeline(timeOriginMicros:start,timeExtentMicros:end-start);
+ await File('$name.timeline.json').writeAsString(jsonEncode(timeline.toJson()));
+ if(cpu){final p=await s.getCpuSamples(isolate.id!,start,end-start);await File('$name.cpu.json').writeAsString(jsonEncode(p.toJson()));}
+ await s.dispose();
+}

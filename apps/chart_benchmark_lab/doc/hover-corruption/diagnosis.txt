@@ -1,0 +1,48 @@
+Native hover corruption diagnosis — 2026-11-05
+
+Follow-up: root-cause.txt now identifies premature transient GPU-buffer reuse
+and records targeted synchronization probes and a candidate engine patch.
+The observations below are the earlier isolation pass.
+
+Reproduced whole-window visual corruption on Flutter 3.47.8, native macOS
+profile, M3 Max, built-in 120 Hz display, DPR 2, 1237 x 420 chart viewport.
+Engine log: Impeller (MetalSDF).
+
+Method: live deterministic data, 20,000 points, smooth line and area fill,
+synthetic Flutter mouse hover events every 16 ms over actual controls.
+Eight-second measurement windows after startup; screenshots capture the
+actual native window during activity. This is not a static raster test.
+
+Evidence:
+- Port renderer: live curve + fill corrupted controls and chart (port-corruption.png).
+- Direct Flutter Canvas.drawPath: also corrupted (direct-canvas-corruption.png).
+  This bypassed ChartView, chart controllers and the Canvas 2D bridge. It retained
+  the port's spline control-point calculation; all curve coordinates were finite.
+  The live control reached step 808 with 715 measured engine frames.
+- No Flutter framework exceptions were recorded in these runs.
+- Fresh-process controls: 20k smooth without fill, 20k fill without smoothing,
+  and 1k smooth + fill showed no corruption in the inspected screenshots.
+  Their measurement windows contained 956, 960 and 960 engine frames respectively.
+- Paused curve + fill with hover did not reproduce in this short test. This does
+  not disprove the user's paused screenshot, which may follow live activity.
+- Skia was tested by changing FLTEnableImpeller only in temporary app copies.
+  Its paused run was clean, but live runs stalled (one measured engine frame).
+  Therefore Skia is NOT a verified live workaround.
+
+Conclusion: strong evidence of a native rendering/backend defect triggered by
+this dense curved filled path workload, rather than parsing or chart hit tests.
+The exact Impeller/Metal implementation defect has NOT been isolated. Hover
+causes additional UI redraws; whether it is necessary to trigger the defect has
+not been established with a matching live no-hover control.
+
+Temporary mitigation: at 20k disable either Smooth lines or Area fill. Both
+settings were visually clean in short live hover controls, not a guarantee of
+long-duration stability. Reducing to 1k also avoided the observed corruption.
+
+Next engineering step: reduce to an independent Flutter-only reproducer with
+explicit spline geometry, then verify an engine fix or geometry-preserving path
+workaround. Do not hide the issue by silently reducing the benchmark dataset.
+
+All experimental runtime changes were confined to /tmp/indexed-triage-work.
+Root app/lib and port/lib hashes matched their pre-diagnosis manifest afterward.
+Full local logs, screenshots and test scripts: .dart_tool/smooth_hover/.

@@ -1,0 +1,38 @@
+[
+  {
+    "case": "partitioned-false-0",
+    "engineFpsApprox": 53.0,
+    "gpuMedianMs": 23.903,
+    "gpuP90Ms": 32.265,
+    "chartUpdateMedianMs": 6.4595,
+    "chartUpdateP90Ms": 8.88,
+    "uiP90Ms": 1.93,
+    "rasterP90Ms": 36.683,
+    "residentMiBAtEnd": 387.6875,
+    "optimizedDraws": 0
+  },
+  {
+    "case": "partitioned-true-1",
+    "engineFpsApprox": 109.5,
+    "gpuMedianMs": 2.56,
+    "gpuP90Ms": 2.854,
+    "chartUpdateMedianMs": 7.226,
+    "chartUpdateP90Ms": 9.89,
+    "uiP90Ms": 2.074,
+    "rasterP90Ms": 8.321,
+    "residentMiBAtEnd": 292.265625,
+    "optimizedDraws": 659
+  },
+  {
+    "case": "partitioned-false-2",
+    "engineFpsApprox": 53.0,
+    "gpuMedianMs": 25.206,
+    "gpuP90Ms": 51.112,
+    "chartUpdateMedianMs": 6.378,
+    "chartUpdateP90Ms": 8.959,
+    "uiP90Ms": 1.838,
+    "rasterP90Ms": 39.963,
+    "residentMiBAtEnd": 411.84375,
+    "optimizedDraws": 0
+  }
+]

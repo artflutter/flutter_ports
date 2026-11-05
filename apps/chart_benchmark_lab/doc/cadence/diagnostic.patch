@@ -1,0 +1,204 @@
+--- a/packages/flutter_chartjs_port/lib/src/widgets/chart_view.dart
++++ b/packages/flutter_chartjs_port/lib/src/widgets/chart_view.dart
+@@ -33,6 +33,8 @@
+ /// plugin or an index of them. It never writes `defaults` or `overrides`,
+ /// also not for the theme (Chart.js ADR 0050).
+ library;
++
++import 'dart:developer' as diag;
+ 
+ import 'package:flutter/foundation.dart';
+ import 'package:flutter/scheduler.dart';
+@@ -479,7 +481,9 @@
+   /// config (Chart.js ADR 0052, section 9). With [fresh], or after a raw
+   /// config, a typed config lowers to new scopes. Else it reconciles with
+   /// the live scopes of the last typed config.
+-  ChartConfigurationScope _appConfig({required bool fresh}) {
++  ChartConfigurationScope _appConfig({required bool fresh}) => diag.Timeline.timeSync('CJ.typedConfig', () => _diagnosticConfig(fresh: fresh));
++
++  ChartConfigurationScope _diagnosticConfig({required bool fresh}) {
+     final typed = widget.config;
+     final ChartConfigurationScope config;
+     if (typed == null) {
+@@ -620,7 +624,9 @@
+   /// A typed config first reconciles with the live Maps (Chart.js ADR 0052,
+   /// section 9): the reconcile patches the dataset Maps and gives the app
+   /// config of the steps, so the theme switch runs after it.
+-  void _update(Duration _) {
++  void _update(Duration t) => diag.Timeline.timeSync('CJ.postFrameUpdate', () => _diagnosticUpdate(t));
++
++  void _diagnosticUpdate(Duration _) {
+     _updatePending = false;
+     final motionUpdate = _motionUpdate;
+     _motionUpdate = false;
+@@ -643,7 +649,7 @@
+     }
+     final config = configChanged ? _appConfig(fresh: false) : applied;
+     final root = _root!;
+-    if (configChanged) _applyConfig(chart, root, config, applied);
++    if (configChanged) diag.Timeline.timeSync('CJ.applyConfig', () => _applyConfig(chart, root, config, applied));
+     // Chart.js ADR 0050, steps 1 to 4, also before a new chart of a new
+     // platform: the root, the user scales and the palette keys then have
+     // the new theme.
+--- a/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.controller.dart
+@@ -32,6 +32,8 @@
+ /// The library imports the platform layer and the chart host. Thus it is not
+ /// a pure layer.
+ library;
++
++import 'dart:developer' as diag;
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+@@ -1513,7 +1515,9 @@
+     }
+   }
+ 
+-  void _updateFull(Object? mode) {
++  void _updateFull(Object? mode) => diag.Timeline.timeSync('CJ.fullUpdate', () => _diagnosticUpdateFull(mode));
++
++  void _diagnosticUpdateFull(Object? mode) {
+     _invalidateDataUpdate();
+     final generation = _dataUpdateGeneration;
+     final config = this.config..update();
+@@ -1892,7 +1896,9 @@
+   /// `box.configure` is the test for [LayoutItemConfigure]. `box._layers()`
+   /// is the function of [LayoutItem.layers], which `layouts.addBox` always
+   /// writes. `item._idx` is [LayoutLayer.idx].
+-  void _updateLayout(double minPadding) {
++  void _updateLayout(double minPadding) => diag.Timeline.timeSync('CJ.layout', () => _diagnosticLayout(minPadding));
++
++  void _diagnosticLayout(double minPadding) {
+     if (notifyPlugins('beforeLayout', CancelableHookArgs(cancelable: true)) ==
+         false) {
+       return;
+@@ -1934,7 +1940,9 @@
+   /// @private
+   ///
+   /// `mode({datasetIndex: i})` is [jsCall] of the function value.
+-  bool _updateDatasets(Object? mode, {bool configure = true}) {
++  bool _updateDatasets(Object? mode, {bool configure = true}) => diag.Timeline.timeSync('CJ.datasets', () => _diagnosticDatasets(mode, configure: configure));
++
++  bool _diagnosticDatasets(Object? mode, {bool configure = true}) {
+     if (notifyPlugins(
+           'beforeDatasetsUpdate',
+           UpdateHookArgs(mode: mode, cancelable: true),
+@@ -2014,7 +2022,9 @@
+ 
+   /// core.controller.js:698 `draw()`.
+   @override
+-  void draw() {
++  void draw() => diag.Timeline.timeSync('CJ.draw', _diagnosticDraw);
++
++  void _diagnosticDraw() {
+     int i;
+     final resizeBeforeDraw = _resizeBeforeDraw;
+     if (resizeBeforeDraw != null) {
+--- a/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
++++ b/packages/flutter_chartjs_port/lib/src/core/core.datasetController.dart
+@@ -40,6 +40,8 @@
+ /// This file imports `core.animations.dart`, which imports
+ /// `core.animator.dart`. Thus it is not a pure layer.
+ library;
++
++import 'dart:developer' as diag;
+ 
+ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+     show CanvasRenderingContext2D;
+@@ -1333,7 +1335,9 @@
+   ///
+   /// [start] and [count] are integers: [start] is at most the count of the
+   /// parsed items.
+-  void parse(double start, double count) {
++  void parse(double start, double count) => diag.Timeline.timeSync('CJ.parse', () => _diagnosticParse(start, count));
++
++  void _diagnosticParse(double start, double count) {
+     final meta = cachedMeta;
+     final data = _data!;
+     final iScale = meta.iScale!;
+--- a/apps/chart_benchmark_lab/lib/benchmark/controller.dart
++++ b/apps/chart_benchmark_lab/lib/benchmark/controller.dart
+@@ -1,3 +1,5 @@
++import 'dart:developer' as diag;
++
+ import 'dart:async';
+ import 'dart:convert';
+ import 'dart:ui' show FramePhase, FrameTiming, Size;
+@@ -278,9 +280,11 @@
+       return;
+     }
+     _step++;
++    diag.Timeline.startSync('LAB.data');
+     frames.value = config.workload == Workload.live
+         ? _generator.frame(_step)
+         : DatasetFrame(frames.value.values, _step);
++    diag.Timeline.finishSync();
+   }
+ 
+   void _onTimings(List<FrameTiming> timings) {
+--- a/apps/chart_benchmark_lab/lib/charts/chart_adapter.dart
++++ b/apps/chart_benchmark_lab/lib/charts/chart_adapter.dart
+@@ -1,3 +1,7 @@
++import 'dart:developer' as diag;
++
++import 'dart:io' as io;
++import 'dart:convert' as convert;
+ import 'dart:math' as math;
+ 
+ import 'package:chart_benchmark_lab/benchmark/config.dart';
+@@ -32,12 +36,12 @@
+   final Size size;
+ 
+   @override
+-  Widget build(BuildContext context) => switch (library) {
++  Widget build(BuildContext context) => diag.Timeline.timeSync('LAB.adapter', () => switch (library) {
+     ChartLibrary.chartjs => _chartJs(),
+     ChartLibrary.flChart => _flChart(),
+     ChartLibrary.graphic => _graphic(),
+     ChartLibrary.syncfusion => _syncfusion(),
+-  };
++  });
+ 
+   Color _color(int index) =>
+       config.alternateColors && config.type != ChartType.line && index.isOdd
+@@ -109,6 +113,20 @@
+       extra: const {'maxTicksLimit': 5},
+     );
+     return cj.ChartView(
++      onChartCreated: (chart) {
++        if (frame.step != 0 || frame.values.length != 20000) return;
++        var mismatch = 0;
++        final points = chart.getDatasetMeta(0).data;
++        for (var i=0;i<points.length;i++) {
++          final point = points[i] as cj.PointElement;
++          final raw = frame.values[i];
++          final x = chart.scales['x']!.getPixelForValue(raw.x, i.toDouble());
++          final y = chart.scales['y']!.getPixelForValue(raw.y, i.toDouble());
++          if ((point.x-x).abs()>1e-9 || (point.y-y).abs()>1e-9 || point.skip==true) mismatch++;
++        }
++        final target = io.Platform.environment['OUTPUT'];
++        if (target != null) io.File('$target.geometry').writeAsStringSync(convert.jsonEncode({'points':points.length,'mismatches':mismatch,'sorted':chart.getDatasetMeta(0).sorted}));
++      },
+       config: cj.ChartConfig(
+         type: switch (config.type) {
+           ChartType.line => cj.ChartKind.line,
+@@ -151,6 +169,7 @@
+         maintainAspectRatio: false,
+         padding: EdgeInsets.zero,
+         extra: {
++          if (const bool.fromEnvironment('DIAG_NO_PARSE')) 'parsing': false,
+           'events': config.tooltips
+               ? ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove']
+               : <String>[],
+--- a/apps/chart_benchmark_lab/macos/Runner/MainFlutterWindow.swift
++++ b/apps/chart_benchmark_lab/macos/Runner/MainFlutterWindow.swift
+@@ -25,7 +25,7 @@
+       } ?? NSScreen.main
+       if let screen = target {
+         let bounds = screen.visibleFrame
+-        window.setContentSize(NSSize(width: min(1360, bounds.width - 32),
++        window.setContentSize(NSSize(width: min(1633, bounds.width - 32),
+                                      height: min(900, bounds.height - 64)))
+         window.setFrameOrigin(NSPoint(x: bounds.minX + 16, y: bounds.minY + 16))
+         window.makeKeyAndOrderFront(nil)

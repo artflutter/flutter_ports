@@ -1,0 +1,83 @@
+[
+  {
+    "variant": "native",
+    "case": "whole-a",
+    "frames": 481,
+    "engineFps": 120.18296794962609,
+    "gpuMedianMs": 3.1235,
+    "gpuP90Ms": 4.886,
+    "metalValidationErrors": null
+  },
+  {
+    "variant": "native",
+    "case": "split32",
+    "frames": 480,
+    "engineFps": 119.93655356316509,
+    "gpuMedianMs": 4.4435,
+    "gpuP90Ms": 4.701,
+    "metalValidationErrors": null
+  },
+  {
+    "variant": "native",
+    "case": "whole-b",
+    "frames": 480,
+    "engineFps": 119.9361340086404,
+    "gpuMedianMs": 3.6025,
+    "gpuP90Ms": 4.868,
+    "metalValidationErrors": null
+  },
+  {
+    "variant": "balanced",
+    "case": "whole-a",
+    "frames": 480,
+    "engineFps": 119.94386627058537,
+    "gpuMedianMs": 0.808,
+    "gpuP90Ms": 1.066,
+    "metalValidationErrors": null
+  },
+  {
+    "variant": "balanced",
+    "case": "split32",
+    "frames": 480,
+    "engineFps": 119.93523497311452,
+    "gpuMedianMs": 1.253,
+    "gpuP90Ms": 1.547,
+    "metalValidationErrors": null
+  },
+  {
+    "variant": "balanced",
+    "case": "whole-b",
+    "frames": 480,
+    "engineFps": 119.96032312312703,
+    "gpuMedianMs": 0.808,
+    "gpuP90Ms": 0.82,
+    "metalValidationErrors": null
+  },
+  {
+    "variant": "balanced-validated",
+    "case": "whole-a",
+    "frames": 479,
+    "engineFps": 119.51777695936795,
+    "gpuMedianMs": 1.203,
+    "gpuP90Ms": 1.407,
+    "metalValidationErrors": 0
+  },
+  {
+    "variant": "balanced-validated",
+    "case": "split32",
+    "frames": 480,
+    "engineFps": 119.93583432863419,
+    "gpuMedianMs": 1.534,
+    "gpuP90Ms": 1.845,
+    "metalValidationErrors": 0
+  },
+  {
+    "variant": "balanced-validated",
+    "case": "whole-b",
+    "frames": 480,
+    "engineFps": 119.95738513892941,
+    "gpuMedianMs": 1.134,
+    "gpuP90Ms": 1.398,
+    "metalValidationErrors": 0
+  }
+]

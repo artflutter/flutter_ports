@@ -1,0 +1,136 @@
+Proposed Impeller fix: balanced local triangle strips for large concave fills
+2026-11-05
+
+Update: standalone-v2/impeller-balanced-fill.patch supersedes this initial
+patch with a tighter allocation bound. See standalone-v2/README.txt and
+impeller-balanced-fill-v2.zip for the self-contained candidate and verifier.
+
+Recommendation
+
+Change StripPathVertexWriter in engine/src/flutter/impeller/tessellator/
+tessellator.cc. For large non-convex contours, subdivide the index range by
+its midpoint. Render short leaves with the existing strip order, and join the
+halves with a signed triangle. Use primitive restart between these pieces.
+Keep the existing compact strip for small contours and convex paths.
+
+The candidate is balanced-strip-engine.patch, based on Flutter 3.50.0-0.4.pre.
+It changes only one engine source file. The current main source inspected
+during this investigation still uses the original alternating-end strip.
+
+Why this is an engine fix
+
+The original algorithm repeatedly connects vertices from opposite ends of a
+long contour. A dense curved boundary can consequently produce many large,
+overlapping triangles in the stencil preparation pass. Reorganizing the
+triangles reduces that work without altering the flattened curve vertices,
+winding rule, paint, clipping, cover draw or Dart API.
+
+This is related to Skia's middle-out polygon triangulation, whose source
+explicitly describes lower rasterizer work than a linear strip or fan:
+https://github.com/google/skia/blob/main/src/gpu/tessellate/MiddleOutPolygonTriangulator.h
+The candidate implementation here is a simple recursive hybrid with short
+strip leaves; it does not copy Skia's streaming stack implementation.
+
+Algorithm
+
+Given the inclusive vertex range [first,last]:
+  - For at most 32 edges, emit the existing alternating-end strip, then restart.
+  - Otherwise split at middle=(first+last)/2.
+  - Emit the left range, triangle(first,middle,last), and the right range.
+
+Every internal diagonal occurs in opposite directions in adjacent pieces.
+Their signed winding contributions cancel, leaving the original contour's
+boundary. This works algebraically for concave and self-intersecting contours;
+it does not require identifying a chart baseline or assuming monotonic x.
+The existing stencil pass continues to resolve nonzero/even-odd coverage.
+Runtime is O(N), auxiliary recursion depth O(log N). No vertices are added.
+
+The draft enables this for non-convex paths with at least 1,024 flattened
+points, on the primitive-restart strip route. Within those paths, contours
+shorter than 1,024 points retain their original strip. The fan and GLES fallback
+routes are unchanged. These thresholds need broader benchmarking before merge.
+
+Index capacity
+
+For a subdivided N-vertex contour with L leaves, emitted index count is
+N + 6*L - 5. Leaves contain 16..32 edges, so 2*N is a conservative capacity.
+The patch reserves 2*point_count + contour_count for an eligible path, checks
+the size multiplication before selecting the larger allocation, and changes
+the existing writer capacity assertion to the new bound. Legacy paths retain
+point_count + contour_count capacity.
+
+Measured example: original draw 241,584 indices; hybrid 290,730 (+20.3%).
+The draft's RESERVED index capacity is up to roughly 2x the old capacity,
+not +20.3%; that unused headroom can be tightened later. Point storage is
+unchanged. Paths containing many small contours can reserve extra space even
+when no individual contour is eligible; this is another tuning opportunity.
+
+Native verification
+
+An Objective-C++ diagnostic shim recognized Impeller's original index order
+and rewrote only its index buffer immediately before the Metal indexed draw.
+It retained the existing vertices, shader/pipeline, primitive type and Dart
+path. It fell back unchanged for unrecognized index streams or short contours.
+The source Dart app kept one large contour throughout these whole-path tests.
+
+On Flutter 3.50.0-0.4.pre / Impeller MetalSDF, M3 Max, built-in 120 Hz display,
+DPR 2, 964 x 420 logical plot, alternating the same two complete datasets:
+
+  Original whole contour: median GPU command 23.5–24.0 ms, ~60 engine FPS.
+  Naive middle-out triangles: 3.1–3.6 ms, ~120 FPS; ~4x emitted indices.
+  Proposed hybrid, whole A: 0.808 ms, ~120 FPS.
+  Proposed hybrid, whole B: 0.808 ms, ~120 FPS.
+
+The hybrid is about 29–30x faster for the measured GPU command. This is a
+fill-only engine reproduction, not a claim that whole-chart rendering improves
+by the same ratio. The prototype's index-copy/allocation overhead differs from
+direct engine emission, so exact end-to-end performance needs an engine build.
+
+Correctness evidence
+
+- Whole-path images at dataset frames 0, 73 and 241 were byte-identical PNGs
+  to those from the unmodified engine: therefore decoded pixels also match.
+- All six within-run whole-versus-partitioned RGBA image comparisons also had
+  zero differing pixels.
+- A separate native run with Metal API and GPU validation had zero reported
+  Invalid Metal usage errors. Validation timings are not performance results.
+- The exact candidate C++ writer was extracted and compiled with minimal
+  engine type stubs. It passed 4,099 capacity/count cases, including one million
+  vertices; 170 randomized/reversed/repeated/collinear/self-intersecting
+  polygons; and 34,000 point-winding checks. Triangle winding matched contour
+  winding, including even-odd parity; signed area error was zero.
+- git apply --check passes against the installed beta SDK.
+
+Files
+
+  balanced-strip-engine.patch: candidate engine source change.
+  engine-prototype-timings.json: measured native comparisons.
+  engine-prototype-pixels.json: image equivalence checks.
+  balanced_strip.h.txt / balanced_probe.mm.txt: native diagnostic prototype.
+  exact_writer.h.txt / check_exact.cpp.txt: extracted writer and standalone tests.
+  Flutter-LICENSE.txt: license for the extracted Flutter writer.
+
+To run the standalone C++ tests, copy the two .txt files to exact_writer.h and
+check_exact.cpp in a temporary directory, compile the latter with C++17 and
+execute it. Expected: PASS capacity=4099 polygons=170 winding_samples=34000
+signed_area_max_error=0.
+
+Not yet done / merge requirements
+
+The installed engine was NOT rebuilt or modified. A full-source syntax check
+could not complete because the SDK checkout lacks third_party/abseil-cpp.
+The tests compile the exact writer but do not compile its complete integration
+translation unit. The patch is a validated algorithm proposal, not a tested
+engine binary or a production-ready upstream PR.
+
+Before merging, build the engine and add its own regression tests for contours
+and holes, both fill rules, clipping, transforms/perspective, fractional edges,
+antialiasing, degenerate paths and index-width boundaries; run goldens and
+benchmarks for ordinary icons/text/paths, and applicable Metal/Vulkan hardware.
+Tune the eligibility threshold, leaf size and reserved capacity. The native
+shim did not have the path-convexity flag, so runtime testing directly verifies
+the concave reproduction, not every guard of the candidate integration.
+
+No production chart runtime, project SDK pin or installed Flutter SDK changed.
+Nothing was submitted upstream. Raw local logs are under
+.dart_tool/impeller_middle_out/.

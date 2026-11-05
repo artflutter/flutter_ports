@@ -1,0 +1,50 @@
+Model: claude-opus-5-5
+Review of supplied measurements; no tools used by reviewer.
+
+I'll review this from your stated facts only, without running anything, and give you a version you can send.
+
+**Verdict:** The library-first recommendation holds, but only as a guarded, opt-in fast path, and not until two gaps are closed (see "Challenge").
+
+## Where the overhead occurs
+
+An engine fix would affect three stages for selected large nonconvex fills:
+
+1. **Allocation:** The engine reserves temporary index space for the path before writing to it. The proposed reservation is 1,095,680 bytes.
+2. **Emission:** The engine writes the reordered indices. This is where index data grows, from 966,336 to 1,087,152 bytes in this repro. The reserved figure is slightly higher because it includes unused space.
+3. **Render:** The GPU uses the same vertices, path, and pipeline, with the new index order. GPU time dropped from about 24ms to about 0.83ms in the standalone native repro. The rewrite isn't installed, and no full engine build exists.
+
+**Where it hits:** The cost applies to per-path transient index buffers. It can be stepwise: this path's indices fit within a 1,024,000-byte arena block before the rewrite but exceed it afterward, which can force another block. Frames in flight can multiply retained resources, so retained memory can rise by more than the byte difference for this one path.
+
+**Where it doesn't hit:** Small or convex paths are excluded, as are routes without primitive-restart strip support. Vertex data is unchanged. These numbers are not a whole-app memory measurement.
+
+## The Dart alternative
+
+Keep the same 19,999 cubics and control points, but build one `Path` with many closed subcontours of 32 segments. Each returns to the same horizontal baseline. Draw it with one `drawPath` call and nonzero winding. The added boundary edges cancel, so the filled area stays the same.
+
+In testing, GPU time was about 1.25ms, and six raw RGBA comparisons across three frames were pixel-identical. All points were retained.
+
+This isn't free. The engine flattens and closes every subcontour, which adds path, closure, and restart work. It can also add boundary vertices and segments, which the engine rewrite doesn't. Its index and memory bytes haven't been measured, so we can't say it uses less memory than the engine fix.
+
+**It's preferable when:**
+- You need a fix now and don't want to maintain a custom SDK.
+- The chart is a simple single-baseline fill.
+- You can fall back to the original path.
+
+**The engine fix is preferable when:** many path shapes or apps are affected, or the chart geometry can't be split safely.
+
+## Limitations
+
+- **Splitting:** Compute full-curve control points before splitting, and never fit chunks independently.
+- **Separate draws:** Only the single compound fill was tested. Separate translucent `drawPath` calls can show seams or double-blend.
+- **Fallback cases:** Use the original path for anything not yet validated, including gaps, loops, overlapping windings, above/below colors, stacks, clips or antialiasing differences, gradient bounds, and complex render targets.
+- **Stroke:** The original stroke can remain unchanged.
+- **Benchmarks:** Disclose the alternative implementation if it affects comparison fairness or the workload. Don't downsample.
+- **Engine risks:** Ribbon-like contours may get slower, and broader goldens and device testing are missing.
+
+## Challenge
+
+- **Test coverage is thin:** Everything comes from one beta build, one M3 Max, and one chart shape. Other GPUs may behave differently, so test your target devices before shipping.
+- **CPU cost is missing:** The summary reports GPU time only. Building and flattening hundreds of subcontours could cost CPU time, so measure UI and raster thread time as well as Dart workaround bytes.
+- **The speedup isn't guaranteed:** The workaround depends on current engine behavior, not a documented contract, so a later Flutter release could change the result. Add a performance regression check.
+- **Don't rank the fixes on speed:** 0.83ms and 1.25ms are both far below 24ms, and neither has broad testing. Compare them on maintenance cost and coverage instead.
+- **The app fix doesn't solve the engine problem:** It only helps charts using this adapter, so also report the standalone repro upstream.

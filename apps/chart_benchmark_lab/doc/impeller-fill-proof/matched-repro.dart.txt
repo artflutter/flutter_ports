@@ -1,0 +1,137 @@
+// Standalone Flutter fill-path reproduction; no chart-library imports.
+// Copyright (c) 2026 Vasiliy Ditsyak. SPDX-License-Identifier: MIT
+// Cubic control formula follows Chart.js splineCurve (MIT, Chart.js Contributors).
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+
+const plotSize = Size(964, 420);
+const count = 20000;
+final phases = (() {
+  var seed = 7;
+  return List.generate(count, (_) {
+    seed = (seed * 1664525 + 1013904223) & 0x7fffffff;
+    return seed / 0x80000000 * math.pi * 2;
+  });
+})();
+
+// Same finite input and cubic control points for both path representations.
+List<List<double>> geometry(int frame) {
+  final time = frame / 60;
+  final points = List.generate(count, (i) {
+    final x = i * 100 / (count - 1);
+    final y = 50 + 26 * math.sin(x * .075 + time) +
+        12 * math.sin(phases[i] + time * .7);
+    return <double>[1 + x / 100 * 962, 419 - y / 100 * 418, 0, 0, 0, 0];
+  });
+  for (var i = 0; i < count; i++) {
+    final p = points[math.max(0, i - 1)];
+    final c = points[i];
+    final n = points[math.min(count - 1, i + 1)];
+    final d1 = math.sqrt(math.pow(c[0]-p[0], 2) + math.pow(c[1]-p[1], 2));
+    final d2 = math.sqrt(math.pow(n[0]-c[0], 2) + math.pow(n[1]-c[1], 2));
+    final a = d1+d2 == 0 ? 0 : .35*d1/(d1+d2);
+    final b = d1+d2 == 0 ? 0 : .35*d2/(d1+d2);
+    c[2] = (c[0]-a*(n[0]-p[0])).clamp(1,963).toDouble();
+    c[3] = (c[1]-a*(n[1]-p[1])).clamp(1,419).toDouble();
+    c[4] = (c[0]+b*(n[0]-p[0])).clamp(1,963).toDouble();
+    c[5] = (c[1]+b*(n[1]-p[1])).clamp(1,419).toDouble();
+    if(!c.every((x)=>x.isFinite))throw StateError('Nonfinite geometry');
+  }
+  return points;
+}
+
+Path fillPath(List<List<double>> p, int chunk) {
+  final path = Path(); // nonzero winding, one draw call in every case.
+  var cubics = 0;
+  for (var start=0; start<p.length-1; start+=chunk) {
+    final end=math.min(start+chunk,p.length-1);
+    path.moveTo(p[start][0],p[start][1]);
+    for(var i=start+1;i<=end;i++) {
+      path.cubicTo(p[i-1][4],p[i-1][5],p[i][2],p[i][3],p[i][0],p[i][1]);
+      cubics++;
+    }
+    path.lineTo(p[end][0],419);
+    path.lineTo(p[start][0],419);
+    path.close();
+  }
+  if(cubics!=count-1)throw StateError('Lost or repeated a curve segment');
+  return path;
+}
+
+void draw(Canvas c,Path p) {
+  c.drawColor(Colors.white,BlendMode.src);
+  c.drawPath(p,Paint()..color=const Color(0x264f6bed));
+}
+
+class Plot extends CustomPainter {
+  Plot(this.path);
+  final Path path;
+  @override void paint(Canvas c,Size s)=>draw(c,path);
+  @override bool shouldRepaint(Plot old)=>true;
+}
+
+class Probe extends StatefulWidget {
+  const Probe({super.key});
+  @override State<Probe> createState()=>_ProbeState();
+}
+class _ProbeState extends State<Probe> with SingleTickerProviderStateMixin {
+  late final Ticker ticker;
+  late final Directory out;
+  String label='Preparing';int chunk=count;int frame=0;
+  Path path=fillPath(geometry(0),count);
+  final timings=<Map<String,num>>[];
+  final results=<Object>[];
+  @override void initState(){
+    super.initState();out=Directory(Platform.environment['PROOF_OUTPUT']!)..createSync(recursive:true);
+    SchedulerBinding.instance.addTimingsCallback((values){for(final t in values)timings.add({'vsync':t.timestampInMicroseconds(ui.FramePhase.vsyncStart),'ui':t.buildDuration.inMicroseconds/1000,'raster':t.rasterDuration.inMicroseconds/1000});});
+    ticker=createTicker((_){setState((){frame++;path=fillPath(geometry(frame.isEven ? 0 : 73),chunk);});});
+    unawaited(run());
+  }
+  Future<void> run()async{
+    try{
+      await Future<void>.delayed(const Duration(seconds:2));
+      for(final item in [('whole-a',count),('split32',32),('whole-b',count)]){
+        setState((){label=item.$1;chunk=item.$2;frame=0;});ticker.start();
+        await Future<void>.delayed(const Duration(seconds:2));
+        timings.clear();final begin=DateTime.now().microsecondsSinceEpoch;final frameBegin=frame;
+        final vsyncBegin=SchedulerBinding.instance.currentSystemFrameTimeStamp.inMicroseconds;
+        stdout.writeln('MEASURE $label $begin');
+        await Future<void>.delayed(const Duration(seconds:4));
+        final end=DateTime.now().microsecondsSinceEpoch;final vsyncEnd=SchedulerBinding.instance.currentSystemFrameTimeStamp.inMicroseconds;
+        ticker.stop();stdout.writeln('END $label $end');
+        await Future<void>.delayed(const Duration(seconds:2));
+        results.add({'case':label,'chunk':chunk,'beginEpochUs':begin,'endEpochUs':end,'tickerFrames':frame-frameBegin,'frames':timings.where((t)=>t['vsync']!>=vsyncBegin&&t['vsync']!<vsyncEnd).toList()});
+        File('${out.path}/timings.json').writeAsStringSync(jsonEncode(results));
+      }
+      final pixels=<Object>[];
+      for(final step in [0,73,241]){
+        final p=geometry(step);
+        List<int>? reference;
+        for(final parts in [count,128,32]){
+          final rec=ui.PictureRecorder();final canvas=Canvas(rec)..scale(2);
+          draw(canvas,fillPath(p,parts));final pic=rec.endRecording();
+          final image=await pic.toImage(1928,840);
+          final rgba=(await image.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List();
+          final png=await image.toByteData(format:ui.ImageByteFormat.png);
+          File('${out.path}/frame-$step-chunk-$parts.png').writeAsBytesSync(png!.buffer.asUint8List());
+          if(reference==null){reference=List.of(rgba);}else{
+            var different=0,overOne=0,overEight=0,maxDelta=0;var totalDelta=0;
+            for(var i=0;i<rgba.length;i+=4){var d=0;for(var j=0;j<4;j++){final a=(rgba[i+j]-reference[i+j]).abs();d=math.max(d,a);totalDelta+=a;}if(d>0)different++;if(d>1)overOne++;if(d>8)overEight++;maxDelta=math.max(maxDelta,d);}
+            pixels.add({'frame':step,'chunk':parts,'pixels':1928*840,'different':different,'overOne':overOne,'overEight':overEight,'maxChannelDelta':maxDelta,'meanChannelDelta':totalDelta/rgba.length});
+          }
+          image.dispose();pic.dispose();
+        }
+      }
+      File('${out.path}/pixel-comparison.json').writeAsStringSync(jsonEncode(pixels));
+      stdout.writeln('PROOF_COMPLETE');exit(0);
+    }catch(e,s){stderr.writeln('$e\n$s');exit(1);}
+  }
+  @override Widget build(BuildContext c)=>MaterialApp(home:Scaffold(body:Center(child:Column(mainAxisSize:MainAxisSize.min,children:[Text('$label • 20k points • frame $frame'),const SizedBox(height:20),RepaintBoundary(child:SizedBox(width:plotSize.width,height:plotSize.height,child:CustomPaint(painter:Plot(path)))),const SizedBox(height:20),const Text('Identical curves. One fill draw. No chart library.')]))));
+  @override void dispose(){ticker.dispose();super.dispose();}
+}
+void main(){WidgetsFlutterBinding.ensureInitialized();FlutterError.onError=(e){FlutterError.presentError(e);exit(2);};runApp(const Probe());}

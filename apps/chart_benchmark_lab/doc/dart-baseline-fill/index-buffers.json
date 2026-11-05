@@ -1,0 +1,12 @@
+{
+  "original": {
+    "indices": 242137,
+    "bytes": 968548,
+    "allocationBytes": 1024000
+  },
+  "partitioned": {
+    "indices": 245257,
+    "bytes": 981028,
+    "allocationBytes": 1024000
+  }
+}

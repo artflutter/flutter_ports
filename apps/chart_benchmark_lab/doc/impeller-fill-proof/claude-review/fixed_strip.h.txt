@@ -1,0 +1,25 @@
+// Fixed-span leaf proposal independently reviewed by Claude Fable 5.1.
+// Implementation by Codex; MIT, Copyright (c) 2026 Vasiliy Ditsyak.
+#pragma once
+#include <cstddef>
+template<class Emit,class End>
+void EmitChunkTree(size_t first,size_t last,size_t lo,size_t hi,size_t chunks,const Emit& emit,const End& end){
+ const size_t a=first+lo*32;
+ const size_t b=hi==chunks ? last : first+hi*32;
+ if(hi-lo==1){
+  emit(a);size_t l=a+1,r=b;
+  while(l<r){emit(l++);emit(r--);}
+  if(l==r)emit(l);
+  end();return;
+ }
+ const size_t mid=lo+(hi-lo)/2;
+ EmitChunkTree(first,last,lo,mid,chunks,emit,end);
+ emit(a);emit(first+mid*32);emit(b);end();
+ EmitChunkTree(first,last,mid,hi,chunks,emit,end);
+}
+template<class Emit,class End>
+void EmitBalancedStrip(size_t first,size_t last,const Emit& emit,const End& end){
+ const size_t edges=last-first;if(edges<2)return;
+ const size_t chunks=edges/32+(edges%32!=0);
+ EmitChunkTree(first,last,0,chunks,chunks,emit,end);
+}

@@ -1,0 +1,41 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer' as diag;
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:chart_benchmark_lab/main.dart';
+import 'package:chart_benchmark_lab/benchmark/config.dart';
+import 'package:chart_benchmark_lab/benchmark/controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
+
+void main() {
+ WidgetsFlutterBinding.ensureInitialized();cj.Chart.register(cj.registerables);
+ final output=Platform.environment['OUTPUT']!;
+ final engine=ChartLibrary.values.byName(Platform.environment['ENGINE']??'chartjs');
+ final frames=<Object?>[];final errors=<String>[];
+ FlutterError.onError=(d){errors.add(d.exceptionAsString());FlutterError.presentError(d);};
+ SchedulerBinding.instance.addTimingsCallback((ts){for(final t in ts)frames.add({
+  'vsync':t.timestampInMicroseconds(ui.FramePhase.vsyncStart),
+  'buildStart':t.timestampInMicroseconds(ui.FramePhase.buildStart),
+  'buildEnd':t.timestampInMicroseconds(ui.FramePhase.buildFinish),
+  'rasterStart':t.timestampInMicroseconds(ui.FramePhase.rasterStart),
+  'rasterEnd':t.timestampInMicroseconds(ui.FramePhase.rasterFinish),
+ });});
+ Future<void> run(BenchmarkController c) async {
+  try {
+   await Future<void>.delayed(const Duration(seconds:2));
+   c.selectLibrary(engine);c.configure(const BenchmarkConfig(count:20000));
+   c.captureSeconds=int.parse(Platform.environment['SECONDS']??'18');
+   await Future<void>.delayed(const Duration(milliseconds:700));
+   c.start(capture:true);diag.Timeline.instantSync('DIAG.start');
+   final watch=Stopwatch()..start();
+   while((c.running||c.finishing)&&watch.elapsed.inSeconds<50)await Future<void>.delayed(const Duration(milliseconds:100));
+   if(c.results.length!=1)throw StateError(c.message);
+   File(output).writeAsStringSync(jsonEncode({'result':c.results.single.toJson(),'frames':frames,'errors':errors}));
+   exit(errors.isEmpty?0:1);
+  }catch(e,st){File(output).writeAsStringSync(jsonEncode({'error':'$e','stack':'$st','errors':errors}));exit(1);}
+ }
+ runApp(ChartBenchmarkApp(onControllerReady:(c)=>unawaited(run(c))));
+}

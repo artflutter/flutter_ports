@@ -1,0 +1,6 @@
+Matched work 307 mean 7.859511400651466 p90 11.129
+post update starts after build finish: 8 14.778501628664495 29 microseconds
+generator starts after build start: 6 11.045602605863191 35
+lag 0 {'False': {'n': 292, 'total': 7.936767123287671, 'parse': 3.4427705479452055}, 'True': {'n': 15, 'total': 6.3556, 'parse': 2.2948}}
+lag 1 {'False': {'n': 292, 'total': 7.671260273972603, 'parse': 3.2426472602739724}, 'True': {'n': 15, 'total': 11.524133333333333, 'parse': 6.190533333333334}}
+lag 2 {'False': {'n': 291, 'total': 7.852652920962199, 'parse': 3.4135360824742267}, 'True': {'n': 16, 'total': 7.98425, 'parse': 2.89825}}

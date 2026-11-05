@@ -1,0 +1,97 @@
+# Independent review: balanced-strip fill patch
+
+**Verdict:** the direction is sound and worth taking upstream, but not in this form. I would change the leaf split so the reservation is nearly exact, and add a shape-regression gate before proposing it.
+
+I ran nothing; everything below is derived from the patch and your notes.
+
+## 1. Correctness, overflow and winding
+
+**Mathematically guaranteed (exact arithmetic, read from the patch):**
+- **Winding:** each leaf strip covers its sub-chain plus the closing chord, and the triangle `(first, middle, last)` cancels the two child chords and adds the parent chord. By induction the signed boundary equals the legacy one, at any split point.
+- **Triangle count:** it stays at n−2, with no new vertices or index values, so 16-bit index risk is no worse than legacy.
+- **Index count:** `n + 6L − 5` is right, and leaf spans are in [16, 32] when the root span exceeds 32.
+- **Capacity bound:** it holds because `Σ floor(nᵢ/16) ≤ floor(N/16)`. This also keeps it safe if the writer merges contours.
+- **Overflow:** `(N/16)*6 < N`, so the extra term cannot overflow.
+- **Recursion depth:** about log2(n/32), roughly 15 at 1M points.
+
+**Hypotheses to confirm in engine source:**
+- **Stencil ops:** intermediate overlap depth changes. This is harmless only if the non-zero stencil uses Increment*Wrap*/Decrement*Wrap* (final value is then order-independent mod 256). I believe it does, but check.
+- **Prepass count:** safety still depends on writer points ≤ prepass points, enforced only by `FML_DCHECK`. A violation in release builds is silent heap corruption, with more indices now written past the end.
+- **Contour merging:** the early return in `EndContour` does not advance `contour_start_`, so a one-point contour seems to merge into the next. That is safe with your aggregate bound, but would break a naive per-contour exact reservation.
+- **Shape regression (the biggest risk):** balanced splitting is not universally better. On ribbon-like contours (spirals, rings, stroke-like outlines), legacy zigzag pairs adjacent vertices and has roughly 1× overdraw. Chord triangles would sweep the whole hull at every level, so the patch could make those slower. Your evidence covers one chart-like shape.
+- **Scope:** fan-capable backends keep the fan writer, which likely has the same overdraw problem on chart shapes. This patch is effectively Metal-only.
+
+## 2. Better solution: fixed-span leaves
+
+The halving recursion makes leaf count jump at powers of two. Extra indices swing between 18.75% and 37.5% depending on n, and the reservation must assume the worst. Your test case sits near the good end (L = 8192, about 29.5 edges per leaf).
+
+Instead, cut the contour into chunks of exactly K edges (last chunk is the remainder) and build the same binary tree over chunk indices:
+
+```cpp
+static constexpr size_t kLeafSpan = 32;  // tunable
+// boundary vertex of chunk i
+size_t V(size_t i) { return std::min(first + i * kLeafSpan, last); }
+
+void WriteChunks(size_t lo, size_t hi) {        // chunk indices, hi > lo
+  if (hi - lo == 1) { WriteZigZagStrip(V(lo), V(hi)); return; }  // existing leaf code
+  size_t mid = lo + (hi - lo) / 2;
+  WriteChunks(lo, mid);
+  Emit(V(lo), V(mid), V(hi), kRestart);
+  WriteChunks(mid, hi);
+}
+// entry: WriteChunks(0, ceil((last - first) / kLeafSpan))
+// reservation: index_capacity = N + C + 6 * (N / kLeafSpan)
+```
+
+**Guaranteed:**
+- The winding proof is unchanged, since it never depended on the split position.
+- L = ⌈(n−1)/K⌉ exactly, so emitted indices are `n + 6⌈(n−1)/K⌉ − 5`.
+- The bound holds: extra over legacy is `6(L−1) ≤ 6⌊(n−1)/K⌋ ≤ 6⌊n/K⌋`, and floors are superadditive across contours.
+- For a single-contour path the slack between reserved and emitted is 0 or 6 indices.
+- The worst-case extra is 18.75% at K = 32, for every n.
+
+**Your case, assuming N = 241,583 and C = 1 (inferred from 241,584):**
+
+| | Indices | Bytes |
+|---|---|---|
+| Legacy emitted and reserved | 241,584 | 966,336 |
+| Patch emitted | 290,730 | 1,162,920 |
+| Patch reserved | 332,172 | 1,328,688 |
+| Fixed-K emitted | 286,878 | 1,147,512 |
+| Fixed-K reserved | 286,878 | 1,147,512 |
+
+That is 181,176 fewer reserved bytes (13.6%) and 15,408 fewer emitted bytes (1.3%). The emitted gain is small here only because this n is near the halving scheme's best case; at its worst case the gain approaches 18.75% of N.
+
+**Hypotheses:**
+- Overdraw should match what you measured, because the tree depth is the same and leaves are 32 edges versus your 29–30. Re-measure.
+- K = 64 would halve the extra to about 9.4% at some leaf-overdraw cost. Treat it as a tuning candidate.
+
+**What is left over:**
+- Paths with many short contours still reserve up to 18.75% unused.
+- Fixing that needs per-contour accumulation in the `CountFillStorage` prepass, which must mirror the writer's merge behaviour. I would defer it.
+- Packing internal triangles into shared strips saves about 4% more at most and is not worth the complexity.
+
+**Whole-app memory:** this cannot be inferred from either byte count. HostBuffer is a block arena, and from memory the block size is about 1 MB with buffers retained across several frames; verify both. If so, legacy (966 KB) fits in a block and any variant here exceeds it, so the real cost is quantized. Measure it with Instruments.
+
+## 3. CPU cost
+
+- **Guaranteed:** emission stays O(n) sequential writes with no new pass or allocation. Fixed-K adds one `min` per chunk boundary.
+- **Hypothesis:** about 19% more index writes costs well under 0.1 ms at this size, against roughly 23 ms of GPU time saved. CPU cannot offset the gain on this shape.
+- **Where CPU could matter:** only if you add an adaptive shape heuristic, which is O(n) cross-products unless sampled.
+- **Unmeasured:** raster-thread tessellation time. Your GPU medians say nothing about it.
+
+## 4. Verification plan
+
+1. **Engine build:** build with fixed-K and add `tessellator_unittests` asserting `GetIndexCount()` equals the formula. Cover n at K boundaries (r = 0, 1, K−1), n around 1024, and mixed short and long contours.
+2. **Promote the bound check:** turn the capacity `FML_DCHECK` into a hard check or a legacy fallback, at least while landing.
+3. **Degenerate contours:** test one-point, empty and duplicate-point contours to pin down the merge behaviour.
+4. **Goldens:** run non-zero and even-odd, holes, self-intersections, clips and transforms on Metal, and on a Vulkan device without fan support if one exists.
+5. **Winding depth:** include a case with winding magnitude above 127 to exercise wrap.
+6. **Shape benchmark matrix:** A/B/A GPU and raster-thread times for chart area, spiral ribbon, ring, large glyph-like outline and random blob, at 1k, 10k and 250k points. This decides whether always-on at 1024 or more points is acceptable.
+7. **Memory:** measure HostBuffer block count and footprint per frame, before and after.
+
+## Upstream readiness
+
+Open an issue with the chart repro and timings first; the roughly 29× drop in fill GPU time on a realistic chart shape is compelling.
+
+Land fixed-K rather than halving. Do not submit until step 6 shows no ribbon regression. If it does regress, add a gate (a sampled overdraw estimate is one hypothesis) or keep it behind a flag.

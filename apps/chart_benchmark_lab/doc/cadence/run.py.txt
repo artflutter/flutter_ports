@@ -1,0 +1,20 @@
+import os,subprocess,re,time,json
+from pathlib import Path
+w=Path(__file__).resolve().parent
+for name,engine,mode in [('port-trace','chartjs','trace'),('fl-trace','flChart','trace'),('port-cpu','chartjs','cpu')]:
+ print('START',name,flush=True)
+ with (w/(name+'.log')).open('w') as log:
+  app=subprocess.Popen(['/tmp/cadence-diagnosis.app/Contents/MacOS/chart_benchmark_lab'],env={**os.environ,'ENGINE':engine,'OUTPUT':str(w/(name+'.frames.json')),'BENCH_DISPLAY_ID':'1'},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   match=None
+   for _ in range(150):
+    match=re.search(r'http://127.0.0.1:(\d+)/(\S+)',(w/(name+'.log')).read_text())
+    if match:break
+    time.sleep(.1)
+   assert match,'no service'
+   subprocess.run(['dart','--packages=.dart_tool/package_config.json',str(w/'profile.dart'),f'ws://127.0.0.1:{match[1]}/{match[2]}ws',str(w/name),mode],check=True,timeout=30)
+   app.wait(timeout=30);assert app.returncode==0,(name,(w/(name+'.frames.json')).read_text())
+  finally:
+   if app.poll() is None:app.terminate();app.wait(timeout=10)
+ r=json.loads((w/(name+'.frames.json')).read_text());assert not r.get('errors') and 'result' in r,r
+ print('DONE',name,r['result']['metrics'],flush=True)

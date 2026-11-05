@@ -1,0 +1,20 @@
+// Copyright (c) 2026 Vasiliy Ditsyak. SPDX-License-Identifier: MIT
+#pragma once
+#include <cstddef>
+// Bounded local strips joined by signed middle-out triangles. No new vertices.
+// Each interior diagonal cancels; at most O(log N) recursion depth.
+template<class EmitIndex,class EndStrip>
+void EmitBalancedStrip(size_t first,size_t last,const EmitIndex& emit,const EndStrip& end) {
+  if(last-first<2)return;
+  if(last-first<=32){
+    emit(first);
+    size_t a=first+1,b=last;
+    while(a<b){emit(a++);emit(b--);}
+    if(a==b)emit(a);
+    end();return;
+  }
+  const size_t mid=first+(last-first)/2;
+  EmitBalancedStrip(first,mid,emit,end);
+  emit(first);emit(mid);emit(last);end();
+  EmitBalancedStrip(mid,last,emit,end);
+}

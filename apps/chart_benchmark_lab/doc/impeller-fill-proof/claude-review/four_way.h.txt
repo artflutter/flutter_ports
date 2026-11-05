@@ -1,0 +1,22 @@
+// Four-way hierarchy proposed independently by Claude Opus 5.5.
+// Implementation by Codex; MIT, Copyright (c) 2026 Vasiliy Ditsyak.
+#pragma once
+#include <cstddef>
+#include <algorithm>
+template<class Emit,class End>
+void EmitBalancedStrip(size_t first,size_t last,const Emit& emit,const End& end){
+ const size_t edges=last-first;if(edges<2)return;
+ size_t coarse=edges,stride=1,group=32;
+ auto vertex=[&](size_t i){return i>edges/stride ? last : first+i*stride;};
+ auto strip=[&](size_t begin,size_t finish){
+  if(finish-begin<2)return;
+  emit(vertex(begin));size_t a=begin+1,b=finish;
+  while(a<b){emit(vertex(a++));emit(vertex(b--));}
+  if(a==b)emit(vertex(a));end();
+ };
+ while(coarse>group){
+  for(size_t j=0;j<coarse;){const size_t next=j+std::min(group,coarse-j);strip(j,next);j=next;}
+  coarse=coarse/group+(coarse%group!=0);stride*=group;group=4;
+ }
+ strip(0,coarse);
+}

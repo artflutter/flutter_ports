@@ -1,0 +1,51 @@
+{
+  "runs": [
+    {
+      "variant": "fixed-native",
+      "case": "whole-a",
+      "engineFps": 120.05506059535828,
+      "gpuMedianMs": 0.829
+    },
+    {
+      "variant": "fixed-native",
+      "case": "split32",
+      "engineFps": 119.99408262029158,
+      "gpuMedianMs": 1.295
+    },
+    {
+      "variant": "fixed-native",
+      "case": "whole-b",
+      "engineFps": 119.93469555826853,
+      "gpuMedianMs": 0.835
+    },
+    {
+      "variant": "four-way-native",
+      "case": "whole-a",
+      "engineFps": 119.93253794740458,
+      "gpuMedianMs": 0.844
+    },
+    {
+      "variant": "four-way-native",
+      "case": "split32",
+      "engineFps": 119.75271065250259,
+      "gpuMedianMs": 1.291
+    },
+    {
+      "variant": "four-way-native",
+      "case": "whole-b",
+      "engineFps": 117.43737651897126,
+      "gpuMedianMs": 0.827
+    }
+  ],
+  "pngByteIdenticalFrames": [
+    0,
+    73,
+    241
+  ],
+  "eachCandidateWindingSamples": 32000,
+  "capacityCheckedPointsThrough": 1000000,
+  "randomMultiContourCapacityCases": 20000,
+  "extraBoundRequiresMinContourPoints": 1024,
+  "fourWayExampleEmittedIndices": 271788,
+  "fourWayExampleReservedIndices": 273920
+}

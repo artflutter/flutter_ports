@@ -1,0 +1,32 @@
+[
+  {
+    "case": "whole-a",
+    "durationSeconds": 4.002177,
+    "engineFrames": 240,
+    "engineFps": 59.96736276281634,
+    "tickerFrames": 240,
+    "gpuCommandSamples": 240,
+    "gpuMedianMs": 23.996000000000002,
+    "gpuP90Ms": 39.467
+  },
+  {
+    "case": "split32",
+    "durationSeconds": 4.006302,
+    "engineFrames": 482,
+    "engineFps": 120.31045088463127,
+    "tickerFrames": 481,
+    "gpuCommandSamples": 481,
+    "gpuMedianMs": 1.248,
+    "gpuP90Ms": 1.294
+  },
+  {
+    "case": "whole-b",
+    "durationSeconds": 4.002131,
+    "engineFrames": 244,
+    "engineFps": 60.96751955395762,
+    "tickerFrames": 245,
+    "gpuCommandSamples": 246,
+    "gpuMedianMs": 23.512500000000003,
+    "gpuP90Ms": 37.549
+  }
+]

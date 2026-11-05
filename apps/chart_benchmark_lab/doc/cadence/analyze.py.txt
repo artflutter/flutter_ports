@@ -1,0 +1,41 @@
+from pathlib import Path
+import json,collections,statistics,math
+w=Path(__file__).resolve().parent
+
+def pct(xs,p):return sorted(xs)[max(0,math.ceil(len(xs)*p)-1)] if xs else 0
+
+def spans(events):
+ active=collections.defaultdict(list);out=[]
+ for e in sorted(events,key=lambda e:e.get('ts',0)):
+  key=(e.get('tid'),e.get('name'));ph=e.get('ph')
+  if ph=='B':active[key].append(e)
+  elif ph=='E' and active[key]:
+   a=active[key].pop();out.append({'name':a['name'],'tid':a['tid'],'start':a['ts'],'end':e['ts']})
+  elif ph=='X':out.append({'name':e['name'],'tid':e['tid'],'start':e['ts'],'end':e['ts']+e['dur']})
+ return out
+summary={}
+for label in ['port-trace','fl-trace','port-cpu','port-no-parse','port-recheck']:
+ if not (w/(label+'.frames.json')).exists():continue
+ data=json.loads((w/(label+'.frames.json')).read_text());events=json.loads((w/(label+'.timeline.json')).read_text())['traceEvents'];sp=spans(events);stages={}
+ for name in sorted({s['name'] for s in sp if s['name'].startswith(('CJ.','LAB.'))}):
+  times=[(s['end']-s['start'])/1000 for s in sp if s['name']==name];stages[name]={'count':len(times),'meanMs':statistics.mean(times),'p90Ms':pct(times,.9),'maxMs':max(times)}
+ frames=sorted(data['frames'],key=lambda f:f['vsync']);updates=[s for s in sp if s['name']=='CJ.postFrameUpdate'];pairs=[]
+ for u in updates:
+  candidates=[i for i,f in enumerate(frames[:-1]) if f['buildStart']<=u['start']<frames[i+1]['buildStart']]
+  if not candidates:continue
+  i=candidates[-1];f=frames[i];n=frames[i+1];between=[s for s in sp if s['start']>=f['vsync'] and s['end']<=n['vsync'] and s['name']=='LAB.data']
+  pairs.append({'gapMs':(n['vsync']-f['vsync'])/1000,'buildMs':(f['buildEnd']-f['buildStart'])/1000,'updateMs':(u['end']-u['start'])/1000,'updateAfterBuildUs':u['start']-f['buildEnd'],'throughUpdateMs':(u['end']-f['vsync'])/1000})
+ fast=[p for p in pairs if p['gapMs']<12];slow=[p for p in pairs if p['gapMs']>=12]
+ def group(ps):return {'n':len(ps),**{k:statistics.mean(p[k] for p in ps) for k in ['buildMs','updateMs','updateAfterBuildUs','throughUpdateMs']}} if ps else {}
+ summary[label]={'metrics':data['result']['metrics'],'stages':stages,'matchedUpdates':len(pairs),'fast':group(fast),'slow':group(slow),'pairs':pairs}
+ print('\n',label,summary[label]['metrics'])
+ for name,s in stages.items():print(name,{k:round(v,3) if isinstance(v,float) else v for k,v in s.items()})
+ print('fast/slow',group(fast),group(slow))
+ if (w/(label+'.cpu.json')).exists():
+  d=json.loads((w/(label+'.cpu.json')).read_text());print('CPU samples',d['sampleCount']);functions=[]
+  for f in sorted(d['functions'],key=lambda f:f['inclusiveTicks'],reverse=True):
+   n=f['function'];name=(n.get('owner',{}).get('name','')+'.'+n['name']).lstrip('.')
+   if f['inclusiveTicks']:functions.append({'name':name,'inclusivePct':100*f['inclusiveTicks']/d['sampleCount'],'selfPct':100*f['exclusiveTicks']/d['sampleCount']})
+  summary[label]['functions']=functions
+  for f in functions[:60]:print(round(f['inclusivePct'],2),round(f['selfPct'],2),f['name'])
+(w/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')

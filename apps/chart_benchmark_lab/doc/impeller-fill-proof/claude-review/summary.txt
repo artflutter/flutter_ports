@@ -1,0 +1,62 @@
+Independent Claude reviews and follow-up experiments — 2026-11-05
+
+Requested models were actually used: claude-opus-5-5 and claude-fable-5-1.
+Both received the same v2 patch and measured facts independently, without the
+other model's suggestions. Tools were disabled for both reviewers. Opus's first
+request exceeded a four-minute cutoff; its retry used a shorter prompt and
+medium effort and completed. Fable completed the original request. Their
+unedited responses are opus-5.5.txt and fable-5.1.txt. Model identities are saved
+in review-metadata.json. The reviewers did not run tests; tests below are ours.
+
+Both agree the signed-boundary cancellation is sound, but neither considers
+the current patch upstream-ready. Both identified potential performance
+regressions on thin/out-and-back ribbon contours and required full engine,
+golden, allocation and multi-backend validation. We confirmed the beta engine
+uses wrapping increment/decrement for its nonzero stencil fill.
+
+Fable proposal: fixed 32-edge leaves in a binary hierarchy.
+This reduces the aggregate reservation to N+C+6*floor(N/32), at most 18.75%
+extra point-related index storage. In the measured case it emits and reserves
+286,878 uint32 indices = 1,147,512 bytes. Its last one-edge leaf is represented
+as a two-vertex restart strip, retaining Fable's exact count formula.
+
+Opus proposal: fixed 32-edge leaves, then four-way coarse strips per level.
+This reduces emitted indices to 271,788 = 1,087,152 bytes, and the proposed
+reservation to N+C+floor(N/8)+floor(N/113)+2 = 273,920 = 1,095,680 bytes.
+The bound requires that contours shorter than 1,024 points remain legacy.
+It is not valid for arbitrary smaller contours (our test found 163..167-point
+counterexamples if that guard is removed). This is consistent with the scope
+stated in Opus's review, not a reason to broaden the threshold without proof.
+
+Comparison for this one measured contour (reserved bytes)
+Original Flutter:       966,336
+Current v2 candidate: 1,328,688
+Fable prototype:      1,147,512
+Opus prototype:       1,095,680
+These are index-buffer bytes, not total application memory or allocated arena
+footprint. Actual allocator block behavior remains to be measured separately.
+
+Independent experimental results
+The same standalone alternating-data repro was used for both native index
+rewrite prototypes. Original Dart path, curve vertices, shader, paint and
+primitive type remained unchanged. Fable's whole-contour A/B GPU medians were
+0.829/0.835 ms; Opus's were 0.844/0.827 ms. Both sustained approximately 120
+engine FPS. Original whole-contour GPU time was ~23.5-24 ms. These tiny timing
+differences between candidates are not established performance differences.
+
+Both candidates produced byte-identical PNGs to the original engine for
+frames 0, 73 and 241. Each algorithm passed ASan/UBSan standalone tests with
+4,099 count/capacity cases and 32,000 winding samples on 160 polygons. Opus's
+bound was additionally checked for every point count 1024..1,000,000 and
+20,000 random multi-contour mixtures using legacy counts below the threshold.
+An initial unconditional-bound assertion failed for smaller contours; the
+final validation explicitly honors the required eligibility guard.
+
+Recommendation
+Prefer the four-way approach as the next engine candidate: lowest measured
+index memory among these variants with effectively the same chart GPU speed.
+Do not replace the standalone v2 patch blindly. First test ribbons, spirals,
+glyph-like shapes and clips; the shared regression concern remains unresolved.
+The existing ZIP and source patch are still v2. The new .h/.mm prototypes and
+measurements here document a better algorithm, not a fully integrated v3
+engine patch. No installed SDK or production runtime was modified.

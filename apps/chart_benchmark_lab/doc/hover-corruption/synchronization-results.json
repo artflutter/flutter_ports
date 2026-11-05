@@ -1,0 +1,100 @@
+[
+  {
+    "run": "metal-validation",
+    "measurementSeconds": 8,
+    "frameCount": 351,
+    "hoverCount": 498,
+    "flutterErrors": [],
+    "gpuValidationErrors": 1485,
+    "reuseHazardsLoggedCappedAt5": null,
+    "peakPendingFrameFences": null
+  },
+  {
+    "run": "metal-wait-completed",
+    "measurementSeconds": 8,
+    "frameCount": 148,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": 0,
+    "reuseHazardsLoggedCappedAt5": null,
+    "peakPendingFrameFences": null
+  },
+  {
+    "run": "present-observe",
+    "measurementSeconds": 8,
+    "frameCount": 362,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": 1513,
+    "reuseHazardsLoggedCappedAt5": null,
+    "peakPendingFrameFences": 11
+  },
+  {
+    "run": "present-bounded",
+    "measurementSeconds": 8,
+    "frameCount": 285,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": 0,
+    "reuseHazardsLoggedCappedAt5": null,
+    "peakPendingFrameFences": 3
+  },
+  {
+    "run": "port-present-observe-normal",
+    "measurementSeconds": 8,
+    "frameCount": 647,
+    "hoverCount": 486,
+    "flutterErrors": [],
+    "gpuValidationErrors": null,
+    "reuseHazardsLoggedCappedAt5": null,
+    "peakPendingFrameFences": 18
+  },
+  {
+    "run": "port-present-bounded-normal",
+    "measurementSeconds": 8,
+    "frameCount": 317,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": null,
+    "reuseHazardsLoggedCappedAt5": null,
+    "peakPendingFrameFences": 3
+  },
+  {
+    "run": "port-present-bounded-validation",
+    "measurementSeconds": 8,
+    "frameCount": 285,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": 0,
+    "reuseHazardsLoggedCappedAt5": null,
+    "peakPendingFrameFences": 3
+  },
+  {
+    "run": "reuse-observe",
+    "measurementSeconds": 8,
+    "frameCount": 634,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": null,
+    "reuseHazardsLoggedCappedAt5": 5,
+    "peakPendingFrameFences": 18
+  },
+  {
+    "run": "reuse-bounded",
+    "measurementSeconds": 8,
+    "frameCount": 318,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": null,
+    "reuseHazardsLoggedCappedAt5": 0,
+    "peakPendingFrameFences": 3
+  },
+  {
+    "run": "port-present-complete-validation",
+    "measurementSeconds": 8,
+    "frameCount": 139,
+    "hoverCount": 499,
+    "flutterErrors": [],
+    "gpuValidationErrors": 0
+  }
+]

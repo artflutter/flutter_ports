@@ -1,0 +1,107 @@
+Impeller dense filled-contour performance reproduction — 2026-11-05
+
+Confirmed: the large-contour representation is the dominant GPU bottleneck
+for this workload. Direct Flutter Canvas drawing reproduces it without any
+chart-library imports, parsing, controllers, plugins or Canvas 2D bridge.
+
+Experiment
+
+Both versions contain the same 20,000 points and 19,999 cubic segments, with
+identical control coordinates, color, nonzero fill rule and a horizontal
+baseline. Both issue ONE Canvas.drawPath fill call. One version closes one
+large contour. The other closes small contours back to the same baseline,
+all within the same Path. Adjacent internal boundaries occur with opposite
+directions and cancel under nonzero winding. There is no downsampling.
+The stroke is deliberately omitted to isolate fill cost.
+
+Native Flutter 3.50.0-0.4.pre, engine 1b9ee1a585, macOS profile, Impeller
+MetalSDF, M3 Max, built-in 120 Hz display, DPR 2, 964 x 420 logical plot.
+Each case warms up for two seconds and measures four seconds of live updates.
+Two seconds after stopping allows outstanding GPU commands/timings to drain.
+GPU timing comes from Metal GPUStartTime/GPUEndTime, attributed by the command's
+submission timestamp. Commands <=0.1 ms (mostly presentation markers) are
+excluded from command-duration statistics. No blocking workaround or Metal
+validation is enabled. FrameTiming FPS is engine cadence, not displayed FPS.
+
+Initial A/B/A result (continuously varying data)
+
+  Whole contour A: 27.445 ms median GPU command; 52.5 engine FPS.
+  128-segment contours: 1.742 ms; 119.7 FPS.
+  32-segment contours: 1.259 ms; 119.9 FPS.
+  Whole contour B: 30.080 ms; 53.0 FPS.
+
+UI median remained approximately 5.2 ms in every case. Repeating the slow
+representation after both fast versions guards against a warmup-only effect.
+
+Final matched-input control
+
+Slower rendering advances an animation by fewer steps. To eliminate that
+confound, the final control alternates exactly the same two complete datasets
+(frames 0 and 73) every tick in every mode, still rebuilding/drawing live.
+
+  Whole contour A: 23.996 ms median GPU command; about 60 FPS.
+  32-segment contours: 1.248 ms; about 120 FPS.
+  Whole contour B: 23.5125 ms; about 61 FPS.
+
+The matched representation change therefore reduces median GPU command time
+by about 19x. See matched-measurements.json for exact counts and durations.
+These short runs demonstrate the performance pathology, not universal device
+throughput or guaranteed production-chart FPS.
+
+Pixel correctness
+
+For each of dataset frames 0, 73 and 241, render whole, 128-segment and
+32-segment variants at 1928 x 840 physical pixels. Compare every RGBA channel.
+All SIX Impeller comparisons had ZERO differing pixels (1,619,520 pixels per
+comparison), in both the initial and matched runs. Images for one example and
+all comparison counters are included. This validates these finite baseline
+fill cases only; it does not establish safety for arbitrary fills, gradients,
+stacks, clipping, loops, gaps or all antialiasing conditions.
+
+Source-level explanation and remaining limit
+
+In the beta engine, entity/geometry/fill_path_geometry.cc:46 submits the filled
+path to Tessellator::TessellateConvex; non-convex nonzero paths select stencil
+mode at lines 61-70. entity/contents/color_source_contents.h:133 onward performs
+stencil preparation followed by a cover draw. In tessellator/tessellator.cc,
+StripPathVertexWriter::EndContour (around lines 204-218) alternates vertices
+from the two ends of a contour to form a triangle strip.
+
+For a long, densely oscillating contour, this can produce long overlapping
+triangles. Partitioning constrains that span while preserving filled coverage.
+The measured sensitivity to this transformation strongly implicates this fill
+geometry/stencil path. Excessive stencil overdraw is the leading mechanism,
+not a measured per-draw GPU-counter result. We have not patched the engine or
+proved one particular C++ line is an incorrect implementation. This is a
+reportable Impeller performance pathology, not the prior buffer-lifetime bug.
+
+Skia control
+
+The same binary was also launched with FLTEnableImpeller=false. Its live ticker
+advanced only 3-4 times in each four-second interval, matching the earlier
+Skia scheduling stall. Those runs are INVALID as a live speed comparison and
+are explicitly marked so in measurements.json. Skia pixel comparisons differ
+by at most one channel unit. The performance conclusion relies on repeated
+same-Impeller A/B tests, not an asserted Skia speed advantage.
+
+Reproduction
+
+repro.dart.txt and matched-repro.dart.txt are complete Flutter-only entrypoints.
+Copy either to lib/main.dart in a temporary Flutter macOS app, build profile
+with Flutter 3.50.0-0.4.pre, then launch with PROOF_OUTPUT set to a writable
+directory. The app runs the live cases, writes timings and images, and exits.
+Preserve a visible 964 x 420 logical plot on a DPR-2, 120 Hz display for matching
+results. Synthetic screenshot rendering runs only AFTER the live measurements.
+
+For optional GPU timing, compile gpu_time.m.txt as Objective-C with Apple's
+clang (-x objective-c -dynamiclib -fobjc-arc -framework Foundation -framework
+Metal -framework QuartzCore), and inject that dylib into a separately signed
+diagnostic app copy via DYLD_INSERT_LIBRARIES. GPU_TIME records contain epoch
+submission seconds, GPU execution milliseconds, submission-to-callback ms.
+The hook adds completion callbacks but does not wait or change command geometry.
+It is a diagnostic tool, not production application code.
+
+Full raw local results and launch scripts: .dart_tool/impeller_fill_proof/.
+No production chart or Flutter SDK code was changed. A baseline-fill contour
+partitioning implementation is a promising workaround but still requires the
+library's correctness guards and regression checks before adoption.

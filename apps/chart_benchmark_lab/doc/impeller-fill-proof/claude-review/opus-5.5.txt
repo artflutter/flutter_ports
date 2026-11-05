@@ -1,0 +1,80 @@
+I reviewed this from the diff and your numbers alone; I ran nothing. **I wouldn't upstream it yet:** the winding approach is sound, but the integration is unproven. I'd also replace the binary connectors with a 4-ary hierarchy.
+
+## Proven math
+- **Winding:** each child polygon's closing chord cancels against the parent, leaving the original closed contour. This holds after vertex snapping because the indexed vertices are shared.
+- **Triangle count:** always `T = N-2`, same as legacy, so the added bytes come only from strip starts and restarts.
+- **Index identity:** with `S` strips, `indices = T + 3S = N - 2 + 3S`. Your hybrid has `S = 2L-1`, giving `N + 6L - 5`.
+- **Your data:** the counts fit one contour with `N=241583`, `L=8192`: hybrid 290730, reserved 332172 (inferred, assuming `C=1`).
+- **Current reservation:** safe, but loose. Halving actually gives `L <= 2E/33`, where `E=N-1`, though this tightening barely helps.
+
+## Correctness risks
+- **Integration:** with no full engine rebuild, this exact diff hasn't been shown end to end. Injected indices don't exercise `CountFillStorage`, HostBuffer, or the flush path.
+- **Release bounds:** capacity is only `FML_DCHECK`ed, so any counter/writer mismatch overruns in release.
+- **Contour bookkeeping:** the single-point early return doesn't advance `contour_start_`, so the stray point joins the next contour. Legacy shares this, but it affects threshold and split behavior. Also check empty contours when `contour_start_ == count_`.
+- **Stencil ops:** order independence requires wrap or invert. Clamped ops or winding beyond the stencil range could differ, so audit every pipeline.
+- **Other backends:** only Metal was measured. Check Vulkan and GLES restart state and index width, including `IndexT` narrowing and sentinel collisions.
+- **Overflow guard:** falling back to legacy doesn't protect the legacy allocation, and the `sizeof(Point)` multiplication is unguarded.
+- **Allocation cost:** `Flush` covers the reserved range, and larger reservations may change HostBuffer block behavior.
+
+## Better algorithm: 32-edge leaves, 4-ary parents
+This replaces single connector triangles with short strips over implicit coarse vertices. It needs no scratch memory or extra pass, and it uses no recursion.
+
+```text
+E=last-first; M=E; u=1; k=32
+p(i)=first+min(i*u,E)
+while M>k:
+  for j=0; j<M; j+=k:
+    e=min(k,M-j)
+    if e>=2: legacyStrip(p(j)...p(j+e)); restart
+  M=ceil(M/k); u*=k; k=4
+if M>=2: legacyStrip(p(0)...p(M)); restart
+```
+
+The `legacyStrip` order is `a, a+1, b, a+2, b-1...`, which preserves parity and the same chord cancellation.
+
+**Count, ignoring skipped one-edge blocks (which only lower it):**
+```text
+B = ceil(E/32)
+f(M) = 1                     if M <= 4
+f(M) = ceil(M/4) + f(ceil(M/4))  otherwise
+S = B + f(B)
+```
+
+**Bound:** induction gives `f(M) <= (M-1)/3 + D`, where `D` is the number of parent levels. Therefore:
+```text
+extra over legacy = 3(S-1) <= (E-1)/8 + 3D
+```
+For `E >= 1023`, `D <= 3E/1023`, so `3D <= E/113`. Summing over contours with `P = point_count` gives an aggregate reservation:
+```text
+capacity = P + C + floor(P/8) + floor(P/113) + 2
+```
+
+| Your contour | Indices | vs. original |
+|---|---|---|
+| Original | 241584 | n/a |
+| Current hybrid emitted | 290730 | +20.3% |
+| **4-ary emitted** | **271788** | **+12.5%** |
+| Current reserved | 332172 | +37.5% |
+| **4-ary reserved** | **273920** | **+13.4%** |
+
+The 4-ary reservation is 17.5% smaller than today's, about 233 KB with 32-bit indices. Only the proof and this arithmetic are done; none of it has been run.
+
+## Untested ideas
+- **Overdraw:** replacing two binary levels spans `{4,2,2}` edges, while a 4-edge zigzag spans `{4,3,2}`. The maximum span is unchanged and the sum is about 12% higher, but that is only a proxy for area, so GPU time could regress.
+- **Fan-out:** `k=8` lowers overhead to about 10.7%, but with longer average spans. Choose it only from measurements.
+- **Ordering:** level-order emission may hurt vertex cache locality compared with depth-first.
+- **Threshold:** nothing here justifies 1024 as the right cutoff.
+
+## Shape regression to test
+Any midpoint hierarchy can lose to legacy when `i` and `N-i` are spatially adjacent, as in a wiggly out-and-back ribbon. Legacy gives roughly `W(T+A)` of coverage, while the hierarchy may reach about `W·A·log(N/32)` (width `W`, thickness `T`, wiggle amplitude `A`). This is a rough estimate, but it's the case most likely to block upstreaming.
+
+An adaptive route is possible, but it adds CPU cost, so try it only if this regression proves real.
+
+## Tests before upstream
+1. **Writer properties:** check every `N` from 1024 to at least 70000, plus sampled sizes up to the maximum. Assert `T=N-2`, the exact index count, capacity, parity, index range, and restart placement.
+2. **Aggregate capacity:** run randomized multi-contour mixes, including 0-, 1-, and 2-point contours, stray points, and sizes 1023/1024/1025. Include block-remainder cases, plus an exhaustive check of the `D` bound.
+3. **Winding:** compare signed area and sampled winding against legacy for both fill rules, including winding above 255 and self-overlap.
+4. **Rendering goldens:** cover MSAA and non-MSAA, clips, transforms, huge off-screen coordinates, and tiny or collinear geometry. NaN and Inf inputs need their own check, because dropped triangles can break cancellation and change the artifacts.
+5. **Performance corpus:** use ribbons, combs, spirals, random stars, text-like multi-contour paths, and large circles reported as nonconvex. Record GPU time, CPU time, allocated and emitted bytes, and flush cost.
+6. **Devices:** run a full engine build on Metal plus Android Vulkan, including tiler GPUs, and GLES where this route is reachable. An M3 Max result won't predict tiler behavior.
+7. **Reporting:** use GPU time distributions with randomized order. The ~120 FPS figure may just be the display cap, so don't use it as evidence.

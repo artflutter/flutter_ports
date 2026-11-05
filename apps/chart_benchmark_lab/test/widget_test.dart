@@ -1,0 +1,178 @@
+import 'package:chart_benchmark_lab/benchmark/config.dart';
+import 'package:chart_benchmark_lab/benchmark/controller.dart';
+import 'package:chart_benchmark_lab/benchmark/data.dart';
+import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
+import 'package:chart_benchmark_lab/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  setUpAll(() => cj.Chart.register(cj.registerables));
+  for (final library in ChartLibrary.values) {
+    for (final type in ChartType.values) {
+      testWidgets(
+        '${library.name} ${type.name} renders and updates all features',
+        (tester) async {
+          final generator = DatasetGenerator(12, 7);
+          final config = BenchmarkConfig(
+            type: type,
+            count: 12,
+            axes: true,
+            grid: true,
+            markers: true,
+            curved: true,
+            fill: true,
+            alternateColors: true,
+            tooltips: true,
+          );
+          Widget scene(int step) => MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: 600,
+                  height: 350,
+                  child: BenchmarkChart(
+                    library: library,
+                    config: config,
+                    frame: generator.frame(step),
+                    size: const Size(600, 350),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pumpWidget(scene(0));
+          await tester.pump(const Duration(milliseconds: 20));
+          await tester.pumpWidget(scene(1));
+          await tester.pump(const Duration(milliseconds: 20));
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(const SizedBox());
+          await tester.pump(const Duration(milliseconds: 20));
+        },
+      );
+    }
+  }
+
+  for (final size in [
+    const Size(1400, 1000),
+    const Size(412, 915),
+    const Size(360, 640),
+  ]) {
+    testWidgets('dashboard controls fit $size', (tester) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(const ChartBenchmarkApp());
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(find.text('Chart benchmark lab'), findsOneWidget);
+      expect(find.byKey(const ValueKey('flutter.version')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 20));
+    });
+  }
+
+  testWidgets(
+    'library switch retains count and features and clears live metrics',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(const ChartBenchmarkApp());
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.tap(find.byKey(const ValueKey('dataset.100')));
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.tap(find.byKey(const ValueKey('feature.markers')));
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.tap(find.byKey(const ValueKey('library.flChart')));
+      await tester.pump(const Duration(milliseconds: 20));
+      final chart = tester.widget<BenchmarkChart>(find.byType(BenchmarkChart));
+      expect(chart.library, ChartLibrary.flChart);
+      expect(chart.config.count, 100);
+      expect(chart.config.markers, isTrue);
+      await tester.tap(find.byKey(const ValueKey('run')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('Pause'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('run')));
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 20));
+    },
+  );
+  testWidgets(
+    'captures lock settings and cancel on hidden or changed viewport',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      late BenchmarkController controller;
+      await tester.pumpWidget(
+        ChartBenchmarkApp(onControllerReady: (c) => controller = c),
+      );
+      await tester.pump(const Duration(milliseconds: 20));
+      controller.configure(const BenchmarkConfig(count: 100));
+      await tester.pump(const Duration(milliseconds: 20));
+      controller.start(capture: true);
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(controller.capturing, isTrue);
+      controller
+        ..configure(const BenchmarkConfig(count: 5000))
+        ..selectLibrary(ChartLibrary.flChart);
+      expect(controller.config.count, 100);
+      expect(controller.library, ChartLibrary.chartjs);
+      controller.setWindowVisible(visible: false);
+      expect(controller.running, isFalse);
+      expect(controller.capturing, isFalse);
+      expect(controller.results, isEmpty);
+      controller.start(capture: true);
+      expect(controller.running, isFalse);
+      controller
+        ..setWindowVisible(visible: true)
+        ..start(capture: true);
+      await tester.pump(const Duration(milliseconds: 20));
+      controller.setViewport(const Size(300, 200), 2, 120);
+      expect(controller.capturing, isFalse);
+      expect(controller.results, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 20));
+    },
+  );
+  testWidgets('Capture all button starts and cancels the batch', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    late BenchmarkController c;
+    await tester.pumpWidget(
+      ChartBenchmarkApp(onControllerReady: (value) => c = value),
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+    c.configure(const BenchmarkConfig(count: 100));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.tap(find.byKey(const ValueKey('capture.all')));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.batchCapturing, isTrue);
+    expect(find.text('Cancel all (1/4)'), findsOneWidget);
+    expect(
+      tester
+          .widget<OutlinedButton>(find.byKey(const ValueKey('library.flChart')))
+          .onPressed,
+      isNull,
+    );
+    await tester.tap(find.byKey(const ValueKey('capture.all')));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.batchCapturing, isFalse);
+    expect(c.results, isEmpty);
+    expect(find.text('Capture all 10s'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
+}

@@ -1,0 +1,127 @@
+--- a/engine/src/flutter/impeller/tessellator/tessellator.cc
++++ b/engine/src/flutter/impeller/tessellator/tessellator.cc
+@@ -5,6 +5,7 @@
+ #include "impeller/tessellator/tessellator.h"
+ #include <cstdint>
+ #include <cstring>
++#include <limits>
+ 
+ #include "flutter/impeller/core/device_buffer.h"
+ #include "flutter/impeller/tessellator/path_tessellator.h"
+@@ -187,8 +188,11 @@
+ class StripPathVertexWriter : public impeller::PathTessellator::VertexWriter {
+  public:
+   explicit StripPathVertexWriter(impeller::Point* point_buffer,
+-                                 IndexT* index_buffer)
+-      : point_buffer_(point_buffer), index_buffer_(index_buffer) {}
++                                 IndexT* index_buffer,
++                                 bool use_balanced_strips)
++      : point_buffer_(point_buffer),
++        index_buffer_(index_buffer),
++        use_balanced_strips_(use_balanced_strips) {}
+ 
+   ~StripPathVertexWriter() = default;
+ 
+@@ -198,6 +202,14 @@
+   void EndContour() override {
+     if (count_ == 0u || contour_start_ == count_ - 1) {
+       // Empty or first contour.
++      return;
++    }
++
++    // Keep short contours on the compact legacy strip. Large non-convex
++    // contours use local strips linked by signed middle-out triangles.
++    if (use_balanced_strips_ && count_ - contour_start_ >= 1024u) {
++      WriteBalancedStrip(contour_start_, count_ - 1);
++      contour_start_ = count_;
+       return;
+     }
+ 
+@@ -227,11 +239,42 @@
+   }
+ 
+  private:
++  void WriteBalancedStrip(size_t first, size_t last) {
++    if (last - first < 2u) {
++      return;
++    }
++    if (last - first <= 32u) {
++      index_buffer_[index_count_++] = first;
++      size_t a = first + 1;
++      size_t b = last;
++      while (a < b) {
++        index_buffer_[index_count_++] = a++;
++        index_buffer_[index_count_++] = b--;
++      }
++      if (a == b) {
++        index_buffer_[index_count_++] = a;
++      }
++      index_buffer_[index_count_++] = static_cast<IndexT>(-1);
++      return;
++    }
++
++    const size_t middle = first + (last - first) / 2;
++    WriteBalancedStrip(first, middle);
++    // Every internal diagonal appears with opposite directions in the child
++    // strip and this triangle, preserving nonzero and even-odd winding.
++    index_buffer_[index_count_++] = first;
++    index_buffer_[index_count_++] = middle;
++    index_buffer_[index_count_++] = last;
++    index_buffer_[index_count_++] = static_cast<IndexT>(-1);
++    WriteBalancedStrip(middle, last);
++  }
++
+   size_t count_ = 0;
+   size_t index_count_ = 0;
+   size_t contour_start_ = 0;
+   impeller::Point* point_buffer_ = nullptr;
+   IndexT* index_buffer_ = nullptr;
++  bool use_balanced_strips_ = false;
+ };
+ 
+ /// @brief A vertex writer that has no hardware requirements.
+@@ -338,10 +381,24 @@
+       // Primitive Restart.
+       const auto [point_count, contour_count] =
+           PathTessellator::CountFillStorage(path, tolerance);
++      const size_t max_indices =
++          std::numeric_limits<size_t>::max() / sizeof(IndexT);
++      // Each balanced leaf spans at least 16 edges. For an N-point contour,
++      // L <= floor((N-1)/16), and emitted indices = N + 6*L - 5.
++      // Summing floor bounds over contours is bounded by floor(total/16).
++      // Add the legacy N+1 capacity to cover unchanged short contours.
++      const size_t extra_indices = (point_count / 16u) * 6u;
++      const bool use_balanced_strips =
++          !supports_triangle_fan && !path.IsConvex() && point_count >= 1024u &&
++          contour_count <= max_indices &&
++          point_count <= max_indices - contour_count &&
++          extra_indices <= max_indices - contour_count - point_count;
++      const size_t index_capacity = point_count + contour_count +
++          (use_balanced_strips ? extra_indices : 0u);
+       BufferView point_buffer = data_host_buffer.Emplace(
+           nullptr, sizeof(Point) * point_count, alignof(Point));
+       BufferView index_buffer = indexes_host_buffer.Emplace(
+-          nullptr, sizeof(IndexT) * (point_count + contour_count),
++          nullptr, sizeof(IndexT) * index_capacity,
+           alignof(IndexT));
+ 
+       auto* points_ptr =
+@@ -354,7 +411,7 @@
+       auto tessellate_path = [&](auto& writer) {
+         PathTessellator::PathToFilledVertices(path, writer, tolerance);
+         FML_DCHECK(writer.GetPointCount() <= point_count);
+-        FML_DCHECK(writer.GetIndexCount() <= (point_count + contour_count));
++        FML_DCHECK(writer.GetIndexCount() <= index_capacity);
+         point_buffer.GetBuffer()->Flush(point_buffer.GetRange());
+         index_buffer.GetBuffer()->Flush(index_buffer.GetRange());
+ 
+@@ -370,7 +427,8 @@
+         FanPathVertexWriter writer(points_ptr, indices_ptr);
+         return tessellate_path(writer);
+       } else {
+-        StripPathVertexWriter writer(points_ptr, indices_ptr);
++        StripPathVertexWriter writer(points_ptr, indices_ptr,
++                                     use_balanced_strips);
+         return tessellate_path(writer);
+       }
+     }
