@@ -40,9 +40,12 @@ Future<void> main() async {
     try {
       await Future<void>.delayed(const Duration(seconds: 2));
       await screenshot('dashboard');
+      var visualCases = 0;
       for (final engine in ChartLibrary.values) {
         controller.selectLibrary(engine);
         for (final type in ChartType.values) {
+          if (!engine.supports(type)) continue;
+          visualCases++;
           controller.configure(
             BenchmarkConfig(
               type: type,
@@ -56,7 +59,7 @@ Future<void> main() async {
             ),
           );
           await Future<void>.delayed(const Duration(milliseconds: 400));
-          if (type == ChartType.line || type == ChartType.pie) {
+          if (type != ChartType.bar && type != ChartType.scatter) {
             await screenshot('${engine.name}-${type.name}');
           }
         }
@@ -90,7 +93,7 @@ Future<void> main() async {
       File('${output.path}/result.json').writeAsStringSync(
         jsonEncode({
           'ok': true,
-          'visualCases': 16,
+          'visualCases': visualCases,
           'captures': controller.results.length,
           'itemsPerCapture': 20000,
           'errors': errors,

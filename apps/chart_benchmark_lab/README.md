@@ -32,12 +32,18 @@ configuration targets native macOS.
 
 - **Library selector:** mounts one engine at a time. Settings stay selected;
   changing engines resets data to the same seed/step and clears live metrics.
-- **Chart type:** line, vertical bar, scatter or pie for every library.
+- **Chart type:** the eight Chart.js types: line, vertical bar, scatter, bubble,
+  pie, doughnut, polar area and radar. Each library draws each type through its
+  public API, with one exception. Syncfusion 35.1.43 has no radar or polar series.
+  Thus its radar shows a message, and Run and Capture are not available for it.
+  The harness does not draw a stand-in, because that would measure the stand-in.
 - **Dataset slider:** 100–20,000 actual input items, with 100/1k/5k/20k presets.
   The slider commits on release. The harness never downsamples or caps one
   library's data differently.
-- **Features:** line markers, smooth lines, area fill, axis labels, grid,
-  alternating item colors, tooltips, 0/50/200 overlay labels and label rotation.
+- **Features:** point markers and area fill (line and radar), smooth lines (line
+  only: fl_chart has no smooth radar), axis labels and grid (not for pie, doughnut
+  or polar area), alternating item colors (not for line or radar), tooltips,
+  0/50/200 overlay labels and label rotation.
   Inapplicable controls are disabled; their values are excluded from the
   effective configuration exported with a result.
 - **Live data:** a new deterministic dataset snapshot per display tick.
@@ -51,8 +57,10 @@ configuration targets native macOS.
 - **Capture all 10s/30s:** run every library sequentially with the same setup.
   Duration is per library; each gets its own two-second warmup and timing drain
   (about 53 seconds total at 10s). Progress names the active engine and shows
-  1/4 through 4/4. Cancel, hide, scroll or resize stops the whole batch; already
-  completed rows remain. Missing engine timings stop the batch without fake rows.
+  1/4 through 4/4. A batch skips a library that does not have the selected type,
+  so a radar batch shows 1/3 through 3/3. Cancel, hide, scroll or resize stops the
+  whole batch; already completed rows remain. Missing engine timings stop the batch
+  without fake rows.
 - **Saved comparisons:** filter by matching effective configuration, capture
   duration, viewport, DPR and display rate. Libraries are deliberately excluded
   from this comparison key. Copy all captures as JSON, with individual settings
@@ -90,8 +98,9 @@ layout, chart work and the small shared readout overhead. No backend is given
 an internal imperative renderer shortcut. Chart.js uses its typed `ChartView`;
 FL Chart, Graphic and Syncfusion use their public chart widgets. Chart.js
 line/scatter use `parsing: false`: the generator already supplies sorted, finite
-numeric XY points. This is recorded in each capture's `engineOptions`; bar and
-pie retain their default parsing. Graphic receives
+numeric XY points. This is recorded in each capture's `engineOptions`; the other
+types retain their default parsing. A bubble needs that step, because Chart.js
+reads the radius of a bubble while it parses. Graphic receives
 only variables required for the selected chart/features; line/scatter do not
 pay for an unused categorical domain. The common overlay painter draws the same
 text workload each tick in its own repaint boundary.
@@ -103,6 +112,31 @@ spline, axis, tooltip and fill implementations differ; this is logical feature
 comparison, not pixel-identical rendering or identical internal algorithms.
 Library-internal optimizations remain enabled. These results are not directly
 interchangeable with the gallery's imperative/core-only stress timings.
+
+Bubble radii come from one shared formula: 2 px at the value 0 and 8 px at 100.
+The four types after the first set use these public forms:
+
+| Type | Chart.js port | fl_chart | Graphic | Syncfusion |
+| --- | --- | --- | --- | --- |
+| Bubble | `BubbleDataset` | `ScatterChart`, a radius for each spot | `PointMark`, a size for each tuple | `BubbleSeries` |
+| Doughnut | `DoughnutDataset` | `PieChart` with a center space | `IntervalMark`, a polar radius range | `DoughnutSeries` |
+| Polar area | `PolarAreaDataset` | `PieChart`, equal values, a radius for each section | `IntervalMark` in a polar coordinate (rose) | `PieSeries`, equal values, `pointRadiusMapper` |
+| Radar | `RadarDataset` | `RadarChart` | `LineMark` in a polar coordinate, `loop: true` | none |
+
+Slices fill 90% of half of the short side. A doughnut has its hole at 50% of its
+outer radius. A radar fills 80%, because fl_chart fixes that share. A radar has one
+spoke per item, at most 8 labels around it and circular rings at 25, 50, 75 and
+100, in each library that has a radar. These native differences stay:
+
+- Syncfusion scales a bubble by the largest size of the data, so its radii differ
+  a little from the shared formula. Its segment draws at twice the radius that it
+  gets, so the adapter gives it half of the range.
+- `RadarChart` of fl_chart has no option for the radial range: it takes the range
+  from the data, not from the fixed 0–100 domain. It has no tooltip, so the Tooltips
+  setting enables only its touch handling. It always draws its grid and its points.
+  Thus its grid and markers off are transparent or zero-size draws, not fewer calls.
+- `RadarChart` of fl_chart scans all entries again for each entry that it places,
+  so its work grows with the square of the item count.
 
 Debug mode is visibly identified. Use profile/release builds for comparisons.
 Browser engine timing availability varies; absent timings display dashes and
@@ -134,9 +168,9 @@ cd apps/chart_benchmark_lab
 flutter run --profile -d macos -t tool/smoke.dart
 ```
 
-The smoke driver renders all 16 library/type combinations, saves native
-screenshots, and captures a 20k-item line run for each library. It exits with a
-JSON success/failure result. By default it uses the app-accessible temporary
+The smoke driver renders all 31 library/type combinations that have a public
+chart, saves native screenshots, and captures a 20k-item line run for each
+library. It exits with a JSON success/failure result. By default it uses the app-accessible temporary
 directory printed to stdout. `BENCH_OUTPUT` selects another output directory. The
 standard macOS sandbox may restrict filesystem exports; for test-only artifact
 collection, use a temporary app copy signed with the repository's existing
@@ -145,5 +179,6 @@ sandbox settings are unchanged. These short smoke captures verify functionality,
 not a published performance ranking.
 
 Tests cover deterministic full-size data, warmup/stale/end-window filtering,
-frame-gap accounting, effective comparison keys, all adapters, phone/desktop
-layouts, library-switch persistence, capture locks and cancellation boundaries.
+frame-gap accounting, effective comparison keys, all adapters, the missing radar
+of Syncfusion, phone/desktop layouts, library-switch persistence, capture locks and
+cancellation boundaries.

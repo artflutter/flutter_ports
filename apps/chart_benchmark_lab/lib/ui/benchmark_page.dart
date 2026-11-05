@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
+String _typeName(BenchmarkConfig config) => config.type.label.toLowerCase();
+
 const String _sdkVersion = FlutterVersion.version ?? 'version unavailable';
 const String _sdkChannel = FlutterVersion.channel ?? '';
 const String _sdkDart = FlutterVersion.dartVersion ?? 'unavailable';
@@ -268,7 +270,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
           ),
           OutlinedButton.icon(
             key: const ValueKey('run'),
-            onPressed: controller.controlsLocked
+            onPressed: controller.controlsLocked || !controller.canRun
                 ? null
                 : () {
                     if (controller.running) {
@@ -286,6 +288,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                 ? null
                 : controller.capturing || controller.finishing
                 ? () => controller.pause()
+                : !controller.canRun
+                ? null
                 : () {
                     controller
                       ..pause()
@@ -314,7 +318,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
             ),
             label: Text(
               controller.batchCapturing
-                  ? 'Cancel all (${controller.batchPosition}/4)'
+                  ? 'Cancel all (${controller.batchPosition}/'
+                        '${controller.batchTotal})'
                   : 'Capture all ${controller.captureSeconds}s',
             ),
           ),
@@ -327,7 +332,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     final config = controller.config;
     final locked = controller.controlsLocked;
     final isLine = config.type == ChartType.line;
-    final cartesian = config.type != ChartType.pie;
+    final drawsLine = config.type.drawsLine;
     final body = Padding(
       padding: const EdgeInsets.all(18),
       child: Column(
@@ -351,6 +356,9 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                   key: ValueKey('type.${type.name}'),
                   label: Text(type.label),
                   avatar: Icon(type.icon, size: 17),
+                  // Eight types must leave the feature toggles in view.
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   selected: config.type == type,
                   onSelected: locked
                       ? null
@@ -399,9 +407,9 @@ class _BenchmarkPageState extends State<BenchmarkPage>
             'Point markers',
             'markers',
             config.markers,
-            !locked && isLine,
+            !locked && drawsLine,
             (v) => controller.configure(config.copyWith(markers: v)),
-            hint: 'Line only',
+            hint: 'Line, radar',
           ),
           _toggle(
             'Smooth lines',
@@ -415,31 +423,31 @@ class _BenchmarkPageState extends State<BenchmarkPage>
             'Area fill',
             'fill',
             config.fill,
-            !locked && isLine,
+            !locked && drawsLine,
             (v) => controller.configure(config.copyWith(fill: v)),
-            hint: 'Line only',
+            hint: 'Line, radar',
           ),
           _toggle(
             'Axis labels',
             'axes',
             config.axes,
-            !locked && cartesian,
+            !locked && config.type.hasAxes,
             (v) => controller.configure(config.copyWith(axes: v)),
           ),
           _toggle(
             'Grid lines',
             'grid',
             config.grid,
-            !locked && cartesian,
+            !locked && config.type.hasAxes,
             (v) => controller.configure(config.copyWith(grid: v)),
           ),
           _toggle(
             'Alternate item colors',
             'colors',
             config.alternateColors,
-            !locked && !isLine,
+            !locked && config.type.hasItemColors,
             (v) => controller.configure(config.copyWith(alternateColors: v)),
-            hint: 'Bar, scatter, pie',
+            hint: 'Not line, radar',
           ),
           _toggle(
             'Tooltips',
@@ -553,7 +561,10 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                                   ),
                                 ),
                                 Text(
-                                  'v${engine.version}',
+                                  engine.supports(controller.config.type)
+                                      ? 'v${engine.version}'
+                                      : 'No ${_typeName(controller.config)} '
+                                            'chart',
                                   style: const TextStyle(
                                     fontSize: 11,
                                     color: Color(0xff64748b),
@@ -707,7 +718,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                       ],
                       Text(
                         controller.batchCapturing
-                            ? '${controller.batchPosition}/4 · '
+                            ? '${controller.batchPosition}/'
+                                  '${controller.batchTotal} · '
                                   '${controller.library.label} · $status'
                             : status,
                         style: const TextStyle(

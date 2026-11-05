@@ -1,5 +1,9 @@
 import 'dart:math' as math;
 
+/// The radius of a bubble with the value [y], in logical pixels: 2 at 0 and 8
+/// at 100.
+double bubbleRadius(double y) => 2 + y * .06;
+
 /// An immutable input value shared by every adapter.
 class Sample {
   /// One item in the deterministic workload.
@@ -13,6 +17,9 @@ class Sample {
 
   /// Positive value in the fixed 0–100 range.
   final double y;
+
+  /// Bubble radius in logical pixels, computed only by a bubble chart.
+  double get r => bubbleRadius(y);
 }
 
 /// A frame and its workload step, independent of library throughput.
