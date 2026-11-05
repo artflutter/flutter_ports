@@ -367,6 +367,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     executor; callback-time generation checks remain with Config/resolvers.
     Reuse these predicates for equivalent guarantees. Keep narrower operation
     requirements explicit; never widen eligibility merely to share a helper.
+    Chart.js ADR 0088 captures a direct executor for an already-prepared scalar
+    point-color plan inside one native line loop. Source and post-context guards
+    remain live. A failed context attempt resumes ordinary resolution with that
+    same context; callbacks, fresh options and original-key continuation remain.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).

@@ -1,0 +1,45 @@
+from pathlib import Path
+import os,json,subprocess
+out=Path(__file__).resolve().parent
+
+def _run(label,variant,extra,expected):
+ cached=out/(label+'.json')
+ if cached.exists():
+  print('REUSE VALIDATED',label,flush=True);return json.loads(cached.read_text())
+ print('START',label,flush=True);result=out/(label+'.results');result.unlink(missing_ok=True);Path(str(result)+'.window').unlink(missing_ok=True)
+ env={**os.environ,'BENCH_DISPLAY_ID':'1','FRAMES':'1','PIXELS':'0','N':'20000','SHAPE':'plain','CALLS':'update','STYLES':'indexed','CONNECTED':'0,1','LABELS':'200','SPIN':'0','SECONDS':'8','OUTPUT':str(result),**extra}
+ with (out/(label+'.log')).open('w') as log:subprocess.run([('/tmp/native-contracts-production.app/Contents/MacOS/chartjs_gallery' if variant=='baseline' else '/tmp/scriptable-headroom-production.app/Contents/MacOS/chartjs_gallery'),'-ApplePersistenceIgnoreState','YES'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=900,check=True)
+ rows=[json.loads(l.split(' ',1)[1]) for l in result.read_text().splitlines() if l.startswith('LINE_FRAME ')]
+ vis=[json.loads(l) for l in Path(str(result)+'.window').read_text().splitlines()];prepared=next(r for r in vis if r['event']=='prepared');assert (prepared['width'],prepared['height'],prepared['dpr'],prepared['displayId'],prepared['maxFps'])==(1100,900,2,1,120)
+ assert not any(r['time']>prepared['time']+1 and (r['occluded'] or r['appHidden'] or r['miniaturized'] or (r['width'],r['height'],r['dpr'],r['displayId'],r['maxFps'])!=(1100,900,2,1,120)) for r in vis),(label,'window changed')
+ assert len(rows)==expected and all(r['samples']>=8 and r['frameTimings']>=50 and r['items']==20000 and r['canvas']=='1036.0x520.0@2.0' for r in rows),(label,'invalid rows')
+ (out/(label+'.json')).write_text(json.dumps(rows,indent=2)+'\n');print('DONE',label,flush=True);return rows
+def run(label,variant,extra,expected):
+ for attempt in range(2):
+  try:return _run(label,variant,extra,expected)
+  except AssertionError as error:
+   if 'window changed' not in str(error):raise
+   print('REJECT OCCLUSION',label,'attempt',attempt+1,flush=True)
+   rejected=out/'rejected';rejected.mkdir(exist_ok=True)
+   for p in out.glob(label+'.*'):
+    p.rename(rejected/(label+'-retry'+str(attempt+1)+p.name[len(label):]))
+   if attempt==1:raise
+
+repeats={}
+for spin in ['0','1']:
+ runs={}
+ for tag,variant in [('a1','baseline'),('b1','production'),('b2','production'),('a2','baseline')]:
+  runs[tag]=run('repeat-'+spin+'-'+tag,variant,{'TYPE':'line','STYLES':'scriptable','CALLS':'update,data','CONNECTED':'1','SPIN':spin,'SECONDS':'12'},2)
+ repeats[spin]=runs
+ (out/'repeats.json').write_text(json.dumps(repeats,indent=2)+'\n')
+controls={}
+for variant in ['baseline','production']:
+ controls[variant]=run('controls-'+variant,variant,{'TYPE':'line','STYLES':'static,indexed','CONNECTED':'1','SECONDS':'8'},2)
+ (out/'controls.json').write_text(json.dumps(controls,indent=2)+'\n')
+matrix={}
+for spin,labels in [('0','0,50,200'),('1','200')]:
+ for call in ['draw','update','data','animate']:
+  label='matrix-'+call+'-'+spin
+  matrix[label]=run(label,'production',{'TYPE':'line','SPIN':spin,'LABELS':labels,'CALLS':call,'STYLES':'static,indexed,scriptable','CONNECTED':'0,1','SECONDS':'6'},18 if spin=='0' else 6)
+  (out/'matrix.json').write_text(json.dumps(matrix,indent=2)+'\n')
+print('ALL FRAME VERIFICATION COMPLETE',flush=True)

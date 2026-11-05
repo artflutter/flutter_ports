@@ -1,0 +1,23 @@
+from pathlib import Path
+import os,subprocess,re,time,json
+w=Path(__file__).resolve().parent
+for name,labels,gcOnly in [('baseline-cpu-zero','0','0'),('baseline-cpu-labels','200','0'),('baseline-gc-labels','200','1')]:
+ os.environ['GC_ONLY']=gcOnly
+ style,connected='scriptable','1'
+ print('START',name,flush=True)
+ with (w/(name+'.log')).open('w') as log:
+  app=subprocess.Popen(['/tmp/native-contracts-production.app/Contents/MacOS/chartjs_gallery','-ApplePersistenceIgnoreState','YES'],env={**os.environ,'BENCH_DISPLAY_ID':'1','GC_ONLY':gcOnly,'FRAMES':'1','PIXELS':'0','N':'20000','SHAPE':'plain','CALLS':'update','STYLES':style,'CONNECTED':connected,'LABELS':labels,'SPIN':'0','SECONDS':'28','OUTPUT':str(w/(name+'.results'))},stdout=log,stderr=subprocess.STDOUT)
+  try:
+   for i in range(150):
+    match=re.search(r'http://127.0.0.1:(\d+)/(\S+)',(w/(name+'.log')).read_text())
+    if match:break
+    time.sleep(.1)
+   assert match
+   subprocess.run(['/Users/vasilich/fvm/versions/3.47.8/bin/cache/dart-sdk/bin/dart','--packages=.dart_tool/package_config.json',str(w/'profile.dart'),f'ws://127.0.0.1:{match[1]}/{match[2]}ws',str(w/(name+'.json'))],env={**os.environ,'GC_ONLY':gcOnly},check=True,timeout=35)
+   app.wait(timeout=15)
+  finally:
+   if app.poll() is None:app.terminate();app.wait(timeout=10)
+ events=[json.loads(l) for l in Path(str(w/(name+'.results'))+'.window').read_text().splitlines()]
+ ready=next(e for e in events if e['event']=='prepared')
+ assert not any(e['time']>ready['time']+1 and (e['occluded'] or e['appHidden'] or e['miniaturized'] or (e['width'],e['height'],e['dpr'],e['displayId'],e['maxFps'])!=(1100,900,2,1,120)) for e in events),(name,'visibility')
+ print('DONE',name,flush=True)

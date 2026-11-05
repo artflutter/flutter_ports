@@ -1,0 +1,82 @@
+from pathlib import Path
+import sys
+root=Path.cwd();w=root/'.dart_tool/scriptable_headroom';pkg=Path('/tmp/indexed-triage-work/packages/flutter_chartjs_port');variant=sys.argv[1] if len(sys.argv)>1 else 'prepared'
+for rel in ['helpers/helpers.config.dart','core/core.config.dart']:
+ p=pkg/'lib/src'/rel;p.write_bytes((w/'before'/p.name).read_bytes())
+if variant=='baseline':raise SystemExit()
+p=pkg/'lib/src/helpers/helpers.config.dart';s=p.read_text();i=s.index('  /// Captures a color-only bar plan')
+s=s[:i]+'''  /// A direct executor for an already-prepared native point scalar-color plan.
+  /// Null results decline before context; post-context failure uses the supplied
+  /// continuation so the original context is consumed exactly once.
+  @internal
+  ElementOptions? Function(Object Function(), Object Function()?)?
+  prepareScalarPointResolution(
+    List<Object> keys,
+    bool Function() stillCached,
+    ElementOptions Function(Object) afterContextFailure,
+  ) {
+    final plan = _scriptableElementPlan;
+    if (_slotsTouched ||
+        plan == null ||
+        !plan.contextOnly ||
+        plan.template is! PointOptions ||
+        !identical(plan.template.$sharedValue, false) ||
+        !plan.matches(keys, immutable: true)) {
+      return null;
+    }
+    return (context, preparedContext) {
+      if (_slotsTouched ||
+          !identical(plan, _scriptableElementPlan) ||
+          !plan.matches(keys, immutable: true)) {
+        return null;
+      }
+      final ctx = (preparedContext ?? context)();
+      if (!stillCached() ||
+          !identical(plan, _scriptableElementPlan) ||
+          !plan.matches(keys, immutable: true)) {
+        return afterContextFailure(ctx);
+      }
+      return _resolveScalarColors(plan, ctx);
+    };
+  }
+
+'''+s[i:];p.write_text(s)
+p=pkg/'lib/src/core/core.config.dart';s=p.read_text();needle="    final prefixes = <String>['point', ''];\n    return NativePointResolution(";assert needle in s
+s=s.replace(needle,"""    final prefixes = <String>['point', ''];
+    final scalar = cached.resolver.prepareScalarPointResolution(
+      keys,
+      current,
+      (ctx) => _resolveElementNamedOptions(
+        scopes, keys, () => ctx, prefixes, _pointResultKind,
+        nativeInputs: true,
+        allowReplacement: true,
+        immutableKeys: true,
+        ownedPoint: true,
+        preparedResolver: cached,
+        preparedCacheCheck: current,
+        resolved: (resolved: false, context: ctx, prepared: null),
+      ),
+    );
+    return NativePointResolution(""")
+needle='''      resolve: (context, preparedContext) {
+        return _resolveElementNamedOptions(''';assert needle in s
+s=s.replace(needle,'''      resolve: (context, preparedContext) {
+        final result = scalar?.call(context, preparedContext);
+        if (result != null) return result;
+        return _resolveElementNamedOptions(''',1)
+needle='''    Object Function()? preparedContext,
+  }) {
+    if (ownedPoint == null)''';assert needle in s
+s=s.replace(needle,'''    Object Function()? preparedContext,
+    ({bool resolved, Object context, ElementOptions? prepared})? resolved,
+  }) {
+    if (ownedPoint == null)''')
+needle='''    final indexed = runtimeType == Config && samePrefixes
+        ?''';assert needle in s
+s=s.replace(needle,'''    final indexed = resolved ?? (runtimeType == Config && samePrefixes
+        ?''')
+needle='''        : null;
+    if (indexed?.resolved ?? false)''';assert needle in s
+s=s.replace(needle,'''        : null);
+    if (indexed?.resolved ?? false)''')
+p.write_text(s)

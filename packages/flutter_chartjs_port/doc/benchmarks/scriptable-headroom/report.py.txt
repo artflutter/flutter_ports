@@ -1,0 +1,41 @@
+from pathlib import Path
+import json,statistics,hashlib,gzip,shutil
+w=Path(__file__).resolve().parent;root=Path.cwd();out=root/'packages/flutter_chartjs_port/doc/benchmarks/scriptable-headroom';out.mkdir(exist_ok=True)
+def load(n):return json.loads((w/n).read_text())
+repeats=load('repeats.json');comparisons=[]
+for spin,runs in repeats.items():
+ for call in ['update','data']:
+  a=[r for k,rs in runs.items() if k.startswith('a') for r in rs if r['call']==call];b=[r for k,rs in runs.items() if k.startswith('b') for r in rs if r['call']==call]
+  before=statistics.mean(r['buildMs'] for r in a);after=statistics.mean(r['buildMs'] for r in b)
+  comparisons.append(dict(spin=spin=='1',call=call,beforeMeanUiMs=before,afterMeanUiMs=after,reductionPct=100*(1-after/before),beforeP90=[r['buildP90Ms'] for r in a],afterP90=[r['buildP90Ms'] for r in b],beforeFps=[r['fps'] for r in a],afterFps=[r['fps'] for r in b]))
+matrix=load('matrix.json');rows=[r for rs in matrix.values() for r in rs];assert len(rows)==96
+miss=[r for r in rows if r['fps']<59 or r['buildP90Ms']>1000/60 or r['rasterP90Ms']>1000/60]
+summary={'missRepeats':load('miss-repeats.json') if (w/'miss-repeats.json').exists() else {},'comparisons':comparisons,'repeats':repeats,'controls':load('controls.json'),'matrix':matrix,'near60Misses':miss,'matrixTimings':sum(r['frameTimings'] for r in rows),'prototype':load('prototype-frames.json')}
+meta=load('production-build.json');assert all(hashlib.sha256((root/p).read_bytes()).hexdigest()==h for p,h in meta['librarySha256'].items())
+meta['baseline']=load('baseline-build.json');meta['baselineRuntimeCommit']='8ed395b';meta['date']='2026-11-05';meta['runtimeDelta']=[p for p,h in meta['librarySha256'].items() if meta['baseline']['librarySha256'].get(p)!=h]
+vis={}
+for p in w.glob('*.results.window'):
+ es=[json.loads(l) for l in p.read_text().splitlines()];ready=next(e for e in es if e['event']=='prepared');assert (ready['width'],ready['height'],ready['dpr'],ready['displayId'],ready['maxFps'])==(1100,900,2,1,120)
+ assert not any(e['time']>ready['time']+1 and (e['occluded'] or e['appHidden'] or e['miniaturized'] or (e['width'],e['height'],e['dpr'],e['displayId'],e['maxFps'])!=(1100,900,2,1,120)) for e in es),p
+ vis[p.name]=es
+validation=load('production-results.json');assert len(validation)==7 and all(c['exit']==0 for c in validation)
+for name,obj in [('summary.json',summary),('metadata.json',meta),('visibility.json',vis),('validation.json',validation)]: (out/name).write_text(json.dumps(obj,indent=2)+'\n')
+for p in w.iterdir():
+ if not p.is_file():continue
+ if p.suffix=='.py':shutil.copyfile(p,out/(p.name+'.txt'))
+ else:
+  with gzip.open(out/(p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+for p in (w/'before').glob('*'):
+ if p.is_file():
+  with gzip.open(out/('baseline-source-'+p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+for p in (w/'rejected').glob('*'):
+ if p.is_file():
+  with gzip.open(out/('rejected-'+p.name+'.gz'),'wb') as f:f.write(p.read_bytes())
+for name in ['probe.dart','pixels.dart']:shutil.copyfile(Path('/tmp/indexed-triage-work/.dart_tool/indexed_triage')/name,out/(name+'.txt'))
+shutil.copyfile(Path('/tmp/indexed-triage-work/apps/chartjs_gallery/macos/Runner/MainFlutterWindow.swift'),out/'MainFlutterWindow.swift.txt')
+shutil.copyfile(root/'packages/flutter_chartjs_port/doc/benchmarks/indexed-update-triage/churn-harness.patch',out/'harness.patch')
+lines=['| Labels | Operation | Mean UI before → after ms | Reduction | UI p90 before → after ms |','| --- | --- | ---: | ---: | --- |']
+for r in comparisons:
+ a=' / '.join(format(x,'.2f') for x in r['beforeP90']);b=' / '.join(format(x,'.2f') for x in r['afterP90']);lines.append(f"| {'rotating' if r['spin'] else 'static'} | {r['call']} | {r['beforeMeanUiMs']:.2f} → {r['afterMeanUiMs']:.2f} | {r['reductionPct']:.1f}% | {a} → {b} |")
+(out/'table.md').write_text('\n'.join(lines)+'\n');print('\n'.join(lines));print('Matrix misses',len(miss),'timings',summary['matrixTimings'])
+for r in miss:print({k:r[k] for k in ['call','style','connected','labels','spin','fps','buildP90Ms','rasterP90Ms']})

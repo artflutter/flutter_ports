@@ -1,0 +1,7 @@
+import subprocess
+from pathlib import Path
+w=Path('.dart_tool/scriptable_headroom')
+for name,args in [('build',['python3',str(w/'build.py'),'production']),('validate',['python3',str(w/'validate.py')]),('frames',['caffeinate','-dims','python3',str(w/'frames.py')]),('capture',['caffeinate','-dims','python3',str(w/'capture_final.py')]),('analyze',['python3',str(w/'analyze_final.py')])]:
+ print('START',name,flush=True)
+ with (w/(name+'-run.log')).open('w') as f:subprocess.run(args,stdout=f,stderr=subprocess.STDOUT,check=True)
+ print('DONE',name,flush=True)

@@ -1,0 +1,70 @@
+--- a/apps/chartjs_gallery/lib/demo/stress_demo.dart
++++ b/apps/chartjs_gallery/lib/demo/stress_demo.dart
+@@ -1,6 +1,7 @@
+ // The reason of each import of lib/src is the comment above it.
+ // ignore_for_file: implementation_imports
+ 
++import 'dart:io' show Platform;
+ import 'dart:math' as math;
+ import 'dart:typed_data';
+ import 'dart:ui' as ui;
+@@ -1162,7 +1163,7 @@
+     registerGalleryComponents();
+     final scene = _chartScene = StressChartScene(_type, _n, _field);
+     _chartData = scene.data;
+-    return stressChartConfig(
++    final config = stressChartConfig(
+       scene: scene,
+       scriptable: _scriptable,
+       indexed: _indexed,
+@@ -1170,6 +1171,37 @@
+       animate: _call == StressChartCall.animate,
+       plugins: [_labelsPlugin, _timing.plugin],
+     );
++    final data = config['data']! as Map<String, Object?>;
++    final dataset = (data['datasets']! as List).first as Map<String, Object?>;
++    final shape = Platform.environment['SHAPE'];
++    if (shape == 'curved') dataset['tension'] = 0.3;
++    if (shape == 'stepped') dataset['stepped'] = true;
++    if (shape == 'observed') {
++      (config['plugins']! as List).add(<String, Object?>{
++        'id': 'observePath',
++        'afterDraw': (Object? value, Object? args, Object? options) {
++          final line = (value! as Chart).getDatasetMeta(0).dataset;
++          if (line is LineElement) {
++            final path = line['_path'];
++            if (path is Path2D) path.commands.length;
++          }
++        },
++      });
++    }
++    if (shape == 'churn') {
++      (config['plugins']! as List).add(<String, Object?>{
++        'id': 'replaceRawMaps',
++        'beforeUpdate': (Object? owner, Object? args, Object? options) {
++          final data=(owner! as Chart).data as Map<String,Object?>;
++          final dataset=(data['datasets']! as List).first as Map<String,Object?>;
++          final values=dataset['data']! as List<Object?>;
++          for(var i=0;i<values.length;i++) {
++            values[i]=Map<String,Object?>.of(values[i]! as Map<String,Object?>);
++          }
++        },
++      });
++    }
++    return config;
+   }
+ 
+   /// The config of `new Chart(canvas, config)` of the mode
+@@ -1421,6 +1453,12 @@
+         _axesScene?.write(_field);
+       } else {
+         _chartScene?.write(_field);
++      }
++    }
++    if (Platform.environment['SHAPE'] == 'sparse' && _call == StressChartCall.update) {
++      final values = _chartScene!.data;
++      for (var i = 0; i < values.length; i++) {
++        if (i % 1200 != 0) (values[i]! as Map<String, Object?>)['x'] = double.nan;
+       }
+     }
+     final meter = _meterOf(chart)..drawMicros = 0;

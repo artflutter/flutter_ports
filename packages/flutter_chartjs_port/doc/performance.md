@@ -7456,3 +7456,40 @@ Shared-contract tests pin capability liveness, projection/grid scope, class
 metadata changes and validation before contexts/execution. Existing line/scatter
 and resolver twins retain mutation, callback, fallback and cache-lifetime checks.
 The 96-case matrix of §59 is not rerun for this behavior-preserving refactor.
+
+## 61. Direct prepared scalar point resolution
+
+2026-11-05. [ADR 0088](adr/0088-prepared-scalar-point-resolution.md),
+[full measurements and reproduction](benchmarks/scriptable-headroom/README.md).
+
+Fresh profiles identify general option-resolution setup around already-prepared
+scalar point colors as avoidable work. A captured native executor now bypasses
+that setup and the successful context/result record. Complete source validation,
+post-context generation/plan/key checks, fresh options, callback order and the
+existing mutation/non-scalar continuation remain. Context-time failure resumes
+ordinary resolution with the already-observed context, without invoking it again.
+No callback-result cache, drawing change or data-only extension is introduced.
+
+Matched A/B/B/A runs cover 20k connected scriptable points with 200 static or
+rotating labels. Mean UI improves 4.6–5.3%, about 0.7–0.8 ms: static-label full
+update 14.56→13.81 ms and data-only fallback 14.88→14.20 ms; rotating-label full
+update 14.71→14.03 ms and fallback 15.07→14.27 ms. Heavy-case candidate UI p90
+ranges 14.74–15.72 ms. Static/indexed controls remain close to baseline.
+
+The complete 96-cell matrix contains 38,433 timings; 95/96 meet mean FPS ≥59 and
+UI/raster p90 ≤16.67 ms. The single miss is connected scriptable data-only fallback
+with 50 static labels: 59.01 FPS, UI p90 16.904 ms. Its longer matched repeat passes
+on the candidate (63.3–63.9 FPS; p90 14.52–14.70 ms), but the original miss remains
+recorded. The roughly 14 ms p90 headroom target is not achieved across heavy label
+cases, and every-mode sustained 60 FPS remains unproven. Covered control/data
+batches were rejected and rerun; all accepted visibility logs pass.
+
+The final CPU profile confirms that the prepared executor replaces the general
+Config/scriptable-resolution route while callbacks still execute. Equal five-
+second GC-only windows show mean GC-labelled UI time 2.09→1.73 ms/frame and
+slow-decile mean 2.64→2.54 ms. No allocation-rate inference is made from snapshots.
+
+Validation passes: 11,091 VM tests; 4,235 tests per browser backend; formatting,
+analysis, spec cases, fixtures, regenerated parity and all seven port checks.
+Eighteen new native-vs-ordinary cases exercise pre/post-context invalidation,
+replacement plans, callback mutation, non-scalar returns, exceptions and reentrancy.

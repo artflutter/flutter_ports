@@ -558,6 +558,43 @@ final class OptionResolver implements ResolverProxy {
         );
   }
 
+  /// A direct executor for an already-prepared native point scalar-color plan.
+  /// [keys] must be the native immutable key snapshot used by its source plan.
+  /// Null results decline before context. Later failure uses the supplied
+  /// continuation, consuming the original context exactly once.
+  @internal
+  // DIVERGES(chartjs): adapt-prepared-scalar-point-resolution, owned executor.
+  ElementOptions? Function(Object Function(), Object Function()?)?
+  prepareScalarPointResolution(
+    List<Object> keys,
+    bool Function() stillCached,
+    ElementOptions Function(Object) afterContextFailure,
+  ) {
+    final plan = _scriptableElementPlan;
+    if (_slotsTouched ||
+        plan == null ||
+        !plan.contextOnly ||
+        plan.template is! PointOptions ||
+        !identical(plan.template.$sharedValue, false) ||
+        !plan.matches(keys, immutable: true)) {
+      return null;
+    }
+    return (context, preparedContext) {
+      if (_slotsTouched ||
+          !identical(plan, _scriptableElementPlan) ||
+          !plan.matches(keys, immutable: true)) {
+        return null;
+      }
+      final ctx = (preparedContext ?? context)();
+      if (!stillCached() ||
+          !identical(plan, _scriptableElementPlan) ||
+          !plan.matches(keys, immutable: true)) {
+        return afterContextFailure(ctx);
+      }
+      return _resolveScalarColors(plan, ctx);
+    };
+  }
+
   /// Captures a color-only bar plan for a synchronous native loop. The caller
   /// must prove that no user code or mutation can run until the loop finishes.
   /// This reads cached values only and never invokes a descriptor or resolver.
