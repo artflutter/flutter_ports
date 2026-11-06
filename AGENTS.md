@@ -723,6 +723,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Public list exposure and complex commands materialize in original order.
     Boundary/ownership tests cover this storage-only change; no capacity hint
     or line algorithm/data-only guard changes are involved.
+    Chart.js ADR 0104: `Path2D` packs unobserved cubic curves too. A filler walk that a partitioned
+    fill can replace keeps the original path out of the engine (`deferCurrentPath`), and a read gets
+    the same path. `boundSegment` proves a whole ascending segment with one scan.
+    `PointElement.drawCircleRun` (`canvas_circle_run.dart`) sends exact point elements with plain
+    options and the style `circle` to the batch with one call each; the first other element or state
+    ends the run, and `DatasetController.draw` draws the rest in order. See performance.md §66.
     Chart.js ADR 0103: on Impeller, the static angle-line plan sends the lines after the
     first through `LineFanCanvas` (`canvas_line_fan.dart`), one `drawRawPoints(PointMode.lines)`.
     Each line stays its own stroke; the last spoke stays the current path; the call counts as
