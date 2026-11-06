@@ -1650,9 +1650,13 @@ class Chart
   /// stay unchanged; call [update] for those changes. Numeric scales require
   /// explicit numeric min/max. A category scale requires `bounds: 'ticks'` and
   /// no label that its parse added. Category, linear and radial-linear scales
-  /// and all built-in controllers are supported. Indexed/scriptable styles,
-  /// unknown components, active animations and unapproved plugins fall back
-  /// to `update('none')`. Native numeric lists/buffers and point data qualify.
+  /// and all built-in controllers are supported. A native indexed style of a
+  /// data element qualifies, with the keys of its options in the defaults and
+  /// the overrides (Chart.js ADR 0100). Scriptable styles, an indexed style of
+  /// a dataset element, an indexed style with an item that is not a native
+  /// scalar, unknown components, active animations and unapproved plugins fall
+  /// back to `update('none')`. Native numeric lists/buffers and point data
+  /// qualify.
   ///
   /// Parsing, stacks, hover/event replay and update/draw hooks stay live.
   /// Scale/layout hooks run only when overflow requires a new layout. Use a
@@ -1715,7 +1719,7 @@ class Chart
       final controller = meta.controller;
       if (controller == null ||
           !controller.supportsDataUpdates ||
-          !controller.hasStaticDataUpdateOptions ||
+          !controller.hasDataUpdateOptions ||
           (controller.parsing is! bool && controller.parsing is! Undefined) ||
           meta.data.length != snapshot.counts[i]) {
         return full();
