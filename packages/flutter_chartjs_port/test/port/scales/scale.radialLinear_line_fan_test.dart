@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../canvas/line_fan_engine.dart';
+
 // The twins of Chart.js ADR 0103, over the plan of Chart.js ADR 0095:
 //
 // - A recording context with the capability gets the fan. It writes the calls
@@ -246,10 +248,7 @@ int _pictures(Chart chart) =>
 void main() {
   Chart.register([_OrdinaryRadial.value]);
 
-  setUp(() {
-    UiCanvasContext.debugLineFanWithoutImpeller = true;
-    addTearDown(() => UiCanvasContext.debugLineFanWithoutImpeller = false);
-  });
+  setUpLineFanEngine();
 
   group('a recording context', () {
     for (final type in const ['radar', 'polarArea']) {
