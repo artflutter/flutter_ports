@@ -1237,7 +1237,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `s_sin.c`, `s_cos.c`, `k_sin.c`, `k_cos.c`, `e_rem_pio2.c`, `k_rem_pio2.c`, `s_scalbn.c`) for
     `fdlibm_log.dart`, `fdlibm_atan.dart` and `fdlibm_trig.dart`. fdlibm has no git repository.
     Thus these files are a committed copy. `REUSE.toml` annotates them.
-- `tool/`: repository scripts (`check_upstream_pin.sh`).
+- `tool/`: repository scripts (`check_upstream_pin.sh`). `tool/pages/index.html` is the root page of
+  the GitHub Pages site, a template that the workflow `pages` fills in.
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
   art for future ports. Docs for one port go in the `doc/` folder of its package.
   - ADR 0007 (package names) is accepted (2026-10-22). It supersedes ADR 0003. ADR 0008 (shared
