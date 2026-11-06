@@ -46,6 +46,12 @@ String _comparisonKey(
   benchmarkSdk,
 ]);
 
+/// The workload of a result, without the size of the chart, its pixel ratio and
+/// the display rate. Results of one workload stay in view after a resize. They
+/// rank together only with one [_comparisonKey].
+String _workloadKey(BenchmarkConfig config, int durationSeconds) =>
+    jsonEncode([config.toJson(), durationSeconds, benchmarkSdk]);
+
 /// Low-frequency UI readout; the chart has its own per-frame notifier.
 class RunReadout {
   /// Current timings and session progress.
@@ -102,6 +108,9 @@ class BenchmarkResult {
   /// Comparison identity excludes the engine but includes effective workload.
   String get comparisonKey =>
       _comparisonKey(config, viewport, dpr, refreshRate, durationSeconds);
+
+  /// The identity of the workload, for the filter of the saved results.
+  String get workloadKey => _workloadKey(config, durationSeconds);
 
   /// Exportable evidence, including limitations of the measurement.
   Map<String, Object?> toJson() => {
@@ -264,6 +273,9 @@ class BenchmarkController extends ChangeNotifier {
   /// Current comparable workload identifier.
   String get comparisonKey =>
       _comparisonKey(config, viewport, dpr, refreshRate, captureSeconds);
+
+  /// The identity of the current workload, for the filter of the saved results.
+  String get workloadKey => _workloadKey(config, captureSeconds);
 
   /// Preserve configuration while replacing the single active engine.
   void selectLibrary(ChartLibrary value) {

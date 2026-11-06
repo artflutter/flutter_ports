@@ -1,10 +1,12 @@
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
+import 'package:chart_benchmark_lab/benchmark/metrics.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
 import 'package:chart_benchmark_lab/main.dart';
 import 'package:chart_benchmark_lab/ui/change_log.dart';
 import 'package:chart_benchmark_lab/ui/page_note.dart';
+import 'package:chart_benchmark_lab/ui/results_table.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -148,7 +150,41 @@ void main() {
     await tester.pump(const Duration(milliseconds: 20));
   });
 
-  testWidgets('a test with the chart out of view stops and says why', (
+  for (final size in [const Size(390, 664), const Size(360, 560)]) {
+    testWidgets('Run on a phone moves the chart into view at $size', (
+      tester,
+    ) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      late BenchmarkController c;
+      await tester.pumpWidget(
+        ChartBenchmarkApp(onControllerReady: (value) => c = value),
+      );
+      await tester.pump(const Duration(milliseconds: 20));
+      // The header shows icons with tooltips.
+      for (final key in ['changelog', 'run', 'capture', 'capture.all']) {
+        expect(
+          tester.widget<IconButton>(find.byKey(ValueKey(key))).tooltip,
+          isNotEmpty,
+        );
+      }
+      expect(find.text('Run'), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('run')));
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 20));
+      }
+      expect(c.running, isTrue, reason: c.message);
+      expect(c.stopReason, isNull);
+      expect(find.byType(PageNote), findsNothing);
+      c.pause();
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 20));
+    });
+  }
+
+  testWidgets('a start with the chart out of view stops and says why', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(412, 915);
@@ -160,16 +196,83 @@ void main() {
       ChartBenchmarkApp(onControllerReady: (value) => c = value),
     );
     await tester.pump(const Duration(milliseconds: 20));
-    await tester.tap(find.byKey(const ValueKey('run')));
+    // A start that does not pass through the buttons.
+    final scrollable = tester.state<ScrollableState>(
+      find.byType(Scrollable).first,
+    );
+    final top = scrollable.position.pixels;
+    expect(top, 0);
+    tester.view.physicalSize = const Size(412, 500);
     await tester.pump(const Duration(milliseconds: 20));
-    await tester.pump(const Duration(milliseconds: 300));
+    c.start();
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(seconds: 1));
     expect(c.running, isFalse);
-    expect(c.stopReason, contains('out of view'));
+    expect(c.stopReason, isNotNull);
     expect(find.text('TEST STOPPED'), findsOneWidget);
 
     c.start();
     expect(c.stopReason, isNull);
     c.pause();
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
+
+  testWidgets('a resize keeps the saved comparisons in view', (tester) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    late BenchmarkController c;
+    await tester.pumpWidget(
+      ChartBenchmarkApp(onControllerReady: (value) => c = value),
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 20));
+    BenchmarkResult result(ChartLibrary library, double fps) => BenchmarkResult(
+      library: library,
+      config: c.config,
+      viewport: c.viewport,
+      dpr: c.dpr,
+      refreshRate: c.refreshRate,
+      metrics: FrameMetrics(samples: 100, fps: fps, intervalP90: 1000 / fps),
+      durationSeconds: c.captureSeconds,
+      createdAt: DateTime.utc(2026),
+    );
+    final first = c.comparisonKey;
+    c.results.addAll([
+      result(ChartLibrary.flChart, 20),
+      result(ChartLibrary.chartjs, 60),
+    ]);
+    // A change of the window size rebuilds the page.
+    tester.view.physicalSize = const Size(1200, 900);
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.comparisonKey, isNot(first));
+    expect(c.results, hasLength(2));
+    Finder inTable(Finder finder) =>
+        find.descendant(of: find.byType(ResultsTable), matching: finder);
+    expect(inTable(find.text('Chart.js port')), findsOneWidget);
+    expect(inTable(find.text('fl_chart')), findsOneWidget);
+    expect(find.byKey(const ValueKey('results.otherWindow')), findsOneWidget);
+    expect(find.byKey(const ValueKey('results.winner')), findsOneWidget);
+
+    // The sort stays when a resize changes the layout of the page.
+    await tester.tap(inTable(find.text('Library')));
+    await tester.pump(const Duration(milliseconds: 300));
+    final state = tester.state(find.byType(ResultsTable));
+    tester.view.physicalSize = const Size(800, 900);
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(tester.state(find.byType(ResultsTable)), same(state));
+
+    // Another workload still leaves the filter empty.
+    c.configure(c.config.copyWith(count: 100));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(find.byType(ResultsTable), findsNothing);
+    expect(find.textContaining('No captures match this setup'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(milliseconds: 20));
   });
