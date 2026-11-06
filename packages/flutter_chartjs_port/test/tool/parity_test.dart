@@ -10,6 +10,8 @@ import 'package:test/test.dart';
 import '../../tool/parity.dart' as command;
 import '../../tool/src/check_support.dart';
 import '../../tool/src/parity.dart';
+import '../../tool/src/port_headers.dart'
+    show parsePortSources, portSourcesPath;
 import '../../tool/src/spec_cases.dart';
 import 'file_tree.dart';
 
@@ -1255,6 +1257,49 @@ void main() {
         : pin.existsSync() && pin.listSync().isNotEmpty
         ? false
         : '${pin.path} is missing: run `dart run melos run upstream`';
+
+    // Chart.js ADR 0096. A missing row is only a warning of tool 6, and tool 6
+    // needs the submodules. This check reads the rows with no submodule.
+    test(
+      'names the port-only tests of the per-item reads',
+      () {
+        final tests = [
+          '$_package/test/port/core/core.datasetController_plumbing_test.dart',
+          '$_package/test/port/core/core.datasetController_walk_test.dart',
+          '$_package/test/port/options/read_key_test.dart',
+        ];
+        for (final path in tests) {
+          expect(File('$repository/$path').existsSync(), isTrue, reason: path);
+        }
+        final package = '$repository/$_package';
+        final sources = File('$package/$portSourcesPath');
+        final status = File('$package/$statusPath');
+        final output = renderParity(
+          ParityModel(
+            repository: repository!,
+            package: package,
+            sources: {
+              for (final source in parsePortSources(
+                sources.readAsStringSync(),
+              ))
+                source.header: source,
+            },
+            rows: const [],
+            portOnlyFiles: tests,
+          ),
+          parseStatusFile(status.readAsStringSync()),
+        );
+        expect(
+          output.findings
+              .map((finding) => '$finding')
+              .where((text) => text.contains('no port-only row names')),
+          isEmpty,
+        );
+      },
+      skip: repository == null
+          ? 'not inside the flutter_ports repository'
+          : false,
+    );
 
     test('lists every file of the pins and reads status.yaml', () {
       final model = computeParity(
