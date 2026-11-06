@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Engines installed in this benchmark, with reproducible dependency versions.
 enum ChartLibrary {

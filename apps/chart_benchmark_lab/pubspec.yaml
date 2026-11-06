@@ -17,6 +17,7 @@ dependencies:
   flutter_chartjs_port:
     path: ../../packages/flutter_chartjs_port
   graphic: 2.7.0
+  material_ui: ^1.10.0
   syncfusion_flutter_charts: 35.1.43
 
 dev_dependencies:

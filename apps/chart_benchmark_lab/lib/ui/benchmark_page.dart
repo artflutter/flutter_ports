@@ -5,10 +5,11 @@ import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
+import 'package:chart_benchmark_lab/ui/change_log.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 String _typeName(BenchmarkConfig config) => config.type.label.toLowerCase();
 
@@ -133,7 +134,12 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                         child: Column(
                           children: [
                             Card(
+                              // The hover color of the tile stays inside the
+                              // rounded corners.
+                              clipBehavior: Clip.antiAlias,
                               child: ExpansionTile(
+                                shape: const Border(),
+                                collapsedShape: const Border(),
                                 title: const Text('Test configuration'),
                                 subtitle: Text(
                                   '${controller.config.type.label} · '
@@ -267,6 +273,12 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                 ? 'PROFILE'
                 : 'RELEASE',
             kDebugMode ? const Color(0xff9a6700) : const Color(0xff15803d),
+          ),
+          ChangeLogButton(
+            enabled:
+                !controller.running &&
+                !controller.finishing &&
+                !controller.batchCapturing,
           ),
           OutlinedButton.icon(
             key: const ValueKey('run'),

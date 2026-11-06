@@ -3,9 +3,10 @@ import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
 import 'package:chart_benchmark_lab/main.dart';
-import 'package:flutter/material.dart';
+import 'package:chart_benchmark_lab/ui/change_log.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
@@ -57,6 +58,24 @@ void main() {
       );
     }
   }
+
+  testWidgets('the header opens the change log, newest entry first', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1400, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(const ChartBenchmarkApp());
+    await tester.pump();
+    expect(find.text('• ${changeLog.first.items.first}'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('changelog')));
+    await tester.pumpAndSettle();
+    expect(find.text('• ${changeLog.first.items.first}'), findsOneWidget);
+    final dates = [for (final entry in changeLog) entry.date];
+    expect(dates, [...dates]..sort((a, b) => b.compareTo(a)));
+    await tester.tap(find.byKey(const ValueKey('changelog.close')));
+    await tester.pumpAndSettle();
+    expect(find.text('• ${changeLog.first.items.first}'), findsNothing);
+  });
 
   testWidgets('a type without a public chart stops only that library', (
     tester,

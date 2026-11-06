@@ -24,9 +24,13 @@ The macOS window opens on the built-in display when available. For a particular
 display, set `BENCH_DISPLAY_ID` to its macOS display ID. The window stays movable
 and resizable; changing displays or viewport invalidates an active capture.
 
-VS Code Run and Debug includes `chart_benchmark_lab` and
-`chart_benchmark_lab (profile)` in the root `.vscode/launch.json`. The profile
-configuration targets native macOS.
+VS Code Run and Debug includes `chart_benchmark_lab`,
+`chart_benchmark_lab (profile)` and `chart_benchmark_lab (profile, wasm)` in the
+root `.vscode/launch.json`. Each one runs on the device of the VS Code picker. The
+wasm configuration needs Chrome in the picker.
+
+The header has a **Change log** button (`lib/ui/change_log.dart`). Add a line
+there when a change moves a figure.
 
 ## Controls
 

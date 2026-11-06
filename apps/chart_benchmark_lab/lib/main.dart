@@ -1,7 +1,7 @@
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/ui/benchmark_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   cj.Chart.register(cj.registerables);
@@ -41,6 +41,9 @@ class ChartBenchmarkApp extends StatelessWidget {
         displayColor: const Color(0xff17243b),
       ),
     ),
+    // fl_chart and Syncfusion still read the theme of the old Material library.
+    // ignore: deprecated_member_use
+    builder: (context, child) => MaterialUiCompatibilityBridge(child: child!),
     home: BenchmarkPage(onControllerReady: onControllerReady),
   );
 }
