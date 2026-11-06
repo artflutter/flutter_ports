@@ -7648,8 +7648,10 @@ The cells that started or stayed below 118.5 FPS:
 | Polar area, 1,000, full | 57.8 | 57.8, 58.5 | 120.0, 120.0 | 120.0 |
 
 All other cells stay at 119 FPS or above on both sides. 22 of the 48 cells reached 119 FPS on the old code.
-38 of the 48 cells reach it on the new code. The 10 cells below 119 FPS all have 20,000 items. The two new
-passes differ by less than 3% in each cell.
+38 of the 48 cells reach it in both new passes. The 10 cells below 119 FPS all have 20,000 items. The two new
+passes differ by less than 3% in each cell. One more pass of the delivered code (`final-pass.txt`, commit
+`fc4e1de`) differs from their mean by less than 4% in each cell. It has 39 cells at 119 FPS or above, because
+scatter, 20,000, full is at the limit: 117.8 to 119.5 FPS over the three passes.
 
 The times at 20,000 items, the mean of the two old passes to the mean of the two new passes:
 
