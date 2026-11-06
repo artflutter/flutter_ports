@@ -14,8 +14,10 @@
 # - Nine more stringIndex reads guard native user Map source identities and
 #   select the upstream point resolver cache for a loop-local plan (ADR 0082).
 #   They do not introduce new option names or by-name reads in point loops.
+# - One more stringIndex read selects the upstream resolver cache by the joined
+#   native arc prefixes (ADR 0093), not a user option name.
 # - jsCall 1: the context function of resolveNamedOptions.
 jsGet 62
-stringIndex 13
+stringIndex 14
 jsCall 1
 jsObjectKeys 3

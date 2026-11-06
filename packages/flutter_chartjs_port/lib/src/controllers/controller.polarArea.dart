@@ -37,6 +37,10 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart'
+    show prepareNativeArcColors;
+import 'package:flutter_chartjs_port/src/core/arc_options.dart'
+    show nativeArcClass, nativeArcElement, nativeArcScale;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
@@ -44,7 +48,7 @@ import 'package:flutter_chartjs_port/src/core/data_update.dart'
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show parseObjectDataRadialScaleOf, readOption;
+    show OptionView, parseObjectDataRadialScaleOf, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
     show formatNumber;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -426,14 +430,42 @@ class PolarAreaController extends DatasetController {
     double i;
 
     final defaultAngle = 360 / countVisibleElements();
+    // DIVERGES(chartjs): adapt-arc-native-options, an exact controller reads
+    // the angle of a hit from its frozen entry, with no copy for one read.
+    final exact = supportsDataUpdates && nativeArcClass(dataElementType);
 
     for (i = 0; i < start; ++i) {
-      angle += _computeAngle(i, mode, defaultAngle);
+      angle += _computeAngle(i, mode, defaultAngle, cachedAngle: exact);
     }
+    // DIVERGES(chartjs): adapt-arc-native-options, a plan of this synchronous
+    // loop only. A custom or active arc ends it for good before its first read.
+    ArcOptions Function(int)? colors;
+    var plannedAngle = 0.0;
+    final tryColors =
+        exact &&
+        mode == 'none' &&
+        start == 0 &&
+        count > 2 &&
+        parsing != false &&
+        cachedDataElementOptions(mode) == null &&
+        _nativeRadialScale(scale);
     for (i = start; i < start + count; i++) {
       final arc = arcs[i.toInt()];
+      if (colors != null && (!nativeArcElement(arc) || arc.active)) {
+        colors = null;
+      }
+      final prepared = colors;
       var startAngle = angle;
-      var endAngle = angle + _computeAngle(i, mode, defaultAngle);
+      // With a plan, the context refresh of `_computeAngle` is not observable:
+      // the resolve below writes each of its fields, and only the exact scale
+      // runs between the two.
+      var endAngle =
+          angle +
+          (prepared == null
+              ? _computeAngle(i, mode, defaultAngle, cachedAngle: exact)
+              : chart.getDataVisibility(i)
+              ? plannedAngle
+              : 0.0);
       var outerRadius = chart.getDataVisibility(i)
           ? scale.getDistanceFromCenterForValue(
               parsedValueOf(getParsed(i), AxisKey.r, 'r'),
@@ -463,10 +495,18 @@ class PolarAreaController extends DatasetController {
       } else {
         properties.y = centerY;
       }
-      final elementOptions = resolveDataElementOptions(
-        i,
-        arc.active ? 'active' : mode,
-      );
+      // DIVERGES(chartjs): adapt-arc-native-options, the context refresh and a
+      // fresh copy of the template, as the resolve of this plan gives.
+      final ElementOptions elementOptions;
+      if (prepared != null) {
+        getContext(i, false, mode);
+        elementOptions = prepared(i.toInt());
+      } else {
+        elementOptions = resolveDataElementOptions(
+          i,
+          arc.active ? 'active' : mode,
+        );
+      }
       properties
         ..innerRadius = 0.0
         ..outerRadius = outerRadius
@@ -490,7 +530,28 @@ class PolarAreaController extends DatasetController {
       }
 
       updateElement(arc, i, properties, mode);
+
+      // Two ordinary resolutions warm the cached plan. One attempt.
+      if (tryColors && i == start + 1 && nativeArcElement(arc)) {
+        colors = prepareNativeArcColors(this, arcs);
+        if (colors != null) {
+          plannedAngle = _angleOf(
+            colors(0).valueOf(OptionKey.angle),
+            defaultAngle,
+          );
+        }
+      }
     }
+  }
+
+  /// The exact radial scale with a scalar `reverse`: its value projection runs
+  /// no user code. Port-only.
+  // DIVERGES(chartjs): adapt-arc-native-options, the guard of the plan.
+  bool _nativeRadialScale(types.RadialLinearScale scale) {
+    if (!nativeArcScale(scale)) return false;
+    final view = scale.options;
+    return view is OptionView &&
+        view.rawOptionsAreScalar(const [OptionKey.reverse]);
   }
 
   /// controller.polarArea.js:216 `countVisibleElements()`.
@@ -520,15 +581,26 @@ class PolarAreaController extends DatasetController {
   ///
   /// `angle || defaultAngle` keeps a truthy raw `angle` option. `toRadians`
   /// applies `ToNumber` to it at the arithmetic. The raw value is
-  /// [ElementOptions.valueOf], typed for an [ArcOptions].
-  double _computeAngle(double index, String mode, double defaultAngle) {
+  /// [ElementOptions.valueOf], typed for an [ArcOptions]. With [cachedAngle],
+  /// a hit of the options cache reads its entry: a call would only copy it.
+  double _computeAngle(
+    double index,
+    String mode,
+    double defaultAngle, {
+    bool cachedAngle = false,
+  }) {
     if (!chart.getDataVisibility(index)) {
       return 0;
     }
-    final angle = resolveDataElementOptions(
-      index,
-      mode,
-    ).valueOf(OptionKey.angle);
-    return toRadians(jsToNumber(jsTruthy(angle) ? angle : defaultAngle));
+    // DIVERGES(chartjs): adapt-arc-native-options, no copy for one read.
+    final cached = cachedAngle ? cachedDataElementOptions(mode) : null;
+    final angle = (cached ?? resolveDataElementOptions(index, mode)).valueOf(
+      OptionKey.angle,
+    );
+    return _angleOf(angle, defaultAngle);
   }
+
+  /// `toRadians(angle || defaultAngle)` of `_computeAngle`.
+  double _angleOf(Object? angle, double defaultAngle) =>
+      toRadians(jsToNumber(jsTruthy(angle) ? angle : defaultAngle));
 }
