@@ -1920,6 +1920,14 @@ class DatasetController
   bool get hasCachedPointNoneOptions =>
       _cachedElementOptions.containsKey('point-none');
 
+  /// The frozen `point-<mode>` entry of `_cachedDataOpts`, for native loops.
+  @internal
+  // DIVERGES(chartjs): adapt-native-point-size, the entry a resolve copies.
+  ElementOptions? cachedPointOptions(String mode) {
+    final key = 'point-$mode';
+    return _cachedElementOptions[key];
+  }
+
   /// core.datasetController.js:804 `_resolveElementOptions(elementType, mode
   /// = 'default', index)`.
   /// @private

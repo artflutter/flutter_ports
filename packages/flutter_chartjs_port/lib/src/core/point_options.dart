@@ -4,9 +4,12 @@ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
     show BulkBarScale;
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show PointOptions, plainOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -101,6 +104,56 @@ final _pointLists = <Type>{
 bool nativePointList(List<types.Element> points) =>
     _pointLists.contains(points.runtimeType);
 
+/// The truthiness of a number with no foreign value: not 0 and not NaN.
+bool _truthy(double value) => value != 0 && !value.isNaN;
+
+/// element.point.ts:81-87 `size` over plain numbers: the `||` and `&&` of
+/// upstream on numbers, with no box. The plain branch of `PointElement.size`
+/// and the native overflow loops share it.
+@internal
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+double nativePointSize(double radius, double hoverRadius, double borderWidth) {
+  final r = _truthy(radius) ? radius : 0.0;
+  final biggest = jsMax(
+    r,
+    _truthy(r) && _truthy(hoverRadius) ? hoverRadius : 0,
+  );
+  final width = _truthy(biggest) && _truthy(borderWidth) ? borderWidth : 0.0;
+  return (biggest + width) * 2;
+}
+
+/// The three plain fields that `size` reads, taken once from one options object
+/// inside one synchronous native loop. Absent or foreign values decline: their
+/// JS conversions stay with the ordinary options object and `size`.
+@internal
+final class NativePointSizeFields {
+  NativePointSizeFields._(this.radius, this.hoverRadius, this.borderWidth);
+
+  /// The fields of [options], or Dart `null` unless all three are plain.
+  static NativePointSizeFields? of(Object? options) =>
+      options is PointOptions &&
+          plainOption(options, OptionKey.radius) &&
+          plainOption(options, OptionKey.hoverRadius) &&
+          plainOption(options, OptionKey.borderWidth)
+      ? NativePointSizeFields._(
+          options.radius,
+          options.hoverRadius,
+          options.borderWidth,
+        )
+      : null;
+
+  /// `options.radius`.
+  final double radius;
+
+  /// `options.hoverRadius`.
+  final double hoverRadius;
+
+  /// `options.borderWidth`.
+  final double borderWidth;
+}
+
 /// Weak identities of maps already accepted by the native container contract.
 /// Values are never cached. Slots follow point indexes, and fill is bounded to
 /// avoid allocating a weak reference for every point in replacement workloads.
@@ -140,6 +193,24 @@ final class NativePointCoordinateCache {
   }
 }
 
+/// One loop's classifier of typed data items: the implementation class is
+/// cached by type, and the fields of an item stay live.
+@internal
+final class NativeTypedItems {
+  Type? _lastType;
+  bool _native = false;
+
+  /// True for an immutable point class that the typed facade registered.
+  bool accepts(TypedDataItem value) {
+    final type = value.runtimeType;
+    if (type != _lastType) {
+      _lastType = type;
+      _native = nativeDataUpdatePoint(value);
+    }
+    return _native;
+  }
+}
+
 /// Qualifies each parsed item at its original iteration, before any conversion
 /// can run user code. It never validates the whole dataset a second time.
 /// Container implementation is cached by type; coordinate values stay live.
@@ -149,6 +220,7 @@ final class NativePointCoordinates {
 
   /// Controller-owned storage, enabled after a native color plan exists.
   final NativePointCoordinateCache? cache;
+  final NativeTypedItems _typedItems = NativeTypedItems();
   Type? _lastType;
   bool _nativeObject = false;
 
@@ -157,7 +229,7 @@ final class NativePointCoordinates {
     if (value is ParsedItem) {
       return !value.hasForeign && _number(value.x) && _number(value.y);
     }
-    if (value is TypedDataItem && nativeDataUpdatePoint(value)) {
+    if (value is TypedDataItem && _typedItems.accepts(value)) {
       return _number(value.x) && _number(value.y);
     }
     if (value is! Map<String, Object?> && value is! OptionScope) return false;

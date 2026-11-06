@@ -287,9 +287,11 @@ class BenchmarkChart extends StatelessWidget {
           _ => EdgeInsets.zero,
         },
         extra: {
-          // The generator supplies sorted, finite numeric XY points. A bubble
-          // keeps its parsing: the radius of a bubble comes from that step.
-          if (config.type == ChartType.line || config.type == ChartType.scatter)
+          // The generator supplies sorted, finite numeric XY points, and a
+          // DataPoint.bubble gives its radius with no parse step.
+          if (config.type == ChartType.line ||
+              config.type == ChartType.scatter ||
+              config.type == ChartType.bubble)
             'parsing': false,
           'events': config.tooltips
               ? const [
