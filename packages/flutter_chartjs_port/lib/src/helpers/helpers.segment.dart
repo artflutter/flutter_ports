@@ -169,6 +169,9 @@ Segment _normalizeSegment({
   return (start: start, end: end, loop: loop, style: segment.style);
 }
 
+final Type _growablePoints = <PointElement>[].runtimeType;
+final Type _fixedPoints = List<PointElement>.empty().runtimeType;
+
 /// Whether the loop of [boundSegment] gives one segment from [start] to [end]:
 /// points of the built-in class with no skip and strictly ascending finite x,
 /// bounds equal to the first and the last x, and no x before the last within
@@ -182,15 +185,21 @@ bool _boundsCoverAscendingPoints(
   double startBound,
   double endBound,
 ) {
+  // A user list keeps the reads of the loop. A negative zero index keeps the
+  // sign that the loop gives it.
+  if (!start.isFinite ||
+      !end.isFinite ||
+      start.isNegative ||
+      end.isNegative ||
+      !startBound.isFinite ||
+      !endBound.isFinite ||
+      (points.runtimeType != _growablePoints &&
+          points.runtimeType != _fixedPoints)) {
+    return false;
+  }
   final first = start.toInt();
   final last = end.toInt();
-  if (first != start ||
-      last != end ||
-      first < 0 ||
-      first > last ||
-      last >= points.length ||
-      !startBound.isFinite ||
-      !endBound.isFinite) {
+  if (first != start || last != end || first > last || last >= points.length) {
     return false;
   }
   var previous = startBound;

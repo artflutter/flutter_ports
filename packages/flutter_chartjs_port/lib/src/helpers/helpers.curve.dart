@@ -116,7 +116,7 @@ void _setControlPoint(SplinePoint point, String cp, String axis, double value) {
   );
 }
 
-/// The loop body of helpers.curve.ts:198-206: [splineCurve] of the three points
+/// The loop body of helpers.curve.ts:204-217: [splineCurve] of the three points
 /// with its four results written into [middlePoint]. The reads and the writes
 /// have the order of the two functions, with no record of the result.
 // DIVERGES(chartjs): adapt-spline-scalar-writes, no result object for a point.

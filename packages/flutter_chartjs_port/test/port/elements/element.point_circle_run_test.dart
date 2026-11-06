@@ -21,6 +21,12 @@ import '../canvas/pixel_compare.dart';
 /// A point of a user class: the run stops at it.
 class _UserPoint extends PointElement {}
 
+/// A point of a user class that gives the type of the built-in class.
+class _DisguisedPoint extends PointElement {
+  @override
+  Type get runtimeType => PointElement;
+}
+
 final class _Area implements ChartArea {
   @override
   double get left => 10;
@@ -227,6 +233,60 @@ void main() {
     expect(ctx.fillStyle, _colors[0]);
     expect(ctx.strokeStyle, _colors[1]);
     expect(ctx.lineWidth, 1);
+  });
+
+  test('a point with no options goes to the ordinary loop', () {
+    final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
+    addTearDown(ctx.dispose);
+    final elements = <types.Element>[
+      PointElement()
+        ..x = 40
+        ..y = 40,
+    ];
+    final next = (elements.first as PointElement).drawCircleRun(
+      ctx,
+      _Area(),
+      elements,
+      0,
+      1,
+      [],
+      activeOnTop: true,
+    );
+    // The ordinary loop gets the element, and its draw throws.
+    expect(next, 0);
+    expect(
+      () => (elements.first as PointElement).draw(ctx, _Area()),
+      throwsA(isA<TypeError>()),
+    );
+  });
+
+  test('a class that overrides runtimeType ends the run', () {
+    final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
+    addTearDown(ctx.dispose);
+    final elements = <types.Element>[
+      _DisguisedPoint()
+        ..x = 40
+        ..y = 40
+        ..options = PointOptions(<String, Object?>{
+          'radius': 3.0,
+          'pointStyle': 'circle',
+          'hoverRadius': 0.0,
+          'borderWidth': 0.0,
+          'backgroundColor': _colors[0],
+        }),
+    ];
+    expect(
+      (elements.first as PointElement).drawCircleRun(
+        ctx,
+        _Area(),
+        elements,
+        0,
+        1,
+        [],
+        activeOnTop: true,
+      ),
+      0,
+    );
   });
 
   test('no draw leaves the styles and the path', () {
