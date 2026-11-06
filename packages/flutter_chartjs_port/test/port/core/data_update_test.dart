@@ -19,6 +19,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet, jsSet;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show ScopeRoute;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
@@ -1639,16 +1641,23 @@ void main() {
         expect(deep(a), deep(b));
       });
 
-      test('a user subclass of the chart or of the config', () {
+      test('a user subclass of the chart', () {
         final canvas = UiCanvasElement(width: 640, height: 400);
         addTearDown(() => canvas.getContext2d().dispose());
         final user = _UserChart(canvas, indexed('pie'));
         addTearDown(user.destroy);
         expect(user.updateData(), isFalse);
+      });
 
-        final other = UiCanvasElement(width: 640, height: 400);
-        addTearDown(() => other.getContext2d().dispose());
-        final chart = _ConfigChart(other, _UserConfig(indexed('pie')));
+      // An exact Chart always makes an exact Config, so `updateData` meets a
+      // user Config only with a user Chart, and its first test declines that.
+      test('a user subclass of the config', () {
+        expect(Config(indexed('pie')).supportsDataUpdates, isTrue);
+        expect(_UserConfig(indexed('pie')).supportsDataUpdates, isFalse);
+
+        final canvas = UiCanvasElement(width: 640, height: 400);
+        addTearDown(() => canvas.getContext2d().dispose());
+        final chart = _ConfigChart(canvas, _UserConfig(indexed('pie')));
         addTearDown(chart.destroy);
         chart.update();
         expect(chart.updateData(), isFalse);
@@ -1706,6 +1715,331 @@ void main() {
           a.getDatasetMeta(0).controller!.hasStaticDataUpdateOptions,
           isFalse,
         );
+      });
+    });
+
+    // The proof covers the keys of an element and of a dataset view. A function
+    // of a chart or plugin option in a shared scope keeps the contract of
+    // Chart.js ADR 0074: a data-dependent one needs a full update. A chart with
+    // a plain style had this rule first.
+    group('a function of the chart or of a plugin in a shared scope', () {
+      for (final type in const ['bar', 'pie']) {
+        for (final indexedStyle in const [true, false]) {
+          final style = indexedStyle ? 'indexed' : 'plain';
+          test('layout.padding waits for a full update, a $style $type', () {
+            var calls = 0;
+            defaults.override(type, <String, Object?>{
+              'layout': <String, Object?>{
+                'padding': (Object? _) {
+                  calls++;
+                  return 1.0;
+                },
+              },
+            });
+            final cfg = indexed(type, plugins: true);
+            if (!indexedStyle) {
+              dataset(cfg)
+                ..['backgroundColor'] = red
+                ..['borderColor'] = blue;
+            }
+            final a = chart(cfg);
+            final atStart = calls;
+            expect(atStart, greaterThan(0));
+            change(cfg, 0);
+            expect(a.updateData(), isTrue);
+            expect(calls, atStart);
+            a.update('none');
+            expect(calls, greaterThan(atStart));
+          });
+        }
+      }
+
+      test('a tick callback of the overrides waits for a full update', () {
+        var calls = 0;
+        Object? tick(Object? value, Object? _, Object? _) {
+          calls++;
+          return '$value';
+        }
+
+        defaults.override('bar', <String, Object?>{
+          'scales': <String, Object?>{
+            'y': <String, Object?>{
+              'ticks': <String, Object?>{'callback': tick},
+            },
+          },
+        });
+        final cfg = indexed('bar');
+        final a = chart(cfg);
+        final atStart = calls;
+        expect(atStart, greaterThan(0));
+        change(cfg, 0);
+        expect(a.updateData(), isTrue);
+        expect(calls, atStart);
+        a.update('none');
+        expect(calls, greaterThan(atStart));
+      });
+    });
+
+    group('each guard of the proof takes the full path', () {
+      /// The own keys and values of the typed scope [scope].
+      Map<String, Object?> copyOf(Object? scope) {
+        final face = scope! as JsObjectFace;
+        return {for (final key in face.jsKeys()) key: face.jsRead(key)};
+      }
+
+      /// A chart of [make], with [edit] after the last full update of each
+      /// twin, then one tick: no `updateData` came before the edit.
+      void expectEdit(
+        Map<String, Object?> Function() make,
+        void Function(Chart) edit,
+      ) {
+        final ca = make();
+        final cb = make();
+        final a = chart(ca);
+        final b = chart(cb);
+        edit(a);
+        edit(b);
+        change(ca, 0);
+        change(cb, 0);
+        expect(a.updateData(), isFalse);
+        b.update('none');
+        expect(deep(a), deep(b));
+        change(ca, 1);
+        change(cb, 1);
+        a.updateData();
+        b.update('none');
+        expect(deep(a), deep(b));
+      }
+
+      /// A bar chart with a line dataset, the second type of [expectTwin].
+      Map<String, Object?> mixed() {
+        final cfg = config('bar');
+        ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+          'type': 'line',
+          'data': <Object?>[2.0, 3.0, 1.0, 2.0],
+          'borderColor': blue,
+        });
+        return cfg;
+      }
+
+      test('the control of the edits: a chart with no edit', () {
+        expectTwin(() => indexed('pie'), path: true);
+        expectTwin(mixed, path: true);
+      });
+
+      test('a plain chart with a user Map in the overrides', () {
+        final saved = jsGet(overrides, 'pie');
+        jsSet(overrides, 'pie', _UserMap(<String, Object?>{}));
+        addTearDown(() => jsSet(overrides, 'pie', saved));
+        expectTwin(() => config('pie'), path: false, ticks: 2);
+      });
+
+      test('a user Map that only the view of a dataset reads', () {
+        final datasets = jsGet(defaults, 'datasets');
+        jsSet(datasets, 'line', _UserMap(copyOf(jsGet(datasets, 'line'))));
+        expectTwin(mixed, path: false, ticks: 2);
+      });
+
+      test('a user Map that only the resolver of an element reads', () {
+        jsSet(jsGet(overrides, 'pie'), 'elements', <String, Object?>{
+          'arc': _UserMap(<String, Object?>{}),
+        });
+        expectTwin(() => indexed('pie'), path: false, ticks: 2);
+      });
+
+      test('a function that only the view of a dataset reads', () {
+        defaults.set('datasets.line', <String, Object?>{
+          'showLine': (Object? _) => true,
+        });
+        expectTwin(mixed, path: false, ticks: 2);
+      });
+
+      test('a new key in the defaults of the element', () {
+        expectEdit(
+          () => indexed('pie'),
+          (_) => jsSet(
+            jsGet(jsGet(defaults, 'elements'), 'arc'),
+            'newKeyOfTheProof',
+            1.0,
+          ),
+        );
+      });
+
+      test('a route on the elements of the defaults', () {
+        var routed = false;
+        expectEdit(() => indexed('pie'), (_) {
+          if (routed) return;
+          routed = true;
+          defaults.route('', 'elements', '', 'color');
+        });
+      });
+
+      test('a Map in the place of the elements of the defaults', () {
+        var replaced = false;
+        expectEdit(() => indexed('pie'), (_) {
+          if (replaced) return;
+          replaced = true;
+          jsSet(defaults, 'elements', copyOf(jsGet(defaults, 'elements')));
+        });
+      });
+
+      test('a Map in the place of the defaults of the element', () {
+        var replaced = false;
+        expectEdit(() => indexed('pie'), (_) {
+          if (replaced) return;
+          replaced = true;
+          final elements = jsGet(defaults, 'elements');
+          jsSet(elements, 'arc', copyOf(jsGet(elements, 'arc')));
+        });
+      });
+
+      test('a route on the type of a typed root', () {
+        typed.ChartConfig make() => const typed.ChartConfig(
+          type: typed.ChartKind.pie,
+          labels: <Object>['a', 'b', 'c'],
+          datasets: [
+            typed.PieDataset(
+              data: [1, 2, 3],
+              backgroundColor: typed.ChartValue.indexed([red, blue]),
+            ),
+          ],
+          responsive: false,
+          animation: typed.ChartAnimation.none,
+          extra: {
+            'plugins': {'legend': false, 'tooltip': false, 'colors': false},
+          },
+        );
+        expect(chart(ChartConfigLowering(make()).lower()).updateData(), isTrue);
+        final root = ChartConfigLowering(make()).lower();
+        final a = chart(root);
+        root.addRoute(
+          'type',
+          ScopeRoute(
+            (_) => 'pie',
+            targetScope: <String, Object?>{'type': 'pie'},
+            targetName: 'type',
+          ),
+        );
+        expect(a.updateData(), isFalse);
+      });
+
+      test('a raw borderDash with a foreign item after the first one', () {
+        expectTwin(
+          () {
+            final cfg = indexed('pie');
+            dataset(cfg)['borderDash'] = <Object?>[
+              1.0,
+              <String, Object?>{'a': 1.0},
+            ];
+            return cfg;
+          },
+          path: false,
+          ticks: 2,
+        );
+      });
+
+      test('a color in a key of another kind', () {
+        expectTwin(
+          () {
+            final cfg = indexed('scatter');
+            dataset(cfg)['pointStyle'] = <Object?>['circle', red];
+            return cfg;
+          },
+          path: false,
+          ticks: 2,
+        );
+      });
+
+      test('a scalar of a subclass of a color in the defaults', () {
+        jsSet(
+          jsGet(jsGet(defaults, 'elements'), 'arc'),
+          'borderColor',
+          const _UserColor(0xff112233),
+        );
+        expectTwin(
+          () {
+            final cfg = indexed('pie');
+            dataset(cfg).remove('borderColor');
+            return cfg;
+          },
+          path: false,
+          ticks: 2,
+        );
+      });
+
+      test('a write of a slot name into the view of the dataset', () {
+        expectEdit(() => indexed('pie'), (c) {
+          c.getDatasetMeta(0).controller!.options['setContext'] = 1.0;
+        });
+      });
+
+      test('a write of a slot name into the resolver of the dataset', () {
+        expectEdit(() => indexed('pie'), (c) {
+          final resolver = c.getDatasetMeta(0).controller!.options['_proxy'];
+          jsSet(resolver, '_slotOfTheProof', 1.0);
+        });
+      });
+
+      test('a write into the resolver of the element', () {
+        expectEdit(() => indexed('pie'), (c) {
+          final config = c.config;
+          final resolver = config.createResolver(
+            config.getOptionScopes(
+              jsGet(jsGet(c.data, 'datasets'), 0),
+              config.datasetElementScopeKeys('pie', 'arc'),
+            ),
+            null,
+            const ['arc', ''],
+          );
+          jsSet(resolver, 'borderWidth', 2.0);
+        });
+      });
+
+      test('scopes with no resolver after a clear of the caches', () {
+        expectEdit(() => indexed('pie'), (c) {
+          final config = c.config..clearCache();
+          config.getOptionScopes(
+            jsGet(jsGet(c.data, 'datasets'), 0),
+            config.datasetElementScopeKeys('pie', 'arc'),
+          );
+        });
+      });
+
+      test('an element type with no native options', () {
+        final a = chart(indexed('pie'));
+        final config = a.config;
+        expect(
+          config.hasStaticIndexedElementOptions(
+            0,
+            controllerType: 'pie',
+            elementType: 'arc',
+          ),
+          isTrue,
+        );
+        expect(
+          config.hasStaticIndexedElementOptions(
+            0,
+            controllerType: 'pie',
+            elementType: 'line',
+          ),
+          isFalse,
+        );
+      });
+
+      test('the proof holds for its generation of the caches', () {
+        // Chart.js ADR 0100, the contract: an edit in place of an option List
+        // waits for the next full update, which proves again.
+        final cfg = indexed('pie');
+        final a = chart(cfg);
+        expect(a.updateData(), isTrue);
+        final colors = dataset(cfg)['backgroundColor']! as List<Object?>;
+        for (var i = colors.length; i < 8; i++) {
+          colors.add(red);
+        }
+        colors.add((Object? _) => red);
+        expect(a.updateData(), isTrue);
+        a.update('none');
+        expect(a.updateData(), isFalse);
       });
     });
 
