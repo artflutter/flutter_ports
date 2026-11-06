@@ -58,7 +58,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show ArrayListener, listenArrayEvents, unlistenArrayEvents;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
+    show IndexedElementStyles, OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isFinite, isObject, resolveObjectKey, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -1159,6 +1159,14 @@ class DatasetController
   // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
   List<OptionKey> get nativeLegendLabelKeys => const [];
 
+  /// The source of [getStyle] while a hidden legend builds its items at a read
+  /// (Chart.js ADR 0099). That build runs no user code, and a read writes no
+  /// context, as a read of the snapshot of upstream writes none. Dart `null` at
+  /// each other time.
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, a later build, no writes.
+  IndexedElementStyles? legendStyles;
+
   /// Whether `getStyle(index)` of a data element reads a cached `default`
   /// entry of [_resolveElementOptions]: the read then runs no context and no
   /// option function (Chart.js ADR 0092).
@@ -1950,6 +1958,11 @@ class DatasetController
     double? index, [
     bool? active,
   ]) {
+    // DIVERGES(chartjs): adapt-hidden-legend-items, a later build, no writes.
+    final styles = legendStyles;
+    if (styles != null) {
+      return styles.at(index! < cachedMeta.data.length ? index : this.index);
+    }
     final mode = jsTruthy(active) ? 'active' : 'default';
     return index == null && cachedMeta.dataset != null
         ? resolveDatasetElementOptions(mode)

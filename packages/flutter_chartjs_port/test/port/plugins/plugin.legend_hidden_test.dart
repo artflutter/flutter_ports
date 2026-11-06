@@ -3,6 +3,8 @@
 library;
 
 import 'dart:collection';
+import 'dart:typed_data' show ByteData;
+import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/widgets.dart' hide Element;
@@ -11,18 +13,27 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
 import 'package:flutter_chartjs_port/src/controllers/controller.pie.dart';
 import 'package:flutter_chartjs_port/src/controllers/controller.polarArea.dart';
+import 'package:flutter_chartjs_port/src/core/core.animation.dart' as core;
+import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
+import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
+import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
+    show OptionResolver, readOption;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsDeleteKey, jsGet, jsSet;
+    show JsObjectFace, jsDeleteKey, jsGet, jsSet;
+import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
+    show foreignAudit;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
@@ -272,6 +283,223 @@ Map<String, Object?> _reader(List<Object?> log, bool Function() armed) => {
       return null;
     },
 };
+
+// The tests of Chart.js ADR 0099: native indexed colors leave no cached entry,
+// and the state that the skipped resolves leave in the contexts stays.
+
+/// The colors of the raw twins.
+const _indexedColors = <String, Object?>{
+  'backgroundColor': <Object?>[_red, _green],
+  'borderColor': <Object?>[_blue, _black, _red],
+};
+
+/// The plain form of a value that user code can read.
+Object? _plain(Object? value) {
+  if (value is Function) return 'function';
+  if (value is core.Animation) return 'animation';
+  if (value is double && !value.isFinite) return '$value';
+  if (value is JsObjectFace) {
+    return {for (final k in value.jsKeys()) k: _plain(value.jsRead(k))};
+  }
+  if (value is Map) {
+    return {for (final e in value.entries) e.key: _plain(e.value)};
+  }
+  if (value is List) return value.map(_plain).toList();
+  return value;
+}
+
+const _contextKeys = [
+  'type',
+  'index',
+  'dataIndex',
+  'datasetIndex',
+  'mode',
+  'active',
+  'parsed',
+  'raw',
+];
+
+/// A context as user code reads it: its own keys in order and its values.
+Object? _contextState(ContextObject? context) => context == null
+    ? null
+    : [
+        context.jsKeys(),
+        for (final key in _contextKeys) _plain(jsGet(context, key)),
+      ];
+
+/// The context of each arc of dataset [index], and of the dataset itself.
+List<Object?> _contexts(Chart chart, [int index = 0]) {
+  final meta = chart.getDatasetMeta(index);
+  final controller = meta.controller;
+  return [
+    for (final element in meta.data)
+      _contextState((element as Element).$context),
+    _contextState(controller?.$context),
+  ];
+}
+
+/// The geometry, the state and the options of each arc of dataset [index].
+List<Object?> _arcs(Chart chart, [int index = 0]) => [
+  for (final element in chart.getDatasetMeta(index).data)
+    if (element is ArcElement)
+      [
+        _plain(element.x),
+        _plain(element.y),
+        _plain(element.startAngle),
+        _plain(element.endAngle),
+        _plain(element.circumference),
+        _plain(element.innerRadius),
+        _plain(element.outerRadius),
+        element.active,
+        _plain(element.options),
+      ],
+];
+
+/// All that a reader can see of dataset 0, without the items of the legend.
+List<Object?> _state(Chart chart) => [_contexts(chart), _arcs(chart)];
+
+/// The bytes of the bitmap of [chart], as the chart host paints it.
+Future<ByteData> _pixels(WidgetTester tester, Chart chart) async {
+  final canvas = chart.canvas! as UiCanvasElement;
+  final recorder = ui.PictureRecorder();
+  canvas.getContext2d().paint(ui.Canvas(recorder), Offset.zero, 1, 1);
+  final picture = recorder.endRecording();
+  final image = picture.toImageSync(canvas.width, canvas.height);
+  try {
+    return (await tester.runAsync(
+      () => image.toByteData(format: ui.ImageByteFormat.rawStraightRgba),
+    ))!;
+  } finally {
+    image.dispose();
+    picture.dispose();
+  }
+}
+
+/// The first dataset of the config of [chart].
+Map<String, Object?> _dataset0(Chart chart) =>
+    _datasetsOf(chart)[0]! as Map<String, Object?>;
+
+/// The steps of the twins of Chart.js ADR 0099. Each one gives a chart an
+/// update of another state of the data or of the options.
+final Map<String, void Function(Chart chart)> _steps = {
+  'mode none': (chart) => chart.update('none'),
+  'mode default': (chart) => chart.update(),
+  'mode resize': (chart) => chart.update('resize'),
+  'mode active': (chart) => chart.update('active'),
+  'a new data List': (chart) {
+    _dataset0(chart)['data'] = <Object?>[4.0, 5.0, 6.0];
+    chart.update('none');
+  },
+  'an in-place value': (chart) {
+    (_dataset0(chart)['data']! as List<Object?>)[1] = 9.0;
+    chart.update('none');
+  },
+  'more data and labels': (chart) {
+    _labelsOf(chart).addAll(<Object?>['d', 'e']);
+    _dataset0(chart)['data'] = <Object?>[1.0, 2.0, 3.0, 4.0, 5.0];
+    chart.update('none');
+  },
+  'less data and labels': (chart) {
+    _labelsOf(chart).removeRange(3, 5);
+    _dataset0(chart)['data'] = <Object?>[3.0, 2.0, 1.0];
+    chart.update('none');
+  },
+  'more labels than data': (chart) {
+    _labelsOf(chart).addAll(<Object?>['d', 'e']);
+    chart.update('none');
+  },
+  'fewer labels than data': (chart) {
+    _labelsOf(chart).removeRange(1, 5);
+    chart.update('none');
+  },
+  'the same labels again': (chart) {
+    _labelsOf(chart).addAll(<Object?>['b', 'c']);
+    chart.update('none');
+  },
+  'a hidden item': (chart) {
+    chart
+      ..toggleDataVisibility(1)
+      ..update('none');
+  },
+  'the item again': (chart) {
+    chart
+      ..toggleDataVisibility(1)
+      ..update('none');
+  },
+  'new colors': (chart) {
+    _dataset0(chart)['backgroundColor'] = <Object?>[_blue, _red, _green];
+    chart.update('none');
+  },
+  'a number that varies': (chart) {
+    _dataset0(chart)['borderWidth'] = <Object?>[1.0, 2.0];
+    chart.update('none');
+  },
+  'a hidden dataset': (chart) {
+    chart
+      ..hide(0)
+      ..update('none');
+  },
+  'the dataset again': (chart) {
+    chart
+      ..show(0)
+      ..update('none');
+  },
+  'an active arc': (chart) {
+    chart
+      ..setActiveElements(<Object?>[
+        <String, Object?>{'datasetIndex': 0, 'index': 1},
+      ])
+      ..update('none');
+  },
+  'no active arc': (chart) {
+    chart
+      ..setActiveElements(<Object?>[])
+      ..update('none');
+  },
+};
+
+/// A user subclass of the arc: its reads stay observable.
+final class _UserArc extends ArcElement {
+  _UserArc(this.reads);
+
+  final List<Object?> reads;
+
+  @override
+  ScriptableContext? get $context {
+    reads.add('context');
+    return super.$context;
+  }
+}
+
+/// A Map of another class: each read can run user code.
+final class _ObservedMap extends MapBase<String, Object?> {
+  _ObservedMap(this.fields);
+
+  final Map<String, Object?> fields;
+  int reads = 0;
+
+  @override
+  Object? operator [](Object? key) {
+    reads++;
+    return fields[key];
+  }
+
+  @override
+  void operator []=(String key, Object? value) => fields[key] = value;
+
+  @override
+  Iterable<String> get keys => fields.keys;
+
+  @override
+  Object? remove(Object? key) => fields.remove(key);
+
+  @override
+  void clear() => fields.clear();
+}
+
+final class _TrivialConfig extends Config {
+  _TrivialConfig(super.config);
+}
 
 void main() {
   group('a read gives the items of the eager build', () {
@@ -770,35 +998,6 @@ void main() {
           calls: () => calls,
           reset: () => calls = 0,
         );
-      });
-
-      testWidgets('$type: indexed colors stay eager', (tester) async {
-        final chart = acquireChart(
-          _config(
-            type,
-            dataset: {
-              'backgroundColor': <Object?>[_red, _green, _blue],
-            },
-          ),
-        );
-        final twin = acquireChart(
-          _eager(
-            type,
-            dataset: {
-              'backgroundColor': <Object?>[_red, _green, _blue],
-            },
-          ),
-        );
-        chart.update('none');
-        twin.update('none');
-        expect(_legendOf(chart).legendItemsPending, isFalse);
-        expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _green);
-        expect(_items(chart.legend!), _items(twin.legend!));
-        // Each element keeps the context mode of the last build.
-        final context = (chart.getDatasetMeta(0).data[1] as dynamic).$context;
-        final twinContext =
-            (twin.getDatasetMeta(0).data[1] as dynamic).$context;
-        expect(jsGet(context, 'mode'), jsGet(twinContext, 'mode'));
       });
 
       testWidgets('$type: a List of another class for the labels', (
@@ -2156,10 +2355,46 @@ void main() {
         });
       }
 
-      testWidgets('$kind: indexed colors stay eager', (tester) async {
+      for (final theme in const [
+        typed.ChartThemeData.light(),
+        typed.ChartThemeData.dark(),
+      ]) {
+        testWidgets('$kind: indexed colors wait under a theme', (tester) async {
+          const indexed = typed.ChartValue<Color>.indexed([_red, _green]);
+          await tester.pumpWidget(
+            view(config([1, 2, 3], kind: kind, color: indexed), theme),
+          );
+          await tester.pumpWidget(
+            view(config([2, 3, 4], kind: kind, color: indexed), theme),
+          );
+          final legend = _legendOf(chartOf(tester));
+          expect(legend.legendItemsPending, isTrue);
+          expect(jsGet(legend.legendItems![1], 'fillStyle'), _green);
+        });
+      }
+
+      testWidgets('$kind: a resolver color stays eager', (tester) async {
+        var calls = 0;
+        final resolver = typed.ChartValue<Color>.resolver((context) {
+          calls++;
+          return _red;
+        });
+        await tester.pumpWidget(
+          view(config([1, 2, 3], kind: kind, color: resolver)),
+        );
+        calls = 0;
+        await tester.pumpWidget(
+          view(config([2, 3, 4], kind: kind, color: resolver)),
+        );
+        expect(_legendOf(chartOf(tester)).legendItemsPending, isFalse);
+        expect(calls, greaterThan(0));
+      });
+
+      testWidgets('$kind: indexed colors wait', (tester) async {
+        const second = Color(0xffed4f6b);
         const indexed = typed.ChartValue<Color>.indexed([
           Color(0xff4f6bed),
-          Color(0xffed4f6b),
+          second,
         ]);
         await tester.pumpWidget(
           view(config([1, 2, 3], kind: kind, color: indexed)),
@@ -2168,9 +2403,1159 @@ void main() {
           view(config([2, 3, 4], kind: kind, color: indexed)),
         );
         final legend = _legendOf(chartOf(tester));
-        expect(legend.legendItemsPending, isFalse);
+        expect(legend.legendItemsPending, isTrue);
         expect(legend.legendItems, hasLength(3));
+        expect(jsGet(legend.legendItems![1], 'fillStyle'), second);
       });
+    }
+  });
+
+  group('Chart.js ADR 0099: raw indexed Lists', () {
+    for (final type in _kinds) {
+      for (final step in _steps.keys) {
+        testWidgets('$type: the twins of each step up to: $step', (
+          tester,
+        ) async {
+          final chart = acquireChart(_config(type, dataset: _indexedColors));
+          final twin = acquireChart(_eager(type, dataset: _indexedColors));
+          expect(_state(chart), _state(twin), reason: 'the construction');
+          for (final entry in _steps.entries) {
+            entry.value(chart);
+            entry.value(twin);
+            expect(
+              _legendOf(chart).legendItemsPending,
+              isTrue,
+              reason: entry.key,
+            );
+            expect(_legendOf(twin).legendItemsPending, isFalse);
+            expect(_state(chart), _state(twin), reason: entry.key);
+            if (entry.key == step) break;
+          }
+          expect(_items(chart.legend!), _items(twin.legend!));
+          final (a, b) = (
+            await _pixels(tester, chart..draw()),
+            await _pixels(tester, twin..draw()),
+          );
+          expect(a.buffer.asUint8List(), b.buffer.asUint8List());
+        });
+      }
+
+      testWidgets('$type: after an update in the mode none, an arc has the '
+          'state of the last resolve of the build', (tester) async {
+        final chart = acquireChart(_config(type, dataset: _indexedColors))
+          ..update('none');
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        final arc = chart.getDatasetMeta(0).data[2] as ArcElement;
+        final context = arc.$context!;
+        expect(context.mode, 'default');
+        expect(context.active, isFalse);
+        expect(context.index, 2);
+        expect(context.dataIndex, 2);
+        expect(context.parsed, type == 'polarArea' ? isA<ParsedItem>() : 3);
+        expect(context.raw, 3);
+      });
+
+      testWidgets('$type: a new arc and a dataset context in the layout', (
+        tester,
+      ) async {
+        // With more labels than arcs, the build writes the dataset context. A
+        // new arc gets its context in the first build of its update.
+        final log = <Object?>[];
+        final twinLog = <Object?>[];
+        Map<String, Object?> probe(List<Object?> into) => {
+          'id': 'layoutContexts',
+          'afterLayout': (Chart chart, Object? args, Object? options) {
+            into.add(_contexts(chart));
+            return null;
+          },
+        };
+        final chart = acquireChart(
+          _config(type, dataset: _indexedColors, plugins: [probe(log)]),
+        );
+        final twin = acquireChart(
+          _eager(type, dataset: _indexedColors, plugins: [probe(twinLog)]),
+        );
+        for (final each in [chart, twin]) {
+          (_dataset0(each)['data']! as List<Object?>).add(4.0);
+          _labelsOf(each).addAll(<Object?>['d', 'e', 'f']);
+          each.update('none');
+        }
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(log, twinLog);
+        expect(log.last, hasLength(5));
+        expect(_state(chart), _state(twin));
+      });
+
+      testWidgets('$type: a dataset with no arcs and with labels', (
+        tester,
+      ) async {
+        final dataset = {
+          ..._indexedColors,
+          'data': <Object?>[],
+        };
+        final chart = acquireChart(_config(type, dataset: dataset));
+        final twin = acquireChart(_eager(type, dataset: dataset));
+        chart.update('none');
+        twin.update('none');
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(_state(chart), _state(twin));
+        expect(_items(chart.legend!), _items(twin.legend!));
+      });
+
+      testWidgets('$type: a second dataset keeps its own path', (tester) async {
+        var calls = 0;
+        var twinCalls = 0;
+        List<Object?> datasets(void Function() count) => <Object?>[
+          <String, Object?>{
+            'data': <Object?>[1.0, 2.0, 3.0],
+            ..._indexedColors,
+          },
+          <String, Object?>{
+            'data': <Object?>[3.0, 2.0, 1.0],
+            'backgroundColor': (Object? ctx) {
+              count();
+              return _green;
+            },
+          },
+        ];
+        final chart = acquireChart(
+          _config(type, datasets: datasets(() => calls++)),
+        );
+        final twin = acquireChart(
+          _config(
+            type,
+            datasets: datasets(() => twinCalls++),
+            labels: {'filter': _keepItem},
+          ),
+        );
+        chart.update('none');
+        twin.update('none');
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(calls, twinCalls);
+        expect(_state(chart), _state(twin));
+        expect(_contexts(chart, 1), _contexts(twin, 1));
+        expect(_arcs(chart, 1), _arcs(twin, 1));
+      });
+
+      testWidgets('$type: an animated update', (tester) async {
+        Map<String, Object?> options() => {
+          'animation': <String, Object?>{'duration': 40.0},
+        };
+        final chart = acquireChart(
+          _config(type, dataset: _indexedColors, options: options()),
+          <String, Object?>{'animation': true},
+        );
+        final twin = acquireChart(
+          _eager(type, dataset: _indexedColors, options: options()),
+          <String, Object?>{'animation': true},
+        );
+        for (final each in [chart, twin]) {
+          _dataset0(each)['data'] = <Object?>[7.0, 8.0, 9.0];
+          each.update();
+        }
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(_contexts(chart), _contexts(twin));
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(_state(chart), _state(twin));
+        expect(_items(chart.legend!), _items(twin.legend!));
+      });
+
+      testWidgets('$type: a hover option with a function, and hover events', (
+        tester,
+      ) async {
+        final calls = <Object?>[];
+        final twinCalls = <Object?>[];
+        Map<String, Object?> dataset(List<Object?> into) => {
+          ..._indexedColors,
+          'hoverBackgroundColor': (ScriptableContext ctx) {
+            into.add([ctx.index, ctx.mode, ctx.active]);
+            return _black;
+          },
+        };
+        final chart = acquireChart(_config(type, dataset: dataset(calls)));
+        final twin = acquireChart(_eager(type, dataset: dataset(twinCalls)));
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        final element = chart.getDatasetMeta(0).data[1];
+        final twinElement = twin.getDatasetMeta(0).data[1];
+        for (final (each, arc) in [(chart, element), (twin, twinElement)]) {
+          await triggerMouseEvent(each, 'mousemove', arc);
+          await tester.pump();
+        }
+        expect(calls, isNotEmpty);
+        expect(calls, twinCalls);
+        expect(chart.getActiveElements(), hasLength(1));
+        expect(_state(chart), _state(twin));
+        for (final each in [chart, twin]) {
+          each.update('none');
+        }
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(calls, twinCalls);
+        expect(_state(chart), _state(twin));
+        final state = _contexts(chart);
+        // The read of the items writes no context.
+        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(_contexts(chart), state);
+        for (final each in [chart, twin]) {
+          each.setActiveElements(<Object?>[]);
+        }
+        expect(calls, twinCalls);
+        expect(_state(chart), _state(twin));
+        final (a, b) = (
+          await _pixels(tester, chart..draw()),
+          await _pixels(tester, twin..draw()),
+        );
+        expect(a.buffer.asUint8List(), b.buffer.asUint8List());
+      });
+    }
+
+    testWidgets('a label that repeats keeps the index of its item', (
+      tester,
+    ) async {
+      final labels = <Object?>['x', 'x', 'x'];
+      final chart = acquireChart(
+        _config('pie', dataset: _indexedColors, labelValues: labels),
+      );
+      final twin = acquireChart(
+        _config(
+          'pie',
+          dataset: _indexedColors,
+          labels: {'filter': _keepItem},
+          labelValues: <Object?>['x', 'x', 'x'],
+        ),
+      );
+      expect(_items(chart.legend!), _items(twin.legend!));
+    });
+
+    testWidgets('a function past the entries of the labels is no read', (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        _config(
+          'pie',
+          dataset: {
+            'backgroundColor': <Object?>[_red, _green, _blue, _keepItem],
+          },
+        ),
+      )..update('none');
+      expect(_legendOf(chart).legendItemsPending, isTrue);
+      expect(jsGet(chart.legend!.legendItems![2], 'fillStyle'), _blue);
+    });
+
+    // `configure` of the update starts new scopes and a new resolver: a write
+    // after the layout reaches the update, and the layout builds do not see it.
+    for (final hook in const ['afterLayout', 'beforeDatasetsUpdate']) {
+      testWidgets('a write in $hook', (tester) async {
+        var armed = false;
+        final seen = <Object?>[];
+        final twinSeen = <Object?>[];
+        Map<String, Object?> plugin(List<Object?> into) => {
+          'id': 'writer',
+          hook: (Chart chart, Object? args, Object? options) {
+            if (armed) {
+              into.add(_items(chart.legend!));
+              _dataset0(chart)['borderWidth'] = 9.0;
+              _dataset0(chart)['backgroundColor'] = <Object?>[_black];
+            }
+            return null;
+          },
+        };
+        final chart = acquireChart(
+          _config('pie', dataset: _indexedColors, plugins: [plugin(seen)]),
+        );
+        final twin = acquireChart(
+          _eager('pie', dataset: _indexedColors, plugins: [plugin(twinSeen)]),
+        );
+        armed = true;
+        chart.update('none');
+        twin.update('none');
+        expect(seen, twinSeen);
+        expect(_state(chart), _state(twin));
+        final options = (chart.getDatasetMeta(0).data[1] as ArcElement).options;
+        expect(jsGet(options, 'borderWidth'), 9);
+        armed = false;
+        chart.update('none');
+        twin.update('none');
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(_state(chart), _state(twin));
+        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _black);
+      });
+
+      testWidgets('a write of a function in $hook', (tester) async {
+        var armed = false;
+        var calls = 0;
+        Object? color(Object? ctx) {
+          calls++;
+          return _black;
+        }
+
+        Map<String, Object?> plugin() => {
+          'id': 'writer',
+          hook: (Chart chart, Object? args, Object? options) {
+            if (armed) _dataset0(chart)['backgroundColor'] = color;
+            return null;
+          },
+        };
+        final chart = acquireChart(
+          _config('pie', dataset: _indexedColors, plugins: [plugin()]),
+        );
+        final twin = acquireChart(
+          _eager('pie', dataset: _indexedColors, plugins: [plugin()]),
+        );
+        armed = true;
+        chart.update('none');
+        final seen = calls;
+        calls = 0;
+        twin.update('none');
+        expect(seen, greaterThan(0));
+        expect(seen, calls);
+        // The dataset update resolves the function: the last build is eager.
+        expect(_legendOf(chart).legendItemsPending, isFalse);
+        expect(_state(chart), _state(twin));
+        expect(_items(chart.legend!), _items(twin.legend!));
+      });
+    }
+
+    testWidgets('a read in beforeUpdate leaves the new resolver cold', (
+      tester,
+    ) async {
+      var armed = false;
+      Map<String, Object?> plugin() => {
+        'id': 'readThenWrite',
+        'beforeUpdate': (Chart chart, Object? args, Object? options) {
+          if (armed) {
+            chart.legend!.legendItems;
+            _dataset0(chart)['borderWidth'] = 9.0;
+          }
+          return null;
+        },
+      };
+      final chart = acquireChart(
+        _config('pie', dataset: _indexedColors, plugins: [plugin()]),
+      );
+      final twin = acquireChart(
+        _eager('pie', dataset: _indexedColors, plugins: [plugin()]),
+      );
+      armed = true;
+      chart.update('none');
+      twin.update('none');
+      expect(_state(chart), _state(twin));
+      expect(
+        jsGet(
+          (chart.getDatasetMeta(0).data[1] as ArcElement).options,
+          'borderWidth',
+        ),
+        9,
+      );
+    });
+
+    testWidgets('a write through the resolver ends the plan', (tester) async {
+      var calls = 0;
+      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final twin = acquireChart(_eager('pie', dataset: _indexedColors));
+      Object? color(Object? ctx) {
+        calls++;
+        return _black;
+      }
+
+      expect(_legendOf(chart).legendItemsPending, isTrue);
+      for (final each in [chart, twin]) {
+        final config = each.config;
+        final dataset = _dataset0(each);
+        final scopes = config.getOptionScopes(
+          dataset,
+          config.datasetElementScopeKeys('pie', 'arc'),
+        );
+        final resolver =
+            config.createResolver(scopes, null, ['arc', '']) as OptionResolver;
+        resolver['backgroundColor'] = color;
+      }
+      // The chart read with the plan gives the last built items: the plan is
+      // gone, and a read does not ask the new options.
+      final built = _items(chart.legend!);
+      expect(built, hasLength(3));
+      expect(calls, 0);
+      for (final each in [chart, twin]) {
+        calls = 0;
+        each.update('none');
+        expect(calls, greaterThan(0));
+        if (identical(each, chart)) {
+          expect(_legendOf(chart).legendItemsPending, isFalse);
+        }
+      }
+      expect(_state(chart), _state(twin));
+    });
+  });
+
+  group('Chart.js ADR 0099: the reads of each hook', () {
+    /// An inline plugin that logs the state in each hook of [_hooks], except
+    /// when [armed] gives false. With [read], each hook reads the items first.
+    Map<String, Object?> logger(
+      List<Object?> log,
+      bool Function() armed, {
+      required bool read,
+    }) => {
+      'id': 'logger',
+      for (final hook in _hooks)
+        hook: (Chart chart, Object? args, Object? options) {
+          if (armed()) {
+            log.add([
+              hook,
+              if (read) _items(chart.legend!),
+              _contexts(chart),
+            ]);
+          }
+          return null;
+        },
+    };
+
+    for (final type in _kinds) {
+      for (final read in const [false, true]) {
+        testWidgets('$type: the contexts in each hook: read $read', (
+          tester,
+        ) async {
+          var armed = false;
+          final log = <Object?>[];
+          final twinLog = <Object?>[];
+          final chart = acquireChart(
+            _config(
+              type,
+              dataset: _indexedColors,
+              plugins: [logger(log, () => armed, read: read)],
+            ),
+          );
+          final twin = acquireChart(
+            _eager(
+              type,
+              dataset: _indexedColors,
+              plugins: [logger(twinLog, () => armed, read: read)],
+            ),
+          );
+          armed = true;
+          for (final each in [chart, twin]) {
+            each.update('none');
+            (_dataset0(each)['data']! as List<Object?>).add(4.0);
+            _labelsOf(each).add('d');
+            each
+              ..update('none')
+              ..update()
+              ..setActiveElements(<Object?>[
+                <String, Object?>{'datasetIndex': 0, 'index': 1},
+              ])
+              ..update('none')
+              ..draw();
+          }
+          expect(log, isNotEmpty);
+          expect(log, twinLog);
+          expect(_state(chart), _state(twin));
+        });
+      }
+
+      testWidgets('$type: a scale or box callback in the layout reads the '
+          'contexts of this update', (tester) async {
+        final log = <Object?>[];
+        final twinLog = <Object?>[];
+        Map<String, Object?> options(List<Object?> into) => {
+          'plugins': <String, Object?>{
+            'title': <String, Object?>{
+              'display': true,
+              'text': (Object? ctx) {
+                into.add(_contexts(jsGet(ctx, 'chart')! as Chart));
+                return 'title';
+              },
+            },
+            'legend': <String, Object?>{
+              'display': false,
+              'labels': <String, Object?>{},
+            },
+          },
+        };
+        final chart = acquireChart(
+          _config(type, dataset: _indexedColors, options: options(log)),
+        );
+        final twin = acquireChart(
+          _config(
+            type,
+            dataset: _indexedColors,
+            options: options(twinLog),
+          ),
+        );
+        // The twin takes the filter through its own label options.
+        _labelOptionsOf(twin)['filter'] = _keepItem;
+        for (final each in [chart, twin]) {
+          (_dataset0(each)['data']! as List<Object?>)[0] = 5.0;
+          each.update('none');
+        }
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(_legendOf(twin).legendItemsPending, isFalse);
+        expect(log.last, twinLog.last);
+        expect(_state(chart), _state(twin));
+      });
+    }
+  });
+
+  group('Chart.js ADR 0099: each guard keeps the ordinary path', () {
+    for (final type in _kinds) {
+      for (final (name, build)
+          in <
+            (String, Map<String, Object?> Function(Object? Function(Object?)))
+          >[
+            (
+              'a scriptable color',
+              (function) => {
+                'backgroundColor': (Object? ctx) {
+                  function(ctx);
+                  return _red;
+                },
+                'borderColor': <Object?>[_blue, _black],
+              },
+            ),
+            (
+              'a function on another key',
+              (function) => {
+                'backgroundColor': <Object?>[_red, _green],
+                'borderWidth': function,
+              },
+            ),
+          ]) {
+        testWidgets('$type: $name', (tester) async {
+          var calls = 0;
+          Object? function(Object? ctx) {
+            calls++;
+            return 1.0;
+          }
+
+          final chart = acquireChart(_config(type, dataset: build(function)))
+            ..update('none');
+          final seen = calls;
+          expect(_legendOf(chart).legendItemsPending, isFalse);
+          calls = 0;
+          final twin = acquireChart(_eager(type, dataset: build(function)))
+            ..update('none');
+          expect(seen, greaterThan(0));
+          expect(seen, calls);
+          expect(_state(chart), _state(twin));
+          expect(_items(chart.legend!), _items(twin.legend!));
+        });
+      }
+
+      testWidgets('$type: a function in defaults.elements.arc', (tester) async {
+        var calls = 0;
+        defaults.set('elements.arc', <String, Object?>{
+          'offset': (Object? ctx) {
+            calls++;
+            return 1.0;
+          },
+        });
+        final chart = acquireChart(_config(type, dataset: _indexedColors))
+          ..update('none');
+        final seen = calls;
+        expect(_legendOf(chart).legendItemsPending, isFalse);
+        calls = 0;
+        final twin = acquireChart(_eager(type, dataset: _indexedColors))
+          ..update('none');
+        expect(seen, calls);
+        expect(seen, greaterThan(0));
+        expect(_state(chart), _state(twin));
+      });
+
+      testWidgets('$type: a function under a new key of the arc defaults', (
+        tester,
+      ) async {
+        var calls = 0;
+        final arcDefaults =
+            readOption(defaults.lookup(OptionKey.elements)?.raw, OptionKey.arc)!
+                  as JsObjectFace
+              ..jsWrite('userKey', (Object? ctx) {
+                calls++;
+                return 1.0;
+              });
+        addTearDown(() => arcDefaults.jsDelete('userKey'));
+        final chart = acquireChart(_config(type, dataset: _indexedColors))
+          ..update('none');
+        final seen = calls;
+        expect(_legendOf(chart).legendItemsPending, isFalse);
+        calls = 0;
+        final twin = acquireChart(_eager(type, dataset: _indexedColors))
+          ..update('none');
+        expect(seen, calls);
+        expect(seen, greaterThan(0));
+        expect(_state(chart), _state(twin));
+      });
+
+      testWidgets('$type: a function in the options of the elements', (
+        tester,
+      ) async {
+        var calls = 0;
+        Map<String, Object?> options() => {
+          'elements': <String, Object?>{
+            'arc': <String, Object?>{
+              'offset': (Object? ctx) {
+                calls++;
+                return 1.0;
+              },
+            },
+          },
+        };
+        final chart = acquireChart(
+          _config(type, dataset: _indexedColors, options: options()),
+        )..update('none');
+        final seen = calls;
+        expect(_legendOf(chart).legendItemsPending, isFalse);
+        calls = 0;
+        final twin = acquireChart(
+          _eager(type, dataset: _indexedColors, options: options()),
+        )..update('none');
+        expect(seen, calls);
+        expect(seen, greaterThan(0));
+        expect(_state(chart), _state(twin));
+      });
+
+      testWidgets('$type: a filter, a sort and a user generator', (
+        tester,
+      ) async {
+        var filters = 0;
+        var sorts = 0;
+        var generators = 0;
+        final labels = <Map<String, Object?>>[
+          {
+            'filter': (Object? item, Object? data) {
+              filters++;
+              return true;
+            },
+          },
+          {
+            'sort': (Object? a, Object? b, Object? data) {
+              sorts++;
+              return 0;
+            },
+          },
+          {
+            'generateLabels': (Object? chart) {
+              generators++;
+              return <Object?>[
+                <String, Object?>{'text': 'x'},
+              ];
+            },
+          },
+        ];
+        for (final each in labels) {
+          final chart = acquireChart(
+            _config(type, dataset: _indexedColors, labels: each),
+          );
+          expect(_legendOf(chart).legendItemsPending, isFalse);
+          chart.update('none');
+          expect(_legendOf(chart).legendItemsPending, isFalse);
+        }
+        expect(filters, 18, reason: 'each item of each of 6 builds');
+        expect(sorts, greaterThanOrEqualTo(12), reason: 'each of 6 builds');
+        expect(generators, 6);
+      });
+
+      testWidgets('$type: foreign values', (tester) async {
+        // These values are foreign on purpose: no review of the oracle O2.
+        final audit = foreignAudit;
+        foreignAudit = (owner, key, raw) {};
+        addTearDown(() => foreignAudit = audit);
+        for (final dataset in <Map<String, Object?>>[
+          {
+            // An object entry gives a sub resolver.
+            'borderAlign': <Object?>[
+              <String, Object?>{'a': 1},
+              'inner',
+            ],
+          },
+          {
+            // A function entry is a value.
+            'borderAlign': <Object?>[_keepItem, 'inner'],
+          },
+          {
+            // A function entry past the first item.
+            'borderAlign': <Object?>['inner', _keepItem],
+          },
+          {
+            // A number key with a string.
+            'borderWidth': '3',
+            'backgroundColor': <Object?>[_red, _green],
+          },
+          {
+            'borderWidth': <Object?>['3', 2.0],
+            'backgroundColor': <Object?>[_red, _green],
+          },
+          {
+            // An empty list has no value for an index.
+            'borderAlign': <Object?>[],
+            'backgroundColor': <Object?>[_red, _green],
+          },
+          {
+            // A list of another class can run user code at each read.
+            'backgroundColor': _ObservedList(<Object?>[_red, _green]),
+          },
+          {
+            // A list of a key that its descriptor makes not indexable.
+            'borderAlign': <Object?>['inner', 'center'],
+            'backgroundColor': <Object?>[_red, _green],
+            '_indexable': (String name) => name != 'borderAlign',
+          },
+          {
+            'backgroundColor': <Object?>[_red, _green],
+            '_scriptable': (String name) => true,
+          },
+          {
+            'backgroundColor': <Object?>[_red, _green],
+            '_indexable': (String name) => true,
+          },
+          {
+            // A raw list of `borderDash` with an object at item 0.
+            'backgroundColor': <Object?>[_red, _green],
+            'borderDash': <Object?>[
+              <String, Object?>{'a': 1},
+            ],
+          },
+        ]) {
+          final chart = acquireChart(_config(type, dataset: dataset))
+            ..update('none');
+          expect(
+            _legendOf(chart).legendItemsPending,
+            isFalse,
+            reason: '$dataset',
+          );
+          final twin = acquireChart(_eager(type, dataset: dataset))
+            ..update('none');
+          expect(_state(chart), _state(twin), reason: '$dataset');
+          expect(
+            _plain(_items(chart.legend!)),
+            _plain(_items(twin.legend!)),
+            reason: '$dataset',
+          );
+        }
+      });
+
+      testWidgets('$type: a list that stays a value', (tester) async {
+        // With `_indexable: false`, no value needs a context: the entry of the
+        // cached options is the proof of Chart.js ADR 0092.
+        final dataset = <String, Object?>{
+          'borderAlign': <Object?>['inner', 'center'],
+          '_indexable': false,
+        };
+        final chart = acquireChart(_config(type, dataset: dataset))
+          ..update('none');
+        final twin = acquireChart(_eager(type, dataset: dataset))
+          ..update('none');
+        expect(_state(chart), _state(twin));
+        expect(_items(chart.legend!), _items(twin.legend!));
+      });
+
+      testWidgets('$type: a dataset and an options Map of another class', (
+        tester,
+      ) async {
+        final dataset = _ObservedMap({
+          'data': <Object?>[1.0, 2.0, 3.0],
+          ..._indexedColors,
+        });
+        final chart = acquireChart(_config(type, datasets: <Object?>[dataset]))
+          ..update('none');
+        expect(_legendOf(chart).legendItemsPending, isFalse);
+        final twin = acquireChart(
+          _config(
+            type,
+            datasets: <Object?>[
+              _ObservedMap({
+                'data': <Object?>[1.0, 2.0, 3.0],
+                ..._indexedColors,
+              }),
+            ],
+            labels: {'filter': _keepItem},
+          ),
+        )..update('none');
+        expect(_state(chart), _state(twin));
+
+        final options = _ObservedMap({
+          'elements': <String, Object?>{},
+          'plugins': <String, Object?>{
+            'legend': <String, Object?>{
+              'display': false,
+              'labels': <String, Object?>{},
+            },
+          },
+        });
+        final other = acquireChart(<String, Object?>{
+          'type': type,
+          'data': <String, Object?>{
+            'labels': <Object?>['a', 'b', 'c'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1.0, 2.0, 3.0],
+                ..._indexedColors,
+              },
+            ],
+          },
+          'options': options,
+        })..update('none');
+        expect(_legendOf(other).legendItemsPending, isFalse);
+      });
+
+      testWidgets('$type: a user subclass of the arc', (tester) async {
+        // Each read of the context of the user arc stays where it was.
+        List<Object?> run(Chart chart) {
+          final reads = <Object?>[];
+          final meta = chart.getDatasetMeta(0);
+          final arc = _UserArc(reads);
+          meta.data[1] = arc;
+          chart.update('none');
+          expect(_legendOf(chart).legendItemsPending, isFalse);
+          return reads;
+        }
+
+        final chart = acquireChart(_config(type, dataset: _indexedColors));
+        final twin = acquireChart(_eager(type, dataset: _indexedColors));
+        final reads = run(chart);
+        expect(reads, isNotEmpty);
+        expect(reads, run(twin));
+        expect(_state(chart), _state(twin));
+        expect(_items(chart.legend!), _items(twin.legend!));
+      });
+
+      testWidgets('$type: the scalar context and a user context', (
+        tester,
+      ) async {
+        // A deleted key takes its place at the end of the keys again. A value
+        // that is not a context gets a new context.
+        final chart = acquireChart(_config(type, dataset: _indexedColors));
+        final twin = acquireChart(_eager(type, dataset: _indexedColors));
+        for (final each in [chart, twin]) {
+          final data = each.getDatasetMeta(0).data;
+          (data[0] as ArcElement).$context!.jsDelete('mode');
+          (data[1] as ArcElement)[r'$context'] = 'text';
+          (data[2] as ArcElement).$context!
+            ..jsWrite('index', -0.0)
+            ..jsWrite('dataIndex', 7.0);
+          each.update('none');
+        }
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        expect(_state(chart), _state(twin));
+      });
+
+      testWidgets('$type: a user subclass of the chart', (tester) async {
+        final canvas = UiCanvasElement(width: 300, height: 300);
+        final chart = _ChildChart(
+          canvas,
+          _config(type, dataset: _indexedColors),
+        );
+        addTearDown(chart.destroy);
+        chart.update('none');
+        expect(_legendOf(chart).legendItemsPending, isFalse);
+        final twin = acquireChart(_config(type, dataset: _indexedColors));
+        expect(_legendOf(twin).legendItemsPending, isTrue);
+      });
+    }
+
+    for (final (id, parent, child) in [
+      ('pieChild', 'pie', _pieChild),
+      ('doughnutChild', 'doughnut', _doughnutChild),
+      ('polarChild', 'polarArea', _polarChild),
+    ]) {
+      testWidgets('a subclass of the controller: $id', (tester) async {
+        registry.addControllers([child]);
+        addTearDown(() => registry.removeControllers([child]));
+        final chart = acquireChart(_config(id, dataset: _indexedColors));
+        final exact = acquireChart(_config(parent, dataset: _indexedColors));
+        for (final mode in ['none', 'default']) {
+          chart.update(mode);
+          exact.update(mode);
+          expect(_legendOf(chart).legendItemsPending, isFalse);
+          expect(_legendOf(exact).legendItemsPending, isTrue);
+          expect(_contexts(chart)[0], _contexts(exact)[0]);
+          expect(_arcs(chart), _arcs(exact));
+          expect(_items(chart.legend!), _items(exact.legend!));
+        }
+      });
+    }
+
+    test('the proof takes the exact Config', () {
+      Map<String, Object?> make() => _config('pie', dataset: _indexedColors);
+      expect(
+        Config(make()).prepareIndexedArcStyles(
+          0,
+          controllerType: 'pie',
+          count: 3,
+        ),
+        isNotNull,
+      );
+      expect(
+        _TrivialConfig(make()).prepareIndexedArcStyles(
+          0,
+          controllerType: 'pie',
+          count: 3,
+        ),
+        isNull,
+      );
+    });
+  });
+
+  group('Chart.js ADR 0099: the rows of differences.md', () {
+    testWidgets('a read after an in-place change of a color list', (
+      tester,
+    ) async {
+      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final twin = acquireChart(_eager('pie', dataset: _indexedColors));
+      for (final each in [chart, twin]) {
+        final colors = <Object?>[_red, _green];
+        _dataset0(each)['backgroundColor'] = colors;
+        each.update('none');
+        colors[1] = _black;
+      }
+      // Upstream, and the twin: the snapshot of the last update.
+      expect(jsGet(twin.legend!.legendItems![1], 'fillStyle'), _green);
+      // A pending build: the entry of the list at the first read.
+      expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _black);
+    });
+
+    testWidgets('a read after an entry became an object', (tester) async {
+      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final colors = <Object?>[_red, _green];
+      _dataset0(chart)['backgroundColor'] = colors;
+      chart.update('none');
+      final built = _items(chart.legend!);
+      colors[1] = _blue;
+      chart.update('none');
+      colors[1] = <String, Object?>{'a': 1};
+      // The read cannot run the build: it gives the last built items, and the
+      // build still waits.
+      expect(_legendOf(chart).legendItemsPending, isTrue);
+      expect(_items(chart.legend!), built);
+      expect(_legendOf(chart).legendItemsPending, isTrue);
+      colors[1] = _black;
+      expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _black);
+      expect(_legendOf(chart).legendItemsPending, isFalse);
+    });
+
+    testWidgets('a read gives the plan of the mark after a clear of the '
+        'caches, as the snapshot does', (tester) async {
+      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final twin = acquireChart(_eager('pie', dataset: _indexedColors));
+      for (final each in [chart, twin]) {
+        each.update('none');
+        _dataset0(each)['backgroundColor'] = <Object?>[_black];
+        each.config.clearCache();
+      }
+      expect(_items(chart.legend!), _items(twin.legend!));
+      expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _green);
+    });
+
+    testWidgets('a read with more labels than the mark', (tester) async {
+      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final state = _state(chart);
+      _labelsOf(chart).add('d');
+      // No index of a new label has an arc: the index of the dataset context.
+      final items = chart.legend!.legendItems!;
+      expect(items, hasLength(4));
+      expect(jsGet(items[3], 'fillStyle'), _red);
+      expect(_state(chart), state);
+    });
+
+    testWidgets('a read with a new first dataset', (tester) async {
+      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final built = _items(chart.legend!);
+      chart.update('none');
+      _datasetsOf(chart)[0] = <String, Object?>{
+        'data': <Object?>[9.0, 9.0, 9.0],
+        'backgroundColor': _black,
+      };
+      expect(_items(chart.legend!), built);
+      expect(_legendOf(chart).legendItemsPending, isTrue);
+      chart.update('none');
+      expect(jsGet(chart.legend!.legendItems![0], 'fillStyle'), _black);
+    });
+
+    testWidgets('a direct build writes the contexts of a resolve', (
+      tester,
+    ) async {
+      Object? mode(Chart chart) =>
+          jsGet((chart.getDatasetMeta(0).data[1] as Element).$context, 'mode');
+      final chart = acquireChart(_config('pie', dataset: _indexedColors))
+        ..update('none')
+        ..setActiveElements(<Object?>[
+          <String, Object?>{'datasetIndex': 0, 'index': 1},
+        ]);
+      final twin = acquireChart(_eager('pie', dataset: _indexedColors))
+        ..update('none')
+        ..setActiveElements(<Object?>[
+          <String, Object?>{'datasetIndex': 0, 'index': 1},
+        ]);
+      // The hover wrote the state of the mode `active` into the context.
+      final hover = _contexts(chart);
+      expect(hover, _contexts(twin));
+      expect(mode(chart), 'active');
+      // A read of the snapshot writes no context.
+      expect(chart.legend!.legendItems, twin.legend!.legendItems);
+      expect(_contexts(chart), hover);
+      expect(_contexts(twin), hover);
+      // A direct build is the upstream call: each resolve writes its context.
+      _legendOf(chart).buildLabels();
+      _legendOf(twin).buildLabels();
+      expect(_contexts(chart), _contexts(twin));
+      expect(mode(chart), 'default');
+    });
+
+    testWidgets('the stop hook settles the pending items', (tester) async {
+      final chart = acquireChart(_config('pie', dataset: _indexedColors))
+        ..update('none');
+      final legend = _legendOf(chart);
+      expect(legend.legendItemsPending, isTrue);
+      (jsGet(chart.config.options, 'plugins')!
+              as Map<String, Object?>)['legend'] =
+          false;
+      chart.update('none');
+      // The box left the chart, with the items of the last state.
+      expect(chart.legend, isNull);
+      expect(legend.legendItemsPending, isFalse);
+      expect(legend.legendItems, hasLength(3));
+      expect(jsGet(legend.legendItems![1], 'fillStyle'), _green);
+    });
+  });
+
+  group('Chart.js ADR 0099: the config of a live chart of the lab', () {
+    for (final kind in const [
+      typed.ChartKind.pie,
+      typed.ChartKind.doughnut,
+      typed.ChartKind.polarArea,
+    ]) {
+      for (final tooltips in const [false, true]) {
+        testWidgets('$kind: ChartValue.indexed: tooltips $tooltips', (
+          tester,
+        ) async {
+          const blue = Color(0xff4f6bed);
+          const teal = Color(0xff14b8a6);
+          const color = typed.ChartValue<Color>.indexed([blue, teal]);
+          const radius = typed.ChartLength.percent(90);
+          final labels = <String>[for (var i = 0; i < 200; i++) '$i'];
+
+          Widget frame(int step, {required bool eager}) {
+            final data = <double>[
+              for (var i = 0; i < 200; i++) 1.0 + step + (i % 7),
+            ];
+            return Directionality(
+              textDirection: TextDirection.ltr,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: SizedBox(
+                  width: 400,
+                  height: 300,
+                  child: typed.ChartView(
+                    config: typed.ChartConfig(
+                      type: kind,
+                      labels: labels,
+                      datasets: [
+                        switch (kind) {
+                          typed.ChartKind.polarArea => typed.PolarAreaDataset(
+                            key: const ValueKey('series'),
+                            label: 'Values',
+                            data: data,
+                            backgroundColor: color,
+                            borderWidth: 0,
+                          ),
+                          typed.ChartKind.doughnut => typed.DoughnutDataset(
+                            key: const ValueKey('series'),
+                            label: 'Values',
+                            data: data,
+                            backgroundColor: color,
+                            borderWidth: 0,
+                            radius: radius,
+                            cutout: const typed.ChartLength.percent(50),
+                          ),
+                          _ => typed.PieDataset(
+                            key: const ValueKey('series'),
+                            label: 'Values',
+                            data: data,
+                            backgroundColor: color,
+                            borderWidth: 0,
+                            radius: radius,
+                          ),
+                        },
+                      ],
+                      scales: kind == typed.ChartKind.polarArea
+                          ? const {
+                              'r': typed.RadialLinearAxis(
+                                min: 0,
+                                max: 100,
+                                display: false,
+                                pointLabelsDisplay: false,
+                                angleLinesDisplay: false,
+                              ),
+                            }
+                          : null,
+                      animation: typed.ChartAnimation.none,
+                      legend: typed.ChartLegend(
+                        display: false,
+                        extra: eager
+                            ? const {
+                                'labels': {'filter': _keepItem},
+                              }
+                            : null,
+                      ),
+                      tooltip: typed.ChartTooltip(enabled: tooltips),
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      extra: {
+                        'events': tooltips
+                            ? [
+                                'mousemove',
+                                'mouseout',
+                                'click',
+                                'touchstart',
+                                'touchmove',
+                              ]
+                            : <String>[],
+                      },
+                    ),
+                    updateMode: 'none',
+                    theme: const typed.ChartThemeData(),
+                    excludeFromSemantics: true,
+                  ),
+                ),
+              ),
+            );
+          }
+
+          Chart chartOf() => Chart.getChart(
+            tester.renderObject<RenderChartHost>(find.byType(ChartHost)).canvas,
+          )!;
+
+          Future<(List<Object?>, List<Object?>, ByteData)> run({
+            required bool eager,
+          }) async {
+            final states = <Object?>[];
+            var pendingFrames = 0;
+            await tester.pumpWidget(frame(0, eager: eager));
+            final chart = chartOf();
+            for (var step = 1; step < 5; step++) {
+              await tester.pumpWidget(frame(step, eager: eager));
+              if (_legendOf(chart).legendItemsPending) pendingFrames++;
+              states.add(_state(chart));
+            }
+            expect(pendingFrames, eager ? 0 : 4);
+            final context =
+                (chart.getDatasetMeta(0).data[3] as ArcElement).$context!;
+            expect(context.mode, 'default');
+            expect(context.active, isFalse);
+            expect(context.raw, 8);
+            final pixels = await _pixels(tester, chart);
+            final items = _items(chart.legend!);
+            expect(items, hasLength(200));
+            // The unmount of the chart. The next run starts a new one.
+            await tester.pumpWidget(const SizedBox());
+            return (states, items, pixels);
+          }
+
+          final (states, items, pixels) = await run(eager: false);
+          final (twinStates, twinItems, twinPixels) = await run(eager: true);
+          expect(states, twinStates);
+          expect(items, twinItems);
+          expect(pixels.buffer.asUint8List(), twinPixels.buffer.asUint8List());
+        });
+      }
     }
   });
 }

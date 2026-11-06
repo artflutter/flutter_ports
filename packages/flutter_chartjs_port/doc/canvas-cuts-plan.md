@@ -2535,3 +2535,9 @@ Chart.js ADR 0098 edits `lib/src/widgets/chart_view.dart`, `lib/src/typed/lower.
 `lib/src/plugins/plugin.legend.dart`, `lib/src/scales/scale.category.dart` and `lib/src/types/plugin.dart`.
 A `ChartView` with `dataOnlyUpdates` calls `chart.updateData` for a new typed config that changed only its
 data Lists. No canvas operation or drawing cut changes. No trigger occurred.
+### A hidden legend with native indexed colors (2026-11-06)
+
+Chart.js ADR 0099 edits `lib/src/plugins/plugin.legend.dart`, `lib/helpers.dart`,
+`lib/src/core/core.config.dart`, `lib/src/core/core.datasetController.dart`,
+`lib/src/helpers/helpers.config.dart` and `lib/src/helpers/helpers.options.dart`. This plan cites no line
+of these changes, and no canvas operation or drawing cut changes. No trigger occurred.
