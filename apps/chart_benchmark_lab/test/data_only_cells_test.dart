@@ -23,13 +23,9 @@ BenchmarkConfig _preset(ChartType type, {required bool full}) => full
       )
     : BenchmarkConfig(type: type, count: 24);
 
-/// Whether a cell qualifies for the data-only path of Chart.js ADR 0098. In the
-/// other cells, `updateData` goes to a full update by itself for the indexed
-/// colors of alternating items (Chart.js ADR 0074). A change here is a change
-/// of the measurement.
-bool _dataOnly(ChartType type, {required bool full}) =>
-    !full || !type.hasItemColors;
-
+/// Each cell qualifies for the data-only path of Chart.js ADR 0098: the
+/// alternating colors of the full preset are a native indexed style (Chart.js
+/// ADR 0100). A change here is a change of the measurement.
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
 
@@ -74,8 +70,7 @@ void main() {
         final chart = cj.Chart.getChart(
           tester.renderObject<RenderChartHost>(find.byType(ChartHost)).canvas,
         )!;
-        final qualifies = _dataOnly(type, full: full);
-        final expectedLayouts = !qualifies || !chartJsDataOnlyUpdates
+        final expectedLayouts = !chartJsDataOnlyUpdates
             ? 1
             // The radius of a bubble comes from the data, so the overflow and
             // the layout change with the largest item.
@@ -87,7 +82,7 @@ void main() {
           await tester.pumpWidget(scene(step));
           expect(layouts, expectedLayouts, reason: 'step $step');
         }
-        expect(chart.updateData(), qualifies);
+        expect(chart.updateData(), isTrue);
       });
     }
   }
