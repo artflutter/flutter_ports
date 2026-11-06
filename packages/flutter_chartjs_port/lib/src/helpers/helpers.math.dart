@@ -235,6 +235,16 @@ double angleDiff(double a, double b) {
 ///
 /// Normalize angle to be between 0 and 2*PI
 double normalizeAngle(double a) {
+  // DIVERGES(chartjs): adapt-normalize-angle-range, no remainder in range.
+  // For |a| < tau the first remainder is a. The sum is below tau for a negative
+  // a, where the second remainder is the sum. In [tau, 2 tau) that remainder is
+  // the exact difference. A sum that rounds to 2 tau, and each other value
+  // (NaN and the infinities too), takes the two remainders.
+  if (a > -tau && a < tau) {
+    final sum = a + tau;
+    if (sum < tau) return sum;
+    if (sum < 2 * tau) return sum - tau;
+  }
   return (a.remainder(tau) + tau).remainder(tau);
 }
 

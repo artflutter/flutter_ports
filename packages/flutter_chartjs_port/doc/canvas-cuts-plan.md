@@ -2493,3 +2493,13 @@ Chart.js ADR 0091 edits `lib/src/core/core.controller.dart`, `lib/src/types/inde
 `lib/src/plugins/plugin.tooltip.dart` and `lib/src/widgets/chart_view.dart`. A mouse move of a live
 `ChartView` waits for the update of its frame. No canvas operation or drawing cut changes. No trigger
 occurred.
+
+### Static plans of the radial scale (2026-11-06)
+
+Chart.js ADR 0095 edits `lib/src/scales/scale.radialLinear.dart`, `lib/src/controllers/controller.radar.dart`,
+`lib/src/helpers/helpers.math.dart`, `lib/src/helpers/helpers.config.dart`, `lib/src/helpers/helpers.options.dart`,
+`lib/src/elements/element.line.dart`, `lib/src/elements/element.point.dart`, `lib/src/core/core.datasetController.dart`,
+`lib/src/core/primitive_parse.dart` and `lib/src/types/index.dart`, and adds `lib/src/core/radial_positions.dart`.
+A plan keeps the canvas calls of each label and angle line that draws, and it reads the capability
+`CanvasTextMetricsSource` of the native canvas. No canvas method and no drawing cut changes. This plan cites no
+line of these files. No trigger occurred.

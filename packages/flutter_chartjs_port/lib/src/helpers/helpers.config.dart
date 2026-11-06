@@ -1303,13 +1303,8 @@ final class OptionView implements ContextProxy {
   @internal
   StaticFontInputs? cachedStaticFont([StaticFontInputs? fallback]) {
     // DIVERGES(chartjs): adapt-static-tick-font, cached scalar inputs only.
-    if (_removedSlots != null ||
-        jsTruthy(_subProxy) ||
-        (_descriptorDefaults != null && _descriptorDefaults is! _Descriptor)) {
-      return null;
-    }
-    final proxy = _proxy;
-    if (proxy is! OptionResolver || !_hasCachedDescriptors(proxy)) return null;
+    final proxy = _staticProxy;
+    if (proxy == null) return null;
     final font = proxy._cache.get(OptionKey.font);
     // An absent ticks.font uses the live global font. The caller supplies its
     // scalar inputs only after ruling out routed or custom fallback getters.
@@ -1323,6 +1318,40 @@ final class OptionView implements ContextProxy {
       font._cache.get(OptionKey.weight),
     );
   }
+
+  /// The resolver of this ordinary setContext/descriptor view, or null when a
+  /// write or a custom descriptor can make a read differ from the cached one.
+  OptionResolver? get _staticProxy {
+    if (_removedSlots != null ||
+        jsTruthy(_subProxy) ||
+        (_descriptorDefaults != null && _descriptorDefaults is! _Descriptor)) {
+      return null;
+    }
+    final proxy = _proxy;
+    return proxy is OptionResolver && _hasCachedDescriptors(proxy)
+        ? proxy
+        : null;
+  }
+
+  /// The raw value of [key] that a read through a view of any new context
+  /// starts from, without resolving or invoking anything. A private marker
+  /// that is none of the plain types stands for an unknown value.
+  ///
+  /// The caller accepts only values that pass `_resolveWithContext` unchanged
+  /// (a number, a string, ...): a function or an array is a value of this
+  /// probe, which it must decline.
+  @internal
+  // DIVERGES(chartjs): adapt-radial-static-plans, inspect only resolved values.
+  Object? cachedStaticValue(OptionKey key) {
+    final proxy = _staticProxy;
+    return proxy == null ? _absent : proxy._cache.get(key);
+  }
+
+  /// Whether a read of [key] gives a value of this view's cache: no resolution
+  /// and no user code run. The value may come from a scriptable option.
+  @internal
+  // DIVERGES(chartjs): adapt-radial-static-plans, inspect only resolved values.
+  bool hasCachedValue(OptionKey key) => !identical(_cache.get(key), _absent);
 
   /// These are the reads of attachContext that the fast path omits. A missing
   /// entry or a changed resolver slot must go through the ordinary reads.

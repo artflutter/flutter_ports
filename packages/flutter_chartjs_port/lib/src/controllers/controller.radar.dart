@@ -27,7 +27,10 @@
 /// - [RadarController.jsClass] is the class as a value with the statics
 ///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
 /// - The option resolution for each point stays literal (Chart.js ADR 0036,
-///   section 8: the step 7 list).
+///   section 8: the step 7 list), but for the guarded loop of Chart.js ADR
+///   0095: in the mode `none`, once the options of a point are the cached
+///   entry, the other points copy it, read the position inputs once and take
+///   the typed setters. No user code runs in that loop.
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -36,7 +39,11 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape;
+    show DataUpdateShape, nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_options.dart'
+    show nativePointClass, nativePointDatasetIndex, nativePointList;
+import 'package:flutter_chartjs_port/src/core/radial_positions.dart'
+    show NativeRadialPositionScale;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, parseObjectDataRadialScaleOf;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -219,6 +226,11 @@ class RadarController extends DatasetController {
   /// `undefined` through the face of the [PointProperties], and
   /// `isNaN(undefined)` is true. Thus the next animation of `x` and `y`
   /// starts at the target, as upstream (core.animation.js:32).
+  ///
+  /// `updateElement` in a direct mode is `Object.assign(point, properties)`.
+  /// On the exact controller, a point of the built-in class takes these writes
+  /// through its typed setters, in the key order of the literal, with no
+  /// property object (Chart.js ADR 0095). [undefined] keeps the object.
   @override
   void updateElements(
     List<types.Element> points,
@@ -228,6 +240,9 @@ class RadarController extends DatasetController {
   ) {
     final scale = cachedMeta.rScale;
     final reset = mode == 'reset';
+    // DIVERGES(chartjs): adapt-radar-direct-updates, typed writes, direct mode.
+    final directWrites =
+        (reset || mode == 'none') && super.runtimeType == RadarController;
 
     for (var i = start; i < start + count; i++) {
       final point = points[i.toInt()];
@@ -243,6 +258,25 @@ class RadarController extends DatasetController {
 
       final x = reset ? radial.xCenter : pointPosition.x;
       final y = reset ? radial.yCenter : pointPosition.y;
+
+      if (directWrites && x != null && y != null) {
+        if (point case final types.PointElementWrites writes
+            when writes.typedWrites) {
+          writes
+            ..x = x
+            ..y = y
+            ..angle = pointPosition.angle
+            ..skip = x.isNaN || y.isNaN
+            ..options = options;
+          // DIVERGES(chartjs): adapt-radar-direct-updates, a pure rest of the
+          // loop, after the first ordinary resolution of the options.
+          if (i == start && mode == 'none') {
+            final end = start + count;
+            i = _updateStaticPoints(points, start + 1, end, radial) - 1;
+          }
+          continue;
+        }
+      }
 
       final properties = PointProperties();
       if (x == null) {
@@ -262,6 +296,68 @@ class RadarController extends DatasetController {
 
       updateElement(point, i, properties, mode);
     }
+  }
+
+  /// The rest of the loop of `updateElements` in the mode `none`, from the
+  /// index [next] up to [end], on the exact controller (Chart.js ADR 0095).
+  ///
+  /// It runs only with the cached entry of the point options: no context and no
+  /// user code. Its inputs stay valid because each read in it is native: the
+  /// list of the points, the built-in point class, a parsed item with a number,
+  /// `null` or no value. An active point, a point of another class and another
+  /// item stop it before any read of that index.
+  ///
+  /// It returns the first index that it did not treat: the ordinary loop
+  /// continues there.
+  double _updateStaticPoints(
+    List<types.Element> points,
+    double next,
+    double end,
+    types.RadialLinearScale radial,
+  ) {
+    final cached = cachedPointNoneOptions;
+    final parsed = cachedMeta.parsed;
+    if (cached == null ||
+        radial is! NativeRadialPositionScale ||
+        !nativePointClass(dataElementType) ||
+        !nativePointList(points) ||
+        !nativeDataUpdateList(parsed) ||
+        !nativePointDatasetIndex(next) ||
+        !nativePointDatasetIndex(end)) {
+      return next;
+    }
+    final positions = (radial as NativeRadialPositionScale)
+        .prepareRadialPositions();
+    if (positions == null) return next;
+    final sharing = enableOptionSharing;
+    final stop = end.toInt();
+    var i = next.toInt();
+    for (; i < stop; i++) {
+      final point = points[i];
+      if (point.active || i >= parsed.length) break;
+      final item = parsed[i];
+      if (item is! ParsedItem) break;
+      final value = item.r;
+      if (value is! double && value != null && value is! Undefined) break;
+      if (point case final types.PointElementWrites writes
+          when writes.typedWrites) {
+        final position = positions.positionAt(
+          i,
+          value is double ? positions.distanceOf(value) : double.nan,
+        );
+        final x = position.x;
+        final y = position.y;
+        writes
+          ..x = x
+          ..y = y
+          ..angle = position.angle
+          ..skip = x.isNaN || y.isNaN
+          ..options = sharing ? cached : cached.clone();
+      } else {
+        break;
+      }
+    }
+    return i.toDouble();
   }
 }
 
