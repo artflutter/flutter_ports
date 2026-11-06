@@ -2528,3 +2528,10 @@ budget of Chart.js ADR 0066. A color that 32 bits of sRGB do not keep joins no b
 `canvas_ui_line_test.dart`, `test/port/elements/element.arc_sector_test.dart` and
 `element.arc_sector_chart_test.dart`. `chart_host_test.dart` reads the scales from the layer. This
 does not bring other deferred cuts forward.
+### The data-only path of a ChartView (2026-11-06)
+
+Chart.js ADR 0098 edits `lib/src/widgets/chart_view.dart`, `lib/src/typed/lower.dart`,
+`lib/src/core/data_update.dart`, `lib/src/core/core.controller.dart`, `lib/src/helpers/helpers.config.dart`,
+`lib/src/plugins/plugin.legend.dart`, `lib/src/scales/scale.category.dart` and `lib/src/types/plugin.dart`.
+A `ChartView` with `dataOnlyUpdates` calls `chart.updateData` for a new typed config that changed only its
+data Lists. No canvas operation or drawing cut changes. No trigger occurred.

@@ -234,11 +234,13 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
     );
   }
 
-  /// Native support for the explicit data-only lifecycle.
+  /// Native support for the explicit data-only lifecycle. A label that [parse]
+  /// added leaves only with the [init] of a full update.
   @override
   // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
   bool get supportsDataUpdates {
     if (super.runtimeType != CategoryScale ||
+        _addedLabels.isNotEmpty ||
         !options.cachedCategoryDataInputs ||
         chart is! CategoryLabelSource) {
       return false;

@@ -27,7 +27,11 @@ inputs change. Native numeric buffers and prepared numeric points are supported.
 Unsupported scales/components/styles or unapproved plugins fall back. Layout,
 interaction and plugin details are in
 [ADR 0074](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/adr/0074-incremental-data-updates.md).
-Widget configuration changes still use the normal full update by default.
+Widget configuration changes still use the normal full update by default. For a
+typed `ChartView` that gets a new data List in each frame, `dataOnlyUpdates: true`
+calls `updateData` when only the data Lists of a new config changed. It needs
+`updateMode: 'none'` and `animation: ChartAnimation.none`, and its doc states
+what it does not re-run.
 
 ## Features
 
