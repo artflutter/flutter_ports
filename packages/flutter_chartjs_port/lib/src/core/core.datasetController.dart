@@ -1053,6 +1053,22 @@ class DatasetController
         (cachedMeta.dataset == null || cached(datasetElementType));
   }
 
+  /// The built-in `generateLabels` of this exact class, or Dart `null`: the
+  /// doughnut, pie and polar area controllers name theirs (Chart.js ADR 0092).
+  /// A subclass and another controller keep the ordinary legend builds.
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the built-in generator.
+  Object? get nativeLegendGenerator => null;
+
+  /// Whether `getStyle(index)` of a data element reads a cached `default`
+  /// entry of [_resolveElementOptions]: the read then runs no context and no
+  /// option function (Chart.js ADR 0092).
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
+  bool get hasCachedDefaultDataOptions => _cachedElementOptions.containsKey(
+    '${jsToString(_idOf(dataElementType))}-default',
+  );
+
   /// core.datasetController.js:271 `supportsDecimation`.
   @override
   bool supportsDecimation = false;

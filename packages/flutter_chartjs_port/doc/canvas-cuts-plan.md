@@ -2493,3 +2493,10 @@ Chart.js ADR 0091 edits `lib/src/core/core.controller.dart`, `lib/src/types/inde
 `lib/src/plugins/plugin.tooltip.dart` and `lib/src/widgets/chart_view.dart`. A mouse move of a live
 `ChartView` waits for the update of its frame. No canvas operation or drawing cut changes. No trigger
 occurred.
+
+### The items of a hidden legend (2026-11-06)
+
+Chart.js ADR 0092 adds the internal getters `nativeLegendGenerator` and
+`hasCachedDefaultDataOptions` to `lib/src/core/core.datasetController.dart`, and edits
+`lib/src/plugins/plugin.legend.dart` and the two arc controllers. This plan cites no line of these
+changes, and no canvas operation or drawing cut changes. No trigger occurred.
