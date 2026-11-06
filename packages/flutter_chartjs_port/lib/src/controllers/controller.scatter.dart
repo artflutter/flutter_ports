@@ -450,6 +450,7 @@ class ScatterController extends DatasetController {
     // DIVERGES(chartjs): adapt-scatter-point-options, prepare only within this
     // synchronous loop. Unknown geometry drops the plan before invoking it.
     PointOptions Function(int)? colors;
+    NativePointContextReader? contexts;
     final coordinates = NativePointCoordinates();
     final tryColors = canPrepareNativePointUpdate(
       mode: mode,
@@ -511,7 +512,7 @@ class ScatterController extends DatasetController {
         // shared options.
         final prepared = colors;
         if (prepared != null) {
-          getContext(i, false, mode);
+          if (contexts?.read(i.toInt()) == null) getContext(i, false, mode);
           writes.options(prepared(i.toInt()));
         } else {
           writes.options(
@@ -534,6 +535,7 @@ class ScatterController extends DatasetController {
           _nativeProjection(iScale) &&
           _nativeProjection(vScale)) {
         colors = _preparePointColors(points);
+        if (colors != null) contexts = prepareNativePointContexts(this, mode);
       }
     }
 
@@ -556,6 +558,9 @@ class ScatterController extends DatasetController {
   ///   by name.
   /// - The cast to `types.PointElement` stands at the upstream read of
   ///   `size` (Chart.js ADR 0028, section 1).
+  /// - The size of a native point depends only on three static fields of its
+  ///   options. Inside this loop such a point takes one size, of the frozen
+  ///   entry or of one plan result (row `adapt-native-point-size`).
   @override
   Object? getMaxOverflow() {
     final meta = cachedMeta;
@@ -563,26 +568,50 @@ class ScatterController extends DatasetController {
 
     if (!jsTruthy(options.readKey(OptionKey.showLine))) {
       var max = 0.0;
-      PointOptions Function(int)? colors;
+      // DIVERGES(chartjs): adapt-native-point-size, one size inside this loop.
+      // A custom point ends it before its options or its `size` can run.
+      double? nativeSize;
+      NativePointContextReader? contexts;
+      var indexed = false;
       final last = data.length - 1;
       for (var i = last; i >= 0; --i) {
         final point = data[i] as types.PointElement;
-        if (colors != null && !nativePointElement(point)) colors = null;
-        final prepared = colors;
-        final ElementOptions pointOptions;
-        if (prepared != null) {
-          getContext(i.toDouble(), false, 'default');
-          pointOptions = prepared(i);
-        } else {
-          pointOptions = resolveDataElementOptions(i.toDouble());
+        if (i == last) nativeSize = _cachedPointSize();
+        if (nativeSize != null && !nativePointElement(point)) {
+          nativeSize = null;
+          indexed = false;
         }
-        max = jsMax(
-          max,
-          point.size(pointOptions) / 2,
-        );
-        // No coordinate conversion occurs here: parsed/raw values are only
-        // copied into contexts, so qualifying their containers is sufficient.
-        if (i == last - 1) colors = _preparePointColors(data);
+        if (nativeSize == null) {
+          max = jsMax(
+            max,
+            point.size(resolveDataElementOptions(i.toDouble())) / 2,
+          );
+          // The first ordinary resolution makes the entry of constant options.
+          if (i == last) nativeSize = _cachedPointSize();
+          // No coordinate conversion occurs here: parsed/raw values are only
+          // copied into contexts, so qualifying their containers is sufficient.
+          if (nativeSize == null && i == last - 1) {
+            final prepared = _preparePointColors(data);
+            final fields = prepared == null
+                ? null
+                : NativePointSizeFields.of(prepared(i));
+            if (fields != null) {
+              nativeSize = nativePointSize(
+                fields.radius,
+                fields.hoverRadius,
+                fields.borderWidth,
+              );
+              indexed = true;
+              contexts = prepareNativePointContexts(this, 'default');
+            }
+          }
+        } else {
+          // Indexed options refresh the context of each point, as upstream.
+          if (indexed && contexts?.read(i) == null) {
+            getContext(i.toDouble(), false, 'default');
+          }
+          max = jsMax(max, nativeSize / 2);
+        }
       }
       return max > 0 ? max : false;
     }
@@ -608,6 +637,21 @@ class ScatterController extends DatasetController {
       resolveDataElementOptions((data.length - 1).toDouble()),
     );
     return jsMax(jsMax(jsToNumber(border), firstPoint), lastPoint) / 2;
+  }
+
+  /// The size of the frozen `point-default` entry for the exact controller:
+  /// its ordinary resolve only copies that entry. Dart `null` without one.
+  // DIVERGES(chartjs): adapt-native-point-size, one size inside the loop.
+  double? _cachedPointSize() {
+    if (super.runtimeType != ScatterController) return null;
+    final fields = cachedNativePointSizeFields(this);
+    return fields == null
+        ? null
+        : nativePointSize(
+            fields.radius,
+            fields.hoverRadius,
+            fields.borderWidth,
+          );
   }
 
   // The existing numeric-scale capability guarantees built-in projection and
