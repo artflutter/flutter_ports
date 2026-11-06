@@ -2574,5 +2574,5 @@ Chart.js ADRs 0093, 0094, 0096 and 0102 edit `lib/src/core/core.datasetControlle
 `lib/src/elements/element.point.dart`. The lines of these files move. No canvas operation or drawing cut
 changes. No trigger occurred.
 - 2026-11-06, Chart.js ADRs 0104 and 0105 change `canvas.dart`, `canvas_ui.dart` and `canvas_ui_path.dart`. The line
-  references of these files move with the code. The new code is outside this plan's cuts: compact curves of `Path2D`,
+  references of these files moved by a diff against `cc3ba00`, so that a reference that was stale at that commit stays stale. The new code is outside this plan's cuts: compact curves of `Path2D`,
   the deferred long path, the run of circles, `UiPathPieces` and `tryFillColumns`.

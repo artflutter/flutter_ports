@@ -290,11 +290,30 @@ const int _closeCode = 6;
 const int minPieceCommands = 128;
 
 /// The most commands of a piece of a long path.
-const int maxPieceCommands = 64;
+const int maxPieceCommands = 512;
 
 /// The largest area of the bounds of a piece, in bitmap pixels. Skia on the web
 /// draws a larger path on the CPU, and uploads the result as a texture.
 const double maxPieceArea = 40000;
+
+/// The fewest columns of a piece of a fill, in bitmap pixels. A piece of one
+/// column at dense data gets holes from the engine.
+const double _minFillPieceColumns = 8;
+
+/// How far a piece of a fill passes each side of its clip, in bitmap pixels, so
+/// that a side of the piece stays out of the clip under any placement of the
+/// bitmap on the device pixels.
+const double _fillPieceMargin = 4;
+
+/// The largest coordinate that a path in pieces takes. The engine draws nothing
+/// for a whole path with a coordinate past its float range, so that a path in
+/// pieces must not draw the rest.
+const double _maxPieceCoordinate = 1e30;
+
+/// How far a piece of a stroke passes its cut along the line, in bitmap pixels.
+/// The start of the next piece stays inside this piece, so that no seam of two
+/// anti-aliased ends shows across the line.
+const double _strokePieceOverlap = 1.5;
 
 /// The most numbers of one deferred command: an arc.
 const int _maxCommandNumbers = 7;
@@ -530,24 +549,27 @@ final class UiPathBuilder implements CanvasPath {
     // A base point can come from another expression: within 1e-6 pixels, the
     // side is vertical.
     if (top < 1 ||
+        codes[last] != _lineCode ||
+        ys[last] != base ||
         !xs[0].isFinite ||
         !((xs[n - 2] - xs[0]).abs() <= 1e-6) ||
         !((xs[last] - xs[top]).abs() <= 1e-6) ||
         !base.isFinite) {
       return false;
     }
-    if (!ys[0].isFinite) return false;
+    bool inRange(double value) => value.abs() <= _maxPieceCoordinate;
+    if (!inRange(xs[0]) || !inRange(ys[0]) || !inRange(base)) return false;
     for (var i = 1; i <= top; i++) {
       final from = xs[i - 1];
       final to = xs[i];
-      if (!(to >= from) || !to.isFinite || !ys[i].isFinite) return false;
+      if (!(to >= from) || !inRange(to) || !inRange(ys[i])) return false;
       if (codes[i] == _cubicCode) {
         final at = offsets[i];
         final c1 = v[at];
         final c2 = v[at + 2];
         if (!(c1 >= from && c1 <= to && c2 >= from && c2 <= to) ||
-            !v[at + 1].isFinite ||
-            !v[at + 3].isFinite) {
+            !inRange(v[at + 1]) ||
+            !inRange(v[at + 3])) {
           return false;
         }
       }
@@ -585,7 +607,7 @@ final class UiPathBuilder implements CanvasPath {
         final nextMax = math.max(maxY, highY(end + 1));
         final area = (xs[end + 1] - xs[start]) * (nextMax - nextMin);
         if (end > start &&
-            right > left &&
+            right >= left + _minFillPieceColumns &&
             (end - start >= maxPieceCommands || area > maxPieceArea)) {
           break;
         }
@@ -595,13 +617,13 @@ final class UiPathBuilder implements CanvasPath {
         right = xs[end].roundToDouble();
       }
       if (end == top) right = endX + 2;
-      // The piece covers its columns: one vertex at or before each side.
+      // The piece covers its columns and a margin past each side.
       var a = start;
-      while (a > 0 && xs[a] > left) {
+      while (a > 0 && xs[a] > left - _fillPieceMargin) {
         a--;
       }
       var b = end;
-      while (b < top && xs[b] < right) {
+      while (b < top && xs[b] < right + _fillPieceMargin) {
         b++;
       }
       scratch
@@ -1887,21 +1909,27 @@ final class _CachedPath {
 /// space (Chart.js ADR 0105). It has the rules of [UiPathBuilder] for a
 /// coordinate that is not finite and for a path with no subpath.
 ///
-/// A piece ends at a vertex, with a short line along the next segment, so that
-/// the join at that vertex stays. The next piece starts at the vertex. A command
-/// that a line chart does not use fails the whole form.
+/// A piece that ends at a cut also takes the commands after the cut, for a
+/// length of about [_strokePieceOverlap] bitmap pixels, so that the engine makes
+/// the join at the cut from the real segments, and the start of the next piece
+/// lies inside this piece. A long straight segment is cut to that length. A
+/// command that a line chart does not use fails the whole form.
 final class UiPathPieces implements CanvasPath {
-  /// Pieces for a transform of the uniform scale [scale].
-  UiPathPieces(double scale, this.lineWidth)
+  /// Pieces for a transform of the uniform scale [scale] and the line width
+  /// [lineWidth].
+  UiPathPieces(this.scale, this.lineWidth)
     : _area = maxPieceArea / (scale * scale),
-      _reach = .5 / scale;
+      _reach = _strokePieceOverlap / scale;
+
+  /// The uniform scale that the limits of a piece use.
+  final double scale;
 
   /// The line width, in user space, that the bounds of a piece include.
   final double lineWidth;
   final double _area;
   final double _reach;
 
-  /// The pieces, in order.
+  /// The pieces.
   final List<ui.Path> pieces = [];
 
   /// Whether the path has a command that this form does not take.
@@ -1919,9 +1947,6 @@ final class UiPathPieces implements CanvasPath {
   double _startX = 0;
   double _startY = 0;
   bool _startInPiece = false;
-  // The direction of the first segment of the subpath, for the join of a close.
-  double _firstX = 0;
-  double _firstY = 0;
   double _minX = 0;
   double _minY = 0;
   double _maxX = 0;
@@ -1930,6 +1955,18 @@ final class UiPathPieces implements CanvasPath {
   double _allMinY = double.infinity;
   double _allMaxX = double.negativeInfinity;
   double _allMaxY = double.negativeInfinity;
+
+  // The piece that takes the commands after its cut, and the length it needs.
+  ui.Path? _tail;
+  double _tailLeft = 0;
+
+  // The first commands of the subpath, for the end of a close: 2 numbers for a
+  // line, 6 for a curve, until they reach the overlap length.
+  final List<double> _firstNumbers = [];
+  final List<int> _firstSizes = [];
+  double _firstLeft = 0;
+
+  bool _inRange(double value) => value.abs() <= _maxPieceCoordinate;
 
   void _include(double x, double y) {
     if (x < _allMinX) _allMinX = x;
@@ -1952,27 +1989,64 @@ final class UiPathPieces implements CanvasPath {
     _current = null;
   }
 
-  /// Cuts before a segment that has the bounds with its end at (x, y) past the
-  /// limits, with a short line toward (towardX, towardY).
-  void _cutBefore(double x, double y, double towardX, double towardY) {
-    if (_commands == 0) return;
+  void _endTail() {
+    final tail = _tail;
+    if (tail != null) pieces.add(tail);
+    _tail = null;
+  }
+
+  /// Cuts before a segment whose bounds with its end at (x, y) pass the limits.
+  /// The piece stays open as the tail. A zero-length segment waits, so that a
+  /// join at the cut has a real next segment.
+  void _cutBefore(double x, double y, {required bool zeroLength}) {
+    if (_commands == 0 || zeroLength) return;
     final minX = math.min(_minX, x);
     final maxX = math.max(_maxX, x);
     final minY = math.min(_minY, y);
     final maxY = math.max(_maxY, y);
     final area = (maxX - minX + lineWidth) * (maxY - minY + lineWidth);
     if (_commands < maxPieceCommands && area <= _area) return;
-    _extend(towardX - _x, towardY - _y);
-    _endPiece();
+    _endTail();
+    _tail = _current;
+    _tailLeft = _reach;
+    _current = null;
     _startPiece(_x, _y);
     _startInPiece = false;
   }
 
-  void _extend(double dx, double dy) {
+  void _tailLine(double x, double y) {
+    final tail = _tail;
+    if (tail == null) return;
+    final dx = x - _x;
+    final dy = y - _y;
     final length = math.sqrt(dx * dx + dy * dy);
-    if (length == 0) return;
-    final t = math.min(1, _reach / length);
-    _current!.lineTo(_x + dx * t, _y + dy * t);
+    if (length > _tailLeft) {
+      // A longer straight segment: the join needs only its direction.
+      final t = _tailLeft / length;
+      tail.lineTo(_x + dx * t, _y + dy * t);
+      _endTail();
+      return;
+    }
+    tail.lineTo(x, y);
+    _tailLeft -= length;
+    if (_tailLeft <= 0 && length > 0) _endTail();
+  }
+
+  void _tailCurve(
+    double cp1x,
+    double cp1y,
+    double cp2x,
+    double cp2y,
+    double x,
+    double y,
+  ) {
+    final tail = _tail;
+    if (tail == null) return;
+    tail.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
+    final dx = x - _x;
+    final dy = y - _y;
+    _tailLeft -= math.sqrt(dx * dx + dy * dy);
+    if (_tailLeft <= 0) _endTail();
   }
 
   void _grow(double x, double y) {
@@ -1983,38 +2057,57 @@ final class UiPathPieces implements CanvasPath {
     _include(x, y);
   }
 
-  void _noteFirst(double towardX, double towardY) {
-    if (_firstX == 0 && _firstY == 0) {
-      _firstX = towardX - _x;
-      _firstY = towardY - _y;
+  void _noteFirst(List<double> numbers, double length) {
+    if (_firstLeft <= 0) return;
+    _firstNumbers.addAll(numbers);
+    _firstSizes.add(numbers.length);
+    _firstLeft -= length;
+  }
+
+  void _openAfterClose() {
+    if (_current == null) {
+      _startPiece(_x, _y);
+      _startInPiece = true;
     }
   }
 
   @override
   void moveTo(double x, double y) {
     if (!x.isFinite || !y.isFinite) return;
+    if (!_inRange(x) || !_inRange(y)) {
+      failed = true;
+      return;
+    }
+    _endTail();
     _endPiece();
     _startPiece(x, y);
     _hasPoint = true;
     _x = _startX = x;
     _y = _startY = y;
     _startInPiece = true;
-    _firstX = _firstY = 0;
+    _firstNumbers.clear();
+    _firstSizes.clear();
+    _firstLeft = _reach;
   }
 
   @override
   void lineTo(double x, double y) {
     if (!x.isFinite || !y.isFinite) return;
+    if (!_inRange(x) || !_inRange(y)) {
+      failed = true;
+      return;
+    }
     if (!_hasPoint) {
       moveTo(x, y);
       return;
     }
-    if (_current == null) {
-      _startPiece(_x, _y);
-      _startInPiece = true;
-    }
-    _noteFirst(x, y);
-    _cutBefore(x, y, x, y);
+    _openAfterClose();
+    final dx = x - _x;
+    final dy = y - _y;
+    final length = math.sqrt(dx * dx + dy * dy);
+    _noteFirst([x, y], length);
+    _cutBefore(x, y, zeroLength: length == 0);
+    if (_tail != null) _tailLine(x, y);
     _current!.lineTo(x, y);
     _commands++;
     _grow(x, y);
@@ -2039,16 +2132,24 @@ final class UiPathPieces implements CanvasPath {
         !y.isFinite) {
       return;
     }
-    if (!_hasPoint) moveTo(cp1x, cp1y);
-    if (_current == null) {
-      _startPiece(_x, _y);
-      _startInPiece = true;
+    if (!_inRange(cp1x) ||
+        !_inRange(cp1y) ||
+        !_inRange(cp2x) ||
+        !_inRange(cp2y) ||
+        !_inRange(x) ||
+        !_inRange(y)) {
+      failed = true;
+      return;
     }
-    final same = cp1x == _x && cp1y == _y;
-    final towardX = same ? cp2x : cp1x;
-    final towardY = same ? cp2y : cp1y;
-    _noteFirst(towardX, towardY);
-    _cutBefore(x, y, towardX, towardY);
+    if (!_hasPoint) moveTo(cp1x, cp1y);
+    _openAfterClose();
+    final dx = x - _x;
+    final dy = y - _y;
+    final chord = math.sqrt(dx * dx + dy * dy);
+    final zero = chord == 0 && cp1x == x && cp1y == y && cp2x == x && cp2y == y;
+    _noteFirst([cp1x, cp1y, cp2x, cp2y, x, y], chord);
+    _cutBefore(x, y, zeroLength: zero);
+    if (_tail != null) _tailCurve(cp1x, cp1y, cp2x, cp2y, x, y);
     _current!.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
     _commands++;
     _grow(cp1x, cp1y);
@@ -2066,22 +2167,45 @@ final class UiPathPieces implements CanvasPath {
       if (_startInPiece) {
         piece.close();
       } else {
+        // The close of a path that a cut divided: the line to the start, then
+        // the first commands of the subpath for the join at the start.
+        if (_tail != null) _tailLine(_startX, _startY);
         piece.lineTo(_startX, _startY);
-        _x = _startX;
-        _y = _startY;
-        _extend(_firstX, _firstY);
+        var at = 0;
+        for (final size in _firstSizes) {
+          final n = _firstNumbers;
+          if (size == 2) {
+            piece.lineTo(n[at], n[at + 1]);
+          } else {
+            piece.cubicTo(
+              n[at],
+              n[at + 1],
+              n[at + 2],
+              n[at + 3],
+              n[at + 4],
+              n[at + 5],
+            );
+          }
+          at += size;
+        }
       }
       _commands++;
     }
+    _endTail();
     _endPiece();
     _x = _startX;
     _y = _startY;
     _startInPiece = false;
-    _firstX = _firstY = 0;
+    _firstNumbers.clear();
+    _firstSizes.clear();
+    _firstLeft = _reach;
   }
 
-  /// Ends the last piece.
-  void finish() => _endPiece();
+  /// Ends the last pieces.
+  void finish() {
+    _endTail();
+    _endPiece();
+  }
 
   @override
   void quadraticCurveTo(double cpx, double cpy, double x, double y) =>
@@ -2145,9 +2269,14 @@ _CachedPath _cacheOf(Path2D path2d) {
 /// The pieces of [path2d] for a stroke, cached as [uiPathOf] caches its path, or
 /// `null` for a path that this form does not take. See [UiPathPieces].
 UiPathPieces? uiPathPiecesOf(Path2D path2d, double scale, double lineWidth) {
+  // A list that code outside can change takes one draw, with the version rule of
+  // [uiPathOf] alone.
+  if (path2d.isExposed) return null;
   final cached = _cacheOf(path2d);
   var pieces = cached.pieces;
-  if (pieces == null) {
+  if (pieces == null ||
+      pieces.scale != scale ||
+      pieces.lineWidth != lineWidth) {
     pieces = UiPathPieces(scale, lineWidth);
     path2d.replayNative(pieces);
     pieces.finish();

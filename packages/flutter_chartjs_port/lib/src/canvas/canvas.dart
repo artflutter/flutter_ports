@@ -976,6 +976,10 @@ final class Path2D implements CanvasPath {
     }
   }
 
+  /// Whether a reader got the list of [commands], which code outside can change.
+  @internal
+  bool get isExposed => _commands != null;
+
   /// Replays private scalar storage to a synchronous native path builder.
   ///
   /// The caller must ensure [target] cannot run user code or inspect this path.

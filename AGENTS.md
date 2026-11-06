@@ -723,10 +723,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Public list exposure and complex commands materialize in original order.
     Boundary/ownership tests cover this storage-only change; no capacity hint
     or line algorithm/data-only guard changes are involved.
-    Chart.js ADR 0105: on the web only, a stroke of a `Path2D` and a line fill over a horizontal base
-    draw in pieces with small bounds (`UiPathPieces`, `UiPathBuilder.tryFillColumns`). Skia on WebGL
-    takes a slow route for one long path. The switch `debugDrawLongPathsInPieces` turns the form on
-    for a test on the VM. Edge pixels differ, and native engines keep one draw. See performance.md §68.
+    Chart.js ADR 0105: on the web only, a stroke of a `Path2D` and a line fill to `origin`, `start` or
+    `end` with one color draw in pieces with small bounds (`UiPathPieces`,
+    `UiPathBuilder.tryFillColumns`). Skia on WebGL is slow for one long path, and one draw of a dense
+    fill misses the true area by up to 57% there. The switch `debugDrawLongPathsInPieces` turns the
+    form on for a test on the VM. Native engines keep one draw. See performance.md §68.
     Chart.js ADR 0104: `Path2D` packs unobserved cubic curves too. A filler walk that a partitioned
     fill can replace keeps the original path out of the engine (`deferCurrentPath`), and a read gets
     the same path. `boundSegment` proves a whole ascending segment with one scan.
