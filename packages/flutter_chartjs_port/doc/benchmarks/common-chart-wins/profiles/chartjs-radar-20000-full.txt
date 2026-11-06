@@ -1,0 +1,45 @@
+samples=2532 period=1000us
+--- exclusive
+  3.3%  ListIterator.moveNext
+  3.0%  _NativePath.lineTo
+  2.6%  tryParseNumericSingleScale.<anonymous closure>
+  2.5%  ._pathSegment
+  2.4%  ._ieee754RemPio2
+  2.2%  .jsTruthy
+  2.1%  RadarController._updateStaticPoints
+  2.1%  PointOptions.clone
+  2.1%  ._reportTaskEvent
+  1.7%  ._lineTo
+  1.5%  _NativeCanvas.__drawAtlas$Method$FfiNative
+  1.5%  CircleBatch.flush
+  1.5%  _GrowableList._allocateData
+  1.5%  .drawPointLegend
+  1.4%  _Double.abs
+  1.4%  _GrowableList.[]
+  1.3%  _GrowableList._GrowableList.generate
+  1.3%  .isPointInArea
+  1.3%  ._findStartAndEnd
+  1.2%  CircleBatch.add
+  1.1%  ._kernelCos
+  1.1%  PointElement.draw
+  1.1%  UiPathBuilder._pathLineTo
+  1.1%  PointOptions.PointOptions._copy
+  1.1%  ._clearStacks
+  1.1%  Path2D._replayChunk
+  1.0%  _Double.isFinite
+  0.9%  ._kernelSin
+  0.9%  UiCanvasContext._batchCircle
+  0.9%  .normalizeAngle
+  0.9%  ._drawStaticPointLabels
+  0.9%  .ieee754Sin
+  0.9%  UiPathBuilder.arc
+  0.9%  .ieee754Cos
+  0.8%  Path2D._append
+  0.8%  UiCanvasContext.lineTo
+  0.8%  native fmod
+  0.8%  _NativeParagraph.__paint$Method$FfiNative
+  0.8%  _PathPoint.copyFrom
+  0.8%  ._solidSegments
+  0.8%  BenchmarkController._tick
+  0.8%  _drawStaticAngleLines.<anonymous closure>
+  0.8%  _NativePath._lineTo$Method$FfiNative

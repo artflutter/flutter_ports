@@ -1,8 +1,8 @@
 # Chart.js ADR 0103: The angle lines of the radial scale in one native call
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
-- Related: Chart.js ADRs 0034, 0066, 0084, 0085, 0095, 0097. Measurements: performance.md.
+- Related: Chart.js ADRs 0034, 0066, 0084, 0085, 0095, 0097. Measurements: performance.md §65.
 - Row of `differences.md`: `adapt-radial-line-fan`.
 
 ## Context

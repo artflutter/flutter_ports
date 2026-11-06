@@ -1,10 +1,10 @@
 # Chart.js ADR 0102: Direct typed writes of arcs and bubbles
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0028, 0054, 0093, 0094; `differences.md` rows
   `adapt-direct-element-writes` and `adapt-polar-constant-options`.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Context
 

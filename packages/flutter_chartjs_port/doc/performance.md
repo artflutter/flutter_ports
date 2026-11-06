@@ -7607,3 +7607,113 @@ margin: a CPU profile before this change gave `PointElement.draw` 43% of the tim
 A move now appears one frame later in a live chart: about 8 ms at 120 Hz. The driver and logs are in
 [`benchmarks/live-mouse/`](benchmarks/live-mouse/README.md). Broader device-specific performance
 remains unmeasured.
+
+## 65. Common performance work on all chart types
+
+Chart.js ADRs 0092 to 0103 remove work that each chart type repeated on each frame. The setup is in
+[`benchmarks/common-chart-wins/`](benchmarks/common-chart-wins/README.md). A cell is a chart type, an item
+count and a preset of `apps/chart_benchmark_lab`. "Plain" has the defaults of the lab. "Full" has markers,
+fill, curves, axes, a grid and alternating colors. Old and new are passes on a locked screen. The first
+column is the only pass with the window in view.
+
+The cells that started or stayed below 118.5 FPS:
+
+| Cell | FPS at the start, visible | FPS old, 2 runs | FPS new, 2 runs | FPS new, no data-only |
+| --- | ---: | ---: | ---: | ---: |
+| Line, 20,000, full | 89.5 | 88.8, 91.2 | 106.0, 105.8 | 102.2 |
+| Bar, 20,000, plain | 42.2 | 44.5, 45.0 | 56.5, 57.0 | 55.0 |
+| Bar, 20,000, full | 31.8 | 33.8, 34.5 | 50.2, 51.2 | 41.8 |
+| Scatter, 20,000, plain | 92.5 | 96.5, 96.2 | 120.0, 120.0 | 120.0 |
+| Scatter, 20,000, full | 55.2 | 57.2, 56.8 | 118.8, 117.8 | 118.8 |
+| Bubble, 20,000, plain | 31.0 | 31.5, 31.2 | 120.0, 120.0 | 120.0 |
+| Bubble, 20,000, full | 11.5 | 11.8, 11.8 | 100.8, 98.8 | 97.5 |
+| Pie, 20,000, plain | 13.0 | 13.5, 13.8 | 120.0, 120.0 | 120.0 |
+| Pie, 20,000, full | 2.2 | 2.2, 2.0 | 83.2, 84.5 | 77.2 |
+| Doughnut, 20,000, plain | 13.2 | 13.0, 13.2 | 120.0, 120.0 | 120.0 |
+| Doughnut, 20,000, full | 2.2 | 2.0, 2.2 | 71.2, 69.2 | 69.0 |
+| Polar area, 20,000, plain | 14.5 | 14.5, 14.8 | 73.0, 72.8 | 73.8 |
+| Polar area, 20,000, full | 3.0 | 3.0, 3.0 | 67.2, 67.2 | 61.0 |
+| Radar, 20,000, plain | 62.5 | 68.2, 70.0 | 120.0, 120.0 | 120.0 |
+| Radar, 20,000, full | 8.8 | 9.0, 9.0 | 57.5, 57.0 | 56.8 |
+| Bubble, 5,000, full | 49.0 | 49.5, 50.0 | 120.0, 120.0 | 120.0 |
+| Pie, 5,000, plain | 64.5 | 63.8, 64.0 | 120.0, 120.0 | 120.0 |
+| Pie, 5,000, full | 9.0 | 8.8, 8.8 | 120.0, 120.0 | 120.0 |
+| Doughnut, 5,000, plain | 57.0 | 63.0, 63.5 | 120.0, 120.0 | 120.0 |
+| Doughnut, 5,000, full | 8.8 | 8.8, 8.8 | 120.0, 120.0 | 120.0 |
+| Polar area, 5,000, plain | 57.5 | 60.2, 60.0 | 120.0, 120.0 | 120.0 |
+| Polar area, 5,000, full | 11.5 | 11.5, 11.5 | 120.0, 120.0 | 120.0 |
+| Radar, 5,000, full | 33.8 | 34.8, 35.0 | 120.0, 120.0 | 120.0 |
+| Pie, 1,000, full | 44.5 | 45.0, 44.5 | 120.0, 120.0 | 120.0 |
+| Doughnut, 1,000, full | 44.5 | 44.2, 44.2 | 120.0, 120.0 | 120.0 |
+| Polar area, 1,000, full | 57.8 | 57.8, 58.5 | 120.0, 120.0 | 120.0 |
+
+All other cells stay at 119 FPS or above on both sides. 22 of the 48 cells reached 119 FPS on the old code.
+38 of the 48 cells reach it on the new code. The 10 cells below 119 FPS all have 20,000 items. The two new
+passes differ by less than 3% in each cell.
+
+The times at 20,000 items, the mean of the two old passes to the mean of the two new passes:
+
+| Cell | Update, ms | Draw, ms | UI busy P90, ms | Raster P90, ms |
+| --- | ---: | ---: | ---: | ---: |
+| Line, 20,000, plain | 2.17 to 0.91 | 0.90 to 0.93 | 5.0 to 3.5 | 1.1 to 1.1 |
+| Line, 20,000, full | 2.34 to 0.99 | 6.21 to 6.04 | 12.1 to 10.6 | 8.7 to 8.6 |
+| Bar, 20,000, plain | 8.66 to 3.74 | 8.88 to 7.75 | 25.5 to 13.7 | 15.2 to 18.0 |
+| Bar, 20,000, full | 13.93 to 7.46 | 10.11 to 10.34 | 34.1 to 25.1 | 15.4 to 18.4 |
+| Scatter, 20,000, plain | 6.22 to 2.72 | 2.59 to 2.41 | 12.0 to 7.5 | 1.1 to 1.2 |
+| Scatter, 20,000, full | 13.00 to 3.67 | 2.98 to 2.52 | 19.9 to 8.8 | 1.4 to 1.4 |
+| Bubble, 20,000, plain | 19.83 to 3.20 | 5.81 to 2.45 | 33.8 to 8.1 | 14.5 to 1.3 |
+| Bubble, 20,000, full | 72.62 to 5.54 | 5.72 to 2.88 | 88.1 to 12.5 | 14.6 to 1.4 |
+| Pie, 20,000, plain | 57.12 to 1.38 | 14.59 to 1.10 | 77.3 to 4.4 | 11.9 to 1.0 |
+| Pie, 20,000, full | 442.42 to 4.94 | 14.21 to 5.42 | 471.5 to 12.3 | 12.8 to 12.0 |
+| Doughnut, 20,000, plain | 57.18 to 1.33 | 16.51 to 1.10 | 79.5 to 4.1 | 12.0 to 1.0 |
+| Doughnut, 20,000, full | 443.11 to 5.08 | 16.11 to 7.57 | 470.2 to 14.9 | 12.9 to 12.2 |
+| Polar area, 20,000, plain | 50.53 to 3.43 | 14.48 to 5.07 | 70.6 to 9.5 | 11.8 to 14.0 |
+| Polar area, 20,000, full | 332.86 to 7.47 | 13.59 to 5.62 | 358.4 to 17.5 | 12.8 to 14.2 |
+| Radar, 20,000, plain | 11.52 to 3.74 | 1.47 to 1.38 | 17.3 to 8.4 | 1.7 to 1.6 |
+| Radar, 20,000, full | 49.04 to 3.21 | 60.21 to 5.38 | 116.5 to 13.0 | 16.5 to 19.7 |
+
+A frame at 120 Hz needs both the UI busy time and the raster time below 8.33 ms. Three causes explain most
+of the gain:
+
+- A hidden legend built its items on each update of a pie, doughnut or polar area chart, also with no reader
+  (Chart.js ADRs 0092 and 0099). The build was 82.7% of the samples of pie at 20,000 items, full preset.
+- The option resolver ran per item, for options that a loop can prove static (Chart.js ADRs 0093, 0094, 0095,
+  0096 and 0102). A context refresh was 21.6% of the samples of scatter (Chart.js ADR 0101).
+- Slices and circles with varying radii drew through a path for each item. Native arcs, one arc for a run of
+  slices of one color and a circle atlas replace these paths (Chart.js ADR 0097). The angle lines and the point
+  labels of a radar take static plans (Chart.js ADR 0095).
+
+The data-only path of `ChartView` is opt-in (Chart.js ADRs 0098 and 0100), and the lab turns it on. The last
+column of the first table is the same code with a full update on each tick. It shows that most of the gain
+does not need the opt-in. The data-only path adds the most in bar, 20,000, full: 41.8 to about 50.8 FPS.
+
+The scene layers of Chart.js ADR 0097 move work from the UI thread to the raster thread. One pass with
+layers and one pass without them:
+
+| Cell | FPS with layers | FPS without | UI busy P90, ms, with and without | Raster P90, ms, with and without |
+| --- | ---: | ---: | ---: | ---: |
+| Bar, 20,000, plain | 56.5 | 62.8 | 13.5, 16.7 | 18.1, 15.0 |
+| Bar, 20,000, full | 50.2 | 43.2 | 25.2, 28.7 | 18.5, 15.5 |
+| Polar area, 20,000, plain | 73.0 | 83.0 | 9.4, 12.3 | 13.9, 11.5 |
+| Polar area, 20,000, full | 67.2 | 57.5 | 17.2, 19.8 | 14.3, 11.7 |
+| Bar, 5,000, plain | 120.0 | 120.0 | 3.8, 5.3 | 6.6, 5.3 |
+| Bar, 1,000, plain | 120.0 | 120.0 | 1.0, 2.2 | 3.7, 3.1 |
+
+Bar and polar area at 20,000 items are the only cells with a difference above 3% in FPS. The layers lose in
+the plain preset, where the raster thread is the limit, and win in the full preset, where the UI thread is the
+limit. The two presets have about the same chunk count, so that a rule by chunk count cannot separate them.
+Thus the layers stay. Below 20,000 items, both forms reach 119 FPS or above in each cell.
+
+The causes of what remains, from the profiles at 20,000 items:
+
+- Bar: one `drawRect` for each bar, 29% to 37% of the UI samples, and a raster P90 of 18 ms. Impeller issues
+  one draw for each bar. 120 FPS needs a form with other pixels, for example `drawVertices`.
+- Pie and doughnut, full preset, and polar area: one `drawArc` for each slice that a run cannot merge, because
+  of another color or another radius. It is 31% to 38% of the UI samples of the three profiles. The raster P90
+  is 12 ms to 14 ms.
+- Radar, full preset: one Impeller draw for each of the 20,000 angle lines. The raster P90 of about 20 ms is
+  the limit, and the one native call of Chart.js ADR 0103 gains only UI time.
+- Line, full preset: the filler and the cubic path work, with both threads near 8.33 ms.
+- Bubble and scatter, full preset: the per-point update on the UI thread, with almost no raster load.
+
+All FPS values are engine frame timings on one Mac, with no presentation feedback.

@@ -1,0 +1,45 @@
+samples=4093 period=1000us
+--- exclusive
+  7.1%  _NativePath.cubicTo
+  3.5%  UiPathBuilder._pathCubicTo
+  3.0%  .jsTruthy
+  2.8%  .splineCurve
+  2.7%  _NativeCanvas.__drawAtlas$Method$FfiNative
+  2.3%  UiPathBuilder.bezierCurveTo
+  2.2%  _Double.isFinite
+  2.2%  _NativeCanvas.__drawPath$Method$FfiNative
+  2.2%  _Array.[]
+  2.2%  CircleBatch.flush
+  2.2%  .boundSegment
+  2.1%  _NativePath._cubicTo$Method$FfiNative
+  2.0%  _GrowableList._allocateData
+  1.9%  ._pathSegment
+  1.8%  LineController.updateElements
+  1.8%  .isPointInArea
+  1.6%  .updateBezierControlPoints
+  1.4%  native tan
+  1.4%  native sin
+  1.4%  CircleBatch.add
+  1.4%  _GrowableList._grow
+  1.3%  .drawPointLegend
+  1.3%  _Double.abs
+  1.2%  .bezierCurveTo
+  1.2%  frame.<anonymous closure>
+  1.1%  ._capBezierPoints
+  1.1%  UiPathBuilder.arc
+  1.0%  ._solidSegments
+  1.0%  PointElement.draw
+  1.0%  _List._List.generate
+  1.0%  _Double._Double.fromInteger
+  0.9%  Element.x
+  0.9%  .distanceBetweenPoints
+  0.9%  Path2D.bezierCurveTo
+  0.9%  .tryPartitionedBaselineFill
+  0.8%  UiCanvasContext._batchCircle
+  0.7%  _propertyFn.<anonymous closure>
+  0.7%  .parsedValueOf
+  0.7%  boundSegment.endIsBefore
+  0.7%  _GrowableList.add
+  0.6%  ._truthy
+  0.6%  PointOptions.rotation
+  0.6%  BenchmarkChart._chartJs

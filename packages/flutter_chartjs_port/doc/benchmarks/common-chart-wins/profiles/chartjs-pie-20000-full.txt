@@ -1,0 +1,45 @@
+samples=3857 period=1000us
+--- exclusive
+ 30.8%  _NativeCanvas.__drawArc$Method$FfiNative
+  4.1%  .jsGetIndex
+  3.6%  DoughnutController.updateElements
+  3.2%  ScriptableContext._writeIndexes
+  2.9%  _GrowableList.[]
+  2.5%  UiCanvasContext.tryDrawArcSector
+  1.9%  _NativePictureRecorder.__endRecording$Method$FfiNative
+  1.5%  DatasetController.draw
+  1.2%  prepareIndexedArcColors.<anonymous closure>
+  1.2%  ArcOptions.ArcOptions._copy
+  1.1%  DoughnutController._circumference
+  1.1%  _GrowableList._allocateData
+  1.1%  ArcOptions.isPresent
+  1.1%  native sin
+  1.1%  .readOption
+  1.1%  ArcElement._tryDrawSector
+  1.1%  UiCanvasContext._rectBarColor
+  1.0%  Paint.color=
+  0.9%  native tan
+  0.9%  OptionScope.readKey
+  0.9%  .nativeArcElement
+  0.8%  ArcOptions.clone
+  0.8%  _Double._Double.fromInteger
+  0.8%  .jsToNumber
+  0.7%  _GrowableList.length
+  0.7%  ListBase.every
+  0.7%  frame.<anonymous closure>
+  0.7%  ArcOptions.isForeign
+  0.6%  ._itemAt
+  0.6%  UiCanvasContext._drew
+  0.6%  _GrowableList._grow
+  0.6%  _List._List.generate
+  0.6%  _VaryingColors.storeInto
+  0.6%  .jsTruthy
+  0.5%  UiTransform.copyFrom
+  0.5%  ArcElement.startAngle=
+  0.5%  ArcElement.draw
+  0.5%  ScriptableContext.refresh
+  0.5%  native dart::Thread::EnterApiScope()
+  0.5%  DoughnutController.parse
+  0.5%  _NativeParagraph.__paint$Method$FfiNative
+  0.5%  ._orZero
+  0.5%  UiCanvasContext._flushSectorRun

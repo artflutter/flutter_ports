@@ -1,0 +1,45 @@
+samples=3506 period=1000us
+--- exclusive
+ 29.0%  _NativeCanvas.__drawRect$Method$FfiNative
+  6.1%  BarController._updateBulk
+  2.9%  _GrowableList.[]
+  2.6%  tryParseNumericCategories.<anonymous closure>
+  2.2%  ListIterator.moveNext
+  2.0%  _Double.isFinite
+  1.8%  ._startEnd
+  1.7%  UiCanvasContext.tryDrawRectBar
+  1.4%  BarOptions.clone
+  1.4%  BarElement.draw
+  1.3%  _Double._Double.fromInteger
+  1.3%  UiCanvasContext._mappedRect
+  1.2%  _OneByteString.==
+  1.2%  ._parseEdge
+  1.1%  _GrowableList._allocateData
+  1.1%  native dart::Zone::Reset()
+  1.1%  _NativePictureRecorder.__endRecording$Method$FfiNative
+  1.0%  UiPathBuilder.rect
+  1.0%  _NativeCanvas.drawRect
+  0.9%  NativePointContextReader._refresh
+  0.9%  UiPathBuilder._direct
+  0.9%  .jsTruthy
+  0.9%  frame.<anonymous closure>
+  0.9%  UiCanvasContext._rectBarColor
+  0.9%  BarController.draw
+  0.9%  native sin
+  0.9%  native tan
+  0.8%  ParsedItem.valueOf
+  0.8%  BarElement._drawRectangular
+  0.7%  _GrowableList._GrowableList.generate
+  0.7%  .rawOption
+  0.7%  Paint.color=
+  0.7%  ScriptableContext.refresh
+  0.7%  BarElement.writeBulkBar
+  0.6%  BarOptions._raw1
+  0.6%  prepareIndexedBarColors.<anonymous closure>
+  0.6%  BarElement.borderSkipped=
+  0.5%  UiPathBuilder._pathLineTo
+  0.5%  BarController.updateElements
+  0.5%  native __psynch_mutexwait
+  0.5%  BarOptions.BarOptions._copy
+  0.5%  _VaryingColors.storeInto
+  0.5%  _List._List.generate

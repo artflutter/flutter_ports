@@ -1,0 +1,45 @@
+samples=2883 period=1000us
+--- exclusive
+ 37.6%  _NativeCanvas.__drawArc$Method$FfiNative
+  3.5%  BenchmarkController._tick
+  3.2%  UiCanvasContext.tryDrawArcSector
+  2.5%  _GrowableList._GrowableList.generate
+  1.9%  _NativePictureRecorder.__endRecording$Method$FfiNative
+  1.7%  DatasetController.draw
+  1.6%  ArcOptions.clone
+  1.5%  ArcOptions.isForeign
+  1.5%  ._reportTaskEvent
+  1.5%  Paint.color=
+  1.2%  ArcElement._tryDrawSector
+  1.2%  tryParseNumericSingleScale.<anonymous closure>
+  1.1%  ListIterator.moveNext
+  1.1%  ArcOptions.isPresent
+  1.0%  updateElements.<anonymous closure>
+  1.0%  PolarAreaController.updateElements
+  0.9%  _Double._Double.fromInteger
+  0.9%  UiCanvasContext._flushSectorRun
+  0.8%  ._numberField
+  0.8%  TypedRecord._append
+  0.8%  ._itemAt
+  0.8%  DatasetController.parse
+  0.8%  .jsSetIndex
+  0.7%  Chart.getDataVisibility
+  0.7%  native dart::Zone::Reset()
+  0.7%  UiTransform.copyFrom
+  0.7%  ArcElement.draw
+  0.7%  _Double.abs
+  0.6%  UiCanvasContext._batchColor
+  0.6%  native sin
+  0.6%  native tan
+  0.6%  ArcOptions.ArcOptions._copy
+  0.6%  _GrowableList.[]=
+  0.6%  ._orZero
+  0.5%  _GrowableList._allocateData
+  0.5%  native dart::Thread::ExitApiScope()
+  0.5%  .jsTruthy
+  0.5%  UiPathBuilder.setPendingSector
+  0.5%  ._circular
+  0.5%  UiCanvasContext._drew
+  0.5%  ._at
+  0.5%  native dart::Thread::EnterApiScope()
+  0.5%  TypedRecord.touchSlot

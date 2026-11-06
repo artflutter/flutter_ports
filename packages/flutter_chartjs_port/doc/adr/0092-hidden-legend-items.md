@@ -1,9 +1,9 @@
 # Chart.js ADR 0092: The items of a hidden legend wait for a read
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0065, 0074 and 0087; `differences.md` row `adapt-hidden-legend-items`.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Context
 

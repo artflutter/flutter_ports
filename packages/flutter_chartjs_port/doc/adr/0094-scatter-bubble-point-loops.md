@@ -1,10 +1,10 @@
 # Chart.js ADR 0094: One size in scatter overflow and native bubble loops
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0054, 0074, 0078, 0079, 0082, 0087; `differences.md` rows
   `adapt-native-point-size`, `adapt-bubble-point-options` and `adapt-bubble-typed-radius`.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Context
 

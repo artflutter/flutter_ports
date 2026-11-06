@@ -287,9 +287,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `ContextObject?` with a `covariant` setter, narrowed to `ScriptableContext?` in the four
     element classes. `Element.assign` of a `*Properties` object of a controller takes the typed
     setters for an element of the built-in class (`typedWrites`, the exact-class rule); a user
-    subclass, an extra key and a foreign value take the writes by name. The element classes read
-    resolved options through `plainOption`, `numberOption` and `rawOption`, and a plain Map by
-    name. `Element` and each element class have a static `jsClass`, the class as a
+    subclass, an extra key and a foreign value take the writes by name. The element classes read resolved options through `plainOption`, `numberOption` and `rawOption`,
+    `ArcElement` reads a key that is not a `double` through the generated `<key>Value` getter of
+    `ArcOptions` (Chart.js ADR 0102), and a plain Map reads by name. `Element` and each element class have a static `jsClass`, the class as a
     value (Chart.js ADR 0020). `PointElement` and `BarElement` implement `types.VisualElementRange`,
     the interface of `getRange`. `getRange` gives an `Object`: the `PointElement` result is the JS
     `+` of `radius` and `hitRadius` (`jsAdd`), a `String` when an option is a string. The hit tests
@@ -298,8 +298,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `jsAdd`. The style of a segment of `helpers.segment.dart` is a `SegmentStyle`, a typed record
     with the face. `LineElement.updateControlPoints` takes a `ChartArea?`: Dart `null`
     is the JS `undefined` of a chart without a layout. The `points` setter of `LineElement` takes
-    `List<types.Element>` and copies a list that is not a `List<types.PointElement>` (Chart.js ADR
-    0028). `lib/src/types/index.dart` also has `RadialLinearScale` and `LegendElement` (Chart.js ADR
+    `List<types.Element>` and copies a list that is not a `List<types.PointElement>` (Chart.js ADR 0028), unless its last copy
+    holds the same elements (Chart.js ADR 0095). `lib/src/types/index.dart` also has `RadialLinearScale` and `LegendElement` (Chart.js ADR
     0028), and `TooltipModel` (Chart.js ADR 0039 §14). `Chart.tooltip` is a `TooltipModel?` field:
     the tooltip plugin writes it, and `core.controller.dart` does not import the plugin.
     `RadialLinearScale` of `scale.radialLinear.dart` implements `types.RadialLinearScale`. Its
@@ -328,7 +328,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Chart.js ADR 0079 prepares indexed point colors within scatter update and
     overflow loops. Plans end before custom reads/points or active callbacks;
     coordinate guards run at their original iteration, without a whole-data
-    scan. Context setters, fresh options and ordinary fallback order remain.
+    scan. Fresh options and ordinary fallback order remain; contexts take
+    `ScriptableContext.refresh` (Chart.js ADR 0101).
     Chart.js ADR 0080 applies guarded indexed preparation to line updates.
     Scriptable color options copy private static fields while preserving live
     calls, fresh results and resolver invalidation. Exact one-argument callbacks
@@ -343,7 +344,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Chart.js ADR 0082 prepares native Map-based point-color resolution within
     one mode-none line loop. Cache generations, source/default identities, routes,
     keys and existing point-none cache entries guard reuse. A native context
-    reader uses live array items and ordinary setter order; generic fallbacks
+    reader uses live array items and `ScriptableContext.refresh` (Chart.js ADR 0101); generic fallbacks
     keep their original context factory. See performance.md §50.
     Chart.js ADR 0083 visits only ordered varying colors on a valid scriptable
     plan and separates one-argument scalar callbacks from view setup. Non-scalar
@@ -441,9 +442,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `axisStackOf`, `visualValuesOf`, `setStackValue`, all `@internal`); the dataset options are
       an `OptionView`; the contexts are typed `ScriptableContext` objects; `_cachedDataOpts` is
       two typed Maps (Chart.js ADR 0054 §8, §11). A parsed item reads with `parsedValueOf`
-      (`@internal`, the `AxisKey` of the scale), and a data item of `parsing: false` and a
-      `_stacks` object that user code gave read with `jsGetKey`. The index reads use `jsGetIndex`
-      and `jsSetIndex`. `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
+      (`@internal`, the `AxisKey` of the scale), a `TypedDataItem` of `parsing: false` gives its typed `x` or `y`, another data item of
+      `parsing: false` and a `_stacks` object that user code gave read with `jsGetKey`. The index reads
+      use `jsGetIndex` and `jsSetIndex`, and `getParsed` and the item reads of the parse functions read
+      their List directly (Chart.js ADR 0096). `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
       through an `Expando` (Chart.js ADR 0036).
       `_insertElements` keeps the old parsed item at each new index below the old length, as the
       upstream `move` does. `_dataCheck` keeps a string `data` as a `JsStringList`, with no array
@@ -495,8 +497,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `test/port/controllers/arc_options_test.dart`. Generated clones share foreign slots with copy
       on write.
     - Chart.js ADR 0094: the exact scatter controller takes the point size of its overflow from the
-      frozen entry or from one plan result. Prepared loops refresh contexts through the native
-      reader, also on typed roots. The bubble parse skips an eager resolve with no effect for an
+      frozen entry or from one plan result. Prepared loops refresh contexts through the native reader, also on typed roots, except the
+      scatter loop of Chart.js ADR 0101. The bubble parse skips an eager resolve with no effect for an
       item with its own radius, which needs a primitive entry radius and a plain old `_custom`. The
       bubble overflow computes from scalars (`nativePointSize`). An update in mode `none` prepares
       constant and indexed options for each loop. Plans end before user code, at the original
@@ -506,8 +508,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - Chart.js ADR 0095: guarded static plans for the fit, the point labels and the angle lines of
       `RadialLinearScale`, local to one loop, after one ordinary pass of the first index. Guards: the
       exact scale, a context with a text-metrics generation, cached plain values
-      (`cachedStaticValue`, `TickFontCache`). Other cases stay ordinary. The limits and each spoke
-      stroke stay per index. `RadarController` takes typed writes in direct modes, and in mode `none`
+      (`cachedStaticValue`, `TickFontCache`). Other cases stay ordinary. The limits stay per index, and each spoke stroke too unless the native context takes the fan
+      (Chart.js ADR 0103). `RadarController` takes typed writes in direct modes, and in mode `none`
       a loop over the cached point-none entry with `RadialPositions`
       (`core/radial_positions.dart`, `jsCos` and `jsSin`). `LineElement.points` keeps its copy for
       the same elements. See `scale.radialLinear_plans_test.dart`.
@@ -575,17 +577,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (the port of `src/controllers/index.js`). Each controller file has the
     controller class and its class value `<Name>Controller.jsClass` (statics `id`, `defaults`,
     `overrides`; the doughnut also `descriptors`). The parsed items are typed `ParsedItem`
-    objects (Chart.js ADR 0054 §8) read with `parsedValueOf`; a data item of `parsing: false`
-    reads with `jsGetKey`; the properties are the props classes of `lib/src/options/props.dart`.
+    objects (Chart.js ADR 0054 §8) read with `parsedValueOf`; a data item of `parsing: false` reads with `jsGetKey`, or gives its typed `x` or `y` for a
+    `TypedDataItem`; the properties are the props classes of `lib/src/options/props.dart`.
     A controller reads the stacks with `stacksOf` and `axisStackOf`, and a raw option value stays
     `Object?` until its upstream operator (Chart.js ADR 0036). It reads the members of other modules through
     `lib/src/types/` (Chart.js ADR 0028). It casts only to a `types` interface or to a class of
     its own library, at the upstream read. Three other kinds of casts stay: a `List` cast of a
     value that upstream reads as an array, the `String` cast of a parsing key and the `AnyObject`
     cast of an object that the controller made. `getLabelAndValue` gives
-    `({Object? label, String value})`. Line, scatter and radar write an element of a built-in
-    class (`typedWrites`, the exact-class rule of Chart.js ADR 0054 §9) through the port-only
-    interfaces `types.PointElementWrites` and `types.LineElementWrites`, which the concrete
+    `({Object? label, String value})`. Line, scatter and radar, and in a direct mode bubble, doughnut, pie and polar area (Chart.js
+    ADR 0102), write an element of a built-in class (`typedWrites`, the exact-class rule of Chart.js
+    ADR 0054 §9) through the port-only interfaces `types.PointElementWrites`,
+    `types.LineElementWrites` and `types.ArcElementWrites`, which the concrete
     classes implement: no controller imports an element module (Chart.js ADR 0028 §1). The files
     are not pure layers: each imports `core.datasetController`.
     - `controller.bar.dart`: `getStackCount` and `getStackIndex` are the `_getStackCount` and
@@ -819,8 +822,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       (`container`, `image`, `semanticLabel`) wrap the host (Chart.js ADR 0051 §1 and §8).
       Chart.js ADR 0098: `ChartView.dataOnlyUpdates` (typed only, default false) calls
       `chart.updateData` when `ChartConfigLowering.apply` reports `lastApplyDataOnly`: equal type,
-      options and plugins, the same labels List, kept dataset scopes, and each patch wrote only
-      `data`. It needs mode `'none'` and `animation: false`, else `chart.update(mode)`. A theme or
+      options and plugins, the same labels List, kept dataset scopes, and each patch changed only `data` or stored a style List with equal items. It needs mode `'none'` and `animation: false`, else `chart.update(mode)`. A theme or
       reduced-motion update stays full. All checks of Chart.js ADR 0074 stay in `updateData`. A
       category scale also needs `bounds: 'ticks'` and no added label. After `afterUpdate`, the
       replay and the draw act as in `update`: their callbacks can call `update`. See

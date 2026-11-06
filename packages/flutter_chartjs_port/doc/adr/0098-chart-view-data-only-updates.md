@@ -1,6 +1,6 @@
 # Chart.js ADR 0098: A data-only path through ChartView
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0049, 0052, 0074, 0090, 0091; `differences.md` row
   `adapt-view-data-only-updates`.
@@ -29,7 +29,8 @@ it was, and with the default value no code path changes.
 | Options | The type and the option fields are `==` (`optionFieldsEqual`): the `options` scope stays. |
 | Labels | `labels` is the same List. |
 | Dataset identity and order | Each dataset keeps its live scope at its index: the `data` scope stays. |
-| Stack, axis ids, order, `hidden` | Each `patch` wrote only `data`: no key came or went, and each other cell has an `==` value. |
+| Stack, axis ids, order, `hidden` | Each `patch` changed only `data`: no key came or went, and each other cell has an `==` value or is a style
+List with equal items. |
 | Plugins | The plugin Lists are `==` by identity of their items. |
 | Theme | The theme switch gives no mode: a new theme updates with the mode of the switch, as before. |
 
@@ -110,10 +111,14 @@ parameter and in the row `adapt-view-data-only-updates`.
 - An edit of `chart.options` or of a dataset, an edit in place of the labels and a write into
   `Chart.defaults` wait for the next full update.
 - A plugin that cancels `beforeLayout` makes upstream add to the legend hit boxes in each update, because
-  no `fit` ran. A chart with a scale takes the full update in that case, because no layout read the options
-  of its scale, and it adds as upstream does. A chart with no scale (pie, doughnut) keeps the layout, does
-  not run that hook and does not add. The group `a plugin that cancels beforeLayout` of
-  `test/port/core/data_update_test.dart` pins both.
+  no `fit` ran. After a cancelled layout, `updateData` takes the full update until a layout runs, so that the
+  chart adds as upstream does and no tick keeps a layout of an old size or of old labels. The group
+  `a plugin that cancels beforeLayout` of `test/port/core/data_update_test.dart` pins this.
+- A plugin that opts in and reads a data context, `legendItems` or `legendHitBoxes` in an update hook before
+  the dataset update sees the values of the last tick, because the legend build of the layout did not run.
+  From `afterUpdate` on, the values agree. Writing these values earlier costs the time that the path saves.
+- After an update that throws in the dataset update, the order of the layers can differ from a full update,
+  because no layout restarted it. The input throws on both paths.
 
 ## Lab cells
 
@@ -137,4 +142,4 @@ the category axis. `test/port/typed/lower_data_only_test.dart` pins the report o
 `test/port/core/data_update_test.dart` the preflight of a list of points, the callbacks of the replay and
 the guards of the category scale.
 
-Measurements: performance.md.
+Measurements: performance.md §65.

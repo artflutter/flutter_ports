@@ -1,0 +1,45 @@
+samples=3177 period=1000us
+--- exclusive
+ 36.9%  _NativeCanvas.__drawRect$Method$FfiNative
+  3.3%  BarController._updateBulk
+  2.6%  UiCanvasContext.tryDrawRectBar
+  2.1%  _GrowableList.[]
+  2.0%  _Double.isFinite
+  2.0%  _NativePictureRecorder.__endRecording$Method$FfiNative
+  1.9%  ._reportTaskEvent
+  1.7%  ParsedItem.valueOf
+  1.6%  native dart::Zone::Reset()
+  1.5%  BarElement.draw
+  1.4%  .jsTruthy
+  1.3%  BarElement._drawRectangular
+  1.3%  tryParseNumericCategories.<anonymous closure>
+  1.2%  Paint.color=
+  1.1%  _GrowableList._GrowableList.generate
+  1.0%  DatasetGenerator.frame
+  0.9%  .rawOption
+  0.9%  UiPathBuilder._pathLineTo
+  0.8%  BarController.draw
+  0.8%  .jsLessThan
+  0.8%  UiPathBuilder._direct
+  0.7%  ParsedItem._setAxisField
+  0.7%  _NativeCanvas.drawRect
+  0.6%  DatasetController.parse
+  0.6%  TypedRecord.initializeTwoSlots
+  0.6%  BarOptions._raw1
+  0.6%  _GrowableList._allocateData
+  0.6%  _OneByteString.==
+  0.5%  BarOptions.isForeign
+  0.5%  BarElement.borderSkipped=
+  0.5%  TypedRecord._append
+  0.5%  _Double.==
+  0.5%  _GrowableList.[]=
+  0.5%  BarElement.writeBulkBar
+  0.5%  UiPathBuilder._pathClose
+  0.5%  .parsedValueOf
+  0.4%  BarController.updateElements
+  0.4%  ._startEnd
+  0.4%  BarOptions.isPresent
+  0.4%  _NativeCanvas.__constructor$Method$FfiNative
+  0.4%  _GrowableList.length
+  0.4%  native dart::Thread::EnterApiScope()
+  0.4%  UiCanvasContext._mappedRect

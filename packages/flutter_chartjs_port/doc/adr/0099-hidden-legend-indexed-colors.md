@@ -1,9 +1,9 @@
 # Chart.js ADR 0099: A hidden legend waits with native indexed colors
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0078, 0092, 0093; `differences.md` row `adapt-hidden-legend-items`.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Context
 

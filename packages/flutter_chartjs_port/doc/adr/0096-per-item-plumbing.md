@@ -1,10 +1,10 @@
 # Chart.js ADR 0096: Direct reads and one growth in the per-item plumbing
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0054, 0071, 0087; `differences.md` rows `adapt-clear-stacks-guard` and
   `adapt-parse-presize`.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Context
 

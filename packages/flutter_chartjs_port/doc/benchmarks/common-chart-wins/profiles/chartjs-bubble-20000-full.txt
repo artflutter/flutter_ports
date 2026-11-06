@@ -1,0 +1,45 @@
+samples=3436 period=1000us
+--- exclusive
+  4.9%  ScriptableContext._writeIndexes
+  4.2%  _NativeCanvas.__drawAtlas$Method$FfiNative
+  3.8%  NativePointContextReader._refresh
+  3.4%  .jsTruthy
+  3.2%  BubbleController.updateElements
+  2.9%  _GrowableList.[]
+  2.6%  BubbleController.getMaxOverflow
+  2.3%  ScriptableContext.refresh
+  2.2%  PointOptions.clone
+  1.9%  _Double._Double.fromInteger
+  1.9%  .isPointInArea
+  1.8%  native tan
+  1.8%  ._truthy
+  1.5%  CircleBatch._drawLadder
+  1.5%  native sin
+  1.4%  _GrowableList.length
+  1.3%  CircleBatch.add
+  1.3%  Color._floatToInt8
+  1.3%  ._plainCustomOf
+  1.3%  PointOptions.storeKey
+  1.3%  ._customOf
+  1.3%  .drawPointLegend
+  1.3%  _GrowableList._allocateData
+  1.2%  ._itemAt
+  1.1%  UiCanvasContext._batchCircle
+  1.0%  prepareIndexedPointColors.<anonymous closure>
+  1.0%  frame.<anonymous closure>
+  1.0%  PointOptions.valueOf
+  0.9%  PointOptions._store5
+  0.9%  BubbleController._nativeProjection
+  0.9%  PointOptions._raw5
+  0.9%  BenchmarkChart._chartJs
+  0.9%  _Type.==
+  0.9%  _Double.+
+  0.9%  _List._List.generate
+  0.9%  .jsAdd
+  0.8%  UiPathBuilder.closePath
+  0.8%  UiPathBuilder.arc
+  0.8%  _PathPoint.copyFrom
+  0.8%  Scale.getPixelForDecimal
+  0.8%  _VaryingColors.storeInto
+  0.7%  _Double.isFinite
+  0.7%  _NativeParagraph.__paint$Method$FfiNative

@@ -1,12 +1,12 @@
 # Chart.js ADR 0097: Native drawing routes of live charts
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0034, 0055, 0066, 0070, 0084, 0089; [differences.md](../differences.md) rows
   `adapt-native-arc-sector`, `adapt-sector-run-seams`, `adapt-circle-fill-ladder` and
   `adapt-point-style-circle`.
 
-Measurements: performance.md.
+Measurements: performance.md §65.
 
 ## Decision
 

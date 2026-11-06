@@ -2515,8 +2515,8 @@ line of these files. No trigger occurred.
 ### Native drawing routes (2026-11-06)
 
 Chart.js ADR 0097 edits `lib/src/canvas/canvas_ui.dart`, `canvas_ui_batch.dart` and
-`canvas_ui_path.dart`, adds `canvas_arc_sector.dart`, and edits the paint of
-`lib/src/platform/chart_host.dart`. The lines of these files move. The host adds the chunk pictures
+`canvas_ui_path.dart`, adds `canvas_arc_sector.dart`, and edits the paint of `lib/src/platform/chart_host.dart`, `lib/src/elements/element.arc.dart` and
+`lib/src/helpers/helpers.canvas.dart`. The lines of these files move. The host adds the chunk pictures
 to the scene through a small layer unless the content needs its isolating layer; `paint` keeps its
 contract, and each test that calls it directly reads the old form. `fill()` and `stroke()` keep
 their forms; the single-line stroke (`drawLine`), the fused sector and the sector run are additions
@@ -2566,3 +2566,10 @@ ADR 0066. R4 of §7.2 stays rejected: its reason is the fills and the strokes of
 fan has one paint and no fill. Four private helpers of `UiPathBuilder.lineTo` get `vm:prefer-inline`. Tests:
 `test/port/canvas/canvas_line_fan_test.dart` and `test/port/scales/scale.radialLinear_line_fan_test.dart`; the CI
 job `test-impeller` also runs them on Impeller on Vulkan. No deferred cut changes. No trigger occurred.
+
+### Option paths, point loops, per-item reads and direct writes (2026-11-06)
+
+Chart.js ADRs 0093, 0094, 0096 and 0102 edit `lib/src/core/core.datasetController.dart`,
+`lib/src/core/core.config.dart`, `lib/src/helpers/helpers.config.dart`, `lib/src/elements/element.arc.dart` and
+`lib/src/elements/element.point.dart`. The lines of these files move. No canvas operation or drawing cut
+changes. No trigger occurred.
