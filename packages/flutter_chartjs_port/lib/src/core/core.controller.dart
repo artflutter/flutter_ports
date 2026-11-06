@@ -1565,7 +1565,7 @@ class Chart
         )
         ? minPadding
         : 0;
-    _updateLayout(minPadding);
+    final laidOut = _updateLayout(minPadding);
 
     // Only reset the controllers if we have animations
     if (!animsDisabled) {
@@ -1600,7 +1600,8 @@ class Chart
 
     render();
     if (generation == _dataUpdateGeneration) {
-      _dataUpdateReady = datasetsUpdated;
+      // DIVERGES(chartjs): adapt-incremental-data-update, a kept layout needs one.
+      _dataUpdateReady = datasetsUpdated && laidOut;
       if (datasetsUpdated &&
           supportsDataUpdates &&
           config.supportsDataUpdates) {
@@ -1781,7 +1782,7 @@ class Chart
       final reuseLayout = padding == _minPadding;
       if (!reuseLayout) {
         _minPadding = padding;
-        _updateLayout(padding);
+        if (!_updateLayout(padding)) _invalidateDataUpdate();
       }
       // Invalidate data-derived caches while preserving scale layout and ticks.
       for (final scale in scales.values) {
@@ -1926,10 +1927,12 @@ class Chart
   /// `box.configure` is the test for [LayoutItemConfigure]. `box._layers()`
   /// is the function of [LayoutItem.layers], which `layouts.addBox` always
   /// writes. `item._idx` is [LayoutLayer.idx].
-  void _updateLayout(double minPadding) {
+  // DIVERGES(chartjs): adapt-incremental-data-update, the result tells whether
+  // a layout ran.
+  bool _updateLayout(double minPadding) {
     if (notifyPlugins('beforeLayout', CancelableHookArgs(cancelable: true)) ==
         false) {
-      return;
+      return false;
     }
 
     layouts.update(this, width, height, minPadding);
@@ -1958,6 +1961,7 @@ class Chart
     }
 
     notifyPlugins('afterLayout');
+    return true;
   }
 
   /// core.controller.js:648 `_updateDatasets(mode)`.
@@ -1977,9 +1981,14 @@ class Chart
       return false;
     }
 
-    if (configure) {
-      for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
-        getDatasetMeta(i.toDouble()).controller!.configure();
+    for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
+      final controller = getDatasetMeta(i.toDouble()).controller!;
+      if (configure) {
+        controller.configure();
+      } else {
+        // DIVERGES(chartjs): adapt-incremental-data-update, the context write
+        // of `configure`.
+        controller.getContext();
       }
     }
     var completed = true;

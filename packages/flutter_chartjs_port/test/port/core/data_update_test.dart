@@ -641,7 +641,7 @@ void main() {
     });
   });
   group('a plugin that cancels beforeLayout', () {
-    (Chart, void Function()) cancelled(String type) {
+    (Chart, void Function({bool on})) cancelled(String type) {
       var cancel = false;
       final plugin = <String, Object?>{
         'id': 'cancelLayout',
@@ -651,15 +651,14 @@ void main() {
       final cfg = config(type, plugins: [plugin]);
       ((cfg['options']! as Map)['plugins'] as Map)['legend'] =
           <String, Object?>{'display': true};
-      return (chart(cfg), () => cancel = true);
+      return (chart(cfg), ({bool on = true}) => cancel = on);
     }
 
     double top(Chart a) => a.legend!.legendHitBoxes.first.top;
 
-    test(
-      'a kept layout does not move the hit boxes, as a full update does',
-      () {
-        final (a, cancel) = cancelled('pie');
+    for (final type in const ['pie', 'doughnut', 'polarArea', 'bar']) {
+      test('a cancelled layout goes to the full update, a $type', () {
+        final (a, cancel) = cancelled(type);
         final start = top(a);
         expect(a.updateData(), isTrue);
         expect(top(a), start);
@@ -667,21 +666,67 @@ void main() {
         a.update('none');
         final moved = top(a);
         expect(moved, greaterThan(start), reason: 'as upstream: no fit ran');
+        expect(a.updateData(), isFalse, reason: 'no layout ran');
+        expect(top(a), greaterThan(moved), reason: 'as upstream: no fit ran');
+        cancel(on: false);
+        expect(
+          a.updateData(),
+          isFalse,
+          reason: 'the last layout was cancelled',
+        );
         expect(a.updateData(), isTrue);
-        expect(top(a), moved, reason: 'the kept layout runs no beforeLayout');
-      },
-    );
+      });
 
-    test('a scale that no layout read goes to the full update', () {
-      final (a, cancel) = cancelled('bar');
-      final start = top(a);
-      cancel();
-      a.update('none');
-      final moved = top(a);
-      expect(moved, greaterThan(start));
-      expect(a.updateData(), isFalse, reason: 'the scale read no option');
-      expect(top(a), greaterThan(moved), reason: 'as upstream: no fit ran');
+      test(
+        'a size that a cancelled layout missed reaches the chart, a $type',
+        () {
+          final (a, cancel) = cancelled(type);
+          final start = a.chartArea!.width;
+          cancel();
+          a.resize(start / 2, a.height);
+          expect(a.chartArea!.width, start, reason: 'no layout ran');
+          cancel(on: false);
+          expect(a.updateData(), isFalse);
+          expect(a.chartArea!.width, lessThan(start));
+        },
+      );
+    }
+
+    test('a layout that a tick cancels makes the next tick a full update', () {
+      var cancel = false;
+      final plugin = <String, Object?>{
+        'id': 'cancelTickLayout',
+        'supportsDataUpdates': true,
+        'beforeLayout': (Object? c, Object? args, Object? o) => !cancel,
+      };
+      List<Object?> points(double r) => [
+        for (var i = 0; i < 4; i++)
+          <String, Object?>{'x': i.toDouble(), 'y': 1.0, 'r': r},
+      ];
+      final cfg = config('bubble', plugins: [plugin]);
+      dataset(cfg)['data'] = points(2);
+      final a = chart(cfg);
+      expect(a.updateData(), isTrue);
+      cancel = true;
+      dataset(cfg)['data'] = points(40);
+      expect(a.updateData(), isTrue, reason: 'the overflow needs a layout');
+      cancel = false;
+      expect(a.updateData(), isFalse, reason: 'that layout was cancelled');
+      expect(a.updateData(), isTrue);
     });
+  });
+  test('a tick writes the dataset context as configure does', () {
+    for (final type in const ['pie', 'line', 'bar']) {
+      final cfg = config(type);
+      final a = chart(cfg);
+      final controller = a.getDatasetMeta(0).controller!;
+      final context = controller.getContext(null, true, 'resize');
+      expect(jsGet(context, 'active'), isTrue);
+      change(cfg, 0);
+      expect(a.updateData(), isTrue, reason: type);
+      expect(jsGet(context, 'active'), isFalse, reason: type);
+      expect(jsGet(context, 'mode'), same(undefined), reason: type);
+    }
   });
   test('the arguments of afterUpdate have only the key mode', () {
     final seen = <List<String>>[];
