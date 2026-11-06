@@ -412,6 +412,9 @@ bool? _pathSegment(
   final options = line.options;
   final (:count, :start, :loop, :ilen) = _pathVars(points, segment, params);
   final lineMethod = _getLineMethod(options);
+  // DIVERGES(chartjs): adapt-line-curve-walk, a typed option read has no effect
+  // and the curve method ignores it, so that the walk skips it.
+  final curve = options is LineOptions && identical(lineMethod, _bezierCurveTo);
   var move = params.move ?? true;
   final reverse = params.reverse;
   types.PointElement point;
@@ -426,6 +429,8 @@ bool? _pathSegment(
     } else if (move) {
       ctx.moveTo(point.x, point.y);
       move = false;
+    } else if (curve) {
+      bezierCurveTo(ctx, prev, point, reverse);
     } else {
       lineMethod(ctx, prev, point, reverse, _stepped(options));
     }

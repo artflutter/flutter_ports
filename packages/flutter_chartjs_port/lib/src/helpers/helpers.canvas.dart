@@ -523,9 +523,9 @@ void drawPointLegend(
 bool isPointInArea(Point? point, TRBL? area, [double? margin]) {
   // Upstream reassigns its parameter.
   // ignore: parameter_assignments
-  margin = jsTruthy(margin)
-      ? margin!
-      : 0.5; // margin - default is to match rounded decimals
+  margin = margin == null || margin == 0 || margin.isNaN
+      ? 0.5
+      : margin; // margin - default is to match rounded decimals
 
   return area == null ||
       // DIVERGES(chartjs): adapt-point-in-area-bool, false for a falsy point.

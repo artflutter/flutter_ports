@@ -1987,7 +1987,34 @@ class DatasetController
       jsCall((dataset as types.VisualElement).draw, [ctx, area, start, count]);
     }
 
-    for (i = start; i < start + count; ++i) {
+    i = start;
+    // DIVERGES(chartjs): adapt-point-circle-run, a run of markers, then the
+    // ordinary loop from the first element that the run did not handle.
+    final last = start + count;
+    if (area != null &&
+        ctx != null &&
+        start >= 0 &&
+        start < last &&
+        last <= elements.length &&
+        start == start.truncateToDouble() &&
+        last == last.truncateToDouble()) {
+      final head = elements[start.toInt()];
+      if (head is types.PointCircleRun) {
+        i = (head as types.PointCircleRun)
+            .drawCircleRun(
+              ctx,
+              area,
+              elements,
+              start.toInt(),
+              last.toInt(),
+              active,
+              activeOnTop: drawActiveElementsOnTop,
+            )
+            .toDouble();
+      }
+    }
+
+    for (; i < start + count; ++i) {
       final element = _at(elements, i)! as Element;
       if (jsTruthy(element.hidden)) {
         continue;

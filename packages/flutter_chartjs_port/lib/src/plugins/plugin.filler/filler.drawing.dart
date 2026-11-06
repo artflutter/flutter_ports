@@ -391,6 +391,11 @@ void _fill(
     );
 
     ctx.beginPath();
+    // DIVERGES(chartjs): adapt-partitioned-baseline-fill, no engine path for an
+    // original path that the partitioned fill leaves unread.
+    if (partitionBoundary && property == 'x') {
+      deferPathOfPartitionedFill(ctx, line);
+    }
 
     final lineLoop = line.pathSegment(ctx, src) == true;
 

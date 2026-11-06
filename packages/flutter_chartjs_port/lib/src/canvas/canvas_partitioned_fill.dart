@@ -4,9 +4,12 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 
 /// Optional native fill of an equivalent compound path. The current Canvas 2D
 /// path remains unchanged. A false result draws nothing and calls no writer.
-// A single optional operation dispatched on the canvas context.
-// ignore: one_member_abstracts
 abstract interface class PartitionedFillCanvas {
+  /// Keeps the current path out of the engine until a read of it: a successful
+  /// [tryFillPartitionedPath] leaves it unread (Chart.js ADR 0104). A read gets
+  /// the same path. Call it after `beginPath`.
+  void deferCurrentPath();
+
   /// Fill an equivalent nonzero path with the current solid paint and clip.
   bool tryFillPartitionedPath(void Function(CanvasPath path) writePath);
 }

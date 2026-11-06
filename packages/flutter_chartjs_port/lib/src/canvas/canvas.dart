@@ -724,12 +724,18 @@ final class Path2D implements CanvasPath {
   static const _chunkCapacity = 1024;
 
   // DIVERGES(chartjs): adapt-compact-path-storage, private scalar commands.
-  // Compact only unobserved move/line/close commands. Curves and inspection
-  // materialize the ordinary list once; subsequent writes stay on that list.
-  // The numeric buffers preserve doubles, including NaN and signed zero.
+  // Compact only unobserved move/line/curve/close commands. Other commands and
+  // inspection materialize the ordinary list once; subsequent writes stay on
+  // that list. The numeric buffers preserve doubles, including NaN and signed
+  // zero. A cubic curve takes three slots of a chunk: [_curve] and two
+  // [_curveMore], each with two coordinates. It never crosses a chunk: a chunk
+  // that lacks the room ends with [_pad] slots.
   static const _close = 0;
   static const _move = 1;
   static const _line = 2;
+  static const _curve = 3;
+  static const _curveMore = 4;
+  static const _pad = 5;
 
   /// The recorded commands, in order, as one stable mutable growable list.
   /// Inspecting it materializes any private compact commands exactly once.
@@ -766,11 +772,26 @@ final class Path2D implements CanvasPath {
     int length,
   ) {
     for (var i = 0; i < length; i++) {
-      result.add(switch (kinds[i]) {
-        _close => const ClosePathCommand(),
-        _move => MoveToCommand(coordinates[i * 2], coordinates[i * 2 + 1]),
-        _ => LineToCommand(coordinates[i * 2], coordinates[i * 2 + 1]),
-      });
+      switch (kinds[i]) {
+        case _close:
+          result.add(const ClosePathCommand());
+        case _move:
+          result.add(MoveToCommand(coordinates[i * 2], coordinates[i * 2 + 1]));
+        case _line:
+          result.add(LineToCommand(coordinates[i * 2], coordinates[i * 2 + 1]));
+        case _curve:
+          result.add(
+            BezierCurveToCommand(
+              coordinates[i * 2],
+              coordinates[i * 2 + 1],
+              coordinates[i * 2 + 2],
+              coordinates[i * 2 + 3],
+              coordinates[i * 2 + 4],
+              coordinates[i * 2 + 5],
+            ),
+          );
+          i += 2;
+      }
     }
   }
 
@@ -784,35 +805,42 @@ final class Path2D implements CanvasPath {
       });
       return;
     }
-    var kinds = _kinds;
-    var coordinates = _coordinates;
-    if (kinds == null || _chunkLength == kinds.length) {
-      final grow = kinds != null && kinds.length < _chunkCapacity;
-      final capacity = kinds == null
-          ? 16
-          : grow
-          ? kinds.length * 2
-          : _chunkCapacity;
-      final nextKinds = Uint8List(capacity);
-      final nextCoordinates = Float64List(capacity * 2);
-      if (grow) {
-        nextKinds.setRange(0, _chunkLength, kinds);
-        nextCoordinates.setRange(0, _chunkLength * 2, coordinates!);
-      } else if (kinds != null) {
-        (_kindChunks ??= []).add(kinds);
-        (_coordinateChunks ??= []).add(coordinates!);
-        _chunkLength = 0;
-      }
-      _kinds = kinds = nextKinds;
-      _coordinates = coordinates = nextCoordinates;
-    }
+    final kinds = _room(1);
     kinds[_chunkLength] = kind;
     if (kind != _close) {
-      coordinates![_chunkLength * 2] = x;
-      coordinates[_chunkLength * 2 + 1] = y;
+      _coordinates![_chunkLength * 2] = x;
+      _coordinates![_chunkLength * 2 + 1] = y;
     }
     _chunkLength++;
     _length++;
+  }
+
+  /// The kinds of the current chunk, with room for [slots] more slots. A chunk
+  /// below the capacity grows. A chunk at the capacity is retained, with [_pad]
+  /// in its free slots, and a new chunk starts.
+  Uint8List _room(int slots) {
+    final kinds = _kinds;
+    if (kinds != null && _chunkLength + slots <= kinds.length) return kinds;
+    final grow = kinds != null && kinds.length < _chunkCapacity;
+    final capacity = kinds == null
+        ? 16
+        : grow
+        ? kinds.length * 2
+        : _chunkCapacity;
+    final nextKinds = Uint8List(capacity);
+    final nextCoordinates = Float64List(capacity * 2);
+    if (grow) {
+      nextKinds.setRange(0, _chunkLength, kinds);
+      nextCoordinates.setRange(0, _chunkLength * 2, _coordinates!);
+    } else if (kinds != null) {
+      kinds.fillRange(_chunkLength, kinds.length, _pad);
+      (_kindChunks ??= []).add(kinds);
+      (_coordinateChunks ??= []).add(_coordinates!);
+      _chunkLength = 0;
+    }
+    _kinds = nextKinds;
+    _coordinates = nextCoordinates;
+    return nextKinds;
   }
 
   /// A slot for the converted form of this path, for the context that drew
@@ -840,7 +868,28 @@ final class Path2D implements CanvasPath {
     double cp2y,
     double x,
     double y,
-  ) => commands.add(BezierCurveToCommand(cp1x, cp1y, cp2x, cp2y, x, y));
+  ) {
+    final exposed = _commands;
+    if (exposed != null) {
+      exposed.add(BezierCurveToCommand(cp1x, cp1y, cp2x, cp2y, x, y));
+      return;
+    }
+    final kinds = _room(3);
+    final coordinates = _coordinates!;
+    final slot = _chunkLength;
+    kinds[slot] = _curve;
+    kinds[slot + 1] = _curveMore;
+    kinds[slot + 2] = _curveMore;
+    final at = slot * 2;
+    coordinates[at] = cp1x;
+    coordinates[at + 1] = cp1y;
+    coordinates[at + 2] = cp2x;
+    coordinates[at + 3] = cp2y;
+    coordinates[at + 4] = x;
+    coordinates[at + 5] = y;
+    _chunkLength = slot + 3;
+    _length++;
+  }
 
   @override
   void quadraticCurveTo(double cpx, double cpy, double x, double y) =>
@@ -961,8 +1010,18 @@ final class Path2D implements CanvasPath {
           target.closePath();
         case _move:
           target.moveTo(coordinates[i * 2], coordinates[i * 2 + 1]);
-        default:
+        case _line:
           target.lineTo(coordinates[i * 2], coordinates[i * 2 + 1]);
+        case _curve:
+          target.bezierCurveTo(
+            coordinates[i * 2],
+            coordinates[i * 2 + 1],
+            coordinates[i * 2 + 2],
+            coordinates[i * 2 + 3],
+            coordinates[i * 2 + 4],
+            coordinates[i * 2 + 5],
+          );
+          i += 2;
       }
     }
   }
