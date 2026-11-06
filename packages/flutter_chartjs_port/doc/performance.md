@@ -7738,3 +7738,17 @@ contain the raster thread, and 2 runs are a weak interval.
 On the line chart, the parts on a settled chart were: the bound search of the fill 0.5 ms before and 0.06 ms after,
 one native curve path with its walk about 1.15 ms, and the markers about 2.6 ms before and about 0.6 ms after. The
 draw still builds two native curve paths: the partitioned fill and the line.
+
+A pass of `apps/chart_benchmark_lab` on Impeller, in [`benchmarks/line-full/`](benchmarks/line-full/README.md), gave
+these means of 2 runs for each side, at 20,000 items with the full preset:
+
+| Cell | FPS, old | FPS, new | UI busy P90, ms, old | UI busy P90, ms, new | Raster P90, ms, old | Raster P90, ms, new |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Line | 100.9 | 116.4 | 11.4 | 7.4 | 8.8 | 8.8 |
+| Scatter | 116.9 | 120 | 9.8 | 8.3 | 1.4 | 1.5 |
+| Bubble | 92.5 | 108.4 | 13.4 | 12.1 | 1.4 | 1.4 |
+| Radar | 51.5 | 52.3 | 13.8 | 11.9 | 22.6 | 21.7 |
+
+The mean draw of the line fell from 6.3 ms to 3.6 ms. The UI thread of the line is now below 8.33 ms. Its raster P90
+of 8.8 ms and raster mean of 8.5 ms are the limit that remains. The raster thread of the radar stays its limit, as
+§65 states. The update of the bubble, 5.7 ms, stays the largest part of its UI thread.
