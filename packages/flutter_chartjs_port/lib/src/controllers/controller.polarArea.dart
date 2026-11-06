@@ -178,6 +178,14 @@ class PolarAreaController extends DatasetController {
   Object? get nativeLegendGenerator =>
       supportsDataUpdates ? _generateLabels : null;
 
+  /// `const {labels: {...}} = chart.legend.options` of [_generateLabels].
+  @override
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
+  List<OptionKey> get nativeLegendLabelKeys => const [
+    OptionKey.pointStyle,
+    OptionKey.color,
+  ];
+
   @override
   DataUpdateShape get dataUpdateShape => DataUpdateShape.radial;
 

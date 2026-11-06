@@ -1060,6 +1060,11 @@ class DatasetController
   // DIVERGES(chartjs): adapt-hidden-legend-items, the built-in generator.
   Object? get nativeLegendGenerator => null;
 
+  /// The label options that [nativeLegendGenerator] reads, in its order.
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
+  List<OptionKey> get nativeLegendLabelKeys => const [];
+
   /// Whether `getStyle(index)` of a data element reads a cached `default`
   /// entry of [_resolveElementOptions]: the read then runs no context and no
   /// option function (Chart.js ADR 0092).
@@ -1068,6 +1073,21 @@ class DatasetController
   bool get hasCachedDefaultDataOptions => _cachedElementOptions.containsKey(
     '${jsToString(_idOf(dataElementType))}-default',
   );
+
+  /// Whether the next `getStyle(index)` of a data element needs no context, and
+  /// thus calls no option function and writes the `default` entry: an entry of
+  /// another mode came from this resolver and this `needContext` result, and no
+  /// clear of the caches came after it. The entry of the mode `active` has
+  /// other prefixes (Chart.js ADR 0092).
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof with no call.
+  bool get defaultDataOptionsNeedNoContext =>
+      hasStaticDataUpdateOptions &&
+      _staticEntryGeneration == (chart.config as Config).resolutionGeneration;
+
+  // The cache generation of the last entry of the element options, Chart.js
+  // ADR 0092.
+  int _staticEntryGeneration = -1;
 
   /// core.datasetController.js:271 `supportsDecimation`.
   @override
@@ -2065,6 +2085,8 @@ class DatasetController
       // enables us to have the 'active' element options and 'default'
       // options to switch between when interacting.
       cache[cacheKey] = jsObjectFreeze(_cloneIfNotShared(values, sharing));
+      // DIVERGES(chartjs): adapt-hidden-legend-items, the cache of the entry.
+      if (!active) _staticEntryGeneration = config.resolutionGeneration;
     }
 
     return values;

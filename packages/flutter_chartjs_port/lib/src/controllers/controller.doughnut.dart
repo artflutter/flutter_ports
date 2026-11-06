@@ -161,6 +161,17 @@ class DoughnutController extends DatasetController {
   Object? get nativeLegendGenerator =>
       supportsDataUpdates ? _generateLabels : null;
 
+  /// `const {labels: {...}} = chart.legend.options` of [_generateLabels].
+  @override
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
+  List<OptionKey> get nativeLegendLabelKeys => const [
+    OptionKey.pointStyle,
+    OptionKey.textAlign,
+    OptionKey.color,
+    OptionKey.useBorderRadius,
+    OptionKey.borderRadius,
+  ];
+
   @override
   DataUpdateShape get dataUpdateShape => DataUpdateShape.scalar;
 
