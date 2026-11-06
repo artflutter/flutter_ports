@@ -60,6 +60,8 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
         visualValuesOf;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
+    show prepareNativePointContexts;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show BarOptions;
@@ -1106,6 +1108,10 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final actualBasePixel = valueScale.getPixelForValue(actualBase);
     if (!basePixel.isFinite || !actualBasePixel.isFinite) return false;
     double? gridWidth;
+    // DIVERGES(chartjs): adapt-context-bulk-refresh, the data chain read once.
+    final contexts = resolveColors == null || !identical(bars, cachedMeta.data)
+        ? null
+        : prepareNativePointContexts(this, 'none');
     for (var i = begin; i < stop; i++) {
       var base = basePixel;
       final head = chart.getDataVisibility(i)
@@ -1126,7 +1132,10 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       // Eligibility proved native config/data/element reads and no callbacks.
       final BarOptions elementOptions;
       if (resolveColors != null) {
-        getContext(i.toDouble(), false, 'none');
+        // The preflight of this loop read the capability of each bar.
+        if (contexts?.readQualified(bars[i], i) == null) {
+          getContext(i.toDouble(), false, 'none');
+        }
         elementOptions = resolveColors(i);
       } else {
         elementOptions = shared;

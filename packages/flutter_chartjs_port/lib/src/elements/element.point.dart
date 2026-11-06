@@ -383,7 +383,7 @@ class PointElement extends Element
   /// §9).
   // The `Type` objects of dart2wasm are not canonical: `identical` of two
   // `Type` objects of one class can be false there, so the test is `==`.
-  late final bool _builtIn = runtimeType == PointElement;
+  late final bool _builtIn = super.runtimeType == PointElement;
 
   /// [Element.typedWrites]: true for the class [PointElement] itself.
   @internal
@@ -394,7 +394,7 @@ class PointElement extends Element
   @internal
   @override
   // DIVERGES(chartjs): adapt-scatter-point-options, native element contract.
-  bool get supportsNativePointOptions => super.runtimeType == PointElement;
+  bool get supportsNativePointOptions => _builtIn;
 
   /// [Element.takesProperties]: a [PointProperties], for an element of the
   /// class [PointElement] itself.

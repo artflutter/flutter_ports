@@ -823,6 +823,9 @@ String _indexKey(double index) {
 /// ([jsGetKey]), which gives [undefined] for a number or a boolean and throws
 /// a [TypeError] for `null` and [undefined].
 @internal
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
 Object? parsedValueOf(Object? item, AxisKey key, String axis) {
   if (item is ParsedItem) return item.valueOf(key, axis);
   if (item is TypedDataItem) {
@@ -1880,7 +1883,10 @@ class DatasetController
   @internal
   void update_([String? mode]) {
     final meta = cachedMeta;
+    // DIVERGES(chartjs): adapt-scatter-overflow-refresh, names this caller.
+    overflowFollowsUpdate = true;
     update(mode == null || mode.isEmpty ? 'default' : mode);
+    overflowFollowsUpdate = false;
     meta.clip = _toClip(
       valueOrDefault(
         options.readKey(OptionKey.clip),
@@ -1888,6 +1894,13 @@ class DatasetController
       ),
     );
   }
+
+  /// Whether the [update] that starts now has the [getMaxOverflow] of
+  /// [update_] after it. A public call of [update] finds it false. An exact
+  /// native controller takes it at its first statement (Chart.js ADR 0101).
+  // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the caller of `update`.
+  @internal
+  bool overflowFollowsUpdate = false;
 
   /// core.datasetController.js:710 `update(mode)`.
   ///
@@ -1992,11 +2005,13 @@ class DatasetController
       if (elementContext is ScriptableContext) {
         return elementContext
           ..parsed = getParsed(index)
-          ..raw = _rawOf(dataset, index)
-          ..dataIndex = index
-          ..index = index
-          ..active = active ?? false
-          ..mode = mode ?? undefined;
+          // DIVERGES(chartjs): adapt-context-bulk-refresh, one presence test.
+          ..refreshAfterParsed(
+            _rawOf(dataset, index),
+            index,
+            active ?? false,
+            mode ?? undefined,
+          );
       }
       return elementContext
         ..jsWrite('parsed', getParsed(index))

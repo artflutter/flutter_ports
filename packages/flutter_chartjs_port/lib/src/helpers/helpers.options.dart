@@ -36,7 +36,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' show CanvasFontSpec;
-import 'package:meta/meta.dart' show protected;
+import 'package:meta/meta.dart' show internal, protected;
 
 /// helpers.options.ts:7 `LINE_HEIGHT`.
 final RegExp _lineHeight = RegExp(r'^(normal|(\d+(?:\.\d+)?)(px|em|%)?)$');
@@ -890,6 +890,88 @@ final class ScriptableContext extends ContextObject {
   set mode(Object? value) {
     if (_presentNames & 256 == 0) _claim('mode', 256);
     _mode = value;
+  }
+
+  /// The bits in [_presentNames] of the six keys of the refresh of a data
+  /// context: `active`, `dataIndex`, `parsed`, `raw`, `index` and `mode`.
+  static const int _refreshKeys = 1 | 8 | 16 | 32 | 128 | 256;
+
+  /// `hasOwnProperty('index')`, with no lookup of the name.
+  // DIVERGES(chartjs): adapt-context-key-presence, the bit of one known name.
+  @internal
+  bool get hasIndexKey => _presentNames & 128 != 0;
+
+  /// The six writes of `getContext` (core.datasetController.js:772-785) for a
+  /// caller whose reads of [parsed] and [raw] run no user code: a native list.
+  ///
+  /// With the six keys present, a write adds no key, so that one test serves
+  /// all of them. After a `delete` of user code, the setters reinsert the keys
+  /// in the order of `getContext`, as each write of a JS object does.
+  // DIVERGES(chartjs): adapt-context-bulk-refresh, one test for six writes.
+  @internal
+  void refresh(
+    Object? parsed,
+    Object? raw,
+    double index,
+    Object? active,
+    Object? mode,
+  ) {
+    if (_presentNames & _refreshKeys != _refreshKeys) {
+      this
+        ..parsed = parsed
+        ..raw = raw
+        ..dataIndex = index
+        ..index = index
+        ..active = active
+        ..mode = mode;
+      return;
+    }
+    _parsed = parsed;
+    _raw = raw;
+    _writeIndexes(index);
+    _active = active;
+    _mode = mode;
+  }
+
+  /// The five writes of `getContext` after its write of `parsed`
+  /// (core.datasetController.js:773), whose read of `raw` can run user code:
+  /// [refresh] with the same rule. A `delete` of `parsed` in that read stays.
+  // DIVERGES(chartjs): adapt-context-bulk-refresh, one test for five writes.
+  @internal
+  void refreshAfterParsed(
+    Object? raw,
+    double index,
+    Object? active,
+    Object? mode,
+  ) {
+    if (_presentNames & _refreshKeys != _refreshKeys) {
+      this
+        ..raw = raw
+        ..dataIndex = index
+        ..index = index
+        ..active = active
+        ..mode = mode;
+      return;
+    }
+    _raw = raw;
+    _writeIndexes(index);
+    _active = active;
+    _mode = mode;
+  }
+
+  /// `context.index = context.dataIndex = index` of two present keys. An index
+  /// that does not change keeps its box: a live chart writes the same number
+  /// into each context several times in each update. -0 is another number.
+  void _writeIndexes(double index) {
+    final current = _index;
+    final Object box =
+        current is double &&
+            current == index &&
+            current.isNegative == index.isNegative
+        ? current
+        : index;
+    _dataIndex = box;
+    _index = box;
   }
 
   void _setElement(Object? value) {

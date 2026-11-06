@@ -426,11 +426,16 @@ class BubbleController extends DatasetController {
       if (i == last) fields = _cachedSizeFields();
       final plan = fields;
       if (plan != null) {
+        // `getParsed(i)` of the exact controller on a native list.
+        final items = cachedMeta.parsed;
         final custom = nativePointElement(point)
-            ? _plainCustomOf(getParsed(i.toDouble()), typedItems)
+            ? _plainCustomOf(
+                i < items.length ? items[i] : undefined,
+                typedItems,
+              )
             : _notPlain;
         if (!identical(custom, _notPlain)) {
-          if (indexed && contexts?.read(i) == null) {
+          if (indexed && contexts?.readQualified(point, i) == null) {
             getContext(i.toDouble(), false, 'default');
           }
           max = jsMax(

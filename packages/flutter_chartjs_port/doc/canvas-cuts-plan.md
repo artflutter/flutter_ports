@@ -2535,3 +2535,10 @@ Chart.js ADR 0098 edits `lib/src/widgets/chart_view.dart`, `lib/src/typed/lower.
 `lib/src/plugins/plugin.legend.dart`, `lib/src/scales/scale.category.dart` and `lib/src/types/plugin.dart`.
 A `ChartView` with `dataOnlyUpdates` calls `chart.updateData` for a new typed config that changed only its
 data Lists. No canvas operation or drawing cut changes. No trigger occurred.
+### The refresh of a data context (2026-11-06)
+
+Chart.js ADR 0101 edits `lib/src/helpers/helpers.options.dart`, `lib/src/helpers/helpers.config.dart`,
+`lib/src/core/core.datasetController.dart`, `lib/src/core/point_options.dart`, `lib/src/elements/element.point.dart`
+and the scatter, bubble, line and bar controllers. The writes of a data context take one test of its mask, and a
+prepared scatter loop leaves its context refresh to the overflow pass of the same update. No canvas operation or
+drawing cut changes. This plan cites no line of these changes. No trigger occurred.
