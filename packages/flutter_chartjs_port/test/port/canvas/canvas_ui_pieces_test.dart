@@ -186,6 +186,77 @@ void main() {
       }
     });
 
+    test('no seam at a place or a scale off the pixel grid', () async {
+      for (final color in [_soft, _blue]) {
+        for (final (x, y, scale) in [
+          (.25, .0, 1.0),
+          (.5, .25, 1.0),
+          (10.5, .0, 1.0),
+          (.0, .0, .75),
+          (.3, .0, .9),
+        ]) {
+          Future<Render> one({required bool pieces}) async {
+            UiCanvasContext.debugDrawLongPathsInPieces = pieces;
+            final ctx = UiCanvasElement(width: 500, height: 300).getContext2d();
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            if (pieces) ctx.deferCurrentPath();
+            _shape(ctx, 5000);
+            ctx.fill();
+            final recorder = ui.PictureRecorder();
+            ctx.paint(ui.Canvas(recorder), ui.Offset(x, y), scale, 1);
+            final picture = recorder.endRecording();
+            final image = await picture.toImage(520, 320);
+            final data = await image.toByteData();
+            image.dispose();
+            picture.dispose();
+            ctx.dispose();
+            return Render(data!.buffer.asUint8List(), 520, 320);
+          }
+
+          final diff = comparePixels(
+            await one(pieces: false),
+            await one(pieces: true),
+          );
+          expect(diff.inkRatio, lessThan(.015), reason: '$x $y $scale $diff');
+          expect(diff.opaqueFlips, 0, reason: '$x $y $scale $diff');
+        }
+      }
+    });
+
+    test('a closing curve after a vertical edge keeps one draw', () async {
+      void shape(CanvasPath p) {
+        p.moveTo(100, 20);
+        for (var i = 0; i < 199; i++) {
+          p.lineTo(100, 20.0 + i);
+        }
+        p
+          ..bezierCurveTo(300, 60, 300, 260, 100, 250)
+          ..closePath();
+      }
+
+      final (a, b, draws) = await _fills(shape);
+      expect(draws, 0);
+      expect(comparePixels(a, b).differing, 0);
+    });
+
+    test('a vertex past the float range keeps one draw', () async {
+      void shape(CanvasPath p) {
+        p.moveTo(10, 100);
+        for (var i = 1; i < 200; i++) {
+          p.lineTo(10 + i * 2.0, i == 100 ? -1e38 : 100);
+        }
+        p
+          ..lineTo(10 + 199 * 2.0, _base)
+          ..lineTo(10, _base)
+          ..closePath();
+      }
+
+      final (a, b, draws) = await _fills(shape);
+      expect(draws, 0);
+      expect(comparePixels(a, b).differing, 0);
+    });
+
     test('both fill rules', () async {
       void shape(CanvasPath p) => _shape(p, 1000);
       final (a, b, draws) = await _fills(shape, rule: 'evenodd');
@@ -513,5 +584,114 @@ void main() {
       }
       expect(wide.bounds, const ui.Rect.fromLTRB(0, 0, 500, 400));
     });
+
+    test('another scale or width makes new pieces', () {
+      final path = Path2D();
+      _top(path, 300);
+      final first = uiPathPiecesOf(path, 1, 2)!;
+      expect(identical(uiPathPiecesOf(path, 2, 2), first), isFalse);
+      final second = uiPathPiecesOf(path, 2, 2)!;
+      expect(identical(uiPathPiecesOf(path, 2, 2), second), isTrue);
+      expect(identical(uiPathPiecesOf(path, 2, 3), second), isFalse);
+    });
+
+    test('a list that a reader got takes one draw', () {
+      final path = Path2D();
+      _top(path, 300);
+      expect(uiPathPiecesOf(path, 1, 2), isNotNull);
+      path.commands;
+      expect(uiPathPiecesOf(path, 1, 2), isNull);
+    });
+
+    test('a coordinate past the float range takes one draw', () {
+      final path = Path2D();
+      _top(path, 300);
+      path.lineTo(250, 1e38);
+      expect(uiPathPiecesOf(path, 1, 2), isNull);
+    });
+
+    test('no seam across a smooth dense line', () async {
+      void shape(CanvasPath p) {
+        p.moveTo(10, 150);
+        for (var i = 1; i < 5000; i++) {
+          final x = 10 + i * .096;
+          p.lineTo(x, 150 + 40 * math.sin(i * .002));
+        }
+      }
+
+      for (final color in [_blue, _half]) {
+        final (a, b, draws) = await _strokes(shape, color: color, width: 8);
+        expect(draws, 1);
+        final diff = comparePixels(a, b);
+        expect(diff.inkRatio, lessThan(.015), reason: '$diff');
+        // The pixels inside the line stay: a seam would change them. An edge
+        // pixel under the short overlap of two pieces can differ.
+        var inner = 0;
+        var worst = 0;
+        for (var y = 1; y < a.height - 1; y++) {
+          for (var x = 1; x < a.width - 1; x++) {
+            final alpha = a.alpha(x, y);
+            if (alpha == 0) continue;
+            var solid = true;
+            for (var dy = -1; dy <= 1 && solid; dy++) {
+              for (var dx = -1; dx <= 1 && solid; dx++) {
+                solid = a.alpha(x + dx, y + dy) == alpha;
+              }
+            }
+            if (!solid) continue;
+            inner++;
+            worst = math.max(worst, (alpha - b.alpha(x, y)).abs());
+          }
+        }
+        expect(inner, greaterThan(1000));
+        expect(worst, lessThanOrEqualTo(2), reason: '$inner inner pixels');
+      }
+    });
+
+    for (final width in [6.0, 30.0]) {
+      test('a turn at a cut keeps its join at width $width', () async {
+        for (final build in <void Function(CanvasPath)>[
+          (p) {
+            // A zero-length line at the cut.
+            p.moveTo(20, 40);
+            for (var i = 1; i <= 64; i++) {
+              p.lineTo(20 + i * 1.5, 40);
+            }
+            p
+              ..lineTo(20 + 64 * 1.5, 40)
+              ..lineTo(20 + 64 * 1.5, 240);
+            for (var i = 1; i < 80; i++) {
+              p.lineTo(20 + 64 * 1.5 + i * 1.5, 240);
+            }
+          },
+          (p) {
+            // A nearly straight curve at the cut.
+            p.moveTo(20, 40);
+            for (var i = 1; i <= 64; i++) {
+              p.lineTo(20 + i * 1.5, 40);
+            }
+            p.bezierCurveTo(116.1, 60, 116, 200, 116, 200);
+            for (var i = 1; i < 80; i++) {
+              p.lineTo(116 + i * 1.5, 200);
+            }
+          },
+          (p) {
+            // A curve with both control points at its start.
+            p.moveTo(20, 40);
+            for (var i = 1; i <= 64; i++) {
+              p.lineTo(20 + i * 1.5, 40);
+            }
+            p.bezierCurveTo(116, 40, 116, 40, 116, 200);
+            for (var i = 1; i < 80; i++) {
+              p.lineTo(116 + i * 1.5, 200);
+            }
+          },
+        ]) {
+          final (a, b, draws) = await _strokes(build, width: width);
+          expect(draws, 1);
+          expect(comparePixels(a, b).opaqueFlips, 0);
+        }
+      });
+    }
   });
 }

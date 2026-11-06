@@ -11,4 +11,6 @@ release build of Flutter 3.50.0-0.4.pre with WebAssembly and skwasm.
   `fade` and `layer` are translucent strokes, direct and in one layer. `fill` is one fill. `fillpart:k` is one compound
   fill of Chart.js ADR 0089. `fillchunk:k` is a separate draw for each contour. `fillcol:k` also clips on whole pixels.
 - `pixels.txt` compares the two forms of the library in Chrome, through `Picture.toImage`, at 1928 x 840 bitmap pixels.
-- `old-*.txt` and `new-*.txt` are passes of the lab on the old and the new code.
+  The tags `smooth*` have no noise and a line of 6 pixels, and `placed5000` has the bitmap at half a pixel.
+- `truth.txt` has the inked area in Chrome of one draw and of pieces against the true area of a fill, sampled from its curve.
+- `lab-*.txt` are the final passes of the lab on the new code. The old code is in [`../devices/`](../devices/README.md).

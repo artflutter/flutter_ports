@@ -1,0 +1,8 @@
+TRUTH n=20000 noise=48 monotone web=true onedraw=1267714 pieces=811975 true=810673 oneErr=56.4% piecesErr=0.2% flips=12839
+TRUTH n=20000 noise=48 bezier web=true onedraw=1192587 pieces=811411 true=810680 oneErr=47.1% piecesErr=0.1% flips=8767
+TRUTH n=5000 noise=12 bezier web=true onedraw=796762 pieces=808573 true=808420 oneErr=-1.4% piecesErr=0.0% flips=0
+TRUTH n=2000 noise=48 monotone web=true onedraw=663304 pieces=796662 true=796377 oneErr=-16.7% piecesErr=0.0% flips=275
+TRUTH n=1000 noise=48 monotone web=true onedraw=742958 pieces=807059 true=806903 oneErr=-7.9% piecesErr=0.0% flips=207
+TRUTH n=1000 noise=12 bezier web=true onedraw=808139 pieces=809181 true=809127 oneErr=-0.1% piecesErr=0.0% flips=0
+TRUTH n=300 noise=48 bezier web=true onedraw=823556 pieces=824372 true=824285 oneErr=-0.1% piecesErr=0.0% flips=0
+TRUTH seed 103 web=true onedraw=178137 pieces=282033 true=281833 oneErr=-36.8% piecesErr=0.1% flips=325
