@@ -27,7 +27,10 @@ const List<ChangeLogEntry> changeLog = [
     'Lab: the web build is on GitHub Pages. A small service worker adds the '
         'headers that rendering threads need, and the header of the page shows '
         'the mode. A browser that takes the JavaScript build has no threads.',
-    'Toolchain: Flutter 3.50.0-0.4.pre, the beta channel.',
+    'Lab: a note that does not scroll says why a scroll or another outside '
+        'cause stopped a test, and why a web page has its mode.',
+    'Toolchain: Flutter 3.50.0-0.4.pre, the beta channel. Material comes from '
+        'the package material_ui.',
     'Lab: the matrix runs in a browser and on phones, with a fixed CPU test in '
         'each row. New drivers measure first paint, animated updates, hover, '
         'resize, several series, stacked bars and time axes.',
