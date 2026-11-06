@@ -101,7 +101,9 @@ class BenchmarkResult {
     'sdk': benchmarkSdk,
     'engineOptions': {
       if (library == ChartLibrary.chartjs &&
-          (config.type == ChartType.line || config.type == ChartType.scatter))
+          (config.type == ChartType.line ||
+              config.type == ChartType.scatter ||
+              config.type == ChartType.bubble))
         'parsing': false,
       if (library == ChartLibrary.chartjs && config.type == ChartType.line)
         'partitionedBaselineFillEnabled': const bool.fromEnvironment(

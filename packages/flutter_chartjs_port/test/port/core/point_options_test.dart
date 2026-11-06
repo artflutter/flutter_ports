@@ -4,13 +4,17 @@ import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
+import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:test/test.dart';
 
 class _ObservedMap extends MapBase<String, Object?> {
@@ -31,7 +35,104 @@ class _ObservedMap extends MapBase<String, Object?> {
   Object? remove(Object? key) => null;
 }
 
+class _RegisteredItem implements TypedDataItem {
+  @override
+  Object get x => 1.0;
+  @override
+  double? get y => 2;
+  @override
+  double? get r => 3;
+  @override
+  Never noSuchMethod(Invocation invocation) => throw UnimplementedError();
+}
+
+class _OtherItem extends _RegisteredItem {}
+
 void main() {
+  test('typed items classify by their class, one class after another', () {
+    registerDataUpdateTypes(const [], [_RegisteredItem]);
+    final items = NativeTypedItems();
+    expect(items.accepts(_RegisteredItem()), isTrue);
+    expect(items.accepts(_RegisteredItem()), isTrue);
+    expect(items.accepts(_OtherItem()), isFalse);
+    expect(items.accepts(_OtherItem()), isFalse);
+    expect(items.accepts(_RegisteredItem()), isTrue);
+  });
+
+  group('the size arithmetic of a native point', () {
+    const values = <double>[
+      0,
+      // The double literal keeps the sign.
+      // ignore: prefer_int_literals
+      -0.0,
+      1,
+      3.5,
+      -2,
+      double.nan,
+      double.infinity,
+      double.negativeInfinity,
+    ];
+
+    test('equals `size` on typed options and on the object by name', () {
+      final point = PointElement();
+      for (final radius in values) {
+        for (final hoverRadius in values) {
+          for (final borderWidth in values) {
+            final typed = PointOptions()
+              ..storeKey(OptionKey.radius, radius)
+              ..storeKey(OptionKey.hoverRadius, hoverRadius)
+              ..storeKey(OptionKey.borderWidth, borderWidth);
+            final size = nativePointSize(radius, hoverRadius, borderWidth);
+            final reason = '$radius, $hoverRadius, $borderWidth';
+            // The two forms of NaN compare through their text.
+            expect('${point.size(typed)}', '$size', reason: reason);
+            final byName = <String, Object?>{
+              'radius': radius,
+              'hoverRadius': hoverRadius,
+              'borderWidth': borderWidth,
+            };
+            expect('${point.size(byName)}', '$size', reason: reason);
+          }
+        }
+      }
+    });
+
+    test('the fields of plain options read once, and others decline', () {
+      final options = PointOptions()
+        ..storeKey(OptionKey.radius, 3.0)
+        ..storeKey(OptionKey.hoverRadius, 4.0)
+        ..storeKey(OptionKey.borderWidth, 1.0);
+      final fields = NativePointSizeFields.of(options)!;
+      expect(fields.radius, 3);
+      expect(fields.hoverRadius, 4);
+      expect(fields.borderWidth, 1);
+
+      expect(NativePointSizeFields.of(null), isNull);
+      expect(
+        NativePointSizeFields.of(<String, Object?>{'radius': 3.0}),
+        isNull,
+      );
+      for (final key in [
+        OptionKey.radius,
+        OptionKey.hoverRadius,
+        OptionKey.borderWidth,
+      ]) {
+        final saved = foreignAudit;
+        foreignAudit = (_, _, _) {};
+        addTearDown(() => foreignAudit = saved);
+        final foreign = options.clone()..storeKey(key, '5');
+        foreignAudit = saved;
+        expect(NativePointSizeFields.of(foreign), isNull, reason: '$key');
+        final absent = PointOptions()
+          ..storeKey(OptionKey.radius, 3.0)
+          ..storeKey(OptionKey.hoverRadius, 4.0)
+          ..storeKey(OptionKey.borderWidth, 1.0)
+          ..jsDelete(key.jsName);
+        expect(NativePointSizeFields.of(absent), isNull, reason: '$key');
+      }
+    });
+  });
+
   test(
     'coordinate checks retain live values without touching custom getters',
     () {
