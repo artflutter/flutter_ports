@@ -153,6 +153,7 @@ void main() {
       expect(json['warmupSeconds'], 2);
       expect(json['version'], ChartLibrary.chartjs.version);
       expect(json['sdk'], benchmarkSdk);
+      expect(json.containsKey('webMode'), isFalse);
     },
   );
   test('a capture records the parsing of each Chart.js type', () {

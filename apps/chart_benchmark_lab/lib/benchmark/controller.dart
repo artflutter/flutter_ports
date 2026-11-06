@@ -6,6 +6,7 @@ import 'dart:ui' show FramePhase, FrameTiming, Size;
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/benchmark/metrics.dart';
+import 'package:chart_benchmark_lab/benchmark/web_mode.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart' show FlutterVersion;
@@ -135,6 +136,7 @@ class BenchmarkResult {
         ? 'profile'
         : 'release',
     'platform': kIsWeb ? 'web' : defaultTargetPlatform.name,
+    'webMode': ?webMode(),
     'sourceRevision': const String.fromEnvironment(
       'SOURCE_REVISION',
       defaultValue: 'worktree',
@@ -194,6 +196,10 @@ class BenchmarkController extends ChangeNotifier {
 
   /// Message explaining a paused or cancelled run.
   String message = 'Configure a workload, then run or capture it.';
+
+  /// Why a cause outside the controls stopped the last test, until the person
+  /// closes the note or starts a new test.
+  String? stopReason;
 
   /// Current chart viewport.
   Size viewport = Size.zero;
@@ -314,6 +320,7 @@ class BenchmarkController extends ChangeNotifier {
       return;
     }
     _reset();
+    stopReason = null;
     capturing = capture;
     running = true;
     message = capture ? 'Warming up for capture…' : 'Running · 2-second warmup';
@@ -327,6 +334,7 @@ class BenchmarkController extends ChangeNotifier {
     _drainTimer?.cancel();
     _drainTimer = null;
     if (_ticker.isActive) _ticker.stop();
+    if (reason != null && (running || finishing)) stopReason = reason;
     if (batchCapturing) {
       message = 'Batch cancelled. Completed captures are kept.';
     } else if (capturing || finishing) {
@@ -339,6 +347,12 @@ class BenchmarkController extends ChangeNotifier {
     finishing = false;
     _batchIndex = null;
     if (reason != null) message = reason;
+    notifyListeners();
+  }
+
+  /// Removes the explanation of a stopped test.
+  void clearStopReason() {
+    stopReason = null;
     notifyListeners();
   }
 
