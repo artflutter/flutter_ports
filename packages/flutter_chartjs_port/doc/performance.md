@@ -7719,3 +7719,22 @@ The causes of what remains, from the profiles at 20,000 items:
 - Bubble and scatter, full preset: the per-point update on the UI thread, with almost no raster load.
 
 All FPS values are engine frame timings on one Mac, with no presentation feedback.
+
+## 66. The curve and the markers of a dense line draw
+
+Chart.js ADR 0104 removes repeated work from a line draw and from the markers of each chart type with points. These
+figures come from the test engine, with no window: `flutter test` on the VM, a real chart at 20,000 items, one
+`update('none')` for each step, and the time from `beforeDraw` to `afterDraw` over the last 100 of 200 steps. Each
+side has 2 runs, in the order old, new, old, new. The figures give the direction of the Dart cost only. They do not
+contain the raster thread, and 2 runs are a weak interval.
+
+| Chart | Draw P50, ms, old | Draw P50, ms, new | Draw P90, ms, old | Draw P90, ms, new |
+| --- | ---: | ---: | ---: | ---: |
+| Line: curve, fill and markers | 11.1 | 7.7 | 19.1 | 12.9 |
+| Scatter: alternating colors | 6.4 | 3.0 | 8.3 | 7.2 |
+| Bubble: alternating colors | 3.9 | 2.3 | 7.7 | 5.1 |
+| Radar: line and markers, no grid | 12.7 | 9.5 | 20.0 | 18.3 |
+
+On the line chart, the parts on a settled chart were: the bound search of the fill 0.5 ms before and 0.06 ms after,
+one native curve path with its walk about 1.15 ms, and the markers about 2.6 ms before and about 0.6 ms after. The
+draw still builds two native curve paths: the partitioned fill and the line.
