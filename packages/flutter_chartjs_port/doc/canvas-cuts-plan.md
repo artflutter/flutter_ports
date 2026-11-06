@@ -2555,3 +2555,14 @@ Chart.js ADR 0100 edits `lib/src/core/core.config.dart`, `lib/src/core/core.cont
 `lib/src/helpers/helpers.config.dart` and `lib/src/widgets/chart_view.dart`. A chart with a native indexed
 style of a data element now takes `chart.updateData` when it qualifies. No canvas operation or drawing cut
 changes. No trigger occurred.
+
+### The angle lines in one native call (2026-11-06)
+
+Chart.js ADR 0103 edits `lib/src/canvas/canvas_ui.dart`, `canvas_ui_path.dart` and
+`lib/src/scales/scale.radialLinear.dart`, and adds `lib/src/canvas/canvas_line_fan.dart`. The lines of these
+files move. `stroke()` keeps its forms; one `drawRawPoints(PointMode.lines, ...)` for the angle lines after the
+first one, on Impeller only, is an addition beside it. The call counts as one draw in the split budget of Chart.js
+ADR 0066. R4 of §7.2 stays rejected: its reason is the fills and the strokes of points that alternate, and a
+fan has one paint and no fill. Four private helpers of `UiPathBuilder.lineTo` get `vm:prefer-inline`. Tests:
+`test/port/canvas/canvas_line_fan_test.dart` and `test/port/scales/scale.radialLinear_line_fan_test.dart`; the CI
+job `test-impeller` also runs them on Impeller on Vulkan. No deferred cut changes. No trigger occurred.

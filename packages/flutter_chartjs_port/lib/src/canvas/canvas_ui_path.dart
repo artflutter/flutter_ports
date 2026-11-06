@@ -496,6 +496,7 @@ final class UiPathBuilder implements CanvasPath {
   /// Whether the next command goes to [_path] directly: the path is built,
   /// or the buffer is full, which builds it. A pending circle becomes
   /// deferred commands first.
+  @pragma('vm:prefer-inline')
   bool _direct() {
     if (_circle) _deferCircle();
     if (_built) return true;
@@ -515,6 +516,7 @@ final class UiPathBuilder implements CanvasPath {
       ..[_numberCount++] = y;
   }
 
+  @pragma('vm:prefer-inline')
   void _pathLineTo(double x, double y) {
     if (_direct()) {
       _path.lineTo(x, y);
@@ -1020,6 +1022,7 @@ final class UiPathBuilder implements CanvasPath {
     hasSubpath = true;
   }
 
+  @pragma('vm:prefer-inline')
   void _lineToMapped(double px, double py) {
     _pathLineTo(px, py);
     _last.set(px, py);
@@ -1027,6 +1030,7 @@ final class UiPathBuilder implements CanvasPath {
 
   /// A line to the user point (x, y), or a move to it when the path has no
   /// subpath.
+  @pragma('vm:prefer-inline')
   void _lineOrMove(double x, double y) {
     final t = transform;
     final px = t.mapX(x, y);
