@@ -16,7 +16,9 @@
 /// - The dataset, chart and legend options and the [ElementOptions] of an
 ///   arc read typed ([OptionView.readKey], [readOption]). The data object
 ///   and the dataset objects of the user read by name. The properties of an
-///   arc are an [ArcProperties] (Chart.js ADR 0054 §9).
+///   arc are an [ArcProperties] (Chart.js ADR 0054 §9). The exact controller in
+///   a direct mode writes a built-in arc with its typed setters, with no object
+///   (row `adapt-direct-element-writes`, Chart.js ADR 0102).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsToNumber],
 ///   [jsTruthy], [jsOrZero] before `Math.max`, or [jsAdd] (Chart.js ADR
@@ -535,6 +537,9 @@ class DoughnutController extends DatasetController {
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     var startAngle = _getRotation();
     double i;
+    // DIVERGES(chartjs): adapt-direct-element-writes, `updateElement` of the
+    // exact controller only assigns in these modes, with its options.
+    final direct = supportsDataUpdates && (reset || mode == 'none');
 
     _loopCircumference = null;
     for (i = 0; i < start; ++i) {
@@ -567,40 +572,67 @@ class DoughnutController extends DatasetController {
       }
       final circumference = _circumference(i, reset);
       final arc = arcs[i.toInt()];
-      final properties = ArcProperties()
-        ..x = centerX + (offsetX ?? double.nan)
-        ..y = centerY + (offsetY ?? double.nan)
-        ..startAngle = startAngle
-        ..endAngle = startAngle + circumference
-        ..circumference = circumference;
-      if (outerRadius == null) {
-        properties.jsWrite('outerRadius', undefined);
-      } else {
-        properties.outerRadius = outerRadius;
-      }
-      if (innerRadius == null) {
-        properties.jsWrite('innerRadius', undefined);
-      } else {
-        properties.innerRadius = innerRadius;
-      }
+      // The literal of :278-286, in locals: the options run user code after it.
+      final x = centerX + (offsetX ?? double.nan);
+      final y = centerY + (offsetY ?? double.nan);
+      final arcStart = startAngle;
+      final arcEnd = startAngle + circumference;
+      ElementOptions? elementOptions;
       if (includeOptions) {
         // DIVERGES(chartjs): adapt-arc-native-options, the context refresh and
         // a fresh copy of the template, as the resolve of this plan gives.
         final prepared = colors;
         if (prepared != null) {
           getContext(i, false, mode);
-          properties.options = prepared(i.toInt());
+          elementOptions = prepared(i.toInt());
         } else {
           // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
           // shared options.
-          properties.options =
+          elementOptions =
               sharedOptions ??
               resolveDataElementOptions(i, arc.active ? 'active' : mode);
         }
       }
       startAngle += circumference;
 
-      updateElement(arc, i, properties, mode);
+      // DIVERGES(chartjs): adapt-direct-element-writes, the assign of the
+      // literal with no object: the writes stay after the resolve above.
+      if (arc case final types.ArcElementWrites target
+          when direct &&
+              outerRadius != null &&
+              innerRadius != null &&
+              elementOptions != null &&
+              target.typedWrites) {
+        target
+          ..x = x
+          ..y = y
+          ..startAngle = arcStart
+          ..endAngle = arcEnd
+          ..circumference = circumference
+          ..outerRadius = outerRadius
+          ..innerRadius = innerRadius
+          ..options = elementOptions;
+      } else {
+        final properties = ArcProperties()
+          ..x = x
+          ..y = y
+          ..startAngle = arcStart
+          ..endAngle = arcEnd
+          ..circumference = circumference;
+        if (outerRadius == null) {
+          properties.jsWrite('outerRadius', undefined);
+        } else {
+          properties.outerRadius = outerRadius;
+        }
+        if (innerRadius == null) {
+          properties.jsWrite('innerRadius', undefined);
+        } else {
+          properties.innerRadius = innerRadius;
+        }
+        if (elementOptions != null) properties.options = elementOptions;
+
+        updateElement(arc, i, properties, mode);
+      }
 
       // Two ordinary resolutions warm the cached plan. One attempt.
       if (tryColors && nativeLoop && i == start + 1) {
