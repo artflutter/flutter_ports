@@ -38,12 +38,19 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart'
+    show prepareNativeArcColors;
+import 'package:flutter_chartjs_port/src/core/arc_options.dart'
+    show nativeArcClass, nativeArcElement;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, presizeParsedNumbers;
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show Defaults;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape;
+    show DataUpdateShape, nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_options.dart'
+    show nativePointChart, nativePointList;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions;
+    show ArcOptions, ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -222,9 +229,10 @@ class DoughnutController extends DatasetController {
   /// controller.doughnut.js:80 `static descriptors`, in the form of
   /// `core.defaults.dart` (Chart.js ADR 0028, section 6): a typed scope of
   /// the kind `Descriptors` (Chart.js ADR 0054 §3).
+  // DIVERGES(chartjs): adapt-arc-native-options, predicates by identity.
   static final DescriptorsScope descriptors = DescriptorsScope()
-    ..descScriptable = _scriptableDescriptor
-    ..descIndexable = _indexableDescriptor;
+    ..descScriptable = Defaults.nativeElementPredicate(_scriptableDescriptor)
+    ..descIndexable = Defaults.nativeElementPredicate(_indexableDescriptor);
 
   /// controller.doughnut.js:81 the `_scriptable` descriptor.
   static bool _scriptableDescriptor(String name) =>
@@ -289,6 +297,16 @@ class DoughnutController extends DatasetController {
   /// controller.doughnut.js:140 `offsetY`. Dart `null` stands for the JS
   /// `undefined` of the constructor. [update] writes a number.
   double? offsetY;
+
+  /// Whether [update] runs [getMaxBorderWidth] and [getMaxOffset] now, in the
+  /// mode `none`. Dart `false` for a call of user code (Chart.js ADR 0093).
+  // DIVERGES(chartjs): adapt-arc-native-options, state of one update.
+  bool _scansMayStop = false;
+
+  /// The one read of the circumference of a loop in which no user code runs,
+  /// or Dart `null` for the read at each call of [_circumference].
+  // DIVERGES(chartjs): adapt-arc-native-options, state of one loop.
+  double? _loopCircumference;
 
   /// controller.doughnut.js:143 `linkScales() {}`.
   @override
@@ -408,10 +426,16 @@ class DoughnutController extends DatasetController {
     final chartArea = chart.chartArea!;
     final meta = cachedMeta;
     final arcs = meta.data;
-    final spacing = jsAdd(
-      getMaxBorderWidth() + getMaxOffset(arcs),
-      options.readKey(OptionKey.spacing),
-    );
+    // DIVERGES(chartjs): adapt-arc-native-options, the scans of this update in
+    // the mode `none` may leave contexts that `updateElements` writes again.
+    final double scans;
+    _scansMayStop = mode == 'none';
+    try {
+      scans = getMaxBorderWidth() + getMaxOffset(arcs);
+    } finally {
+      _scansMayStop = false;
+    }
+    final spacing = jsAdd(scans, options.readKey(OptionKey.spacing));
     final maxSize = jsMax(
       (jsMin(chartArea.width, chartArea.height) - jsToNumber(spacing)) / 2,
       0,
@@ -464,7 +488,8 @@ class DoughnutController extends DatasetController {
   double _circumference(double i, bool reset) {
     final opts = options;
     final meta = cachedMeta;
-    final circumference = _getCircumference();
+    // DIVERGES(chartjs): adapt-arc-native-options, one read for a native loop.
+    final circumference = _loopCircumference ?? _getCircumference();
     if ((reset &&
             jsTruthy(
               readOption(
@@ -511,11 +536,35 @@ class DoughnutController extends DatasetController {
     var startAngle = _getRotation();
     double i;
 
+    _loopCircumference = null;
     for (i = 0; i < start; ++i) {
       startAngle += _circumference(i, reset);
     }
 
+    // DIVERGES(chartjs): adapt-arc-native-options, plans of this synchronous
+    // loop only. No user code runs while one holds, and a custom or active arc
+    // ends them for good before its first read.
+    var nativeLoop = start == 0 && _nativeArcLoop(arcs, mode);
+    ArcOptions Function(int)? colors;
+    final tryColors =
+        nativeLoop &&
+        includeOptions &&
+        sharedOptions == null &&
+        count > 2 &&
+        cachedDataElementOptions(mode) == null;
+    _loopCircumference = nativeLoop && sharedOptions != null && count > 0
+        ? _getCircumference()
+        : null;
+
     for (i = start; i < start + count; ++i) {
+      if (nativeLoop) {
+        final next = arcs[i.toInt()];
+        if (!nativeArcElement(next) || (colors != null && next.active)) {
+          nativeLoop = false;
+          colors = null;
+          _loopCircumference = null;
+        }
+      }
       final circumference = _circumference(i, reset);
       final arc = arcs[i.toInt()];
       final properties = ArcProperties()
@@ -535,16 +584,86 @@ class DoughnutController extends DatasetController {
         properties.innerRadius = innerRadius;
       }
       if (includeOptions) {
-        // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
-        // shared options.
-        properties.options =
-            sharedOptions ??
-            resolveDataElementOptions(i, arc.active ? 'active' : mode);
+        // DIVERGES(chartjs): adapt-arc-native-options, the context refresh and
+        // a fresh copy of the template, as the resolve of this plan gives.
+        final prepared = colors;
+        if (prepared != null) {
+          getContext(i, false, mode);
+          properties.options = prepared(i.toInt());
+        } else {
+          // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
+          // shared options.
+          properties.options =
+              sharedOptions ??
+              resolveDataElementOptions(i, arc.active ? 'active' : mode);
+        }
       }
       startAngle += circumference;
 
       updateElement(arc, i, properties, mode);
+
+      // Two ordinary resolutions warm the cached plan. One attempt.
+      if (tryColors && nativeLoop && i == start + 1) {
+        colors = prepareNativeArcColors(this, arcs);
+        if (colors != null) _loopCircumference = _getCircumference();
+      }
     }
+    _loopCircumference = null;
+  }
+
+  /// The reads of an arc loop in the mode `none` run no user code: the exact
+  /// controller and chart, native arrays, and parsed numbers. The arcs stay a
+  /// live check at their own iteration.
+  // DIVERGES(chartjs): adapt-arc-native-options, the guard of the native loops.
+  bool _nativeArcLoop(List<types.Element> arcs, String mode) =>
+      mode == 'none' &&
+      supportsDataUpdates &&
+      nativePointChart(chart) &&
+      identical(arcs, cachedMeta.data) &&
+      nativePointList(arcs) &&
+      nativeDataUpdateList(cachedMeta.parsed) &&
+      parsing != false;
+
+  /// The dataset options that [update] reads between its scans and the arcs.
+  static const List<OptionKey> _updateOptions = [
+    OptionKey.spacing,
+    OptionKey.cutout,
+    OptionKey.rotation,
+    OptionKey.circumference,
+    OptionKey.radius,
+  ];
+
+  /// Whether a scan can end after the result [options] of [controller]: each
+  /// later call has no other effect on the scan. The caller asks for the first
+  /// two items only.
+  ///
+  /// - A frozen cached entry: each later call is a hit that gives this object.
+  ///   A hit runs no user code and changes nothing, so `Math.max` of the same
+  ///   inputs gives the same number. This holds for any exact controller.
+  /// - A plan where only native colors vary: each later call differs from this
+  ///   one in the colors, which no scan reads, and in the refresh of the
+  ///   context of its arc. The update stops that refresh only for its own
+  ///   arcs, in the mode `none`, when `updateElements` writes each of these
+  ///   contexts again with no user code before it. An active arc breaks that:
+  ///   its resolve can write no context, can run a hover callback and can
+  ///   throw, so each scan keeps its refresh.
+  // DIVERGES(chartjs): adapt-arc-native-options, the result that must repeat.
+  bool _scanRepeats(Object? controller, Object options) {
+    if (options is! ElementOptions ||
+        controller is! DoughnutController ||
+        !controller.supportsDataUpdates ||
+        !nativeArcClass(controller.dataElementType)) {
+      return false;
+    }
+    if (controller.isCachedElementOptions(options)) return true;
+    if (!_scansMayStop || !identical(controller, this)) return false;
+    final arcs = cachedMeta.data;
+    return _nativeArcLoop(arcs, 'none') &&
+        prepareNativeArcColors(this, arcs) != null &&
+        // The rings read each other dataset and its controller.
+        _datasetCount() == 1 &&
+        this.options.rawOptionsAreScalar(_updateOptions) &&
+        arcs.every((arc) => nativeArcElement(arc) && !arc.active);
   }
 
   /// controller.doughnut.js:296 `calculateTotal()`.
@@ -639,6 +758,8 @@ class DoughnutController extends DatasetController {
           jsOrZero(readOption(options, OptionKey.hoverBorderWidth)),
         );
       }
+      // DIVERGES(chartjs): adapt-arc-native-options, the rest must repeat.
+      if (i <= 1 && _scanRepeats(controller, options)) break;
     }
     return max;
   }
@@ -656,6 +777,8 @@ class DoughnutController extends DatasetController {
         jsMax(max, jsOrZero(options.valueOf(OptionKey.offset))),
         jsOrZero(options.valueOf(OptionKey.hoverOffset)),
       );
+      // DIVERGES(chartjs): adapt-arc-native-options, the rest must repeat.
+      if (i <= 1 && _scanRepeats(this, options)) break;
     }
     return max;
   }

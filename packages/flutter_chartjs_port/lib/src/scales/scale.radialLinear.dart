@@ -35,6 +35,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/arc_options.dart'
+    show NativeArcScale;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
@@ -764,7 +766,7 @@ final class PointLabelItem implements types.TRBL {
 /// area and radar controllers read its members through that interface
 /// (Chart.js ADR 0028, section 1).
 class RadialLinearScale extends LinearScaleBase
-    implements types.RadialLinearScale {
+    implements types.RadialLinearScale, NativeArcScale {
   /// scale.radialLinear.js:412 `constructor(cfg)`.
   ///
   /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new]. The fields
@@ -783,6 +785,12 @@ class RadialLinearScale extends LinearScaleBase
       getUserBounds().minDefined &&
       getUserBounds().maxDefined &&
       options.cachedFixedDataBounds;
+
+  /// The exact class, for the options of a polar area loop (Chart.js ADR 0093).
+  @internal
+  @override
+  // DIVERGES(chartjs): adapt-arc-native-options, native scale contract.
+  bool get supportsNativeArcOptions => super.runtimeType == RadialLinearScale;
 
   /// scale.radialLinear.js:345 `static defaults`, a typed scope of the kind
   /// `ScaleOptions` (Chart.js ADR 0054 §3).

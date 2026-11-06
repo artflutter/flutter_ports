@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:meta/meta.dart';
 
 /// The type of [_absent].
 final class _Absent {
@@ -283,6 +284,16 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
   /// [TypeError] in the frozen state.
   void storeKey(Object key, Object? raw) {
     jsWrite(key is OptionKey ? key.jsName : key as String, raw);
+  }
+
+  /// Stores the resolved value of `$shared` of options that are not frozen:
+  /// the case of [storeKey] in a generated subclass (Chart.js ADR 0093).
+  /// `$shared` is a known key of each generated class.
+  @internal
+  // The generated `storeKey` calls one store for each of its cases.
+  // ignore: use_setters_to_change_properties
+  void storeShared(Object? raw) {
+    _shared = raw;
   }
 
   /// Whether the options own the declared key [key]. A typed field gives

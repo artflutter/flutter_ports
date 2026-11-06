@@ -463,9 +463,10 @@ String _resolved(Schema schema) {
         '    : _present = source._present,\n'
         '      _foreign = source._foreign,\n'
         '      _int = source._int,\n'
-        '      _foreignRaw = source._foreignRaw == null\n'
-        '          ? null\n'
-        '          : List<Object?>.of(source._foreignRaw!),\n',
+        '      _foreignRaw = source._foreignRaw,\n'
+        '      _foreignShared =\n'
+        '          source._foreignRaw != null &&\n'
+        '          (source._foreignShared = true),\n',
       );
     for (final key in typed) {
       final id = keyIdentifier(key);
@@ -494,20 +495,33 @@ String _resolved(Schema schema) {
       ..write('  /// The raw values of the foreign keys, by slot.\n')
       ..write('  List<Object?>? _foreignRaw;\n\n')
       ..write(
+        '  /// Whether a clone holds the same [_foreignRaw]. The first write of\n'
+        '  /// a slot then copies the list (Chart.js ADR 0093).\n',
+      )
+      ..write('  bool _foreignShared = false;\n\n')
+      ..write(
         '  /// The bits of the `double` keys whose raw value is a Dart `int`:\n'
         '  /// the read by name gives the `int` back.\n',
       )
       ..write('  int _int = 0;\n\n')
       ..write(
+        '  List<Object?> _ownForeign() {\n'
+        '    final raw = _foreignRaw;\n'
+        '    if (raw == null) {\n'
+        '      return _foreignRaw = ${_filled(typed.length)};\n'
+        '    }\n'
+        '    if (!_foreignShared) return raw;\n'
+        '    _foreignShared = false;\n'
+        '    return _foreignRaw = List<Object?>.of(raw);\n'
+        '  }\n\n'
         '  void _setForeign(int slot, int bit, Object? raw) {\n'
         '    _foreign |= bit;\n'
-        '    (_foreignRaw ??= ${_filled(typed.length)})[slot] =\n'
-        '        raw;\n'
+        '    _ownForeign()[slot] = raw;\n'
         '  }\n\n'
         '  void _clearForeign(int slot, int bit) {\n'
         '    if (_foreign & bit != 0) {\n'
         '      _foreign &= ~bit;\n'
-        '      _foreignRaw![slot] = null;\n'
+        '      _ownForeign()[slot] = null;\n'
         '    }\n'
         '  }\n',
       );
@@ -612,7 +626,10 @@ String _resolved(Schema schema) {
       ..write('\n  @override\n')
       ..write('  void storeKey(Object key, Object? raw) {\n')
       ..write('    if (key is OptionKey && !isFrozen) {\n')
-      ..write('      switch (key) {\n');
+      ..write('      switch (key) {\n')
+      ..write('        case OptionKey.dollarShared:\n')
+      ..write('          storeShared(raw);\n')
+      ..write('          return;\n');
     for (final (slot, key) in typed.indexed) {
       out
         ..write('        case OptionKey.${keyIdentifier(key)}:\n')

@@ -58,9 +58,10 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
-    show BarOptions, PointOptions;
+    show ArcOptions, BarOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
+        ArcOptionsScope,
         BarOptionsScope,
         ElementOptionsByTypeScope,
         PointOptionsScope,
@@ -448,6 +449,9 @@ class Config implements types.ChartConfiguration {
   String? _lastScopeType;
   String? _lastScopeElement;
   String _lastScopeKey = '';
+  String? _lastPrefixFirst;
+  String? _lastPrefixSecond;
+  String _lastPrefixKey = '';
 
   /// core.config.js:161 `_scopeCache`: the scope lists of
   /// [getOptionScopes], by main scope and by key lists.
@@ -624,6 +628,53 @@ class Config implements types.ChartConfiguration {
     );
   }
 
+  /// A warmed arc resolver over native context sources, as
+  /// [prepareIndexedPointColors]. No option getter or context callback runs
+  /// merely to qualify a synchronous loop.
+  @internal
+  // DIVERGES(chartjs): adapt-arc-native-options, cached arc inputs.
+  ArcOptions Function(int)? prepareIndexedArcColors(
+    int datasetIndex, {
+    required String controllerType,
+  }) {
+    if (super.runtimeType != Config ||
+        !supportsDataUpdates ||
+        (_config is OptionScope && _config.routeOf('type') != null)) {
+      return null;
+    }
+    final data = dataUpdateField(_config, 'data');
+    if (!nativeDataUpdateObject(data)) return null;
+    final datasets = dataUpdateField(data!, 'datasets');
+    if (!nativeDataUpdateList(datasets)) return null;
+    final list = datasets! as List<Object?>;
+    if (datasetIndex < 0 || datasetIndex >= list.length) return null;
+    final dataset = list[datasetIndex];
+    if (!nativeDataUpdateObject(dataset) ||
+        !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
+      return null;
+    }
+    final scopeKeys = datasetElementScopeKeys(controllerType, 'arc');
+    final scopes = _scopeCache[dataset]?[scopeKeys];
+    if (scopes == null) return null;
+    final cached = _resolverCache[scopes]?['arc,'];
+    if (cached == null ||
+        cached.subPrefixes.length != 2 ||
+        cached.subPrefixes[0] != 'arc' ||
+        cached.subPrefixes[1] != '') {
+      return null;
+    }
+    if (defaults.routeOf('elements') != null) return null;
+    final elements = defaults.elementsCell?.raw;
+    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
+    final elementScopes = elements! as ElementOptionsByTypeScope;
+    if (elementScopes.routeOf('arc') != null) return null;
+    final arc = elementScopes.arcCell?.raw;
+    if (arc.runtimeType != ArcOptionsScope) return null;
+    return cached.resolver.prepareIndexedArcColors(
+      (arc! as ArcOptionsScope).jsOwnKeys(),
+    );
+  }
+
   /// Captures a warmed point resolver for one native line loop. Every use
   /// checks the source identities, key snapshot and cache generation again.
   @internal
@@ -705,7 +756,7 @@ class Config implements types.ChartConfiguration {
         nativeInputs: true,
         allowReplacement: true,
         immutableKeys: true,
-        ownedPoint: true,
+        owned: true,
         preparedResolver: cached,
         preparedCacheCheck: current,
         resolved: (resolved: false, context: ctx, prepared: null),
@@ -727,7 +778,7 @@ class Config implements types.ChartConfiguration {
           nativeInputs: true,
           allowReplacement: true,
           immutableKeys: true,
-          ownedPoint: true,
+          owned: true,
           preparedResolver: cached,
           preparedCacheCheck: current,
           preparedContext: preparedContext,
@@ -1087,6 +1138,7 @@ class Config implements types.ChartConfiguration {
   // DIVERGES(chartjs): adapt-owned-option-result, private type tokens.
   static final _pointResultKind = PointOptions()..freeze();
   static final _barResultKind = BarOptions()..freeze();
+  static final _arcResultKind = ArcOptions()..freeze();
 
   /// Resolves a controller-owned point/bar result without allocating a temporary
   /// result when a native template can return the final fresh options directly.
@@ -1109,7 +1161,7 @@ class Config implements types.ChartConfiguration {
           nativeInputs: true,
           allowReplacement: true,
           immutableKeys: immutableKeys,
-          ownedPoint: point,
+          owned: true,
         )
       : resolveElementNamedOptions(
           scopes,
@@ -1117,6 +1169,35 @@ class Config implements types.ChartConfiguration {
           context,
           prefixes,
           point ? PointOptions() : BarOptions(),
+        );
+
+  /// [resolveOwnedElementNamedOptions] for an arc result (Chart.js ADR 0093).
+  @internal
+  // DIVERGES(chartjs): adapt-owned-option-result, the private arc type token.
+  ElementOptions resolveOwnedArcNamedOptions(
+    List<Object?> scopes,
+    List<Object> keys,
+    Object Function() context,
+    List<String> prefixes, {
+    bool immutableKeys = false,
+  }) => runtimeType == Config
+      ? _resolveElementNamedOptions(
+          scopes,
+          keys,
+          context,
+          prefixes,
+          _arcResultKind,
+          nativeInputs: true,
+          allowReplacement: true,
+          immutableKeys: immutableKeys,
+          owned: true,
+        )
+      : resolveElementNamedOptions(
+          scopes,
+          keys,
+          context,
+          prefixes,
+          ArcOptions(),
         );
 
   ElementOptions _resolveElementNamedOptions(
@@ -1128,7 +1209,7 @@ class Config implements types.ChartConfiguration {
     required bool nativeInputs,
     bool allowReplacement = false,
     bool immutableKeys = false,
-    bool? ownedPoint,
+    bool owned = false,
     _CachedResolver? preparedResolver,
     bool Function()? preparedCacheCheck,
     Object Function()? preparedContext,
@@ -1136,7 +1217,7 @@ class Config implements types.ChartConfiguration {
     // ordinary post-context branch without attempting native resolution again.
     ({bool resolved, Object context, ElementOptions? prepared})? resolved,
   }) {
-    if (ownedPoint == null) into.storeKey(OptionKey.dollarShared, true);
+    if (!owned) into.storeKey(OptionKey.dollarShared, true);
     // Owned prefixes contain strings and have no observable indexing. Reuse
     // their key for the post-context cache check instead of joining twice.
     final cacheKey = preparedResolver != null
@@ -1144,7 +1225,7 @@ class Config implements types.ChartConfiguration {
         : !nativeInputs
         ? null
         : prefixes.length == 2
-        ? '${prefixes[0]},${prefixes[1]}'
+        ? _joinedPrefixes(prefixes[0], prefixes[1])
         : prefixes.join(',');
     final (:resolver, :subPrefixes) =
         preparedResolver ??
@@ -1162,10 +1243,7 @@ class Config implements types.ChartConfiguration {
             (nativeInputs ||
                 (helpers.OptionResolver.nativeIndexedList(prefixes) &&
                     helpers.OptionResolver.nativeIndexedList(scopes))) &&
-            prefixes.length == subPrefixes.length &&
-            Iterable<int>.generate(prefixes.length).every(
-              (i) => prefixes[i] == subPrefixes[i],
-            );
+            _samePrefixes(prefixes, subPrefixes);
     // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
     final indexed =
         resolved ??
@@ -1184,7 +1262,7 @@ class Config implements types.ChartConfiguration {
                                 resolver,
                               ),
                           immutableKeys: immutableKeys,
-                          replacementOnly: ownedPoint != null,
+                          replacementOnly: owned,
                           preparedContext: preparedContext,
                         )
                       : null) ??
@@ -1203,21 +1281,17 @@ class Config implements types.ChartConfiguration {
                     nativeInputs: nativeInputs,
                     allowReplacement: allowReplacement,
                     immutableKeys: immutableKeys,
-                    replacementOnly: ownedPoint != null,
+                    replacementOnly: owned,
                     preparedContext: preparedContext,
                   )
             : null);
     if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
-    final result = ownedPoint == null
-        ? into
-        : ownedPoint
-        ? PointOptions()
-        : BarOptions();
-    if (ownedPoint != null) result.storeKey(OptionKey.dollarShared, true);
+    final result = owned ? helpers.OptionResolver.newNativeResult(into) : into;
+    if (owned) result.storeKey(OptionKey.dollarShared, true);
     helpers.OptionView? view;
     if (indexed != null || _needContextKeys(resolver, keys)) {
       // A declined native fill already stored $shared before its context call.
-      if (indexed == null || ownedPoint != null) {
+      if (indexed == null || owned) {
         result.storeKey(OptionKey.dollarShared, false);
       }
       final ctx = indexed?.context ?? context();
@@ -1238,6 +1312,18 @@ class Config implements types.ChartConfiguration {
       result.storeKey(key, value);
     }
     return result;
+  }
+
+  /// `prefixes.join()` of two strings. Only the joined string is retained, as
+  /// [datasetElementScopeKeys] retains its key.
+  // DIVERGES(chartjs): adapt-option-resolution-setup, one join per prefix pair.
+  String _joinedPrefixes(String first, String second) {
+    if (first == _lastPrefixFirst && second == _lastPrefixSecond) {
+      return _lastPrefixKey;
+    }
+    _lastPrefixFirst = first;
+    _lastPrefixSecond = second;
+    return _lastPrefixKey = '$first,$second';
   }
 
   /// core.config.js:375 `createResolver`.
@@ -1309,6 +1395,16 @@ _CachedResolver _getResolver(
     cache[cacheKey] = cached;
   }
   return cached;
+}
+
+/// Whether the main and the sub resolver have equal prefix lists: no hover
+/// prefix. The element step reads this for each resolve.
+bool _samePrefixes(List<String> prefixes, List<String> subPrefixes) {
+  if (prefixes.length != subPrefixes.length) return false;
+  for (var i = 0; i < prefixes.length; i++) {
+    if (prefixes[i] != subPrefixes[i]) return false;
+  }
+  return true;
 }
 
 /// core.config.js:402 `hasFunction`.
