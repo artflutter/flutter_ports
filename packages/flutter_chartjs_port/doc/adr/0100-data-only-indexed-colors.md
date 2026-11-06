@@ -98,10 +98,16 @@ other List class keeps the full path.
 ## Fallback
 
 Each of these keeps the full path, as the first call of `updateData` decides, with no read of user code to
-qualify: a scriptable option in any scope; a dataset element with no cached entry; a foreign or nested
-item; an empty list; a custom list; a custom scope; a user subclass of a controller, element, scale, chart
-or config class. No plan after the last full update, for example a dataset with no element, also keeps it.
-The next full update proves again.
+qualify: a function of an element key that a resolve reads; a function of an option that the view of a
+dataset read; a dataset element with no cached entry; a foreign or nested item; an empty list; a custom list;
+a custom scope; a user subclass of a controller, element, scale, chart or config class. No plan after the last
+full update, for example a dataset with no element, also keeps it. The next full update proves again.
+
+The proof covers the keys of an element and of a dataset view. A function of a chart or plugin option in the
+defaults or the overrides, for example `layout.padding` or a legend `filter`, and a tick callback in any scope
+do not keep the full path. The contract of Chart.js ADR 0074 applies to them: a data-dependent configuration
+callback needs a full update. A chart with a plain style had this rule first. A chart with an indexed style now
+has it too. The options of the user keep the walk of Chart.js ADR 0074, which refuses a function.
 
 A function of a dataset option in the defaults or the overrides now keeps the full path also for a chart
 with no indexed style. Before this record its result stayed that of the last full update, against the rule
@@ -123,4 +129,12 @@ data-only path. A bubble cell also runs a layout in a tick where its largest rad
 `test/port/core/data_update_test.dart` and `test/port/widgets/chart_view_data_only_test.dart` compare the
 six chart types with a chart of full updates: elements, options with their key order, contexts and, through
 the widget, pixels. The steps are ticks, a later full update, a hidden item, a hover, a resize, a visible
-legend, a theme and an overflow that grows. The guards each have a test with the results of a full update.
+legend, a theme and an overflow that grows.
+
+The group `a function of the chart or of a plugin in a shared scope` of `data_update_test.dart` pins the rule of
+the shared scopes on a plain and an indexed chart. The group `each guard of the proof takes the full path` has a
+test for each guard that a public input reaches, with the results of a full update. No public input reaches
+these guards, which stay as a defense with no test: the touched-slot test and the template test of
+`hasStaticIndexedOptions`, the sub-prefix test and the class tests of `hasStaticIndexedElementOptions`, and
+`nativePointDatasetIndex`. The test of the memo of the proof uses an edit in place, which is outside the
+contract, because the memo changes no result within the contract.
