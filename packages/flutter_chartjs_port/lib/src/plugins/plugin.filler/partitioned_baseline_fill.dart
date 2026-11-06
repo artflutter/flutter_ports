@@ -47,8 +47,9 @@ void deferPathOfPartitionedFill(
 }
 
 /// Try a full, ascending, unstyled cubic line against a private horizontal
-/// origin/start/end boundary. Runs only after the original path was built.
-/// No custom point/list/option getters are evaluated during preflight.
+/// origin/start/end boundary. Runs after the commands of the original path, and
+/// reads no state of that path. No custom point/list/option getters are
+/// evaluated during preflight.
 bool tryPartitionedBaselineFill(
   CanvasRenderingContext2D ctx, {
   required types.LineElement line,

@@ -1,4 +1,5 @@
 // Original code, not ported from Chart.js: the proof of an ascending segment.
+import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
@@ -100,6 +101,58 @@ void main() {
     }
   });
 
+  test('an index that is not finite gives what the loop gives', () {
+    final points = <types.PointElement>[
+      for (final x in [1.0, 2.0, 3.0]) PointElement()..x = x,
+    ];
+    for (final (start, end) in [
+      (double.nan, 2.0),
+      (0.0, double.nan),
+      (double.nan, double.nan),
+      (double.infinity, 2.0),
+      (0.0, double.negativeInfinity),
+      (double.infinity, double.negativeInfinity),
+    ]) {
+      expect(
+        boundSegment(_RawSegment(start, end), points, (
+          property: 'x',
+          start: 1,
+          end: 3,
+        )),
+        isEmpty,
+        reason: '$start $end',
+      );
+    }
+  });
+
+  test('a negative zero index gives what the loop gives', () {
+    final zero = double.parse('-0');
+    final native = <types.PointElement>[PointElement()..x = 0];
+    final user = <types.PointElement>[_UserPoint()..x = 0];
+    for (final (start, end) in [(zero, 0.0), (0.0, zero), (zero, zero)]) {
+      final segment = _RawSegment(start, end);
+      const bounds = (property: 'x', start: 0.0, end: 0.0);
+      final a = boundSegment(segment, native, bounds).single;
+      final b = boundSegment(segment, user, bounds).single;
+      expect(a.start.isNegative, b.start.isNegative);
+      expect(a.end.isNegative, b.end.isNegative);
+    }
+  });
+
+  test('a user list keeps the reads of the loop', () {
+    final reads = <int>[];
+    final points = _CountingList([
+      for (final x in [1.0, 2.0, 2.0, 3.0]) PointElement()..x = x,
+    ], reads);
+    final segments = boundSegment(createBoundarySegment(0, 3), points, (
+      property: 'x',
+      start: 1,
+      end: 3,
+    ));
+    expect(segments.single.end, 3);
+    expect(reads, [0, 1, 2, 3]);
+  });
+
   test('a point of a user class reads no coordinate in the proof', () {
     var reads = 0;
     final points = <types.PointElement>[
@@ -114,6 +167,37 @@ void main() {
     // Only the read of the loop of `boundSegment` for each point.
     expect(reads, 2);
   });
+}
+
+final class _RawSegment implements types.Segment {
+  _RawSegment(this.start, this.end);
+  @override
+  final double start;
+  @override
+  final double end;
+  @override
+  bool get loop => false;
+  @override
+  Object? get style => null;
+}
+
+final class _CountingList extends ListBase<types.PointElement> {
+  _CountingList(this._items, this._reads);
+  final List<types.PointElement> _items;
+  final List<int> _reads;
+  @override
+  int get length => _items.length;
+  @override
+  set length(int value) => _items.length = value;
+  @override
+  types.PointElement operator [](int index) {
+    _reads.add(index);
+    return _items[index];
+  }
+
+  @override
+  void operator []=(int index, types.PointElement value) =>
+      _items[index] = value;
 }
 
 class _CountingPoint extends PointElement {

@@ -660,12 +660,12 @@ class PointElement extends Element
     drawPoint(ctx, _drawPointOptionsOf(opts), x, y);
   }
 
-  /// The loop of core.datasetController.js:732-743 for the elements of a run:
+  /// The loop of core.datasetController.js:728-738 for the elements of a run:
   /// elements of this exact class with plain options and the default style.
   /// Each draw goes to [CircleRunCanvas] with the values of [draw]. The style
-  /// setters run once for each options object, and the path of the last circle
-  /// is the current path at the end. Gives the index of the first element that
-  /// the run did not handle.
+  /// setters run once for each series of elements with one options object, and
+  /// the path of the last circle is the current path at the end. Gives the
+  /// index of the first element that the run did not handle.
   // DIVERGES(chartjs): adapt-point-circle-run, one canvas call for each marker.
   @override
   int drawCircleRun(
@@ -692,8 +692,8 @@ class PointElement extends Element
     try {
       for (; i < end; i++) {
         final element = elements[i];
-        if (element.runtimeType != PointElement) break;
-        final point = element as PointElement;
+        if (element is! PointElement || !element._builtIn) break;
+        final point = element;
         if (!identical(point.hidden, undefined) && jsTruthy(point.hidden)) {
           continue;
         }
@@ -702,7 +702,8 @@ class PointElement extends Element
           continue;
         }
         final current = point.options;
-        if (!identical(current, options)) {
+        // Dart `null` is the `undefined` options of draw, which throw there.
+        if (current == null || !identical(current, options)) {
           if (current is! PointOptions ||
               !plainOption(current, OptionKey.radius) ||
               !plainOption(current, OptionKey.hoverRadius) ||
