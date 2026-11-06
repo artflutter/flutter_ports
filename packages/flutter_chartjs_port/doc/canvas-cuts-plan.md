@@ -2496,7 +2496,8 @@ occurred.
 
 ### The data-only path of a ChartView (2026-11-06)
 
-Chart.js ADR 0098 edits `lib/src/widgets/chart_view.dart`, `lib/src/typed/lower.dart` and
-`lib/src/core/data_update.dart`. A `ChartView` with `dataOnlyUpdates` calls `chart.updateData` for a new
-typed config that changed only its data Lists. No canvas operation or drawing cut changes. No trigger
-occurred.
+Chart.js ADR 0098 edits `lib/src/widgets/chart_view.dart`, `lib/src/typed/lower.dart`,
+`lib/src/core/data_update.dart`, `lib/src/core/core.controller.dart`, `lib/src/helpers/helpers.config.dart`,
+`lib/src/plugins/plugin.legend.dart`, `lib/src/scales/scale.category.dart` and `lib/src/types/plugin.dart`.
+A `ChartView` with `dataOnlyUpdates` calls `chart.updateData` for a new typed config that changed only its
+data Lists. No canvas operation or drawing cut changes. No trigger occurred.

@@ -27,6 +27,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// A hook of the `Plugin` interface (U `index.d.ts:856-1240` and the hooks
 /// of the tooltip plugin, `index.d.ts:2777-2786`), with its JS name.
@@ -228,10 +229,17 @@ final class UpdateHookArgs extends PluginHookArgs {
   UpdateHookArgs({
     required Object? mode,
     bool? cancelable,
+    this.layoutKept = false,
   }) {
     this.mode = mode;
     if (cancelable != null) this.cancelable = cancelable;
   }
+
+  /// Whether this update kept the layout of the last update, so no box ran its
+  /// `update`: the data-only lifecycle of Chart.js ADR 0074. It is not a key of
+  /// the object, because upstream always runs the layout.
+  @internal
+  final bool layoutKept;
 
   static const List<String> _fieldNames = [
     'mode',

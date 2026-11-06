@@ -1489,6 +1489,8 @@ final class OptionView implements ContextProxy {
   }
 
   /// Category bounds/source may be absent, but cannot be scriptable inputs.
+  /// The limits of a category scale come from the data unless `bounds` is
+  /// `'ticks'` (scale.category.js:84).
   @internal
   bool get cachedCategoryDataInputs {
     final proxy = _proxy;
@@ -1499,7 +1501,8 @@ final class OptionView implements ContextProxy {
         value is String ||
         (value is num && value.isFinite);
     final labels = proxy._cache.get(OptionKey.labels);
-    return bound(proxy._cache.get(OptionKey.min)) &&
+    return proxy._cache.get(OptionKey.bounds) == 'ticks' &&
+        bound(proxy._cache.get(OptionKey.min)) &&
         bound(proxy._cache.get(OptionKey.max)) &&
         !identical(labels, _absent) &&
         !jsIsFunction(labels);

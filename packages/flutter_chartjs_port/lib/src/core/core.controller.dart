@@ -1647,8 +1647,9 @@ class Chart
   /// for structural/type changes. Options/defaults/theme, labels (including
   /// in-place edits), dataset identities/order, stacking and visibility must
   /// stay unchanged; call [update] for those changes. Numeric scales require
-  /// explicit numeric min/max. Category, linear and radial-linear scales and
-  /// all built-in controllers are supported. Indexed/scriptable styles,
+  /// explicit numeric min/max. A category scale requires `bounds: 'ticks'` and
+  /// no label that its parse added. Category, linear and radial-linear scales
+  /// and all built-in controllers are supported. Indexed/scriptable styles,
   /// unknown components, active animations and unapproved plugins fall back
   /// to `update('none')`. Native numeric lists/buffers and point data qualify.
   ///
@@ -1656,7 +1657,10 @@ class Chart
   /// Scale/layout hooks run only when overflow requires a new layout. Use a
   /// full update for data-dependent scale/configuration callbacks. Plugins
   /// must opt in and must not mutate configuration or data during these hooks.
-  /// Neither update method may re-enter synchronously from these callbacks.
+  /// Neither update method may re-enter synchronously from the hooks up to
+  /// `afterUpdate`. The event replay and the draw that follow them are as in a
+  /// full update: their callbacks may call [update], not [updateData]
+  /// (Chart.js ADR 0098).
   ///
   /// Returns true when the data-only lifecycle was selected, even if a hook
   /// cancelled it; false when this call delegated to the full lifecycle.
@@ -1736,6 +1740,15 @@ class Chart
       if (primitive == null) return full();
       controller.primitiveDataUpdate = primitive;
     }
+    void endDataLifecycle() {
+      _updatingData = false;
+      for (final controller in controllers) {
+        controller
+          ..updatingData = false
+          ..reuseDataLayout = false;
+      }
+    }
+
     _updatingData = true;
     try {
       if (notifyPlugins(
@@ -1775,25 +1788,41 @@ class Chart
           ..reuseDataLayout = reuseLayout && controllers.length == 1;
       }
       if (!_updateDatasets('none', configure: false)) _invalidateDataUpdate();
-      notifyPlugins('afterUpdate', UpdateHookArgs(mode: 'none'));
-      final event = _eventToReplay();
-      if (event != null) {
-        _replayLastEvent(event);
-      } else if (active.isNotEmpty) {
-        _updateHoverStyles(active, active, true);
+      notifyPlugins(
+        'afterUpdate',
+        UpdateHookArgs(mode: 'none', layoutKept: reuseLayout),
+      );
+      // A layout gave the layers in the order of the boxes. The kept ones have
+      // the order of the sort of the last update.
+      if (!reuseLayout) {
+        jsSort(
+          _layers,
+          _compare2Level<LayoutLayer>((layer) => layer.z, (layer) => layer.idx),
+        );
       }
-      render();
+
+      // The steps from here are the steps of `update`. A callback of the replay
+      // may call `update`, which needs no state of this lifecycle, and it
+      // cannot call `updateData`, as in `update`.
+      endDataLifecycle();
+      _fullUpdateDepth++;
+      try {
+        final event = _eventToReplay();
+        if (event != null) {
+          _replayLastEvent(event);
+        } else if (active.isNotEmpty) {
+          _updateHoverStyles(active, active, true);
+        }
+        render();
+      } finally {
+        _fullUpdateDepth--;
+      }
       return true;
     } on Object {
       _invalidateDataUpdate();
       rethrow;
     } finally {
-      _updatingData = false;
-      for (final controller in controllers) {
-        controller
-          ..updatingData = false
-          ..reuseDataLayout = false;
-      }
+      endDataLifecycle();
     }
   }
 
