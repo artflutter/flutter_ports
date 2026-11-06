@@ -5,6 +5,7 @@ library;
 // Keep canvas state transitions and their observations as separate steps.
 // ignore_for_file: cascade_invocations
 
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -15,12 +16,14 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'line_fan_engine.dart';
 import 'pixel_compare.dart';
 
 // The twins of Chart.js ADR 0103. The route is the context method; its twin is
 // the Canvas 2D sequence of the same lines on a new context. `flutter test`
 // runs them on Skia on the CPU, and `flutter test --enable-impeller` on
-// Impeller on Vulkan, where the route needs no switch.
+// Impeller on Vulkan, where the route needs no switch. The CI job
+// `test-impeller` runs the second form.
 
 const double _x = 80.25;
 const double _y = 79.75;
@@ -157,10 +160,7 @@ void _background(ui.Canvas canvas) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
-    UiCanvasContext.debugLineFanWithoutImpeller = true;
-    addTearDown(() => UiCanvasContext.debugLineFanWithoutImpeller = false);
-  });
+  setUpLineFanEngine();
 
   group('the engine draws each line of one call as its own stroke', () {
     // The canvas alone: one `drawRawPoints` against a `drawLine` for each line.
@@ -796,5 +796,39 @@ void main() {
       addTearDown(ctx.dispose);
       expect(ctx, isA<LineFanCanvas>());
     });
+  });
+
+  test('a job of CI runs the twins on Impeller and requires that engine', () {
+    var dir = Directory.current.absolute;
+    while (!File('${dir.path}/.github/workflows/ci.yaml').existsSync()) {
+      expect(dir.parent.path, isNot(dir.path), reason: 'no repository root');
+      dir = dir.parent;
+    }
+    final lines = File(
+      '${dir.path}/.github/workflows/ci.yaml',
+    ).readAsLinesSync();
+    final start = lines.indexOf('  test-impeller:');
+    expect(start, isNot(-1), reason: 'ci.yaml has no job test-impeller');
+    final job = lines
+        .skip(start + 1)
+        .takeWhile((line) => !RegExp(r'^  \S').hasMatch(line))
+        .toList();
+    expect(job, contains(matches(r'^\s+CHART_IMPELLER: "1"$')));
+    expect(
+      job,
+      contains(
+        matches(r'^\s+working-directory: packages/flutter_chartjs_port$'),
+      ),
+    );
+    final run = job.firstWhere(
+      (line) => RegExp(r'^\s+run: flutter test ').hasMatch(line),
+      orElse: () => '',
+    );
+    expect(run, contains('--enable-impeller'));
+    expect(run, contains('test/port/canvas/canvas_line_fan_test.dart'));
+    expect(
+      run,
+      contains('test/port/scales/scale.radialLinear_line_fan_test.dart'),
+    );
   });
 }

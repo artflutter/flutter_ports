@@ -40,6 +40,11 @@ and keeps these calls.
 --impeller-backend=metal`). The signed distance route of the macOS embedder has no flag in
 `flutter_tester`: the source above is its proof.
 
+The CI job `test-impeller` runs both twin files on Impeller on Vulkan, with the gate of an app and no
+switch of the tests. `CHART_IMPELLER=1` fails a run that is not on Impeller. `flutter_tester` links
+SwiftShader, so the job needs no GPU on its runner. No automated test runs on Impeller on Metal or on the
+signed distance route: the run on Metal is a manual step at an engine change.
+
 **Coordinates.** The numbers map through the transform in doubles as `moveTo` and `lineTo` map them.
 A `Float32List` element and the argument of `drawLine` narrow to one float, below the bound of the
 guard.
@@ -66,7 +71,8 @@ Every composite operation takes the fan: the twins pass for each one on the thre
 **The engine.** `ui.ImageFilter.isShaderFilterSupported` is the only signal of the engine in `dart:ui`,
 and it is true only on Impeller. Thus GPU Skia and the web decline: their Skia source is not available
 here and no test runs on them. Skia on the CPU cannot be told from GPU Skia, so it declines in an app
-too. The tests of `flutter_tester` set `UiCanvasContext.debugLineFanWithoutImpeller`.
+too. A test on Skia on the CPU sets `UiCanvasContext.debugLineFanWithoutImpeller`. A test on Impeller runs
+with no switch (`test/port/canvas/line_fan_engine.dart`).
 
 ## Fallback
 
@@ -94,4 +100,5 @@ each color, width, cap and blend mode, a clip and a transform, then the context 
 2D sequence, the batches, the split budget, the path after the call and each guard with no state change.
 `test/port/scales/scale.radialLinear_line_fan_test.dart`: a recording context with and without the
 capability (the same calls and bits), bytes against a trivial user subclass and a picture observer for
-radar and polar area and a typed `ChartView`, and each option that falls back.
+radar and polar area and a typed `ChartView`, and each option that falls back. The first file also fails
+when `ci.yaml` loses the job `test-impeller`, its flag or its `CHART_IMPELLER=1`.
