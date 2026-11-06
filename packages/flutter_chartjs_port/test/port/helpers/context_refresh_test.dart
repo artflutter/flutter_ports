@@ -36,8 +36,10 @@ void main() {
 
         final expected = start();
         _ordinary(expected, 3);
+        // The interpolation gives the text of `_ordinary` on each target: the
+        // text of a whole double has no `.0` on JavaScript.
         final bulk = start()
-          ..refresh('parsed 3.0', 'raw 3.0', 3, false, 'none');
+          ..refresh('parsed ${3.0}', 'raw ${3.0}', 3, false, 'none');
         expect(_state(bulk), _state(expected), reason: 'deleted $deleted');
         expect(bulk.dataIndex, 3);
         expect(bulk.index, 3);
@@ -70,7 +72,8 @@ void main() {
   );
 
   test('the index fields take each number, also over -0 and a string', () {
-    const negativeZero = -0.0;
+    // A runtime value: on JavaScript, the constant `-0.0` evaluates to +0.
+    final negativeZero = double.parse('-0');
     final context = ScriptableContext.data(null, 0, 'point')
       ..index = negativeZero
       ..refresh(1, 2, 0, false, 'none');
