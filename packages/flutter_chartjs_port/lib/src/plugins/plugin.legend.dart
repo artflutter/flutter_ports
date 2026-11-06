@@ -508,6 +508,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     return _stylesRunNoUserCode(
           controller,
           items.length,
+          root,
+          labels,
           atMark: atMark,
           datasetsUpdated: datasetsUpdated,
         ) &&
@@ -524,7 +526,9 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   // DIVERGES(chartjs): adapt-hidden-legend-items, the two proofs.
   bool _stylesRunNoUserCode(
     DatasetController controller,
-    int count, {
+    int count,
+    OptionResolver root,
+    OptionResolver labels, {
     required bool atMark,
     required bool datasetsUpdated,
   }) {
@@ -539,7 +543,13 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       return true;
     }
     if (!atMark) return false;
-    return (_markStyles = _indexedItemStyles(controller, count)) != null;
+    return (_markStyles = _indexedItemStyles(
+          controller,
+          count,
+          root,
+          labels,
+        )) !=
+        null;
   }
 
   /// Runs the build that waits, when it can run: with the options of its mark,
@@ -554,7 +564,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final current = super.options;
     final styles = _pendingStyles;
     super.options = pending;
-    styles?.controller.legendStyles = styles.styles;
+    styles?.controller.legendStyles = (
+      styles: styles.styles,
+      arcCount: styles.arcCount,
+    );
     try {
       buildLabels();
     } finally {
@@ -1395,16 +1408,36 @@ bool _styleReadsRunNoUserCode(
 /// native. Then each `getStyle(i)` for a [count] of labels runs no user code
 /// and throws nothing, and its one effect is the state of the context of its
 /// arc. Dart `null` leaves the ordinary path at its first reads.
+///
+/// An ordinary build writes the context of its first resolve before it reads
+/// the next keys of the arcs, and `filter`, `sort` and `reverse`. So this proof
+/// comes after their reads only when they have no reader: the scopes of the box
+/// are native, and each value that makes a sub resolver stops the proof before
+/// its read ([OptionResolver.peekKey]). A user arc at index 0 reads its context
+/// in the first resolve. A visible legend reads its items: it takes no such
+/// proof.
 // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of Chart.js ADR 0099.
 _IndexedItemStyles? _indexedItemStyles(
   DatasetController controller,
   int count,
+  OptionResolver root,
+  OptionResolver labels,
 ) {
+  if (!root.scopesAreNative ||
+      !labels.scopesAreNative ||
+      !identical(root.peekKey(OptionKey.display), false) ||
+      jsTruthy(labels.peekKey(OptionKey.filter)) ||
+      jsTruthy(labels.peekKey(OptionKey.sort)) ||
+      !_plainOption(root.peekKey(OptionKey.reverse))) {
+    return null;
+  }
   final meta = controller.cachedMeta;
+  final arcs = meta.data;
   if (!nativeArcClass(controller.dataElementType) ||
-      !nativePointList(meta.data) ||
+      !nativePointList(arcs) ||
       !nativeDataUpdateList(meta.parsed) ||
-      !nativePointDatasetIndex(controller.index)) {
+      !nativePointDatasetIndex(controller.index) ||
+      (arcs.isNotEmpty && !nativeArcElement(arcs[0]))) {
     return null;
   }
   final config = controller.chart.config;
@@ -1422,7 +1455,8 @@ _IndexedItemStyles? _indexedItemStyles(
 /// of a build at a later read (Chart.js ADR 0099).
 // DIVERGES(chartjs): adapt-hidden-legend-items, the state of one mark.
 final class _IndexedItemStyles {
-  _IndexedItemStyles(this.controller, this.styles, this.count);
+  _IndexedItemStyles(this.controller, this.styles, this.count)
+    : arcCount = controller.cachedMeta.data.length;
 
   /// The controller of dataset 0 at the mark.
   final DatasetController controller;
@@ -1432,6 +1466,11 @@ final class _IndexedItemStyles {
 
   /// The count of the labels at the mark.
   final int count;
+
+  /// The count of the arcs at the mark. A build at a read gives the item of a
+  /// label at this index or above the style of the dataset context, as the
+  /// build of the mark does, also when a next update has rebuilt the arcs.
+  final int arcCount;
 
   /// Whether a build at a read with [count] labels can run: [controller] is
   /// still the controller of dataset 0, and the styles cover these items.
@@ -1454,10 +1493,10 @@ final class _IndexedItemStyles {
     final rawData = dataUpdateField(dataset!, 'data');
     if (!nativeDataUpdateList(rawData)) return false;
     final raw = rawData! as List<Object?>;
-    final arcCount = count < arcs.length ? count : arcs.length;
+    final end = count < arcCount ? count : arcCount;
     final parsedLength = parsed.length;
     final rawLength = raw.length;
-    for (var i = 0; i < arcCount; i++) {
+    for (var i = 0; i < end; i++) {
       final arc = arcs[i];
       if (!nativeArcElement(arc)) return false;
       final context = (arc as Element).$context;
@@ -1473,8 +1512,8 @@ final class _IndexedItemStyles {
         controller.getContext(i.toDouble(), false, 'default');
       }
     }
-    if (count > arcCount) {
-      controller.getContext(arcCount.toDouble(), false, 'default');
+    if (count > end) {
+      controller.getContext(end.toDouble(), false, 'default');
     }
     return true;
   }

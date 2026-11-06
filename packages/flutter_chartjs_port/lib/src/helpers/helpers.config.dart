@@ -814,13 +814,39 @@ final class OptionResolver implements ResolverProxy {
     return varying.isEmpty ? null : varying;
   }
 
+  /// Whether a read of a plain value through this resolver runs no user code:
+  /// `operator []` of a custom Map scope is user code, and a write or a delete
+  /// of a slot can replace the scopes. [peekKey] needs this.
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
+  bool get scopesAreNative =>
+      !_slotsTouched && _scopes.every(nativeOptionScope);
+
+  /// The raw value of [key] with no effect: no write to the cache, and no sub
+  /// resolver for an object, whose creation can call a function `_fallback` and
+  /// read a custom Map. A proof that fails on this value leaves the read for
+  /// its own point of the ordinary path. Only with [scopesAreNative].
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
+  Object? peekKey(OptionKey key) {
+    final cached = _cache.get(key);
+    if (!identical(cached, _absent)) return cached;
+    final name = key.jsName;
+    for (final prefix in _prefixes) {
+      final value = _resolve(_readKey(prefix, name), _scopes);
+      if (!identical(value, undefined)) return value;
+    }
+    return undefined;
+  }
+
   /// The native indexed plan of [keys] for the indexes below [count], or Dart
-  /// `null`. A cold resolver takes here the reads of the first resolve of an
-  /// ordinary build, in its order: the descriptors, then each key. Each of them
-  /// fills the same cache, and the first value that is no scalar or native list
-  /// returns at once: an ordinary resolve goes on from there and finds the
-  /// reads in the cache. This runs no user code when the scopes are native
-  /// (their check is for the caller): it calls no descriptor and no option.
+  /// `null`. It takes the descriptors, the first reads of a resolve, and calls
+  /// none of them. An ordinary resolve stops at the first list and takes its
+  /// context, so it reads the keys after that list later: this function peeks
+  /// at each key ([peekKey]), and only when all of them are a scalar or a
+  /// native list does it read them, which runs no user code and fills the cache
+  /// of that resolve. Else the ordinary resolve does each read at its own
+  /// point. The scopes are native (their check is for the caller).
   /// [descriptorGuard] and [kind] are the ones of a resolve of the caller.
   @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
@@ -841,9 +867,12 @@ final class OptionResolver implements ResolverProxy {
         return null;
       }
       for (final key in keys) {
-        if (key is! OptionKey) return null;
-        final value = readKey(key);
+        if (key is! OptionKey || key.jsName.startsWith('_')) return null;
+        final value = peekKey(key);
         if (!_indexedScalar(value) && !nativeIndexedList(value)) return null;
+      }
+      for (final key in keys) {
+        readKey(key as OptionKey);
       }
       // Only the qualification of a resolve: no result, no write to [kind] and
       // no reader of this context, and it remembers a rejected key shape.
