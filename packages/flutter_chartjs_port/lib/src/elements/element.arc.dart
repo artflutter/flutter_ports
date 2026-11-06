@@ -1,6 +1,7 @@
 // Ported from Chart.js v4.6.1 src/elements/element.arc.ts (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native Color values.
 // DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
+// DIVERGES(chartjs): adapt-native-arc-sector, an optional fused native draw.
 
 /// Port of `src/elements/element.arc.ts`: the arc element of the doughnut,
 /// pie and polar area charts.
@@ -40,6 +41,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show Defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -1534,6 +1536,67 @@ class ArcElement extends Element
     return getCenterPoint(useFinalPosition);
   }
 
+  /// Offers the sector of an ordinary arc to [ctx] (Chart.js ADR 0097): the
+  /// exact class, with plain numeric options and no offset, spacing, rounded
+  /// corner or border, on a circular arc below a full turn. Each other arc
+  /// takes the sequence of [draw].
+  ///
+  /// The numbers are those of `_pathArc` for such an arc: the offset, the
+  /// spacing and the corner limits add 0, and the corner limits are 0 for
+  /// finite radii and angles.
+  bool _tryDrawSector(
+    ArcSectorCanvas ctx,
+    Object options,
+    double offset,
+    double spacing,
+  ) {
+    if (!_builtIn ||
+        circumference == double.negativeInfinity ||
+        options is! ArcOptions ||
+        offset != 0 ||
+        spacing != 0 ||
+        pixelMargin != 0 ||
+        fullCircles != 0 ||
+        !options.circular ||
+        !plainOption(options, OptionKey.borderWidth) ||
+        options.borderWidth != 0) {
+      return false;
+    }
+    final corners = rawOption(
+      options,
+      OptionKey.borderRadius,
+      options.borderRadius,
+    );
+    if (corners is! num || corners != 0) return false;
+    final start = startAngle;
+    final end = endAngle;
+    final outer = outerRadius;
+    final alpha = end - start;
+    if (!(alpha > 0) || alpha >= tau - 1e-4 || !(outer > 0)) return false;
+    final innerR = innerRadius;
+    final inner = innerR > 0 ? innerR : 0.0;
+    final beta = jsMax(0.001, alpha * outer) / outer;
+    final angleOffset = (alpha - beta) / 2;
+    return ctx.tryDrawArcSector(
+      x: x,
+      y: y,
+      outerRadius: outer,
+      innerRadius: inner,
+      startAngle: start + angleOffset,
+      endAngle: end - angleOffset,
+      backgroundColor: rawOption(
+        options,
+        OptionKey.backgroundColor,
+        options.backgroundColor,
+      ),
+      borderColor: rawOption(
+        options,
+        OptionKey.borderColor,
+        options.borderColor,
+      ),
+    );
+  }
+
   /// element.arc.ts:470 `draw(ctx)`.
   ///
   /// It sets [pixelMargin] and [fullCircles] first. It draws nothing for a
@@ -1559,15 +1622,32 @@ class ArcElement extends Element
       return;
     }
 
+    // DIVERGES(chartjs): adapt-native-arc-sector, a fused native sector.
+    if (ctx is ArcSectorCanvas &&
+        _tryDrawSector(ctx as ArcSectorCanvas, options, offset, spacing)) {
+      return;
+    }
+
     ctx.save();
 
-    final halfAngle = (startAngle + endAngle) / 2;
-    // js-ok: display only (Chart.js ADR 0045)
-    ctx.translate(math.cos(halfAngle) * offset, math.sin(halfAngle) * offset);
-    final fix =
-        // js-ok: display only (Chart.js ADR 0045)
-        1 - math.sin(jsMin(pi, jsTruthy(circumference) ? circumference : 0));
-    final radiusOffset = offset * fix;
+    // DIVERGES(chartjs): adapt-native-arc-sector, no zero native translation.
+    if (!_builtIn ||
+        offset != 0 ||
+        ctx is! ArcSectorCanvas ||
+        !(ctx as ArcSectorCanvas).zeroTranslateIsNoOp) {
+      final halfAngle = (startAngle + endAngle) / 2;
+      // js-ok: display only (Chart.js ADR 0045)
+      ctx.translate(math.cos(halfAngle) * offset, math.sin(halfAngle) * offset);
+    }
+    // `offset * fix` is 0 for an offset of 0, except that `fix` is NaN for a
+    // circumference of -Infinity: the sine of it has no value.
+    var radiusOffset = 0.0;
+    if (offset != 0 || circumference == double.negativeInfinity) {
+      final fix =
+          // js-ok: display only (Chart.js ADR 0045)
+          1 - math.sin(jsMin(pi, jsTruthy(circumference) ? circumference : 0));
+      radiusOffset = offset * fix;
+    }
 
     ctx
       ..fillStyle = canvasStyle(_backgroundColor(options))
