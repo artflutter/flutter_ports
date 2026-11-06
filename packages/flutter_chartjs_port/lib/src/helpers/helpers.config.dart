@@ -351,6 +351,26 @@ final class _IndexedElementPlan {
   bool get _rawListPlain =>
       rawListAt < 0 || _plainRawList(values[rawListAt]! as List<Object?>);
 
+  /// Whether the fill of [prepared] accepts each input for any index, so that
+  /// no resolve leaves this plan. This reads each item of each list.
+  // DIVERGES(chartjs): adapt-data-update-indexed-plan, the items of the lists.
+  bool get hasStaticInputs {
+    for (var i = 0; i < keys.length; i++) {
+      final value = values[i];
+      if (i == rawListAt) {
+        if (!(value! as List<Object?>).every(_indexedScalar)) return false;
+      } else if (value is List<Object?>) {
+        if (value.isEmpty) return false;
+        for (final item in value) {
+          if (!_staticIndexedValue(keys[i], item)) return false;
+        }
+      } else if (!_staticIndexedValue(keys[i], value)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   // DIVERGES(chartjs): adapt-prepared-indexed-options, copy native static
   // fields when the caller owns the result. Never retain a returned object.
   ElementOptions? prepared(Object context, ElementOptions into) {
@@ -575,6 +595,17 @@ bool _nativeIndexedValue(OptionKey key, Object? value) =>
       _ => false,
     };
 
+/// A value of [_nativeIndexedValue] that is plain in its key: a color key holds
+/// an exact [Color] or no value, the only forms that the canvas draws with no
+/// error, and no other key holds a color. Any other value is foreign for the
+/// proof of a data-only update, though a plan can store it.
+// DIVERGES(chartjs): adapt-data-update-indexed-plan, the values of the proof.
+bool _staticIndexedValue(OptionKey key, Object? value) =>
+    _nativeIndexedValue(key, value) &&
+    (key == OptionKey.backgroundColor || key == OptionKey.borderColor
+        ? value == null || value is Undefined || value.runtimeType == Color
+        : value is! Color);
+
 /// helpers.config.ts:27 `_createResolver`.
 ///
 /// Creates a Proxy for resolving raw values for options.
@@ -708,6 +739,25 @@ final class OptionResolver implements ResolverProxy {
               indexed.keys[i] == OptionKey.backgroundColor ||
               indexed.keys[i] == OptionKey.borderColor,
         );
+  }
+
+  /// Whether each resolve of [keys] takes the indexed plan of this resolver,
+  /// for any index: each input is a native scalar or a native list of them,
+  /// each of the scopes is native, and no write came after the reads of the
+  /// plan. The reads went through all scopes, also the defaults and the
+  /// overrides, and the plan holds no function. A resolve then runs no user
+  /// code. This reads cached values only and never invokes a descriptor or a
+  /// resolver.
+  @internal
+  // DIVERGES(chartjs): adapt-data-update-indexed-plan, the plan as the proof.
+  bool hasStaticIndexedOptions(List<Object> keys) {
+    final plan = _indexedElementPlan;
+    return !_slotsTouched &&
+        plan != null &&
+        plan._template != null &&
+        plan.matches(keys) &&
+        _scopes.every(nativeOptionScope) &&
+        plan.hasStaticInputs;
   }
 
   /// A direct executor for an already-prepared native point scalar-color plan.
@@ -1681,6 +1731,32 @@ final class OptionView implements ContextProxy {
     }
     for (final key in keys) {
       if (!_indexedScalar(proxy._rawValueOf(key))) return false;
+    }
+    return true;
+  }
+
+  /// Whether each option that the resolver of this view read so far has a raw
+  /// value that is no function, in native scopes: a data-only update keeps the
+  /// results of this view, and a scriptable option would run again in a full
+  /// update. The scopes include the defaults and the overrides.
+  @internal
+  // DIVERGES(chartjs): adapt-data-update-indexed-plan, the dataset options.
+  bool get readsNoFunctionValue {
+    final proxy = _proxy;
+    if (proxy is! OptionResolver ||
+        _removedSlots != null ||
+        proxy._slotsTouched ||
+        !proxy._scopes.every(nativeOptionScope)) {
+      return false;
+    }
+    final keys = proxy._cache._keys ?? const <Object>[];
+    for (var i = 0; i < keys.length; i++) {
+      final key = keys[i];
+      final name = key is OptionKey ? key.jsName : key as String;
+      // A name with `_` is a descriptor or a slot, not an option.
+      if (!name.startsWith('_') && isFunction(proxy._cache._values![i])) {
+        return false;
+      }
     }
     return true;
   }

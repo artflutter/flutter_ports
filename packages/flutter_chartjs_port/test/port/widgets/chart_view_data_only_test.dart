@@ -2,14 +2,17 @@
 @TestOn('vm')
 library;
 
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter/widgets.dart' hide Element;
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet, jsSet;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show EventHookArgs;
@@ -314,6 +317,39 @@ Object _observe(Chart chart) {
   }
   return result;
 }
+
+/// The option [key] of [element].
+Object? _option(types.Element element, String key) =>
+    (element.options! as JsObjectFace)[key];
+
+/// [_observe] with the options, their key order and the context of each
+/// element.
+Object _observeDeep(Chart chart) => [
+  _observe(chart),
+  for (final meta in chart.getSortedVisibleDatasetMetas())
+    for (final element in meta.data)
+      () {
+        final options = element.options! as JsObjectFace;
+        final context = (element as chartjs.Element).$context;
+        return [
+          _plain(options),
+          options.jsKeys(),
+          element.active,
+          context?.jsKeys(),
+          for (final key in const [
+            'active',
+            'dataIndex',
+            'datasetIndex',
+            'index',
+            'mode',
+            'parsed',
+            'raw',
+            'type',
+          ])
+            _plain(context?.jsRead(key)),
+        ];
+      }(),
+];
 
 /// The bytes of the chart canvas over white.
 Future<Uint8List> _pixels(WidgetTester tester, Chart chart) async {
@@ -738,26 +774,10 @@ void main() {
             colored(step, [_red, _green]),
           ],
         ),
-        eligible: false,
       );
       expect(spy.layouts, 1);
-    });
-
-    testWidgets('an equal indexed color: updateData goes to the full update '
-        'by itself', (tester) async {
-      Dataset colored(int step) => BarDataset(
-        key: _a,
-        data: _values(step),
-        backgroundColor: const ChartValue.indexed([_red, _green]),
-      );
-      final spy = await afterChange(
-        tester,
-        (labels) => _bars(3, labels, datasets: [colored(3)]),
-        first: (step, labels) => _bars(step, labels, datasets: [colored(step)]),
-        eligible: false,
-      );
-      expect(spy.layouts, 1);
-      expect(spy.modes, ['none']);
+      final bar = _chart(tester).getDatasetMeta(0).data[1];
+      expect(_option(bar, 'backgroundColor'), _blue);
     });
 
     testWidgets('a data List of another length', (tester) async {
@@ -1006,6 +1026,475 @@ void main() {
       }
 
       expect(await run(dataOnly: true), await run(dataOnly: false));
+    });
+  });
+
+  group('native indexed colors (Chart.js ADR 0100)', () {
+    const kinds = [
+      ChartKind.bar,
+      ChartKind.scatter,
+      ChartKind.bubble,
+      ChartKind.pie,
+      ChartKind.doughnut,
+      ChartKind.polarArea,
+    ];
+
+    /// A dataset of [type] with an indexed background and border color.
+    Dataset colored(
+      ChartKind type,
+      int step, {
+      ChartValue<Color> background = const ChartValue.indexed([_red, _green]),
+      ChartValue<Color> border = const ChartValue.indexed([
+        _blue,
+        _red,
+        _green,
+      ]),
+      double radius = 4,
+    }) => switch (type) {
+      ChartKind.bar => BarDataset(
+        key: _a,
+        label: 'd',
+        data: _values(step),
+        backgroundColor: background,
+        borderColor: border,
+        borderWidth: 1,
+      ),
+      ChartKind.scatter => ScatterDataset(
+        key: _a,
+        label: 'd',
+        points: _points(step),
+        backgroundColor: background,
+        borderColor: border,
+        pointRadius: 3,
+      ),
+      ChartKind.bubble => BubbleDataset(
+        key: _a,
+        label: 'd',
+        points: <DataPoint>[
+          for (var i = 0; i < _count; i++)
+            DataPoint.bubble(i * 10, _value(i, step), radius),
+        ],
+        backgroundColor: background,
+        borderColor: border,
+        borderWidth: 1,
+      ),
+      ChartKind.pie => PieDataset(
+        key: _a,
+        label: 'd',
+        data: _values(step),
+        backgroundColor: background,
+        borderColor: border,
+        borderWidth: 1,
+      ),
+      ChartKind.doughnut => DoughnutDataset(
+        key: _a,
+        label: 'd',
+        data: _values(step),
+        backgroundColor: background,
+        borderColor: border,
+        borderWidth: 1,
+      ),
+      _ => PolarAreaDataset(
+        key: _a,
+        label: 'd',
+        data: _values(step),
+        backgroundColor: background,
+        borderColor: border,
+        borderWidth: 1,
+      ),
+    };
+
+    ChartConfig coloredConfig(
+      ChartKind type,
+      int step,
+      List<Object> labels, {
+      Dataset? dataset,
+      ChartLegend? legend = const ChartLegend(display: false),
+      ChartTitle? title,
+    }) => ChartConfig(
+      type: type,
+      labels: labels,
+      datasets: [dataset ?? colored(type, step)],
+      scales: switch (type) {
+        ChartKind.pie || ChartKind.doughnut => null,
+        ChartKind.polarArea => _radialAxis,
+        ChartKind.scatter || ChartKind.bubble => _cartesianAxes,
+        _ => _categoryAxes,
+      },
+      animation: ChartAnimation.none,
+      legend: legend,
+      title: title,
+    );
+
+    Offset elementAt(WidgetTester tester, int index) {
+      final element = _chart(tester).getDatasetMeta(0).data[index];
+      return switch (element) {
+        ArcElement(:final x, :final y, :final startAngle, :final endAngle) =>
+          () {
+            final angle = (startAngle + endAngle) / 2;
+            final r = (element.innerRadius + element.outerRadius) / 2;
+            return Offset(x + r * math.cos(angle), y + r * math.sin(angle));
+          }(),
+        _ => Offset(element.x, element.y + 1),
+      };
+    }
+
+    for (final type in kinds) {
+      group(type.name, () {
+        /// One run of the steps, with the parameter and without it. [check]
+        /// gets the layouts of a tick of new data.
+        Future<List<Object>> run(
+          WidgetTester tester,
+          _Spy spy, {
+          required bool dataOnly,
+          ChartLegend? legend = const ChartLegend(display: false),
+        }) async {
+          final labels = _newLabels();
+          ChartConfig at(int step, ChartTitle? title) => coloredConfig(
+            type,
+            step,
+            labels,
+            legend: legend,
+            title: title,
+          );
+          Widget view(int step, {double width = 400, ChartTitle? title}) =>
+              _box(
+                ChartView(
+                  config: at(step, title),
+                  updateMode: 'none',
+                  dataOnlyUpdates: dataOnly,
+                ),
+                width: width,
+              );
+          final seen = <Object>[];
+          Future<void> record() async {
+            final chart = _chart(tester);
+            seen
+              ..add(_observeDeep(chart))
+              ..add(await _pixels(tester, chart));
+          }
+
+          Future<void> tick(
+            int step, {
+            double width = 400,
+            ChartTitle? title,
+          }) async {
+            spy.clear();
+            await tester.pumpWidget(view(step, width: width, title: title));
+            expect(spy.layouts, dataOnly ? 0 : 1, reason: 'tick $step');
+            expect(spy.modes, ['none'], reason: 'tick $step');
+            expect(spy.draws, 1, reason: 'tick $step');
+            await record();
+          }
+
+          await _warm(tester, view);
+          await tick(2);
+          await tick(3);
+
+          // A later full update.
+          const title = ChartTitle(display: true, text: 'new');
+          spy.clear();
+          await tester.pumpWidget(view(4, title: title));
+          expect(spy.layouts, 1);
+          await record();
+          await tick(5, title: title);
+
+          // A hidden item.
+          _chart(tester).hide(0, 1);
+          await record();
+          await tick(6, title: title);
+          _chart(tester).show(0, 1);
+          await tick(7, title: title);
+
+          // A hover with the mouse, then with the API.
+          final mouse = await _mouse(tester);
+          await mouse.moveTo(elementAt(tester, 2));
+          await tester.pump();
+          expect(_chart(tester).getActiveElements(), isNotEmpty);
+          await tick(8, title: title);
+          await tick(9, title: title);
+          await mouse.moveTo(const Offset(399, 299));
+          await tester.pump();
+          await mouse.removePointer();
+          await tester.pump();
+          _chart(tester).setActiveElements([
+            <String, Object?>{'datasetIndex': 0.0, 'index': 3.0},
+          ]);
+          await tick(10, title: title);
+          _chart(tester).setActiveElements(const <Object?>[]);
+
+          // A resize.
+          await tester.pumpWidget(view(11, width: 240, title: title));
+          await tester.pump();
+          await tester.pump();
+          expect(_chart(tester).width, 240);
+          await record();
+          await tick(12, width: 240, title: title);
+
+          await tester.pumpWidget(const SizedBox());
+          return seen;
+        }
+
+        testWidgets('matches a full update in the elements, the options, the '
+            'contexts and the pixels', (tester) async {
+          final spy = _spyOnChart();
+          expect(
+            await run(tester, spy, dataOnly: true),
+            await run(tester, spy, dataOnly: false),
+          );
+        });
+
+        testWidgets('matches a full update with a visible legend', (
+          tester,
+        ) async {
+          final spy = _spyOnChart();
+          const legend = ChartLegend(display: true);
+          expect(
+            await run(tester, spy, dataOnly: true, legend: legend),
+            await run(tester, spy, dataOnly: false, legend: legend),
+          );
+        });
+
+        testWidgets('a new ChartValue with equal colors stays on the path', (
+          tester,
+        ) async {
+          final spy = _spyOnChart();
+          final labels = _newLabels();
+          ChartConfig at(int step) => coloredConfig(
+            type,
+            step,
+            labels,
+            dataset: colored(
+              type,
+              step,
+              background: ChartValue.indexed(
+                List<Color>.of(const [_red, _green]),
+              ),
+              border: ChartValue.indexed(
+                List<Color>.of(const [_blue, _red, _green]),
+              ),
+            ),
+          );
+          await _warm(tester, (step) => _view(at(step)));
+          spy.clear();
+          await tester.pumpWidget(_view(at(2)));
+          expect(spy.layouts, 0);
+          final seen = _observeDeep(_chart(tester));
+          final pixels = await _pixels(tester, _chart(tester));
+          await tester.pumpWidget(const SizedBox());
+          // The const value gives the same chart.
+          await _warm(
+            tester,
+            (step) => _view(coloredConfig(type, step, labels)),
+          );
+          spy.clear();
+          await tester.pumpWidget(_view(coloredConfig(type, 2, labels)));
+          expect(spy.layouts, 0);
+          expect(_observeDeep(_chart(tester)), seen);
+          expect(await _pixels(tester, _chart(tester)), pixels);
+        });
+
+        testWidgets('a new List of other colors takes the full path, and the '
+            'next tick the data-only path', (tester) async {
+          final spy = _spyOnChart();
+          final labels = _newLabels();
+          ChartConfig at(int step, List<Color> colors) => coloredConfig(
+            type,
+            step,
+            labels,
+            dataset: colored(
+              type,
+              step,
+              background: ChartValue.indexed(colors),
+            ),
+          );
+          await _warm(tester, (step) => _view(at(step, [_red, _green])));
+          spy.clear();
+          await tester.pumpWidget(_view(at(2, [_red, _green])));
+          expect(spy.layouts, 0);
+          spy.clear();
+          await tester.pumpWidget(_view(at(3, [_green, _blue])));
+          expect(spy.layouts, 1);
+          final element = _chart(tester).getDatasetMeta(0).data[1];
+          expect(_option(element, 'backgroundColor'), _blue);
+          spy.clear();
+          await tester.pumpWidget(_view(at(4, [_green, _blue])));
+          expect(spy.layouts, 0);
+        });
+
+        testWidgets('a color resolver takes the full path, with no change of '
+            'its calls', (tester) async {
+          final spy = _spyOnChart();
+          final labels = _newLabels();
+          var calls = 0;
+          Color resolve(ChartContext _) {
+            calls++;
+            return _red;
+          }
+
+          ChartConfig at(int step) => coloredConfig(
+            type,
+            step,
+            labels,
+            dataset: colored(
+              type,
+              step,
+              background: ChartValue.resolver(resolve),
+            ),
+          );
+          await _warm(tester, (step) => _view(at(step)));
+          spy.clear();
+          calls = 0;
+          await tester.pumpWidget(_view(at(2)));
+          expect(spy.layouts, 1);
+          expect(calls, greaterThan(0));
+        });
+      });
+    }
+
+    testWidgets('a function in the defaults of the element takes the full '
+        'path', (tester) async {
+      final spy = _spyOnChart();
+      final labels = _newLabels();
+      var calls = 0;
+      jsSet(jsGet(jsGet(defaults, 'elements'), 'arc'), 'offset', (Object? _) {
+        calls++;
+        return 0.0;
+      });
+      await _warm(
+        tester,
+        (step) => _view(coloredConfig(ChartKind.pie, step, labels)),
+      );
+      spy.clear();
+      calls = 0;
+      await tester.pumpWidget(_view(coloredConfig(ChartKind.pie, 2, labels)));
+      expect(spy.layouts, 1);
+      expect(calls, greaterThan(0));
+    });
+
+    testWidgets('an overflow that grows runs a layout, with the result of a '
+        'full update', (tester) async {
+      final spy = _spyOnChart();
+      final labels = _newLabels();
+      ChartConfig at(int step, double radius) => coloredConfig(
+        ChartKind.bubble,
+        step,
+        labels,
+        dataset: colored(ChartKind.bubble, step, radius: radius),
+      );
+      Future<Object> run({required bool dataOnly}) async {
+        await _warm(tester, (step) => _view(at(step, 4), dataOnly: dataOnly));
+        spy.clear();
+        await tester.pumpWidget(_view(at(2, 12), dataOnly: dataOnly));
+        expect(spy.layouts, 1);
+        final seen = [
+          _observeDeep(_chart(tester)),
+          await _pixels(tester, _chart(tester)),
+        ];
+        spy.clear();
+        await tester.pumpWidget(_view(at(3, 12), dataOnly: dataOnly));
+        expect(spy.layouts, dataOnly ? 0 : 1);
+        seen
+          ..add(_observeDeep(_chart(tester)))
+          ..add(await _pixels(tester, _chart(tester)));
+        await tester.pumpWidget(const SizedBox());
+        return seen;
+      }
+
+      expect(await run(dataOnly: true), await run(dataOnly: false));
+    });
+
+    testWidgets('a theme stays, with the result of a full update', (
+      tester,
+    ) async {
+      final spy = _spyOnChart();
+      for (final type in kinds) {
+        Future<Object> run({required bool dataOnly}) async {
+          final labels = _newLabels();
+          Widget view(int step) => _view(
+            coloredConfig(type, step, labels),
+            dataOnly: dataOnly,
+            theme: const ChartThemeData.dark(),
+          );
+          await _warm(tester, view);
+          spy.clear();
+          await tester.pumpWidget(view(2));
+          expect(spy.layouts, dataOnly ? 0 : 1, reason: type.name);
+          final seen = [
+            _observeDeep(_chart(tester)),
+            await _pixels(tester, _chart(tester)),
+          ];
+          await tester.pumpWidget(const SizedBox());
+          return seen;
+        }
+
+        expect(await run(dataOnly: true), await run(dataOnly: false));
+      }
+    });
+
+    testWidgets('the indexed palette of the colors plugin stays on the path', (
+      tester,
+    ) async {
+      final spy = _spyOnChart();
+      for (final (type, make) in <(ChartKind, Dataset Function(List<double>))>[
+        (ChartKind.pie, (values) => PieDataset(key: _a, data: values)),
+        (
+          ChartKind.doughnut,
+          (values) => DoughnutDataset(key: _a, data: values),
+        ),
+        (
+          ChartKind.polarArea,
+          (values) => PolarAreaDataset(key: _a, data: values),
+        ),
+      ]) {
+        Future<Object> run({required bool dataOnly}) async {
+          final labels = _newLabels();
+          Widget view(int step) => _view(
+            coloredConfig(
+              type,
+              step,
+              labels,
+              dataset: make(_values(step)),
+            ).copyWith(
+              extra: const {
+                'plugins': {
+                  'colors': {'enabled': true},
+                },
+              },
+            ),
+            dataOnly: dataOnly,
+          );
+          await _warm(tester, view);
+          spy.clear();
+          await tester.pumpWidget(view(2));
+          expect(spy.layouts, dataOnly ? 0 : 1, reason: type.name);
+          final seen = [
+            _observeDeep(_chart(tester)),
+            await _pixels(tester, _chart(tester)),
+          ];
+          await tester.pumpWidget(const SizedBox());
+          return seen;
+        }
+
+        expect(await run(dataOnly: true), await run(dataOnly: false));
+      }
+    });
+
+    testWidgets('two ticks keep the layout, the ticks and the scale objects', (
+      tester,
+    ) async {
+      final labels = _newLabels();
+      await _warm(
+        tester,
+        (step) => _view(coloredConfig(ChartKind.bar, step, labels)),
+      );
+      final chart = _chart(tester);
+      final area = chart.chartArea;
+      final ticks = chart.scales['y']!.ticks;
+      await tester.pumpWidget(_view(coloredConfig(ChartKind.bar, 2, labels)));
+      await tester.pumpWidget(_view(coloredConfig(ChartKind.bar, 3, labels)));
+      expect(chart.chartArea, same(area));
+      expect(chart.scales['y']!.ticks, same(ticks));
     });
   });
 

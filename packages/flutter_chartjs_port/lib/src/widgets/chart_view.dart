@@ -283,9 +283,10 @@ class ChartView extends StatefulWidget {
   /// after a change of the size, after a change of the visible datasets with
   /// no update, with a scale without an explicit `min` and `max`, with a
   /// category axis with `bounds: 'data'` or with a label that a data point
-  /// added, with an indexed or resolved style, with a plugin without
+  /// added, with a resolved style, with a plugin without
   /// `supportsDataUpdates`, with a data List of another length and with a
-  /// queued animation.
+  /// queued animation. An equal `ChartValue.indexed` style stays on this path,
+  /// and one with other values is a full update (Chart.js ADR 0100).
   final bool dataOnlyUpdates;
 
   /// Called after the frame in which the widget starts a chart, and again

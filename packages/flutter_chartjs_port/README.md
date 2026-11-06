@@ -22,8 +22,9 @@ returns true when it selected the incremental lifecycle, or false when it used
 `update('none')`. Cancellation by plugins is separate from that return value.
 
 Keep options, labels, dataset structure and visibility unchanged. Use explicit
-numeric scale bounds and reusable styles; call the normal `update()` when other
-inputs change. Native numeric buffers and prepared numeric points are supported.
+numeric scale bounds and reusable or native indexed styles; call the normal
+`update()` when other inputs change. Native numeric buffers and prepared numeric
+points are supported.
 Unsupported scales/components/styles or unapproved plugins fall back. Layout,
 interaction and plugin details are in
 [ADR 0074](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/adr/0074-incremental-data-updates.md).

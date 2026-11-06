@@ -52,6 +52,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show DataUpdateShape, nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_options.dart'
+    show nativePointDatasetIndex;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, createElementOptions;
@@ -1138,16 +1140,60 @@ class DatasetController
   /// Whether the ordinary full update resolved context-independent styles.
   /// The cache records this even for controllers that do not share options.
   @internal
-  bool get hasStaticDataUpdateOptions {
-    bool cached(Object? type) {
-      final prefix = '${jsToString(_idOf(type))}-';
-      return _cachedElementOptions.keys.any(
-        (key) => key.startsWith(prefix) && key != '${prefix}active',
-      );
-    }
+  bool get hasStaticDataUpdateOptions =>
+      _hasCachedEntry(dataElementType) &&
+      (cachedMeta.dataset == null || _hasCachedEntry(datasetElementType));
 
-    return cached(dataElementType) &&
-        (cachedMeta.dataset == null || cached(datasetElementType));
+  /// Whether the cache has an entry of the element type [type], in another mode
+  /// than `active`.
+  bool _hasCachedEntry(Object? type) {
+    final prefix = '${jsToString(_idOf(type))}-';
+    return _cachedElementOptions.keys.any(
+      (key) => key.startsWith(prefix) && key != '${prefix}active',
+    );
+  }
+
+  /// Whether a data-only update of this controller gives the options of a full
+  /// update with no user code (Chart.js ADR 0100): each resolve of a data
+  /// element is a cached entry or a native indexed plan, the dataset element
+  /// has a cached entry, and no dataset option that a view read is a function.
+  ///
+  /// A proof holds for its cache generation of the config: each clear of the
+  /// scopes or of the resolvers changes it. `updateData` states that the
+  /// options stay unchanged, so the items of the indexed lists are read once
+  /// for each generation.
+  @internal
+  // DIVERGES(chartjs): adapt-data-update-indexed-plan, the proof of the path.
+  bool get hasDataUpdateOptions {
+    final config = chart.config;
+    if (config is! Config) return false;
+    final generation = config.resolutionGeneration;
+    if (_dataUpdateProofGeneration == generation) return true;
+    if (!options.readsNoFunctionValue ||
+        !(hasStaticDataUpdateOptions || _hasIndexedDataOptions(config))) {
+      return false;
+    }
+    _dataUpdateProofGeneration = generation;
+    return true;
+  }
+
+  // The cache generation of the last proof of [hasDataUpdateOptions].
+  int _dataUpdateProofGeneration = -1;
+
+  /// Whether each resolve of a data element takes a native indexed plan. A
+  /// dataset element has no such plan: its cached entry stays the proof.
+  bool _hasIndexedDataOptions(Config config) {
+    final elementType = _idOf(dataElementType);
+    if (elementType is! String ||
+        !nativePointDatasetIndex(index) ||
+        (cachedMeta.dataset != null && !_hasCachedEntry(datasetElementType))) {
+      return false;
+    }
+    return config.hasStaticIndexedElementOptions(
+      index.toInt(),
+      controllerType: type,
+      elementType: elementType,
+    );
   }
 
   /// The built-in `generateLabels` of this exact class, or Dart `null`: the

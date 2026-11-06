@@ -2548,3 +2548,10 @@ Chart.js ADR 0099 edits `lib/src/plugins/plugin.legend.dart`, `lib/helpers.dart`
 `lib/src/core/core.config.dart`, `lib/src/core/core.datasetController.dart`,
 `lib/src/helpers/helpers.config.dart` and `lib/src/helpers/helpers.options.dart`. This plan cites no line
 of these changes, and no canvas operation or drawing cut changes. No trigger occurred.
+### Native indexed colors on the data-only path (2026-11-06)
+
+Chart.js ADR 0100 edits `lib/src/core/core.config.dart`, `lib/src/core/core.controller.dart`,
+`lib/src/core/core.datasetController.dart`, `lib/src/core/data_update.dart`,
+`lib/src/helpers/helpers.config.dart` and `lib/src/widgets/chart_view.dart`. A chart with a native indexed
+style of a data element now takes `chart.updateData` when it qualifies. No canvas operation or drawing cut
+changes. No trigger occurred.
