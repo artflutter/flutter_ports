@@ -51,7 +51,7 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape;
+    show DataUpdateShape, nativeDataUpdateList;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, createElementOptions;
@@ -502,6 +502,7 @@ Object _itemStacksOf(Object? item) {
     case final Map<dynamic, dynamic> map:
       map['_stacks'] = created;
     case final List<dynamic> list:
+      _objectStacksWritten = true;
       _objectStacks[list] = created;
     case final JsClass value:
       value['_stacks'] = created;
@@ -509,6 +510,7 @@ Object _itemStacksOf(Object? item) {
       // A JavaScript TypeError: a property write into a primitive.
       throw TypeError();
     default:
+      _objectStacksWritten = true;
       _objectStacks[item!] = created;
   }
   return created;
@@ -629,6 +631,14 @@ void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
 
   final key = AxisKey.of(axis);
   final parsedItems = items ?? meta.parsed;
+  // DIVERGES(chartjs): adapt-clear-stacks-guard, a typed data item holds
+  // stacks only through [_objectStacks]: with no entry, the walk of a native
+  // List finds none.
+  if (!_objectStacksWritten &&
+      parsedItems is List<TypedDataItem> &&
+      nativeDataUpdateList(parsedItems)) {
+    return;
+  }
   for (final parsed in parsedItems) {
     final stacks = stacksOf(parsed);
     if (!jsTruthy(stacks)) {
@@ -716,6 +726,72 @@ T? _at<T extends Object>(List<T> list, double index) {
   return null;
 }
 
+/// [jsGetIndex] of a receiver that is a List by its static type: the same
+/// result, with no type test (Chart.js ADR 0096).
+Object? _itemAt(List<Object?> list, double index) {
+  if (index >= 0 && index < list.length) {
+    final i = index.toInt();
+    if (i == index) return list[i];
+  }
+  return undefined;
+}
+
+/// `dataset.data[index]` of `getContext`, the data of the dataset object of
+/// the user.
+Object? _rawOf(Object? dataset, double index) =>
+    jsGetIndex(readOption(dataset, OptionKey.data), index);
+
+/// `new Array(count)` of the parse functions, as the bound of their loop:
+/// a count below 0 is an empty range.
+int _itemCount(double count) {
+  final ilen = count.toInt();
+  return ilen < 0 ? 0 : ilen;
+}
+
+/// The class of the plain List that `_dataCheck` gives `meta._parsed`.
+final Type _plainParsedList = <Object?>[].runtimeType;
+
+/// Gives the empty plain List [items] the length of the [count] items of a
+/// parse from index 0 that copies the native List [source], and that then
+/// writes [items] by index. Returns whether it did.
+///
+/// Upstream grows `meta._parsed` by one for each item. The length is
+/// observable only by user code that runs between the writes. The callers
+/// keep that out: [DatasetController.parse] gives the list its upstream
+/// length before a value that can run user code, and
+/// [presizeParsedNumbers] takes only numbers (Chart.js ADR 0096).
+// DIVERGES(chartjs): adapt-parse-presize, one growth of the plain List.
+bool _presizeParsed(
+  List<Object?> items,
+  double start,
+  double count,
+  List<Object?> source,
+) {
+  if (start == 0 &&
+      count > 0 &&
+      items.runtimeType == _plainParsedList &&
+      items.isEmpty &&
+      nativeDataUpdateList(source) &&
+      count <= source.length) {
+    items.length = count.toInt();
+    return true;
+  }
+  return false;
+}
+
+/// [_presizeParsed] for a parse that writes the numbers of the native List
+/// [data] in a loop with no user code (controller.doughnut.js:153-165).
+/// Another [data] keeps the growth by one.
+@internal
+void presizeParsedNumbers(
+  List<Object?> items,
+  Object? data,
+  double start,
+  double count,
+) {
+  if (data is List<num?>) _presizeParsed(items, start, count, data);
+}
+
 /// The property keys `'0'` to `'63'`.
 final List<String> _indexKeys = [
   for (var i = 0; i < 64; i++) jsNumberToString(i),
@@ -737,12 +813,20 @@ String _indexKey(double index) {
 ///
 /// A [ParsedItem] reads its typed field ([ParsedItem.valueOf]) by the key
 /// [key] of the axis [axis] (`AxisKey.of(scale.axis)`, once for each loop).
-/// A parsed item is any value (index.d.ts:503): a data item of `parsing:
-/// false` reads by name ([jsGetKey]), which gives [undefined] for a number
-/// or a boolean and throws a [TypeError] for `null` and [undefined].
+/// A parsed item is any value (index.d.ts:503): a [TypedDataItem] of
+/// `parsing: false` gives its typed field for the axis `x` or `y`, as
+/// [dataItemValue] does. Another data item, and another axis, read by name
+/// ([jsGetKey]), which gives [undefined] for a number or a boolean and throws
+/// a [TypeError] for `null` and [undefined].
 @internal
-Object? parsedValueOf(Object? item, AxisKey key, String axis) =>
-    item is ParsedItem ? item.valueOf(key, axis) : jsGetKey(item, axis);
+Object? parsedValueOf(Object? item, AxisKey key, String axis) {
+  if (item is ParsedItem) return item.valueOf(key, axis);
+  if (item is TypedDataItem) {
+    if (key == AxisKey.x) return item.x;
+    if (key == AxisKey.y) return item.y;
+  }
+  return jsGetKey(item, axis);
+}
 
 /// `properties[axis] = value` of the properties of a point (for example
 /// controller.line.js:100-101, controller.bubble.js:127-128): the typed
@@ -786,6 +870,10 @@ Object? dataItemValue(Object? item, String key) => item is TypedDataItem
 /// array, the `Date` or the function (core.datasetController.js:165).
 final Expando<Object> _objectStacks = Expando('_stacks');
 
+/// Whether an item has an entry in [_objectStacks]. It stays true: the read
+/// of an entry needs no count of the live entries.
+bool _objectStacksWritten = false;
+
 /// Whether [item] is a JS primitive: a property write into it throws a
 /// `TypeError` in strict code. A record is not a JS value. It counts here,
 /// because an [Expando] cannot take it.
@@ -812,7 +900,9 @@ bool _isPrimitive(Object? item) =>
 /// wrote for it, or Dart `null` (Chart.js ADR 0036).
 @internal
 Object? stacksOf(Object? item) {
-  if (item is ParsedItem) return item.stacks ?? item.jsRead('_stacks');
+  if (item is ParsedItem) {
+    return item.hasSlot(4) ? item.stacks ?? item.jsRead('_stacks') : undefined;
+  }
   if (item is Map<dynamic, dynamic>) return item['_stacks'];
   if (item is List<dynamic>) return _objectStacks[item];
   if (item is JsClass || _isPrimitive(item)) return jsGet(item, '_stacks');
@@ -1158,7 +1248,7 @@ class DatasetController
   /// index that names no dataset.
   @override
   Object? getDataset() {
-    return jsGetIndex(jsGet(chart.data, 'datasets'), index);
+    return jsGetIndex(readOption(chart.data, OptionKey.datasets), index);
   }
 
   /// core.datasetController.js:323 `getMeta()`.
@@ -1372,9 +1462,17 @@ class DatasetController
               ));
       final parsedItems = meta.parsed;
       final offset = start.toInt();
+      // DIVERGES(chartjs): adapt-parse-presize, one growth of the plain List.
+      var presized = _presizeParsed(parsedItems, start, count, parsed);
       for (i = 0; i < count; ++i) {
         jsSetIndex(parsedItems, i + offset, cur = parsed[i]);
         if (sorted) {
+          // The comparison runs the `toString` of a value that is not a
+          // number. That user code sees the list of upstream.
+          if (presized && parsedValueOf(cur, iKey, iAxis) is! num?) {
+            parsedItems.length = i + offset + 1;
+            presized = false;
+          }
           if (isNotInOrderComparedToPrev()) {
             sorted = false;
           }
@@ -1429,26 +1527,19 @@ class DatasetController
       count,
     );
     if (numeric != null) return numeric;
-    final parsed = <ParsedItem>[];
-    double index;
 
-    for (var i = 0, ilen = count.toInt(); i < ilen; ++i) {
-      index = i + start;
-      parsed.add(
-        ParsedItem.of(
-          iKey,
-          iAxis,
-          // `singleScale || iScale.parse(...)`.
-          singleScale
-              ? singleScale
-              : iScale.parse(jsGetIndex(labels, index), index),
-          vKey,
-          vAxis,
-          vScale.parse(jsGetIndex(data, index), index),
-        ),
+    return List<ParsedItem>.generate(_itemCount(count), (i) {
+      final index = i + start;
+      return ParsedItem.of(
+        iKey,
+        iAxis,
+        // `singleScale || iScale.parse(...)`.
+        singleScale ? singleScale : iScale.parse(_itemAt(labels, index), index),
+        vKey,
+        vAxis,
+        vScale.parse(_itemAt(data, index), index),
       );
-    }
-    return parsed;
+    });
   }
 
   /// core.datasetController.js:532 `parseArrayData(meta, data, start,
@@ -1474,25 +1565,19 @@ class DatasetController
   ) {
     final xScale = meta.xScale!;
     final yScale = meta.yScale!;
-    final parsed = <ParsedItem>[];
-    double index;
-    Object? item;
 
-    for (var i = 0, ilen = count.toInt(); i < ilen; ++i) {
-      index = i + start;
-      item = jsGetIndex(data, index);
-      parsed.add(
-        ParsedItem.of(
-          AxisKey.x,
-          'x',
-          xScale.parse(jsGetIndex(item, 0), index),
-          AxisKey.y,
-          'y',
-          yScale.parse(jsGetIndex(item, 1), index),
-        ),
+    return List<ParsedItem>.generate(_itemCount(count), (i) {
+      final index = i + start;
+      final item = _itemAt(data, index);
+      return ParsedItem.of(
+        AxisKey.x,
+        'x',
+        xScale.parse(jsGetIndex(item, 0), index),
+        AxisKey.y,
+        'y',
+        yScale.parse(jsGetIndex(item, 1), index),
       );
-    }
-    return parsed;
+    });
   }
 
   /// core.datasetController.js:559 `parseObjectData(meta, data, start,
@@ -1532,25 +1617,19 @@ class DatasetController
       readOption(parsing, OptionKey.yAxisKey),
       'y',
     );
-    final parsed = <ParsedItem>[];
-    double index;
-    Object? item;
 
-    for (var i = 0, ilen = count.toInt(); i < ilen; ++i) {
-      index = i + start;
-      item = jsGetIndex(data, index);
-      parsed.add(
-        ParsedItem.of(
-          AxisKey.x,
-          'x',
-          xScale.parse(dataItemValue(item, xAxisKey! as String), index),
-          AxisKey.y,
-          'y',
-          yScale.parse(dataItemValue(item, yAxisKey! as String), index),
-        ),
+    return List<ParsedItem>.generate(_itemCount(count), (i) {
+      final index = i + start;
+      final item = _itemAt(data, index);
+      return ParsedItem.of(
+        AxisKey.x,
+        'x',
+        xScale.parse(dataItemValue(item, xAxisKey! as String), index),
+        AxisKey.y,
+        'y',
+        yScale.parse(dataItemValue(item, yAxisKey! as String), index),
       );
-    }
-    return parsed;
+    });
   }
 
   /// core.datasetController.js:579 `getParsed(index)`.
@@ -1564,7 +1643,7 @@ class DatasetController
   /// JS `null` item.
   @override
   Object? getParsed(double index) {
-    return jsGetIndex(cachedMeta.parsed, index);
+    return _itemAt(cachedMeta.parsed, index);
   }
 
   /// core.datasetController.js:586 `getDataElement(index)`.
@@ -1864,31 +1943,29 @@ class DatasetController
         index,
         element,
       );
-      // `dataset.data[index]`: the data of the dataset object of the user,
-      // read after the write of `parsed`, as upstream.
-      Object? raw() => jsGetIndex(jsGet(dataset, 'data'), index);
+      // `raw` is read after the write of `parsed`, as upstream.
       if (elementContext is ScriptableContext) {
         return elementContext
           ..parsed = getParsed(index)
-          ..raw = raw()
+          ..raw = _rawOf(dataset, index)
           ..dataIndex = index
           ..index = index
-          ..active = jsTruthy(active)
+          ..active = active ?? false
           ..mode = mode ?? undefined;
       }
       return elementContext
         ..jsWrite('parsed', getParsed(index))
-        ..jsWrite('raw', raw())
+        ..jsWrite('raw', _rawOf(dataset, index))
         ..jsWrite('dataIndex', index)
         ..jsWrite('index', index)
-        ..jsWrite('active', jsTruthy(active))
+        ..jsWrite('active', active ?? false)
         ..jsWrite('mode', mode ?? undefined);
     }
     return ($context ??= _createDatasetContext(chart.getContext(), this.index))
       ..dataset = dataset
       ..datasetIndex = this.index
       ..index = this.index
-      ..active = jsTruthy(active)
+      ..active = active ?? false
       ..mode = mode ?? undefined;
   }
 

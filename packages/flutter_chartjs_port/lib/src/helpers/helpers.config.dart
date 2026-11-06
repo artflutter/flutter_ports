@@ -1197,12 +1197,15 @@ final class OptionResolver implements ResolverProxy {
 /// [OptionResolver], else the JS property read [jsGet]. The chart options,
 /// the scale options, the plugin options and the dataset options are
 /// views; a test can give a raw Map. The style object of a controller is a
-/// typed [ElementOptions]: its [ElementOptions.valueOf]. Upstream reads the
-/// property by name. Port-only.
+/// typed [ElementOptions]: its [ElementOptions.valueOf]. A typed scope, for
+/// example the root, the data or a dataset of a typed config, reads its cell
+/// by [OptionScope.readKey] (Chart.js ADR 0096). Upstream reads the property
+/// by name. Port-only.
 Object? readOption(Object? options, OptionKey key) => switch (options) {
   final OptionView view => view.readKey(key),
   final OptionResolver resolver => resolver.readKey(key),
   final ElementOptions elementOptions => elementOptions.valueOf(key),
+  final OptionScope scope => scope.readKey(key),
   _ => jsGet(options, key.jsName),
 };
 
