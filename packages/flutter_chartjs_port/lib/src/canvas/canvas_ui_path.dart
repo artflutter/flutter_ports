@@ -499,8 +499,8 @@ final class UiPathBuilder implements CanvasPath {
   ///
   /// Each piece writes its part of the shape into [scratch] and calls [draw]
   /// with a clip on whole bitmap pixels, so that each pixel column belongs to
-  /// one piece. A piece keeps the geometry of the whole shape in its column. The
-  /// commands stay deferred. A false result calls nothing.
+  /// one piece. A piece keeps the geometry of the whole shape in its column.
+  /// The commands stay deferred. A false result calls nothing.
   bool tryFillColumns(
     ui.Path scratch,
     void Function(ui.Rect clip) draw,
@@ -1910,9 +1910,9 @@ final class _CachedPath {
 /// coordinate that is not finite and for a path with no subpath.
 ///
 /// A piece that ends at a cut also takes the commands after the cut, for a
-/// length of about [_strokePieceOverlap] bitmap pixels, so that the engine makes
-/// the join at the cut from the real segments, and the start of the next piece
-/// lies inside this piece. A long straight segment is cut to that length. A
+/// length of about [_strokePieceOverlap] bitmap pixels, so that the engine
+/// makes the join at the cut from the real segments, and the start of the next
+/// piece lies inside this piece. A long straight segment is cut to that length. A
 /// command that a line chart does not use fails the whole form.
 final class UiPathPieces implements CanvasPath {
   /// Pieces for a transform of the uniform scale [scale] and the line width
@@ -2266,11 +2266,11 @@ _CachedPath _cacheOf(Path2D path2d) {
   return fresh;
 }
 
-/// The pieces of [path2d] for a stroke, cached as [uiPathOf] caches its path, or
-/// `null` for a path that this form does not take. See [UiPathPieces].
+/// The pieces of [path2d] for a stroke, cached as [uiPathOf] caches its path,
+/// or `null` for a path that this form does not take. See [UiPathPieces].
 UiPathPieces? uiPathPiecesOf(Path2D path2d, double scale, double lineWidth) {
-  // A list that code outside can change takes one draw, with the version rule of
-  // [uiPathOf] alone.
+  // A list that outside code can change takes one draw, with the version rule
+  // of [uiPathOf] alone.
   if (path2d.isExposed) return null;
   final cached = _cacheOf(path2d);
   var pieces = cached.pieces;

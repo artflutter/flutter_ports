@@ -1797,7 +1797,7 @@ final class UiCanvasContext
 
   UiPathBuilder? _partitionedFillPath;
 
-  // DIVERGES(chartjs): adapt-web-long-path-pieces, one long path is slow on WebGL.
+  // DIVERGES(chartjs): adapt-web-long-path-pieces, a long path is slow on WebGL.
   /// Whether this build runs in a browser: Skia on WebGL.
   static const bool _onWeb = bool.fromEnvironment('dart.library.js_interop');
 
@@ -1858,8 +1858,9 @@ final class UiCanvasContext
         !t.isSimilarity) {
       return false;
     }
-    // A translucent line of at most one pixel: the engine draws it as a hairline,
-    // whose segments blend over each other. A layer gives another tone.
+    // A translucent line of at most one pixel: the engine draws it as a
+    // hairline, whose segments blend over each other. A layer gives another
+    // tone.
     if (s.strokeColor!.a * s.globalAlpha < 1 &&
         s.lineWidth * t.scaleFactor <= 1) {
       return false;

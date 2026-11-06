@@ -165,7 +165,7 @@ void main() {
       }
     }
 
-    test('each pixel column belongs to one piece: no seam at sparse points', () async {
+    test('each column belongs to one piece: no seam at sparse points', () async {
       // Few and wide segments with one straight edge: the pieces must give the
       // bytes of the whole shape in a translucent and in an opaque color.
       void shape(CanvasPath p) {
