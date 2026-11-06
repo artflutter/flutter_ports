@@ -161,8 +161,6 @@ longer supported. No global color installer or intermediate option color exists.
   `packages/*/tool/port_sources.yaml` pins.
 - `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
   run the gallery.
-- `dart run melos run benchmark:build:pages`: build the lab for the folder `lab/` of the GitHub Pages
-  site. `.github/workflows/pages.yaml` runs it and deploys the site.
 - `dart run melos run gallery:build:web` / `gallery:build:android` / `gallery:build:ios`: build the
   gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
@@ -1812,10 +1810,20 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `port-checks`, `upstream-manifest`, `gallery-web`,
   `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
-- Releases: `.github/workflows/pages.yaml` publishes `apps/chart_benchmark_lab` at
-  <https://artflutter.github.io/flutter_ports/lab/>. A deploy replaces the whole Pages site, so each
-  app has its own folder in the job `build` of that workflow. `web/isolate.js` of the lab adds the COOP
-  and COEP headers on `github.io` through a service worker. `web/flutter_bootstrap.js` gives the
+- Releases: `.github/workflows/pages.yaml` publishes `apps/chart_benchmark_lab` once for each Flutter
+  channel, at <https://artflutter.github.io/flutter_ports/lab-stable/>, `lab-beta/` and `lab-master/`.
+  Each run takes the newest release of stable and of beta, and the head of the branch `master`. It does
+  not read `.fvmrc`. The action caches no SDK for master, because its cache key for master is fixed. The
+  lab resolves alone in these builds (the step deletes `resolution: workspace`), so that a dev dependency
+  of the workspace cannot stop a page. The root `pubspec.lock` gives the first choice of versions. If a
+  channel does not build, its page shows that result, and the other pages deploy. If no channel builds,
+  the deploy stops. The old address `lab/` goes to the root page. The job `version` computes the lab
+  version with git-cliff (`cliff.toml`) from the commits after the last `lab/v*` tag. Only the paths of
+  its `include_paths` count. The builds take it through `--build-name`, and the run number through
+  `--build-number`. The bottom of the page shows both values (the key `lab.version`). The job `deploy`
+  pushes the tag of a new version. A deploy replaces the whole Pages site,
+  so each page has its own folder in the job `deploy` of that workflow. `web/isolate.js` of the lab adds
+  the COOP and COEP headers on `github.io` through a service worker, with one reload key for each page. `web/flutter_bootstrap.js` gives the
   loader no service worker settings: else the worker of Flutter removes that worker. The header of a
   web run shows its mode (`lib/benchmark/web_mode.dart`). A note that does not scroll
   (`lib/ui/page_note.dart`) says why that mode applies, or why a scroll or another outside cause stopped a test.

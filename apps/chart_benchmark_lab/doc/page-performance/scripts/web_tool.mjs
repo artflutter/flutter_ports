@@ -268,7 +268,7 @@ if (mode === 'sw') {
     let state;
     while (Date.now() - t0 < 60000) {
       await sleep(100);
-      const r = await c.send('Runtime.evaluate', { expression: "JSON.stringify({f: window.__firstFrame, iso: window.crossOriginIsolated, reloaded: sessionStorage.getItem('isolate.reloaded'), worker: !!navigator.serviceWorker.controller, build: !!document.querySelector('flutter-view')})", returnByValue: true });
+      const r = await c.send('Runtime.evaluate', { expression: "JSON.stringify({f: window.__firstFrame, iso: window.crossOriginIsolated, reloaded: sessionStorage.getItem('isolate.reloaded:' + location.pathname), worker: !!navigator.serviceWorker.controller, build: !!document.querySelector('flutter-view')})", returnByValue: true });
       state = r.result?.result?.value ? JSON.parse(r.result.result.value) : null;
       if (state?.f) break;
     }

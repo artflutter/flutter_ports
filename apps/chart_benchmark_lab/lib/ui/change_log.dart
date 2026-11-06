@@ -20,6 +20,11 @@ class ChangeLogEntry {
 /// are in `doc/performance.md` of the Chart.js port.
 const List<ChangeLogEntry> changeLog = [
   ChangeLogEntry('2026-11-06', [
+    'Web: the lab now has one page for each Flutter channel, on the newest '
+        'build of stable, of beta and of master. Figures of different pages do '
+        'not compare, because each page has its own engine. The header shows '
+        'the Flutter version, and the bottom of the page shows the lab '
+        'version.',
     'Lab page: each section now builds and paints on its own, so that a chart '
         'frame, a scroll and a readout no longer record the page around them. '
         'An idle chart stays mounted through a resize, and a load mounts it '

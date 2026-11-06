@@ -20,9 +20,25 @@ iOS, macOS and web platform scaffolds are included. iOS device builds require
 your usual signing setup. `benchmark:build:web` produces a WebAssembly build
 with JavaScript fallback.
 
-The workflow `.github/workflows/pages.yaml` publishes the lab at
-<https://artflutter.github.io/flutter_ports/lab/> when a push to `main` changes
-the lab, the Chart.js port or the toolchain. `benchmark:build:pages` is its build.
+The workflow `.github/workflows/pages.yaml` publishes one page of the lab for each
+Flutter channel: <https://artflutter.github.io/flutter_ports/lab-stable/>,
+<https://artflutter.github.io/flutter_ports/lab-beta/> and
+<https://artflutter.github.io/flutter_ports/lab-master/>. A push to `main` that
+changes the lab or the Chart.js port deploys all three pages. A person can also
+start the workflow. Each run takes the newest release of stable and of beta, and
+the head of the branch `master`. It does not read `.fvmrc`. The lab resolves alone
+in these builds, as an app that uses the port. The root `pubspec.lock` gives the
+first choice of versions. If a channel does not build, its page shows that result,
+and the other pages still deploy.
+
+git-cliff (`cliff.toml`) computes the lab version from the commits after the last
+`lab/v*` tag, by Conventional Commits. A feature gives a new minor version, and
+another commit gives a new patch version. Only a commit that changes the lab or the
+Chart.js port counts. The three builds take the version through `--build-name` and
+the workflow run number through `--build-number`. The bottom of the page shows both
+values, for example `Lab version 0.2.0+41`. A deploy pushes the tag of a new
+version. `git cliff --bumped-version` shows the next version on a local machine.
+
 GitHub Pages cannot send the COOP and COEP headers, so `web/isolate.js` adds them
 through a service worker, on `github.io` only. The first visit reloads once.
 `web/flutter_bootstrap.js` gives the Flutter loader no service worker settings,

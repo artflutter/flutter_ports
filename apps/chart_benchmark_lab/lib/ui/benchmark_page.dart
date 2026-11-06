@@ -23,6 +23,15 @@ const String _sdkDart = FlutterVersion.dartVersion ?? 'unavailable';
 const String _sdkEngine = FlutterVersion.engineRevision ?? 'unavailable';
 const String _sdkFramework = FlutterVersion.frameworkRevision ?? 'unavailable';
 
+/// The version of the lab. A build of the workflow pages stamps it through
+/// `--build-name` and `--build-number`, from the `lab/v*` tags of `cliff.toml`.
+/// Another build has the version of `pubspec.yaml`.
+const String _labVersion = String.fromEnvironment(
+  'FLUTTER_BUILD_NAME',
+  defaultValue: 'unavailable',
+);
+const String _labBuild = String.fromEnvironment('FLUTTER_BUILD_NUMBER');
+
 /// Interactive, single-engine benchmark dashboard.
 class BenchmarkPage extends StatefulWidget {
   /// Creates the test bed.
@@ -154,6 +163,13 @@ class _BenchmarkPageState extends State<BenchmarkPage>
               _headerSection,
               SizedBox(height: narrow ? 10 : 20),
               Expanded(child: _main),
+              const SizedBox(height: 6),
+              const Text(
+                'Lab version $_labVersion'
+                '${_labBuild == "" ? "" : "+$_labBuild"}',
+                key: ValueKey('lab.version'),
+                style: TextStyle(color: Color(0xff64748b), fontSize: 11),
+              ),
             ],
           ),
         );

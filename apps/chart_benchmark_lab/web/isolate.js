@@ -34,7 +34,9 @@ if (typeof window === 'undefined') {
     'serviceWorker' in navigator && location.hostname.endsWith('.github.io') &&
     (navigator.vendor === 'Google Inc.' || navigator.userAgent.includes('Edg/'))) {
   navigator.serviceWorker.register(document.currentScript.src).then((registration) => {
-    const key = 'isolate.reloaded';
+    // sessionStorage covers each page of the origin in this tab, and each lab
+    // page has its own worker. Thus each page has its own key.
+    const key = `isolate.reloaded:${location.pathname}`;
     // One reload for each session, so that a page that stays without isolation
     // still runs, on one thread.
     const reload = () => {

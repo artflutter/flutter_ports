@@ -1,0 +1,60 @@
+# git-cliff: the version and the release notes of the chart benchmark lab.
+# https://git-cliff.org/docs/configuration
+#
+# The job version of .github/workflows/pages.yaml reads this file. It computes
+# the next lab/v* tag from the commits after the last tag, and the three builds
+# of the lab take that version through --build-name.
+#
+# To read the next version on a local machine: git cliff --bumped-version
+
+[changelog]
+body = """
+{% if version %}\
+    ## {{ version | trim_start_matches(pat="lab/v") }} - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+    ## Unreleased
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | striptags | trim }}
+    {% for commit in commits %}
+        - {% if commit.scope %}{{ commit.scope }}: {% endif %}\
+            {% if commit.breaking %}[**breaking**] {% endif %}\
+            {{ commit.message | upper_first }}\
+    {% endfor %}
+{% endfor %}
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = false
+split_commits = false
+commit_parsers = [
+    { message = "^feat", group = "<!-- 0 -->Features" },
+    { message = "^fix", group = "<!-- 1 -->Bug fixes" },
+    { message = "^perf", group = "<!-- 2 -->Performance" },
+    { message = "^refactor", group = "<!-- 3 -->Refactoring" },
+    { message = "^doc", group = "<!-- 4 -->Documentation" },
+    { message = "^test", group = "<!-- 5 -->Tests" },
+    { message = ".*", group = "<!-- 6 -->Other" },
+]
+protect_breaking_commits = false
+filter_commits = false
+tag_pattern = "lab/v[0-9].*"
+# The commits that change the pages. A commit of another package gives no new
+# version. The list follows the paths of the workflow, without the workflow.
+include_paths = [
+    "apps/chart_benchmark_lab/lib/**",
+    "apps/chart_benchmark_lab/pubspec.yaml",
+    "apps/chart_benchmark_lab/web/**",
+    "packages/flutter_chartjs_port/lib/**",
+    "packages/flutter_chartjs_port/pubspec.yaml",
+    "pubspec.lock",
+]
+topo_order = false
+sort_commits = "oldest"
+
+[bump]
+features_always_bump_minor = true
+breaking_always_bump_major = true
+initial_tag = "lab/v0.1.0"
