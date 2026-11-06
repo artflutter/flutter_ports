@@ -7777,7 +7777,7 @@ and radar with the full preset on JavaScript, at 107 FPS. At 20,000 items with t
 
 **The web.** A long path is the limit. The raster P90 of a line with the full preset is 21 ms at 1,000 points, 286 ms at
 5,000 and 1,951 ms at 20,000. A plain line with no curve also takes 21 ms at 5,000 points, against 2 ms for 1,000 bars.
-The cause in Skia on the web is not established. JavaScript adds a slow draw on the UI thread: 8 ms at 5,000 bars and 33 ms
+§68 gives the fix, and Chart.js ADR 0105 the cause as far as it is known. JavaScript adds a slow draw on the UI thread: 8 ms at 5,000 bars and 33 ms
 at 20,000, against 1.4 ms and 7 ms on WebAssembly.
 
 **Everyday use.** The tests with a FPS below 110, of 62 tests with a meaningful FPS (no `mount` tests) on each target:
@@ -7797,3 +7797,37 @@ The time from a new chart to the end of its first draw, P50 over the chart types
 **A long first frame of an animated update.** FPS hides it. The first update of an animation creates the animation objects
 of each element. On scatter at 5,000 points, it takes 36 ms on the web, 53 ms on the Mac and the iPhone, and 73 ms on the
 Pixel, once for each change of the data. On the Pixel, it takes 16 to 19 ms at 1,000 points of line or scatter.
+
+## 68. Long paths in pieces on the web
+
+Chart.js ADR 0105 draws a long stroke and a long line fill in pieces on the web. The setup is in
+[`benchmarks/web-lines/`](benchmarks/web-lines/README.md). The old figures are the pass of §67. Each side ran once, with the
+Mac in use by day.
+
+| Lab matrix | WebAssembly, FPS, old | WebAssembly, FPS, new | Raster P90, ms, old | Raster P90, ms, new | JavaScript, FPS, old | JavaScript, FPS, new |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Line 1,000 full | 48.5 | 120 | 21.2 | 3.6 | 44.5 | 120 |
+| Line 5,000 plain | 49.3 | 120 | 20.9 | 1.8 | 51.3 | 120 |
+| Line 5,000 full | 3.5 | 120 | 286.5 | 8.6 | 3.8 | 82 |
+| Line 20,000 plain | 44.3 | 120 | 24.0 | 1.9 | 43.8 | 120 |
+| Line 20,000 full | 0.5 | 46 | 1,951 | 22.6 | 0.5 | 31 |
+| Radar 5,000 plain | 95.5 | 120 | 11.2 | 2.0 | 82.5 | 120 |
+| Radar 20,000 plain | 16.5 | 119 | 65.0 | 9.7 | 15.8 | 70.5 |
+
+| Everyday tests, WebAssembly | FPS, old | FPS, new | Raster P90, ms, old | Raster P90, ms, new |
+| --- | ---: | ---: | ---: | ---: |
+| Line 1,000, animate | 95.8 | 120 | 11.8 | 3.2 |
+| Line 1,000, hover | 85.8 | 120 | 12.3 | 3.2 |
+| Line 1,000, resize | 78.5 | 120 | 15.4 | 8.4 |
+| Line 5,000, animate | 48.3 | 118.5 | 48.4 | 6.5 |
+| Line 5,000, hover | 21.8 | 120 | 48.3 | 7.7 |
+| 5 lines of 1,000, animate | 42.3 | 83.5 | 60.4 | 13.0 |
+| 5 lines of 1,000, new data each frame | 18.3 | 80.5 | 64.8 | 13.8 |
+
+Tests below 110 FPS fell from 7 to 2 of 62, and both are the 5 lines. Other cells do not take this code. Some of them moved by up
+to about 20% between the two passes, in both directions, for example pie at 5,000 with the full preset from 67 to 56 FPS. This
+gives the noise of one pass by day.
+
+What stays slow on the web at the full preset: radar at 5,000 and 20,000 (24 and 5 FPS), pie and doughnut at 5,000 (56 and 29 FPS)
+and at 20,000 (12 and 6 FPS). JavaScript also keeps its slow draw on the UI thread: bar at 20,000 gets 18 FPS, against 36 on
+WebAssembly.
