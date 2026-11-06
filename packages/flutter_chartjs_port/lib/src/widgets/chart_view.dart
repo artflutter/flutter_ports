@@ -274,8 +274,7 @@ class ChartView extends StatefulWidget {
   ///
   /// The parameter needs the [updateMode] `'none'` and
   /// `animation: ChartAnimation.none` in the config. Without them, it has no
-  /// effect. A raw config does not have it. A new theme, a change of the
-  /// reduced-motion preference, a new `labels` List, another option, another
+  /// effect. A raw config does not have it. A new theme, a reduced-motion preference that turned on, a new `labels` List, another option, another
   /// plugin List, and a new dataset key or dataset field stay a full update.
   ///
   /// `chart.updateData()` also goes to `chart.update('none')` by itself when

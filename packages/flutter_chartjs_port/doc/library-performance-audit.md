@@ -117,10 +117,7 @@ specifically a measurement of the full lifecycle, not moving-data simulation.
 
 `Chart.updateData()` already addresses part of this problem. It must not be
 reported as missing. The remaining access/coverage gap is that
-[ChartView._update](../lib/src/widgets/chart_view.dart), lines 623–680, always
-calls `chart.update(...)` after applying config changes. A typed config with new
-data does not automatically select the incremental lifecycle; `updateMode: 'none'`
-also remains a full update. Users can call `updateData()` imperatively.
+[ChartView._update](../lib/src/widgets/chart_view.dart) calls `chart.update(...)` after applying config changes unless `dataOnlyUpdates` is set (Chart.js ADR 0098). Without it, a typed config with new data does not select the incremental lifecycle, and `updateMode: 'none'` alone remains a full update. Users can call `updateData()` imperatively.
 
 The incremental contract intentionally falls back for unsupported plugins,
 active animations, unsuitable ranges/settings, structural changes and custom

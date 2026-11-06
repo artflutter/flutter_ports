@@ -1,10 +1,10 @@
 # Chart.js ADR 0101: One write of a data context, and one refresh less in a scatter update
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0054, 0079, 0080, 0082, 0087, 0093, 0094; `differences.md` rows
   `adapt-context-bulk-refresh` and `adapt-scatter-overflow-refresh`.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Context
 
@@ -56,7 +56,8 @@ of the config: this is not simple, so nothing is deferred across it.
 The refresh of `updateElements` is left out in one window. In the mode `none`, the prepared loop of the
 exact scatter controller leaves the refresh of each point to the overflow pass of the same `update_`,
 which writes each of these contexts again. For that loop this supersedes "No context writes are skipped"
-of Chart.js ADR 0080 and "A prepared update or overflow loop refreshes each context" of Chart.js ADR 0094.
+of Chart.js ADR 0080 and, of Chart.js ADR 0094, "A prepared update or overflow loop refreshes each context" and "Each point keeps its
+`as types.PointElement` cast and its capability read".
 The rest of those ADRs stays. The window needs:
 
 - a color plan (Chart.js ADR 0079), so that no point of the loop runs user code while the plan holds;
@@ -67,6 +68,8 @@ The rest of those ADRs stays. The window needs:
 - the caller. `update_` names its `update`, and that `update` names its loop. Each takes the name at its
   first statement, so that a public call of `update` or `updateElements`, also from user code inside
   another update, keeps each write. No overflow pass follows a public call.
+- plain `radius`, `hoverRadius` and `borderWidth` in a result of the plan (`NativePointSizeFields.of`), and a
+  context reader of the mode `default` (`prepareNativePointContexts`). Without them the loop keeps each write.
 
 A plan that ends in the window, at a custom or an active point or a foreign value, first writes the
 waiting contexts, in their order, with the values of the mode `none`. Thus code that runs after that

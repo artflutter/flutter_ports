@@ -1,10 +1,10 @@
 # Chart.js ADR 0100: Native indexed colors on the data-only path
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0074, 0076, 0078, 0079, 0080, 0092, 0093 and 0098; `differences.md` row
   `adapt-data-update-indexed-plan`.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Context
 
@@ -80,8 +80,8 @@ items of a list stay live reads in a resolve, but the proof does not run again f
 - Doughnut and pie: the scans of Chart.js ADR 0093 stop on the plan, under their own guards, and the loop
   writes each context again. Polar area: as in that record.
 - Hover: the resolves of active elements stay ordinary, as in a full update.
-- The legend: `afterUpdate` builds the items, also for a hidden legend, because its proof reads a cached
-  entry (Chart.js ADR 0092). Colors of a palette plugin stay: the plugin writes an indexed List in
+- The legend: a hidden legend takes a mark in `afterUpdate`, so its items wait for a read, also with indexed
+  colors (Chart.js ADRs 0092 and 0099). A visible legend builds them. Colors of a palette plugin stay: the plugin writes an indexed List in
   `beforeLayout`, and its items depend on the index only, under the same data length.
 
 ### Typed and raw configs

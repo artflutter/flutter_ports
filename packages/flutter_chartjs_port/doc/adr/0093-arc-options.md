@@ -1,9 +1,9 @@
 # Chart.js ADR 0093: Native arc options
 
 - Date: 2026-11-06
-- Status: proposed
+- Status: accepted
 - Related: ADRs 0054, 0062, 0076, 0078, 0079, 0081, 0083, 0087.
-- Measurements: performance.md.
+- Measurements: performance.md §65.
 
 ## Decision
 
@@ -82,7 +82,7 @@ The spacing fix-ups of the polar area stay per item on the fresh result.
 ### Smaller items
 
 - A clone of a generated options class shares the foreign slot list, and the first
-  write copies it. The generator writes this; the file has no other change.
+  write copies it. The generator writes this.
 - The generated `storeKey` stores `$shared` directly. A frozen object still throws
   a `TypeError`, and a user subclass of `ElementOptions` keeps its `jsWrite`.
 - `jsToString` tests for a `String` first. The miss path of
