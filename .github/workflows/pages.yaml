@@ -1,0 +1,74 @@
+name: pages
+
+# Deploys the chart benchmark lab to
+# https://artflutter.github.io/flutter_ports/lab/.
+#
+# A repository has one Pages site, and a deploy replaces the whole site. Thus
+# the job build assembles the site, with one folder for each app. A later app
+# adds its build step, its folder and its link on the root page.
+#
+# Pages cannot send the COOP and COEP headers, so the WebAssembly build runs on
+# one thread there.
+
+on:
+  push:
+    branches: [main]
+    # The files that change the page.
+    paths:
+      - .fvmrc
+      - .github/actions/setup/**
+      - .github/workflows/pages.yaml
+      - apps/chart_benchmark_lab/lib/**
+      - apps/chart_benchmark_lab/pubspec.yaml
+      - apps/chart_benchmark_lab/web/**
+      - packages/flutter_chartjs_port/lib/**
+      - packages/flutter_chartjs_port/pubspec.yaml
+      - pubspec.lock
+      - pubspec.yaml
+  workflow_dispatch:
+
+concurrency:
+  # A deploy that started finishes. A newer push waits for it.
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - name: Build the lab for the web (WebAssembly + JavaScript fallback)
+        run: dart run melos run benchmark:build:pages
+      - name: Assemble the site
+        run: |
+          mkdir site
+          cp -R apps/chart_benchmark_lab/build/web site/lab
+          cat > site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=lab/">
+          <title>flutter_ports</title>
+          <a href="lab/">Chart benchmark lab</a>
+          </html>
+          HTML
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

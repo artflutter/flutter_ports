@@ -32,6 +32,9 @@ melos:
     benchmark:build:web:
       run: cd apps/chart_benchmark_lab && flutter build web --wasm
       description: Build the chart benchmark for web with a JavaScript fallback.
+    benchmark:build:pages:
+      run: cd apps/chart_benchmark_lab && flutter build web --wasm --base-href /flutter_ports/lab/
+      description: Build the chart benchmark for the folder lab/ of the GitHub Pages site, as the workflow pages does.
     format:
       run: dart format .
       description: Format all Dart code.
