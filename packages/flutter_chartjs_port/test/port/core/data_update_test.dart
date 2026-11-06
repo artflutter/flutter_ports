@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
+import 'package:flutter_chartjs_port/src/types/data_item.dart'
+    show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
@@ -51,6 +53,18 @@ class _CustomLinear extends LinearScale {
     statics: {'id': 'data-custom-linear'},
     construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
   );
+}
+
+/// A point class that the typed lowering does not register.
+final class _OtherPoint implements TypedDataItem {
+  @override
+  Object get x => 1.0;
+  @override
+  double? get y => 2;
+  @override
+  double? get r => null;
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 final class _Event implements types.ChartEvent {
@@ -368,6 +382,44 @@ void main() {
   );
   test('preflight does not execute user numeric conversions', () {
     expect(dataUpdateValues(<Object?>[1, 2, Object()]), isNull);
+  });
+  group('preflight of a list of points', () {
+    final point = typed.DataPoint(1, 2);
+    setUpAll(() => registerDataUpdateTypes(const [], [typed.DataPoint]));
+
+    test('the items after the first point classify as the first one', () {
+      expect(dataUpdateValues(<Object?>[point, point, point]), isFalse);
+      expect(dataUpdateValues(<Object?>[1.0, point, null, point]), isFalse);
+      expect(
+        dataUpdateValues(<Object?>[
+          point,
+          <String, Object?>{'x': 1.0, 'y': 2.0},
+          point,
+          <double>[1, 2],
+          point,
+        ]),
+        isFalse,
+      );
+    });
+    test('a point with a value that is not a number falls back', () {
+      final label = typed.DataPoint.label('a', 1);
+      final time = typed.DataPoint.time(DateTime.utc(2026), 1);
+      expect(dataUpdateValues(<Object?>[point, label]), isNull);
+      expect(dataUpdateValues(<Object?>[label, point]), isNull);
+      expect(dataUpdateValues(<Object?>[point, time]), isNull);
+      expect(dataUpdateValues(<Object?>[point, point, time, point]), isNull);
+    });
+    test('another class after a point falls back', () {
+      expect(dataUpdateValues(<Object?>[point, Object()]), isNull);
+      expect(dataUpdateValues(<Object?>[point, _OtherPoint()]), isNull);
+      expect(
+        dataUpdateValues(<Object?>[
+          point,
+          <String, Object?>{'x': 'a'},
+        ]),
+        isNull,
+      );
+    });
   });
   test('changed prepared x coordinates invalidate spacing caches', () {
     final ca = config('bar', prepared: true);

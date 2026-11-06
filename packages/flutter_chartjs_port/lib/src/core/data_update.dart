@@ -153,6 +153,9 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
 bool _number(Object? value) =>
     value == null || value is Undefined || value is num;
 
+bool _numericPoint(TypedDataItem point) =>
+    _number(point.x) && _number(point.y) && _number(point.r);
+
 /// The fields read by native default parsers. Custom parsing keys fall back.
 @internal
 enum DataUpdateShape { cartesian, bubble, radial, scalar }
@@ -168,10 +171,14 @@ bool? dataUpdateValues(
   if (!nativeDataUpdateList(source)) return null;
   var primitive = true;
   Type? mapType;
+  Type? pointType;
   for (final item in source! as List<Object?>) {
     if (_number(item)) continue;
     primitive = false;
-    if (item is ParsedItem) {
+    if (item.runtimeType == pointType) {
+      // The class of the last point: no set lookups for a list of one class.
+      if (!_numericPoint(item! as TypedDataItem)) return null;
+    } else if (item is ParsedItem) {
       if (item.hasForeign ||
           item.hasSlot(3) ||
           item.hasSlot(4) ||
@@ -201,10 +208,8 @@ bool? dataUpdateValues(
         return null;
       }
     } else if (_points.contains(item.runtimeType)) {
-      final point = item! as TypedDataItem;
-      if (!_number(point.x) || !_number(point.y) || !_number(point.r)) {
-        return null;
-      }
+      pointType = item.runtimeType;
+      if (!_numericPoint(item! as TypedDataItem)) return null;
     } else if (nativeDataUpdateList(item)) {
       if (!(item! as List<Object?>).every(_number)) return null;
     } else {
