@@ -353,6 +353,19 @@ abstract base class OptionScope
     return cell == null ? undefined : cell.raw;
   }
 
+  /// `object[key.jsName]`: the result of [jsRead], with no read of a name
+  /// (Chart.js ADR 0096). The own cell of a declared key is the result of a
+  /// scope without routes. A key that the scope does not own, an extra and a
+  /// routed key take [lookup].
+  Object? readKey(OptionKey key) {
+    if (_routeNames == null) {
+      final own = cellOf(key);
+      if (own != null) return own.raw;
+    }
+    final cell = lookup(key);
+    return cell == null ? undefined : cell.raw;
+  }
+
   /// `object[name] = value` (`[[Set]]`): stores the cell of [value].
   @override
   void jsWrite(String name, Object? value) {

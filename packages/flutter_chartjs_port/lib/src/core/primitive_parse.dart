@@ -67,19 +67,16 @@ List<ParsedItem>? tryParseNumericCategories(
   final vAxis = vScale.axis;
   final iKey = AxisKey.of(iAxis);
   final vKey = AxisKey.of(vAxis);
-  final parsed = <ParsedItem>[];
-  for (var i = offset; i < end; i++) {
+  return List<ParsedItem>.generate(end - offset, (k) {
+    final i = k + offset;
     final value = data[i];
-    parsed.add(
-      ParsedItem.of(
-        iKey,
-        iAxis,
-        i < labels.length && labels[i] is String ? i.toDouble() : null,
-        vKey,
-        vAxis,
-        value is num && value.isFinite ? value.toDouble() : null,
-      ),
+    return ParsedItem.of(
+      iKey,
+      iAxis,
+      i < labels.length && labels[i] is String ? i.toDouble() : null,
+      vKey,
+      vAxis,
+      value is num && value.isFinite ? value.toDouble() : null,
     );
-  }
-  return parsed;
+  });
 }

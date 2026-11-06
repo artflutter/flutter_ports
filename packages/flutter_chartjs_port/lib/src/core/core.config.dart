@@ -497,8 +497,10 @@ class Config implements types.ChartConfiguration {
   @override
   Object get data {
     // DIVERGES(chartjs): adapt-config-objects, the data object is an object.
-    final data = jsGet(_config, 'data');
-    return _isConfigObject(data) ? data! : throw TypeError();
+    final data = helpers.readOption(_config, OptionKey.data);
+    return data is OptionScope || _isConfigObject(data)
+        ? data!
+        : throw TypeError();
   }
 
   /// core.config.js:181 `set data(data)`.

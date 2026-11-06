@@ -1,5 +1,5 @@
 # The allowlist of the close step (Chart.js ADR 0054 §5, the raw boundary).
-# - jsGet 62, stringIndex 13, jsObjectKeys 3: the config of the user is a Map
+# - jsGet 61, stringIndex 13, jsObjectKeys 3: the config of the user is a Map
 #   or the typed root of ChartView, read by name as upstream reads it:
 #   type, data, data.datasets and each dataset (axis ids, type, indexAxis),
 #   options and its scales by user scale id, plugins, platform, the theme
@@ -15,7 +15,7 @@
 #   select the upstream point resolver cache for a loop-local plan (ADR 0082).
 #   They do not introduce new option names or by-name reads in point loops.
 # - jsCall 1: the context function of resolveNamedOptions.
-jsGet 62
+jsGet 61
 stringIndex 13
 jsCall 1
 jsObjectKeys 3
