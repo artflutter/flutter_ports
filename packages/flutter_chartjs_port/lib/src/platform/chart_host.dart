@@ -88,7 +88,9 @@ library;
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -336,6 +338,77 @@ class ChartHost extends LeafRenderObjectWidget {
       ..devicePixelRatio = _devicePixelRatio(context)
       ..tickerEnabled = TickerMode.valuesOf(context).enabled
       ..gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
+  }
+}
+
+/// The pictures of a canvas as pictures of the scene (Chart.js ADR 0097).
+///
+/// The layer pushes the transform of the host and the clip to the bitmap, and
+/// adds one scene picture for each picture of the context. It has the pixels of
+/// `Canvas.drawPicture` of these pictures under the same transform and clip,
+/// without the recording canvas of the boundary, whose spatial index merges
+/// the regions of each picture on the UI thread.
+///
+/// It reads the pictures from the context when the scene needs them. Thus it
+/// holds no picture that the context can dispose. Each engine layer of a scene
+/// keeps its own reference to its picture. A clean layer is retained: the scene
+/// keeps what the last paint added.
+@internal
+final class ChartPicturesLayer extends Layer {
+  final Float64List _matrix = Float64List(16)
+    ..[10] = 1
+    ..[15] = 1;
+  UiCanvasContext? _context;
+  ui.ClipRectEngineLayer? _clip;
+  Rect _bounds = Rect.zero;
+
+  /// The scale of the bitmap on the x axis, for tests.
+  @visibleForTesting
+  double get scaleX => _matrix[0];
+
+  /// The scale of the bitmap on the y axis, for tests.
+  @visibleForTesting
+  double get scaleY => _matrix[5];
+
+  /// Shows the pictures of [context] at [offset], with the scales of the host.
+  void update(
+    UiCanvasContext context,
+    Offset offset,
+    double scaleX,
+    double scaleY,
+  ) {
+    _context = context;
+    _bounds = context.bitmapBounds;
+    _matrix
+      ..[0] = scaleX
+      ..[5] = scaleY
+      ..[12] = offset.dx
+      ..[13] = offset.dy;
+    markNeedsAddToScene();
+  }
+
+  @override
+  void addToScene(ui.SceneBuilder builder) {
+    final transform = builder.pushTransform(
+      _matrix,
+      oldLayer: engineLayer as ui.TransformEngineLayer?,
+    );
+    final oldClip = _clip;
+    _clip = builder.pushClipRect(_bounds, oldLayer: oldClip);
+    oldClip?.dispose();
+    _context?.addPicturesToScene(builder);
+    builder
+      ..pop()
+      ..pop();
+    engineLayer = transform;
+  }
+
+  @override
+  void dispose() {
+    _clip?.dispose();
+    _clip = null;
+    _context = null;
+    super.dispose();
   }
 }
 
@@ -707,6 +780,8 @@ class RenderChartHost extends RenderBox
   // Paint.
 
   final LayerHandle<ClipRectLayer> _clipLayer = LayerHandle<ClipRectLayer>();
+  final LayerHandle<ChartPicturesLayer> _picturesLayer =
+      LayerHandle<ChartPicturesLayer>();
 
   /// Paints the bitmap at the display size, as the DOM stretches a canvas
   /// bitmap to its CSS size: one scale of display size / bitmap size on
@@ -745,7 +820,30 @@ class RenderChartHost extends RenderBox
     if ((scaleX * dpr - 1).abs() < 1e-3 && (scaleY * dpr - 1).abs() < 1e-3) {
       scaleX = scaleY = 1 / dpr;
     }
-    _canvas.getContext2d().paint(context.canvas, offset, scaleX, scaleY);
+    final canvasContext = _canvas.getContext2d();
+    // The host is a repaint boundary, so its ancestors take a layer of it. The
+    // merge of the regions in `Canvas.drawPicture` is a cost of the native
+    // engine only: the web keeps the draw, and a scale that a transform cannot
+    // take keeps it too.
+    if (!kIsWeb &&
+        scaleX > 0 &&
+        scaleY > 0 &&
+        scaleX.isFinite &&
+        scaleY.isFinite &&
+        offset.isFinite &&
+        canvasContext.beginScenePaint()) {
+      if (canvasContext.hasScenePictures) {
+        context.addLayer(
+          (_picturesLayer.layer ??= ChartPicturesLayer())
+            ..update(canvasContext, offset, scaleX, scaleY),
+        );
+      } else {
+        _picturesLayer.layer = null;
+      }
+      return;
+    }
+    _picturesLayer.layer = null;
+    canvasContext.paint(context.canvas, offset, scaleX, scaleY);
   }
 
   // Attach and detach.
@@ -776,6 +874,7 @@ class RenderChartHost extends RenderBox
     _endInput();
     _clearHoverPointers();
     _clipLayer.layer = null;
+    _picturesLayer.layer = null;
     _resizeObservers.clear();
     _pendingFirstResize.clear();
     _hide(_canvas);

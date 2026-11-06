@@ -2493,3 +2493,20 @@ Chart.js ADR 0091 edits `lib/src/core/core.controller.dart`, `lib/src/types/inde
 `lib/src/plugins/plugin.tooltip.dart` and `lib/src/widgets/chart_view.dart`. A mouse move of a live
 `ChartView` waits for the update of its frame. No canvas operation or drawing cut changes. No trigger
 occurred.
+
+### Native drawing routes (2026-11-06)
+
+Chart.js ADR 0097 edits `lib/src/canvas/canvas_ui.dart`, `canvas_ui_batch.dart` and
+`canvas_ui_path.dart`, adds `canvas_arc_sector.dart`, and edits the paint of
+`lib/src/platform/chart_host.dart`. The lines of these files move. The host adds the chunk pictures
+to the scene through a small layer unless the content needs its isolating layer; `paint` keeps its
+contract, and each test that calls it directly reads the old form. `fill()` and `stroke()` keep
+their forms; the single-line stroke (`drawLine`), the fused sector and the sector run are additions
+beside them. The circle batch takes fills with varying radii through a fixed ladder of masters. R5
+of Chart.js ADR 0055 (radius classes of a quarter pixel) stays deferred: the ladder takes its cell
+for fills. Strokes with varying radii keep `drawCircle`. Direct circles now count in the split
+budget of Chart.js ADR 0066. Tests: `test/port/platform/chart_host_scene_test.dart`,
+`test/port/canvas/canvas_arc_sector_test.dart`, `canvas_ui_ladder_test.dart`,
+`canvas_ui_line_test.dart`, `test/port/elements/element.arc_sector_test.dart` and
+`element.arc_sector_chart_test.dart`. `chart_host_test.dart` reads the scales from the layer. This
+does not bring other deferred cuts forward.
