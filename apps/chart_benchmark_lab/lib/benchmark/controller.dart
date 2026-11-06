@@ -19,6 +19,14 @@ const benchmarkSdk = <String, String?>{
   'dartVersion': FlutterVersion.dartVersion,
 };
 
+/// Whether the Chart.js adapter gives each tick of new data to the data-only
+/// path of its `ChartView` (Chart.js ADR 0098). The one switch of this choice:
+/// `--dart-define=CHARTJS_DATA_ONLY_UPDATES=false` runs a full update per tick.
+const chartJsDataOnlyUpdates = bool.fromEnvironment(
+  'CHARTJS_DATA_ONLY_UPDATES',
+  defaultValue: true,
+);
+
 /// One comparison identity for saved results and the current setup. It excludes
 /// the engine but includes the effective workload.
 String _comparisonKey(
@@ -100,6 +108,8 @@ class BenchmarkResult {
     'version': library.version,
     'sdk': benchmarkSdk,
     'engineOptions': {
+      if (library == ChartLibrary.chartjs)
+        'dataOnlyUpdates': chartJsDataOnlyUpdates,
       if (library == ChartLibrary.chartjs &&
           (config.type == ChartType.line || config.type == ChartType.scatter))
         'parsing': false,
