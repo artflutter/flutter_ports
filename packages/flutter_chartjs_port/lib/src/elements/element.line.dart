@@ -944,7 +944,31 @@ class LineElement extends Element
   /// [TypeError] (the difference `adapt-line-points-elements`).
   // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
   @override
-  set points(List<types.Element> points) => _setPoints(_pointElements(points));
+  set points(List<types.Element> points) => _setPoints(_typedPoints(points));
+
+  /// The typed copy that the last write of [points] made.
+  List<types.PointElement>? _pointsCopy;
+
+  /// [_pointElements], with the last copy of this line when it is the current
+  /// value of [points] and holds the same elements in the same order. Nothing
+  /// else holds that copy unless a reader of [points] kept it: upstream keeps
+  /// one array across updates (differences.md `adapt-line-points-identity`).
+  // DIVERGES(chartjs): adapt-line-points-identity, no copy for the same points.
+  List<types.PointElement> _typedPoints(List<types.Element> points) {
+    if (points is List<types.PointElement>) return points;
+    final copy = _pointsCopy;
+    if (copy != null &&
+        identical(copy, _points) &&
+        copy.length == points.length) {
+      var i = 0;
+      final n = copy.length;
+      while (i < n && identical(copy[i], points[i])) {
+        i++;
+      }
+      if (i == n) return copy;
+    }
+    return _pointsCopy = _pointElements(points);
+  }
 
   /// element.line.js:315 `get points()`.
   ///

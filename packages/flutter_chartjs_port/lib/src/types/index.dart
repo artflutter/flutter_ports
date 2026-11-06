@@ -1207,6 +1207,12 @@ abstract interface class PointElementWrites {
   Object? get options;
 
   set options(Object? value);
+
+  /// controller.radar.js:96 `angle: pointPosition.angle`. Dart `null` stands
+  /// for JS `undefined`.
+  double? get angle;
+
+  set angle(double value);
 }
 
 /// The typed writes of a controller into a line element, a port-only
