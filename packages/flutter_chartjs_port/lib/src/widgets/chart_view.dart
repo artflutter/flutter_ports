@@ -102,6 +102,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 ///   chart calls the callback of the newest config.
 /// * Change the config, not the Maps of the chart (`chart.data`,
 ///   `chart.options`): the next config writes its keys again.
+/// * For a chart that gets new data in each frame, read [dataOnlyUpdates].
 ///
 /// Size: the constraints and the options `responsive`, `maintainAspectRatio`
 /// and `aspectRatio` give the size (the table of Chart.js ADR 0049 §5). In a
@@ -181,6 +182,7 @@ class ChartView extends StatefulWidget {
   const ChartView({
     required ChartConfig this.config,
     this.updateMode,
+    this.dataOnlyUpdates = false,
     this.onChartCreated,
     this.theme,
     this.focusNode,
@@ -205,7 +207,8 @@ class ChartView extends StatefulWidget {
     this.excludeFromSemantics = false,
     super.key,
   }) : rawConfig = config,
-       config = null;
+       config = null,
+       dataOnlyUpdates = false;
 
   /// The typed config of the chart, or Dart `null` for a widget of
   /// [ChartView.raw].
@@ -251,6 +254,38 @@ class ChartView extends StatefulWidget {
   /// [rawConfig]. Null is the default mode. When the same frame also
   /// switches the theme, the one update takes the mode of the theme switch.
   final String? updateMode;
+
+  /// Whether a new [config] that differs from the last one only in its
+  /// dataset data Lists calls `chart.updateData()` in place of `chart.update`
+  /// (Chart.js ADR 0098). The default is `false`. It is a promise of the app:
+  /// no other input of the chart changes between two configs.
+  ///
+  /// Such an update keeps the layout, the ticks and the settings of the last
+  /// full update. It differs from a Chart.js update in these points:
+  ///
+  /// * The plugin hooks of the layout and of the scales run only when the
+  ///   overflow of the new data needs a new layout. The hooks `beforeUpdate`,
+  ///   `afterUpdate`, the dataset update hooks and the draw hooks run.
+  /// * The tick and scale callbacks do not run again. Do not use the parameter
+  ///   when their result depends on the data.
+  /// * An imperative edit of `chart.options` or of a dataset, an edit in place
+  ///   of [ChartConfig.labels] and a write into `Chart.defaults` wait for the
+  ///   next full update. Call `chart.update()` after such an edit.
+  /// * The hooks get the mode `'none'`, also with a null [updateMode].
+  ///
+  /// The parameter needs an [updateMode] that is `'none'` or null, and
+  /// `animation: ChartAnimation.none` in the config. Without them, it has no
+  /// effect. A raw config does not have it. A new theme, a change of the
+  /// reduced-motion preference, a new `labels` List, another option, another
+  /// plugin List, and a new dataset key or dataset field stay a full update.
+  ///
+  /// `chart.updateData()` also goes to `chart.update('none')` by itself when
+  /// the chart does not qualify: for the first new config after the start,
+  /// after a change of the size, after a change of the visible datasets with
+  /// no update, with a scale without an explicit `min` and `max`, with an
+  /// indexed or resolved style, with a plugin without `supportsDataUpdates`,
+  /// with a data List of another length and with a queued animation.
+  final bool dataOnlyUpdates;
 
   /// Called after the frame in which the widget starts a chart, and again
   /// after a new `platform` replaces the chart.
@@ -307,6 +342,13 @@ class ChartView extends StatefulWidget {
         DiagnosticsProperty<ChartThemeData>('theme', theme, defaultValue: null),
       )
       ..add(StringProperty('updateMode', updateMode, defaultValue: null))
+      ..add(
+        FlagProperty(
+          'dataOnlyUpdates',
+          value: dataOnlyUpdates,
+          ifTrue: 'data-only updates',
+        ),
+      )
       ..add(
         ObjectFlagProperty<ValueChanged<Chart>>.has(
           'onChartCreated',
@@ -654,6 +696,10 @@ class _ChartViewState extends State<ChartView> {
   /// A typed config first reconciles with the live Maps (Chart.js ADR 0052,
   /// section 9): the reconcile patches the dataset Maps and gives the app
   /// config of the steps, so the theme switch runs after it.
+  ///
+  /// [ChartView.dataOnlyUpdates] replaces the one `chart.update` of a new
+  /// config that changed only its data with `chart.updateData` (Chart.js ADR
+  /// 0098).
   void _update(Duration _) {
     _updatePending = false;
     final motionUpdate = _motionUpdate;
@@ -709,6 +755,11 @@ class _ChartViewState extends State<ChartView> {
       _lastConfigUpdate = SchedulerBinding.instance.currentSystemFrameTimeStamp;
     }
     final mode = widget.updateMode;
+    if (configChanged && !motionUpdate && _dataOnly(mode)) {
+      // DIVERGES(chartjs): adapt-view-data-only-updates, the explicit opt-in.
+      chart.updateData();
+      return;
+    }
     // Step 6: the default mode also when the preference turned on
     // (Chart.js ADR 0049, section 7): a running animation ends.
     if (mode == null || motionUpdate) {
@@ -716,6 +767,17 @@ class _ChartViewState extends State<ChartView> {
     } else {
       chart.update(mode);
     }
+  }
+
+  /// Whether the last reconcile may take `chart.updateData` under the rule of
+  /// [ChartView.dataOnlyUpdates]. A raw config has no such update.
+  bool _dataOnly(String? mode) {
+    final lowering = _lowering;
+    return widget.dataOnlyUpdates &&
+        (mode == null || mode == 'none') &&
+        lowering != null &&
+        lowering.lastApplyDataOnly &&
+        lowering.animationOff;
   }
 
   /// Steps 1 to 4 of the update of Chart.js ADR 0049, section 4: the values
