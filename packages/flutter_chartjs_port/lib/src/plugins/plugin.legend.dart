@@ -37,21 +37,30 @@
 ///
 /// A hidden legend of a built-in slice chart leaves its items pending, and
 /// the first read of `legendItems` that can run the build runs it (Chart.js
-/// ADR 0092).
+/// ADRs 0092 and 0099).
 ///
 /// Not a pure layer: it imports `helpers.extras`.
 library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/arc_options.dart'
+    show nativeArcClass, nativeArcElement;
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart'
     show CategoryLabelSource;
+import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show dataUpdateField, nativeDataUpdateList, nativeDataUpdateObject;
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show DatasetMetaSource, nativePointChart;
+    show
+        DatasetMetaSource,
+        nativePointChart,
+        nativePointDatasetIndex,
+        nativePointList;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show
         DrawPointOptions,
@@ -61,7 +70,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
         renderText,
         unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionResolver, OptionView;
+    show IndexedElementStyles, OptionResolver, OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show callback, isFunction, isObject, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
@@ -69,7 +78,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isBetween;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ParsedFont, ScriptableChartContext, toFont, toPadding, toTRBLCorners;
+    show
+        ParsedFont,
+        ScriptableChartContext,
+        ScriptableContext,
+        toFont,
+        toPadding,
+        toTRBLCorners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
@@ -267,6 +282,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   set legendItems(List<Object?>? value) {
     // DIVERGES(chartjs): adapt-hidden-legend-items, a write ends the wait.
     _pendingOptions = null;
+    _pendingStyles = null;
     _legendItems = value;
   }
 
@@ -276,6 +292,11 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// waits. `beforeUpdate` of a next update replaces [options].
   // DIVERGES(chartjs): adapt-hidden-legend-items, no upstream state.
   OptionView? _pendingOptions;
+
+  /// The indexed styles of the mark of a pending build, or Dart `null` when
+  /// the proof of the mark was a cached entry (Chart.js ADR 0099).
+  // DIVERGES(chartjs): adapt-hidden-legend-items, no upstream state.
+  _IndexedItemStyles? _pendingStyles;
 
   /// Whether a build waits for a read of [legendItems] that can run it.
   @internal
@@ -381,9 +402,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   // DIVERGES(chartjs): adapt-hidden-legend-items, the build of an unread list.
   void _buildLabelsOrMark({required bool datasetsUpdated}) {
     final options = super.options;
-    if (options is OptionView &&
-        _itemsCanWait(options, datasetsUpdated: datasetsUpdated)) {
+    _markStyles = null;
+    final waits =
+        options is OptionView &&
+        _itemsCanWait(options, datasetsUpdated: datasetsUpdated);
+    final styles = _markStyles;
+    _markStyles = null;
+    // The state that the resolve of each item of the build leaves in its arc.
+    if (waits && (styles == null || styles.writeContexts())) {
       _pendingOptions = options;
+      _pendingStyles = styles;
       optionOf(optionOf(options, OptionKey.labels), OptionKey.color);
     } else {
       // Only the write of a build ends the wait of the last mark. Thus after a
@@ -391,6 +419,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       buildLabels();
     }
   }
+
+  /// The indexed styles that the guards of a mark found, for that mark only.
+  // DIVERGES(chartjs): adapt-hidden-legend-items, no upstream state.
+  _IndexedItemStyles? _markStyles;
 
   /// Whether a build of the items of this legend with [options] can wait for a
   /// read: nothing in the chart reads the items of a hidden legend ([fit],
@@ -418,7 +450,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// [atMark] is true at a mark. After it, the reads of [options] are in its
   /// cache, and this function reads no options of the chart: a new update can
   /// have replaced them with options that nothing read yet. See
-  /// [_styleReadsRunNoUserCode] for the style of each item.
+  /// [_stylesRunNoUserCode] for the style of each item.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of no user code.
   bool _buildRunsNoUserCode(
     OptionView options, {
@@ -473,8 +505,12 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         return false;
       }
     }
-    return _styleReadsRunNoUserCode(
+    return _stylesRunNoUserCode(
           controller,
+          items.length,
+          root,
+          labels,
+          atMark: atMark,
           datasetsUpdated: datasetsUpdated,
         ) &&
         !jsTruthy(labels.readKey(OptionKey.filter)) &&
@@ -482,8 +518,43 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         _plainOption(root.readKey(OptionKey.reverse));
   }
 
+  /// Whether each `getStyle(i)` of a build with the items of [count] labels
+  /// runs no user code. A mark asks for the cached entry of Chart.js ADR 0092,
+  /// then for the indexed styles of Chart.js ADR 0099, which it keeps in
+  /// [_markStyles]. A read reads no new resolver: it asks the proof of its
+  /// mark.
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the two proofs.
+  bool _stylesRunNoUserCode(
+    DatasetController controller,
+    int count,
+    OptionResolver root,
+    OptionResolver labels, {
+    required bool atMark,
+    required bool datasetsUpdated,
+  }) {
+    if (!atMark) {
+      final styles = _pendingStyles;
+      if (styles != null) return styles.coversRead(controller, count);
+    }
+    if (_styleReadsRunNoUserCode(
+      controller,
+      datasetsUpdated: datasetsUpdated,
+    )) {
+      return true;
+    }
+    if (!atMark) return false;
+    return (_markStyles = _indexedItemStyles(
+          controller,
+          count,
+          root,
+          labels,
+        )) !=
+        null;
+  }
+
   /// Runs the build that waits, when it can run: with the options of its mark,
-  /// as the build of upstream at that point used them.
+  /// as the build of upstream at that point used them, and with the indexed
+  /// styles of its mark, as a resolve of that point gives them.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the build at a read.
   void _buildPendingItems() {
     final pending = _pendingOptions;
@@ -491,10 +562,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       return;
     }
     final current = super.options;
+    final styles = _pendingStyles;
     super.options = pending;
+    styles?.controller.legendStyles = (
+      styles: styles.styles,
+      arcCount: styles.arcCount,
+    );
     try {
       buildLabels();
     } finally {
+      styles?.controller.legendStyles = null;
       super.options = current;
     }
   }
@@ -1298,9 +1375,9 @@ bool _labelColorIsPlain(
   return root is OptionResolver && _plainOption(root.readKey(OptionKey.color));
 }
 
-/// Whether each call `getStyle(i)` of a built-in generator runs no user code.
-/// This function is the one seam of that proof: a later change can extend it
-/// to indexed and scriptable colors after arcs have a native option plan.
+/// Whether each call `getStyle(i)` of a built-in generator reads a cached
+/// entry, with no user code and no context. [Legend._stylesRunNoUserCode] asks
+/// this function first.
 ///
 /// The proof is the cached `default` entry of the element options of
 /// [controller]: `_resolveElementOptions` answers from it, with no context and
@@ -1323,6 +1400,123 @@ bool _styleReadsRunNoUserCode(
   }
   controller.getStyle(0);
   return controller.hasCachedDefaultDataOptions;
+}
+
+/// The second proof of a mark, for the options that leave no cached entry
+/// (Chart.js ADR 0099): each option of the arcs of [controller] is a scalar or
+/// a native indexed List of native entries, and the arcs and the data are
+/// native. Then each `getStyle(i)` for a [count] of labels runs no user code
+/// and throws nothing, and its one effect is the state of the context of its
+/// arc. Dart `null` leaves the ordinary path at its first reads.
+///
+/// An ordinary build writes the context of its first resolve before it reads
+/// the next keys of the arcs, and `filter`, `sort` and `reverse`. So this proof
+/// comes after their reads only when they have no reader: the scopes of the box
+/// are native, and each value that makes a sub resolver stops the proof before
+/// its read ([OptionResolver.peekKey]). A user arc at index 0 reads its context
+/// in the first resolve. A visible legend reads its items: it takes no such
+/// proof.
+// DIVERGES(chartjs): adapt-hidden-legend-items, the proof of Chart.js ADR 0099.
+_IndexedItemStyles? _indexedItemStyles(
+  DatasetController controller,
+  int count,
+  OptionResolver root,
+  OptionResolver labels,
+) {
+  if (!root.scopesAreNative ||
+      !labels.scopesAreNative ||
+      !identical(root.peekKey(OptionKey.display), false) ||
+      jsTruthy(labels.peekKey(OptionKey.filter)) ||
+      jsTruthy(labels.peekKey(OptionKey.sort)) ||
+      !_plainOption(root.peekKey(OptionKey.reverse))) {
+    return null;
+  }
+  final meta = controller.cachedMeta;
+  final arcs = meta.data;
+  if (!nativeArcClass(controller.dataElementType) ||
+      !nativePointList(arcs) ||
+      !nativeDataUpdateList(meta.parsed) ||
+      !nativePointDatasetIndex(controller.index) ||
+      (arcs.isNotEmpty && !nativeArcElement(arcs[0]))) {
+    return null;
+  }
+  final config = controller.chart.config;
+  if (config is! Config) return null;
+  final styles = config.prepareIndexedArcStyles(
+    controller.index.toInt(),
+    controllerType: controller.type,
+    count: count,
+  );
+  return styles == null ? null : _IndexedItemStyles(controller, styles, count);
+}
+
+/// The indexed styles of one mark of a hidden legend: the proof that a build of
+/// the items of [count] labels runs no user code, and the source of the styles
+/// of a build at a later read (Chart.js ADR 0099).
+// DIVERGES(chartjs): adapt-hidden-legend-items, the state of one mark.
+final class _IndexedItemStyles {
+  _IndexedItemStyles(this.controller, this.styles, this.count)
+    : arcCount = controller.cachedMeta.data.length;
+
+  /// The controller of dataset 0 at the mark.
+  final DatasetController controller;
+
+  /// The resolver plan at the mark.
+  final IndexedElementStyles styles;
+
+  /// The count of the labels at the mark.
+  final int count;
+
+  /// The count of the arcs at the mark. A build at a read gives the item of a
+  /// label at this index or above the style of the dataset context, as the
+  /// build of the mark does, also when a next update has rebuilt the arcs.
+  final int arcCount;
+
+  /// Whether a build at a read with [count] labels can run: [controller] is
+  /// still the controller of dataset 0, and the styles cover these items.
+  bool coversRead(DatasetController controller, int count) =>
+      identical(controller, this.controller) && styles.covers(count);
+
+  /// The effect of each `getStyle(i)` of the build at the mark:
+  /// `getContext(i, false, 'default')`, in the order of the items, over the
+  /// native arrays of the proof. An arc that has no context takes the ordinary
+  /// call, which creates it. From the first index past the arcs, each call
+  /// writes the same fields of the dataset context, so one call has the effect
+  /// of all of them. A custom arc returns false: the ordinary build then runs
+  /// from its first item, and it writes the same values again before that arc.
+  bool writeContexts() {
+    final meta = controller.cachedMeta;
+    final arcs = meta.data;
+    final parsed = meta.parsed;
+    final dataset = controller.getDataset();
+    if (!nativeDataUpdateObject(dataset)) return false;
+    final rawData = dataUpdateField(dataset!, 'data');
+    if (!nativeDataUpdateList(rawData)) return false;
+    final raw = rawData! as List<Object?>;
+    final end = count < arcCount ? count : arcCount;
+    final parsedLength = parsed.length;
+    final rawLength = raw.length;
+    for (var i = 0; i < end; i++) {
+      final arc = arcs[i];
+      if (!nativeArcElement(arc)) return false;
+      final context = (arc as Element).$context;
+      if (context is ScriptableContext) {
+        context.refresh(
+          i < parsedLength ? parsed[i] : undefined,
+          i < rawLength ? raw[i] : undefined,
+          i.toDouble(),
+          false,
+          'default',
+        );
+      } else {
+        controller.getContext(i.toDouble(), false, 'default');
+      }
+    }
+    if (count > end) {
+      controller.getContext(end.toDouble(), false, 'default');
+    }
+    return true;
+  }
 }
 
 /// The `rotation` of the draw options of a point style (:329): Dart `null`

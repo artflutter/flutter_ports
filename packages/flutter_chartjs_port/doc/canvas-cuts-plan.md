@@ -2542,3 +2542,9 @@ Chart.js ADR 0101 edits `lib/src/helpers/helpers.options.dart`, `lib/src/helpers
 and the scatter, bubble, line and bar controllers. The writes of a data context take one test of its mask, and a
 prepared scatter loop leaves its context refresh to the overflow pass of the same update. No canvas operation or
 drawing cut changes. This plan cites no line of these changes. No trigger occurred.
+### A hidden legend with native indexed colors (2026-11-06)
+
+Chart.js ADR 0099 edits `lib/src/plugins/plugin.legend.dart`, `lib/helpers.dart`,
+`lib/src/core/core.config.dart`, `lib/src/core/core.datasetController.dart`,
+`lib/src/helpers/helpers.config.dart` and `lib/src/helpers/helpers.options.dart`. This plan cites no line
+of these changes, and no canvas operation or drawing cut changes. No trigger occurred.
