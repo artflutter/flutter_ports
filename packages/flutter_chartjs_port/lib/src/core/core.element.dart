@@ -556,8 +556,9 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// user subclass: the exact-class rule of Chart.js ADR 0054 §9. A
   /// controller writes the properties of such an element through its typed
   /// setters, for example in the direct update of the line and scatter
-  /// controllers (controller.line.js:91-111), and the properties of
-  /// another element by name, so that its `operator []=` sees each write.
+  /// controllers (controller.line.js:91-111) and of the arc and bubble
+  /// controllers (Chart.js ADR 0102), and the properties of another element
+  /// by name, so that its `operator []=` sees each write.
   /// [Element] itself gives false.
   @internal
   bool get typedWrites => false;

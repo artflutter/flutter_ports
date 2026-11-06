@@ -53,6 +53,7 @@ export 'package:flutter_chartjs_port/src/js/js_undefined.dart'
     show Undefined, undefined;
 export 'package:flutter_chartjs_port/src/types.dart'
     hide
+        ArcElementWrites,
         ChartMeta,
         ChartMetaFiller,
         ElementPropertyRead,

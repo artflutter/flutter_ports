@@ -94,42 +94,42 @@ import 'package:meta/meta.dart';
 /// Dart `null`, the `undefined` state of the options.
 Object? _byName(Object? object, String name) => jsGet(object, name);
 
-/// The option `borderAlign` of [options], its raw JS value: the typed field
-/// of an [ArcOptions] with its presence bit and foreign slot, else the read
-/// by name. Both give JS `undefined` for an absent key. The other option
-/// functions of this file work in the same way.
+/// The option `borderAlign` of [options], its raw JS value: the typed getter
+/// of an [ArcOptions] (its field with its presence bit and foreign slot, as
+/// [rawOption] gives them), else the read by name. Both give JS `undefined` for
+/// an absent key. The other option functions of this file work in the same way.
 Object? _borderAlign(Object? options) => options is ArcOptions
-    ? rawOption(options, OptionKey.borderAlign, options.borderAlign)
+    ? options.borderAlignValue
     : _byName(options, 'borderAlign');
 
 /// The option `borderColor` of [options], as [_borderAlign] reads
 /// `borderAlign`.
 Object? _borderColor(Object? options) => options is ArcOptions
-    ? rawOption(options, OptionKey.borderColor, options.borderColor)
+    ? options.borderColorValue
     : _byName(options, 'borderColor');
 
 /// The option `borderDash` of [options], as [_borderAlign] reads
 /// `borderAlign`.
 Object? _borderDash(Object? options) => options is ArcOptions
-    ? rawOption(options, OptionKey.borderDash, options.borderDash)
+    ? options.borderDashValue
     : _byName(options, 'borderDash');
 
 /// The option `borderJoinStyle` of [options], as [_borderAlign] reads
 /// `borderAlign`.
 Object? _borderJoinStyle(Object? options) => options is ArcOptions
-    ? rawOption(options, OptionKey.borderJoinStyle, options.borderJoinStyle)
+    ? options.borderJoinStyleValue
     : _byName(options, 'borderJoinStyle');
 
 /// The option `borderRadius` of [options], as [_borderAlign] reads
 /// `borderAlign`.
 Object? _borderRadius(Object? options) => options is ArcOptions
-    ? rawOption(options, OptionKey.borderRadius, options.borderRadius)
+    ? options.borderRadiusValue
     : _byName(options, 'borderRadius');
 
 /// The option `spacingMode` of [options], as [_borderAlign] reads
 /// `borderAlign`.
 Object? _spacingMode(Object? options) => options is ArcOptions
-    ? rawOption(options, OptionKey.spacingMode, options.spacingMode)
+    ? options.spacingModeValue
     : _byName(options, 'spacingMode');
 
 /// The `ToBoolean` of the option `circular` of [options]. The `bool` field
@@ -148,7 +148,7 @@ bool _selfJoin(Object? options) => options is ArcOptions
 /// The option `backgroundColor` of [options], as [_borderAlign] reads
 /// `borderAlign`.
 Object? _backgroundColor(Object? options) => options is ArcOptions
-    ? rawOption(options, OptionKey.backgroundColor, options.backgroundColor)
+    ? options.backgroundColorValue
     : _byName(options, 'backgroundColor');
 
 /// The typed `double` field of the numeric option [key] of [options]:
@@ -921,7 +921,11 @@ abstract interface class ArcProps implements Point {
 /// 0017, section 1). Thus [inXRange] and [inYRange] give false (the
 /// difference `adapt-arc-axis-range`).
 class ArcElement extends Element
-    implements types.VisualElement, ArcProps, NativeArcElement {
+    implements
+        types.VisualElement,
+        types.ArcElementWrites,
+        ArcProps,
+        NativeArcElement {
   /// element.arc.ts:411 `constructor(cfg)`.
   ///
   /// [options], [circumference], [startAngle], [endAngle], [innerRadius]
@@ -979,7 +983,7 @@ class ArcElement extends Element
   @internal
   @override
   // DIVERGES(chartjs): adapt-arc-native-options, native element contract.
-  bool get supportsNativeArcOptions => super.runtimeType == ArcElement;
+  bool get supportsNativeArcOptions => _builtIn;
 
   /// element.arc.ts:373 `class ArcElement extends Element` as a value (Chart.js
   /// ADR 0020, section 3).
@@ -1066,6 +1070,7 @@ class ArcElement extends Element
   @override
   double get circumference => _circumference;
 
+  @override
   set circumference(double value) {
     _circumference = value;
     _undefinedBits &= ~_circumferenceBit;
@@ -1076,6 +1081,7 @@ class ArcElement extends Element
   @override
   double get endAngle => _endAngle;
 
+  @override
   set endAngle(double value) {
     _endAngle = value;
     _undefinedBits &= ~_endAngleBit;
@@ -1097,6 +1103,7 @@ class ArcElement extends Element
   @override
   double get innerRadius => _innerRadius;
 
+  @override
   set innerRadius(double value) {
     _innerRadius = value;
     _undefinedBits &= ~_innerRadiusBit;
@@ -1107,6 +1114,7 @@ class ArcElement extends Element
   @override
   double get outerRadius => _outerRadius;
 
+  @override
   set outerRadius(double value) {
     _outerRadius = value;
     _undefinedBits &= ~_outerRadiusBit;
@@ -1128,6 +1136,7 @@ class ArcElement extends Element
   @override
   double get startAngle => _startAngle;
 
+  @override
   set startAngle(double value) {
     _startAngle = value;
     _undefinedBits &= ~_startAngleBit;
@@ -1217,7 +1226,7 @@ class ArcElement extends Element
   /// §9).
   // The `Type` objects of dart2wasm are not canonical: `identical` of two
   // `Type` objects of one class can be false there, so the test is `==`.
-  late final bool _builtIn = runtimeType == ArcElement;
+  late final bool _builtIn = super.runtimeType == ArcElement;
 
   /// [Element.typedWrites]: true for the class [ArcElement] itself.
   @internal
@@ -1562,11 +1571,7 @@ class ArcElement extends Element
         options.borderWidth != 0) {
       return false;
     }
-    final corners = rawOption(
-      options,
-      OptionKey.borderRadius,
-      options.borderRadius,
-    );
+    final corners = options.borderRadiusValue;
     if (corners is! num || corners != 0) return false;
     final start = startAngle;
     final end = endAngle;
@@ -1584,16 +1589,8 @@ class ArcElement extends Element
       innerRadius: inner,
       startAngle: start + angleOffset,
       endAngle: end - angleOffset,
-      backgroundColor: rawOption(
-        options,
-        OptionKey.backgroundColor,
-        options.backgroundColor,
-      ),
-      borderColor: rawOption(
-        options,
-        OptionKey.borderColor,
-        options.borderColor,
-      ),
+      backgroundColor: options.backgroundColorValue,
+      borderColor: options.borderColorValue,
     );
   }
 
