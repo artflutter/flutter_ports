@@ -64,14 +64,28 @@ ADR 0093, "The spacing fix-ups of the polar area stay per item on the fresh resu
 the color plan, and the frozen entry plan runs them once. Each later fix-up would read the same scalar
 and store the same value.
 
-The plan needs the prerequisites of the color plan of ADR 0093 (the exact controller, a native class and
-radial scale, parsing on, `start` 0), and:
+The color plan needs a cache with no entry at the start of its loop. This plan does not: an entry is its
+premise. A full update clears the cache in `configure`, and the first resolve of the loop writes the entry.
+`Chart.updateData` runs no `configure` (Chart.js ADR 0098): each of its ticks starts with the entry of the
+last update, takes no color plan, and takes this plan. This is the path of a live chart.
+
+The plan needs these prerequisites of the color plan of ADR 0093: the exact controller, a native class and
+radial scale, parsing on, `start` 0 and more than two arcs. It also needs:
 
 - the exact chart, whose `getDataVisibility` runs no user code;
 - the arcs of the meta in a native List, and a native parsed List;
-- no option sharing: a shared result is the frozen entry itself, and its fix-up throws, as upstream;
-- scalar raw `spacing` and `spacingMode` in native scopes (`rawOptionsAreScalar`);
+- an arc that is not active at the iteration of the attempt: its result was then a copy of the entry, and
+  its fix-ups have read each key that a later fix-up reads;
+- no option sharing: a shared result is the frozen entry itself. Each arc holds that object, and its fix-up
+  throws, as upstream;
+- a scalar raw value in native scopes (`rawOptionsAreScalar`) for each fix-up that fires on the entry, that
+  is `spacing` when the entry has 0, and `spacingMode` when the entry has `angular`;
 - an `angle` that is a number or `undefined`, whose `ToNumber` is no user code.
+
+The guard reads no key whose fix-up does not fire. The ordinary loop never reads such a key, and a read stays
+in the resolver until the next `configure`: a read ahead of the loop would change what a plugin hook reads
+after it. For the same reason, the guard needs an arc that is not active, so that the reads of a key that does
+fire stay at their place, before any callback of a later active arc.
 
 A custom or active arc ends the plan for good before its first read, as in ADR 0093.
 
@@ -88,8 +102,8 @@ reads the exact-class flag of the element once, not a `Type` compare at each rea
 A user subclass of a controller or an element, an overridden `updateElement`, another mode, an
 `undefined` value and a bubble axis of another name take `updateElement` with the record, at its upstream
 place. For the frozen entry plan: a user chart or scale, a custom list, parsing off, a scriptable or
-object `spacing` or `spacingMode`, a foreign `angle`, a varying option and an active arc take the
-ordinary resolve of each arc.
+object `spacing` or `spacingMode` that a fix-up reads, a custom Map scope under such a fix-up, a shared
+result, a foreign `angle`, a varying option and an active arc take the ordinary resolve of each arc.
 
 ## Differences
 
@@ -112,4 +126,7 @@ user subclass of its controller, in each mode, with hidden items, a NaN and a nu
 shrinking data, active elements, a user callback that reads its element and a callback that throws: each
 property by name, the keys and the key order of the options, `getProps`, the animation state, the context
 and the pixels. Probes show that each direct path ran and that each guard falls back, and a test opt-in
-that breaks the contract shows that the frozen entry plan ran. The observation test keeps its digests.
+that breaks the contract shows that the frozen entry plan ran, also on a tick of `Chart.updateData`. Twins
+compare such a tick with a full update of the user subclass, with the fix-ups, an active arc and a shared
+result. A plugin hook after the loop shows that the guard adds no read. The observation test keeps its
+digests.

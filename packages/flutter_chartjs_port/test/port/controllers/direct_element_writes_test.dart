@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
     show ArcOptions;
+import 'package:flutter_chartjs_port/src/typed/axes.dart';
 import 'package:flutter_chartjs_port/src/typed/chart_value.dart';
 import 'package:flutter_chartjs_port/src/typed/config.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart';
@@ -157,6 +158,12 @@ class _ProbePoint extends PointElement {
   }
 }
 
+void _clearCounts(_ProbeArc probe) {
+  probe
+    ..assigns = 0
+    ..startAngleWrites = 0;
+}
+
 /// A user arc: its `operator []=` sees each write, by name, in the key order.
 class _UserArc extends ArcElement {
   _UserArc(this.writes);
@@ -208,6 +215,41 @@ class _CustomList extends ListBase<types.Element> {
   void operator []=(int index, types.Element value) => values[index] = value;
 }
 
+/// A parsed list of the user: the loop must not treat it as a native list.
+class _CustomParsed extends ListBase<Object?> {
+  _CustomParsed(this.values);
+  final List<Object?> values;
+  @override
+  int get length => values.length;
+  @override
+  set length(int value) => values.length = value;
+  @override
+  Object? operator [](int index) => values[index];
+  @override
+  void operator []=(int index, Object? value) => values[index] = value;
+}
+
+/// A scope of the user: each read of its `operator []` is user code.
+class _CountingScope extends MapBase<String, Object?> {
+  _CountingScope(this.own, this.reads);
+  final Map<String, Object?> own;
+  final List<String> reads;
+  @override
+  Object? operator [](Object? key) {
+    if (key == 'spacing' || key == 'spacingMode') reads.add(key! as String);
+    return own[key];
+  }
+
+  @override
+  void operator []=(String key, Object? value) => own[key] = value;
+  @override
+  void clear() => own.clear();
+  @override
+  Iterable<String> get keys => own.keys;
+  @override
+  Object? remove(Object? key) => own.remove(key);
+}
+
 /// A platform that keeps the option `animation`.
 class _AnimatedPlatform extends BasicPlatform {
   static final JsClass value = JsClass(
@@ -229,6 +271,16 @@ class _Counted {
     return '5';
   }
 }
+
+/// The arc defaults mask the values of the polar area: the fix-ups of the
+/// controller store the values of the polar area into each arc.
+Map<String, Object?> _maskedSpacing() => <String, Object?>{
+  'spacing': 4.0,
+  'spacingMode': 'parallel',
+  'elements': <String, Object?>{
+    'arc': <String, Object?>{'spacing': 0.0, 'spacingMode': 'angular'},
+  },
+};
 
 const _arcTypes = ['pie', 'doughnut', 'polarArea'];
 const List<String> _allTypes = [..._arcTypes, 'bubble'];
@@ -358,6 +410,32 @@ Map<String, Object?> _config(
     ...?options,
   },
 };
+
+/// A config of the data-only lifecycle, as the live polar area of the benchmark
+/// lab: a fixed radial axis and no plugin.
+Map<String, Object?> _liveConfig(
+  String type,
+  Map<String, Object?> dataset, {
+  Map<String, Object?>? options,
+}) => _config(
+  type,
+  dataset,
+  options: {
+    'scales': <String, Object?>{
+      'r': <String, Object?>{'min': 0.0, 'max': 100.0, 'display': false},
+    },
+    'plugins': <String, Object?>{
+      'legend': false,
+      'tooltip': false,
+      'title': false,
+      'subtitle': false,
+      'colors': false,
+      'decimation': false,
+      'filler': false,
+    },
+    ...?options,
+  },
+);
 
 List<Object?> _datasets(Map<String, Object?> cfg) =>
     (cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>;
@@ -545,6 +623,16 @@ void main() {
       'offset': 2.0,
     }),
     types: _arcTypes,
+  );
+
+  _twins(
+    'the spacing of the polar area under the arc defaults',
+    (type, _) => _config(
+      type,
+      {'backgroundColor': red},
+      options: _maskedSpacing(),
+    ),
+    types: const ['polarArea'],
   );
 
   _twins(
@@ -975,13 +1063,18 @@ void main() {
   });
 
   group('the constant options of a polar area', () {
-    /// The value of `spacing` of each arc, when the arc at index 5 writes a new
-    /// `spacing` into the options while the loop reads its `active`. The plan
-    /// has its value already. An ordinary loop reads the new value.
-    Future<List<Object?>> planProbe(
+    /// The value of [key] of each arc, when the arc at index 5 writes a new
+    /// value of it into the options while the loop reads its `active`. The plan
+    /// has its value already. An ordinary loop reads the new value. With
+    /// [invalidate], the write also clears the cache of the controller, for the
+    /// options that no fix-up reads: an ordinary loop then resolves again.
+    List<Object?> planProbe(
       Map<String, Object?> cfg, {
       Chart Function(Map<String, Object?>)? create,
-    }) async {
+      OptionKey key = OptionKey.spacing,
+      Object? written = 9.0,
+      bool invalidate = false,
+    }) {
       final chart = (create ?? _chart)(cfg);
       final meta = chart.getDatasetMeta(0);
       var armed = false;
@@ -991,7 +1084,12 @@ void main() {
           probe.onActive = () {
             if (!armed) return;
             armed = false;
-            meta.controller!.options.jsWrite('spacing', 9.0);
+            if (invalidate) {
+              _first(cfg)[key.jsName] = written;
+              meta.controller!.configure();
+            } else {
+              meta.controller!.options.jsWrite(key.jsName, written);
+            }
           };
         }
         meta.data[i] = probe;
@@ -1001,16 +1099,16 @@ void main() {
       chart.update('none');
       return [
         for (final arc in meta.data.cast<ArcElement>())
-          (arc.options! as ArcOptions).spacing,
+          (arc.options! as ArcOptions).valueOf(key),
       ];
     }
 
     const planned = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
     const ordinary = [0.0, 0.0, 0.0, 0.0, 0.0, 9.0, 9.0, 9.0];
 
-    test('takes the plan', () async {
+    test('takes the plan', () {
       expect(
-        await planProbe(_config('polarArea', {'backgroundColor': red})),
+        planProbe(_config('polarArea', {'backgroundColor': red})),
         planned,
       );
     });
@@ -1060,18 +1158,18 @@ void main() {
       }
     });
 
-    test('a user subclass declines it', () async {
+    test('a user subclass declines it', () {
       expect(
-        await planProbe(
+        planProbe(
           _config(_refType('polarArea'), {'backgroundColor': red}),
         ),
         ordinary,
       );
     });
 
-    test('a user chart declines it', () async {
+    test('a user chart declines it', () {
       expect(
-        await planProbe(
+        planProbe(
           _config('polarArea', {'backgroundColor': red}),
           create: (cfg) {
             final chart = _ReferenceChart(
@@ -1086,9 +1184,9 @@ void main() {
       );
     });
 
-    test('a user scale declines it', () async {
+    test('a user scale declines it', () {
       expect(
-        await planProbe(
+        planProbe(
           _config(
             'polarArea',
             {'backgroundColor': red},
@@ -1123,6 +1221,23 @@ void main() {
       armed = true;
       meta.controller!.updateElements(arcs, 0, 8, 'none');
       expect((arcs[7] as ArcElement).options, isA<ArcOptions>());
+      expect(((arcs[7] as ArcElement).options! as ArcOptions).spacing, 9.0);
+    });
+
+    test('a native list that is not the list of the meta declines it', () {
+      final chart = _chart(_config('polarArea', {'backgroundColor': red}));
+      final meta = chart.getDatasetMeta(0);
+      final probe = _ProbeArc();
+      var armed = false;
+      probe.onActive = () {
+        if (!armed) return;
+        armed = false;
+        meta.controller!.options.jsWrite('spacing', 9.0);
+      };
+      final arcs = <types.Element>[...meta.data]..[5] = probe;
+      armed = true;
+      meta.controller!.updateElements(arcs, 0, 8, 'none');
+      expect(armed, isFalse);
       expect(((arcs[7] as ArcElement).options! as ArcOptions).spacing, 9.0);
     });
 
@@ -1204,6 +1319,502 @@ void main() {
         results.add(_observe(chart, cfg));
       }
       expect(results[0], results[1]);
+    });
+
+    test('the template has the fix-ups of each arc', () {
+      for (final kind in ['polarArea', _refType('polarArea')]) {
+        final chart = _chart(
+          _config(kind, {'backgroundColor': red}, options: _maskedSpacing()),
+        )..update('none');
+        final arcs = chart.getDatasetMeta(0).data.cast<ArcElement>();
+        for (final arc in arcs) {
+          final options = arc.options! as ArcOptions;
+          expect(options.valueOf(OptionKey.spacing), 4.0, reason: kind);
+          expect(
+            options.valueOf(OptionKey.spacingMode),
+            'parallel',
+            reason: kind,
+          );
+        }
+      }
+    });
+
+    /// Each arc holds one frozen object, as the shared result upstream.
+    void expectShared(Chart chart) {
+      final arcs = chart.getDatasetMeta(0).data.cast<ArcElement>();
+      final first = arcs.first.options! as ArcOptions;
+      expect(first.isFrozen, isTrue);
+      for (final arc in arcs) {
+        expect(arc.options, same(first));
+      }
+    }
+
+    test('a shared result with its own spacing declines it', () {
+      final results = <Object?>[];
+      for (final kind in ['polarArea', _refType('polarArea')]) {
+        final cfg = _config(kind, {
+          'backgroundColor': red,
+          'spacing': 3.0,
+          'spacingMode': 'parallel',
+        });
+        final chart = _chart(cfg);
+        chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
+        chart.update('none');
+        expectShared(chart);
+        results.add(_observe(chart, cfg));
+      }
+      expect(results[0], results[1]);
+    });
+
+    test(
+      'a scriptable spacing of the polar area under a fix-up declines it',
+      () {
+        final results = <Object?>[];
+        for (final kind in ['polarArea', _refType('polarArea')]) {
+          final calls = <Object?>[];
+          results.add(
+            planProbe(
+              _config(
+                kind,
+                {'backgroundColor': red},
+                options: {
+                  'spacing': (Object? ctx) {
+                    calls.add('spacing');
+                    return 4.0;
+                  },
+                  'elements': <String, Object?>{
+                    'arc': <String, Object?>{'spacing': 0.0},
+                  },
+                },
+              ),
+            ),
+          );
+          expect(calls, isNotEmpty);
+        }
+        expect(results[0], const [4.0, 4.0, 4.0, 4.0, 4.0, 9.0, 9.0, 9.0]);
+        expect(results[0], results[1]);
+      },
+    );
+
+    test('a scriptable mode of the polar area under a fix-up declines it', () {
+      final results = <Object?>[];
+      for (final kind in ['polarArea', _refType('polarArea')]) {
+        final calls = <Object?>[];
+        results.add(
+          planProbe(
+            _config(
+              kind,
+              {'backgroundColor': red, 'spacing': 3.0},
+              options: {
+                'spacingMode': (Object? ctx) {
+                  calls.add('spacingMode');
+                  return 'parallel';
+                },
+                'elements': <String, Object?>{
+                  'arc': <String, Object?>{'spacingMode': 'angular'},
+                },
+              },
+            ),
+            key: OptionKey.spacingMode,
+            written: 'written',
+          ),
+        );
+        expect(calls, isNotEmpty);
+      }
+      expect(results[0], const [
+        'parallel',
+        'parallel',
+        'parallel',
+        'parallel',
+        'parallel',
+        'written',
+        'written',
+        'written',
+      ]);
+      expect(results[0], results[1]);
+    });
+
+    test('a scope of the user under a fix-up declines it', () {
+      final results = <Object?>[];
+      for (final kind in ['polarArea', _refType('polarArea')]) {
+        final reads = <String>[];
+        final values = planProbe(
+          _config(
+            kind,
+            {'backgroundColor': red},
+            options: {
+              'datasets': <String, Object?>{
+                kind: _CountingScope(<String, Object?>{}, reads),
+              },
+            },
+          ),
+        );
+        expect(values, ordinary, reason: kind);
+        expect(reads, isNotEmpty);
+        results.add(reads);
+      }
+      expect(results[0], results[1]);
+    });
+
+    test(
+      'a function that no fix-up reads stays uncalled, and the plan runs',
+      () {
+        final calls = <Object?>[];
+        Object? call(Object? ctx) {
+          calls.add('called');
+          return 1.0;
+        }
+
+        final options = <String, Object?>{'spacing': call, 'spacingMode': call};
+        final own = <String, Object?>{
+          'backgroundColor': red,
+          'spacing': 3.0,
+          'spacingMode': 'parallel',
+        };
+        expect(
+          planProbe(
+            _config('polarArea', own, options: options),
+            invalidate: true,
+          ),
+          const [3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0],
+        );
+        expect(calls, isEmpty);
+        expect(
+          planProbe(
+            _config(_refType('polarArea'), own, options: options),
+            invalidate: true,
+          ),
+          const [3.0, 3.0, 3.0, 3.0, 3.0, 9.0, 9.0, 9.0],
+        );
+        expect(calls, isEmpty);
+      },
+    );
+
+    test('a custom parsed list declines it', () {
+      final chart = _chart(_config('polarArea', {'backgroundColor': red}));
+      final meta = chart.getDatasetMeta(0);
+      meta.parsed = _CustomParsed([...meta.parsed]);
+      final probe = _ProbeArc();
+      var armed = false;
+      probe.onActive = () {
+        if (!armed) return;
+        armed = false;
+        meta.controller!.options.jsWrite('spacing', 9.0);
+      };
+      meta.data[5] = probe;
+      chart.update('none');
+      expect(meta.parsed, isA<_CustomParsed>());
+      armed = true;
+      chart.update('none');
+      expect(armed, isFalse);
+      expect(
+        [
+          for (final arc in meta.data.cast<ArcElement>())
+            (arc.options! as ArcOptions).spacing,
+        ],
+        const [0.0, 0.0, 0.0, 0.0, 0.0, 9.0, 9.0, 9.0],
+      );
+    });
+
+    test('two active arcs first: no read ahead of a callback', () {
+      final results = <Object?>[];
+      for (final kind in ['polarArea', _refType('polarArea')]) {
+        var armed = false;
+        late final Map<String, Object?> cfg;
+        cfg = _config(kind, {
+          'backgroundColor': red,
+          // The active arcs have their own spacing: no fix-up of the first two
+          // arcs reads the spacing of the polar area.
+          'hoverSpacing': 5.0,
+          // The third active arc writes the spacing of the polar area in a
+          // callback. The fix-up of the fourth arc is its first read.
+          'hoverBorderWidth': (Object? ctx) {
+            if (armed && (ctx! as ScriptableContext).index == 2) {
+              armed = false;
+              _first(cfg)['spacing'] = 7.0;
+            }
+            return 1.0;
+          },
+        });
+        final chart = _chart(cfg)
+          ..setActiveElements([
+            {'datasetIndex': 0.0, 'index': 0.0},
+            {'datasetIndex': 0.0, 'index': 1.0},
+            {'datasetIndex': 0.0, 'index': 2.0},
+          ]);
+        armed = true;
+        chart.update('none');
+        expect(armed, isFalse);
+        results.add([
+          for (final arc in chart.getDatasetMeta(0).data.cast<ArcElement>())
+            (arc.options! as ArcOptions).valueOf(OptionKey.spacing),
+        ]);
+      }
+      expect(results[0], results[1]);
+      expect(results[0], const [5.0, 5.0, 5.0, 7.0, 7.0, 7.0, 7.0, 7.0]);
+    });
+
+    group('the guard reads no key that no fix-up reads', () {
+      for (final MapEntry(key: name, value: own)
+          in const <String, Map<String, Object?>>{
+            'both own': {'spacing': 3.0, 'spacingMode': 'parallel'},
+            'spacing own': {'spacing': 3.0},
+            'mode own': {'spacingMode': 'parallel'},
+            'none own': {},
+          }.entries) {
+        test(name, () {
+          final results = <Object?>[];
+          for (final kind in ['polarArea', _refType('polarArea')]) {
+            var value = 10.0;
+            final trace = <Object?>[];
+            final cfg = _config(kind, {'backgroundColor': red, ...own});
+            final dataset = _first(cfg);
+            cfg['plugins'] = <Object?>[
+              <String, Object?>{
+                'id': 'writes-read-back',
+                'afterDatasetUpdate':
+                    (Object? chart, Object? args, Object? options) {
+                      final view = (chart! as Chart)
+                          .getDatasetMeta(0)
+                          .controller!
+                          .options;
+                      if (own.containsKey('spacing')) {
+                        dataset['spacing'] = value;
+                      }
+                      if (own.containsKey('spacingMode')) {
+                        dataset['spacingMode'] = 'mode$value';
+                      }
+                      trace.add([view['spacing'], view['spacingMode']]);
+                    },
+              },
+            ];
+            final chart = _chart(cfg);
+            value = 20.0;
+            chart.update('none');
+            value = 30.0;
+            chart.update('reset');
+            results.add(trace);
+          }
+          expect(results[0], results[1]);
+          final last = (results[0]! as List)[1] as List;
+          if (own.containsKey('spacing')) expect(last[0], 20.0);
+          if (own.containsKey('spacingMode')) expect(last[1], 'mode20.0');
+        });
+      }
+    });
+
+    group('over a kept entry', () {
+      List<Object?> arcValues(Chart chart, OptionKey key) => [
+        for (final arc in chart.getDatasetMeta(0).data.cast<ArcElement>())
+          (arc.options! as ArcOptions).valueOf(key),
+      ];
+
+      /// Probe arcs, with one full update on them. After each call of the
+      /// result, the arc at index 5 writes `spacing` while the loop reads its
+      /// `active`: first 9, then 10, and so on.
+      void Function() armedProbes(Chart chart) {
+        final meta = chart.getDatasetMeta(0);
+        final probes = <_ProbeArc>[];
+        for (var i = 0; i < meta.data.length; i++) {
+          final probe = _ProbeArc();
+          probes.add(probe);
+          meta.data[i] = probe;
+        }
+        chart.update('none');
+        var armed = false;
+        var written = 9.0;
+        probes[5].onActive = () {
+          if (!armed) return;
+          armed = false;
+          meta.controller!.options.jsWrite('spacing', written++);
+        };
+        return () {
+          probes.forEach(_clearCounts);
+          armed = true;
+        };
+      }
+
+      test('a data-only tick takes the plan', () {
+        final cfg = _liveConfig('polarArea', {'backgroundColor': red});
+        final chart = _chart(cfg);
+        final arm = armedProbes(chart);
+        // A plan has the value of the last tick: it stays in the options.
+        var expected = 0.0;
+        for (final step in const [2.0, 3.0, 4.0]) {
+          _setData(cfg, step, 8);
+          arm();
+          expect(chart.updateData(), isTrue);
+          expect(arcValues(chart, OptionKey.spacing), List.filled(8, expected));
+          expected = expected == 0 ? 9 : expected + 1;
+          for (final arc in chart.getDatasetMeta(0).data.cast<_ProbeArc>()) {
+            expect(arc.assigns, 0);
+            expect(arc.startAngleWrites, 1);
+          }
+        }
+      });
+
+      test('a typed config takes the plan on a data-only tick', () {
+        // The polar area of the benchmark lab, with a fixed size.
+        ChartConfig config(List<double> values) => ChartConfig(
+          type: ChartKind.polarArea,
+          labels: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+          datasets: [
+            PolarAreaDataset(
+              data: values,
+              backgroundColor: const ChartValue.constant(red),
+              borderWidth: 0,
+            ),
+          ],
+          scales: const {
+            'r': RadialLinearAxis(
+              min: 0,
+              max: 100,
+              display: false,
+              pointLabelsDisplay: false,
+              angleLinesDisplay: false,
+            ),
+          },
+          animation: ChartAnimation.none,
+          legend: const ChartLegend(display: false),
+          tooltip: const ChartTooltip(enabled: false),
+          responsive: false,
+          extra: const {'events': <String>[]},
+        );
+        final lowering = ChartConfigLowering(config([1, 2, 3, 4, 5, 6, 7, 8]));
+        final chart = Chart(
+          UiCanvasElement(width: 480, height: 320),
+          lowering.lower(),
+        );
+        addTearDown(chart.destroy);
+        final arm = armedProbes(chart);
+        lowering.apply(config([8, 7, 6, 5, 4, 3, 2, 1]));
+        expect(lowering.lastApplyDataOnly, isTrue);
+        arm();
+        expect(chart.updateData(), isTrue);
+        expect(arcValues(chart, OptionKey.spacing), planned);
+      });
+
+      test('a user subclass ticks through the full update', () {
+        final cfg = _liveConfig(_refType('polarArea'), {
+          'backgroundColor': red,
+        });
+        final chart = _chart(cfg);
+        final arm = armedProbes(chart);
+        _setData(cfg, 2, 8);
+        arm();
+        expect(chart.updateData(), isFalse);
+        expect(arcValues(chart, OptionKey.spacing), ordinary);
+      });
+
+      /// One data-only tick on the exact chart and one full update on the
+      /// trivial user subclass give the same elements and pixels.
+      void dataOnlyTwin(
+        String name,
+        Map<String, Object?> dataset, {
+        Map<String, Object?>? options,
+        void Function(Chart chart)? prepare,
+      }) {
+        test('a data-only twin: $name', () async {
+          final configs = [
+            _liveConfig('polarArea', dataset, options: options),
+            _liveConfig(_refType('polarArea'), dataset, options: options),
+          ];
+          final charts = configs.map(_chart).toList();
+          if (prepare != null) charts.forEach(prepare);
+          for (final tick in [2.0, 3.0, 4.0, 5.0]) {
+            for (final cfg in configs) {
+              _setData(cfg, tick, 8);
+            }
+            expect(charts[0].updateData(), isTrue, reason: '$tick');
+            expect(charts[1].updateData(), isFalse, reason: '$tick');
+            expect(
+              _observe(charts[0], configs[0]),
+              _observe(charts[1], configs[1]),
+              reason: '$tick',
+            );
+            expect(await _pixels(charts[0]), await _pixels(charts[1]));
+          }
+          for (final cfg in configs) {
+            final data = _data('polarArea', 6);
+            data[2] = double.nan;
+            data[5] = null;
+            _first(cfg)['data'] = data;
+          }
+          expect(charts[0].updateData(), isTrue);
+          charts[1].updateData();
+          expect(
+            _observe(charts[0], configs[0]),
+            _observe(charts[1], configs[1]),
+          );
+          expect(await _pixels(charts[0]), await _pixels(charts[1]));
+        });
+      }
+
+      dataOnlyTwin('constants', {
+        'backgroundColor': red,
+        'borderColor': blue,
+        'borderWidth': 2.0,
+      });
+      dataOnlyTwin('no border', {'backgroundColor': red, 'borderWidth': 0.0});
+      dataOnlyTwin('an own spacing', {
+        'backgroundColor': red,
+        'spacing': 3.0,
+        'spacingMode': 'parallel',
+        'offset': 2.0,
+      });
+      dataOnlyTwin('a static angle', {'backgroundColor': red, 'angle': 40.0});
+      dataOnlyTwin('the fix-ups', {
+        'backgroundColor': red,
+      }, options: _maskedSpacing());
+      dataOnlyTwin(
+        'an active arc',
+        {'backgroundColor': red, 'hoverBorderWidth': 5.0},
+        prepare: (chart) => chart
+          ..setActiveElements([
+            {'datasetIndex': 0.0, 'index': 4.0},
+          ])
+          ..update('none'),
+      );
+      dataOnlyTwin(
+        'a shared result',
+        {'backgroundColor': red, 'spacing': 3.0, 'spacingMode': 'parallel'},
+        prepare: (chart) {
+          chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
+          chart.update('none');
+          expectShared(chart);
+        },
+      );
+
+      test('a direct loop keeps the same arcs', () {
+        final results = <Object?>[];
+        for (final kind in ['polarArea', _refType('polarArea')]) {
+          final cfg = _config(
+            kind,
+            {'backgroundColor': red},
+            options: _maskedSpacing(),
+          );
+          final chart = _chart(cfg);
+          final meta = chart.getDatasetMeta(0);
+          final controller = meta.controller!;
+          void loop(double start, double count) {
+            controller.updateElements(meta.data, start, count, 'none');
+            results.add(_observe(chart, cfg));
+          }
+
+          // Over the kept entry: the whole loop, a part of it and two arcs.
+          loop(0, 8);
+          loop(3, 2);
+          loop(0, 2);
+          // A write after the entry: each resolve stays a hit of the entry.
+          _first(cfg)['spacing'] = 7.0;
+          loop(0, 8);
+          // An arc that is not native ends the plan before its first read.
+          meta.data[4] = _UserArc([]);
+          loop(0, 8);
+        }
+        final half = results.length ~/ 2;
+        expect(results.sublist(0, half), results.sublist(half));
+      });
     });
 
     test('each arc has its own options, and a write stays in one arc', () {

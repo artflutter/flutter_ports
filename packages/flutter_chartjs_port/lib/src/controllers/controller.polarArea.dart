@@ -466,14 +466,16 @@ class PolarAreaController extends DatasetController {
     // DIVERGES(chartjs): adapt-polar-constant-options, the plan is the copy of
     // a frozen entry: a hit writes no context, and the copy has the fix-ups.
     var constant = false;
-    final tryColors =
+    final tryPlan =
         exact &&
         mode == 'none' &&
         start == 0 &&
         count > 2 &&
         parsing != false &&
-        cachedDataElementOptions(mode) == null &&
         _nativeRadialScale(scale);
+    // An existing entry stands before a color plan. It is the premise of the
+    // copy: each tick of `Chart.updateData` starts with the entry.
+    final tryColors = tryPlan && cachedDataElementOptions(mode) == null;
     for (i = start; i < start + count; i++) {
       final arc = arcs[i.toInt()];
       if (colors != null && (!nativeArcElement(arc) || arc.active)) {
@@ -564,14 +566,14 @@ class PolarAreaController extends DatasetController {
       }
 
       // Two ordinary resolutions warm the cached plan. One attempt.
-      if (tryColors && i == start + 1 && nativeArcElement(arc)) {
-        colors = prepareNativeArcColors(this, arcs);
+      if (tryPlan && i == start + 1 && nativeArcElement(arc)) {
+        colors = tryColors ? prepareNativeArcColors(this, arcs) : null;
         if (colors != null) {
           plannedAngle = _angleOf(
             colors(0).valueOf(OptionKey.angle),
             defaultAngle,
           );
-        } else if (_frozenEntryTemplate(arcs, mode) case final template?) {
+        } else if (_frozenEntryTemplate(arc, arcs, mode) case final template?) {
           colors = (_) => template.clone();
           plannedAngle = _angleOf(
             template.valueOf(OptionKey.angle),
@@ -605,18 +607,34 @@ class PolarAreaController extends DatasetController {
   /// the frozen entry: the exact chart, native arrays, a not shared result, and
   /// an `angle` and dataset options whose reads run no user code. Each later
   /// fix-up then stores the same values. Else Dart `null`.
+  ///
+  /// [arc] is the arc of this iteration. When it is not active, its result was
+  /// a copy of the entry, so its fix-ups read each dataset option that a fix-up
+  /// reads. A key whose fix-up does not fire on the entry has no read, as in
+  /// the ordinary loop: a read stays in the resolver until the next
+  /// `configure`.
   // DIVERGES(chartjs): adapt-polar-constant-options, the guard of the plan.
-  ArcOptions? _frozenEntryTemplate(List<types.Element> arcs, String mode) {
+  ArcOptions? _frozenEntryTemplate(
+    types.Element arc,
+    List<types.Element> arcs,
+    String mode,
+  ) {
     final entry = cachedDataElementOptions(mode);
     if (entry is! ArcOptions ||
+        arc.active ||
         enableOptionSharing ||
         !nativePointChart(chart) ||
         !identical(arcs, cachedMeta.data) ||
         !nativePointList(arcs) ||
-        !nativeDataUpdateList(cachedMeta.parsed) ||
-        !options.rawOptionsAreScalar(const [
-          OptionKey.spacing,
-          OptionKey.spacingMode,
+        !nativeDataUpdateList(cachedMeta.parsed)) {
+      return null;
+    }
+    final fixesSpacing = entry.valueOf(OptionKey.spacing) == 0;
+    final fixesMode = entry.valueOf(OptionKey.spacingMode) == 'angular';
+    if ((fixesSpacing || fixesMode) &&
+        !options.rawOptionsAreScalar([
+          if (fixesSpacing) OptionKey.spacing,
+          if (fixesMode) OptionKey.spacingMode,
         ])) {
       return null;
     }
