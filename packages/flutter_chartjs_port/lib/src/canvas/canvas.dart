@@ -159,8 +159,6 @@ abstract interface class CanvasPath {
     double radius,
     double startAngle,
     double endAngle, [
-    // The DOM signature.
-    // ignore: avoid_positional_boolean_parameters
     bool counterclockwise = false,
   ]);
 
@@ -177,8 +175,6 @@ abstract interface class CanvasPath {
     double rotation,
     double startAngle,
     double endAngle, [
-    // The DOM signature.
-    // ignore: avoid_positional_boolean_parameters
     bool counterclockwise = false,
   ]);
 
@@ -1143,8 +1139,6 @@ final class ArcCommand extends PathCommand {
     this.radius,
     this.startAngle,
     this.endAngle,
-    // The DOM argument order.
-    // ignore: avoid_positional_boolean_parameters
     this.counterclockwise,
   );
 
@@ -1206,8 +1200,6 @@ final class EllipseCommand extends PathCommand {
     this.rotation,
     this.startAngle,
     this.endAngle,
-    // The DOM argument order.
-    // ignore: avoid_positional_boolean_parameters
     this.counterclockwise,
   );
 

@@ -190,8 +190,6 @@ double textX(
   String align,
   double left,
   double right,
-  // The upstream signature has a positional `rtl`.
-  // ignore: avoid_positional_boolean_parameters
   bool rtl,
 ) {
   final check = rtl ? 'left' : 'right';
@@ -218,8 +216,6 @@ double textX(
 ({double start, double count}) getStartAndCountOfVisiblePoints(
   ChartMeta meta,
   List<Element> points,
-  // The upstream signature has a positional `animationsDisabled`.
-  // ignore: avoid_positional_boolean_parameters
   bool animationsDisabled,
 ) {
   final pointCount = points.length.toDouble();

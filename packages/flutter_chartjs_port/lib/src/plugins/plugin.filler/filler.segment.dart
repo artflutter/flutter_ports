@@ -127,8 +127,6 @@ List<FillPart> segments(
   String property,
   types.PointElement first,
   types.PointElement last, [
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   bool? loop,
 ]) {
   if (loop ?? false) {

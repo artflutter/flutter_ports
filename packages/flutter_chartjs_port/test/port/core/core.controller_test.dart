@@ -1889,8 +1889,6 @@ void main() {
       // creates under TickerMode(enabled: false).
       final canvas = UiCanvasElement();
       late Chart chart;
-      // The callback of ChartHost.onTickerModeChanged.
-      // ignore: avoid_positional_boolean_parameters
       void onTickerModeChanged(bool enabled) =>
           enabled ? animator.unmute(chart) : animator.mute(chart);
       Widget host({required bool enabled}) => Directionality(

@@ -434,8 +434,6 @@ abstract interface class Chart {
     Object e,
     Object? mode,
     Object? options, [
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]);
 
@@ -451,8 +449,6 @@ abstract interface class Chart {
   /// is true. `index.d.ts` does not declare it. The dataset controller
   /// reads it (core.datasetController.js:61).
   List<ChartMeta> getSortedDatasetMetas(
-    // The upstream signature has a positional `filterVisible`.
-    // ignore: avoid_positional_boolean_parameters
     bool filterVisible,
   );
 
@@ -588,8 +584,6 @@ abstract interface class DatasetController {
   /// record.
   ({double min, double max}) getMinMax(
     Scale scale, [
-    // The upstream signature has a positional `canStack`.
-    // ignore: avoid_positional_boolean_parameters
     bool? canStack,
   ]);
 
@@ -604,8 +598,6 @@ abstract interface class DatasetController {
   /// calls it.
   Object getStyle(
     double? index, [
-    // The upstream signature has a positional `active`.
-    // ignore: avoid_positional_boolean_parameters
     bool? active,
   ]);
 
@@ -1002,24 +994,18 @@ abstract interface class VisualElement {
   bool inRange(
     double? mouseX,
     double? mouseY, [
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]);
 
   /// index.d.ts:1849 `inXRange(mouseX, useFinalPosition?): boolean`.
   bool inXRange(
     double? mouseX, [
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]);
 
   /// index.d.ts:1850 `inYRange(mouseY, useFinalPosition?): boolean`.
   bool inYRange(
     double? mouseY, [
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]);
 
@@ -1029,8 +1015,6 @@ abstract interface class VisualElement {
   /// which stands for the object literal `{x, y}` (Chart.js ADR 0017,
   /// section 9).
   Point getCenterPoint([
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]);
 }

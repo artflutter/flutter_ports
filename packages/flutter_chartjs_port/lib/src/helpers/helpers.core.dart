@@ -257,8 +257,6 @@ void each(
   Object? loopable,
   Object fn, [
   Object? thisArg = undefined,
-  // The upstream signature has a positional `reverse`.
-  // ignore: avoid_positional_boolean_parameters
   bool reverse = false,
 ]) {
   int i;

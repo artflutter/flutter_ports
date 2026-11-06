@@ -255,8 +255,6 @@ final class UiTransform {
 /// The sweep of `arc(x, y, r, startAngle, endAngle, counterclockwise)`, as
 /// Chromium canonicalizes the end angle (`AdjustEndAngle`): a sweep of 2π
 /// or more is a full circle, else the sweep goes the given way round.
-// The DOM argument order.
-// ignore: avoid_positional_boolean_parameters
 double canvasArcSweep(double startAngle, double endAngle, bool ccw) {
   if (!ccw && endAngle - startAngle >= _tau) return _tau;
   if (ccw && startAngle - endAngle >= _tau) return -_tau;

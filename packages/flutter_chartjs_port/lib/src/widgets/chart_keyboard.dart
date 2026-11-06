@@ -109,8 +109,6 @@ final class ChartKeyboard {
   /// The `Focus.onFocusChange` handler: with a target, a focus loss sends
   /// `mouseout` at [_outside] and clears the target. Each change calls
   /// `chart.render()` (section 6).
-  // The signature of `Focus.onFocusChange`.
-  // ignore: avoid_positional_boolean_parameters
   void onFocusChange(bool focused) {
     _focused = focused;
     final chart = _chart();

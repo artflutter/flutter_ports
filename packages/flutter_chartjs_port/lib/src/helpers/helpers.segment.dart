@@ -584,8 +584,6 @@ List<Segment> _doSplitByStyles(
   var start = segments[0].start;
   var i = start;
 
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   void addStyle(double s, double e, bool l, SegmentStyle st) {
     final dir = jsTruthy(spanGaps) ? -1.0 : 1.0;
     if (s == e) {

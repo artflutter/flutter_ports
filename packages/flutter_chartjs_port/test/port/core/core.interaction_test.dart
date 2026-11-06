@@ -416,8 +416,6 @@ void main() {
         types.Chart chart,
         Object e,
         Object options, [
-        // The mode signature has a positional `useFinalPosition`.
-        // ignore: avoid_positional_boolean_parameters
         bool? useFinalPosition,
       ]) => const [];
       Interaction.modes['custom'] = custom;

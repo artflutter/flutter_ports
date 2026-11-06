@@ -1065,8 +1065,6 @@ class Config implements types.ChartConfiguration {
   List<Object?> getOptionScopes(
     Object? mainScope,
     List<List<String>> keyLists, [
-    // The upstream signature has a positional `resetCache`.
-    // ignore: avoid_positional_boolean_parameters
     bool resetCache = false,
   ]) {
     final options = this.options;

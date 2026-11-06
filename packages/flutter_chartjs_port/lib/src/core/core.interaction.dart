@@ -125,8 +125,6 @@ typedef InteractionModeFunction = List<InteractionItem> Function(
   types.Chart chart,
   Object e,
   Object options, [
-  // The upstream signature has a positional `useFinalPosition`.
-  // ignore: avoid_positional_boolean_parameters
   bool? useFinalPosition,
 ]);
 
@@ -903,8 +901,6 @@ abstract final class Interaction {
     String axis,
     Point position,
     InteractionHandler handler, [
-    // The upstream signature has a positional `intersect`.
-    // ignore: avoid_positional_boolean_parameters
     bool? intersect,
   ]) => _evaluateInteractionItems(chart, axis, position, handler, intersect);
 

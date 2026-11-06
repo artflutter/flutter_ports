@@ -111,8 +111,6 @@ Object? _readKey(Object? entry, String key) {
   List<Object?> table,
   String key,
   double value, [
-  // The upstream signature has a positional `last`.
-  // ignore: avoid_positional_boolean_parameters
   bool last = false,
 ]) => lookup(
   table,

@@ -39,8 +39,6 @@ final class TypedRegistry {
   TypedRegistry(
     this.type,
     this.scope, [
-    // The upstream signature has a positional `override`.
-    // ignore: avoid_positional_boolean_parameters
     this.override = false,
   ]);
 

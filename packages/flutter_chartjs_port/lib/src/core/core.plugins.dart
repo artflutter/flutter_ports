@@ -357,8 +357,6 @@ List<PluginDescriptor> createDescriptors(
   types.Chart chart,
   ({List<Object> plugins, Map<String, bool> localIds}) allPlugins,
   Object? options,
-  // The upstream signature has a positional `all`.
-  // ignore: avoid_positional_boolean_parameters
   bool all,
 ) {
   final (:plugins, :localIds) = allPlugins;
