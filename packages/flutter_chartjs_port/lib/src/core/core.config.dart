@@ -439,6 +439,12 @@ class Config implements types.ChartConfiguration {
   // DIVERGES(chartjs): adapt-native-line-resolution, lookup generation.
   int _resolutionGeneration = 0;
 
+  /// The generation of the scope and resolver caches. Each clear of them
+  /// changes it (Chart.js ADR 0092).
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the same cached resolver.
+  int get resolutionGeneration => _resolutionGeneration;
+
   String? _lastScopeType;
   String? _lastScopeElement;
   String _lastScopeKey = '';

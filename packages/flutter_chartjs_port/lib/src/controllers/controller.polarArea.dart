@@ -171,6 +171,21 @@ class PolarAreaController extends DatasetController {
   // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
   bool get supportsDataUpdates => super.runtimeType == PolarAreaController;
 
+  /// The generator of [overrides] for the exact class: [supportsDataUpdates]
+  /// is its exact class test.
+  @override
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the built-in generator.
+  Object? get nativeLegendGenerator =>
+      supportsDataUpdates ? _generateLabels : null;
+
+  /// `const {labels: {...}} = chart.legend.options` of [_generateLabels].
+  @override
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
+  List<OptionKey> get nativeLegendLabelKeys => const [
+    OptionKey.pointStyle,
+    OptionKey.color,
+  ];
+
   @override
   DataUpdateShape get dataUpdateShape => DataUpdateShape.radial;
 

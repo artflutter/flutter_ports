@@ -636,7 +636,8 @@ class Chart
         CategoryLabelSource,
         SingleBarIndexSource,
         BulkBarChart,
-        NativePointChart {
+        NativePointChart,
+        DatasetMetaSource {
   /// core.controller.js:123 `constructor(item, userConfig)`.
   ///
   /// [item] is a canvas element, a context, an object with a `canvas`, or
@@ -2209,6 +2210,21 @@ class Chart
     }
 
     return meta;
+  }
+
+  /// The meta that [getDatasetMeta] finds, or Dart `null`: this read adds no
+  /// meta (Chart.js ADR 0092). The caller has checked the List of the datasets.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, a read with no write.
+  ChartMeta? existingDatasetMeta(num datasetIndex) {
+    final dataset = jsGetIndex(_datasets, datasetIndex.toDouble());
+    final metasets = this.metasets;
+    for (var i = metasets.length - 1; i >= 0; i--) {
+      final x = metasets[i];
+      if (x != null && identical(x.dataset_, dataset)) return x;
+    }
+    return null;
   }
 
   /// core.controller.js:855 `getContext()`.
