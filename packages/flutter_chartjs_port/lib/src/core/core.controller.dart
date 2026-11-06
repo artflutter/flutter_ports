@@ -1600,7 +1600,7 @@ class Chart
 
     render();
     if (generation == _dataUpdateGeneration) {
-      // DIVERGES(chartjs): adapt-incremental-data-update, a kept layout needs one.
+      // DIVERGES(chartjs): adapt-incremental-data-update, needs a layout.
       _dataUpdateReady = datasetsUpdated && laidOut;
       if (datasetsUpdated &&
           supportsDataUpdates &&
