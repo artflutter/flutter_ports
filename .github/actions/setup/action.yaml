@@ -5,6 +5,9 @@ runs:
   steps:
     - uses: subosito/flutter-action@v2
       with:
+        # The action looks for the version in this channel, and its default
+        # is stable. A move of .fvmrc to another channel changes this line.
+        channel: beta
         flutter-version-file: .fvmrc
         cache: true
     - name: Resolve workspace
