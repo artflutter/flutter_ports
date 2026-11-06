@@ -40,6 +40,8 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/arc_options.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show Defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, numberOption, plainOption, rawOption;
@@ -916,7 +918,8 @@ abstract interface class ArcProps implements Point {
 /// implements `types.VisualElement`, which declares them (Chart.js ADR
 /// 0017, section 1). Thus [inXRange] and [inYRange] give false (the
 /// difference `adapt-arc-axis-range`).
-class ArcElement extends Element implements types.VisualElement, ArcProps {
+class ArcElement extends Element
+    implements types.VisualElement, ArcProps, NativeArcElement {
   /// element.arc.ts:411 `constructor(cfg)`.
   ///
   /// [options], [circumference], [startAngle], [endAngle], [innerRadius]
@@ -964,10 +967,17 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// Dart function (Chart.js ADR 0043).
   static final DescriptorsScope descriptors = DescriptorsScope()
     ..descScriptable = true
-    ..descIndexable = _indexableDescriptor;
+    // DIVERGES(chartjs): adapt-arc-native-options, the predicate by identity.
+    ..descIndexable = Defaults.nativeElementPredicate(_indexableDescriptor);
 
   /// element.arc.ts:399 the `_indexable` descriptor.
   static bool _indexableDescriptor(String name) => name != 'borderDash';
+
+  /// Native context reads as well as property writes (Chart.js ADR 0093).
+  @internal
+  @override
+  // DIVERGES(chartjs): adapt-arc-native-options, native element contract.
+  bool get supportsNativeArcOptions => super.runtimeType == ArcElement;
 
   /// element.arc.ts:373 `class ArcElement extends Element` as a value (Chart.js
   /// ADR 0020, section 3).

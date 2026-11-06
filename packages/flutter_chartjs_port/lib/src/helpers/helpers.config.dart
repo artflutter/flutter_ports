@@ -64,6 +64,8 @@ import 'dart:typed_data' show Uint16List;
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show nativeOptionScope;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show capitalize, isArray, isFunction, isObject, resolveObjectKey;
@@ -79,7 +81,7 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
-    show BarOptions, PointOptions;
+    show ArcOptions, BarOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
@@ -254,6 +256,21 @@ bool _indexedScalar(Object? value) =>
     value is String ||
     (value is Color && !isObject(value));
 
+// DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list
+// (helpers.config.ts:233-296) gives the same list unless item 0 is an object.
+// The plan keeps the list and asks at each use: its items stay live.
+bool _plainRawList(List<Object?> list) => list.isEmpty || !isObject(list[0]);
+
+// `borderDash` is the one key of a built-in descriptor that gives a raw list
+// with no conversion or audit: its slot takes any value. Another key with a
+// non-indexable list keeps the ordinary path.
+bool _nativeRawList(OptionKey key, Object? value, _Descriptor descriptors) =>
+    key == OptionKey.borderDash &&
+    value is List<Object?> &&
+    _nativeIndexedLists.contains(value.runtimeType) &&
+    !descriptors.isIndexable(key.jsName) &&
+    _plainRawList(value);
+
 // Static values are already cached by the raw resolver. The two contextual
 // views remain fresh: callbacks can retain the subview or change the resolver.
 typedef _ScriptableColor = ({OptionKey key, Object? callback, int position});
@@ -268,6 +285,7 @@ final class _ScriptableElementPlan {
     this.scriptable,
     this.indexable,
     this.allKeys,
+    this.rawList,
   ) : contextOnly = colors.every(
         (color) =>
             color.callback is Object? Function(Never) &&
@@ -280,6 +298,15 @@ final class _ScriptableElementPlan {
   final Object? scriptable;
   final Object? indexable;
   final Object? allKeys;
+
+  /// The `borderDash` list that the template holds by reference, or null.
+  final List<Object?>? rawList;
+
+  /// A callback or a context factory can change the items of [rawList].
+  bool get rawListPlain {
+    final list = rawList;
+    return list == null || _plainRawList(list);
+  }
 
   _Descriptor _descriptors() => _Descriptor(
     scriptable: identical(scriptable, undefined) ? true : scriptable,
@@ -312,11 +339,17 @@ final class _ScriptableElementPlan {
 }
 
 final class _IndexedElementPlan {
-  _IndexedElementPlan(this.keys, this.values);
+  _IndexedElementPlan(this.keys, this.values, this.rawListAt);
   final List<OptionKey> keys;
   final List<Object?> values;
+
+  /// The position in [values] of the list that stays a raw reference, or -1.
+  final int rawListAt;
   ElementOptions? _template;
   late List<int> _varying;
+
+  bool get _rawListPlain =>
+      rawListAt < 0 || _plainRawList(values[rawListAt]! as List<Object?>);
 
   // DIVERGES(chartjs): adapt-prepared-indexed-options, copy native static
   // fields when the caller owns the result. Never retain a returned object.
@@ -325,19 +358,24 @@ final class _IndexedElementPlan {
     final rawIndex = context.index;
     if (rawIndex is! num) return null;
     final index = rawIndex.toDouble();
-    if (!index.isFinite || index < 0 || index != index.truncateToDouble()) {
+    if (!index.isFinite ||
+        index < 0 ||
+        index != index.truncateToDouble() ||
+        !_rawListPlain) {
       return null;
     }
     var template = _template;
     if (template == null || template.runtimeType != into.runtimeType) {
       // The constructor/type and scalar checks are the same as fill. Preparing
       // from cached inputs avoids retaining mutations of any previous result.
-      template = (into is PointOptions ? PointOptions() : BarOptions())
+      template = OptionResolver.newNativeResult(into)
         ..storeKey(OptionKey.dollarShared, false);
       final varying = <int>[];
       for (var i = 0; i < keys.length; i++) {
         final value = values[i];
-        if (value is List<Object?>) {
+        if (i == rawListAt) {
+          template.storeKey(keys[i], value);
+        } else if (value is List<Object?>) {
           varying.add(i);
         } else {
           if (!_nativeIndexedValue(keys[i], value)) return null;
@@ -355,7 +393,7 @@ final class _IndexedElementPlan {
       if (list.isEmpty ||
           !_nativeIndexedValue(
             keys[i],
-            list[index.remainder(list.length).toInt()],
+            list[_indexedSlot(index, list.length)],
           )) {
         return null;
       }
@@ -363,7 +401,7 @@ final class _IndexedElementPlan {
     final result = template.clone();
     for (final i in varying) {
       final list = values[i]! as List<Object?>;
-      result.storeKey(keys[i], list[index.remainder(list.length).toInt()]);
+      result.storeKey(keys[i], list[_indexedSlot(index, list.length)]);
     }
     return result;
   }
@@ -387,16 +425,20 @@ final class _IndexedElementPlan {
     if (rawIndex is! num) return false;
     // Match jsToNumber before remainder, including VM integers above 2^53.
     final index = rawIndex.toDouble();
-    if (!index.isFinite || index < 0 || index != index.truncateToDouble()) {
+    if (!index.isFinite ||
+        index < 0 ||
+        index != index.truncateToDouble() ||
+        !_rawListPlain) {
       return false;
     }
     // No stores before preflight: unsupported selected values must follow the
     // original path, including nested resolvers and empty-array semantics.
     for (var i = 0; i < values.length; i++) {
+      if (i == rawListAt) continue;
       var value = values[i];
       if (value is List<Object?>) {
         if (value.isEmpty) return false;
-        value = value[index.remainder(value.length).toInt()];
+        value = value[_indexedSlot(index, value.length)];
       }
       // Native stores only. Foreign numeric conversions can invoke the debug
       // audit hook; those keep the ordinary observable read/write order too.
@@ -406,14 +448,26 @@ final class _IndexedElementPlan {
       final value = values[i];
       into.storeKey(
         keys[i],
-        value is List<Object?>
-            ? value[index.remainder(value.length).toInt()]
+        i != rawListAt && value is List<Object?>
+            ? value[_indexedSlot(index, value.length)]
             : value,
       );
     }
     return true;
   }
 }
+
+/// `index % length` of a finite, whole, nonnegative JS number and a positive
+/// length. Below 2^53 the integer form gives the result of the double form with
+/// no call of `fmod`. Above it, the double form matches `jsToNumber` of a VM
+/// integer.
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+int _indexedSlot(double index, int length) => index < 9007199254740992.0
+    // js-ok: nonnegative index and positive length (the callers' preflight).
+    ? index.toInt() % length
+    : index.remainder(length).toInt();
 
 bool _nativeIndexedValue(OptionKey key, Object? value) =>
     _indexedScalar(value) &&
@@ -423,13 +477,24 @@ bool _nativeIndexedValue(OptionKey key, Object? value) =>
       OptionKey.hoverBorderWidth ||
       OptionKey.hoverRadius ||
       OptionKey.radius ||
-      OptionKey.rotation => value is num,
+      OptionKey.rotation ||
+      OptionKey.borderDashOffset ||
+      OptionKey.offset ||
+      OptionKey.spacing => value is num,
       OptionKey.backgroundColor ||
       OptionKey.borderColor ||
       OptionKey.pointStyle ||
       OptionKey.borderSkipped ||
       OptionKey.borderRadius ||
-      OptionKey.inflateAmount => true,
+      OptionKey.inflateAmount ||
+      OptionKey.borderDash => true,
+      // DIVERGES(chartjs): adapt-arc-native-options, the slots of the other
+      // arc keys. The `undefined` of the two arc defaults is a foreign value:
+      // its debug audit runs at the template build, not at each copy.
+      OptionKey.borderAlign || OptionKey.spacingMode => value is String,
+      OptionKey.circular || OptionKey.selfJoin => value is bool,
+      OptionKey.borderJoinStyle => value is String || value is Undefined,
+      OptionKey.angle => value is num || value is Undefined,
       _ => false,
     };
 
@@ -528,10 +593,20 @@ final class OptionResolver implements ResolverProxy {
   static bool nativeIndexedList(Object? value) =>
       _nativeIndexedLists.contains(value.runtimeType);
 
-  /// Exact native result classes, both final. Other kinds skip all list guards.
+  /// Exact native result classes, all final. Other kinds skip all list guards.
   @internal
   static bool nativeIndexedResult(ElementOptions into) =>
-      into is PointOptions || into is BarOptions;
+      into is PointOptions || into is BarOptions || into is ArcOptions;
+
+  /// A new result of the class of the native result [kind]: a private type
+  /// token or the supplied result of the owned path.
+  @internal
+  // DIVERGES(chartjs): adapt-owned-option-result, the class of a type token.
+  static ElementOptions newNativeResult(ElementOptions kind) => switch (kind) {
+    PointOptions() => PointOptions(),
+    ArcOptions() => ArcOptions(),
+    _ => BarOptions(),
+  };
 
   /// True only for an already-prepared, unshared point plan. No raw option,
   /// custom descriptor or context is evaluated to qualify a loop.
@@ -632,18 +707,45 @@ final class OptionResolver implements ResolverProxy {
     };
   }
 
+  /// A fresh options copy per native arc, with static fields prepared once.
+  /// Only the colors vary and each of their entries is native: the result for
+  /// each index differs only in the colors. The caller must stop using it
+  /// before any user code can run.
+  @internal
+  // DIVERGES(chartjs): adapt-arc-native-options, loop-local color plan.
+  ArcOptions Function(int)? prepareIndexedArcColors(List<Object> keys) {
+    final template = ArcOptions()..storeKey(OptionKey.dollarShared, false);
+    final varying = _prepareIndexedColors(keys, template);
+    if (varying == null) return null;
+    return (index) {
+      final result = template.clone();
+      for (final item in varying) {
+        // js-ok: native loop indices are nonnegative and lengths positive.
+        result.storeKey(item.key, item.values[index % item.values.length]);
+      }
+      return result;
+    };
+  }
+
   List<({OptionKey key, List<Object?> values})>? _prepareIndexedColors(
     List<Object> keys,
     ElementOptions template,
   ) {
     final plan = _indexedElementPlan;
-    if (_slotsTouched || plan == null || !plan.matches(keys)) return null;
+    if (_slotsTouched ||
+        plan == null ||
+        !plan.matches(keys) ||
+        !plan._rawListPlain) {
+      return null;
+    }
     final varying = <({OptionKey key, List<Object?> values})>[];
     for (var i = 0; i < plan.keys.length; i++) {
       final key = plan.keys[i];
       if (!template.knownKeyList.contains(key.jsName)) return null;
       final value = plan.values[i];
-      if (value is List<Object?>) {
+      if (i == plan.rawListAt) {
+        template.storeKey(key, value);
+      } else if (value is List<Object?>) {
         if ((key != OptionKey.backgroundColor &&
                 key != OptionKey.borderColor) ||
             value.isEmpty ||
@@ -700,10 +802,20 @@ final class OptionResolver implements ResolverProxy {
           identical(_cache.get(OptionKey.descAllKeys), _absent)) {
         return reject();
       }
-      final template = (into is PointOptions ? PointOptions() : BarOptions())
+      final template = OptionResolver.newNativeResult(into)
         ..storeKey(OptionKey.dollarShared, false);
+      final descriptors = _Descriptor(
+        allKeys: false,
+        scriptable: _cache.get(OptionKey.descScriptable) is Undefined
+            ? true
+            : _cache.get(OptionKey.descScriptable),
+        indexable: _cache.get(OptionKey.descIndexable) is Undefined
+            ? true
+            : _cache.get(OptionKey.descIndexable),
+      );
       final planKeys = <OptionKey>[];
       final colors = <_ScriptableColor>[];
+      List<Object?>? rawList;
       for (final key in keys) {
         if (key is! OptionKey ||
             key.jsName.startsWith('_') ||
@@ -713,12 +825,17 @@ final class OptionResolver implements ResolverProxy {
         final value = _cache.get(key);
         if (isFunction(value)) {
           // Only colors use the arbitrary-value slot without conversion or
-          // foreign auditing. Other callbacks keep ordinary resolution.
-          if (key != OptionKey.backgroundColor &&
-              key != OptionKey.borderColor) {
+          // foreign auditing. Other callbacks keep ordinary resolution. A key
+          // that its descriptor makes not scriptable keeps its raw function.
+          if ((key != OptionKey.backgroundColor &&
+                  key != OptionKey.borderColor) ||
+              !descriptors.isScriptable(key.jsName)) {
             return reject();
           }
           colors.add((key: key, callback: value, position: planKeys.length));
+        } else if (_nativeRawList(key, value, descriptors)) {
+          rawList = value! as List<Object?>;
+          template.storeKey(key, value);
         } else {
           if (!_nativeIndexedValue(key, value)) return reject();
           template.storeKey(key, value);
@@ -733,6 +850,7 @@ final class OptionResolver implements ResolverProxy {
         _cache.get(OptionKey.descScriptable),
         _cache.get(OptionKey.descIndexable),
         _cache.get(OptionKey.descAllKeys),
+        rawList,
       );
     }
     // DIVERGES(chartjs): adapt-owned-option-result, read-only type token.
@@ -741,7 +859,8 @@ final class OptionResolver implements ResolverProxy {
     final ctx = (preparedContext ?? context)();
     if (!stillCached() ||
         !identical(plan, _scriptableElementPlan) ||
-        !plan.matches(keys, immutable: immutableKeys)) {
+        !plan.matches(keys, immutable: immutableKeys) ||
+        !plan.rawListPlain) {
       return (resolved: false, context: ctx, prepared: null);
     }
     return (
@@ -765,7 +884,7 @@ final class OptionResolver implements ResolverProxy {
       result.storeKey(color.key, value);
       // A callback or a foreign-audit store may invalidate the raw resolver.
       // Resume at the next original key, including intervening static fields.
-      if (!identical(plan, _scriptableElementPlan)) {
+      if (!identical(plan, _scriptableElementPlan) || !plan.rawListPlain) {
         return _finishScalarColors(
           plan,
           ctx,
@@ -786,7 +905,7 @@ final class OptionResolver implements ResolverProxy {
     final result = plan.template.clone();
     for (final color in plan.colors) {
       result.storeKey(color.key, view.readKey(color.key));
-      if (!identical(plan, _scriptableElementPlan)) {
+      if (!identical(plan, _scriptableElementPlan) || !plan.rawListPlain) {
         _resolveColorTail(plan, view, result, color.position + 1);
         break;
       }
@@ -877,6 +996,7 @@ final class OptionResolver implements ResolverProxy {
       final planKeys = <OptionKey>[];
       final values = <Object?>[];
       var indexed = false;
+      var rawListAt = -1;
       for (final key in keys) {
         if (key is! OptionKey ||
             key.jsName.startsWith('_') ||
@@ -885,18 +1005,26 @@ final class OptionResolver implements ResolverProxy {
         }
         final value = _cache.get(key);
         if (!_indexedScalar(value)) {
-          if (value is! List<Object?> ||
-              !_nativeIndexedLists.contains(value.runtimeType) ||
-              !desc.isIndexable(key.jsName)) {
-            return reject();
+          if (_nativeRawList(key, value, desc)) {
+            rawListAt = planKeys.length;
+          } else {
+            if (value is! List<Object?> ||
+                !_nativeIndexedLists.contains(value.runtimeType) ||
+                !desc.isIndexable(key.jsName)) {
+              return reject();
+            }
+            indexed = true;
           }
-          indexed = true;
         }
         planKeys.add(key);
         values.add(value);
       }
       if (!indexed) return reject();
-      plan = _indexedElementPlan = _IndexedElementPlan(planKeys, values);
+      plan = _indexedElementPlan = _IndexedElementPlan(
+        planKeys,
+        values,
+        rawListAt,
+      );
     }
     // The context factory can observe or mutate the result supplied by its
     // caller. Preserve the upstream $shared store before invoking it.
@@ -1334,6 +1462,26 @@ final class OptionView implements ContextProxy {
       !identical(proxy._cache.get(OptionKey.descScriptable), _absent) &&
       !identical(proxy._cache.get(OptionKey.descIndexable), _absent) &&
       !identical(proxy._cache.get(OptionKey.descAllKeys), _absent);
+
+  /// Whether the raw values of [keys] are scalars in native scopes: a read of
+  /// them through this view, also its first, runs no user code and stores the
+  /// raw value. `operator []` of a custom Map scope is user code: its reads
+  /// keep their original order and position.
+  @internal
+  // DIVERGES(chartjs): adapt-arc-native-options, no user code until a rewrite.
+  bool rawOptionsAreScalar(List<OptionKey> keys) {
+    final proxy = _proxy;
+    if (proxy is! OptionResolver ||
+        _removedSlots != null ||
+        proxy._slotsTouched ||
+        !proxy._scopes.every(nativeOptionScope)) {
+      return false;
+    }
+    for (final key in keys) {
+      if (!_indexedScalar(proxy.readKey(key))) return false;
+    }
+    return true;
+  }
 
   /// A cached cartesian index axis, without resolving or invoking anything.
   @internal

@@ -138,6 +138,8 @@ Object? _toPrimitiveNumber(Object? value) => switch (value) {
 /// the function or `'[object Object]'` (differences.md row
 /// `js-semantics-function-source`).
 String jsToString(Object? value) => switch (value) {
+  // The element ids and the modes of each option resolution (ADR 0093).
+  final String string => string,
   null => 'null',
   final num n => jsNumberToString(n),
   final List<Object?> list =>

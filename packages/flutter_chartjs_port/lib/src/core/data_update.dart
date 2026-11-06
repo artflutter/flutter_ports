@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 import 'dart:ui' show Color;
 
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
@@ -77,6 +78,13 @@ void registerDataUpdateTypes(Iterable<Type> lists, Iterable<Type> points) {
 @internal
 bool nativeDataUpdateObject(Object? value) =>
     _maps.contains(value.runtimeType) || _scopes.contains(value.runtimeType);
+
+/// A scope of a resolver whose reads by key run no user code: a native object
+/// or the root of the defaults. A custom Map or a subclass of a scope class can
+/// run any code in a read.
+@internal
+bool nativeOptionScope(Object? value) =>
+    nativeDataUpdateObject(value) || identical(value, defaults);
 
 /// Root routes could run callbacks during metadata checks.
 @internal

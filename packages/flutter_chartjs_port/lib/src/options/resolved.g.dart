@@ -36,9 +36,9 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,
-      _foreignRaw = source._foreignRaw == null
-          ? null
-          : List<Object?>.of(source._foreignRaw!),
+      _foreignRaw = source._foreignRaw,
+      _foreignShared =
+          source._foreignRaw != null && (source._foreignShared = true),
       _borderWidth = source._borderWidth,
       _hitRadius = source._hitRadius,
       _hoverBorderWidth = source._hoverBorderWidth,
@@ -81,19 +81,33 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   /// The raw values of the foreign keys, by slot.
   List<Object?>? _foreignRaw;
 
+  /// Whether a clone holds the same [_foreignRaw]. The first write of
+  /// a slot then copies the list (Chart.js ADR 0093).
+  bool _foreignShared = false;
+
   /// The bits of the `double` keys whose raw value is a Dart `int`:
   /// the read by name gives the `int` back.
   int _int = 0;
 
+  List<Object?> _ownForeign() {
+    final raw = _foreignRaw;
+    if (raw == null) {
+      return _foreignRaw = List<Object?>.filled(9, null);
+    }
+    if (!_foreignShared) return raw;
+    _foreignShared = false;
+    return _foreignRaw = List<Object?>.of(raw);
+  }
+
   void _setForeign(int slot, int bit, Object? raw) {
     _foreign |= bit;
-    (_foreignRaw ??= List<Object?>.filled(9, null))[slot] = raw;
+    _ownForeign()[slot] = raw;
   }
 
   void _clearForeign(int slot, int bit) {
     if (_foreign & bit != 0) {
       _foreign &= ~bit;
-      _foreignRaw![slot] = null;
+      _ownForeign()[slot] = null;
     }
   }
 
@@ -457,6 +471,9 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   void storeKey(Object key, Object? raw) {
     if (key is OptionKey && !isFrozen) {
       switch (key) {
+        case OptionKey.dollarShared:
+          storeShared(raw);
+          return;
         case OptionKey.borderWidth:
           _store0(raw);
           return;
@@ -606,9 +623,9 @@ final class LineOptions extends ElementOptions {
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,
-      _foreignRaw = source._foreignRaw == null
-          ? null
-          : List<Object?>.of(source._foreignRaw!),
+      _foreignRaw = source._foreignRaw,
+      _foreignShared =
+          source._foreignRaw != null && (source._foreignShared = true),
       _borderCapStyle = source._borderCapStyle,
       _borderDash = source._borderDash,
       _borderDashOffset = source._borderDashOffset,
@@ -661,19 +678,33 @@ final class LineOptions extends ElementOptions {
   /// The raw values of the foreign keys, by slot.
   List<Object?>? _foreignRaw;
 
+  /// Whether a clone holds the same [_foreignRaw]. The first write of
+  /// a slot then copies the list (Chart.js ADR 0093).
+  bool _foreignShared = false;
+
   /// The bits of the `double` keys whose raw value is a Dart `int`:
   /// the read by name gives the `int` back.
   int _int = 0;
 
+  List<Object?> _ownForeign() {
+    final raw = _foreignRaw;
+    if (raw == null) {
+      return _foreignRaw = List<Object?>.filled(14, null);
+    }
+    if (!_foreignShared) return raw;
+    _foreignShared = false;
+    return _foreignRaw = List<Object?>.of(raw);
+  }
+
   void _setForeign(int slot, int bit, Object? raw) {
     _foreign |= bit;
-    (_foreignRaw ??= List<Object?>.filled(14, null))[slot] = raw;
+    _ownForeign()[slot] = raw;
   }
 
   void _clearForeign(int slot, int bit) {
     if (_foreign & bit != 0) {
       _foreign &= ~bit;
-      _foreignRaw![slot] = null;
+      _ownForeign()[slot] = null;
     }
   }
 
@@ -1162,6 +1193,9 @@ final class LineOptions extends ElementOptions {
   void storeKey(Object key, Object? raw) {
     if (key is OptionKey && !isFrozen) {
       switch (key) {
+        case OptionKey.dollarShared:
+          storeShared(raw);
+          return;
         case OptionKey.borderCapStyle:
           _store0(raw);
           return;
@@ -1366,9 +1400,9 @@ final class BarOptions extends ElementOptions {
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,
-      _foreignRaw = source._foreignRaw == null
-          ? null
-          : List<Object?>.of(source._foreignRaw!),
+      _foreignRaw = source._foreignRaw,
+      _foreignShared =
+          source._foreignRaw != null && (source._foreignShared = true),
       _borderSkipped = source._borderSkipped,
       _borderWidth = source._borderWidth,
       _borderRadius = source._borderRadius,
@@ -1407,19 +1441,33 @@ final class BarOptions extends ElementOptions {
   /// The raw values of the foreign keys, by slot.
   List<Object?>? _foreignRaw;
 
+  /// Whether a clone holds the same [_foreignRaw]. The first write of
+  /// a slot then copies the list (Chart.js ADR 0093).
+  bool _foreignShared = false;
+
   /// The bits of the `double` keys whose raw value is a Dart `int`:
   /// the read by name gives the `int` back.
   int _int = 0;
 
+  List<Object?> _ownForeign() {
+    final raw = _foreignRaw;
+    if (raw == null) {
+      return _foreignRaw = List<Object?>.filled(7, null);
+    }
+    if (!_foreignShared) return raw;
+    _foreignShared = false;
+    return _foreignRaw = List<Object?>.of(raw);
+  }
+
   void _setForeign(int slot, int bit, Object? raw) {
     _foreign |= bit;
-    (_foreignRaw ??= List<Object?>.filled(7, null))[slot] = raw;
+    _ownForeign()[slot] = raw;
   }
 
   void _clearForeign(int slot, int bit) {
     if (_foreign & bit != 0) {
       _foreign &= ~bit;
-      _foreignRaw![slot] = null;
+      _ownForeign()[slot] = null;
     }
   }
 
@@ -1637,6 +1685,9 @@ final class BarOptions extends ElementOptions {
   void storeKey(Object key, Object? raw) {
     if (key is OptionKey && !isFrozen) {
       switch (key) {
+        case OptionKey.dollarShared:
+          storeShared(raw);
+          return;
         case OptionKey.borderSkipped:
           _store0(raw);
           return;
@@ -1764,9 +1815,9 @@ final class ArcOptions extends ElementOptions {
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,
-      _foreignRaw = source._foreignRaw == null
-          ? null
-          : List<Object?>.of(source._foreignRaw!),
+      _foreignRaw = source._foreignRaw,
+      _foreignShared =
+          source._foreignRaw != null && (source._foreignShared = true),
       _borderAlign = source._borderAlign,
       _borderColor = source._borderColor,
       _borderDash = source._borderDash,
@@ -1819,19 +1870,33 @@ final class ArcOptions extends ElementOptions {
   /// The raw values of the foreign keys, by slot.
   List<Object?>? _foreignRaw;
 
+  /// Whether a clone holds the same [_foreignRaw]. The first write of
+  /// a slot then copies the list (Chart.js ADR 0093).
+  bool _foreignShared = false;
+
   /// The bits of the `double` keys whose raw value is a Dart `int`:
   /// the read by name gives the `int` back.
   int _int = 0;
 
+  List<Object?> _ownForeign() {
+    final raw = _foreignRaw;
+    if (raw == null) {
+      return _foreignRaw = List<Object?>.filled(14, null);
+    }
+    if (!_foreignShared) return raw;
+    _foreignShared = false;
+    return _foreignRaw = List<Object?>.of(raw);
+  }
+
   void _setForeign(int slot, int bit, Object? raw) {
     _foreign |= bit;
-    (_foreignRaw ??= List<Object?>.filled(14, null))[slot] = raw;
+    _ownForeign()[slot] = raw;
   }
 
   void _clearForeign(int slot, int bit) {
     if (_foreign & bit != 0) {
       _foreign &= ~bit;
-      _foreignRaw![slot] = null;
+      _ownForeign()[slot] = null;
     }
   }
 
@@ -2356,6 +2421,9 @@ final class ArcOptions extends ElementOptions {
   void storeKey(Object key, Object? raw) {
     if (key is OptionKey && !isFrozen) {
       switch (key) {
+        case OptionKey.dollarShared:
+          storeShared(raw);
+          return;
         case OptionKey.borderAlign:
           _store0(raw);
           return;
