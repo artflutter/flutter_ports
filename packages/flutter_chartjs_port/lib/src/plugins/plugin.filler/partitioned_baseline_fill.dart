@@ -29,6 +29,23 @@ final Type _fixedPoints = List<types.PointElement>.empty().runtimeType;
 bool _nativePoints(List<types.PointElement> points) =>
     points.runtimeType == _growablePoints || points.runtimeType == _fixedPoints;
 
+/// Keeps the original path of [line] out of the engine when a partitioned fill
+/// can replace its draw. It reads only the class and the length of the native
+/// list. A fill that the partition declines reads the same path.
+void deferPathOfPartitionedFill(
+  CanvasRenderingContext2D ctx,
+  types.LineElement line,
+) {
+  if (partitionedBaselineFillEnabled &&
+      ctx is PartitionedFillCanvas &&
+      line.runtimeType == LineElement) {
+    final points = (line as LineElement).points;
+    if (_nativePoints(points) && points.length >= 1024) {
+      (ctx as PartitionedFillCanvas).deferCurrentPath();
+    }
+  }
+}
+
 /// Try a full, ascending, unstyled cubic line against a private horizontal
 /// origin/start/end boundary. Runs only after the original path was built.
 /// No custom point/list/option getters are evaluated during preflight.

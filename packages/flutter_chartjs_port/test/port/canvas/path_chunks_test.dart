@@ -29,7 +29,88 @@ List<Object> _trace(Path2D path) => [
     },
 ];
 
+void _fillCurves(Path2D path, int count, int seed) {
+  path.moveTo(1, 2);
+  for (var i = 1; i <= count; i++) {
+    final v = (i * 7 + seed) % 13 + .5;
+    if (seed > 0 && i % seed == 0) {
+      path.lineTo(v, -v);
+    } else if (seed > 0 && i % (seed * 3) == 1) {
+      path.closePath();
+    } else {
+      path.bezierCurveTo(v, i + .25, -v, i + .5, v * 2, i + .75);
+    }
+  }
+}
+
 void main() {
+  for (final seed in [0, 1, 2, 5]) {
+    for (final count in [
+      1,
+      4,
+      5,
+      6,
+      15,
+      340,
+      341,
+      342,
+      343,
+      681,
+      682,
+      683,
+      1022,
+      1023,
+      1024,
+      5000,
+      20000,
+    ]) {
+      test('curves in compact storage, $count entries, seed $seed', () {
+        final compact = Path2D();
+        final eager = Path2D();
+        final eagerList = eager.commands;
+        _fillCurves(compact, count, seed);
+        _fillCurves(eager, count, seed);
+        expect(compact.version, eager.version);
+        final replayed = Path2D();
+        compact.replayNative(replayed);
+        expect(replayed.version, eager.version);
+        expect(_trace(replayed), _trace(eager));
+        // The first read materializes one stable list.
+        expect(_trace(compact), _trace(eager));
+        expect(identical(compact.commands, compact.commands), isTrue);
+        compact.bezierCurveTo(1, 2, 3, 4, 5, 6);
+        eager.bezierCurveTo(1, 2, 3, 4, 5, 6);
+        expect(_trace(compact), _trace(eager));
+        expect(identical(eager.commands, eagerList), isTrue);
+      });
+    }
+  }
+
+  test('a curve keeps NaN, an infinity and a signed zero', () {
+    final zero = double.parse('-0');
+    final path = Path2D()
+      ..bezierCurveTo(double.nan, zero, double.infinity, 1, 2, zero);
+    final copy = Path2D();
+    path.replayNative(copy);
+    for (final target in [path, copy]) {
+      final curve = target.commands.single as BezierCurveToCommand;
+      expect(curve.cp1x.isNaN, isTrue);
+      expect(curve.cp1y.isNegative, isTrue);
+      expect(curve.cp2x, double.infinity);
+      expect(curve.y.isNegative, isTrue);
+    }
+  });
+
+  test('an old path keeps its curves after a new one', () {
+    final old = Path2D();
+    _fillCurves(old, 1000, 0);
+    final expected = Path2D();
+    _fillCurves(expected, 1000, 0);
+    final newer = Path2D();
+    _fillCurves(newer, 1000, 3);
+    expect(_trace(old), _trace(expected));
+  });
+
   for (final count in [
     0,
     1,

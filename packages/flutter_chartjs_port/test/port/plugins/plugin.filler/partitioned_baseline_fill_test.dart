@@ -10,6 +10,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart'
+    show deferredPathCommands;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
@@ -111,6 +113,90 @@ void main() {
       },
     );
   }
+
+  test('a partitioned fill builds no engine path of the original', () {
+    final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
+    addTearDown(ctx.dispose);
+    final line = _line();
+    ctx.fillStyle = const ui.Color(0x804f6bed);
+    ctx.beginPath();
+    deferPathOfPartitionedFill(ctx, line);
+    line.pathSegment(ctx, createBoundarySegment(0, line.points.length - 1));
+    ctx.lineTo(line.points.last.x, 125);
+    ctx.lineTo(line.points.first.x, 125);
+    ctx.closePath();
+    expect(_try(ctx, line, _boundary(line)), isTrue);
+    expect(ctx.debugPath.debugBuilt, isFalse);
+    // The next path takes the buffers of a short path again.
+    ctx.beginPath();
+    expect(ctx.debugPath.debugBuilt, isFalse);
+    for (var i = 0; i <= deferredPathCommands; i++) {
+      ctx.lineTo(i.toDouble(), 3);
+    }
+    expect(ctx.debugPath.debugBuilt, isTrue);
+  });
+
+  test('a read of the deferred original gets the same path', () async {
+    final line = _line();
+    final boundary = _boundary(line);
+    Future<Render> draw({required bool defer, required bool partition}) =>
+        renderContext((ctx) {
+          ctx.setTransform(.9, 0, 0, .9, .25, .5);
+          ctx.fillStyle = const ui.Color(0x804f6bed);
+          ctx.beginPath();
+          if (defer) deferPathOfPartitionedFill(ctx, line);
+          line.pathSegment(
+            ctx,
+            createBoundarySegment(0, line.points.length - 1),
+          );
+          ctx.lineTo(line.points.last.x, 125);
+          ctx.lineTo(line.points.first.x, 125);
+          ctx.closePath();
+          if (partition) {
+            expect(_try(ctx, line, boundary), isTrue);
+          } else {
+            ctx.fill();
+          }
+          ctx.strokeStyle = const ui.Color(0xffdd4400);
+          ctx.lineWidth = .6;
+          ctx.stroke();
+        });
+    expect(
+      comparePixels(
+        await draw(defer: false, partition: false),
+        await draw(defer: true, partition: false),
+      ).differing,
+      0,
+    );
+    expect(
+      comparePixels(
+        await draw(defer: false, partition: true),
+        await draw(defer: true, partition: true),
+      ).differing,
+      0,
+    );
+  });
+
+  test('a short line or a user class keeps the eager path', () {
+    final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
+    addTearDown(ctx.dispose);
+    final short = LineElement()
+      ..options = LineOptions(<String, Object?>{'tension': .4})
+      ..points = <types.PointElement>[
+        for (var i = 0; i < 100; i++)
+          PointElement()
+            ..x = i.toDouble()
+            ..y = i % 7
+            ..cp1x = i - .2
+            ..cp1y = i % 7
+            ..cp2x = i + .2
+            ..cp2y = i % 7,
+      ];
+    ctx.beginPath();
+    deferPathOfPartitionedFill(ctx, short);
+    short.pathSegment(ctx, createBoundarySegment(0, 99));
+    expect(ctx.debugPath.debugBuilt, isTrue);
+  });
 
   test('unsupported geometry and options decline before drawing', () {
     final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();

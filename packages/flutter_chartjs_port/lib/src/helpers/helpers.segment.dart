@@ -169,6 +169,47 @@ Segment _normalizeSegment({
   return (start: start, end: end, loop: loop, style: segment.style);
 }
 
+/// Whether the loop of [boundSegment] gives one segment from [start] to [end]:
+/// points of the built-in class with no skip and strictly ascending finite x,
+/// bounds equal to the first and the last x, and no x before the last within
+/// the epsilon of [isBetween] below the end bound, which would stop the loop
+/// early.
+/// It reads nothing of a point of another class.
+bool _boundsCoverAscendingPoints(
+  List<PointElement> points,
+  double start,
+  double end,
+  double startBound,
+  double endBound,
+) {
+  final first = start.toInt();
+  final last = end.toInt();
+  if (first != start ||
+      last != end ||
+      first < 0 ||
+      first > last ||
+      last >= points.length ||
+      !startBound.isFinite ||
+      !endBound.isFinite) {
+    return false;
+  }
+  var previous = startBound;
+  for (var i = first; i <= last; i++) {
+    final point = points[i];
+    if (point is! PointElementWrites ||
+        !(point as PointElementWrites).typedWrites ||
+        (point.skip ?? false)) {
+      return false;
+    }
+    final x = point.x;
+    if (i == first ? x != startBound : !(x > previous)) return false;
+    if (i == last) return x == endBound;
+    if (i == last - 1 && endBound <= x + 1e-6) return false;
+    previous = x;
+  }
+  return false;
+}
+
 /// helpers.segment.js:77 `_boundSegment`.
 ///
 /// Returns the sub-segment(s) of a line segment that fall in the given bounds
@@ -203,6 +244,22 @@ List<Segment> boundSegment(
   final count = points.length.toDouble();
   final (:compare, :between, :normalize) = _propertyFn(property);
   final (:start, :end, :loop, :style) = _getSegment(segment, points, bounds);
+
+  // DIVERGES(chartjs): adapt-bound-ascending-segment, one scan proves the
+  // result of the loop below for a whole segment of ascending points.
+  if (property == 'x' &&
+      !loop &&
+      _boundsCoverAscendingPoints(points, start, end, startBound, endBound)) {
+    return [
+      _normalizeSegment(
+        start: start,
+        end: end,
+        loop: loop,
+        count: count,
+        style: style,
+      ),
+    ];
+  }
 
   final result = <Segment>[];
   var inside = false;

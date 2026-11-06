@@ -1649,6 +1649,24 @@ abstract interface class Element implements Point {
   Object? get hidden;
 }
 
+/// The run of markers of the point element class of `element.point.dart`
+/// (Chart.js ADR 0104), for `DatasetController.draw`: a controller imports no
+/// element module (Chart.js ADR 0028 §1).
+// A capability dispatched on the element, not a standalone operation.
+// ignore: one_member_abstracts
+abstract interface class PointCircleRun {
+  /// See `PointElement.drawCircleRun` of `element.point.dart`.
+  int drawCircleRun(
+    CanvasRenderingContext2D ctx,
+    ChartArea area,
+    List<Element> elements,
+    int start,
+    int end,
+    List<Element> active, {
+    required bool activeOnTop,
+  });
+}
+
 /// element.point.ts:20 `PointElement`, which index.d.ts:17 re-exports.
 ///
 /// It implements [SplinePoint], as [Element] implements [Point]:

@@ -565,6 +565,61 @@ void main() {
       );
     });
 
+    test('a long deferred path, read at the end or in the middle', () async {
+      void long(CanvasPath p) {
+        p.moveTo(2, 2);
+        for (var i = 0; i < 40 * deferredPathCommands; i++) {
+          switch (i % 11) {
+            case 3:
+              p.arc(4 + i * 0.05, 40, 3, 0, 2.2);
+            case 5:
+              p.bezierCurveTo(i * .05, 3, i * .05 + 1, 70, i * .05 + 2, 20);
+            case 7:
+              p.quadraticCurveTo(i * .05, 60, i * .05 + 1, 15);
+            case 9:
+              p.roundRect(i * .05, 30, 6, 6, 2);
+            default:
+              p.lineTo(2 + i * 0.05, 10 + (i % 5) * 9.0);
+          }
+        }
+        p.closePath();
+      }
+
+      final builder = UiPathBuilder(_retina())..deferLongPath();
+      long(builder);
+      expect(builder.debugBuilt, isFalse);
+      expect(builder.singleSector, isNull);
+      expect(builder.hasSingleLine, isFalse);
+      await _expectDeferredPath(_retina, (p) {
+        if (p is UiPathBuilder && !p.debugBuilt) p.deferLongPath();
+        long(p);
+      });
+      // A read in the middle: the later commands go to the built path.
+      await _expectDeferredPath(_retina, (p) {
+        if (p is UiPathBuilder && !p.debugBuilt) p.deferLongPath();
+        long(p);
+        if (p is UiPathBuilder) expect(p.path.getBounds().isEmpty, isFalse);
+        long(p);
+      });
+      // The buffers stay, but a reset ends the long path.
+      builder.reset();
+      for (var i = 0; i < deferredPathCommands; i++) {
+        builder.lineTo(i * 2.0, (i % 3) * 5.0);
+      }
+      expect(builder.debugBuilt, isFalse);
+      builder.lineTo(70, 70);
+      expect(builder.debugBuilt, isTrue);
+      // A second long path on the kept buffers.
+      builder
+        ..reset()
+        ..deferLongPath();
+      long(builder);
+      expect(builder.debugBuilt, isFalse);
+      final fresh = UiPathBuilder(_retina())..deferLongPath();
+      long(fresh);
+      expect(_contours(builder.path), _contours(fresh.path));
+    });
+
     test('more commands than the buffer, and a read in the middle', () async {
       void polyline(CanvasPath p) {
         p.moveTo(2, 2);

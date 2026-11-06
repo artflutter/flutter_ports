@@ -116,6 +116,46 @@ void _setControlPoint(SplinePoint point, String cp, String axis, double value) {
   );
 }
 
+/// The loop body of helpers.curve.ts:198-206: [splineCurve] of the three points
+/// with its four results written into [middlePoint]. The reads and the writes
+/// have the order of the two functions, with no record of the result.
+// DIVERGES(chartjs): adapt-spline-scalar-writes, no result object for a point.
+void _writeSplineControlPoints(
+  SplinePoint firstPoint,
+  SplinePoint middlePoint,
+  SplinePoint afterPoint,
+  double t,
+) {
+  final previous = (firstPoint.skip ?? false) ? middlePoint : firstPoint;
+  final current = middlePoint;
+  final next = (afterPoint.skip ?? false) ? middlePoint : afterPoint;
+  final d01 = math.sqrt(
+    jsSquare(previous.x - current.x) + jsSquare(previous.y - current.y),
+  );
+  final d12 = math.sqrt(
+    jsSquare(current.x - next.x) + jsSquare(current.y - next.y),
+  );
+
+  var s01 = d01 / (d01 + d12);
+  var s12 = d12 / (d01 + d12);
+
+  s01 = s01.isNaN ? 0 : s01;
+  s12 = s12.isNaN ? 0 : s12;
+
+  final fa = t * s01;
+  final fb = t * s12;
+
+  final previousX = current.x - fa * (next.x - previous.x);
+  final previousY = current.y - fa * (next.y - previous.y);
+  final nextX = current.x + fb * (next.x - previous.x);
+  final nextY = current.y + fb * (next.y - previous.y);
+  middlePoint
+    ..cp1x = previousX
+    ..cp1y = previousY
+    ..cp2x = nextX
+    ..cp2y = nextY;
+}
+
 /// helpers.curve.ts:57 `monotoneAdjust`.
 ///
 /// Adjust tangents to ensure monotonic properties
@@ -325,17 +365,12 @@ void updateBezierControlPoints(
     for (var i = 0, ilen = points.length; i < ilen; ++i) {
       final point = points[i];
       // The indexes are list indexes: non-negative integers.
-      final controlPoints = splineCurve(
+      _writeSplineControlPoints(
         prev!,
         point,
         points[math.min<int>(i + 1, ilen - (loop ? 0 : 1)).remainder(ilen)],
         tension,
       );
-      point
-        ..cp1x = controlPoints.previous.x
-        ..cp1y = controlPoints.previous.y
-        ..cp2x = controlPoints.next.x
-        ..cp2y = controlPoints.next.y;
       prev = point;
     }
   }

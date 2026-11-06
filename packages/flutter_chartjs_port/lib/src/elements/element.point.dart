@@ -28,12 +28,14 @@ library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
+import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions, numberOption, plainOption, rawOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show DrawPointOptions, drawPoint, isPointInArea;
+import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show tau;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -152,6 +154,7 @@ class PointElement extends Element
         types.RadialPointElement,
         types.VisualElementRange,
         types.PointElementWrites,
+        types.PointCircleRun,
         NativePointElement {
   /// element.point.ts:49 `constructor(cfg)`.
   ///
@@ -655,6 +658,102 @@ class PointElement extends Element
         ..fillStyle = canvasStyle(_byName(opts, OptionKey.backgroundColor));
     }
     drawPoint(ctx, _drawPointOptionsOf(opts), x, y);
+  }
+
+  /// The loop of core.datasetController.js:732-743 for the elements of a run:
+  /// elements of this exact class with plain options and the default style.
+  /// Each draw goes to [CircleRunCanvas] with the values of [draw]. The style
+  /// setters run once for each options object, and the path of the last circle
+  /// is the current path at the end. Gives the index of the first element that
+  /// the run did not handle.
+  // DIVERGES(chartjs): adapt-point-circle-run, one canvas call for each marker.
+  @override
+  int drawCircleRun(
+    CanvasRenderingContext2D ctx,
+    ChartArea area,
+    List<types.Element> elements,
+    int start,
+    int end,
+    List<types.Element> active, {
+    required bool activeOnTop,
+  }) {
+    if (ctx is! CircleRunCanvas) return start;
+    final run = ctx as CircleRunCanvas;
+    PointOptions? options;
+    var radius = 0.0;
+    var margin = 0.0;
+    var borderWidth = 0.0;
+    var styled = false;
+    var drawn = false;
+    var lastX = 0.0;
+    var lastY = 0.0;
+    var lastRadius = 0.0;
+    var i = start;
+    try {
+      for (; i < end; i++) {
+        final element = elements[i];
+        if (element.runtimeType != PointElement) break;
+        final point = element as PointElement;
+        if (!identical(point.hidden, undefined) && jsTruthy(point.hidden)) {
+          continue;
+        }
+        if (point.active && activeOnTop) {
+          active.add(point);
+          continue;
+        }
+        final current = point.options;
+        if (!identical(current, options)) {
+          if (current is! PointOptions ||
+              !plainOption(current, OptionKey.radius) ||
+              !plainOption(current, OptionKey.hoverRadius) ||
+              !plainOption(current, OptionKey.borderWidth) ||
+              !identical(current.pointStyle, 'circle')) {
+            break;
+          }
+          options = current;
+          radius = current.radius;
+          borderWidth = current.borderWidth;
+          final half =
+              nativePointSize(radius, current.hoverRadius, borderWidth) / 2;
+          margin = half == 0 || half.isNaN ? 0.5 : half;
+          styled = false;
+        }
+        if (point.skip == true) continue;
+        // NaN takes the ordinary path: it writes the styles, with no draw.
+        if (radius.isNaN) break;
+        if (radius < 0.1) continue;
+        final x = point.x;
+        final y = point.y;
+        if (!(x > area.left - margin &&
+            x < area.right + margin &&
+            y > area.top - margin &&
+            y < area.bottom + margin)) {
+          continue;
+        }
+        if (!styled) {
+          final o = options!;
+          ctx
+            ..strokeStyle = canvasStyle(o.borderColor)
+            ..lineWidth = borderWidth
+            ..fillStyle = canvasStyle(o.backgroundColor);
+          if (!run.tryStartCircleRun(radius, stroke: borderWidth > 0)) break;
+          styled = true;
+        }
+        if (!run.tryAddRunCircle(x, y)) break;
+        drawn = true;
+        lastX = x;
+        lastY = y;
+        lastRadius = radius;
+      }
+    } finally {
+      if (drawn) {
+        ctx
+          ..beginPath()
+          ..arc(lastX, lastY, lastRadius, 0, tau)
+          ..closePath();
+      }
+    }
+    return i;
   }
 
   /// element.point.ts:102 `getRange()`.

@@ -407,16 +407,39 @@ final class UiPathBuilder implements CanvasPath {
   // command, the numbers of the commands in order, and the rounded rectangle
   // of each `addRRect`. [_path] gets them at the first read of [path], or
   // when the buffer is full.
-  final Uint8List _codes = Uint8List(deferredPathCommands);
-  final Float64List _numbers = Float64List(
-    deferredPathCommands * _maxCommandNumbers,
-  );
-  final List<ui.RRect?> _rrects = List<ui.RRect?>.filled(
-    deferredPathCommands,
-    null,
-  );
+  Uint8List _codes = Uint8List(deferredPathCommands);
+  Float64List _numbers = Float64List(deferredPathCommands * _maxCommandNumbers);
+  List<ui.RRect?> _rrects = List<ui.RRect?>.filled(deferredPathCommands, null);
   int _deferred = 0;
   int _numberCount = 0;
+
+  // The count of commands that stay in the buffers: [deferredPathCommands], or
+  // the capacity of the buffers after [deferLongPath].
+  int _deferredLimit = deferredPathCommands;
+  bool _longPath = false;
+
+  /// Keeps the commands of the current path, of any length, in the buffers
+  /// until a read of [path]. Call it after [reset]. [reset] ends it, and the
+  /// buffers keep their capacity for the next long path.
+  ///
+  /// The caller expects no read: a fill that a partitioned path replaces
+  /// (Chart.js ADR 0104). A read makes the same `ui.Path` calls in the same
+  /// order, at a small cost for the two passes.
+  @internal
+  void deferLongPath() {
+    _longPath = true;
+    _deferredLimit = _codes.length;
+  }
+
+  void _growDeferred() {
+    final capacity = _codes.length * 2;
+    _codes = Uint8List(capacity)..setRange(0, _deferred, _codes);
+    _numbers = Float64List(capacity * _maxCommandNumbers)
+      ..setRange(0, _numberCount, _numbers);
+    _rrects = List<ui.RRect?>.filled(capacity, null)
+      ..setRange(0, _deferred, _rrects);
+    _deferredLimit = capacity;
+  }
 
   // The items of [singleSector]: the kind of each item (0 a point, 1 an arc
   // group) and its numbers (x and y; or the center, the radius, the start
@@ -500,7 +523,11 @@ final class UiPathBuilder implements CanvasPath {
   bool _direct() {
     if (_circle) _deferCircle();
     if (_built) return true;
-    if (_deferred < deferredPathCommands) return false;
+    if (_deferred < _deferredLimit) return false;
+    if (_longPath) {
+      _growDeferred();
+      return false;
+    }
     _build();
     return true;
   }
@@ -819,7 +846,12 @@ final class UiPathBuilder implements CanvasPath {
   /// same pixels.
   UiSector? get singleSector {
     if (_sector) _materializeSector();
-    if (_built || _circle || _deferred < 2) return null;
+    if (_built ||
+        _circle ||
+        _deferred < 2 ||
+        _deferred > deferredPathCommands) {
+      return null;
+    }
     final codes = _codes;
     final n = _numbers;
     final kinds = _itemKinds;
@@ -979,6 +1011,8 @@ final class UiPathBuilder implements CanvasPath {
     }
     _deferred = 0;
     _numberCount = 0;
+    _longPath = false;
+    _deferredLimit = deferredPathCommands;
     hasSubpath = false;
     _ops = 0;
     _rect = null;

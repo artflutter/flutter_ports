@@ -47,6 +47,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
@@ -550,7 +551,8 @@ final class UiCanvasContext
         RectBarCanvas,
         ArcSectorCanvas,
         LineFanCanvas,
-        PartitionedFillCanvas {
+        PartitionedFillCanvas,
+        CircleRunCanvas {
   UiCanvasContext._(this._element) {
     _s = _states[0];
     _path = UiPathBuilder(_s.transform);
@@ -1725,7 +1727,78 @@ final class UiCanvasContext
   void roundRect(double x, double y, double w, double h, [Object? radii]) =>
       _path.roundRect(x, y, w, h, radii);
 
+  // The values of the run of [tryStartCircleRun]: bitmap space.
+  double _circleRunRadius = 0;
+  double _circleRunWidth = 0;
+  bool _circleRunStroke = false;
+
+  @override
+  bool tryStartCircleRun(double radius, {required bool stroke}) {
+    final s = _s;
+    final t = s.transform;
+    final fill = s.fillColor;
+    final strokeColor = s.strokeColor;
+    if (_disposed ||
+        (!_notified && _onChanged != null) ||
+        ui.Picture.onCreate != null ||
+        ui.Picture.onDispose != null ||
+        ui.Image.onCreate != null ||
+        ui.Image.onDispose != null ||
+        !identical(_path.transform, t) ||
+        !t.isSimilarity ||
+        s.globalAlpha != 1 ||
+        !(radius > 0) ||
+        !_batchable(fill, s.fillShader) ||
+        !batchKeepsColor(fill!)) {
+      return false;
+    }
+    final mapped = radius * t.scaleFactor;
+    var width = 0.0;
+    if (stroke) {
+      if (s.lineDash.isNotEmpty ||
+          !_batchable(strokeColor, s.strokeShader) ||
+          !batchKeepsColor(strokeColor!)) {
+        return false;
+      }
+      width = s.lineWidth * t.scaleFactor;
+    }
+    // The tests of [_batchCircle] for each draw of the run.
+    if (!(mapped + width / 2 <= maxBatchRadius)) return false;
+    _circleRunRadius = mapped;
+    _circleRunWidth = width;
+    _circleRunStroke = stroke;
+    return true;
+  }
+
+  @override
+  bool tryAddRunCircle(double x, double y) {
+    final s = _s;
+    final t = s.transform;
+    final px = t.mapX(x, y);
+    final py = t.mapY(x, y);
+    // Also false for NaN, which draws nothing on the ordinary path.
+    if (!(px.abs() <= maxBatchCenter && py.abs() <= maxBatchCenter)) {
+      return false;
+    }
+    final radius = _circleRunRadius;
+    _batchCircle(px, py, radius, s.fillColor!, stroke: false);
+    if (_circleRunStroke) {
+      _batchCircle(
+        px,
+        py,
+        radius,
+        s.strokeColor!,
+        stroke: true,
+        width: _circleRunWidth,
+      );
+    }
+    return true;
+  }
+
   UiPathBuilder? _partitionedFillPath;
+
+  @override
+  void deferCurrentPath() => _path.deferLongPath();
 
   @override
   bool tryFillPartitionedPath(void Function(CanvasPath path) writePath) {
