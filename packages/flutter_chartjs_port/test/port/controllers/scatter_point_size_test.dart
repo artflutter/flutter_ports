@@ -556,7 +556,7 @@ void main() {
           }
           expect(context.jsRead('mode'), 'default');
         }
-        // A prepared point reads its capability in the loop and in the reader.
+        // A prepared point reads its capability once in each loop.
         final meta = a.getDatasetMeta(0);
         for (final point in probes) {
           point.planReads = 0;
@@ -564,7 +564,7 @@ void main() {
         meta.controller!.getMaxOverflow();
         expect(probes[_length - 1].planReads, 0);
         expect(probes[_length - 2].planReads, 0);
-        expect(probes[0].planReads, 2);
+        expect(probes[0].planReads, 1);
         meta.controller!.updateElements(
           meta.data,
           0,
@@ -572,7 +572,7 @@ void main() {
           'none',
         );
         expect(probes[3].$context?.jsRead('mode'), 'none');
-        expect(probes[3].planReads, greaterThanOrEqualTo(4));
+        expect(probes[3].planReads, greaterThanOrEqualTo(2));
       });
     }
 

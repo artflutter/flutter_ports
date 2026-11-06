@@ -215,6 +215,12 @@ final class _PointWrites {
   }
 }
 
+/// What the overflow pass of `update_` needs after a loop that left the context
+/// refresh of its points to it: the one size and a context reader of the mode
+/// `default`.
+// DIVERGES(chartjs): adapt-scatter-overflow-refresh, within one `update_`.
+typedef _OverflowPass = ({Object? overflow, NativePointContextReader contexts});
+
 /// controller.scatter.js:6 `ScatterController extends DatasetController`.
 class ScatterController extends DatasetController {
   /// `new ScatterController(chart, datasetIndex)`. Upstream declares no
@@ -313,6 +319,10 @@ class ScatterController extends DatasetController {
   ///   `meta.dataset` holds the JS `undefined` as Dart `null`.
   @override
   void update(String mode) {
+    // DIVERGES(chartjs): adapt-scatter-overflow-refresh, taken before any read
+    // that can run user code: a public call in it finds it false.
+    final overflowFollows = overflowFollowsUpdate;
+    overflowFollowsUpdate = false;
     final meta = cachedMeta;
     final points = meta.data;
     final animationsDisabled = chart.animationsDisabled;
@@ -373,8 +383,20 @@ class ScatterController extends DatasetController {
     }
 
     // Update Points
+    // DIVERGES(chartjs): adapt-scatter-overflow-refresh, names this loop.
+    _loopBeforeOverflow = overflowFollows;
     updateElements(points, start, count, mode);
   }
+
+  /// Whether the [updateElements] that starts now is the loop of an [update]
+  /// that [overflowFollowsUpdate] named. The loop takes it first.
+  // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the caller of the loop.
+  bool _loopBeforeOverflow = false;
+
+  /// The pass that the last loop left its context refreshes to, until the
+  /// [getMaxOverflow] of the same `update_`.
+  // DIVERGES(chartjs): adapt-scatter-overflow-refresh, within one `update_`.
+  _OverflowPass? _overflowPass;
 
   /// controller.scatter.js:101 `addElements()`.
   ///
@@ -423,6 +445,9 @@ class ScatterController extends DatasetController {
     double count,
     String mode,
   ) {
+    // DIVERGES(chartjs): adapt-scatter-overflow-refresh, taken before any read.
+    final overflowFollows = _loopBeforeOverflow;
+    _loopBeforeOverflow = false;
     final reset = mode == 'reset';
     final meta = cachedMeta;
     final iScale = meta.iScale;
@@ -439,6 +464,8 @@ class ScatterController extends DatasetController {
     final options = this.options;
     final spanGaps = options.readKey(OptionKey.spanGaps);
     final segment = options.readKey(OptionKey.segment);
+    final hasStack = jsTruthy(stacked);
+    final hasSegment = jsTruthy(segment);
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)
         : double.infinity;
@@ -451,6 +478,11 @@ class ScatterController extends DatasetController {
     // synchronous loop. Unknown geometry drops the plan before invoking it.
     PointOptions Function(int)? colors;
     NativePointContextReader? contexts;
+    // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the first index whose
+    // refresh waits for the overflow pass, or -1. Code that can read a context
+    // finds these refreshes done: see [_catchUpContexts].
+    _OverflowPass? overflowPass;
+    var waitingFrom = -1;
     final coordinates = NativePointCoordinates();
     final tryColors = canPrepareNativePointUpdate(
       mode: mode,
@@ -472,6 +504,10 @@ class ScatterController extends DatasetController {
               point.active ||
               !coordinates.accepts(parsed))) {
         colors = null;
+        if (waitingFrom >= 0) {
+          _catchUpContexts(contexts!, waitingFrom, i.toInt(), mode);
+          waitingFrom = -1;
+        }
       }
       writes.begin(point);
       // :128, also :130 (one-read rule).
@@ -484,7 +520,7 @@ class ScatterController extends DatasetController {
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
-              jsTruthy(stacked) ? applyStack(vScale, parsed, stacked) : vValue,
+              hasStack ? applyStack(vScale, parsed, stacked) : vValue,
               i,
             );
       writes
@@ -500,7 +536,7 @@ class ScatterController extends DatasetController {
                       .abs() >
                   maxGapLength,
         );
-      if (jsTruthy(segment)) {
+      if (hasSegment) {
         writes
           ..parsed(parsed)
           // `_dataset.data[i]`: the data of the dataset object of the user.
@@ -512,7 +548,10 @@ class ScatterController extends DatasetController {
         // shared options.
         final prepared = colors;
         if (prepared != null) {
-          if (contexts?.read(i.toInt()) == null) getContext(i, false, mode);
+          if (waitingFrom < 0 &&
+              contexts?.readQualified(point, i.toInt()) == null) {
+            getContext(i, false, mode);
+          }
           writes.options(prepared(i.toInt()));
         } else {
           writes.options(
@@ -535,11 +574,71 @@ class ScatterController extends DatasetController {
           _nativeProjection(iScale) &&
           _nativeProjection(vScale)) {
         colors = _preparePointColors(points);
-        if (colors != null) contexts = prepareNativePointContexts(this, mode);
+        if (colors != null) {
+          contexts = prepareNativePointContexts(this, mode);
+          if (overflowFollows && contexts != null) {
+            overflowPass = _prepareOverflowPass(points, start, count, colors);
+            if (overflowPass != null) waitingFrom = i.toInt() + 1;
+          }
+        }
       }
     }
 
+    // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the plan held to the
+    // end: the overflow pass of this `update_` writes each waiting context.
+    _overflowPass = waitingFrom >= 0 ? overflowPass : null;
     updateSharedOptions(sharedOptions, mode, firstOpts);
+  }
+
+  /// The refreshes that the loop left out, for the indexes from [from] until
+  /// [to], in their order, before code that can read a context runs.
+  // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the end of a plan.
+  void _catchUpContexts(
+    NativePointContextReader contexts,
+    int from,
+    int to,
+    String mode,
+  ) {
+    for (var i = from; i < to; i++) {
+      if (contexts.read(i) == null) getContext(i.toDouble(), false, mode);
+    }
+  }
+
+  /// The overflow pass that can take the context refreshes of a loop in the
+  /// mode `none`, or Dart `null`: then the loop keeps them.
+  ///
+  /// The caller has a prepared color plan and is the loop of an [update] under
+  /// `update_`. Between its last point and the first context of the pass, only
+  /// the read of `clip` stands (core.datasetController.js:705): a scalar raw
+  /// value in native scopes runs no user code. Each point of a whole-dataset
+  /// loop has qualified as native at its own iteration, or below, if the plan
+  /// holds to the end. Thus the pass reads no options object and calls no
+  /// `size`: the options of each index differ in their colors only.
+  // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the window of the proof.
+  _OverflowPass? _prepareOverflowPass(
+    List<types.Element> points,
+    double start,
+    double count,
+    PointOptions Function(int) colors,
+  ) {
+    if (start != 0 ||
+        count != points.length ||
+        jsTruthy(options.readKey(OptionKey.showLine)) ||
+        !nativePointElement(points[0]) ||
+        !nativePointElement(points[1]) ||
+        !options.rawOptionsAreScalar(const [OptionKey.clip])) {
+      return null;
+    }
+    final fields = NativePointSizeFields.of(colors(1));
+    final contexts = prepareNativePointContexts(this, 'default');
+    if (fields == null || contexts == null) return null;
+    // `max = Math.max(max, size / 2)` from 0, and `max > 0 && max`, of one size.
+    final max = jsMax(
+      0,
+      nativePointSize(fields.radius, fields.hoverRadius, fields.borderWidth) /
+          2,
+    );
+    return (overflow: max > 0 ? max : false, contexts: contexts);
   }
 
   /// controller.scatter.js:156 `getMaxOverflow()`.
@@ -561,10 +660,25 @@ class ScatterController extends DatasetController {
   /// - The size of a native point depends only on three static fields of its
   ///   options. Inside this loop such a point takes one size, of the frozen
   ///   entry or of one plan result (row `adapt-native-point-size`).
+  /// - The overflow of `update_` after a loop that left its context refreshes
+  ///   to it writes them, in this order (row `adapt-scatter-overflow-refresh`).
   @override
   Object? getMaxOverflow() {
     final meta = cachedMeta;
     final data = meta.data;
+    // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the last writer of the
+    // contexts of a loop that left its refreshes to this pass.
+    final pass = _overflowPass;
+    _overflowPass = null;
+    if (pass != null) {
+      final contexts = pass.contexts;
+      for (var i = data.length - 1; i >= 0; --i) {
+        if (contexts.readQualified(data[i], i) == null) {
+          getContext(i.toDouble(), false, 'default');
+        }
+      }
+      return pass.overflow;
+    }
 
     if (!jsTruthy(options.readKey(OptionKey.showLine))) {
       var max = 0.0;
@@ -607,7 +721,7 @@ class ScatterController extends DatasetController {
           }
         } else {
           // Indexed options refresh the context of each point, as upstream.
-          if (indexed && contexts?.read(i) == null) {
+          if (indexed && contexts?.readQualified(point, i) == null) {
             getContext(i.toDouble(), false, 'default');
           }
           max = jsMax(max, nativeSize / 2);
