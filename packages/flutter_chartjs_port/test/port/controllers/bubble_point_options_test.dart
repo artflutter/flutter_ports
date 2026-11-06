@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:clock/clock.dart';
 import 'package:flutter/widgets.dart'
     show Directionality, SizedBox, TextDirection;
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -82,6 +83,19 @@ class _ReferenceChart extends Chart {
   _ReferenceChart(super.item, super.userConfig);
   @override
   bool get supportsNativePointOptions => false;
+}
+
+/// A platform that keeps the option `animation`: an unhosted canvas otherwise
+/// gets a [BasicPlatform], whose `updateConfig` writes `false` into it.
+class _AnimatedPlatform extends BasicPlatform {
+  static final JsClass value = JsClass(
+    'AnimatedPlatform',
+    superclass: BasicPlatform.jsClass,
+    construct: (_, _) => _AnimatedPlatform(),
+  );
+
+  @override
+  void updateConfig(ChartConfiguration config) {}
 }
 
 // Explicit test opt-in: counters only, with native size/context behavior.
@@ -393,36 +407,46 @@ void main() {
     }
   });
 
-  test('twin of the mode default and of a running animation', () {
+  test('twin of the mode default and of a queued animation', () {
     for (final animation in <Object>[false, true]) {
-      final configs = _pair((type) {
-        final cfg = _config(type: type);
-        (cfg['options']! as Map)['animation'] = animation;
-        return cfg;
-      });
-      final a = _chart(configs[0]);
-      final b = _chart(configs[1], reference: true);
-      for (final cfg in configs) {
-        _dataset(cfg)['data'] = _maps(step: 1);
-      }
-      a.update();
-      b.update();
-      a.stop();
-      b.stop();
-      expect(
-        a.getDatasetMeta(0).controller!.getMaxOverflow(),
-        b.getDatasetMeta(0).controller!.getMaxOverflow(),
-      );
-      for (var i = 0; i < _length; i++) {
-        final first = a.getDatasetMeta(0).data[i] as PointElement;
-        final second = b.getDatasetMeta(0).data[i] as PointElement;
-        expect(first.x, second.x);
-        expect(first.y, second.y);
+      // `stop` writes the value at its time: both charts stop at one time.
+      var now = DateTime.utc(2026);
+      withClock(Clock(() => now), () {
+        final configs = _pair((type) {
+          final cfg = _config(type: type);
+          (cfg['options']! as Map)['animation'] = animation;
+          cfg['platform'] = _AnimatedPlatform.value;
+          return cfg;
+        });
+        final a = _chart(configs[0]);
+        final b = _chart(configs[1], reference: true);
+        for (final cfg in configs) {
+          _dataset(cfg)['data'] = _maps(step: 1);
+        }
+        a.update();
+        b.update();
+        for (final chart in [a, b]) {
+          expect(chart.animationsDisabled, animation == false);
+          expect(animator.has(chart), animation == true);
+        }
+        now = now.add(const Duration(milliseconds: 250));
+        a.stop();
+        b.stop();
         expect(
-          jsGet(first.options, 'radius'),
-          jsGet(second.options, 'radius'),
+          a.getDatasetMeta(0).controller!.getMaxOverflow(),
+          b.getDatasetMeta(0).controller!.getMaxOverflow(),
         );
-      }
+        for (var i = 0; i < _length; i++) {
+          final first = a.getDatasetMeta(0).data[i] as PointElement;
+          final second = b.getDatasetMeta(0).data[i] as PointElement;
+          expect(first.x, second.x);
+          expect(first.y, second.y);
+          expect(
+            jsGet(first.options, 'radius'),
+            jsGet(second.options, 'radius'),
+          );
+        }
+      });
     }
   });
 
@@ -781,6 +805,215 @@ void main() {
         expect(parsed[2].custom, '05');
         expect(parsed[3].custom, 6.0);
       }
+    });
+  });
+
+  group('a radius conversion with user code', () {
+    /// `_custom` of an array item, with [custom] at index 4.
+    List<Object?> arrays(_Custom custom) => [
+      for (var i = 0; i < _length; i++)
+        <Object?>[i.toDouble(), 1.0, if (i == 4) custom else 2.0 + i],
+    ];
+
+    /// The results that do not hold the object of one chart of a twin.
+    List<Object?> radii(Chart chart) {
+      final meta = chart.getDatasetMeta(0);
+      return [
+        for (final point in meta.data) jsGet(point.options, 'radius'),
+        meta.controller!.getMaxOverflow(),
+      ];
+    }
+
+    test('a radius option keeps each conversion of a parse resolve', () {
+      allowForeign();
+      final counts = <List<int>>[];
+      final results = <Object?>[];
+      for (final type in ['bubble', 'referenceBubble']) {
+        final custom = _Custom();
+        final cfg = _config(type: type, dataset: {'radius': custom});
+        final chart = _chart(cfg, reference: type != 'bubble');
+        final created = custom.calls;
+        chart.update('none');
+        final kept = custom.calls - created;
+        // A new data List drops the old parsed items: each resolve converts.
+        _dataset(cfg)['data'] = _maps(step: 1);
+        chart.update('none');
+        counts.add([created, kept, custom.calls - created - kept]);
+        results.add(radii(chart));
+      }
+      expect(counts[0], counts[1]);
+      expect(counts[1][0], greaterThanOrEqualTo(_length));
+      expect(counts[1][2], greaterThanOrEqualTo(_length));
+      expect(results[0], results[1]);
+    });
+
+    test('an old _custom of an item that stays keeps its conversion', () {
+      allowForeign();
+      final counts = <List<int>>[];
+      final results = <Object?>[];
+      for (final type in ['bubble', 'referenceBubble']) {
+        final custom = _Custom();
+        final cfg = _config(type: type, data: arrays(custom));
+        final chart = _chart(cfg, reference: type != 'bubble');
+        final created = custom.calls;
+        chart.update('none');
+        counts.add([created, custom.calls - created]);
+        results.add(radii(chart));
+      }
+      expect(counts[0], counts[1]);
+      expect(results[0], results[1]);
+    });
+
+    test('an old _custom of a replaced item keeps its conversion', () {
+      allowForeign();
+      final counts = <int>[];
+      final results = <Object?>[];
+      for (final type in ['bubble', 'referenceBubble']) {
+        final custom = _Custom();
+        final data = arrays(custom);
+        final cfg = _config(type: type, data: data);
+        final chart = _chart(cfg, reference: type != 'bubble');
+        final meta = chart.getDatasetMeta(0);
+        data[4] = <Object?>[4.0, 1.0, 2.0];
+        final before = custom.calls;
+        meta.controller!.buildOrUpdateElements(false);
+        counts.add(custom.calls - before);
+        results.add([for (final p in meta.parsed.cast<ParsedItem>()) p.custom]);
+      }
+      expect(counts[1], 1);
+      expect(counts[0], counts[1]);
+      expect(results[0], results[1]);
+    });
+
+    test('a new foreign item[2] with no old _custom keeps the twin', () {
+      allowForeign();
+      final counts = <int>[];
+      final results = <Object?>[];
+      for (final type in ['bubble', 'referenceBubble']) {
+        final custom = _Custom();
+        final cfg = _config(type: type);
+        final chart = _chart(cfg, reference: type != 'bubble');
+        final meta = chart.getDatasetMeta(0);
+        _dataset(cfg)['data'] = arrays(custom);
+        meta.controller!.buildOrUpdateElements(false);
+        counts.add(custom.calls);
+        results.add([
+          for (final p in meta.parsed.cast<ParsedItem>())
+            if (identical(p.custom, custom)) 'custom' else p.custom,
+        ]);
+      }
+      expect(counts[1], 0);
+      expect(counts[0], counts[1]);
+      expect(results[0], results[1]);
+    });
+
+    test('an old _custom of an item with no radius ends the skip first', () {
+      allowForeign();
+      final counts = <int>[];
+      final results = <Object?>[];
+      for (final type in ['bubble', 'referenceBubble']) {
+        final custom = _Custom();
+        final data = arrays(custom);
+        final cfg = _config(type: type, data: data);
+        final chart = _chart(cfg, reference: type != 'bubble');
+        final meta = chart.getDatasetMeta(0);
+        var calls = 0;
+        double radius(Object? ctx) {
+          calls++;
+          return 4;
+        }
+
+        data[4] = <Object?>[4.0, 1.0];
+        custom.onConvert = () {
+          custom.onConvert = null;
+          _dataset(cfg)['radius'] = radius;
+          chart.config.clearCache();
+          meta.controller!.configure();
+        };
+        meta.controller!.buildOrUpdateElements(false);
+        counts.add(calls);
+        results.add([
+          for (final p in meta.parsed.cast<ParsedItem>()) p.custom,
+        ]);
+      }
+      expect(counts[1], greaterThan(0));
+      expect(counts[0], counts[1]);
+      expect(results[0], results[1]);
+    });
+
+    test('a radius option leaves the constant plan out of the update', () {
+      allowForeign();
+      List<Object?> items() => [
+        for (var i = 0; i < _length; i++)
+          <String, Object?>{'x': i.toDouble(), 'y': 1.0},
+      ];
+      for (var n = 1; n <= _length; n++) {
+        final widths = <List<Object?>>[];
+        final probed = <bool>[];
+        for (final type in ['bubble', 'referenceBubble']) {
+          final custom = _Custom();
+          final cfg = _config(
+            type: type,
+            parsing: false,
+            data: items(),
+            dataset: {'radius': custom},
+          );
+          final chart = _chart(cfg, reference: type != 'bubble');
+          final probes = _probes(chart);
+          final meta = chart.getDatasetMeta(0);
+          var left = n;
+          custom.onConvert = () {
+            if (--left != 0) return;
+            _dataset(cfg)['borderWidth'] = 7.0;
+            chart.config.clearCache();
+            meta.controller!.configure();
+          };
+          meta.controller!.updateElements(
+            meta.data,
+            0,
+            _length.toDouble(),
+            'none',
+          );
+          custom.onConvert = null;
+          widths.add([
+            for (final point in meta.data) jsGet(point.options, 'borderWidth'),
+          ]);
+          probed.add(probes.any((p) => p.planReads > 0));
+        }
+        expect(widths[0], widths[1], reason: 'conversion $n');
+        expect(probed, [false, false], reason: 'conversion $n');
+      }
+    });
+
+    test('a primitive radius option keeps the constant plan', () {
+      allowForeign();
+      List<Object?> items() => [
+        for (var i = 0; i < _length; i++)
+          <String, Object?>{'x': i.toDouble(), 'y': 1.0},
+      ];
+      final results = <Object>[];
+      final probed = <bool>[];
+      for (final type in ['bubble', 'referenceBubble']) {
+        final cfg = _config(
+          type: type,
+          parsing: false,
+          data: items(),
+          dataset: const {'radius': '5'},
+        );
+        final chart = _chart(cfg, reference: type != 'bubble');
+        final probes = _probes(chart);
+        final meta = chart.getDatasetMeta(0);
+        meta.controller!.updateElements(
+          meta.data,
+          0,
+          _length.toDouble(),
+          'none',
+        );
+        probed.add(probes.any((p) => p.planReads > 0));
+        results.add(_observe(chart));
+      }
+      expect(probed, [true, false]);
+      expect(results[0], results[1]);
     });
   });
 
@@ -1279,13 +1512,28 @@ void main() {
   });
 }
 
+/// A test that stores a user object in typed options on purpose: its pairs are
+/// not reviewed foreign pairs. The hook comes back at the end of the test.
+void allowForeign() {
+  final saved = foreignAudit;
+  addTearDown(() => foreignAudit = saved);
+  foreignAudit = (_, _, _) {};
+}
+
 /// A user object whose JS conversion runs user code.
 class _Custom {
-  _Custom(this.log);
+  _Custom([List<String>? log]) : log = log ?? [];
   final List<String> log;
+
+  /// Runs at each conversion, as a `toString` of the user can.
+  void Function()? onConvert;
+
+  int get calls => log.length;
+
   @override
   String toString() {
     log.add('toString');
+    onConvert?.call();
     return '4';
   }
 }

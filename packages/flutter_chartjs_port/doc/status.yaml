@@ -1493,7 +1493,7 @@ port-only:
     contents: "One size in the native overflow loop and the context reader beside a plan, on raw and typed roots: twins with a trivial user subclass over updates and length changes, the size formula values, foreign values, custom points and their mutations, cast order, a counting subclass and a scriptable radius (Chart.js ADR 0094)."
     tests: "VM"
   - file: "`test/port/controllers/bubble_point_options_test.dart`"
-    contents: "Native bubble parse, overflow and update loops: twins with a trivial user subclass, parsing on and off, DataPoint and Map items, constant and indexed colors, two datasets, length changes, partial ranges, custom points, active points, scriptable and indexed numeric options, items with no radius, null items, foreign and effectful values, custom scales; the row `adapt-bubble-typed-radius` (Chart.js ADR 0094)."
+    contents: "Native bubble parse, overflow and update loops: twins with a trivial user subclass, parsing on and off, DataPoint and Map items, constant and indexed colors, two datasets, length changes, partial ranges, custom points, active points, scriptable and indexed numeric options, items with no radius, null items, foreign and effectful values, radius conversions with user code, queued animations, custom scales; the row `adapt-bubble-typed-radius` (Chart.js ADR 0094)."
     tests: "VM"
   - file: "`test/port/core/point_coordinate_cache_test.dart`"
     contents: "Weak identity fill bounds, mixed/churning maps, live coordinates, resize/partial slots, custom observations and routed-scope rejection (Chart.js ADR 0086)."

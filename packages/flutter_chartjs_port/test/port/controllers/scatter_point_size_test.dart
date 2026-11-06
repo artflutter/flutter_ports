@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show
@@ -16,6 +17,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show controllerArgs;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -70,6 +72,19 @@ class _ReferenceChart extends Chart {
   _ReferenceChart(super.item, super.userConfig);
   @override
   bool get supportsNativePointOptions => false;
+}
+
+/// A platform that keeps the option `animation`: an unhosted canvas otherwise
+/// gets a [BasicPlatform], whose `updateConfig` writes `false` into it.
+class _AnimatedPlatform extends BasicPlatform {
+  static final JsClass value = JsClass(
+    'AnimatedPlatform',
+    superclass: BasicPlatform.jsClass,
+    construct: (_, _) => _AnimatedPlatform(),
+  );
+
+  @override
+  void updateConfig(ChartConfiguration config) {}
 }
 
 // Explicit test opt-in: counters only, with native size/context behavior.
@@ -320,6 +335,60 @@ void main() {
           second.update('none');
           expect(_observe(first), _observe(second));
         }
+      }
+    });
+
+    test('twin of a queued animation in the mode default', () {
+      for (final color in [
+        blue,
+        <ui.Color>[red, blue],
+      ]) {
+        // `stop` writes the value at its time: both charts stop at one time.
+        var now = DateTime.utc(2026);
+        withClock(Clock(() => now), () {
+          final a = _config(backgroundColor: color);
+          final b = _config(type: 'referenceScatter', backgroundColor: color);
+          for (final cfg in [a, b]) {
+            (cfg['options']! as Map)['animation'] = true;
+            cfg['platform'] = _AnimatedPlatform.value;
+          }
+          final first = _chart(a);
+          final second = _chart(b, reference: true);
+          for (final cfg in [a, b]) {
+            _dataset(cfg)['data'] = <Object?>[
+              for (var i = 0; i < _length; i++)
+                <String, Object?>{'x': i.toDouble(), 'y': i - 2.0},
+            ];
+          }
+          first.update();
+          second.update();
+          for (final chart in [first, second]) {
+            expect(chart.animationsDisabled, isFalse);
+            expect(animator.has(chart), isTrue);
+          }
+          now = now.add(const Duration(milliseconds: 250));
+          first.stop();
+          second.stop();
+          // The options hold the animations of their chart: read their values.
+          Object values(Chart chart) {
+            final meta = chart.getDatasetMeta(0);
+            return [
+              _plain(meta.controller!.getMaxOverflow()),
+              for (final point in meta.data.cast<PointElement>())
+                [
+                  point.x,
+                  point.y,
+                  point.skip,
+                  point.stop,
+                  jsGet(point.options, 'radius'),
+                  jsGet(point.options, 'borderWidth'),
+                  jsGet(point.options, 'backgroundColor'),
+                ],
+            ];
+          }
+
+          expect(values(first), values(second));
+        });
       }
     });
 

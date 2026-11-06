@@ -641,6 +641,7 @@ class ScatterController extends DatasetController {
 
   /// The size of the frozen `point-default` entry for the exact controller:
   /// its ordinary resolve only copies that entry. Dart `null` without one.
+  // DIVERGES(chartjs): adapt-native-point-size, one size inside the loop.
   double? _cachedPointSize() {
     if (super.runtimeType != ScatterController) return null;
     final fields = cachedNativePointSizeFields(this);
