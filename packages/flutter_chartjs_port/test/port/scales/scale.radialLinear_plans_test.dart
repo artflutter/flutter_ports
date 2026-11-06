@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableScalePointLabelContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -59,6 +61,42 @@ final class _OrdinaryRadial extends RadialLinearScale {
     statics: {'id': 'ordinaryRadial'},
     construct: (_, args) => _OrdinaryRadial(scaleCfgArg(args)),
   );
+}
+
+/// A user subclass that counts the contexts of its point labels.
+class _CountedRadial extends RadialLinearScale {
+  _CountedRadial(super.cfg);
+
+  static final value = JsClass(
+    'CountedRadial',
+    superclass: RadialLinearScale.jsClass,
+    statics: {'id': 'countedRadial'},
+    construct: (_, args) => _CountedRadial(scaleCfgArg(args)),
+  );
+
+  int contexts = 0;
+
+  @override
+  ScriptableScalePointLabelContext? getPointLabelContext(int index) {
+    contexts++;
+    return super.getPointLabelContext(index);
+  }
+}
+
+/// [_CountedRadial] that reports the class of the built-in scale. It stays a
+/// user subclass: it keeps each ordinary call.
+final class _DisguisedRadial extends _CountedRadial {
+  _DisguisedRadial(super.cfg);
+
+  static final value = JsClass(
+    'DisguisedRadial',
+    superclass: RadialLinearScale.jsClass,
+    statics: {'id': 'disguisedRadial'},
+    construct: (_, args) => _DisguisedRadial(scaleCfgArg(args)),
+  );
+
+  @override
+  Type get runtimeType => RadialLinearScale;
 }
 
 /// A chart that counts `getDataVisibility` and records its arguments.
@@ -675,7 +713,11 @@ final List<_Case> _cases = [
 ];
 
 void main() {
-  Chart.register([_OrdinaryRadial.value]);
+  Chart.register([
+    _OrdinaryRadial.value,
+    _CountedRadial.value,
+    _DisguisedRadial.value,
+  ]);
 
   group('twins', () {
     for (final type in const ['radar', 'polarArea']) {
@@ -792,6 +834,45 @@ void main() {
       expect(_emptyTexts(subclass), 30);
       expect(_count(plan, 'setStrokeStyle'), lessThan(40));
       expect(_count(subclass, 'setStrokeStyle'), greaterThanOrEqualTo(40));
+    });
+
+    testWidgets('a subclass that reports the built-in class keeps each '
+        'ordinary call', (tester) async {
+      // In one draw, each label and each angle line read their own context, 24
+      // in all. In one fit, each label reads its own context.
+      ({int fit, int draw, List<ContextCall> calls}) run(String scaleType) {
+        final chart = acquireChart(_config(scaleType: scaleType, n: 12));
+        final scale = _scaleOf(chart) as _CountedRadial;
+        scale.contexts = 0;
+        _fitWith(chart, _PlanRecorder(chart.ctx!));
+        final fit = scale.contexts;
+        scale.contexts = 0;
+        scale.draw(chart.chartArea);
+        final draw = scale.contexts;
+        return (
+          fit: fit,
+          draw: draw,
+          calls: _drawWith(chart, _PlanRecorder(chart.ctx!)),
+        );
+      }
+
+      final disguised = run('disguisedRadial');
+      final counted = run('countedRadial');
+      expect(disguised.draw, 24);
+      expect(counted.draw, 24);
+      expect(disguised.fit, 12);
+      expect(counted.fit, 12);
+      // The labels with no text and the state of each angle line stay.
+      expect(_emptyTexts(disguised.calls), 9);
+      expect(
+        _count(disguised.calls, 'setStrokeStyle'),
+        greaterThanOrEqualTo(12),
+      );
+      expect(_rawOperations(disguised.calls), _rawOperations(counted.calls));
+      expect(
+        [for (final call in disguised.calls) call['name']],
+        [for (final call in counted.calls) call['name']],
+      );
     });
 
     testWidgets('the plan writes the state once and each line its path', (

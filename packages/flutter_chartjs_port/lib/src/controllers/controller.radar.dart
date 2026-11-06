@@ -304,8 +304,10 @@ class RadarController extends DatasetController {
   /// It runs only with the cached entry of the point options: no context and no
   /// user code. Its inputs stay valid because each read in it is native: the
   /// list of the points, the built-in point class, a parsed item with a number,
-  /// `null` or no value. An active point, a point of another class and another
-  /// item stop it before any read of that index.
+  /// `null` or no value. A point of another class stops it before any read of
+  /// that point: it can have its own getters, and the ordinary loop makes the
+  /// reads of that index. An active point and another item stop it before any
+  /// write of that index.
   ///
   /// It returns the first index that it did not treat: the ordinary loop
   /// continues there.
@@ -334,13 +336,13 @@ class RadarController extends DatasetController {
     var i = next.toInt();
     for (; i < stop; i++) {
       final point = points[i];
-      if (point.active || i >= parsed.length) break;
-      final item = parsed[i];
-      if (item is! ParsedItem) break;
-      final value = item.r;
-      if (value is! double && value != null && value is! Undefined) break;
       if (point case final types.PointElementWrites writes
           when writes.typedWrites) {
+        if (point.active || i >= parsed.length) break;
+        final item = parsed[i];
+        if (item is! ParsedItem) break;
+        final value = item.r;
+        if (value is! double && value != null && value is! Undefined) break;
         final position = positions.positionAt(
           i,
           value is double ? positions.distanceOf(value) : double.nan,
