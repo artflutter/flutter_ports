@@ -154,6 +154,24 @@ class DoughnutController extends DatasetController {
   // DIVERGES(chartjs): adapt-incremental-data-update, native opt-in.
   bool get supportsDataUpdates => super.runtimeType == DoughnutController;
 
+  /// The generator of [overrides] for the exact doughnut and pie classes:
+  /// [supportsDataUpdates] is the exact class test of both.
+  @override
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the built-in generator.
+  Object? get nativeLegendGenerator =>
+      supportsDataUpdates ? _generateLabels : null;
+
+  /// `const {labels: {...}} = chart.legend.options` of [_generateLabels].
+  @override
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
+  List<OptionKey> get nativeLegendLabelKeys => const [
+    OptionKey.pointStyle,
+    OptionKey.textAlign,
+    OptionKey.color,
+    OptionKey.useBorderRadius,
+    OptionKey.borderRadius,
+  ];
+
   @override
   DataUpdateShape get dataUpdateShape => DataUpdateShape.scalar;
 
