@@ -16,6 +16,9 @@ counts and 2 presets. Each cell has 2 seconds of warmup and 4 seconds of capture
   `--dart-define=CHARTJS_DATA_ONLY_UPDATES=false`: a full update on each tick.
 - `new-no-scene-layers.txt` is one pass of the same code with the condition of the scene layers in
   `RenderChartHost.paint` set to false, in a temporary edit.
+- `final-pass.txt` is one pass of the delivered code at commit `fc4e1de`. After `310806d`, that code runs a
+  full update after a cancelled layout and writes the dataset context once on each data-only tick. Each cell
+  differs from the mean of `new-1.txt` and `new-2.txt` by less than 4%.
 - `profiles/` has the top of the CPU profile of the UI thread for 8 of the slowest cells of the merged work.
   Each one samples 7 seconds, 3 seconds after the cell starts.
 
