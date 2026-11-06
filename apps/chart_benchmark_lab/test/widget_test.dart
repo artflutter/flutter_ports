@@ -109,6 +109,27 @@ void main() {
     await tester.pump(const Duration(milliseconds: 20));
   });
 
+  for (final size in const [Size(1400, 900), Size(412, 915)]) {
+    testWidgets('the bottom of the page shows the lab version at $size', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(size);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(const ChartBenchmarkApp());
+      await tester.pump();
+      final version = find.byKey(const ValueKey('lab.version'));
+      expect(tester.widget<Text>(version).data, startsWith('Lab version '));
+      // In view, and below the header and the content of the page.
+      expect(tester.getBottomLeft(version).dy, lessThanOrEqualTo(size.height));
+      expect(
+        tester.getTopLeft(version).dy,
+        greaterThan(size.height - 60),
+      );
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 20));
+    });
+  }
+
   testWidgets('a scroll stops a test, and a note that stays says why', (
     tester,
   ) async {

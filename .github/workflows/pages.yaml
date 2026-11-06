@@ -1,11 +1,21 @@
 name: pages
 
-# Deploys the chart benchmark lab to
-# https://artflutter.github.io/flutter_ports/lab/.
+# Deploys the chart benchmark lab on the newest build of each Flutter channel:
+#   https://artflutter.github.io/flutter_ports/lab-stable/
+#   https://artflutter.github.io/flutter_ports/lab-beta/
+#   https://artflutter.github.io/flutter_ports/lab-master/
+#
+# These builds do not read .fvmrc. Each run takes the newest release of stable
+# and of beta, and the head of the branch master.
+#
+# git-cliff computes the version of the lab from the commits after the last
+# lab/v* tag (cliff.toml). Each build stamps it with --build-name, and the run
+# number with --build-number. The page shows them at its bottom. A deploy pushes
+# the tag of a new version.
 #
 # A repository has one Pages site, and a deploy replaces the whole site. Thus
-# the job build assembles the site, with one folder for each app. A later app
-# adds its build step, its folder and its link on the root page.
+# the job deploy assembles the site, with one folder for each page. A later app
+# adds its build, its folder and its link on the root page.
 #
 # Pages cannot send the COOP and COEP headers. web/isolate.js of the lab adds them
 # through a service worker, so that WebAssembly gets its rendering thread there.
@@ -13,10 +23,8 @@ name: pages
 on:
   push:
     branches: [main]
-    # The files that change the page.
+    # The files that change the pages.
     paths:
-      - .fvmrc
-      - .github/actions/setup/**
       - .github/workflows/pages.yaml
       - apps/chart_benchmark_lab/lib/**
       - apps/chart_benchmark_lab/pubspec.yaml
@@ -24,7 +32,6 @@ on:
       - packages/flutter_chartjs_port/lib/**
       - packages/flutter_chartjs_port/pubspec.yaml
       - pubspec.lock
-      - pubspec.yaml
   workflow_dispatch:
 
 concurrency:
@@ -36,39 +43,157 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  version:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.git-cliff.outputs.version }}
+      version: ${{ steps.stamp.outputs.version }}
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup
+        with:
+          # git-cliff reads the commits and the tags.
+          fetch-depth: 0
+      - id: git-cliff
+        uses: orhun/git-cliff-action@v4
+        with:
+          version: v2.14.2
+          config: cliff.toml
+          args: --bump --unreleased
+      - id: stamp
+        name: Read the version
+        env:
+          TAG: ${{ steps.git-cliff.outputs.version }}
+          NOTES: ${{ steps.git-cliff.outputs.changelog }}
+        run: |
+          case "$TAG" in
+            lab/v[0-9]*) ;;
+            *)
+              echo "::error::git-cliff gave the version '$TAG'."
+              exit 1
+              ;;
+          esac
+          echo "version=${TAG#lab/v}" >> "$GITHUB_OUTPUT"
+          cat "$NOTES" >> "$GITHUB_STEP_SUMMARY"
+
+  build:
+    needs: version
+    runs-on: ubuntu-latest
+    strategy:
+      # A channel that fails does not stop the other channels.
+      fail-fast: false
+      matrix:
+        channel: [stable, beta, master]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          # No version, so the action takes the newest build of the channel.
+          channel: ${{ matrix.channel }}
+          # The key of a release has its hash, so a new release misses the cache.
+          # The key of master is fixed, so a hit would give an old master.
+          cache: ${{ matrix.channel != 'master' }}
+      - name: Resolve the lab alone
+        working-directory: apps/chart_benchmark_lab
+        # As an app that uses the port. The workspace also resolves the dev
+        # dependencies of each package, and these can ask for more than the
+        # flutter_test of a channel permits. The root lock file gives the first
+        # choice of versions, where the channel permits them.
+        run: |
+          sed -i '/^resolution: workspace$/d' pubspec.yaml
+          cp ../../pubspec.lock pubspec.lock
+          flutter pub get
       - name: Build the lab for the web (WebAssembly + JavaScript fallback)
-        run: dart run melos run benchmark:build:pages
-      - name: Assemble the site
+        working-directory: apps/chart_benchmark_lab
+        run: >-
+          flutter build web --wasm
+          --base-href /flutter_ports/lab-${{ matrix.channel }}/
+          --build-name ${{ needs.version.outputs.version }}
+          --build-number ${{ github.run_number }}
+      - name: Put the build into its folder
         run: |
           mkdir site
-          cp -R apps/chart_benchmark_lab/build/web site/lab
-          cat > site/index.html <<'HTML'
-          <!doctype html>
-          <html lang="en">
-          <meta charset="utf-8">
-          <meta http-equiv="refresh" content="0; url=lab/">
-          <title>flutter_ports</title>
-          <a href="lab/">Chart benchmark lab</a>
-          </html>
-          HTML
-      - uses: actions/upload-pages-artifact@v5
+          cp -R apps/chart_benchmark_lab/build/web site/lab-${{ matrix.channel }}
+      # The artifact holds the folder. With one artifact, download-artifact puts
+      # the files in its path with no folder of the artifact name.
+      - uses: actions/upload-artifact@v7
         with:
+          name: lab-${{ matrix.channel }}
           path: site
+          if-no-files-found: error
 
   deploy:
-    needs: build
+    needs: [version, build]
+    # A channel that failed does not stop the pages of the other channels.
+    if: ${{ !cancelled() && needs.version.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: lab-*
+          merge-multiple: true
+          path: site
+      - name: Assemble the site
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          built=0
+          for channel in stable beta master; do
+            if [ -d "site/lab-$channel" ]; then
+              built=$((built + 1))
+            else
+              # The page of this channel says so. It does not keep an old Flutter.
+              mkdir -p "site/lab-$channel"
+              printf '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<title>Chart benchmark lab</title>\n<p>The lab did not build on the newest Flutter %s. <a href="%s">Read the run</a>.</p>\n</html>\n' \
+                "$channel" "$RUN_URL" > "site/lab-$channel/index.html"
+            fi
+          done
+          # With no build at all, the deploy stops, so that the old pages stay.
+          if [ "$built" -eq 0 ]; then
+            echo '::error::The lab did not build on any channel.'
+            exit 1
+          fi
+          # The old address of the lab goes to the root page.
+          mkdir site/lab
+          cat > site/lab/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=../">
+          <title>flutter_ports</title>
+          <a href="../">Chart benchmark lab</a>
+          </html>
+          HTML
+          cat > site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <meta charset="utf-8">
+          <title>flutter_ports</title>
+          <h1>Chart benchmark lab</h1>
+          <ul>
+            <li><a href="lab-stable/">Flutter stable</a></li>
+            <li><a href="lab-beta/">Flutter beta</a></li>
+            <li><a href="lab-master/">Flutter master</a></li>
+          </ul>
+          </html>
+          HTML
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
       - id: deployment
         uses: actions/deploy-pages@v5
+      - name: Tag the version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.version.outputs.tag }}
+        # A run with no new commit of the lab keeps the tag of the last version.
+        run: |
+          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --silent 2>/dev/null; then
+            gh api "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$TAG" -f "sha=$GITHUB_SHA" --silent
+          fi
