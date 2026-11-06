@@ -29,8 +29,16 @@
       "request": "launch",
       "cwd": "apps/chart_benchmark_lab",
       "program": "lib/main.dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "chart_benchmark_lab (profile, wasm)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/chart_benchmark_lab",
+      "program": "lib/main.dart",
       "flutterMode": "profile",
-      "deviceId": "macos"
+      "args": ["--wasm"]
     }
   ]
 }
