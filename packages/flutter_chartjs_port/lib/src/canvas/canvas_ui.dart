@@ -1797,6 +1797,103 @@ final class UiCanvasContext
 
   UiPathBuilder? _partitionedFillPath;
 
+  // DIVERGES(chartjs): adapt-web-long-path-pieces, the slow route of one long path
+  // of Skia on WebGL.
+  /// Whether this build runs in a browser: Skia on WebGL.
+  static const bool _onWeb = bool.fromEnvironment('dart.library.js_interop');
+
+  /// Whether the context draws long paths in pieces (Chart.js ADR 0105). Only
+  /// the tests set this switch on the VM, for a comparison of the two forms.
+  @visibleForTesting
+  static bool debugDrawLongPathsInPieces = _onWeb;
+
+  /// The count of the fills and strokes in pieces, for the tests.
+  @visibleForTesting
+  int debugPieceDraws = 0;
+
+  ui.Path? _pieceFill;
+  final ui.Paint _pieceLayer = ui.Paint();
+
+  @override
+  bool get takesPartitionedFill => !debugDrawLongPathsInPieces;
+
+  @override
+  int get deferredFillMinPoints =>
+      debugDrawLongPathsInPieces ? minPieceCommands : 1024;
+
+  /// Fills the deferred current path in pieces. See
+  /// [UiPathBuilder.tryFillColumns]. The paint is ready.
+  bool _tryFillInPieces(ui.PathFillType fillType) {
+    final s = _s;
+    if (!debugDrawLongPathsInPieces ||
+        s.fillShader != null ||
+        s.blendMode != ui.BlendMode.srcOver) {
+      return false;
+    }
+    final scratch = (_pieceFill ??= ui.Path())..fillType = fillType;
+    final canvas = _c;
+    final drawn = _path.tryFillColumns(scratch, (clip) {
+      canvas
+        ..save()
+        ..clipRect(clip, doAntiAlias: false)
+        ..drawPath(scratch, _fillPaint)
+        ..restore();
+    });
+    if (drawn) debugPieceDraws++;
+    return drawn;
+  }
+
+  /// Strokes [path2d] in pieces, with the styles of the context. A false result
+  /// draws nothing. A translucent line goes through one layer, so that the
+  /// pieces do not blend over each other.
+  bool _tryStrokeInPieces(Path2D path2d) {
+    final s = _s;
+    final t = s.transform;
+    if (!debugDrawLongPathsInPieces ||
+        path2d.version < minPieceCommands ||
+        s.lineDash.isNotEmpty ||
+        s.strokeShader != null ||
+        s.strokeColor == null ||
+        s.blendMode != ui.BlendMode.srcOver ||
+        s.cap != ui.StrokeCap.butt ||
+        !t.isSimilarity) {
+      return false;
+    }
+    // A translucent line of at most one pixel: the engine draws it as a hairline,
+    // whose segments blend over each other. A layer gives another tone.
+    if (s.strokeColor!.a * s.globalAlpha < 1 &&
+        s.lineWidth * t.scaleFactor <= 1) {
+      return false;
+    }
+    final pieces = uiPathPiecesOf(path2d, t.scaleFactor, s.lineWidth);
+    if (pieces == null) return false;
+    // The paint with no color has nothing to draw, as in [_strokeUser].
+    if (!_setupStroke(1, mapped: false)) return true;
+    final color = _strokePaint.color;
+    final translucent = color.a < 1;
+    final canvas = _c
+      ..save()
+      ..transform(t.writeMatrix4(_m4));
+    if (translucent) {
+      _pieceLayer.color = ui.Color.fromRGBO(0, 0, 0, color.a);
+      _strokePaint.color = color.withValues(alpha: 1);
+      // A miter reaches at most half of the limit times the width.
+      canvas.saveLayer(
+        pieces.bounds.inflate(s.lineWidth * (s.miterLimit + 1)),
+        _pieceLayer,
+      );
+    }
+    final list = pieces.pieces;
+    for (var i = 0; i < list.length; i++) {
+      canvas.drawPath(list[i], _strokePaint);
+    }
+    if (translucent) canvas.restore();
+    canvas.restore();
+    debugPieceDraws++;
+    _drew();
+    return true;
+  }
+
   @override
   void deferCurrentPath() => _path.deferLongPath();
 
@@ -1918,7 +2015,7 @@ final class UiCanvasContext
           final sector = _path.singleSector;
           if (sector != null) {
             _fillSector(canvas, sector);
-          } else {
+          } else if (!_tryFillInPieces(fillType)) {
             canvas.drawPath(_path.path..fillType = fillType, _fillPaint);
           }
         }
@@ -2015,7 +2112,7 @@ final class UiCanvasContext
     final t = _s.transform;
     if (!t.isInvertible) return;
     if (path != null) {
-      _strokeUser(uiPathOf(path));
+      if (!_tryStrokeInPieces(path)) _strokeUser(uiPathOf(path));
     } else if (_path.isEmpty) {
       return;
     } else if (t.isSimilarity) {

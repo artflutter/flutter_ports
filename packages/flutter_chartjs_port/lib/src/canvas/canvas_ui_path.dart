@@ -285,6 +285,17 @@ const int _arcCode = 4; // cx, cy, rx, ry, start, sweep, forceMoveTo (1 or 0)
 const int _rrectCode = 5; // the ui.RRect in UiPathBuilder._rrects
 const int _closeCode = 6;
 
+/// The fewest commands of a path that the context draws in pieces (Chart.js ADR
+/// 0105). A shorter path costs little as one draw.
+const int minPieceCommands = 128;
+
+/// The most commands of a piece of a long path.
+const int maxPieceCommands = 64;
+
+/// The largest area of the bounds of a piece, in bitmap pixels. Skia on the web
+/// draws a larger path on the CPU, and uploads the result as a texture.
+const double maxPieceArea = 40000;
+
 /// The most numbers of one deferred command: an arc.
 const int _maxCommandNumbers = 7;
 
@@ -460,6 +471,170 @@ final class UiPathBuilder implements CanvasPath {
     if (_sector) _materializeSector();
     if (!_built) _build();
     return _path;
+  }
+
+  /// Fills a long deferred path in pieces (Chart.js ADR 0105), when it has the
+  /// shape of a line over a horizontal base: one subpath with a top edge that
+  /// goes up in x, in lines and cubic curves, then lines along the base back to
+  /// its start, then a close.
+  ///
+  /// Each piece writes its part of the shape into [scratch] and calls [draw]
+  /// with a clip on whole bitmap pixels, so that each pixel column belongs to
+  /// one piece. A piece keeps the geometry of the whole shape in its column. The
+  /// commands stay deferred. A false result calls nothing.
+  bool tryFillColumns(
+    ui.Path scratch,
+    void Function(ui.Rect clip) draw,
+  ) {
+    final n = _deferred;
+    if (_built || _circle || _sector || n < minPieceCommands) return false;
+    final codes = _codes;
+    final v = _numbers;
+    if (codes[0] != _moveCode || codes[n - 1] != _closeCode) return false;
+    // The end of each command and the offset of its numbers.
+    final xs = Float64List(n - 1);
+    final ys = Float64List(n - 1);
+    final offsets = Int32List(n - 1);
+    var j = 2;
+    xs[0] = v[0];
+    ys[0] = v[1];
+    for (var i = 1; i < n - 1; i++) {
+      offsets[i] = j;
+      switch (codes[i]) {
+        case _lineCode:
+          xs[i] = v[j];
+          ys[i] = v[j + 1];
+          j += 2;
+        case _cubicCode:
+          xs[i] = v[j + 4];
+          ys[i] = v[j + 5];
+          j += 6;
+        default:
+          return false;
+      }
+    }
+    // The lines along the base, from the end: the x grows while the walk goes
+    // back. The first command that breaks it is the end of the top edge.
+    final base = ys[n - 2];
+    var last = n - 2;
+    while (last > 1 &&
+        codes[last] == _lineCode &&
+        ys[last] == base &&
+        xs[last - 1] >= xs[last] &&
+        ys[last - 1] == base &&
+        codes[last - 1] == _lineCode) {
+      last--;
+    }
+    // [last] is the first line of the base, and the top edge ends before it.
+    final top = last - 1;
+    // A base point can come from another expression: within 1e-6 pixels, the
+    // side is vertical.
+    if (top < 1 ||
+        !xs[0].isFinite ||
+        !((xs[n - 2] - xs[0]).abs() <= 1e-6) ||
+        !((xs[last] - xs[top]).abs() <= 1e-6) ||
+        !base.isFinite) {
+      return false;
+    }
+    if (!ys[0].isFinite) return false;
+    for (var i = 1; i <= top; i++) {
+      final from = xs[i - 1];
+      final to = xs[i];
+      if (!(to >= from) || !to.isFinite || !ys[i].isFinite) return false;
+      if (codes[i] == _cubicCode) {
+        final at = offsets[i];
+        final c1 = v[at];
+        final c2 = v[at + 2];
+        if (!(c1 >= from && c1 <= to && c2 >= from && c2 <= to) ||
+            !v[at + 1].isFinite ||
+            !v[at + 3].isFinite) {
+          return false;
+        }
+      }
+    }
+
+    double lowY(int i) {
+      var y = ys[i];
+      if (codes[i] == _cubicCode) {
+        final at = offsets[i];
+        y = math.min(y, math.min(v[at + 1], v[at + 3]));
+      }
+      return y;
+    }
+
+    double highY(int i) {
+      var y = ys[i];
+      if (codes[i] == _cubicCode) {
+        final at = offsets[i];
+        y = math.max(y, math.max(v[at + 1], v[at + 3]));
+      }
+      return y;
+    }
+
+    final endX = xs[top];
+    var left = xs[0] - 2;
+    var start = 0;
+    while (start < top) {
+      // Grow the piece to the limits of a piece, and past a column.
+      var end = start;
+      var minY = math.min(base, ys[start]);
+      var maxY = math.max(base, ys[start]);
+      var right = left;
+      while (end < top) {
+        final nextMin = math.min(minY, lowY(end + 1));
+        final nextMax = math.max(maxY, highY(end + 1));
+        final area = (xs[end + 1] - xs[start]) * (nextMax - nextMin);
+        if (end > start &&
+            right > left &&
+            (end - start >= maxPieceCommands || area > maxPieceArea)) {
+          break;
+        }
+        end++;
+        minY = nextMin;
+        maxY = nextMax;
+        right = xs[end].roundToDouble();
+      }
+      if (end == top) right = endX + 2;
+      // The piece covers its columns: one vertex at or before each side.
+      var a = start;
+      while (a > 0 && xs[a] > left) {
+        a--;
+      }
+      var b = end;
+      while (b < top && xs[b] < right) {
+        b++;
+      }
+      scratch
+        ..reset()
+        ..moveTo(xs[a], ys[a]);
+      var low = math.min(base, ys[a]);
+      var high = math.max(base, ys[a]);
+      for (var i = a + 1; i <= b; i++) {
+        final at = offsets[i];
+        if (codes[i] == _lineCode) {
+          scratch.lineTo(v[at], v[at + 1]);
+        } else {
+          scratch.cubicTo(
+            v[at],
+            v[at + 1],
+            v[at + 2],
+            v[at + 3],
+            v[at + 4],
+            v[at + 5],
+          );
+        }
+        low = math.min(low, lowY(i));
+        high = math.max(high, highY(i));
+      }
+      scratch
+        ..lineTo(xs[b], base)
+        ..lineTo(xs[a], base)
+        ..close();
+      draw(ui.Rect.fromLTRB(left, low - 2, right, high + 2));
+      left = right;
+      start = end;
+    }
+    return true;
   }
 
   /// Whether the `ui.Path` of the path is built, for tests: a path that a
@@ -1698,12 +1873,252 @@ bool _cornerContains(
   return reach + math.max(irx / rx, iry / ry) <= limit;
 }
 
-/// The `ui.Path` of a [Path2D], in user space, kept in [Path2D.cache].
+/// The `ui.Path` of a [Path2D], in user space, and its pieces, kept in
+/// [Path2D.cache].
 final class _CachedPath {
-  _CachedPath(this.version, this.path);
+  _CachedPath(this.version);
 
   final int version;
-  final ui.Path path;
+  ui.Path? path;
+  UiPathPieces? pieces;
+}
+
+/// A [CanvasPath] that cuts a stroke path into short `ui.Path` pieces, in user
+/// space (Chart.js ADR 0105). It has the rules of [UiPathBuilder] for a
+/// coordinate that is not finite and for a path with no subpath.
+///
+/// A piece ends at a vertex, with a short line along the next segment, so that
+/// the join at that vertex stays. The next piece starts at the vertex. A command
+/// that a line chart does not use fails the whole form.
+final class UiPathPieces implements CanvasPath {
+  /// Pieces for a transform of the uniform scale [scale].
+  UiPathPieces(double scale, this.lineWidth)
+    : _area = maxPieceArea / (scale * scale),
+      _reach = .5 / scale;
+
+  /// The line width, in user space, that the bounds of a piece include.
+  final double lineWidth;
+  final double _area;
+  final double _reach;
+
+  /// The pieces, in order.
+  final List<ui.Path> pieces = [];
+
+  /// Whether the path has a command that this form does not take.
+  bool failed = false;
+
+  /// The bounds of the path, with no line width.
+  ui.Rect get bounds =>
+      ui.Rect.fromLTRB(_allMinX, _allMinY, _allMaxX, _allMaxY);
+
+  ui.Path? _current;
+  int _commands = 0;
+  bool _hasPoint = false;
+  double _x = 0;
+  double _y = 0;
+  double _startX = 0;
+  double _startY = 0;
+  bool _startInPiece = false;
+  // The direction of the first segment of the subpath, for the join of a close.
+  double _firstX = 0;
+  double _firstY = 0;
+  double _minX = 0;
+  double _minY = 0;
+  double _maxX = 0;
+  double _maxY = 0;
+  double _allMinX = double.infinity;
+  double _allMinY = double.infinity;
+  double _allMaxX = double.negativeInfinity;
+  double _allMaxY = double.negativeInfinity;
+
+  void _include(double x, double y) {
+    if (x < _allMinX) _allMinX = x;
+    if (x > _allMaxX) _allMaxX = x;
+    if (y < _allMinY) _allMinY = y;
+    if (y > _allMaxY) _allMaxY = y;
+  }
+
+  void _startPiece(double x, double y) {
+    _current = ui.Path()..moveTo(x, y);
+    _commands = 0;
+    _minX = _maxX = x;
+    _minY = _maxY = y;
+    _include(x, y);
+  }
+
+  void _endPiece() {
+    final piece = _current;
+    if (piece != null && _commands > 0) pieces.add(piece);
+    _current = null;
+  }
+
+  /// Cuts before a segment that has the bounds with its end at (x, y) past the
+  /// limits, with a short line toward (towardX, towardY).
+  void _cutBefore(double x, double y, double towardX, double towardY) {
+    if (_commands == 0) return;
+    final minX = math.min(_minX, x);
+    final maxX = math.max(_maxX, x);
+    final minY = math.min(_minY, y);
+    final maxY = math.max(_maxY, y);
+    final area = (maxX - minX + lineWidth) * (maxY - minY + lineWidth);
+    if (_commands < maxPieceCommands && area <= _area) return;
+    _extend(towardX - _x, towardY - _y);
+    _endPiece();
+    _startPiece(_x, _y);
+    _startInPiece = false;
+  }
+
+  void _extend(double dx, double dy) {
+    final length = math.sqrt(dx * dx + dy * dy);
+    if (length == 0) return;
+    final t = math.min(1, _reach / length);
+    _current!.lineTo(_x + dx * t, _y + dy * t);
+  }
+
+  void _grow(double x, double y) {
+    if (x < _minX) _minX = x;
+    if (x > _maxX) _maxX = x;
+    if (y < _minY) _minY = y;
+    if (y > _maxY) _maxY = y;
+    _include(x, y);
+  }
+
+  void _noteFirst(double towardX, double towardY) {
+    if (_firstX == 0 && _firstY == 0) {
+      _firstX = towardX - _x;
+      _firstY = towardY - _y;
+    }
+  }
+
+  @override
+  void moveTo(double x, double y) {
+    if (!x.isFinite || !y.isFinite) return;
+    _endPiece();
+    _startPiece(x, y);
+    _hasPoint = true;
+    _x = _startX = x;
+    _y = _startY = y;
+    _startInPiece = true;
+    _firstX = _firstY = 0;
+  }
+
+  @override
+  void lineTo(double x, double y) {
+    if (!x.isFinite || !y.isFinite) return;
+    if (!_hasPoint) {
+      moveTo(x, y);
+      return;
+    }
+    if (_current == null) {
+      _startPiece(_x, _y);
+      _startInPiece = true;
+    }
+    _noteFirst(x, y);
+    _cutBefore(x, y, x, y);
+    _current!.lineTo(x, y);
+    _commands++;
+    _grow(x, y);
+    _x = x;
+    _y = y;
+  }
+
+  @override
+  void bezierCurveTo(
+    double cp1x,
+    double cp1y,
+    double cp2x,
+    double cp2y,
+    double x,
+    double y,
+  ) {
+    if (!cp1x.isFinite ||
+        !cp1y.isFinite ||
+        !cp2x.isFinite ||
+        !cp2y.isFinite ||
+        !x.isFinite ||
+        !y.isFinite) {
+      return;
+    }
+    if (!_hasPoint) moveTo(cp1x, cp1y);
+    if (_current == null) {
+      _startPiece(_x, _y);
+      _startInPiece = true;
+    }
+    final same = cp1x == _x && cp1y == _y;
+    final towardX = same ? cp2x : cp1x;
+    final towardY = same ? cp2y : cp1y;
+    _noteFirst(towardX, towardY);
+    _cutBefore(x, y, towardX, towardY);
+    _current!.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
+    _commands++;
+    _grow(cp1x, cp1y);
+    _grow(cp2x, cp2y);
+    _grow(x, y);
+    _x = x;
+    _y = y;
+  }
+
+  @override
+  void closePath() {
+    if (!_hasPoint) return;
+    final piece = _current;
+    if (piece != null && _commands > 0) {
+      if (_startInPiece) {
+        piece.close();
+      } else {
+        piece.lineTo(_startX, _startY);
+        _x = _startX;
+        _y = _startY;
+        _extend(_firstX, _firstY);
+      }
+      _commands++;
+    }
+    _endPiece();
+    _x = _startX;
+    _y = _startY;
+    _startInPiece = false;
+    _firstX = _firstY = 0;
+  }
+
+  /// Ends the last piece.
+  void finish() => _endPiece();
+
+  @override
+  void quadraticCurveTo(double cpx, double cpy, double x, double y) =>
+      failed = true;
+
+  @override
+  void arc(
+    double x,
+    double y,
+    double radius,
+    double startAngle,
+    double endAngle, [
+    bool counterclockwise = false,
+  ]) => failed = true;
+
+  @override
+  void arcTo(double x1, double y1, double x2, double y2, double radius) =>
+      failed = true;
+
+  @override
+  void ellipse(
+    double x,
+    double y,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle, [
+    bool counterclockwise = false,
+  ]) => failed = true;
+
+  @override
+  void rect(double x, double y, double w, double h) => failed = true;
+
+  @override
+  void roundRect(double x, double y, double w, double h, [Object? radii]) =>
+      failed = true;
 }
 
 final UiTransform _identity = UiTransform();
@@ -1711,13 +2126,32 @@ final UiTransform _identity = UiTransform();
 /// The `ui.Path` of [path2d] in user space. The result is cached on the
 /// path while [Path2D.version] does not change.
 ui.Path uiPathOf(Path2D path2d) {
-  final cache = path2d.cache;
-  if (cache is _CachedPath && cache.version == path2d.version) {
-    return cache.path;
-  }
+  final cached = _cacheOf(path2d);
+  final known = cached.path;
+  if (known != null) return known;
   final builder = UiPathBuilder(_identity);
-  path2d
-    ..replayNative(builder)
-    ..cache = _CachedPath(path2d.version, builder.path);
-  return builder.path;
+  path2d.replayNative(builder);
+  return cached.path = builder.path;
+}
+
+_CachedPath _cacheOf(Path2D path2d) {
+  final cache = path2d.cache;
+  if (cache is _CachedPath && cache.version == path2d.version) return cache;
+  final fresh = _CachedPath(path2d.version);
+  path2d.cache = fresh;
+  return fresh;
+}
+
+/// The pieces of [path2d] for a stroke, cached as [uiPathOf] caches its path, or
+/// `null` for a path that this form does not take. See [UiPathPieces].
+UiPathPieces? uiPathPiecesOf(Path2D path2d, double scale, double lineWidth) {
+  final cached = _cacheOf(path2d);
+  var pieces = cached.pieces;
+  if (pieces == null) {
+    pieces = UiPathPieces(scale, lineWidth);
+    path2d.replayNative(pieces);
+    pieces.finish();
+    cached.pieces = pieces;
+  }
+  return pieces.failed || pieces.pieces.isEmpty ? null : pieces;
 }

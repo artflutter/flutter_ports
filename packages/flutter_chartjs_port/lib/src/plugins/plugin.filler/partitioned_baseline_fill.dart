@@ -39,9 +39,11 @@ void deferPathOfPartitionedFill(
   if (partitionedBaselineFillEnabled &&
       ctx is PartitionedFillCanvas &&
       line.runtimeType == LineElement) {
+    final canvas = ctx as PartitionedFillCanvas;
     final points = (line as LineElement).points;
-    if (_nativePoints(points) && points.length >= 1024) {
-      (ctx as PartitionedFillCanvas).deferCurrentPath();
+    if (_nativePoints(points) &&
+        points.length >= canvas.deferredFillMinPoints) {
+      canvas.deferCurrentPath();
     }
   }
 }
@@ -60,6 +62,7 @@ bool tryPartitionedBaselineFill(
 }) {
   if (!partitionedBaselineFillEnabled ||
       ctx is! PartitionedFillCanvas ||
+      !(ctx as PartitionedFillCanvas).takesPartitionedFill ||
       line.runtimeType != LineElement ||
       target.runtimeType != LineElement ||
       source.runtimeType != _nativeSegment) {

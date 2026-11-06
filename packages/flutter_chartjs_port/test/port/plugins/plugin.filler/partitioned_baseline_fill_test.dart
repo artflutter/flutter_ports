@@ -177,6 +177,35 @@ void main() {
     );
   });
 
+  test('the context of long paths in pieces takes no compound path', () {
+    final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
+    addTearDown(ctx.dispose);
+    addTearDown(() => UiCanvasContext.debugDrawLongPathsInPieces = false);
+    UiCanvasContext.debugDrawLongPathsInPieces = true;
+    final line = _line();
+    final before = partitionedBaselineFillDraws;
+    ctx.fillStyle = const ui.Color(0x804f6bed);
+    expect(_try(ctx, line, _boundary(line)), isFalse);
+    expect(partitionedBaselineFillDraws, before);
+    // The fill path stays out of the engine from a lower count of points.
+    final short = LineElement()
+      ..options = LineOptions(<String, Object?>{'tension': .4})
+      ..points = <types.PointElement>[
+        for (var i = 0; i < 300; i++)
+          PointElement()
+            ..x = i * .5
+            ..y = 40.0 + i % 7
+            ..cp1x = i * .5 - .1
+            ..cp1y = 40.0 + i % 7
+            ..cp2x = i * .5 + .1
+            ..cp2y = 40.0 + i % 7,
+      ];
+    ctx.beginPath();
+    deferPathOfPartitionedFill(ctx, short);
+    short.pathSegment(ctx, createBoundarySegment(0, 299));
+    expect(ctx.debugPath.debugBuilt, isFalse);
+  });
+
   test('a short line or a user class keeps the eager path', () {
     final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
     addTearDown(ctx.dispose);
