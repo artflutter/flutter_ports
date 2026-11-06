@@ -22,7 +22,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionResolver, readOption;
+    show OptionResolver, createResolver, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -30,6 +30,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsDeleteKey, jsGet, jsSet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
     show foreignAudit;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -460,27 +461,36 @@ final Map<String, void Function(Chart chart)> _steps = {
 
 /// A user subclass of the arc: its reads stay observable.
 final class _UserArc extends ArcElement {
-  _UserArc(this.reads);
+  _UserArc(this.reads, [this.onRead]);
 
   final List<Object?> reads;
+
+  /// Runs at each read of the context.
+  final void Function()? onRead;
 
   @override
   ScriptableContext? get $context {
     reads.add('context');
+    onRead?.call();
     return super.$context;
   }
 }
 
 /// A Map of another class: each read can run user code.
 final class _ObservedMap extends MapBase<String, Object?> {
-  _ObservedMap(this.fields);
+  _ObservedMap(this.fields, [this.onRead]);
 
   final Map<String, Object?> fields;
+
+  /// Runs at each read, with its key.
+  final void Function(Object? key)? onRead;
+
   int reads = 0;
 
   @override
   Object? operator [](Object? key) {
     reads++;
+    onRead?.call(key);
     return fields[key];
   }
 
@@ -499,6 +509,44 @@ final class _ObservedMap extends MapBase<String, Object?> {
 
 final class _TrivialConfig extends Config {
   _TrivialConfig(super.config);
+}
+
+/// A chart of [config] of the exact class, or of a trivial user subclass, which
+/// takes the ordinary path at each point. Both have the same canvas size.
+Chart _chartOf(Map<String, Object?> config, {required bool exact}) {
+  (config['options']! as Map<String, Object?>)
+    ..['animation'] = false
+    ..['responsive'] = false;
+  final canvas = UiCanvasElement(width: 300, height: 300);
+  final chart = exact ? Chart(canvas, config) : _ChildChart(canvas, config);
+  addTearDown(chart.destroy);
+  return chart;
+}
+
+/// `fillStyle` of each item of the box of [chart].
+List<Object?> _fillStyles(Chart chart) => [
+  for (final item in chart.legend!.legendItems!) jsGet(item, 'fillStyle'),
+];
+
+/// `fillStyle` and `lineWidth` of each item of the box of [chart].
+List<Object?> _fillAndWidth(Chart chart) => [
+  for (final item in chart.legend!.legendItems!)
+    [jsGet(item, 'fillStyle'), jsGet(item, 'lineWidth')],
+];
+
+/// The state of the context of arc 0 of [chart], as user code reads it.
+String _firstArcState(Chart chart) {
+  final context = (chart.getDatasetMeta(0).data[0] as ArcElement).$context!;
+  return '${context.mode}/${context.active}/raw=${context.raw}';
+}
+
+/// Makes arc 0 of [chart] active and gives it a new value, for an update that
+/// must write the new state into its context.
+void _changeFirstArc(Chart chart) {
+  chart.setActiveElements(<Object?>[
+    <String, Object?>{'datasetIndex': 0, 'index': 0},
+  ]);
+  (_dataset0(chart)['data']! as List<Object?>)[0] = 9.0;
 }
 
 void main() {
@@ -3294,6 +3342,483 @@ void main() {
     });
   });
 
+  group('Chart.js ADR 0099: a read before the mark of the layout', () {
+    // The update rebuilds the arcs before the layout, and the mark of the
+    // layout comes after them. A read in this window gives what the last
+    // `afterUpdate` built: the index of each item comes from the arcs of that
+    // mark, not from the arcs of the update.
+    const cases =
+        <(String, List<Object?>, List<Object?>, List<Object?>, List<Object?>)>[
+          (
+            'fewer arcs',
+            <Object?>['a', 'b', 'c'],
+            <Object?>[1.0, 2.0, 3.0],
+            <Object?>[1.0],
+            <Object?>[_red, _green, _blue],
+          ),
+          (
+            'more arcs',
+            <Object?>['a', 'b', 'c', 'd'],
+            <Object?>[1.0, 2.0],
+            <Object?>[1.0, 2.0, 3.0, 4.0],
+            <Object?>[_red, _green, _red, _red],
+          ),
+        ];
+
+    for (final type in _kinds) {
+      for (final (name, labels, before, after, expected) in cases) {
+        testWidgets('$type: $name: a read in beforeLayout', (tester) async {
+          List<Object?> run({required bool exact}) {
+            var armed = false;
+            final log = <Object?>[];
+            final chart = _chartOf(
+              _config(
+                type,
+                labelValues: <Object?>[...labels],
+                dataset: {
+                  'data': <Object?>[...before],
+                  'backgroundColor': <Object?>[_red, _green, _blue],
+                },
+                plugins: [
+                  _hook('beforeLayout', (chart) {
+                    if (armed) log.add(_fillStyles(chart));
+                    return null;
+                  }),
+                ],
+              ),
+              exact: exact,
+            );
+            expect(_legendOf(chart).legendItemsPending, exact);
+            armed = true;
+            _dataset0(chart)['data'] = <Object?>[...after];
+            chart.update('none');
+            expect(_legendOf(chart).legendItemsPending, exact);
+            return [...log, _items(chart.legend!), _state(chart)];
+          }
+
+          final exact = run(exact: true);
+          expect(exact.first, expected);
+          expect(exact, run(exact: false));
+        });
+
+        testWidgets('$type: $name: a read in a title function', (tester) async {
+          List<Object?> run({required bool exact}) {
+            var armed = false;
+            final log = <Object?>[];
+            final chart = _chartOf(
+              _config(
+                type,
+                labelValues: <Object?>[...labels],
+                dataset: {
+                  'data': <Object?>[...before],
+                  'backgroundColor': <Object?>[_red, _green, _blue],
+                },
+                options: {
+                  'plugins': <String, Object?>{
+                    'title': <String, Object?>{
+                      'display': true,
+                      'text': (Object? ctx) {
+                        if (armed) {
+                          log.add(_fillStyles(jsGet(ctx, 'chart')! as Chart));
+                        }
+                        return 'title';
+                      },
+                    },
+                    'legend': <String, Object?>{
+                      'display': false,
+                      'labels': <String, Object?>{},
+                    },
+                  },
+                },
+              ),
+              exact: exact,
+            );
+            armed = true;
+            _dataset0(chart)['data'] = <Object?>[...after];
+            chart.update('none');
+            expect(_legendOf(chart).legendItemsPending, exact);
+            return [...log, _items(chart.legend!), _state(chart)];
+          }
+
+          final exact = run(exact: true);
+          expect(exact.first, expected);
+          expect(exact, run(exact: false));
+        });
+      }
+
+      for (final hook in const [
+        'beforeElementsUpdate',
+        'beforeLayout',
+        'afterLayout',
+        'beforeDatasetsUpdate',
+        'afterUpdate',
+      ]) {
+        testWidgets('$type: the twins with a read in $hook', (tester) async {
+          // The steps leave the labels: their List is live in each read.
+          final steps = <void Function(Chart chart)>[
+            (chart) => _dataset0(chart)['data'] = <Object?>[5.0],
+            (chart) => _dataset0(chart)['data'] = <Object?>[],
+            (chart) => _dataset0(chart)['data'] = <Object?>[
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0,
+            ],
+            (chart) => _dataset0(chart)['backgroundColor'] = <Object?>[
+              _blue,
+              _red,
+              _green,
+            ],
+            (chart) => _dataset0(chart)['borderWidth'] = <Object?>[1.0, 2.0],
+            (chart) => _dataset0(chart)['data'] = <Object?>[4.0, 3.0],
+            (chart) => (_dataset0(chart)['data']! as List<Object?>).add(1.0),
+            (chart) => _dataset0(chart)['backgroundColor'] = <Object?>[_black],
+          ];
+
+          List<Object?> run({required bool exact}) {
+            var armed = false;
+            final log = <Object?>[];
+            final chart = _chartOf(
+              _config(
+                type,
+                dataset: _indexedColors,
+                plugins: [
+                  _hook(hook, (chart) {
+                    if (armed) log.add(_items(chart.legend!));
+                    return null;
+                  }),
+                ],
+              ),
+              exact: exact,
+            );
+            armed = true;
+            for (final step in steps) {
+              step(chart);
+              chart.update('none');
+              expect(
+                _legendOf(chart).legendItemsPending,
+                exact && hook != 'afterUpdate',
+              );
+              log.add(_state(chart));
+            }
+            log.add(_items(chart.legend!));
+            return log;
+          }
+
+          expect(run(exact: true), run(exact: false));
+        });
+      }
+    }
+  });
+
+  group('Chart.js ADR 0099: the first resolve of a build keeps its order', () {
+    test('a peek gives the raw value with no effect', () {
+      var calls = 0;
+      final object = <String, Object?>{'outerStart': 1.0};
+      final scope = <String, Object?>{
+        'borderRadius': object,
+        'borderWidth': 2.0,
+        '_fallback': (Object? prop, Object? value) {
+          calls++;
+          return undefined;
+        },
+      };
+      final resolver = createResolver([scope]);
+      expect(resolver.scopesAreNative, isTrue);
+      expect(resolver.peekKey(OptionKey.borderRadius), same(object));
+      expect(resolver.peekKey(OptionKey.borderWidth), 2.0);
+      expect(resolver.peekKey(OptionKey.spacing), same(undefined));
+      expect(calls, 0, reason: 'no sub resolver');
+      scope['borderWidth'] = 3.0;
+      expect(resolver.peekKey(OptionKey.borderWidth), 3.0, reason: 'no cache');
+      expect(resolver.readKey(OptionKey.borderWidth), 3.0);
+      scope['borderWidth'] = 4.0;
+      expect(resolver.peekKey(OptionKey.borderWidth), 3.0, reason: 'its cache');
+      expect(resolver.readKey(OptionKey.borderRadius), isA<OptionResolver>());
+      expect(calls, 1);
+      expect(resolver.peekKey(OptionKey.borderRadius), isA<OptionResolver>());
+    });
+
+    test('a Map of another class and a write of a slot are not native', () {
+      expect(
+        createResolver([_ObservedMap(<String, Object?>{})]).scopesAreNative,
+        isFalse,
+      );
+      final resolver = createResolver([<String, Object?>{}]);
+      expect(resolver.scopesAreNative, isTrue);
+      resolver['_scopes'] = <Object?>[];
+      expect(resolver.scopesAreNative, isFalse);
+    });
+
+    for (final type in _kinds) {
+      for (final display in const [false, true]) {
+        final name = '$type: display $display';
+
+        testWidgets('$name: a function _fallback past the first list', (
+          tester,
+        ) async {
+          // A sub resolver of the option `borderRadius` calls the function.
+          // The ordinary build makes it after the context of the first resolve.
+          List<Object?> run({required bool exact}) {
+            var armed = false;
+            final log = <Object?>[];
+            late final Chart chart;
+            chart = _chartOf(
+              _config(
+                type,
+                legend: {'display': display},
+                dataset: {
+                  'borderColor': <Object?>[_blue, _black],
+                  'borderRadius': <String, Object?>{'outerStart': 1.0},
+                  '_fallback': (Object? prop, Object? value) {
+                    if (armed) log.add([prop, _firstArcState(chart)]);
+                    return undefined;
+                  },
+                },
+              ),
+              exact: exact,
+            );
+            _changeFirstArc(chart);
+            armed = true;
+            chart.update('none');
+            armed = false;
+            return log;
+          }
+
+          final exact = run(exact: true);
+          expect(exact, isNotEmpty);
+          expect((exact.first! as List<Object?>)[1], 'default/false/raw=9.0');
+          expect(exact, run(exact: false));
+        });
+
+        testWidgets('$name: a throwing _fallback past the first list', (
+          tester,
+        ) async {
+          List<Object?> run({required bool exact}) {
+            var armed = false;
+            final chart = _chartOf(
+              _config(
+                type,
+                legend: {'display': display},
+                dataset: {
+                  'borderColor': <Object?>[_blue, _black],
+                  'borderRadius': <String, Object?>{'outerStart': 1.0},
+                  '_fallback': (Object? prop, Object? value) {
+                    if (armed) throw StateError('fallback');
+                    return undefined;
+                  },
+                },
+              ),
+              exact: exact,
+            );
+            _changeFirstArc(chart);
+            armed = true;
+            expect(() => chart.update('none'), throwsStateError);
+            armed = false;
+            return [_firstArcState(chart)];
+          }
+
+          final exact = run(exact: true);
+          expect(exact, ['default/false/raw=9.0']);
+          expect(exact, run(exact: false));
+        });
+
+        testWidgets('$name: a Map of another class past the first list', (
+          tester,
+        ) async {
+          List<Object?> run({required bool exact}) {
+            var armed = false;
+            final log = <Object?>[];
+            late final Chart chart;
+            chart = _chartOf(
+              _config(
+                type,
+                legend: {'display': display},
+                dataset: {
+                  'borderColor': <Object?>[_blue, _black],
+                  'borderRadius': _ObservedMap(
+                    <String, Object?>{'outerStart': 1.0},
+                    (key) {
+                      if (armed) log.add([key, _firstArcState(chart)]);
+                    },
+                  ),
+                },
+              ),
+              exact: exact,
+            );
+            _changeFirstArc(chart);
+            armed = true;
+            chart.update('none');
+            armed = false;
+            return log;
+          }
+
+          final exact = run(exact: true);
+          expect(exact, isNotEmpty);
+          expect((exact.first! as List<Object?>)[1], 'default/false/raw=9.0');
+          expect(exact, run(exact: false));
+        });
+      }
+
+      testWidgets('$type: a Map of another class in the labels', (
+        tester,
+      ) async {
+        // The ordinary build reads `filter` after the contexts of a resolve.
+        List<Object?> run({required bool exact}) {
+          var armed = false;
+          final log = <Object?>[];
+          late final Chart chart;
+          chart = _chartOf(
+            _config(
+              type,
+              legend: {
+                'labels': _ObservedMap(<String, Object?>{}, (key) {
+                  if (armed && key == 'filter') {
+                    log.add(_firstArcState(chart));
+                  }
+                }),
+              },
+              dataset: _indexedColors,
+            ),
+            exact: exact,
+          );
+          _changeFirstArc(chart);
+          armed = true;
+          chart.update('none');
+          armed = false;
+          return [log, _state(chart)];
+        }
+
+        final exact = run(exact: true);
+        expect((exact.first! as List<Object?>).first, 'default/false/raw=9.0');
+        expect(exact, run(exact: false));
+      });
+
+      testWidgets('$type: a Map of another class in the legend', (
+        tester,
+      ) async {
+        // The ordinary build reads `reverse` after the contexts of a resolve.
+        List<Object?> run({required bool exact}) {
+          var armed = false;
+          final log = <Object?>[];
+          late final Chart chart;
+          chart = _chartOf(
+            _config(
+              type,
+              dataset: _indexedColors,
+              options: {
+                'plugins': <String, Object?>{
+                  'legend': _ObservedMap(
+                    <String, Object?>{
+                      'display': false,
+                      'labels': <String, Object?>{},
+                    },
+                    (key) {
+                      if (armed && key == 'reverse') {
+                        log.add(_firstArcState(chart));
+                      }
+                    },
+                  ),
+                },
+              },
+            ),
+            exact: exact,
+          );
+          _changeFirstArc(chart);
+          armed = true;
+          chart.update('none');
+          armed = false;
+          return [log, _state(chart)];
+        }
+
+        final exact = run(exact: true);
+        expect((exact.first! as List<Object?>).first, 'default/false/raw=9.0');
+        expect(exact, run(exact: false));
+      });
+
+      for (final key in const ['reverse', 'display']) {
+        testWidgets('$type: an object at the legend key $key', (tester) async {
+          // Its read makes a sub resolver, which calls the function _fallback.
+          List<Object?> run({required bool exact}) {
+            var armed = false;
+            final log = <Object?>[];
+            late final Chart chart;
+            chart = _chartOf(
+              _config(
+                type,
+                dataset: _indexedColors,
+                legend: {
+                  key: <String, Object?>{},
+                  '_fallback': (Object? prop, Object? value) {
+                    if (armed && prop == key) log.add(_firstArcState(chart));
+                    return undefined;
+                  },
+                },
+              ),
+              exact: exact,
+            );
+            _changeFirstArc(chart);
+            armed = true;
+            chart.update('none');
+            armed = false;
+            return [log, _state(chart)];
+          }
+
+          final exact = run(exact: true);
+          expect(
+            (exact.first! as List<Object?>).first,
+            'default/false/raw=9.0',
+          );
+          expect(exact, run(exact: false));
+        });
+      }
+
+      testWidgets('$type: a user arc at index 0 changes an option', (
+        tester,
+      ) async {
+        // The ordinary resolve stops at the first list. It reads `borderWidth`
+        // after the context of that arc, where user code can change it. The
+        // layout build gives the item; the dataset update has a new resolver.
+        List<Object?> run({required bool exact}) {
+          var armed = false;
+          final log = <Object?>[];
+          final chart = _chartOf(
+            _config(
+              type,
+              dataset: _indexedColors,
+              plugins: [
+                _hook('afterLayout', (chart) {
+                  if (armed) log.add(_fillAndWidth(chart));
+                  return null;
+                }),
+              ],
+            ),
+            exact: exact,
+          );
+          final dataset = _dataset0(chart);
+          chart.getDatasetMeta(0).data[0] = _UserArc(<Object?>[], () {
+            if (armed) dataset['borderWidth'] = 9.0;
+          });
+          armed = true;
+          chart.update('none');
+          armed = false;
+          return [log, _arcs(chart)];
+        }
+
+        final exact = run(exact: true);
+        expect(
+          ((exact.first! as List<Object?>).first! as List<Object?>).first,
+          [
+            _red,
+            9.0,
+          ],
+        );
+        expect(exact, run(exact: false));
+      });
+    }
+  });
+
   group('Chart.js ADR 0099: the rows of differences.md', () {
     testWidgets('a read after an in-place change of a color list', (
       tester,
@@ -3330,6 +3855,97 @@ void main() {
       expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _black);
       expect(_legendOf(chart).legendItemsPending, isFalse);
     });
+
+    // The read cannot run the build when an index of a label reaches an entry
+    // that is no native value of its key, a List has no entries, or item 0 of
+    // the raw `borderDash` List is an object. No update ran after the edit.
+    for (final (name, edit)
+        in <
+          (String, void Function(List<Object?>, List<Object?>, List<Object?>))
+        >[
+          (
+            'a color List became empty',
+            (colors, widths, dash) => colors.clear(),
+          ),
+          (
+            'a color entry became an object',
+            (colors, widths, dash) => colors[1] = <String, Object?>{'a': 1},
+          ),
+          (
+            'a color entry became a function',
+            (colors, widths, dash) => colors[1] = _keepItem,
+          ),
+          (
+            'a width List became empty',
+            (colors, widths, dash) => widths.clear(),
+          ),
+          (
+            'a width entry became a String',
+            (colors, widths, dash) => widths[1] = '3',
+          ),
+          (
+            'a width entry became null',
+            (colors, widths, dash) => widths[1] = null,
+          ),
+          (
+            'a width entry became an object',
+            (colors, widths, dash) => widths[1] = <String, Object?>{'a': 1},
+          ),
+          (
+            'a width entry became a function',
+            (colors, widths, dash) => widths[1] = _keepItem,
+          ),
+          (
+            'item 0 of the dash List became an object',
+            (colors, widths, dash) => dash[0] = <String, Object?>{'a': 1},
+          ),
+        ]) {
+      testWidgets('a read after $name gives the last built items', (
+        tester,
+      ) async {
+        (List<Object?>, bool) run({required bool exact}) {
+          final chart = _chartOf(
+            _config(
+              'pie',
+              dataset: {
+                'backgroundColor': <Object?>[_red, _red, _red],
+                'borderWidth': <Object?>[1.0, 1.0, 1.0],
+                'borderDash': <Object?>[1.0, 1.0],
+              },
+            ),
+            exact: exact,
+          );
+          final colors = <Object?>[_green, _blue, _green];
+          final widths = <Object?>[2.0, 3.0, 4.0];
+          final dash = <Object?>[2.0, 2.0];
+          _dataset0(chart)
+            ..['backgroundColor'] = colors
+            ..['borderWidth'] = widths
+            ..['borderDash'] = dash;
+          chart.update('none');
+          edit(colors, widths, dash);
+          return (_fillAndWidth(chart), _legendOf(chart).legendItemsPending);
+        }
+
+        // The items of the last build, from before the last update. The build
+        // still waits.
+        final (items, pending) = run(exact: true);
+        expect(items, const [
+          [_red, 1.0],
+          [_red, 1.0],
+          [_red, 1.0],
+        ]);
+        expect(pending, isTrue);
+        // Upstream, and the twin: the snapshot of the last update.
+        final (twinItems, twinPending) = run(exact: false);
+        expect(twinItems, const [
+          [_green, 2.0],
+          [_blue, 3.0],
+          [_green, 4.0],
+        ]);
+        expect(twinPending, isFalse);
+      });
+    }
 
     testWidgets('a read gives the plan of the mark after a clear of the '
         'caches, as the snapshot does', (tester) async {

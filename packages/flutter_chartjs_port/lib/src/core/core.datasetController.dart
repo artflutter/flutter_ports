@@ -1160,12 +1160,13 @@ class DatasetController
   List<OptionKey> get nativeLegendLabelKeys => const [];
 
   /// The source of [getStyle] while a hidden legend builds its items at a read
-  /// (Chart.js ADR 0099). That build runs no user code, and a read writes no
-  /// context, as a read of the snapshot of upstream writes none. Dart `null` at
-  /// each other time.
+  /// (Chart.js ADR 0099), with the count of the arcs at the mark of that build:
+  /// an update can rebuild the arcs before its own mark. That build runs no
+  /// user code, and a read writes no context, as a read of the snapshot of
+  /// upstream writes none. Dart `null` at each other time.
   @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, a later build, no writes.
-  IndexedElementStyles? legendStyles;
+  ({IndexedElementStyles styles, int arcCount})? legendStyles;
 
   /// Whether `getStyle(index)` of a data element reads a cached `default`
   /// entry of [_resolveElementOptions]: the read then runs no context and no
@@ -1959,9 +1960,9 @@ class DatasetController
     bool? active,
   ]) {
     // DIVERGES(chartjs): adapt-hidden-legend-items, a later build, no writes.
-    final styles = legendStyles;
-    if (styles != null) {
-      return styles.at(index! < cachedMeta.data.length ? index : this.index);
+    final legend = legendStyles;
+    if (legend != null) {
+      return legend.styles.at(index! < legend.arcCount ? index : this.index);
     }
     final mode = jsTruthy(active) ? 'active' : 'default';
     return index == null && cachedMeta.dataset != null
