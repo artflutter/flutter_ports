@@ -316,6 +316,10 @@ const double _sectorAngleTolerance = 1e-9;
 /// [UiPathBuilder.singleSector] reads.
 const int _maxSectorItems = 8;
 
+/// The count of commands that a pending sector stands for: any count above 2
+/// (see [UiPathBuilder.setPendingSector]).
+const int _sectorOps = 3;
+
 /// Whether the angles [a] and [b] are the same direction, within
 /// [_sectorAngleTolerance].
 bool _sameAngle(double a, double b) {
@@ -430,6 +434,7 @@ final class UiPathBuilder implements CanvasPath {
   /// full circle (see [singleCircle]). The later commands of the path go to
   /// it directly.
   ui.Path get path {
+    if (_sector) _materializeSector();
     if (!_built) _build();
     return _path;
   }
@@ -604,6 +609,76 @@ final class UiPathBuilder implements CanvasPath {
     _codes[_deferred++] = _closeCode;
   }
 
+  // An arc sector that the context drew (Chart.js ADR 0097), in user space,
+  // with the transform of its draw. Its commands stay out of the buffer until
+  // another command or a read of the path needs them: most arcs never need
+  // them, and they take four cosines and sines.
+  bool _sector = false;
+  double _sectorX = 0;
+  double _sectorY = 0;
+  double _sectorOuter = 0;
+  double _sectorInner = 0;
+  double _sectorStart = 0;
+  double _sectorEnd = 0;
+  final UiTransform _sectorTransform = UiTransform();
+
+  /// Makes the path the sector of `ArcElement.draw` with no offset, spacing or
+  /// rounded corner, without its commands: `beginPath()` and the calls of
+  /// [_materializeSector]. [t] is the current transform of the draw.
+  @internal
+  void setPendingSector(
+    double x,
+    double y,
+    double outerRadius,
+    double innerRadius,
+    double startAngle,
+    double endAngle,
+    UiTransform t,
+  ) {
+    reset();
+    _sector = true;
+    _sectorX = x;
+    _sectorY = y;
+    _sectorOuter = outerRadius;
+    _sectorInner = innerRadius;
+    _sectorStart = startAngle;
+    _sectorEnd = endAngle;
+    _sectorTransform.copyFrom(t);
+    hasSubpath = true;
+    // The sector has more than two commands: [isEmpty], [singleRect],
+    // [singleRRect] and [shapePair] read this count.
+    _ops = _sectorOps;
+  }
+
+  /// Gives the path the commands of the pending sector: the calls of `pathArc`
+  /// (element.arc.ts:138) for a circular arc with no offset, no spacing and no
+  /// rounded corner. For a wedge, the two inner arcs of upstream have NaN
+  /// angles and add nothing.
+  void _materializeSector() {
+    _sector = false;
+    _ops = 0;
+    hasSubpath = false;
+    final current = transform;
+    transform = _sectorTransform;
+    final x = _sectorX;
+    final y = _sectorY;
+    final outer = _sectorOuter;
+    final inner = _sectorInner;
+    final start = _sectorStart;
+    final end = _sectorEnd;
+    final middle = (start + end) / 2;
+    arc(x, y, outer, start, middle);
+    arc(x, y, outer, middle, end);
+    lineTo(x + inner * math.cos(end), y + inner * math.sin(end));
+    if (inner > 0) {
+      arc(x, y, inner, end, middle, true);
+      arc(x, y, inner, middle, start, true);
+    }
+    lineTo(x + outer * math.cos(start), y + outer * math.sin(start));
+    closePath();
+    transform = current;
+  }
+
   // A full circle that `arc` added to an empty path, in bitmap space. It
   // stays out of [_path] until another command or a read of [path] needs
   // it, so that the context can draw it with `drawCircle`: a chart draws
@@ -693,6 +768,34 @@ final class UiPathBuilder implements CanvasPath {
   @internal
   double get circleRadius => _circleR;
 
+  /// Whether the deferred commands are one `moveTo` and one `lineTo`: the
+  /// context strokes them with `drawLine` (Chart.js ADR 0097). The commands
+  /// stay deferred for a later read of the path.
+  @internal
+  bool get hasSingleLine =>
+      _deferred == 2 &&
+      !_built &&
+      !_circle &&
+      !_sector &&
+      _codes[0] == _moveCode &&
+      _codes[1] == _lineCode;
+
+  /// Bitmap-space start x; read only when [hasSingleLine] is true.
+  @internal
+  double get lineX0 => _numbers[0];
+
+  /// Bitmap-space start y; read only when [hasSingleLine] is true.
+  @internal
+  double get lineY0 => _numbers[1];
+
+  /// Bitmap-space end x; read only when [hasSingleLine] is true.
+  @internal
+  double get lineX1 => _numbers[2];
+
+  /// Bitmap-space end y; read only when [hasSingleLine] is true.
+  @internal
+  double get lineY1 => _numbers[3];
+
   /// The circular sector of the path in bitmap space, when the deferred
   /// commands are one subpath that fills a wedge with its center or a ring
   /// sector (canvas-cuts-plan.md §7, N4). The context fills it with
@@ -713,6 +816,7 @@ final class UiPathBuilder implements CanvasPath {
   /// Both shapes are simple, so the nonzero and the even-odd rule fill the
   /// same pixels.
   UiSector? get singleSector {
+    if (_sector) _materializeSector();
     if (_built || _circle || _deferred < 2) return null;
     final codes = _codes;
     final n = _numbers;
@@ -880,6 +984,7 @@ final class UiPathBuilder implements CanvasPath {
     _shape0 = null;
     _shape1 = null;
     _circle = false;
+    _sector = false;
   }
 
   /// Adds the pending circle to the commands, as [_nativeArc] adds a full
@@ -935,6 +1040,7 @@ final class UiPathBuilder implements CanvasPath {
 
   @override
   void closePath() {
+    if (_sector) _materializeSector();
     if (!hasSubpath) return;
     if (_circle && !_circleClosed) {
       _circleClosed = true;
@@ -947,6 +1053,7 @@ final class UiPathBuilder implements CanvasPath {
 
   @override
   void moveTo(double x, double y) {
+    if (_sector) _materializeSector();
     if (!x.isFinite || !y.isFinite || !transform.isInvertible) return;
     final t = transform;
     _moveToMapped(t.mapX(x, y), t.mapY(x, y));
@@ -955,6 +1062,7 @@ final class UiPathBuilder implements CanvasPath {
 
   @override
   void lineTo(double x, double y) {
+    if (_sector) _materializeSector();
     if (!x.isFinite || !y.isFinite || !transform.isInvertible) return;
     _lineOrMove(x, y);
     _ops++;
@@ -962,6 +1070,7 @@ final class UiPathBuilder implements CanvasPath {
 
   @override
   void quadraticCurveTo(double cpx, double cpy, double x, double y) {
+    if (_sector) _materializeSector();
     if (!cpx.isFinite ||
         !cpy.isFinite ||
         !x.isFinite ||
@@ -989,6 +1098,7 @@ final class UiPathBuilder implements CanvasPath {
     double x,
     double y,
   ) {
+    if (_sector) _materializeSector();
     if (!cp1x.isFinite ||
         !cp1y.isFinite ||
         !cp2x.isFinite ||
@@ -1011,6 +1121,7 @@ final class UiPathBuilder implements CanvasPath {
 
   @override
   void rect(double x, double y, double w, double h) {
+    if (_sector) _materializeSector();
     if (!x.isFinite ||
         !y.isFinite ||
         !w.isFinite ||
@@ -1055,6 +1166,7 @@ final class UiPathBuilder implements CanvasPath {
   /// [_roundRectSegments]. Then a new subpath starts at (x, y).
   @override
   void roundRect(double x, double y, double w, double h, [Object? radii]) {
+    if (_sector) _materializeSector();
     final g = roundRectGeometry(x, y, w, h, radii);
     final t = transform;
     if (g == null || !t.isInvertible) return;
@@ -1154,6 +1266,7 @@ final class UiPathBuilder implements CanvasPath {
     double endAngle, [
     bool counterclockwise = false,
   ]) {
+    if (_sector) _materializeSector();
     if (!x.isFinite ||
         !y.isFinite ||
         !radius.isFinite ||
@@ -1202,6 +1315,7 @@ final class UiPathBuilder implements CanvasPath {
     double endAngle, [
     bool counterclockwise = false,
   ]) {
+    if (_sector) _materializeSector();
     if (!x.isFinite ||
         !y.isFinite ||
         !radiusX.isFinite ||
@@ -1222,6 +1336,7 @@ final class UiPathBuilder implements CanvasPath {
 
   @override
   void arcTo(double x1, double y1, double x2, double y2, double radius) {
+    if (_sector) _materializeSector();
     if (!x1.isFinite ||
         !y1.isFinite ||
         !x2.isFinite ||
