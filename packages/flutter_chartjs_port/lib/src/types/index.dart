@@ -1250,6 +1250,62 @@ abstract interface class LineElementWrites {
   set points(List<Element> value);
 }
 
+/// The typed writes of a controller into an arc element, a port-only interface
+/// (Chart.js ADR 0102): the keys of the literals of
+/// controller.doughnut.js:278-289 and controller.polarArea.js:194-203, written
+/// where `updateElement` assigns them in a direct update.
+///
+/// The concrete `ArcElement` of `element.arc.dart` implements it, as
+/// [PointElementWrites] states for a point. A controller writes through it only
+/// when [typedWrites] is true. An element of a user subclass takes
+/// `updateElement`, so that its `operator []=` sees each write. The getters
+/// pair the setters.
+abstract interface class ArcElementWrites {
+  /// `Element.typedWrites`: true for an element of the built-in class itself,
+  /// as [PointElementWrites.typedWrites].
+  bool get typedWrites;
+
+  /// core.element.ts:11 `x`. NaN in the `undefined` state.
+  double get x;
+
+  set x(double value);
+
+  /// core.element.ts:12 `y`. NaN in the `undefined` state.
+  double get y;
+
+  set y(double value);
+
+  /// element.arc.ts:408 `startAngle`. NaN in the `undefined` state.
+  double get startAngle;
+
+  set startAngle(double value);
+
+  /// element.arc.ts:403 `endAngle`. NaN in the `undefined` state.
+  double get endAngle;
+
+  set endAngle(double value);
+
+  /// element.arc.ts:402 `circumference`. NaN in the `undefined` state.
+  double get circumference;
+
+  set circumference(double value);
+
+  /// element.arc.ts:406 `outerRadius`. NaN in the `undefined` state.
+  double get outerRadius;
+
+  set outerRadius(double value);
+
+  /// element.arc.ts:405 `innerRadius`. NaN in the `undefined` state.
+  double get innerRadius;
+
+  set innerRadius(double value);
+
+  /// core.element.ts:14 `options`. Dart `null` stands for JS `undefined`.
+  Object? get options;
+
+  set options(Object? value);
+}
+
 /// simpleArc.js:4 `simpleArc`: the members that filler.drawing.js calls by
 /// name on a fill target (:153, :201). It is not a declaration of
 /// `index.d.ts`. The class `SimpleArc` of `plugin.filler/simpleArc.dart`
