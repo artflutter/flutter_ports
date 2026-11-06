@@ -27,6 +27,13 @@ const List<ChangeLogEntry> changeLog = [
     'Lab: the web build is on GitHub Pages. A small service worker adds the '
         'headers that rendering threads need, and the header of the page shows '
         'the mode. A browser that takes the JavaScript build has no threads.',
+    'Lab: saved comparisons rank each setup, mark the winner and the best '
+        'value of each column, and sort by a click on a column header. A '
+        'resize keeps them in view, and rows of another chart size rank apart. '
+        'Small differences are ties: 1% of FPS, 1 point of over budget, one '
+        'display frame of frame p90 and 10% of the UI and raster work.',
+    'Lab: on a phone, Run and Capture move the chart into view first, and the '
+        'header shows icons and takes less height.',
     'Lab: a note that does not scroll says why a scroll or another outside '
         'cause stopped a test, and why a web page has its mode.',
     'Toolchain: Flutter 3.50.0-0.4.pre, the beta channel. Material comes from '
@@ -56,23 +63,49 @@ const List<ChangeLogEntry> changeLog = [
 /// run.
 class ChangeLogButton extends StatelessWidget {
   /// Creates the button.
-  const ChangeLogButton({required this.enabled, super.key});
+  const ChangeLogButton({
+    required this.enabled,
+    this.iconOnly = false,
+    super.key,
+  });
 
   /// Whether a press opens the log.
   final bool enabled;
 
+  /// Whether the button shows only its icon, with a tooltip, as on a phone.
+  final bool iconOnly;
+
   @override
-  Widget build(BuildContext context) => TextButton.icon(
-    key: const ValueKey('changelog'),
-    onPressed: enabled
+  Widget build(BuildContext context) {
+    final open = enabled
         ? () => showDialog<void>(
             context: context,
             builder: (_) => const _ChangeLogDialog(),
           )
-        : null,
-    icon: const Icon(Icons.history),
-    label: const Text('Change log'),
-  );
+        : null;
+    const key = ValueKey('changelog');
+    return iconOnly
+        ? IconButton(
+            key: key,
+            style: IconButton.styleFrom(
+              fixedSize: const Size.square(36),
+              minimumSize: const Size.square(36),
+              padding: EdgeInsets.zero,
+              iconSize: 20,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              foregroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            tooltip: 'Change log',
+            onPressed: open,
+            icon: const Icon(Icons.history),
+          )
+        : TextButton.icon(
+            key: key,
+            onPressed: open,
+            icon: const Icon(Icons.history),
+            label: const Text('Change log'),
+          );
+  }
 }
 
 class _ChangeLogDialog extends StatelessWidget {

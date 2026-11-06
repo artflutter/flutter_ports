@@ -42,6 +42,10 @@ VS Code Run and Debug includes `chart_benchmark_lab`,
 root `.vscode/launch.json`. Each one runs on the device of the VS Code picker. The
 wasm configuration needs Chrome in the picker.
 
+Run, Capture and Capture all first scroll the chart into view, because a test
+measures only a chart in full view. Below 600 pixels of width, the header actions are
+icons with tooltips, so that the chart fits below the header on a phone.
+
 A note in the floating slot of the page (`lib/ui/page_note.dart`) stays in place
 when the page scrolls. It says why a scroll or another outside cause stopped a test,
 because the status line below the chart can be out of view. Otherwise, on the web,
@@ -83,10 +87,18 @@ there when a change moves a figure.
   so a radar batch shows 1/3 through 3/3. Cancel, hide, scroll or resize stops the
   whole batch; already completed rows remain. Missing engine timings stop the batch
   without fake rows.
-- **Saved comparisons:** filter by matching effective configuration, capture
-  duration, viewport, DPR and display rate. Libraries are deliberately excluded
-  from this comparison key. Copy all captures as JSON, with individual settings
-  and package versions; unlike runs are never silently averaged.
+- **Saved comparisons:** filter by matching effective configuration and capture
+  duration, so that a resize keeps the rows in view. Rows of another chart size,
+  DPR or display rate stay visible with their size and rank apart. Libraries are
+  deliberately excluded from this comparison key. Copy all captures as JSON, with
+  individual settings and package versions; unlike runs are never silently
+  averaged. The table ranks
+  each setup on its own by FPS, then over budget, frame p90, and UI + raster p90.
+  A difference inside a margin is a tie: 1% of FPS, 1 point of over budget, one
+  display frame of frame p90 and 10% of the work. It marks the winner when at least
+  two libraries of one setup differ, shows how many times each row is slower, and
+  marks the best value of each column. A click on a column header sorts by that
+  column.
 
 On macOS, native hidden/occluded/minimized-window events cancel captures. App
 lifecycle visibility loss, scrolling the chart, resizing, changing displays or

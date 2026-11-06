@@ -8,6 +8,7 @@ import 'package:chart_benchmark_lab/benchmark/web_mode.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
 import 'package:chart_benchmark_lab/ui/change_log.dart';
 import 'package:chart_benchmark_lab/ui/page_note.dart';
+import 'package:chart_benchmark_lab/ui/results_table.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -40,8 +41,14 @@ class _BenchmarkPageState extends State<BenchmarkPage>
   );
   bool _matchingOnly = true;
   final GlobalKey _plotKey = GlobalKey();
+
+  /// Keeps the sort of the table when a resize changes the page layout.
+  final GlobalKey _resultsKey = GlobalKey();
   Timer? _displayRetry;
   bool _webModeNoteClosed = false;
+
+  /// The height of the scroll view of the chart, from the last layout.
+  double _chartViewHeight = double.infinity;
   int _displayRetries = 0;
 
   @override
@@ -104,15 +111,16 @@ class _BenchmarkPageState extends State<BenchmarkPage>
       floatingActionButton: _pageNote(),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(_isNarrow(context) ? 12 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _header(context),
-              const SizedBox(height: 20),
+              SizedBox(height: _isNarrow(context) ? 10 : 20),
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
+                    _chartViewHeight = constraints.maxHeight;
                     final content = _content(context);
                     if (constraints.maxWidth >= 1000) {
                       return Row(
@@ -227,158 +235,256 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     child: child,
   );
 
-  void _checkChartVisibility() {
-    if (!controller.running && !controller.finishing) return;
+  /// The chart fits inside its scroll view, because a test measures only a
+  /// chart in full view. Only a short window takes less than the usual height,
+  /// and a result keeps its size in its comparison key.
+  double _plotHeight(BuildContext context) => math.min(
+    MediaQuery.sizeOf(context).width < 700 ? 300 : 420,
+    math.max(160, _chartViewHeight - 8),
+  );
+
+  /// Whether the full chart is inside its scroll view.
+  bool _chartInView() {
     final plot = _plotKey.currentContext?.findRenderObject();
-    if (plot is! RenderBox || !plot.hasSize) return;
+    if (plot is! RenderBox || !plot.hasSize) return true;
     final viewport = RenderAbstractViewport.maybeOf(plot);
-    if (viewport == null || viewport is! RenderBox) return;
+    if (viewport == null || viewport is! RenderBox) return true;
     final viewportBox = viewport as RenderBox;
     final visible = (viewportBox.localToGlobal(Offset.zero) & viewportBox.size)
         .inflate(1);
     final bounds = plot.localToGlobal(Offset.zero) & plot.size;
-    if (!visible.contains(bounds.topLeft) ||
-        !visible.contains(bounds.bottomRight)) {
-      controller.pause(
-        'The test stopped because part of the chart is out of view. A test '
-        'measures only a chart that a person can see in full. Scroll until the '
-        'full chart is in view, run again, and do not scroll until the test '
-        'ends.',
-      );
-    }
+    return visible.contains(bounds.topLeft) &&
+        visible.contains(bounds.bottomRight);
   }
 
-  Widget _header(BuildContext context) => Wrap(
-    alignment: WrapAlignment.spaceBetween,
-    crossAxisAlignment: WrapCrossAlignment.center,
-    spacing: 16,
-    runSpacing: 12,
-    children: [
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: const Color(0xff4f46e5),
-              borderRadius: BorderRadius.circular(13),
+  /// Whether the scroll view of the chart is shorter than the chart.
+  bool _windowTooShort() {
+    final plot = _plotKey.currentContext?.findRenderObject();
+    if (plot is! RenderBox || !plot.hasSize) return false;
+    final Object? viewport = RenderAbstractViewport.maybeOf(plot);
+    return viewport is RenderBox && viewport.size.height < plot.size.height;
+  }
+
+  void _checkChartVisibility() {
+    if (!controller.running && !controller.finishing) return;
+    if (_chartInView()) return;
+    controller.pause(
+      _windowTooShort()
+          ? 'The test stopped because this window is too short to show the '
+                'full chart. Make the window taller, or turn the phone '
+                'upright, and run again.'
+          : 'The test stopped because part of the chart is out of view. A '
+                'test measures only a chart that a person can see in full. '
+                'Scroll until the full chart is in view, run again, and do not '
+                'scroll until the test ends.',
+    );
+  }
+
+  /// Moves the chart into view, then does [start]. On a phone the chart is
+  /// below the controls, and a test measures only a chart in full view.
+  Future<void> _withChartInView(VoidCallback start) async {
+    final plot = _plotKey.currentContext;
+    if (plot != null && !_chartInView()) {
+      await Scrollable.ensureVisible(
+        plot,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    }
+    if (mounted) start();
+  }
+
+  Widget _header(BuildContext context) {
+    final narrow = _isNarrow(context);
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 16,
+      runSpacing: narrow ? 6 : 12,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: narrow ? 36 : 46,
+              height: narrow ? 36 : 46,
+              decoration: BoxDecoration(
+                color: const Color(0xff4f46e5),
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: const Icon(
+                Icons.monitor_heart_outlined,
+                color: Colors.white,
+              ),
             ),
-            child: const Icon(
-              Icons.monitor_heart_outlined,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Chart benchmark lab',
-                  style: Theme.of(context).textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.w700),
-                ),
-                const Text(
-                  'One dataset · four native Flutter engines',
-                  style: TextStyle(color: Color(0xff64748b), fontSize: 12),
-                ),
-                const Tooltip(
-                  message:
-                      'Dart $_sdkDart\n'
-                      'Engine $_sdkEngine\n'
-                      'Framework $_sdkFramework',
-                  child: Text(
-                    'Flutter $_sdkVersion'
-                    '${_sdkChannel == "" ? "" : " · $_sdkChannel"}',
-                    key: ValueKey('flutter.version'),
-                    style: TextStyle(color: Color(0xff64748b), fontSize: 12),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Chart benchmark lab',
+                    style: Theme.of(context).textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.w700),
                   ),
-                ),
-              ],
+                  if (!narrow)
+                    const Text(
+                      'One dataset · four native Flutter engines',
+                      style: TextStyle(color: Color(0xff64748b), fontSize: 12),
+                    ),
+                  const Tooltip(
+                    message:
+                        'Dart $_sdkDart\n'
+                        'Engine $_sdkEngine\n'
+                        'Framework $_sdkFramework',
+                    child: Text(
+                      'Flutter $_sdkVersion'
+                      '${_sdkChannel == "" ? "" : " · $_sdkChannel"}',
+                      key: ValueKey('flutter.version'),
+                      style: TextStyle(color: Color(0xff64748b), fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          _badge(
-            kDebugMode
-                ? 'DEBUG · use profile for timing'
-                : kProfileMode
-                ? 'PROFILE'
-                : 'RELEASE',
-            kDebugMode ? const Color(0xff9a6700) : const Color(0xff15803d),
-          ),
-          if (webMode() case final mode?) _badge(mode, const Color(0xff475569)),
-          ChangeLogButton(
-            enabled:
-                !controller.running &&
-                !controller.finishing &&
-                !controller.batchCapturing,
-          ),
-          OutlinedButton.icon(
-            key: const ValueKey('run'),
-            onPressed: controller.controlsLocked || !controller.canRun
-                ? null
-                : () {
-                    if (controller.running) {
-                      controller.pause();
-                    } else {
-                      controller.start();
-                    }
-                  },
-            icon: Icon(controller.running ? Icons.pause : Icons.play_arrow),
-            label: Text(controller.running ? 'Pause' : 'Run'),
-          ),
-          FilledButton.icon(
-            key: const ValueKey('capture'),
-            onPressed: controller.batchCapturing
-                ? null
-                : controller.capturing || controller.finishing
-                ? () => controller.pause()
-                : !controller.canRun
-                ? null
-                : () {
-                    controller
-                      ..pause()
-                      ..start(capture: true);
-                  },
-            icon: Icon(
-              controller.capturing || controller.finishing
-                  ? Icons.stop
-                  : Icons.fiber_manual_record,
+          ],
+        ),
+        Wrap(
+          spacing: narrow ? 4 : 8,
+          runSpacing: narrow ? 4 : 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            _badge(
+              kDebugMode
+                  ? 'DEBUG · use profile for timing'
+                  : kProfileMode
+                  ? 'PROFILE'
+                  : 'RELEASE',
+              kDebugMode ? const Color(0xff9a6700) : const Color(0xff15803d),
             ),
-            label: Text(
-              controller.capturing || controller.finishing
+            if (webMode() case final mode?)
+              _badge(mode, const Color(0xff475569)),
+            ChangeLogButton(
+              iconOnly: narrow,
+              enabled:
+                  !controller.running &&
+                  !controller.finishing &&
+                  !controller.batchCapturing,
+            ),
+            _action(
+              key: 'run',
+              narrow: narrow,
+              label: controller.running ? 'Pause' : 'Run',
+              icon: controller.running ? Icons.pause : Icons.play_arrow,
+              onPressed: controller.controlsLocked || !controller.canRun
+                  ? null
+                  : () {
+                      if (controller.running) {
+                        controller.pause();
+                      } else {
+                        unawaited(_withChartInView(controller.start));
+                      }
+                    },
+            ),
+            _action(
+              key: 'capture',
+              narrow: narrow,
+              filled: true,
+              label: controller.capturing || controller.finishing
                   ? 'Cancel capture'
                   : 'Capture ${controller.captureSeconds}s',
+              icon: controller.capturing || controller.finishing
+                  ? Icons.stop
+                  : Icons.fiber_manual_record,
+              onPressed: controller.batchCapturing
+                  ? null
+                  : controller.capturing || controller.finishing
+                  ? () => controller.pause()
+                  : !controller.canRun
+                  ? null
+                  : () => unawaited(
+                      _withChartInView(() {
+                        controller
+                          ..pause()
+                          ..start(capture: true);
+                      }),
+                    ),
             ),
-          ),
-          OutlinedButton.icon(
-            key: const ValueKey('capture.all'),
-            onPressed: controller.batchCapturing
-                ? () => controller.pause()
-                : controller.controlsLocked
-                ? null
-                : controller.captureAll,
-            icon: Icon(
-              controller.batchCapturing ? Icons.stop : Icons.playlist_play,
-            ),
-            label: Text(
-              controller.batchCapturing
+            _action(
+              key: 'capture.all',
+              narrow: narrow,
+              label: controller.batchCapturing
                   ? 'Cancel all (${controller.batchPosition}/'
                         '${controller.batchTotal})'
                   : 'Capture all ${controller.captureSeconds}s',
+              icon: controller.batchCapturing
+                  ? Icons.stop
+                  : Icons.playlist_play,
+              onPressed: controller.batchCapturing
+                  ? () => controller.pause()
+                  : controller.controlsLocked
+                  ? null
+                  : () => unawaited(_withChartInView(controller.captureAll)),
             ),
-          ),
-        ],
-      ),
-    ],
-  );
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// A header action: an icon with a tooltip on a phone, else an icon and a
+  /// label.
+  Widget _action({
+    required String key,
+    required bool narrow,
+    required String label,
+    required IconData icon,
+    required VoidCallback? onPressed,
+    bool filled = false,
+  }) {
+    final id = ValueKey(key);
+    if (narrow) {
+      final scheme = Theme.of(context).colorScheme;
+      final style = IconButton.styleFrom(
+        fixedSize: const Size.square(36),
+        minimumSize: const Size.square(36),
+        padding: EdgeInsets.zero,
+        iconSize: 20,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        foregroundColor: filled ? scheme.onPrimary : scheme.primary,
+        backgroundColor: filled ? scheme.primary : null,
+      );
+      return filled
+          ? IconButton.filled(
+              key: id,
+              style: style,
+              tooltip: label,
+              onPressed: onPressed,
+              icon: Icon(icon),
+            )
+          : IconButton.outlined(
+              key: id,
+              style: style,
+              tooltip: label,
+              onPressed: onPressed,
+              icon: Icon(icon),
+            );
+    }
+    return filled
+        ? FilledButton.icon(
+            key: id,
+            onPressed: onPressed,
+            icon: Icon(icon),
+            label: Text(label),
+          )
+        : OutlinedButton.icon(
+            key: id,
+            onPressed: onPressed,
+            icon: Icon(icon),
+            label: Text(label),
+          );
+  }
 
   Widget _settings(BuildContext context, {bool card = true}) {
     final config = controller.config;
@@ -666,7 +772,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
               ),
               const SizedBox(height: 18),
               SizedBox(
-                height: MediaQuery.sizeOf(context).width < 700 ? 300 : 420,
+                height: _plotHeight(context),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final size = constraints.biggest;
@@ -807,7 +913,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                   'Deferred work can fall outside engine UI-build timings. ',
         style: TextStyle(fontSize: 12, color: Color(0xff64748b)),
       ),
-      const SizedBox(height: 12),
+      // The last rows of the table can scroll above the note over the page.
+      const SizedBox(height: 180),
     ],
   );
 
@@ -898,7 +1005,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
   Widget _results(BuildContext context) {
     final matching = controller.results
         .where(
-          (r) => !_matchingOnly || r.comparisonKey == controller.comparisonKey,
+          (r) => !_matchingOnly || r.workloadKey == controller.workloadKey,
         )
         .toList();
     return Card(
@@ -968,7 +1075,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                   controller.results.isEmpty
                       ? 'Capture a run, switch libraries, and capture again. '
                             'Results stay separate and keep their settings.'
-                      : 'No captures match this setup and viewport. '
+                      : 'No captures match this setup. '
                             'Turn off the filter to inspect earlier runs.',
                   style: const TextStyle(
                     color: Color(0xff64748b),
@@ -977,66 +1084,10 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                 ),
               )
             else
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: 22,
-                  horizontalMargin: 0,
-                  columns: const [
-                    DataColumn(label: Text('Library')),
-                    DataColumn(label: Text('Setup')),
-                    DataColumn(label: Text('FPS'), numeric: true),
-                    DataColumn(label: Text('Frame p90'), numeric: true),
-                    DataColumn(label: Text('UI p90'), numeric: true),
-                    DataColumn(label: Text('Raster p90'), numeric: true),
-                    DataColumn(label: Text('Over budget'), numeric: true),
-                  ],
-                  rows: [
-                    for (final result in matching)
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text(
-                              result.library.label,
-                              style: TextStyle(
-                                color: result.library.color,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              '${result.config.type.label} · '
-                              '${_number(result.config.count)} · '
-                              '${result.durationSeconds}s',
-                            ),
-                          ),
-                          DataCell(Text(result.metrics.fps.toStringAsFixed(1))),
-                          DataCell(
-                            Text(
-                              _milliseconds(result.metrics.intervalP90),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              '${result.metrics.uiP90.toStringAsFixed(2)} ms',
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              '${result.metrics.rasterP90.toStringAsFixed(2)} '
-                              'ms',
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              _percent(result.metrics.overBudgetPercent),
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
+              ResultsTable(
+                key: _resultsKey,
+                results: matching,
+                currentKey: controller.comparisonKey,
               ),
           ],
         ),
@@ -1051,6 +1102,10 @@ const _eyebrow = TextStyle(
   letterSpacing: 1.1,
   color: Color(0xff64748b),
 );
+
+/// A phone in the upright position, with little height above the chart.
+bool _isNarrow(BuildContext context) => MediaQuery.sizeOf(context).width < 600;
+
 String _number(int value) => value >= 1000
     ? '${(value / 1000).toStringAsFixed(value % 1000 == 0 ? 0 : 1)}k'
     : '$value';
@@ -1201,7 +1256,3 @@ class _LabelsPainter extends CustomPainter {
   bool shouldRepaint(covariant _LabelsPainter oldDelegate) =>
       oldDelegate.count != count || oldDelegate.step != step;
 }
-
-String _percent(double value) => '${value.toStringAsFixed(1)}%';
-
-String _milliseconds(double value) => '${value.toStringAsFixed(2)} ms';
