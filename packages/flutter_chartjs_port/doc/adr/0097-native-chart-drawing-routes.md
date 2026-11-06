@@ -30,7 +30,11 @@ of each picture on the UI thread (`DisplayListBuilder::DrawDisplayList`,
   each picture, and a clean layer is retained. The context never needs to retire a picture.
 - **Pixels.** The same pictures, transform and anti-aliased clip. They are byte-equal on
   `flutter_tester` at fractional offsets and at device pixel ratios of 1, 2, 2.625 and 3, with one
-  and with several pictures.
+  and with several pictures. An ancestor `ShaderMask` with a gradient at a fractional offset is the
+  exception: pixels under its gradient can differ by 1 of 255. In the cases tried, it needs content
+  with an edge on a whole device pixel at that offset. The bounds that the mask gets for its child
+  may explain it; the cause is not established. A test pins the bound. 240 snapshots of a real chart
+  under 15 kinds of ancestors show no other difference.
 - **Raster, from the engine source; not measured here.** The frame dispatches the same nested
   display lists, one level less deep. Each picture adds one layer: a `Preroll`, a save, a zero
   translation and a restore. A partial repaint walks the children once, with a deep compare only for
@@ -59,8 +63,13 @@ The ordinary path stays as the current path. A pending sector keeps the argument
 transform. The first later command or read of the path writes the commands of `pathArc`, in order,
 with the same values. The logical styles, the save depth, the clips and the transform do not change.
 
-A native canvas also skips `translate` and its trigonometry for an offset of 0 on a finite matrix,
-through `zeroTranslateIsNoOp`. A recording context keeps the call.
+For the exact class, a native canvas also skips `translate` and its trigonometry for an offset of 0
+on a finite matrix, through `zeroTranslateIsNoOp`. A recording context keeps the call, and a user
+subclass keeps the call and its reads of the angles.
+
+`draw` skips `fix` for an offset of 0, on each context, because `offset * fix` is 0. A circumference
+of -Infinity is the exception: `Math.sin` gives NaN, so upstream has a radius offset of NaN and an
+arc with no radius. It keeps that computation, and the element offers no sector for it.
 
 ### 3. The run of adjacent sectors
 
@@ -80,10 +89,11 @@ it has no analytic anti-aliasing on the outer edge.
 ### 4. Fills with varying radii
 
 A run of fills takes another radius while it has no stroke, when it is below 16 fills or already
-varies. It keeps a radius for each instance. Below 64 fills it draws `drawCircle`, with today's
-pixels. At 64 fills and more it draws one atlas with a color for each instance, in order.
+varies. It keeps a radius for each instance. Below 64 fills it draws `drawCircle` with the exact
+color of each fill: the pixels of separate fills. At 64 fills and more it draws one atlas with a
+color for each instance, in order.
 
-The atlas holds white masters for a fixed ladder of radii, each 1.1 times the last, from 0.5 to 48
+The atlas holds white masters for a fixed ladder of radii, each 1.1 times the last, from 2 to 48
 bitmap pixels, at two master pixels for each bitmap pixel. A radial gradient paints the coverage of
 a master: a ramp of one bitmap pixel across its radius. The transform of each instance has the exact
 radius in its scale and the exact center. The atlas is about 2 MB and is built once.
@@ -91,25 +101,48 @@ radius in its scale and the exact center. The atlas is about 2 MB and is built o
 A rasterized edge in a master was rejected: a scaled copy at one master pixel for each bitmap pixel
 blurs the edge by the phase of the sampling, and at two master pixels the edge is too sharp.
 
+**The colors.** A batch reads a color as 32 bits of sRGB (`toARGB32`). A color in another color
+space, or with a channel that is not finite, joins no batch: `_batchCircle` declines it, and the
+fill or the stroke draws `drawCircle` with its exact values. This holds for each run, also for a run
+of one radius, which before this decision drew a wide-gamut color with its raw channels as sRGB.
+Thus only an sRGB color reaches the atlas. There it has its 8-bit form: for a color with more bits,
+such as an alpha of 0.5, a solid pixel differs by at most 1 of 255.
+
+**The radii.** The ramp of a master is one bitmap pixel wide at each radius, so the area of a master
+is pi (r^2 + 1/12): 2 % over the area of the circle at a radius of 2, and 23 % at a radius of 0.6.
+Thus a radius below 2 keeps `drawCircle`, in runs of one radius. A chart with such radii has no gain
+from the ladder.
+
 **The bound.** The figure of 46 of 255 of Chart.js ADR 0055 belongs to its one radius of 3 in its
 color. The accepted form of §8.5 reaches much more on other radii, because Skia on the CPU has its
 own error for a circle. Thus the test compares both forms with `drawCircle` on the same random
-radii, at full contrast:
+radii, at full contrast. Each row gives the worst of 12 grids on `flutter_tester` (Skia on the CPU):
 
-| Radii | Ladder: max, p99 | Form for one radius: max, p99 |
-|---|---|---|
-| 2 to 8 | 91, 56 | 150, 70 |
-| 4 to 16 | 91, 56 | 166, 73 |
-| 16 to 40 | 84, 64 | 115, 71 |
+| Radii | Ladder: max, p99 | Form for one radius: max, p99 | Ink of the ladder against `drawCircle` |
+|---|---|---|---|
+| 2 to 2.5 | 82, 48 | 88, 68 | +4.3 % to +5.4 % |
+| 2.5 to 4 | 101, 63 | 91, 68 | -1.6 % to -2.8 % |
+| 4 to 8 | 90, 57 | 160, 72 | +1.1 % to +2.4 % |
+| 8 to 16 | 114, 67 | 178, 74 | +0.3 % to +1.5 % |
+| 16 to 48 | 111, 71 | 176, 75 | +0.3 % to +0.6 % |
+| 2 to 8, mixed | 92, 57 | 152, 71 | +1.5 % to +1.7 % |
+| 4 to 16, mixed | 108, 60 | 174, 73 | +0.7 % to +0.9 % |
 
-The ladder is closer than the accepted form on each row, and a chart color on white gives 63 of 255.
-It does not reach 46. No solid pixel flips, and the ink stays within 2 %.
+The largest difference reaches at least 114 of 255; another grid can reach more. The ladder is closer
+than the accepted form at the 99th percentile on each row, and at the largest difference from a
+radius of 4 up. Below a radius of 4 its largest difference is up to 10 above that form. A chart color
+on white gives 63 of 255. It does not reach 46. No solid pixel flips.
+
+The ink is not within 2 % on each row. The ink of `drawCircle` on this backend is itself 3.2 % below
+to 3.7 % above the area of the circle, and that error jumps with the radius. The ladder keeps the
+area of its master at each radius, so a narrow range of radii differs by up to 5.4 %, and a mixed
+range by less than 2 %. Other backends are not measured.
 
 **Strokes stay on `drawCircle`.** A stroke of 1 pixel does not pass. In a probe that is not kept as a
 test, a ladder of the same kind gave about 120 of 255, 99th percentile about 89, where the form for
 one radius gave 80 and 46 on radii from 2 to 16. A stroke ends a varying run, and a run
-with a stroke keeps one radius, so a stroked bubble keeps today's draw. A radius below 0.5 or above
-48 bitmap pixels, a shader, and another composite operation also keep `drawCircle`. A varying run ends
+with a stroke keeps one radius, so a stroked bubble keeps today's draw. A radius below 2 or above 48
+bitmap pixels, a shader, and another composite operation also keep `drawCircle`. A varying run ends
 after 16 fills of one radius, for the sprites of that radius.
 
 **Direct circles count.** A run that ends in `_batchCircle` and draws one by one adds its length to

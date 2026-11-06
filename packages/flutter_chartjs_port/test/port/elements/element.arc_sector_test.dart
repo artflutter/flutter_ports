@@ -24,12 +24,28 @@ class _ReferenceArc extends ArcElement {
   _ReferenceArc(super.cfg);
 }
 
+/// A user subclass with a start angle that moves at each read: a read that the
+/// ordinary path has must stay.
+class _DriftingArc extends ArcElement {
+  _DriftingArc(super.cfg);
+
+  int reads = 0;
+
+  @override
+  double get startAngle {
+    reads++;
+    return super.startAngle + (reads - 1) * 0.1;
+  }
+}
+
 /// A recording context that offers the capability and declines it.
 class _Probe extends MockContext implements ArcSectorCanvas {
+  _Probe({this.zeroTranslateIsNoOp = false});
+
   int probes = 0;
 
   @override
-  bool get zeroTranslateIsNoOp => false;
+  final bool zeroTranslateIsNoOp;
 
   @override
   bool tryDrawArcSector({
@@ -646,6 +662,67 @@ void main() {
     });
   });
 
+  group('a circumference of -Infinity', () {
+    // `Math.sin(-Infinity)` is NaN, so `fix` and `offset * fix` are NaN, also
+    // for an offset of 0 (element.arc.ts:483-484): the arc has no radius.
+    Map<String, Object?> cfg({double borderWidth = 0}) => {
+      ..._cfg(
+        start: 0,
+        sweep: 1,
+        x: 80,
+        y: 80,
+        options: _options(borderWidth: borderWidth),
+      ),
+      'circumference': double.negativeInfinity,
+    };
+
+    for (final borderWidth in const [0.0, 2.0]) {
+      test('a border width of $borderWidth: a recording context gets NaN', () {
+        for (final element in [
+          ArcElement(cfg(borderWidth: borderWidth)),
+          _ReferenceArc(cfg(borderWidth: borderWidth)),
+        ]) {
+          final ctx = MockContext();
+          element.draw(ctx);
+          final arc = ctx.getCalls().firstWhere((c) => c['name'] == 'arc');
+          final args = arc['args']! as List<Object?>;
+          expect((args[2]! as double).isNaN, isTrue, reason: '$args');
+        }
+      });
+
+      test(
+        'a border width of $borderWidth: the native canvas draws nothing',
+        () async {
+          for (final native in [true, false]) {
+            final render = await renderContext(
+              (ctx) => _draw(ctx, [cfg(borderWidth: borderWidth)], native),
+            );
+            expect(render.ink, 0, reason: 'exact class: $native');
+          }
+        },
+      );
+    }
+
+    test('the exact class offers no sector', () {
+      final probe = _Probe();
+      ArcElement(cfg()).draw(probe);
+      expect(probe.probes, 0);
+      final finite = _Probe();
+      ArcElement(_cfg()).draw(finite);
+      expect(finite.probes, 1);
+    });
+
+    test('another circumference does not change the arc', () async {
+      for (final circumference in const [-1.0, double.nan, 0.5]) {
+        final (a, b) = await _twin([
+          {..._cfg(start: 0, sweep: 1), 'circumference': circumference},
+        ]);
+        _expectSame(a, b);
+        expect(a.ink, greaterThan(100), reason: '$circumference');
+      }
+    });
+  });
+
   group('no zero translation on the native canvas', () {
     test('a bordered arc gives the pixels of the ordinary path', () async {
       final cfgs = [
@@ -687,6 +764,35 @@ void main() {
       final calls = [for (final c in ctx.getCalls()) c['name']];
       expect(calls.first, 'save');
       expect(calls[1], 'translate');
+    });
+
+    test('only the exact class skips the translation', () {
+      List<Object?> calls(ArcElement element) {
+        final probe = _Probe(zeroTranslateIsNoOp: true);
+        element.draw(probe);
+        return [for (final c in probe.getCalls()) c['name']];
+      }
+
+      final cfg = _cfg(options: _options(borderWidth: 2.0));
+      expect(calls(ArcElement(cfg)), isNot(contains('translate')));
+      expect(calls(_ReferenceArc(cfg)), contains('translate'));
+    });
+
+    test('a user subclass keeps its reads of the ordinary path', () {
+      for (final options in [_options(), _options(borderWidth: 2.0)]) {
+        final recorded = _DriftingArc(_cfg(options: options));
+        final calls = MockContext();
+        recorded.draw(calls);
+        expect(
+          [for (final c in calls.getCalls()) c['name']],
+          contains('translate'),
+        );
+        final native = _DriftingArc(_cfg(options: options));
+        final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
+        addTearDown(ctx.dispose);
+        native.draw(ctx);
+        expect(native.reads, recorded.reads);
+      }
     });
 
     test('the canvas answers for a finite matrix only', () {

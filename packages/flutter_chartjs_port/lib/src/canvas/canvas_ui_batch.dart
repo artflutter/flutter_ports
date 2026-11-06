@@ -32,9 +32,13 @@
 ///
 /// A run of fills may also change its radius (Chart.js ADR 0097): bubbles.
 /// Such a run keeps a radius for each instance. Fewer than [minLadderRun]
-/// fills draw with `drawCircle`. A longer run draws with [_FillLadder], one
-/// atlas of masters for a ladder of radii. The transform of each instance
-/// scales its master to the exact radius, at the exact center.
+/// fills draw with `drawCircle`, each in its exact color. A longer run draws
+/// with [_FillLadder], one atlas of masters for a ladder of radii. The
+/// transform of each instance scales its master to the exact radius, at the
+/// exact center.
+///
+/// The batch reads a color as 32 bits of sRGB, in `toARGB32`. A color that
+/// these bits do not keep draws directly (see [batchKeepsColor]).
 library;
 
 import 'dart:collection';
@@ -73,15 +77,16 @@ const int maxAtlasInstances = 512;
 const int minLadderRun = 64;
 
 /// The smallest radius, in bitmap pixels, of a fill that changes the radius
-/// of its run. A smaller circle is mostly an edge, and draws in the runs of
-/// one radius.
-const double minLadderRadius = 0.5;
+/// of its run. The edge ramp of a master is one bitmap pixel wide at each
+/// radius, so its area is pi * (r * r + 1 / 12). A smaller circle would gain
+/// more than 2 % of ink, and draws in the runs of one radius.
+const double minLadderRadius = 2;
 
 /// The bound of the sprite cache.
 const int _spriteCacheSize = 32;
 
-/// The ratio of two radii of the ladder. A master scales by less than half
-/// of this step, so its edge ramp stays about one bitmap pixel wide.
+/// The ratio of two radii of the ladder. A master scales by about half of
+/// this step, so its edge ramp stays about one bitmap pixel wide.
 const double _ladderStep = 1.1;
 
 /// The master pixels for each bitmap pixel. An edge ramp of one bitmap pixel
@@ -179,6 +184,13 @@ final class _FillLadder {
 
 _FillLadder? _fillLadder;
 
+/// Whether a batch keeps [color]: it reads a color as 32 bits of sRGB. Another
+/// color space would lose its color, and a channel that is not finite has no
+/// such form. These colors draw directly, with their exact values.
+bool batchKeepsColor(ui.Color color) =>
+    color.colorSpace == ui.ColorSpace.sRGB &&
+    (color.a + color.r + color.g + color.b).isFinite;
+
 typedef _SpriteKey = (double radius, int fill, int stroke, double width);
 
 final LinkedHashMap<_SpriteKey, ui.Image> _sprites = LinkedHashMap();
@@ -255,6 +267,10 @@ final class CircleBatch {
   Uint8List _kinds = Uint8List(256);
   Int32List _colors = Int32List(256);
   Float64List _radii = Float64List(256);
+
+  // The exact color of each of the first instances: a run with varying radii
+  // that draws directly has at most this many.
+  final List<ui.Color?> _exact = List<ui.Color?>.filled(minLadderRun, null);
 
   // The transforms, the rects and the colors of one atlas call.
   final Float32List _transforms = Float32List(maxAtlasInstances * 4);
@@ -352,6 +368,7 @@ final class CircleBatch {
     _ys[length] = y;
     _kinds[length] = stroke ? 1 : 0;
     if (_colored) _colors[length] = color.toARGB32();
+    if (length < minLadderRun) _exact[length] = color;
     if (_varying) _radii[length] = radius;
     length++;
   }
@@ -464,7 +481,7 @@ final class CircleBatch {
     }
     for (var i = 0; i < n; i++) {
       final paint = _kinds[i] == 0 ? _fillPaint : _strokePaint;
-      if (colored) paint.color = ui.Color(_colors[i]);
+      if (colored) paint.color = varying ? _exact[i]! : ui.Color(_colors[i]);
       canvas.drawCircle(
         ui.Offset(_xs[i], _ys[i]),
         varying ? _radii[i] : _radius,
