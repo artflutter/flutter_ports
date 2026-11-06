@@ -271,9 +271,8 @@ class ChartView extends StatefulWidget {
   /// * An imperative edit of `chart.options` or of a dataset, an edit in place
   ///   of [ChartConfig.labels] and a write into `Chart.defaults` wait for the
   ///   next full update. Call `chart.update()` after such an edit.
-  /// * The hooks get the mode `'none'`, also with a null [updateMode].
   ///
-  /// The parameter needs an [updateMode] that is `'none'` or null, and
+  /// The parameter needs the [updateMode] `'none'` and
   /// `animation: ChartAnimation.none` in the config. Without them, it has no
   /// effect. A raw config does not have it. A new theme, a change of the
   /// reduced-motion preference, a new `labels` List, another option, another
@@ -282,9 +281,11 @@ class ChartView extends StatefulWidget {
   /// `chart.updateData()` also goes to `chart.update('none')` by itself when
   /// the chart does not qualify: for the first new config after the start,
   /// after a change of the size, after a change of the visible datasets with
-  /// no update, with a scale without an explicit `min` and `max`, with an
-  /// indexed or resolved style, with a plugin without `supportsDataUpdates`,
-  /// with a data List of another length and with a queued animation.
+  /// no update, with a scale without an explicit `min` and `max`, with a
+  /// category axis with `bounds: 'data'` or with a label that a data point
+  /// added, with an indexed or resolved style, with a plugin without
+  /// `supportsDataUpdates`, with a data List of another length and with a
+  /// queued animation.
   final bool dataOnlyUpdates;
 
   /// Called after the frame in which the widget starts a chart, and again
@@ -771,10 +772,14 @@ class _ChartViewState extends State<ChartView> {
 
   /// Whether the last reconcile may take `chart.updateData` under the rule of
   /// [ChartView.dataOnlyUpdates]. A raw config has no such update.
+  ///
+  /// `updateData` always updates in the mode `'none'`: another mode, also the
+  /// default mode of a null [mode], keeps its value in the hooks and in the
+  /// context of a scriptable option.
   bool _dataOnly(String? mode) {
     final lowering = _lowering;
     return widget.dataOnlyUpdates &&
-        (mode == null || mode == 'none') &&
+        mode == 'none' &&
         lowering != null &&
         lowering.lastApplyDataOnly &&
         lowering.animationOff;

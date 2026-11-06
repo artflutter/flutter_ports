@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter/widgets.dart' hide Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -149,6 +150,10 @@ ChartConfig _config(ChartKind type, int step, List<Object> labels) =>
       },
       animation: ChartAnimation.none,
     );
+
+/// A scriptable radius that reads the mode of its context.
+Object? _radiusOfMode(Object? context) =>
+    (context! as JsObjectFace)['mode'] == 'none' ? 2.0 : 9.0;
 
 /// A raw config of a bar chart with a fixed range and no animation.
 Map<String, Object?> _rawBars(int step) => <String, Object?>{
@@ -396,24 +401,6 @@ void main() {
       expect(chart.scales['y']!.ticks, same(ticks));
     });
 
-    testWidgets('a null updateMode gives the mode none to the hooks', (
-      tester,
-    ) async {
-      final spy = _spyOnChart();
-      final labels = _newLabels();
-      Widget view(int step) => _view(_bars(step, labels), updateMode: null);
-      await tester.pumpWidget(view(0));
-      await tester.pump();
-      spy.clear();
-      await tester.pumpWidget(view(1));
-      expect(spy.modes, ['none'], reason: 'updateData goes to update(none)');
-      expect(spy.layouts, 1);
-      spy.clear();
-      await tester.pumpWidget(view(2));
-      expect(spy.modes, ['none']);
-      expect(spy.layouts, 0);
-    });
-
     /// The twin of [view] over [steps] ticks: the elements and the pixels
     /// with the parameter and without it.
     Future<void> expectTwin(
@@ -438,17 +425,6 @@ void main() {
 
       expect(await run(dataOnly: true), await run(dataOnly: false));
     }
-
-    testWidgets('a null updateMode matches a full update of the default mode', (
-      tester,
-    ) async {
-      final labels = _newLabels();
-      await expectTwin(
-        tester,
-        (step, {required dataOnly}) =>
-            _view(_bars(step, labels), dataOnly: dataOnly, updateMode: null),
-      );
-    });
 
     testWidgets('the palette of the colors plugin stays', (tester) async {
       final labels = _newLabels();
@@ -836,6 +812,60 @@ void main() {
       expect(layouts, 4, reason: 'the start and each update');
     });
 
+    testWidgets('a null updateMode gives the default mode to the hooks', (
+      tester,
+    ) async {
+      final spy = _spyOnChart();
+      final labels = _newLabels();
+      Widget view(int step) => _view(_bars(step, labels), updateMode: null);
+      await _warm(tester, view);
+      for (var step = 2; step < 4; step++) {
+        spy.clear();
+        await tester.pumpWidget(view(step));
+        expect(spy.modes, [undefined], reason: 'step $step');
+        expect(spy.layouts, 1, reason: 'step $step');
+      }
+    });
+
+    testWidgets('a null updateMode: a function of the context mode gets the '
+        'default mode', (tester) async {
+      final spy = _spyOnChart();
+      Future<List<Object?>> run({required bool dataOnly}) async {
+        final labels = _newLabels();
+        ChartConfig line(int step) => ChartConfig(
+          type: ChartKind.line,
+          labels: labels,
+          datasets: [LineDataset(points: _points(step))],
+          scales: _categoryAxes,
+          animation: ChartAnimation.none,
+          extra: const {
+            'elements': {
+              'point': {'radius': _radiusOfMode},
+            },
+          },
+        );
+        Widget view(int step) =>
+            _view(line(step), dataOnly: dataOnly, updateMode: null);
+        await _warm(tester, view);
+        spy.clear();
+        await tester.pumpWidget(view(2));
+        expect(spy.modes, [undefined]);
+        final point =
+            _chart(tester).getDatasetMeta(0).data[0]
+                as types.ElementPropertyRead;
+        final seen = <Object?>[
+          (point['options']! as JsObjectFace)['radius'],
+          await _pixels(tester, _chart(tester)),
+        ];
+        await tester.pumpWidget(const SizedBox());
+        return seen;
+      }
+
+      final fast = await run(dataOnly: true);
+      expect(fast.first, 9.0);
+      expect(fast, await run(dataOnly: false));
+    });
+
     testWidgets('a mode other than none', (tester) async {
       final spy = _spyOnChart();
       final labels = _newLabels();
@@ -1150,6 +1180,427 @@ void main() {
       }
 
       expect(await run(dataOnly: true), await run(dataOnly: false));
+    });
+  });
+
+  group('the legend', () {
+    ChartConfig legendBars(
+      int step,
+      List<Object> labels,
+      ChartPosition position,
+    ) => _bars(
+      step,
+      labels,
+      datasets: [
+        BarDataset(
+          key: _a,
+          label: 'a',
+          data: _values(step),
+          backgroundColor: const ChartValue.constant(_blue),
+          borderWidth: 0,
+        ),
+        BarDataset(
+          key: _b,
+          label: 'b',
+          data: _values(step + 1),
+          backgroundColor: const ChartValue.constant(_red),
+          borderWidth: 0,
+        ),
+      ],
+    ).copyWith(legend: ChartLegend(position: position));
+
+    List<List<double>> hitBoxes(Chart chart) => [
+      for (final box in chart.legend!.legendHitBoxes)
+        [box.left, box.top, box.width, box.height],
+    ];
+
+    for (final position in const [
+      ChartPosition.top,
+      ChartPosition.bottom,
+      ChartPosition.left,
+      ChartPosition.right,
+    ]) {
+      testWidgets('the hit boxes of a legend at ${position.name} stay', (
+        tester,
+      ) async {
+        final spy = _spyOnChart();
+        Future<List<Object>> run({required bool dataOnly}) async {
+          final labels = _newLabels();
+          Widget view(int step) =>
+              _view(legendBars(step, labels, position), dataOnly: dataOnly);
+          await _warm(tester, view);
+          final seen = <Object>[hitBoxes(_chart(tester))];
+          for (var step = 2; step < 6; step++) {
+            spy.clear();
+            await tester.pumpWidget(view(step));
+            expect(spy.layouts, dataOnly ? 0 : 1, reason: 'step $step');
+            seen.add(hitBoxes(_chart(tester)));
+          }
+          seen.add(await _pixels(tester, _chart(tester)));
+
+          // A full update makes new hit boxes from the kept state.
+          await tester.pumpWidget(
+            _view(
+              legendBars(6, labels, position).copyWith(
+                title: const ChartTitle(display: true, text: 'new'),
+              ),
+              dataOnly: dataOnly,
+            ),
+          );
+          seen.add(hitBoxes(_chart(tester)));
+          await tester.pumpWidget(const SizedBox());
+          return seen;
+        }
+
+        expect(await run(dataOnly: true), await run(dataOnly: false));
+      });
+    }
+
+    testWidgets('a mouse click on a legend item hides its data', (
+      tester,
+    ) async {
+      Future<bool> run({required bool dataOnly}) async {
+        final labels = _newLabels();
+        Widget view(int step) => _view(
+          legendBars(step, labels, ChartPosition.top),
+          dataOnly: dataOnly,
+        );
+        await _warm(tester, view);
+        final chart = _chart(tester);
+        final box = chart.legend!.legendHitBoxes[0];
+        final center =
+            tester.getTopLeft(find.byType(ChartView)) +
+            Offset(box.left + box.width / 2, box.top + box.height / 2);
+        for (var step = 2; step < 6; step++) {
+          await tester.pumpWidget(view(step));
+        }
+        await tester.tapAt(center, kind: PointerDeviceKind.mouse);
+        await tester.pump(const Duration(milliseconds: 16));
+        final visible = chart.isDatasetVisible(0);
+        await tester.pumpWidget(const SizedBox());
+        return visible;
+      }
+
+      expect(await run(dataOnly: true), isFalse);
+      expect(await run(dataOnly: false), isFalse);
+    });
+
+    testWidgets('the keys of a legend item hide its data', (tester) async {
+      Future<bool> run({required bool dataOnly}) async {
+        final node = FocusNode(debugLabel: 'data-only');
+        addTearDown(node.dispose);
+        final labels = _newLabels();
+        Widget view(int step) => _box(
+          ChartView(
+            config: legendBars(step, labels, ChartPosition.top),
+            updateMode: 'none',
+            dataOnlyUpdates: dataOnly,
+            focusNode: node,
+          ),
+        );
+        await _warm(tester, view);
+        for (var step = 2; step < 6; step++) {
+          await tester.pumpWidget(view(step));
+        }
+        node.requestFocus();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pump(const Duration(milliseconds: 16));
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pump(const Duration(milliseconds: 16));
+        final visible = _chart(tester).isDatasetVisible(0);
+        await tester.pumpWidget(const SizedBox());
+        return visible;
+      }
+
+      expect(await run(dataOnly: true), isFalse);
+      expect(await run(dataOnly: false), isFalse);
+    });
+  });
+
+  group('a layout inside a data-only update', () {
+    /// A bubble of the radius [radius] with colored grids, so that the order
+    /// of the layers shows in the pixels.
+    ChartConfig bubbles(
+      int step,
+      double radius, {
+      Map<String, Object?>? xExtra,
+      ChartLegend? legend,
+    }) => ChartConfig(
+      type: ChartKind.bubble,
+      datasets: [
+        BubbleDataset(
+          points: <DataPoint>[DataPoint.bubble(40 + step, 50, radius)],
+          backgroundColor: const ChartValue.constant(_blue),
+          borderWidth: 0,
+        ),
+      ],
+      scales: {
+        'x': LinearAxis(
+          min: 0,
+          max: 100,
+          grid: const AxisGrid(color: _red, lineWidth: 3),
+          extra: xExtra,
+        ),
+        'y': const LinearAxis(
+          min: 0,
+          max: 100,
+          grid: AxisGrid(color: _green, lineWidth: 3),
+        ),
+      },
+      animation: ChartAnimation.none,
+      legend: legend,
+    );
+
+    /// The pixels of each tick: a new radius runs a layout, and the same
+    /// radius keeps the layout that it made.
+    Future<void> expectPixels(
+      WidgetTester tester, {
+      Map<String, Object?>? xExtra,
+      ChartLegend? legend,
+    }) async {
+      final spy = _spyOnChart();
+      Future<List<Object>> run({required bool dataOnly}) async {
+        Widget view(int step, double radius) => _view(
+          bubbles(step, radius, xExtra: xExtra, legend: legend),
+          dataOnly: dataOnly,
+        );
+        await _warm(tester, (step) => view(step, 4));
+        final seen = <Object>[];
+        for (final (step, radius, layouts) in const [
+          (2, 40.0, 1),
+          (3, 40.0, 0),
+          (4, 80.0, 1),
+          (5, 80.0, 0),
+        ]) {
+          spy.clear();
+          await tester.pumpWidget(view(step, radius));
+          expect(spy.layouts, dataOnly ? layouts : 1, reason: 'step $step');
+          final chart = _chart(tester);
+          final hitBoxes = chart.legend!.legendHitBoxes;
+          seen
+            ..add(_observe(chart))
+            ..add(await _pixels(tester, chart))
+            ..add([for (final box in hitBoxes) box.left])
+            ..add([for (final box in hitBoxes) box.top]);
+        }
+        await tester.pumpWidget(const SizedBox());
+        return seen;
+      }
+
+      expect(await run(dataOnly: true), await run(dataOnly: false));
+    }
+
+    testWidgets('draws the layers in the order of a full update', (
+      tester,
+    ) async {
+      await expectPixels(tester);
+    });
+
+    testWidgets('draws a layer of z above 0 after the datasets, and the other '
+        'layers before them', (tester) async {
+      await expectPixels(
+        tester,
+        xExtra: const {
+          'ticks': {'z': 1},
+        },
+      );
+    });
+
+    testWidgets('adjusts the hit boxes of its new fit once', (tester) async {
+      await expectPixels(
+        tester,
+        legend: const ChartLegend(position: ChartPosition.left),
+      );
+    });
+  });
+
+  group('an update from a callback of the replay', () {
+    testWidgets('runs and draws, as in a full update', (tester) async {
+      final spy = _spyOnChart();
+      Future<List<Object?>> run({required bool dataOnly}) async {
+        final labels = _newLabels();
+        var armed = false;
+        var nested = 0;
+        void onHover(ChartEventDetails details) {
+          if (!armed) return;
+          armed = false;
+          nested++;
+          details.chart.update('none');
+        }
+
+        Widget view(int step) => _view(
+          _bars(step, labels).copyWith(onHover: onHover),
+          dataOnly: dataOnly,
+        );
+        await _warm(tester, view);
+        final chart = _chart(tester);
+        final mouse = await _mouse(tester);
+        final bar =
+            chart.getDatasetMeta(0).data[1] as types.ElementPropertyRead;
+        await mouse.moveTo(
+          tester.getTopLeft(find.byType(ChartView)) +
+              Offset(bar['x']! as double, chart.chartArea!.bottom - 2),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+
+        armed = true;
+        spy.clear();
+        await tester.pumpWidget(view(2));
+        expect(tester.takeException(), isNull);
+        expect(nested, 1);
+        // The data-only path has only the layout of the nested update.
+        expect(spy.layouts, dataOnly ? 1 : 2);
+        expect(spy.draws, 2, reason: 'the nested update and this tick');
+        final seen = <Object?>[
+          spy.draws,
+          _observe(chart),
+          chart.getActiveElements().map((e) => e.index).toList(),
+          await _pixels(tester, chart),
+        ];
+
+        // The update made a new plan, so the path of the next tick is its own.
+        spy.clear();
+        await tester.pumpWidget(view(3));
+        expect(spy.layouts, dataOnly ? 0 : 1);
+        seen
+          ..add(_observe(chart))
+          ..add(await _pixels(tester, chart));
+        await mouse.removePointer();
+        await tester.pumpWidget(const SizedBox());
+        return seen;
+      }
+
+      expect(await run(dataOnly: true), await run(dataOnly: false));
+    });
+  });
+
+  group('a category axis', () {
+    const dataBounds = <String, ChartAxis>{
+      'x': CategoryAxis(extra: {'bounds': 'data'}),
+      'y': LinearAxis(min: 0, max: 100),
+    };
+
+    testWidgets('with bounds data takes the range of the prepared data of a '
+        'tick', (tester) async {
+      final spy = _spyOnChart();
+      Future<List<Object?>> run({required bool dataOnly}) async {
+        final labels = _newLabels();
+        ChartConfig line(int step) => ChartConfig(
+          type: ChartKind.line,
+          labels: labels,
+          datasets: [
+            LineDataset(
+              points: <DataPoint>[
+                DataPoint(step < 2 ? 0 : 3, 10 + step),
+                DataPoint(step < 2 ? 1 : 4, 20),
+              ],
+            ),
+          ],
+          scales: dataBounds,
+          animation: ChartAnimation.none,
+          extra: const {'parsing': false},
+        );
+        Widget view(int step) => _view(line(step), dataOnly: dataOnly);
+        await _warm(tester, view);
+        spy.clear();
+        await tester.pumpWidget(view(2));
+        expect(spy.layouts, 1, reason: 'bounds data is not a fixed range');
+        final chart = _chart(tester);
+        final x = chart.scales['x']!;
+        final seen = <Object?>[x.min, x.max, _observe(chart)];
+        await tester.pumpWidget(const SizedBox());
+        return seen;
+      }
+
+      final fast = await run(dataOnly: true);
+      expect(fast.take(2), [3.0, 4.0]);
+      expect(fast, await run(dataOnly: false));
+    });
+
+    testWidgets('with bounds data takes the range of the parsed data of a '
+        'tick', (tester) async {
+      final spy = _spyOnChart();
+      Future<List<Object?>> run({required bool dataOnly}) async {
+        final labels = _newLabels();
+        ChartConfig line(int step) => _bars(
+          step,
+          labels,
+          scales: dataBounds,
+          datasets: [
+            BarDataset(
+              key: _a,
+              data: List<double>.generate(
+                _count,
+                (i) => step >= 2 && i < 3 ? 500.0 : 50.0,
+              ),
+              backgroundColor: const ChartValue.constant(_blue),
+              borderWidth: 0,
+            ),
+          ],
+        );
+        Widget view(int step) => _view(line(step), dataOnly: dataOnly);
+        await _warm(tester, view);
+        spy.clear();
+        await tester.pumpWidget(view(2));
+        expect(spy.layouts, 1, reason: 'bounds data is not a fixed range');
+        final chart = _chart(tester);
+        final x = chart.scales['x']!;
+        final seen = <Object?>[x.min, x.max, _observe(chart)];
+        await tester.pumpWidget(const SizedBox());
+        return seen;
+      }
+
+      expect(await run(dataOnly: true), await run(dataOnly: false));
+    });
+
+    testWidgets('a label that a data point added leaves at the next tick', (
+      tester,
+    ) async {
+      final spy = _spyOnChart();
+      Future<List<Object?>> run({required bool dataOnly}) async {
+        final labels = <Object>['a', 'b'];
+        ChartConfig line(List<DataPoint> points) => ChartConfig(
+          type: ChartKind.line,
+          labels: labels,
+          datasets: [LineDataset(points: points)],
+          scales: _categoryAxes,
+          animation: ChartAnimation.none,
+        );
+        List<DataPoint> numbers(double y) => <DataPoint>[
+          DataPoint(0, y),
+          DataPoint(1, 20),
+        ];
+        Widget view(List<DataPoint> points) =>
+            _view(line(points), dataOnly: dataOnly);
+        await _warm(tester, (step) => view(numbers(10.0 + step)));
+        final seen = <Object?>[];
+        await tester.pumpWidget(
+          view(<DataPoint>[DataPoint.label('new', 10), DataPoint(1, 20)]),
+        );
+        seen.add(List<Object>.of(labels));
+
+        spy.clear();
+        await tester.pumpWidget(view(numbers(30)));
+        expect(spy.layouts, 1, reason: 'the added label needs a full update');
+        final chart = _chart(tester);
+        seen
+          ..add(List<Object>.of(labels))
+          ..add(chart.scales['x']!.max)
+          ..add(_observe(chart))
+          ..add(await _pixels(tester, chart));
+
+        spy.clear();
+        await tester.pumpWidget(view(numbers(40)));
+        expect(spy.layouts, dataOnly ? 0 : 1, reason: 'the label is gone');
+        seen.add(_observe(chart));
+        await tester.pumpWidget(const SizedBox());
+        return seen;
+      }
+
+      final fast = await run(dataOnly: true);
+      expect(fast[1], ['a', 'b']);
+      expect(fast, await run(dataOnly: false));
     });
   });
 

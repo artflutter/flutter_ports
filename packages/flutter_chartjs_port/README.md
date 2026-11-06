@@ -30,7 +30,8 @@ interaction and plugin details are in
 Widget configuration changes still use the normal full update by default. For a
 typed `ChartView` that gets a new data List in each frame, `dataOnlyUpdates: true`
 calls `updateData` when only the data Lists of a new config changed. It needs
-`animation: ChartAnimation.none`, and its doc states what it does not re-run.
+`updateMode: 'none'` and `animation: ChartAnimation.none`, and its doc states
+what it does not re-run.
 
 ## Features
 

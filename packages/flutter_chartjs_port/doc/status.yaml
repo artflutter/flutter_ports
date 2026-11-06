@@ -571,7 +571,7 @@ port-only:
     contents: "One hover pass and one draw for each frame of a live `ChartView`, the old path of a chart with no recent update, and the release of a move that no update takes (Chart.js ADR 0091)."
     tests: "VM"
   - file: "`test/port/widgets/chart_view_data_only_test.dart`"
-    contents: "The data-only path of `ChartView` (Chart.js ADR 0098): twins of the elements and the pixels on the eight chart types, each guard and each other kind of change on the full path, the visibility of a dataset, a resize and the mouse of a live chart."
+    contents: "The data-only path of `ChartView` (Chart.js ADR 0098): twins of the elements and the pixels on the eight chart types, each guard and each other kind of change on the full path, the visibility of a dataset, a resize, the mouse of a live chart, the hit boxes, a click and the keys of the legend, the draw layers after a layout, an update from `onHover` and the category axis."
     tests: "VM"
   - file: "`test/port/typed/lower_data_only_test.dart`"
     contents: "The report of `ChartConfigLowering.apply` for a config that changed only its data Lists, and the read of `animation: false` (Chart.js ADR 0098)."
