@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
@@ -301,7 +300,9 @@ final class NativePointResolution {
 }
 
 /// Existing context refresh over captured native arrays. It never creates a
-/// context, reads coordinate properties, or skips the ordinary typed setters.
+/// context or reads coordinate properties. Its writes are those of `getContext`
+/// on a data context, of any element class: the capability check of [read] is
+/// for points, and a loop over other elements calls [readQualified].
 @internal
 final class NativePointContextReader {
   NativePointContextReader._(
@@ -332,26 +333,37 @@ final class NativePointContextReader {
     return NativePointContextReader._(meta, points, parsed, raw, mode);
   }
 
+  bool get _sourcesLive =>
+      identical(_meta.data, _points) && identical(_meta.parsed, _parsed);
+
+  /// The refresh of the context of the point at [index], or Dart `null` for the
+  /// ordinary `getContext`: changed sources, a custom point, or a context that
+  /// does not exist.
   ScriptableContext? read(int index) {
-    if (!identical(_meta.data, _points) ||
-        !identical(_meta.parsed, _parsed) ||
-        index < 0 ||
-        index >= _points.length) {
-      return null;
-    }
+    if (!_sourcesLive || index < 0 || index >= _points.length) return null;
     final element = _points[index];
-    if (element is! Element || !nativePointElement(element)) {
-      return null;
-    }
+    return nativePointElement(element) ? _refresh(element, index) : null;
+  }
+
+  /// [read] for the [element] at [index] of the native list of a loop that has
+  /// read its capability at this iteration, so that no second read is needed.
+  ScriptableContext? readQualified(types.Element element, int index) =>
+      _sourcesLive ? _refresh(element, index) : null;
+
+  ScriptableContext? _refresh(types.Element element, int index) {
+    if (element is! Element) return null;
     final context = element.$context;
     if (context is! ScriptableContext) return null;
-    final value = index.toDouble();
-    return context
-      ..parsed = jsGetIndex(_parsed, value)
-      ..raw = jsGetIndex(_raw, value)
-      ..dataIndex = value
-      ..index = value
-      ..active = false
-      ..mode = _mode;
+    // The lists are native: [prepare] proved their classes. An index past the
+    // end of one gives `undefined`, as `jsGetIndex` and `getParsed` do.
+    final parsed = _parsed;
+    final raw = _raw;
+    return context..refresh(
+      index < parsed.length ? parsed[index] : undefined,
+      index < raw.length ? raw[index] : undefined,
+      index.toDouble(),
+      false,
+      _mode,
+    );
   }
 }

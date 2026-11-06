@@ -354,7 +354,7 @@ final class _IndexedElementPlan {
   // DIVERGES(chartjs): adapt-prepared-indexed-options, copy native static
   // fields when the caller owns the result. Never retain a returned object.
   ElementOptions? prepared(Object context, ElementOptions into) {
-    if (context is! ScriptableContext || !context.jsHas('index')) return null;
+    if (context is! ScriptableContext || !context.hasIndexKey) return null;
     final rawIndex = context.index;
     if (rawIndex is! num) return null;
     final index = rawIndex.toDouble();
@@ -420,7 +420,7 @@ final class _IndexedElementPlan {
   }
 
   bool fill(Object context, ElementOptions into) {
-    if (context is! ScriptableContext || !context.jsHas('index')) return false;
+    if (context is! ScriptableContext || !context.hasIndexKey) return false;
     final rawIndex = context.index;
     if (rawIndex is! num) return false;
     // Match jsToNumber before remainder, including VM integers above 2^53.
@@ -454,6 +454,35 @@ final class _IndexedElementPlan {
       );
     }
     return true;
+  }
+}
+
+/// The one or two colors of a loop-local plan (`prepareIndexedPointColors` and
+/// its twins) that vary with the index. The lists stay live.
+// DIVERGES(chartjs): adapt-prepared-indexed-options, the colors of a loop plan.
+final class _VaryingColors {
+  _VaryingColors(
+    this._firstKey,
+    this._firstValues,
+    this._secondKey,
+    this._secondValues,
+  );
+
+  final OptionKey _firstKey;
+  final List<Object?> _firstValues;
+  final OptionKey? _secondKey;
+  final List<Object?>? _secondValues;
+
+  /// Stores the colors of [index] into the fresh [result], in the key order.
+  void storeInto(ElementOptions result, int index) {
+    final first = _firstValues;
+    // js-ok: native loop indices are nonnegative and lengths positive.
+    result.storeKey(_firstKey, first[index % first.length]);
+    final second = _secondValues;
+    if (second != null) {
+      // js-ok: native loop indices are nonnegative and lengths positive.
+      result.storeKey(_secondKey!, second[index % second.length]);
+    }
   }
 }
 
@@ -681,10 +710,7 @@ final class OptionResolver implements ResolverProxy {
     if (varying == null) return null;
     return (index) {
       final result = template.clone();
-      for (final item in varying) {
-        // js-ok: nonnegative index and positive length (bulk preflight).
-        result.storeKey(item.key, item.values[index % item.values.length]);
-      }
+      varying.storeInto(result, index);
       return result;
     };
   }
@@ -699,10 +725,7 @@ final class OptionResolver implements ResolverProxy {
     if (varying == null) return null;
     return (index) {
       final result = template.clone();
-      for (final item in varying) {
-        // js-ok: native loop indices are nonnegative and lengths positive.
-        result.storeKey(item.key, item.values[index % item.values.length]);
-      }
+      varying.storeInto(result, index);
       return result;
     };
   }
@@ -719,15 +742,12 @@ final class OptionResolver implements ResolverProxy {
     if (varying == null) return null;
     return (index) {
       final result = template.clone();
-      for (final item in varying) {
-        // js-ok: native loop indices are nonnegative and lengths positive.
-        result.storeKey(item.key, item.values[index % item.values.length]);
-      }
+      varying.storeInto(result, index);
       return result;
     };
   }
 
-  List<({OptionKey key, List<Object?> values})>? _prepareIndexedColors(
+  _VaryingColors? _prepareIndexedColors(
     List<Object> keys,
     ElementOptions template,
   ) {
@@ -738,7 +758,10 @@ final class OptionResolver implements ResolverProxy {
         !plan._rawListPlain) {
       return null;
     }
-    final varying = <({OptionKey key, List<Object?> values})>[];
+    OptionKey? firstKey;
+    List<Object?>? firstValues;
+    OptionKey? secondKey;
+    List<Object?>? secondValues;
     for (var i = 0; i < plan.keys.length; i++) {
       final key = plan.keys[i];
       if (!template.knownKeyList.contains(key.jsName)) return null;
@@ -757,13 +780,22 @@ final class OptionResolver implements ResolverProxy {
             )) {
           return null;
         }
-        varying.add((key: key, values: value));
+        // Each key is once in the plan, and two keys may vary: the colors.
+        if (firstValues == null) {
+          firstKey = key;
+          firstValues = value;
+        } else {
+          secondKey = key;
+          secondValues = value;
+        }
       } else {
         if (!_nativeIndexedValue(key, value)) return null;
         template.storeKey(key, value);
       }
     }
-    return varying.isEmpty ? null : varying;
+    return firstValues == null
+        ? null
+        : _VaryingColors(firstKey!, firstValues, secondKey, secondValues);
   }
 
   /// Copies already-resolved static fields while keeping each scriptable read
@@ -1128,6 +1160,20 @@ final class OptionResolver implements ResolverProxy {
     final value = _resolveWithPrefixes(name, _prefixes, _scopes, this);
     _cache.set(key, value);
     return value;
+  }
+
+  /// The value that [readKey] starts from, with no sub resolver: making one
+  /// calls the `_fallback` of an object, which can be a function of the user.
+  // DIVERGES(chartjs): adapt-arc-native-options, a probe of a scalar value.
+  Object? _rawValueOf(OptionKey key) {
+    final cached = _cache.get(key);
+    if (!identical(cached, _absent)) return cached;
+    final name = key.jsName;
+    for (final prefix in _prefixes) {
+      final value = _resolve(_readKey(prefix, name), _scopes);
+      if (!identical(value, undefined)) return value;
+    }
+    return undefined;
   }
 
   /// helpers.config.ts:54 the `deleteProperty` trap.
@@ -1507,7 +1553,7 @@ final class OptionView implements ContextProxy {
       return false;
     }
     for (final key in keys) {
-      if (!_indexedScalar(proxy.readKey(key))) return false;
+      if (!_indexedScalar(proxy._rawValueOf(key))) return false;
     }
     return true;
   }
