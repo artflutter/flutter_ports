@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:chart_benchmark_lab/benchmark/config.dart';
+import 'package:chart_benchmark_lab/benchmark/controller.dart'
+    show chartJsDataOnlyUpdates;
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:fl_chart/fl_chart.dart' as fl;
 import 'package:flutter/material.dart';
@@ -305,6 +307,7 @@ class BenchmarkChart extends StatelessWidget {
         },
       ),
       updateMode: 'none',
+      dataOnlyUpdates: chartJsDataOnlyUpdates,
       theme: const cj.ChartThemeData(),
       excludeFromSemantics: true,
     );

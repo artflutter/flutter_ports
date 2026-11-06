@@ -41,7 +41,7 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:flutter/foundation.dart' show Key, ValueChanged;
+import 'package:flutter/foundation.dart' show Key, ValueChanged, listEquals;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
@@ -80,6 +80,7 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
         lowerLegend,
         lowerTitle,
         lowerTooltip;
+import 'package:flutter_chartjs_port/src/typed/props.dart' show byEntries;
 import 'package:flutter_chartjs_port/src/types/animation.dart'
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/types/index.dart'
@@ -117,6 +118,26 @@ final class ChartConfigLowering {
   /// The live dataset scopes of [_lowered], in dataset order.
   List<_LiveDataset> _datasets = const [];
 
+  /// Whether the last [apply] changed only dataset data Lists (Chart.js ADR
+  /// 0098): the type, the labels, the option fields and the plugins are `==`,
+  /// each dataset kept its scope at its index, and each patch wrote only
+  /// `data`. A [lower] gives `false`.
+  ///
+  /// It proves the part of the contract of `Chart.updateData` that a config
+  /// shows. An imperative edit of a live scope, a write into
+  /// `Chart.defaults` and a change in place of the labels are not in a config.
+  bool get lastApplyDataOnly => _lastApplyDataOnly;
+  bool _lastApplyDataOnly = false;
+
+  /// Whether the `options` scope of the last [lower] or [apply] holds
+  /// `animation: false`: from `ChartAnimation.none`, from `extra`, or from an
+  /// imperative write into the live scope.
+  bool get animationOff {
+    final options = _root.optionsCell?.raw;
+    return options is ChartOptionsScope &&
+        identical(options.animationCell?.raw, false);
+  }
+
   /// The root scope of [config]: a new scope at each call, with the keys
   /// `type`, `data` (`labels` by reference and a new `datasets` List),
   /// `options` (a new scope, `ChartConfig.extra` merged last) and `plugins`
@@ -130,6 +151,7 @@ final class ChartConfigLowering {
       _duplicateKeyMessage(config.datasets),
     );
     _lowered = config;
+    _lastApplyDataOnly = false;
     final datasets = _datasets = [
       for (final dataset in config.datasets)
         _LiveDataset.lower(dataset, config.type),
@@ -173,12 +195,15 @@ final class ChartConfigLowering {
   ///    the last type.
   /// 6. `plugins`: the last List when the plugins are `==`, else the new
   ///    List by reference.
+  ///
+  /// [lastApplyDataOnly] reports whether these rules kept all but the data.
   ChartConfigurationScope apply(ChartConfig next) {
     config = next;
     final last = _lowered;
     if (last == null) return lower();
     if (next == last) {
       _lowered = next;
+      _lastApplyDataOnly = false;
       return _root;
     }
     assert(
@@ -207,16 +232,23 @@ final class ChartConfigLowering {
     } else {
       root.data = _data(next, datasets);
     }
-    if (sameType && optionFieldsEqual(next, last)) {
+    final sameOptions = sameType && optionFieldsEqual(next, last);
+    if (sameOptions) {
       root.optionsCell = old.optionsCell;
     } else {
       root.options = _options();
     }
-    if (pluginsEqual(next, last)) {
+    final samePlugins = pluginsEqual(next, last);
+    if (samePlugins) {
       root.pluginsCell = old.pluginsCell;
     } else {
       put(root, OptionKey.plugins, next.plugins);
     }
+    _lastApplyDataOnly =
+        sameMaps &&
+        sameOptions &&
+        samePlugins &&
+        datasets.every((dataset) => dataset.dataOnly);
     return _root = root;
   }
 
@@ -332,7 +364,12 @@ String _duplicateKeyMessage(List<Dataset> datasets) =>
 /// One live dataset scope of a [ChartConfigLowering]: the typed dataset,
 /// the scope of the chart and the cells that the lowering wrote into it.
 final class _LiveDataset {
-  _LiveDataset(this.dataset, this.scope, this.lowered);
+  _LiveDataset(
+    this.dataset,
+    this.scope,
+    this.lowered, {
+    this.dataOnly = false,
+  });
 
   /// The live dataset of a new scope: the lowering of [dataset] in a chart
   /// of the type [type].
@@ -351,25 +388,49 @@ final class _LiveDataset {
   /// lowering wrote into [scope].
   final OptionScope lowered;
 
+  /// Whether this is the result of a [patch] that changed no value but
+  /// `data` (Chart.js ADR 0098).
+  final bool dataOnly;
+
   /// This scope with the values of [next] in a chart of the type [type]
   /// (rule 3 of [ChartConfigLowering.apply]). Two cells are equal when
   /// their JS values are `==`, as the values of the Maps of Chart.js ADR
   /// 0052: an object, a List and a function by identity.
   _LiveDataset patch(Dataset next, ChartKind type, {required bool sameType}) {
     final scope = this.scope;
-    if (sameType && next == dataset) return _LiveDataset(next, scope, lowered);
+    if (sameType && next == dataset) {
+      return _LiveDataset(next, scope, lowered, dataOnly: true);
+    }
     final written = lowerDataset(next, type);
     final last = lowered;
+    // An `extra` List goes by reference, so a new one is a new value even
+    // with the same items.
+    var dataOnly = byEntries(next.extra) == byEntries(dataset.extra);
     for (final key in last.ownKeys) {
-      if (written.ownCell(key) == null) scope.delete(key);
+      if (written.ownCell(key) == null) {
+        scope.delete(key);
+        dataOnly = false;
+      }
     }
     for (final key in written.ownKeys) {
       final cell = written.ownCell(key)!;
       final old = last.ownCell(key);
-      if (old == null || old.raw != cell.raw) scope.store(key, cell);
+      if (old == null || old.raw != cell.raw) {
+        scope.store(key, cell);
+        dataOnly =
+            dataOnly &&
+            old != null &&
+            (key == OptionKey.data || _sameStyleList(old.raw, cell.raw));
+      }
     }
-    return _LiveDataset(next, scope, written);
+    return _LiveDataset(next, scope, written, dataOnly: dataOnly);
   }
+
+  /// Whether [a] and [b] are the Lists of two lowerings of one style List
+  /// (`ChartValue.indexed`, `borderDash`): each lowering makes a new List, so
+  /// their items compare, as `ChartIndexed ==` does.
+  static bool _sameStyleList(Object? a, Object? b) =>
+      a is List<Object?> && b is List<Object?> && listEquals(a, b);
 }
 
 /// A new scope of the kind of [scope] with each own key of [scope] in its

@@ -97,7 +97,7 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show EventHookArgs, Plugin;
+    show EventHookArgs, Plugin, UpdateHookArgs;
 import 'package:meta/meta.dart';
 
 /// `Math.SQRT2`.
@@ -1714,11 +1714,17 @@ void _beforeUpdate(types.Chart chart, Object _, Object options) {
 /// plugin.legend.js:623 `afterUpdate(chart)`. The labels need to be built
 /// after datasets are updated to ensure that colors and other styling are
 /// correct. See https://github.com/chartjs/Chart.js/issues/6968
-void _afterUpdate(types.Chart chart, Object _, Object _) {
-  (chart.legend! as Legend)
+///
+/// `adjustHitBoxes` adds the position of the legend to the hit boxes of the
+/// last `fit`. A data update that keeps the layout runs no `fit`, so its hit
+/// boxes already have that position.
+void _afterUpdate(types.Chart chart, Object args, Object _) {
+  final legend = chart.legend! as Legend
     // DIVERGES(chartjs): adapt-hidden-legend-items, the first read builds.
-    .._buildLabelsOrMark(datasetsUpdated: true)
-    ..adjustHitBoxes();
+    .._buildLabelsOrMark(datasetsUpdated: true);
+  // DIVERGES(chartjs): adapt-incremental-data-update, no `fit` in this update.
+  if (args case UpdateHookArgs(layoutKept: true)) return;
+  legend.adjustHitBoxes();
 }
 
 /// plugin.legend.js:630 `afterEvent(chart, args)`: the typed `replay` and

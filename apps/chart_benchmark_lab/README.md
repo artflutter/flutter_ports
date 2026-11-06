@@ -100,7 +100,13 @@ FL Chart, Graphic and Syncfusion use their public chart widgets. Chart.js
 line/scatter/bubble use `parsing: false`: the generator already supplies sorted,
 finite numeric XY points, and each `DataPoint.bubble` gives its radius as a typed
 field. This is recorded in each capture's `engineOptions`; the other types retain
-their default parsing. Graphic receives
+their default parsing. The Chart.js adapter also sets the public
+`ChartView.dataOnlyUpdates`, the data-only path of Chart.js ADR 0098: a tick that
+changes only the data keeps the layout and the ticks. `updateData` goes to a full
+update by itself for a chart that does not qualify, for example with the indexed
+colors of alternating items. Each capture's `engineOptions` records it as
+`dataOnlyUpdates`, and the comparable-run key does not include it.
+`--dart-define=CHARTJS_DATA_ONLY_UPDATES=false` turns it off. Graphic receives
 only variables required for the selected chart/features; line/scatter do not
 pay for an unused categorical domain. The common overlay painter draws the same
 text workload each tick in its own repaint boundary.

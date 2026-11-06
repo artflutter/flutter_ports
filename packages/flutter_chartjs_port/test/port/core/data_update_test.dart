@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
+import 'package:flutter_chartjs_port/src/types/data_item.dart'
+    show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
@@ -51,6 +53,18 @@ class _CustomLinear extends LinearScale {
     statics: {'id': 'data-custom-linear'},
     construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
   );
+}
+
+/// A point class that the typed lowering does not register.
+final class _OtherPoint implements TypedDataItem {
+  @override
+  Object get x => 1.0;
+  @override
+  double? get y => 2;
+  @override
+  double? get r => null;
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 final class _Event implements types.ChartEvent {
@@ -369,6 +383,44 @@ void main() {
   test('preflight does not execute user numeric conversions', () {
     expect(dataUpdateValues(<Object?>[1, 2, Object()]), isNull);
   });
+  group('preflight of a list of points', () {
+    final point = typed.DataPoint(1, 2);
+    setUpAll(() => registerDataUpdateTypes(const [], [typed.DataPoint]));
+
+    test('the items after the first point classify as the first one', () {
+      expect(dataUpdateValues(<Object?>[point, point, point]), isFalse);
+      expect(dataUpdateValues(<Object?>[1.0, point, null, point]), isFalse);
+      expect(
+        dataUpdateValues(<Object?>[
+          point,
+          <String, Object?>{'x': 1.0, 'y': 2.0},
+          point,
+          <double>[1, 2],
+          point,
+        ]),
+        isFalse,
+      );
+    });
+    test('a point with a value that is not a number falls back', () {
+      final label = typed.DataPoint.label('a', 1);
+      final time = typed.DataPoint.time(DateTime.utc(2026), 1);
+      expect(dataUpdateValues(<Object?>[point, label]), isNull);
+      expect(dataUpdateValues(<Object?>[label, point]), isNull);
+      expect(dataUpdateValues(<Object?>[point, time]), isNull);
+      expect(dataUpdateValues(<Object?>[point, point, time, point]), isNull);
+    });
+    test('another class after a point falls back', () {
+      expect(dataUpdateValues(<Object?>[point, Object()]), isNull);
+      expect(dataUpdateValues(<Object?>[point, _OtherPoint()]), isNull);
+      expect(
+        dataUpdateValues(<Object?>[
+          point,
+          <String, Object?>{'x': 'a'},
+        ]),
+        isNull,
+      );
+    });
+  });
   test('changed prepared x coordinates invalidate spacing caches', () {
     final ca = config('bar', prepared: true);
     final cb = config('bar', prepared: true);
@@ -438,6 +490,188 @@ void main() {
     expect(a.updateData, throwsStateError);
     enabled = false;
     expect(a.updateData(), isFalse);
+  });
+  group('a callback of the replay', () {
+    void move(Chart a) {
+      final point = a.getDatasetMeta(0).data[1];
+      a.eventHandler(_Event(point.x, point.y + 2));
+    }
+
+    /// A bar chart with [onHover], and a mouse over its bar 1.
+    (Chart, Map<String, Object?>) hovered(
+      void Function(Chart chart) onHover,
+    ) {
+      final cfg = config('bar');
+      void hover(Object? e, Object? active, Object? c) => onHover(c! as Chart);
+      (cfg['options']! as Map<String, Object?>)['onHover'] = hover;
+      final a = chart(cfg);
+      move(a);
+      return (a, cfg);
+    }
+
+    test('may run update, as in a full update', () {
+      var armed = false;
+      void nested(Chart c) {
+        if (armed) {
+          armed = false;
+          c.update('none');
+        }
+      }
+
+      final (a, ca) = hovered(nested);
+      final (b, cb) = hovered(nested);
+      change(ca, 0);
+      change(cb, 0);
+      armed = true;
+      expect(a.updateData(), isTrue);
+      expect(armed, isFalse, reason: 'the callback ran');
+      armed = true;
+      b.update('none');
+      expect(armed, isFalse, reason: 'the callback ran');
+      expect(observe(a), observe(b));
+
+      // The nested update made a plan, and the state of the data update ended.
+      change(ca, 1);
+      change(cb, 1);
+      expect(a.updateData(), isTrue);
+      b.update('none');
+      expect(observe(a), observe(b));
+    });
+
+    test('cannot run updateData, as in a full update', () {
+      var armed = false;
+      final (a, ca) = hovered((c) {
+        if (armed) {
+          armed = false;
+          c.updateData();
+        }
+      });
+      armed = true;
+      expect(() => a.update('none'), throwsStateError);
+      expect(a.updateData(), isFalse, reason: 'the throw ended the plan');
+
+      // A throw in the callback also ends the last event, as upstream.
+      move(a);
+      change(ca, 0);
+      armed = true;
+      expect(a.updateData, throwsStateError);
+      expect(a.updateData(), isFalse, reason: 'the throw ended the plan');
+      expect(a.updateData(), isTrue);
+    });
+
+    test('a draw hook may run update, as in a full update', () {
+      var armed = false;
+      Chart? hooked;
+      final plugin = <String, Object?>{
+        'id': 'updateInDraw',
+        'supportsDataUpdates': true,
+        'afterDraw': (Object? c, Object? args, Object? o) {
+          if (armed) {
+            armed = false;
+            hooked = c! as Chart;
+            hooked!.update('none');
+          }
+        },
+      };
+      final a = chart(config('bar', plugins: [plugin]));
+      expect(a.updateData(), isTrue);
+      armed = true;
+      expect(a.updateData(), isTrue);
+      expect(hooked, same(a));
+      expect(a.updateData(), isTrue);
+    });
+  });
+  group('a plugin that cancels beforeLayout', () {
+    (Chart, void Function()) cancelled(String type) {
+      var cancel = false;
+      final plugin = <String, Object?>{
+        'id': 'cancelLayout',
+        'supportsDataUpdates': true,
+        'beforeLayout': (Object? c, Object? args, Object? o) => !cancel,
+      };
+      final cfg = config(type, plugins: [plugin]);
+      ((cfg['options']! as Map)['plugins'] as Map)['legend'] =
+          <String, Object?>{'display': true};
+      return (chart(cfg), () => cancel = true);
+    }
+
+    double top(Chart a) => a.legend!.legendHitBoxes.first.top;
+
+    test(
+      'a kept layout does not move the hit boxes, as a full update does',
+      () {
+        final (a, cancel) = cancelled('pie');
+        final start = top(a);
+        expect(a.updateData(), isTrue);
+        expect(top(a), start);
+        cancel();
+        a.update('none');
+        final moved = top(a);
+        expect(moved, greaterThan(start), reason: 'as upstream: no fit ran');
+        expect(a.updateData(), isTrue);
+        expect(top(a), moved, reason: 'the kept layout runs no beforeLayout');
+      },
+    );
+
+    test('a scale that no layout read goes to the full update', () {
+      final (a, cancel) = cancelled('bar');
+      final start = top(a);
+      cancel();
+      a.update('none');
+      final moved = top(a);
+      expect(moved, greaterThan(start));
+      expect(a.updateData(), isFalse, reason: 'the scale read no option');
+      expect(top(a), greaterThan(moved), reason: 'as upstream: no fit ran');
+    });
+  });
+  test('the arguments of afterUpdate have only the key mode', () {
+    final seen = <List<String>>[];
+    final plugin = <String, Object?>{
+      'id': 'updateArgs',
+      'supportsDataUpdates': true,
+      'afterUpdate': (Object? c, Object? args, Object? o) {
+        seen.add((args! as JsObjectFace).jsKeys().toList());
+      },
+    };
+    final a = chart(config('bar', plugins: [plugin]));
+    expect(a.updateData(), isTrue);
+    expect(seen, [
+      ['mode'],
+      ['mode'],
+    ]);
+  });
+  test('a category scale with bounds data falls back', () {
+    final cfg = config('bar');
+    (((cfg['options']! as Map)['scales'] as Map)['x'] as Map)['bounds'] =
+        'data';
+    expect(chart(cfg).updateData(), isFalse);
+  });
+  test('a category scale with bounds of a function falls back', () {
+    final cfg = config('bar');
+    String bounds(Object? context) => 'ticks';
+    (((cfg['options']! as Map)['scales'] as Map)['x'] as Map)['bounds'] =
+        bounds;
+    expect(chart(cfg).updateData(), isFalse);
+  });
+  test('a category scale with an added label falls back once', () {
+    final cfg = config('bar');
+    final a = chart(cfg);
+    final labels = (cfg['data']! as Map)['labels'] as List<String>;
+    final numbers = dataset(cfg)['data'];
+    // A full update parses the string, and adds it to the labels. The plan of
+    // this update has the new length of the labels.
+    dataset(cfg)['data'] = <Object?>[
+      <String, Object?>{'x': 'new', 'y': 1.0},
+      2.0,
+      3.0,
+      4.0,
+    ];
+    a.update('none');
+    expect(labels, hasLength(5));
+    dataset(cfg)['data'] = numbers;
+    expect(a.updateData(), isFalse, reason: 'the added label needs an update');
+    expect(labels, hasLength(4));
+    expect(a.updateData(), isTrue);
   });
   test('hover, hit tests and tooltip values stay synchronized', () {
     Map<String, Object?> cfg() {
