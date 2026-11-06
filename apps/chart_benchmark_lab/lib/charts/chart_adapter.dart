@@ -50,6 +50,28 @@ class BenchmarkChart extends StatelessWidget {
   /// radar still has one spoke per item.
   int get _radarLabelStep => math.max(1, (config.count / 8).ceil());
 
+  /// One label List per item count. An app with stable labels keeps its List,
+  /// so a new data List does not also replace the labels of the chart.
+  static final Map<int, List<String>> _chartJsLabels = {};
+
+  static List<String> _chartJsLabelsFor(int count) =>
+      _chartJsLabels.putIfAbsent(
+        count,
+        () => [for (var i = 0; i < count; i++) '$i'],
+      );
+
+  /// One point-label callback per label step: a new closure is a new option
+  /// value for `ChartConfig ==`.
+  static final Map<int, Object? Function(Object?, num)> _radarLabelCallbacks =
+      {};
+
+  static Object? Function(Object?, num) _radarLabelCallback(int step) =>
+      _radarLabelCallbacks.putIfAbsent(
+        step,
+        () =>
+            (label, index) => index % step == 0 ? label : '',
+      );
+
   @override
   Widget build(BuildContext context) {
     if (!library.supports(config.type)) {
@@ -175,7 +197,6 @@ class BenchmarkChart extends StatelessWidget {
       autoSkip: true,
       extra: const {'maxTicksLimit': 5},
     );
-    final step = _radarLabelStep;
     return cj.ChartView(
       config: cj.ChartConfig(
         type: switch (config.type) {
@@ -191,7 +212,7 @@ class BenchmarkChart extends StatelessWidget {
         datasets: [dataset],
         labels: switch (config.type) {
           ChartType.line || ChartType.scatter || ChartType.bubble => null,
-          _ => [for (final p in values) '${p.index}'],
+          _ => _chartJsLabelsFor(values.length),
         },
         scales: switch (config.type) {
           ChartType.pie || ChartType.doughnut => null,
@@ -218,8 +239,7 @@ class BenchmarkChart extends StatelessWidget {
               ticks: ticks,
               extra: {
                 'pointLabels': {
-                  'callback': (Object? label, num index) =>
-                      index % step == 0 ? label : '',
+                  'callback': _radarLabelCallback(_radarLabelStep),
                 },
               },
             ),
@@ -272,8 +292,14 @@ class BenchmarkChart extends StatelessWidget {
           if (config.type == ChartType.line || config.type == ChartType.scatter)
             'parsing': false,
           'events': config.tooltips
-              ? ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove']
-              : <String>[],
+              ? const [
+                  'mousemove',
+                  'mouseout',
+                  'click',
+                  'touchstart',
+                  'touchmove',
+                ]
+              : const <String>[],
         },
       ),
       updateMode: 'none',
