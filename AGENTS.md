@@ -161,6 +161,8 @@ longer supported. No global color installer or intermediate option color exists.
   `packages/*/tool/port_sources.yaml` pins.
 - `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
   run the gallery.
+- `dart run melos run benchmark:build:pages`: build the lab for the folder `lab/` of the GitHub Pages
+  site. `.github/workflows/pages.yaml` runs it and deploys the site.
 - `dart run melos run gallery:build:web` / `gallery:build:android` / `gallery:build:ios`: build the
   gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
@@ -1805,6 +1807,9 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `port-checks`, `upstream-manifest`, `gallery-web`,
   `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
+- Releases: `.github/workflows/pages.yaml` publishes `apps/chart_benchmark_lab` at
+  <https://artflutter.github.io/flutter_ports/lab/>. A deploy replaces the whole Pages site, so each
+  app has its own folder in the job `build` of that workflow.
 - Toolchain: Flutter 3.50.0-0.4.pre (beta channel, Dart 3.14.0-315.3.beta), pinned in `.fvmrc`; CI reads the same file, and `.github/actions/setup/action.yaml` names its channel. All
   packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`
   (`packages/flutter_chartjs_port/doc/porting-flow.md` §2.12).

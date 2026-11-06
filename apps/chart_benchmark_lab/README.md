@@ -20,6 +20,13 @@ iOS, macOS and web platform scaffolds are included. iOS device builds require
 your usual signing setup. `benchmark:build:web` produces a WebAssembly build
 with JavaScript fallback.
 
+The workflow `.github/workflows/pages.yaml` publishes the lab at
+<https://artflutter.github.io/flutter_ports/lab/> when a push to `main` changes
+the lab, the Chart.js port or the toolchain. `benchmark:build:pages` is its build.
+GitHub Pages cannot send the COOP and COEP headers. Thus the WebAssembly build
+runs on one thread on that page, and its figures do not compare with runs that
+have these headers.
+
 The macOS window opens on the built-in display when available. For a particular
 display, set `BENCH_DISPLAY_ID` to its macOS display ID. The window stays movable
 and resizable; changing displays or viewport invalidates an active capture.

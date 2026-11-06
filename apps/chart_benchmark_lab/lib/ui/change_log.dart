@@ -24,6 +24,9 @@ const List<ChangeLogEntry> changeLog = [
         'went from 3.5 to 120 FPS on WebAssembly, and from 3.8 to 82 FPS on '
         'JavaScript. A dense fill now has its true area: one draw missed it '
         'by up to 57%.',
+    'Lab: the web build is on GitHub Pages. Pages cannot send the headers that '
+        'several rendering threads need, so WebAssembly runs on one thread '
+        'there. The web figures in this log come from runs with these headers.',
     'Toolchain: Flutter 3.50.0-0.4.pre, the beta channel.',
     'Lab: the matrix runs in a browser and on phones, with a fixed CPU test in '
         'each row. New drivers measure first paint, animated updates, hover, '
