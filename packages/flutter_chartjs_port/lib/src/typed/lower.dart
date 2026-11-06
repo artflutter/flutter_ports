@@ -120,7 +120,8 @@ final class ChartConfigLowering {
 
   /// Whether the last [apply] changed only dataset data Lists (Chart.js ADR
   /// 0098): the type, the labels, the option fields and the plugins are `==`,
-  /// each dataset kept its scope at its index, and each patch changed only `data` or stored a style List with equal items. A [lower] gives `false`.
+  /// each dataset kept its scope at its index, and each patch changed only
+  /// `data` or stored a style List with equal items. A [lower] gives `false`.
   ///
   /// It proves the part of the contract of `Chart.updateData` that a config
   /// shows. An imperative edit of a live scope, a write into
