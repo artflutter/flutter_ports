@@ -675,6 +675,61 @@ class Config implements types.ChartConfiguration {
     );
   }
 
+  /// The native indexed arc styles of dataset [datasetIndex] for the indexes
+  /// below [count], or Dart `null`: the resolver of the `default` mode of
+  /// `_resolveElementOptions`, with the reads of its first resolve. A hidden
+  /// legend proves with it that each `getStyle(i)` of a build runs no user code
+  /// (Chart.js ADR 0099). Each step here is a step of the first `getStyle` of
+  /// an ordinary build: the caches that it fills are the caches of that call.
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
+  helpers.IndexedElementStyles? prepareIndexedArcStyles(
+    int datasetIndex, {
+    required String controllerType,
+    required int count,
+  }) {
+    if (super.runtimeType != Config ||
+        !supportsDataUpdates ||
+        (_config is OptionScope && _config.routeOf('type') != null)) {
+      return null;
+    }
+    final data = dataUpdateField(_config, 'data');
+    if (!nativeDataUpdateObject(data)) return null;
+    final datasets = dataUpdateField(data!, 'datasets');
+    if (!nativeDataUpdateList(datasets)) return null;
+    final list = datasets! as List<Object?>;
+    if (datasetIndex < 0 || datasetIndex >= list.length) return null;
+    final dataset = list[datasetIndex];
+    if (!nativeDataUpdateObject(dataset) ||
+        !nativeDataUpdateList(dataUpdateField(dataset!, 'data'))) {
+      return null;
+    }
+    if (defaults.routeOf('elements') != null) return null;
+    final elements = defaults.elementsCell?.raw;
+    if (elements.runtimeType != ElementOptionsByTypeScope) return null;
+    final elementScopes = elements! as ElementOptionsByTypeScope;
+    if (elementScopes.routeOf('arc') != null) return null;
+    final arc = elementScopes.arcCell?.raw;
+    if (arc.runtimeType != ArcOptionsScope) return null;
+    final scopes = getOptionScopes(
+      dataset,
+      datasetElementScopeKeys(controllerType, 'arc'),
+    );
+    if (!scopes.every(nativeOptionScope)) return null;
+    final (:resolver, subPrefixes: _) = _getResolver(
+      _resolverCache,
+      scopes,
+      const ['arc', ''],
+      cacheKey: 'arc,',
+    );
+    return resolver.prepareIndexedStyles(
+      (arc! as ArcOptionsScope).nativeOwnKeySnapshot,
+      _arcResultKind,
+      Defaults.nativeElementDescriptors,
+      count,
+    );
+  }
+
   /// Captures a warmed point resolver for one native line loop. Every use
   /// checks the source identities, key snapshot and cache generation again.
   @internal

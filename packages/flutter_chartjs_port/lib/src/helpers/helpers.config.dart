@@ -419,6 +419,23 @@ final class _IndexedElementPlan {
     return true;
   }
 
+  /// Whether [prepared] gives a result for each index below [count]: the static
+  /// fields are native, and each entry of a varying list at such an index is.
+  /// A resolve of such an index runs no user code and throws nothing.
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
+  bool covers(int count, ScriptableContext at, ElementOptions kind) {
+    if (prepared(at..index = 0.0, kind) == null) return false;
+    for (final i in _varying) {
+      final key = keys[i];
+      final list = values[i]! as List<Object?>;
+      final end = count < list.length ? count : list.length;
+      for (var j = 1; j < end; j++) {
+        if (!_nativeIndexedValue(key, list[j])) return false;
+      }
+    }
+    return true;
+  }
+
   bool fill(Object context, ElementOptions into) {
     if (context is! ScriptableContext || !context.jsHas('index')) return false;
     final rawIndex = context.index;
@@ -468,6 +485,37 @@ int _indexedSlot(double index, int length) => index < 9007199254740992.0
     // js-ok: nonnegative index and positive length (the callers' preflight).
     ? index.toInt() % length
     : index.remainder(length).toInt();
+
+/// The options of a data element of each index of one native indexed plan, with
+/// no context: a legend of a slice chart reads them when it builds its items
+/// after the update of that plan (Chart.js ADR 0099). The plan keeps the values
+/// that the resolver cached when it qualified, and [at] gives the result of the
+/// resolve of a context with this index. The items of the lists stay live.
+@internal
+// DIVERGES(chartjs): adapt-hidden-legend-items, the styles of a later build.
+final class IndexedElementStyles {
+  IndexedElementStyles._(this._resolver, this._plan, this._kind);
+
+  final OptionResolver _resolver;
+  final _IndexedElementPlan _plan;
+  final ElementOptions _kind;
+
+  /// The `index` of the context of a resolve, with no other effect.
+  final ScriptableContext _context = ScriptableContext(null);
+
+  /// Whether each resolve of an index below [count] stays on this plan: it runs
+  /// no user code and throws nothing, and a write through the resolver has not
+  /// ended the plan.
+  bool covers(int count) =>
+      !_resolver._slotsTouched &&
+      identical(_plan, _resolver._indexedElementPlan) &&
+      _plan.covers(count, _context, _kind);
+
+  /// The fresh options of a resolve with a context of the index [index], after
+  /// [covers] of a higher count, with no user code between.
+  ElementOptions at(double index) =>
+      _plan.prepared(_context..index = index, _kind)!;
+}
 
 bool _nativeIndexedValue(OptionKey key, Object? value) =>
     _indexedScalar(value) &&
@@ -764,6 +812,56 @@ final class OptionResolver implements ResolverProxy {
       }
     }
     return varying.isEmpty ? null : varying;
+  }
+
+  /// The native indexed plan of [keys] for the indexes below [count], or Dart
+  /// `null`. A cold resolver takes here the reads of the first resolve of an
+  /// ordinary build, in its order: the descriptors, then each key. Each of them
+  /// fills the same cache, and the first value that is no scalar or native list
+  /// returns at once: an ordinary resolve goes on from there and finds the
+  /// reads in the cache. This runs no user code when the scopes are native
+  /// (their check is for the caller): it calls no descriptor and no option.
+  /// [descriptorGuard] and [kind] are the ones of a resolve of the caller.
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
+  IndexedElementStyles? prepareIndexedStyles(
+    List<Object> keys,
+    ElementOptions kind,
+    bool Function(Object?, Object?) descriptorGuard,
+    int count,
+  ) {
+    if (_slotsTouched) return null;
+    final warm = _indexedElementPlan;
+    if (warm == null || !warm.matches(keys, immutable: true)) {
+      descriptors(this);
+      if (!descriptorGuard(
+        _cache.get(OptionKey.descScriptable),
+        _cache.get(OptionKey.descIndexable),
+      )) {
+        return null;
+      }
+      for (final key in keys) {
+        if (key is! OptionKey) return null;
+        final value = readKey(key);
+        if (!_indexedScalar(value) && !nativeIndexedList(value)) return null;
+      }
+      // Only the qualification of a resolve: no result, no write to [kind] and
+      // no reader of this context, and it remembers a rejected key shape.
+      resolveIndexedElementOptions(
+        keys,
+        () => _absent,
+        kind,
+        descriptorGuard,
+        () => true,
+        nativeInputs: true,
+        immutableKeys: true,
+        replacementOnly: true,
+      );
+    }
+    final plan = _indexedElementPlan;
+    if (plan == null || !plan.matches(keys, immutable: true)) return null;
+    final styles = IndexedElementStyles._(this, plan, kind);
+    return styles.covers(count) ? styles : null;
   }
 
   /// Copies already-resolved static fields while keeping each scriptable read

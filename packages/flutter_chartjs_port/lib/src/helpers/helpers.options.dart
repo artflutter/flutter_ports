@@ -36,7 +36,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' show CanvasFontSpec;
-import 'package:meta/meta.dart' show protected;
+import 'package:meta/meta.dart' show internal, protected;
 
 /// helpers.options.ts:7 `LINE_HEIGHT`.
 final RegExp _lineHeight = RegExp(r'^(normal|(\d+(?:\.\d+)?)(px|em|%)?)$');
@@ -890,6 +890,52 @@ final class ScriptableContext extends ContextObject {
   set mode(Object? value) {
     if (_presentNames & 256 == 0) _claim('mode', 256);
     _mode = value;
+  }
+
+  /// The six writes of `getContext` for the data element at [index]
+  /// (core.datasetController.js:769-776), in one call: `parsed`, `raw`,
+  /// `dataIndex`, `index`, `active` and `mode`, in this order. A loop of a
+  /// hidden legend calls it for each element (Chart.js ADR 0099). With all six
+  /// names own keys, the order of the writes has no reader, and an index that
+  /// already holds the value keeps its object.
+  @internal
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the writes of a resolve.
+  void writeDataState(
+    Object? parsed,
+    Object? raw,
+    int index,
+    // The upstream signature has a positional `active`.
+    // ignore: avoid_positional_boolean_parameters
+    bool active,
+    Object? mode,
+  ) {
+    const all = 1 | 8 | 16 | 32 | 128 | 256;
+    if (_presentNames & all != all) {
+      final value = index.toDouble();
+      this
+        ..parsed = parsed
+        ..raw = raw
+        ..dataIndex = value
+        ..index = value
+        ..active = active
+        ..mode = mode;
+      return;
+    }
+    _parsed = parsed;
+    _raw = raw;
+    final value = index.toDouble();
+    final current = _index;
+    // Zero compares equal to its negative: that value takes the write.
+    if (current is! double ||
+        current != value ||
+        value == 0 ||
+        !identical(_dataIndex, current)) {
+      final Object boxed = value;
+      _dataIndex = boxed;
+      _index = boxed;
+    }
+    _active = active;
+    _mode = mode;
   }
 
   void _setElement(Object? value) {
