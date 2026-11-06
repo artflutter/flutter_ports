@@ -32,6 +32,7 @@ on:
       - packages/flutter_chartjs_port/lib/**
       - packages/flutter_chartjs_port/pubspec.yaml
       - pubspec.lock
+      - tool/pages/**
   workflow_dispatch:
 
 concurrency:
@@ -113,6 +114,8 @@ jobs:
         run: |
           mkdir site
           cp -R apps/chart_benchmark_lab/build/web site/lab-${{ matrix.channel }}
+          # The root page shows this version.
+          flutter --version --machine > site/lab-${{ matrix.channel }}/flutter.json
       # The artifact holds the folder. With one artifact, download-artifact puts
       # the files in its path with no folder of the artifact name.
       - uses: actions/upload-artifact@v7
@@ -134,6 +137,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: tool/pages
       - uses: actions/download-artifact@v8
         with:
           pattern: lab-*
@@ -141,18 +147,26 @@ jobs:
           path: site
       - name: Assemble the site
         env:
+          LAB_VERSION: ${{ needs.version.outputs.version }}+${{ github.run_number }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          mkdir -p site
+          sed "s|{{lab}}|$LAB_VERSION|" tool/pages/index.html > site/index.html
           built=0
           for channel in stable beta master; do
             if [ -d "site/lab-$channel" ]; then
               built=$((built + 1))
+              # A file that cannot be read must not stop the deploy.
+              version=$(jq -r '.frameworkVersion // "unknown"' "site/lab-$channel/flutter.json" 2>/dev/null) || version=unknown
+              status="Flutter $version"
             else
+              status='Did not build in this run'
               # The page of this channel says so. It does not keep an old Flutter.
               mkdir -p "site/lab-$channel"
               printf '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<title>Chart benchmark lab</title>\n<p>The lab did not build on the newest Flutter %s. <a href="%s">Read the run</a>.</p>\n</html>\n' \
                 "$channel" "$RUN_URL" > "site/lab-$channel/index.html"
             fi
+            sed -i "s|{{$channel}}|$status|" site/index.html
           done
           # With no build at all, the deploy stops, so that the old pages stay.
           if [ "$built" -eq 0 ]; then
@@ -168,19 +182,6 @@ jobs:
           <meta http-equiv="refresh" content="0; url=../">
           <title>flutter_ports</title>
           <a href="../">Chart benchmark lab</a>
-          </html>
-          HTML
-          cat > site/index.html <<'HTML'
-          <!doctype html>
-          <html lang="en">
-          <meta charset="utf-8">
-          <title>flutter_ports</title>
-          <h1>Chart benchmark lab</h1>
-          <ul>
-            <li><a href="lab-stable/">Flutter stable</a></li>
-            <li><a href="lab-beta/">Flutter beta</a></li>
-            <li><a href="lab-master/">Flutter master</a></li>
-          </ul>
           </html>
           HTML
       - uses: actions/upload-pages-artifact@v5
