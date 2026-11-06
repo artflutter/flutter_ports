@@ -522,6 +522,42 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       upstream length. `ParsedItem.of` writes `x`, `y` and `r` at once, and a user axis name goes by
       name. See `core.datasetController_plumbing_test.dart` and
       `core.datasetController_walk_test.dart`.
+    - Chart.js ADR 0099 lets a hidden legend wait with native indexed arc options.
+      `Config.prepareIndexedArcStyles` peeks at each arc key (`OptionResolver.peekKey`:
+      no cache write, no sub resolver), then takes the ADR 0093 plan. Each mark writes
+      `getContext(i, false, 'default')` state in a scalar loop (`ScriptableContext.refresh`).
+      A read uses the mark's `IndexedElementStyles` and arc count and writes no context.
+      Functions, objects, custom classes, custom Map scopes of the legend, a visible
+      legend and user descriptors keep the eager build. Guards are in `plugin.legend.dart`;
+      see `plugin.legend_hidden_test.dart`.
+    - Chart.js ADR 0100: `updateData` also accepts a data element with no cached entry when
+      `DatasetController.hasDataUpdateOptions` proves its resolver's native indexed plan:
+      every key, read through all scopes including defaults and overrides, is a native
+      scalar or list of them, in native scopes. List items are walked once per config
+      cache generation. Functions in dataset options, foreign or nested items, custom
+      lists or scopes and user subclasses keep the full path. A function of a chart or
+      plugin option in the defaults or overrides and a tick callback stay on the path,
+      under the contract of Chart.js ADR 0074. `hasStaticDataUpdateOptions` (ADR 0092) is
+      unchanged. See `core.config.dart` `hasStaticIndexedElementOptions` and
+      `data_update_test.dart`.
+    - Chart.js ADR 0101: `ScriptableContext.refresh` writes a data context's six keys with
+      one mask test; a deleted key takes the setters, in `getContext` order.
+      `NativePointContextReader.readQualified` serves a loop that read the element
+      capability at this iteration; the bar bulk loop uses it too. The prepared exact
+      scatter loop under `update_` (whole dataset, no `showLine`, scalar raw `clip`) leaves
+      its refresh to the overflow pass. A plan that ends writes the waiting contexts first,
+      and a public `update` or `updateElements` keeps each write. The refresh before the
+      layout stays. Guards live in `controller.scatter.dart` and `core/point_options.dart`;
+      twins are in `test/port/controllers/context_refresh_twins_test.dart`.
+    - Chart.js ADR 0102: the exact doughnut, pie, polar area and bubble controllers in mode
+      none or reset write a built-in element through typed setters
+      (`types.ArcElementWrites`, `types.PointElementWrites`) where `updateElement` stood,
+      after the options resolve. A user controller or element, another mode, an undefined
+      value or another bubble axis takes `updateElement`. A polar loop with constant
+      options copies one template of its frozen entry, also on a tick of
+      `Chart.updateData`, which keeps the entry. Its guard reads only the keys whose
+      spacing fix-up fires on the entry, after an arc that is not active. See
+      `direct_element_writes_test.dart`.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the port of
       `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of
@@ -684,6 +720,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Public list exposure and complex commands materialize in original order.
     Boundary/ownership tests cover this storage-only change; no capacity hint
     or line algorithm/data-only guard changes are involved.
+    Chart.js ADR 0103: on Impeller, the static angle-line plan sends the lines after the
+    first through `LineFanCanvas` (`canvas_line_fan.dart`), one `drawRawPoints(PointMode.lines)`.
+    Each line stays its own stroke; the last spoke stays the current path; the call counts as
+    one draw of ADR 0066. Dash, shader, non-similarity transform, observers, unnotified canvas,
+    zero-length or non-finite lines and non-Impeller engines decline to the ordinary loop.
+    Tests on software Skia set `debugLineFanWithoutImpeller`; on Impeller they run with no
+    switch (`test/port/canvas/line_fan_engine.dart`). The CI job `test-impeller` (macos-latest)
+    runs `test/port/canvas/canvas_line_fan_test.dart` and
+    `scale.radialLinear_line_fan_test.dart` with `--enable-impeller` and `CHART_IMPELLER=1`, on
+    Impeller on Vulkan through the SwiftShader of flutter_tester; that variable fails a run
+    that is not on Impeller. No job runs on Impeller on Metal or its signed distance route.
     Chart.js ADR 0097: `RenderChartHost` adds chunk pictures through `ChartPicturesLayer`
     unless the content needs its layer. The web keeps `drawPicture`. `ArcSectorCanvas` fuses a
     plain exact `ArcElement` sector, and the ordinary path stays pending in `UiPathBuilder`.
@@ -1741,7 +1788,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
     `Signed-off-by` trailer;
   - CI `dco` job: checks the sign-off on every pull-request commit.
 - CI jobs (`.github/workflows/ci.yaml`): `format`, `analyze`, `test` (ubuntu, macOS, Windows),
-  `test-web`, `fixtures` (on `ubuntu-24.04`, also the runner of the theme goldens),
+  `test-web`, `test-impeller`, `fixtures` (on `ubuntu-24.04`, also the runner of the theme goldens),
   `port-checks`, `upstream-manifest`, `gallery-web`,
   `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
