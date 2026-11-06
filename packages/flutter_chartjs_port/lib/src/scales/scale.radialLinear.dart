@@ -29,6 +29,9 @@
 ///   readers only in this file. It keeps the underscore.
 /// - A point label item is the public class [PointLabelItem]: the specs read
 ///   it, and the port writes its `visible` (Chart.js ADR 0025, section 6).
+/// - The loops over the point labels have guarded static plans for the exact
+///   class on the native canvas (Chart.js ADR 0095). Each plan belongs to one
+///   fit or one draw and follows one ordinary pass of its first index.
 ///
 /// `core.scale.dart` imports `helpers.extras`, which is not a pure layer.
 /// Thus this library is not a pure layer.
@@ -40,9 +43,19 @@ import 'package:flutter_chartjs_port/src/core/arc_options.dart'
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_options.dart'
+    show nativePointChart;
+import 'package:flutter_chartjs_port/src/core/primitive_parse.dart'
+    show NativeNumericParseScale;
+import 'package:flutter_chartjs_port/src/core/radial_positions.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show addRoundedRectPath, isPointInArea, longestText, renderText;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show callback, isArray, isFinite, isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -51,7 +64,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show
         ParsedFont,
         ScriptableScalePointLabelContext,
-        createContext,
         toFont,
         toPadding,
         toTRBLCorners;
@@ -87,15 +99,27 @@ typedef _LabelSize = ({double w, double h});
 /// (scale.radialLinear.js:29-43).
 typedef _Limit = ({double start, double end});
 
+/// The label size before the write of an index: no list item stays at it.
+const _LabelSize _noLabelSize = (w: 0.0, h: 0.0);
+
 /// The object `itemOpts` of `buildPointLabelItems`
 /// (scale.radialLinear.js:181-184, :188-189): `extra`, `additionalAngle`,
 /// and the `padding` option and the label size of one index.
-typedef _ItemOpts = ({
-  double extra,
-  double additionalAngle,
-  Object? padding,
-  _LabelSize size,
-});
+final class _ItemOpts {
+  _ItemOpts({required this.extra, required this.additionalAngle});
+
+  /// `extra`.
+  final double extra;
+
+  /// `additionalAngle`.
+  final double additionalAngle;
+
+  /// `padding`, the raw option of the current index.
+  Object? padding;
+
+  /// `size`, the label size of the current index.
+  _LabelSize size = _noLabelSize;
+}
 
 /// The objects `orig` and `limits` of `fitWithPointLabels`
 /// (scale.radialLinear.js:79-85): the left, right, top and bottom edges.
@@ -259,6 +283,7 @@ _LabelSize _measureLabelSize(
 }
 
 /// scale.radialLinear.js:27 `determineLimits(angle, pos, size, min, max)`.
+@pragma('vm:prefer-inline')
 _Limit _determineLimits(
   double angle,
   double pos,
@@ -323,9 +348,9 @@ void _fitWithPointLabels(RadialLinearScale scale) {
     b: scale.bottom - scale._padding!.bottom,
   );
   final limits = _Limits.of(orig);
-  final labelSizes = <_LabelSize>[];
-  final padding = <Object?>[];
   final valueCount = scale.pointLabels.length;
+  final labelSizes = List<_LabelSize>.filled(valueCount, _noLabelSize);
+  final padding = List<Object?>.filled(valueCount, null);
   final pointLabelOpts = scale.options.pointLabels;
   final additionalAngle = jsTruthy(pointLabelOpts.centerPointLabels)
       ? pi / valueCount
@@ -333,7 +358,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
 
   for (var i = 0; i < valueCount; i++) {
     final opts = pointLabelOpts.setContext(scale.getPointLabelContext(i)!);
-    padding.add(opts.padding);
+    padding[i] = opts.padding;
     final pointPosition = scale.getPointPosition(
       i.toDouble(),
       jsToNumber(jsAdd(scale.drawingArea, padding[i])),
@@ -345,7 +370,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
       plFont,
       scale.pointLabels[i],
     );
-    labelSizes.add(textSize);
+    labelSizes[i] = textSize;
 
     final angleRadians = normalizeAngle(
       scale.getIndexAngle(i.toDouble()) + additionalAngle,
@@ -366,6 +391,30 @@ void _fitWithPointLabels(RadialLinearScale scale) {
       270,
     );
     _updateLimits(limits, orig, angleRadians, hLimits, vLimits);
+
+    // DIVERGES(chartjs): adapt-radial-static-plans, one font and one padding.
+    if (i == 0 && valueCount > 1 && _nativeStaticPlan(scale)) {
+      final view = pointLabelOpts.raw;
+      final positions = scale.prepareRadialPositions();
+      if (view is OptionView && positions != null) {
+        final staticPadding = view.cachedStaticValue(OptionKey.padding);
+        if (staticPadding is num && _staticFont(view, plFont)) {
+          final next = _fitStaticPointLabels(
+            scale,
+            positions,
+            plFont,
+            staticPadding,
+            additionalAngle,
+            valueCount,
+            limits,
+            orig,
+            labelSizes,
+            padding,
+          );
+          i = next - 1;
+        }
+      }
+    }
   }
 
   scale
@@ -379,8 +428,82 @@ void _fitWithPointLabels(RadialLinearScale scale) {
     ..pointLabelItems = _buildPointLabelItems(scale, labelSizes, padding);
 }
 
+/// The rest of the loop of `fitWithPointLabels` from the index 1, with the font
+/// and the padding of each label known (Chart.js ADR 0095). No context, view or
+/// font object is made. Each label still adds its size, its padding and its
+/// limits. An empty label has its width, 0 on the native canvas, and keeps the
+/// height of one line in the limits.
+///
+/// It returns the first index that it did not treat: a label that is not a
+/// `String`, or [valueCount]. The ordinary loop continues there.
+int _fitStaticPointLabels(
+  RadialLinearScale scale,
+  RadialPositions positions,
+  ParsedFont font,
+  num staticPadding,
+  double additionalAngle,
+  int valueCount,
+  _Limits limits,
+  _Limits orig,
+  List<_LabelSize> labelSizes,
+  List<Object?> padding,
+) {
+  final ctx = scale.ctx!;
+  final labels = scale.pointLabels;
+  final distance = jsToNumber(jsAdd(scale.drawingArea, staticPadding));
+  final lineHeight = font.lineHeight;
+  _LabelSize? emptySize;
+  // `longestText` of one line: a width that is not above 0 gives 0. The font
+  // is the state of each measure of the ordinary loop.
+  double widthOf(String label) {
+    final width = ctx.measureText(label).width;
+    return width > 0 ? width : 0;
+  }
+
+  ctx
+    ..save()
+    ..font = font.string;
+  var i = 1;
+  for (; i < valueCount; i++) {
+    final label = labels[i];
+    if (label is! String) break;
+    final textSize = label.isEmpty
+        ? emptySize ??= (w: widthOf(label), h: lineHeight)
+        : (w: widthOf(label), h: lineHeight);
+    padding[i] = staticPadding;
+    labelSizes[i] = textSize;
+    final pointPosition = positions.positionAt(i, distance, additionalAngle);
+    final angleRadians = normalizeAngle(
+      positions.indexAngleAt(i) + additionalAngle,
+    );
+    final angle = jsRound(toDegrees(angleRadians));
+    final hLimits = _determineLimits(
+      angle,
+      pointPosition.x,
+      textSize.w,
+      0,
+      180,
+    );
+    final vLimits = _determineLimits(
+      angle,
+      pointPosition.y,
+      textSize.h,
+      90,
+      270,
+    );
+    _updateLimits(limits, orig, angleRadians, hLimits, vLimits);
+  }
+  ctx.restore();
+  return i;
+}
+
 /// scale.radialLinear.js:118 `updateLimits(limits, orig, angle, hLimits,
 /// vLimits)`.
+///
+/// `Math.sin` and `Math.cos` are pure: each runs only in a branch that divides
+/// by it.
+// DIVERGES(chartjs): adapt-radial-static-plans, trig only for a label past a
+// limit.
 void _updateLimits(
   _Limits limits,
   _Limits orig,
@@ -388,22 +511,20 @@ void _updateLimits(
   _Limit hLimits,
   _Limit vLimits,
 ) {
-  final sin = jsSin(angle).abs();
-  final cos = jsCos(angle).abs();
   double x;
   double y;
   if (hLimits.start < orig.l) {
-    x = (orig.l - hLimits.start) / sin;
+    x = (orig.l - hLimits.start) / jsSin(angle).abs();
     limits.l = jsMin(limits.l, orig.l - x);
   } else if (hLimits.end > orig.r) {
-    x = (hLimits.end - orig.r) / sin;
+    x = (hLimits.end - orig.r) / jsSin(angle).abs();
     limits.r = jsMax(limits.r, orig.r + x);
   }
   if (vLimits.start < orig.t) {
-    y = (orig.t - vLimits.start) / cos;
+    y = (orig.t - vLimits.start) / jsCos(angle).abs();
     limits.t = jsMin(limits.t, orig.t - y);
   } else if (vLimits.end > orig.b) {
-    y = (vLimits.end - orig.b) / cos;
+    y = (vLimits.end - orig.b) / jsCos(angle).abs();
     limits.b = jsMax(limits.b, orig.b + y);
   }
 }
@@ -413,18 +534,21 @@ void _updateLimits(
 /// The `padding` of [itemOpts] is the raw `padding` option.
 /// `outerDistance + extra + padding` is [jsAdd] for the last `+`: a string
 /// padding joins the sum. `getPointPosition` applies [jsToNumber] to it.
+/// [positions] are the inputs of `getPointPosition` for the exact class, else
+/// Dart `null` (Chart.js ADR 0095).
 PointLabelItem _createPointLabelItem(
   RadialLinearScale scale,
   int index,
   _ItemOpts itemOpts,
+  RadialPositions? positions,
 ) {
   final outerDistance = scale.drawingArea;
-  final (:extra, :additionalAngle, :padding, :size) = itemOpts;
-  final pointLabelPosition = scale.getPointPosition(
-    index.toDouble(),
-    jsToNumber(jsAdd(outerDistance + extra, padding)),
-    additionalAngle,
-  );
+  final _ItemOpts(:extra, :additionalAngle, :padding, :size) = itemOpts;
+  final distance = jsToNumber(jsAdd(outerDistance + extra, padding));
+  // DIVERGES(chartjs): adapt-radial-static-plans, no option read per label.
+  final pointLabelPosition = positions != null
+      ? positions.positionAt(index, distance, additionalAngle)
+      : scale.getPointPosition(index.toDouble(), distance, additionalAngle);
   final angle = jsRound(
     toDegrees(normalizeAngle(pointLabelPosition.angle + halfPi)),
   );
@@ -468,40 +592,38 @@ bool _isNotOverlapped(PointLabelItem item, PointLabelItem? area) {
 /// padding)`.
 ///
 /// Upstream writes the `padding` and the `size` of each index into one
-/// object `itemOpts`. Here each index gets a record with the same members.
+/// object `itemOpts`, as here. No user code runs in the loop.
 List<PointLabelItem> _buildPointLabelItems(
   RadialLinearScale scale,
   List<_LabelSize> labelSizes,
   List<Object?> padding,
 ) {
-  final items = <PointLabelItem>[];
   final valueCount = scale.pointLabels.length;
   final opts = scale.options;
   final pointLabels = opts.pointLabels;
   final centerPointLabels = pointLabels.centerPointLabels;
   final display = pointLabels.display;
-  final extra = _getTickBackdropHeight(opts) / 2;
-  final additionalAngle = jsTruthy(centerPointLabels) ? pi / valueCount : 0.0;
+  final itemOpts = _ItemOpts(
+    extra: _getTickBackdropHeight(opts) / 2,
+    additionalAngle: jsTruthy(centerPointLabels) ? pi / valueCount : 0.0,
+  );
+  final positions = scale.prepareRadialPositions();
   PointLabelItem? area;
 
-  for (var i = 0; i < valueCount; i++) {
-    final itemOpts = (
-      extra: extra,
-      additionalAngle: additionalAngle,
-      padding: padding[i],
-      size: labelSizes[i],
-    );
+  return List<PointLabelItem>.generate(valueCount, (i) {
+    itemOpts
+      ..padding = padding[i]
+      ..size = labelSizes[i];
 
-    final item = _createPointLabelItem(scale, i, itemOpts);
-    items.add(item);
+    final item = _createPointLabelItem(scale, i, itemOpts, positions);
     if (display == 'auto') {
       item.visible = _isNotOverlapped(item, area);
       if (item.visible) {
         area = item;
       }
     }
-  }
-  return items;
+    return item;
+  });
 }
 
 /// scale.radialLinear.js:203 `getTextAlignForAngle(angle)`.
@@ -591,6 +713,7 @@ void _drawPointLabelBox(
 void _drawPointLabels(RadialLinearScale scale, int labelCount) {
   final ctx = scale.ctx;
   final pointLabels = scale.options.pointLabels;
+  var planned = false;
 
   for (var i = labelCount - 1; i >= 0; i--) {
     final item = scale.pointLabelItems[i];
@@ -615,7 +738,83 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
         textBaseline: 'middle',
       ),
     );
+
+    // DIVERGES(chartjs): adapt-radial-static-plans, one font and one color.
+    if (!planned) {
+      planned = true;
+      final view = pointLabels.raw;
+      if (view is OptionView &&
+          _nativeStaticPlan(scale) &&
+          _staticFont(view, plFont)) {
+        final backdropColor = view.cachedStaticValue(OptionKey.backdropColor);
+        final color = view.cachedStaticValue(OptionKey.color);
+        if (isNullOrUndef(backdropColor) && plainOptionValue(color)) {
+          i = _drawStaticPointLabels(scale, plFont, color, i - 1) + 1;
+        }
+      }
+    }
   }
+}
+
+/// The rest of the loop of `drawPointLabels` from the index [start], down, with
+/// the font and the color of each label known and no backdrop (Chart.js ADR
+/// 0095). An empty string draws nothing on the native canvas: its `fillText`
+/// returns at once, between a `save` and a `restore`. A label with text takes
+/// the ordinary `renderText`.
+///
+/// It returns the first index that it did not treat: a label that is not a
+/// `String`, or -1. The ordinary loop continues there.
+int _drawStaticPointLabels(
+  RadialLinearScale scale,
+  ParsedFont font,
+  Object? color,
+  int start,
+) {
+  final ctx = scale.ctx!;
+  final items = scale.pointLabelItems;
+  final labels = scale.pointLabels;
+  final middle = font.lineHeight / 2;
+  for (var i = start; i >= 0; i--) {
+    final item = items[i];
+    if (!item.visible) {
+      // overlapping
+      continue;
+    }
+    final label = labels[i];
+    if (label is! String) return i;
+    if (label.isEmpty) continue;
+    renderText(
+      ctx,
+      label,
+      item.x,
+      item.y + middle,
+      font,
+      _RenderTextOpts(
+        color: color,
+        textAlign: item.textAlign,
+        textBaseline: 'middle',
+      ),
+    );
+  }
+  return -1;
+}
+
+/// Whether the static plans can apply: the exact class, on a context whose
+/// setters and text measures have no effect beyond its state (the capability
+/// of the native canvas). A recording context keeps each ordinary call.
+bool _nativeStaticPlan(RadialLinearScale scale) =>
+    scale._exactClass &&
+    switch (scale.ctx) {
+      final CanvasTextMetricsSource source =>
+        source.textMetricsGeneration != null,
+      _ => false,
+    };
+
+/// Whether each new context of [pointLabels] gives the font [resolved]: all
+/// inputs are cached scalars, and the ordinary resolution gave these inputs.
+bool _staticFont(OptionView pointLabels, ParsedFont resolved) {
+  final inputs = TickFontCache.staticInputs(pointLabels);
+  return inputs != null && TickFontCache.matchesResolved(inputs, resolved);
 }
 
 /// scale.radialLinear.js:290 `pathRadiusLine(scale, radius, circular,
@@ -700,11 +899,12 @@ ScriptableScalePointLabelContext _createPointLabelContext(
   int index,
   Object? label,
 ) {
-  return createContext(parent, <String, Object?>{
-    'label': label,
-    'index': index.toDouble(),
-    'type': 'pointLabel',
-  }) as ScriptableScalePointLabelContext;
+  // DIVERGES(chartjs): adapt-point-label-context-construction, no Map.
+  return ScriptableScalePointLabelContext.pointLabel(
+    parent,
+    label,
+    index.toDouble(),
+  );
 }
 
 /// scale.radialLinear.js:147-163 the object of `createPointLabelItem`: the
@@ -766,7 +966,11 @@ final class PointLabelItem implements types.TRBL {
 /// area and radar controllers read its members through that interface
 /// (Chart.js ADR 0028, section 1).
 class RadialLinearScale extends LinearScaleBase
-    implements types.RadialLinearScale, NativeArcScale {
+    implements
+        types.RadialLinearScale,
+        NativeArcScale,
+        NativeNumericParseScale,
+        NativeRadialPositionScale {
   /// scale.radialLinear.js:412 `constructor(cfg)`.
   ///
   /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new]. The fields
@@ -776,6 +980,11 @@ class RadialLinearScale extends LinearScaleBase
 
   // scale.radialLinear.js:340 `static id = 'radialLinear'`. Scale has the
   // instance field `id`. Thus the value is only in the statics of jsClass.
+
+  /// Whether this object is of the class itself. `super.runtimeType` is the
+  /// class of the object also when a user subclass overrides `runtimeType`.
+  // DIVERGES(chartjs): adapt-radial-static-plans, the exact-class guard.
+  bool get _exactClass => super.runtimeType == RadialLinearScale;
 
   /// Native support for the explicit data-only lifecycle.
   @override
@@ -791,6 +1000,40 @@ class RadialLinearScale extends LinearScaleBase
   @override
   // DIVERGES(chartjs): adapt-arc-native-options, native scale contract.
   bool get supportsNativeArcOptions => super.runtimeType == RadialLinearScale;
+
+  /// The number parse of [LinearScaleBase], with no override (Chart.js ADR
+  /// 0095). Unknown subclasses keep their ordinary parse calls.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-radial-numeric-parse, native parse contract.
+  bool get supportsNativeNumericParse => super.runtimeType == RadialLinearScale;
+
+  /// The inputs of the position methods for one loop with no user code
+  /// (Chart.js ADR 0095). Only the exact class qualifies, and only after an
+  /// ordinary read resolved both options.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-radial-static-plans, the inputs of one pure loop.
+  RadialPositions? prepareRadialPositions() {
+    final opts = options;
+    if (super.runtimeType != RadialLinearScale ||
+        !opts.hasCachedValue(OptionKey.reverse) ||
+        !opts.hasCachedValue(OptionKey.startAngle)) {
+      return null;
+    }
+    final min = this.min;
+    final max = this.max;
+    return RadialPositions(
+      angleStep: tau / (pointLabels.isEmpty ? 1 : pointLabels.length),
+      startRadians: toRadians(jsOrZero(opts.startAngle)),
+      xCenter: xCenter ?? double.nan,
+      yCenter: yCenter ?? double.nan,
+      min: min,
+      max: max,
+      scalingFactor: drawingArea / (max - min),
+      reverse: jsTruthy(opts.reverse),
+    );
+  }
 
   /// scale.radialLinear.js:345 `static defaults`, a typed scope of the kind
   /// `ScaleOptions` (Chart.js ADR 0054 §3).
@@ -946,6 +1189,14 @@ class RadialLinearScale extends LinearScaleBase
   /// it. The callback gets the index as a number. The filter reads the data
   /// visibility of the chart (`types.Chart.getDataVisibility`, Chart.js ADR
   /// 0025, section 4).
+  ///
+  /// On the exact class (Chart.js ADR 0095), the built-in callback and a native
+  /// label list take the labels directly: no user code runs after its first
+  /// read. A closure of the shape `Object? Function(Object?, double)` gets the
+  /// call of [callback] with no argument list, tested once for each closure.
+  /// The other values go through [callback]. The option stays a read for each
+  /// label while a user closure runs. On the exact chart, which runs no user
+  /// code here, no hidden index gives the list of the callbacks.
   @override
   void generateTickLabels(List<Tick> ticks) {
     super.generateTickLabels(ticks);
@@ -953,24 +1204,54 @@ class RadialLinearScale extends LinearScaleBase
     // Point labels
     final labels = getLabels();
     final length = labels.length;
-    final mapped = <Object?>[
-      for (var index = 0; index < length; index++)
-        _pointLabelOf(
-          callback(options.pointLabels.callback, [
-            labels[index],
-            index.toDouble(),
-          ], this),
-        ),
-    ];
+    // DIVERGES(chartjs): adapt-radial-label-dispatch, the same calls, in order.
+    final mapped = List<Object?>.filled(length, null, growable: true);
+    final exact = super.runtimeType == RadialLinearScale;
+    final nativeLabels = exact && nativeDataUpdateList(labels);
+    Object? shaped;
+    Object? Function(Object?, double)? typed;
+    for (var index = 0; index < length; index++) {
+      final fn = options.pointLabels.callback;
+      if (nativeLabels && identical(fn, _pointLabelCallback)) {
+        for (var i = index; i < length; i++) {
+          mapped[i] = _pointLabelOf(labels[i]);
+        }
+        break;
+      }
+      if (exact && !identical(fn, shaped)) {
+        shaped = fn;
+        typed = fn is Object? Function(Object?, double) ? fn : null;
+      }
+      final direct = typed;
+      mapped[index] = _pointLabelOf(
+        direct != null
+            ? direct(labels[index], index.toDouble())
+            : callback(fn, [labels[index], index.toDouble()], this),
+      );
+    }
+    final chart = this.chart;
+    if (nativePointChart(chart)) {
+      var visible = 0;
+      while (visible < length && chart.getDataVisibility(visible)) {
+        visible++;
+      }
+      if (visible == length) {
+        pointLabels = mapped;
+        return;
+      }
+    }
     pointLabels = [
       for (var i = 0; i < mapped.length; i++)
         if (chart.getDataVisibility(i.toDouble())) mapped[i],
     ];
   }
 
-  /// `label || label === 0 ? label : ''` of scale.radialLinear.js:461.
+  /// `label || label === 0 ? label : ''` of scale.radialLinear.js:461. A string
+  /// gives itself: an empty one is the `''`.
   static Object? _pointLabelOf(Object? label) =>
-      jsTruthy(label) || (label is num && label == 0) ? label : '';
+      label is String || jsTruthy(label) || (label is num && label == 0)
+      ? label
+      : '';
 
   /// scale.radialLinear.js:466 `fit()`.
   @override
@@ -1192,6 +1473,8 @@ class RadialLinearScale extends LinearScaleBase
         final lineWidth = optsAtIndex.lineWidth;
 
         if (!jsTruthy(lineWidth) || !jsTruthy(color)) {
+          // DIVERGES(chartjs): adapt-radial-static-plans, no line to draw.
+          if (i == labelCount - 1 && _staticAngleLineStyle(angleLines)) break;
           continue;
         }
 
@@ -1210,9 +1493,63 @@ class RadialLinearScale extends LinearScaleBase
           ..moveTo(xCenter ?? double.nan, yCenter ?? double.nan)
           ..lineTo(position.x, position.y)
           ..stroke();
+
+        // DIVERGES(chartjs): adapt-radial-static-plans, one state, each line.
+        if (i == labelCount - 1 && _staticAngleLineState(angleLines)) {
+          final positions = prepareRadialPositions();
+          if (positions != null) {
+            _drawStaticAngleLines(ctx, positions, offset, i - 1);
+            break;
+          }
+        }
       }
 
       ctx.restore();
+    }
+  }
+
+  /// Whether each new context of [angleLines] gives the `color` and the
+  /// `lineWidth` of the first line, on the exact class and the native canvas.
+  /// A scriptable or an indexed value is no plain value. The probe reads the
+  /// resolved value, so one that comes through the fallback to `grid` counts.
+  bool _staticAngleLineStyle(AngleLineOptions angleLines) {
+    final view = angleLines.raw;
+    return view is OptionView &&
+        _nativeStaticPlan(this) &&
+        plainOptionValue(view.cachedStaticValue(OptionKey.color)) &&
+        plainOptionValue(view.cachedStaticValue(OptionKey.lineWidth));
+  }
+
+  /// Whether each new context of [angleLines] gives the state of the first
+  /// line: its style, an empty dash list and its dash offset. The setters of
+  /// the first line stay the state of each other line.
+  bool _staticAngleLineState(AngleLineOptions angleLines) {
+    if (!_staticAngleLineStyle(angleLines)) return false;
+    final view = angleLines.raw! as OptionView;
+    final dash = view.cachedStaticValue(OptionKey.borderDash);
+    return dash is List<Object?> &&
+        dash.isEmpty &&
+        plainOptionValue(view.cachedStaticValue(OptionKey.borderDashOffset));
+  }
+
+  /// The rest of the loop of the angle lines from the index [start], down
+  /// (Chart.js ADR 0095): the same path and stroke for each line. A translucent
+  /// line still blends over the lines before it: each line is its own stroke.
+  void _drawStaticAngleLines(
+    CanvasRenderingContext2D ctx,
+    RadialPositions positions,
+    double offset,
+    int start,
+  ) {
+    final x = xCenter ?? double.nan;
+    final y = yCenter ?? double.nan;
+    for (var i = start; i >= 0; i--) {
+      final position = positions.positionAt(i, offset);
+      ctx
+        ..beginPath()
+        ..moveTo(x, y)
+        ..lineTo(position.x, position.y)
+        ..stroke();
     }
   }
 

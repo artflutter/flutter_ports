@@ -1009,6 +1009,17 @@ final class ScriptableScalePointLabelContext extends ContextObject {
   /// A point label context with the parent [prototype].
   ScriptableScalePointLabelContext(super.prototype);
 
+  /// The fresh point label context, with the upstream literal's own-key order.
+  // DIVERGES(chartjs): adapt-point-label-context-construction, typed fields.
+  ScriptableScalePointLabelContext.pointLabel(
+    Object? parent,
+    Object? label,
+    double index,
+  ) : _label = label,
+      _index = index,
+      _type = 'pointLabel',
+      super._withNames(parent, ['label', 'index', 'type']);
+
   Object? _label = _unset;
   Object? _index = _unset;
   Object? _type = _unset;

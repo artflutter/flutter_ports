@@ -80,3 +80,46 @@ List<ParsedItem>? tryParseNumericCategories(
     );
   });
 }
+
+/// Parse a callback-free numeric range with one scale on both axes, or decline
+/// before creating records. The caller has already performed its ordinary
+/// initial getLabels read, and the labels of this form are never parsed: the
+/// value of the second key of the literal `{[iAxis]: true, [vAxis]: value}`
+/// replaces the first. Records stay fresh, with one own key.
+List<ParsedItem>? tryParseNumericSingleScale(
+  types.Scale scale,
+  List<Object?> data,
+  double start,
+  double count,
+) {
+  if (scale is! NativeNumericParseScale ||
+      !(scale as NativeNumericParseScale).supportsNativeNumericParse ||
+      !nativeDataUpdateList(data) ||
+      !start.isFinite ||
+      !count.isFinite ||
+      start < 0 ||
+      count <= 0 ||
+      start != start.truncateToDouble() ||
+      count != count.truncateToDouble() ||
+      start + count > data.length) {
+    return null;
+  }
+  final offset = start.toInt();
+  final length = count.toInt();
+  for (var i = offset, end = offset + length; i < end; i++) {
+    final value = data[i];
+    if (value is! num && value != null && !identical(value, undefined)) {
+      return null;
+    }
+  }
+  final axis = scale.axis;
+  final key = AxisKey.of(axis);
+  return List<ParsedItem>.generate(length, (i) {
+    final value = data[i + offset];
+    return ParsedItem()..setValue(
+      key,
+      axis,
+      value is num && value.isFinite ? value.toDouble() : null,
+    );
+  });
+}

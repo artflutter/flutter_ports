@@ -340,6 +340,7 @@ class PointElement extends Element
   @override
   double? get angle => _undefinedBits & _angleBit != 0 ? null : _angle;
 
+  @override
   set angle(double value) {
     _angle = value;
     _undefinedBits &= ~_angleBit;

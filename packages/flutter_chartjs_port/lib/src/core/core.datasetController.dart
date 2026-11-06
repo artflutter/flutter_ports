@@ -1557,6 +1557,11 @@ class DatasetController
     final vKey = AxisKey.of(vAxis);
     final labels = iScale.getLabels();
     final singleScale = identical(iScale, vScale);
+    // DIVERGES(chartjs): adapt-radial-numeric-parse, one scale on both axes.
+    if (singleScale) {
+      final single = tryParseNumericSingleScale(vScale, data, start, count);
+      if (single != null) return single;
+    }
     // DIVERGES(chartjs): adapt-numeric-category-parse, shared primitive path.
     final numeric = tryParseNumericCategories(
       iScale,
@@ -2074,6 +2079,16 @@ class DatasetController
     final key = 'point-$mode';
     return _cachedElementOptions[key];
   }
+
+  /// The entry that `_resolveElementOptions` gives for the type `point` in the
+  /// mode `none`, without user code. Null before a shareable resolution.
+  @internal
+  // DIVERGES(chartjs): adapt-radar-direct-updates, the existing cached entry.
+  ElementOptions? get cachedPointNoneOptions =>
+      _cachedElementOptions[_pointNoneCacheKey];
+
+  /// The cache key of the options of the type `point` in the mode `none`.
+  static const String _pointNoneCacheKey = 'point-none';
 
   /// core.datasetController.js:804 `_resolveElementOptions(elementType, mode
   /// = 'default', index)`.

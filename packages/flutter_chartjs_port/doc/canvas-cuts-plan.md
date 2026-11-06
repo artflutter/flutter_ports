@@ -2503,3 +2503,12 @@ Chart.js ADR 0092 adds the internal members `nativeLegendGenerator`, `nativeLege
 `lib/src/core/point_options.dart`, and edits `lib/src/plugins/plugin.legend.dart` and the two arc
 controllers. This plan cites no line of these changes, and no canvas operation or drawing cut changes.
 No trigger occurred.
+### Static plans of the radial scale (2026-11-06)
+
+Chart.js ADR 0095 edits `lib/src/scales/scale.radialLinear.dart`, `lib/src/controllers/controller.radar.dart`,
+`lib/src/helpers/helpers.math.dart`, `lib/src/helpers/helpers.config.dart`, `lib/src/helpers/helpers.options.dart`,
+`lib/src/elements/element.line.dart`, `lib/src/elements/element.point.dart`, `lib/src/core/core.datasetController.dart`,
+`lib/src/core/primitive_parse.dart` and `lib/src/types/index.dart`, and adds `lib/src/core/radial_positions.dart`.
+A plan keeps the canvas calls of each label and angle line that draws, and it reads the capability
+`CanvasTextMetricsSource` of the native canvas. No canvas method and no drawing cut changes. This plan cites no
+line of these files. No trigger occurred.
