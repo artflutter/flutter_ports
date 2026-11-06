@@ -60,6 +60,7 @@ export 'package:flutter_chartjs_port/src/types.dart'
         LayoutItem,
         LineElementWrites,
         PluginService,
+        PointCircleRun,
         PointElementProperty,
         PointElementWrites,
         PropertyAccess,
