@@ -338,6 +338,22 @@ void drawPointLegend(
 
   ctx.beginPath();
 
+  // DIVERGES(chartjs): adapt-point-style-circle, no compares for the default.
+  if (identical(style, 'circle')) {
+    if (hasW) {
+      ctx.ellipse(x, y, w! / 2, radius, 0, 0, tau);
+    } else {
+      ctx.arc(x, y, radius, 0, tau);
+    }
+    ctx
+      ..closePath()
+      ..fill();
+    if (options.borderWidth > 0) {
+      ctx.stroke();
+    }
+    return;
+  }
+
   switch (style) {
     case 'triangle':
       width = hasW ? w! / 2 : radius;

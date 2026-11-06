@@ -19,6 +19,8 @@
 /// - [UiCanvasContext.paint] ends the current recording. When more than a
 ///   few paint generations pile up without a full clear, the context flattens
 ///   them into one image of the bitmap size, so that memory stays bounded.
+/// - A host with no need for such a layer adds the pictures to its scene
+///   instead ([UiCanvasContext.addPicturesToScene], Chart.js ADR 0097).
 /// - [UiCanvasContext.onChanged] tells the host that the content changed,
 ///   once until the next paint.
 ///
@@ -44,6 +46,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_partitioned_fill.dart';
@@ -63,9 +66,36 @@ export 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart'
 /// generation can span multiple pictures without triggering rasterization.
 const int _maxPaintGenerations = 8;
 
-/// Bound native drawPicture's spatial-index consolidation. Pending circle
-/// runs keep their existing batching; they do not consume this budget.
+/// Bound native drawPicture's spatial-index consolidation. A pending circle
+/// run that draws with the atlas does not consume this budget. A run that
+/// draws each circle does, when the next circle ends it (Chart.js ADR 0097).
 const int _maxPictureDraws = 256;
+
+/// The largest center coordinate and radius of a sector that
+/// [UiCanvasContext.tryDrawArcSector] takes, in bitmap pixels. Below it, the
+/// rounding of the path points stays far below the tolerance of
+/// [UiPathBuilder.singleSector], so the ordinary path is a sector too.
+const double _maxSectorExtent = 100000;
+
+/// The smallest inner radius and ring width of such a sector, in bitmap
+/// pixels: far above that tolerance.
+const double _minSectorWidth = 1e-3;
+
+/// The largest absolute angle of such a sector, in radians, for the same
+/// reason.
+const double _maxSectorAngle = 1000;
+
+/// The largest sweep of such a sector, in radians.
+const double _maxSectorSweep = 2 * math.pi - 1e-6;
+
+/// The largest sweep of a run of sectors, in radians: below a full turn, so
+/// that `drawArc` keeps its two end angles.
+const double _maxSectorRunSweep = 2 * math.pi - 1e-3;
+
+/// The largest gap between two sectors of a run, in radians. The angles of
+/// `pathArc` round by a few bits, so two neighbors do not meet exactly. At the
+/// largest radius of a sector, this gap is 1e-4 bitmap pixels.
+const double _maxSectorRunGap = 1e-9;
 
 const ui.Color _black = ui.Color(0xFF000000);
 
@@ -512,6 +542,7 @@ final class UiCanvasContext
         CanvasRenderingContext2D,
         CanvasTextMetricsSource,
         RectBarCanvas,
+        ArcSectorCanvas,
         PartitionedFillCanvas {
   UiCanvasContext._(this._element) {
     _s = _states[0];
@@ -545,6 +576,24 @@ final class UiCanvasContext
   // Full-circle fills and strokes not drawn yet. Every other access to the
   // recording canvas draws them first, so the draw order stays.
   final CircleBatch _batch = CircleBatch();
+  // Adjacent sector fills of one color not drawn yet, in bitmap space
+  // (Chart.js ADR 0097). As for the circles, every other access to the
+  // recording canvas draws them first. At most one of the two runs waits.
+  int _sectorRun = 0;
+  double _runX = 0;
+  double _runY = 0;
+  double _runRadius = 0;
+  double _runInner = 0;
+  double _runStart = 0;
+  double _runSweep = 0;
+  // The end of the last sector in user space, and the rotation of its
+  // transform: the next sector goes on from it in user space, with no rounding
+  // of the mapped angles.
+  double _runEnd = 0;
+  double _runAngle = 0;
+  bool _runReflected = false;
+  ui.Color _runColor = _black;
+  final ui.Paint _runPaint = ui.Paint();
   bool _hasContent = false;
   int _pictureDraws = 0;
   int _paintGenerations = 0;
@@ -579,6 +628,10 @@ final class UiCanvasContext
   /// its draw, for tests.
   @visibleForTesting
   int get debugPendingCircles => _batch.length;
+
+  /// The count of the sector fills that wait for their one draw, for tests.
+  @visibleForTesting
+  int get debugPendingSectors => _sectorRun;
 
   /// The builder of the current path, for tests: its `singleRect`,
   /// `singleCircle` and `singleRRect` select the fast paths of [fill] and
@@ -644,6 +697,51 @@ final class UiCanvasContext
     canvas.restore();
   }
 
+  /// Starts the paint of a host that adds the pictures to its scene
+  /// ([addPicturesToScene]), for a layer in place of `Canvas.drawPicture`
+  /// (Chart.js ADR 0097). It does what [paint] does before its first draw.
+  ///
+  /// False when the content needs the `saveLayer` of [paint], which the host
+  /// then calls: a composite operation or a partial clear blends with the
+  /// content and must not reach what is below the canvas.
+  @internal
+  bool beginScenePaint() {
+    _notified = false;
+    if (_disposed) return true;
+    _endRecording();
+    if (_paintGenerations > _maxPaintGenerations) _flatten();
+    return !_needsLayer;
+  }
+
+  /// Whether [addPicturesToScene] adds a picture.
+  @internal
+  bool get hasScenePictures => _pictures.isNotEmpty;
+
+  /// The bitmap in its own space: the clip of the pictures in a scene.
+  @internal
+  ui.Rect get bitmapBounds => _bitmapBounds;
+
+  /// Adds the pictures to [builder], in bitmap space.
+  ///
+  /// It reads the pictures that this context holds at the call, so it never
+  /// touches a disposed picture. A scene keeps its own reference to each one.
+  ///
+  /// More than one picture asks the raster cache of the Skia backends to skip
+  /// them: it would keep one bitmap of the chart for each picture.
+  @internal
+  void addPicturesToScene(ui.SceneBuilder builder) {
+    final pictures = _pictures;
+    final n = pictures.length;
+    final willChange = n > 1;
+    for (var i = 0; i < n; i++) {
+      builder.addPicture(
+        ui.Offset.zero,
+        pictures[i],
+        willChangeHint: willChange,
+      );
+    }
+  }
+
   /// Releases the pictures. The context draws nothing after this call.
   void dispose() {
     if (_disposed) return;
@@ -653,6 +751,8 @@ final class UiCanvasContext
     _onChanged = null;
     _rectBarBorder = null;
     _rectBarBackground = null;
+    _arcBorder = null;
+    _arcBackground = null;
     _partitionedFillPath = null;
   }
 
@@ -660,12 +760,39 @@ final class UiCanvasContext
 
   ui.Canvas get _c {
     if (_batch.length > 0) _flushBatch();
+    if (_sectorRun > 0) _flushSectorRun();
     return _canvas ?? _begin();
   }
 
   /// Draws the pending circles of [_batch].
   void _flushBatch() {
     _batch.flush(_canvas ?? _begin());
+  }
+
+  /// Draws the pending sectors with one `drawArc`. The caller may be in the
+  /// middle of a draw, with [_fillPaint] set up: this draw uses paints of its
+  /// own, and it never ends the recording.
+  void _flushSectorRun() {
+    _sectorRun = 0;
+    _pictureDraws++;
+    _drawSector(
+      _canvas ?? _begin(),
+      _runPaint..color = _runColor,
+      _runX,
+      _runY,
+      _runRadius,
+      _runInner,
+      _runStart,
+      _runSweep,
+    );
+  }
+
+  /// Ends the sector run for a new draw, between two draws. Its one draw
+  /// counts in the budget of the recording.
+  void _endSectorRun() {
+    if (_sectorRun == 0) return;
+    _flushSectorRun();
+    if (_pictureDraws >= _maxPictureDraws) _endRecording(split: true);
   }
 
   /// Adds a fill or a stroke of the scalar circle in [color] to [_batch]. The
@@ -685,8 +812,17 @@ final class UiCanvasContext
         y.abs() > maxBatchCenter) {
       return false;
     }
+    _endSectorRun();
     if (!_batch.accepts(radius, color, stroke: stroke, width: width)) {
+      // Circles that draw one by one count in the budget of the recording.
+      // Here no native sequence is open. A run that ends inside
+      // [_endRecording] or [restore] does not split.
+      final direct = _batch.directLength;
       _flushBatch();
+      if (direct > 0) {
+        _pictureDraws += direct;
+        if (_pictureDraws >= _maxPictureDraws) _endRecording(split: true);
+      }
     }
     _batch.add(
       x,
@@ -731,6 +867,7 @@ final class UiCanvasContext
       _generationHasContent = false;
     }
     if (_batch.length > 0) _flushBatch();
+    if (_sectorRun > 0) _flushSectorRun();
     final recorder = _recorder;
     if (recorder == null) return;
     final picture = recorder.endRecording();
@@ -747,6 +884,7 @@ final class UiCanvasContext
 
   void _discardRecording() {
     _batch.clear();
+    _sectorRun = 0;
     _pictureDraws = 0;
     final recorder = _recorder;
     if (recorder == null) {
@@ -945,6 +1083,24 @@ final class UiCanvasContext
     _drew();
   }
 
+  /// Strokes the one line of the current path with `drawLine`, for a
+  /// similarity transform of the scale [scale] (Chart.js ADR 0097): no
+  /// `ui.Path`, and the commands stay deferred for a later read. A line with
+  /// no length, or with a coordinate that is not finite, takes the path.
+  void _strokeLine(double scale) {
+    final x0 = _path.lineX0;
+    final y0 = _path.lineY0;
+    final x1 = _path.lineX1;
+    final y1 = _path.lineY1;
+    if (!_finite4(x0, y0, x1, y1) || (x0 == x1 && y0 == y1)) {
+      _strokeMapped(_path.path, scale);
+      return;
+    }
+    if (!_setupStroke(scale, mapped: true)) return;
+    _c.drawLine(ui.Offset(x0, y0), ui.Offset(x1, y1), _strokePaint);
+    _drew();
+  }
+
   /// Whether a draw with [color] or [shader] can join the circle batch: a
   /// plain color in the `srcOver` mode.
   bool _batchable(ui.Color? color, UiShaderSource? shader) =>
@@ -1045,6 +1201,7 @@ final class UiCanvasContext
     if (_depth == 0) return;
     if (_ownsClips) {
       if (_batch.length > 0) _flushBatch();
+      if (_sectorRun > 0) _flushSectorRun();
       _canvas?.restore();
     }
     _depth--;
@@ -1342,6 +1499,136 @@ final class UiCanvasContext
     return true;
   }
 
+  ui.Color? _arcBorder;
+  ui.Color? _arcBackground;
+
+  /// `translate(0, 0)` adds 0 to the translation of a finite matrix.
+  @override
+  @internal
+  bool get zeroTranslateIsNoOp {
+    final t = _s.transform;
+    return t.a.isFinite && t.b.isFinite && t.c.isFinite && t.d.isFinite;
+  }
+
+  /// A fused ordinary arc (Chart.js ADR 0097): the fill of the sector, with
+  /// the numbers that [UiPathBuilder.singleSector] reads from the ordinary
+  /// path. The logical styles, the save depth and the transform stay. The path
+  /// of the ordinary sequence stays pending as the current path.
+  ///
+  /// Adjacent sectors of one color, one center and one pair of radii in the
+  /// `srcOver` mode draw once, when the run ends: the seams between them
+  /// disappear (differences.md row `adapt-sector-run-seams`).
+  @override
+  @internal
+  bool tryDrawArcSector({
+    required double x,
+    required double y,
+    required double outerRadius,
+    required double innerRadius,
+    required double startAngle,
+    required double endAngle,
+    required Object? backgroundColor,
+    required Object? borderColor,
+  }) {
+    final s = _s;
+    final t = s.transform;
+    // A callback can inspect or mutate the temporary style/path/save state,
+    // as for a fused bar. So can an observer of a picture or an image.
+    if (_disposed ||
+        (!_notified && _onChanged != null) ||
+        ui.Picture.onCreate != null ||
+        ui.Picture.onDispose != null ||
+        ui.Image.onCreate != null ||
+        ui.Image.onDispose != null ||
+        !identical(_path.transform, t) ||
+        !t.isSimilarity ||
+        !_rectBarColor(backgroundColor, _arcBackground) ||
+        !_rectBarColor(borderColor, _arcBorder)) {
+      return false;
+    }
+    final px = t.mapX(x, y);
+    final py = t.mapY(x, y);
+    final scale = t.scaleFactor;
+    final radius = outerRadius * scale;
+    final inner = innerRadius * scale;
+    final middle = (startAngle + endAngle) / 2;
+    final firstSweep = middle - startAngle;
+    final secondSweep = endAngle - middle;
+    if (!(px.abs() <= _maxSectorExtent) ||
+        !(py.abs() <= _maxSectorExtent) ||
+        !(radius <= _maxSectorExtent) ||
+        !(radius - inner >= _minSectorWidth) ||
+        (inner != 0 && !(inner >= _minSectorWidth)) ||
+        !(startAngle.abs() <= _maxSectorAngle) ||
+        !(endAngle.abs() <= _maxSectorAngle) ||
+        !(firstSweep > 0) ||
+        !(secondSweep > 0) ||
+        !(firstSweep + secondSweep < _maxSectorSweep)) {
+      return false;
+    }
+    final background = backgroundColor! as ui.Color;
+    _arcBackground = background;
+    _arcBorder = borderColor! as ui.Color;
+    _path.setPendingSector(
+      x,
+      y,
+      outerRadius,
+      innerRadius,
+      startAngle,
+      endAngle,
+      t,
+    );
+    // The angles of `_addArc` for a similarity transform, added as
+    // `singleSector` adds them.
+    final reflected = t.isReflected;
+    final angle = t.angle;
+    final start = reflected ? angle - startAngle : angle + startAngle;
+    final sweep = reflected
+        ? -firstSweep + -secondSweep
+        : firstSweep + secondSweep;
+    if (s.blendMode != ui.BlendMode.srcOver) {
+      if (_setupPaint(_fillPaint, background, null, mapped: true)) {
+        _drawSector(_c, _fillPaint, px, py, radius, inner, start, sweep);
+        _drew();
+      }
+      return true;
+    }
+    final color = _batchColor(background);
+    if (color == null) return true;
+    // DIVERGES(chartjs): adapt-sector-run-seams, one draw for adjacent sectors.
+    if (_sectorRun > 0 &&
+        (startAngle - _runEnd).abs() <= _maxSectorRunGap &&
+        px == _runX &&
+        py == _runY &&
+        radius == _runRadius &&
+        inner == _runInner &&
+        angle == _runAngle &&
+        reflected == _runReflected &&
+        (identical(color, _runColor) || color == _runColor) &&
+        (_runSweep + sweep).abs() < _maxSectorRunSweep) {
+      _sectorRun++;
+      _runSweep += sweep;
+      _runEnd = endAngle;
+      _drew(batched: true);
+      return true;
+    }
+    _endSectorRun();
+    if (_batch.length > 0) _flushBatch();
+    _sectorRun = 1;
+    _runX = px;
+    _runY = py;
+    _runRadius = radius;
+    _runInner = inner;
+    _runStart = start;
+    _runSweep = sweep;
+    _runEnd = endAngle;
+    _runAngle = angle;
+    _runReflected = reflected;
+    _runColor = color;
+    _drew(batched: true);
+    return true;
+  }
+
   @override
   void strokeRect(double x, double y, double w, double h) {
     if (_disposed || !_finite4(x, y, w, h)) return;
@@ -1560,17 +1847,30 @@ final class UiCanvasContext
   /// radii and its two end angles, which is the region of the path.
   void _fillSector(ui.Canvas canvas, UiSector sector) {
     final (:x, :y, :radius, :inner, :start, :sweep) = sector;
+    _drawSector(canvas, _fillPaint, x, y, radius, inner, start, sweep);
+  }
+
+  /// The draw of [_fillSector], with the fill paint [fill].
+  void _drawSector(
+    ui.Canvas canvas,
+    ui.Paint fill,
+    double x,
+    double y,
+    double radius,
+    double inner,
+    double start,
+    double sweep,
+  ) {
     if (inner == 0) {
       canvas.drawArc(
         ui.Rect.fromLTRB(x - radius, y - radius, x + radius, y + radius),
         start,
         sweep,
         true,
-        _fillPaint,
+        fill,
       );
       return;
     }
-    final fill = _fillPaint;
     final paint = _sectorPaint
       ..color = fill.color
       ..shader = fill.shader
@@ -1639,6 +1939,8 @@ final class UiCanvasContext
           _path.circleRadius,
           t.scaleFactor,
         );
+      } else if (_path.hasSingleLine && _s.lineDash.isEmpty) {
+        _strokeLine(t.scaleFactor);
       } else {
         _strokeMapped(_path.path, t.scaleFactor);
       }
@@ -1674,6 +1976,7 @@ final class UiCanvasContext
           : _PathClip(ui.Path.from(_path.path)..fillType = fillType);
     }
     if (_batch.length > 0) _flushBatch();
+    if (_sectorRun > 0) _flushSectorRun();
     // The first clip of a saved state makes the save of that state.
     final first = _depth > 0 && !_ownsClips;
     s.clips = [...s.clips, clip];

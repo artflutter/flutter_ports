@@ -409,22 +409,13 @@ void main() {
       );
     }
 
-    /// The `Canvas.scale` calls of the paint of [host], as (x, y). The host
-    /// and the context scale the canvas itself and push no transform layer,
-    /// so a [TestRecordingCanvas] records the calls.
-    List<(double, double)> paintScales(RenderChartHost host) {
-      final canvas = TestRecordingCanvas();
-      host.paint(TestRecordingPaintingContext(canvas), Offset.zero);
-      return [
-        for (final call in canvas.invocations)
-          if (call.invocation.memberName == #scale)
-            switch (call.invocation.positionalArguments) {
-              [final double x] || [final double x, null] => (x, x),
-              [final double x, final double y] => (x, y),
-              final arguments => throw StateError('scale$arguments'),
-            },
-      ];
-    }
+    /// The scales of the picture layer of the host, as (x, y). A chart that
+    /// needs no isolating layer reaches the scene through this layer
+    /// (Chart.js ADR 0097).
+    List<(double, double)> paintScales(WidgetTester tester) => [
+      for (final layer in tester.layers.whereType<ChartPicturesLayer>())
+        (layer.scaleX, layer.scaleY),
+    ];
 
     testWidgets('a chart at devicePixelRatio 1 on a view at 2 fills its '
         'display size', (tester) async {
@@ -502,7 +493,7 @@ void main() {
       await tester.pump();
       expect((chart.width, chart.height), (101.0, 50.5));
       expect((canvas.width, canvas.height), (151, 75));
-      final (scaleX, scaleY) = paintScales(_host(tester)).single;
+      final (scaleX, scaleY) = paintScales(tester).single;
       expect(scaleX, 101 / 151);
       expect(scaleY, 50.5 / 75);
       expect(scaleX * 1.5, closeTo(1.0033, 1e-4));
@@ -521,7 +512,7 @@ void main() {
       expect((chart.width, chart.height), (387.4, 193.7));
       expect((canvas.width, canvas.height), (1016, 508));
       expect(chart.width * 2.625 / canvas.width, closeTo(1, 1e-3));
-      expect(paintScales(_host(tester)), [(1 / 2.625, 1 / 2.625)]);
+      expect(paintScales(tester), [(1 / 2.625, 1 / 2.625)]);
       chart.destroy();
     });
 
@@ -591,7 +582,7 @@ void main() {
       expect((canvas.width, canvas.height), (960, 720));
       expect(canvas.style.getPropertyValue('width'), '320px');
       expect(_host(tester).size, const Size(320, 240));
-      expect(paintScales(_host(tester)), [(1 / 3, 1 / 3)]);
+      expect(paintScales(tester), [(1 / 3, 1 / 3)]);
       chart.destroy();
     });
 

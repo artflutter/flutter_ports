@@ -29,9 +29,16 @@
 /// each one by the color of its instance (`BlendMode.modulate`): white
 /// times a color is that color. A run of one color keeps its colored
 /// sprites.
+///
+/// A run of fills may also change its radius (Chart.js ADR 0097): bubbles.
+/// Such a run keeps a radius for each instance. Fewer than [minLadderRun]
+/// fills draw with `drawCircle`. A longer run draws with [_FillLadder], one
+/// atlas of masters for a ladder of radii. The transform of each instance
+/// scales its master to the exact radius, at the exact center.
 library;
 
 import 'dart:collection';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -60,8 +67,117 @@ const int subpixelSteps = 4;
 /// stack and corrupted the heap of the renderer. 512 instances take 16 KB.
 const int maxAtlasInstances = 512;
 
+/// The smallest run of fills with varying radii that draws with the atlas. A
+/// shorter run draws each circle with `drawCircle`: a few bubbles keep their
+/// exact pixels and cost no atlas.
+const int minLadderRun = 64;
+
+/// The smallest radius, in bitmap pixels, of a fill that changes the radius
+/// of its run. A smaller circle is mostly an edge, and draws in the runs of
+/// one radius.
+const double minLadderRadius = 0.5;
+
 /// The bound of the sprite cache.
 const int _spriteCacheSize = 32;
+
+/// The ratio of two radii of the ladder. A master scales by less than half
+/// of this step, so its edge ramp stays about one bitmap pixel wide.
+const double _ladderStep = 1.1;
+
+/// The master pixels for each bitmap pixel. An edge ramp of one bitmap pixel
+/// has two master pixels: bilinear sampling then keeps the ramp within 1 / 8
+/// of the coverage.
+const int _ladderResolution = 2;
+
+/// The entries for each bitmap pixel of the radius in [_FillLadder._table].
+const int _ladderTableScale = 8;
+
+/// One atlas of filled discs for a fixed ladder of radii, white with an alpha
+/// of the coverage of each pixel.
+///
+/// A master has no anti-aliased edge of the rasterizer. A radial gradient
+/// paints its coverage: a ramp of one bitmap pixel across the radius. A
+/// rasterized edge has half that width in a master of twice the resolution,
+/// and a scaled copy of it would be too sharp.
+final class _FillLadder {
+  _FillLadder._(
+    this.image,
+    this._table,
+    this._scales,
+    this._tops,
+    this._cells,
+    this._centers,
+  );
+
+  factory _FillLadder._build() {
+    final radii = <double>[];
+    for (var r = minLadderRadius; ; r *= _ladderStep) {
+      radii.add(r);
+      if (r >= maxBatchRadius) break;
+    }
+    final n = radii.length;
+    final scales = Float32List(n);
+    final tops = Float32List(n);
+    final cells = Float32List(n);
+    final centers = Float32List(n);
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder);
+    final paint = ui.Paint();
+    const on = ui.Color(0xFFFFFFFF);
+    const off = ui.Color(0x00FFFFFF);
+    var top = 0.0;
+    var width = 0.0;
+    for (var i = 0; i < n; i++) {
+      final radius = radii[i] * _ladderResolution;
+      // The half of the ramp of one bitmap pixel, in master pixels.
+      const half = _ladderResolution / 2;
+      final outer = radius + half;
+      final cell = (2 * outer + 4).ceilToDouble();
+      final center = (cell / 2).floorToDouble();
+      final inner = math.max<double>(0, radius - half);
+      paint.shader = ui.Gradient.radial(
+        ui.Offset(center, top + center),
+        outer,
+        const [on, on, off],
+        [0, inner / outer, 1],
+      );
+      canvas.drawRect(ui.Rect.fromLTWH(0, top, cell, cell), paint);
+      scales[i] = 1 / radius;
+      tops[i] = top;
+      cells[i] = cell;
+      centers[i] = center;
+      top += cell;
+      width = math.max(width, cell);
+    }
+    final picture = recorder.endRecording();
+    final image = picture.toImageSync(width.ceil(), top.ceil());
+    picture.dispose();
+    // The rung with the nearest ratio for each radius of the table.
+    final table = Uint8List(maxBatchRadius.ceil() * _ladderTableScale + 1);
+    var rung = 0;
+    for (var k = 0; k < table.length; k++) {
+      final r = (k + 0.5) / _ladderTableScale;
+      while (rung + 1 < n && radii[rung + 1] / r < r / radii[rung]) {
+        rung++;
+      }
+      table[k] = rung;
+    }
+    return _FillLadder._(image, table, scales, tops, cells, centers);
+  }
+
+  /// The atlas image.
+  final ui.Image image;
+
+  final Uint8List _table;
+  // For each rung: 1 over its radius in master pixels, the top of its cell,
+  // the side of its cell and its center in the cell.
+  final Float32List _scales;
+  final Float32List _tops;
+  final Float32List _cells;
+  final Float32List _centers;
+}
+
+_FillLadder? _fillLadder;
 
 typedef _SpriteKey = (double radius, int fill, int stroke, double width);
 
@@ -119,12 +235,18 @@ ui.Image _sprite(_SpriteKey key, int cell) {
 /// width, in bitmap space: with one fill color and one stroke color, or
 /// with a color for each instance.
 final class CircleBatch {
+  // The radius of a run of one radius, else the last radius of a run with a
+  // radius for each instance ([_varying]).
   double _radius = 0;
   ui.Color? _fill;
   ui.Color? _stroke;
   double _width = 0;
   // The run has a color for each instance in [_colors].
   bool _colored = false;
+  // The run has a radius for each instance in [_radii]. It has fills only.
+  bool _varying = false;
+  // The fills at the end of a varying run with its last radius.
+  int _streak = 0;
 
   // For each instance: x, y (the center), the kind (0 fill, 1 stroke) and,
   // in a run with a color for each instance, the ARGB color.
@@ -132,6 +254,7 @@ final class CircleBatch {
   Float64List _ys = Float64List(256);
   Uint8List _kinds = Uint8List(256);
   Int32List _colors = Int32List(256);
+  Float64List _radii = Float64List(256);
 
   // The transforms, the rects and the colors of one atlas call.
   final Float32List _transforms = Float32List(maxAtlasInstances * 4);
@@ -149,6 +272,13 @@ final class CircleBatch {
   /// Whether the run takes a fill ([stroke] false) or a stroke of a circle
   /// with [radius] in [color] (and the stroke [width]). A run of fewer than
   /// [minAtlasRun] circles takes another color (see [add]).
+  ///
+  /// A run of fills takes another radius below [minAtlasRun] circles or once
+  /// it has varying radii. A stroke ends a run with varying radii, and a run
+  /// with a stroke keeps one radius: a scaled stroke differs too much from
+  /// `drawCircle` (Chart.js ADR 0097). A run with varying radii ends after
+  /// [minAtlasRun] fills of one radius: the next one takes the sprites of that
+  /// radius.
   bool accepts(
     double radius,
     ui.Color color, {
@@ -156,13 +286,26 @@ final class CircleBatch {
     double width = 0,
   }) {
     if (length == 0) return true;
-    if (radius != _radius) return false;
+    if (radius != _radius) {
+      if (stroke ||
+          _stroke != null ||
+          radius < minLadderRadius ||
+          _radius < minLadderRadius) {
+        return false;
+      }
+      return _varying || length < minAtlasRun;
+    }
+    if (_varying) return !stroke && _streak < minAtlasRun;
     final current = stroke ? _stroke : _fill;
     if (current == null) return true;
     if (stroke && _width != width) return false;
     if (_colored || identical(current, color) || current == color) return true;
     return length < minAtlasRun;
   }
+
+  /// The count of the circles that [flush] draws with `drawCircle`.
+  int get directLength =>
+      length < (_varying ? minLadderRun : minAtlasRun) ? length : 0;
 
   /// Adds a fill or a stroke. The run must accept it (see [accepts]). A
   /// color that is not the color of the run for its kind gives each
@@ -180,6 +323,17 @@ final class CircleBatch {
       _fill = null;
       _stroke = null;
       _colored = false;
+      _varying = false;
+    }
+    if (radius != _radius) {
+      if (!_varying) {
+        _varying = true;
+        _radii.fillRange(0, length, _radius);
+      }
+      _radius = radius;
+      _streak = 1;
+    } else if (_varying) {
+      _streak++;
     }
     if (!_colored) {
       final current = stroke ? _stroke : _fill;
@@ -198,6 +352,7 @@ final class CircleBatch {
     _ys[length] = y;
     _kinds[length] = stroke ? 1 : 0;
     if (_colored) _colors[length] = color.toARGB32();
+    if (_varying) _radii[length] = radius;
     length++;
   }
 
@@ -217,6 +372,7 @@ final class CircleBatch {
     _ys = Float64List(size)..setRange(0, length, _ys);
     _kinds = Uint8List(size)..setRange(0, length, _kinds);
     _colors = Int32List(size)..setRange(0, length, _colors);
+    _radii = Float64List(size)..setRange(0, length, _radii);
   }
 
   /// Empties the run without a draw.
@@ -228,9 +384,14 @@ final class CircleBatch {
   void flush(ui.Canvas canvas) {
     final n = length;
     if (n == 0) return;
+    final direct = directLength;
     length = 0;
-    if (n < minAtlasRun) {
+    if (direct > 0) {
       _drawDirect(canvas, n);
+      return;
+    }
+    if (_varying) {
+      _drawLadder(canvas, n);
       return;
     }
     // A run with a color for each instance has white sprites, and the atlas
@@ -292,6 +453,7 @@ final class CircleBatch {
 
   void _drawDirect(ui.Canvas canvas, int n) {
     final colored = _colored;
+    final varying = _varying;
     final fill = _fill;
     if (fill != null) _fillPaint.color = fill;
     final stroke = _stroke;
@@ -303,7 +465,71 @@ final class CircleBatch {
     for (var i = 0; i < n; i++) {
       final paint = _kinds[i] == 0 ? _fillPaint : _strokePaint;
       if (colored) paint.color = ui.Color(_colors[i]);
-      canvas.drawCircle(ui.Offset(_xs[i], _ys[i]), _radius, paint);
+      canvas.drawCircle(
+        ui.Offset(_xs[i], _ys[i]),
+        varying ? _radii[i] : _radius,
+        paint,
+      );
+    }
+  }
+
+  /// Draws a run of fills with varying radii, in order. Each instance takes
+  /// the master with the nearest radius, and its transform scales the master
+  /// to the exact radius at the exact center. The atlas multiplies the white
+  /// masters by the colors.
+  // DIVERGES(chartjs): adapt-circle-fill-ladder, one atlas for varying radii.
+  void _drawLadder(ui.Canvas canvas, int n) {
+    final ladder = _fillLadder ??= _FillLadder._build();
+    final table = ladder._table;
+    final scales = ladder._scales;
+    final tops = ladder._tops;
+    final cells = ladder._cells;
+    final centers = ladder._centers;
+    final image = ladder.image;
+    final xs = _xs;
+    final ys = _ys;
+    final radii = _radii;
+    final colored = _colored;
+    final instanceColors = _colors;
+    final constant = colored ? 0 : _fill!.toARGB32();
+    final transforms = _transforms;
+    final rects = _rects;
+    final colors = _atlasColors;
+    final tableEnd = table.length - 1;
+    var j = 0;
+    for (var i = 0; i < n; i++) {
+      final radius = radii[i];
+      final index = (radius * _ladderTableScale).toInt();
+      final rung = table[index < tableEnd ? index : tableEnd];
+      final scale = radius * scales[rung];
+      final center = centers[rung];
+      final top = tops[rung];
+      final cell = cells[rung];
+      transforms
+        ..[j] = scale
+        ..[j + 1] = 0
+        ..[j + 2] = xs[i] - scale * center
+        ..[j + 3] = ys[i] - scale * center;
+      rects
+        ..[j] = 0
+        ..[j + 1] = top
+        ..[j + 2] = cell
+        ..[j + 3] = top + cell;
+      colors[j >> 2] = colored ? instanceColors[i] : constant;
+      j += 4;
+      if (j == transforms.length || i == n - 1) {
+        final full = j == transforms.length;
+        canvas.drawRawAtlas(
+          image,
+          full ? transforms : Float32List.sublistView(transforms, 0, j),
+          full ? rects : Float32List.sublistView(rects, 0, j),
+          full ? colors : Int32List.sublistView(colors, 0, j >> 2),
+          ui.BlendMode.modulate,
+          null,
+          _atlasPaint,
+        );
+        j = 0;
+      }
     }
   }
 }
