@@ -801,7 +801,7 @@ int _drawStaticPointLabels(
 /// setters and text measures have no effect beyond its state (the capability
 /// of the native canvas). A recording context keeps each ordinary call.
 bool _nativeStaticPlan(RadialLinearScale scale) =>
-    scale.runtimeType == RadialLinearScale &&
+    scale._exactClass &&
     switch (scale.ctx) {
       final CanvasTextMetricsSource source =>
         source.textMetricsGeneration != null,
@@ -977,6 +977,11 @@ class RadialLinearScale extends LinearScaleBase
 
   // scale.radialLinear.js:340 `static id = 'radialLinear'`. Scale has the
   // instance field `id`. Thus the value is only in the statics of jsClass.
+
+  /// Whether this object is of the class itself. `super.runtimeType` is the
+  /// class of the object also when a user subclass overrides `runtimeType`.
+  // DIVERGES(chartjs): adapt-radial-static-plans, the exact-class guard.
+  bool get _exactClass => super.runtimeType == RadialLinearScale;
 
   /// Native support for the explicit data-only lifecycle.
   @override

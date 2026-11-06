@@ -83,6 +83,19 @@ final class _ObservedPoint extends PointElement {
   }
 }
 
+/// A user point class that counts the reads of its `active` getter.
+final class _CountedActivePoint extends PointElement {
+  _CountedActivePoint();
+
+  int activeReads = 0;
+
+  @override
+  bool get active {
+    activeReads++;
+    return super.active;
+  }
+}
+
 String _bits(Object? value) {
   if (value is double) {
     final data = ByteData(8)..setFloat64(0, value);
@@ -479,6 +492,25 @@ void main() {
         ..[3] = _ObservedPoint();
       twin.update('none');
       expect(_pointsText(chart), _pointsText(twin));
+    });
+
+    testWidgets('a user point in the rest of the loop gets one active read', (
+      tester,
+    ) async {
+      // The built-in point at the index 0 starts the rest of the loop, and the
+      // user point at the index 3 ends it. The class test comes before each
+      // read of that point: the ordinary loop makes the one read of upstream.
+      int reads(String type) {
+        final chart = acquireChart(_config(type, n: 6));
+        final meta = chart.getDatasetMeta(0);
+        final point = _CountedActivePoint();
+        meta.data[3] = point;
+        meta.controller!.updateElements(meta.data, 0, 6, 'none');
+        return point.activeReads;
+      }
+
+      expect(reads('radar'), 1);
+      expect(reads('ordinaryRadar'), 1);
     });
 
     testWidgets('a controller with option sharing shares its cached options', (
