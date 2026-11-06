@@ -976,7 +976,7 @@ final class Path2D implements CanvasPath {
     }
   }
 
-  /// Whether a reader got the list of [commands], which code outside can change.
+  /// Whether a reader got the list of [commands], which outside code can change.
   @internal
   bool get isExposed => _commands != null;
 
