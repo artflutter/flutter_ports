@@ -6,7 +6,7 @@ import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:chartjs_gallery/demo/events_demo.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/demo/text_demo.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The tabs of [CanvasHostDemoPage]: key, label, icon and content.
 final List<({String key, String label, IconData icon, Widget Function() build})>

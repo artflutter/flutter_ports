@@ -1,9 +1,9 @@
 // Original code, not ported from Chart.js: site design drafts.
 import 'package:chartjs_gallery/main.dart' show GalleryHome;
 import 'package:chartjs_gallery/site_drafts/package_health.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:material_ui/material_ui.dart';
 
 const _ink = Color(0xFF17252C);
 const _blue = Color(0xFF205CF5);

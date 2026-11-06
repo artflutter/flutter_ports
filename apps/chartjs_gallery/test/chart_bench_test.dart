@@ -8,7 +8,6 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
-import 'package:flutter/material.dart' hide Title, Tooltip;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: UiCanvasElement, the canvas of the internal host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
@@ -31,6 +30,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     show Tooltip;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart' hide Title, Tooltip;
 
 /// The timing of these tests: one short batch after a short warm-up.
 const ChartBenchSettings _settings = ChartBenchSettings(

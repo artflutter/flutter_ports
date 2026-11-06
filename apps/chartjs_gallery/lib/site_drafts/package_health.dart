@@ -1,8 +1,8 @@
 // Original code, not ported from Chart.js: package health snapshots.
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A checked public-metadata snapshot, shared across the cards of one page.
 class PackageHealthSnapshot {

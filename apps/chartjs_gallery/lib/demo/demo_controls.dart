@@ -1,5 +1,5 @@
 import 'package:chartjs_gallery/demo/demo_common.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Lays out [children] in columns of equal width: one column on a phone,
 /// up to [maxColumns] on a wide screen.

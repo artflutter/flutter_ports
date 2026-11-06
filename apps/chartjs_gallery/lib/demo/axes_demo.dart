@@ -6,8 +6,8 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The scale types of the x axis of the Axes tab.
 const List<String> axesDemoXTypes = [

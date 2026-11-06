@@ -6,9 +6,9 @@ import 'dart:ui' show FramePhase;
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The scene of the profiling entry: `--dart-define=MODE=elements` selects
 /// the [StressMode] of that name (`primitives`, `elements`, `bars`, `arcs`,

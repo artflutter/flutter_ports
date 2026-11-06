@@ -23,7 +23,6 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart' show mapEquals;
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
@@ -37,6 +36,7 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 // Not public: fromNativeEvent, the chart event of a NativeEvent.
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
+import 'package:material_ui/material_ui.dart';
 
 export 'package:chartjs_gallery/demo/stress_chart_config.dart'
     show StressChartType, stressAnimateMs, stressArcCounts, stressPointCounts;

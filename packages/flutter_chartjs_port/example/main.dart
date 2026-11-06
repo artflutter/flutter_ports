@@ -10,8 +10,8 @@ library;
 
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   // Chart.js registers nothing by itself. Register the components before the

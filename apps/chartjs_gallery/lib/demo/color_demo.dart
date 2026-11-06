@@ -1,9 +1,9 @@
 import 'package:chartjs_gallery/demo/demo_common.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
 // Numerical color operations; chart inputs are Flutter Color values.
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
+import 'package:material_ui/material_ui.dart';
 
 /// Native color samples used by the chart API.
 const List<Color> sampleColors = [

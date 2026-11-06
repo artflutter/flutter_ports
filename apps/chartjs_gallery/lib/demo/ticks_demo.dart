@@ -4,7 +4,6 @@
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Tick, ticks;
 // Not public: JsFunction and jsCall, the call of a formatter with a `this`.
@@ -12,6 +11,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show JsFunction, jsCall;
 // Not public: the interfaces types.Chart and types.Scale of the stand-ins.
 import 'package:flutter_chartjs_port/src/types/index.dart' show Chart, Scale;
+import 'package:material_ui/material_ui.dart';
 
 /// The locales of the locale menu.
 const List<String> tickLocales = ['en-US', 'de-DE', 'fr-FR', 'ru-RU', 'ja-JP'];

@@ -69,7 +69,7 @@ The package needs Flutter 3.47 and Dart 3.13 or later.
 ## Usage
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 void main() {

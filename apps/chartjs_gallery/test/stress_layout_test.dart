@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: stress-screen information hierarchy.
 import 'package:chartjs_gallery/demo/stress_demo.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'stress_controls.dart';
 

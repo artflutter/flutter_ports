@@ -3,13 +3,13 @@
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: _updateBezierControlPoints, an upstream `_` helper.
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show updateBezierControlPoints;
 // Not exported: SplinePoint, not in the list of Chart.js ADR 0048 §5.
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
+import 'package:material_ui/material_ui.dart';
 
 /// A point `{x, y}` whose control points the curve helpers write, as the
 /// port tests of `helpers.curve` pass it.

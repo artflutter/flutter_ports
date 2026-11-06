@@ -7,7 +7,6 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
-import 'package:flutter/material.dart' hide Tooltip;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: jsGet, the JS property read of the chart values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
@@ -27,6 +26,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     show Tooltip;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart' hide Tooltip;
 
 import 'stress_controls.dart';
 
