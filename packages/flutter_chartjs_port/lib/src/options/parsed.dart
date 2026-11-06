@@ -61,7 +61,10 @@ final class ParsedItem extends TypedRecord {
   ParsedItem();
 
   /// The item `{[a]: aValue, [b]: bValue}` of the parse functions, in this
-  /// key order (`{[iAxis]: ..., [vAxis]: ...}`).
+  /// key order (`{[iAxis]: ..., [vAxis]: ...}`). Two equal keys are one key
+  /// with the second value. The axes `x`, `y` and `r` write their fields at
+  /// once, because the index of an [AxisKey] is the slot of its field. A
+  /// user axis name goes by name: it can name a field (Chart.js ADR 0096).
   ParsedItem.of(
     AxisKey a,
     String aName,
@@ -70,8 +73,14 @@ final class ParsedItem extends TypedRecord {
     String bName,
     Object? bValue,
   ) {
-    setValue(a, aName, aValue);
-    setValue(b, bName, bValue);
+    if (a == AxisKey.other || b == AxisKey.other) {
+      setValue(a, aName, aValue);
+      setValue(b, bName, bValue);
+      return;
+    }
+    _setAxisField(a, aValue);
+    _setAxisField(b, bValue);
+    initializeTwoSlots(a.index, b.index);
   }
 
   static const List<String> _fieldNames = ['x', 'y', 'r', '_custom', '_stacks'];
@@ -133,6 +142,20 @@ final class ParsedItem extends TypedRecord {
   set stacks(ItemStacks? value) {
     _stacks = value;
     touchSlot(4);
+  }
+
+  /// The field of the axis [axis], with no change of the own keys.
+  void _setAxisField(AxisKey axis, Object? value) {
+    switch (axis) {
+      case AxisKey.x:
+        _x = value;
+      case AxisKey.y:
+        _y = value;
+      case AxisKey.r:
+        _r = value;
+      case AxisKey.other:
+        break;
+    }
   }
 
   /// The value of the axis [axis]: `item[axis]`. [name] is the axis name of

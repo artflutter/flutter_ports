@@ -848,45 +848,47 @@ final class ScriptableContext extends ContextObject {
   Object? get mode => _fieldRead(_mode, 'mode');
 
   // The typed writes of `getContext` (core.datasetController.js:762-786).
-  // Each one makes its name an own key first, as `operator []=` does.
+  // Each one makes its name an own key first, as `operator []=` does. The
+  // mask test stands at the setter: `getContext` writes each key of each
+  // element at each resolve, and only the first write claims it.
 
   set active(Object? value) {
-    _claim('active', 1);
+    if (_presentNames & 1 == 0) _claim('active', 1);
     _active = value;
   }
 
   set dataset(Object? value) {
-    _claim('dataset', 2);
+    if (_presentNames & 2 == 0) _claim('dataset', 2);
     _dataset = value;
   }
 
   set datasetIndex(Object? value) {
-    _claim('datasetIndex', 4);
+    if (_presentNames & 4 == 0) _claim('datasetIndex', 4);
     _datasetIndex = value;
   }
 
   set dataIndex(Object? value) {
-    _claim('dataIndex', 8);
+    if (_presentNames & 8 == 0) _claim('dataIndex', 8);
     _dataIndex = value;
   }
 
   set parsed(Object? value) {
-    _claim('parsed', 16);
+    if (_presentNames & 16 == 0) _claim('parsed', 16);
     _parsed = value;
   }
 
   set raw(Object? value) {
-    _claim('raw', 32);
+    if (_presentNames & 32 == 0) _claim('raw', 32);
     _raw = value;
   }
 
   set index(Object? value) {
-    _claim('index', 128);
+    if (_presentNames & 128 == 0) _claim('index', 128);
     _index = value;
   }
 
   set mode(Object? value) {
-    _claim('mode', 256);
+    if (_presentNames & 256 == 0) _claim('mode', 256);
     _mode = value;
   }
 

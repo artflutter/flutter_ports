@@ -22,6 +22,67 @@ void main() {
       expect(item.ownKeyCount, 5);
     });
 
+    test('of gives the record of the two writes for each pair of axes', () {
+      const axes = {
+        'x': AxisKey.x,
+        'y': AxisKey.y,
+        'r': AxisKey.r,
+        'u': AxisKey.other,
+        '_custom': AxisKey.other,
+        '_stacks': AxisKey.other,
+        '1': AxisKey.other,
+      };
+      List<Object?> state(ParsedItem item) => [
+        item.jsKeys(),
+        item.ownKeyCount,
+        for (var slot = 0; slot < 5; slot++) ...[
+          item.hasSlot(slot),
+          item.isForeignSlot(slot),
+          item.foreignSlot(slot),
+        ],
+        for (var p = 0; p < item.ownKeyCount; p++) ...[
+          item.keyAt(p),
+          item.slotAt(p),
+        ],
+        for (final name in axes.keys) [item[name], item.jsHas(name)],
+        item.x,
+        item.y,
+        item.r,
+        item.custom,
+        item.stacks,
+      ];
+      axes.forEach((aName, a) {
+        axes.forEach((bName, b) {
+          final reason = '$aName $bName';
+          final fast = ParsedItem.of(a, aName, 1.0, b, bName, null);
+          final writes = ParsedItem()
+            ..setValue(a, aName, 1.0)
+            ..setValue(b, bName, null);
+          expect(state(fast), state(writes), reason: reason);
+          // A later key goes to the end, and a key of the two stays in place.
+          for (final item in [fast, writes]) {
+            item
+              ..custom = 3.0
+              ..['extra'] = 'e'
+              ..x = 7.0;
+          }
+          expect(state(fast), state(writes), reason: reason);
+          for (final item in [fast, writes]) {
+            item.jsDelete(aName);
+          }
+          expect(state(fast), state(writes), reason: reason);
+        });
+      });
+    });
+
+    test('of keeps the second value of two equal keys', () {
+      final item = ParsedItem.of(AxisKey.r, 'r', true, AxisKey.r, 'r', 4.0);
+      expect(item.jsKeys(), ['r']);
+      expect(item.r, 4.0);
+      expect(item.x, same(undefined));
+      expect(item.ownKeyCount, 1);
+    });
+
     test('reads by axis key and by name', () {
       final item = ParsedItem()
         ..setValue(AxisKey.x, 'x', 1.0)

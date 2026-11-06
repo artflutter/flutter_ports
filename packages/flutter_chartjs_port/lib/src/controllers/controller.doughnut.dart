@@ -39,7 +39,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs;
+    show DatasetController, controllerArgs, presizeParsedNumbers;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show DataUpdateShape;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -317,6 +317,8 @@ class DoughnutController extends DatasetController {
             jsToNumber(resolveObjectKey(jsGetIndex(data, i), key! as String));
       }
 
+      // DIVERGES(chartjs): adapt-parse-presize, one growth for numbers.
+      presizeParsedNumbers(meta.parsed, data, start, count);
       for (var i = start, ilen = start + count; i < ilen; ++i) {
         jsSetIndex<Object?>(meta.parsed, i.toInt(), getter(i));
       }

@@ -58,6 +58,9 @@ bool jsIsFinite(Object? value) => jsToNumber(value).isFinite;
 bool jsTruthy(Object? value) => switch (value) {
   null || Undefined() => false,
   final bool b => b,
+  // A double compares with a double: the virtual `num ==` converts its int
+  // operand and boxes the result.
+  final double d => d != 0.0 && !d.isNaN,
   final num n => n != 0 && !n.isNaN,
   final String s => s.isNotEmpty,
   _ => true,

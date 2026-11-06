@@ -78,6 +78,13 @@ final class _ObservedFont extends FontSpecScope {
     reads++;
     return super.jsRead(name);
   }
+
+  // `readOption` reads a typed scope by its key (Chart.js ADR 0096).
+  @override
+  Object? readKey(OptionKey key) {
+    reads++;
+    return super.readKey(key);
+  }
 }
 
 final class _MutatingFont extends MapBase<String, Object?> {
