@@ -15,7 +15,10 @@
 ///   `item.r` is the typed field of a `TypedDataItem`, else a read by name.
 ///   A parsed item of `parsing: false` is a data item of the user, read by
 ///   name. The options of a point are a [PointOptions], and the
-///   properties a [PointProperties] (Chart.js ADR 0054 §9).
+///   properties a [PointProperties] (Chart.js ADR 0054 §9). The exact
+///   controller in a direct mode writes a built-in point with its typed
+///   setters, with no object (row `adapt-direct-element-writes`, Chart.js ADR
+///   0102).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsAdd] for `+=`
 ///   (Chart.js ADR 0036, section 7).
@@ -538,6 +541,13 @@ class BubbleController extends DatasetController {
     final vAxis = vScale.axis;
     final iKey = AxisKey.of(iAxis);
     final vKey = AxisKey.of(vAxis);
+    // DIVERGES(chartjs): adapt-direct-element-writes, `updateElement` of the
+    // exact controller only assigns in these modes, into two typed axes.
+    final direct =
+        _exact &&
+        (reset || mode == 'none') &&
+        (iKey == AxisKey.x || iKey == AxisKey.y) &&
+        (vKey == AxisKey.x || vKey == AxisKey.y);
     // DIVERGES(chartjs): adapt-bubble-point-options, one synchronous loop.
     PointOptions Function(int)? prepared;
     NativePointContextReader? contexts;
@@ -568,21 +578,18 @@ class BubbleController extends DatasetController {
               identical(_plainCustomOf(parsed, typedItems), _notPlain))) {
         prepared = null;
       }
-      final properties = PointProperties();
       final iPixel = reset
           ? iScale.getPixelForDecimal(0.5)
           : iScale.getPixelForValue(parsedValueOf(parsed, iKey, iAxis));
-      setPointAxis(properties, iKey, iAxis, iPixel);
       final vPixel = reset
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(parsedValueOf(parsed, vKey, vAxis));
-      setPointAxis(properties, vKey, vAxis, vPixel);
 
-      properties.skip = iPixel.isNaN || vPixel.isNaN;
+      final skip = iPixel.isNaN || vPixel.isNaN;
 
+      ElementOptions? options;
       if (includeOptions) {
         final plan = prepared;
-        final ElementOptions options;
         if (plan != null) {
           if (indexed && contexts?.read(i.toInt()) == null) {
             getContext(i, false, mode);
@@ -593,14 +600,38 @@ class BubbleController extends DatasetController {
               sharedOptions ??
               resolveDataElementOptions(i, point.active ? 'active' : mode);
         }
-        properties.options = options;
 
         if (reset) {
           options.storeKey(OptionKey.radius, 0.0);
         }
       }
 
-      updateElement(point, i, properties, mode);
+      // DIVERGES(chartjs): adapt-direct-element-writes, the assign of the
+      // properties with no object: the writes stay after the resolve above.
+      if (point case final types.PointElementWrites target
+          when direct && options != null && target.typedWrites) {
+        if (iKey == AxisKey.x) {
+          target.x = iPixel;
+        } else {
+          target.y = iPixel;
+        }
+        if (vKey == AxisKey.x) {
+          target.x = vPixel;
+        } else {
+          target.y = vPixel;
+        }
+        target
+          ..skip = skip
+          ..options = options;
+      } else {
+        final properties = PointProperties();
+        setPointAxis(properties, iKey, iAxis, iPixel);
+        setPointAxis(properties, vKey, vAxis, vPixel);
+        properties.skip = skip;
+        if (options != null) properties.options = options;
+
+        updateElement(point, i, properties, mode);
+      }
 
       // Two ordinary resolutions populate the entry or the indexed plan. There
       // is one attempt for each loop, never another after custom code runs.

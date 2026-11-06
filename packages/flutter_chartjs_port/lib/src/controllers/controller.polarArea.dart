@@ -15,7 +15,9 @@
 ///   ADR 0036). A read with a number index is [jsGetIndex]. The chart, the
 ///   dataset and the legend options and the [ArcOptions] of an element read
 ///   typed ([readOption]). The properties of an arc are an
-///   [ArcProperties] (Chart.js ADR 0054 §9).
+///   [ArcProperties] (Chart.js ADR 0054 §9). The exact controller in a direct
+///   mode writes a built-in arc with its typed setters, with no object (row
+///   `adapt-direct-element-writes`, Chart.js ADR 0102).
 /// - `getMinMax` keeps the raw parsed values of the range and compares them
 ///   with [jsLessThan], as upstream compares with `<` and `>` (Chart.js ADR
 ///   0036, section 7). Two string values compare as strings.
@@ -44,7 +46,9 @@ import 'package:flutter_chartjs_port/src/core/arc_options.dart'
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape;
+    show DataUpdateShape, nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/point_options.dart'
+    show nativePointChart, nativePointList;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -448,6 +452,9 @@ class PolarAreaController extends DatasetController {
     // DIVERGES(chartjs): adapt-arc-native-options, an exact controller reads
     // the angle of a hit from its frozen entry, with no copy for one read.
     final exact = supportsDataUpdates && nativeArcClass(dataElementType);
+    // DIVERGES(chartjs): adapt-direct-element-writes, `updateElement` of the
+    // exact controller only assigns in these modes.
+    final direct = supportsDataUpdates && (reset || mode == 'none');
 
     for (i = 0; i < start; ++i) {
       angle += _computeAngle(i, mode, defaultAngle, cachedAngle: exact);
@@ -456,14 +463,19 @@ class PolarAreaController extends DatasetController {
     // loop only. A custom or active arc ends it for good before its first read.
     ArcOptions Function(int)? colors;
     var plannedAngle = 0.0;
-    final tryColors =
+    // DIVERGES(chartjs): adapt-polar-constant-options, the plan is the copy of
+    // a frozen entry: a hit writes no context, and the copy has the fix-ups.
+    var constant = false;
+    final tryPlan =
         exact &&
         mode == 'none' &&
         start == 0 &&
         count > 2 &&
         parsing != false &&
-        cachedDataElementOptions(mode) == null &&
         _nativeRadialScale(scale);
+    // An existing entry stands before a color plan. It is the premise of the
+    // copy: each tick of `Chart.updateData` starts with the entry.
+    final tryColors = tryPlan && cachedDataElementOptions(mode) == null;
     for (i = start; i < start + count; i++) {
       final arc = arcs[i.toInt()];
       if (colors != null && (!nativeArcElement(arc) || arc.active)) {
@@ -497,24 +509,11 @@ class PolarAreaController extends DatasetController {
         }
       }
 
-      // `x` and `y` are `undefined` before the first layout of the scale:
-      // the face of the properties keeps it.
-      final properties = ArcProperties();
-      if (centerX == null) {
-        properties.jsWrite('x', undefined);
-      } else {
-        properties.x = centerX;
-      }
-      if (centerY == null) {
-        properties.jsWrite('y', undefined);
-      } else {
-        properties.y = centerY;
-      }
       // DIVERGES(chartjs): adapt-arc-native-options, the context refresh and a
       // fresh copy of the template, as the resolve of this plan gives.
       final ElementOptions elementOptions;
       if (prepared != null) {
-        getContext(i, false, mode);
+        if (!constant) getContext(i, false, mode);
         elementOptions = prepared(i.toInt());
       } else {
         elementOptions = resolveDataElementOptions(
@@ -522,41 +521,128 @@ class PolarAreaController extends DatasetController {
           arc.active ? 'active' : mode,
         );
       }
-      properties
-        ..innerRadius = 0.0
-        ..outerRadius = outerRadius
-        ..startAngle = startAngle
-        ..endAngle = endAngle
-        ..options = elementOptions;
 
-      // Arc defaults (`spacing=0`, `spacingMode='angular'`) can mask
-      // polarArea-level values.
-      if (elementOptions.valueOf(OptionKey.spacing) == 0) {
-        elementOptions.storeKey(
-          OptionKey.spacing,
-          options.readKey(OptionKey.spacing),
-        );
-      }
-      if (elementOptions.valueOf(OptionKey.spacingMode) == 'angular') {
-        elementOptions.storeKey(
-          OptionKey.spacingMode,
-          options.readKey(OptionKey.spacingMode),
-        );
+      if (prepared == null || !constant) {
+        _fixSpacing(elementOptions);
       }
 
-      updateElement(arc, i, properties, mode);
+      // DIVERGES(chartjs): adapt-direct-element-writes, the assign of the
+      // literal with no object: the writes stay after the resolve above.
+      if (arc case final types.ArcElementWrites target
+          when direct &&
+              centerX != null &&
+              centerY != null &&
+              target.typedWrites) {
+        target
+          ..x = centerX
+          ..y = centerY
+          ..innerRadius = 0.0
+          ..outerRadius = outerRadius
+          ..startAngle = startAngle
+          ..endAngle = endAngle
+          ..options = elementOptions;
+      } else {
+        // `x` and `y` are `undefined` before the first layout of the scale:
+        // the face of the properties keeps it.
+        final properties = ArcProperties();
+        if (centerX == null) {
+          properties.jsWrite('x', undefined);
+        } else {
+          properties.x = centerX;
+        }
+        if (centerY == null) {
+          properties.jsWrite('y', undefined);
+        } else {
+          properties.y = centerY;
+        }
+        properties
+          ..innerRadius = 0.0
+          ..outerRadius = outerRadius
+          ..startAngle = startAngle
+          ..endAngle = endAngle
+          ..options = elementOptions;
+
+        updateElement(arc, i, properties, mode);
+      }
 
       // Two ordinary resolutions warm the cached plan. One attempt.
-      if (tryColors && i == start + 1 && nativeArcElement(arc)) {
-        colors = prepareNativeArcColors(this, arcs);
+      if (tryPlan && i == start + 1 && nativeArcElement(arc)) {
+        colors = tryColors ? prepareNativeArcColors(this, arcs) : null;
         if (colors != null) {
           plannedAngle = _angleOf(
             colors(0).valueOf(OptionKey.angle),
             defaultAngle,
           );
+        } else if (_frozenEntryTemplate(arc, arcs, mode) case final template?) {
+          colors = (_) => template.clone();
+          plannedAngle = _angleOf(
+            template.valueOf(OptionKey.angle),
+            defaultAngle,
+          );
+          constant = true;
         }
       }
     }
+  }
+
+  /// controller.polarArea.js:204-210: arc defaults (`spacing=0`,
+  /// `spacingMode='angular'`) can mask polarArea-level values.
+  // DIVERGES(chartjs): adapt-polar-constant-options, shared with the template.
+  void _fixSpacing(ElementOptions elementOptions) {
+    if (elementOptions.valueOf(OptionKey.spacing) == 0) {
+      elementOptions.storeKey(
+        OptionKey.spacing,
+        options.readKey(OptionKey.spacing),
+      );
+    }
+    if (elementOptions.valueOf(OptionKey.spacingMode) == 'angular') {
+      elementOptions.storeKey(
+        OptionKey.spacingMode,
+        options.readKey(OptionKey.spacingMode),
+      );
+    }
+  }
+
+  /// The fresh result of each later resolve of this loop, when each is a hit of
+  /// the frozen entry: the exact chart, native arrays, a not shared result, and
+  /// an `angle` and dataset options whose reads run no user code. Each later
+  /// fix-up then stores the same values. Else Dart `null`.
+  ///
+  /// [arc] is the arc of this iteration. When it is not active, its result was
+  /// a copy of the entry, so its fix-ups read each dataset option that a fix-up
+  /// reads. A key whose fix-up does not fire on the entry has no read, as in
+  /// the ordinary loop: a read stays in the resolver until the next
+  /// `configure`.
+  // DIVERGES(chartjs): adapt-polar-constant-options, the guard of the plan.
+  ArcOptions? _frozenEntryTemplate(
+    types.Element arc,
+    List<types.Element> arcs,
+    String mode,
+  ) {
+    final entry = cachedDataElementOptions(mode);
+    if (entry is! ArcOptions ||
+        arc.active ||
+        enableOptionSharing ||
+        !nativePointChart(chart) ||
+        !identical(arcs, cachedMeta.data) ||
+        !nativePointList(arcs) ||
+        !nativeDataUpdateList(cachedMeta.parsed)) {
+      return null;
+    }
+    final fixesSpacing = entry.valueOf(OptionKey.spacing) == 0;
+    final fixesMode = entry.valueOf(OptionKey.spacingMode) == 'angular';
+    if ((fixesSpacing || fixesMode) &&
+        !options.rawOptionsAreScalar([
+          if (fixesSpacing) OptionKey.spacing,
+          if (fixesMode) OptionKey.spacingMode,
+        ])) {
+      return null;
+    }
+    final angle = entry.angleValue;
+    if (angle is! num && angle is! Undefined) return null;
+    final template = entry.clone();
+    _fixSpacing(template);
+    return template;
   }
 
   /// The exact radial scale with a scalar `reverse`: its value projection runs
