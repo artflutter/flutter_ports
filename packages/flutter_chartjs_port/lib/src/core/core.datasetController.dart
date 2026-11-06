@@ -1461,8 +1461,6 @@ class DatasetController
   ///
   /// Dart `null` for [resetNewElements] stands for JS `undefined`.
   void buildOrUpdateElements([
-    // The upstream signature has a positional `resetNewElements`.
-    // ignore: avoid_positional_boolean_parameters
     bool? resetNewElements,
   ]) {
     final meta = cachedMeta;
@@ -2073,8 +2071,6 @@ class DatasetController
   /// its place (row `adapt-typed-contexts`).
   ContextObject getContext([
     double? index,
-    // The upstream signature has a positional `active`.
-    // ignore: avoid_positional_boolean_parameters
     bool? active,
     String? mode,
   ]) {
@@ -2367,8 +2363,6 @@ class DatasetController
   Animations resolveAnimations([
     double? index,
     String? transition,
-    // The upstream signature has a positional `active`.
-    // ignore: avoid_positional_boolean_parameters
     bool? active,
   ]) {
     final chart = this.chart;

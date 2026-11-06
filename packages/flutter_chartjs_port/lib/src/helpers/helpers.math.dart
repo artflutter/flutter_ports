@@ -253,8 +253,6 @@ bool angleBetween(
   double angle,
   double start,
   double end, [
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   bool? sameAngleIsFullCircle,
 ]) {
   final a = normalizeAngle(angle);

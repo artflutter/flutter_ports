@@ -282,8 +282,6 @@ int _toUint32(double value) {
 bool retinaScale(
   Chart chart,
   double? forceRatio, [
-  // The upstream signature has a positional `forceStyle`.
-  // ignore: avoid_positional_boolean_parameters
   bool? forceStyle,
 ]) {
   final pixelRatio = jsTruthy(forceRatio) ? forceRatio! : 1.0;

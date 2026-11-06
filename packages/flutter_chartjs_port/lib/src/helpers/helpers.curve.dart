@@ -340,8 +340,6 @@ void updateBezierControlPoints(
   List<SplinePoint> points,
   Object options,
   ChartArea? area,
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   bool loop,
   String indexAxis,
 ) {

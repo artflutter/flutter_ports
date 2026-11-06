@@ -318,8 +318,6 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// `undefined`. Dart `null` for [useFinalPosition] stands for JS
   /// `undefined`: `plugin.tooltip.js:34` calls it with no argument.
   ElementPoint tooltipPosition([
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]) {
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
@@ -384,8 +382,6 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   double finalNumber(
     AnimatedProp prop,
     double current,
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ) {
     if (useFinalPosition != true) return current;
@@ -400,8 +396,6 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   Object? finalValue(
     AnimatedProp prop,
     Object? current,
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ) {
     if (useFinalPosition != true) return current;
@@ -423,8 +417,6 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// a boolean with `jsTruthy`.
   ElementProps getProps(
     List<String> props, [
-    // The upstream signature has a positional `final`.
-    // ignore: avoid_positional_boolean_parameters
     bool? isFinal,
   ]) {
     final anims = $animations;

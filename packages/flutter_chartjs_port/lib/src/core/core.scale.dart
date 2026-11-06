@@ -1153,8 +1153,6 @@ class Scale extends _ScalePrototype
   /// @return {{min: number, max: number}}
   /// @protected
   /// @since 3.0
-  // The upstream signature has a positional `canStack`.
-  // ignore: avoid_positional_boolean_parameters
   ({double min, double max}) getMinMax(bool canStack) {
     var (:min, :max, :minDefined, :maxDefined) = getUserBounds();
     ({double min, double max}) range;

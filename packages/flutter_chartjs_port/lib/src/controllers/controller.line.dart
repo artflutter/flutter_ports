@@ -143,8 +143,6 @@ final class _PointWrites {
   }
 
   /// `properties.skip = value` (:94, :103).
-  // The write of one boolean property.
-  // ignore: avoid_positional_boolean_parameters
   void skip(bool value) {
     final object = this.object;
     if (object != null) {
@@ -157,8 +155,6 @@ final class _PointWrites {
   }
 
   /// `properties.stop = value` (:104).
-  // The write of one boolean property.
-  // ignore: avoid_positional_boolean_parameters
   void stop(bool value) {
     final object = this.object;
     if (object != null) {

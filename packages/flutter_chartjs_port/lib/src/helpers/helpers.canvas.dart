@@ -568,8 +568,6 @@ void steppedLineTo(
   CanvasPath ctx,
   Point? previous,
   Point target, [
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   bool? flip,
   Object? mode,
 ]) {
@@ -601,8 +599,6 @@ void bezierCurveTo(
   CanvasPath ctx,
   SplinePoint? previous,
   SplinePoint target, [
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   bool? flip,
 ]) {
   if (previous == null) {

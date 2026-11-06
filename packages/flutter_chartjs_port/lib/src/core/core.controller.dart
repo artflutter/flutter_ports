@@ -2305,8 +2305,6 @@ class Chart
   void setDatasetVisibility(
     // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
     num datasetIndex,
-    // The upstream signature has a positional `visible`.
-    // ignore: avoid_positional_boolean_parameters
     bool visible,
   ) {
     _invalidateDataUpdate();
@@ -2595,8 +2593,6 @@ class Chart
   void updateHoverStyle(
     List<types.ActiveElement> items,
     Object? mode,
-    // The upstream signature has a positional `enabled`.
-    // ignore: avoid_positional_boolean_parameters
     bool enabled,
   ) {
     final prefix = enabled ? 'set' : 'remove';
@@ -2769,8 +2765,6 @@ class Chart
   /// this field. Dart `null` for `replay` stands for an absent argument.
   // DIVERGES(chartjs): harness-method-fields, a test replaces it per chart.
   @internal
-  // The upstream signature has a positional `replay`.
-  // ignore: avoid_positional_boolean_parameters
   late void Function(types.ChartEvent e, [bool? replay]) eventHandler =
       _eventHandlerMethod;
 
@@ -2883,8 +2877,6 @@ class Chart
   @internal
   bool handleEvent(
     types.ChartEvent e, [
-    // The upstream signature has a positional `replay`.
-    // ignore: avoid_positional_boolean_parameters
     bool? replay,
     Object? inChartArea,
   ]) {

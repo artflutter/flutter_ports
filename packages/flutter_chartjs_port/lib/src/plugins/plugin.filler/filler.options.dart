@@ -37,8 +37,6 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 Object resolveTarget(
   List<FillerSource?> sources,
   int index,
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   bool propagate,
 ) {
   final source = sources[index]!;

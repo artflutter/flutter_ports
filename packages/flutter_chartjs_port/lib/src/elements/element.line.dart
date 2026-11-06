@@ -301,8 +301,6 @@ void Function(
   CanvasPath ctx,
   types.PointElement? previous,
   types.PointElement target,
-  // The upstream signature.
-  // ignore: avoid_positional_boolean_parameters
   bool flip,
   Object? mode,
 )

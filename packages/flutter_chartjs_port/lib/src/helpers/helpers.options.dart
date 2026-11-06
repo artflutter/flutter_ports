@@ -515,8 +515,6 @@ Object? resolve(
 ({double min, double max}) addGrace(
   ({double min, double max}) minmax,
   Object? grace,
-  // Upstream takes beginAtZero as a positional parameter.
-  // ignore: avoid_positional_boolean_parameters
   bool beginAtZero,
 ) {
   final (:min, :max) = minmax;
