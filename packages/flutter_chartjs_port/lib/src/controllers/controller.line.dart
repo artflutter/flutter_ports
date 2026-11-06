@@ -491,7 +491,7 @@ class LineController extends DatasetController {
         // shared options.
         final prepared = colors;
         if (prepared != null) {
-          if (contextReader?.read(i) == null) {
+          if (contextReader?.readQualified(point, i) == null) {
             getContext(index, false, mode);
           }
           writes.options(prepared(i));
