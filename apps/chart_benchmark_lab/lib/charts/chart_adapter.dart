@@ -5,9 +5,9 @@ import 'package:chart_benchmark_lab/benchmark/controller.dart'
     show chartJsDataOnlyUpdates;
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:fl_chart/fl_chart.dart' as fl;
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:graphic/graphic.dart' as gr;
+import 'package:material_ui/material_ui.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as sf;
 
 /// One active public-widget adapter; inactive engines are never mounted.

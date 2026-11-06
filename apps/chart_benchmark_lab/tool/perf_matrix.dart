@@ -31,9 +31,9 @@ import 'dart:convert';
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/main.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
+import 'package:material_ui/material_ui.dart';
 
 import 'perf_cpu.dart';
 import 'perf_matrix_host.dart';
