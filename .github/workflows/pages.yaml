@@ -7,8 +7,8 @@ name: pages
 # the job build assembles the site, with one folder for each app. A later app
 # adds its build step, its folder and its link on the root page.
 #
-# Pages cannot send the COOP and COEP headers, so the WebAssembly build runs on
-# one thread there.
+# Pages cannot send the COOP and COEP headers. web/isolate.js of the lab adds them
+# through a service worker, so that WebAssembly gets its rendering thread there.
 
 on:
   push:

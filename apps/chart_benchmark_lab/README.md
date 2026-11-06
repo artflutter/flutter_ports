@@ -23,9 +23,15 @@ with JavaScript fallback.
 The workflow `.github/workflows/pages.yaml` publishes the lab at
 <https://artflutter.github.io/flutter_ports/lab/> when a push to `main` changes
 the lab, the Chart.js port or the toolchain. `benchmark:build:pages` is its build.
-GitHub Pages cannot send the COOP and COEP headers. Thus the WebAssembly build
-runs on one thread on that page, and its figures do not compare with runs that
-have these headers.
+GitHub Pages cannot send the COOP and COEP headers, so `web/isolate.js` adds them
+through a service worker, on `github.io` only. The first visit reloads once.
+`web/flutter_bootstrap.js` gives the Flutter loader no service worker settings,
+because the worker of Flutter removes any other worker in its scope. The
+header of a web run shows its mode: `WASM · THREADS`, `WASM · 1 THREAD` or
+`JAVASCRIPT`. The exported JSON has the same text as `webMode`. Only Chromium
+browsers take WebAssembly. Threads have the engine race of turned text
+(`packages/flutter_chartjs_port/doc/performance.md` section 5), and the tag
+`3.50.0-0.4.pre` does not hold the merge commit of the Flutter fix #194139.
 
 The macOS window opens on the built-in display when available. For a particular
 display, set `BENCH_DISPLAY_ID` to its macOS display ID. The window stays movable
@@ -35,6 +41,11 @@ VS Code Run and Debug includes `chart_benchmark_lab`,
 `chart_benchmark_lab (profile)` and `chart_benchmark_lab (profile, wasm)` in the
 root `.vscode/launch.json`. Each one runs on the device of the VS Code picker. The
 wasm configuration needs Chrome in the picker.
+
+A note in the floating slot of the page (`lib/ui/page_note.dart`) stays in place
+when the page scrolls. It says why a scroll or another outside cause stopped a test,
+because the status line below the chart can be out of view. Otherwise, on the web,
+it says why the page has its mode. It hides during a run, and a person can close it.
 
 The header has a **Change log** button (`lib/ui/change_log.dart`). Add a line
 there when a change moves a figure.

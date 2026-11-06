@@ -4,6 +4,7 @@ import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
 import 'package:chart_benchmark_lab/main.dart';
 import 'package:chart_benchmark_lab/ui/change_log.dart';
+import 'package:chart_benchmark_lab/ui/page_note.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -75,6 +76,102 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('changelog.close')));
     await tester.pumpAndSettle();
     expect(find.text('• ${changeLog.first.items.first}'), findsNothing);
+  });
+
+  testWidgets('a page note shows its text and closes', (tester) async {
+    var closed = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          floatingActionButton: PageNote(
+            title: 'WASM · 1 THREAD',
+            text: 'The reason.',
+            onClose: () => closed = true,
+          ),
+        ),
+      ),
+    );
+    expect(find.text('WASM · 1 THREAD'), findsOneWidget);
+    expect(find.text('The reason.'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('page.note.close')));
+    expect(closed, isTrue);
+  });
+
+  testWidgets('a native build has no web mode note', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(1400, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(const ChartBenchmarkApp());
+    await tester.pump();
+    expect(find.byType(PageNote), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
+
+  testWidgets('a scroll stops a test, and a note that stays says why', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    late BenchmarkController c;
+    await tester.pumpWidget(
+      ChartBenchmarkApp(onControllerReady: (value) => c = value),
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.tap(find.byKey(const ValueKey('run')));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.running, isTrue);
+    expect(find.byType(PageNote), findsNothing);
+
+    await tester.dragFrom(const Offset(800, 220), const Offset(0, -150));
+    await tester.pump(const Duration(milliseconds: 20));
+    // This frame builds the note. The next one ends the scale of the floating
+    // slot.
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(seconds: 1));
+    expect(c.running, isFalse);
+    expect(find.text('TEST STOPPED'), findsOneWidget);
+    expect(find.textContaining('You scrolled during the test'), findsWidgets);
+    final place = tester.getTopLeft(find.byKey(const ValueKey('page.note')));
+
+    await tester.dragFrom(const Offset(800, 400), const Offset(0, 100));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(tester.getTopLeft(find.byKey(const ValueKey('page.note'))), place);
+
+    await tester.tap(find.byKey(const ValueKey('page.note.close')));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(seconds: 1));
+    expect(c.stopReason, isNull);
+    expect(find.text('TEST STOPPED'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
+
+  testWidgets('a test with the chart out of view stops and says why', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(412, 915);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    late BenchmarkController c;
+    await tester.pumpWidget(
+      ChartBenchmarkApp(onControllerReady: (value) => c = value),
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.tap(find.byKey(const ValueKey('run')));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(c.running, isFalse);
+    expect(c.stopReason, contains('out of view'));
+    expect(find.text('TEST STOPPED'), findsOneWidget);
+
+    c.start();
+    expect(c.stopReason, isNull);
+    c.pause();
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
   });
 
   testWidgets('a type without a public chart stops only that library', (

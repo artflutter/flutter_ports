@@ -4,8 +4,10 @@ import 'dart:math' as math;
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
+import 'package:chart_benchmark_lab/benchmark/web_mode.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
 import 'package:chart_benchmark_lab/ui/change_log.dart';
+import 'package:chart_benchmark_lab/ui/page_note.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -39,6 +41,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
   bool _matchingOnly = true;
   final GlobalKey _plotKey = GlobalKey();
   Timer? _displayRetry;
+  bool _webModeNoteClosed = false;
   int _displayRetries = 0;
 
   @override
@@ -98,6 +101,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
     builder: (context, _) => Scaffold(
+      floatingActionButton: _pageNote(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -164,6 +168,33 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     ),
   );
 
+  /// The note over the page, except during a run: a widget over the chart must
+  /// not change the frames that the run measures. Why a test stopped comes
+  /// first, because the status line below the chart can be out of view.
+  Widget? _pageNote() {
+    if (controller.running ||
+        controller.finishing ||
+        controller.batchCapturing) {
+      return null;
+    }
+    final stopReason = controller.stopReason;
+    if (stopReason != null) {
+      return PageNote(
+        title: 'TEST STOPPED',
+        text: stopReason,
+        onClose: controller.clearStopReason,
+      );
+    }
+    final mode = webMode();
+    final why = webModeWhy();
+    if (mode == null || why == null || _webModeNoteClosed) return null;
+    return PageNote(
+      title: mode,
+      text: '$why Figures of different modes do not compare.',
+      onClose: () => setState(() => _webModeNoteClosed = true),
+    );
+  }
+
   void _retryDisplay() {
     // During a native display move, the view configuration can briefly arrive
     // before its Display entry. Keep the previous rate and retry after metrics
@@ -183,7 +214,10 @@ class _BenchmarkPageState extends State<BenchmarkPage>
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             controller.pause(
-              'Chart scrolled. Run again with the full chart visible.',
+              'You scrolled during the test, so the test stopped and saved no '
+              'result. A scroll adds frames that the chart does not cause, and '
+              'it can move the chart out of view. Keep the full chart in view, '
+              'run again, and do not scroll until the test ends.',
             );
           }
         });
@@ -205,7 +239,12 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     final bounds = plot.localToGlobal(Offset.zero) & plot.size;
     if (!visible.contains(bounds.topLeft) ||
         !visible.contains(bounds.bottomRight)) {
-      controller.pause('Scroll the full chart into view before running.');
+      controller.pause(
+        'The test stopped because part of the chart is out of view. A test '
+        'measures only a chart that a person can see in full. Scroll until the '
+        'full chart is in view, run again, and do not scroll until the test '
+        'ends.',
+      );
     }
   }
 
@@ -274,6 +313,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                 : 'RELEASE',
             kDebugMode ? const Color(0xff9a6700) : const Color(0xff15803d),
           ),
+          if (webMode() case final mode?) _badge(mode, const Color(0xff475569)),
           ChangeLogButton(
             enabled:
                 !controller.running &&
