@@ -624,7 +624,9 @@ class DoughnutController extends DatasetController {
   ///   one in the colors, which no scan reads, and in the refresh of the
   ///   context of its arc. The update stops that refresh only for its own
   ///   arcs, in the mode `none`, when `updateElements` writes each of these
-  ///   contexts again with no user code before it.
+  ///   contexts again with no user code before it. An active arc breaks that:
+  ///   its resolve can write no context, can run a hover callback and can
+  ///   throw, so each scan keeps its refresh.
   // DIVERGES(chartjs): adapt-arc-native-options, the result that must repeat.
   bool _scanRepeats(Object? controller, Object options) {
     if (options is! ElementOptions ||
@@ -641,7 +643,7 @@ class DoughnutController extends DatasetController {
         // The rings read each other dataset and its controller.
         _datasetCount() == 1 &&
         this.options.rawOptionsAreScalar(_updateOptions) &&
-        arcs.every(nativeArcElement);
+        arcs.every((arc) => nativeArcElement(arc) && !arc.active);
   }
 
   /// controller.doughnut.js:296 `calculateTotal()`.

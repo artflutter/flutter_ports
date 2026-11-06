@@ -5,17 +5,25 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:flutter/widgets.dart'
+    show Align, Alignment, Directionality, SizedBox, TextDirection;
 import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show ChartThemeData, ChartView;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show controllerArgs;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show nativeOptionScope;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/chart_value.dart';
 import 'package:flutter_chartjs_port/src/typed/config.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart';
@@ -134,9 +142,11 @@ class _ObservedMap extends MapBase<String, Object?> {
   _ObservedMap(this.fields, this.reads);
   final Map<String, Object?> fields;
   final List<Object?> reads;
+  void Function(Object? key)? onRead;
   @override
   Object? operator [](Object? key) {
     reads.add(key);
+    onRead?.call(key);
     return fields[key];
   }
 
@@ -149,6 +159,8 @@ class _ObservedMap extends MapBase<String, Object?> {
   @override
   void clear() => fields.clear();
 }
+
+final class _UserScope extends ChartOptionsScope {}
 
 class _UserRadial extends RadialLinearScale {
   _UserRadial(super.cfg);
@@ -173,6 +185,27 @@ Object? _contextState(Object? element) {
       ? null
       : [context.jsRead('mode'), context.jsRead('index')];
 }
+
+/// The context of each arc of ring 0, as user code can read it.
+List<Object?> _arcContexts(Chart chart) => [
+  for (final element in chart.getDatasetMeta(0).data)
+    if ((element as ArcElement).$context case final context?)
+      [
+        for (final key in ['index', 'mode', 'active', 'parsed', 'raw'])
+          _plain(context.jsRead(key)),
+      ]
+    else
+      null,
+];
+
+/// The dataset options that `update` reads between the scans and the loop.
+const _updateOptionNames = {
+  'spacing',
+  'cutout',
+  'rotation',
+  'circumference',
+  'radius',
+};
 
 class _ObservedList extends ListBase<Object?> {
   _ObservedList(this.values, this.reads);
@@ -305,6 +338,31 @@ void _newData(Chart chart, Map<String, Object?> cfg) {
   chart.update('none');
 }
 
+// New data with two new arcs.
+void _growData(Chart chart, Map<String, Object?> cfg) {
+  _first(cfg)['data'] = <Object?>[
+    for (var i = 0; i < 10; i++) (i * 5 + 2).toDouble(),
+  ];
+  chart.update('none');
+}
+
+// New data, and a `borderColor` that the hover default of an active arc cannot
+// read: `getHoverColor(null)` throws in the update loop. The twin compares the
+// contexts after the throw.
+void _throwInActiveResolve(Chart chart, Map<String, Object?> cfg) {
+  _first(cfg)
+    ..['data'] = <Object?>[
+      for (var i = 0; i < 8; i++) (i * 7 + 3).toDouble(),
+    ]
+    ..['borderColor'] = null;
+  expect(() => chart.update('none'), throwsArgumentError);
+  _first(cfg).remove('borderColor');
+}
+
+void _activate(Chart chart, double index) => chart.setActiveElements([
+  {'datasetIndex': 0.0, 'index': index},
+]);
+
 /// The update steps of a twin in the modes of a live chart and of the others.
 const List<_Step> _steps = [
   _none,
@@ -338,10 +396,11 @@ void _twins(
   Map<String, Object?> Function(String type, List<Object?> trace) build, {
   List<_Step> steps = _steps,
   List<String> types = const ['pie', 'doughnut', 'polarArea'],
+  List<_Reference> references = _Reference.values,
   void Function(Chart chart, List<Object?> trace)? prepare,
 }) {
   for (final type in types) {
-    for (final reference in _Reference.values) {
+    for (final reference in references) {
       test('$name: $type against the ordinary ${reference.name}', () {
         final traces = [<Object?>[], <Object?>[]];
         final refType = reference == _Reference.config ? type : _refType(type);
@@ -808,6 +867,89 @@ void main() {
     ]);
   });
 
+  _twins(
+    'static hover colors of an active arc after the first two',
+    (type, _) => _config(type, [
+      _dataset({
+        'backgroundColor': <ui.Color>[red, blue, green],
+        'hoverBackgroundColor': red,
+        'hoverBorderColor': blue,
+      }),
+    ]),
+    prepare: (chart, _) => _activate(chart, 4),
+    steps: const [_none, _newData, _growData, _none],
+  );
+
+  _twins(
+    'a hover callback reads the contexts of the other arcs',
+    (type, trace) => _config(type, [
+      _dataset({
+        'backgroundColor': <ui.Color>[red, blue, green],
+        'hoverBorderWidth': (Object? ctx) {
+          trace.add(_arcContexts(jsGet(ctx, 'chart')! as Chart));
+          return 3.0;
+        },
+      }),
+    ]),
+    prepare: (chart, _) => _activate(chart, 1),
+    steps: const [_none, _newData, _growData, _none],
+  );
+
+  _twins(
+    'a throw in the resolve of an active arc',
+    (type, _) => _config(type, [
+      _dataset({
+        'backgroundColor': <ui.Color>[red, blue, green],
+      }),
+    ]),
+    prepare: (chart, _) => _activate(chart, 2),
+    steps: const [_none, _throwInActiveResolve, _none, _newData],
+  );
+
+  for (final (name, fields) in [
+    ('a visible dataset', <String, Object?>{}),
+    ('a hidden dataset', <String, Object?>{'hidden': true}),
+  ]) {
+    Map<String, Object?> observed(
+      String type,
+      List<Object?> trace,
+    ) {
+      final cfg = _config(type, [
+        _dataset({
+          'backgroundColor': <ui.Color>[red, blue, green],
+          ...fields,
+        }),
+      ]);
+      cfg['options'] = _ObservedMap(
+        cfg['options']! as Map<String, Object?>,
+        trace,
+      );
+      return cfg;
+    }
+
+    // The reads of a controller with another id also name that id.
+    _twins(
+      'each read of a user options Map, $name',
+      observed,
+      references: const [_Reference.config],
+    );
+
+    // A read of the Map is user code: it sees the contexts of the ordinary path
+    // and it can throw there.
+    _twins(
+      'a user options Map reads the contexts at each read, $name',
+      (type, _) => observed(type, <Object?>[]),
+      prepare: (chart, trace) {
+        (_rawConfig[chart]!['options']! as _ObservedMap).onRead = (key) {
+          if (_updateOptionNames.contains(key)) {
+            trace.add([key, _arcContexts(chart)]);
+          }
+        };
+      },
+      steps: const [_none, _newData, _growData, _none],
+    );
+  }
+
   group('user subclasses', () {
     for (final type in ['pie', 'doughnut', 'polarArea']) {
       test('a user arc keeps its reads: $type', () {
@@ -1021,6 +1163,40 @@ void main() {
         probes.removeAt(5);
         chart.update('none');
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3]);
+      });
+
+      test('an active arc keeps each scan of $type', () {
+        final probes = <_ProbeArc>[];
+        final chart = probeChart(type, probes);
+        (chart.getDatasetMeta(0).data[5] as ArcElement).active = true;
+        chart.update('none');
+        expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
+      });
+
+      test('a user options Map keeps each scan of $type', () {
+        final cfg = _config(type, [
+          _dataset({
+            'backgroundColor': <ui.Color>[red, blue, green],
+          }),
+        ]);
+        cfg['options'] = _ObservedMap(
+          cfg['options']! as Map<String, Object?>,
+          <Object?>[],
+        );
+        final chart = _native(cfg);
+        final data = chart.getDatasetMeta(0).data;
+        final probes = <_ProbeArc>[];
+        for (var i = 0; i < data.length; i++) {
+          final probe = _ProbeArc();
+          probes.add(probe);
+          data[i] = probe;
+        }
+        chart.update('none');
+        for (final probe in probes) {
+          probe.contextReads = 0;
+        }
+        chart.update('none');
+        expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
 
       test('parsing false keeps each scan of $type', () {
@@ -1276,7 +1452,65 @@ void main() {
           expect(jsGet(arc.options, 'backgroundColor'), blue);
           expect(jsGet(arc.options, r'$shared'), isFalse);
         });
+
+        // The scopes of a chart in a view with a theme are native too.
+        testWidgets('$type takes the native loop in a themed view', (
+          tester,
+        ) async {
+          late Chart chart;
+          await tester.pumpWidget(
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: SizedBox(
+                  width: 640,
+                  height: 400,
+                  child: ChartView(
+                    config: ChartConfig(
+                      type: kinds[type]!,
+                      labels: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+                      datasets: [datasets[type]!(values(0))],
+                      animation: ChartAnimation.none,
+                      tooltip: const ChartTooltip(enabled: false),
+                      extra: const {
+                        'plugins': {'legend': false},
+                      },
+                    ),
+                    updateMode: 'none',
+                    theme: const ChartThemeData(),
+                    excludeFromSemantics: true,
+                    onChartCreated: (value) => chart = value,
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pump();
+          final meta = chart.getDatasetMeta(0);
+          final probes = <_ProbeArc>[];
+          for (var i = 0; i < meta.data.length; i++) {
+            final probe = _ProbeArc();
+            probes.add(probe);
+            meta.data[i] = probe;
+          }
+          chart.update('none');
+          for (final probe in probes) {
+            probe.contextReads = 0;
+          }
+          chart.update('none');
+          expect(probes.map((p) => p.contextReads), expected[type]);
+        });
       }
+    });
+
+    test('a read of a native option scope runs no user code', () {
+      expect(nativeOptionScope(<String, Object?>{}), isTrue);
+      expect(nativeOptionScope(ChartOptionsScope()), isTrue);
+      expect(nativeOptionScope(defaults), isTrue);
+      expect(nativeOptionScope(_ObservedMap({}, [])), isFalse);
+      expect(nativeOptionScope(_UserScope()), isFalse);
+      expect(nativeOptionScope(null), isFalse);
     });
 
     test('no plan exists for a custom Config', () {
