@@ -1912,8 +1912,8 @@ final class _CachedPath {
 /// A piece that ends at a cut also takes the commands after the cut, for a
 /// length of about [_strokePieceOverlap] bitmap pixels, so that the engine
 /// makes the join at the cut from the real segments, and the start of the next
-/// piece lies inside this piece. A long straight segment is cut to that length. A
-/// command that a line chart does not use fails the whole form.
+/// piece lies inside this piece. A long straight segment is cut to that length.
+/// A command that a line chart does not use fails the whole form.
 final class UiPathPieces implements CanvasPath {
   /// Pieces for a transform of the uniform scale [scale] and the line width
   /// [lineWidth].

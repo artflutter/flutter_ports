@@ -1797,7 +1797,7 @@ final class UiCanvasContext
 
   UiPathBuilder? _partitionedFillPath;
 
-  // DIVERGES(chartjs): adapt-web-long-path-pieces, a long path is slow on WebGL.
+  // DIVERGES(chartjs): adapt-web-long-path-pieces, long paths are slow on WebGL
   /// Whether this build runs in a browser: Skia on WebGL.
   static const bool _onWeb = bool.fromEnvironment('dart.library.js_interop');
 
