@@ -12,9 +12,8 @@
 // - MATRIX_SECONDS: the measured seconds of a cell, default 4.
 // - MATRIX_HOLD: a cell that keeps running, for a CPU profile. It has the form
 //   engine:type:count:preset:seconds.
-// - MATRIX_IGNORE_COVER: 1 measures while a lock screen covers the window. The
-//   update and draw times stay valid for a comparison, but only a visible window
-//   gives an FPS figure for a report.
+// - MATRIX_IGNORE_COVER: 1 measures while a lock screen covers the window. Start
+//   the app with `-NSAppSleepDisabled YES` too, or the system throttles it.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
