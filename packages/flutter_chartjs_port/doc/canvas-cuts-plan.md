@@ -2496,7 +2496,10 @@ occurred.
 
 ### The items of a hidden legend (2026-11-06)
 
-Chart.js ADR 0092 adds the internal getters `nativeLegendGenerator` and
-`hasCachedDefaultDataOptions` to `lib/src/core/core.datasetController.dart`, and edits
-`lib/src/plugins/plugin.legend.dart` and the two arc controllers. This plan cites no line of these
-changes, and no canvas operation or drawing cut changes. No trigger occurred.
+Chart.js ADR 0092 adds the internal members `nativeLegendGenerator`, `nativeLegendLabelKeys`,
+`hasCachedDefaultDataOptions` and `defaultDataOptionsNeedNoContext` to
+`lib/src/core/core.datasetController.dart`, `resolutionGeneration` to `lib/src/core/core.config.dart`,
+`existingDatasetMeta` to `lib/src/core/core.controller.dart` and `DatasetMetaSource` to
+`lib/src/core/point_options.dart`, and edits `lib/src/plugins/plugin.legend.dart` and the two arc
+controllers. This plan cites no line of these changes, and no canvas operation or drawing cut changes.
+No trigger occurred.

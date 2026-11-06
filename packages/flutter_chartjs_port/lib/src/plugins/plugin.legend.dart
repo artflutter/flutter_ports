@@ -36,7 +36,8 @@
 /// [LegendItem] through its fields and another item by name ([_Item]).
 ///
 /// A hidden legend of a built-in slice chart leaves its items pending, and
-/// the first read of `legendItems` builds them (Chart.js ADR 0092).
+/// the first read of `legendItems` that can run the build runs it (Chart.js
+/// ADR 0092).
 ///
 /// Not a pure layer: it imports `helpers.extras`.
 library;
@@ -50,7 +51,7 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show nativePointChart;
+    show DatasetMetaSource, nativePointChart;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show
         DrawPointOptions,
@@ -251,34 +252,34 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// code, read through [_Item].
   ///
   /// [update] and the `afterUpdate` hook can leave the items pending
-  /// ([_itemsCanWait], Chart.js ADR 0092). Then the first read builds them,
-  /// and the next reads give the same List until the next mark. A direct
-  /// [buildLabels] and a write take the place of a pending build.
+  /// ([_itemsCanWait], Chart.js ADR 0092). Then the first read that can run
+  /// the build runs it ([_buildPendingItems]), and the next reads give the same
+  /// List until the next mark. A read that cannot run it gives the last built
+  /// items, and the build still waits. A direct [buildLabels] and a write take
+  /// the place of a pending build.
   @override
   List<Object?>? get legendItems {
     // DIVERGES(chartjs): adapt-hidden-legend-items, the first read builds.
-    if (_itemsPending) {
-      _itemsPending = false;
-      // The generators read `chart.legend`. Another box keeps its last items.
-      if (identical(chart.legend, this)) buildLabels();
-    }
+    _buildPendingItems();
     return _legendItems;
   }
 
   set legendItems(List<Object?>? value) {
     // DIVERGES(chartjs): adapt-hidden-legend-items, a write ends the wait.
-    _itemsPending = false;
+    _pendingOptions = null;
     _legendItems = value;
   }
 
   List<Object?>? _legendItems;
 
+  /// The options at the mark of a pending build, or Dart `null` when no build
+  /// waits. `beforeUpdate` of a next update replaces [options].
   // DIVERGES(chartjs): adapt-hidden-legend-items, no upstream state.
-  bool _itemsPending = false;
+  OptionView? _pendingOptions;
 
-  /// Whether the first read of [legendItems] will build the items.
+  /// Whether a build waits for a read of [legendItems] that can run it.
   @internal
-  bool get legendItemsPending => _itemsPending;
+  bool get legendItemsPending => _pendingOptions != null;
 
   /// plugin.legend.js:66 `columnSizes`: `{width, height}` of each column of
   /// a vertical legend, a [LegendColumnSize]. Dart `null` stands for JS
@@ -372,35 +373,60 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   }
 
   /// The call `this.buildLabels()` of :88 and :625, or the mark of a build that
-  /// [legendItems] runs at its first read.
+  /// [legendItems] runs later.
   ///
-  /// [datasetsUpdated] is true after `_updateDatasets` of the same update.
+  /// [datasetsUpdated] is true after `_updateDatasets` of the same update. The
+  /// mark does the first read of the label color by the generators: the view
+  /// keeps the result, so a later build reads no options of the chart.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the build of an unread list.
   void _buildLabelsOrMark({required bool datasetsUpdated}) {
-    if (_itemsCanWait(datasetsUpdated: datasetsUpdated)) {
-      _itemsPending = true;
+    final options = super.options;
+    if (options is OptionView &&
+        _itemsCanWait(options, datasetsUpdated: datasetsUpdated)) {
+      _pendingOptions = options;
+      optionOf(optionOf(options, OptionKey.labels), OptionKey.color);
     } else {
-      _itemsPending = false;
+      // Only the write of a build ends the wait of the last mark. Thus after a
+      // build that throws, a read gives the last snapshot of upstream.
       buildLabels();
     }
   }
 
-  /// Whether a build of the items of this legend can wait for a read: nothing
-  /// in the chart reads the items of a hidden legend ([fit], [adjustHitBoxes]
-  /// and [draw] return at `display`), and the build runs no user code.
+  /// Whether a build of the items of this legend with [options] can wait for a
+  /// read: nothing in the chart reads the items of a hidden legend ([fit],
+  /// [adjustHitBoxes] and [draw] return at `display`), the build runs no user
+  /// code, and the box has last built items for a read that cannot run it.
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the guards of the mark.
+  bool _itemsCanWait(OptionView options, {required bool datasetsUpdated}) =>
+      _legendItems != null &&
+      _buildRunsNoUserCode(
+        options,
+        atMark: true,
+        datasetsUpdated: datasetsUpdated,
+      ) &&
+      identical(optionOf(options.proxy, OptionKey.display), false);
+
+  /// Whether [buildLabels] with [options] runs no user code and throws nothing.
   ///
   /// The reads go through the resolvers behind the views: they give the raw
-  /// option values and call no function, in the order of [buildLabels], of
-  /// the generators and of [fit]. The chart reads are the first reads of the
-  /// generators. Thus this function runs no user code, and a failed test
-  /// leaves the ordinary path with its order. See [_styleReadsRunNoUserCode]
-  /// for the style of each item.
-  // DIVERGES(chartjs): adapt-hidden-legend-items, the guards of the mark.
-  bool _itemsCanWait({required bool datasetsUpdated}) {
+  /// option values and call no function. Each failed test returns at once, and
+  /// the reads before it are the first reads of an ordinary build, in its
+  /// order: the generator first, then only the keys of the built-in generator
+  /// of that controller. Thus a failed test leaves the ordinary path with its
+  /// reads and its order. The data reads have no cache and add no meta.
+  ///
+  /// [atMark] is true at a mark. After it, the reads of [options] are in its
+  /// cache, and this function reads no options of the chart: a new update can
+  /// have replaced them with options that nothing read yet. See
+  /// [_styleReadsRunNoUserCode] for the style of each item.
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of no user code.
+  bool _buildRunsNoUserCode(
+    OptionView options, {
+    required bool atMark,
+    bool datasetsUpdated = false,
+  }) {
     final chart = this.chart;
-    final options = super.options;
     if (super.runtimeType != Legend ||
-        options is! OptionView ||
         !nativePointChart(chart) ||
         !identical(chart.legend, this)) {
       return false;
@@ -412,22 +438,11 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final generator = labels.readKey(OptionKey.generateLabels);
     // The generator of this file has one item for each dataset.
     if (identical(generator, _generateLabels)) return false;
-    if (!_plainOption(labels.readKey(OptionKey.pointStyle)) ||
-        !_plainOption(labels.readKey(OptionKey.textAlign)) ||
-        !_labelColorIsPlain(chart, labels) ||
-        !_plainOption(labels.readKey(OptionKey.useBorderRadius)) ||
-        !_plainOption(labels.readKey(OptionKey.borderRadius)) ||
-        jsTruthy(labels.readKey(OptionKey.filter)) ||
-        jsTruthy(labels.readKey(OptionKey.sort)) ||
-        !_plainOption(root.readKey(OptionKey.reverse)) ||
-        !identical(root.readKey(OptionKey.display), false)) {
-      return false;
-    }
     // Native containers: no user getter or List operator runs in a build. The
     // list of the labels is the list of `data.labels`, not of `data.xLabels`.
-    final Object host = chart;
-    if (host is! CategoryLabelSource) return false;
-    final items = host.categoryLabels(null, horizontal: true);
+    final Object labelSource = chart;
+    if (labelSource is! CategoryLabelSource) return false;
+    final items = labelSource.categoryLabels(null, horizontal: true);
     if (items == null || items.isEmpty) return false;
     final data = chart.data;
     if (!identical(items, optionOf(data, OptionKey.labels))) return false;
@@ -436,23 +451,62 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         (datasets! as List<Object?>).isEmpty) {
       return false;
     }
-    final controller = chart.getDatasetMeta(0).controller;
-    if (controller is! DatasetController) return false;
+    final Object metaSource = chart;
+    if (metaSource is! DatasetMetaSource) return false;
+    final controller = metaSource.existingDatasetMeta(0)?.controller;
+    // The controller of the first dataset of the last update: after a removal,
+    // the controller of another index has its dataset behind it no more.
+    if (controller is! DatasetController || controller.index != 0) return false;
     final builtIn = controller.nativeLegendGenerator;
-    return builtIn != null &&
-        identical(builtIn, generator) &&
-        _styleReadsRunNoUserCode(controller, datasetsUpdated: datasetsUpdated);
+    if (builtIn == null || !identical(builtIn, generator)) return false;
+    // A user descriptor runs at the read of each function value of a build.
+    if (!identical(
+      labels.readKey(OptionKey.descScriptable),
+      _labelsScriptableDescriptor,
+    )) {
+      return false;
+    }
+    for (final key in controller.nativeLegendLabelKeys) {
+      if (key == OptionKey.color
+          ? !_labelColorIsPlain(chart, labels, atMark: atMark)
+          : !_plainOption(labels.readKey(key))) {
+        return false;
+      }
+    }
+    return _styleReadsRunNoUserCode(
+          controller,
+          datasetsUpdated: datasetsUpdated,
+        ) &&
+        !jsTruthy(labels.readKey(OptionKey.filter)) &&
+        !jsTruthy(labels.readKey(OptionKey.sort)) &&
+        _plainOption(root.readKey(OptionKey.reverse));
+  }
+
+  /// Runs the build that waits, when it can run: with the options of its mark,
+  /// as the build of upstream at that point used them.
+  // DIVERGES(chartjs): adapt-hidden-legend-items, the build at a read.
+  void _buildPendingItems() {
+    final pending = _pendingOptions;
+    if (pending == null || !_buildRunsNoUserCode(pending, atMark: false)) {
+      return;
+    }
+    final current = super.options;
+    super.options = pending;
+    try {
+      buildLabels();
+    } finally {
+      super.options = current;
+    }
   }
 
   /// The `stop` hook takes `chart.legend`, which the generators read. A box
   /// that its owner keeps gives the items of the last state: this function
-  /// runs a pending build while the build runs no user code. Else the box
-  /// keeps its last built items.
+  /// runs a pending build when it can run. Else the box keeps its last built
+  /// items.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the last read of a generator.
   void _settleItems() {
-    if (!_itemsPending) return;
-    _itemsPending = false;
-    if (_itemsCanWait(datasetsUpdated: false)) buildLabels();
+    _buildPendingItems();
+    _pendingOptions = null;
   }
 
   /// plugin.legend.js:92 `setDimensions()`.
@@ -1225,12 +1279,19 @@ bool _plainOption(Object? value) =>
 
 /// Whether the read of the label option `color` by a generator runs no user
 /// code: a plain value, or the default function [_chartColor] over a plain
-/// `color` of the chart options.
+/// `color` of the chart options. After the mark ([atMark] false), the view of
+/// the label options has the result of the function, and no read reaches the
+/// chart options.
 // DIVERGES(chartjs): adapt-hidden-legend-items, a proof of no user code.
-bool _labelColorIsPlain(types.Chart chart, OptionResolver labels) {
+bool _labelColorIsPlain(
+  types.Chart chart,
+  OptionResolver labels, {
+  required bool atMark,
+}) {
   final color = labels.readKey(OptionKey.color);
   if (_plainOption(color)) return true;
   if (!identical(color, _chartColor)) return false;
+  if (!atMark) return true;
   final chartOptions = chart.options;
   if (chartOptions is! OptionView) return false;
   final root = chartOptions.proxy;
@@ -1246,18 +1307,20 @@ bool _labelColorIsPlain(types.Chart chart, OptionResolver labels) {
 /// no function. Indexed and scriptable options leave no entry.
 ///
 /// The update of a polar area chart in a mode other than `default` has no such
-/// entry when the datasets are updated, and the cached entry of its mode shows
-/// the same fact ([DatasetController.hasStaticDataUpdateOptions]): the resolve
-/// has the same scopes and prefixes. Then this function runs the first read
-/// of the ordinary build, which writes the `default` entry that a next layout
-/// and a next direct `getStyle` read, as the ordinary build does.
+/// entry when the datasets are updated ([datasetsUpdated]). When
+/// [DatasetController.defaultDataOptionsNeedNoContext] proves that the first
+/// `getStyle` calls no function, this function runs that `getStyle(0)`, the
+/// first call of the ordinary build. It writes the `default` entry that a next
+/// layout and a next direct `getStyle` read, as the ordinary build does.
 // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of Chart.js ADR 0092.
 bool _styleReadsRunNoUserCode(
   DatasetController controller, {
   required bool datasetsUpdated,
 }) {
   if (controller.hasCachedDefaultDataOptions) return true;
-  if (!datasetsUpdated || !controller.hasStaticDataUpdateOptions) return false;
+  if (!datasetsUpdated || !controller.defaultDataOptionsNeedNoContext) {
+    return false;
+  }
   controller.getStyle(0);
   return controller.hasCachedDefaultDataOptions;
 }
