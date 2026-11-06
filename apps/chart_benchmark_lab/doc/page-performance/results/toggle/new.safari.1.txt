@@ -1,0 +1,3 @@
+PAGE {"scenario":"startup","firstFrameMs":179}
+PAGE {"scenario":"toggle.empty","platform":"web","width":1400,"height":925,"refreshHz":60,"frames":145,"timed":145,"uiP50":1,"uiP90":2,"uiP99":19,"uiMax":20,"rasterP50":1,"rasterP90":2,"rasterP99":3,"rasterMax":3,"overBudget":3}
+MATRIX_DONE

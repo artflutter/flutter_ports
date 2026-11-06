@@ -1,0 +1,4 @@
+flutter: The Dart VM service is listening on http://127.0.0.1:61206/-Rznh4_t11Q=/
+PAGE {"scenario":"startup","firstFrameMs":12}
+PAGE {"scenario":"toggle.empty","platform":"macOS","width":1360.0,"height":900.0,"refreshHz":120.0,"frames":290,"timed":290,"uiP50":1.24,"uiP90":1.61,"uiP99":9.44,"uiMax":11.61,"rasterP50":1.75,"rasterP90":2.36,"rasterP99":3.1,"rasterMax":5.28,"overBudget":3}
+MATRIX_DONE

@@ -1,0 +1,48 @@
+[
+ {
+  "run": 0,
+  "firstPaintMs": 3076,
+  "firstContentfulMs": 3076,
+  "firstFlutterFrameMs": 3073,
+  "isolated": true,
+  "totalKB": 2614,
+  "files": [
+   "1307 KB /main.dart.wasm",
+   "1204 KB https://www.gstatic.com/flutter-canvaskit/1b9ee1a58581e9c51a5fc9b38d42ab80388c6d1d/skwasm.wasm",
+   "63 KB https://fonts.gstatic.com/s/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2",
+   "15 KB https://www.gstatic.com/flutter-canvaskit/1b9ee1a58581e9c51a5fc9b38d42ab80388c6d1d/skwasm.js",
+   "7 KB /main.dart.mjs",
+   "6 KB /flutter_bootstrap.js",
+   "5 KB /icons/Icon-192.png",
+   "1 KB /isolate.js",
+   "1 KB /favicon.png",
+   "1 KB /",
+   "1 KB /assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+   "1 KB /manifest.json",
+   "0 KB /assets/FontManifest.json"
+  ]
+ },
+ {
+  "run": 1,
+  "firstPaintMs": 3706,
+  "firstContentfulMs": 3706,
+  "firstFlutterFrameMs": 3703,
+  "isolated": true,
+  "totalKB": 2614,
+  "files": [
+   "1307 KB /main.dart.wasm",
+   "1204 KB https://www.gstatic.com/flutter-canvaskit/1b9ee1a58581e9c51a5fc9b38d42ab80388c6d1d/skwasm.wasm",
+   "63 KB https://fonts.gstatic.com/s/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2",
+   "15 KB https://www.gstatic.com/flutter-canvaskit/1b9ee1a58581e9c51a5fc9b38d42ab80388c6d1d/skwasm.js",
+   "7 KB /main.dart.mjs",
+   "6 KB /flutter_bootstrap.js",
+   "5 KB /icons/Icon-192.png",
+   "1 KB /isolate.js",
+   "1 KB /favicon.png",
+   "1 KB /",
+   "1 KB /assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+   "1 KB /manifest.json",
+   "0 KB /assets/FontManifest.json"
+  ]
+ }
+]

@@ -1,0 +1,2 @@
+PAGE {"scenario":"firstload","firstFrameMs":501,"firstPaintMs":12}
+MATRIX_DONE

@@ -20,6 +20,16 @@ class ChangeLogEntry {
 /// are in `doc/performance.md` of the Chart.js port.
 const List<ChangeLogEntry> changeLog = [
   ChangeLogEntry('2026-11-06', [
+    'Lab page: each section now builds and paints on its own, so that a chart '
+        'frame, a scroll and a readout no longer record the page around them. '
+        'An idle chart stays mounted through a resize, and a load mounts it '
+        'once. With 24 saved rows, a resize went from 42 to 60 FPS in Firefox '
+        'and from 52 to 60 FPS in Safari. On a Pixel 8a, the UI time of a '
+        'chart frame went from 2.3 to 1.1 ms, and its raster time from 2.4 to '
+        '2.9 ms. Older exported captures can differ by this amount.',
+    'Lab page: a browser load shows a splash in the color of the page, and no '
+        'blank white page. The first paint in Chrome went from about 3.4 s to '
+        'about 80 ms on a 20 Mbit/s connection.',
     'Web: long lines and their fills draw in small pieces. Line 5,000 full '
         'went from 3.5 to 120 FPS on WebAssembly, and from 3.8 to 82 FPS on '
         'JavaScript. A dense fill now has its true area: one draw missed it '

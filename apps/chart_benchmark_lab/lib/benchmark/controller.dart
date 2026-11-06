@@ -70,7 +70,7 @@ class RunReadout {
 /// Completed, immutable benchmark evidence.
 class BenchmarkResult {
   /// Settings and environment are frozen when the capture starts.
-  const BenchmarkResult({
+  BenchmarkResult({
     required this.library,
     required this.config,
     required this.viewport,
@@ -106,11 +106,16 @@ class BenchmarkResult {
   final DateTime createdAt;
 
   /// Comparison identity excludes the engine but includes effective workload.
-  String get comparisonKey =>
-      _comparisonKey(config, viewport, dpr, refreshRate, durationSeconds);
+  late final String comparisonKey = _comparisonKey(
+    config,
+    viewport,
+    dpr,
+    refreshRate,
+    durationSeconds,
+  );
 
   /// The identity of the workload, for the filter of the saved results.
-  String get workloadKey => _workloadKey(config, durationSeconds);
+  late final String workloadKey = _workloadKey(config, durationSeconds);
 
   /// Exportable evidence, including limitations of the measurement.
   Map<String, Object?> toJson() => {
@@ -290,7 +295,7 @@ class BenchmarkController extends ChangeNotifier {
 
   /// Editing a setting starts an entirely new data/timing session.
   void configure(BenchmarkConfig value) {
-    if (controlsLocked) return;
+    if (controlsLocked || value == config) return;
     final resume = running;
     pause();
     config = value;
@@ -308,9 +313,17 @@ class BenchmarkController extends ChangeNotifier {
     _generator = DatasetGenerator(config.count, config.seed);
     frames.value = _generator.frame(0);
     readout.value = const RunReadout(FrameMetrics(), 0, 0);
-    message = canRun
-        ? 'Ready. Measurements exclude the first 2 seconds.'
-        : library.unsupportedReason(config.type);
+    message = _readyMessage;
+  }
+
+  String get _readyMessage => canRun
+      ? 'Ready. Measurements exclude the first 2 seconds.'
+      : library.unsupportedReason(config.type);
+
+  /// Changes the length of the next capture.
+  void setCaptureSeconds(int seconds) {
+    captureSeconds = seconds;
+    notifyListeners();
   }
 
   /// Start a fresh live or timed measurement, always from the same seed/step.
@@ -380,13 +393,21 @@ class BenchmarkController extends ChangeNotifier {
   void setViewport(Size size, double pixelRatio, double hz) {
     final rate = hz > 0 ? hz : 60.0;
     if (size == viewport && pixelRatio == dpr && rate == refreshRate) return;
-    if (running || finishing) {
-      pause('Viewport changed. Run again to measure this size.');
-    }
+    final active = running || finishing;
+    if (active) pause('Viewport changed. Run again to measure this size.');
     viewport = size;
     dpr = pixelRatio;
     refreshRate = rate;
-    _reset();
+    // An idle chart follows its size and stays mounted, so that a resize and
+    // the first layout mount no chart. Each test starts with a new chart in
+    // `_begin`. Graphic reads the width of its bars only when it mounts.
+    if (active ||
+        (library == ChartLibrary.graphic && config.type == ChartType.bar)) {
+      _reset();
+    } else {
+      readout.value = const RunReadout(FrameMetrics(), 0, 0);
+      message = _readyMessage;
+    }
     notifyListeners();
   }
 

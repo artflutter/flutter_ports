@@ -1,0 +1,52 @@
+--------- beginning of main
+The Dart VM service is listening on http://127.0.0.1:35839/-_oy-bvwylE=/
+[IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(74)] Using the Impeller rendering backend (Vulkan).
+PAGE {"scenario":"startup","firstFrameMs":24}
+PAGE {"scenario":"idle","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":0}
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e1625b0
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+[ERROR:flutter/impeller/entity/contents/text_contents.cc(211)] Break on 'ImpellerValidationBreak' to inspect point of failure: Frame bounds are not present in the atlas 0xb40000794e161f38
+PAGE {"scenario":"scroll.empty","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":719,"timed":719,"uiP50":0.87,"uiP90":1.32,"uiP99":1.95,"uiMax":2.38,"rasterP50":3.27,"rasterP90":4.08,"rasterP99":6.89,"rasterMax":10.95,"overBudget":5,"gapP90":8.37,"gapMax":9.72,"lateGaps":0}
+PAGE {"scenario":"scroll.table","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":719,"timed":719,"uiP50":0.82,"uiP90":1.24,"uiP99":1.93,"uiMax":2.44,"rasterP50":3.68,"rasterP90":4.94,"rasterP99":6.51,"rasterMax":10.11,"overBudget":2,"gapP90":8.37,"gapMax":16.71,"lateGaps":1}
+PAGE {"scenario":"run.readout","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":716,"timed":716,"uiP50":1.12,"uiP90":1.57,"uiP99":5.47,"uiMax":24.98,"rasterP50":2.99,"rasterP90":3.93,"rasterP99":4.72,"rasterMax":8.94,"overBudget":3,"gapP90":8.37,"gapMax":25.05,"lateGaps":1}
+PAGE {"scenario":"filter.chip","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":308,"timed":308,"uiP50":1.61,"uiP90":2.41,"uiP99":20.38,"uiMax":27.51,"rasterP50":3.31,"rasterP90":4.47,"rasterP99":5.51,"rasterMax":8.73,"overBudget":8}
+PAGE {"scenario":"sort.table","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":103,"timed":103,"uiP50":0.99,"uiP90":7.55,"uiP99":27.43,"uiMax":29.33,"rasterP50":3.4,"rasterP90":4.63,"rasterP99":6.34,"rasterMax":7.12,"overBudget":10}
+PAGE {"scenario":"settings.expand","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":276,"timed":276,"uiP50":2.35,"uiP90":4.07,"uiP99":11.8,"uiMax":40.11,"rasterP50":3.52,"rasterP90":4.69,"rasterP99":7.89,"rasterMax":32.05,"overBudget":6}
+PAGE {"scenario":"toggle.feature","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":303,"timed":303,"uiP50":2.61,"uiP90":3.41,"uiP99":30.52,"uiMax":39.17,"rasterP50":3.83,"rasterP90":4.58,"rasterP99":5.87,"rasterMax":6.58,"overBudget":6}
+PAGE {"scenario":"slider.drag","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":357,"timed":357,"uiP50":2.78,"uiP90":5.58,"uiP99":8.33,"uiMax":22.26,"rasterP50":3.77,"rasterP90":5.28,"rasterP99":7.63,"rasterMax":10.22,"overBudget":5,"gapP90":8.37,"gapMax":25.07,"lateGaps":1}
+PAGE {"scenario":"library.switch","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":259,"timed":259,"uiP50":1.57,"uiP90":2.33,"uiP99":8.88,"uiMax":12.24,"rasterP50":3.56,"rasterP90":4.56,"rasterP99":4.98,"rasterMax":5.39,"overBudget":3}
+PAGE {"scenario":"dialog.open","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":260,"timed":260,"uiP50":1.28,"uiP90":2.4,"uiP99":8.43,"uiMax":18.46,"rasterP50":4.64,"rasterP90":5.69,"rasterP99":6.8,"rasterMax":14.58,"overBudget":5}
+PAGE {"scenario":"run.pause","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":390,"timed":390,"uiP50":1.66,"uiP90":2.55,"uiP99":7.5,"uiMax":19.27,"rasterP50":2.96,"rasterP90":4.14,"rasterP99":4.93,"rasterMax":5.56,"overBudget":3}
+PAGE {"scenario":"resize.light","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":588,"timed":588,"uiP50":2.9,"uiP90":4.95,"uiP99":14.63,"uiMax":21.75,"rasterP50":4.03,"rasterP90":4.75,"rasterP99":5.63,"rasterMax":8.25,"overBudget":23,"gapP90":8.37,"gapMax":24.27,"lateGaps":9}
+PAGE {"scenario":"resize.heavy","platform":"android","width":0.0,"height":0.0,"refreshHz":120.00000762939453,"frames":593,"timed":593,"uiP50":3.34,"uiP90":4.35,"uiP99":10.47,"uiMax":18.22,"rasterP50":4.41,"rasterP90":4.83,"rasterP99":5.31,"rasterMax":6.91,"overBudget":8,"gapP90":8.37,"gapMax":25.07,"lateGaps":4}
+MATRIX_DONE

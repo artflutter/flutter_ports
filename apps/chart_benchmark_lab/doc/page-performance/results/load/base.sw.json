@@ -1,0 +1,44 @@
+[
+ {
+  "visit": 1,
+  "firstFrameMs": 3096,
+  "isolated": true,
+  "worker": true,
+  "reloadedOnce": "1"
+ },
+ {
+  "visit": 2,
+  "firstFrameMs": 164,
+  "isolated": true,
+  "worker": true,
+  "reloadedOnce": "1"
+ },
+ {
+  "visit": 3,
+  "firstFrameMs": 167,
+  "isolated": true,
+  "worker": true,
+  "reloadedOnce": "1"
+ },
+ {
+  "visit": 4,
+  "firstFrameMs": 148,
+  "isolated": true,
+  "worker": true,
+  "reloadedOnce": "1"
+ },
+ {
+  "visit": 5,
+  "firstFrameMs": 152,
+  "isolated": true,
+  "worker": true,
+  "reloadedOnce": "1"
+ },
+ {
+  "visit": 6,
+  "firstFrameMs": 153,
+  "isolated": true,
+  "worker": true,
+  "reloadedOnce": "1"
+ }
+]

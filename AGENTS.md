@@ -1140,6 +1140,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   comparable-run keys. Engine build timing excludes some deferred work: retain
   frame-interval metrics and full-window FPS. Do not silently downsample an engine.
   `tool/smoke.dart` drives the real UI/controller in native profile mode.
+  Each section of `lib/ui/benchmark_page.dart` is one widget instance that rebuilds
+  through `_Selected`: its `select` must cover each value that its builder reads.
+  `test/page_work_test.dart` has the budgets of the page and fails on a stale section.
+  `tool/perf_page.dart` times the page in profile mode. An idle resize keeps the chart
+  mounted, except a Graphic bar chart. Each test still starts with a new chart.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.
   - `lib/flutter_d3_port.dart`: the public library. `lib/src/upstream.dart` has `d3Version`

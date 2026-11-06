@@ -1,0 +1,18 @@
+WORK startup chartMounts=1
+WORK desktop readout builds=53 chartBuilds=0 settingsBuilds=0 layouts=101 paints=136
+WORK desktop tick builds=6 chartBuilds=1 settingsBuilds=0 layouts=1 paints=5
+WORK desktop notify builds=0 chartBuilds=0 settingsBuilds=0 layouts=0 paints=0
+WORK desktop scroll builds=0 chartBuilds=0 settingsBuilds=0 layouts=0 paints=1
+WORK desktop filter builds=100 chartBuilds=0 settingsBuilds=0 layouts=108 paints=296
+WORK desktop sort builds=1461 chartBuilds=0 settingsBuilds=0 layouts=725 paints=3268
+WORK desktop resize builds=1796 chartBuilds=1 settingsBuilds=0 layouts=1486 paints=607
+WORK desktop run builds=159 chartBuilds=1 settingsBuilds=0 layouts=74 paints=164
+WORK phone readout builds=53 chartBuilds=0 settingsBuilds=0 layouts=93 paints=158
+WORK phone tick builds=6 chartBuilds=1 settingsBuilds=0 layouts=1 paints=5
+WORK phone notify builds=0 chartBuilds=0 settingsBuilds=0 layouts=0 paints=0
+WORK phone scroll builds=0 chartBuilds=0 settingsBuilds=0 layouts=0 paints=1
+WORK phone filter builds=100 chartBuilds=0 settingsBuilds=0 layouts=92 paints=340
+WORK phone sort builds=1461 chartBuilds=0 settingsBuilds=0 layouts=717 paints=3279
+WORK phone resize builds=1765 chartBuilds=1 settingsBuilds=0 layouts=1461 paints=603
+WORK phone run builds=203 chartBuilds=1 settingsBuilds=0 layouts=37 paints=348
+WORK desktop hover builds=20 chartBuilds=0 settingsBuilds=0 layouts=2 paints=1126

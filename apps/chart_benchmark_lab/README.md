@@ -54,6 +54,37 @@ it says why the page has its mode. It hides during a run, and a person can close
 The header has a **Change log** button (`lib/ui/change_log.dart`). Add a line
 there when a change moves a figure.
 
+## The page around the chart
+
+The page must stay smooth, and it must add little to the frames of a test. Each
+section of `lib/ui/benchmark_page.dart` is one widget instance for the life of
+the page. A section rebuilds through `_Selected` only when a value that it reads
+changes. Thus a change of the controller builds only the sections that show it,
+and a page rebuild never updates the chart. The `select` function of a section
+must cover each value that its builder reads.
+
+Repaint boundaries sit below each scroll view, around the plot and around the
+sections that change often. A scroll frame records no paint, a chart frame records
+only the chart, and a readout records only the readouts.
+
+An idle chart stays mounted when the window changes size, also at the first layout.
+The exception is a Graphic bar chart, which reads its bar width only when it mounts.
+Each test still starts with a new chart. A settings tap with no change does nothing.
+
+On the web, `web/index.html` shows a splash in the color of the page until the first
+frame, so that a load shows no blank white page.
+
+Two tools measure this:
+
+- `test/page_work_test.dart` counts the widgets that build and the render objects
+  that lay out and paint for each interaction, with budgets. It also compares the
+  screen with a forced rebuild of each element after each state of the controller,
+  and it fails when a section misses a value.
+- `tool/perf_page.dart` runs the real page with a small chart, scripts each
+  interaction and prints one `PAGE {json}` line for each, with the frame timings.
+  Run it in profile mode: `flutter run --profile -t tool/perf_page.dart -d <device>`.
+  A browser build posts its lines to `/line`, as the matrix does.
+
 ## Controls
 
 - **Library selector:** mounts one engine at a time. Settings stay selected;
