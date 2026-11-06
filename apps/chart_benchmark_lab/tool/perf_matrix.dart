@@ -12,6 +12,9 @@
 // - MATRIX_SECONDS: the measured seconds of a cell, default 4.
 // - MATRIX_HOLD: a cell that keeps running, for a CPU profile. It has the form
 //   engine:type:count:preset:seconds.
+// - MATRIX_IGNORE_COVER: 1 measures while a lock screen covers the window. The
+//   update and draw times stay valid for a comparison, but only a visible window
+//   gives an FPS figure for a report.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -212,8 +215,25 @@ Future<void> _hold(BenchmarkController c, String spec) async {
   exit(0);
 }
 
+/// Keeps frames on and the capture gate open while the window is covered.
+void _ignoreCover(BenchmarkController c) {
+  void open() {
+    if (c.windowVisible && SchedulerBinding.instance.framesEnabled) {
+      return;
+    }
+    WidgetsBinding.instance.handleAppLifecycleStateChanged(
+      AppLifecycleState.resumed,
+    );
+    c.windowVisible = true;
+  }
+
+  open();
+  Timer.periodic(const Duration(milliseconds: 200), (_) => open());
+}
+
 Future<void> _run(BenchmarkController c) async {
   await _delay(2500);
+  if (_env['MATRIX_IGNORE_COVER'] == '1') _ignoreCover(c);
   _measureFrames();
   final hold = _env['MATRIX_HOLD'];
   if (hold != null) return _hold(c, hold);
