@@ -64,6 +64,8 @@ import 'dart:typed_data' show Uint16List;
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+import 'package:flutter_chartjs_port/src/core/data_update.dart'
+    show nativeOptionScope;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show capitalize, isArray, isFunction, isObject, resolveObjectKey;
@@ -1458,13 +1460,20 @@ final class OptionView implements ContextProxy {
       !identical(proxy._cache.get(OptionKey.descIndexable), _absent) &&
       !identical(proxy._cache.get(OptionKey.descAllKeys), _absent);
 
-  /// Whether the raw values of [keys] are scalars: a read of them through this
-  /// view, also its first, runs no user code and stores the raw value.
+  /// Whether the raw values of [keys] are scalars in native scopes: a read of
+  /// them through this view, also its first, runs no user code and stores the
+  /// raw value. `operator []` of a custom Map scope is user code: its reads
+  /// keep their original order and position.
   @internal
   // DIVERGES(chartjs): adapt-arc-native-options, no user code until a rewrite.
   bool rawOptionsAreScalar(List<OptionKey> keys) {
     final proxy = _proxy;
-    if (proxy is! OptionResolver || _removedSlots != null) return false;
+    if (proxy is! OptionResolver ||
+        _removedSlots != null ||
+        proxy._slotsTouched ||
+        !proxy._scopes.every(nativeOptionScope)) {
+      return false;
+    }
     for (final key in keys) {
       if (!_indexedScalar(proxy.readKey(key))) return false;
     }

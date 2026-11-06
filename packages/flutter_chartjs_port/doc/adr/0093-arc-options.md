@@ -49,10 +49,18 @@ ask for the first two items only, then run as upstream.
   which no scan reads, and in the context refresh of its arc. That refresh is left
   to `updateElements`, which writes each of these contexts again. This needs:
   mode `none`, inside `update` (a public call keeps each refresh); the controller
-  of the scan is `this`; one dataset; the exact chart, Config and arcs; native
-  arrays and sources; parsing on; and scalar raw values for the five dataset
-  options read between the scans and the loop. Thus no user code runs in the
-  window with the old contexts.
+  of the scan is `this`; one dataset; the exact chart, Config and arcs; no active
+  arc; native arrays and sources; parsing on; and scalar raw values, in native
+  scopes, for the five dataset options read between the scans and the loop. Thus
+  no user code runs in the window with the old contexts, and a resolve in that
+  window can neither throw nor skip the write of its context.
+
+An active arc ends the second stop because its resolve is not a plan: static hover
+options write no context, a hover callback can read any arc, and the hover default
+of a bad color throws. A custom Map scope ends it because its `operator []` is user
+code: it reads the five options at their original positions and in their original
+order, which for a hidden dataset has `radius` before `rotation` and
+`circumference`. The first stop needs neither: a hit writes no context.
 
 ### The loops
 
@@ -85,10 +93,11 @@ The spacing fix-ups of the polar area stay per item on the fresh result.
 ## Fallback
 
 A user subclass of a controller, arc, scale, chart or Config class, a user
-descriptor, a foreign value, an object, a custom list, a hover prefix, a mode other
-than `none` where this needs it, a varying key other than a color, more than one
-dataset for the plan stop, and a scriptable dataset option all keep the ordinary
-path at its original observation point. A failed attempt keeps the one context
+descriptor, a foreign value, an object, a custom list, a custom Map scope for the
+two read-ahead checks (the five dataset options and `reverse`), a hover prefix, a
+mode other than `none` where this needs it, a varying key other than a color, an
+active arc or more than one dataset for the plan stop, and a scriptable dataset
+option all keep the ordinary path at its original observation point. A failed attempt keeps the one context
 that it created. Every result stays a fresh object with `$shared: false`, the
 original key order and independent mutable fields.
 
