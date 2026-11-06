@@ -38,6 +38,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
     show NativeArcScale;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -1535,6 +1536,8 @@ class RadialLinearScale extends LinearScaleBase
   /// The rest of the loop of the angle lines from the index [start], down
   /// (Chart.js ADR 0095): the same path and stroke for each line. A translucent
   /// line still blends over the lines before it: each line is its own stroke.
+  ///
+  /// A native canvas may take these strokes in one call (Chart.js ADR 0103).
   void _drawStaticAngleLines(
     CanvasRenderingContext2D ctx,
     RadialPositions positions,
@@ -1543,6 +1546,19 @@ class RadialLinearScale extends LinearScaleBase
   ) {
     final x = xCenter ?? double.nan;
     final y = yCenter ?? double.nan;
+    // DIVERGES(chartjs): adapt-radial-line-fan, one native call for the lines.
+    if (ctx case final LineFanCanvas fan when start > 0) {
+      final drawn = fan.tryStrokeLineFan(x, y, start + 1, (ends) {
+        var k = 0;
+        for (var i = start; i >= 0; i--) {
+          final position = positions.positionAt(i, offset);
+          ends[k] = position.x;
+          ends[k + 1] = position.y;
+          k += 2;
+        }
+      });
+      if (drawn) return;
+    }
     for (var i = start; i >= 0; i--) {
       final position = positions.positionAt(i, offset);
       ctx

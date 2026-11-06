@@ -49,6 +49,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_partitioned_fill.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
@@ -96,6 +97,11 @@ const double _maxSectorRunSweep = 2 * math.pi - 1e-3;
 /// `pathArc` round by a few bits, so two neighbors do not meet exactly. At the
 /// largest radius of a sector, this gap is 1e-4 bitmap pixels.
 const double _maxSectorRunGap = 1e-9;
+
+/// The largest absolute coordinate of a line of a fan, in bitmap pixels. Below
+/// it, a `Float32List` element and the argument of `drawLine` narrow to one
+/// finite float. The engine clamps the argument instead of giving Infinity.
+const double _maxLineFanExtent = 1e30;
 
 const ui.Color _black = ui.Color(0xFF000000);
 
@@ -543,6 +549,7 @@ final class UiCanvasContext
         CanvasTextMetricsSource,
         RectBarCanvas,
         ArcSectorCanvas,
+        LineFanCanvas,
         PartitionedFillCanvas {
   UiCanvasContext._(this._element) {
     _s = _states[0];
@@ -594,6 +601,10 @@ final class UiCanvasContext
   bool _runReflected = false;
   ui.Color _runColor = _black;
   final ui.Paint _runPaint = ui.Paint();
+  // The numbers of the last line fan, kept for the next one: a redraw has the
+  // same count ([tryStrokeLineFan]).
+  Float64List? _fanEnds;
+  Float32List? _fanPoints;
   bool _hasContent = false;
   int _pictureDraws = 0;
   int _paintGenerations = 0;
@@ -754,6 +765,8 @@ final class UiCanvasContext
     _arcBorder = null;
     _arcBackground = null;
     _partitionedFillPath = null;
+    _fanEnds = null;
+    _fanPoints = null;
   }
 
   // The recording.
@@ -1948,6 +1961,96 @@ final class UiCanvasContext
     } else {
       _strokeUser(_path.path.transform(t.writeInverseMatrix4(_m4)));
     }
+  }
+
+  /// Whether [tryStrokeLineFan] also takes an engine without Impeller. Only the
+  /// pixel twins set it: on `flutter_tester`, that engine is Skia on the CPU.
+  @visibleForTesting
+  static bool debugLineFanWithoutImpeller = false;
+
+  /// One `drawRawPoints` of the lines of a fan (Chart.js ADR 0103), in place of
+  /// one `drawLine` of [_strokeLine] for each line. The engine draws each line
+  /// of the call as its own stroke, in order, so a translucent line still
+  /// blends over the lines before it. The logical styles and the transform do
+  /// not change. The path of the last line stays as the current path, with its
+  /// commands deferred.
+  ///
+  /// Impeller and Skia on the CPU draw the same bytes for both forms. GPU Skia
+  /// and the web are not proven, so they decline: `isShaderFilterSupported` is
+  /// the only signal of the engine that `dart:ui` has, and it is false on both.
+  /// A dash, a shader, another transform than a similarity and a line that
+  /// [_strokeLine] gives to the path decline too, as does a context whose next
+  /// draw would notify, and an observer of a picture or an image: a fan makes
+  /// fewer pictures.
+  @override
+  @internal
+  bool tryStrokeLineFan(
+    double x,
+    double y,
+    int count,
+    void Function(Float64List ends) writeEnds,
+  ) {
+    final s = _s;
+    final t = s.transform;
+    if (count < 2 ||
+        _disposed ||
+        !(ui.ImageFilter.isShaderFilterSupported ||
+            debugLineFanWithoutImpeller) ||
+        (!_notified && _onChanged != null) ||
+        ui.Picture.onCreate != null ||
+        ui.Picture.onDispose != null ||
+        ui.Image.onCreate != null ||
+        ui.Image.onDispose != null ||
+        !identical(_path.transform, t) ||
+        !t.isInvertible ||
+        !t.isSimilarity ||
+        s.lineDash.isNotEmpty ||
+        s.strokeShader != null ||
+        s.strokeColor == null) {
+      return false;
+    }
+    final x0 = t.mapX(x, y);
+    final y0 = t.mapY(x, y);
+    if (!(x0.abs() <= _maxLineFanExtent) || !(y0.abs() <= _maxLineFanExtent)) {
+      return false;
+    }
+    final endCount = count * 2;
+    var ends = _fanEnds;
+    if (ends == null || ends.length != endCount) {
+      ends = _fanEnds = Float64List(endCount);
+    }
+    writeEnds(ends);
+    final pointCount = count * 4;
+    var points = _fanPoints;
+    if (points == null || points.length != pointCount) {
+      points = _fanPoints = Float32List(pointCount);
+    }
+    var p = 0;
+    for (var e = 0; e < endCount; e += 2) {
+      final endX = ends[e];
+      final endY = ends[e + 1];
+      final x1 = t.mapX(endX, endY);
+      final y1 = t.mapY(endX, endY);
+      if (!(x1.abs() <= _maxLineFanExtent) ||
+          !(y1.abs() <= _maxLineFanExtent) ||
+          (x1 == x0 && y1 == y0)) {
+        return false;
+      }
+      points
+        ..[p] = x0
+        ..[p + 1] = y0
+        ..[p + 2] = x1
+        ..[p + 3] = y1;
+      p += 4;
+    }
+    _path
+      ..reset()
+      ..moveTo(x, y)
+      ..lineTo(ends[endCount - 2], ends[endCount - 1]);
+    if (!_setupStroke(t.scaleFactor, mapped: true)) return true;
+    _c.drawRawPoints(ui.PointMode.lines, points, _strokePaint);
+    _drew();
+    return true;
   }
 
   /// An unknown fill rule does nothing (the DOM throws a `TypeError`).
