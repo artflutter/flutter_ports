@@ -215,10 +215,25 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   static bool nativeElementDescriptors(Object? scriptable, Object? indexable) =>
       (scriptable is bool ||
           scriptable is Undefined ||
-          identical(scriptable, _scriptableDefault)) &&
+          identical(scriptable, _scriptableDefault) ||
+          _nativeElementPredicates.contains(scriptable)) &&
       (indexable is bool ||
           indexable is Undefined ||
-          identical(indexable, _indexableDefault));
+          identical(indexable, _indexableDefault) ||
+          _nativeElementPredicates.contains(indexable));
+
+  /// The predicates of [nativeElementPredicate], by identity.
+  static final Set<Object?> _nativeElementPredicates = Set<Object?>.identity();
+
+  /// Names the built-in descriptor predicate [predicate] of an element or
+  /// controller class, which this library does not import, for
+  /// [nativeElementDescriptors]. It must be a pure function of its key.
+  @internal
+  // DIVERGES(chartjs): adapt-arc-native-options, exact predicate identity.
+  static T nativeElementPredicate<T extends Object>(T predicate) {
+    _nativeElementPredicates.add(predicate);
+    return predicate;
+  }
 
   /// core.defaults.js:90 `set`.
   ///

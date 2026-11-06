@@ -83,7 +83,11 @@ import 'package:flutter_chartjs_port/src/options/parsed.dart'
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show BarOptionsScope, GenericDatasetOptionsScope, PointOptionsScope;
+    show
+        ArcOptionsScope,
+        BarOptionsScope,
+        GenericDatasetOptionsScope,
+        PointOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
@@ -1920,6 +1924,36 @@ class DatasetController
   bool get hasCachedPointNoneOptions =>
       _cachedElementOptions.containsKey('point-none');
 
+  /// The cached entry of the data element type and [mode], with no copy. An
+  /// exact native controller reads a value of it. Dart `null` on a miss.
+  @internal
+  // DIVERGES(chartjs): adapt-arc-native-options, a read needs no clone.
+  ElementOptions? cachedDataElementOptions(String mode) =>
+      _cachedElementOptions[_elementCacheKey(
+        jsToString(_idOf(dataElementType)),
+        mode,
+      )];
+
+  /// Whether [options], the result of the last data element call, is its
+  /// frozen cached entry. For an exact native controller, each later call
+  /// before [configure] is then a hit that gives the same object.
+  @internal
+  // DIVERGES(chartjs): adapt-arc-native-options, the result that must repeat.
+  bool isCachedElementOptions(ElementOptions options) =>
+      identical(_cachedElementOptions[_lastElementCacheKey], options);
+
+  /// [_lastElementCacheKey] for [typeName] and [mode].
+  // DIVERGES(chartjs): adapt-element-option-cache-key, retain the original
+  // string key (including collisions) and convert the element id every time.
+  String _elementCacheKey(String typeName, String mode) {
+    if (typeName == _lastElementTypeName && mode == _lastElementMode) {
+      return _lastElementCacheKey;
+    }
+    _lastElementTypeName = typeName;
+    _lastElementMode = mode;
+    return _lastElementCacheKey = '$typeName-$mode';
+  }
+
   /// core.datasetController.js:804 `_resolveElementOptions(elementType, mode
   /// = 'default', index)`.
   /// @private
@@ -1936,24 +1970,38 @@ class DatasetController
     double? index,
   ]) {
     final resolvedMode = mode ?? 'default';
-    final active = resolvedMode == 'active';
     final cache = _cachedElementOptions;
     final typeName = jsToString(elementType);
-    // DIVERGES(chartjs): adapt-element-option-cache-key, retain the original
-    // string key (including collisions) and convert the element id every time.
-    final String cacheKey;
-    if (typeName == _lastElementTypeName && resolvedMode == _lastElementMode) {
-      cacheKey = _lastElementCacheKey;
-    } else {
-      _lastElementTypeName = typeName;
-      _lastElementMode = resolvedMode;
-      cacheKey = _lastElementCacheKey = '$typeName-$resolvedMode';
-    }
+    final cacheKey = _elementCacheKey(typeName, resolvedMode);
     final cached = cache[cacheKey];
     final sharing = enableOptionSharing && index != null;
     if (cached != null) {
       return _cloneIfNotShared(cached, sharing);
     }
+    return _resolveUncachedElementOptions(
+      elementType,
+      typeName,
+      resolvedMode,
+      index,
+      cacheKey,
+      sharing,
+    );
+  }
+
+  /// The miss path of [_resolveElementOptions] (core.datasetController.js:
+  /// 812-832).
+  // DIVERGES(chartjs): adapt-element-option-cache-key, its own method: a hit
+  // allocates no context for the closure of the context factory.
+  ElementOptions _resolveUncachedElementOptions(
+    Object? elementType,
+    String typeName,
+    String resolvedMode,
+    double? index,
+    String cacheKey,
+    bool sharing,
+  ) {
+    final active = resolvedMode == 'active';
+    final cache = _cachedElementOptions;
     final config = chart.config as Config;
     final scopeKeys = config.datasetElementScopeKeys(type, elementType);
     // DIVERGES(chartjs): adapt-option-resolution-setup, native prefixes.
@@ -1998,7 +2046,9 @@ class DatasetController
       _nativeElementDefaultKeys =
           elementDefaults is! OptionScope ||
           elementDefaults.runtimeType == PointOptionsScope ||
-          elementDefaults.runtimeType == BarOptionsScope;
+          elementDefaults.runtimeType == BarOptionsScope ||
+          // DIVERGES(chartjs): adapt-arc-native-options, a third key producer.
+          elementDefaults.runtimeType == ArcOptionsScope;
       _nativeSnapshotKeys =
           elementDefaults is OptionScope && _nativeElementDefaultKeys;
     }
@@ -2018,6 +2068,17 @@ class DatasetController
             context,
             prefixes,
             point: elementType == 'point',
+            immutableKeys: immutableKeys,
+          )
+        : _nativeElementDefaultKeys &&
+              config.runtimeType == Config &&
+              elementType is String &&
+              elementType == 'arc'
+        ? config.resolveOwnedArcNamedOptions(
+            scopes,
+            keys,
+            context,
+            prefixes,
             immutableKeys: immutableKeys,
           )
         : _nativeElementDefaultKeys
