@@ -94,7 +94,36 @@ BenchmarkConfig _config(ChartType type, int count, String preset) =>
 
 Future<void> _delay(int ms) => Future<void>.delayed(Duration(milliseconds: ms));
 
+/// Waits while the window is covered. A covered window cancels a capture.
+Future<void> _waitForVisibleWindow(BenchmarkController c) async {
+  var waited = false;
+  while (!c.windowVisible) {
+    if (!waited) stdout.writeln('MATRIX_WAIT window covered');
+    waited = true;
+    await _delay(500);
+  }
+}
+
+/// Runs a capture again when a covered window cancelled it.
 Future<Map<String, Object?>> _capture(
+  BenchmarkController c,
+  ChartLibrary engine,
+  ChartType type,
+  int count,
+  String preset,
+  int seconds,
+) async {
+  for (var attempt = 1; ; attempt++) {
+    await _waitForVisibleWindow(c);
+    final row = await _attempt(c, engine, type, count, preset, seconds);
+    if (row['saved'] == true) return row..['attempts'] = attempt;
+    stdout.writeln('MATRIX_RETRY $attempt ${row['message']}');
+    if (attempt >= 20) return row;
+    await _delay(1000);
+  }
+}
+
+Future<Map<String, Object?>> _attempt(
   BenchmarkController c,
   ChartLibrary engine,
   ChartType type,
