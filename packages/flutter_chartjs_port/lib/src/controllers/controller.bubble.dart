@@ -28,7 +28,10 @@
 ///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
 /// - The option copy for each item (the option resolution of each parse
 ///   and the copy of the shared options) is ported literally (Chart.js ADR
-///   0036, section 8: the step 7 list).
+///   0036, section 8: the step 7 list), except inside the guarded native loops
+///   of row `adapt-bubble-point-options` (Chart.js ADR 0094).
+/// - `_custom` of a `TypedDataItem` under `parsing: false` is its typed `r`
+///   (row `adapt-bubble-typed-radius`).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -37,7 +40,9 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape;
+    show DataUpdateShape, nativeDataUpdateList, nativeDataUpdateObject;
+import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
+import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -70,10 +75,163 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// value ([ElementOptions.valueOf]), typed for a [PointOptions].
 Object? _radiusOf(ElementOptions options) => options.valueOf(OptionKey.radius);
 
-/// `parsed._custom` of a parsed item: the typed field of a [ParsedItem],
-/// else the read by name of a data item of `parsing: false`.
-Object? _customOf(Object? parsed) =>
-    parsed is ParsedItem ? parsed.custom : jsGetKey(parsed, '_custom');
+/// `parsed._custom` of a parsed item: the typed field of a [ParsedItem], the
+/// typed `r` of a [TypedDataItem] of `parsing: false` (Dart `null` is an absent
+/// value), else the read by name of a data item of `parsing: false`.
+Object? _customOf(Object? parsed) => switch (parsed) {
+  final ParsedItem item => item.custom,
+  // DIVERGES(chartjs): adapt-bubble-typed-radius, a typed item has its radius.
+  final TypedDataItem item => item.r ?? undefined,
+  _ => jsGetKey(parsed, '_custom'),
+};
+
+/// The result of [_plainCustomOf] for a value that a native loop leaves to the
+/// ordinary path.
+// DIVERGES(chartjs): adapt-bubble-point-options, the end of a native loop.
+const Object _notPlain = Object();
+
+/// `parsed._custom` when its read and the `+=` of controller.bubble.js:165 run
+/// no user code: a number or `undefined` in a native item. Else [_notPlain].
+// DIVERGES(chartjs): adapt-bubble-point-options, the guard of a native loop.
+Object? _plainCustomOf(Object? parsed, NativeTypedItems typedItems) {
+  if (parsed is ParsedItem ||
+      (parsed is TypedDataItem && typedItems.accepts(parsed)) ||
+      (parsed is Map<String, Object?> && nativeDataUpdateObject(parsed))) {
+    final custom = _customOf(parsed);
+    return custom is num || custom is Undefined ? custom : _notPlain;
+  }
+  return _notPlain;
+}
+
+/// Whether the `+=` of controller.bubble.js:165 on the radius of [options] runs
+/// no user code: an absent or primitive radius. An object has its `toString`.
+// DIVERGES(chartjs): adapt-bubble-point-options, the guard of a native loop.
+bool _primitiveRadius(ElementOptions options) {
+  final radius = _radiusOf(options);
+  return radius == null ||
+      radius is num ||
+      radius is String ||
+      radius is bool ||
+      radius is Undefined;
+}
+
+/// One parse loop's permission to leave out the eager option resolve of
+/// `valueOrDefault(item.r, this.resolveDataElementOptions(i).radius)`.
+///
+/// The result of that resolve is unused for an item with its own radius. It
+/// can be left out while it has no other effect: the frozen `point-default`
+/// entry exists, so that it only copies the entry, or a prepared indexed color
+/// plan exists, so that it only refreshes the context of the item. This class
+/// keeps that context refresh. A value that could run user code ends the
+/// permission for good, before the code runs: each later item resolves. The
+/// `+=` of that resolve converts the radius of the entry or the `_custom` of
+/// the old parsed item, so both are part of the permission.
+// DIVERGES(chartjs): adapt-bubble-point-options, one synchronous parse loop.
+final class _ParseRadii {
+  _ParseRadii(this._owner, List<Object?> data)
+    : _open =
+          _owner._exact &&
+          nativePointClass(_owner.dataElementType) &&
+          nativeDataUpdateList(data) &&
+          nativeDataUpdateList(_owner.cachedMeta.parsed) {
+    if (_open) _takeEntry();
+  }
+
+  final BubbleController _owner;
+  final NativeTypedItems _typedItems = NativeTypedItems();
+  bool _open;
+  bool _skips = false;
+  bool _indexed = false;
+  int _resolves = 0;
+  NativePointContextReader? _contexts;
+
+  void _end() {
+    _open = false;
+    _skips = false;
+    _indexed = false;
+  }
+
+  /// Whether the entry of a resolve exists. Its radius decides the permission.
+  bool _takeEntry() {
+    final entry = _owner.cachedPointOptions('default');
+    if (entry == null) return false;
+    if (_primitiveRadius(entry)) {
+      _skips = true;
+    } else {
+      _end();
+    }
+    return true;
+  }
+
+  /// A data item of `parseObjectData`, before the read of its `r`.
+  void objectItem(Object? item) {
+    if (!_open) return;
+    if (item is TypedDataItem) {
+      if (!_typedItems.accepts(item)) _end();
+    } else if (item != null &&
+        item is! Undefined &&
+        (item is! Map<String, Object?> || !nativeDataUpdateObject(item))) {
+      _end();
+    }
+  }
+
+  /// `item.r`, before its `ToNumber`.
+  void objectRadius(Object? value) {
+    if (_open && value != null && value is! num && value is! Undefined) _end();
+  }
+
+  /// A data item of `parseArrayData`, before the read of `item[2]`.
+  void arrayItem(Object? item) {
+    if (_open && !nativeDataUpdateList(item)) _end();
+  }
+
+  /// The old parsed item of [index], before the resolve of any item reads it:
+  /// `parsed && parsed._custom`. A falsy item has no read. `item[2]` of the new
+  /// item needs no check: the parse only keeps it, with no conversion.
+  void oldItem(double index) {
+    if (!_open) return;
+    final parsed = _owner.getParsed(index);
+    if (jsTruthy(parsed) &&
+        identical(_plainCustomOf(parsed, _typedItems), _notPlain)) {
+      _end();
+    }
+  }
+
+  /// Whether the eager resolve of [index] can stay out. With an indexed plan,
+  /// this refreshes the context of the item, as the resolve would.
+  bool skips(double index) {
+    if (!_skips) return false;
+    if (_indexed) {
+      final i = index.toInt();
+      final points = _owner.cachedMeta.data;
+      if (i >= points.length || !nativePointElement(points[i])) {
+        _end();
+        return false;
+      }
+      if (_contexts?.read(i) == null) {
+        _owner.getContext(index, false, 'default');
+      }
+    }
+    return true;
+  }
+
+  /// One ordinary resolve ran: it may have made the entry, and two warm the
+  /// indexed plan. There is one attempt for each loop.
+  void resolved() {
+    if (!_open || _skips) return;
+    _resolves++;
+    if (_resolves > 2 || _takeEntry()) return;
+    if (_resolves == 2) {
+      if (_owner._preparePointColors(_owner.cachedMeta.data) == null) {
+        _end();
+      } else {
+        _skips = true;
+        _indexed = true;
+        _contexts = prepareNativePointContexts(_owner, 'default');
+      }
+    }
+  }
+}
 
 /// controller.bubble.js:4 `BubbleController extends DatasetController`.
 class BubbleController extends DatasetController {
@@ -89,6 +247,10 @@ class BubbleController extends DatasetController {
 
   @override
   DataUpdateShape get dataUpdateShape => DataUpdateShape.bubble;
+
+  /// The exact class: no override of a resolve, of a parse or of `getParsed`.
+  // DIVERGES(chartjs): adapt-bubble-point-options, the guard of a native loop.
+  bool get _exact => super.runtimeType == BubbleController;
 
   /// controller.bubble.js:6 `static id = 'bubble'`.
 
@@ -170,11 +332,14 @@ class BubbleController extends DatasetController {
     double count,
   ) {
     final parsed = super.parseArrayData(meta, data, start, count);
+    final radii = _ParseRadii(this, data);
     for (var i = 0; i < parsed.length; i++) {
       final item = jsGetIndex(data, start + i);
-      parsed[i].custom = valueOrDefault(
+      radii.arrayItem(item);
+      parsed[i].custom = _radiusOrDefault(
         jsGetIndex(item, 2),
-        _radiusOf(resolveDataElementOptions(i + start)),
+        i + start,
+        radii,
       );
     }
     return parsed;
@@ -198,8 +363,10 @@ class BubbleController extends DatasetController {
     double count,
   ) {
     final parsed = super.parseObjectData(meta, data, start, count);
+    final radii = _ParseRadii(this, data);
     for (var i = 0; i < parsed.length; i++) {
       final item = jsGetIndex(data, start + i);
+      radii.objectItem(item);
       final Object? r;
       if (!jsTruthy(item)) {
         r = item;
@@ -207,14 +374,26 @@ class BubbleController extends DatasetController {
         final value = item is TypedDataItem
             ? item.r ?? undefined
             : jsGetKey(item, 'r');
+        radii.objectRadius(value);
         r = jsTruthy(value) ? jsToNumber(value) : value;
       }
-      parsed[i].custom = valueOrDefault(
-        r,
-        _radiusOf(resolveDataElementOptions(i + start)),
-      );
+      parsed[i].custom = _radiusOrDefault(r, i + start, radii);
     }
     return parsed;
+  }
+
+  /// `valueOrDefault(own, this.resolveDataElementOptions(index).radius)`,
+  /// without the resolve when [radii] finds that it has no effect to keep.
+  // DIVERGES(chartjs): adapt-bubble-point-options, upstream always resolves.
+  Object? _radiusOrDefault(Object? own, double index, _ParseRadii radii) {
+    radii.oldItem(index);
+    if (own is! Undefined && radii.skips(index)) return own;
+    final result = valueOrDefault(
+      own,
+      _radiusOf(resolveDataElementOptions(index)),
+    );
+    radii.resolved();
+    return result;
   }
 
   /// controller.bubble.js:83 `getMaxOverflow()`.
@@ -225,19 +404,68 @@ class BubbleController extends DatasetController {
   /// when a size is NaN, and `NaN > 0` is false. The cast to
   /// `types.PointElement` stands at the read of `size` (Chart.js ADR 0028,
   /// section 4).
+  ///
+  /// A native point inside a native loop computes `size` from its own radius
+  /// and the fields of the frozen entry or of one indexed plan result, with no
+  /// options object (row `adapt-bubble-point-options`). An indexed plan keeps
+  /// the context refresh of each point.
   @override
   Object? getMaxOverflow() {
     final data = cachedMeta.data;
 
     var max = 0.0;
-    for (var i = data.length - 1; i >= 0; --i) {
+    // DIVERGES(chartjs): adapt-bubble-point-options, scalars inside this loop.
+    // A custom point or a value with user code ends them before it can run.
+    NativePointSizeFields? fields;
+    NativePointContextReader? contexts;
+    final typedItems = NativeTypedItems();
+    var indexed = false;
+    final last = data.length - 1;
+    for (var i = last; i >= 0; --i) {
+      final point = data[i] as types.PointElement;
+      if (i == last) fields = _cachedSizeFields();
+      final plan = fields;
+      if (plan != null) {
+        final custom = nativePointElement(point)
+            ? _plainCustomOf(getParsed(i.toDouble()), typedItems)
+            : _notPlain;
+        if (!identical(custom, _notPlain)) {
+          if (indexed && contexts?.read(i) == null) {
+            getContext(i.toDouble(), false, 'default');
+          }
+          max = jsMax(
+            max,
+            nativePointSize(
+                  // The `+=` of :165 from the 0 of :163.
+                  0.0 + (custom is num ? custom : plan.radius),
+                  plan.hoverRadius,
+                  plan.borderWidth,
+                ) /
+                2,
+          );
+          continue;
+        }
+        fields = null;
+        indexed = false;
+      }
       max = jsMax(
         max,
-        (data[i] as types.PointElement).size(
-              resolveDataElementOptions(i.toDouble()),
-            ) /
-            2,
+        point.size(resolveDataElementOptions(i.toDouble())) / 2,
       );
+      // The first ordinary resolution makes the entry of constant options, and
+      // two warm the indexed plan. There is one attempt for each loop.
+      if (i == last) {
+        fields = _cachedSizeFields();
+      } else if (fields == null && i == last - 1) {
+        final prepared = _preparePointColors(data);
+        if (prepared != null) {
+          fields = NativePointSizeFields.of(prepared(i));
+          if (fields != null) {
+            indexed = true;
+            contexts = prepareNativePointContexts(this, 'default');
+          }
+        }
+      }
     }
     return max > 0 ? max : false;
   }
@@ -285,6 +513,11 @@ class BubbleController extends DatasetController {
   /// `undefined` of no shared options. `properties.options.radius = 0`
   /// writes into the shared options or into the result of
   /// [resolveDataElementOptions], as upstream.
+  ///
+  /// The exact controller in the mode `none` prepares fresh options once inside
+  /// this loop, after two ordinary resolutions (row
+  /// `adapt-bubble-point-options`). Each iteration still checks its point and
+  /// its parsed item first, and the plan ends for good before user code.
   @override
   void updateElements(
     List<types.Element> points,
@@ -300,10 +533,36 @@ class BubbleController extends DatasetController {
     final vAxis = vScale.axis;
     final iKey = AxisKey.of(iAxis);
     final vKey = AxisKey.of(vAxis);
+    // DIVERGES(chartjs): adapt-bubble-point-options, one synchronous loop.
+    PointOptions Function(int)? prepared;
+    NativePointContextReader? contexts;
+    var indexed = false;
+    final coordinates = NativePointCoordinates();
+    final typedItems = NativeTypedItems();
+    final tryPrepare =
+        _exact &&
+        canPrepareNativePointUpdate(
+          mode: mode,
+          sharedOptions: sharedOptions,
+          includeOptions: includeOptions,
+          stacked: cachedMeta.stacked,
+          segment: null,
+          iAxis: iAxis,
+          vAxis: vAxis,
+          start: start,
+          count: count,
+        );
 
     for (var i = start; i < start + count; i++) {
       final point = points[i.toInt()];
       final parsed = reset ? false : getParsed(i);
+      if (prepared != null &&
+          (!nativePointElement(point) ||
+              point.active ||
+              !coordinates.accepts(parsed) ||
+              identical(_plainCustomOf(parsed, typedItems), _notPlain))) {
+        prepared = null;
+      }
       final properties = PointProperties();
       final iPixel = reset
           ? iScale.getPixelForDecimal(0.5)
@@ -317,9 +576,18 @@ class BubbleController extends DatasetController {
       properties.skip = iPixel.isNaN || vPixel.isNaN;
 
       if (includeOptions) {
-        final options =
-            sharedOptions ??
-            resolveDataElementOptions(i, point.active ? 'active' : mode);
+        final plan = prepared;
+        final ElementOptions options;
+        if (plan != null) {
+          if (indexed && contexts?.read(i.toInt()) == null) {
+            getContext(i, false, mode);
+          }
+          options = _customRadius(plan(i.toInt()), parsed, mode);
+        } else {
+          options =
+              sharedOptions ??
+              resolveDataElementOptions(i, point.active ? 'active' : mode);
+        }
         properties.options = options;
 
         if (reset) {
@@ -328,7 +596,59 @@ class BubbleController extends DatasetController {
       }
 
       updateElement(point, i, properties, mode);
+
+      // Two ordinary resolutions populate the entry or the indexed plan. There
+      // is one attempt for each loop, never another after custom code runs.
+      if (tryPrepare &&
+          i == start + 1 &&
+          coordinates.accepts(parsed) &&
+          _nativeProjection(iScale) &&
+          _nativeProjection(vScale)) {
+        prepared = _prepareConstantOptions(mode);
+        if (prepared == null) {
+          prepared = _preparePointColors(points);
+          if (prepared != null) {
+            indexed = true;
+            contexts = prepareNativePointContexts(this, mode);
+          }
+        }
+      }
     }
+  }
+
+  // The existing numeric-scale capability guarantees built-in projection and
+  // base-pixel reads. The scale's chart must provide the same native DPR reads.
+  // DIVERGES(chartjs): adapt-bubble-point-options, the guard of a native loop.
+  bool _nativeProjection(types.Scale scale) =>
+      nativePointProjection(scale) && identical(scale.chart, chart);
+
+  /// The size fields of the frozen `point-default` entry for the exact
+  /// controller, whose ordinary resolve only copies that entry.
+  // DIVERGES(chartjs): adapt-bubble-point-options, the fields of a native loop.
+  NativePointSizeFields? _cachedSizeFields() =>
+      _exact && nativeDataUpdateList(cachedMeta.parsed)
+      ? cachedNativePointSizeFields(this)
+      : null;
+
+  /// A fresh copy of the frozen `point-<mode>` entry for each point, as the
+  /// ordinary resolve of the exact controller makes. Without an entry, or with
+  /// a radius whose `+=` runs user code, Dart `null`.
+  // DIVERGES(chartjs): adapt-bubble-point-options, one synchronous loop.
+  PointOptions Function(int)? _prepareConstantOptions(String mode) {
+    if (!nativePointClass(dataElementType) ||
+        !nativeDataUpdateList(cachedMeta.parsed)) {
+      return null;
+    }
+    final entry = cachedPointOptions(mode);
+    if (entry is! PointOptions || !_primitiveRadius(entry)) return null;
+    final template = entry.clone()..storeKey(OptionKey.dollarShared, false);
+    return (_) => template.clone();
+  }
+
+  // DIVERGES(chartjs): adapt-native-point-contracts, shared preparation rules.
+  PointOptions Function(int)? _preparePointColors(List<types.Element> points) {
+    if (!_exact || type != 'bubble') return null;
+    return prepareNativePointColors(this, points, controllerType: 'bubble');
   }
 
   /// controller.bubble.js:151 `resolveDataElementOptions(index, mode)`.
@@ -355,6 +675,16 @@ class BubbleController extends DatasetController {
       values = values.clone()..storeKey(OptionKey.dollarShared, false);
     }
 
+    return _customRadius(values, parsed, mode);
+  }
+
+  /// controller.bubble.js:161-165, the end of `resolveDataElementOptions`.
+  // DIVERGES(chartjs): adapt-bubble-point-options, shared with the update plan.
+  ElementOptions _customRadius(
+    ElementOptions values,
+    Object? parsed,
+    String? mode,
+  ) {
     // Custom radius resolution
     final radius = _radiusOf(values);
     if (mode != 'active') {

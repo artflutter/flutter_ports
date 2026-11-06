@@ -4,7 +4,7 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeDataUpdateList;
+    show dataUpdateField, nativeDataUpdateList, nativeDataUpdateObject;
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions;
@@ -41,6 +41,53 @@ PointOptions Function(int)? prepareNativePointColors(
         )
       : null;
 }
+
+/// A context reader beside a prepared plan, for the same synchronous loop. It
+/// reads the native data chain once, without routes, as the plan does; a chain
+/// that does not qualify keeps the ordinary `getContext` of each point.
+@internal
+NativePointContextReader? prepareNativePointContexts(
+  DatasetController controller,
+  String mode,
+) {
+  if (!nativePointChart(controller.chart) ||
+      !nativePointDatasetIndex(controller.index)) {
+    return null;
+  }
+  final config = controller.chart.config;
+  if (config is! Config ||
+      config.runtimeType != Config ||
+      !config.supportsDataUpdates) {
+    return null;
+  }
+  final data = config.data;
+  if (!nativeDataUpdateObject(data)) return null;
+  final datasets = dataUpdateField(data, 'datasets');
+  if (!nativeDataUpdateList(datasets)) return null;
+  final list = datasets! as List<Object?>;
+  final index = controller.index.toInt();
+  if (index >= list.length) return null;
+  final dataset = list[index];
+  if (!nativeDataUpdateObject(dataset)) return null;
+  final raw = dataUpdateField(dataset!, 'data');
+  return nativeDataUpdateList(raw)
+      ? NativePointContextReader.prepare(
+          controller.cachedMeta,
+          raw! as List<Object?>,
+          mode,
+        )
+      : null;
+}
+
+/// The size fields of the frozen entry that `resolveDataElementOptions(index)`
+/// would copy, after the caller's exact-controller check. With that entry the
+/// ordinary resolve reads no chart, context or user value: it only copies it.
+@internal
+NativePointSizeFields? cachedNativePointSizeFields(
+  DatasetController controller,
+) => nativePointClass(controller.dataElementType)
+    ? NativePointSizeFields.of(controller.cachedPointOptions('default'))
+    : null;
 
 /// Prepare a generation-checked line resolver after the exact-class check.
 /// The controller's owner guard still runs before each use. The plan validates

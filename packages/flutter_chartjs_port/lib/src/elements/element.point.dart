@@ -119,9 +119,6 @@ double _sum(Object? options, OptionKey a, OptionKey b) {
   return jsToNumber(jsAdd(_raw(options, a), _raw(options, b)));
 }
 
-/// The truthiness of a number with no foreign value: not 0 and not NaN.
-bool _truthy(double value) => value != 0 && !value.isNaN;
-
 /// element.point.ts:18 `PointProps = Point`, the animated properties of a
 /// point element.
 typedef PointProps = Point;
@@ -583,16 +580,11 @@ class PointElement extends Element
         plainOption(options, OptionKey.borderWidth)) {
       // The typed fields hold the raw numbers: the `||` and `&&` of
       // upstream on numbers, with no box.
-      final value = options.radius;
-      final r = _truthy(value) ? value : 0.0;
-      final hoverRadius = options.hoverRadius;
-      final radius = jsMax(
-        r,
-        _truthy(r) && _truthy(hoverRadius) ? hoverRadius : 0,
+      return nativePointSize(
+        options.radius,
+        options.hoverRadius,
+        options.borderWidth,
       );
-      final width = options.borderWidth;
-      final borderWidth = _truthy(radius) && _truthy(width) ? width : 0.0;
-      return (radius + borderWidth) * 2;
     }
     // `options.radius || 0` keeps the raw option value, and `radius &&`
     // tests it before the `ToNumber` of `Math.max`: a truthy value whose

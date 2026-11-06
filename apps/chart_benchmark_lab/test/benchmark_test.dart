@@ -155,6 +155,32 @@ void main() {
       expect(json['sdk'], benchmarkSdk);
     },
   );
+  test('a capture records the parsing of each Chart.js type', () {
+    Map<String, Object?> engineOptions(ChartLibrary library, ChartType type) =>
+        BenchmarkResult(
+              library: library,
+              config: BenchmarkConfig(type: type),
+              viewport: const Size(600, 400),
+              dpr: 2,
+              refreshRate: 120,
+              metrics: const FrameMetrics(),
+              durationSeconds: 10,
+              createdAt: DateTime.utc(2026),
+            ).toJson()['engineOptions']!
+            as Map<String, Object?>;
+    for (final type in ChartType.values) {
+      final prepared =
+          type == ChartType.line ||
+          type == ChartType.scatter ||
+          type == ChartType.bubble;
+      expect(
+        engineOptions(ChartLibrary.chartjs, type)['parsing'],
+        prepared ? isFalse : isNull,
+        reason: '$type',
+      );
+      expect(engineOptions(ChartLibrary.flChart, type)['parsing'], isNull);
+    }
+  });
   test(
     'deferred work appears in cadence while 60 Hz rounding is tolerated',
     () {

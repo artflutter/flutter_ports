@@ -97,10 +97,10 @@ Measurements include common data generation, public-widget data adaptation,
 layout, chart work and the small shared readout overhead. No backend is given
 an internal imperative renderer shortcut. Chart.js uses its typed `ChartView`;
 FL Chart, Graphic and Syncfusion use their public chart widgets. Chart.js
-line/scatter use `parsing: false`: the generator already supplies sorted, finite
-numeric XY points. This is recorded in each capture's `engineOptions`; the other
-types retain their default parsing. A bubble needs that step, because Chart.js
-reads the radius of a bubble while it parses. Graphic receives
+line/scatter/bubble use `parsing: false`: the generator already supplies sorted,
+finite numeric XY points, and each `DataPoint.bubble` gives its radius as a typed
+field. This is recorded in each capture's `engineOptions`; the other types retain
+their default parsing. Graphic receives
 only variables required for the selected chart/features; line/scatter do not
 pay for an unused categorical domain. The common overlay painter draws the same
 text workload each tick in its own repaint boundary.
