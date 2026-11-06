@@ -2505,7 +2505,7 @@ their forms; the single-line stroke (`drawLine`), the fused sector and the secto
 beside them. The circle batch takes fills with varying radii through a fixed ladder of masters. R5
 of Chart.js ADR 0055 (radius classes of a quarter pixel) stays deferred: the ladder takes its cell
 for fills. Strokes with varying radii keep `drawCircle`. Direct circles now count in the split
-budget of Chart.js ADR 0066. Tests: `test/port/platform/chart_host_scene_test.dart`,
+budget of Chart.js ADR 0066. A color that 32 bits of sRGB do not keep joins no batch. Tests: `test/port/platform/chart_host_scene_test.dart`,
 `test/port/canvas/canvas_arc_sector_test.dart`, `canvas_ui_ladder_test.dart`,
 `canvas_ui_line_test.dart`, `test/port/elements/element.arc_sector_test.dart` and
 `element.arc_sector_chart_test.dart`. `chart_host_test.dart` reads the scales from the layer. This

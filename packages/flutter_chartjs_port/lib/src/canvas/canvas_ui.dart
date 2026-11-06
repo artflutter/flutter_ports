@@ -809,7 +809,8 @@ final class UiCanvasContext
   }) {
     if (radius + width / 2 > maxBatchRadius ||
         x.abs() > maxBatchCenter ||
-        y.abs() > maxBatchCenter) {
+        y.abs() > maxBatchCenter ||
+        !batchKeepsColor(color)) {
       return false;
     }
     _endSectorRun();

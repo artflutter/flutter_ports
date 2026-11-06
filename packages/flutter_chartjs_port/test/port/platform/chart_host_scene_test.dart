@@ -223,6 +223,54 @@ void main() {
     });
   });
 
+  group('under a shader mask at a fractional offset', () {
+    Widget mask(Widget child) => ShaderMask(
+      shaderCallback: (bounds) => const LinearGradient(
+        colors: [Color(0xFFFFFFFF), Color(0x00FFFFFF)],
+      ).createShader(bounds),
+      child: child,
+    );
+
+    // A rectangle on whole pixels of the display at this offset. The two forms
+    // differ in this case (Chart.js ADR 0097 §1).
+    void content(UiCanvasContext ctx) {
+      ctx.fillStyle = const Color(0xB0DD1100);
+      ctx.fillRect(10.5, 10.5, 100, 60);
+    }
+
+    testWidgets('the pixels stay within 1 of 255', (tester) async {
+      const offset = Offset(0, 7.5);
+
+      final scene = _canvas(1);
+      final sceneContext = scene.getContext2d();
+      addTearDown(sceneContext.dispose);
+      content(sceneContext);
+      await tester.pumpWidget(_frame(mask(ChartHost(canvas: scene)), offset));
+      expect(_layers(tester), hasLength(1));
+      final a = await _bytes(tester, 1);
+
+      final plain = _canvas(1);
+      final plainContext = plain.getContext2d();
+      addTearDown(plainContext.dispose);
+      content(plainContext);
+      await tester.pumpWidget(
+        _frame(
+          mask(
+            RepaintBoundary(
+              child: CustomPaint(
+                size: const Size(_width, _height),
+                painter: _CanvasPaint(plainContext, 1),
+              ),
+            ),
+          ),
+          offset,
+        ),
+      );
+      expect(_layers(tester), isEmpty);
+      expect(_worst(a, await _bytes(tester, 1)), lessThanOrEqualTo(1));
+    });
+  });
+
   group('the choice of the form', () {
     testWidgets('an empty canvas adds no layer', (tester) async {
       final canvas = _canvas(1);

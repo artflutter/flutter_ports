@@ -1541,6 +1541,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     double spacing,
   ) {
     if (!_builtIn ||
+        circumference == double.negativeInfinity ||
         options is! ArcOptions ||
         offset != 0 ||
         spacing != 0 ||
@@ -1620,16 +1621,18 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     ctx.save();
 
     // DIVERGES(chartjs): adapt-native-arc-sector, no zero native translation.
-    if (offset != 0 ||
+    if (!_builtIn ||
+        offset != 0 ||
         ctx is! ArcSectorCanvas ||
         !(ctx as ArcSectorCanvas).zeroTranslateIsNoOp) {
       final halfAngle = (startAngle + endAngle) / 2;
       // js-ok: display only (Chart.js ADR 0045)
       ctx.translate(math.cos(halfAngle) * offset, math.sin(halfAngle) * offset);
     }
-    // `offset * fix` is 0 for an offset of 0: `fix` is finite and not negative.
+    // `offset * fix` is 0 for an offset of 0, except that `fix` is NaN for a
+    // circumference of -Infinity: the sine of it has no value.
     var radiusOffset = 0.0;
-    if (offset != 0) {
+    if (offset != 0 || circumference == double.negativeInfinity) {
       final fix =
           // js-ok: display only (Chart.js ADR 0045)
           1 - math.sin(jsMin(pi, jsTruthy(circumference) ? circumference : 0));
