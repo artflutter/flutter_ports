@@ -39,6 +39,7 @@ final _lists = <Type>{
   <int?>[].runtimeType,
   <String>[].runtimeType,
   <Color>[].runtimeType,
+  <Color?>[].runtimeType,
   <Map<String, Object?>>[].runtimeType,
   <Map<String, double>>[].runtimeType,
   <ParsedItem>[].runtimeType,
@@ -64,6 +65,10 @@ final _lists = <Type>{
   const <num>[].runtimeType,
   const <int>[].runtimeType,
   const <String>[].runtimeType,
+  // A const style List of a raw config (Chart.js ADR 0100).
+  const <Object>[].runtimeType,
+  const <Color>[].runtimeType,
+  const <Color?>[].runtimeType,
 };
 final _points = <Type>{};
 

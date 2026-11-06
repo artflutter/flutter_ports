@@ -675,6 +675,58 @@ class Config implements types.ChartConfiguration {
     );
   }
 
+  /// Whether each resolve of the data elements of dataset [datasetIndex] takes
+  /// the native indexed plan that the last resolves of [elementType] left, as
+  /// `OptionResolver.hasStaticIndexedOptions` proves. The plan read the keys of
+  /// `defaults.elements[elementType]` through all scopes of the resolver. No
+  /// option getter or context callback runs merely to qualify.
+  @internal
+  // DIVERGES(chartjs): adapt-data-update-indexed-plan, cached element inputs.
+  bool hasStaticIndexedElementOptions(
+    int datasetIndex, {
+    required String controllerType,
+    required String elementType,
+  }) {
+    final nativeDefaults = switch (elementType) {
+      'point' => PointOptionsScope,
+      'bar' => BarOptionsScope,
+      'arc' => ArcOptionsScope,
+      _ => null,
+    };
+    if (nativeDefaults == null ||
+        super.runtimeType != Config ||
+        !supportsDataUpdates ||
+        (_config is OptionScope && _config.routeOf('type') != null)) {
+      return false;
+    }
+    final data = dataUpdateField(_config, 'data');
+    if (!nativeDataUpdateObject(data)) return false;
+    final datasets = dataUpdateField(data!, 'datasets');
+    if (!nativeDataUpdateList(datasets)) return false;
+    final list = datasets! as List<Object?>;
+    if (datasetIndex < 0 || datasetIndex >= list.length) return false;
+    final dataset = list[datasetIndex];
+    if (!nativeDataUpdateObject(dataset)) return false;
+    final scopeKeys = datasetElementScopeKeys(controllerType, elementType);
+    final scopes = _scopeCache[dataset]?[scopeKeys];
+    if (scopes == null) return false;
+    final cached = _resolverCache[scopes]?[_joinedPrefixes(elementType, '')];
+    if (cached == null ||
+        cached.subPrefixes.length != 2 ||
+        cached.subPrefixes[0] != elementType ||
+        cached.subPrefixes[1] != '') {
+      return false;
+    }
+    if (defaults.routeOf('elements') != null) return false;
+    final elements = defaults.elementsCell?.raw;
+    if (elements.runtimeType != ElementOptionsByTypeScope) return false;
+    final element = dataUpdateField(elements!, elementType);
+    return element.runtimeType == nativeDefaults &&
+        cached.resolver.hasStaticIndexedOptions(
+          (element! as OptionScope).jsOwnKeys(),
+        );
+  }
+
   /// Captures a warmed point resolver for one native line loop. Every use
   /// checks the source identities, key snapshot and cache generation again.
   @internal

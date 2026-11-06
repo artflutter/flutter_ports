@@ -11,9 +11,14 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart'
     show invalidateCanvasTextMetrics;
+import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+    show controllerArgs;
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
+    show defaults, overrides;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet, jsSet;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
@@ -80,6 +85,58 @@ final class _Event implements types.ChartEvent {
   final NativeEvent native;
   @override
   types.Chart? get chart => null;
+}
+
+// The user subclasses of Chart.js ADR 0100: the same results, the full path.
+final class _UserPie extends PieController {
+  _UserPie(super.chart, super.datasetIndex, [super.newTarget]);
+  static final value = JsClass(
+    'UserPie',
+    superclass: PieController.jsClass,
+    statics: {'id': 'user-pie'},
+    construct: (target, args) {
+      final (:chart, :datasetIndex) = controllerArgs(args);
+      return _UserPie(chart, datasetIndex, target);
+    },
+  );
+}
+
+final class _UserArc extends ArcElement {}
+
+final class _UserChart extends Chart {
+  _UserChart(super.item, super.userConfig);
+}
+
+final class _UserConfig extends Config {
+  _UserConfig(super.config);
+}
+
+final class _ConfigChart extends Chart {
+  _ConfigChart(Object item, this.supplied) : super(item, <String, Object?>{});
+  final Config supplied;
+  @override
+  Config get config => supplied;
+}
+
+/// A user Map: each read is user code.
+final class _UserMap extends MapBase<String, Object?> {
+  _UserMap(this.store);
+  final Map<String, Object?> store;
+  @override
+  Object? operator [](Object? key) => store[key];
+  @override
+  void operator []=(String key, Object? value) => store[key] = value;
+  @override
+  void clear() => store.clear();
+  @override
+  Iterable<String> get keys => store.keys;
+  @override
+  Object? remove(Object? key) => store.remove(key);
+}
+
+/// A user subclass of a color.
+final class _UserColor extends ui.Color {
+  const _UserColor(super.value);
 }
 
 Map<String, Object?> config(
@@ -898,5 +955,826 @@ void main() {
     };
     final a = chart(cfg);
     expect(a.updateData(), isFalse);
+  });
+  group('native indexed styles (Chart.js ADR 0100)', () {
+    const red = ui.Color(0xffff0000);
+    const green = ui.Color(0xff00ff00);
+    const blue = ui.Color(0xff0000ff);
+    const types = ['bar', 'scatter', 'bubble', 'pie', 'doughnut', 'polarArea'];
+
+    /// The defaults key of the data element of a chart type.
+    String elementOf(String type) => switch (type) {
+      'bar' => 'bar',
+      'scatter' || 'bubble' || 'line' || 'radar' => 'point',
+      _ => 'arc',
+    };
+
+    Map<String, Object?> indexed(
+      String type, {
+      bool prepared = false,
+      bool plugins = false,
+      Object? background,
+      Object? border,
+    }) {
+      final cfg = config(type, prepared: prepared);
+      dataset(cfg)
+        ..['backgroundColor'] = background ?? <Object?>[red, green, blue]
+        ..['borderColor'] = border ?? <Object?>[blue, red];
+      if (plugins) {
+        ((cfg['options']! as Map)['plugins'] as Map).addAll(<String, Object?>{
+          'tooltip': true,
+          'legend': true,
+        });
+      }
+      return cfg;
+    }
+
+    /// [observe] of each dataset, with the options, their key order and the
+    /// context of each element.
+    Object deep(Chart chart) => [
+      observe(chart),
+      for (final meta in chart.getSortedVisibleDatasetMetas())
+        for (final element in meta.data)
+          () {
+            final context = (element as Element).$context;
+            final options = element.options;
+            return [
+              plain(options),
+              (options! as JsObjectFace).jsKeys(),
+              element.active,
+              context?.jsKeys(),
+              for (final key in const [
+                'active',
+                'dataIndex',
+                'datasetIndex',
+                'index',
+                'mode',
+                'parsed',
+                'raw',
+                'type',
+              ])
+                plain(context?.jsRead(key)),
+            ];
+          }(),
+    ];
+
+    /// The twin of [make] over the data ticks: `updateData` with the path
+    /// [path], or with any path for Dart `null`, against `update('none')` with
+    /// the same values.
+    void expectTwin(
+      Map<String, Object?> Function() make, {
+      required bool? path,
+      int ticks = 3,
+    }) {
+      final ca = make();
+      final cb = make();
+      final a = chart(ca);
+      final b = chart(cb);
+      for (var step = 0; step < ticks; step++) {
+        change(ca, step);
+        change(cb, step);
+        final selected = a.updateData();
+        if (path != null) expect(selected, path, reason: 'tick $step');
+        b.update('none');
+        expect(deep(a), deep(b), reason: 'tick $step');
+      }
+    }
+
+    for (final type in types) {
+      group(type, () {
+        test('takes the data-only path with the results of a full update', () {
+          final ca = indexed(type);
+          final cb = indexed(type);
+          final a = chart(ca);
+          final b = chart(cb);
+          final area = a.chartArea;
+          expect(deep(a), deep(b));
+          for (var step = 0; step < 3; step++) {
+            change(ca, step);
+            change(cb, step);
+            expect(a.updateData(), isTrue, reason: 'tick $step');
+            b.update('none');
+            expect(deep(a), deep(b), reason: 'tick $step');
+            expect(a.chartArea, same(area));
+          }
+        });
+
+        test(
+          'a later full update has the results of a chart of full updates',
+          () {
+            final ca = indexed(type);
+            final cb = indexed(type);
+            final a = chart(ca);
+            final b = chart(cb);
+            change(ca, 0);
+            change(cb, 0);
+            expect(a.updateData(), isTrue);
+            b.update('none');
+            change(ca, 1);
+            change(cb, 1);
+            a.update();
+            b.update();
+            expect(deep(a), deep(b));
+            change(ca, 2);
+            change(cb, 2);
+            expect(a.updateData(), isTrue);
+            b.update('none');
+            expect(deep(a), deep(b));
+          },
+        );
+
+        test('a hidden item', () {
+          final ca = indexed(type);
+          final cb = indexed(type);
+          final a = chart(ca);
+          final b = chart(cb);
+          for (final c in [a, b]) {
+            c.hide(0, 1);
+          }
+          expect(deep(a), deep(b));
+          change(ca, 0);
+          change(cb, 0);
+          expect(a.updateData(), isTrue);
+          b.update('none');
+          expect(deep(a), deep(b));
+          for (final c in [a, b]) {
+            c.toggleDataVisibility(2);
+          }
+          change(ca, 1);
+          change(cb, 1);
+          expect(a.updateData(), isFalse, reason: 'no update after the toggle');
+          b.update('none');
+          expect(deep(a), deep(b));
+          change(ca, 2);
+          change(cb, 2);
+          expect(a.updateData(), isTrue);
+          b.update('none');
+          expect(deep(a), deep(b));
+        });
+
+        test('active elements, the legend and the tooltip', () {
+          Map<String, Object?> make() => indexed(type, plugins: true);
+          final ca = make();
+          final cb = make();
+          final a = chart(ca);
+          final b = chart(cb);
+          for (final c in [a, b]) {
+            c.setActiveElements([
+              <String, Object?>{'datasetIndex': 0.0, 'index': 1.0},
+            ]);
+          }
+          change(ca, 0);
+          change(cb, 0);
+          expect(a.updateData(), isTrue);
+          b.update('none');
+          expect(deep(a), deep(b));
+          expect(
+            (a.getDatasetMeta(0).data[1] as Element).active,
+            isTrue,
+          );
+          final point = a.getDatasetMeta(0).data[2];
+          final event = _Event(point.x, point.y);
+          a.eventHandler(event);
+          b.eventHandler(event);
+          change(ca, 1);
+          change(cb, 1);
+          expect(a.updateData(), isTrue);
+          b.update('none');
+          expect(deep(a), deep(b));
+          Object legend(Chart c) => [
+            for (final item in c.legend!.legendItems ?? const <Object?>[])
+              plain(item),
+          ];
+          expect(legend(a), legend(b));
+        });
+
+        test('two datasets, one of them with a plain style', () {
+          Map<String, Object?> make() {
+            final cfg = indexed(type);
+            final datasets = (cfg['data']! as Map)['datasets']! as List;
+            final plainStyle = config(type);
+            datasets.add(dataset(plainStyle));
+            return cfg;
+          }
+
+          expectTwin(make, path: true);
+        });
+
+        test('a dataset of one item stays equal to a full update', () {
+          final ca = indexed(type);
+          final cb = indexed(type);
+          for (final c in [ca, cb]) {
+            final item = (dataset(c)['data']! as List).first;
+            dataset(c)['data'] = <Object?>[item];
+          }
+          final a = chart(ca);
+          final b = chart(cb);
+          for (var step = 0; step < 2; step++) {
+            change(ca, step);
+            change(cb, step);
+            a.updateData();
+            b.update('none');
+            expect(deep(a), deep(b));
+          }
+        });
+
+        test('an indexed style that is not a color', () {
+          expectTwin(() {
+            final cfg = indexed(type);
+            dataset(cfg)['borderWidth'] = <num>[1, 2.5];
+            return cfg;
+          }, path: true);
+        });
+
+        test(
+          'a function in the defaults of the element keeps the full path',
+          () {
+            final calls = <Object?>[];
+            jsSet(
+              jsGet(jsGet(defaults, 'elements'), elementOf(type)),
+              'borderWidth',
+              (Object? context) {
+                calls.add(jsGet(context, 'index'));
+                return 2.0;
+              },
+            );
+            expectTwin(() {
+              final cfg = indexed(type);
+              dataset(cfg).remove('borderWidth');
+              return cfg;
+            }, path: false);
+            expect(calls, isNotEmpty);
+          },
+        );
+
+        test('a function in the overrides of the type keeps the full path', () {
+          final calls = <Object?>[];
+          jsSet(jsGet(overrides, type), 'borderWidth', (Object? context) {
+            calls.add(jsGet(context, 'index'));
+            return 2.0;
+          });
+          expectTwin(() {
+            final cfg = indexed(type);
+            dataset(cfg).remove('borderWidth');
+            return cfg;
+          }, path: false);
+          expect(calls, isNotEmpty);
+        });
+
+        test('a function that the dataset hides runs in neither path', () {
+          final calls = <Object?>[];
+          jsSet(
+            jsGet(jsGet(defaults, 'elements'), elementOf(type)),
+            'borderWidth',
+            (Object? context) {
+              calls.add(context);
+              return 2.0;
+            },
+          );
+          expectTwin(() => indexed(type), path: true);
+          expect(calls, isEmpty);
+        });
+
+        test('an indexed list in the defaults, with the native values', () {
+          jsSet(
+            jsGet(jsGet(defaults, 'elements'), elementOf(type)),
+            'borderWidth',
+            <Object?>[1.0, 3.0],
+          );
+          expectTwin(() {
+            final cfg = indexed(type);
+            dataset(cfg).remove('borderWidth');
+            return cfg;
+          }, path: true);
+        });
+
+        test(
+          'a foreign item in a list of the defaults keeps the full path',
+          () {
+            jsSet(
+              jsGet(jsGet(defaults, 'elements'), elementOf(type)),
+              'borderWidth',
+              <Object?>[1.0, '3'],
+            );
+            expectTwin(() {
+              final cfg = indexed(type);
+              dataset(cfg).remove('borderWidth');
+              return cfg;
+            }, path: false);
+          },
+        );
+      });
+    }
+
+    test('a bar chart of prepared maps', () {
+      expectTwin(() => indexed('bar', prepared: true), path: true);
+    });
+
+    test('stacked bars', () {
+      expectTwin(() {
+        final cfg = indexed('bar');
+        ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+          ...dataset(cfg),
+          'data': <Object?>[2.0, 3.0, 1.0, 2.0],
+        });
+        final scales = (cfg['options']! as Map)['scales'] as Map;
+        for (final scale in scales.values) {
+          (scale as Map)['stacked'] = true;
+        }
+        return cfg;
+      }, path: true);
+    });
+
+    test('a line dataset beside indexed bars', () {
+      expectTwin(() {
+        final cfg = indexed('bar');
+        ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+          'type': 'line',
+          'data': <Object?>[2.0, 3.0, 1.0, 2.0],
+          'borderColor': blue,
+        });
+        return cfg;
+      }, path: true);
+    });
+
+    test('a hidden dataset beside an indexed one', () {
+      for (final type in types) {
+        expectTwin(() {
+          final cfg = indexed(type);
+          ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+            ...dataset(config(type)),
+            'backgroundColor': <Object?>[green, blue],
+            'hidden': true,
+          });
+          return cfg;
+        }, path: null);
+      }
+    });
+
+    test('an indexed radius takes part in the overflow', () {
+      for (final type in const ['scatter', 'bubble']) {
+        expectTwin(() {
+          final cfg = indexed(type);
+          dataset(cfg)['pointRadius'] = <num>[3, 8];
+          dataset(cfg)['hoverRadius'] = <num>[4, 9];
+          return cfg;
+        }, path: true);
+      }
+    });
+
+    test('a horizontal bar chart', () {
+      expectTwin(() {
+        final cfg = config('bar', horizontal: true);
+        dataset(cfg)['backgroundColor'] = <Object?>[red, green];
+        return cfg;
+      }, path: true);
+    });
+
+    test('a line or a radar with indexed point colors', () {
+      for (final type in const ['line', 'radar']) {
+        expectTwin(() {
+          final cfg = config(type);
+          dataset(cfg)['pointBackgroundColor'] = <Object?>[red, green];
+          return cfg;
+        }, path: true);
+      }
+    });
+
+    test('a scatter chart with a line and indexed point colors', () {
+      expectTwin(() {
+        final cfg = config('scatter');
+        dataset(cfg)
+          ..['showLine'] = true
+          ..['pointBackgroundColor'] = <Object?>[red, green];
+        return cfg;
+      }, path: true);
+    });
+
+    test('an indexed style of a dataset element keeps the full path', () {
+      for (final type in const ['line', 'radar']) {
+        expectTwin(() {
+          final cfg = config(type);
+          dataset(cfg)['borderColor'] = <Object?>[red, green];
+          return cfg;
+        }, path: false);
+      }
+    });
+
+    test('each native form of a color list of a raw config', () {
+      final forms = <String, Object? Function()>{
+        'Object?': () => <Object?>[red, green],
+        'Object': () => <Object>[red, green],
+        'Color': () => <ui.Color>[red, green],
+        'Color?': () => <ui.Color?>[red, null, green],
+        'const Color': () => const <ui.Color>[red, green],
+        'const Object': () => const <Object>[red, green],
+      };
+      for (final MapEntry(key: name, value: form) in forms.entries) {
+        for (final type in types) {
+          final ca = indexed(type, background: form());
+          final cb = indexed(type, background: form());
+          final a = chart(ca);
+          final b = chart(cb);
+          change(ca, 0);
+          change(cb, 0);
+          expect(a.updateData(), isTrue, reason: '$name, $type');
+          b.update('none');
+          expect(deep(a), deep(b), reason: '$name, $type');
+        }
+      }
+    });
+
+    group('falls back with the results of a full update', () {
+      // A list longer than the data: the draw reads no foreign item, so the two
+      // paths differ only in the proof, which reads each item.
+      List<Object?> withItem(Object? item) => <Object?>[
+        red,
+        green,
+        blue,
+        red,
+        item,
+      ];
+
+      final foreign = <String, Object? Function()>{
+        'a number': () => 5.0,
+        'a boolean': () => true,
+        'a string': () => 'red',
+        'a function': () =>
+            (Object? _) => red,
+        'a map': () => <String, Object?>{'a': 1.0},
+        'an object': Object.new,
+        'a nested list': () => <Object?>[red],
+        'a subclass of a color': () => const _UserColor(0xff112233),
+      };
+
+      // The controls of the groups below: the same list with a native item.
+      test('a color list of the defaults or the overrides with a color', () {
+        for (final type in types) {
+          jsSet(
+            jsGet(jsGet(defaults, 'elements'), elementOf(type)),
+            'backgroundColor',
+            withItem(blue),
+          );
+          jsSet(jsGet(overrides, type), 'borderColor', withItem(green));
+          expectTwin(
+            () {
+              final cfg = indexed(type);
+              dataset(cfg)
+                ..remove('backgroundColor')
+                ..remove('borderColor');
+              return cfg;
+            },
+            path: true,
+            ticks: 2,
+          );
+        }
+      });
+
+      // The constructor refuses a value that is no color in the options and
+      // in the datasets (Chart.js ADR 0061). The scopes that it does not walk
+      // are the ones that the walk of the settings does not read either.
+      for (final MapEntry(key: name, value: item) in foreign.entries) {
+        test('a color list of the defaults with $name', () {
+          for (final type in types) {
+            jsSet(
+              jsGet(jsGet(defaults, 'elements'), elementOf(type)),
+              'backgroundColor',
+              withItem(item()),
+            );
+            expectTwin(
+              () {
+                final cfg = indexed(type);
+                dataset(cfg).remove('backgroundColor');
+                return cfg;
+              },
+              path: false,
+              ticks: 2,
+            );
+          }
+        });
+
+        test('a color list of the overrides with $name', () {
+          for (final type in types) {
+            jsSet(jsGet(overrides, type), 'backgroundColor', withItem(item()));
+            expectTwin(
+              () {
+                final cfg = indexed(type);
+                dataset(cfg).remove('backgroundColor');
+                return cfg;
+              },
+              path: false,
+              ticks: 2,
+            );
+          }
+        });
+      }
+
+      for (final (name, item) in <(String, Object? Function())>[
+        (
+          'a function',
+          () =>
+              (Object? _) => red,
+        ),
+        ('a nested list', () => <Object?>[red]),
+        ('a subclass of a color', () => const _UserColor(0xff112233)),
+      ]) {
+        test('a color list of the dataset with $name', () {
+          for (final type in types) {
+            expectTwin(
+              () => indexed(type, background: withItem(item())),
+              path: false,
+              ticks: 2,
+            );
+          }
+        });
+      }
+
+      for (final (name, item) in <(String, Object? Function())>[
+        ('a string', () => '3'),
+        ('a boolean', () => true),
+        (
+          'a function',
+          () =>
+              (Object? _) => 1.0,
+        ),
+        ('a map', () => <String, Object?>{'a': 1.0}),
+        ('a nested list', () => <Object?>[1.0]),
+      ]) {
+        test('a list of a number key of the dataset with $name', () {
+          for (final type in types) {
+            expectTwin(
+              () {
+                final cfg = indexed(type);
+                dataset(cfg)['borderWidth'] = <Object?>[
+                  1.0,
+                  2.0,
+                  1.0,
+                  2.0,
+                  item(),
+                ];
+                return cfg;
+              },
+              path: false,
+              ticks: 2,
+            );
+          }
+        });
+      }
+
+      test('an empty list of a number key of the dataset', () {
+        for (final type in types) {
+          expectTwin(
+            () {
+              final cfg = indexed(type);
+              dataset(cfg)['borderWidth'] = <Object?>[];
+              return cfg;
+            },
+            path: false,
+            ticks: 2,
+          );
+        }
+      });
+
+      test('a custom list', () {
+        for (final type in types) {
+          expectTwin(
+            () =>
+                indexed(type, background: _ObservedList(<Object?>[red, blue])),
+            path: false,
+            ticks: 2,
+          );
+        }
+      });
+
+      test('a scriptable color', () {
+        for (final type in types) {
+          final calls = <Object?>[];
+          expectTwin(
+            () => indexed(
+              type,
+              background: (Object? context) {
+                calls.add(jsGet(context, 'index'));
+                return red;
+              },
+            ),
+            path: false,
+            ticks: 2,
+          );
+          expect(calls, isNotEmpty);
+        }
+      });
+
+      test('a scriptable color beside an indexed one', () {
+        for (final type in types) {
+          expectTwin(
+            () => indexed(type, border: (Object? _) => blue),
+            path: false,
+            ticks: 2,
+          );
+        }
+      });
+
+      test('a user Map in the overrides, with no read of it to qualify', () {
+        final saved = jsGet(overrides, 'pie');
+        final scope = _UserMap(<String, Object?>{});
+        jsSet(overrides, 'pie', scope);
+        addTearDown(() => jsSet(overrides, 'pie', saved));
+        expectTwin(() => indexed('pie'), path: false, ticks: 2);
+      });
+
+      test('a function of a dataset option in the overrides', () {
+        for (final cfg in <Map<String, Object?> Function()>[
+          () => indexed('pie'),
+          () => config('pie'),
+        ]) {
+          final calls = <Object?>[];
+          final pie = jsGet(overrides, 'pie');
+          jsSet(pie, 'rotation', (Object? context) {
+            calls.add(jsGet(jsGet(context, 'dataset'), 'data'));
+            return 30.0;
+          });
+          expectTwin(cfg, path: false, ticks: 2);
+          expect(calls, isNotEmpty);
+        }
+      });
+
+      test(
+        'a function of a dataset option in the defaults of the datasets',
+        () {
+          final datasets = jsGet(jsGet(defaults, 'datasets'), 'doughnut');
+          jsSet(datasets, 'cutout', (Object? _) => '40%');
+          expectTwin(() => indexed('doughnut'), path: false, ticks: 2);
+        },
+      );
+
+      test('a user subclass of the controller', () {
+        Chart.register([_UserPie.value]);
+        addTearDown(() => Chart.unregister([_UserPie.value]));
+        final ca = indexed('pie');
+        final cb = indexed('pie');
+        ca['type'] = 'user-pie';
+        final a = chart(ca);
+        final b = chart(cb);
+        change(ca, 0);
+        change(cb, 0);
+        expect(a.updateData(), isFalse);
+        b.update('none');
+        expect(deep(a), deep(b));
+      });
+
+      test('a user subclass of the element', () {
+        final ca = indexed('pie');
+        final cb = indexed('pie');
+        final a = chart(ca);
+        final b = chart(cb);
+        for (final c in [a, b]) {
+          final data = c.getDatasetMeta(0).data;
+          data[1] = _UserArc()..options = data[1].options;
+          c.update('none');
+        }
+        change(ca, 0);
+        change(cb, 0);
+        expect(a.updateData(), isFalse);
+        b.update('none');
+        expect(deep(a), deep(b));
+      });
+
+      test('a user subclass of the chart or of the config', () {
+        final canvas = UiCanvasElement(width: 640, height: 400);
+        addTearDown(() => canvas.getContext2d().dispose());
+        final user = _UserChart(canvas, indexed('pie'));
+        addTearDown(user.destroy);
+        expect(user.updateData(), isFalse);
+
+        final other = UiCanvasElement(width: 640, height: 400);
+        addTearDown(() => other.getContext2d().dispose());
+        final chart = _ConfigChart(other, _UserConfig(indexed('pie')));
+        addTearDown(chart.destroy);
+        chart.update();
+        expect(chart.updateData(), isFalse);
+      });
+    });
+
+    group('the proof of the options', () {
+      test('runs again after the config clears its caches', () {
+        final cfg = indexed('pie');
+        final a = chart(cfg);
+        expect(a.updateData(), isTrue);
+        a.config.clearCache();
+        expect(a.updateData(), isFalse, reason: 'no plan after the clear');
+        expect(a.updateData(), isTrue, reason: 'the full update made a plan');
+      });
+
+      test('a new list with a foreign item takes the full path after a full '
+          'update', () {
+        final cfg = indexed('pie');
+        final a = chart(cfg);
+        expect(a.updateData(), isTrue);
+        dataset(cfg)['backgroundColor'] = <Object?>[
+          red,
+          green,
+          blue,
+          red,
+          (Object? _) => blue,
+        ];
+        a.update('none');
+        expect(a.updateData(), isFalse);
+      });
+
+      test('a new list of native colors takes the data-only path after a full '
+          'update', () {
+        final cfg = indexed('pie');
+        final a = chart(cfg);
+        expect(a.updateData(), isTrue);
+        dataset(cfg)['backgroundColor'] = <Object?>[green];
+        a.update('none');
+        expect(a.updateData(), isTrue);
+        final options = a.getDatasetMeta(0).data[1].options;
+        expect(jsGet(options, 'backgroundColor'), green);
+      });
+
+      test('a chart of a plain style stays on its path', () {
+        expectTwin(() => config('pie'), path: true);
+      });
+
+      test('the proof does not make a legend build wait', () {
+        // `hasStaticDataUpdateOptions` also serves Chart.js ADR 0092: an
+        // indexed chart has no cached entry, and its getStyle needs a context.
+        final a = chart(indexed('pie'));
+        expect(a.getDatasetMeta(0).controller!.hasDataUpdateOptions, isTrue);
+        expect(
+          a.getDatasetMeta(0).controller!.hasStaticDataUpdateOptions,
+          isFalse,
+        );
+      });
+    });
+
+    test('a bubble whose overflow grows runs a layout, as a full update', () {
+      final calls = <String>[];
+      final plugin = <String, Object?>{
+        'id': 'indexedLayoutProbe',
+        'supportsDataUpdates': true,
+        'beforeLayout': (Object? c, Object? a, Object? o) {
+          calls.add('beforeLayout');
+        },
+      };
+      final ca = indexed('bubble');
+      final cb = indexed('bubble');
+      (ca['plugins'] = <Object?>[plugin]) as List;
+      final a = chart(ca);
+      final b = chart(cb);
+      calls.clear();
+      for (final cfg in [ca, cb]) {
+        ((dataset(cfg)['data']! as List)[0] as Map)['r'] = 20.0;
+      }
+      expect(a.updateData(), isTrue);
+      expect(calls, ['beforeLayout']);
+      b.update('none');
+      expect(deep(a), deep(b));
+      expect(a.chartArea!.left, b.chartArea!.left);
+      calls.clear();
+      change(ca, 0);
+      change(cb, 0);
+      expect(a.updateData(), isTrue);
+      expect(calls, isEmpty, reason: 'the same overflow keeps the new layout');
+      b.update('none');
+      expect(deep(a), deep(b));
+    });
+
+    test('the typed lowering of an equal indexed color reaches the path', () {
+      typed.ChartConfig cfg(
+        List<double> values,
+        typed.ChartValue<ui.Color> c,
+      ) => typed.ChartConfig(
+        type: typed.ChartKind.pie,
+        labels: const <Object>['a', 'b', 'c'],
+        datasets: [typed.PieDataset(data: values, backgroundColor: c)],
+        responsive: false,
+        animation: typed.ChartAnimation.none,
+        extra: const {
+          'plugins': {'legend': false, 'tooltip': false, 'colors': false},
+        },
+      );
+      final lowering = ChartConfigLowering(
+        cfg(const [1, 2, 3], const typed.ChartValue.indexed([red, blue])),
+      );
+      final a = chart(lowering.lower());
+      lowering.apply(
+        cfg(
+          const [3, 2, 1],
+          typed.ChartValue.indexed(List<ui.Color>.of(const [red, blue])),
+        ),
+      );
+      expect(lowering.lastApplyDataOnly, isTrue);
+      expect(a.updateData(), isTrue);
+      expect(
+        jsGet(a.getDatasetMeta(0).data[1].options, 'backgroundColor'),
+        blue,
+      );
+      lowering.apply(
+        cfg(const [2, 2, 2], const typed.ChartValue.indexed([green, blue])),
+      );
+      expect(lowering.lastApplyDataOnly, isFalse);
+    });
   });
 }
