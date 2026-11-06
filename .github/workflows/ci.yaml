@@ -92,6 +92,23 @@ jobs:
       - uses: ./.github/actions/setup
       - run: dart run melos run test:web
 
+  test-impeller:
+    # The twins of the angle line fan (Chart.js ADR 0103) on the engine family
+    # that takes the fan in an app. The job test compares them on Skia on the
+    # CPU, where an app declines the fan. flutter_tester links SwiftShader, so
+    # --enable-impeller is Impeller on Vulkan with no GPU or driver of the
+    # runner. CHART_IMPELLER=1 fails a run that is not on Impeller. No job runs
+    # on Impeller on Metal or on its signed distance route.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - name: Run the line fan twins on Impeller
+        working-directory: packages/flutter_chartjs_port
+        env:
+          CHART_IMPELLER: "1"
+        run: flutter test --enable-impeller test/port/canvas/canvas_line_fan_test.dart test/port/scales/scale.radialLinear_line_fan_test.dart
+
   fixtures:
     # Tool 7 of packages/flutter_chartjs_port/doc/porting-flow.md section 4
     # (Chart.js ADR 0029, section 3 item 5 and section 11). The runner reads the
