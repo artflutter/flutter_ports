@@ -9,7 +9,6 @@ import 'package:chartjs_gallery/demo/canvas_demo.dart'
 import 'package:chartjs_gallery/demo/demo_chart.dart' hide PointOptions;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor;
@@ -18,6 +17,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, BarOptions, LineOptions, PointOptions;
 // Not public: jsOrZero, the JS `value || 0` (Chart.js ADR 0017, section 8).
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsOrZero;
+import 'package:material_ui/material_ui.dart';
 
 /// The event types of the elements chart: the Chart.js default `events`
 /// option (`core.defaults`): `mousemove`, `mouseout`, `click`, `touchstart`

@@ -189,14 +189,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     interface, `ChartMeta`, `defaultDateZone`, `setDefaultDateZone`, `notifyArrayListeners`,
     `JsClass`, `Undefined`, `undefined` and `lib/src/upstream.dart`) and `lib/helpers.dart` (the
     `chart.js/helpers` entry: `lib/src/helpers/index.dart` without the Dart names of the upstream
-    `_` exports). An app imports the app library next to `material.dart` with no prefix.
+    `_` exports). An app imports the app library next to `material_ui.dart` with no prefix.
     `doc/public_api.txt` is the committed list of their export names.
     `test/tool/public_api_test.dart` compares the list, checks that the app library shares no name
     with the Flutter libraries and `dart:ui`, checks the `@internal` rule of Chart.js ADR 0048 §6,
     and checks that the libraries cover the `exports` of `doc/upstream/manifest.json` (the
     allowlist `_notExported` has the reasons). After a change of the public API,
     `PUBLIC_API_UPDATE=1 flutter test test/tool/public_api_test.dart` writes the list again.
-    `test/port/public_library_test.dart` imports the app library next to `material.dart`,
+    `test/port/public_library_test.dart` imports the app library next to `material_ui.dart`,
     registers the line set and pumps a `ChartView`.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color`

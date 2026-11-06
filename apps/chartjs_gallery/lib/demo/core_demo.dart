@@ -9,7 +9,6 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: the typed options of Chart.js ADR 0018 in the readout.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -17,6 +16,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 // Not public: the frozen state of the options (Chart.js ADR 0021, §5).
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsObjectIsFrozen;
+import 'package:material_ui/material_ui.dart';
 
 /// The interaction modes of the selector: the keys of `Interaction.modes`
 /// (core.interaction.js:257), in their order.

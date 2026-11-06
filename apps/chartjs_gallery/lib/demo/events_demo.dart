@@ -8,7 +8,6 @@ import 'package:chartjs_gallery/demo/canvas_demo.dart'
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
     show drawPoint, getRelativePosition, renderText, toFont;
@@ -19,6 +18,7 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show addCanvasEventListener, removeCanvasEventListener;
 // Not public: NativeEvent, the stand-in of the DOM event.
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The event types of the demo chart: the Chart.js default `events` option
 /// (`core.defaults`), plus `mousedown`, `mouseup`, `touchend` and `wheel`.

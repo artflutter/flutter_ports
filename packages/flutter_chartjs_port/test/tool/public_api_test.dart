@@ -51,6 +51,7 @@ const List<String> _libraries = [
 const List<String> _flutterLibraries = [
   'package:flutter/widgets.dart',
   'package:flutter/material.dart',
+  'package:material_ui/material_ui.dart',
   'package:flutter/cupertino.dart',
   'dart:ui',
 ];

@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
     show
@@ -24,6 +23,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 // Not public: the upstream `_` helpers _bezierCurveTo and _steppedLineTo.
 import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show bezierCurveTo, steppedLineTo;
+import 'package:material_ui/material_ui.dart';
 
 /// The Chart.js sample colors.
 const List<ui.Color> chartColors = [

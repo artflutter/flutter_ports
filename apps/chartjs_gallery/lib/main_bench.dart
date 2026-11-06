@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:chartjs_gallery/bench/chart_bench.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The cases of the benchmark entry: `--dart-define=CASES=a,c` gives a
 /// comma list of selectors. A selector is a mode (`chart` or `axes`), a case

@@ -48,6 +48,8 @@ dev_dependencies:
     path: ../chartjs_test_utils
   flutter_test:
     sdk: flutter
+  # The example and the tests import Material; lib/ does not (Chart.js ADR 0050).
+  material_ui: ^1.10.0
   # Pure-layer specs and port tests run with `dart test` on the VM, dart2js and
   # dart2wasm (porting-flow.md section 3). 1.31.1 matches the test_api pin of
   # flutter_test in Flutter 3.47.7 (0.7.12).

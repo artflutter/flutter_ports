@@ -1,8 +1,8 @@
 // Original code, not ported from Chart.js: stress tab control helpers.
 
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Whether the control of [key] is on the page.
 Future<bool> stressControlExists(WidgetTester tester, String key) async =>

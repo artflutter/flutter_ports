@@ -4,7 +4,7 @@ import 'package:chartjs_gallery/demo/easing_demo.dart';
 import 'package:chartjs_gallery/demo/options_demo.dart';
 import 'package:chartjs_gallery/demo/spline_demo.dart';
 import 'package:chartjs_gallery/demo/ticks_demo.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The tabs of [HelpersDemoPage]: label, icon and content.
 final List<({String label, IconData icon, Widget Function() build})>

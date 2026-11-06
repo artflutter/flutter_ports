@@ -3,8 +3,8 @@ import 'package:chartjs_gallery/demo/ticks_demo.dart';
 import 'package:chartjs_gallery/helpers_demo.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Pumps the demo page at [size] logical pixels.
 Future<void> _pumpDemo(WidgetTester tester, {Size? size}) async {

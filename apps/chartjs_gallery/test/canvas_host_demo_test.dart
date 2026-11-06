@@ -5,7 +5,6 @@ import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 // Not public: UiCanvasElement and UiImageSource of the canvas layer.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
@@ -14,6 +13,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show ChartHost;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'stress_controls.dart';
 

@@ -5,7 +5,6 @@ import 'package:chartjs_gallery/demo/axes_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: jsToNumber, the JS ToNumber of a raw chart value.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
@@ -21,6 +20,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     as plugin_tooltip;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A tall desktop window.
 const Size _desktop = Size(1200, 1600);

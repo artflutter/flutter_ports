@@ -9,7 +9,6 @@ import 'package:chartjs_gallery/demo/canvas_demo.dart'
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
     show
@@ -28,6 +27,7 @@ import 'package:flutter_chartjs_port/helpers.dart'
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 // Not public: _longestText, an upstream `_` helper (Chart.js ADR 0048).
 import 'package:flutter_chartjs_port/src/helpers/index.dart' show longestText;
+import 'package:material_ui/material_ui.dart';
 
 /// The `textAlign` values of the canvas.
 const List<String> textAligns = ['left', 'center', 'right', 'start', 'end'];

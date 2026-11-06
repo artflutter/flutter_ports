@@ -1,8 +1,8 @@
 // Original code, not ported from Chart.js: stress native option regression.
 import 'package:chartjs_gallery/demo/stress_demo.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Native behavior plus an eligibility counter, with no state-changing hooks.
 class _ProbePoint extends PointElement {

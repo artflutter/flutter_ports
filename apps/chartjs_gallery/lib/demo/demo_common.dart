@@ -1,7 +1,6 @@
 // The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show JsObjectFace, Undefined;
 // Not public: jsNumberToString, the JS text of a number in the readouts.
@@ -9,6 +8,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
 // Not public: the Color class of the @kurkle/color port (Chart.js ADR 0048).
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
+import 'package:material_ui/material_ui.dart';
 
 /// The JavaScript text of the number [value] (`Number.prototype.toString`),
 /// for the readouts.

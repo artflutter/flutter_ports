@@ -16,6 +16,7 @@ dependencies:
   # (Chart.js ADR 0047).
   flutter_chartjs_port:
     path: ../../packages/flutter_chartjs_port
+  material_ui: ^1.10.0
 
 dev_dependencies:
   flutter_test:

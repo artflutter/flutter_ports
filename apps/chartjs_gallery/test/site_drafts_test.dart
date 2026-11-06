@@ -1,9 +1,9 @@
 // Original code, not ported from Chart.js: responsive site draft checks.
 import 'package:chartjs_gallery/site_drafts/package_health.dart';
 import 'package:chartjs_gallery/site_drafts/site_drafts.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   setUpAll(() => Chart.register(registerables));

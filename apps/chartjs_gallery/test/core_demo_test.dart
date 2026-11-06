@@ -5,7 +5,6 @@ import 'package:chartjs_gallery/demo/core_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: the typed element options of Chart.js ADR 0018.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -23,6 +22,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     as plugin_tooltip;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A tall desktop window: the whole Core tab is in view.
 const Size _desktop = Size(1200, 1600);

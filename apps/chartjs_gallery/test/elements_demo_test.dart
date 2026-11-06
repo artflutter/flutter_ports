@@ -4,7 +4,6 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: the typed element options of Chart.js ADR 0018.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -13,6 +12,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show ChartHost;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A Pixel 8a: 412 x 915 logical pixels at DPR 2.625, as in
 /// canvas_host_demo_test.dart.
