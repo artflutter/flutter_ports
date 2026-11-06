@@ -15,9 +15,18 @@
 // - MATRIX_IGNORE_COVER: 1 measures while a lock screen covers the window.
 //   Start the app with `-NSAppSleepDisabled YES` too, or the system throttles
 //   it.
+// - MATRIX_COOL: 1 waits before a cell until the fixed CPU test of the UI
+//   thread is within 10% of its best time, and measures again each cell whose
+//   test was more than 15% above its best time after the capture: a phone that
+//   heats. Do not set it on an iPhone: its test can stay slow on a slower core
+//   for minutes, with no heat that the app can read.
+//
+// A browser takes the options from the page address, and a phone from
+// `--dart-define`. Each row has the time of the CPU test before and after the
+// capture (`calMs`, `calAfterMs`), the wait (`coolS`) and the wall clock
+// (`at`).
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
@@ -26,7 +35,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 
-final Map<String, String> _env = Platform.environment;
+import 'perf_cpu.dart';
+import 'perf_matrix_host.dart';
+
+// The options of a build for a target with no process environment: a phone.
+// A browser reads them from the page address, and a desktop from the
+// environment.
+const Map<String, String> _defines = {
+  'MATRIX_ENGINES': String.fromEnvironment('MATRIX_ENGINES'),
+  'MATRIX_TYPES': String.fromEnvironment('MATRIX_TYPES'),
+  'MATRIX_COUNTS': String.fromEnvironment('MATRIX_COUNTS'),
+  'MATRIX_PRESETS': String.fromEnvironment('MATRIX_PRESETS'),
+  'MATRIX_SECONDS': String.fromEnvironment('MATRIX_SECONDS'),
+  'MATRIX_IGNORE_COVER': String.fromEnvironment('MATRIX_IGNORE_COVER'),
+  'MATRIX_COOL': String.fromEnvironment('MATRIX_COOL'),
+};
+
+String? _option(String name) {
+  final hosted = hostEnv(name);
+  if (hosted != null && hosted.isNotEmpty) return hosted;
+  final defined = _defines[name];
+  return defined == null || defined.isEmpty ? null : defined;
+}
+
 final _watch = Stopwatch()..start();
 
 class _Phase {
@@ -101,7 +132,7 @@ Future<void> _delay(int ms) => Future<void>.delayed(Duration(milliseconds: ms));
 Future<void> _waitForVisibleWindow(BenchmarkController c) async {
   var waited = false;
   while (!c.windowVisible) {
-    if (!waited) stdout.writeln('MATRIX_WAIT window covered');
+    if (!waited) hostLine('MATRIX_WAIT window covered');
     waited = true;
     await _delay(500);
   }
@@ -120,7 +151,7 @@ Future<Map<String, Object?>> _capture(
     await _waitForVisibleWindow(c);
     final row = await _attempt(c, engine, type, count, preset, seconds);
     if (row['saved'] == true) return row..['attempts'] = attempt;
-    stdout.writeln('MATRIX_RETRY $attempt ${row['message']}');
+    hostLine('MATRIX_RETRY $attempt ${row['message']}');
     if (attempt >= 20) return row;
     await _delay(1000);
   }
@@ -139,6 +170,8 @@ Future<Map<String, Object?>> _attempt(
     ..configure(_config(type, count, preset))
     ..captureSeconds = seconds;
   await _delay(600);
+  _showChart();
+  await _delay(200);
   // The controller keeps 24 results. Each cell prints its own result.
   c
     ..clearResults()
@@ -193,7 +226,7 @@ Future<Map<String, Object?>> _attempt(
   };
 }
 
-List<String> _list(String name, String fallback) => (_env[name] ?? fallback)
+List<String> _list(String name, String fallback) => (_option(name) ?? fallback)
     .split(',')
     .map((s) => s.trim())
     .where((s) => s.isNotEmpty)
@@ -208,11 +241,46 @@ Future<void> _hold(BenchmarkController c, String spec) async {
     ..configure(_config(type, int.parse(parts[2]), parts[3]));
   await _delay(600);
   c.start();
-  stdout.writeln('MATRIX_HOLD_READY');
+  hostLine('MATRIX_HOLD_READY');
   await _delay(int.parse(parts[4]) * 1000);
   c.pause();
-  await stdout.flush();
-  exit(0);
+  await hostExit();
+}
+
+/// Scrolls the chart into view, as a person does on a narrow screen. A capture
+/// stops when the plot is not in the viewport.
+void _showChart() {
+  void visit(Element element) {
+    if (element.widget is cj.ChartView) {
+      Scrollable.ensureVisible(element);
+      return;
+    }
+    element.visitChildren(visit);
+  }
+
+  WidgetsBinding.instance.rootElement?.visitChildren(visit);
+}
+
+/// One cell: the wait, the capture and the CPU test around it.
+Future<Map<String, Object?>> _cell(
+  BenchmarkController c,
+  ChartLibrary engine,
+  ChartType type,
+  int count,
+  String preset,
+  int seconds,
+  int pass,
+) async {
+  final (cal, coolS) = await coolDown(enabled: _option('MATRIX_COOL') == '1');
+  final row = await _capture(c, engine, type, count, preset, seconds);
+  await _delay(100);
+  final after = cpuTest();
+  return row
+    ..['calMs'] = double.parse(cal.toStringAsFixed(2))
+    ..['calAfterMs'] = double.parse(after.toStringAsFixed(2))
+    ..['coolS'] = coolS
+    ..['pass'] = pass
+    ..['at'] = DateTime.now().millisecondsSinceEpoch;
 }
 
 /// Keeps frames on and the capture gate open while the window is covered.
@@ -233,9 +301,10 @@ void _ignoreCover(BenchmarkController c) {
 
 Future<void> _run(BenchmarkController c) async {
   await _delay(2500);
-  if (_env['MATRIX_IGNORE_COVER'] == '1') _ignoreCover(c);
+  hostStart();
+  if (_option('MATRIX_IGNORE_COVER') == '1') _ignoreCover(c);
   _measureFrames();
-  final hold = _env['MATRIX_HOLD'];
+  final hold = _option('MATRIX_HOLD');
   if (hold != null) return _hold(c, hold);
   final engines = _list('MATRIX_ENGINES', 'chartjs');
   final types = _list(
@@ -244,7 +313,10 @@ Future<void> _run(BenchmarkController c) async {
   );
   final counts = _list('MATRIX_COUNTS', '1000,5000,20000');
   final presets = _list('MATRIX_PRESETS', 'plain,full');
-  final seconds = int.parse(_env['MATRIX_SECONDS'] ?? '4');
+  final seconds = int.parse(_option('MATRIX_SECONDS') ?? '4');
+  final hot = <(ChartLibrary, ChartType, int, String)>[];
+  // One capture with no row: the first capture of a process warms the engine.
+  await _attempt(c, ChartLibrary.chartjs, ChartType.line, 1000, 'plain', 2);
   for (final engineName in engines) {
     final engine = ChartLibrary.values.byName(engineName);
     for (final typeName in types) {
@@ -252,22 +324,31 @@ Future<void> _run(BenchmarkController c) async {
       if (!engine.supports(type)) continue;
       for (final count in counts) {
         for (final preset in presets) {
-          final row = await _capture(
+          final row = await _cell(
             c,
             engine,
             type,
             int.parse(count),
             preset,
             seconds,
+            1,
           );
-          stdout.writeln('MATRIX ${jsonEncode(row)}');
+          hostLine('MATRIX ${jsonEncode(row)}');
+          if ((row['calAfterMs']! as double) > cpuTestBest * 1.15) {
+            hot.add((engine, type, int.parse(count), preset));
+          }
         }
       }
     }
   }
-  stdout.writeln('MATRIX_DONE');
-  await stdout.flush();
-  exit(0);
+  if (_option('MATRIX_COOL') == '1') {
+    for (final (engine, type, count, preset) in hot) {
+      final row = await _cell(c, engine, type, count, preset, seconds, 2);
+      hostLine('MATRIX ${jsonEncode(row)}');
+    }
+  }
+  hostLine('MATRIX_DONE');
+  await hostExit();
 }
 
 Future<void> main() async {
@@ -275,6 +356,6 @@ Future<void> main() async {
   cj.Chart.register(cj.registerables);
   cj.Chart.register([_timingPlugin()]);
   FlutterError.onError = (d) =>
-      stdout.writeln('MATRIX_ERROR ${d.exceptionAsString()}');
+      hostLine('MATRIX_ERROR ${d.exceptionAsString()}');
   runApp(ChartBenchmarkApp(onControllerReady: (c) => unawaited(_run(c))));
 }

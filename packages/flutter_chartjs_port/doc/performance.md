@@ -7752,3 +7752,48 @@ these means of 2 runs for each side, at 20,000 items with the full preset:
 The mean draw of the line fell from 6.3 ms to 3.6 ms. The UI thread of the line is now below 8.33 ms. Its raster P90
 of 8.8 ms and raster mean of 8.5 ms are the limit that remains. The raster thread of the radar stays its limit, as
 §65 states. The update of the bubble, 5.7 ms, stays the largest part of its UI thread.
+
+## 67. The lab on the web and on phones
+
+The setup is in [`benchmarks/devices/`](benchmarks/devices/README.md). Each pass ran once, so that the figures are a map
+and not a comparison.
+
+FPS of the lab matrix at 5,000 items with the full preset. The Mac column is the last pass of §65:
+
+| Chart | Mac | iPhone 17 Pro | Pixel 8a | Web, WebAssembly | Web, JavaScript |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Line | 120 | 120 | 120 | 3.5 | 3.8 |
+| Bar | 120 | 120 | 81 | 120 | 71 |
+| Scatter | 120 | 120 | 120 | 120 | 120 |
+| Bubble | 120 | 120 | 120 | 120 | 120 |
+| Pie | 120 | 120 | 80 | 67 | 59 |
+| Doughnut | 120 | 120 | 86 | 37 | 29 |
+| Polar area | 120 | 120 | 93 | 118 | 64 |
+| Radar | 120 | 120 | 70 | 22 | 17 |
+
+At 1,000 items, every cell holds at least 119 FPS on both phones. On the web, the exceptions are line with 44 to 115 FPS,
+and radar with the full preset on JavaScript, at 107 FPS. At 20,000 items with the full preset, the iPhone gives 30 to
+102 FPS, the Pixel 13 to 75 FPS and WebAssembly 0.5 to 119 FPS.
+
+**The web.** A long path is the limit. The raster P90 of a line with the full preset is 21 ms at 1,000 points, 286 ms at
+5,000 and 1,951 ms at 20,000. A plain line with no curve also takes 21 ms at 5,000 points, against 2 ms for 1,000 bars.
+The cause in Skia on the web is not established. JavaScript adds a slow draw on the UI thread: 8 ms at 5,000 bars and 33 ms
+at 20,000, against 1.4 ms and 7 ms on WebAssembly.
+
+**Everyday use.** The tests with a FPS below 110, of 62 tests with a meaningful FPS (no `mount` tests) on each target:
+
+| Target | Tests below 110 FPS |
+| --- | --- |
+| Mac | none |
+| iPhone 17 Pro | none |
+| Pixel 8a | bubble 2,000: hover 88, animate 99; scatter 1,000: resize 80; line 1,000: resize 98; line 5,000: hover 108; 5 stacked bar series of 200, new data each frame: 91 |
+| Web, WebAssembly | line 1,000: animate 96, hover 86, resize 79; line 5,000: animate 48, hover 22; 5 lines of 1,000: animate 42, new data each frame 18 |
+
+Each failure on the web is a curved line. A line of 1,000 points with no curve on a time axis holds 120 FPS.
+
+The time from a new chart to the end of its first draw, P50 over the chart types: Mac 4 to 12 ms, iPhone 4 to 5 ms, Pixel
+15 to 17 ms and web 6 to 7 ms, with a P90 of at most 28 ms. First paint is no limit.
+
+**A long first frame of an animated update.** FPS hides it. The first update of an animation creates the animation objects
+of each element. On scatter at 5,000 points, it takes 36 ms on the web, 53 ms on the Mac and the iPhone, and 73 ms on the
+Pixel, once for each change of the data. On the Pixel, it takes 16 to 19 ms at 1,000 points of line or scatter.
