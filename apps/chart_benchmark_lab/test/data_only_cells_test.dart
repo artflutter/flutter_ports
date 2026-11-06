@@ -1,0 +1,94 @@
+import 'package:chart_benchmark_lab/benchmark/config.dart';
+import 'package:chart_benchmark_lab/benchmark/controller.dart'
+    show chartJsDataOnlyUpdates;
+import 'package:chart_benchmark_lab/benchmark/data.dart';
+import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
+// The test reads the chart of the widget, as the tests of the package do.
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+/// The presets of `tool/perf_matrix.dart`.
+BenchmarkConfig _preset(ChartType type, {required bool full}) => full
+    ? BenchmarkConfig(
+        type: type,
+        count: 24,
+        markers: true,
+        fill: true,
+        curved: true,
+        axes: true,
+        grid: true,
+        alternateColors: true,
+      )
+    : BenchmarkConfig(type: type, count: 24);
+
+/// Whether a cell qualifies for the data-only path of Chart.js ADR 0098. In the
+/// other cells, `updateData` goes to a full update by itself for the indexed
+/// colors of alternating items (Chart.js ADR 0074). A change here is a change
+/// of the measurement.
+bool _dataOnly(ChartType type, {required bool full}) =>
+    !full || !type.hasItemColors;
+
+void main() {
+  setUpAll(() => cj.Chart.register(cj.registerables));
+
+  for (final type in ChartType.values) {
+    for (final full in [false, true]) {
+      testWidgets('chartjs ${type.name} ${full ? 'full' : 'plain'}: the path '
+          'of a tick of new data', (tester) async {
+        var layouts = 0;
+        final spy = <String, Object?>{
+          'id': r'$dataOnlyCells',
+          'supportsDataUpdates': true,
+          'beforeLayout': (Object? chart, Object? args, Object? options) {
+            layouts++;
+          },
+        };
+        cj.Chart.register([spy]);
+        addTearDown(() => cj.Chart.unregister([spy]));
+
+        final generator = DatasetGenerator(24, 7);
+        final config = _preset(type, full: full);
+        Widget scene(int step) => MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 600,
+                height: 350,
+                child: BenchmarkChart(
+                  library: ChartLibrary.chartjs,
+                  config: config,
+                  frame: generator.frame(step),
+                  size: const Size(600, 350),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpWidget(scene(0));
+        await tester.pump();
+        // The first resize notification ends the plan of the first update.
+        await tester.pumpWidget(scene(1));
+
+        final chart = cj.Chart.getChart(
+          tester.renderObject<RenderChartHost>(find.byType(ChartHost)).canvas,
+        )!;
+        final qualifies = _dataOnly(type, full: full);
+        final expectedLayouts = !qualifies || !chartJsDataOnlyUpdates
+            ? 1
+            // The radius of a bubble comes from the data, so the overflow and
+            // the layout change with the largest item.
+            : type == ChartType.bubble
+            ? 1
+            : 0;
+        for (var step = 2; step < 6; step++) {
+          layouts = 0;
+          await tester.pumpWidget(scene(step));
+          expect(layouts, expectedLayouts, reason: 'step $step');
+        }
+        expect(chart.updateData(), qualifies);
+      });
+    }
+  }
+}
