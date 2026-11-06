@@ -1,5 +1,6 @@
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/benchmark/ranking.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 const _bestColor = Color(0xff15803d);
@@ -31,6 +32,31 @@ class ResultsTable extends StatefulWidget {
 class _ResultsTableState extends State<ResultsTable> {
   int _column = 0;
   bool _ascending = true;
+  late List<RankedResult> _ranked = rankResults(widget.results);
+  late String? _summary = winnerSummary(_ranked);
+  late bool _otherWindow = _hasOtherWindow();
+
+  /// The last result of [build]. The same instance stops a rebuild of the rows,
+  /// which a resize and the filter of the page would otherwise repeat.
+  Widget? _built;
+
+  bool _hasOtherWindow() =>
+      widget.results.any((r) => r.comparisonKey != widget.currentKey);
+
+  @override
+  void didUpdateWidget(covariant ResultsTable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.results, widget.results)) {
+      _ranked = rankResults(widget.results);
+      _summary = winnerSummary(_ranked);
+      _built = null;
+    }
+    final otherWindow = _hasOtherWindow();
+    if (otherWindow != _otherWindow) {
+      _otherWindow = otherWindow;
+      _built = null;
+    }
+  }
 
   /// The header, the direction of the first click and the sort value of each
   /// column. A null value keeps the rank order.
@@ -86,6 +112,7 @@ class _ResultsTableState extends State<ResultsTable> {
   );
 
   void _sort(int column) => setState(() {
+    _built = null;
     if (_column == column) {
       _ascending = !_ascending;
     } else {
@@ -120,12 +147,11 @@ class _ResultsTableState extends State<ResultsTable> {
   );
 
   @override
-  Widget build(BuildContext context) {
-    final ranked = rankResults(widget.results);
-    final summary = winnerSummary(ranked);
-    final otherWindow = widget.results.any(
-      (r) => r.comparisonKey != widget.currentKey,
-    );
+  Widget build(BuildContext context) => _built ??= _table();
+
+  Widget _table() {
+    final summary = _summary;
+    final otherWindow = _otherWindow;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -168,103 +194,133 @@ class _ResultsTableState extends State<ResultsTable> {
           ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columnSpacing: 22,
-            horizontalMargin: 8,
-            sortColumnIndex: _column,
-            sortAscending: _ascending,
-            columns: [
-              for (final (i, column) in _columns.indexed)
-                DataColumn(
-                  label: Text(column.label),
-                  numeric: column.numeric,
-                  onSort: (_, _) => _sort(i),
-                ),
-            ],
-            rows: [
-              for (final row in _sorted(ranked))
-                DataRow(
-                  color: row.winner
-                      ? const WidgetStatePropertyAll(_winnerRow)
-                      : null,
-                  cells: [
-                    DataCell(
-                      row.winner
-                          ? const Icon(
-                              Icons.emoji_events,
-                              key: ValueKey('results.winner'),
-                              size: 20,
-                              color: Color(0xffb7791f),
-                            )
-                          : Text('${row.rank}'),
-                    ),
-                    DataCell(
-                      Text(
-                        row.result.library.label,
-                        style: TextStyle(
-                          color: row.result.library.color,
-                          fontWeight: FontWeight.w600,
+          // A sideways scroll moves the finished layer of the table.
+          child: RepaintBoundary(
+            child: DataTable(
+              columnSpacing: 22,
+              horizontalMargin: 8,
+              sortColumnIndex: _column,
+              sortAscending: _ascending,
+              columns: [
+                for (final (i, column) in _columns.indexed)
+                  DataColumn(
+                    label: Text(column.label),
+                    numeric: column.numeric,
+                    onSort: (_, _) => _sort(i),
+                  ),
+              ],
+              rows: [
+                // A key moves a row in a sort, with its finished text layout.
+                for (final row in _sorted(_ranked))
+                  DataRow(
+                    key: ObjectKey(row.result),
+                    color: row.winner
+                        ? const WidgetStatePropertyAll(_winnerRow)
+                        : null,
+                    cells: [
+                      DataCell(
+                        row.winner
+                            ? const Icon(
+                                Icons.emoji_events,
+                                key: ValueKey('results.winner'),
+                                size: 20,
+                                color: Color(0xffb7791f),
+                              )
+                            : Text('${row.rank}'),
+                      ),
+                      DataCell(
+                        Text(
+                          row.result.library.label,
+                          style: TextStyle(
+                            color: row.result.library.color,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    DataCell(
-                      Text(
-                        '${row.result.config.type.label} · '
-                        '${_count(row.result.config.count)} · '
-                        '${row.result.durationSeconds}s'
-                        '${otherWindow ? ' · ${_size(row.result)}' : ''}',
+                      DataCell(
+                        Text(
+                          '${row.result.config.type.label} · '
+                          '${_count(row.result.config.count)} · '
+                          '${row.result.durationSeconds}s'
+                          '${otherWindow ? ' · ${_size(row.result)}' : ''}',
+                        ),
                       ),
-                    ),
-                    DataCell(
-                      SizedBox(
-                        width: 64,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _value(row, RankMetric.fps),
-                            const SizedBox(height: 3),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(2),
-                              child: ColoredBox(
-                                color: const Color(0xffe2e8f0),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  heightFactor: 1,
-                                  child: FractionallySizedBox(
-                                    widthFactor: row.fpsShare,
-                                    child: ColoredBox(
-                                      color: row.result.library.color,
-                                      child: const SizedBox(height: 4),
-                                    ),
+                      DataCell(
+                        SizedBox(
+                          width: 64,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _value(row, RankMetric.fps),
+                              const SizedBox(height: 3),
+                              SizedBox(
+                                height: 4,
+                                width: double.infinity,
+                                child: CustomPaint(
+                                  painter: _FpsBarPainter(
+                                    row.fpsShare,
+                                    row.result.library.color,
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    DataCell(
-                      Text(
-                        switch (row.slowerBy) {
-                          final times? => '${times.toStringAsFixed(1)}× slower',
-                          null => row.winner ? 'best' : '—',
-                        },
+                      DataCell(
+                        Text(
+                          switch (row.slowerBy) {
+                            final times? =>
+                              '${times.toStringAsFixed(1)}× slower',
+                            null => row.winner ? 'best' : '—',
+                          },
+                        ),
                       ),
-                    ),
-                    DataCell(_value(row, RankMetric.frame)),
-                    DataCell(_value(row, RankMetric.ui)),
-                    DataCell(_value(row, RankMetric.raster)),
-                    DataCell(_value(row, RankMetric.overBudget)),
-                  ],
-                ),
-            ],
+                      DataCell(_value(row, RankMetric.frame)),
+                      DataCell(_value(row, RankMetric.ui)),
+                      DataCell(_value(row, RankMetric.raster)),
+                      DataCell(_value(row, RankMetric.overBudget)),
+                    ],
+                  ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
+}
+
+/// The share of the best FPS, as a bar on a track. It draws two shapes, with no
+/// clip: the table stays on screen in each frame of a run.
+class _FpsBarPainter extends CustomPainter {
+  const _FpsBarPainter(this.share, this.color);
+
+  final double share;
+  final Color color;
+
+  static const _radius = Radius.circular(2);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Offset.zero & size, _radius),
+      Paint()..color = const Color(0xffe2e8f0),
+    );
+    if (share <= 0) return;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Offset.zero & Size(size.width * share, size.height),
+        _radius,
+      ),
+      Paint()..color = color,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_FpsBarPainter oldDelegate) =>
+      oldDelegate.share != share || oldDelegate.color != color;
 }
 
 String _size(BenchmarkResult result) =>

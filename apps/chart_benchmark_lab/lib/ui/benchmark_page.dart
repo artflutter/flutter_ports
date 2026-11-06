@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' show FlutterView;
 
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
@@ -39,23 +40,26 @@ class _BenchmarkPageState extends State<BenchmarkPage>
   static const _window = MethodChannel(
     'dev.artflutter.chart_benchmark_lab/window',
   );
-  bool _matchingOnly = true;
+  final ValueNotifier<bool> _matchingOnly = ValueNotifier(true);
   final GlobalKey _plotKey = GlobalKey();
 
   /// Keeps the sort of the table when a resize changes the page layout.
   final GlobalKey _resultsKey = GlobalKey();
   Timer? _displayRetry;
-  bool _webModeNoteClosed = false;
-
-  /// The height of the scroll view of the chart, from the last layout.
-  double _chartViewHeight = double.infinity;
+  final ValueNotifier<bool> _webModeNoteClosed = ValueNotifier(false);
   int _displayRetries = 0;
+  late FlutterView _view;
+
+  /// The size of the chart, from the last layout.
+  Size? _plotSize;
+  bool _viewportSyncQueued = false;
 
   @override
   void initState() {
     super.initState();
     controller = BenchmarkController(this);
     widget.onControllerReady?.call(controller);
+    controller.addListener(_scheduleViewportSync);
     WidgetsBinding.instance.addObserver(this);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
       _window.setMethodCallHandler((call) async {
@@ -83,6 +87,15 @@ class _BenchmarkPageState extends State<BenchmarkPage>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _view = View.of(context);
+  }
+
+  @override
+  void didChangeMetrics() => _scheduleViewportSync();
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.hidden ||
         state == AppLifecycleState.paused ||
@@ -100,80 +113,145 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
       _window.setMethodCallHandler(null);
     }
-    controller.dispose();
+    controller
+      ..removeListener(_scheduleViewportSync)
+      ..dispose();
+    _matchingOnly.dispose();
+    _webModeNoteClosed.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: controller,
-    builder: (context, _) => Scaffold(
-      floatingActionButton: _pageNote(),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(_isNarrow(context) ? 12 : 24),
+  Widget build(BuildContext context) => _PageValue<bool>(
+    value: MediaQuery.sizeOf(context).width < 600,
+    child: _page,
+  );
+
+  // Each section of the page is one widget instance for the life of the page.
+  // A rebuild of a parent stops at the same instance, and a section rebuilds
+  // only when a value that it reads changes (`_Selected`). A chart frame, a
+  // readout, a scroll and a resize step thus leave the other sections alone.
+  late final Widget _page = _Selected(
+    listenable: Listenable.merge([controller, _webModeNoteClosed]),
+    select: () => (
+      controller.running || controller.finishing || controller.batchCapturing,
+      controller.stopReason,
+      _webModeNoteClosed.value,
+    ),
+    builder: (context) =>
+        Scaffold(floatingActionButton: _pageNote(), body: _body),
+  );
+
+  late final Widget _body = SafeArea(
+    child: Builder(
+      builder: (context) {
+        final narrow = _isNarrow(context);
+        return Padding(
+          padding: EdgeInsets.all(narrow ? 12 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _header(context),
-              SizedBox(height: _isNarrow(context) ? 10 : 20),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    _chartViewHeight = constraints.maxHeight;
-                    final content = _content(context);
-                    if (constraints.maxWidth >= 1000) {
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 292,
-                            child: SingleChildScrollView(
-                              child: _settings(context),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: _chartScroll(
-                              SingleChildScrollView(child: content),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return _chartScroll(
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Card(
-                              // The hover color of the tile stays inside the
-                              // rounded corners.
-                              clipBehavior: Clip.antiAlias,
-                              child: ExpansionTile(
-                                shape: const Border(),
-                                collapsedShape: const Border(),
-                                title: const Text('Test configuration'),
-                                subtitle: Text(
-                                  '${controller.config.type.label} · '
-                                  '${_number(controller.config.count)} items',
-                                ),
-                                children: [_settings(context, card: false)],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            content,
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              _headerSection,
+              SizedBox(height: narrow ? 10 : 20),
+              Expanded(child: _main),
             ],
           ),
+        );
+      },
+    ),
+  );
+
+  /// The chart fits inside its scroll view, because a test measures only a
+  /// chart in full view. Only a short window takes less than the usual height,
+  /// and a result keeps its size in its comparison key.
+  late final Widget _main = LayoutBuilder(
+    builder: (context, constraints) => _PageValue<double>(
+      value: math.min(
+        MediaQuery.sizeOf(context).width < 700 ? 300 : 420,
+        math.max(160, constraints.maxHeight - 8),
+      ),
+      child: constraints.maxWidth >= 1000 ? _wideLayout : _narrowLayout,
+    ),
+  );
+
+  // A boundary below a scroll view moves the finished layer: a scroll frame
+  // records no paint.
+  late final Widget _wideLayout = Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SizedBox(
+        width: 292,
+        child: SingleChildScrollView(
+          child: RepaintBoundary(child: _settingsSection(card: true)),
+        ),
+      ),
+      const SizedBox(width: 20),
+      Expanded(
+        child: _chartScroll(
+          SingleChildScrollView(child: RepaintBoundary(child: _content)),
+        ),
+      ),
+    ],
+  );
+
+  late final Widget _narrowLayout = _chartScroll(
+    SingleChildScrollView(
+      child: RepaintBoundary(
+        child: Column(
+          children: [
+            Card(
+              // The hover color of the tile stays inside the rounded corners.
+              clipBehavior: Clip.antiAlias,
+              child: ExpansionTile(
+                shape: const Border(),
+                collapsedShape: const Border(),
+                title: const Text('Test configuration'),
+                subtitle: _Selected(
+                  listenable: controller,
+                  select: () =>
+                      (controller.config.type, controller.config.count),
+                  builder: (_) => Text(
+                    '${controller.config.type.label} · '
+                    '${_number(controller.config.count)} items',
+                  ),
+                ),
+                children: [_settingsSection(card: false)],
+              ),
+            ),
+            const SizedBox(height: 16),
+            _content,
+          ],
         ),
       ),
     ),
+  );
+
+  late final Widget _headerSection = RepaintBoundary(
+    child: _Selected(
+      listenable: controller,
+      select: () => (
+        controller.running,
+        controller.finishing,
+        controller.capturing,
+        controller.batchCapturing,
+        controller.batchPosition,
+        controller.batchTotal,
+        controller.controlsLocked,
+        controller.canRun,
+        controller.captureSeconds,
+      ),
+      builder: _header,
+    ),
+  );
+
+  Widget _settingsSection({required bool card}) => _Selected(
+    listenable: controller,
+    select: () => (
+      controller.config,
+      controller.controlsLocked,
+      controller.captureSeconds,
+    ),
+    builder: (context) => _settings(context, card: card),
   );
 
   /// The note over the page, except during a run: a widget over the chart must
@@ -195,11 +273,11 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     }
     final mode = webMode();
     final why = webModeWhy();
-    if (mode == null || why == null || _webModeNoteClosed) return null;
+    if (mode == null || why == null || _webModeNoteClosed.value) return null;
     return PageNote(
       title: mode,
       text: '$why Figures of different modes do not compare.',
-      onClose: () => setState(() => _webModeNoteClosed = true),
+      onClose: () => _webModeNoteClosed.value = true,
     );
   }
 
@@ -211,8 +289,40 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     _displayRetries++;
     _displayRetry = Timer(const Duration(milliseconds: 100), () {
       _displayRetry = null;
-      if (mounted) setState(() {});
+      if (mounted) _syncViewport();
     });
+  }
+
+  /// After the next frame, gives the controller the size of the chart and the
+  /// state of the display, and stops a test with a chart out of view. A change
+  /// of the controller, of the layout or of the window can each change them.
+  void _scheduleViewportSync() {
+    if (_viewportSyncQueued) return;
+    _viewportSyncQueued = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewportSyncQueued = false;
+      if (mounted) _syncViewport();
+    });
+  }
+
+  void _syncViewport() {
+    final size = _plotSize;
+    if (size == null) return;
+    var refreshRate = controller.refreshRate;
+    try {
+      refreshRate = _view.display.refreshRate;
+      _displayRetries = 0;
+      // Flutter can report a display before its registry entry.
+      // ignore: avoid_catching_errors
+    } on TypeError {
+      _retryDisplay();
+      // Debug mode asserts on the same transient condition.
+      // ignore: avoid_catching_errors
+    } on AssertionError {
+      _retryDisplay();
+    }
+    controller.setViewport(size, _view.devicePixelRatio, refreshRate);
+    _checkChartVisibility();
   }
 
   Widget _chartScroll(Widget child) => NotificationListener<ScrollNotification>(
@@ -233,14 +343,6 @@ class _BenchmarkPageState extends State<BenchmarkPage>
       return false;
     },
     child: child,
-  );
-
-  /// The chart fits inside its scroll view, because a test measures only a
-  /// chart in full view. Only a short window takes less than the usual height,
-  /// and a result keeps its size in its comparison key.
-  double _plotHeight(BuildContext context) => math.min(
-    MediaQuery.sizeOf(context).width < 700 ? 300 : 420,
-    math.max(160, _chartViewHeight - 8),
   );
 
   /// Whether the full chart is inside its scroll view.
@@ -373,6 +475,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                   !controller.batchCapturing,
             ),
             _action(
+              context,
               key: 'run',
               narrow: narrow,
               label: controller.running ? 'Pause' : 'Run',
@@ -388,6 +491,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                     },
             ),
             _action(
+              context,
               key: 'capture',
               narrow: narrow,
               filled: true,
@@ -412,6 +516,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                     ),
             ),
             _action(
+              context,
               key: 'capture.all',
               narrow: narrow,
               label: controller.batchCapturing
@@ -435,7 +540,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
 
   /// A header action: an icon with a tooltip on a phone, else an icon and a
   /// label.
-  Widget _action({
+  Widget _action(
+    BuildContext context, {
     required String key,
     required bool narrow,
     required String label,
@@ -505,32 +611,36 @@ class _BenchmarkPageState extends State<BenchmarkPage>
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: [
-              for (final type in ChartType.values)
-                ChoiceChip(
-                  key: ValueKey('type.${type.name}'),
-                  label: Text(type.label),
-                  avatar: Icon(type.icon, size: 17),
-                  // Eight types must leave the feature toggles in view.
-                  visualDensity: VisualDensity.compact,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  selected: config.type == type,
-                  onSelected: locked
-                      ? null
-                      : (_) =>
-                            controller.configure(config.copyWith(type: type)),
-                ),
-            ],
+          RepaintBoundary(
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: [
+                for (final type in ChartType.values)
+                  ChoiceChip(
+                    key: ValueKey('type.${type.name}'),
+                    label: Text(type.label),
+                    avatar: Icon(type.icon, size: 17),
+                    // Eight types must leave the feature toggles in view.
+                    visualDensity: VisualDensity.compact,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    selected: config.type == type,
+                    onSelected: locked
+                        ? null
+                        : (_) =>
+                              controller.configure(config.copyWith(type: type)),
+                  ),
+              ],
+            ),
           ),
           const SizedBox(height: 20),
-          _DatasetSlider(
-            value: config.count,
-            enabled: !locked,
-            onChanged: (value) =>
-                controller.configure(config.copyWith(count: value)),
+          RepaintBoundary(
+            child: _DatasetSlider(
+              value: config.count,
+              enabled: !locked,
+              onChanged: (value) =>
+                  controller.configure(config.copyWith(count: value)),
+            ),
           ),
           const Divider(height: 32),
           const Text('Workload', style: TextStyle(fontWeight: FontWeight.w600)),
@@ -653,7 +763,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                 ],
                 onChanged: locked
                     ? null
-                    : (n) => setState(() => controller.captureSeconds = n!),
+                    : (n) => controller.setCaptureSeconds(n!),
               ),
             ],
           ),
@@ -668,82 +778,27 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     return card ? Card(child: body) : body;
   }
 
-  Widget _content(BuildContext context) => Column(
+  late final Widget _content = Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      LayoutBuilder(
-        builder: (context, constraints) {
-          final columns = constraints.maxWidth < 620 ? 2 : 4;
-          return Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final engine in ChartLibrary.values)
-                SizedBox(
-                  width: (constraints.maxWidth - (columns - 1) * 8) / columns,
-                  child: Semantics(
-                    selected: engine == controller.library,
-                    child: OutlinedButton(
-                      key: ValueKey('library.${engine.name}'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 13,
-                        ),
-                        backgroundColor: engine == controller.library
-                            ? engine.color.withValues(alpha: .08)
-                            : Colors.white,
-                        side: BorderSide(
-                          color: engine == controller.library
-                              ? engine.color
-                              : const Color(0xffdfe5ef),
-                        ),
-                      ),
-                      onPressed: controller.controlsLocked
-                          ? null
-                          : () => controller.selectLibrary(engine),
-                      child: Row(
-                        children: [
-                          Icon(Icons.circle, size: 8, color: engine.color),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  engine.label,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff17243b),
-                                  ),
-                                ),
-                                Text(
-                                  engine.supports(controller.config.type)
-                                      ? 'v${engine.version}'
-                                      : 'No ${_typeName(controller.config)} '
-                                            'chart',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: Color(0xff64748b),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
+      RepaintBoundary(
+        child: _Selected(
+          listenable: controller,
+          select: () => (
+            controller.library,
+            controller.controlsLocked,
+            controller.config.type,
+          ),
+          builder: (_) => _librarySelector(),
+        ),
       ),
       const SizedBox(height: 16),
-      ValueListenableBuilder<RunReadout>(
-        valueListenable: controller.readout,
-        builder: (context, value, _) => _metrics(context, value),
+      // A readout comes twice a second during a run.
+      RepaintBoundary(
+        child: ValueListenableBuilder<RunReadout>(
+          valueListenable: controller.readout,
+          builder: (context, value, _) => _metrics(context, value),
+        ),
       ),
       const SizedBox(height: 16),
       Card(
@@ -752,158 +807,77 @@ class _BenchmarkPageState extends State<BenchmarkPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                runSpacing: 8,
-                spacing: 12,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    '${controller.config.type.label} · '
-                    '${_number(controller.config.count)} items',
-                    style: Theme.of(context).textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  _badge(
-                    controller.config.workload.label,
-                    const Color(0xff64748b),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              SizedBox(
-                height: _plotHeight(context),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final size = constraints.biggest;
-                    final view = View.of(context);
-                    var refreshRate = controller.refreshRate;
-                    try {
-                      refreshRate = view.display.refreshRate;
-                      _displayRetries = 0;
-                      // Flutter can report a display before its registry entry.
-                      // ignore: avoid_catching_errors
-                    } on TypeError {
-                      _retryDisplay();
-                      // Debug mode asserts on the same transient condition.
-                      // ignore: avoid_catching_errors
-                    } on AssertionError {
-                      _retryDisplay();
-                    }
-                    final dpr = view.devicePixelRatio;
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (mounted) {
-                        controller.setViewport(size, dpr, refreshRate);
-                        _checkChartVisibility();
-                      }
-                    });
-                    return ClipRect(
-                      key: _plotKey,
-                      child: ValueListenableBuilder<DatasetFrame>(
-                        valueListenable: controller.frames,
-                        builder: (context, frame, _) => Stack(
-                          children: [
-                            Positioned.fill(
-                              child: RepaintBoundary(
-                                child: BenchmarkChart(
-                                  key: ValueKey((
-                                    controller.library,
-                                    controller.revision,
-                                    controller.config.workload ==
-                                            Workload.rebuild
-                                        ? frame.step
-                                        : 0,
-                                  )),
-                                  library: controller.library,
-                                  config: controller.config,
-                                  frame: frame,
-                                  size: size,
-                                ),
-                              ),
-                            ),
-                            if (controller.config.overlayLabels > 0)
-                              Positioned.fill(
-                                child: IgnorePointer(
-                                  child: RepaintBoundary(
-                                    child: CustomPaint(
-                                      painter: _LabelsPainter(
-                                        controller.config.overlayLabels,
-                                        frame.step,
-                                        rotate: controller.config.rotateLabels,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
+              _Selected(
+                listenable: controller,
+                select: () => (
+                  controller.config.type,
+                  controller.config.count,
+                  controller.config.workload,
+                ),
+                builder: (context) => Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  runSpacing: 8,
+                  spacing: 12,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      '${controller.config.type.label} · '
+                      '${_number(controller.config.count)} items',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                    );
-                  },
+                    ),
+                    _badge(
+                      controller.config.workload.label,
+                      const Color(0xff64748b),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(height: 18),
+              _plotSection,
               const SizedBox(height: 16),
-              ValueListenableBuilder<RunReadout>(
-                valueListenable: controller.readout,
-                builder: (context, value, _) {
-                  final warm = controller.running && value.seconds < 2;
-                  final progress = (value.seconds - 2)
-                      .clamp(0, controller.captureSeconds)
-                      .toStringAsFixed(1);
-                  final status = controller.finishing
-                      ? controller.message
-                      : warm
-                      ? 'Warming up… ${value.seconds.toStringAsFixed(1)} / 2s'
-                      : controller.running
-                      ? controller.capturing
-                            ? 'Capturing $progress / ${controller.captureSeconds}s'
-                            : 'Live · ${value.timings.samples} '
-                                  'recent engine frames'
-                      : controller.message;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (controller.capturing) ...[
-                        LinearProgressIndicator(
-                          value: controller.finishing
-                              ? 1
-                              : (value.seconds /
-                                        (controller.captureSeconds + 2))
-                                    .clamp(0, 1),
-                          minHeight: 3,
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                      Text(
-                        controller.batchCapturing
-                            ? '${controller.batchPosition}/'
-                                  '${controller.batchTotal} · '
-                                  '${controller.library.label} · $status'
-                            : status,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xff64748b),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
+              RepaintBoundary(child: _statusSection),
               const SizedBox(height: 7),
-              Text(
-                '${controller.viewport.width.round()} × '
-                '${controller.viewport.height.round()} logical px · DPR '
-                '${controller.dpr.toStringAsFixed(1)} · display '
-                '${controller.refreshRate.round()} Hz · seed '
-                '${controller.config.seed}',
-                style: const TextStyle(fontSize: 11, color: Color(0xff94a3b8)),
+              _Selected(
+                listenable: controller,
+                select: () => (
+                  controller.viewport,
+                  controller.dpr,
+                  controller.refreshRate,
+                  controller.config.seed,
+                ),
+                builder: (_) => Text(
+                  '${controller.viewport.width.round()} × '
+                  '${controller.viewport.height.round()} logical px · DPR '
+                  '${controller.dpr.toStringAsFixed(1)} · display '
+                  '${controller.refreshRate.round()} Hz · seed '
+                  '${controller.config.seed}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xff94a3b8),
+                  ),
+                ),
               ),
             ],
           ),
         ),
       ),
       const SizedBox(height: 16),
-      _results(context),
+      RepaintBoundary(
+        child: _Selected(
+          listenable: Listenable.merge([controller, _matchingOnly]),
+          select: () => (
+            Object.hashAll(controller.results),
+            _matchingOnly.value,
+            controller.workloadKey,
+            // The table needs the key of the window only for this question,
+            // and a resize changes the key on each step.
+            _shownResultsFromOtherWindow(),
+          ),
+          builder: _results,
+        ),
+      ),
       const SizedBox(height: 12),
       const Text(
         kIsWeb
@@ -916,6 +890,196 @@ class _BenchmarkPageState extends State<BenchmarkPage>
       // The last rows of the table can scroll above the note over the page.
       const SizedBox(height: 180),
     ],
+  );
+
+  Widget _librarySelector() => LayoutBuilder(
+    builder: (context, constraints) {
+      final columns = constraints.maxWidth < 620 ? 2 : 4;
+      return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final engine in ChartLibrary.values)
+            SizedBox(
+              width: (constraints.maxWidth - (columns - 1) * 8) / columns,
+              child: Semantics(
+                selected: engine == controller.library,
+                child: OutlinedButton(
+                  key: ValueKey('library.${engine.name}'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 13,
+                    ),
+                    backgroundColor: engine == controller.library
+                        ? engine.color.withValues(alpha: .08)
+                        : Colors.white,
+                    side: BorderSide(
+                      color: engine == controller.library
+                          ? engine.color
+                          : const Color(0xffdfe5ef),
+                    ),
+                  ),
+                  onPressed: controller.controlsLocked
+                      ? null
+                      : () => controller.selectLibrary(engine),
+                  child: Row(
+                    children: [
+                      Icon(Icons.circle, size: 8, color: engine.color),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              engine.label,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff17243b),
+                              ),
+                            ),
+                            Text(
+                              engine.supports(controller.config.type)
+                                  ? 'v${engine.version}'
+                                  : 'No ${_typeName(controller.config)} '
+                                        'chart',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xff64748b),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      );
+    },
+  );
+
+  /// The chart and the overlay. The boundary keeps a chart frame from recording
+  /// the column around the chart: the layout builder dirties its own paint each
+  /// time that the chart below it builds.
+  late final Widget _plotSection = _Selected(
+    listenable: controller,
+    select: () => (controller.library, controller.revision, controller.config),
+    builder: (context) => SizedBox(
+      height: _PageValue.of<double>(context),
+      child: RepaintBoundary(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final size = constraints.biggest;
+            _plotSize = size;
+            _scheduleViewportSync();
+            return ClipRect(
+              key: _plotKey,
+              child: ValueListenableBuilder<DatasetFrame>(
+                valueListenable: controller.frames,
+                builder: (context, frame, _) => Stack(
+                  children: [
+                    Positioned.fill(
+                      child: RepaintBoundary(
+                        child: BenchmarkChart(
+                          key: ValueKey((
+                            controller.library,
+                            controller.revision,
+                            controller.config.workload == Workload.rebuild
+                                ? frame.step
+                                : 0,
+                          )),
+                          library: controller.library,
+                          config: controller.config,
+                          frame: frame,
+                          size: size,
+                        ),
+                      ),
+                    ),
+                    if (controller.config.overlayLabels > 0)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: RepaintBoundary(
+                            child: CustomPaint(
+                              painter: _LabelsPainter(
+                                controller.config.overlayLabels,
+                                frame.step,
+                                rotate: controller.config.rotateLabels,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ),
+  );
+
+  late final Widget _statusSection = _Selected(
+    listenable: controller,
+    select: () => (
+      controller.running,
+      controller.finishing,
+      controller.capturing,
+      controller.message,
+      controller.captureSeconds,
+      controller.batchCapturing,
+      controller.batchPosition,
+      controller.batchTotal,
+      controller.library,
+    ),
+    builder: (_) => ValueListenableBuilder<RunReadout>(
+      valueListenable: controller.readout,
+      builder: (context, value, _) {
+        final warm = controller.running && value.seconds < 2;
+        final progress = (value.seconds - 2)
+            .clamp(0, controller.captureSeconds)
+            .toStringAsFixed(1);
+        final status = controller.finishing
+            ? controller.message
+            : warm
+            ? 'Warming up… ${value.seconds.toStringAsFixed(1)} / 2s'
+            : controller.running
+            ? controller.capturing
+                  ? 'Capturing $progress / ${controller.captureSeconds}s'
+                  : 'Live · ${value.timings.samples} '
+                        'recent engine frames'
+            : controller.message;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (controller.capturing) ...[
+              LinearProgressIndicator(
+                value: controller.finishing
+                    ? 1
+                    : (value.seconds / (controller.captureSeconds + 2)).clamp(
+                        0,
+                        1,
+                      ),
+                minHeight: 3,
+              ),
+              const SizedBox(height: 10),
+            ],
+            Text(
+              controller.batchCapturing
+                  ? '${controller.batchPosition}/'
+                        '${controller.batchTotal} · '
+                        '${controller.library.label} · $status'
+                  : status,
+              style: const TextStyle(fontSize: 12, color: Color(0xff64748b)),
+            ),
+          ],
+        );
+      },
+    ),
   );
 
   Widget _metrics(BuildContext context, RunReadout readout) {
@@ -1002,11 +1166,21 @@ class _BenchmarkPageState extends State<BenchmarkPage>
     );
   }
 
+  /// Whether a row that the table shows comes from another window.
+  bool _shownResultsFromOtherWindow() {
+    final current = controller.comparisonKey;
+    final workload = controller.workloadKey;
+    return controller.results.any(
+      (r) =>
+          (!_matchingOnly.value || r.workloadKey == workload) &&
+          r.comparisonKey != current,
+    );
+  }
+
   Widget _results(BuildContext context) {
+    final workload = controller.workloadKey;
     final matching = controller.results
-        .where(
-          (r) => !_matchingOnly || r.workloadKey == controller.workloadKey,
-        )
+        .where((r) => !_matchingOnly.value || r.workloadKey == workload)
         .toList();
     return Card(
       child: Padding(
@@ -1033,8 +1207,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                         'Matching setup',
                         style: TextStyle(fontSize: 11),
                       ),
-                      selected: _matchingOnly,
-                      onSelected: (v) => setState(() => _matchingOnly = v),
+                      selected: _matchingOnly.value,
+                      onSelected: (v) => _matchingOnly.value = v,
                     ),
                     IconButton(
                       tooltip: 'Clear captures',
@@ -1104,7 +1278,75 @@ const _eyebrow = TextStyle(
 );
 
 /// A phone in the upright position, with little height above the chart.
-bool _isNarrow(BuildContext context) => MediaQuery.sizeOf(context).width < 600;
+bool _isNarrow(BuildContext context) => _PageValue.of<bool>(context);
+
+/// One value of the page shape. A reader rebuilds when the value changes, and
+/// not on each step of a resize.
+class _PageValue<T> extends InheritedWidget {
+  const _PageValue({required this.value, required super.child});
+
+  final T value;
+
+  static T of<T>(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_PageValue<T>>()!.value;
+
+  @override
+  bool updateShouldNotify(_PageValue<T> oldWidget) => value != oldWidget.value;
+}
+
+/// Builds a section of the page, and rebuilds it only when [select] gives
+/// another value. [select] must cover each value that [builder] reads.
+class _Selected<T> extends StatefulWidget {
+  const _Selected({
+    required this.listenable,
+    required this.select,
+    required this.builder,
+    super.key,
+  });
+
+  final Listenable listenable;
+  final T Function() select;
+  final WidgetBuilder builder;
+
+  @override
+  State<_Selected<T>> createState() => _SelectedState<T>();
+}
+
+class _SelectedState<T> extends State<_Selected<T>> {
+  late T _value;
+
+  @override
+  void initState() {
+    super.initState();
+    // The value of the first build: a later change must compare with it.
+    _value = widget.select();
+    widget.listenable.addListener(_changed);
+  }
+
+  @override
+  void didUpdateWidget(covariant _Selected<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.listenable != widget.listenable) {
+      oldWidget.listenable.removeListener(_changed);
+      widget.listenable.addListener(_changed);
+    }
+    _value = widget.select();
+  }
+
+  @override
+  void dispose() {
+    widget.listenable.removeListener(_changed);
+    super.dispose();
+  }
+
+  void _changed() {
+    final value = widget.select();
+    if (value != _value) setState(() => _value = value);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context);
+}
 
 String _number(int value) => value >= 1000
     ? '${(value / 1000).toStringAsFixed(value % 1000 == 0 ? 0 : 1)}k'

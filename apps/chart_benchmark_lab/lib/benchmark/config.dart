@@ -198,6 +198,40 @@ class BenchmarkConfig {
     seed: seed ?? this.seed,
   );
 
+  @override
+  bool operator ==(Object other) =>
+      other is BenchmarkConfig &&
+      other.type == type &&
+      other.count == count &&
+      other.workload == workload &&
+      other.markers == markers &&
+      other.curved == curved &&
+      other.fill == fill &&
+      other.axes == axes &&
+      other.grid == grid &&
+      other.alternateColors == alternateColors &&
+      other.tooltips == tooltips &&
+      other.overlayLabels == overlayLabels &&
+      other.rotateLabels == rotateLabels &&
+      other.seed == seed;
+
+  @override
+  int get hashCode => Object.hash(
+    type,
+    count,
+    workload,
+    markers,
+    curved,
+    fill,
+    axes,
+    grid,
+    alternateColors,
+    tooltips,
+    overlayLabels,
+    rotateLabels,
+    seed,
+  );
+
   /// Effective settings only; disabled controls cannot change comparability.
   Map<String, Object> toJson() => {
     'chart': type.name,
