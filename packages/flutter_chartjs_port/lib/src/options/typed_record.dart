@@ -163,6 +163,31 @@ abstract base class TypedRecord implements JsObjectFace {
     _count = count;
   }
 
+  /// Initialize the fields [first] and [second] of a fresh compact record:
+  /// the own keys of the literal `{[first]: a, [second]: b}`, in this order.
+  /// Two equal slots are one key, as a repeated key of a JS literal. The
+  /// subclass has already assigned the typed values (Chart.js ADR 0096).
+  @protected
+  void initializeTwoSlots(int first, int second) {
+    assert(
+      fieldNames.length <= _maxGroups,
+      'Initial slots require the compact declared-field layout',
+    );
+    assert(
+      _present == 0 && _count == 0 && _orderList == null,
+      'Only a fresh record can initialize slots',
+    );
+    if (first == second) {
+      _present = 1 << first;
+      _order = first + 1;
+      _count = 1;
+    } else {
+      _present = (1 << first) | (1 << second);
+      _order = (first + 1) | ((second + 1) << _bits);
+      _count = 2;
+    }
+  }
+
   /// Marks the field [slot] present after a typed store of a subclass: a
   /// new key goes to the end of the key order, and a foreign value goes.
   @protected
