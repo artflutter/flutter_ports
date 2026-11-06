@@ -7,6 +7,8 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // A timed run has no touch: the screen stays on.
+    application.isIdleTimerDisabled = true
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
