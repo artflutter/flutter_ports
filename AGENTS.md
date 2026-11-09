@@ -139,6 +139,8 @@ longer supported. No global color installer or intermediate option color exists.
   `-- --check`. It fails when tool 8 cannot read a module, a header line of `lib/` or a
   `parity.md` status. It also fails when an import does not resolve. `check:port` and the CI job
   `port-checks` run it.
+- `dart run melos run docs` / `docs:build:web`: run the documentation site in Chrome / build it for the web
+  with WebAssembly.
 - `dart run melos run upstream`: check out the pinned reference sources (every `third_party/`
   submodule, at depth 1). These are the three Chart.js submodules, the 34 D3 submodules, the
   two ECharts submodules and the chartjs-plugin-zoom submodule.
@@ -1143,6 +1145,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `test/page_work_test.dart` has the budgets of the page and fails on a stale section.
   `tool/perf_page.dart` times the page in profile mode. An idle resize keeps the chart
   mounted, except a Graphic bar chart. Each test still starts with a new chart.
+- `apps/chartjs_docs`: the documentation site of the Chart.js port (web). The line chart page has the
+  section structure of `docs/charts/line.md`, with Dart text and live charts.
+  `lib/pages/line_chart_page.dart` has the text and the table of options. `lib/examples/line_examples.dart`
+  has the code of the charts. The app also loads this file as an asset, and a code panel shows the lines
+  between `// #docregion <name>` and `// #enddocregion <name>`. Thus a panel shows the code that draws its
+  chart. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+  `LineDataset`. The workflow `pages` deploys the site.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.
   - `lib/flutter_d3_port.dart`: the public library. `lib/src/upstream.dart` has `d3Version`
@@ -1811,7 +1820,10 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `port-checks`, `upstream-manifest`, `gallery-web`,
   `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
-- Releases: `.github/workflows/pages.yaml` publishes `apps/chart_benchmark_lab` once for each Flutter
+- Releases: `.github/workflows/pages.yaml` publishes `apps/chartjs_docs` at
+  <https://artflutter.github.io/flutter_ports/docs/>, on the newest stable Flutter. If the docs do not build,
+  their page shows that result, and the other pages deploy. The workflow also publishes
+  `apps/chart_benchmark_lab` once for each Flutter
   channel, at <https://artflutter.github.io/flutter_ports/lab-stable/>, `lab-beta/` and `lab-master/`.
   Each run takes the newest release of stable and of beta, and the head of the branch `master`. It does
   not read `.fvmrc`. The action caches no SDK for master, because its cache key for master is fixed. The

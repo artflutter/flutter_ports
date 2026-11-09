@@ -73,6 +73,8 @@
       margin: auto 0 0; font-size: 14px; font-weight: 600;
       font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
     }
+    .card.docs { min-height: 0; height: auto; margin-top: 16px; --channel: #4f46e5; }
+    .card.docs .what { margin-bottom: 0; }
     footer {
       display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px;
       margin-top: clamp(20px, 4vw, 28px); color: #64748b; font-size: 13px;
@@ -122,6 +124,10 @@
         </a>
       </li>
     </ul>
+    <a class="card docs" href="docs/">
+      <span class="name">Documentation<svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <p class="what">Chart.js for Flutter, with live charts.</p>
+    </a>
     <footer>
       <span>Lab version {{lab}}</span>
       <a href="https://github.com/artflutter/flutter_ports">Source on GitHub</a>
