@@ -74,34 +74,6 @@ class BenchmarkChart extends StatelessWidget {
             (label, index) => index % step == 0 ? label : '',
       );
 
-  /// The Chart.js series shadow: canvas shadow state around each dataset
-  /// draw. The filler of a line draws first, in its own `beforeDatasetDraw`,
-  /// so the fill has no shadow, as in fl_chart. The hooks touch only the
-  /// context, so the plugin keeps the data-only updates.
-  static Map<String, Object?> _chartJsShadow({required bool blur}) => {
-    'id': 'benchShadow',
-    'supportsDataUpdates': true,
-    'beforeDatasetDraw': (cj.Chart chart, Object? args, Object? options) {
-      chart.ctx!
-        ..save()
-        ..shadowColor = chartShadow
-        ..shadowOffsetX = chartShadowOffset.dx
-        ..shadowOffsetY = chartShadowOffset.dy
-        // The canvas blur is twice the Gaussian sigma.
-        ..shadowBlur = blur ? chartShadowSigma * 2 : 0;
-    },
-    'afterDatasetDraw': (cj.Chart chart, Object? args, Object? options) {
-      chart.ctx!.restore();
-    },
-  };
-
-  /// One plugin Map for each blur: `ChartConfig ==` compares the plugins by
-  /// identity.
-  static final List<Map<String, Object?>> _chartJsShadows = [
-    _chartJsShadow(blur: false),
-    _chartJsShadow(blur: true),
-  ];
-
   /// The fl_chart line shadow. fl_chart converts the radius to a sigma with
   /// `radius * 0.57735 + 0.5`.
   Shadow get _flShadow => config.shadow
@@ -150,10 +122,19 @@ class BenchmarkChart extends StatelessWidget {
         config.type == ChartType.line || config.type == ChartType.scatter
         ? [for (final p in values) cj.DataPoint(p.x, p.y)]
         : null;
+    // The canvas blur is twice the Gaussian sigma.
+    final shadow = config.shadow
+        ? cj.ChartShadow(
+            color: chartShadow,
+            blur: config.shadowBlur ? chartShadowSigma * 2 : 0,
+            offset: chartShadowOffset,
+          )
+        : null;
     final dataset = switch (config.type) {
       ChartType.line => cj.LineDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         points: points,
         borderColor: const cj.ChartValue.constant(chartBlue),
         borderWidth: 2,
@@ -168,6 +149,7 @@ class BenchmarkChart extends StatelessWidget {
       ChartType.bar => cj.BarDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         data: [for (final p in values) p.y],
         backgroundColor: color,
         borderWidth: 0,
@@ -177,6 +159,7 @@ class BenchmarkChart extends StatelessWidget {
       ChartType.scatter => cj.ScatterDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         points: points,
         backgroundColor: color,
         pointRadius: 3,
@@ -186,6 +169,7 @@ class BenchmarkChart extends StatelessWidget {
       ChartType.bubble => cj.BubbleDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         points: [for (final p in values) cj.DataPoint.bubble(p.x, p.y, p.r)],
         backgroundColor: color,
         borderWidth: 0,
@@ -193,6 +177,7 @@ class BenchmarkChart extends StatelessWidget {
       ChartType.pie => cj.PieDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         data: [for (final p in values) p.y],
         backgroundColor: color,
         borderWidth: 0,
@@ -201,6 +186,7 @@ class BenchmarkChart extends StatelessWidget {
       ChartType.doughnut => cj.DoughnutDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         data: [for (final p in values) p.y],
         backgroundColor: color,
         borderWidth: 0,
@@ -210,6 +196,7 @@ class BenchmarkChart extends StatelessWidget {
       ChartType.polarArea => cj.PolarAreaDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         data: [for (final p in values) p.y],
         backgroundColor: color,
         borderWidth: 0,
@@ -217,6 +204,7 @@ class BenchmarkChart extends StatelessWidget {
       ChartType.radar => cj.RadarDataset(
         key: const ValueKey('series'),
         label: 'Values',
+        shadow: shadow,
         data: [for (final p in values) p.y],
         borderColor: const cj.ChartValue.constant(chartBlue),
         borderWidth: 2,
@@ -314,9 +302,6 @@ class BenchmarkChart extends StatelessWidget {
         animation: cj.ChartAnimation.none,
         legend: const cj.ChartLegend(display: false),
         tooltip: cj.ChartTooltip(enabled: config.tooltips),
-        plugins: config.shadow
-            ? [_chartJsShadows[config.shadowBlur ? 1 : 0]]
-            : null,
         responsive: true,
         maintainAspectRatio: false,
         // A radial scale has no radius option: the padding gives its share.
