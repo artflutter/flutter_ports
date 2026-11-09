@@ -2003,14 +2003,12 @@ void main() {
     });
   });
 
-  group('platform-canvas-no-shadow', () {
-    // platform.dom.tests.js:299-329 "should reset context to default values"
-    // reads 13 attributes of the context after destroy(). The canvas layer
-    // has no shadow attributes (Chart.js ADR 0013, section 1). Thus the spec
-    // case skips. This test runs the case with the other 9 attributes. The
-    // chart starts detached and draws nothing before destroy(). Thus the
-    // test first gives each attribute a value that is not the default.
-    testWidgets('destroy() resets the 9 attributes of the context', (
+  group('destroy() and the context', () {
+    // platform.dom.tests.js:299-329 reads 13 attributes of the context after
+    // destroy(). The chart starts detached and draws nothing before destroy().
+    // Thus this test first gives each attribute a value that is not the
+    // default.
+    testWidgets('destroy() resets the 13 attributes of the context', (
       tester,
     ) async {
       final wrapper = document.createElement<HarnessElement>('div');
@@ -2025,6 +2023,10 @@ void main() {
         ..lineCap = 'square'
         ..lineWidth = 3
         ..miterLimit = 4
+        ..shadowBlur = 5
+        ..shadowColor = const native_ui.Color.fromRGBO(0, 0, 255, 1)
+        ..shadowOffsetX = 6
+        ..shadowOffsetY = 7
         ..strokeStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
         ..textAlign = 'center'
         ..textBaseline = 'top';
@@ -2038,25 +2040,13 @@ void main() {
       expect(context.lineCap, 'butt');
       expect(context.lineWidth, 1);
       expect(context.miterLimit, 10);
+      expect(context.shadowBlur, 0);
+      expect(context.shadowColor, const native_ui.Color(0x00000000));
+      expect(context.shadowOffsetX, 0);
+      expect(context.shadowOffsetY, 0);
       expect(context.strokeStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(context.textAlign, 'start');
       expect(context.textBaseline, 'alphabetic');
-
-      // The context has none of the 4 shadow attributes of the spec. A
-      // change here makes the spec case pass: remove its skip and the row.
-      final dynamic object = context;
-      // A dynamic read of shadowBlur, which the context does not declare.
-      // ignore: avoid_dynamic_calls
-      expect(() => object.shadowBlur, throwsNoSuchMethodError);
-      // The same read of shadowColor.
-      // ignore: avoid_dynamic_calls
-      expect(() => object.shadowColor, throwsNoSuchMethodError);
-      // The same read of shadowOffsetX.
-      // ignore: avoid_dynamic_calls
-      expect(() => object.shadowOffsetX, throwsNoSuchMethodError);
-      // The same read of shadowOffsetY.
-      // ignore: avoid_dynamic_calls
-      expect(() => object.shadowOffsetY, throwsNoSuchMethodError);
 
       wrapper.parentNode!.removeChild(wrapper);
     });

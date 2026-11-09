@@ -562,6 +562,26 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
   /// [CanvasCompositeOperation.sourceOver]; setting null leaves it unchanged.
   abstract CanvasCompositeOperation? globalCompositeOperation;
 
+  // Shadows (Chart.js ADR 0106). No ported caller reads them: a plugin sets
+  // them, as a plugin of the browser canvas does.
+
+  /// `shadowBlur`: the blur of a shadow, in bitmap pixels. The transform does
+  /// not change it. A negative or a value that is not finite does nothing.
+  /// The DOM default is 0.
+  abstract double? shadowBlur;
+
+  /// `shadowColor`: a native `Color`. The DOM default is transparent black.
+  abstract Object? shadowColor;
+
+  /// `shadowOffsetX`: the horizontal offset of a shadow, in bitmap pixels.
+  /// The transform does not change it. A value that is not finite does
+  /// nothing. The DOM default is 0.
+  abstract double? shadowOffsetX;
+
+  /// `shadowOffsetY`: the vertical offset of a shadow, in bitmap pixels. The
+  /// rules of [shadowOffsetX] apply.
+  abstract double? shadowOffsetY;
+
   // Fill and stroke styles.
 
   /// `fillStyle`: a CSS color `String`, a [CanvasGradient] or a

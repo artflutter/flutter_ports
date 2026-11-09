@@ -105,6 +105,7 @@ const double _maxSectorRunGap = 1e-9;
 const double _maxLineFanExtent = 1e30;
 
 const ui.Color _black = ui.Color(0xFF000000);
+const ui.Color _transparent = ui.Color(0x00000000);
 
 const String _defaultFontString = '10px sans-serif';
 
@@ -486,6 +487,20 @@ final class _State {
   double globalAlpha = 1;
   ui.BlendMode blendMode = ui.BlendMode.srcOver;
   List<_Clip> clips = const [];
+  double shadowBlur = 0;
+  ui.Color shadowColor = _transparent;
+  double shadowOffsetX = 0;
+  double shadowOffsetY = 0;
+
+  /// Whether a draw casts a shadow (the HTML rule: a color that is not
+  /// transparent, and a blur or an offset). Each fast path tests this field.
+  bool shadowOn = false;
+
+  void updateShadowOn() {
+    shadowOn =
+        shadowColor.a != 0 &&
+        (shadowBlur > 0 || shadowOffsetX != 0 || shadowOffsetY != 0);
+  }
 
   void copyFrom(_State other) {
     transform.copyFrom(other.transform);
@@ -509,6 +524,11 @@ final class _State {
     globalAlpha = other.globalAlpha;
     blendMode = other.blendMode;
     clips = other.clips;
+    shadowBlur = other.shadowBlur;
+    shadowColor = other.shadowColor;
+    shadowOffsetX = other.shadowOffsetX;
+    shadowOffsetY = other.shadowOffsetY;
+    shadowOn = other.shadowOn;
   }
 
   static final _State defaults = _State();
@@ -1056,6 +1076,60 @@ final class UiCanvasContext
     return true;
   }
 
+  /// The sigma of the blur of a shadow. The HTML rule gives half of
+  /// `shadowBlur`, in bitmap pixels. A draw under the transform ([user])
+  /// divides it by the scale that the engine applies to a mask filter.
+  double _shadowSigma({required bool user}) {
+    final s = _s;
+    final sigma = s.shadowBlur / 2;
+    return user ? sigma / math.sqrt(s.transform.determinant.abs()) : sigma;
+  }
+
+  /// Draws the shadow of a shape with the paint [source] (Chart.js ADR 0106):
+  /// [draw] with a paint of the shadow, moved by the offset. With [user], the
+  /// shape is in user space. The offset then stays outside the transform.
+  void _castShadow(
+    ui.Paint source,
+    void Function(ui.Paint paint) draw, {
+    bool user = false,
+  }) {
+    final s = _s;
+    final sigma = _shadowSigma(user: user);
+    final paint = _shadowPaint
+      ..style = source.style
+      ..strokeWidth = source.strokeWidth
+      ..strokeCap = source.strokeCap
+      ..strokeJoin = source.strokeJoin
+      ..strokeMiterLimit = source.strokeMiterLimit
+      ..blendMode = source.blendMode
+      ..maskFilter = sigma > 0
+          ? ui.MaskFilter.blur(ui.BlurStyle.normal, sigma)
+          : null;
+    if (source.shader == null) {
+      paint
+        ..shader = null
+        ..colorFilter = null
+        ..color = s.shadowColor.withValues(
+          alpha: s.shadowColor.a * source.color.a,
+        );
+    } else {
+      // A transparent part of a gradient casts no shadow.
+      paint
+        ..shader = source.shader
+        ..color = source.color
+        ..colorFilter = ui.ColorFilter.mode(
+          s.shadowColor,
+          ui.BlendMode.srcIn,
+        );
+    }
+    final canvas = _c
+      ..save()
+      ..translate(s.shadowOffsetX, s.shadowOffsetY);
+    if (user) canvas.transform(s.transform.writeMatrix4(_m4));
+    draw(paint);
+    canvas.restore();
+  }
+
   /// Strokes [path], in bitmap space, for a similarity transform of
   /// [scale].
   void _strokeMapped(ui.Path path, double scale) {
@@ -1070,6 +1144,7 @@ final class UiCanvasContext
             s.lineDashOffset,
             caps: s.cap != ui.StrokeCap.butt,
           );
+    if (s.shadowOn) _castShadow(_strokePaint, (p) => _c.drawPath(dashed, p));
     _c.drawPath(dashed, _strokePaint);
     _drew();
   }
@@ -1095,6 +1170,12 @@ final class UiCanvasContext
       }
     }
     if (!_setupStroke(scale, mapped: true)) return;
+    if (s.shadowOn) {
+      _castShadow(
+        _strokePaint,
+        (p) => _c.drawCircle(ui.Offset(x, y), radius, p),
+      );
+    }
     _c.drawCircle(ui.Offset(x, y), radius, _strokePaint);
     _drew();
   }
@@ -1113,6 +1194,12 @@ final class UiCanvasContext
       return;
     }
     if (!_setupStroke(scale, mapped: true)) return;
+    if (_s.shadowOn) {
+      _castShadow(
+        _strokePaint,
+        (p) => _c.drawLine(ui.Offset(x0, y0), ui.Offset(x1, y1), p),
+      );
+    }
     _c.drawLine(ui.Offset(x0, y0), ui.Offset(x1, y1), _strokePaint);
     _drew();
   }
@@ -1120,7 +1207,10 @@ final class UiCanvasContext
   /// Whether a draw with [color] or [shader] can join the circle batch: a
   /// plain color in the `srcOver` mode.
   bool _batchable(ui.Color? color, UiShaderSource? shader) =>
-      shader == null && color != null && _s.blendMode == ui.BlendMode.srcOver;
+      shader == null &&
+      color != null &&
+      _s.blendMode == ui.BlendMode.srcOver &&
+      !_s.shadowOn;
 
   /// [color] times `globalAlpha`, as [_setupPaint] gives it, or `null`
   /// when `globalAlpha` is 0 and the draw paints nothing.
@@ -1143,6 +1233,9 @@ final class UiCanvasContext
             s.lineDashOffset,
             caps: s.cap != ui.StrokeCap.butt,
           );
+    if (s.shadowOn) {
+      _castShadow(_strokePaint, (p) => _c.drawPath(dashed, p), user: true);
+    }
     _c
       ..save()
       ..transform(s.transform.writeMatrix4(_m4))
@@ -1279,6 +1372,52 @@ final class UiCanvasContext
   }
 
   @override
+  double get shadowBlur => _s.shadowBlur;
+
+  @override
+  set shadowBlur(double? value) {
+    if (value == null || !value.isFinite || value < 0) return;
+    _s
+      ..shadowBlur = value
+      ..updateShadowOn();
+  }
+
+  @override
+  Object get shadowColor => _s.shadowColor;
+
+  /// A native Color. An invalid color throws without changing the current
+  /// color, as for `fillStyle`.
+  @override
+  set shadowColor(Object? value) {
+    if (value == null) return;
+    _s
+      ..shadowColor = requireUiColor(value, 'shadowColor')
+      ..updateShadowOn();
+  }
+
+  @override
+  double get shadowOffsetX => _s.shadowOffsetX;
+
+  @override
+  set shadowOffsetX(double? value) {
+    if (value == null || !value.isFinite) return;
+    _s
+      ..shadowOffsetX = value
+      ..updateShadowOn();
+  }
+
+  @override
+  double get shadowOffsetY => _s.shadowOffsetY;
+
+  @override
+  set shadowOffsetY(double? value) {
+    if (value == null || !value.isFinite) return;
+    _s
+      ..shadowOffsetY = value
+      ..updateShadowOn();
+  }
+
+  @override
   CanvasCompositeOperation get globalCompositeOperation =>
       compositeOperationOf(_s.blendMode);
 
@@ -1402,6 +1541,9 @@ final class UiCanvasContext
     if (!_setupPaint(_fillPaint, s.fillColor, s.fillShader, mapped: true)) {
       return;
     }
+    if (s.shadowOn) {
+      _castShadow(_fillPaint, (p) => _c.drawPath(_rectPath(x, y, w, h), p));
+    }
     if (t.isAxisAligned) {
       _c.drawRect(_mappedRect(x, y, w, h), _fillPaint);
     } else {
@@ -1452,6 +1594,7 @@ final class UiCanvasContext
     // A callback can inspect or mutate the temporary style/path/save state.
     // Let the original sequence handle any draw that can notify user code.
     if (_disposed ||
+        _s.shadowOn ||
         (!_notified && _onChanged != null) ||
         ui.Picture.onCreate != null ||
         ui.Picture.onDispose != null ||
@@ -1551,6 +1694,7 @@ final class UiCanvasContext
     // A callback can inspect or mutate the temporary style/path/save state,
     // as for a fused bar. So can an observer of a picture or an image.
     if (_disposed ||
+        s.shadowOn ||
         (!_notified && _onChanged != null) ||
         ui.Picture.onCreate != null ||
         ui.Picture.onDispose != null ||
@@ -1739,6 +1883,7 @@ final class UiCanvasContext
     final fill = s.fillColor;
     final strokeColor = s.strokeColor;
     if (_disposed ||
+        s.shadowOn ||
         (!_notified && _onChanged != null) ||
         ui.Picture.onCreate != null ||
         ui.Picture.onDispose != null ||
@@ -1813,6 +1958,9 @@ final class UiCanvasContext
   ui.Path? _pieceFill;
   final ui.Paint _pieceLayer = ui.Paint();
 
+  /// The paint of the shadow of a shape ([_castShadow]).
+  final ui.Paint _shadowPaint = ui.Paint();
+
   @override
   bool get takesPartitionedFill => !debugDrawLongPathsInPieces;
 
@@ -1825,6 +1973,7 @@ final class UiCanvasContext
   bool _tryFillInPieces(ui.PathFillType fillType) {
     final s = _s;
     if (!debugDrawLongPathsInPieces ||
+        s.shadowOn ||
         s.fillShader != null ||
         s.blendMode != ui.BlendMode.srcOver) {
       return false;
@@ -1849,6 +1998,7 @@ final class UiCanvasContext
     final s = _s;
     final t = s.transform;
     if (!debugDrawLongPathsInPieces ||
+        s.shadowOn ||
         path2d.version < minPieceCommands ||
         s.lineDash.isNotEmpty ||
         s.strokeShader != null ||
@@ -1900,6 +2050,7 @@ final class UiCanvasContext
   @override
   bool tryFillPartitionedPath(void Function(CanvasPath path) writePath) {
     if (_disposed ||
+        _s.shadowOn ||
         (!_notified && _onChanged != null) ||
         ui.Picture.onCreate != null ||
         ui.Picture.onDispose != null ||
@@ -1944,6 +2095,9 @@ final class UiCanvasContext
       )) {
         return;
       }
+      if (s.shadowOn) {
+        _castShadow(_fillPaint, (p) => _c.drawPath(path, p), user: true);
+      }
       _c
         ..save()
         ..transform(s.transform.writeMatrix4(_m4))
@@ -1978,6 +2132,12 @@ final class UiCanvasContext
         mapped: true,
       )) {
         return;
+      }
+      if (s.shadowOn) {
+        _castShadow(
+          _fillPaint,
+          (p) => _c.drawPath(_path.path..fillType = fillType, p),
+        );
       }
       final canvas = _c;
       final rect = _path.singleRect;
@@ -2164,6 +2324,7 @@ final class UiCanvasContext
     final t = s.transform;
     if (count < 2 ||
         _disposed ||
+        s.shadowOn ||
         !(ui.ImageFilter.isShaderFilterSupported ||
             debugLineFanWithoutImpeller) ||
         (!_notified && _onChanged != null) ||
@@ -2493,27 +2654,54 @@ final class UiCanvasContext
       layout.ideographic,
     );
     final top = shift - layout.ascent;
-    final canvas = _c;
     // A gradient or a pattern needs the paragraph space of its shader.
-    if (source == null && t.isTranslation && sx == 1) {
-      canvas.drawParagraph(
-        layout.paragraph,
-        ui.Offset(t.e + x + dx, t.f + y + top),
-      );
-    } else {
-      canvas
-        ..save()
-        ..transform(
-          t.isSimilarity && !t.isAxisAligned
-              ? _snappedTextMatrix(t, x, y)
-              : t.writeMatrix4(_m4),
-        )
-        ..translate(x, y);
-      if (sx != 1) canvas.scale(sx, 1);
-      canvas
-        ..drawParagraph(layout.paragraph, ui.Offset(dx, top))
-        ..restore();
+    void place(ui.Paragraph paragraph) {
+      if (source == null && t.isTranslation && sx == 1) {
+        _c.drawParagraph(
+          paragraph,
+          ui.Offset(t.e + x + dx, t.f + y + top),
+        );
+      } else {
+        final canvas = _c
+          ..save()
+          ..transform(
+            t.isSimilarity && !t.isAxisAligned
+                ? _snappedTextMatrix(t, x, y)
+                : t.writeMatrix4(_m4),
+          )
+          ..translate(x, y);
+        if (sx != 1) canvas.scale(sx, 1);
+        canvas
+          ..drawParagraph(paragraph, ui.Offset(dx, top))
+          ..restore();
+      }
     }
+
+    if (s.shadowOn) {
+      final sourceAlpha = source == null ? color!.a * alpha : alpha;
+      final paint = stroke ? _textStrokePaint(_black) : ui.Paint();
+      final sigma = _shadowSigma(user: true);
+      paint
+        ..color = s.shadowColor.withValues(
+          alpha: s.shadowColor.a * sourceAlpha,
+        )
+        ..maskFilter = sigma > 0
+            ? ui.MaskFilter.blur(ui.BlurStyle.normal, sigma)
+            : null;
+      final shadow = layoutCanvasText(
+        font,
+        prepared,
+        direction,
+        foreground: paint,
+      );
+      _c
+        ..save()
+        ..translate(s.shadowOffsetX, s.shadowOffsetY);
+      place(shadow.paragraph);
+      _c.restore();
+      shadow.paragraph.dispose();
+    }
+    place(layout.paragraph);
     // An uncached layout (a gradient or a pattern) is not used again. The
     // recording keeps its own reference to the painted text.
     if (source != null) layout.paragraph.dispose();
@@ -2608,6 +2796,47 @@ final class UiCanvasContext
 
   // Images.
 
+  /// The shadow of an image goes through a layer, because a mask filter
+  /// is not reliable on an image of each engine. The layer has the bounds of
+  /// the image in bitmap space, with room for the blur.
+  void _castImageShadow(ui.Image source, ui.Rect from, ui.Rect to) {
+    final s = _s;
+    final t = s.transform;
+    final sigma = s.shadowBlur / 2;
+    final xs = [
+      t.mapX(to.left, to.top),
+      t.mapX(to.right, to.top),
+      t.mapX(to.left, to.bottom),
+      t.mapX(to.right, to.bottom),
+    ];
+    final ys = [
+      t.mapY(to.left, to.top),
+      t.mapY(to.right, to.top),
+      t.mapY(to.left, to.bottom),
+      t.mapY(to.right, to.bottom),
+    ];
+    final bounds = ui.Rect.fromLTRB(
+      xs.reduce(math.min),
+      ys.reduce(math.min),
+      xs.reduce(math.max),
+      ys.reduce(math.max),
+    ).inflate(sigma * 3 + 1);
+    final layer = ui.Paint()
+      ..blendMode = s.blendMode
+      ..colorFilter = ui.ColorFilter.mode(s.shadowColor, ui.BlendMode.srcIn);
+    if (sigma > 0) {
+      layer.imageFilter = ui.ImageFilter.blur(sigmaX: sigma, sigmaY: sigma);
+    }
+    _c
+      ..save()
+      ..translate(s.shadowOffsetX, s.shadowOffsetY)
+      ..saveLayer(bounds, layer)
+      ..transform(t.writeMatrix4(_m4))
+      ..drawImageRect(source, from, to, _imagePaint)
+      ..restore()
+      ..restore();
+  }
+
   /// Draws a [UiImageSource]. Another image source does nothing.
   @override
   void drawImage(
@@ -2632,25 +2861,23 @@ final class UiCanvasContext
       ..color = alpha == 1 ? _black : _black.withValues(alpha: alpha)
       ..blendMode = s.blendMode;
     final source = image.image;
+    final from = ui.Rect.fromLTWH(
+      0,
+      0,
+      source.width.toDouble(),
+      source.height.toDouble(),
+    );
+    final to = ui.Rect.fromLTRB(
+      math.min(dx, dx + w),
+      math.min(dy, dy + h),
+      math.max(dx, dx + w),
+      math.max(dy, dy + h),
+    );
+    if (s.shadowOn) _castImageShadow(source, from, to);
     _c
       ..save()
       ..transform(t.writeMatrix4(_m4))
-      ..drawImageRect(
-        source,
-        ui.Rect.fromLTWH(
-          0,
-          0,
-          source.width.toDouble(),
-          source.height.toDouble(),
-        ),
-        ui.Rect.fromLTRB(
-          math.min(dx, dx + w),
-          math.min(dy, dy + h),
-          math.max(dx, dx + w),
-          math.max(dy, dy + h),
-        ),
-        _imagePaint,
-      )
+      ..drawImageRect(source, from, to, _imagePaint)
       ..restore();
     _drew();
   }

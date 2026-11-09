@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port and reads the UMD entry of
@@ -366,12 +368,34 @@ void main() {
     });
 
     group('controller.destroy', () {
-      // DIVERGES(chartjs): platform-canvas-no-shadow, no shadow attributes.
-      test(
-        'should reset context to default values',
-        () {},
-        skip: 'diverges: platform-canvas-no-shadow',
-      );
+      // DIVERGES(chartjs): adapt-direct-colors, native Color values.
+      testWidgets('should reset context to default values', (tester) async {
+        final wrapper = document.createElement<HarnessElement>('div');
+        final canvas = document.createElement<HTMLCanvasElement>('canvas');
+        wrapper.appendChild(canvas);
+        document.body.appendChild(wrapper);
+        final chart = Chart(canvas, <String, Object?>{});
+        final context = chart.ctx!;
+
+        chart.destroy();
+
+        // https://www.w3.org/TR/2dcontext/#conformance-requirements
+        expect(context.fillStyle, const ui.Color.fromRGBO(0, 0, 0, 1));
+        expect(context.font, '10px sans-serif');
+        expect(context.lineJoin, 'miter');
+        expect(context.lineCap, 'butt');
+        expect(context.lineWidth, 1);
+        expect(context.miterLimit, 10);
+        expect(context.shadowBlur, 0);
+        expect(context.shadowColor, const ui.Color(0x00000000));
+        expect(context.shadowOffsetX, 0);
+        expect(context.shadowOffsetY, 0);
+        expect(context.strokeStyle, const ui.Color.fromRGBO(0, 0, 0, 1));
+        expect(context.textAlign, 'start');
+        expect(context.textBaseline, 'alphabetic');
+
+        wrapper.parentNode!.removeChild(wrapper);
+      });
 
       testWidgets('should restore canvas initial values', (tester) async {
         await waitForDone((done) {
