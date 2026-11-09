@@ -729,6 +729,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     for plugins: no ported caller reads them. `_castShadow` of `canvas_ui.dart` draws the shape with
     a blur mask filter before the shape. Each fast path declines while `_State.shadowOn` is true.
     See `test/port/canvas/canvas_ui_shadow_test.dart`, which the CI job `test-impeller` also runs.
+    Chart.js ADR 0107: each typed dataset has `shadow`, a `ChartShadow`. The lowering writes the plain
+    extras `shadowColor`, `shadowBlur`, `shadowOffsetX` and `shadowOffsetY`, so the data-only path
+    stays. The `$chartView` plugin of `ChartView` sets them on the canvas around the draw of the
+    dataset. The area fill has no shadow. See `test/port/widgets/chart_view_shadow_test.dart`.
     Chart.js ADR 0105: on the web only, a stroke of a `Path2D` and a line fill to `origin`, `start` or
     `end` with one color draw in pieces with small bounds (`UiPathPieces`,
     `UiPathBuilder.tryFillColumns`). Skia on WebGL is slow for one long path, and one draw of a dense
@@ -796,7 +800,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 54 names. `config.dart` has `ChartConfig`, `ChartKind` and
+    `typed.dart` is its export list of 55 names. `config.dart` has `ChartConfig`, `ChartKind` and
     `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver

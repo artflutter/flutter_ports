@@ -209,6 +209,24 @@ when lowered, and callbacks should use a stable tear-off when possible.
 Hover, point-specific and element-style colors retain their existing types.
 The raw Map API keeps its existing color value/list/function forms.
 
+Each dataset class takes a `shadow`. The lines, the points, the bars and the arcs of the dataset
+cast it. The area fill of a line does not. `blur` is the `shadowBlur` of the canvas: the Gaussian
+sigma of the blur is half of it.
+
+```dart
+LineDataset(
+  data: [12, 19, 3, 5, 2, 3],
+  shadow: ChartShadow(
+    color: Color(0x59000000),
+    blur: 8,
+    offset: Offset(0, 3),
+  ),
+)
+```
+
+A shadow is not a Chart.js option. `ChartView` draws it. In a `ChartView.raw` dataset, set the
+keys `shadowColor` (a `Color`), `shadowBlur`, `shadowOffsetX` and `shadowOffsetY`.
+
 ### Axes
 
 `scales` maps an axis id to an axis. A chart type has default axes, so give only the axes with

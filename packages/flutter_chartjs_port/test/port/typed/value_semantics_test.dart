@@ -41,6 +41,7 @@ const List<String> _style = [
   'hoverBackgroundColor',
   'hoverBorderColor',
   'hoverBorderWidth',
+  'shadow',
 ];
 
 /// The parameter names of the line style.

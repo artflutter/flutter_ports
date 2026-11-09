@@ -9,10 +9,17 @@
 /// [DataPoint].
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, Offset;
 
 import 'package:flutter/foundation.dart'
-    show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
+    show
+        DiagnosticPropertiesBuilder,
+        Diagnosticable,
+        DiagnosticsProperty,
+        DoubleProperty,
+        Key,
+        immutable;
+import 'package:flutter/painting.dart' show ColorProperty;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show registerDataUpdateTypes;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
@@ -77,6 +84,7 @@ abstract final class Dataset with Diagnosticable {
     this.hoverBackgroundColor,
     this.hoverBorderColor,
     this.hoverBorderWidth,
+    this.shadow,
     this.extra,
   });
 
@@ -125,6 +133,15 @@ abstract final class Dataset with Diagnosticable {
   /// `hoverBorderWidth`.
   final double? hoverBorderWidth;
 
+  /// The shadow of the dataset (Chart.js ADR 0107). It is not a Chart.js
+  /// option.
+  ///
+  /// The shadow falls under the lines, the points, the bars and the arcs of
+  /// the dataset. The area fill of a line has no shadow. The keys
+  /// `shadowColor`, `shadowBlur`, `shadowOffsetX` and `shadowOffsetY` of the
+  /// dataset carry it, so a `ChartView.raw` dataset can set them too.
+  final ChartShadow? shadow;
+
   /// The Chart.js options of the dataset that have no parameter, for
   /// example `{'clip': 5}`.
   ///
@@ -150,6 +167,7 @@ abstract final class Dataset with Diagnosticable {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     Map<String, Object?>? extra,
   });
 
@@ -176,6 +194,7 @@ abstract final class Dataset with Diagnosticable {
     ('hoverBackgroundColor', hoverBackgroundColor),
     ('hoverBorderColor', hoverBorderColor),
     ('hoverBorderWidth', hoverBorderWidth),
+    ('shadow', shadow),
   ];
 
   @override
@@ -242,7 +261,69 @@ OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
   put(scope, OptionKey.hoverBorderColor, colorValue(dataset.hoverBorderColor));
   put(scope, OptionKey.hoverBorderWidth, dataset.hoverBorderWidth);
   dataset._lowerOwn(scope);
+  if (dataset.shadow case final shadow?) {
+    // Plain values keep the data-only path of Chart.js ADR 0100.
+    mergeExtra(scope, {
+      'shadowColor': colorValue(shadow.color),
+      'shadowBlur': shadow.blur,
+      'shadowOffsetX': shadow.offset.dx,
+      'shadowOffsetY': shadow.offset.dy,
+    });
+  }
   return mergeExtra(scope, dataset.extra);
+}
+
+/// The shadow of a dataset ([Dataset.shadow], Chart.js ADR 0107): the
+/// canvas shadow around the draw of the dataset.
+///
+/// The values are those of the Canvas 2D shadow: [blur] is `shadowBlur`, so
+/// the Gaussian sigma of the blur is `blur / 2`, and [offset] is in logical
+/// pixels and does not follow the transform of the canvas.
+@immutable
+final class ChartShadow with Diagnosticable {
+  /// A shadow of [color], blurred by [blur] and moved by [offset].
+  const ChartShadow({
+    required this.color,
+    this.blur = 0,
+    this.offset = Offset.zero,
+  }) : assert(blur >= 0, 'The blur is not negative.');
+
+  /// The color of the shadow: `shadowColor`. A transparent color draws no
+  /// shadow.
+  final Color color;
+
+  /// The blur of the shadow: `shadowBlur`. 0 gives a sharp shadow.
+  final double blur;
+
+  /// The move of the shadow: `shadowOffsetX` and `shadowOffsetY`.
+  final Offset offset;
+
+  /// A copy of this shadow with the given values.
+  ChartShadow copyWith({Color? color, double? blur, Offset? offset}) =>
+      ChartShadow(
+        color: color ?? this.color,
+        blur: blur ?? this.blur,
+        offset: offset ?? this.offset,
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is ChartShadow &&
+      other.color == color &&
+      other.blur == blur &&
+      other.offset == offset;
+
+  @override
+  int get hashCode => Object.hash(color, blur, offset);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(ColorProperty('color', color))
+      ..add(DoubleProperty('blur', blur))
+      ..add(DiagnosticsProperty<Offset>('offset', offset));
+  }
 }
 
 bool _dataUpdateTypesRegistered = false;
@@ -282,6 +363,7 @@ final class BarDataset extends Dataset {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.xAxisID,
     this.yAxisID,
     this.stack,
@@ -383,6 +465,7 @@ final class BarDataset extends Dataset {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     String? xAxisID,
     String? yAxisID,
     String? stack,
@@ -408,6 +491,7 @@ final class BarDataset extends Dataset {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     stack: stack ?? this.stack,
@@ -554,6 +638,7 @@ final class LineDataset extends Dataset with _LineStyle {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.xAxisID,
     this.yAxisID,
     this.stack,
@@ -700,6 +785,7 @@ final class LineDataset extends Dataset with _LineStyle {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     String? xAxisID,
     String? yAxisID,
     String? stack,
@@ -732,6 +818,7 @@ final class LineDataset extends Dataset with _LineStyle {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     stack: stack ?? this.stack,
@@ -805,6 +892,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.xAxisID,
     this.yAxisID,
     this.stack,
@@ -912,6 +1000,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     String? xAxisID,
     String? yAxisID,
     String? stack,
@@ -943,6 +1032,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     stack: stack ?? this.stack,
@@ -1011,6 +1101,7 @@ final class BubbleDataset extends Dataset {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.xAxisID,
     this.yAxisID,
     this.radius,
@@ -1054,6 +1145,7 @@ final class BubbleDataset extends Dataset {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     String? xAxisID,
     String? yAxisID,
     double? radius,
@@ -1072,6 +1164,7 @@ final class BubbleDataset extends Dataset {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     radius: radius ?? this.radius,
@@ -1167,6 +1260,7 @@ final class PieDataset extends Dataset with _ArcStyle {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.offset,
     this.hoverOffset,
     this.spacing,
@@ -1256,6 +1350,7 @@ final class PieDataset extends Dataset with _ArcStyle {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     double? offset,
     double? hoverOffset,
     double? spacing,
@@ -1277,6 +1372,7 @@ final class PieDataset extends Dataset with _ArcStyle {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     offset: offset ?? this.offset,
     hoverOffset: hoverOffset ?? this.hoverOffset,
     spacing: spacing ?? this.spacing,
@@ -1327,6 +1423,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.offset,
     this.hoverOffset,
     this.spacing,
@@ -1388,6 +1485,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     double? offset,
     double? hoverOffset,
     double? spacing,
@@ -1409,6 +1507,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     offset: offset ?? this.offset,
     hoverOffset: hoverOffset ?? this.hoverOffset,
     spacing: spacing ?? this.spacing,
@@ -1459,6 +1558,7 @@ final class PolarAreaDataset extends Dataset {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.offset,
     this.hoverOffset,
     this.spacing,
@@ -1490,6 +1590,7 @@ final class PolarAreaDataset extends Dataset {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     double? offset,
     double? hoverOffset,
     double? spacing,
@@ -1506,6 +1607,7 @@ final class PolarAreaDataset extends Dataset {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     offset: offset ?? this.offset,
     hoverOffset: hoverOffset ?? this.hoverOffset,
     spacing: spacing ?? this.spacing,
@@ -1557,6 +1659,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     super.hoverBackgroundColor,
     super.hoverBorderColor,
     super.hoverBorderWidth,
+    super.shadow,
     this.fill,
     this.tension,
     this.borderDash,
@@ -1646,6 +1749,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     Color? hoverBackgroundColor,
     Color? hoverBorderColor,
     double? hoverBorderWidth,
+    ChartShadow? shadow,
     ChartFill? fill,
     double? tension,
     List<double>? borderDash,
@@ -1673,6 +1777,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    shadow: shadow ?? this.shadow,
     fill: fill ?? this.fill,
     tension: tension ?? this.tension,
     borderDash: borderDash ?? this.borderDash,

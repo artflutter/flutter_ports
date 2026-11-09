@@ -146,6 +146,7 @@ ChartPointStyle
 ChartPosition
 ChartResolver
 ChartScript
+ChartShadow
 ChartTheme
 ChartThemeData
 ChartTitle
