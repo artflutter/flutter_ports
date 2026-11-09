@@ -270,6 +270,12 @@ const List<DocProperty> lineProperties = [
     fallback: 'undefined',
   ),
   DocProperty(
+    'shadow',
+    section: 'line-styling',
+    type: 'ChartShadow',
+    fallback: 'no shadow',
+  ),
+  DocProperty(
     'showLine',
     section: 'line-styling',
     type: 'bool',
@@ -541,6 +547,12 @@ DocPageContent lineChartPage() => DocPageContent(
                     'straight lines. The monotone mode ignores this option.',
               ),
               (
+                'shadow',
+                'The shadow of the line and its points: a `ChartShadow` with '
+                    'a color, a blur and an offset. The area fill has no '
+                    'shadow. The shadow is not a Chart.js option.',
+              ),
+              (
                 'showLine',
                 'If `false`, the chart does not draw the line of this '
                     'dataset.',
@@ -592,6 +604,15 @@ DocPageContent lineChartPage() => DocPageContent(
                     datasets: [pointsOnlyLine],
                   ),
                   region: 'line-points-only',
+                ),
+                ExampleVariant(
+                  label: 'Shadow',
+                  config: ChartConfig(
+                    type: .line,
+                    labels: months,
+                    datasets: [shadowLine],
+                  ),
+                  region: 'line-shadow',
                 ),
               ],
             ),
