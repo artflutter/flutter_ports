@@ -21,7 +21,7 @@ SPDX-License-Identifier = "MIT"
 # The Chart.js port, and the gallery code where ported Chart.js samples live:
 # derived from Chart.js (MIT), so the upstream notice is kept alongside ours.
 [[annotations]]
-path = ["packages/flutter_chartjs_port/**", "apps/chartjs_gallery/lib/**", "apps/chartjs_gallery/test/**"]
+path = ["packages/flutter_chartjs_port/**", "apps/chartjs_gallery/lib/**", "apps/chartjs_gallery/test/**", "apps/chartjs_docs/lib/**", "apps/chartjs_docs/test/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2014-2024 Chart.js Contributors", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"
@@ -71,6 +71,8 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = [
   "apps/chartjs_gallery/web/favicon.png",
+  "apps/chartjs_docs/web/favicon.png",
+  "apps/chartjs_docs/web/icons/**",
   "apps/chartjs_gallery/web/icons/**",
   "apps/chartjs_gallery/macos/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
   "apps/chartjs_gallery/ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
@@ -146,3 +148,10 @@ path = "apps/chartjs_gallery/design/logo-options/**/references/input-*.png"
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Vasiliy Ditsyak"
 SPDX-License-Identifier = "MIT"
+
+# The code font of the docs site. The font file stays unchanged.
+[[annotations]]
+path = "apps/chartjs_docs/assets/fonts/RobotoMono-Regular.ttf"
+precedence = "override"
+SPDX-FileCopyrightText = "2015 Google Inc."
+SPDX-License-Identifier = "Apache-2.0"

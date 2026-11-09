@@ -17,6 +17,13 @@
       "flutterMode": "profile"
     },
     {
+      "name": "chartjs_docs",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/chartjs_docs",
+      "program": "lib/main.dart"
+    },
+    {
       "name": "chart_benchmark_lab",
       "type": "dart",
       "request": "launch",

@@ -1,5 +1,8 @@
 name: pages
 
+# Deploys the documentation site on the newest stable Flutter:
+#   https://artflutter.github.io/flutter_ports/docs/
+#
 # Deploys the chart benchmark lab on the newest build of each Flutter channel:
 #   https://artflutter.github.io/flutter_ports/lab-stable/
 #   https://artflutter.github.io/flutter_ports/lab-beta/
@@ -29,6 +32,10 @@ on:
       - apps/chart_benchmark_lab/lib/**
       - apps/chart_benchmark_lab/pubspec.yaml
       - apps/chart_benchmark_lab/web/**
+      - apps/chartjs_docs/assets/**
+      - apps/chartjs_docs/lib/**
+      - apps/chartjs_docs/pubspec.yaml
+      - apps/chartjs_docs/web/**
       - packages/flutter_chartjs_port/lib/**
       - packages/flutter_chartjs_port/pubspec.yaml
       - pubspec.lock
@@ -124,9 +131,37 @@ jobs:
           path: site
           if-no-files-found: error
 
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Resolve the docs alone
+        working-directory: apps/chartjs_docs
+        # For the same reason as the lab.
+        run: |
+          sed -i '/^resolution: workspace$/d' pubspec.yaml
+          cp ../../pubspec.lock pubspec.lock
+          flutter pub get
+      - name: Build the docs for the web (WebAssembly + JavaScript fallback)
+        working-directory: apps/chartjs_docs
+        run: flutter build web --wasm --base-href /flutter_ports/docs/
+      - name: Put the build into its folder
+        run: |
+          mkdir site
+          cp -R apps/chartjs_docs/build/web site/docs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: docs
+          path: site
+          if-no-files-found: error
+
   deploy:
-    needs: [version, build]
-    # A channel that failed does not stop the pages of the other channels.
+    needs: [version, build, build-docs]
+    # A build that failed does not stop the other pages.
     if: ${{ !cancelled() && needs.version.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
@@ -144,6 +179,12 @@ jobs:
         with:
           pattern: lab-*
           merge-multiple: true
+          path: site
+      - uses: actions/download-artifact@v8
+        # A failed build of the docs has no artifact. The next step says so.
+        continue-on-error: true
+        with:
+          name: docs
           path: site
       - name: Assemble the site
         env:
@@ -172,6 +213,13 @@ jobs:
           if [ "$built" -eq 0 ]; then
             echo '::error::The lab did not build on any channel.'
             exit 1
+          fi
+          # The page of the docs says so. It does not keep an old build.
+          if [ ! -d site/docs ]; then
+            echo '::warning::The docs did not build in this run.'
+            mkdir -p site/docs
+            printf '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<title>Chart.js for Flutter</title>\n<p>The docs did not build in this run. <a href="%s">Read the run</a>.</p>\n</html>\n' \
+              "$RUN_URL" > site/docs/index.html
           fi
           # The old address of the lab goes to the root page.
           mkdir site/lab

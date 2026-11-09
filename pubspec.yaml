@@ -13,6 +13,7 @@ workspace:
   - packages/flutter_chartjs_plugin_zoom_port
   - apps/chartjs_gallery
   - apps/chart_benchmark_lab
+  - apps/chartjs_docs
 
 dev_dependencies:
   commitlint_cli: ^0.8.1
@@ -32,6 +33,13 @@ melos:
     benchmark:build:web:
       run: cd apps/chart_benchmark_lab && flutter build web --wasm
       description: Build the chart benchmark for web with a JavaScript fallback.
+    docs:
+      run: cd apps/chartjs_docs && flutter run -d chrome
+      stdio: inherit
+      description: Run the documentation site in Chrome.
+    docs:build:web:
+      run: cd apps/chartjs_docs && flutter build web --wasm
+      description: Build the documentation site for the web (WebAssembly with a JavaScript fallback).
     format:
       run: dart format .
       description: Format all Dart code.
