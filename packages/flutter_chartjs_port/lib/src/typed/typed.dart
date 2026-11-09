@@ -40,6 +40,7 @@ export 'package:flutter_chartjs_port/src/typed/datasets.dart'
     show
         BarDataset,
         BubbleDataset,
+        ChartShadow,
         DataPoint,
         Dataset,
         DoughnutDataset,
