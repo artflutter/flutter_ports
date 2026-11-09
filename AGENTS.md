@@ -725,6 +725,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Public list exposure and complex commands materialize in original order.
     Boundary/ownership tests cover this storage-only change; no capacity hint
     or line algorithm/data-only guard changes are involved.
+    Chart.js ADR 0106: the canvas has `shadowBlur`, `shadowColor`, `shadowOffsetX` and `shadowOffsetY`,
+    for plugins: no ported caller reads them. `_castShadow` of `canvas_ui.dart` draws the shape with
+    a blur mask filter before the shape. Each fast path declines while `_State.shadowOn` is true.
+    See `test/port/canvas/canvas_ui_shadow_test.dart`, which the CI job `test-impeller` also runs.
     Chart.js ADR 0105: on the web only, a stroke of a `Path2D` and a line fill to `origin`, `start` or
     `end` with one color draw in pieces with small bounds (`UiPathPieces`,
     `UiPathBuilder.tryFillColumns`). Skia on WebGL is slow for one long path, and one draw of a dense

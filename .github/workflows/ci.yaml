@@ -103,11 +103,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
-      - name: Run the line fan twins on Impeller
+      - name: Run the line fan twins and the shadow tests on Impeller
         working-directory: packages/flutter_chartjs_port
         env:
           CHART_IMPELLER: "1"
-        run: flutter test --enable-impeller test/port/canvas/canvas_line_fan_test.dart test/port/scales/scale.radialLinear_line_fan_test.dart
+        run: flutter test --enable-impeller test/port/canvas/canvas_line_fan_test.dart test/port/scales/scale.radialLinear_line_fan_test.dart test/port/canvas/canvas_ui_shadow_test.dart
 
   fixtures:
     # Tool 7 of packages/flutter_chartjs_port/doc/porting-flow.md section 4

@@ -1698,7 +1698,7 @@ The specs never see `chartSize` (`displaySize` after C2) or the stretch. Only `i
 | `platform.dom` | responsive false, "canvas style" (345 x 125), "decimal display" (345.42) | `initCanvas` style read | pass | pass | `diverges:` |
 | `platform.dom` | responsive false, "attributes for the render size and style for the display size" (165 x 85, 345 x 125) | attributes, stretch | **fail** (render from the style) | **pass** | `diverges:` |
 | `platform.dom` | responsive true, "fit parent using aspect ratio" (150 x 245 to 214 x 350) | `initCanvas` style read | pass | pass. The callback never runs, as upstream. The construction gives 300 x 490, the first observer resize 214 x 350. `test/port/core/core.controller_test.dart`, group "the platform.dom spec cases", pins both sizes | fail or `diverges:` |
-| `platform.dom` | destroy, "reset context to default values" | `canvas.width = canvas.width`, the shadow attributes | `diverges: platform-canvas-no-shadow` | `diverges: platform-canvas-no-shadow`. The canvas layer has no shadow attributes. Cut 2 does not change this result | `diverges: platform-canvas-no-shadow` |
+| `platform.dom` | destroy, "reset context to default values" | `canvas.width = canvas.width`, the shadow attributes | passes (Chart.js ADR 0106) | passes. Cut 2 does not change this result | passes |
 | `platform.dom` | destroy, "restore canvas initial values" (attribute 180) | attributes, style restore | `n/a` | **pass** | `diverges:` |
 | `platform.dom` | event handling | — | pass | `blocked: controller.line` (pass after the controller port) | pass |
 | `platform.dom` | isAttached | — | `n/a` | `n/a` | `n/a` |

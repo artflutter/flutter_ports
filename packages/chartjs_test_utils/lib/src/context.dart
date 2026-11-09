@@ -67,6 +67,20 @@ class MockContext implements CanvasRenderingContext2D {
   /// context.js:3 `constructor`.
   MockContext();
 
+  // Port-only: the shadow attributes of Chart.js ADR 0106. The chart never
+  // reads them, and the mock does not record them.
+  @override
+  double? shadowBlur;
+
+  @override
+  Object? shadowColor;
+
+  @override
+  double? shadowOffsetX;
+
+  @override
+  double? shadowOffsetY;
+
   // context.js:4 `this._calls = []`.
   List<ContextCall> _calls = [];
 
