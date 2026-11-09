@@ -174,6 +174,20 @@ const pointsOnlyLine = LineDataset(
 );
 // #enddocregion line-points-only
 
+// #docregion line-shadow
+const shadowLine = LineDataset(
+  label: 'Shadow',
+  data: values,
+  borderColor: .constant(teal),
+  borderWidth: 3,
+  shadow: ChartShadow(
+    color: Color(0x66000000),
+    blur: 10,
+    offset: Offset(0, 6),
+  ),
+);
+// #enddocregion line-shadow
+
 /// The data of the gap examples.
 const List<num?> gapValues = [65, 59, null, 81, 56, null, 40];
 
