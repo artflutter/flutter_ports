@@ -36,6 +36,30 @@ enum ChartLibrary {
   /// The reason that a chart of [type] does not run on this library.
   String unsupportedReason(ChartType type) =>
       '$label $version has no ${type.label.toLowerCase()} chart.';
+
+  /// Whether the public API of this library draws the series shadow of a
+  /// chart of [type], with or without [blur].
+  ///
+  /// fl_chart has a shadow only on the line of a line chart. Graphic has
+  /// only Material elevation: it always blurs, and on a line it shadows the
+  /// filled polygon and not the stroke. Syncfusion has no public shadow.
+  bool drawsShadow(ChartType type, {required bool blur}) => switch (this) {
+    chartjs => true,
+    flChart => type == ChartType.line,
+    graphic => blur && !type.drawsLine,
+    syncfusion => false,
+  };
+
+  /// Whether this library can run [config] with its public API.
+  bool runs(BenchmarkConfig config) =>
+      supports(config.type) &&
+      (!config.shadow || drawsShadow(config.type, blur: config.shadowBlur));
+
+  /// The reason that [config] does not run on this library.
+  String reasonFor(BenchmarkConfig config) => supports(config.type)
+      ? '$label $version has no ${config.shadowBlur ? 'blurred' : 'sharp'} '
+            'shadow on a ${config.type.label.toLowerCase()} chart.'
+      : unsupportedReason(config.type);
 }
 
 /// The eight chart types of Chart.js, on every adapter that has them.
@@ -108,6 +132,15 @@ const chartTeal = Color(0xff12a89d);
 /// Common grid stroke.
 const chartGrid = Color(0xffe5e9f1);
 
+/// Common series shadow color.
+const chartShadow = Color(0x59000000);
+
+/// Common series shadow offset, in logical pixels.
+const chartShadowOffset = Offset(0, 3);
+
+/// Common Gaussian sigma of a blurred series shadow, in logical pixels.
+const chartShadowSigma = 4.0;
+
 /// Immutable test configuration; library selection is deliberately separate.
 @immutable
 class BenchmarkConfig {
@@ -123,6 +156,8 @@ class BenchmarkConfig {
     this.grid = false,
     this.alternateColors = false,
     this.tooltips = false,
+    this.shadow = false,
+    this.shadowBlur = false,
     this.overlayLabels = 0,
     this.rotateLabels = false,
     this.seed = 7,
@@ -158,6 +193,12 @@ class BenchmarkConfig {
   /// Enable the selected library's pointer tooltip behavior.
   final bool tooltips;
 
+  /// A shadow under the series, offset by [chartShadowOffset].
+  final bool shadow;
+
+  /// Blur the [shadow] with [chartShadowSigma].
+  final bool shadowBlur;
+
   /// Common overlay text count, outside each library's renderer.
   final int overlayLabels;
 
@@ -179,6 +220,8 @@ class BenchmarkConfig {
     bool? grid,
     bool? alternateColors,
     bool? tooltips,
+    bool? shadow,
+    bool? shadowBlur,
     int? overlayLabels,
     bool? rotateLabels,
     int? seed,
@@ -193,6 +236,8 @@ class BenchmarkConfig {
     grid: grid ?? this.grid,
     alternateColors: alternateColors ?? this.alternateColors,
     tooltips: tooltips ?? this.tooltips,
+    shadow: shadow ?? this.shadow,
+    shadowBlur: shadowBlur ?? this.shadowBlur,
     overlayLabels: overlayLabels ?? this.overlayLabels,
     rotateLabels: rotateLabels ?? this.rotateLabels,
     seed: seed ?? this.seed,
@@ -211,6 +256,8 @@ class BenchmarkConfig {
       other.grid == grid &&
       other.alternateColors == alternateColors &&
       other.tooltips == tooltips &&
+      other.shadow == shadow &&
+      other.shadowBlur == shadowBlur &&
       other.overlayLabels == overlayLabels &&
       other.rotateLabels == rotateLabels &&
       other.seed == seed;
@@ -227,6 +274,8 @@ class BenchmarkConfig {
     grid,
     alternateColors,
     tooltips,
+    shadow,
+    shadowBlur,
     overlayLabels,
     rotateLabels,
     seed,
@@ -245,6 +294,9 @@ class BenchmarkConfig {
     'grid': type.hasAxes && grid,
     'alternateColors': type.hasItemColors && alternateColors,
     'tooltips': tooltips,
+    // Only a set shadow adds a key, so the saved runs without one keep
+    // their comparison keys.
+    if (shadow) 'shadow': shadowBlur ? 'blurred' : 'sharp',
     'overlayLabels': overlayLabels,
     'rotateLabels': overlayLabels > 0 && rotateLabels,
     'nativeTransitions': false,

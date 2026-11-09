@@ -687,52 +687,56 @@ class _BenchmarkPageState extends State<BenchmarkPage>
           ),
           const Divider(height: 28),
           const Text('FEATURES', style: _eyebrow),
-          _toggle(
-            'Point markers',
-            'markers',
-            config.markers,
-            !locked && drawsLine,
-            (v) => controller.configure(config.copyWith(markers: v)),
-            hint: 'Line, radar',
-          ),
-          _toggle(
-            'Smooth lines',
-            'curved',
-            config.curved,
-            !locked && isLine,
-            (v) => controller.configure(config.copyWith(curved: v)),
-            hint: 'Line only',
-          ),
-          _toggle(
-            'Area fill',
-            'fill',
-            config.fill,
-            !locked && drawsLine,
-            (v) => controller.configure(config.copyWith(fill: v)),
-            hint: 'Line, radar',
-          ),
-          _toggle(
-            'Axis labels',
-            'axes',
-            config.axes,
-            !locked && config.type.hasAxes,
-            (v) => controller.configure(config.copyWith(axes: v)),
-          ),
-          _toggle(
-            'Grid lines',
-            'grid',
-            config.grid,
-            !locked && config.type.hasAxes,
-            (v) => controller.configure(config.copyWith(grid: v)),
-          ),
-          _toggle(
-            'Alternate item colors',
-            'colors',
-            config.alternateColors,
-            !locked && config.type.hasItemColors,
-            (v) => controller.configure(config.copyWith(alternateColors: v)),
-            hint: 'Not line, radar',
-          ),
+          // A feature that the chart type does not have is hidden. A run
+          // only disables the features that it shows.
+          if (drawsLine)
+            _toggle(
+              'Point markers',
+              'markers',
+              config.markers,
+              !locked,
+              (v) => controller.configure(config.copyWith(markers: v)),
+            ),
+          if (isLine)
+            _toggle(
+              'Smooth lines',
+              'curved',
+              config.curved,
+              !locked,
+              (v) => controller.configure(config.copyWith(curved: v)),
+            ),
+          if (drawsLine)
+            _toggle(
+              'Area fill',
+              'fill',
+              config.fill,
+              !locked,
+              (v) => controller.configure(config.copyWith(fill: v)),
+            ),
+          if (config.type.hasAxes) ...[
+            _toggle(
+              'Axis labels',
+              'axes',
+              config.axes,
+              !locked,
+              (v) => controller.configure(config.copyWith(axes: v)),
+            ),
+            _toggle(
+              'Grid lines',
+              'grid',
+              config.grid,
+              !locked,
+              (v) => controller.configure(config.copyWith(grid: v)),
+            ),
+          ],
+          if (config.type.hasItemColors)
+            _toggle(
+              'Alternate item colors',
+              'colors',
+              config.alternateColors,
+              !locked,
+              (v) => controller.configure(config.copyWith(alternateColors: v)),
+            ),
           _toggle(
             'Tooltips',
             'tooltips',
@@ -740,6 +744,22 @@ class _BenchmarkPageState extends State<BenchmarkPage>
             !locked,
             (v) => controller.configure(config.copyWith(tooltips: v)),
           ),
+          _toggle(
+            'Shadow',
+            'shadow',
+            config.shadow,
+            !locked,
+            (v) => controller.configure(config.copyWith(shadow: v)),
+            hint: _shadowHint(config),
+          ),
+          if (config.shadow)
+            _toggle(
+              'Shadow blur',
+              'shadowBlur',
+              config.shadowBlur,
+              !locked,
+              (v) => controller.configure(config.copyWith(shadowBlur: v)),
+            ),
           const Divider(height: 28),
           const Text(
             'Overlay labels',
@@ -759,13 +779,14 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                     config.copyWith(overlayLabels: v.first),
                   ),
           ),
-          _toggle(
-            'Rotate labels',
-            'rotate',
-            config.rotateLabels,
-            !locked && config.overlayLabels > 0,
-            (v) => controller.configure(config.copyWith(rotateLabels: v)),
-          ),
+          if (config.overlayLabels > 0)
+            _toggle(
+              'Rotate labels',
+              'rotate',
+              config.rotateLabels,
+              !locked,
+              (v) => controller.configure(config.copyWith(rotateLabels: v)),
+            ),
           const Divider(height: 28),
           Row(
             children: [
@@ -956,8 +977,10 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                               ),
                             ),
                             Text(
-                              engine.supports(controller.config.type)
+                              engine.runs(controller.config)
                                   ? 'v${engine.version}'
+                                  : engine.supports(controller.config.type)
+                                  ? 'No shadow here'
                                   : 'No ${_typeName(controller.config)} '
                                         'chart',
                               style: const TextStyle(
@@ -1378,6 +1401,18 @@ Widget _badge(String label, Color color) => Container(
     style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color),
   ),
 );
+
+/// The libraries that cannot draw the shadow of [config], or `null`.
+String? _shadowHint(BenchmarkConfig config) {
+  final missing = [
+    for (final engine in ChartLibrary.values)
+      if (engine.supports(config.type) &&
+          !engine.drawsShadow(config.type, blur: config.shadowBlur))
+        engine.label,
+  ];
+  return missing.isEmpty ? null : 'Not on ${missing.join(', ')}';
+}
+
 Widget _toggle(
   String label,
   String id,

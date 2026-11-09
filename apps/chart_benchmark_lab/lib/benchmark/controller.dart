@@ -248,14 +248,15 @@ class BenchmarkController extends ChangeNotifier {
   /// Number of engines in the active or the last batch.
   int get batchTotal => _batchOrder.length;
 
-  /// Whether the selected library can draw the selected chart type.
-  bool get canRun => library.supports(config.type);
+  /// Whether the selected library can draw the selected chart type and
+  /// features.
+  bool get canRun => library.runs(config);
 
   /// Settings stay fixed through warmup, capture and timing-batch draining.
   bool get controlsLocked => capturing || finishing || batchCapturing;
 
-  /// Capture every library that has the selected chart type, using the current
-  /// duration and unchanged settings.
+  /// Capture every library that can draw the selected chart type and features,
+  /// using the current duration and unchanged settings.
   /// Each pass takes a new random engine order, so no engine always runs first.
   /// Each engine gets its own reset, two-second warmup and timing window.
   void captureAll() {
@@ -266,14 +267,14 @@ class BenchmarkController extends ChangeNotifier {
       notifyListeners();
       return;
     }
-    _batchOrder = ChartLibrary.values.where(_supportsType).toList()
+    _batchOrder = ChartLibrary.values.where(_runsConfig).toList()
       ..shuffle(_random);
     _batchIndex = 0;
     library = _batchOrder.first;
     _begin(capture: true);
   }
 
-  bool _supportsType(ChartLibrary value) => value.supports(config.type);
+  bool _runsConfig(ChartLibrary value) => value.runs(config);
 
   /// Current comparable workload identifier.
   String get comparisonKey =>
@@ -318,7 +319,7 @@ class BenchmarkController extends ChangeNotifier {
 
   String get _readyMessage => canRun
       ? 'Ready. Measurements exclude the first 2 seconds.'
-      : library.unsupportedReason(config.type);
+      : library.reasonFor(config);
 
   /// Changes the length of the next capture.
   void setCaptureSeconds(int seconds) {
@@ -340,7 +341,7 @@ class BenchmarkController extends ChangeNotifier {
       return;
     }
     if (!canRun) {
-      message = library.unsupportedReason(config.type);
+      message = library.reasonFor(config);
       notifyListeners();
       return;
     }

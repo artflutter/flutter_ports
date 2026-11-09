@@ -363,6 +363,91 @@ void main() {
     });
   }
 
+  for (final library in ChartLibrary.values) {
+    for (final type in ChartType.values) {
+      for (final blur in [false, true]) {
+        testWidgets(
+          '${library.name} ${type.name} draws a shadow with blur $blur or '
+          'shows why not',
+          (tester) async {
+            final generator = DatasetGenerator(12, 7);
+            final config = BenchmarkConfig(
+              type: type,
+              count: 12,
+              markers: true,
+              fill: true,
+              shadow: true,
+              shadowBlur: blur,
+            );
+            Widget scene(int step) => MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: SizedBox(
+                    width: 600,
+                    height: 350,
+                    child: BenchmarkChart(
+                      library: library,
+                      config: config,
+                      frame: generator.frame(step),
+                      size: const Size(600, 350),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            await tester.pumpWidget(scene(0));
+            await tester.pump(const Duration(milliseconds: 20));
+            await tester.pumpWidget(scene(1));
+            await tester.pump(const Duration(milliseconds: 20));
+            expect(tester.takeException(), isNull);
+            expect(
+              find.byKey(const ValueKey('chart.unsupported')),
+              library.runs(config) ? findsNothing : findsOneWidget,
+            );
+            await tester.pumpWidget(const SizedBox());
+            await tester.pump(const Duration(milliseconds: 20));
+          },
+        );
+      }
+    }
+  }
+
+  testWidgets('the settings hide the features that a chart type has not', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const ChartBenchmarkApp());
+    await tester.pump(const Duration(milliseconds: 20));
+    Finder feature(String id) => find.byKey(ValueKey('feature.$id'));
+    for (final id in ['markers', 'curved', 'fill', 'axes', 'grid']) {
+      expect(feature(id), findsOneWidget, reason: id);
+    }
+    expect(feature('colors'), findsNothing);
+    expect(feature('shadowBlur'), findsNothing);
+    expect(feature('rotate'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('type.pie')));
+    await tester.pump(const Duration(milliseconds: 20));
+    for (final id in ['markers', 'curved', 'fill', 'axes', 'grid']) {
+      expect(feature(id), findsNothing, reason: id);
+    }
+    expect(feature('colors'), findsOneWidget);
+    await tester.ensureVisible(feature('shadow'));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.tap(feature('shadow'));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(feature('shadowBlur'), findsOneWidget);
+    expect(find.text('Not on fl_chart, Graphic, Syncfusion'), findsOneWidget);
+    await tester.tap(feature('shadowBlur'));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(find.text('Not on fl_chart, Syncfusion'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
+
   testWidgets(
     'library switch retains count and features and clears live metrics',
     (tester) async {
