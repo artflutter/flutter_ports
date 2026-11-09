@@ -67,6 +67,35 @@ void main() {
       expect(json['grid'], json['axes'], reason: type.name);
     }
   });
+  test('the shadow runs only where the public API draws it', () {
+    for (final type in ChartType.values) {
+      for (final blur in [false, true]) {
+        final config = BenchmarkConfig(
+          type: type,
+          shadow: true,
+          shadowBlur: blur,
+        );
+        final reason = '${type.name} blur $blur';
+        expect(ChartLibrary.chartjs.runs(config), isTrue, reason: reason);
+        expect(
+          ChartLibrary.flChart.runs(config),
+          type == ChartType.line,
+          reason: reason,
+        );
+        expect(
+          ChartLibrary.graphic.runs(config),
+          blur && !type.drawsLine,
+          reason: reason,
+        );
+        expect(ChartLibrary.syncfusion.runs(config), isFalse, reason: reason);
+      }
+    }
+    expect(const BenchmarkConfig().toJson().containsKey('shadow'), isFalse);
+    expect(
+      const BenchmarkConfig(shadow: true, shadowBlur: true).toJson()['shadow'],
+      'blurred',
+    );
+  });
   test('only the radar of Syncfusion has no public chart', () {
     for (final library in ChartLibrary.values) {
       for (final type in ChartType.values) {

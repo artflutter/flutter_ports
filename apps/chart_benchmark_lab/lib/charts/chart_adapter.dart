@@ -74,13 +74,55 @@ class BenchmarkChart extends StatelessWidget {
             (label, index) => index % step == 0 ? label : '',
       );
 
+  /// The Chart.js series shadow: canvas shadow state around each dataset
+  /// draw. The filler of a line draws first, in its own `beforeDatasetDraw`,
+  /// so the fill has no shadow, as in fl_chart. The hooks touch only the
+  /// context, so the plugin keeps the data-only updates.
+  static Map<String, Object?> _chartJsShadow({required bool blur}) => {
+    'id': 'benchShadow',
+    'supportsDataUpdates': true,
+    'beforeDatasetDraw': (cj.Chart chart, Object? args, Object? options) {
+      chart.ctx!
+        ..save()
+        ..shadowColor = chartShadow
+        ..shadowOffsetX = chartShadowOffset.dx
+        ..shadowOffsetY = chartShadowOffset.dy
+        // The canvas blur is twice the Gaussian sigma.
+        ..shadowBlur = blur ? chartShadowSigma * 2 : 0;
+    },
+    'afterDatasetDraw': (cj.Chart chart, Object? args, Object? options) {
+      chart.ctx!.restore();
+    },
+  };
+
+  /// One plugin Map for each blur: `ChartConfig ==` compares the plugins by
+  /// identity.
+  static final List<Map<String, Object?>> _chartJsShadows = [
+    _chartJsShadow(blur: false),
+    _chartJsShadow(blur: true),
+  ];
+
+  /// The fl_chart line shadow. fl_chart converts the radius to a sigma with
+  /// `radius * 0.57735 + 0.5`.
+  Shadow get _flShadow => config.shadow
+      ? Shadow(
+          color: chartShadow,
+          offset: chartShadowOffset,
+          blurRadius: config.shadowBlur ? (chartShadowSigma - .5) / .57735 : 0,
+        )
+      : const Shadow(color: Colors.transparent);
+
+  /// The Graphic shadow: Material elevation, the only shadow of its API.
+  gr.ElevationEncode? get _graphicElevation =>
+      config.shadow ? gr.ElevationEncode(value: 4) : null;
+
   @override
   Widget build(BuildContext context) {
-    if (!library.supports(config.type)) {
+    if (!library.runs(config)) {
       return Center(
         key: const ValueKey('chart.unsupported'),
         child: Text(
-          library.unsupportedReason(config.type),
+          library.reasonFor(config),
           textAlign: TextAlign.center,
           style: const TextStyle(color: Color(0xff64748b)),
         ),
@@ -272,6 +314,9 @@ class BenchmarkChart extends StatelessWidget {
         animation: cj.ChartAnimation.none,
         legend: const cj.ChartLegend(display: false),
         tooltip: cj.ChartTooltip(enabled: config.tooltips),
+        plugins: config.shadow
+            ? [_chartJsShadows[config.shadowBlur ? 1 : 0]]
+            : null,
         responsive: true,
         maintainAspectRatio: false,
         // A radial scale has no radius option: the padding gives its share.
@@ -394,6 +439,7 @@ class BenchmarkChart extends StatelessWidget {
                 spots: [for (final p in values) fl.FlSpot(p.x, p.y)],
                 color: chartBlue,
                 isCurved: config.curved,
+                shadow: _flShadow,
                 dotData: fl.FlDotData(
                   show: config.markers,
                   getDotPainter: (_, _, _, _) => fl.FlDotCirclePainter(
@@ -667,6 +713,12 @@ class BenchmarkChart extends StatelessWidget {
             ),
           );
         }
+    }
+    // Only the filled marks: on a line, the elevation shadows a polygon.
+    if (!config.type.drawsLine) {
+      for (final mark in marks) {
+        mark.elevation = _graphicElevation;
+      }
     }
     final axes = <gr.AxisGuide<dynamic>>[];
     if (config.type.hasAxes && (config.axes || config.grid)) {
