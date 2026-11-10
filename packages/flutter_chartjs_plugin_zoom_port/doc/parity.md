@@ -25,19 +25,19 @@ seams is `connects` or `zoom-side`. The column "Phase" gives the roadmap phase o
 | `src/utils.ts` | 111 | `lib/src/utils.dart` | H6, H11, H21, H26 | 2 | ported |
 | `src/scale.types.ts` | 288 | `lib/src/scale.types.dart` | H1, H13, H14, H21 | 2 | ported |
 | `src/core.ts` | 286 | `lib/src/core.dart` | H1, H13, H14, H15, H21, H22, H26 | 2 | ported |
-| `src/handlers.ts` | 322 | `lib/src/handlers.dart` | H1, H2, H3, H4, H5, H6, H7, H11 | 3 | not started |
-| `src/gestures.ts` | 395 | `lib/src/gestures.dart` | H1, H3, H4, H6, H7, H8 | 3 | partial: `GestureEvent`, `ActivePointer` |
-| `src/plugin.ts` | 152 | `lib/src/plugin.dart` | H9, H12, H16, H17, H19 | 3 | not started |
-| `src/index.ts` | 38 | `lib/src/index.dart` | H9, H18 | 3 | not started |
-| `src/index.umd.ts` | 6 | `lib/src/index.umd.dart` | H16 | 3 | not started |
+| `src/handlers.ts` | 322 | `lib/src/handlers.dart` | H1, H2, H3, H4, H5, H6, H7, H11 | 3 | ported |
+| `src/gestures.ts` | 395 | `lib/src/gestures.dart` | H1, H3, H4, H6, H7, H8 | 3 | ported |
+| `src/plugin.ts` | 152 | `lib/src/plugin.dart` | H9, H12, H16, H17, H19 | 3 | ported |
+| `src/index.ts` | 38 | `lib/src/index.dart` | H9, H18 | 3 | ported |
+| `src/index.umd.ts` | 6 | `lib/src/index.umd.dart` | H16 | 3 | ported |
 
 `src/utils.ts` uses H6 only for the types of its event parameters: `keyPressed` and
 `keyNotPressed` read the modifier flags of an event. `src/state.ts` uses H3 and H6 for the types
 of the listener targets and of the drag events.
 
-`src/options.ts` imports the type `GestureEvent` from `src/gestures.ts`. Thus zoom phase 2 ports
-the two public types of `src/gestures.ts`, `GestureEvent` and `ActivePointer`. The gesture manager
-comes in phase 3.
+`src/options.ts` imports the type `GestureEvent` from `src/gestures.ts`. Thus zoom phase 2 ported
+the two public types of `src/gestures.ts`, `GestureEvent` and `ActivePointer`, and phase 3 the
+gesture manager.
 
 ## Tests
 
@@ -45,16 +45,16 @@ comes in phase 3.
 |---|---:|---|---|---:|---|
 | `src/utils.test.ts` | 1 | `test/specs/utils_test.dart` | none | 2 | ported |
 | `src/scale.types.test.ts` | 5 | `test/specs/scale.types_test.dart` | H13 | 2 | ported |
-| `test/specs/api.spec.js` | 17 | `test/specs/api_test.dart` | H9, H20 | 3 | not started |
-| `test/specs/defaults.spec.js` | 2 | `test/specs/defaults_test.dart` | H16 | 3 | not started |
-| `test/specs/module.spec.js` | 4 | `test/specs/module_test.dart` | H16 | 3 | not started |
+| `test/specs/api.spec.js` | 17 | `test/specs/api_test.dart` | H9, H14, H20 | 3 | ported |
+| `test/specs/defaults.spec.js` | 2 | `test/specs/defaults_test.dart` | H16 | 3 | ported |
+| `test/specs/module.spec.js` | 4 | `test/specs/module_test.dart` | H16 | 3 | ported |
 | `test/specs/zoom.wheel.spec.js` | 10 | `test/specs/zoom.wheel_test.dart` | H23 | 3 | not started |
 | `test/specs/zoom.drag.spec.js` | 11 | `test/specs/zoom.drag_test.dart` | H23 | 3 | not started |
 | `test/specs/pan.spec.js` | 12 | `test/specs/pan_test.dart` | H23 | 3 | not started |
 | `test/specs/zoom.pinch.spec.js` | 4 | `test/specs/zoom.pinch_test.dart` | H23 | 3 | not started |
 | `test/specs/gestures.spec.js` | 2 | `test/specs/gestures_test.dart` | H23 | 3 | not started |
 | `test/specs/fixtures.spec.js` | 0 | `test/specs/fixtures_test.dart` | H24 | 4 | not started |
-| `test/index.js` | — | `test/flutter_test_config.dart` | H3, H6, H7, H23 | 3 | partial: `testExecutable` (the set-up) |
+| `test/index.js` | — | `test/flutter_test_config.dart` | H3, H6, H7, H23 | 3 | ported |
 | `test/fixtures/pan/*.js` (7) | — | `test/fixtures/hand/pan/*.dart` | H24 | 4 | not started |
 | `test/fixtures/zoom/*.js` (5) | — | `test/fixtures/hand/zoom/*.dart` | H24 | 4 | not started |
 
@@ -69,6 +69,10 @@ cases of `panFunctions.category` are `testWidgets` cases on the category scale o
 `toBeCloseTo` formula of jasmine-core 5.4.0.
 
 `test/flutter_test_config.dart` has the set-up of `test/index.js` (the device pixel ratio, the
-date zone, the built-in components, the colors plugin, the restore of the defaults, the release of
-the charts and the test font). The registration of the plugin and the event helpers come in phase
-3.
+date zone, the built-in components and the plugin, the colors plugin, the restore of the defaults,
+the release of the charts and the test font) and its event helpers.
+
+The 23 cases of the specs `api`, `defaults` and `module` pass, with no skip. The port-only
+`test/port/plugin_test.dart` tests the plugin object on the host: the data-only updates of a
+`ChartView` (seam H25), the warnings of `start` (H12, H17) and the range in the scale options
+(H14).
