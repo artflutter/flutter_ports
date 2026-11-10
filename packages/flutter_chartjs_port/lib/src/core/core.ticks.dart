@@ -114,15 +114,27 @@ String _numeric(Scale self, double tickValue, double index, List<Tick> ticks) {
           0,
         );
 
+  // The read of `this.options.ticks.format` comes before the options object
+  // here. The object literal runs no code, so the reads keep their order.
+  final format = TickOptions(readOption(self.options, OptionKey.ticks)).format;
+  if (!jsIsObjectLike(format)) {
+    // `Object.assign` copies nothing from a value that is not an object
+    // ([_assign]): the options are the three keys of the literal.
+    // DIVERGES(chartjs): adapt-numeric-tick-format-key, a record key.
+    return formatNumberDigits(
+      tickValue,
+      locale,
+      notation is String ? notation : null,
+      numDecimal,
+      numDecimal,
+    );
+  }
   final options = <String, Object?>{
     'notation': notation,
     'minimumFractionDigits': numDecimal,
     'maximumFractionDigits': numDecimal,
   };
-  _assign(
-    options,
-    TickOptions(readOption(self.options, OptionKey.ticks)).format,
-  );
+  _assign(options, format);
 
   return formatNumber(tickValue, locale, options);
 }

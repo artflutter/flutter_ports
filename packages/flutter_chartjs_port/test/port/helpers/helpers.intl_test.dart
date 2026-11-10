@@ -418,4 +418,126 @@ void main() {
       }
     });
   });
+
+  // The record key of formatters.numeric (row adapt-numeric-tick-format-key)
+  // against the String key of formatNumber with the same options object.
+  group('formatNumberDigits', () {
+    /// The options object of core.ticks.js:56 with no `ticks.format` key.
+    Map<String, Object?> options(String? notation, double digits) => {
+      'notation': notation ?? undefined,
+      'minimumFractionDigits': digits,
+      'maximumFractionDigits': digits,
+    };
+
+    const values = <double>[
+      0.5,
+      -0.25,
+      1,
+      7.07,
+      1234.5678,
+      -1010,
+      0.00003,
+      1e-7,
+      123456789.125,
+      1000000000000000,
+      9500000000000000,
+      1e21,
+      -1e21,
+      double.nan,
+      double.infinity,
+      double.negativeInfinity,
+    ];
+    const locales = <Object?>[
+      undefined,
+      'en',
+      'en-US',
+      'de-DE',
+      'fr',
+      'hi',
+      'ar',
+      ['de'],
+      <Object?>['xx-YY', 'fr-CA'],
+      <Object?>[],
+    ];
+    const notations = <String?>[null, 'scientific'];
+    const digits = <double>[0, 1, 2, 3, 5, 15, 16, 20];
+
+    test('gives the strings of formatNumber with the same options', () {
+      // Twice: the first pass makes the entries of both keys, the second
+      // reads them from the cache.
+      final mismatches = <String>[];
+      for (var pass = 0; pass < 2; pass++) {
+        for (final locale in locales) {
+          for (final notation in notations) {
+            for (final d in digits) {
+              for (final value in values) {
+                final record = formatNumberDigits(
+                  value,
+                  locale,
+                  notation,
+                  d,
+                  d,
+                );
+                final string = formatNumber(
+                  value,
+                  locale,
+                  options(notation, d),
+                );
+                if (record != string) {
+                  mismatches.add(
+                    '$locale $notation $d $value: $record, expected $string',
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
+      expect(mismatches, isEmpty);
+    });
+
+    test('keeps the strings of the spec labels', () {
+      for (final (spec, locale, calls) in _specCases) {
+        for (final (value, d, expected) in calls) {
+          if (d == null) continue;
+          expect(
+            formatNumberDigits(value, locale, null, d.toDouble(), d.toDouble()),
+            expected,
+            reason: '$spec: $value with $d fraction digits',
+          );
+        }
+      }
+      // The V8 strings of the scientific guard.
+      expect(
+        formatNumberDigits(1000000000000000, 'en-US', 'scientific', 0, 0),
+        '1E15',
+      );
+      expect(
+        formatNumberDigits(9500000000000000, 'en-US', 'scientific', 0, 0),
+        '1E16',
+      );
+    });
+
+    test('throws where formatNumber throws, and caches no throw', () {
+      for (var i = 0; i < 2; i++) {
+        expect(
+          () => formatNumberDigits(1234.5, null, null, 1, 1),
+          throwsA(isA<TypeError>()),
+        );
+        expect(
+          () => formatNumberDigits(1234.5, 'en_US', null, 1, 1),
+          throwsArgumentError,
+        );
+        expect(
+          () => formatNumberDigits(1234.5, 'en', null, 101, 101),
+          throwsArgumentError,
+        );
+        expect(
+          () => formatNumberDigits(1234.5, 'en', null, 2, 1),
+          throwsArgumentError,
+        );
+      }
+      expect(formatNumberDigits(1234.5, 'en', null, 1, 1), '1,234.5');
+    });
+  });
 }

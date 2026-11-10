@@ -13,9 +13,14 @@ library;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsProxyObject;
 import 'package:flutter_chartjs_port/src/js/js_intl.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// helpers.intl.ts:2 `intlCache`.
-final Map<String, JsNumberFormat> _intlCache = <String, JsNumberFormat>{};
+///
+/// A key is the String of [_cacheKey], or the record of
+/// [formatNumberDigits]. A record never equals a String, so the two kinds
+/// of keys never share an entry.
+final Map<Object, JsNumberFormat> _intlCache = <Object, JsNumberFormat>{};
 
 /// helpers.intl.ts:4 `getNumberFormat`.
 ///
@@ -75,6 +80,45 @@ String formatNumber(
   Object? options,
 ]) {
   return _getNumberFormat(locale, _entriesOf(options)).format(number);
+}
+
+/// [formatNumber] for the options object `{notation, minimumFractionDigits,
+/// maximumFractionDigits}` with no other key: the options of
+/// `formatters.numeric` (core.ticks.js:56) when `ticks.format` adds no key.
+///
+/// [notation] `null` stands for `undefined`. The cache key is the record of
+/// the intl locale of [jsNumberFormatLocale] and the three options, not the
+/// String of [_cacheKey]: the three entries map one-to-one to the fields of
+/// the record. The function builds the options Map only on a miss, and
+/// [jsNumberFormat] gets the same Map as from [formatNumber]. A formatter is
+/// stateless, so a second entry for the same options gives the same text.
+/// The resolved locale stays in the key: a change of `Intl.defaultLocale`
+/// reaches the next call. It throws where [formatNumber] throws: the locale
+/// first, then a digit option out of range.
+// DIVERGES(chartjs): adapt-numeric-tick-format-key, a record key.
+String formatNumberDigits(
+  double number,
+  Object? locale,
+  String? notation,
+  double minimumFractionDigits,
+  double maximumFractionDigits,
+) {
+  final cacheKey = (
+    jsNumberFormatLocale(locale),
+    notation,
+    minimumFractionDigits,
+    maximumFractionDigits,
+  );
+  var formatter = _intlCache[cacheKey];
+  if (formatter == null) {
+    formatter = jsNumberFormat(locale, <String, Object?>{
+      'notation': notation ?? undefined,
+      'minimumFractionDigits': minimumFractionDigits,
+      'maximumFractionDigits': maximumFractionDigits,
+    });
+    _intlCache[cacheKey] = formatter;
+  }
+  return formatter.format(number);
 }
 
 /// The options [options] as a Map of their entries: a Map itself; a
