@@ -216,6 +216,19 @@ void _sameLook(Render a, Render b, [String why = '']) {
   expect(diff.inkRatio, lessThan(.015), reason: '$why $diff');
 }
 
+/// The pixels whose alpha differs by at least [step] between [a] and [b]. For
+/// a translucent line of the alpha [step], it counts a notch or a hole, which
+/// the flip checks of [_sameLook] cannot see: they need alpha 0 or 255.
+int _alphaJumps(Render a, Render b, int step) {
+  var count = 0;
+  for (var y = 0; y < a.height; y++) {
+    for (var x = 0; x < a.width; x++) {
+      if ((a.alpha(x, y) - b.alpha(x, y)).abs() >= step) count++;
+    }
+  }
+  return count;
+}
+
 /// The bytes of the bitmap of [chart].
 Future<Render> _chartRender(WidgetTester tester, Chart chart) async {
   final source = (chart.canvas! as UiCanvasElement).toImageSource();
@@ -611,6 +624,29 @@ void main() {
       }
     });
 
+    test('native apps keep one draw on a desktop system', () async {
+      for (final platform in _desktop) {
+        await _on(platform, () async {
+          var draws = -1;
+          await renderContext(
+            (ctx) {
+              UiCanvasContext.debugDrawLongPathsInPieces = false;
+              ctx
+                ..strokeStyle = _blue
+                ..lineWidth = 2;
+              final path = Path2D();
+              _top(path, 100);
+              ctx.stroke(path);
+              draws = ctx.debugPieceDraws;
+            },
+            width: 500,
+            height: 300,
+          );
+          expect(draws, 0, reason: '$platform');
+        });
+      }
+    });
+
     test('other commands keep one draw', () async {
       for (final platform in [null, TargetPlatform.macOS]) {
         await _on(platform, () async {
@@ -868,6 +904,10 @@ void main() {
                       reason: why,
                     );
                     _sameLook(a, b, why);
+                    if (color == _half) {
+                      // 0x80: the alpha of the translucent line.
+                      expect(_alphaJumps(a, b, 0x80), 0, reason: why);
+                    }
                   }
                 }
               }
@@ -947,11 +987,24 @@ void main() {
         ]) {
           debugDefaultTargetPlatformOverride = platform;
           UiCanvasContext.debugDrawLongPathsInPieces = false;
-          final whole = await _chartRender(tester, chartOf(count));
+          final wholeChart = chartOf(count);
+          // A native app keeps one draw on each system.
+          expect(pieceDraws(wholeChart), 0, reason: '$platform $count');
+          final whole = await _chartRender(tester, wholeChart);
           UiCanvasContext.debugDrawLongPathsInPieces = true;
           final chart = chartOf(count);
           expect(pieceDraws(chart), draws, reason: '$platform $count');
-          _sameLook(whole, await _chartRender(tester, chart));
+          final render = await _chartRender(tester, chart);
+          if (draws == 0) {
+            // No piece: the bytes of one draw.
+            expect(
+              comparePixels(whole, render).differing,
+              0,
+              reason: '$platform $count',
+            );
+          } else {
+            _sameLook(whole, render);
+          }
         }
       } finally {
         debugDefaultTargetPlatformOverride = null;

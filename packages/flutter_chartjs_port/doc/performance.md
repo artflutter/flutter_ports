@@ -8125,4 +8125,8 @@ phone browsers keep one draw below 128 commands: there pieces cost raster mean i
 
 **The night run** (the night of 2026-11-10, pending). One lab run of the final build: the Mac browsers at 10 to 100
 points with a plain, a curved and a translucent line and a small chart, a chart with several datasets, and one phone
-batch for each browser that shows no change. Figures: to come.
+batch for each browser that shows no change; a repeat of the Pixel Firefox cells of pieces from 2 commands at 10 to 40
+points with the temperature gate; and a pixel compare of a long curved line (200 to 1,000 commands, widths 1, 2 and 6,
+opaque and translucent) between `96f6f9d` and this build in headless Chrome, for the new overlap of a curve, which also
+changes the long lines of phone browsers. A run on Windows, Linux, a Chromebook or an Android tablet in desktop-site
+mode waits for such hardware. Figures: to come.

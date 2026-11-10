@@ -1908,15 +1908,16 @@ final class _CachedPath {
 /// coordinate that is not finite and for a path with no subpath.
 ///
 /// A piece that ends at a cut also takes the commands after the cut, for a
-/// length of about [_strokePieceOverlap] bitmap pixels, and of at least
-/// [_curveOverlapWidths] line widths over a curve, so that the engine makes the
-/// join at the cut from the real segments, and the start of the next piece
-/// lies inside this piece. A longer segment is cut to that length: a straight
-/// one at that point, a curve at the parameter of that length (de Casteljau),
-/// so that its part has the geometry and the start tangent of the curve
-/// (Chart.js ADR 0113). The close of a path that a cut divided takes the first
-/// commands of the subpath with the same rule. A command that a line chart
-/// does not use fails the whole form.
+/// length of about [_strokePieceOverlap] bitmap pixels, so that the engine
+/// makes the join at the cut from the real segments, and the start of the
+/// next piece lies inside this piece. A longer straight segment is cut at
+/// that point. A curve in the overlap is cut at the larger of the remaining
+/// overlap and [_curveOverlapWidths] line widths, at the parameter of that
+/// length (de Casteljau), so that its part has the geometry and the start
+/// tangent of the curve; a shorter curve stays whole (Chart.js ADR 0113).
+/// The close of a path that a cut divided takes the first commands of the
+/// subpath with the same rule. A command that a line chart does not use
+/// fails the whole form.
 final class UiPathPieces implements CanvasPath {
   /// Pieces for a transform of the uniform scale [scale] and the line width
   /// [lineWidth].
@@ -2069,8 +2070,18 @@ final class UiPathPieces implements CanvasPath {
     );
     if (t < 1) {
       // A longer curve: the join needs only its first part.
-      final part = _curvePart(_x, _y, cp1x, cp1y, cp2x, cp2y, x, y, t);
-      tail.cubicTo(part[0], part[1], part[2], part[3], part[4], part[5]);
+      final (c1x, c1y, c2x, c2y, ex, ey) = _curvePart(
+        _x,
+        _y,
+        cp1x,
+        cp1y,
+        cp2x,
+        cp2y,
+        x,
+        y,
+        t,
+      );
+      tail.cubicTo(c1x, c1y, c2x, c2y, ex, ey);
       _endTail();
       return;
     }
@@ -2127,11 +2138,34 @@ final class UiPathPieces implements CanvasPath {
       y,
       math.max(_firstLeft, _curveReach),
     );
-    _firstNumbers.addAll(
-      t < 1
-          ? _curvePart(_x, _y, cp1x, cp1y, cp2x, cp2y, x, y, t)
-          : [cp1x, cp1y, cp2x, cp2y, x, y],
-    );
+    if (t < 1) {
+      final (c1x, c1y, c2x, c2y, ex, ey) = _curvePart(
+        _x,
+        _y,
+        cp1x,
+        cp1y,
+        cp2x,
+        cp2y,
+        x,
+        y,
+        t,
+      );
+      _firstNumbers
+        ..add(c1x)
+        ..add(c1y)
+        ..add(c2x)
+        ..add(c2y)
+        ..add(ex)
+        ..add(ey);
+    } else {
+      _firstNumbers
+        ..add(cp1x)
+        ..add(cp1y)
+        ..add(cp2x)
+        ..add(cp2y)
+        ..add(x)
+        ..add(y);
+    }
     _firstSizes.add(6);
     _firstLeft = t < 1 ? 0 : _firstLeft - length;
   }
@@ -2362,7 +2396,7 @@ final class UiPathPieces implements CanvasPath {
 /// The control points and the end of the part of the cubic curve from
 /// (x0, y0) up to the parameter [t] (de Casteljau): the same geometry, with
 /// the start and the start tangent of the curve.
-List<double> _curvePart(
+(double, double, double, double, double, double) _curvePart(
   double x0,
   double y0,
   double x1,
@@ -2383,7 +2417,7 @@ List<double> _curvePart(
   final by = ay + (my - ay) * t;
   final sx = mx + (rx - mx) * t;
   final sy = my + (ry - my) * t;
-  return [ax, ay, bx, by, bx + (sx - bx) * t, by + (sy - by) * t];
+  return (ax, ay, bx, by, bx + (sx - bx) * t, by + (sy - by) * t);
 }
 
 final UiTransform _identity = UiTransform();

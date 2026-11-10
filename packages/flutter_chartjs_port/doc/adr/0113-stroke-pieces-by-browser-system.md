@@ -38,14 +38,17 @@ form on for a test on the VM. Native engines keep each path as one draw.
 1. **The stroke of a `Path2D`.** The path needs `UiCanvasContext.strokePieceMinCommands` commands:
    `desktopStrokePieceCommands` (2) when Flutter's `defaultTargetPlatform`, the system of the browser, is macOS, Windows or
    Linux, else `minPieceCommands` (128). Flutter reports Android for a browser on an unknown system, iOS for an iPad that
-   asks for the desktop site and Linux for a Chromebook. The context reads the platform at each stroke, after the switch
+   asks for the desktop site and Linux for a Chromebook. An Android browser in desktop-site mode, the default of Chrome
+   on large Android tablets, has no `Android` in its user agent and a platform string that starts with `Linux`: it
+   reports Linux and takes the desktop rule on a mobile GPU. `debugDefaultTargetPlatformOverride` also wins in a release
+   web build, so an app that forces a platform look also picks the stroke rule. The context reads the platform at each stroke, after the switch
    and the shadow test, so that `debugDefaultTargetPlatformOverride` picks the rule in a test. `uiPathPiecesOf` cuts the path into
    `ui.Path` pieces and keeps them in `Path2D.cache`, with the version rule of `uiPathOf`, for one scale and one line
    width; the rule of the system does not change a cut, so the cache needs no key for it. A piece that ends at a cut also
-   takes the commands after the cut, for about 1.5 bitmap pixels along the line, and for at least two line widths over a
-   curve. A longer segment is cut to that length: a straight one at that point, a curve at the parameter of that length
-   (de Casteljau, from the polyline of 16 steps of the parameter), so that its part has the geometry and the start
-   tangent of the curve. Thus the engine makes the join at the cut from the real segments, and the start of the next
+   takes the commands after the cut, for about 1.5 bitmap pixels along the line. A longer straight segment is cut at
+   that point. A curve in the overlap is cut at the larger of the remaining overlap and two line widths, at the
+   parameter of that length (de Casteljau, from the polyline of 16 steps of the parameter), so that its part has the
+   geometry and the start tangent of the curve; a shorter curve stays whole. Thus the engine makes the join at the cut from the real segments, and the start of the next
    piece lies inside this piece, so that no seam of two soft ends shows across the line. A zero-length command does not
    start a cut. A close of a path that a cut divided takes a line to the start and the first commands of the subpath,
    with the same rule. A translucent stroke draws opaque pieces in one layer. The stroke declines, with one draw as
@@ -68,9 +71,11 @@ What changed against Chart.js ADR 0105: the stroke threshold of a desktop browse
 overlap of a curve and of the first commands of a divided close. In Chart.js ADR 0105 a curve stayed whole in the
 overlap, and a close took whole first commands. On a dense line a curve is a few pixels long, so this cost nothing. On a
 short line of a desktop browser a curve is 50 to 250 pixels long, and the overlap drew it twice: the twins of section
-Pixels found up to 14.8% more ink on a thin curved line. The overlap of at least two line widths over a curve covers the
-inner side of a tight turn at the cut: with a part of 1.5 pixels, a curve of a 12-pixel line that turns within 3.5
-pixels of the cut lost up to 34 pixels, because the start of the next piece has no join there.
+Pixels found up to 14.8% more ink on a thin curved line. A curve part of at least two line widths covers the inner side
+of a tight turn at the cut: with a part of 1.5 pixels, a curve of a 12-pixel line that turns within 3.5 pixels of the
+cut lost up to 34 pixels, because the start of the next piece has no join there. The overlap does not continue over the
+following curves: on a dense curved line, where each curve is shorter than two line widths, it stays about 1.5 pixels,
+so the loss of 16 pixels that Chart.js ADR 0105 recorded on a 12-pixel line stays (section Pixels).
 
 ## Measurements
 
@@ -227,7 +232,9 @@ These differences of Chart.js ADR 0105 stay on the test engine:
 - The 960 twins of section Pixels.
 - A filled line of 100 points on macOS strokes in pieces and fills in one draw, also from a deferred path; in a line chart
   with `fill: 'origin'`, a line of 100 points takes 1 draw in pieces on macOS and none on Android and iOS, and a line of
-  200 points takes 2 (the stroke and the fill) on both; each against the bytes of one draw.
+  200 points takes 2 (the stroke and the fill) on both; each against one draw: the same bytes where no piece is drawn,
+  else the rule of the twins.
+- With the switch off, a short path on macOS, Windows and Linux keeps one draw: native apps keep the rule.
 - The cases of Chart.js ADR 0105 (fills, long strokes, seams, joins at a cut, the cache, the limits) pass unchanged.
 
 ## Consequences
@@ -246,9 +253,12 @@ These differences of Chart.js ADR 0105 stay on the test engine:
 
 1. **The system is confounded with the chart size.** The Mac chart has 1.69 million bitmap pixels, the Pixel chart 0.73
    and the iPhone chart 0.92; a line of 100 points cut into 12.3 to 12.6, 7.0 and 8.3 pieces. No cell separates the
-   system from the size or the GPU: a large chart on a tablet and a small chart on a desktop are untested.
+   system from the size or the GPU: a large chart on a tablet and a small chart on a desktop are untested. An app that
+   sets `debugDefaultTargetPlatformOverride` in a web build takes the rule of the system that it forces.
 2. **Windows and Linux are untested.** The rule assumes that their browsers act as the three browsers of the Mac. A
-   Chromebook reports Linux and takes the desktop rule.
+   Chromebook reports Linux and takes the desktop rule, and so does an Android browser in desktop-site mode (Decision
+   1), on a mobile GPU, where the Pixel Chrome cells lost 0.5 to 1.6 ms of raster mean. A run on a Windows or Linux
+   desktop, a Chromebook and an Android tablet is pending: the lab bench has none of them.
 3. **The switch point of phone browsers is unknown.** It lies between 100 and 1,000 points; cells at 200 to 500 points
    would place it.
 4. **iPhone Safari ran abnormally slow.** JavaScript ran 26 times slower than the native app on the same phone, while Mac
@@ -259,6 +269,16 @@ These differences of Chart.js ADR 0105 stay on the test engine:
    improve. A slower desktop, which no cell measured, would show the benefit.
 6. **The lab run of the final build** (the night of 2026-11-10): the Mac browsers at 10 to 100 points with a plain, a
    curved and a translucent line and a small chart, a chart with several datasets, and one phone batch for each browser
-   that shows no change. performance.md §70 gets the figures. A one-piece guard (a stroke that gives one piece takes one
-   draw) is worth adding only if the small or the translucent chart shows a cost.
-7. **The overlap of a curve** was measured on the test engine only. The lab run checks it in the three browsers.
+   that shows no change, and a repeat of the Pixel Firefox cells of pieces from 2 commands at 10 to 40 points with the
+   temperature gate (the losses at 20 and 40 points came from cells that ran 1 to 2 °C warmer). performance.md §70 gets
+   the figures. A one-piece guard (a stroke that gives one piece takes one draw) is worth adding only if the small or the
+   translucent chart shows a cost.
+7. **The overlap of a curve** was measured on the test engine only. It applies to each stroke in pieces on the web, so
+   the pixels of a long line (128 commands or more) in a phone browser change too, which the measurements of this
+   record did not cover. The lab run checks it in the three browsers of the Mac; the night run also compares a long
+   curved line (200 to 1,000 commands, widths 1, 2 and 6, opaque and translucent) between `96f6f9d` and this build in
+   headless Chrome, with JavaScript and WebAssembly.
+8. **The twins run at scale 1.** A desktop browser draws at DPR 2. A scratch probe of the review drew the same lines at
+   `setTransform(2, 0, 0, 2, 0, 0)`: open curved lines of widths 2 to 4 at 20 to 60 commands gave 3 to 23 pixels per
+   case that are clear in one draw and opaque in pieces, each inside the true stroke (0.6 to 1.4 bitmap pixels from its
+   edge): holes of one draw on the test engine, which the pieces fill. No test pins scale 2.
