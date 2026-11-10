@@ -7986,20 +7986,65 @@ frame rate shows it. The counts of a real pinch and pan on both phones go into C
 | An animated zoom | not measurable: the bench runs with `animation: false` |
 | A cache of the data-limit scan and the other changes that `update` does not allow | they change the behavior of `update` |
 
-**After.** The old-against-new runs fill this table: step p50 in ms, the mean of 2 runs for each side.
+**After.** Old code `cc4fe90` against new code `d14d36f`, on 2026-11-10: step p50 in ms. Each side ran once on each
+target, old first. Safari ran twice on each side, and its figures are the mean of the two runs. The iPhone figures use a
+second new run: the first new run was slower, probably from heat. The native apps are profile builds of
+`lib/main_bench.dart`, as above. The browsers loaded one web build of each side,
+`flutter build web --wasm --profile`. Chrome ran WebAssembly with skwasm, and Firefox and Safari ran JavaScript with
+CanvasKit, each with `crossOriginIsolated` true.
+
+These figures are of `d14d36f`, before commit `8084b6b` reverted the `alignToPixels` part of item 4 (see below). The
+revert brings the two slow Safari rows, `zoom.base` and `zoom.idle` update on the time axis at 20,000 points, back to
+the old time. It can cost a small part of the gain on the other targets. That part was not measured.
+
+Native apps:
 
 | Case | Points | x axis | Pixel 8a, old | Pixel 8a, new | iPhone 17 Pro, old | iPhone 17 Pro, new | Mac, old | Mac, new |
 | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `zoom.idle` update | 1,000 | linear | — | — | — | — | — | — |
-| `zoom.idle` update | 20,000 | linear | — | — | — | — | — | — |
-| `zoom.wheel` | 1,000 | linear | — | — | — | — | — | — |
-| `zoom.wheel` | 20,000 | linear | — | — | — | — | — | — |
-| `zoom.wheel` | 1,000 | time | — | — | — | — | — | — |
-| `zoom.wheel` | 20,000 | time | — | — | — | — | — | — |
-| `zoom.pan` | 20,000 | linear | — | — | — | — | — | — |
-| `zoom.pinch` | 20,000 | linear | — | — | — | — | — | — |
-| `zoom.drag` | 20,000 | linear | — | — | — | — | — | — |
-| `zoom.api` | 20,000 | linear | — | — | — | — | — | — |
+| `zoom.idle` update | 1,000 | linear | 1.265 | 1.144 | 0.534 | 0.480 | 0.619 | 0.533 |
+| `zoom.idle` update | 20,000 | linear | 9.941 | 8.467 | 4.184 | 3.569 | 4.562 | 3.837 |
+| `zoom.wheel` | 1,000 | linear | 1.219 | 1.075 | 0.510 | 0.443 | 0.574 | 0.487 |
+| `zoom.wheel` | 20,000 | linear | 7.992 | 6.937 | 3.454 | 2.860 | 3.758 | 2.956 |
+| `zoom.wheel` | 1,000 | time | 1.684 | 1.505 | 0.685 | 0.598 | 0.778 | 0.674 |
+| `zoom.wheel` | 20,000 | time | 8.694 | 7.632 | 3.674 | 3.125 | 3.971 | 3.305 |
+| `zoom.pan` | 1,000 | linear | 1.182 | 1.049 | 0.504 | 0.435 | 0.555 | 0.473 |
+| `zoom.pan` | 20,000 | linear | 8.230 | 7.008 | 3.650 | 2.975 | 3.775 | 3.060 |
+| `zoom.pinch` | 1,000 | linear | 1.153 | 1.035 | 0.505 | 0.432 | 0.556 | 0.474 |
+| `zoom.pinch` | 20,000 | linear | 7.426 | 6.382 | 3.335 | 2.737 | 3.507 | 2.853 |
+| `zoom.drag` | 1,000 | linear | 0.281 | 0.235 | 0.126 | 0.106 | 0.137 | 0.110 |
+| `zoom.drag` | 20,000 | linear | 3.838 | 2.880 | 1.594 | 1.196 | 1.709 | 1.168 |
+| `zoom.api` | 1,000 | linear | 1.214 | 1.092 | 0.528 | 0.468 | 0.585 | 0.497 |
+| `zoom.api` | 20,000 | linear | 8.229 | 6.919 | 3.600 | 2.949 | 3.781 | 3.058 |
+
+Browsers:
+
+| Case | Points | x axis | Mac Chrome, old | Mac Chrome, new | Mac Firefox, old | Mac Firefox, new | Mac Safari, old | Mac Safari, new | Pixel Chrome, old | Pixel Chrome, new | Pixel Firefox, old | Pixel Firefox, new |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `zoom.idle` update | 1,000 | linear | 0.725 | 0.646 | 1.780 | 1.540 | 1.230 | 1.160 | 1.776 | 1.675 | 4.980 | 4.400 |
+| `zoom.idle` update | 20,000 | linear | 5.151 | 4.805 | 10.480 | 8.720 | 6.640 | 6.780 | 11.525 | 11.065 | 23.120 | 20.960 |
+| `zoom.wheel` | 1,000 | linear | 0.666 | 0.594 | 1.760 | 1.560 | 1.200 | 1.120 | 1.941 | 1.870 | 5.060 | 4.481 |
+| `zoom.wheel` | 20,000 | linear | 4.076 | 3.760 | 8.160 | 7.620 | 5.000 | 4.820 | 10.510 | 9.825 | 20.660 | 18.040 |
+| `zoom.wheel` | 1,000 | time | 0.829 | 0.760 | 2.240 | 1.960 | 1.480 | 1.390 | 2.225 | 2.020 | 6.400 | 5.720 |
+| `zoom.wheel` | 20,000 | time | 4.534 | 4.109 | 8.700 | 8.580 | 5.470 | 5.500 | 12.175 | 11.029 | 22.500 | 20.280 |
+| `zoom.pan` | 1,000 | linear | 0.646 | 0.580 | 1.680 | 1.500 | 1.140 | 1.050 | 1.750 | 1.670 | 4.880 | 4.340 |
+| `zoom.pan` | 20,000 | linear | 4.689 | 3.971 | 8.200 | 7.200 | 5.090 | 5.370 | 11.130 | 10.425 | 20.440 | 18.200 |
+| `zoom.pinch` | 1,000 | linear | 0.639 | 0.555 | 1.640 | 1.480 | 1.080 | 0.960 | 1.695 | 1.615 | 4.900 | 4.300 |
+| `zoom.pinch` | 20,000 | linear | 4.326 | 3.645 | 7.620 | 7.140 | 4.860 | 4.560 | 10.260 | 9.620 | 19.920 | 18.040 |
+| `zoom.drag` | 1,000 | linear | 0.154 | 0.135 | 0.240 | 0.220 | 0.200 | 0.190 | 0.350 | 0.330 | 0.860 | 0.680 |
+| `zoom.drag` | 20,000 | linear | 2.196 | 1.799 | 1.900 | 1.480 | 1.470 | 1.290 | 4.795 | 4.200 | 4.900 | 3.860 |
+| `zoom.api` | 1,000 | linear | 0.669 | 0.580 | 1.760 | 1.520 | 1.200 | 1.070 | 1.796 | 1.685 | 5.080 | 4.480 |
+| `zoom.api` | 20,000 | linear | 4.714 | 4.015 | 8.120 | 7.240 | 5.100 | 4.800 | 11.415 | 10.830 | 20.720 | 18.320 |
+
+The geometric mean of new/old over all 16 cases, at 1,000 / 20,000 points: Pixel 8a 0.887 / 0.832,
+iPhone 17 Pro 0.869 / 0.811, Mac 0.846 / 0.778, Mac Chrome 0.875 / 0.843, Mac Firefox 0.885 / 0.854,
+Mac Safari 0.943 / 0.974, Pixel Chrome 0.930 / 0.915, Pixel Firefox 0.882 / 0.869.
+
+The new code is faster in all 32 cases on each target except Safari. On the Pixel 8a at 20,000 points, each input step
+is now below the frame of 8.33 ms at 120 Hz: the wheel and pan steps fell from 7.99 and 8.23 ms to 6.94 and 7.01 ms, and
+on a time axis from 8.69 and 9.08 ms to 7.63 and 7.84 ms. The noise of a single row: the old native runs are within
+4.8% of the table "Before", a second old run gave -15% to +17.5% on Pixel Chrome and -2.1% to +24.2% on Pixel Firefox,
+`zoom.pan` on the time axis at 20,000 points went from -13.6% in the first Safari run to +15.9% in the second, and
+Firefox and Safari give times in steps of 0.020 ms. Files: `.handover/zoom-perf/ab/`, outside the repository.
 
 **Safari and the `alignToPixels` field.** In the first Safari run, the base and idle updates on the time axis at
 20,000 points were 22% slower with the new code. A second run gave +17.5% and +13.2%. The extra time was all in the
