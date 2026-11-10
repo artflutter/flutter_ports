@@ -2638,3 +2638,15 @@ changes. No trigger occurred.
   after 1878 by +18 to +31 and after 1938 by +32; the records keep their lines. The inventory row of
   `CircleBatch` names the held run, and §4.1 names the new test file. No deferred cut changes. No
   trigger occurred.
+- 2026-11-10, the other items of the zoom performance campaign (Chart.js ADRs 0109 and 0110, the rows
+  `adapt-native-gap-reads`, `adapt-loop-invariant-truthiness`, `adapt-typed-scope-merge`,
+  `adapt-resolver-single-walk`, `adapt-numeric-tick-format-key` and `adapt-category-string-labels`).
+  They edit `lib/src/controllers/controller.line.dart`, `controller.scatter.dart`,
+  `lib/src/core/core.scale.dart`, `core.ticks.dart`, `core.defaults.dart`, `date_zone.dart`,
+  `point_options.dart` and `point_option_preparation.dart`, `lib/src/helpers/helpers.core.dart`
+  (`merge`, `_isValidKey` and `_cloneToScope`, not `isNullOrUndef`), `helpers.config.dart` and
+  `helpers.intl.dart`, `lib/src/options/option_scope.dart` and `scope_kinds.g.dart`,
+  `lib/src/scales/scale.category.dart` and `lib/helpers.dart` (one hidden name). This plan cites no
+  line of these changes and no canvas operation. `doc/performance.md` gets section 69 at its end;
+  this plan cites its sections, and no cited section number changes. No deferred cut changes. No
+  trigger occurred.

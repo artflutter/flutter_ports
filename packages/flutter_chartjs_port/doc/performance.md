@@ -2126,7 +2126,8 @@ The ADR takes the typed direct call.
 - **Local time** (fact 3). The local `DateTime` constructor costs about 1,000 ns on AOT and
   dart2wasm, because it asks the platform for the offset. A cache keeps one interval of instants
   with one offset. Wall time to instant: 52.7 ns with the cache, 678.9 ns with the constructor on
-  AOT. dart2wasm: 37.7 against 300.2 ns.
+  AOT. dart2wasm: 37.7 against 300.2 ns. Since Chart.js ADR 0110, the cache keeps up to 64
+  intervals, and the VM reads `timeZoneOffset` (§69).
 - **ISO 8601 parse** (fact 5). A code-unit scanner of the moment ISO grammar costs 35-54 ns on AOT
   and 57-140 ns on dart2wasm. `DateTime.tryParse` costs 745-1,709 ns and 796-1,606 ns, and it
   gives the moment result for fewer strings.
@@ -2181,7 +2182,8 @@ benchmark outside the repository, medians in ns for each call:
 - In local time, with dates that are years apart, each call costs about 1.1-1.6 µs: the cache of
   one interval misses at each call. A local `diff` of two dates 21 days apart costs about 1-3 µs,
   and a local `startOf` `isoWeek` with a weekday about 216 ns. Both leave the cached interval at
-  each call. The time scale makes about 10 such calls in each update.
+  each call. The time scale makes about 10 such calls in each update. The 64 intervals of
+  Chart.js ADR 0110 keep most of them (§69).
 
 ### 12.5 Open
 
@@ -7844,3 +7846,157 @@ gives the noise of one pass by day.
 What stays slow on the web at the full preset: radar at 5,000 and 20,000 (24 and 5 FPS), pie and doughnut at 5,000 (56 and 29 FPS)
 and at 20,000 (12 and 6 FPS). JavaScript also keeps its slow draw on the UI thread: bar at 20,000 gets 18 FPS, against 36 on
 WebAssembly.
+
+## 69. Zoom and pan steps
+
+The steps of the zoom port `flutter_chartjs_plugin_zoom_port` on three devices, profiled before a change, and nine
+exact host changes that the profiles chose. Two more changes need a decision first: Chart.js ADRs 0111 and 0112.
+
+**The bench cases** (commit `cc4fe90`). The mode `zoom` of `apps/chartjs_gallery/lib/bench/chart_bench.dart` times a
+line chart of one dataset with a visible x axis (linear or time) and a visible linear y axis, at 1,000 and 20,000
+points: `parsing: false` with `{x, y}` Maps, `animation: false`, `events: []`, a canvas of 800 x 480 at DPR 1.
+
+| Case | Step |
+| --- | --- |
+| `zoom.base`, `zoom.idle` | `draw()` and `update('none')`, without and with the plugin and its default options |
+| `zoom.wheel` | one `wheel` event at the center, `deltaY` -100 and +100 in turn; the listener zooms with the mode `'zoom'` |
+| `zoom.pan` | one `pointermove` of 20 px back and forth, after a press past the threshold, mode `x` |
+| `zoom.drag` | one `mousemove` of the drag box; the listener only draws |
+| `zoom.pinch` | one `pointermove` of the second of two touch pointers, a spread and a pinch in turn |
+| `zoom.api`, `zoom.apiPan` | `chart.zoom(1.05)` and `chart.zoom(1 / 1.05)`, `chart.pan(+20 px)` and `chart.pan(-20 px)` in turn |
+
+A step dispatches one event with `canvas.dispatchEvent` (Chart.js ADR 0108) or calls the API, and ends the
+recording: the work of one frame with one input. The cases put the scale ranges back with `zoomScale` before each
+pair of steps, outside the timing.
+
+**The method.** Profile builds of `lib/main_bench.dart` with `--dart-define=CASES=zoom`, 16 cases at 1,000 and
+20,000 points. The timing build has no marks: 2 runs on each device, and the step p50 below is the mean of the two
+runs. A second build with `PROFILE_MARKS=true` prints the `BENCH_MARK` lines, and a VM service client fetched the CPU
+samples of the UI isolate (`getCpuSamples`, a period of 1 ms, native time with its Dart caller) for the window of
+each case, one run. A share counts the samples of the timed steps only, not the range restore.
+
+- Pixel 8a: Impeller on Vulkan, 120 Hz, started with `adb` with no VM service client for the timing, a gate on the
+  battery temperature, the thermal status and the big-core frequency. The two runs differ by at most 1.5% in 29 of
+  32 cases.
+- iPhone 17 Pro: iOS 27.2, wired, started with `devicectl`. Run 2 was 0.4% to 6.7% slower than run 1.
+- MacBook Pro, M3 Max: Impeller on Metal, by day with the Mac in use. The two runs differ by at most 3% in 31 of 32
+  cases.
+
+**Before** (commit `cc4fe90`), step p50 in ms, the mean of 2 runs:
+
+| Case | Points | x axis | Pixel 8a | iPhone 17 Pro | Mac |
+| --- | ---: | --- | ---: | ---: | ---: |
+| `zoom.idle` update | 1,000 | linear | 1.249 | 0.554 | 0.618 |
+| `zoom.idle` update | 20,000 | linear | 9.956 | 4.253 | 4.672 |
+| `zoom.idle` update | 1,000 | time | 1.752 | 0.720 | 0.832 |
+| `zoom.idle` update | 20,000 | time | 10.678 | 4.555 | 4.899 |
+| `zoom.idle` draw | 1,000 | linear | 0.265 | 0.124 | 0.139 |
+| `zoom.idle` draw | 20,000 | linear | 3.641 | 1.587 | 1.738 |
+| `zoom.wheel` | 1,000 | linear | 1.219 | 0.521 | 0.576 |
+| `zoom.wheel` | 20,000 | linear | 8.058 | 3.433 | 3.769 |
+| `zoom.wheel` | 1,000 | time | 1.678 | 0.693 | 0.792 |
+| `zoom.wheel` | 20,000 | time | 8.764 | 3.661 | 4.040 |
+| `zoom.pan` | 1,000 | linear | 1.185 | 0.515 | 0.562 |
+| `zoom.pan` | 20,000 | linear | 8.340 | 3.593 | 3.868 |
+| `zoom.pan` | 1,000 | time | 1.718 | 0.704 | 0.798 |
+| `zoom.pan` | 20,000 | time | 9.096 | 3.829 | 4.117 |
+| `zoom.drag` | 1,000 | linear | 0.281 | 0.130 | 0.139 |
+| `zoom.drag` | 20,000 | linear | 3.792 | 1.639 | 1.714 |
+| `zoom.pinch` | 1,000 | linear | 1.172 | 0.502 | 0.557 |
+| `zoom.pinch` | 20,000 | linear | 7.434 | 3.300 | 3.664 |
+| `zoom.api` | 1,000 | linear | 1.244 | 0.538 | 0.602 |
+| `zoom.api` | 20,000 | linear | 8.253 | 3.569 | 3.950 |
+| `zoom.apiPan` | 1,000 | linear | 1.196 | 0.517 | 0.565 |
+| `zoom.apiPan` | 20,000 | linear | 8.373 | 3.591 | 3.865 |
+
+At 20,000 points the Pixel misses a frame of 8.33 ms at 120 Hz with a pan (8.34 ms) and with each input on a time
+axis (8.76 to 9.10 ms), and comes close with a wheel or an API call (8.06 to 8.37 ms). The hooks of the registered plugin cost 0.4% to 1.6% of an idle update at 1,000 points and 0.1% at 20,000.
+
+**Where the time goes.** The work of the zoom port itself, with the host helpers that it calls but without the
+update and the draw that it starts, is 1.0% to 3.9% of an input step at 1,000 points and 0.0% to 1.8% at 20,000:
+at most 47 µs (Pixel, wheel at 1,000) and 132 µs (Pixel, pinch at 20,000). Reads of the option facades are about two
+thirds of it. 92% to 99% of each input step is the `update` and the `draw` of the host. An input step at 20,000
+points costs 15% to 25% less than an idle update, because the range restore sets `min` and `max` of both scales and
+the update skips the scan of the data limits; in an app that zooms x only, the y scale has no bounds and the scan
+(14.8% to 15.9% of a 20,000-point update) stays.
+
+**The floor.** The ticks, the layout, the element update and the draw, which even a range update must do, are
+65% to 78% of an input step at 1,000 points, 91% to 96% at 20,000 and 99% to 100% of a drag-box step. At 1,000
+points the draw is 35% to 42% of the step (the scale layers with tick text and grid 12% to 22%), the layout 11% to
+21% and the elements 9% to 16%. At 20,000 points the elements are 29% to 38% (the parsed reads of
+`LineController.updateElements` 10% to 17%) and the draw 51% to 61% (the circle batch with `drawRawAtlas` 16% to
+26%, the work of each point in the batch 12% to 18%, the line stroke about 10% to 13%).
+
+**The changes.** Each is exact: every case outside its guards keeps the old path. The gain is what the profiles
+give for the removed work, as a share of a step on Pixel / iPhone / Mac; the measured gains go into the table
+"After".
+
+| # | Change | What it removes | Record | Expected gain, 1,000 points | Expected gain, 20,000 points |
+| ---: | --- | --- | --- | --- | --- |
+| 1 | The previous x of the gap test | the read `prevParsed[iAxis]` of each point in the line and scatter loops, when no user code can run between the two reads | Chart.js ADR 0109, row `adapt-native-gap-reads` | 0.8-1.2% / 1.3-2.2% / 1.4-1.6% | 3.5-4.4% / 4.4-5.8% / 4.1-5.0% |
+| 2 | The held circle run | the bound, color and batch tests of each fill and stroke after the first circle of a run | `CircleBatch.hold` and `addHeld` (port-only) | 0.4-1.4% / 0.8-1.5% / 1.5-2.0% | 1.7-2.6% / 2.8-3.5% / 3.5-5.2%; drag box 4.2% / 6.3% / 9.6% |
+| 3 | The typed scope merge | the walk by name of `mergeIf` and `merge` between typed scopes in `mergeScaleConfig` | row `adapt-typed-scope-merge` | 4.2-5.3% / 4.9-5.9% / 4.9-6.0% | 0.8-1.2% / 0.5-0.9% / 0.9-1.5% |
+| 4 | The loop-invariant truthiness | `jsTruthy` of `stacked` and `segment` at each point, and of `alignToPixels` at each pixel | row `adapt-loop-invariant-truthiness` | 0.0-0.4% / 0.5-1.3% / 0.6-1.7% | 0.3-0.8% / 1.9-3.0% / 2.3-4.3% |
+| 5 | The record key of the number format | the String key and the options Map of each tick label | row `adapt-numeric-tick-format-key` | 2.2-3.0% / 2.0-3.0% / 1.4-3.1% | 0.2-0.8% |
+| 6 | The local-zone offsets | the field form of the offset read on the VM and the misses of a cache of one interval | Chart.js ADR 0110 | time axis: 2.1-2.7% / 2.4-2.8% / 2.8-3.2% | time axis: 0.6-1.1% |
+| 7 | The first reads of the resolvers | the second walk of the scopes of a sub-resolver when it adds nothing, and the second key lookup of a miss | row `adapt-resolver-single-walk` | 0.9-1.4% / 1.3-2.0% / 1.5-2.0% | 0.1-0.5% |
+| 8 | `_isValidKey` | a list literal for each merged key | none (the same three compares) | 0.2-0.6% / 0.6-1.1% / 0.5-1.1% | 0.0-0.3% |
+| 9 | The category parse | the label scan for a value that is not a String, with native `List<String>` labels | row `adapt-category-string-labels` | no bench case | no bench case |
+
+Together, with the overlaps counted once, the profiles give 12.5% / 15.7% / 14.5% of a wheel step at 1,000 points,
+8.1% / 12.1% / 14.2% at 20,000 and 4.2% / 6.3% / 9.6% of a drag-box step at 20,000. On the Pixel, the wheel and pan
+steps at 20,000 points would fall from 8.06 and 8.34 ms to about 7.4 and 7.6 ms.
+
+Notes of the changes:
+
+- Item 1 holds the x only on the paths of its guards: the exact controller, a direct update, no stack and no
+  `segment`, axes x and y, the native linear projection of both scales, native items, and options that are shared
+  or come from the indexed-color plan. The built-in scatter shares no options, so its loop holds the x only in that
+  plan, and a time x axis is no native projection: the time cases keep the read. On AOT the read costs 8.6-9.1 ns
+  per point, the guard of the item class 2.4 ns. On dart2wasm only `ParsedItem` qualifies. The define
+  `CHARTJS_NATIVE_GAP_READS=false` gives the old reads.
+- Item 2 on the Mac test VM (JIT, indicative): the loop of 20,000 stroked circles takes 490-556 µs against
+  1,023-1,117 µs.
+- Item 3 on the Mac test VM (JIT, indicative): `mergeIf` of `defaults.scale` into a new scale scope 10.3 to 5.6 µs, a
+  `Config` with two linear scales 30.5 to 19.1 µs.
+- Item 6: one update of a 1,000-point local time axis reads the platform offset 227 times in place of 335 (20,000
+  points: 348 in place of 528). Fewer than 64 slots gave no gain, because one update makes 37 to 58 intervals.
+
+**Proposed, with no code.** Chart.js ADR 0111 (an opt-in range update, `Chart.updateRanges(mode)` with the zoom
+option `rangeOnlyUpdates`) would skip the rebuild of the configuration in each zoom or pan step: 23% to 32% of a
+1,000-point linear step, 18% to 25% with a time axis and 4.2% to 7.5% at 20,000 points. Chart.js ADR 0112 (frame-aligned
+coalescing of the continuous input of the host) would run one update for each pointer and frame. The input probe
+`apps/chartjs_gallery/lib/main_input_probe.dart` counts the input of each frame: on the Pixel 8a, `adb shell input
+swipe` (one synthetic pointer, 0.5 s) gave 1.35 to 1.44 moves per frame, at most 2, with as many updates and draws,
+at about 58 frames per second against a vsync of 120 Hz. `FrameTiming` build times leave the input work out; the
+frame rate shows it. The counts of a real pinch and pan on both phones go into Chart.js ADR 0112.
+
+**Dropped.**
+
+| Change | Reason (measured) |
+| --- | --- |
+| The zoom draw hooks | 0.3% to 0.6% of an idle draw at 1,000 points, 0.0% to 0.1% at 20,000 |
+| `_values`, `getScaleUnderPoint` and the second `isHorizontal()` of the zoom port | 0.1% to 0.2% of a step |
+| `_GestureManager._buildEvent` of the zoom port | 0.0% to 0.2% of a pinch or pan step |
+| A typed slot for the zoom options | 0.4% to 1.6% at 1,000 points; it comes with zoom phase 5 as an API item |
+| The string switch of `PluginHook.of` and the compares of `notify` | 0.0% to 0.5% of each step |
+| `_notifyStateChanges` and `pluginScopeKeys` | 0.2% to 1.0% and 0.1% to 0.3% of a 1,000-point step, within the noise; the rebuild of the descriptors is a part of Chart.js ADR 0111 |
+| One `Animations` for each update of the line element | 0.1% to 0.6%; the loops already take the direct path with `animation: false` |
+| The bounding box of the canvas, the `List.of` of `_invokeListeners`, the replay of the last event | not in the bench (no host, `events: []`); estimates below 1% |
+| An animated zoom | not measurable: the bench runs with `animation: false` |
+| A cache of the data-limit scan and the other changes that `update` does not allow | they change the behavior of `update` |
+
+**After.** The old-against-new runs fill this table: step p50 in ms, the mean of 2 runs for each side.
+
+| Case | Points | x axis | Pixel 8a, old | Pixel 8a, new | iPhone 17 Pro, old | iPhone 17 Pro, new | Mac, old | Mac, new |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `zoom.idle` update | 1,000 | linear | — | — | — | — | — | — |
+| `zoom.idle` update | 20,000 | linear | — | — | — | — | — | — |
+| `zoom.wheel` | 1,000 | linear | — | — | — | — | — | — |
+| `zoom.wheel` | 20,000 | linear | — | — | — | — | — | — |
+| `zoom.wheel` | 1,000 | time | — | — | — | — | — | — |
+| `zoom.wheel` | 20,000 | time | — | — | — | — | — | — |
+| `zoom.pan` | 20,000 | linear | — | — | — | — | — | — |
+| `zoom.pinch` | 20,000 | linear | — | — | — | — | — | — |
+| `zoom.drag` | 20,000 | linear | — | — | — | — | — | — |
+| `zoom.api` | 20,000 | linear | — | — | — | — | — | — |
