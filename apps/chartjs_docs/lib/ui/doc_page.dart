@@ -42,6 +42,7 @@ class DocPageContent {
     required this.icon,
     required this.intro,
     required this.sections,
+    this.credit = 'The text follows the Chart.js documentation (MIT).',
   });
 
   /// The heading of the page.
@@ -58,6 +59,37 @@ class DocPageContent {
 
   /// The sections after the first card.
   final List<DocSection> sections;
+
+  /// The line below the last card: the source of the text.
+  final String credit;
+}
+
+/// A page of the site in the navigation: its route, its group and how to
+/// build it.
+class DocPageLink {
+  /// Creates the link of a page.
+  const DocPageLink({
+    required this.route,
+    required this.group,
+    required this.navLabel,
+    required this.icon,
+    required this.build,
+  });
+
+  /// The route name of the page, for example `/migrate/fl_chart`.
+  final String route;
+
+  /// The heading of the group of the page in the navigation.
+  final String group;
+
+  /// The name of the page in the navigation.
+  final String navLabel;
+
+  /// The icon of the page in the navigation.
+  final IconData icon;
+
+  /// Builds the content of the page.
+  final DocPageContent Function() build;
 }
 
 /// The widest layout of the text and the charts.
@@ -71,11 +103,24 @@ const String _top = 'top';
 
 /// The frame of a docs page: the header, the navigation and the content.
 class DocPage extends StatefulWidget {
-  /// Creates the frame of [content].
-  const DocPage({required this.content, required this.snippets, super.key});
+  /// Creates the frame of [content], the page with the route [route] of
+  /// [pages].
+  const DocPage({
+    required this.content,
+    required this.snippets,
+    this.pages = const [],
+    this.route = '/',
+    super.key,
+  });
 
   /// The content.
   final DocPageContent content;
+
+  /// The pages of the site, in navigation order.
+  final List<DocPageLink> pages;
+
+  /// The route of this page.
+  final String route;
 
   /// The code regions of the content.
   final Snippets snippets;
@@ -204,9 +249,9 @@ class _DocPageState extends State<DocPage> {
                   ], pad),
                 ],
                 const SizedBox(height: 14),
-                const Text(
-                  'The text follows the Chart.js documentation (MIT).',
-                  style: TextStyle(color: DocColors.muted, fontSize: 11),
+                Text(
+                  content.credit,
+                  style: const TextStyle(color: DocColors.muted, fontSize: 11),
                 ),
                 const SizedBox(height: 8),
               ],
@@ -269,18 +314,73 @@ class _DocPageState extends State<DocPage> {
     ),
   );
 
+  /// The groups of [DocPage.pages], in navigation order.
+  List<(String group, List<DocPageLink> pages)> get _groups {
+    final groups = <(String, List<DocPageLink>)>[];
+    for (final page in widget.pages) {
+      if (groups.isEmpty || groups.last.$1 != page.group) {
+        groups.add((page.group, []));
+      }
+      groups.last.$2.add(page);
+    }
+    return groups;
+  }
+
+  /// A link to the other page [page].
+  Widget _pageLink(DocPageLink page) => InkWell(
+    key: ValueKey('page.${page.route}'),
+    borderRadius: BorderRadius.circular(10),
+    onTap: () => Navigator.of(context).pushReplacementNamed(page.route),
+    child: Padding(
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        children: [
+          Icon(page.icon, size: 18, color: DocColors.muted),
+          const SizedBox(width: 8),
+          Text(
+            page.navLabel,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  /// The navigation: each group with its pages, and the outline of this
+  /// page under its tile.
+  List<Widget> _navigation() {
+    final groups = _groups;
+    if (groups.isEmpty) {
+      return [
+        const Text('CHART TYPES', style: eyebrow),
+        const SizedBox(height: 10),
+        _pageTile(),
+        const SizedBox(height: 10),
+        for (final (id, title, level) in _outline) _link(id, title, level),
+      ];
+    }
+    return [
+      for (final (index, (group, pages)) in groups.indexed) ...[
+        if (index > 0) const SizedBox(height: 16),
+        Text(group.toUpperCase(), style: eyebrow),
+        const SizedBox(height: 10),
+        for (final page in pages)
+          if (page.route == widget.route) ...[
+            _pageTile(),
+            const SizedBox(height: 10),
+            for (final (id, title, level) in _outline) _link(id, title, level),
+          ] else
+            _pageLink(page),
+      ],
+    ];
+  }
+
   Widget get _sidebar => Card(
     child: SingleChildScrollView(
       padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text('CHART TYPES', style: eyebrow),
-          const SizedBox(height: 10),
-          _pageTile(),
-          const SizedBox(height: 10),
-          for (final (id, title, level) in _outline) _link(id, title, level),
-        ],
+        children: _navigation(),
       ),
     ),
   );
@@ -298,6 +398,8 @@ class _DocPageState extends State<DocPage> {
       expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final (id, title, level) in _outline) _link(id, title, level),
+        for (final page in widget.pages)
+          if (page.route != widget.route) _pageLink(page),
       ],
     ),
   );

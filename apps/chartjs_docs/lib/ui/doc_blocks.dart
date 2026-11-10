@@ -327,10 +327,13 @@ typedef DocRow = (String name, String description);
 /// A table of option names and their descriptions.
 class DocTable extends StatelessWidget {
   /// Creates the table of [rows].
-  const DocTable(this.rows, {super.key});
+  const DocTable(this.rows, {this.nameWidth = 210, super.key});
 
   /// The rows, with the inline forms in the cells.
   final List<DocRow> rows;
+
+  /// The width of the column of the names on a wide screen.
+  final double nameWidth;
 
   @override
   Widget build(BuildContext context) => _panel(
@@ -362,7 +365,8 @@ class DocTable extends StatelessWidget {
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(width: 210, child: nameCell),
+                    SizedBox(width: nameWidth, child: nameCell),
+                    const SizedBox(width: 12),
                     Expanded(child: textCell),
                   ],
                 );

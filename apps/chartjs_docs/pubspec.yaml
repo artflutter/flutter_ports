@@ -15,6 +15,7 @@ dependencies:
   flutter_chartjs_port:
     path: ../../packages/flutter_chartjs_port
   material_ui: ^1.10.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -23,8 +24,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    # The page shows the code of its live charts from this source file.
-    - lib/examples/line_examples.dart
+    # The pages show the code of their live charts from these source files.
+    - lib/examples/
+    - lib/migrate/fl_chart/
+    - lib/migrate/graphic/
+    - lib/migrate/syncfusion/
+    # The data of the fl_chart samples 12 and 13 (fl_chart example app, MIT).
+    - assets/flchart/
   fonts:
     - family: RobotoMono
       fonts:

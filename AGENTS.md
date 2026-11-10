@@ -1164,6 +1164,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   between `// #docregion <name>` and `// #enddocregion <name>`. Thus a panel shows the code that draws its
   chart. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
+  - `docPages` of `lib/main.dart` lists the pages with their routes (`/`, `/migrate/fl_chart`,
+    `/migrate/graphic`, `/migrate/syncfusion`) and their groups in the sidebar. The browser address
+    `#/<route>` opens a page.
+  - The pages "Migrate from" rebuild the line chart demos of fl_chart 1.3.0 (13), Graphic 2.7.0 and
+    Syncfusion 35.1.43 with the port. `migrationPage` of `lib/ui/replica_block.dart` gives the intro, a
+    table of the names that map and one section for each demo: notes, the live replica and its code on
+    a tap. Each replica is one file of `lib/migrate/<library>/` with one region. `Snippets.load` reads
+    the regions of each Dart file of `snippetFolders`, and `pubspec.yaml` lists each folder as assets.
+  - The replicas are new code. The Syncfusion replicas use no Syncfusion code. The data of the fl_chart
+    samples 12 and 13 (`assets/flchart/`) and `lib/migrate/graphic/graphic_data.dart` are MIT copies:
+    the `LICENSE` of the app and `REUSE.toml` name their holders.
+    `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.
   - `lib/flutter_d3_port.dart`: the public library. `lib/src/upstream.dart` has `d3Version`
