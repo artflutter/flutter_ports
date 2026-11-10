@@ -1304,6 +1304,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   only on a line chart, Graphic only as a blurred Material elevation of a filled
   mark, and Syncfusion not at all. The settings hide a feature that the chart type
   does not have. A run disables the features that the settings show.
+  `ChartLibrary.zoomsWith` gives the zoom and pan of the x axis (line, bar, scatter
+  and bubble): the Chart.js port through the zoom port, which the adapter registers
+  only for a chart with zoom (`ChartConfig.plugins` takes no typed plugin), fl_chart
+  `transformationConfig`, Graphic `RectCoord.horizontalRangeUpdater` and Syncfusion
+  `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times.
   Run `dart run melos run benchmark:macos` for profile measurements. Dependencies
   are pinned; Syncfusion is included under the owner's confirmed eligible license.
   Shared seeded data and controls live in `lib/benchmark`, adapters in

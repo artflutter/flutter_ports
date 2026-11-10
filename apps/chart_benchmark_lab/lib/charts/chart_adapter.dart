@@ -5,6 +5,8 @@ import 'package:chart_benchmark_lab/benchmark/controller.dart'
     show chartJsDataOnlyUpdates;
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:fl_chart/fl_chart.dart' as fl;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    as zp;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:graphic/graphic.dart' as gr;
 import 'package:material_ui/material_ui.dart';
@@ -87,6 +89,90 @@ class BenchmarkChart extends StatelessWidget {
   /// The Graphic shadow: Material elevation, the only shadow of its API.
   gr.ElevationEncode? get _graphicElevation =>
       config.shadow ? gr.ElevationEncode(value: 4) : null;
+
+  // Zoom and pan (BenchmarkConfig.zoom). Each library zooms and pans only the
+  // x axis, inside the full range of the data, down to 1/chartMaxZoom of it.
+  // A pinch zooms on touch and a drag pans a zoomed chart, on each library.
+  // The mouse wheel zooms on each library too. Only the Chart.js port claims
+  // the wheel (its listener prevents the default): on fl_chart, Graphic and
+  // Syncfusion, a wheel over the chart also scrolls a page that can scroll,
+  // and a scroll stops a test. Each test starts with a new chart, at the full
+  // range: the key of the chart has the revision of the controller.
+
+  /// The zoom options of the Chart.js port, for `plugins.zoom` of the port of
+  /// chartjs-plugin-zoom: pan with a drag, zoom with the wheel and a pinch,
+  /// both on x. The limits keep the original range, as the other libraries
+  /// do, and `minRange` gives the largest zoom. The drag zoom (a box) stays
+  /// off: fl_chart and Graphic have none.
+  Map<String, Object?> get _chartJsZoom => {
+    'pan': <String, Object?>{'enabled': true, 'mode': zp.Mode.x},
+    'zoom': <String, Object?>{
+      'wheel': <String, Object?>{'enabled': true},
+      'pinch': <String, Object?>{'enabled': true},
+      'mode': zp.Mode.x,
+    },
+    'limits': <String, Object?>{
+      'x': <String, Object?>{
+        'min': 'original',
+        'max': 'original',
+        // A category axis counts the bars from 0, a linear axis goes to 100.
+        'minRange':
+            (config.type == ChartType.bar ? config.count - 1 : 100) /
+            chartMaxZoom,
+      },
+    },
+  };
+
+  /// The zoom of fl_chart: `FlScaleAxis.horizontal` zooms and pans only x.
+  /// fl_chart zooms with a pinch and with the mouse wheel, and pans with a
+  /// drag. A trackpad scroll pans, its default
+  /// (`trackpadScrollCausesScale: false`). Its `minScale` 1 keeps the full
+  /// range, and its viewer stops a pan at the edge of the data.
+  fl.FlTransformationConfig get _flZoom => config.zooms
+      ? const fl.FlTransformationConfig(
+          scaleAxis: fl.FlScaleAxis.horizontal,
+          maxScale: chartMaxZoom,
+        )
+      : const fl.FlTransformationConfig();
+
+  /// The default range event of Graphic: a one-pointer drag pans, a pinch
+  /// zooms, the mouse wheel zooms by 10% around the center and a double tap
+  /// goes back to the full range. Only Graphic has this double tap.
+  static final gr.EventUpdater<List<double>> _graphicRangeEvent =
+      gr.Defaults.horizontalRangeEvent;
+
+  /// The horizontal range updater of Graphic: [_graphicRangeEvent], kept
+  /// inside the full range and at most [chartMaxZoom] times, as the other
+  /// libraries are. Without the bounds, a Graphic pan moves the data out of
+  /// view, and a zoom out makes it smaller than the plot.
+  static List<double> _graphicRange(
+    List<double> init,
+    List<double> pre,
+    gr.Event event,
+  ) {
+    final next = _graphicRangeEvent(init, pre, event);
+    // The range is the width of the data as a share of the plot: [0, 1] is
+    // the full range, and a zoom makes it wider.
+    final width = (next.last - next.first).clamp(1.0, chartMaxZoom);
+    final start = ((next.first + next.last - width) / 2).clamp(1 - width, 0.0);
+    return start == next.first && start + width == next.last
+        ? next
+        : [start, start + width];
+  }
+
+  /// The zoom of Syncfusion: pinch, pan and wheel zoom, with `ZoomMode.x`.
+  /// Its default `maximumZoomLevel` 0.01 is 1/[chartMaxZoom] of the full
+  /// range. A zoom out stops at the full range, and a pan stays inside it. The
+  /// selection zoom (a box) and the double-tap zoom stay off: fl_chart and
+  /// Graphic have neither.
+  sf.ZoomPanBehavior? get _sfZoom => config.zooms
+      ? sf.ZoomPanBehavior(
+          enablePinching: true,
+          enablePanning: true,
+          enableMouseWheelZooming: true,
+          zoomMode: sf.ZoomMode.x,
+        )
+      : null;
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +315,7 @@ class BenchmarkChart extends StatelessWidget {
       autoSkip: true,
       extra: const {'maxTicksLimit': 5},
     );
-    return cj.ChartView(
+    final view = cj.ChartView(
       config: cj.ChartConfig(
         type: switch (config.type) {
           ChartType.line => cj.ChartKind.line,
@@ -325,6 +411,7 @@ class BenchmarkChart extends StatelessWidget {
               config.type == ChartType.scatter ||
               config.type == ChartType.bubble)
             'parsing': false,
+          if (config.zooms) 'plugins': {'zoom': _chartJsZoom},
           'events': config.tooltips
               ? const [
                   'mousemove',
@@ -340,6 +427,13 @@ class BenchmarkChart extends StatelessWidget {
       dataOnlyUpdates: chartJsDataOnlyUpdates,
       theme: const cj.ChartThemeData(),
       excludeFromSemantics: true,
+    );
+    // A change of the toggle mounts a new chart, with the registry that the
+    // toggle gives.
+    return _ChartJsZoomPlugin(
+      key: ValueKey(config.zooms),
+      zoom: config.zooms,
+      child: view,
     );
   }
 
@@ -440,6 +534,7 @@ class BenchmarkChart extends StatelessWidget {
             ],
           ),
           duration: Duration.zero,
+          transformationConfig: _flZoom,
         );
       case ChartType.bar:
         return fl.BarChart(
@@ -472,6 +567,7 @@ class BenchmarkChart extends StatelessWidget {
             ],
           ),
           duration: Duration.zero,
+          transformationConfig: _flZoom,
         );
       case ChartType.scatter:
       case ChartType.bubble:
@@ -498,6 +594,7 @@ class BenchmarkChart extends StatelessWidget {
             ],
           ),
           duration: Duration.zero,
+          transformationConfig: _flZoom,
         );
       case ChartType.pie:
       case ChartType.doughnut:
@@ -772,6 +869,9 @@ class BenchmarkChart extends StatelessWidget {
         ChartType.polarArea => gr.PolarCoord(radiusRange: [0, _sliceExtent]),
         // Unlike a radius range, this also limits the spokes and the labels.
         ChartType.radar => gr.PolarCoord(endRadius: _radarExtent),
+        _ when config.zooms => gr.RectCoord(
+          horizontalRangeUpdater: _graphicRange,
+        ),
         _ => null,
       },
       padding: (_) =>
@@ -959,7 +1059,68 @@ class BenchmarkChart extends StatelessWidget {
       primaryXAxis: axis(x: true),
       primaryYAxis: axis(x: false),
       tooltipBehavior: sf.TooltipBehavior(enable: config.tooltips),
+      zoomPanBehavior: _sfZoom,
       series: series,
     );
   }
+}
+
+/// Registers the zoom plugin of the Chart.js port for a chart with zoom, and
+/// removes it for a chart without, so that a run without zoom runs no hook of
+/// the plugin. The typed plugin `zoomPlugin` cannot be an inline plugin of
+/// one typed chart: `ChartConfig.plugins` takes only plugin Maps (seam H18 of
+/// the zoom port). Thus the registry holds it, as `Chart.register` of the
+/// docs of the plugin does.
+///
+/// One engine is mounted at a time. A new chart reads the registry at its
+/// first layout, after the `initState` of its own [_ChartJsZoomPlugin]. The
+/// chart before it is destroyed at the end of the same frame. The last widget
+/// that registered the plugin removes it at its dispose.
+class _ChartJsZoomPlugin extends StatefulWidget {
+  const _ChartJsZoomPlugin({
+    required this.zoom,
+    required this.child,
+    super.key,
+  });
+
+  /// Whether the chart below zooms.
+  final bool zoom;
+
+  /// The chart.
+  final Widget child;
+
+  @override
+  State<_ChartJsZoomPlugin> createState() => _ChartJsZoomPluginState();
+}
+
+class _ChartJsZoomPluginState extends State<_ChartJsZoomPlugin> {
+  /// The state that registered the plugin last, or `null`.
+  static _ChartJsZoomPluginState? _owner;
+
+  static bool get _registered =>
+      cj.registry.plugins.get(zp.zoomPlugin.id) != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.zoom) {
+      if (!_registered) cj.Chart.register([zp.zoomPlugin]);
+      _owner = this;
+    } else {
+      if (_registered) cj.Chart.unregister([zp.zoomPlugin]);
+      _owner = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    if (identical(_owner, this)) {
+      _owner = null;
+      if (_registered) cj.Chart.unregister([zp.zoomPlugin]);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

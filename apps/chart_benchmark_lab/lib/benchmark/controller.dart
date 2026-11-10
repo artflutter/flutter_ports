@@ -10,6 +10,8 @@ import 'package:chart_benchmark_lab/benchmark/web_mode.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart' show FlutterVersion;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show chartjsPluginZoomVersion;
 
 /// SDK identity injected by the Flutter build tool; never inferred from a pin.
 const benchmarkSdk = <String, String?>{
@@ -135,6 +137,9 @@ class BenchmarkResult {
           'CHARTJS_PARTITIONED_BASELINE_FILL',
           defaultValue: true,
         ),
+      // The pin of the port of chartjs-plugin-zoom, which zooms this chart.
+      if (library == ChartLibrary.chartjs && config.zooms)
+        'zoomPlugin': chartjsPluginZoomVersion,
     },
     'settings': config.toJson(),
     'viewport': {'width': viewport.width, 'height': viewport.height},

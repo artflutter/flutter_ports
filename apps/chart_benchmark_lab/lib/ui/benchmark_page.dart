@@ -15,8 +15,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-String _typeName(BenchmarkConfig config) => config.type.label.toLowerCase();
-
 const String _sdkVersion = FlutterVersion.version ?? 'version unavailable';
 const String _sdkChannel = FlutterVersion.channel ?? '';
 const String _sdkDart = FlutterVersion.dartVersion ?? 'unavailable';
@@ -744,6 +742,15 @@ class _BenchmarkPageState extends State<BenchmarkPage>
             !locked,
             (v) => controller.configure(config.copyWith(tooltips: v)),
           ),
+          if (config.type.hasZoom)
+            _toggle(
+              'Zoom and pan',
+              'zoom',
+              config.zoom,
+              !locked,
+              (v) => controller.configure(config.copyWith(zoom: v)),
+              hint: _zoomHint(config),
+            ),
           _toggle(
             'Shadow',
             'shadow',
@@ -979,10 +986,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                             Text(
                               engine.runs(controller.config)
                                   ? 'v${engine.version}'
-                                  : engine.supports(controller.config.type)
-                                  ? 'No shadow here'
-                                  : 'No ${_typeName(controller.config)} '
-                                        'chart',
+                                  : engine.shortReasonFor(controller.config),
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: Color(0xff64748b),
@@ -1401,6 +1405,19 @@ Widget _badge(String label, Color color) => Container(
     style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color),
   ),
 );
+
+/// How a person zooms and pans, and the libraries that cannot.
+String _zoomHint(BenchmarkConfig config) {
+  final missing = [
+    for (final engine in ChartLibrary.values)
+      if (engine.supports(config.type) && !engine.zoomsWith(config.type))
+        engine.label,
+  ];
+  return [
+    'X axis: pinch or wheel zooms, drag pans',
+    if (missing.isNotEmpty) 'not on ${missing.join(', ')}',
+  ].join(' · ');
+}
 
 /// The libraries that cannot draw the shadow of [config], or `null`.
 String? _shadowHint(BenchmarkConfig config) {

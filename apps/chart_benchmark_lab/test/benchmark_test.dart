@@ -5,6 +5,8 @@ import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/benchmark/metrics.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show chartjsPluginZoomVersion;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -95,6 +97,86 @@ void main() {
       const BenchmarkConfig(shadow: true, shadowBlur: true).toJson()['shadow'],
       'blurred',
     );
+  });
+  test('zoom applies to the types with an x axis, on each library', () {
+    for (final type in ChartType.values) {
+      final xAxis = switch (type) {
+        ChartType.line ||
+        ChartType.bar ||
+        ChartType.scatter ||
+        ChartType.bubble => true,
+        _ => false,
+      };
+      expect(type.hasZoom, xAxis, reason: type.name);
+      final config = BenchmarkConfig(type: type, zoom: true);
+      expect(config.zooms, xAxis, reason: type.name);
+      for (final library in ChartLibrary.values) {
+        final reason = '${library.name} ${type.name}';
+        expect(library.zoomsWith(type), xAxis, reason: reason);
+        // Zoom stops no library: each has it on each type with an x axis.
+        expect(
+          library.runs(config),
+          library.supports(type),
+          reason: reason,
+        );
+      }
+    }
+  });
+  test('a set zoom adds a key, so earlier saved runs keep theirs', () {
+    const off = BenchmarkConfig();
+    const on = BenchmarkConfig(zoom: true);
+    expect(off.toJson().containsKey('zoom'), isFalse);
+    expect(on.toJson()['zoom'], isTrue);
+    expect(on, isNot(off));
+    expect(off.copyWith(zoom: true), on);
+    expect(off.copyWith(zoom: true).hashCode, on.hashCode);
+    expect(on.copyWith(count: 500).zoom, isTrue);
+    // A type without an x axis drops the hidden toggle from its key.
+    const pie = BenchmarkConfig(type: ChartType.pie);
+    expect(pie.copyWith(zoom: true).toJson(), pie.toJson());
+
+    BenchmarkResult result(ChartLibrary library, BenchmarkConfig config) =>
+        BenchmarkResult(
+          library: library,
+          config: config,
+          viewport: const Size(600, 400),
+          dpr: 2,
+          refreshRate: 120,
+          metrics: const FrameMetrics(),
+          durationSeconds: 10,
+          createdAt: DateTime.utc(2026),
+        );
+    expect(
+      result(ChartLibrary.chartjs, on).comparisonKey,
+      isNot(result(ChartLibrary.chartjs, off).comparisonKey),
+    );
+    expect(
+      result(ChartLibrary.chartjs, on).comparisonKey,
+      result(ChartLibrary.syncfusion, on).comparisonKey,
+    );
+    expect(
+      result(ChartLibrary.chartjs, pie.copyWith(zoom: true)).comparisonKey,
+      result(ChartLibrary.chartjs, pie).comparisonKey,
+    );
+    Map<String, Object?> engineOptions(
+      ChartLibrary library,
+      BenchmarkConfig config,
+    ) =>
+        result(library, config).toJson()['engineOptions']!
+            as Map<String, Object?>;
+    expect(
+      engineOptions(ChartLibrary.chartjs, on)['zoomPlugin'],
+      chartjsPluginZoomVersion,
+    );
+    expect(engineOptions(ChartLibrary.chartjs, off)['zoomPlugin'], isNull);
+    expect(
+      engineOptions(
+        ChartLibrary.chartjs,
+        pie.copyWith(zoom: true),
+      )['zoomPlugin'],
+      isNull,
+    );
+    expect(engineOptions(ChartLibrary.flChart, on)['zoomPlugin'], isNull);
   });
   test('only the radar of Syncfusion has no public chart', () {
     for (final library in ChartLibrary.values) {
