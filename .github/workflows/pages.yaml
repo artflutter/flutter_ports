@@ -20,8 +20,9 @@ name: pages
 # the job deploy assembles the site, with one folder for each page. A later app
 # adds its build, its folder and its link on the root page.
 #
-# Pages cannot send the COOP and COEP headers. web/isolate.js of the lab adds them
-# through a service worker, so that WebAssembly gets its rendering thread there.
+# Pages cannot send the COOP and COEP headers. web/isolate.js of the lab and of the
+# docs adds them through a service worker, so that WebAssembly gets its rendering
+# thread there.
 
 on:
   push:
