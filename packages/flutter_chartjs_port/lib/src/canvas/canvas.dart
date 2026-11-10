@@ -393,10 +393,13 @@ abstract interface class TextMetrics {
 }
 
 /// lib.dom.d.ts `CSSStyleDeclaration`: the part that `helpers.rtl`
-/// (helpers.rtl.ts:56-73) uses on `canvas.style`.
+/// (helpers.rtl.ts:56-73), `helpers.dom` and `platform.dom.js` use on
+/// `canvas.style`. The extension [CssStyleProperties] adds the members that
+/// add-on plugins write (Chart.js ADR 0108).
 ///
 /// The canvas layer reads the `direction` property of the canvas style when
-/// [CanvasRenderingContext2D.direction] is `'inherit'`, as the DOM does.
+/// [CanvasRenderingContext2D.direction] is `'inherit'`, as the DOM does. The
+/// chart host reads `width` and `height`.
 abstract interface class CSSStyleDeclaration {
   /// `getPropertyValue(property)`. An unset property gives `''`.
   String getPropertyValue(String property);
@@ -413,6 +416,39 @@ abstract interface class CSSStyleDeclaration {
   /// callers pass the direction String, so the call reads `'r'` and `'t'`
   /// (helpers.rtl.ts:72, `plugin.legend.js:437`).
   void setProperty(String property, String? value, [String? priority]);
+}
+
+/// The CSSOM members of an inline style that add-on plugins write (Chart.js
+/// ADR 0108). Port-only.
+///
+/// They are extension members over [CSSStyleDeclaration.getPropertyValue]
+/// and [CSSStyleDeclaration.setProperty], so that each style has them, also
+/// a fake style of a test. The upstream lines keep their form:
+/// `style.touchAction = 'none'`, `style.removeProperty('user-select')`.
+/// `user-select` has no effect: the canvas has no text to select.
+extension CssStyleProperties on CSSStyleDeclaration {
+  /// `style.touchAction`: the `touch-action` property, `''` when it is not
+  /// set.
+  String get touchAction => getPropertyValue('touch-action');
+
+  /// `style.touchAction = value`. An empty [value] removes the property.
+  set touchAction(String value) => setProperty('touch-action', value);
+
+  /// `style.userSelect`: the `user-select` property, `''` when it is not
+  /// set.
+  String get userSelect => getPropertyValue('user-select');
+
+  /// `style.userSelect = value`. An empty [value] removes the property.
+  set userSelect(String value) => setProperty('user-select', value);
+
+  /// `removeProperty(property)`: removes [property] and gives its old value,
+  /// `''` when it was not set. The CSSOM removal is `setProperty(property,
+  /// '')`.
+  String removeProperty(String property) {
+    final old = getPropertyValue(property);
+    setProperty(property, null);
+    return old;
+  }
 }
 
 /// lib.dom.d.ts `HTMLCanvasElement`: the part that the ported code reads

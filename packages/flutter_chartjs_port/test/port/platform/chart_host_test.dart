@@ -8,7 +8,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart'
     show ClipRectLayer, RenderRepaintBoundary;
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -26,6 +28,12 @@ import 'fake_chart.dart';
 // gives mouseout to the host of the last tap. The group 'touch sequence'
 // pins the rules of the device check P4 (D1 to D5). The FakeChart makes the
 // platform calls of core.controller.js.
+//
+// Chart.js ADR 0108: the DOM fields of the events (group 'events'), the
+// canvas event target and the bubble phase (group 'canvas event target'),
+// the document of the canvas elements and its keyboard bridge (group
+// 'document target') and the box of the canvas (group
+// 'getBoundingClientRect').
 
 Widget _box(Widget child, {double width = 400, double height = 300}) =>
     Directionality(
@@ -83,6 +91,47 @@ void _record(UiCanvasElement canvas, List<NativeEvent> log) {
 List<String> _types(List<NativeEvent> log) => [
   for (final event in log) event.type,
 ];
+
+/// The document of the canvas elements.
+CanvasDocument get _document => CanvasDocument.instance;
+
+/// Adds [listener] for each type of [types] to the document until the end of
+/// the test.
+void _onDocument(
+  List<String> types,
+  NativeEventListener listener, {
+  bool? passive,
+}) {
+  for (final type in types) {
+    _document.addEventListener(type, listener, passive: passive);
+    addTearDown(() => _document.removeEventListener(type, listener));
+  }
+}
+
+/// The type and the target of each event of [log]: `canvas` for [canvas],
+/// `document` for the document.
+List<String> _targets(List<NativeEvent> log, Object canvas) => [
+  for (final event in log)
+    '${event.type} ${switch (event.target) {
+      final target when identical(target, canvas) => 'canvas',
+      final target when identical(target, _document) => 'document',
+      final target => '$target',
+    }}',
+];
+
+/// A canvas element that implements only `getContext` and `toDataURL`: a
+/// fake of a test, which is not a [UiCanvasElement].
+final class _FakeCanvas implements HTMLCanvasElement {
+  @override
+  CanvasRenderingContext2D? getContext(String contextId) => null;
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 /// The global routes of the pointer router.
 int _globalRoutes(WidgetTester tester) =>
@@ -1382,6 +1431,16 @@ void main() {
         tester,
         events: const ['mousedown', 'mouseup', 'pointerup', 'mousemove'],
       );
+      // Chart.js ADR 0108: the document gets the move, the up and the click
+      // outside the box, with the document as the target.
+      final document = <NativeEvent>[];
+      _onDocument(const [
+        'pointermove',
+        'mousemove',
+        'pointerup',
+        'mouseup',
+        'click',
+      ], document.add);
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(gesture.removePointer);
       await gesture.addPointer(location: const Offset(10, 10));
@@ -1392,8 +1451,21 @@ void main() {
       await gesture.up();
       await tester.pump();
       expect(_nativeTypes(chart), ['mousedown']);
+      expect(_targets(document, chart.canvas!), [
+        'pointermove document',
+        'mousemove document',
+        'pointerup document',
+        'mouseup document',
+        'click document',
+      ]);
+      expect(
+        [for (final e in document) (e.offsetX, e.clientX, e.clientY)],
+        everyElement((700.0, 700.0, 500.0)),
+      );
 
-      // An up inside the box still gives mouseup.
+      // An up inside the box still gives mouseup. It bubbles to the
+      // document with the canvas as the target.
+      document.clear();
       await gesture.down(const Offset(20, 20));
       await gesture.up();
       await tester.pump();
@@ -1403,7 +1475,288 @@ void main() {
         'pointerup',
         'mouseup',
       ]);
+      expect(_targets(document, chart.canvas!), [
+        'pointerup canvas',
+        'mouseup canvas',
+        'click canvas',
+      ]);
       chart.destroy();
+    });
+
+    testWidgets('a mouse down, up and click have the DOM fields of Chrome', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(100, 50));
+      await tester.pump();
+      log.clear();
+      await gesture.down(const Offset(100, 50));
+      await gesture.moveTo(const Offset(110, 60));
+      await gesture.up();
+      await tester.pump();
+      expect(
+        [
+          for (final e in log)
+            (
+              e.type,
+              e.button,
+              e.buttons,
+              e.pointerId,
+              e.pointerType,
+              e.bubbles,
+              e.cancelable,
+            ),
+        ],
+        [
+          ('pointerdown', 0, 1, 1, 'mouse', true, true),
+          ('mousedown', 0, 1, 0, '', true, true),
+          ('pointermove', -1, 1, 1, 'mouse', true, true),
+          ('mousemove', 0, 1, 0, '', true, true),
+          ('pointerup', 0, 0, 1, 'mouse', true, true),
+          ('mouseup', 0, 0, 0, '', true, true),
+          ('click', 0, 0, 1, 'mouse', true, true),
+        ],
+      );
+      // The client point is the position in the view: the host is at
+      // (40, 0).
+      expect(
+        [for (final e in log) (e.clientX - e.offsetX, e.clientY - e.offsetY)],
+        everyElement((40.0, 0.0)),
+      );
+      expect((log.first.clientX, log.first.clientY), (100.0, 50.0));
+      expect(log.every((e) => identical(e.target, canvas)), isTrue);
+      expect(
+        log.every((e) => e.key == '' && e.deltaY == 0 && !e.ctrlKey),
+        isTrue,
+      );
+    });
+
+    testWidgets('the enter and leave events neither bubble nor cancel', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(600, 50));
+      await gesture.moveTo(const Offset(100, 50));
+      await gesture.moveTo(const Offset(600, 50));
+      await tester.pump();
+      expect(
+        [
+          for (final e in log)
+            if (e.type != 'pointermove' && e.type != 'mousemove')
+              (e.type, e.bubbles, e.cancelable, e.button),
+        ],
+        [
+          ('pointerover', true, true, -1),
+          ('pointerenter', false, false, -1),
+          ('mouseover', true, true, 0),
+          ('mouseenter', false, false, 0),
+          ('pointerout', true, true, -1),
+          ('pointerleave', false, false, -1),
+          ('mouseout', true, true, 0),
+          ('mouseleave', false, false, 0),
+        ],
+      );
+      expect(
+        log.where((e) => e.type.startsWith('pointer')).map((e) => e.pointerId),
+        everyElement(1),
+      );
+    });
+
+    for (final (name, flutterButtons, button) in const [
+      ('secondary', kSecondaryMouseButton, 2),
+      ('middle', kMiddleMouseButton, 1),
+      ('back', kBackMouseButton, 3),
+      ('forward', kForwardMouseButton, 4),
+    ]) {
+      testWidgets('a $name-button down and up give the button $button', (
+        tester,
+      ) async {
+        final log = <NativeEvent>[];
+        await _pumpHost(tester, log);
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+          buttons: flutterButtons,
+        );
+        addTearDown(gesture.removePointer);
+        await gesture.down(const Offset(100, 50));
+        await gesture.up();
+        await tester.pump();
+        expect(
+          [
+            for (final e in log)
+              if (e.type.endsWith('down') || e.type.endsWith('up'))
+                (e.type, e.button, e.buttons),
+          ],
+          [
+            ('pointerdown', button, flutterButtons),
+            ('mousedown', button, flutterButtons),
+            ('pointerup', button, 0),
+            ('mouseup', button, 0),
+          ],
+        );
+      });
+    }
+
+    testWidgets('a scroll signal gives the wheel deltas', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      addCanvasEventListener(_host(tester).canvas, 'wheel', log.add);
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+      await tester.sendEventToBinding(pointer.hover(const Offset(140, 40)));
+      log.clear();
+      await tester.sendEventToBinding(pointer.scroll(const Offset(-3, 20)));
+      final wheel = log.single;
+      expect(wheel.type, 'wheel');
+      expect((wheel.deltaX, wheel.deltaY, wheel.deltaMode), (-3.0, 20.0, 0));
+      expect((wheel.offsetX, wheel.offsetY), (100.0, 40.0));
+      expect((wheel.clientX, wheel.clientY), (140.0, 40.0));
+      expect((wheel.bubbles, wheel.cancelable), (true, true));
+      expect((wheel.button, wheel.buttons, wheel.pointerId), (0, 0, 0));
+    });
+
+    testWidgets('the events have the modifier keys of HardwareKeyboard', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(100, 50));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      log.clear();
+      await gesture.moveTo(const Offset(110, 50));
+      expect(
+        [for (final e in log) (e.ctrlKey, e.shiftKey, e.altKey, e.metaKey)],
+        everyElement((true, true, false, false)),
+      );
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+      log.clear();
+      await gesture.moveTo(const Offset(120, 50));
+      expect(
+        [for (final e in log) (e.ctrlKey, e.shiftKey, e.altKey, e.metaKey)],
+        everyElement((false, false, true, true)),
+      );
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    });
+
+    testWidgets('a touch tap has the pointer ids and buttons of Chrome', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      await tester.tapAt(const Offset(100, 50));
+      await tester.pump();
+      final pointerId = log.first.pointerId;
+      expect(pointerId, greaterThanOrEqualTo(2));
+      expect(
+        [
+          for (final e in log)
+            (
+              e.type,
+              e.button,
+              e.buttons,
+              e.pointerId == pointerId
+                  ? 'id'
+                  : e.pointerId == 0
+                  ? '0'
+                  : '${e.pointerId}',
+              e.pointerType,
+              e.bubbles,
+            ),
+        ],
+        [
+          ('pointerover', -1, 1, 'id', 'touch', true),
+          ('pointerenter', -1, 1, 'id', 'touch', false),
+          ('pointerdown', 0, 1, 'id', 'touch', true),
+          ('touchstart', 0, 0, '0', '', true),
+          ('pointerup', 0, 0, 'id', 'touch', true),
+          ('pointerout', -1, 0, 'id', 'touch', true),
+          ('pointerleave', -1, 0, 'id', 'touch', false),
+          ('touchend', 0, 0, '0', '', true),
+          ('mouseover', 0, 0, '0', '', true),
+          ('mouseenter', 0, 0, '0', '', false),
+          ('mousemove', 0, 0, '0', '', true),
+          ('mousedown', 0, 1, '0', '', true),
+          ('mouseup', 0, 0, '0', '', true),
+          ('click', 0, 0, 'id', 'touch', true),
+        ],
+      );
+      // A TouchEvent has no client point, as it has no offsets.
+      final touchstart = log[3];
+      expect([touchstart.clientX, touchstart.clientY], everyElement(isNaN));
+      expect(touchstart.cancelable, isTrue);
+      expect((log[2].clientX, log[2].clientY), (100.0, 50.0));
+
+      // The next touch takes a new id.
+      log.clear();
+      await tester.tapAt(const Offset(120, 50));
+      await tester.pump();
+      expect(log.first.pointerId, greaterThan(pointerId));
+    });
+
+    testWidgets('a stylus is a pen, and an inverted stylus in contact has '
+        'the eraser bit', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      for (final (kind, buttons) in const [
+        (PointerDeviceKind.stylus, 1),
+        (PointerDeviceKind.invertedStylus, 32),
+      ]) {
+        log.clear();
+        final gesture = await tester.startGesture(
+          const Offset(100, 50),
+          kind: kind,
+        );
+        await gesture.up();
+        await tester.pump();
+        final down = log.firstWhere((e) => e.type == 'pointerdown');
+        expect((down.pointerType, down.buttons), ('pen', buttons));
+        expect(
+          log.firstWhere((e) => e.type == 'pointerup').buttons,
+          0,
+          reason: '$kind',
+        );
+      }
+    });
+
+    testWidgets('the pan begin cancels at the client point (0, 0), and the '
+        'later touchmove events are not cancelable', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      await gesture.moveBy(const Offset(0, 30));
+      await gesture.moveBy(const Offset(0, 10));
+      await gesture.up();
+      await tester.pump();
+      final cancel = log.firstWhere((e) => e.type == 'pointercancel');
+      expect((cancel.clientX, cancel.clientY), (0.0, 0.0));
+      expect((cancel.offsetX, cancel.offsetY), (-40.0, 0.0));
+      expect(
+        (cancel.cancelable, cancel.button, cancel.buttons),
+        (
+          false,
+          -1,
+          0,
+        ),
+      );
+      expect(
+        [
+          for (final e in log)
+            if (e.type == 'touchmove') e.cancelable,
+        ],
+        [true, false],
+      );
     });
 
     testWidgets('an inverted stylus hover gives mouseover and mouseout', (
@@ -1818,18 +2171,43 @@ void main() {
 
     testWidgets('a mouse up outside the box gives no click', (tester) async {
       final log = <NativeEvent>[];
-      await _pumpHost(tester, log);
+      final canvas = await _pumpHost(tester, log);
+      // Chart.js ADR 0108: the document gets the click of the click rule, as
+      // the DOM sends it to the common ancestor.
+      final document = <NativeEvent>[];
+      _onDocument(const [
+        'pointermove',
+        'mousemove',
+        'pointerup',
+        'mouseup',
+        'click',
+      ], document.add);
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(gesture.removePointer);
       await gesture.down(const Offset(100, 50));
       await gesture.moveTo(const Offset(20, 50));
       await gesture.up();
-      // A later up inside the box after a down outside gives no click.
+      expect(_targets(document, canvas), [
+        'pointermove document',
+        'mousemove document',
+        'pointerup document',
+        'mouseup document',
+        'click document',
+      ]);
+      // The offsets are in the coordinates of the host at (40, 0).
+      expect(
+        [for (final e in document) (e.offsetX, e.clientX)],
+        everyElement((-20.0, 20.0)),
+      );
+      // A later up inside the box after a down outside gives no click. The
+      // pointer did not go down on the host: the document gets nothing.
+      document.clear();
       await gesture.down(const Offset(20, 60));
       await gesture.moveTo(const Offset(100, 60));
       await gesture.up();
       await tester.pump();
       expect(_types(log), isNot(contains('click')));
+      expect(document, isEmpty);
     });
 
     testWidgets('a secondary-button click gives no click', (tester) async {
@@ -2778,6 +3156,594 @@ void main() {
         NativeEvent(type: 'click', offsetX: 1, offsetY: 2),
       );
       expect(received, ['click']);
+    });
+
+    // Chart.js ADR 0108: the extension CanvasEventTarget, the bubble phase
+    // to the document, stopPropagation, passive listeners and the result
+    // of a dispatch.
+    setUp(() => expect(_document.debugListenerCount, 0));
+
+    /// A bubbling, cancelable event of [type].
+    NativeEvent event(String type, {bool bubbles = true}) => NativeEvent(
+      type: type,
+      offsetX: 1,
+      offsetY: 2,
+      bubbles: bubbles,
+      cancelable: true,
+    );
+
+    test('a bubbling event reaches the canvas listeners, then the document '
+        'listeners, with the canvas as the target', () {
+      final canvas = UiCanvasElement();
+      final calls = <String>[];
+      void onCanvas(NativeEvent e) => calls.add('canvas ${e.target}');
+      void onDocument(NativeEvent e) => calls.add('document ${e.target}');
+      _onDocument(const ['mouseup'], onDocument);
+      canvas
+        ..addEventListener('mouseup', onCanvas)
+        ..addEventListener('mouseup', (e) => calls.add('canvas 2'));
+      expect(canvas.dispatchEvent(event('mouseup')), isTrue);
+      expect(calls, [
+        'canvas $canvas',
+        'canvas 2',
+        'document $canvas',
+      ]);
+      canvas.removeEventListener('mouseup', onCanvas);
+      calls.clear();
+      canvas.dispatchEvent(event('mouseup'));
+      expect(calls, ['canvas 2', 'document $canvas']);
+    });
+
+    test('an event that does not bubble stays on the canvas', () {
+      final canvas = UiCanvasElement();
+      final calls = <String>[];
+      _onDocument(const ['mouseenter'], (e) => calls.add('document'));
+      canvas
+        ..addEventListener('mouseenter', (e) => calls.add('canvas'))
+        ..dispatchEvent(event('mouseenter', bubbles: false));
+      expect(calls, ['canvas']);
+      // A bubbling event with no canvas listener still reaches the
+      // document.
+      canvas.dispatchEvent(event('mouseenter'));
+      expect(calls, ['canvas', 'canvas', 'document']);
+    });
+
+    test('stopPropagation ends the dispatch after the canvas listeners', () {
+      final canvas = UiCanvasElement();
+      final calls = <String>[];
+      void stop(NativeEvent e) {
+        calls.add('stop');
+        e.stopPropagation();
+      }
+
+      _onDocument(const ['pointerup'], (e) => calls.add('document'));
+      canvas
+        ..addEventListener('pointerup', stop)
+        ..addEventListener('pointerup', (e) => calls.add('canvas'));
+      final up = event('pointerup');
+      canvas.dispatchEvent(up);
+      // The other listeners of the canvas still run.
+      expect(calls, ['stop', 'canvas']);
+      // A new dispatch of the same event clears the stop flag.
+      canvas.removeEventListener('pointerup', stop);
+      calls.clear();
+      canvas.dispatchEvent(up);
+      expect(calls, ['canvas', 'document']);
+    });
+
+    test('the dispatch gives false when a listener prevents the default', () {
+      final canvas = UiCanvasElement();
+      void prevent(NativeEvent e) => e.preventDefault();
+      canvas.addEventListener('mousedown', prevent);
+      expect(canvas.dispatchEvent(event('mousedown')), isFalse);
+      // An event that is not cancelable cannot be prevented.
+      expect(
+        canvas.dispatchEvent(
+          NativeEvent(type: 'mousedown', offsetX: 0, offsetY: 0),
+        ),
+        isTrue,
+      );
+      canvas.removeEventListener('mousedown', prevent);
+      expect(canvas.dispatchEvent(event('mousedown')), isTrue);
+      // A document listener prevents in the bubble phase.
+      _onDocument(const ['mousedown'], prevent);
+      expect(canvas.dispatchEvent(event('mousedown')), isFalse);
+    });
+
+    test('a passive listener cannot prevent the default', () {
+      final canvas = UiCanvasElement();
+      void prevent(NativeEvent e) => e.preventDefault();
+      canvas.addEventListener('wheel', prevent, passive: true);
+      expect(debugCanvasEventListenerPassive(canvas, 'wheel', prevent), true);
+      expect(canvas.dispatchEvent(event('wheel')), isTrue);
+      // The first passive value stays.
+      canvas.addEventListener('wheel', prevent, passive: false);
+      expect(canvas.dispatchEvent(event('wheel')), isTrue);
+      // The default of a canvas is false.
+      canvas
+        ..removeEventListener('wheel', prevent)
+        ..addEventListener('wheel', prevent);
+      expect(debugCanvasEventListenerPassive(canvas, 'wheel', prevent), false);
+      expect(canvas.dispatchEvent(event('wheel')), isFalse);
+      canvas.removeEventListener('wheel', prevent);
+      expect(debugCanvasEventListenerPassive(canvas, 'wheel', prevent), null);
+    });
+
+    test('the passive default of the document is true for wheel, touchstart '
+        'and touchmove', () {
+      final canvas = UiCanvasElement();
+      void prevent(NativeEvent e) => e.preventDefault();
+      for (final type in const ['wheel', 'touchstart', 'touchmove']) {
+        _onDocument([type], prevent);
+        expect(canvas.dispatchEvent(event(type)), isTrue, reason: type);
+      }
+      // Another type is not passive by default.
+      _onDocument(const ['mousemove'], prevent);
+      expect(canvas.dispatchEvent(event('mousemove')), isFalse);
+      // An explicit false makes the listener of the document active.
+      void active(NativeEvent e) => e.preventDefault();
+      _onDocument(const ['touchmove'], active, passive: false);
+      expect(canvas.dispatchEvent(event('touchmove')), isFalse);
+    });
+
+    test('the document dispatch sets the document as the target and calls '
+        'no canvas listener', () {
+      final canvas = UiCanvasElement();
+      final calls = <String>[];
+      canvas.addEventListener('mouseup', (e) => calls.add('canvas'));
+      _onDocument(const ['mouseup'], (e) => calls.add('document ${e.target}'));
+      final up = event('mouseup');
+      final document = canvas.ownerDocument;
+      expect(document.dispatchEvent(up), isTrue);
+      expect(calls, ['document #document']);
+      expect(up.target, same(document));
+      // A canvas dispatch of the same event sets the canvas.
+      canvas.dispatchEvent(up);
+      expect(up.target, same(canvas));
+    });
+
+    test('ownerDocument is one object, and eventTarget is one object for each '
+        'canvas', () {
+      final a = UiCanvasElement();
+      final b = UiCanvasElement();
+      expect(a.ownerDocument, same(_document));
+      expect(b.ownerDocument, same(a.ownerDocument));
+      expect(a.eventTarget, same(a.eventTarget));
+      expect(a.eventTarget == a.eventTarget, isTrue);
+      expect(a.eventTarget == b.eventTarget, isFalse);
+      expect(a.eventTarget, isNot(same(_document)));
+
+      // The target adds, dispatches and removes on its canvas.
+      final calls = <String>[];
+      void listener(NativeEvent e) => calls.add('${e.type} ${e.target}');
+      final target = a.eventTarget..addEventListener('click', listener);
+      expect(hasCanvasEventListener(a, 'click'), isTrue);
+      expect(target.dispatchEvent(event('click')), isTrue);
+      expect(calls, ['click $a']);
+      target.removeEventListener('click', listener);
+      expect(hasCanvasEventListener(a, 'click'), isFalse);
+    });
+
+    test('a listener that a listener adds runs from the next event of its '
+        'target', () {
+      final canvas = UiCanvasElement();
+      final calls = <String>[];
+      void late1(NativeEvent e) => calls.add('late canvas');
+      void late2(NativeEvent e) => calls.add('late document');
+      addTearDown(() => _document.removeEventListener('mouseup', late2));
+      canvas.addEventListener('mouseup', (e) {
+        calls.add('first');
+        canvas.addEventListener('mouseup', late1);
+        _document.addEventListener('mouseup', late2);
+      });
+      canvas.dispatchEvent(event('mouseup'));
+      // The document stage starts after the canvas stage: it has the new
+      // document listener, as in the DOM.
+      expect(calls, ['first', 'late document']);
+      calls.clear();
+      canvas.dispatchEvent(event('mouseup'));
+      expect(calls, ['first', 'late canvas', 'late document']);
+    });
+
+    test('a removal in a dispatch takes effect with the next event', () {
+      final canvas = UiCanvasElement();
+      final calls = <String>[];
+      void second(NativeEvent e) => calls.add('second');
+      canvas
+        ..addEventListener('click', (e) {
+          calls.add('first');
+          canvas.removeEventListener('click', second);
+        })
+        ..addEventListener('click', second);
+      canvas.dispatchEvent(event('click'));
+      expect(calls, ['first', 'second']);
+      calls.clear();
+      canvas.dispatchEvent(event('click'));
+      expect(calls, ['first']);
+    });
+
+    test('a fake canvas of a test has the members too', () {
+      final canvas = _FakeCanvas();
+      final calls = <String>[];
+      canvas
+        ..addEventListener('click', (e) => calls.add(e.type))
+        ..dispatchEvent(event('click'));
+      expect(calls, ['click']);
+      expect(canvas.getBoundingClientRect(), DOMRect.zero);
+      expect(canvas.ownerDocument, same(_document));
+    });
+  });
+
+  group('document target', () {
+    // Chart.js ADR 0108: the document of the canvas elements. A mouse-like
+    // pointer that went down on the host gives the document its events
+    // outside the box. The keyboard bridge gives the document each key.
+    setUp(() {
+      expect(_document.debugListenerCount, 0);
+      expect(_document.debugKeyBridge, isFalse);
+    });
+
+    const mouseTypes = <String>[
+      'pointerdown',
+      'mousedown',
+      'pointermove',
+      'mousemove',
+      'pointerup',
+      'mouseup',
+      'click',
+      'pointercancel',
+    ];
+
+    testWidgets('a mouse drag out of the box and back', (tester) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final document = <NativeEvent>[];
+      _onDocument(mouseTypes, document.add);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.down(const Offset(100, 50));
+      await gesture.moveTo(const Offset(380, 50));
+      await gesture.moveTo(const Offset(120, 50));
+      await gesture.up();
+      expect(_targets(document, canvas), [
+        'pointerdown canvas',
+        'mousedown canvas',
+        'pointermove document',
+        'mousemove document',
+        'pointermove canvas',
+        'mousemove canvas',
+        'pointerup canvas',
+        'mouseup canvas',
+        'click canvas',
+      ]);
+      // The canvas gets none of the events outside the box.
+      expect(
+        _types(log).where(mouseTypes.contains),
+        [
+          'pointerdown',
+          'mousedown',
+          'pointermove',
+          'mousemove',
+          'pointerup',
+          'mouseup',
+          'click',
+        ],
+      );
+      final outside = document[2];
+      expect((outside.offsetX, outside.clientX), (340.0, 380.0));
+      expect((outside.button, outside.buttons), (-1, 1));
+      expect((outside.bubbles, outside.cancelable), (true, true));
+    });
+
+    testWidgets('an up and a click outside the box go to the document only', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final document = <NativeEvent>[];
+      _onDocument(mouseTypes, document.add);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.down(const Offset(100, 50));
+      await gesture.moveTo(const Offset(100, 400));
+      await gesture.up();
+      expect(_targets(document, canvas).skip(2), [
+        'pointermove document',
+        'mousemove document',
+        'pointerup document',
+        'mouseup document',
+        'click document',
+      ]);
+      final up = document[4];
+      expect((up.button, up.buttons, up.pointerId), (0, 0, 1));
+      expect(_types(log), isNot(contains('pointerup')));
+    });
+
+    testWidgets('a mouse cancel outside the box goes to the document', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final document = <NativeEvent>[];
+      _onDocument(mouseTypes, document.add);
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+      await tester.sendEventToBinding(pointer.addPointer());
+      await tester.sendEventToBinding(pointer.down(const Offset(100, 50)));
+      await tester.sendEventToBinding(pointer.move(const Offset(600, 50)));
+      await tester.sendEventToBinding(pointer.cancel());
+      await tester.sendEventToBinding(pointer.removePointer());
+      expect(_targets(document, canvas).last, 'pointercancel document');
+      expect(document.last.cancelable, isFalse);
+    });
+
+    testWidgets('a canvas swap and a detach end the document events of a '
+        'drag', (tester) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final document = <NativeEvent>[];
+      _onDocument(mouseTypes, document.add);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+
+      // A canvas swap.
+      await gesture.down(const Offset(100, 50));
+      await _pumpHost(tester, log, canvas: UiCanvasElement());
+      document.clear();
+      await gesture.moveTo(const Offset(600, 50));
+      await gesture.up();
+      expect(document, isEmpty);
+
+      // A detach.
+      await _pumpHost(tester, log, canvas: canvas);
+      await gesture.down(const Offset(100, 50));
+      expect(_targets(document, canvas), [
+        'pointerdown canvas',
+        'mousedown canvas',
+      ]);
+      await tester.pumpWidget(_box(const SizedBox()));
+      document.clear();
+      await gesture.moveTo(const Offset(600, 50));
+      await gesture.up();
+      expect(document, isEmpty);
+    });
+
+    testWidgets('the keyboard bridge gives the document each key while it '
+        'has a key listener', (tester) async {
+      await tester.pumpWidget(_box(const SizedBox()));
+      final log = <NativeEvent>[];
+      addTearDown(() {
+        _document
+          ..removeEventListener('keydown', log.add)
+          ..removeEventListener('keyup', log.add);
+      });
+      _document.addEventListener('keydown', log.add);
+      expect(_document.debugKeyBridge, isTrue);
+      _document.addEventListener('keyup', log.add);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      expect(_types(log), ['keydown', 'keyup']);
+      final down = log.first;
+      expect(down.key, 'Escape');
+      expect(down.target, same(_document));
+      expect(down.source, isA<KeyDownEvent>());
+      expect([
+        down.offsetX,
+        down.offsetY,
+        down.clientX,
+        down.clientY,
+      ], everyElement(isNaN));
+      expect((down.bubbles, down.cancelable), (true, true));
+      expect(log.last.source, isA<KeyUpEvent>());
+
+      // The bridge stays while a key listener is left.
+      _document.removeEventListener('keydown', log.add);
+      expect(_document.debugKeyBridge, isTrue);
+      _document.removeEventListener('keyup', log.add);
+      expect(_document.debugKeyBridge, isFalse);
+      log.clear();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      expect(log, isEmpty);
+    });
+
+    testWidgets('the key values of the UI Events', (tester) async {
+      await tester.pumpWidget(_box(const SizedBox()));
+      final log = <NativeEvent>[];
+      _onDocument(const ['keydown', 'keypress', 'keyup'], log.add);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyB, character: 'B');
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyB);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      expect(
+        [
+          for (final e in log)
+            if (e.type != 'keypress' || e.key.length == 1)
+              '${e.type} ${e.key}${e.shiftKey ? ' shift' : ''}',
+        ],
+        containsAllInOrder([
+          'keydown ArrowLeft',
+          'keyup ArrowLeft',
+          'keydown Enter',
+          'keyup Enter',
+          'keydown a',
+          'keypress a',
+          'keyup a',
+          'keydown Shift shift',
+          'keydown B shift',
+          'keypress B shift',
+          'keyup B shift',
+          'keyup Shift',
+        ]),
+      );
+    });
+
+    testWidgets('a prevented keydown gives no keypress, and the bridge '
+        'handles the key', (tester) async {
+      await tester.pumpWidget(_box(const SizedBox()));
+      final log = <NativeEvent>[];
+      void prevent(NativeEvent e) {
+        log.add(e);
+        e.preventDefault();
+      }
+
+      _onDocument(const ['keydown'], prevent);
+      _onDocument(const ['keypress', 'keyup'], log.add);
+      expect(await tester.sendKeyDownEvent(LogicalKeyboardKey.keyA), isTrue);
+      expect(_types(log), ['keydown']);
+      expect(log.single.defaultPrevented, isTrue);
+      expect(await tester.sendKeyUpEvent(LogicalKeyboardKey.keyA), isFalse);
+      expect(_types(log), ['keydown', 'keyup']);
+      expect(log.last.key, 'a');
+
+      // Without the prevention, the key goes on.
+      _document.removeEventListener('keydown', prevent);
+      log.clear();
+      expect(await tester.sendKeyDownEvent(LogicalKeyboardKey.keyA), isFalse);
+      expect(_types(log), ['keypress']);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyA);
+    });
+
+    testWidgets('the document gets a key without the focus of a chart', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final keys = <NativeEvent>[];
+      _onDocument(const ['keydown'], keys.add);
+      canvas.addEventListener('keydown', log.add);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      // The bridge sends to the document only: the canvas has no focus.
+      expect(_targets(keys, canvas), ['keydown document']);
+      expect(_types(log), isNot(contains('keydown')));
+    });
+  });
+
+  group('CssStyleProperties', () {
+    // Chart.js ADR 0108: the CSSOM members of the canvas style that add-on
+    // plugins write (chartjs-plugin-zoom gestures.ts:200-222).
+    test('touchAction and userSelect read and write the properties', () {
+      final style = UiCanvasElement().style;
+      expect((style.touchAction, style.userSelect), ('', ''));
+      style
+        ..touchAction = 'none'
+        ..userSelect = 'none';
+      expect(style.getPropertyValue('touch-action'), 'none');
+      expect(style.getPropertyValue('user-select'), 'none');
+      expect((style.touchAction, style.userSelect), ('none', 'none'));
+      // A write of '' removes the property, as in the CSSOM.
+      style.touchAction = '';
+      expect(style.getPropertyValue('touch-action'), '');
+    });
+
+    test('removeProperty removes a property and gives its old value', () {
+      final style = UiCanvasElement().style
+        ..setProperty('-webkit-user-select', 'none')
+        ..setProperty('user-select', 'none', 'important');
+      expect(style.removeProperty('-webkit-user-select'), 'none');
+      expect(style.getPropertyValue('-webkit-user-select'), '');
+      // An important property goes too.
+      expect(style.removeProperty('user-select'), 'none');
+      expect(style.getPropertyPriority('user-select'), '');
+      // A property that is not set gives ''.
+      expect(style.removeProperty('touch-action'), '');
+    });
+  });
+
+  group('getBoundingClientRect', () {
+    // Chart.js ADR 0108: the box of the canvas in the logical pixels of the
+    // view, the space of clientX and clientY.
+    testWidgets('a translated host gives its origin and the display size', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      final canvas = UiCanvasElement();
+      _record(canvas, log);
+      await tester.pumpWidget(
+        _box(
+          Padding(
+            padding: const EdgeInsets.only(left: 40, top: 30),
+            child: ChartHost(canvas: canvas),
+          ),
+        ),
+      );
+      final rect = canvas.getBoundingClientRect();
+      expect(rect, const DOMRect(40, 30, 300, 150));
+      expect(
+        (rect.left, rect.top, rect.right, rect.bottom),
+        (40, 30, 340, 180),
+      );
+      expect(_host(tester).boundingClientRect, rect);
+
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(100, 50));
+      await gesture.moveTo(const Offset(150.5, 70.25));
+      final move = log.lastWhere((e) => e.type == 'mousemove');
+      expect(move.clientX - rect.left, move.offsetX);
+      expect(move.clientY - rect.top, move.offsetY);
+      expect((move.offsetX, move.offsetY), (110.5, 40.25));
+    });
+
+    testWidgets('the display size of the style gives the size', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      canvas.style
+        ..setProperty('width', '200px')
+        ..setProperty('height', '100px');
+      expect(canvas.getBoundingClientRect(), const DOMRect(0, 0, 200, 100));
+    });
+
+    testWidgets('a scaled host gives the box of the transformed canvas', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      final canvas = UiCanvasElement();
+      _record(canvas, log);
+      await tester.pumpWidget(
+        _box(
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Transform.scale(
+              scale: 0.5,
+              alignment: Alignment.topLeft,
+              child: ChartHost(canvas: canvas),
+            ),
+          ),
+        ),
+      );
+      final rect = canvas.getBoundingClientRect();
+      expect(rect, const DOMRect(10, 0, 150, 75));
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(30, 20));
+      await gesture.moveTo(const Offset(60, 30));
+      final move = log.lastWhere((e) => e.type == 'mousemove');
+      expect((move.offsetX, move.offsetY), (100.0, 60.0));
+      expect((move.clientX - rect.left) * 2, move.offsetX);
+      expect((move.clientY - rect.top) * 2, move.offsetY);
+    });
+
+    testWidgets('the standby host and a detached host give zeros', (
+      tester,
+    ) async {
+      // A canvas that no host shows.
+      expect(UiCanvasElement().getBoundingClientRect(), DOMRect.zero);
+      // A host that is not attached.
+      final standby = UiCanvasElement();
+      final host = RenderChartHost(canvas: standby, devicePixelRatio: 1);
+      addTearDown(host.dispose);
+      expect(standby.parentNode, same(host));
+      expect(standby.getBoundingClientRect(), DOMRect.zero);
+
+      // A host that was attached.
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      expect(canvas.getBoundingClientRect(), const DOMRect(0, 0, 300, 150));
+      await tester.pumpWidget(_box(const SizedBox()));
+      expect(canvas.getBoundingClientRect(), DOMRect.zero);
     });
   });
 }

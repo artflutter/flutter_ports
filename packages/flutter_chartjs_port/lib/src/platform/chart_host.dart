@@ -11,9 +11,12 @@
 /// - The host is the parent node of its canvas (`CanvasNode.parentNode`)
 ///   and its container ([CanvasContainer]): the container size is the max
 ///   size of its incoming constraints.
-/// - The event listeners of a canvas ([addCanvasEventListener]) stand in for
-///   the `EventTarget` of the DOM canvas. The host makes [NativeEvent]s from
-///   Flutter pointer events and sends them to these listeners.
+/// - The event listeners of a canvas ([addCanvasEventListener], and the
+///   extension [CanvasEventTarget] for add-on plugins) stand in for the
+///   `EventTarget` of the DOM canvas. The host makes [NativeEvent]s from
+///   Flutter pointer events and sends them to these listeners. A bubbling
+///   event then reaches the listeners of the one document of the isolate
+///   ([CanvasDocument], `canvas.ownerDocument`, Chart.js ADR 0108).
 /// - [CanvasMutationObserver] stands in for the `MutationObserver` of
 ///   `createAttachObserver` and `createDetachObserver`, and
 ///   [ContainerResizeObserver] for the `ResizeObserver` of
@@ -82,8 +85,22 @@
 ///   the route goes. The detach or the dispose of the owner ends it.
 ///
 /// A mouse has no implicit capture: a mouse move, up or cancel outside the
-/// box gives no event. The host tracks the hover of the kinds other than the
-/// mouse itself and gives their enter and exit events.
+/// box gives the canvas no event. The host tracks the hover of the kinds
+/// other than the mouse itself and gives their enter and exit events.
+///
+/// The document and the event fields (Chart.js ADR 0108):
+/// - A mouse-like pointer that went down on the host gives the document its
+///   `pointermove` and `mousemove`, its `pointerup` and `mouseup`, the
+///   `click` of the click rule and its `pointercancel` while it is outside
+///   the box, with the document as the target. A detach, a dispose or a
+///   canvas swap ends it.
+/// - Each event has the fields of the DOM event that Chrome gives: the
+///   client point (`PointerEvent.position`), `button`, `buttons`,
+///   `pointerId` (the mouse 1, a touch-like pointer an id from 2),
+///   `pointerType`, the wheel deltas, the modifier keys of
+///   `HardwareKeyboard`, `bubbles` and `cancelable`.
+/// - `canvas.getBoundingClientRect()` gives the box of the canvas in the
+///   logical pixels of the view ([RenderChartHost.boundingClientRect]).
 library;
 
 import 'dart:async';
@@ -102,61 +119,434 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 
 // The EventTarget of the canvas.
 
+/// One entry of a listener list: the listener and its `passive` flag.
+typedef _Listener = ({NativeEventListener listener, bool passive});
+
 /// The listeners of each canvas, by DOM event type: the `EventTarget` part of
 /// the DOM canvas element.
-final Expando<Map<String, List<void Function(NativeEvent)>>> _eventListeners =
-    Expando('canvas event listeners');
+final Expando<Map<String, List<_Listener>>> _eventListeners = Expando(
+  'canvas event listeners',
+);
 
-/// `canvas.addEventListener(type, listener)`.
+/// Adds [listener] to the list of [type] in [byType], once, as the DOM
+/// `addEventListener` does.
+void _addListener(
+  Map<String, List<_Listener>> byType,
+  String type,
+  NativeEventListener listener, {
+  required bool passive,
+}) {
+  final listeners = byType.putIfAbsent(type, () => []);
+  for (final entry in listeners) {
+    if (entry.listener == listener) {
+      return;
+    }
+  }
+  listeners.add((listener: listener, passive: passive));
+}
+
+/// Removes [listener] from the list of [type] in [byType], as the DOM
+/// `removeEventListener` does. Gives whether a listener went.
+bool _removeListener(
+  Map<String, List<_Listener>>? byType,
+  String type,
+  NativeEventListener listener,
+) {
+  final listeners = byType?[type];
+  if (listeners == null) {
+    return false;
+  }
+  final index = listeners.indexWhere((entry) => entry.listener == listener);
+  if (index < 0) {
+    return false;
+  }
+  listeners.removeAt(index);
+  if (listeners.isEmpty) {
+    byType!.remove(type);
+  }
+  return true;
+}
+
+/// Calls the [listeners] with [event], in the order of registration. A
+/// listener that a listener adds or removes takes effect with the next
+/// event: the calls run on a copy.
+void _invokeListeners(List<_Listener>? listeners, NativeEvent event) {
+  if (listeners == null) {
+    return;
+  }
+  for (final entry in List.of(listeners)) {
+    invokeNativeEventListener(entry.listener, event, passive: entry.passive);
+  }
+}
+
+/// `canvas.addEventListener(type, listener, {passive})`.
 ///
 /// As in the DOM, a listener that the canvas already has for [type] is not
-/// added again. The listeners stay on the canvas when no host shows it.
+/// added again, and the first [passive] value stays. The listeners stay on
+/// the canvas when no host shows it.
 void addCanvasEventListener(
   HTMLCanvasElement canvas,
   String type,
-  void Function(NativeEvent) listener,
-) {
-  final listeners = (_eventListeners[canvas] ??= {}).putIfAbsent(
+  NativeEventListener listener, {
+  bool passive = false,
+}) {
+  _addListener(
+    _eventListeners[canvas] ??= {},
     type,
-    () => [],
+    listener,
+    passive: passive,
   );
-  if (!listeners.contains(listener)) {
-    listeners.add(listener);
-  }
 }
 
 /// `canvas.removeEventListener(type, listener)`.
 void removeCanvasEventListener(
   HTMLCanvasElement canvas,
   String type,
-  void Function(NativeEvent) listener,
+  NativeEventListener listener,
 ) {
-  final byType = _eventListeners[canvas];
-  final listeners = byType?[type];
-  if (listeners == null) {
-    return;
-  }
-  listeners.remove(listener);
-  if (listeners.isEmpty) {
-    byType!.remove(type);
-  }
+  _removeListener(_eventListeners[canvas], type, listener);
 }
 
 /// Whether [canvas] has a listener for [type].
 bool hasCanvasEventListener(HTMLCanvasElement canvas, String type) =>
     _eventListeners[canvas]?.containsKey(type) ?? false;
 
-/// `canvas.dispatchEvent(event)`: calls the listeners of `event.type` in
-/// the order of registration. A listener that a listener adds or removes
-/// takes effect with the next event.
-void dispatchCanvasEvent(HTMLCanvasElement canvas, NativeEvent event) {
-  final listeners = _eventListeners[canvas]?[event.type];
-  if (listeners == null) {
-    return;
+/// The `passive` flag of the [listener] of [type] on [canvas], or Dart
+/// `null` when the canvas does not have that listener.
+@visibleForTesting
+bool? debugCanvasEventListenerPassive(
+  HTMLCanvasElement canvas,
+  String type,
+  NativeEventListener listener,
+) {
+  for (final entry in _eventListeners[canvas]?[type] ?? const <_Listener>[]) {
+    if (entry.listener == listener) {
+      return entry.passive;
+    }
   }
-  for (final listener in List.of(listeners)) {
-    listener(event);
+  return null;
+}
+
+/// `canvas.dispatchEvent(event)` (Chart.js ADR 0108): sets the target of
+/// [event] to [canvas] and calls the canvas listeners of `event.type` in
+/// the order of registration. Then, for a bubbling event that no listener
+/// stopped, it calls the listeners of the document
+/// ([CanvasDocument.instance]), with the canvas as the target: the bubble
+/// phase of the DOM. Gives `!event.defaultPrevented`.
+///
+/// A listener that a listener adds or removes takes effect with the next
+/// event of its target. Thus a document listener that a canvas listener adds
+/// gets the bubble phase of the same event, as in the DOM.
+bool dispatchCanvasEvent(HTMLCanvasElement canvas, NativeEvent event) {
+  setNativeEventTarget(event, canvas);
+  _invokeListeners(_eventListeners[canvas]?[event.type], event);
+  if (event.bubbles && !nativeEventStopped(event)) {
+    CanvasDocument.instance._invoke(event);
   }
+  return !event.defaultPrevented;
+}
+
+/// The DOM members of a canvas element that the host gives (Chart.js ADR
+/// 0108). Port-only.
+///
+/// They are extension members, so that each [HTMLCanvasElement] has them,
+/// also a fake canvas of a test. The upstream lines of an add-on plugin keep
+/// their form: `canvas.addEventListener('wheel', listener, passive: false)`,
+/// `canvas.getBoundingClientRect()`, `canvas.ownerDocument`.
+extension CanvasEventTarget on HTMLCanvasElement {
+  /// `addEventListener(type, listener, {passive})`. A Dart `null`
+  /// [passive] is the DOM default of an element: false.
+  void addEventListener(
+    String type,
+    NativeEventListener listener, {
+    bool? passive,
+  }) => addCanvasEventListener(this, type, listener, passive: passive ?? false);
+
+  /// `removeEventListener(type, listener)`.
+  void removeEventListener(String type, NativeEventListener listener) =>
+      removeCanvasEventListener(this, type, listener);
+
+  /// `dispatchEvent(event)`: the canvas listeners, then the document
+  /// listeners for a bubbling event. Gives `!event.defaultPrevented`.
+  bool dispatchEvent(NativeEvent event) => dispatchCanvasEvent(this, event);
+
+  /// `ownerDocument`: the one document of the isolate (Chart.js ADR 0108).
+  NativeEventTarget get ownerDocument => CanvasDocument.instance;
+
+  /// This canvas as a [NativeEventTarget]. Each read gives the same object
+  /// for the same canvas, so that two reads are `==`, as two reads of a DOM
+  /// element are `===`.
+  NativeEventTarget get eventTarget =>
+      _canvasTargets[this] ??= _CanvasEventTarget(this);
+
+  /// `getBoundingClientRect()`: the canvas box in the logical pixels of the
+  /// view, the space of `clientX` and `clientY`: the origin of the host and
+  /// the display size of the canvas ([RenderChartHost.boundingClientRect]).
+  /// A canvas that no attached, laid-out host shows gives [DOMRect.zero], as
+  /// a DOM element outside the document does.
+  DOMRect getBoundingClientRect() {
+    if (this case CanvasNode(parentNode: final RenderChartHost host)) {
+      return host.boundingClientRect;
+    }
+    return DOMRect.zero;
+  }
+}
+
+/// The [NativeEventTarget] of each canvas: one object for each canvas.
+final Expando<_CanvasEventTarget> _canvasTargets = Expando(
+  'canvas event target',
+);
+
+/// A canvas element as a [NativeEventTarget].
+final class _CanvasEventTarget implements NativeEventTarget {
+  _CanvasEventTarget(this._canvas);
+
+  final HTMLCanvasElement _canvas;
+
+  @override
+  void addEventListener(
+    String type,
+    NativeEventListener listener, {
+    bool? passive,
+  }) => _canvas.addEventListener(type, listener, passive: passive);
+
+  @override
+  void removeEventListener(String type, NativeEventListener listener) =>
+      _canvas.removeEventListener(type, listener);
+
+  @override
+  bool dispatchEvent(NativeEvent event) => _canvas.dispatchEvent(event);
+
+  @override
+  String toString() => 'EventTarget($_canvas)';
+}
+
+// The document.
+
+/// The DOM document of the canvas elements (Chart.js ADR 0108): one for each
+/// isolate, as a page has one document. `canvas.ownerDocument` gives it.
+///
+/// - A bubbling event that a canvas dispatches reaches the document
+///   listeners after the canvas listeners ([dispatchCanvasEvent]).
+/// - The host also sends the document the `pointermove`, `mousemove`,
+///   `pointerup`, `mouseup`, `click` and `pointercancel` of a mouse-like
+///   pointer that went down on the host, while the pointer is outside the
+///   box. Their target is the document.
+/// - While the document has a `keydown`, `keypress` or `keyup` listener, one
+///   `HardwareKeyboard` handler sends it each key of the app, whichever
+///   widget has the focus, as the DOM document gets each key of the page.
+///   The handler runs before the focus tree. Thus the document gets a key
+///   before the key listeners of a focused `ChartView`: the DOM order is
+///   the reverse.
+///
+/// [dispatchEvent] is the port of `document.documentElement.dispatchEvent`:
+/// it calls the document listeners only.
+final class CanvasDocument implements NativeEventTarget {
+  CanvasDocument._();
+
+  /// The document of the isolate.
+  static final CanvasDocument instance = CanvasDocument._();
+
+  /// The DOM event types whose `passive` default is true on the document
+  /// (the default passive value of the DOM).
+  static const Set<String> _passiveTypes = {
+    'wheel',
+    'mousewheel',
+    'touchstart',
+    'touchmove',
+  };
+
+  /// The key event types of the keyboard bridge.
+  static const Set<String> _keyTypes = {'keydown', 'keypress', 'keyup'};
+
+  final Map<String, List<_Listener>> _listeners = {};
+
+  bool _keyBridge = false;
+
+  @override
+  void addEventListener(
+    String type,
+    NativeEventListener listener, {
+    bool? passive,
+  }) {
+    _addListener(
+      _listeners,
+      type,
+      listener,
+      passive: passive ?? _passiveTypes.contains(type),
+    );
+    if (_keyTypes.contains(type)) {
+      // The test binding clears the keyboard handlers after each test. Thus
+      // each key listener installs the handler again, once.
+      HardwareKeyboard.instance
+        ..removeHandler(_onKey)
+        ..addHandler(_onKey);
+      _keyBridge = true;
+    }
+  }
+
+  @override
+  void removeEventListener(String type, NativeEventListener listener) {
+    if (_removeListener(_listeners, type, listener) &&
+        _keyTypes.contains(type) &&
+        !_keyTypes.any(_listeners.containsKey)) {
+      HardwareKeyboard.instance.removeHandler(_onKey);
+      _keyBridge = false;
+    }
+  }
+
+  @override
+  bool dispatchEvent(NativeEvent event) {
+    setNativeEventTarget(event, this);
+    _invoke(event);
+    return !event.defaultPrevented;
+  }
+
+  /// Whether the document has a listener for [type].
+  bool hasListener(String type) => _listeners.containsKey(type);
+
+  /// The count of the listeners of the document, of all types.
+  @visibleForTesting
+  int get debugListenerCount {
+    var count = 0;
+    for (final listeners in _listeners.values) {
+      count += listeners.length;
+    }
+    return count;
+  }
+
+  /// Whether the keyboard bridge is on: the document has a key listener.
+  @visibleForTesting
+  bool get debugKeyBridge => _keyBridge;
+
+  /// The document listeners of `event.type`: the bubble phase, or the
+  /// dispatch of [dispatchEvent]. The target stays.
+  void _invoke(NativeEvent event) {
+    _invokeListeners(_listeners[event.type], event);
+  }
+
+  /// The `HardwareKeyboard` handler of the keyboard bridge: `keydown`, then
+  /// `keypress` for a key with a character, or `keyup` (the mapping of
+  /// Chart.js ADR 0051, section 5). A prevented `keydown` gives no
+  /// `keypress`, as in the DOM. Each event has NaN offsets and client
+  /// point, the key value of [domKeyValue], the modifiers, `bubbles` and
+  /// `cancelable`. The handler gives true when a listener prevented the
+  /// default: the event then does not reach the text input and the
+  /// platform, as a prevented DOM key has no default action. The focus tree
+  /// still gets the event.
+  bool _onKey(KeyEvent event) {
+    final key = domKeyValue(event);
+    final modifiers = _modifiers();
+
+    /// Sends [type] to the document listeners. Gives false when a listener
+    /// prevented the default.
+    bool send(String type) {
+      if (!hasListener(type)) {
+        return true;
+      }
+      return dispatchEvent(
+        NativeEvent(
+          type: type,
+          offsetX: double.nan,
+          offsetY: double.nan,
+          clientX: double.nan,
+          clientY: double.nan,
+          source: event,
+          bubbles: true,
+          cancelable: true,
+          key: key,
+          ctrlKey: modifiers.ctrl,
+          altKey: modifiers.alt,
+          shiftKey: modifiers.shift,
+          metaKey: modifiers.meta,
+        ),
+      );
+    }
+
+    if (event is KeyUpEvent) {
+      return !send('keyup');
+    }
+    if (!send('keydown')) {
+      return true;
+    }
+    return event.character != null && !send('keypress');
+  }
+
+  @override
+  String toString() => '#document';
+}
+
+/// The UI Events key values of the named keys. `LogicalKeyboardKey.keyLabel`
+/// is not the DOM value: it gives `'Arrow Left'`.
+final Map<LogicalKeyboardKey, String> _namedKeys = {
+  LogicalKeyboardKey.escape: 'Escape',
+  LogicalKeyboardKey.enter: 'Enter',
+  LogicalKeyboardKey.numpadEnter: 'Enter',
+  LogicalKeyboardKey.tab: 'Tab',
+  LogicalKeyboardKey.backspace: 'Backspace',
+  LogicalKeyboardKey.delete: 'Delete',
+  LogicalKeyboardKey.insert: 'Insert',
+  LogicalKeyboardKey.home: 'Home',
+  LogicalKeyboardKey.end: 'End',
+  LogicalKeyboardKey.pageUp: 'PageUp',
+  LogicalKeyboardKey.pageDown: 'PageDown',
+  LogicalKeyboardKey.arrowUp: 'ArrowUp',
+  LogicalKeyboardKey.arrowDown: 'ArrowDown',
+  LogicalKeyboardKey.arrowLeft: 'ArrowLeft',
+  LogicalKeyboardKey.arrowRight: 'ArrowRight',
+  LogicalKeyboardKey.shift: 'Shift',
+  LogicalKeyboardKey.shiftLeft: 'Shift',
+  LogicalKeyboardKey.shiftRight: 'Shift',
+  LogicalKeyboardKey.control: 'Control',
+  LogicalKeyboardKey.controlLeft: 'Control',
+  LogicalKeyboardKey.controlRight: 'Control',
+  LogicalKeyboardKey.alt: 'Alt',
+  LogicalKeyboardKey.altLeft: 'Alt',
+  LogicalKeyboardKey.altRight: 'Alt',
+  LogicalKeyboardKey.meta: 'Meta',
+  LogicalKeyboardKey.metaLeft: 'Meta',
+  LogicalKeyboardKey.metaRight: 'Meta',
+  LogicalKeyboardKey.capsLock: 'CapsLock',
+  LogicalKeyboardKey.contextMenu: 'ContextMenu',
+  LogicalKeyboardKey.f1: 'F1',
+  LogicalKeyboardKey.f2: 'F2',
+  LogicalKeyboardKey.f3: 'F3',
+  LogicalKeyboardKey.f4: 'F4',
+  LogicalKeyboardKey.f5: 'F5',
+  LogicalKeyboardKey.f6: 'F6',
+  LogicalKeyboardKey.f7: 'F7',
+  LogicalKeyboardKey.f8: 'F8',
+  LogicalKeyboardKey.f9: 'F9',
+  LogicalKeyboardKey.f10: 'F10',
+  LogicalKeyboardKey.f11: 'F11',
+  LogicalKeyboardKey.f12: 'F12',
+  LogicalKeyboardKey.space: ' ',
+};
+
+/// The character of the last down of each physical key: a `KeyUpEvent` has
+/// no character in Flutter.
+final Map<PhysicalKeyboardKey, String> _downCharacters = {};
+
+/// The UI Events `key` value of the Flutter key [event] (Chart.js ADR 0108):
+/// the value of a named key ([_namedKeys]), else the character of a down or
+/// a repeat, else, for an up, the character of the last down of its
+/// physical key, else `'Unidentified'`. The document bridge and the
+/// keyboard of `ChartView` use it.
+String domKeyValue(KeyEvent event) {
+  final named = _namedKeys[event.logicalKey];
+  if (named != null) {
+    return named;
+  }
+  if (event is KeyUpEvent) {
+    return _downCharacters[event.physicalKey] ?? 'Unidentified';
+  }
+  final character = event.character;
+  if (character == null) {
+    _downCharacters.remove(event.physicalKey);
+    return 'Unidentified';
+  }
+  _downCharacters[event.physicalKey] = character;
+  return character;
 }
 
 // The MutationObserver of the document.
@@ -643,6 +1033,24 @@ class RenderChartHost extends RenderBox
     return Size(_canvas.width.toDouble(), _canvas.height.toDouble());
   }
 
+  /// The DOM `getBoundingClientRect()` of the canvas (Chart.js ADR 0108):
+  /// the box of the host origin and the [displaySize], in the logical
+  /// pixels of the view, the space of `PointerEvent.position`. Thus for a
+  /// host with no transform, `clientX - rect.left` is `offsetX`. A rotated or
+  /// scaled host gives the axis-aligned box of the transformed canvas, as
+  /// the DOM does. A host that is not attached and laid out gives
+  /// [DOMRect.zero].
+  DOMRect get boundingClientRect {
+    if (!attached || !_laidOut) {
+      return DOMRect.zero;
+    }
+    final rect = MatrixUtils.transformRect(
+      getTransformTo(null),
+      Offset.zero & _finite(displaySize),
+    );
+    return DOMRect(rect.left, rect.top, rect.width, rect.height);
+  }
+
   Size _laidOutDisplaySize = Size.zero;
 
   void _handleCanvasChanged() {
@@ -924,16 +1332,35 @@ class RenderChartHost extends RenderBox
   /// The tap candidate of the host, or null (Chart.js ADR 0037, section 8).
   _TouchTap? _tap;
 
-  bool _has(String type) => hasCanvasEventListener(_canvas, type);
+  /// The mouse-like pointers that went down on the host, with the last
+  /// buttons of each that were not 0. The `button` of a `pointerup` and a
+  /// `mouseup` is the lowest of these buttons (Flutter sends one up when all
+  /// buttons are up). While such a pointer is outside the box, its events go
+  /// to the document (Chart.js ADR 0108).
+  final Map<int, int> _mouseButtons = {};
 
-  /// Sends the events [types] at [position] to the canvas listeners.
+  /// Whether the canvas has a listener for [type], or the document has one
+  /// for a bubbling [type].
+  bool _has(String type) =>
+      hasCanvasEventListener(_canvas, type) ||
+      (_bubbles(type) && CanvasDocument.instance.hasListener(type));
+
+  /// Sends the events [types] at [position] to the canvas listeners. A
+  /// bubbling event then goes to the document listeners.
+  ///
+  /// [source] gives the fields of the events ([_nativeEvent]). [client] is
+  /// the client point, by default the position of [source]. [compat] marks
+  /// the compatibility mouse events of a touch tap or a long press.
   void _emit(
     List<String> types,
     Offset position,
-    Object? source, {
+    PointerEvent source, {
     bool touch = false,
+    bool compat = false,
+    Offset? client,
   }) {
     List<NativeTouch>? touches;
+    _Modifiers? modifiers;
     for (final type in types) {
       if (!_has(type)) {
         continue;
@@ -941,18 +1368,203 @@ class RenderChartHost extends RenderBox
       final isTouchEvent = touch && type.startsWith('touch');
       dispatchCanvasEvent(
         _canvas,
-        NativeEvent(
-          type: type,
-          // A TouchEvent has no offsetX and offsetY.
-          offsetX: isTouchEvent ? double.nan : position.dx,
-          offsetY: isTouchEvent ? double.nan : position.dy,
+        _nativeEvent(
+          type,
+          position,
+          source,
+          client: client ?? source.position,
+          modifiers: modifiers ??= _modifiers(),
+          touchEvent: isTouchEvent,
           touches: isTouchEvent ? (touches ??= _touchList) : const [],
-          target: _canvas,
-          source: source,
+          compat: compat,
         ),
       );
     }
   }
+
+  /// Sends the events [types] of a mouse-like pointer that went down on the
+  /// host and is outside the box to the document listeners only (Chart.js
+  /// ADR 0108). Their target is the document. The DOM sends them to the
+  /// element under the pointer, and they bubble to the document. The canvas
+  /// gets none of them: a mouse has no implicit capture.
+  void _emitToDocument(
+    List<String> types,
+    Offset position,
+    PointerEvent source,
+  ) {
+    final document = CanvasDocument.instance;
+    _Modifiers? modifiers;
+    for (final type in types) {
+      if (!document.hasListener(type)) {
+        continue;
+      }
+      document.dispatchEvent(
+        _nativeEvent(
+          type,
+          position,
+          source,
+          client: source.position,
+          modifiers: modifiers ??= _modifiers(),
+        ),
+      );
+    }
+  }
+
+  /// The DOM event [type] of the Flutter event [source] at the local
+  /// [position] and the client point [client], with the fields of Chrome
+  /// (Chart.js ADR 0108).
+  ///
+  /// A `touch*` event ([touchEvent]) has NaN offsets and client point and
+  /// the [touches]. A compatibility mouse event of a tap ([compat]) has the
+  /// fields of the mouse event of Chrome for a tap: `buttons` 1 for
+  /// `mousedown`, else 0.
+  NativeEvent _nativeEvent(
+    String type,
+    Offset position,
+    PointerEvent source, {
+    required Offset client,
+    required _Modifiers modifiers,
+    bool touchEvent = false,
+    List<NativeTouch> touches = const [],
+    bool compat = false,
+  }) {
+    final mouseLike = _isMouseKind(source.kind);
+    final pointerEvent = type.startsWith('pointer') || type == 'click';
+    final wheel = type == 'wheel' && source is PointerScrollEvent;
+    return NativeEvent(
+      type: type,
+      // A TouchEvent has no offsetX and offsetY.
+      offsetX: touchEvent ? double.nan : position.dx,
+      offsetY: touchEvent ? double.nan : position.dy,
+      touches: touches,
+      source: source,
+      bubbles: _bubbles(type),
+      cancelable: _cancelable(type),
+      clientX: touchEvent ? double.nan : client.dx,
+      clientY: touchEvent ? double.nan : client.dy,
+      button: _button(type, source, mouseLike: mouseLike),
+      buttons: _buttons(type, source, mouseLike: mouseLike, compat: compat),
+      pointerId: pointerEvent ? _domPointerId(source) : 0,
+      pointerType: pointerEvent ? _pointerType(source.kind) : '',
+      deltaX: wheel ? source.scrollDelta.dx : 0,
+      deltaY: wheel ? source.scrollDelta.dy : 0,
+      ctrlKey: modifiers.ctrl,
+      altKey: modifiers.alt,
+      shiftKey: modifiers.shift,
+      metaKey: modifiers.meta,
+    );
+  }
+
+  /// `bubbles` of the DOM event [type]: false for the enter and leave
+  /// events.
+  static bool _bubbles(String type) => switch (type) {
+    'pointerenter' || 'pointerleave' || 'mouseenter' || 'mouseleave' => false,
+    _ => true,
+  };
+
+  /// `cancelable` of the DOM event [type]: false for the enter and leave
+  /// events, `pointercancel` and `touchcancel`, and for a `touchmove` after
+  /// the pan begins (Chrome sends uncancelable moves while it scrolls).
+  bool _cancelable(String type) => switch (type) {
+    'pointerenter' ||
+    'pointerleave' ||
+    'pointercancel' ||
+    'mouseenter' ||
+    'mouseleave' ||
+    'touchcancel' => false,
+    'touchmove' => !_panned,
+    _ => true,
+  };
+
+  /// `MouseEvent.button` of the DOM event [type] of [source]: the pressed
+  /// button of a mouse-like `pointerdown` and `mousedown`, the released
+  /// button of a mouse-like `pointerup` and `mouseup`, -1 for a `pointer*`
+  /// event with no change of the buttons, and 0 for the other events.
+  int _button(String type, PointerEvent source, {required bool mouseLike}) {
+    switch (type) {
+      case 'pointerdown' || 'mousedown':
+        return mouseLike ? _domButton(source.buttons) : 0;
+      case 'pointerup' || 'mouseup':
+        return mouseLike ? _domButton(_mouseButtons[source.pointer] ?? 0) : 0;
+      case 'click':
+        return 0;
+    }
+    return type.startsWith('pointer') ? -1 : 0;
+  }
+
+  /// `MouseEvent.buttons` of the DOM event [type] of [source].
+  ///
+  /// A mouse-like pointer gives its Flutter buttons, whose bits are the DOM
+  /// bits. A touch-like pointer gives its buttons in contact, with the
+  /// eraser bit 32 for the contact of an inverted stylus, and 0 at the up,
+  /// the cancel and the leave. A `touch*` event, which has no buttons in the
+  /// DOM, gives 0. A compatibility event of a tap ([compat]) gives 1 for
+  /// `mousedown` and 0 for the others.
+  static int _buttons(
+    String type,
+    PointerEvent source, {
+    required bool mouseLike,
+    required bool compat,
+  }) {
+    if (mouseLike) {
+      return source.buttons;
+    }
+    if (compat) {
+      return type == 'mousedown' ? 1 : 0;
+    }
+    switch (type) {
+      case 'pointerup' || 'pointercancel' || 'pointerout' || 'pointerleave':
+        return 0;
+    }
+    if (type.startsWith('touch')) {
+      return 0;
+    }
+    final buttons = source.buttons;
+    if (source.kind == PointerDeviceKind.invertedStylus &&
+        buttons & kPrimaryButton != 0) {
+      return buttons & ~kPrimaryButton | _eraserButton;
+    }
+    return buttons;
+  }
+
+  /// The DOM `buttons` bit of the eraser of a pen.
+  static const int _eraserButton = 32;
+
+  /// The DOM `button` of the lowest bit of the Flutter mouse [buttons]: the
+  /// primary bit 1 is 0, the secondary bit 2 is 2, the middle bit 4 is 1,
+  /// the back bit 8 is 3 and the forward bit 16 is 4. No bit gives 0.
+  static int _domButton(int buttons) {
+    if (buttons & kPrimaryMouseButton != 0) return 0;
+    if (buttons & kSecondaryMouseButton != 0) return 2;
+    if (buttons & kMiddleMouseButton != 0) return 1;
+    if (buttons & kBackMouseButton != 0) return 3;
+    if (buttons & kForwardMouseButton != 0) return 4;
+    return 0;
+  }
+
+  /// `PointerEvent.pointerType` of [kind].
+  static String _pointerType(PointerDeviceKind kind) => switch (kind) {
+    PointerDeviceKind.mouse || PointerDeviceKind.trackpad => 'mouse',
+    PointerDeviceKind.touch => 'touch',
+    PointerDeviceKind.stylus || PointerDeviceKind.invertedStylus => 'pen',
+    PointerDeviceKind.unknown => '',
+  };
+
+  /// The DOM pointer ids of the touch-like Flutter pointers, by Flutter
+  /// pointer id. The host frees an id after the events of the up or the
+  /// cancel of its pointer, or at the hover exit of a hovering pointer.
+  static final Map<int, int> _domPointerIds = {};
+
+  /// The next DOM pointer id of a touch-like pointer. Blink counts the ids
+  /// up from 2 (`PointerEventFactory`); 1 is the mouse.
+  static int _nextDomPointerId = 2;
+
+  /// `PointerEvent.pointerId` of [source]: 1 for a mouse-like pointer, as the
+  /// mouse of Blink, else the id of the Flutter pointer, which the first
+  /// event of the pointer takes.
+  static int _domPointerId(PointerEvent source) => _isMouseKind(source.kind)
+      ? 1
+      : _domPointerIds.putIfAbsent(source.pointer, () => _nextDomPointerId++);
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
@@ -974,15 +1586,27 @@ class RenderChartHost extends RenderBox
           _clickPointer = event.buttons == kPrimaryButton
               ? event.pointer
               : null;
+          _mouseButtons[event.pointer] = event.buttons;
           _emit(const ['pointerdown', 'mousedown'], position, event);
         }
       case PointerMoveEvent():
         if (touch) {
           _handleTouchMove(event);
-        } else if (size.contains(position)) {
-          // A mouse has no implicit capture: the canvas gets no move outside
-          // its box.
-          _emit(const ['pointermove', 'mousemove'], position, event);
+        } else {
+          if (event.buttons != 0 && _mouseButtons.containsKey(event.pointer)) {
+            _mouseButtons[event.pointer] = event.buttons;
+          }
+          if (size.contains(position)) {
+            _emit(const ['pointermove', 'mousemove'], position, event);
+          } else if (_mouseButtons.containsKey(event.pointer)) {
+            // A mouse has no implicit capture: the canvas gets no move
+            // outside its box, and the document gets it.
+            _emitToDocument(
+              const ['pointermove', 'mousemove'],
+              position,
+              event,
+            );
+          }
         }
       case PointerUpEvent():
         if (touch) {
@@ -992,14 +1616,20 @@ class RenderChartHost extends RenderBox
           _clickPointer = null;
           if (size.contains(position)) {
             // The up goes to the hit path of the down, but a mouse has no
-            // implicit capture: the canvas gets no up outside its box. An up
-            // outside the box gives no click, because the DOM sends the
-            // click to the common ancestor.
+            // implicit capture: the canvas gets no up outside its box.
             _emit(const ['pointerup', 'mouseup'], position, event);
             if (click) {
               _emit(const ['click'], position, event);
             }
+          } else if (_mouseButtons.containsKey(event.pointer)) {
+            // The document gets the up outside the box, and the click of the
+            // click rule: the DOM sends that click to the common ancestor.
+            _emitToDocument(const ['pointerup', 'mouseup'], position, event);
+            if (click) {
+              _emitToDocument(const ['click'], position, event);
+            }
           }
+          _mouseButtons.remove(event.pointer);
         }
       case PointerCancelEvent():
         if (touch) {
@@ -1023,11 +1653,15 @@ class RenderChartHost extends RenderBox
             event,
             touch: true,
           );
+          _domPointerIds.remove(event.pointer);
         } else {
           _clickPointer = null;
           if (size.contains(position)) {
             _emit(const ['pointercancel'], position, event);
+          } else if (_mouseButtons.containsKey(event.pointer)) {
+            _emitToDocument(const ['pointercancel'], position, event);
           }
+          _mouseButtons.remove(event.pointer);
         }
       case PointerScrollEvent():
         _emit(const ['wheel'], position, event);
@@ -1122,6 +1756,7 @@ class RenderChartHost extends RenderBox
         const ['pointercancel', 'pointerout', 'pointerleave'],
         origin,
         touch.last,
+        client: Offset.zero,
       );
     }
   }
@@ -1164,6 +1799,7 @@ class RenderChartHost extends RenderBox
             const ['mousemove', 'mousedown', 'mouseup', 'click'],
             position,
             source,
+            compat: true,
           );
         } else if (_mouseOwner != null) {
           _releaseMouse(source, emit: true);
@@ -1173,6 +1809,8 @@ class RenderChartHost extends RenderBox
     // The route has no candidate for this pointer: the pointer was in
     // _hostPointers when the route saw its down.
     _hostPointers.remove(event.pointer);
+    // The click of the tap has the id of its pointer.
+    _domPointerIds.remove(event.pointer);
   }
 
   /// The long press of the host candidate [tap]: the compatibility mouse
@@ -1184,7 +1822,12 @@ class RenderChartHost extends RenderBox
     }
     final down = tap.down;
     _takeMouse(down);
-    _emit(const ['mousemove'], globalToLocal(down.position), down);
+    _emit(
+      const ['mousemove'],
+      globalToLocal(down.position),
+      down,
+      compat: true,
+    );
   }
 
   void _endTap() {
@@ -1200,7 +1843,9 @@ class RenderChartHost extends RenderBox
     _panned = false;
     _sequenceTouches = 0;
     _clickPointer = null;
+    _mouseButtons.clear();
     _hostPointers.removeAll(_touches.keys);
+    _touches.keys.forEach(_domPointerIds.remove);
     _touches.clear();
     if (identical(_mouseOwner, this)) {
       _releaseMouse(null, emit: false);
@@ -1255,6 +1900,7 @@ class RenderChartHost extends RenderBox
         const ['mouseover', 'mouseenter'],
         globalToLocal(source.position),
         source,
+        compat: true,
       );
     }
     _ownerPointer = source.pointer;
@@ -1281,6 +1927,7 @@ class RenderChartHost extends RenderBox
         const ['mouseout', 'mouseleave'],
         owner.globalToLocal(source.position),
         source,
+        compat: true,
       );
     }
   }
@@ -1448,6 +2095,7 @@ class RenderChartHost extends RenderBox
       attached ? globalToLocal(event.position) : event.localPosition,
       event,
     );
+    _domPointerIds.remove(event.pointer);
   }
 
   void _removeHoverDevice(int device) {
@@ -1468,6 +2116,9 @@ class RenderChartHost extends RenderBox
   }
 
   void _clearHoverPointers() {
+    for (final event in _hoverDevices.values) {
+      _domPointerIds.remove(event.pointer);
+    }
     List.of(_hoverDevices.keys).forEach(_removeHoverDevice);
   }
 
@@ -1536,6 +2187,23 @@ double _slopLimitSquared(
       (kind == PointerDeviceKind.stylus ? touch * _stylusSlopFactor : touch) +
       _slopEpsilon;
   return limit * limit;
+}
+
+/// The modifier keys of an event: `ctrlKey`, `altKey`, `shiftKey` and
+/// `metaKey`.
+typedef _Modifiers = ({bool ctrl, bool alt, bool shift, bool meta});
+
+/// The modifier keys that are down now, from `HardwareKeyboard`. Flutter
+/// updates the pressed keys before it calls the key handlers, so the down of
+/// Control has `ctrlKey` true and its up false, as in the DOM.
+_Modifiers _modifiers() {
+  final keyboard = HardwareKeyboard.instance;
+  return (
+    ctrl: keyboard.isControlPressed,
+    alt: keyboard.isAltPressed,
+    shift: keyboard.isShiftPressed,
+    meta: keyboard.isMetaPressed,
+  );
 }
 
 /// One touch-like pointer that is down on the host (Chart.js ADR 0037,
