@@ -58,9 +58,12 @@
 /// [RenderChartHost] reads raw pointer events in `handleEvent` and maps them
 /// to the DOM event names of Chrome by `PointerDeviceKind`: mouse and
 /// trackpad are mouse-like, all other kinds in contact are touch-like, as
-/// in Chrome on Android (device check P4, row ST1). It claims nothing in the
-/// gesture arena. Thus parent scrollables keep their drags, and tappable
-/// ancestors keep their taps, as a DOM click also reaches them by bubbling.
+/// in Chrome on Android (device check P4, row ST1). With the default
+/// `touch-action` of the canvas, it claims nothing in the gesture arena.
+/// Thus parent scrollables keep their drags, and tappable ancestors keep
+/// their taps, as a DOM click also reaches them by bubbling. A canvas with
+/// `touch-action: none` and a prevented `wheel` change this (Chart.js ADR
+/// 0108, below).
 /// - The click rule (section 7): a mouse-like down with the primary button
 ///   on the host, then the up of that pointer inside the box, gives `click`
 ///   after `mouseup`. The distance between the down and the up has no limit.
@@ -69,7 +72,8 @@
 ///   `pointermove` inside its slop limit. The first move past a slop limit
 ///   begins the pan: `pointercancel`, `pointerout` and `pointerleave` at the
 ///   view origin for each touch-like pointer, then only `touch*` events
-///   until all touch-like pointers of the host lift.
+///   until all touch-like pointers of the host lift. A sequence with
+///   `touch-action: none` has no pan (below).
 /// - The tap rule (section 8): one touch-like pointer on the host, no pan, no
 ///   cancel, and the up before `kLongPressTimeout`. A tap gives `mouseover` and
 ///   `mouseenter` (when the compatibility mouse is not over the host),
@@ -101,6 +105,28 @@
 ///   `HardwareKeyboard`, `bubbles` and `cancelable`.
 /// - `canvas.getBoundingClientRect()` gives the box of the canvas in the
 ///   logical pixels of the view ([RenderChartHost.boundingClientRect]).
+///
+/// `touch-action` and the wheel (Chart.js ADR 0108):
+/// - The host reads the `touch-action` of the inline style of the canvas at
+///   the first touch-like down of a sequence, as Chrome fixes the touch
+///   action at the start of a touch. A change in a sequence acts at the next
+///   one. With `none`, no move begins the pan: no `pointercancel`, and the
+///   `pointer*` and `touch*` events go on. The tap candidate ends at its
+///   first move past its slop limit. The host adds each touch-like pointer
+///   of the sequence to the gesture arena. It accepts the arena of a pointer
+///   at its first move farther than the hit slop (`computeHitSlop`) from its
+///   down, and the arenas of all its pointers at a second touch-like down.
+///   Thus a parent scrollable, a `PageView` and an `InteractiveViewer` do
+///   not pan or zoom, as the browser does not pan or zoom the canvas. It
+///   gives up the arena of a pointer that it did not accept at its up or
+///   its cancel. Thus a tappable ancestor still gets a tap. Each other value
+///   keeps the rules of Chart.js ADR 0037.
+/// - A `wheel` whose dispatch gives false (a listener prevented its
+///   default) takes the pointer signal: the host registers with the
+///   `pointerSignalResolver` before any ancestor, and responds with
+///   `allowPlatformDefault: false`. Thus no parent scrollable scrolls, and
+///   on the web the page does not scroll. An unprevented `wheel` changes
+///   nothing.
 library;
 
 import 'dart:async';
@@ -1325,6 +1351,13 @@ class RenderChartHost extends RenderBox
   /// change begins the pan.
   int _sequenceTouches = 0;
 
+  /// Whether the touch sequence of the host has `touch-action: none`
+  /// (Chart.js ADR 0108): the inline style of the canvas at the first
+  /// touch-like down of the sequence. While it is true, no move begins the
+  /// pan, and the host claims its touch-like pointers in the gesture arena
+  /// ([_claim]).
+  bool _touchActionNone = false;
+
   /// The pointer of a mouse-like down with the primary button on the host,
   /// or null: the DOM click rule (Chart.js ADR 0037, section 7).
   int? _clickPointer;
@@ -1351,7 +1384,10 @@ class RenderChartHost extends RenderBox
   /// [source] gives the fields of the events ([_nativeEvent]). [client] is
   /// the client point, by default the position of [source]. [compat] marks
   /// the compatibility mouse events of a touch tap or a long press.
-  void _emit(
+  ///
+  /// Gives false when a listener prevented the default of one of the
+  /// events: the result of `dispatchEvent` (Chart.js ADR 0108).
+  bool _emit(
     List<String> types,
     Offset position,
     PointerEvent source, {
@@ -1361,12 +1397,13 @@ class RenderChartHost extends RenderBox
   }) {
     List<NativeTouch>? touches;
     _Modifiers? modifiers;
+    var notPrevented = true;
     for (final type in types) {
       if (!_has(type)) {
         continue;
       }
       final isTouchEvent = touch && type.startsWith('touch');
-      dispatchCanvasEvent(
+      if (!dispatchCanvasEvent(
         _canvas,
         _nativeEvent(
           type,
@@ -1378,8 +1415,11 @@ class RenderChartHost extends RenderBox
           touches: isTouchEvent ? (touches ??= _touchList) : const [],
           compat: compat,
         ),
-      );
+      )) {
+        notPrevented = false;
+      }
     }
+    return notPrevented;
   }
 
   /// Sends the events [types] of a mouse-like pointer that went down on the
@@ -1633,7 +1673,10 @@ class RenderChartHost extends RenderBox
         }
       case PointerCancelEvent():
         if (touch) {
-          _touches.remove(event.pointer);
+          final hostTouch = _touches.remove(event.pointer);
+          if (hostTouch != null) {
+            _unclaim(hostTouch);
+          }
           if (_tap?.pointer == event.pointer) {
             _endTap();
           }
@@ -1664,11 +1707,25 @@ class RenderChartHost extends RenderBox
           _mouseButtons.remove(event.pointer);
         }
       case PointerScrollEvent():
-        _emit(const ['wheel'], position, event);
+        if (!_emit(const ['wheel'], position, event)) {
+          // A listener prevented the default of the wheel (Chart.js ADR
+          // 0108). The host is deeper than each scrollable, so it registers
+          // first, and the first registration wins: no ancestor scrolls.
+          GestureBinding.instance.pointerSignalResolver.register(
+            event,
+            _preventPlatformDefault,
+          );
+        }
       default:
         break;
     }
   }
+
+  /// The pointer signal callback of a prevented `wheel`: the platform does
+  /// not scroll the page (Chart.js ADR 0108), as for a scrollable that
+  /// scrolls.
+  static void _preventPlatformDefault(PointerSignalEvent event) =>
+      event.respond(allowPlatformDefault: false);
 
   void _handleTouchDown(PointerDownEvent event) {
     if (_touches.isEmpty) {
@@ -1676,11 +1733,31 @@ class RenderChartHost extends RenderBox
       // non-hovering event with no active touch (pointer_event_manager.cc).
       _panned = false;
       _sequenceTouches = 0;
+      // Chrome fixes the touch action at the start of the touch (Chart.js
+      // ADR 0108). Only the canvas style counts: the port has no ancestor
+      // elements.
+      _touchActionNone =
+          _canvas.style.touchAction.trim().toLowerCase() == 'none';
     }
     final limitSquared = _slopLimitSquared(event.kind, gestureSettings);
-    _touches[event.pointer] = _HostTouch(event, limitSquared);
+    final hostTouch = _touches[event.pointer] = _HostTouch(
+      event,
+      limitSquared,
+    );
     if (_touches.length > _sequenceTouches) {
       _sequenceTouches = _touches.length;
+    }
+    if (_touchActionNone) {
+      // The host handles the down before GestureBinding closes the arena.
+      hostTouch.arena = GestureBinding.instance.gestureArena.add(
+        event.pointer,
+        const _TouchActionClaim(),
+      );
+      if (_touches.length > 1) {
+        // A second finger: a scale recognizer of an ancestor can accept on
+        // the change of the span before a finger passes the hit slop.
+        _touches.values.forEach(_claim);
+      }
     }
     _hostPointers.add(event.pointer);
     // A second touch-like pointer on the host ends the candidate: it stands
@@ -1720,6 +1797,10 @@ class RenderChartHost extends RenderBox
       return;
     }
     touch.last = event;
+    if (_touchActionNone) {
+      _handleTouchMoveWithoutPan(touch, event);
+      return;
+    }
     final position = event.localPosition;
     if (_panned) {
       // P4 D3: after the pan, only the touch events go on.
@@ -1739,6 +1820,63 @@ class RenderChartHost extends RenderBox
       _emit(const ['pointermove'], position, event);
     } else {
       _emit(const ['pointermove', 'touchmove'], position, event, touch: true);
+    }
+  }
+
+  /// A move with a change of the touch-like pointer [touch] in a sequence
+  /// with `touch-action: none` (Chart.js ADR 0108). No move begins the pan,
+  /// also with more than 2 pointers: the `pointer*` and `touch*` events go
+  /// on, and `touchmove` stays cancelable. The first move farther than the
+  /// hit slop from the down claims the pointer ([_claim]). The tap candidate
+  /// gives only `pointermove` inside its slop limit (P4 D1), and its first
+  /// move past the limit ends it: no `click` and no compatibility event.
+  void _handleTouchMoveWithoutPan(_HostTouch touch, PointerMoveEvent event) {
+    final distanceSquared =
+        (event.position - touch.down.position).distanceSquared;
+    if (!touch.claimed) {
+      // The drag recognizers accept when one axis passes the same slop. The
+      // host sees the move first: its entry of the hit path is deeper than
+      // the routes of the recognizers, which GestureBinding.handleEvent
+      // runs. Thus it wins a tie.
+      final slop = computeHitSlop(event.kind, gestureSettings);
+      if (distanceSquared > slop * slop) {
+        _claim(touch);
+      }
+    }
+    final position = event.localPosition;
+    if (_tap?.pointer == event.pointer) {
+      if (distanceSquared <= touch.limitSquared) {
+        _emit(const ['pointermove'], position, event);
+        return;
+      }
+      _endTap();
+    }
+    _emit(const ['pointermove', 'touchmove'], position, event, touch: true);
+  }
+
+  /// Accepts the gesture arena of [touch] for the host, once (Chart.js ADR
+  /// 0108). The recognizers of the ancestors lose the pointer: their drags,
+  /// scales and taps. On an open arena, the host is the eager winner, and
+  /// the close of the arena resolves it.
+  static void _claim(_HostTouch touch) {
+    final arena = touch.arena;
+    if (arena != null && !touch.claimed) {
+      touch.claimed = true;
+      arena.resolve(GestureDisposition.accepted);
+    }
+  }
+
+  /// Gives up the gesture arena of [touch] at its up, its cancel or the end
+  /// of the input of the host, unless the host accepted it (Chart.js ADR
+  /// 0108). It runs before the sweep of `GestureBinding.handleEvent`. The
+  /// sweep gives an unresolved arena to its first member, the host. Thus a
+  /// tap of an ancestor inside the slop still wins, as a DOM click of a
+  /// `touch-action: none` canvas still bubbles to the ancestors.
+  static void _unclaim(_HostTouch touch) {
+    final arena = touch.arena;
+    touch.arena = null;
+    if (arena != null && !touch.claimed) {
+      arena.resolve(GestureDisposition.rejected);
     }
   }
 
@@ -1775,7 +1913,10 @@ class RenderChartHost extends RenderBox
 
   void _handleTouchUp(PointerUpEvent event) {
     final position = event.localPosition;
-    _touches.remove(event.pointer);
+    final hostTouch = _touches.remove(event.pointer);
+    if (hostTouch != null) {
+      _unclaim(hostTouch);
+    }
     _emit(
       _panned
           ? const ['touchend']
@@ -1837,15 +1978,18 @@ class RenderChartHost extends RenderBox
 
   /// Ends the input state of the host at a detach, a dispose or a canvas
   /// swap. An owner of the compatibility mouse ends without an event, as a
-  /// DOM element that leaves the document gets no `mouseout`.
+  /// DOM element that leaves the document gets no `mouseout`. The host gives
+  /// up each gesture arena that it did not accept.
   void _endInput() {
     _endTap();
     _panned = false;
     _sequenceTouches = 0;
+    _touchActionNone = false;
     _clickPointer = null;
     _mouseButtons.clear();
     _hostPointers.removeAll(_touches.keys);
     _touches.keys.forEach(_domPointerIds.remove);
+    _touches.values.forEach(_unclaim);
     _touches.clear();
     if (identical(_mouseOwner, this)) {
       _releaseMouse(null, emit: false);
@@ -2219,6 +2363,38 @@ final class _HostTouch {
 
   /// The last event of the pointer that gave DOM events: the down or a move.
   PointerEvent last;
+
+  /// The entry of the host in the gesture arena of the pointer, in a
+  /// sequence with `touch-action: none` (Chart.js ADR 0108). Null in the
+  /// other sequences, and after the host gave up the arena.
+  GestureArenaEntry? arena;
+
+  /// Whether the host accepted [arena].
+  bool claimed = false;
+}
+
+/// The member of the gesture arena with which a host claims its touch-like
+/// pointers in a sequence with `touch-action: none` (Chart.js ADR 0108). The
+/// host reads the raw pointer events in `handleEvent`, so a win or a loss
+/// changes nothing for it: the claim only takes the pointer from the
+/// recognizers of the ancestors, as the browser does not pan or zoom such an
+/// element.
+///
+/// Not an `EagerGestureRecognizer`: it accepts at the down, and thus it also
+/// takes the taps of a `GestureDetector`, an `InkWell` or a `ListTile`
+/// ancestor. In the DOM, `touch-action` stops only the pan and the zoom of
+/// the browser.
+final class _TouchActionClaim implements GestureArenaMember {
+  const _TouchActionClaim();
+
+  @override
+  void acceptGesture(int pointer) {}
+
+  @override
+  void rejectGesture(int pointer) {}
+
+  @override
+  String toString() => 'RenderChartHost (touch-action: none)';
 }
 
 /// One touch-like pointer that can still end as a tap (Chart.js ADR 0037,
