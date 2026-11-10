@@ -1001,7 +1001,12 @@ class Scale extends _ScalePrototype
   /// core.scale.js:497 `_alignToPixels`, the `alignToPixels` option that
   /// `configure` reads. The constructor does not declare it. It starts
   /// absent.
-  Object? _alignToPixels = undefined;
+  ///
+  /// Its one reader, `getPixelForDecimal` (:926), tests its truthiness, and
+  /// no code reads it by name. Thus it keeps the `ToBoolean` of the option,
+  /// taken at the write: absent is `false`.
+  // DIVERGES(chartjs): adapt-loop-invariant-truthiness, ToBoolean at write.
+  bool _alignToPixels = false;
 
   /// The `position` of the layout box (layout.d.ts:9). The constructor does
   /// not declare it. `layouts.configure` writes the `position` option
@@ -1412,7 +1417,7 @@ class Scale extends _ScalePrototype
     this.endPixel = endPixel;
     this.reversePixels = reversePixels;
     length = endPixel - startPixel;
-    _alignToPixels = options.alignToPixels;
+    _alignToPixels = jsTruthy(options.alignToPixels);
   }
 
   /// core.scale.js:500 `afterUpdate()`.
@@ -2141,9 +2146,7 @@ class Scale extends _ScalePrototype
     }
 
     final pixel = startPixel + decimal * length;
-    return int16Range(
-      jsTruthy(_alignToPixels) ? alignPixel(chart, pixel, 0) : pixel,
-    );
+    return int16Range(_alignToPixels ? alignPixel(chart, pixel, 0) : pixel);
   }
 
   /// core.scale.js:933 `getDecimalForPixel(pixel)`.

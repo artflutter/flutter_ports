@@ -387,6 +387,10 @@ class LineController extends DatasetController {
     final options = this.options;
     final spanGaps = options.readKey(OptionKey.spanGaps);
     final segment = options.readKey(OptionKey.segment);
+    // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:101)
+    // and `if (segment)` (:105) test two locals of this call: once here.
+    final hasStack = jsTruthy(stacked);
+    final hasSegment = jsTruthy(segment);
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)
         : double.infinity;
@@ -459,7 +463,7 @@ class LineController extends DatasetController {
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
-              jsTruthy(stacked) ? applyStack(vScale, parsed, stacked) : vValue,
+              hasStack ? applyStack(vScale, parsed, stacked) : vValue,
               index,
             );
       writes
@@ -475,7 +479,7 @@ class LineController extends DatasetController {
                       .abs() >
                   maxGapLength,
         );
-      if (jsTruthy(segment)) {
+      if (hasSegment) {
         writes
           ..parsed(parsed)
           // `_dataset.data[i]`: the data of the dataset object of the user.

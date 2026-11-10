@@ -460,6 +460,8 @@ class ScatterController extends DatasetController {
     final options = this.options;
     final spanGaps = options.readKey(OptionKey.spanGaps);
     final segment = options.readKey(OptionKey.segment);
+    // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:130)
+    // and `if (segment)` (:134) test two locals of this call: once here.
     final hasStack = jsTruthy(stacked);
     final hasSegment = jsTruthy(segment);
     final maxGapLength = isNumber(spanGaps)
