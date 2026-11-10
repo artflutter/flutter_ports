@@ -956,6 +956,227 @@ void main() {
     });
   });
 
+  group('add-on port', () {
+    const host = 'packages/flutter_chartjs_port';
+    const harness = 'packages/chartjs_test_utils';
+    const zoomName = 'flutter_chartjs_plugin_zoom_port';
+    const zoom = 'packages/$zoomName';
+    const zoomPortOnly =
+        '// Original code, not ported from chartjs-plugin-zoom: a test.';
+    const zoomPorted =
+        '// Ported from chartjs-plugin-zoom v2.2.0+fb81d331 src/plugin.ts '
+        '(MIT, chartjs-plugin-zoom contributors).';
+    const sources = [
+      'marker: zoom',
+      'host: flutter_chartjs_port',
+      'sources:',
+      '  - header: chartjs-plugin-zoom',
+      '    version: "v2.2.0+fb81d331"',
+      '    url: https://github.com/chartjs/chartjs-plugin-zoom',
+      '    language: js',
+      '    spdx: MIT',
+      '    holder: chartjs-plugin-zoom contributors',
+      '    pin:',
+      '      kind: copy',
+      '      path: third_party/chartjs-plugin-zoom',
+      '    targets:',
+      '      - source: src/',
+      '        dart: $zoom/lib/src/',
+    ];
+    late FileTree repo;
+
+    setUp(() {
+      repo = FileTree()
+        ..write('$host/pubspec.yaml', ['name: flutter_chartjs_port'])
+        ..write('$host/lib/chartjs.dart', [_portOnly])
+        ..write('$host/lib/helpers.dart', [_portOnly])
+        ..write('$host/lib/js_semantics.dart', [_portOnly])
+        ..write('$host/lib/flutter_chartjs_port.dart', [_portOnly])
+        ..write('$host/lib/src/js/js_math.dart', [_portOnly])
+        ..write('$harness/pubspec.yaml', ['name: chartjs_test_utils'])
+        ..write('$harness/lib/pure.dart', [
+          _portOnly,
+          "import 'package:flutter_chartjs_port/src/js/js_math.dart';",
+        ])
+        ..write('$zoom/pubspec.yaml', [
+          'name: flutter_chartjs_plugin_zoom_port',
+        ])
+        ..write('$zoom/tool/port_sources.yaml', sources)
+        ..write('$zoom/lib/flutter_chartjs_plugin_zoom_port.dart', [
+          zoomPortOnly,
+          'library;',
+          "export 'src/plugin.dart';",
+        ])
+        ..write('$zoom/lib/src/plugin.dart', [
+          zoomPorted,
+          "import 'dart:math' as math;",
+          "import 'package:flutter/widgets.dart';",
+          "import 'package:flutter_chartjs_port/chartjs.dart';",
+          "import 'package:flutter_chartjs_port/helpers.dart';",
+          "import 'package:flutter_chartjs_port/js_semantics.dart';",
+          "import 'package:flutter_chartjs_plugin_zoom_port/src/utils.dart';",
+        ])
+        ..write('$zoom/lib/src/utils.dart', [zoomPorted])
+        ..write('$zoom/test/specs/api_test.dart', [
+          zoomPorted,
+          "@TestOn('vm')",
+          'library;',
+          "import 'package:chartjs_test_utils/flutter.dart';",
+          "import 'package:chartjs_test_utils/pure.dart';",
+          "import 'package:flutter/material.dart';",
+          "import 'package:$zoomName/$zoomName.dart';",
+          "import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';",
+          "import 'package:flutter_test/flutter_test.dart';",
+          "import '../support/jasmine.dart';",
+        ])
+        ..write('$zoom/test/support/jasmine.dart', [
+          zoomPortOnly,
+          "import 'package:flutter_chartjs_port/chartjs.dart';",
+        ]);
+    });
+
+    ({List<String> findings, int files}) runAddOn({String? harnessDirectory}) {
+      final result = checkLibImports(
+        repo.path(zoom),
+        displayPrefix: '$zoom/',
+        harnessDirectory: harnessDirectory,
+      );
+      return (findings: describeFindings(result.findings), files: result.files);
+    }
+
+    test('imports the public libraries of the host', () {
+      final result = runAddOn();
+      expect(result.findings, isEmpty);
+      expect(result.files, 5);
+    });
+
+    test('never imports src/ of the host or of the harness', () {
+      repo
+        ..write('$zoom/lib/src/utils.dart', [
+          zoomPorted,
+          "import 'package:flutter_chartjs_port/src/js/js_math.dart';",
+          "import 'package:flutter_chartjs_port/missing.dart';",
+          "import 'package:chartjs_test_utils/flutter.dart';",
+        ])
+        ..write('$zoom/test/support/jasmine.dart', [
+          zoomPortOnly,
+          "import 'package:flutter_chartjs_port/src/types/plugin.dart';",
+          "import 'package:chartjs_test_utils/src/utils.dart';",
+          "import 'package:chartjs_test_utils/chartjs_test_utils.dart';",
+        ]);
+      const hostRule =
+          'but an add-on port imports only the public libraries of its host '
+          'flutter_chartjs_port: package:flutter_chartjs_port/chartjs.dart, '
+          'package:flutter_chartjs_port/flutter_chartjs_port.dart, '
+          'package:flutter_chartjs_port/helpers.dart, '
+          'package:flutter_chartjs_port/js_semantics.dart (ADR 0009, item 3).';
+      const harnessRule =
+          'but the tests of an add-on port import only '
+          'package:chartjs_test_utils/flutter.dart and '
+          'package:chartjs_test_utils/pure.dart of the harness (ADR 0009, '
+          'item 7).';
+      String error(String path, String uri, String rule) =>
+          'error: $zoom/$path: imports $uri, $rule';
+      expect(runAddOn().findings, [
+        error(
+          'lib/src/utils.dart:2',
+          'package:flutter_chartjs_port/src/js/js_math.dart',
+          hostRule,
+        ),
+        error(
+          'lib/src/utils.dart:3',
+          'package:flutter_chartjs_port/missing.dart',
+          hostRule,
+        ),
+        error(
+          'lib/src/utils.dart:4',
+          'package:chartjs_test_utils/flutter.dart',
+          'which is not on the lib/ allowlist (porting-flow.md 4, tool 1).',
+        ),
+        error(
+          'test/support/jasmine.dart:2',
+          'package:flutter_chartjs_port/src/types/plugin.dart',
+          hostRule,
+        ),
+        error(
+          'test/support/jasmine.dart:3',
+          'package:chartjs_test_utils/src/utils.dart',
+          harnessRule,
+        ),
+        error(
+          'test/support/jasmine.dart:4',
+          'package:chartjs_test_utils/chartjs_test_utils.dart',
+          harnessRule,
+        ),
+      ]);
+    });
+
+    test('keeps the web rule: a test that imports the host is VM only', () {
+      repo.write('$zoom/test/specs/utils_test.dart', [
+        zoomPorted,
+        "import 'package:flutter_chartjs_port/helpers.dart';",
+        "import 'package:test/test.dart';",
+      ]);
+      expect(runAddOn().findings, [
+        startsWith(
+          'error: $zoom/test/specs/utils_test.dart:2: imports '
+          'package:flutter_chartjs_port/helpers.dart, but the file compiles '
+          'for the web test legs.',
+        ),
+      ]);
+    });
+
+    test('skips the pure.dart closure of the harness', () {
+      // The closure imports the pure layers of the host, not of the add-on.
+      final result = runAddOn(harnessDirectory: repo.path(harness));
+      expect(result.findings, isEmpty);
+      expect(result.files, 5);
+    });
+
+    test('reports a host that is not next to the package', () {
+      repo.write('$zoom/tool/port_sources.yaml', [
+        for (final line in sources)
+          if (line == 'host: flutter_chartjs_port')
+            'host: chartjs_port'
+          else
+            line,
+      ]);
+      expect(runAddOn().findings, [
+        equals(
+          'error: $zoom/tool/port_sources.yaml: the host package chartjs_port '
+          'is not next to the package (ADR 0009).',
+        ),
+        equals(
+          'error: $zoom/lib/src/plugin.dart:4: imports '
+          'package:flutter_chartjs_port/chartjs.dart, which is not on the '
+          'lib/ allowlist (porting-flow.md 4, tool 1).',
+        ),
+        startsWith('error: $zoom/lib/src/plugin.dart:5: imports '),
+        startsWith('error: $zoom/lib/src/plugin.dart:6: imports '),
+      ]);
+    });
+
+    test('reports a source list that it cannot read', () {
+      repo.write('$zoom/tool/port_sources.yaml', ['host: x', 'marker: Z']);
+      expect(runAddOn().findings, [
+        'error: $zoom/tool/port_sources.yaml: the file has no "sources" list',
+        startsWith('error: $zoom/lib/src/plugin.dart:4: imports '),
+        startsWith('error: $zoom/lib/src/plugin.dart:5: imports '),
+        startsWith('error: $zoom/lib/src/plugin.dart:6: imports '),
+      ]);
+    });
+
+    test('leaves a package without a host key to the other rules', () {
+      repo.write('$host/tool/port_sources.yaml', sources.skip(2).toList());
+      final result = checkLibImports(
+        repo.path(host),
+        harnessDirectory: repo.path(harness),
+      );
+      expect(describeFindings(result.findings), isEmpty);
+      expect(result.files, 5 + 1);
+    });
+  });
+
   test('adds the display prefix to paths', () {
     tree.write('lib/src/js/js_math.dart', [
       _portOnly,

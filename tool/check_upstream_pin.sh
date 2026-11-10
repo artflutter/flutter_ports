@@ -164,7 +164,10 @@ check_pin() {
 }
 
 # One line "<path> <ref> <commit>" for each pin block of port_sources.yaml.
+# The unindented lines are the top-level keys ("sources", and "marker" and
+# "host" of an add-on port). They are no pin keys.
 d3_pins=$(awk '
+  /^[^[:space:]]/ { next }
   $1 == "pin:" { path = ""; ref = ""; next }
   $1 == "path:" { path = $2 }
   $1 == "ref:" { ref = $2; gsub(/"/, "", ref) }
@@ -208,8 +211,10 @@ if [ ! -f "$echarts_sources" ]; then
 fi
 
 # One line "<path> <ref> <commit>" for each pin block of a port_sources.yaml.
+# The script skips the unindented lines: the top-level keys.
 read_pins() {
   awk '
+    /^[^[:space:]]/ { next }
     $1 == "pin:" { path = ""; ref = ""; next }
     $1 == "path:" { path = $2 }
     $1 == "ref:" { ref = $2; gsub(/"/, "", ref) }
@@ -334,7 +339,7 @@ fi
 # The loops above examine the D3, ECharts and zoom entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
-listed=$(awk '$1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)
+listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)
 while read -r _ path <&3; do
   if ! grep -qxF -- "$path" <<<"$listed"; then
     echo "$path is in .gitmodules, but no port_sources.yaml entry pins it." >&2

@@ -65,15 +65,16 @@ melos:
       description: Run the theme goldens of flutter_chartjs_port (Chart.js ADR 0050). They skip unless CHART_GOLDENS=1. Only the CI job fixtures on ubuntu-24.04 sets it. Options go after "--", for example "dart run melos run test:goldens -- --update-goldens" (write the golden files; only the workflow_dispatch run of CI with update_goldens does this).
 
     # The per-module tools of packages/flutter_chartjs_port/doc/porting-flow.md section 4.
+    # Tools 1-3 also examine the add-on port flutter_chartjs_plugin_zoom_port (ADR 0009 item 6).
     check:lib-imports:
-      run: dart run packages/flutter_chartjs_port/tool/check_lib_imports.dart
-      description: Fail on flutter_chartjs_port imports outside the allowlists (lib/, pure layers, web tests, theme) and on chartjs_test_utils pure.dart imports outside the pure layer.
+      run: dart run packages/flutter_chartjs_port/tool/check_lib_imports.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port
+      description: Fail on flutter_chartjs_port imports outside the allowlists (lib/, pure layers, web tests, theme), on chartjs_test_utils pure.dart imports outside the pure layer, and on flutter_chartjs_plugin_zoom_port imports of flutter_chartjs_port/src/ or chartjs_test_utils/src/ (ADR 0009).
     check:headers:
-      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart
-      description: Fail on flutter_chartjs_port and chartjs_test_utils file headers, DIVERGES markers or port_sources.yaml entries that break the rules.
+      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port
+      description: Fail on flutter_chartjs_port, chartjs_test_utils and flutter_chartjs_plugin_zoom_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. The zoom package runs as its own home package.
     check:js-semantics:
-      run: dart run packages/flutter_chartjs_port/tool/check_js_semantics.dart
-      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs_port and chartjs_test_utils files.
+      run: dart run packages/flutter_chartjs_port/tool/check_js_semantics.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port
+      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs_port, chartjs_test_utils and flutter_chartjs_plugin_zoom_port files.
     port:next:check:
       run: dart run packages/flutter_chartjs_port/tool/port_order.dart --check
       description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.

@@ -174,12 +174,16 @@ jobs:
     # runs the spec tests of flutter_chartjs_port for the case counts.
     # Shallow submodules, so that the header check compares each header path
     # and each "files" entry of tool/port_sources.yaml with the pinned tree.
-    # The job checks out only the Chart.js submodules, by path.
+    # Tools 1-3 also examine the add-on port flutter_chartjs_plugin_zoom_port
+    # (ADR 0009 item 6). Its tool/port_sources.yaml has no "files" entry, so
+    # the header check reads its source paths from the submodule. The job
+    # checks out only the Chart.js submodules and
+    # third_party/chartjs-plugin-zoom, by path.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Check out the Chart.js submodules
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils
+      - name: Check out the Chart.js and chartjs-plugin-zoom submodules
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/chartjs-plugin-zoom
       - uses: ./.github/actions/setup
       - run: dart run melos run check:lib-imports
       - run: dart run melos run check:headers

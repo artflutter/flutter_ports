@@ -9,13 +9,29 @@
 # with "commit". The script compares the gitlink with "commit" and with the
 # <sha8> of chartjsPluginZoomVersion, and it reads the tag of the last
 # version with git ls-remote. Both also fail on a submodule of .gitmodules
-# that no entry of a packages/*/tool/port_sources.yaml file pins.
+# that no entry of a packages/*/tool/port_sources.yaml file pins. Both skip
+# the top-level keys other than "sources".
+#
+# The port checks of packages/flutter_chartjs_port/tool read this file too
+# (ADR 0009 item 6): check:headers with this package as its first package,
+# check:lib-imports and check:js-semantics with this package after the host.
+#
+# Top-level keys before "sources":
+# - marker: the tag of the DIVERGES markers, "// DIVERGES(zoom): <row id>,
+#   <reason>" (Zoom ADR 0002). The default is "chartjs".
+# - host: the host package of the add-on port (ADR 0009). check:lib-imports
+#   allows the imports of the public libraries of the host, the libraries
+#   directly in its lib/, and rejects package:<host>/src/.
 #
 # Keys of an entry, as in packages/flutter_chartjs_port/tool/port_sources.yaml:
 # - header: the project name in the header.
 # - version: the header version. A commit pin is "v<last version>+<sha8>"
 #   (Zoom ADR 0001). A release pin is "v<version>".
-# - version_source: where the version comes from.
+# - version_source: where the version comes from. The form "<constant> in
+#   packages/flutter_chartjs_plugin_zoom_port/lib/src/upstream.dart" makes
+#   the entry the primary project of the package: check:headers compares
+#   "version" with the constant, and requires its name in the port-only
+#   marker and its repository in a backport line.
 # - url: the project repository.
 # - language: the language of the source. "js" is JavaScript or TypeScript,
 #   as in packages/flutter_chartjs_port/tool/port_sources.yaml.
@@ -29,14 +45,19 @@
 #   moves.
 # - targets: the Dart path of a source path (Zoom ADR 0002). A "source" that
 #   ends with "/" is a directory. Its files map into the "dart" directory. The
-#   map changes ".spec.js" and ".test.ts" to "_test.dart", and ".ts" and
-#   ".js" to ".dart". Any other "source" is one file. Its "dart" is the Dart
-#   file. A file target applies before a directory target.
-# - files, file_index: the source paths that exist at the pin. Phase 0 ports
-#   no file. Thus the entry has no such key yet.
+#   map changes ".spec.js" to "_test.dart", and ".ts" and ".js" to ".dart".
+#   Any other "source" is one file. Its "dart" is the Dart file: the two unit
+#   tests src/*.test.ts have file targets. A file target applies before a
+#   directory target.
+# - files, file_index: the source paths that exist at the pin. The entry has
+#   no such key. Thus check:headers reads the source paths from the
+#   checked-out submodule (dart run melos run upstream).
 #
 # All paths are relative to the repository root. Only "source" is relative
 # to the project root.
+
+marker: zoom
+host: flutter_chartjs_port
 
 sources:
   - header: chartjs-plugin-zoom

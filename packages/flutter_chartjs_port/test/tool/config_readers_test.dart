@@ -158,6 +158,195 @@ list:
     );
   });
 
+  group('parsePortSourcesFile', () {
+    const entry = [
+      'sources:',
+      '  - header: a',
+      '    version: "v1.0.0"',
+      '    version_source: aVersion in packages/a/lib/src/upstream.dart',
+      '    url: https://github.com/o/a-b.c',
+      '    language: js',
+      '    spdx: MIT',
+      '    holder: A',
+      '    pin:',
+      '      kind: copy',
+      '      path: third_party/a',
+      '    targets:',
+      '      - source: a.js',
+      '        dart: packages/a/lib/a.dart',
+    ];
+
+    Matcher throwsMessage(String message) => throwsA(
+      isA<FormatException>().having((e) => e.message, 'message', message),
+    );
+
+    test('reads the marker tag and the host', () {
+      final plain = parsePortSourcesFile(entry.join('\n'));
+      expect(plain.marker, 'chartjs');
+      expect(plain.host, isNull);
+      expect(plain.sources.single.header, 'a');
+      final addOn = parsePortSourcesFile(
+        ['marker: zoom', 'host: flutter_chartjs_port', ...entry].join('\n'),
+      );
+      expect(addOn.marker, 'zoom');
+      expect(addOn.host, 'flutter_chartjs_port');
+      expect(parsePortSources([...entry, 'marker: x-1'].join('\n')), [
+        isA<PortSource>(),
+      ]);
+    });
+
+    test('rejects bad top-level keys', () {
+      expect(
+        () => parsePortSourcesFile(['markers: zoom', ...entry].join('\n')),
+        throwsMessage(
+          'the top-level key "markers" is not one of sources, marker, host',
+        ),
+      );
+      for (final marker in ['Zoom', '1x', 'a_b', '"a b"']) {
+        expect(
+          () => parsePortSourcesFile(['marker: $marker', ...entry].join('\n')),
+          throwsMessage(
+            '"marker" is a tag of lowercase letters, digits and hyphens',
+          ),
+          reason: marker,
+        );
+      }
+      expect(
+        () => parsePortSourcesFile(['host: a-b', ...entry].join('\n')),
+        throwsMessage('"host" is the name of a package'),
+      );
+      expect(
+        () => parsePortSourcesFile(['host:', '  - a', ...entry].join('\n')),
+        throwsMessage('"host" is the name of a package'),
+      );
+    });
+
+    test('reads the version constant and the repository of an entry', () {
+      final source = parsePortSources(entry.join('\n')).single;
+      expect(source.versionSource, startsWith('aVersion in '));
+      expect(source.versionConstantIn('packages/a'), 'aVersion');
+      expect(source.versionConstantIn('packages'), isNull);
+      expect(source.versionConstantIn('packages/b'), isNull);
+      expect(source.repository, 'o/a-b.c');
+      PortSource other(String versionSource, String url) => parsePortSources(
+        [
+          for (final line in entry)
+            if (line.startsWith('    version_source:'))
+              '    version_source: $versionSource'
+            else if (line.startsWith('    url:'))
+              '    url: $url'
+            else
+              line,
+        ].join('\n'),
+      ).single;
+      expect(
+        other(
+          'the a v1 package.json in packages/a/lib/src/upstream.dart',
+          'https://www.netlib.org/fdlibm/',
+        ).versionConstantIn('packages/a'),
+        isNull,
+      );
+      // A URL with one path segment names no repository.
+      expect(other('x', 'https://www.netlib.org/fdlibm/').repository, isNull);
+      expect(other('x', 'https://example.com/a/b/c').repository, 'a/b');
+    });
+
+    test('reads the source lists of the repository', () {
+      final host = parsePortSourcesFile(
+        File('tool/port_sources.yaml').readAsStringSync(),
+      );
+      expect(host.marker, 'chartjs');
+      expect(host.host, isNull);
+      expect(
+        host.sources.map(
+          (s) => s.versionConstantIn('packages/flutter_chartjs_port'),
+        ),
+        ['chartJsVersion', null, null, null],
+      );
+      expect(host.sources.first.repository, 'chartjs/Chart.js');
+
+      const zoomPackage = 'packages/flutter_chartjs_plugin_zoom_port';
+      final zoom = parsePortSourcesFile(
+        File(
+          '../flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml',
+        ).readAsStringSync(),
+      );
+      expect(zoom.marker, 'zoom');
+      expect(zoom.host, 'flutter_chartjs_port');
+      final source = zoom.sources.single;
+      expect(source.versionConstantIn(zoomPackage), 'chartjsPluginZoomVersion');
+      expect(source.repository, 'chartjs/chartjs-plugin-zoom');
+      expect(
+        {
+          for (final path in [
+            'src/utils.ts',
+            'src/index.umd.ts',
+            'src/utils.test.ts',
+            'src/scale.types.test.ts',
+            'test/specs/zoom.wheel.spec.js',
+            'test/fixtures/zoom/category.js',
+            'test/index.js',
+          ])
+            path: source.dartPathOf(path),
+        },
+        {
+          'src/utils.ts': '$zoomPackage/lib/src/utils.dart',
+          'src/index.umd.ts': '$zoomPackage/lib/src/index.umd.dart',
+          'src/utils.test.ts': '$zoomPackage/test/specs/utils_test.dart',
+          'src/scale.types.test.ts':
+              '$zoomPackage/test/specs/scale.types_test.dart',
+          'test/specs/zoom.wheel.spec.js':
+              '$zoomPackage/test/specs/zoom.wheel_test.dart',
+          'test/fixtures/zoom/category.js':
+              '$zoomPackage/test/fixtures/hand/zoom/category.dart',
+          'test/index.js': '$zoomPackage/test/flutter_test_config.dart',
+        },
+      );
+    });
+  });
+
+  group('targetPackages', () {
+    test('lists the packages of the dart targets in order', () {
+      final root = posixPath(Directory.systemTemp.createTempSync('pc_').path);
+      addTearDown(() => Directory(root).deleteSync(recursive: true));
+      for (final package in ['packages/a', 'packages/b', 'packages/a/c']) {
+        File('$root/$package/pubspec.yaml')
+          ..createSync(recursive: true)
+          ..writeAsStringSync('name: x\n');
+      }
+      final sources = parsePortSources(
+        [
+          'sources:',
+          '  - header: a',
+          '    version: "1.0"',
+          '    url: https://example.com/a',
+          '    language: js',
+          '    spdx: MIT',
+          '    holder: A',
+          '    pin:',
+          '      kind: copy',
+          '      path: third_party/a',
+          '    targets:',
+          '      - source: b/',
+          '        dart: packages/b/lib/src/',
+          '      - source: a.js',
+          '        dart: packages/a/lib/missing/a.dart',
+          '      - source: c/',
+          '        dart: packages/a/c/',
+          '      - source: d.js',
+          '        dart: packages/b/test/d_test.dart',
+          '      - source: e.js',
+          '        dart: other/e.dart',
+        ].join('\n'),
+      );
+      expect(targetPackages(root, sources), [
+        '$root/packages/b',
+        '$root/packages/a',
+        '$root/packages/a/c',
+      ]);
+    });
+  });
+
   group('PortTarget', () {
     const target = PortTarget('src/', 'packages/p/lib/src/');
 
@@ -178,6 +367,13 @@ list:
         const PortTarget('test/specs/', 't/').map('test/specs/a.b.tests.js'),
         't/a.b_test.dart',
       );
+      expect(
+        const PortTarget('test/specs/', 't/').map('test/specs/a.b.spec.js'),
+        't/a.b_test.dart',
+      );
+      // A unit test of src/ has a file target: the directory target maps
+      // only the extension.
+      expect(target.map('src/a.test.ts'), 'packages/p/lib/src/a.test.dart');
       expect(target.map('test/index.js'), isNull);
       expect(const PortTarget('a.c', 'x.dart').map('a.c'), 'x.dart');
       expect(const PortTarget('a.c', 'x.dart').map('b.c'), isNull);
@@ -191,7 +387,7 @@ list:
       ]);
       expect(
         const PortTarget('test/specs/', 't/').sourcesOf('t/a.b_test.dart'),
-        contains('test/specs/a.b.tests.js'),
+        containsAll(['test/specs/a.b.tests.js', 'test/specs/a.b.spec.js']),
       );
       expect(target.sourcesOf('packages/p/lib/a.dart'), isEmpty);
       expect(target.sourcesOf('packages/p/lib/src/a.txt'), isEmpty);

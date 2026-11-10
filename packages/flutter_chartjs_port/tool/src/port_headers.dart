@@ -2,11 +2,23 @@
 
 /// The header check of porting-flow.md section 4, tool 2.
 ///
+/// The home package is the first package of the command. It holds
+/// `tool/port_sources.yaml`, `doc/differences.md` and
+/// `lib/src/upstream.dart`. The primary project of the home is the first
+/// entry of `tool/port_sources.yaml` whose `version_source` is
+/// `<constant> in <home>/lib/src/upstream.dart`: Chart.js for
+/// `flutter_chartjs_port`, chartjs-plugin-zoom for the add-on
+/// `flutter_chartjs_plugin_zoom_port`. The optional top-level key `marker`
+/// of the file gives the tag of the `DIVERGES(<tag>)` markers
+/// ([defaultMarker] when the key is absent).
+///
 /// For each Dart file under `lib/`, `test/` and `tool/` of the examined
-/// packages (the command adds the harness package `chartjs_test_utils` when
-/// it exists, [withHarnessPackage]):
-/// - Line 1 is a `// Ported from` line or the port-only marker. More
-///   `// Ported from` lines and backport lines can follow directly.
+/// packages (the given packages, and each package that a `dart` target of
+/// the home names, [targetPackages]):
+/// - Line 1 is a `// Ported from` line or the port-only marker of the
+///   primary project. More `// Ported from` lines and backport lines can
+///   follow directly. A backport line names the repository of the primary
+///   project.
 /// - The project, license and holder of a `// Ported from` line agree with
 ///   `tool/port_sources.yaml`. The holder is in the package `LICENSE`. The
 ///   `REUSE.toml` annotation of the file lists the holder and the license.
@@ -15,7 +27,7 @@
 ///   `tool/` are port-only. A port-only file is not at the Dart path of a
 ///   source that exists at a pin. A checked-out submodule must be at the pin
 ///   commit, because the check reads the source paths from its files.
-/// - Each `DIVERGES(chartjs)` marker names a row of `doc/differences.md`, and
+/// - Each `DIVERGES(<tag>)` marker names a row of `doc/differences.md`, and
 ///   each row has a marker.
 /// - A header version older than the pinned version is stale: a warning.
 ///
@@ -61,8 +73,13 @@ const List<String> examinedDirectories = ['lib', 'test', 'tool'];
 /// (porting-flow.md 3).
 const String harnessPackageName = 'chartjs_test_utils';
 
+/// The tag of the `DIVERGES(<tag>)` markers when `tool/port_sources.yaml` has
+/// no top-level key `marker`.
+const String defaultMarker = 'chartjs';
+
 /// [packages], plus the harness package next to the first package when it
-/// has a `pubspec.yaml` and is not in [packages] (porting-flow.md 4, tool 2).
+/// has a `pubspec.yaml` and is not in [packages] (porting-flow.md 4, tools 1
+/// and 3).
 ///
 /// Each package keeps its own `LICENSE` for the holder check (AGENTS.md
 /// Licensing).
@@ -93,9 +110,16 @@ const String jsLanguage = 'js';
 
 final RegExp _markerCandidate = RegExp(r'^///?\s*DIVERGES\b');
 final RegExp _blockMarkerCandidate = RegExp(r'^/\*+\s*DIVERGES\b');
-final RegExp _marker = RegExp(r'^// DIVERGES\(chartjs\): (\S+), (\S.*)$');
-final RegExp _chartJsVersion = RegExp(
-  "^const String chartJsVersion = '([^']+)';",
+final RegExp _markerTag = RegExp(r'^[a-z][a-z0-9-]*$');
+final RegExp _packageName = RegExp(r'^[a-z_][a-z0-9_]*$');
+
+/// The marker grammar of porting-flow.md 4 with the tag [tag].
+RegExp _markerPattern(String tag) =>
+    RegExp('^// DIVERGES\\(${RegExp.escape(tag)}\\): (\\S+), (\\S.*)\$');
+
+/// The line of the version [constant] in `lib/src/upstream.dart`.
+RegExp _versionConstantPattern(String constant) => RegExp(
+  "^const String ${RegExp.escape(constant)} = '([^']+)';",
   multiLine: true,
 );
 
@@ -124,6 +148,8 @@ final class PortTarget {
     final String dartName;
     if (name.endsWith('.tests.js')) {
       dartName = '${name.substring(0, name.length - 9)}_test.dart';
+    } else if (name.endsWith('.spec.js')) {
+      dartName = '${name.substring(0, name.length - 8)}_test.dart';
     } else if (name.endsWith('.d.ts')) {
       dartName = '${name.substring(0, name.length - 5)}.dart';
     } else if (name.contains('.')) {
@@ -137,7 +163,7 @@ final class PortTarget {
   /// The source paths that this target maps to the Dart path [dartPath].
   ///
   /// For a directory, these are the names with the extensions `.js`, `.ts`
-  /// and `.d.ts`, and `.tests.js` for a `_test.dart` file.
+  /// and `.d.ts`, and `.tests.js` and `.spec.js` for a `_test.dart` file.
   List<String> sourcesOf(String dartPath) {
     if (!isDirectory) return dartPath == dart ? [source] : const [];
     if (!dartPath.startsWith(dart) || !dartPath.endsWith('.dart')) {
@@ -147,8 +173,10 @@ final class PortTarget {
     return [
       for (final extension in const ['.js', '.ts', '.d.ts'])
         '$source$rest$extension',
-      if (rest.endsWith('_test'))
+      if (rest.endsWith('_test')) ...[
         '$source${rest.substring(0, rest.length - 5)}.tests.js',
+        '$source${rest.substring(0, rest.length - 5)}.spec.js',
+      ],
     ].where((candidate) => map(candidate) == dartPath).toList();
   }
 }
@@ -167,6 +195,7 @@ final class PortSource {
     required this.pinPath,
     required this.targets,
     required this.files,
+    this.versionSource,
     this.pinRef,
     this.pinCommit,
     this.fileIndex,
@@ -218,6 +247,7 @@ final class PortSource {
     return PortSource(
       header: header,
       version: required(map, 'version', header),
+      versionSource: optional(map, 'version_source', header),
       url: required(map, 'url', header),
       language: language,
       spdx: required(map, 'spdx', header),
@@ -251,8 +281,34 @@ final class PortSource {
   /// The header version.
   final String version;
 
+  /// Where [version] comes from. For the primary project of a package, this
+  /// is `<constant> in <package>/lib/src/upstream.dart`.
+  final String? versionSource;
+
+  /// The constant of `<package>/lib/src/upstream.dart` that [versionSource]
+  /// names, or null. [package] is relative to the repository.
+  String? versionConstantIn(String package) {
+    final source = versionSource;
+    if (source == null) return null;
+    final suffix = ' in $package/$upstreamPath';
+    if (!source.endsWith(suffix)) return null;
+    final constant = source.substring(0, source.length - suffix.length);
+    return RegExp(r'^[A-Za-z_]\w*$').hasMatch(constant) ? constant : null;
+  }
+
   /// The project repository.
   final String url;
+
+  /// The `<owner>/<repo>` of [url], for example `chartjs/Chart.js`: the
+  /// repository that a backport line names. Null when the path of [url] has
+  /// fewer than two segments.
+  String? get repository {
+    final segments = [
+      for (final segment in Uri.tryParse(url)?.pathSegments ?? const <String>[])
+        if (segment.isNotEmpty) segment,
+    ];
+    return segments.length < 2 ? null : '${segments[0]}/${segments[1]}';
+  }
 
   /// The language of the source: an item of [sourceLanguages].
   final String language;
@@ -314,11 +370,53 @@ final class PortSource {
   }
 }
 
-/// Reads the `sources` list of `tool/port_sources.yaml` from [text].
-List<PortSource> parsePortSources(String text) {
+/// The contents of `tool/port_sources.yaml`.
+final class PortSourcesFile {
+  /// The [sources], the [marker] tag and the [host] package.
+  const PortSourcesFile({
+    required this.sources,
+    this.marker = defaultMarker,
+    this.host,
+  });
+
+  /// The entries of the `sources` list.
+  final List<PortSource> sources;
+
+  /// The tag of the `DIVERGES(<tag>)` markers: the top-level key `marker`,
+  /// else [defaultMarker].
+  final String marker;
+
+  /// The host package of an add-on port (ADR 0009): the top-level key
+  /// `host`, for example `flutter_chartjs_port`. Null for a host port.
+  final String? host;
+}
+
+/// The top-level keys of `tool/port_sources.yaml`.
+const List<String> portSourcesKeys = ['sources', 'marker', 'host'];
+
+/// Reads `tool/port_sources.yaml` from [text]: the `sources` list and the
+/// optional top-level keys `marker` and `host`. Throws a [FormatException].
+PortSourcesFile parsePortSourcesFile(String text) {
   final document = parseYamlSubset(text);
   if (document is! Map<String, Object?> || document['sources'] is! List) {
     throw const FormatException('the file has no "sources" list');
+  }
+  for (final key in document.keys) {
+    if (!portSourcesKeys.contains(key)) {
+      throw FormatException(
+        'the top-level key "$key" is not one of ${portSourcesKeys.join(', ')}',
+      );
+    }
+  }
+  final marker = document['marker'] ?? defaultMarker;
+  if (marker is! String || !_markerTag.hasMatch(marker)) {
+    throw const FormatException(
+      '"marker" is a tag of lowercase letters, digits and hyphens',
+    );
+  }
+  final host = document['host'];
+  if (host != null && (host is! String || !_packageName.hasMatch(host))) {
+    throw const FormatException('"host" is the name of a package');
   }
   final sources = [
     for (final entry in document['sources']! as List<Object?>)
@@ -330,7 +428,39 @@ List<PortSource> parsePortSources(String text) {
       throw FormatException('${source.header} is listed twice');
     }
   }
-  return sources;
+  return PortSourcesFile(
+    sources: sources,
+    marker: marker,
+    host: host as String?,
+  );
+}
+
+/// Reads the `sources` list of `tool/port_sources.yaml` from [text]
+/// ([parsePortSourcesFile]).
+List<PortSource> parsePortSources(String text) =>
+    parsePortSourcesFile(text).sources;
+
+/// The packages that the `dart` targets of [sources] name, in the order of
+/// the targets, as absolute paths with `/` separators. The package of a
+/// target is the closest directory under [repository] with a `pubspec.yaml`
+/// at or above its `dart` path. A target outside a package names none.
+List<String> targetPackages(String repository, List<PortSource> sources) {
+  final packages = <String>[];
+  for (final source in sources) {
+    for (final target in source.targets) {
+      var path = normalizeRelative(target.dart);
+      while (path != null && path.isNotEmpty) {
+        if (File('$repository/$path/pubspec.yaml').existsSync()) {
+          final package = '$repository/$path';
+          if (!packages.contains(package)) packages.add(package);
+          break;
+        }
+        final slash = path.lastIndexOf('/');
+        path = slash < 0 ? null : path.substring(0, slash);
+      }
+    }
+  }
+  return packages;
 }
 
 /// One row of `doc/differences.md`.
@@ -514,10 +644,11 @@ final class HeaderCheckInput {
   /// The repository root, with `REUSE.toml`.
   final String repository;
 
-  /// The `flutter_chartjs_port` package.
+  /// The home package, for example `flutter_chartjs_port`.
   final String home;
 
-  /// The packages to examine.
+  /// The packages to examine. The check also examines each package that a
+  /// `dart` target of the home names ([targetPackages]).
   final List<String> packages;
 
   /// Reads a gitlink; replaceable for tests.
@@ -546,11 +677,12 @@ final class _PinIndex {
       : listed.contains(path);
 }
 
-const String _malformedMarker =
+/// The message of a malformed marker with the tag [tag].
+String _malformedMarker(String tag) =>
     'a malformed DIVERGES marker: write the line comment '
-    '"DIVERGES(chartjs): <row id>, <reason>" (porting-flow.md 4).';
+    '"DIVERGES($tag): <row id>, <reason>" (porting-flow.md 4).';
 
-/// One `DIVERGES(chartjs)` marker.
+/// One `DIVERGES(<tag>)` marker.
 final class _Marker {
   const _Marker(this.path, this.line, this.id);
 
@@ -558,6 +690,11 @@ final class _Marker {
   final int line;
   final String id;
 }
+
+/// The version constant of `lib/src/upstream.dart` that a project of
+/// `tool/port_sources.yaml` follows, and its value (null when the file has
+/// no such constant).
+typedef _VersionPin = ({String constant, String? pinned});
 
 /// Runs the header check.
 ({List<Finding> findings, int files}) checkPortHeaders(
@@ -568,23 +705,35 @@ final class _Marker {
   String rel(String path) => relativePath(repo, path);
 
   final sourcesFile = '${input.home}/$portSourcesPath';
-  final List<PortSource> sources;
+  final PortSourcesFile sourcesList;
   try {
-    sources = parsePortSources(File(sourcesFile).readAsStringSync());
+    sourcesList = parsePortSourcesFile(File(sourcesFile).readAsStringSync());
   } on FileSystemException catch (e) {
     return (findings: [Finding(rel(sourcesFile), null, e.message)], files: 0);
   } on FormatException catch (e) {
     return (findings: [Finding(rel(sourcesFile), null, e.message)], files: 0);
   }
+  final sources = sourcesList.sources;
 
   final upstreamFile = '${input.home}/$upstreamPath';
   final upstreamText = File(upstreamFile).existsSync()
       ? File(upstreamFile).readAsStringSync()
       : '';
-  final pinnedVersion = _chartJsVersion.firstMatch(upstreamText)?.group(1);
-  if (pinnedVersion == null) {
-    findings.add(Finding(rel(upstreamFile), null, 'no chartJsVersion found.'));
+  final versions = <String, _VersionPin>{};
+  for (final source in sources) {
+    final constant = source.versionConstantIn(rel(input.home));
+    if (constant == null) continue;
+    final pinned = _versionConstantPattern(
+      constant,
+    ).firstMatch(upstreamText)?.group(1);
+    if (pinned == null) {
+      findings.add(Finding(rel(upstreamFile), null, 'no $constant found.'));
+    }
+    versions[source.header] = (constant: constant, pinned: pinned);
   }
+  final primary = sources
+      .where((source) => versions.containsKey(source.header))
+      .firstOrNull;
 
   var annotations = const <ReuseAnnotation>[];
   try {
@@ -598,7 +747,7 @@ final class _Marker {
   final pins = _validateSources(
     sources,
     input,
-    pinnedVersion,
+    versions,
     rel(sourcesFile),
     findings,
   );
@@ -620,15 +769,25 @@ final class _Marker {
     }
   }
 
+  final tag = sourcesList.marker;
   final context = _FileContext(
     sources: {for (final source in sources) source.header: source},
     pins: pins,
     annotations: annotations,
-    pinnedVersion: pinnedVersion,
+    versions: versions,
+    primary: primary,
+    markerTag: tag,
     findings: findings,
   );
+  final packages = <String>[];
+  for (final package in [
+    ...input.packages,
+    ...targetPackages(repo, sources),
+  ]) {
+    if (!packages.contains(package)) packages.add(package);
+  }
   var files = 0;
-  for (final package in input.packages) {
+  for (final package in packages) {
     final licenseFile = '$package/LICENSE';
     final license = File(licenseFile).existsSync()
         ? File(licenseFile).readAsStringSync()
@@ -655,7 +814,7 @@ final class _Marker {
         Finding(
           marker.path,
           marker.line,
-          'the DIVERGES(chartjs) marker names "${marker.id}", which is not a '
+          'the DIVERGES($tag) marker names "${marker.id}", which is not a '
           'row of ${rel(differencesFile)}.',
         ),
       );
@@ -667,7 +826,7 @@ final class _Marker {
         Finding(
           rel(differencesFile),
           row.line,
-          'row ${row.id} has no DIVERGES(chartjs) marker in the code.',
+          'row ${row.id} has no DIVERGES($tag) marker in the code.',
         ),
       );
     }
@@ -676,25 +835,35 @@ final class _Marker {
 }
 
 /// Checks the entries of `tool/port_sources.yaml` and returns the pin index
-/// of each project.
+/// of each project. [versions] has the version constants of the projects of
+/// `lib/src/upstream.dart`.
 Map<String, _PinIndex> _validateSources(
   List<PortSource> sources,
   HeaderCheckInput input,
-  String? pinnedVersion,
+  Map<String, _VersionPin> versions,
   String sourcesPath,
   List<Finding> findings,
 ) {
   void report(String message) =>
       findings.add(Finding(sourcesPath, null, message));
 
-  final chartJs = sources.where((s) => s.header == chartJsProject).firstOrNull;
-  if (chartJs == null) {
-    report('there is no $chartJsProject entry.');
-  } else if (pinnedVersion != null && chartJs.version != 'v$pinnedVersion') {
+  if (versions.isEmpty) {
+    final home = relativePath(input.repository, input.home);
     report(
-      '$chartJsProject version is ${chartJs.version}, but chartJsVersion is '
-      '$pinnedVersion: write v$pinnedVersion.',
+      'no entry has the version_source "<constant> in $home/$upstreamPath": '
+      'the entry of the project that the package ports names its version '
+      'constant there.',
     );
+  }
+  for (final source in sources) {
+    final pin = versions[source.header];
+    final pinned = pin?.pinned;
+    if (pin != null && pinned != null && source.version != 'v$pinned') {
+      report(
+        '${source.header} version is ${source.version}, but ${pin.constant} '
+        'is $pinned: write v$pinned.',
+      );
+    }
   }
 
   final pins = <String, _PinIndex>{};
@@ -797,14 +966,26 @@ final class _FileContext {
     required this.sources,
     required this.pins,
     required this.annotations,
-    required this.pinnedVersion,
+    required this.versions,
+    required this.primary,
+    required this.markerTag,
     required this.findings,
-  });
+  }) : _marker = _markerPattern(markerTag);
 
   final Map<String, PortSource> sources;
   final Map<String, _PinIndex> pins;
   final List<ReuseAnnotation> annotations;
-  final String? pinnedVersion;
+
+  /// The version constants of the projects of `lib/src/upstream.dart`.
+  final Map<String, _VersionPin> versions;
+
+  /// The primary project of the home package, or null when no entry names
+  /// `lib/src/upstream.dart` (a finding of the source list).
+  final PortSource? primary;
+
+  /// The tag of the `DIVERGES(<tag>)` markers.
+  final String markerTag;
+  final RegExp _marker;
   final List<Finding> findings;
   final List<_Marker> markers = [];
 
@@ -820,20 +1001,38 @@ final class _FileContext {
 
     final source = DartSource(text);
     final header = Header.parse(source.lines);
-    for (final line in header.malformed) {
+    final project = primary?.header;
+    final repository = primary?.repository;
+    // A backport line of another repository does not match the grammar of
+    // the home package.
+    bool isForeign(Backport backport) =>
+        primary != null && backport.repository != repository;
+    final malformed = {
+      ...header.malformed,
+      for (final backport in header.backports)
+        if (isForeign(backport)) backport.line,
+    }.toList()..sort();
+    for (final line in malformed) {
       report(
         line,
         'the header line does not match the grammar of porting-flow.md 4, '
         'tool 2.',
       );
     }
-    switch (header.kind) {
+    // A port-only marker of another project is no marker of the home package.
+    final kind =
+        header.kind == HeaderKind.portOnly &&
+            project != null &&
+            header.portOnlyProject != project
+        ? HeaderKind.missing
+        : header.kind;
+    switch (kind) {
       case HeaderKind.missing:
         report(
           1,
           'line 1 is neither a "// Ported from" header (AGENTS.md rule 2) nor '
-          'the port-only marker "// Original code, not ported from Chart.js: '
-          '<reason>.".',
+          'the port-only marker "// Original code, not ported from '
+          '${project ?? '<project>'}: <reason>.".',
         );
       case HeaderKind.portOnly:
         final mapped = _sourceAt(path);
@@ -856,11 +1055,16 @@ final class _FileContext {
         for (final portedFrom in header.portedFrom) {
           _checkPortedFrom(portedFrom, path, licensePath, license, report);
         }
-        if (header.backports.isNotEmpty &&
-            !header.portedFrom.any((p) => p.project == chartJsProject)) {
+        final backports = [
+          for (final backport in header.backports)
+            if (!isForeign(backport)) backport,
+        ];
+        if (project != null &&
+            backports.isNotEmpty &&
+            !header.portedFrom.any((p) => p.project == project)) {
           report(
-            header.backports.first.line,
-            'a backport line needs a "// Ported from $chartJsProject" line.',
+            backports.first.line,
+            'a backport line needs a "// Ported from $project" line.',
           );
         }
     }
@@ -868,13 +1072,13 @@ final class _FileContext {
     for (final comment in source.comments) {
       if (!comment.isLineComment) {
         if (_blockMarkerCandidate.hasMatch(comment.text)) {
-          report(comment.line, _malformedMarker);
+          report(comment.line, _malformedMarker(markerTag));
         }
         continue;
       }
       final text = comment.text;
       if (comment.line > header.lastLine &&
-          !header.malformed.contains(comment.line) &&
+          !malformed.contains(comment.line) &&
           (text.startsWith(portedFromPrefix) ||
               text.startsWith(backportPrefix))) {
         report(
@@ -886,21 +1090,21 @@ final class _FileContext {
       if (!_markerCandidate.hasMatch(text)) continue;
       final match = _marker.firstMatch(text);
       if (match == null) {
-        report(comment.line, _malformedMarker);
+        report(comment.line, _malformedMarker(markerTag));
         continue;
       }
       final id = match.group(1)!;
       if (!isDifferenceId(id)) {
         report(
           comment.line,
-          'the DIVERGES(chartjs) row ID "$id" does not start with a '
+          'the DIVERGES($markerTag) row ID "$id" does not start with a '
           'category (${differenceCategories.join(', ')}) and a hyphen.',
         );
       }
       if (source.lines[comment.line - 1].length > markerLineLimit) {
         report(
           comment.line,
-          'the DIVERGES(chartjs) marker line is longer than '
+          'the DIVERGES($markerTag) marker line is longer than '
           '$markerLineLimit columns.',
         );
       }
@@ -1011,10 +1215,9 @@ final class _FileContext {
     void Function(int? line, String message) report,
   ) {
     final line = portedFrom.line;
-    final isChartJs = source.header == chartJsProject;
-    final expected = isChartJs && pinnedVersion != null
-        ? 'v$pinnedVersion'
-        : source.version;
+    final pin = versions[source.header];
+    final pinned = pin?.pinned;
+    final expected = pinned != null ? 'v$pinned' : source.version;
     final actual = parsePortVersion(portedFrom.version);
     final wanted = parsePortVersion(expected);
     if (actual == null || wanted == null) return;
@@ -1031,7 +1234,7 @@ final class _FileContext {
           path,
           line,
           'stale header: ${source.header} ${portedFrom.version} is older than '
-          '$expected${isChartJs ? ' (chartJsVersion)' : ''}. Restamp it '
+          '$expected${pin != null ? ' (${pin.constant})' : ''}. Restamp it '
           '(upstream-tracking.md 4.8).',
         ),
       );

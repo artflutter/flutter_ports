@@ -4,8 +4,9 @@
 ///
 /// It flags Dart calls and operators whose results differ from the
 /// JavaScript that a ported file translates (Chart.js ADR 0045). It examines
-/// the files whose header block names a `js` project of
-/// `tool/port_sources.yaml`, or a project that the file does not list. A site
+/// the files whose header block names a `js` project of the
+/// `tool/port_sources.yaml` files of the examined packages (for example the
+/// host and an add-on port), or a project that no file lists. A site
 /// passes with a `// js-ok: <reason>` comment at the end of its line, or with
 /// a `// js-ok: <reason>` line directly before it.
 ///
@@ -30,6 +31,13 @@ import 'check_support.dart';
 import 'dart_source.dart';
 import 'headers.dart';
 import 'port_headers.dart';
+
+/// The JS runtime that the messages name: `lib/src/js/` of the host port,
+/// or its public library `js_semantics.dart` for an add-on port (ADR 0009,
+/// item 4).
+const String jsRuntime =
+    'the JS runtime (lib/src/js/, or '
+    'package:flutter_chartjs_port/js_semantics.dart in an add-on)';
 
 /// One pattern of the check.
 final class JsSemanticsRule {
@@ -102,7 +110,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     '.toString()',
     r'\.toString\(\)',
     'Dart toString() of a number differs from JS String(x), for example '
-        '"1.0" and "1". Use the lib/src/js runtime, or add js-ok when the '
+        '"1.0" and "1". Use $jsRuntime, or add js-ok when the '
         'receiver is not a number.',
   ),
   JsSemanticsRule(
@@ -291,8 +299,8 @@ String _mathFunctionMessage(String function) =>
           'js-ok when the result reaches only the canvas or an easing value.'
     : 'dart:math $function calls the host C library on the VM and the '
           'browser on the web. JS Math.$function gives the fdlibm bits of the '
-          'reference engine (Chart.js ADR 0045). Call the lib/src/js port of '
-          'the function, or add js-ok with the reason.';
+          'reference engine (Chart.js ADR 0045). Call the port of the '
+          'function in $jsRuntime, or add js-ok with the reason.';
 
 /// Adds a finding for each site in [sites] of the file [path] that has no
 /// js-ok comment in [source], and a warning for each unused js-ok comment.
@@ -458,8 +466,8 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
           'number interpolation',
           'Dart writes the ${type!.getDisplayString()} with toString(), for '
               'example "12.0" on the VM and dart2wasm; JS String(12) is '
-              '"12". Use the lib/src/js runtime (jsNumberToString), or add '
-              'js-ok with the reason.',
+              '"12". Use jsNumberToString of $jsRuntime, or add js-ok with '
+              'the reason.',
         ),
       );
     }
@@ -498,9 +506,8 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
             unit.lineInfo.getLocation(node.offset).lineNumber,
             '$name(',
             'dart:math $name with ${type!.getDisplayString()} operands '
-                'boxes them on dart2wasm. Call $js from '
-                'lib/src/js/js_math.dart (Chart.js ADR 0045), or add js-ok '
-                'with the reason.',
+                'boxes them on dart2wasm. Call $js of $jsRuntime (Chart.js '
+                'ADR 0045), or add js-ok with the reason.',
           ),
         );
       }
@@ -537,36 +544,42 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
   }
 }
 
-/// Reads the `language` of each project in `tool/port_sources.yaml` of
-/// [home]. Adds a finding when the file cannot be read.
+/// Reads the `language` of each project in the `tool/port_sources.yaml` of
+/// each of [packages], for example of the host and of an add-on port. The
+/// first package must have the file. The first entry of a project counts.
+/// Adds a finding when a file cannot be read.
 Map<String, String> _readLanguages(
-  String home,
+  List<String> packages,
   String base,
   List<Finding> findings,
 ) {
-  final file = '$home/$portSourcesPath';
-  try {
-    return {
-      for (final source in parsePortSources(File(file).readAsStringSync()))
-        source.header: source.language,
-    };
-  } on FileSystemException catch (e) {
-    findings.add(Finding(relativePath(base, file), null, e.message));
-  } on FormatException catch (e) {
-    findings.add(Finding(relativePath(base, file), null, e.message));
+  final languages = <String, String>{};
+  for (final (index, package) in packages.indexed) {
+    final file = '$package/$portSourcesPath';
+    if (index > 0 && !File(file).existsSync()) continue;
+    try {
+      for (final source in parsePortSources(File(file).readAsStringSync())) {
+        languages.putIfAbsent(source.header, () => source.language);
+      }
+    } on FileSystemException catch (e) {
+      findings.add(Finding(relativePath(base, file), null, e.message));
+    } on FormatException catch (e) {
+      findings.add(Finding(relativePath(base, file), null, e.message));
+    }
   }
-  return const {};
+  return languages;
 }
 
 /// Runs the check over the `lib/` and `test/` files of [packages]. The first
-/// package holds `tool/port_sources.yaml`. The paths in the findings are
-/// relative to [base].
+/// package holds `tool/port_sources.yaml`. The `tool/port_sources.yaml` of
+/// another package, for example of an add-on port, adds its projects. The
+/// paths in the findings are relative to [base].
 Future<({List<Finding> findings, int files})> checkJsSemantics(
   List<String> packages, {
   required String base,
 }) async {
   final findings = <Finding>[];
-  final languages = _readLanguages(packages.first, base, findings);
+  final languages = _readLanguages(packages, base, findings);
   final examined = <String, String>{};
   for (final package in packages) {
     for (final directory in jsSemanticsDirectories) {

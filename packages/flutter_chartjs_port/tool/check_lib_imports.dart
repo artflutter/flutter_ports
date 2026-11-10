@@ -17,8 +17,13 @@ Usage: dart run tool/check_lib_imports.dart [<package directory>...]
 Checks the imports of lib/ and test/ against the allowlists of
 porting-flow.md section 4, tool 1. The default package is the package of
 this tool. When the harness package chartjs_test_utils is next to the first
-package, the check also keeps its lib/pure.dart closure a pure layer. Exits
-with 1 when a check fails.''';
+package, the check also keeps its lib/pure.dart closure a pure layer. A
+package whose tool/port_sources.yaml names a host (an add-on port, ADR 0009)
+imports only the public libraries of the host, never its src/, and its
+tests import only flutter.dart and pure.dart of the harness. Put the host
+first, for example "packages/flutter_chartjs_port
+packages/flutter_chartjs_plugin_zoom_port". Exits with 1 when a check
+fails.''';
 
 Future<void> main(List<String> args) async {
   exitCode = await runCheck(

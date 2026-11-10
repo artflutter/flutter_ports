@@ -398,7 +398,10 @@ void main() {
     );
     expect(
       sites.values.first.first.message,
-      contains('Call jsMax from lib/src/js/js_math.dart'),
+      contains(
+        'Call jsMax of the JS runtime (lib/src/js/, or '
+        'package:flutter_chartjs_port/js_semantics.dart in an add-on)',
+      ),
     );
   });
 
@@ -428,7 +431,10 @@ void main() {
     final message = sites.values.first.first.message;
     expect(message, startsWith('The tear-off of dart:math sin'));
     expect(message, contains('Call jsSin'));
-    expect(sites.values.first[2].message, contains('Call the lib/src/js port'));
+    expect(
+      sites.values.first[2].message,
+      contains('Call the port of the function in $jsRuntime'),
+    );
   });
 
   test('accepts a tear-off of dart:math with js-ok', () async {
@@ -480,6 +486,94 @@ void main() {
       describeFindings(missing.findings),
       contains(startsWith('error: tool/port_sources.yaml: Cannot open')),
     );
+  });
+
+  test('merges the languages of the source lists of the packages', () async {
+    const home = 'packages/flutter_chartjs_port';
+    const zoom = 'packages/flutter_chartjs_plugin_zoom_port';
+    const zoomHeader =
+        '// Ported from chartjs-plugin-zoom v2.2.0+fb81d331 src/utils.ts '
+        '(MIT, chartjs-plugin-zoom contributors).';
+    const cHeader = '// Ported from zoom-c 1.0 a.c (MIT, A).';
+    final tree = FileTree()
+      ..write('$home/pubspec.yaml', ['name: flutter_chartjs_port'])
+      ..write('$home/tool/port_sources.yaml', _portSources)
+      ..write('$home/lib/src/a.dart', [_ported, 'final a = 1.5.round();'])
+      ..write('$zoom/pubspec.yaml', ['name: flutter_chartjs_plugin_zoom_port'])
+      ..write('$zoom/tool/port_sources.yaml', [
+        'marker: zoom',
+        'host: flutter_chartjs_port',
+        'sources:',
+        '  - header: chartjs-plugin-zoom',
+        '    version: "v2.2.0+fb81d331"',
+        '    url: https://github.com/chartjs/chartjs-plugin-zoom',
+        '    language: js',
+        '    spdx: MIT',
+        '    holder: chartjs-plugin-zoom contributors',
+        '    pin:',
+        '      kind: copy',
+        '      path: third_party/chartjs-plugin-zoom',
+        '    targets:',
+        '      - source: src/',
+        '        dart: $zoom/lib/src/',
+        // The first source list of a project counts: fdlibm stays c.
+        '  - header: fdlibm',
+        '    version: "5.3"',
+        '    url: https://www.netlib.org/fdlibm/',
+        '    language: js',
+        '    spdx: SunPro',
+        '    holder: Sun Microsystems, Inc.',
+        '    pin:',
+        '      kind: copy',
+        '      path: third_party/fdlibm',
+        '    targets:',
+        '      - source: e_log.c',
+        '        dart: $zoom/lib/src/fdlibm.dart',
+        '  - header: zoom-c',
+        '    version: "1.0"',
+        '    url: https://example.com/zoom-c',
+        '    language: c',
+        '    spdx: MIT',
+        '    holder: A',
+        '    pin:',
+        '      kind: copy',
+        '      path: third_party/zoom-c',
+        '    targets:',
+        '      - source: a.c',
+        '        dart: $zoom/lib/src/c.dart',
+      ])
+      ..write('$zoom/lib/src/utils.dart', [zoomHeader, 'final b = 1 % 2;'])
+      ..write('$zoom/lib/src/fdlibm.dart', [_fdlibm, 'final c = 1 % 2;'])
+      ..write('$zoom/lib/src/c.dart', [cHeader, 'final d = 1 % 2;'])
+      ..write('$zoom/test/specs/utils_test.dart', [
+        zoomHeader,
+        r"String e(double x) => '$x';",
+      ]);
+    final result = await checkJsSemantics([
+      tree.path(home),
+      tree.path(zoom),
+    ], base: tree.root);
+    expect(result.files, 3);
+    // The findings are in path order.
+    expect(describeFindings(result.findings), [
+      startsWith('error: $zoom/lib/src/utils.dart:2: %:'),
+      allOf(
+        startsWith('error: $zoom/test/specs/utils_test.dart:2: number '),
+        contains('Use jsNumberToString of $jsRuntime'),
+        contains('package:flutter_chartjs_port/js_semantics.dart'),
+      ),
+      startsWith('error: $home/lib/src/a.dart:2: .round():'),
+    ]);
+
+    // Without its source list, the add-on is no finding: its projects count
+    // as js.
+    tree.delete('$zoom/tool/port_sources.yaml');
+    final unlisted = await checkJsSemantics([
+      tree.path(home),
+      tree.path(zoom),
+    ], base: tree.root);
+    expect(unlisted.findings, hasLength(4));
+    expect(unlisted.files, 4);
   });
 
   test('examines the harness package next to the home package', () async {
