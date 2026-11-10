@@ -20,6 +20,10 @@
 /// do. Ported code calls `dart:math` `max` and `min` only for `int` operands
 /// (Chart.js ADR 0045).
 ///
+/// [jsHypot] computes `Math.hypot` of two operands in the form of the V8
+/// builtin, with correctly rounded steps, so every target gives the V8 bits
+/// (Chart.js ADR 0108).
+///
 /// `Math.pow` has no port here. Ported code calls `dart:math` `pow` with
 /// double operands (Chart.js ADR 0045). `dart:math` `pow` gives 1 for
 /// `pow(1, NaN)` and `pow(+-1, +-Infinity)`, where JavaScript gives NaN. A
@@ -121,6 +125,30 @@ double jsMin(double a, double b) {
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
 double jsSquare(double x) => x * x;
+
+/// `Math.hypot(a, b)` for two doubles, as V8 13.6 computes it (Chart.js ADR
+/// 0108): +Infinity when an operand is infinite (also with a NaN operand),
+/// else NaN when an operand is NaN, +0 when both are zero, else the operands
+/// scaled by the larger magnitude.
+///
+/// The V8 builtin `MathHypot` divides each operand by the larger magnitude,
+/// adds the squares, and multiplies the square root by that magnitude. With
+/// two operands, its Kahan compensation adds nothing. Each step is a
+/// correctly rounded IEEE operation, so the VM, dart2js and dart2wasm give
+/// the V8 bits. `math.sqrt(a * a + b * b)` differs from V8 in the last bit
+/// for about one pair in three, gives +Infinity for `a = b = 1e200` and +0
+/// for `a = b = 1e-200`.
+double jsHypot(double a, double b) {
+  if (a.isInfinite || b.isInfinite) return double.infinity;
+  if (a.isNaN || b.isNaN) return double.nan;
+  final x = a.abs();
+  final y = b.abs();
+  final m = x > y ? x : y;
+  if (m == 0) return 0;
+  final p = x / m;
+  final q = y / m;
+  return math.sqrt(p * p + q * q) * m;
+}
 
 /// `Math.log10(x)`: the fdlibm 5.3 base-10 logarithm, as V8 13.6 on x64
 /// computes it.

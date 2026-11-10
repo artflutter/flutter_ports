@@ -24,9 +24,16 @@
 /// of a user subclass, Chart.js ADR 0020) and `undefined` (the third state
 /// of a config value, Chart.js ADR 0043).
 ///
-/// The Dart names of the upstream `_` exports, the port-only declarations of
-/// `lib/src/types/` and `LayoutItem` stay internal (Chart.js ADR 0048,
-/// section 6).
+/// It also exports the typed plugin API (Chart.js ADR 0108): `Plugin`, the
+/// hook type `PluginHookFunction` and the argument classes of the hooks. A
+/// plugin of user code or of an add-on port is a `Plugin`, or a Map. A hook
+/// function can declare its chart parameter as `Object` and cast it to
+/// `Chart` once: `Object? beforeEvent(Object chart, EventHookArgs args,
+/// Object options)`.
+///
+/// The Dart names of the upstream `_` exports, the other port-only
+/// declarations of `lib/src/types/` and `LayoutItem` stay internal (Chart.js
+/// ADR 0048, section 6).
 library;
 
 export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
@@ -74,4 +81,16 @@ export 'package:flutter_chartjs_port/src/types.dart'
         VisualElementRange,
         adapters,
         detectPlatform;
+export 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show
+        CancelableHookArgs,
+        DatasetDrawHookArgs,
+        DatasetUpdateHookArgs,
+        EventHookArgs,
+        Plugin,
+        PluginHookArgs,
+        PluginHookFunction,
+        ResizeHookArgs,
+        TooltipDrawHookArgs,
+        UpdateHookArgs;
 export 'package:flutter_chartjs_port/src/upstream.dart';

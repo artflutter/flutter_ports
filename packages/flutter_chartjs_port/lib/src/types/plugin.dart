@@ -1015,7 +1015,9 @@ final class Plugin implements JsObjectFace {
   set additionalOptionScopes(Object? value) => _store(38, value);
 
   /// The value of the hook [hook]: the field value, or [undefined] when the
-  /// plugin does not own it.
+  /// plugin does not own it. The plugin service reads it ([PluginHook] is
+  /// internal, Chart.js ADR 0108).
+  @internal
   Object? hookValue(PluginHook hook) => _member(_hookSlot(hook));
 
   /// The slot of the hook [hook].
@@ -1027,7 +1029,9 @@ final class Plugin implements JsObjectFace {
   /// [args] is of its argument class, else a call with JS arity, `this` the
   /// plugin. [args] passes by identity. A function that is typed for the
   /// argument class of [hook] throws a [TypeError] for an args object of
-  /// another class (the narrow case of the row `adapt-typed-plugins`).
+  /// another class (the narrow case of the row `adapt-typed-plugins`). The
+  /// plugin service calls it (Chart.js ADR 0108).
+  @internal
   Object? invokeHook(
     PluginHook hook,
     Object function,
