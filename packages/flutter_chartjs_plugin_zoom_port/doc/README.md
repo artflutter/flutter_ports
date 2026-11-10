@@ -28,8 +28,8 @@ and the public API of the Chart.js port.
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md).
-- **Prior art:** the survey file of the zoom and pan code of other Dart and Flutter packages
-  comes in a later change. Prior art is never a source (AGENTS.md rule 1).
+- **Prior art:** [prior-art/README.md](prior-art/README.md), the survey of the zoom and pan code
+  of other Dart and Flutter packages (2026-11-10). Prior art is never a source (AGENTS.md rule 1).
 - **Test harness:** `packages/chartjs_test_utils`, a dev dependency from phase 2 (ADR 0009 item 7).
   `test/flutter_test_config.dart` ports the set-up of `test/index.js` with its event helpers. The
   specs dispatch synthetic DOM events on the canvas. The port-only tests of `test/port/` also drive
@@ -73,13 +73,13 @@ flow of the Chart.js port applies to each module: `packages/flutter_chartjs_port
 Each phase ends with green checks of the whole workspace. A phase that changes the host port also
 runs the checks of the host (AGENTS.md, "Before a push").
 
-Phases 1 to 4 are done (2026-11-10). Two items stay open: the prior-art survey file of phase 0,
-and the device check of H8 of phase 4 on Android and iOS (Chart.js ADR 0108 Open 1), which needs a
-device run of the gallery page. Phase 5 is next.
+Phases 1 to 4 are done (2026-11-10). One item stays open: the device check of H8 of phase 4 on
+Android and iOS (Chart.js ADR 0108 Open 1), which needs a device run of the gallery page. Phase 5
+is next.
 
 | Phase | Content | Exit | State |
 |---|---|---|---|
-| 0 | Scaffold: the package, the pin, the checks, the ADRs, the seam list, then the prior-art survey file. | The scaffold and the docs are in. The survey file follows. | Done 2026-10-30; the survey file is open. |
+| 0 | Scaffold: the package, the pin, the checks, the ADRs, the seam list, then the prior-art survey file. | The scaffold and the docs are in. The survey file follows. | Done 2026-10-30. The survey file: done 2026-11-10. |
 | 1 | The host change of Chart.js ADR 0108: the input path (H2 to H8), the JS runtime `js_semantics.dart` with `jsHypot` (H13), the typed plugin API (H16) and the harness (H23), with host tests and a row update in `host-seams.md`. The port checks `check:lib-imports`, `check:headers` and `check:js-semantics` examine the zoom package (ADR 0009 item 6). | The seams H2 to H8, H13, H16 and H23 are `connects`. The Chart.js port passes its checks. | Done 2026-11-10 (Chart.js ADR 0108 accepted). |
 | 2 | The pure modules: `types`, `options`, `defaults`, `state`, `utils`, `scale.types`, `core`, with `src/*.test.ts`, and the base of the set-up `test/flutter_test_config.dart`. | `utils_test.dart` and `scale.types_test.dart` pass. | Done 2026-11-10. |
 | 3 | The input modules `handlers` and `gestures`, the plugin `plugin`, `index` and `index.umd` (the input specs need the registered plugin), the helpers of the set-up (H23), the specs `api`, `defaults`, `module`, `zoom.wheel`, `zoom.drag`, `pan`, `zoom.pinch` and `gestures`, the check of H17 and the test of the data-only opt-in (H25). | The specs pass or have a reason. | Done 2026-11-10: the 83 cases of the 8 specs pass, with no skip. |

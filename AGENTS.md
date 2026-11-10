@@ -1315,10 +1315,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 - `packages/flutter_chartjs_plugin_zoom_port`: the chartjs-plugin-zoom port (library,
   `publish_to: none` until 0.1.0, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
   done (2026-11-10): each file of `src/` is ported, and the specs, the fixtures and the tests of
-  real input pass. Two items stay open: the prior-art survey file and the device check of seam H8
-  on Android and iOS (Chart.js ADR 0108 Open 1). `doc/README.md` has the plan and the roadmap of
-  phases 0-6. Phase 5, next, adds the typed options slot (H18) and the theme extension (H19), each
-  after its Chart.js ADR.
+  real input pass. One item stays open: the device check of seam H8 on Android and iOS (Chart.js
+  ADR 0108 Open 1). `doc/README.md` has the plan and the roadmap of phases 0-6. Phase 5, next, adds
+  the typed options slot (H18) and the theme extension (H19), each after its Chart.js ADR.
   - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
     libraries, `js_semantics.dart` among them (Zoom ADR 0003, Chart.js ADR 0108).
   - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only): `zoomPlugin`, the
@@ -1390,7 +1389,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     of the host port, `connects`, `zoom-side`, `gap` or `examine`, and the tests that pin it),
     `parity.md` (a person writes it), `differences.md` (its table of the reserved IDs has the
     header cell `Reserved ID`, so `check:headers` reads no rows from it) and `upstream-ledger.md`.
-    The prior-art survey `prior-art/` comes in a later change.
+    `prior-art/README.md` is the prior-art survey (2026-11-10).
     - `doc/adr/`: Zoom ADRs 0001-0003, all proposed. Zoom ADR 0001 (upstream source, name and
       license) has gate 0. Zoom ADR 0002 (file naming and layout) has gate 1. Zoom ADR 0003 (the
       connection to the host port) has gates 1 and 2. Docs name them "Zoom ADR NNNN".
