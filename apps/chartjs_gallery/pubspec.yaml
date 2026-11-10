@@ -12,6 +12,11 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  # The chartjs-plugin-zoom port, an add-on of the Chart.js port (ADR 0009):
+  # the page "Zoom and pan" and the global registration of the plugin. A path
+  # dependency: the package has no release (Zoom ADR 0001).
+  flutter_chartjs_plugin_zoom_port:
+    path: ../../packages/flutter_chartjs_plugin_zoom_port
   # A path dependency: a release of the port does not change this file
   # (Chart.js ADR 0047).
   flutter_chartjs_port:

@@ -2,6 +2,9 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/charts/chart_type_page.dart';
 import 'package:chartjs_gallery/charts/chart_types.dart';
 import 'package:chartjs_gallery/helpers_demo.dart';
+import 'package:chartjs_gallery/plugins/zoom_page.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show chartjsPluginZoomVersion;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -39,7 +42,9 @@ final ChartThemeData galleryDarkChartTheme = const ChartThemeData.dark()
 /// the ported code: the canvas layer and the chart host of phase 3 with the
 /// elements of phase 4, the core of phase 5, the scales of phase 6, the
 /// controllers of phase 7 and the plugins of phase 8, and the helpers of
-/// phase 2.
+/// phase 2. After the list, the tile "Zoom and pan" opens the samples of
+/// chartjs-plugin-zoom (`ZoomPage`): the gallery registers that plugin for
+/// all charts, as its docs do.
 ///
 /// The app follows the platform brightness. The builder of the app puts a
 /// [ChartTheme] above each route: the light preset in the light theme, and
@@ -68,7 +73,8 @@ class GalleryApp extends StatelessWidget {
   }
 }
 
-/// The home page of the gallery: the two demos, then the chart types.
+/// The home page of the gallery: the two demos, the chart types, then the
+/// zoom plugin.
 class GalleryHome extends StatelessWidget {
   /// Creates the home page.
   const GalleryHome({super.key});
@@ -124,6 +130,19 @@ class GalleryHome extends StatelessWidget {
                 ),
               ),
             ),
+          ListTile(
+            key: const ValueKey('gallery.plugin.zoom'),
+            leading: const Icon(Icons.zoom_in),
+            title: const Text('Zoom and pan'),
+            subtitle: const Text(
+              'chartjs-plugin-zoom $chartjsPluginZoomVersion: '
+              'docs/samples',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ZoomPage()),
+            ),
+          ),
         ],
       ),
     );
