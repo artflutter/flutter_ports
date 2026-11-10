@@ -56,7 +56,7 @@ of the host port. At the host commit `140f081` (2026-11-10), before Chart.js ADR
   (`src/gestures.ts:200-201`) to get all pointer moves.
 - Zoom adds ten methods to the chart object at run time (`src/plugin.ts:51-62`). The Dart `Chart`
   has no access by name and no run-time methods.
-- Zoom writes the scale range into `scale.options` and deletes it (`src/scale.types.ts:162-163`,
+- Zoom writes the scale range into `scale.options` and deletes it (`src/scale.types.ts:163-164`,
   `src/core.ts:146-152`). `Scale.options` is a `CoreScaleOptions`, an extension type over the
   `OptionView` of the scale (Chart.js ADR 0054 §4, `lib/src/core/scale_options.dart:70`). Its face
   has `operator []=` (the `set` trap), `jsDelete` (the `deleteProperty` trap) and `jsHas`
