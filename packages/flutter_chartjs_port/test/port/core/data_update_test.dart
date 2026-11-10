@@ -27,7 +27,6 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 final class _ObservedList extends ListBase<Object?> {
