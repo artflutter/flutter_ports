@@ -95,8 +95,10 @@ List<int> parseChartBenchCounts(String value) => [
 /// `datasetsUpdate` and `datasetsDraw`. The cases of the mode `chart` give
 /// the keys `type`, `sharing` and `scriptable`. The cases of the mode `axes`
 /// give the tick count `ticks` and the `labelRotation` `rotation` of the x
-/// axis. The cases of the mode `zoom` give the keys `id`, `scale` and
-/// `zoomPlugin`, the count of the timed steps `steps`, and `stepP50Ms`,
+/// axis. The cases of the mode `zoom` give the keys `id`, `scale`,
+/// `zoomPlugin` and `rangeUpdates` (`--dart-define=ZOOM_RANGE_UPDATES=true`:
+/// the input cases opt into the range updates of Chart.js ADR 0111), the
+/// count of the timed steps `steps`, and `stepP50Ms`,
 /// `stepP90Ms` and `stepMaxMs` of the single steps. With
 /// `PROFILE_MARKS=true`, the lines `BENCH_MARK {json}` mark the timed window
 /// of each case ([benchProfileMarks]). No frame drives the charts: the cases
