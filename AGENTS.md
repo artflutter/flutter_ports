@@ -1138,8 +1138,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `gallery.type.<stem>`, `type.<stem>.variant.<variant>`, `type.<stem>.host`,
     `type.<stem>.readout` and `type.<stem>.help`.
   - `lib/demo/gallery_components.dart` has `registerGalleryComponents` (it registers
-    `registerables` once, and `zoomPlugin` of `flutter_chartjs_plugin_zoom_port` for all charts, as
-    the upstream docs of the plugin do) and `unitScales` (the two hidden unit scales).
+    `registerables` once), `registerZoomComponents` (it also registers `zoomPlugin` of
+    `flutter_chartjs_plugin_zoom_port` once for all charts, as the upstream docs of the plugin do;
+    only the zoom page calls it, so the stress and benchmark entries run no zoom hook) and
+    `unitScales` (the two hidden unit scales).
   - After the nine entries, the home list has the tile "Zoom and pan" (key `gallery.plugin.zoom`).
     It opens the zoom page `lib/plugins/zoom_page.dart`. Its variants are the ports of four samples
     of the docs of chartjs-plugin-zoom (`docs/samples/basic.md`, `drag/linear.md`,

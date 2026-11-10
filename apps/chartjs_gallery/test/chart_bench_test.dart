@@ -5,6 +5,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
@@ -122,6 +123,15 @@ double _median(Map<String, Object?> line, String part) =>
     double.parse(line['${part}MedianMs']! as String);
 
 void main() {
+  test('the benchmark and stress charts run no zoom plugin', () {
+    // The benchmark and the stress entries call registerGalleryComponents,
+    // which registers `registerables` only. Only the zoom page registers
+    // the zoom plugin (registerZoomComponents), so the figures stay
+    // comparable with the figures of earlier runs.
+    registerGalleryComponents();
+    expect(() => registry.getPlugin('zoom'), throwsA(anything));
+  });
+
   testWidgets('main_bench prints one BENCH line for a tiny case', (
     tester,
   ) async {
