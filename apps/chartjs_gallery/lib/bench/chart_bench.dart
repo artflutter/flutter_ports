@@ -1469,6 +1469,16 @@ final List<ChartBenchCase> _themeCases = [
 /// The point counts of the cases of the mode `zoom`.
 const List<int> chartBenchZoomCounts = [1000, 20000];
 
+/// Whether the input cases of the mode `zoom` write the port-only zoom option
+/// `rangeOnlyUpdates: true`, so that each zoom and pan updates the chart with
+/// `chart.updateRanges` of Chart.js ADR 0111: the define
+/// `--dart-define=ZOOM_RANGE_UPDATES=true`. The default is off: the zoom
+/// calls `chart.update`, as upstream. The key `rangeUpdates` of each BENCH
+/// line of the mode `zoom` gives the value.
+const bool chartBenchZoomRangeUpdates = bool.fromEnvironment(
+  'ZOOM_RANGE_UPDATES',
+);
+
 /// The x scale types of the zoom cases `base`, `idle`, `wheel` and `pan`.
 /// The other zoom cases have a linear x axis only.
 const List<StressAxisType> chartBenchZoomScales = [
@@ -1814,12 +1824,15 @@ Map<String, Object?> _zoomConfig(
 /// runs in the preparation, its steps in the frames, and its restores in the
 /// changes before the frames.
 ///
-/// The BENCH line has the keys `id`, `scale` (the type of the x axis) and
-/// `zoomPlugin`, and the step figures ([ChartBenchCase.stepTimes]).
+/// The BENCH line has the keys `id`, `scale` (the type of the x axis),
+/// `zoomPlugin` and `rangeUpdates` (the input of the case writes the zoom
+/// option `rangeOnlyUpdates`, [rangeUpdates]), and the step figures
+/// ([ChartBenchCase.stepTimes]).
 ChartBenchCase _zoomCase(
   String name,
   ChartBenchCall call,
   StressAxisType scale, {
+  required bool rangeUpdates,
   bool plugin = true,
   Map<String, Object?> Function()? zoom,
   _ZoomInput Function()? input,
@@ -1827,7 +1840,12 @@ ChartBenchCase _zoomCase(
   mode: 'zoom',
   name: name,
   call: call,
-  keys: {'id': 'zoom.$name', 'scale': scale.name, 'zoomPlugin': plugin},
+  keys: {
+    'id': 'zoom.$name',
+    'scale': scale.name,
+    'zoomPlugin': plugin,
+    'rangeUpdates': rangeUpdates && input != null,
+  },
   counts: chartBenchZoomCounts,
   primary: call.frameMetric,
   stepTimes: true,
@@ -1852,8 +1870,16 @@ ChartBenchCase _zoomCase(
     late Chart bound;
     var ranges = const <String, ScaleRange>{};
     var i = 0;
+    final zoomOptions = zoom?.call();
     return ChartBenchScene(
-      config: _zoomConfig(axes, zoom: zoom?.call(), plugins: [timing.plugin]),
+      config: _zoomConfig(
+        axes,
+        // Chart.js ADR 0111: the input cases opt into the range updates.
+        zoom: rangeUpdates && input != null
+            ? <String, Object?>{...?zoomOptions, 'rangeOnlyUpdates': true}
+            : zoomOptions,
+        plugins: [timing.plugin],
+      ),
       takeParts: timing.take,
       prepare: steps == null
           ? null
@@ -1880,8 +1906,9 @@ ChartBenchCase _zoomCase(
 /// plugin of chartjs-plugin-zoom on a line chart of one dataset with a
 /// visible x axis and a visible linear y axis ([_zoomConfig]), for 1000 and
 /// 20000 points ([chartBenchZoomCounts]). Each BENCH line has the keys `id`,
-/// `scale` and `zoomPlugin`, the four parts of `StressChartTiming` and the
-/// figures of the single steps ([ChartBenchCase.stepTimes]).
+/// `scale`, `zoomPlugin` and `rangeUpdates`, the four parts of
+/// `StressChartTiming` and the figures of the single steps
+/// ([ChartBenchCase.stepTimes]).
 ///
 /// - `zoom.base`: the chart without the zoom plugin, with `chart.draw()` and
 ///   with `chart.update('none')` (no change of the data), for a linear and a
@@ -1938,17 +1965,31 @@ ChartBenchCase _zoomCase(
 /// steps starts from the same state, and the range stays bounded. The timed
 /// steps are the input steps only. `notifies` above 0 shows that the last
 /// step reached the chart.
-final List<ChartBenchCase> chartBenchZoomCases = [
+///
+/// With [rangeUpdates], each input case (all but `zoom.base` and
+/// `zoom.idle`) writes the port-only zoom option `rangeOnlyUpdates: true`:
+/// each zoom and pan then calls `chart.updateRanges` (Chart.js ADR 0111),
+/// also the untimed restore of the ranges. The key `rangeUpdates` of each
+/// case gives it.
+List<ChartBenchCase> chartBenchZoomCasesWith({required bool rangeUpdates}) => [
   for (final scale in chartBenchZoomScales) ...[
     for (final call in chartBenchDrawAndUpdate)
-      _zoomCase('base', call, scale, plugin: false),
-    for (final call in chartBenchDrawAndUpdate) _zoomCase('idle', call, scale),
+      _zoomCase(
+        'base',
+        call,
+        scale,
+        rangeUpdates: rangeUpdates,
+        plugin: false,
+      ),
+    for (final call in chartBenchDrawAndUpdate)
+      _zoomCase('idle', call, scale, rangeUpdates: rangeUpdates),
   ],
   for (final scale in chartBenchZoomScales)
     _zoomCase(
       'wheel',
       ChartBenchCall.frame,
       scale,
+      rangeUpdates: rangeUpdates,
       zoom: () => <String, Object?>{
         'zoom': <String, Object?>{
           'wheel': <String, Object?>{'enabled': true},
@@ -1961,6 +2002,7 @@ final List<ChartBenchCase> chartBenchZoomCases = [
       'pan',
       ChartBenchCall.frame,
       scale,
+      rangeUpdates: rangeUpdates,
       zoom: () => <String, Object?>{
         'pan': <String, Object?>{'enabled': true, 'mode': 'x'},
       },
@@ -1970,6 +2012,7 @@ final List<ChartBenchCase> chartBenchZoomCases = [
     'drag',
     ChartBenchCall.frame,
     StressAxisType.linear,
+    rangeUpdates: rangeUpdates,
     zoom: () => <String, Object?>{
       'zoom': <String, Object?>{
         'drag': <String, Object?>{'enabled': true},
@@ -1981,6 +2024,7 @@ final List<ChartBenchCase> chartBenchZoomCases = [
     'pinch',
     ChartBenchCall.frame,
     StressAxisType.linear,
+    rangeUpdates: rangeUpdates,
     zoom: () => <String, Object?>{
       'zoom': <String, Object?>{
         'pinch': <String, Object?>{'enabled': true},
@@ -1992,15 +2036,23 @@ final List<ChartBenchCase> chartBenchZoomCases = [
     'api',
     ChartBenchCall.frame,
     StressAxisType.linear,
+    rangeUpdates: rangeUpdates,
     input: _apiZoomInput,
   ),
   _zoomCase(
     'apiPan',
     ChartBenchCall.frame,
     StressAxisType.linear,
+    rangeUpdates: rangeUpdates,
     input: _apiPanInput,
   ),
 ];
+
+/// The cases of the mode `zoom` of a run: [chartBenchZoomCasesWith] with the
+/// define `ZOOM_RANGE_UPDATES` ([chartBenchZoomRangeUpdates]).
+final List<ChartBenchCase> chartBenchZoomCases = chartBenchZoomCasesWith(
+  rangeUpdates: chartBenchZoomRangeUpdates,
+);
 
 /// The cases of the benchmark, in the order of a run.
 ///

@@ -159,6 +159,34 @@ ChartBenchCase _zoomCase(
   return (scene: scene, chart: chart);
 }
 
+/// The ranges of the scales and the points after each of four steps of the
+/// frame case [benchCase] on a new chart, which the end destroys. With
+/// [kept], each step keeps the resolver of the chart options: a range update
+/// of Chart.js ADR 0111, or a step with no update; else each step makes a
+/// new one: a full update.
+List<Object> _rangeSteps(
+  ChartBenchCase benchCase, {
+  required bool kept,
+  required String reason,
+}) {
+  final (:scene, :chart) = _zoomChart(benchCase);
+  Object? resolver() => chart.options.jsRead('_proxy');
+  scene.prepare!(chart);
+  final seen = <Object>[];
+  for (var i = 0; i < 4; i++) {
+    final before = resolver();
+    _frame(scene, chart);
+    expect(identical(resolver(), before), kept, reason: '$reason step $i');
+    seen.add([
+      _range(chart, 'x'),
+      _range(chart, 'y'),
+      [for (final e in chart.getDatasetMeta(0).data) (e.x, e.y)],
+    ]);
+  }
+  chart.destroy();
+  return seen;
+}
+
 /// One iteration of a frame case, as the loop of the benchmark runs it: the
 /// change outside the timing, then the frame.
 void _frame(ChartBenchScene scene, Chart chart) {
@@ -1725,6 +1753,7 @@ void main() {
         'id': c.id,
         'scale': c.keys['scale'],
         'zoomPlugin': c.name != 'base',
+        'rangeUpdates': false,
       }, reason: c.id);
       expect(c.counts, chartBenchZoomCounts, reason: c.id);
       expect(c.primary, c.call.frameMetric, reason: c.id);
@@ -1771,6 +1800,7 @@ void main() {
       expect(line['id'], benchCase.id, reason: reason);
       expect(line['scale'], scale, reason: reason);
       expect(line['zoomPlugin'], plugin, reason: reason);
+      expect(line['rangeUpdates'], isFalse, reason: reason);
       expect(line['n'], n, reason: reason);
       expect(line['call'], benchCase.call.name, reason: reason);
       expect(line['primary'], benchCase.call.frameMetric, reason: reason);
@@ -1802,6 +1832,34 @@ void main() {
       for (final call in ['draw', 'update']) {
         expect(notifies['idle $call $scale'], notifies['base $call $scale']);
       }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('with ZOOM_RANGE_UPDATES, each input case takes the range '
+      'updates of Chart.js ADR 0111 and gives the ranges of the default run', (
+    tester,
+  ) async {
+    // The define is off in the tests: the default run has no range update.
+    expect(chartBenchZoomRangeUpdates, isFalse);
+    final on = chartBenchZoomCasesWith(rangeUpdates: true);
+    final off = chartBenchZoomCasesWith(rangeUpdates: false);
+    expect([for (final c in off) c.id], [for (final c in on) c.id]);
+    for (var k = 0; k < on.length; k++) {
+      final (a, b) = (on[k], off[k]);
+      final input = a.call == ChartBenchCall.frame;
+      final reason = '${a.id} ${a.call.name} ${a.keys['scale']}';
+      expect(a.keys['rangeUpdates'], input, reason: reason);
+      expect(b.keys['rangeUpdates'], isFalse, reason: reason);
+      if (!input) continue;
+      // One side after the other: the listeners of a pressed mouse are on
+      // the one document of the canvases, so two pressed charts would both
+      // take each move.
+      expect(
+        _rangeSteps(b, kept: a.name == 'drag', reason: '$reason: full'),
+        _rangeSteps(a, kept: true, reason: '$reason: ranges'),
+        reason: reason,
+      );
     }
     expect(tester.takeException(), isNull);
   });
