@@ -185,6 +185,12 @@ final Expando<UiCanvasElement> _canvasOfStyle = Expando('style canvas');
 /// - `max-width`, `max-height` (px): a cap of the content box.
 /// - `padding` (one px value): the padding lies outside the content box
 ///   (`box-sizing: content-box`).
+/// - `left`, `top` (px, also negative) of an element with
+///   `position: absolute` (Chart.js ADR 0108): the offset of its box from
+///   the top left corner of the padding box of its parent. The parent
+///   stands for the containing block, also for `position: fixed`. Without
+///   one of them, that coordinate keeps the static position: the place of
+///   the element in the flow. The offset does not change the width.
 /// - `display: none`: the element and its subtree get the size 0. The
 ///   hosts stay mounted.
 /// - `direction: rtl`: a `Directionality` with `TextDirection.rtl` for the
@@ -202,8 +208,11 @@ final Expando<UiCanvasElement> _canvasOfStyle = Expando('style canvas');
 /// where CSS lets it overflow.
 ///
 /// `document.body` has the size of the test view (800 x 600 logical
-/// pixels). It places each child at its top left corner, with the view
-/// width as its content width.
+/// pixels) and no margin. It places each child at its top left corner (the
+/// static position), with the view width as its content width. A child
+/// with `position: absolute` goes to its `left` and `top`. Thus
+/// `canvas.getBoundingClientRect()` of a canvas in a wrapper with
+/// `position: absolute; left: 50px; top: 50px` has `left` 50 and `top` 50.
 final class HarnessElement {
   HarnessElement._([this._isBody = false]) {
     style = _HarnessStyle(this);
@@ -442,6 +451,14 @@ extension CssProperties on CSSStyleDeclaration {
   /// `style.position`.
   String get position => getPropertyValue('position');
   set position(String value) => _write('position', value);
+
+  /// `style.left`.
+  String get left => getPropertyValue('left');
+  set left(String value) => _write('left', value);
+
+  /// `style.top`.
+  String get top => getPropertyValue('top');
+  set top(String value) => _write('top', value);
 
   /// `style.direction`.
   String get direction => getPropertyValue('direction');
@@ -822,6 +839,8 @@ final class _Layout {
     this.height,
     this.maxWidth,
     this.maxHeight,
+    this.left,
+    this.top,
     this.direction,
   });
 
@@ -851,6 +870,12 @@ final class _Layout {
       height: _pixels(style.getPropertyValue('height')),
       maxWidth: _pixels(style.getPropertyValue('max-width')),
       maxHeight: _pixels(style.getPropertyValue('max-height')),
+      left: absolute
+          ? _pixels(style.getPropertyValue('left'), signed: true)
+          : null,
+      top: absolute
+          ? _pixels(style.getPropertyValue('top'), signed: true)
+          : null,
       direction: direction,
     );
   }
@@ -858,15 +883,17 @@ final class _Layout {
   static final RegExp _spaces = RegExp(r'[\t\n\f\r ]+');
 
   static final RegExp _length = RegExp(
-    r'^\s*(\d*\.?\d+(?:e[+-]?\d+)?)(px)?\s*$',
+    r'^\s*([+-]?\d*\.?\d+(?:e[+-]?\d+)?)(px)?\s*$',
     caseSensitive: false,
   );
 
-  /// A px length, or `0` without a unit. `null` for another value.
-  static double? _pixels(String value) {
+  /// A px length, or `0` without a unit. `null` for another value, and for
+  /// a negative length unless [signed].
+  static double? _pixels(String value, {bool signed = false}) {
     final match = _length.firstMatch(value);
     if (match == null) return null;
     final number = double.parse(match[1]!);
+    if (number < 0 && !signed) return null;
     return match[2] != null || number == 0 ? number : null;
   }
 
@@ -880,7 +907,17 @@ final class _Layout {
   final double? height;
   final double? maxWidth;
   final double? maxHeight;
+
+  /// `left` of an element with `position: absolute`, else `null`.
+  final double? left;
+
+  /// `top` of an element with `position: absolute`, else `null`.
+  final double? top;
   final TextDirection? direction;
+
+  /// The offset of the box from the parent: [left] and [top] where they
+  /// are set, else the static position [inFlow].
+  Offset place(Offset inFlow) => Offset(left ?? inFlow.dx, top ?? inFlow.dy);
 
   @override
   bool operator ==(Object other) =>
@@ -893,6 +930,8 @@ final class _Layout {
       other.height == height &&
       other.maxWidth == maxWidth &&
       other.maxHeight == maxHeight &&
+      other.left == left &&
+      other.top == top &&
       other.direction == direction;
 
   @override
@@ -905,6 +944,8 @@ final class _Layout {
     height,
     maxWidth,
     maxHeight,
+    left,
+    top,
     direction,
   );
 }
@@ -963,8 +1004,12 @@ final class _RenderHarnessElement extends RenderBox
   _Layout _layout;
   set elementLayout(_Layout value) {
     if (value == _layout) return;
+    final moved = value.left != _layout.left || value.top != _layout.top;
     _layout = value;
     markNeedsLayout();
+    // The parent places the box. A child of the body is a relayout
+    // boundary: its own layout does not lay out the body again.
+    if (moved) parent?.markNeedsLayout();
   }
 
   /// Whether an ancestor has `display: none`. Then the element and its
@@ -1088,13 +1133,17 @@ final class _RenderHarnessElement extends RenderBox
         : constraints.constrain(const Size(800, 600));
     final width = size.width;
     for (var child = firstChild; child != null; child = childAfter(child)) {
+      var offset = Offset.zero;
       if (child is RenderChartHost) {
         _layoutHost(child, width, null, null);
       } else {
-        if (child is _RenderHarnessElement) child._hiddenByAncestor = false;
+        if (child is _RenderHarnessElement) {
+          child._hiddenByAncestor = false;
+          offset = child._layout.place(offset);
+        }
         child.layout(BoxConstraints(maxWidth: width));
       }
-      (child.parentData! as _ElementParentData).offset = Offset.zero;
+      (child.parentData! as _ElementParentData).offset = offset;
     }
   }
 
@@ -1132,10 +1181,9 @@ final class _RenderHarnessElement extends RenderBox
         child.layout(BoxConstraints(maxWidth: width), parentUsesSize: true);
         childHeight = child.size.height;
       }
-      (child.parentData! as _ElementParentData).offset = Offset(
-        padding,
-        padding + flow,
-      );
+      final inFlow = Offset(padding, padding + flow);
+      (child.parentData! as _ElementParentData).offset =
+          child is _RenderHarnessElement ? child._layout.place(inFlow) : inFlow;
       final outOfFlow =
           child is _RenderHarnessElement &&
           child._layout.absolute &&

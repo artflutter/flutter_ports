@@ -33,12 +33,14 @@
 /// - Before a config loads, the runner compares the SHA-256 of the upstream
 ///   file in `third_party/Chart.js/test/fixtures/` with the `sha256` of the
 ///   manifest. Without the checkout, each fixture skips with the reason
-///   [noSubmoduleReason]. With `FIXTURES_REQUIRED=1`, it fails. Tool 4
-///   hashes the files of an LF checkout. Thus, when the SHA-256 of the
-///   bytes differs, the runner also compares the SHA-256 of the bytes with
-///   each CRLF changed to LF. A checkout with `core.autocrlf=true` (the
-///   default of Git for Windows) has CRLF line ends: the submodule has no
-///   `.gitattributes`, and the root `.gitattributes` does not apply to it.
+///   [FixtureSource.noSubmoduleReason], which names the submodule of the
+///   source ([noSubmoduleReason] for Chart.js). With `FIXTURES_REQUIRED=1`,
+///   it fails. Tool 4 hashes the files of an LF checkout. Thus, when the
+///   SHA-256 of the bytes differs, the runner also compares the SHA-256 of
+///   the bytes with each CRLF changed to LF. A checkout with
+///   `core.autocrlf=true` (the default of Git for Windows) has CRLF line
+///   ends: the submodule has no `.gitattributes`, and the root
+///   `.gitattributes` does not apply to it.
 /// - [sha256Hex]: the SHA-256 of the check above, without a dependency on
 ///   package:crypto. The observation oracle O1 of flutter_chartjs_port also
 ///   uses it (Chart.js ADR 0054).
@@ -76,8 +78,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// The tag of each fixture test (Chart.js ADR 0029, section 10).
 const String fixturesTag = 'fixtures';
 
-/// The skip reason of each fixture when the upstream fixture files are not
-/// checked out (Chart.js ADR 0029, section 11 item 5).
+/// The skip reason of each fixture of the default [FixtureSource] when the
+/// upstream fixture files of Chart.js are not checked out (Chart.js ADR
+/// 0029, section 11 item 5). [FixtureSource.noSubmoduleReason] gives the
+/// reason of another submodule.
 const String noSubmoduleReason =
     'n/a: the submodule third_party/Chart.js is not checked out';
 
@@ -113,14 +117,18 @@ final Map<String, Object?> _decoded = {};
 /// The files of tool 4 that stand for the Karma files (fixture.js:77).
 ///
 /// The paths are relative to the working directory of `flutter test`, the
-/// package root.
+/// package root. The defaults are the files of flutter_chartjs_port. The
+/// port of an add-on gives its own files and the [submodule] that holds
+/// its upstream fixture files (Chart.js ADR 0108), for example
+/// `third_party/chartjs-plugin-zoom`.
 final class FixtureSource {
   /// The files of tool 4 at [manifest] and [data], and the upstream
-  /// fixture files in [upstream].
+  /// fixture files in [upstream], a folder of the [submodule].
   const FixtureSource({
     this.manifest = 'doc/upstream/manifest.json',
     this.data = 'doc/upstream/fixtures.json',
     this.upstream = '../../third_party/Chart.js/test/fixtures',
+    this.submodule = 'third_party/Chart.js',
     this.requireUpstream,
   });
 
@@ -132,6 +140,16 @@ final class FixtureSource {
 
   /// The directory of the upstream fixture files at the pin.
   final String upstream;
+
+  /// The path of the submodule that holds [upstream], from the repository
+  /// root. The skip reason of a missing checkout names it.
+  final String submodule;
+
+  /// The skip reason of each fixture when [upstream] is not checked out:
+  /// `'n/a: the submodule <submodule> is not checked out'`. It is
+  /// [noSubmoduleReason] for the default [submodule].
+  String get noSubmoduleReason =>
+      'n/a: the submodule $submodule is not checked out';
 
   /// Whether a missing [upstream] directory fails each fixture. Null reads
   /// the environment variable `FIXTURES_REQUIRED`: `1` fails.
@@ -255,7 +273,7 @@ void _declare(
         tags: fixturesTag,
       );
     } else {
-      test(path, () {}, skip: noSubmoduleReason, tags: fixturesTag);
+      test(path, () {}, skip: source.noSubmoduleReason, tags: fixturesTag);
     }
     return;
   }

@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/index.dart';
+import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0022, sections 3, 7 and 8: the DOM stand-in, the harness
@@ -222,11 +223,15 @@ void main() {
         ..maxHeight = '20px'
         ..padding = '1px'
         ..position = 'absolute'
+        ..left = '5px'
+        ..top = '-6px'
         ..direction = 'rtl';
       expect(canvas.style.maxWidth, '10px');
       expect(canvas.style.maxHeight, '20px');
       expect(canvas.style.padding, '1px');
       expect(canvas.style.position, 'absolute');
+      expect(canvas.style.left, '5px');
+      expect(canvas.style.top, '-6px');
       expect(canvas.style.direction, 'rtl');
     });
   });
@@ -424,6 +429,96 @@ void main() {
       await _checkpoint();
       expect(_containerOf(canvas), const Size(400, 100));
       expect((inner.clientWidth, inner.clientHeight), (400, 100));
+    });
+
+    testWidgets('left and top place an element with position absolute', (
+      tester,
+    ) async {
+      // zoom.drag.spec.js:441 of chartjs-plugin-zoom (Chart.js ADR 0108).
+      final canvas = document.createElement<HTMLCanvasElement>('canvas')
+        ..setAttribute('width', '200')
+        ..setAttribute('height', '100');
+      final (wrapper, _) = _wrap(
+        'position: absolute; left: 50px; top: 30px;',
+        canvas: canvas,
+      );
+      await _checkpoint();
+      expect(_hostOf(canvas).localToGlobal(Offset.zero), const Offset(50, 30));
+      expect(canvas.getBoundingClientRect(), const DOMRect(50, 30, 200, 100));
+      // The offset does not change the shrink-to-fit width.
+      expect((wrapper.clientWidth, wrapper.clientHeight), (200, 100));
+
+      // A write moves the box at the next frame. A child of the body is a
+      // relayout boundary: the body places it again.
+      wrapper.style
+        ..left = '-10px'
+        ..top = '0';
+      await tester.pump();
+      expect(canvas.getBoundingClientRect(), const DOMRect(-10, 0, 200, 100));
+    });
+
+    testWidgets('left and top have no effect without position absolute', (
+      tester,
+    ) async {
+      final (_, canvas) = _wrap(
+        'width: 300px; height: 150px; position: relative; left: 50px; '
+        'top: 30px',
+      );
+      await _checkpoint();
+      expect(_hostOf(canvas).localToGlobal(Offset.zero), Offset.zero);
+      // The class chartjs-wrapper gives position absolute.
+      final (_, wrapped) = _wrap(
+        'left: 20px; top: 40px',
+        attributes: {'class': 'chartjs-wrapper'},
+      );
+      await _checkpoint();
+      expect(
+        _hostOf(wrapped).localToGlobal(Offset.zero),
+        const Offset(20, 40),
+      );
+      // A percentage is not a px length: the static position stays.
+      final (_, percent) = _wrap('position: absolute; left: 10%; top: 5px');
+      await _checkpoint();
+      expect(_hostOf(percent).localToGlobal(Offset.zero), const Offset(0, 5));
+    });
+
+    testWidgets('without left or top, a coordinate keeps the static '
+        'position in the padding box of the parent', (tester) async {
+      final outer = document.createElement<HarnessElement>('div')
+        ..setAttribute('style', 'width: 400px; height: 300px; padding: 10px');
+      final first = document.createElement<HarnessElement>('div')
+        ..setAttribute('style', 'height: 40px');
+      final onlyTop = document.createElement<HarnessElement>('div')
+        ..setAttribute(
+          'style',
+          'position: absolute; top: 100px; width: 50px; height: 20px',
+        );
+      final onlyLeft = document.createElement<HarnessElement>('div')
+        ..setAttribute(
+          'style',
+          'position: absolute; left: 20px; width: 50px; height: 20px',
+        );
+      final topCanvas = document.createElement<HTMLCanvasElement>('canvas');
+      final leftCanvas = document.createElement<HTMLCanvasElement>('canvas');
+      onlyTop.appendChild(topCanvas);
+      onlyLeft.appendChild(leftCanvas);
+      outer
+        ..appendChild(first)
+        ..appendChild(onlyTop)
+        ..appendChild(onlyLeft);
+      document.body.appendChild(outer);
+      await _checkpoint();
+      // `left` and `top` start at the padding edge of the parent. The static
+      // position is in the content box, after the elements in the flow: an
+      // absolute element is out of the flow.
+      expect(
+        _hostOf(topCanvas).localToGlobal(Offset.zero),
+        const Offset(10, 100),
+      );
+      expect(
+        _hostOf(leftCanvas).localToGlobal(Offset.zero),
+        const Offset(20, 50),
+      );
     });
 
     testWidgets('a canvas child of the body gets the body width', (

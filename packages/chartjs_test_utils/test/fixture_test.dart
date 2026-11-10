@@ -301,6 +301,25 @@ void main() {
       );
     });
 
+    test('the skip reason names the submodule of the source', () {
+      // The sources of the probe have the default submodule: the test above
+      // reads its reason from the skipped tests of the runner.
+      expect(const FixtureSource().submodule, 'third_party/Chart.js');
+      expect(const FixtureSource().noSubmoduleReason, noSubmoduleReason);
+      // The source of an add-on port (Chart.js ADR 0108).
+      const zoom = FixtureSource(
+        manifest: 'test/fixtures/manifest.json',
+        data: 'test/fixtures/fixtures.json',
+        upstream: '../../third_party/chartjs-plugin-zoom/test/fixtures',
+        submodule: 'third_party/chartjs-plugin-zoom',
+      );
+      expect(
+        zoom.noSubmoduleReason,
+        'n/a: the submodule third_party/chartjs-plugin-zoom is not checked '
+        'out',
+      );
+    });
+
     test('without the checkout, a required fixture fails', () {
       const message = 'the upstream fixture files are not checked out';
       _expectFail('no checkout required aXb/c.json', message);
