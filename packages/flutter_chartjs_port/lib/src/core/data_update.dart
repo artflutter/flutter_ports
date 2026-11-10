@@ -363,12 +363,20 @@ final class DataUpdateSnapshot {
 /// The second capture of the last full update for `Chart.updateRanges`
 /// (Chart.js ADR 0111, check 6): the `data` and `options` objects of the
 /// config and the dataset objects, read with [dataUpdateField] from native
-/// objects only. Unlike [DataUpdateSnapshot], it keeps no value List and no
-/// labels: a range update parses the data as `update` does, so new values,
-/// a new data List and new labels are allowed.
+/// objects only, the chart type and the inline plugins of the config.
+/// Unlike [DataUpdateSnapshot], it keeps no value List and no labels: a
+/// range update parses the data as `update` does, so new values, a new data
+/// List and new labels are allowed.
 @internal
 final class RangeUpdateSnapshot {
-  RangeUpdateSnapshot._(this.data, this.options, this.datasets);
+  RangeUpdateSnapshot._(
+    this.data,
+    this.options,
+    this.datasets,
+    this.type,
+    this.plugins,
+    this.pluginCount,
+  );
 
   /// The `data` object of the config.
   final Object data;
@@ -379,10 +387,26 @@ final class RangeUpdateSnapshot {
   /// The dataset objects, in their order.
   final List<Object> datasets;
 
+  /// The chart type of the config (`config.type`).
+  final Object? type;
+
+  /// The inline plugins of the config (`config.plugins`): a List, or another
+  /// value.
+  final Object? plugins;
+
+  /// The length of [plugins] when it is a List, else -1.
+  final int pluginCount;
+
   /// The capture of [data] and [options], or null when one of them, the
   /// dataset List or a dataset is not a native object, or when a route of the
-  /// typed data scope could run code in a read.
-  static RangeUpdateSnapshot? capture(Object data, Object options) {
+  /// typed data scope could run code in a read. [type] and [plugins] are the
+  /// chart type and the inline plugins of the config.
+  static RangeUpdateSnapshot? capture(
+    Object data,
+    Object options, {
+    required Object? type,
+    required Object? plugins,
+  }) {
     if (!nativeDataUpdateObject(data) || !nativeDataUpdateObject(options)) {
       return null;
     }
@@ -394,13 +418,31 @@ final class RangeUpdateSnapshot {
       if (!nativeDataUpdateObject(dataset)) return null;
       datasets.add(dataset!);
     }
-    return RangeUpdateSnapshot._(data, options, datasets);
+    return RangeUpdateSnapshot._(
+      data,
+      options,
+      datasets,
+      type,
+      plugins,
+      plugins is List<Object?> ? plugins.length : -1,
+    );
   }
 
   /// Whether [currentData] and [currentOptions] are the captured objects,
-  /// with the same count of datasets and the same object at each index.
-  bool matches(Object currentData, Object currentOptions) {
+  /// with the same count of datasets and the same object at each index, and
+  /// whether [type] equals the captured type and [plugins] is the captured
+  /// value, a List of the same length.
+  bool matches(
+    Object currentData,
+    Object currentOptions, {
+    required Object? type,
+    required Object? plugins,
+  }) {
     if (!identical(data, currentData) || !identical(options, currentOptions)) {
+      return false;
+    }
+    if (type != this.type || !identical(plugins, this.plugins)) return false;
+    if (plugins is List<Object?> && plugins.length != pluginCount) {
       return false;
     }
     final raw = dataUpdateField(data, 'datasets');

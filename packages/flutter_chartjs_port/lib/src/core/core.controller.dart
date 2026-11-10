@@ -1629,7 +1629,12 @@ class Chart
       );
       // DIVERGES(chartjs): adapt-range-updates, the range state.
       if (laidOut) {
-        _rangeUpdateSnapshot = RangeUpdateSnapshot.capture(data, options);
+        _rangeUpdateSnapshot = RangeUpdateSnapshot.capture(
+          data,
+          options,
+          type: config.type,
+          plugins: config.plugins,
+        );
       }
     }
   }
@@ -1870,16 +1875,22 @@ class Chart
   /// [update] after any other change.
   ///
   /// Each hook, the parse, the layout, the dataset updates, the replay and
-  /// the draw run as in [update], and each scriptable option runs again. The
-  /// configuration of the last full update stays: no scale merge, no new
-  /// resolver, no check of the scale ids, types and positions, no new
-  /// controller. When a check fails, the call is `update(mode)`: a call from
-  /// an update, no completed full update since an invalidation (a resize, a
-  /// visibility change, the `data` or `options` setter, a cancelled or thrown
-  /// update), a chart or config of another class, a plugin that does not opt
-  /// into the partial lifecycles, a notified change of a data array, another
-  /// `data` or `options` object or another dataset, and a controller that is
-  /// not of its exact built-in class.
+  /// the draw run as in [update], and each scriptable option that these steps
+  /// read runs again. The configuration of the last full update stays: no
+  /// scale merge, no new resolver, no check of the scale ids, types and
+  /// positions, no new controller. The options that only these skipped steps
+  /// read (`responsive`, the chart `indexAxis`, the `axis` and `position` of a
+  /// scale) keep the results of the last full update: the contract covers
+  /// their functions too. When a check fails, the call is `update(mode)`: a
+  /// call from an update, no completed full update since an invalidation (a
+  /// resize, a visibility change, the `data` or `options` setter, a cancelled
+  /// or thrown update), a chart or config of another class, a plugin that
+  /// does not opt into the partial lifecycles, a notified change of a data
+  /// array, another `data` or `options` object, another dataset, another chart
+  /// type or another inline plugin List, and a controller that is not of its
+  /// exact built-in class. A plugin registered or unregistered since the last
+  /// full update is a change of the contract: the next notify of the chart
+  /// takes the new plugin list without `start` or `stop`.
   ///
   /// [mode] is the mode of [update]: the hooks, the transitions and the
   /// contexts get it as in [update]. Each mode and running animations are
@@ -1910,21 +1921,32 @@ class Chart
 
   /// The checks of a range update (Chart.js ADR 0111, section 3). They read
   /// identities and flags: no walk of the options.
+  // DIVERGES(chartjs): adapt-range-updates, the checks of a range update.
   bool _canUpdateRanges() {
     // 1. An update lifecycle runs: the call is a nested update.
     if (_updatingData || _fullUpdateDepth > 0) return false;
     // 2. The range state of the last full update or range update.
     final snapshot = _rangeUpdateSnapshot;
     if (snapshot == null) return false;
-    // 3. The exact classes of the chart and of its config.
+    // 3. The exact classes of the chart and of its config. Check 2 already
+    // covers it: only these classes record the range state. It stays as the
+    // check of the ADR.
     final config = this.config;
     if (!supportsDataUpdates || !config.supportsDataUpdates) return false;
     // 4. The cached descriptors, each plugin opted in.
     if (!plugins.supportsRangeUpdates) return false;
     // 5. No notified change of a data array.
     if (dataChanges.isNotEmpty) return false;
-    // 6. The same data and options objects and the same datasets.
-    if (!snapshot.matches(data, config.options)) return false;
+    // 6. The same data and options objects, the same datasets, the same
+    // chart type and the same inline plugin List.
+    if (!snapshot.matches(
+      data,
+      config.options,
+      type: config.type,
+      plugins: config.plugins,
+    )) {
+      return false;
+    }
     // 7. The exact built-in controller of each dataset.
     final count = snapshot.datasets.length;
     if (_datasets.length != count) return false;
@@ -1939,6 +1961,7 @@ class Chart
   /// Chart.js ADR 0111, section 4. The configuration and its resolvers stay;
   /// each place where `update` makes a new resolver gets a new context view
   /// over the kept one.
+  // DIVERGES(chartjs): adapt-range-updates, the steps of a range update.
   void _updateRanges(Object? mode) {
     _invalidateDataUpdate();
     final generation = _dataUpdateGeneration;
@@ -2021,9 +2044,10 @@ class Chart
   /// `scale.init` takes the scale options of the new chart view. No id
   /// writes, no axis, type and position checks, no scale made or removed:
   /// under the contract the scales and their options are those of the last
-  /// full update. `init` runs in the order of [scales]; `buildOrUpdateScales`
-  /// runs it in the order of the keys of `options.scales`, which hold the
-  /// same ids, and `init` reads and writes only its own scale.
+  /// full update. `init` runs in the order of the keys of `options.scales`,
+  /// as in `buildOrUpdateScales`: the `init` of a category scale changes the
+  /// shared labels, so the order counts.
+  // DIVERGES(chartjs): adapt-range-updates, the scale steps of a range.
   void _updateScaleRanges(OptionView options) {
     final scales = this.scales;
     for (final scale in scales.values) {
@@ -2031,8 +2055,8 @@ class Chart
     }
     if (scales.isNotEmpty) {
       final byId = options.readKey(OptionKey.scales)! as OptionView;
-      for (final MapEntry(key: id, value: scale) in scales.entries) {
-        scale.init(byId.jsRead(id)! as OptionView, options);
+      for (final id in byId.jsKeys()) {
+        scales[id]!.init(byId.jsRead(id)! as OptionView, options);
       }
     }
     for (final scale in scales.values) {

@@ -47,8 +47,9 @@ no default (an absent key is `false`). With `true`, each zoom and pan step updat
 ([Chart.js ADR 0111](../../flutter_chartjs_port/doc/adr/0111-range-updates.md)) in place of
 `chart.update(transition)`. The range update keeps the configuration of the last full update and
 skips its rebuild; each hook, the layout, the dataset updates and the draw run as in `update`, and
-each scriptable option runs again. The ranges, the ticks, the points and the pixels are those of
-`update`.
+each scriptable option that these steps read runs again. The ranges, the ticks, the points and the
+pixels are those of `update`. The options that only the skipped steps read (`responsive`, the chart
+`indexAxis`, the `axis` and `position` of a scale) keep the results of the last full update.
 
 ```dart
 ChartView(
@@ -69,13 +70,13 @@ ChartView(
 
 The app keeps the contract of `updateRanges`: between the full updates of the chart, nothing
 changes an option, a default (`Chart.defaults`, `Chart.overrides`), the theme, a dataset, a scale
-or a plugin in place. New data values, a new data List and new labels are allowed. A `ChartView`
+or a plugin in place, and no plugin is registered or unregistered. New data values, a new data List and new labels are allowed. A `ChartView`
 keeps the contract: a new config, a new theme and a change of the reduced-motion preference reach
 the chart through a full update. An app that writes `chart.options` or a dataset Map in place calls
 `chart.update()` after the write. The host takes `update` by itself when one of its checks fails:
 another class of chart, config or controller, a plugin that does not opt into the partial
-lifecycles, a notified change of a data array, another `data`, `options` or dataset object, or an
-update since which the state is not valid (a resize, a visibility change, a cancelled update). Row
+lifecycles, a notified change of a data array, another `data`, `options` or dataset object, another
+chart type or another inline plugin List, or an update since which the state is not valid (a resize, a visibility change, a cancelled update). Row
 `adapt-range-only-updates` of [differences.md](differences.md), seam H28.
 
 ## What gets ported
