@@ -135,6 +135,66 @@ Future<void> _drag(WidgetTester tester, double dx) async {
   await tester.pump(const Duration(milliseconds: 20));
 }
 
+/// A desktop trackpad gesture over the center of the chart: pan-zoom events
+/// with a pan to [pan] and a scale to [scale], in six steps.
+Future<void> _trackpad(
+  WidgetTester tester, {
+  Offset pan = Offset.zero,
+  double scale = 1,
+}) async {
+  final center = _center(tester);
+  final gesture = await tester.createGesture(
+    kind: PointerDeviceKind.trackpad,
+  );
+  await gesture.panZoomStart(center);
+  await tester.pump(const Duration(milliseconds: 16));
+  for (var i = 1; i <= 6; i++) {
+    await gesture.panZoomUpdate(
+      center,
+      pan: pan * (i / 6),
+      scale: 1 + (scale - 1) * i / 6,
+    );
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  await gesture.panZoomEnd();
+  await tester.pump(const Duration(milliseconds: 20));
+  await tester.pump(const Duration(milliseconds: 20));
+}
+
+/// [library] with [config] in a list that can scroll both ways, with [scroll]
+/// as the controller of the list. Give [scroll] the offset [_listTop]: the
+/// chart then sits at the top of the list.
+Widget _listScene(
+  ChartLibrary library,
+  BenchmarkConfig config,
+  ScrollController scroll,
+) => MaterialApp(
+  home: Scaffold(
+    body: ListView(
+      controller: scroll,
+      children: [
+        const SizedBox(height: _listTop),
+        RepaintBoundary(
+          key: _boundary,
+          child: SizedBox.fromSize(
+            size: _size,
+            child: BenchmarkChart(
+              library: library,
+              config: config,
+              frame: _frame,
+              size: _size,
+            ),
+          ),
+        ),
+        const SizedBox(height: 2000),
+      ],
+    ),
+  ),
+);
+
+/// The height of the list above the chart in [_listScene].
+const _listTop = 200.0;
+
 /// The one live chart of the Chart.js port.
 cj.Chart _chart() => cj.Chart.instances.values.single;
 
@@ -399,6 +459,132 @@ void main() {
       await _end(tester);
     });
   }
+
+  for (final library in ChartLibrary.values) {
+    testWidgets('${library.name}: a wheel zoom does not scroll the page', (
+      tester,
+    ) async {
+      for (final zoom in [true, false]) {
+        final scroll = ScrollController(initialScrollOffset: _listTop);
+        addTearDown(scroll.dispose);
+        await _pump(
+          tester,
+          _listScene(
+            library,
+            BenchmarkConfig(count: 100, axes: true, zoom: zoom),
+            scroll,
+          ),
+        );
+        final before = await _baseline(tester, library);
+        await _wheel(tester, -60);
+        final reason = 'zoom $zoom';
+        // With zoom, the chart takes the wheel; without, the list does.
+        expect(
+          scroll.offset,
+          zoom ? _listTop : lessThan(_listTop),
+          reason: reason,
+        );
+        if (zoom) {
+          expect(
+            listEquals(await _pixels(tester), before),
+            isFalse,
+            reason: reason,
+          );
+        }
+        await _end(tester);
+      }
+    });
+  }
+
+  // A desktop trackpad sends pan-zoom events, not a wheel (see
+  // ChartLibrary.zoomsWith): a pinch zooms fl_chart and Graphic, a vertical
+  // two-finger scroll zooms Syncfusion, and the Chart.js port gets neither.
+  for (final library in ChartLibrary.values) {
+    testWidgets('${library.name}: a trackpad pinch and scroll', (tester) async {
+      const config = BenchmarkConfig(count: 100, axes: true, zoom: true);
+      Future<bool> changes(Future<void> Function() gesture) async {
+        await _pump(tester, _scene(library, config));
+        final before = await _baseline(tester, library);
+        await gesture();
+        final changed = !listEquals(await _pixels(tester), before);
+        await _end(tester);
+        return changed;
+      }
+
+      expect(
+        await changes(() => _trackpad(tester, scale: 2)),
+        library == ChartLibrary.flChart || library == ChartLibrary.graphic,
+        reason: 'pinch',
+      );
+      expect(
+        await changes(() => _trackpad(tester, pan: const Offset(0, 120))),
+        library == ChartLibrary.syncfusion,
+        reason: 'scroll',
+      );
+      if (library == ChartLibrary.syncfusion) {
+        // Syncfusion reads a pinch as a wheel step out: a pinch out after a
+        // wheel zoom goes back to the full range.
+        await _pump(tester, _scene(library, config));
+        final full = await _baseline(tester, library);
+        await _wheel(tester, -60);
+        expect(listEquals(await _pixels(tester), full), isFalse);
+        await _trackpad(tester, scale: 2);
+        expect(listEquals(await _pixels(tester), full), isTrue);
+        await _end(tester);
+      }
+    });
+  }
+
+  testWidgets('a Graphic double tap keeps the zoom', (tester) async {
+    await _pump(
+      tester,
+      _scene(
+        ChartLibrary.graphic,
+        const BenchmarkConfig(count: 100, zoom: true),
+      ),
+    );
+    await _pinch(tester);
+    final zoomed = await _pixels(tester);
+    await tester.tapAt(_center(tester));
+    await tester.pump(const Duration(milliseconds: 80));
+    await tester.tapAt(_center(tester));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(listEquals(await _pixels(tester), zoomed), isTrue);
+    await _end(tester);
+  });
+
+  testWidgets('each run mounts a new chart on each library', (tester) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    late BenchmarkController c;
+    await tester.pumpWidget(
+      ChartBenchmarkApp(onControllerReady: (value) => c = value),
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+    c.configure(c.config.copyWith(zoom: true));
+    for (final library in ChartLibrary.values) {
+      c.selectLibrary(library);
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 20));
+      final before = tester.element(find.byType(BenchmarkChart));
+      c.start();
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(c.running, isTrue, reason: c.message);
+      expect(
+        tester.element(find.byType(BenchmarkChart)),
+        isNot(same(before)),
+        reason: library.name,
+      );
+      c.pause();
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
 
   testWidgets('a zoom stays through live data, and a run starts at the full '
       'range', (tester) async {

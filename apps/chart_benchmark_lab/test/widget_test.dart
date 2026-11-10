@@ -462,7 +462,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 20));
     const zoom = ValueKey('feature.zoom');
     expect(
-      find.text('X axis: pinch or wheel zooms, drag pans'),
+      find.text('X axis: touch pinch or mouse wheel zooms, drag pans'),
       findsOneWidget,
     );
     await tester.ensureVisible(find.byKey(zoom));

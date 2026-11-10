@@ -67,6 +67,15 @@ enum ChartLibrary {
   ///
   /// A pie, a doughnut, a polar area and a radar have no x axis, and the
   /// settings hide the toggle for them.
+  ///
+  /// A touch pinch and the mouse wheel zoom each library, and a drag pans it.
+  /// A desktop trackpad differs, because the native desktop sends its pinch
+  /// and its two-finger scroll as pan-zoom events, not as a wheel:
+  /// - a trackpad pinch zooms fl_chart and Graphic;
+  /// - Syncfusion reads each pan-zoom step as a wheel step by its vertical
+  ///   pan: a two-finger vertical scroll zooms, and a pinch only zooms out;
+  /// - the host of the Chart.js port maps no pan-zoom event (Chart.js ADR
+  ///   0108 Open 5): a trackpad does not zoom or pan it.
   bool zoomsWith(ChartType type) => type.hasZoom;
 
   /// Whether this library can run [config] with its public API.

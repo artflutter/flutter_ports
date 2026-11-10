@@ -831,7 +831,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
           select: () => (
             controller.library,
             controller.controlsLocked,
-            controller.config.type,
+            // The type, the shadow and the zoom decide each note.
+            _libraryNotes(controller.config),
           ),
           builder: (_) => _librarySelector(),
         ),
@@ -984,9 +985,7 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                               ),
                             ),
                             Text(
-                              engine.runs(controller.config)
-                                  ? 'v${engine.version}'
-                                  : engine.shortReasonFor(controller.config),
+                              _libraryNote(engine, controller.config),
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: Color(0xff64748b),
@@ -1406,7 +1405,19 @@ Widget _badge(String label, Color color) => Container(
   ),
 );
 
-/// How a person zooms and pans, and the libraries that cannot.
+/// The note of [engine] in the library selector: its version, or why it
+/// cannot run [config].
+String _libraryNote(ChartLibrary engine, BenchmarkConfig config) =>
+    engine.runs(config) ? 'v${engine.version}' : engine.shortReasonFor(config);
+
+/// The notes of all libraries, which the library selector shows.
+String _libraryNotes(BenchmarkConfig config) => [
+  for (final engine in ChartLibrary.values) _libraryNote(engine, config),
+].join('\n');
+
+/// How a person zooms and pans, and the libraries that cannot. A desktop
+/// trackpad differs by library (ChartLibrary.zoomsWith), so the hint names
+/// the touch pinch and the mouse wheel only.
 String _zoomHint(BenchmarkConfig config) {
   final missing = [
     for (final engine in ChartLibrary.values)
@@ -1414,7 +1425,7 @@ String _zoomHint(BenchmarkConfig config) {
         engine.label,
   ];
   return [
-    'X axis: pinch or wheel zooms, drag pans',
+    'X axis: touch pinch or mouse wheel zooms, drag pans',
     if (missing.isNotEmpty) 'not on ${missing.join(', ')}',
   ].join(' · ');
 }
