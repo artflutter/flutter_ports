@@ -1342,11 +1342,14 @@ final class ScaleCache {
 /// legend specs (global.defaults.tests.js:46) read.
 ///
 /// `index.d.ts` declares it with `extends Element, LayoutItem`. No ported
-/// module reads a member of these interfaces through this interface. Thus
-/// it does not implement them. The `Legend` class of `plugin.legend.dart`
-/// extends the `Element` of `core.element.dart` and implements
-/// [LayoutItem] itself (Chart.js ADR 0038, section 6).
-abstract interface class LegendElement {
+/// module of Chart.js reads a member of these interfaces through this
+/// interface. It implements [TRBL], the box edges of `LayoutItem`: the
+/// ported chartjs-plugin-zoom gives `chart.legend` to `_isPointInArea`
+/// (`src/handlers.ts:90` of chartjs-plugin-zoom, Chart.js ADR 0108). The
+/// `Legend` class of `plugin.legend.dart` extends the `Element` of
+/// `core.element.dart` and implements [LayoutItem] and [TRBL] itself
+/// (Chart.js ADR 0038, section 6).
+abstract interface class LegendElement implements TRBL {
   /// index.d.ts:2415 `chart`.
   Chart get chart;
 

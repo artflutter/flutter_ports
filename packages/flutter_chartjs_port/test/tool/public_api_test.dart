@@ -14,10 +14,12 @@ import 'package:test/test.dart';
 
 import '../../tool/src/js_semantics.dart' show dartSdkPath;
 
-// The public API of the package (Chart.js ADR 0048, sections 5 and 6):
-// `lib/chartjs.dart` (the `chart.js` entry), `lib/helpers.dart` (the
-// `chart.js/helpers` entry) and `lib/flutter_chartjs_port.dart` (the app
-// library). The test resolves the three libraries with package:analyzer.
+// The public API of the package (Chart.js ADR 0048, sections 5 and 6, and
+// Chart.js ADR 0108): `lib/chartjs.dart` (the `chart.js` entry),
+// `lib/helpers.dart` (the `chart.js/helpers` entry),
+// `lib/flutter_chartjs_port.dart` (the app library) and
+// `lib/js_semantics.dart` (the JS runtime for add-on ports). The test
+// resolves the four libraries with package:analyzer.
 //
 // 1. The sorted export names of each library are the committed list
 //    `doc/public_api.txt`. After a change of the public API, write the list
@@ -36,16 +38,22 @@ import '../../tool/src/js_semantics.dart' show dartSdkPath;
 //    declaration of `src/types/*.d.ts` that a file of `lib/src/` declares as
 //    a type of the same name, and `helpers.dart` covers each runtime export of
 //    `src/helpers/index.ts` (the `exports` of `doc/upstream/manifest.json`,
-//    tool 4). A `_` export of upstream stays internal. A covered name is an
-//    export of the library, a name of its hide list, or a name of
-//    `_notExported` with its reason.
+//    tool 4). A `_` export of upstream stays internal, except a name of
+//    `_addOnHelpers` (Chart.js ADR 0108). A covered name is an export of the
+//    library, a name of its hide list, or a name of `_notExported` with its
+//    reason.
 
-/// The three public libraries, by their path in the package.
+/// The four public libraries, by their path in the package.
 const List<String> _libraries = [
   'lib/chartjs.dart',
   'lib/flutter_chartjs_port.dart',
   'lib/helpers.dart',
+  'lib/js_semantics.dart',
 ];
+
+/// The `_` exports of `src/helpers/index.ts` that a ported add-on imports:
+/// `helpers.dart` exports their Dart names (Chart.js ADR 0108).
+const Set<String> _addOnHelpers = {'_isPointInArea'};
 
 /// The Flutter libraries of case 2.
 const List<String> _flutterLibraries = [
@@ -118,9 +126,6 @@ const Map<String, String> _notExported = {
   'SplinePoint': 'not in the ADR 0048 export list',
   'TRBLCorners': 'not in the ADR 0048 export list',
   'TypedRegistry': 'not in the ADR 0048 export list',
-  // The typed plugin of Chart.js ADR 0054 section 12: internal until the
-  // typed public plugin API (its Open 2); a plugin of user code is a Map.
-  'Plugin': 'the typed plugin of ADR 0054',
   // The typed contexts of Chart.js ADR 0054 section 11: internal, a context
   // is a ContextObject of lib/helpers.dart.
   'ScriptableChartContext': 'a typed context of ADR 0054',
@@ -371,11 +376,20 @@ void main() {
         }
       }
 
-      // src/helpers/index.ts: each runtime export but the `_` exports.
+      // src/helpers/index.ts: each runtime export but the `_` exports that
+      // no ported add-on imports.
       final helpers = _exportNames(await _library('lib/helpers.dart'));
+      for (final name in _addOnHelpers) {
+        if (!list('helpers').contains(name)) {
+          findings.add('_addOnHelpers: $name is stale');
+        }
+      }
       for (final name in list('helpers')) {
         if (name.startsWith('_')) {
-          if (helpers.contains(name.substring(1))) {
+          final exported = helpers.contains(name.substring(1));
+          if (_addOnHelpers.contains(name) && !exported) {
+            findings.add('helpers.dart: $name is not exported');
+          } else if (!_addOnHelpers.contains(name) && exported) {
             findings.add('helpers.dart: $name is exported');
           }
         } else {
