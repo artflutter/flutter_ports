@@ -108,8 +108,8 @@ const Map<String, ({String key, IconData icon, String text})> _actionSegments =
 ///
 /// Each variant is a sample of the docs of chartjs-plugin-zoom: its config
 /// and its actions, with the changes that the sample file states. The
-/// gallery registers the zoom plugin for all charts, as the docs do
-/// (`registerGalleryComponents`), and each sample gives its options in
+/// page registers the zoom plugin for all charts at its first build, as the
+/// docs do (`registerZoomComponents`), and each sample gives its options in
 /// `options.plugins.zoom`. The chart is a `ChartView.raw`: the typed
 /// `ChartConfig` has no slot for the options of a plugin of another package
 /// yet (`doc/host-seams.md` of the zoom port).
@@ -163,7 +163,7 @@ class ZoomPageState extends State<ZoomPage> {
   /// The sample of the current variant, with the inline plugin of the
   /// readout. The components are registered first.
   ZoomDocsSample _makeSample() {
-    registerGalleryComponents();
+    registerZoomComponents();
     final sample = _current.sample(_log);
     sample.config['plugins'] = <Object?>[_readoutPlugin];
     _output = sample.output;
