@@ -99,6 +99,23 @@ OriginalScaleLimits _storeOriginalScaleLimits(Chart chart, State state) {
   return originalScaleLimits;
 }
 
+/// `chart.update(transition)` of the five update calls of core.ts (:90,
+/// :120, :136, :156, :233): `chart.updateRanges(transition)` of the host when
+/// the option `rangeOnlyUpdates` is on (Chart.js ADR 0111). The zoom
+/// functions write only `min` and `max` through the views of the scale
+/// options, and the fields `min` and `max` of a category scale, which the
+/// layout of both paths computes again. The host takes `update` when one of
+/// its checks fails. [state] has the options of the last `beforeUpdate`: the
+/// read is a cache hit of the view.
+// DIVERGES(zoom): adapt-range-only-updates, the opt-in range update.
+void _updateChart(Chart chart, State state, String transition) {
+  if (state.options.rangeOnlyUpdates) {
+    chart.updateRanges(transition);
+  } else {
+    chart.update(transition);
+  }
+}
+
 /// core.ts:51 `doZoom(scale, amount, center, limits)`.
 void _doZoom(Scale scale, double amount, Point center, LimitOptions limits) {
   final fn = zoomFunctions[scale.type] ?? zoomFunctions['default'];
@@ -157,7 +174,7 @@ void zoom(
     }
   }
 
-  chart.update(transition);
+  _updateChart(chart, state, transition);
 
   // zoomOptions?.onZoom?.({ chart, trigger })
   if (!zoomOptions.isNullish) {
@@ -196,7 +213,7 @@ void zoomRect(
     }
   }
 
-  chart.update(transition);
+  _updateChart(chart, state, transition);
 
   // zoomOptions.onZoom?.({ chart, trigger })
   _callZoom(zoomOptions.onZoom, (chart: chart, trigger: trigger));
@@ -218,7 +235,7 @@ void zoomScale(
   _storeOriginalScaleLimits(chart, state);
   final scale = chart.scales[scaleId]!;
   updateRange(scale, range, null, true);
-  chart.update(transition);
+  _updateChart(chart, state, transition);
 
   // state.options.zoom?.onZoom?.({ chart, trigger })
   final zoomOptions = state.options.zoom;
@@ -246,7 +263,7 @@ void resetZoom(Chart chart, [String transition = 'default']) {
     }
     state.updatedScaleLimits.remove(scale.id);
   }
-  chart.update(transition);
+  _updateChart(chart, state, transition);
 
   // state.options.zoom?.onZoomComplete?.({ chart })
   final zoomOptions = state.options.zoom;
@@ -349,7 +366,7 @@ void pan(
     }
   }
 
-  chart.update(transition);
+  _updateChart(chart, state, transition);
 
   // onPan?.({ chart })
   _callGeneric(onPan, (chart: chart));

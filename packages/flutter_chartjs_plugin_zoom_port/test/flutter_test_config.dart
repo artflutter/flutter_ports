@@ -65,6 +65,14 @@ import 'package:flutter_test/flutter_test.dart';
 /// The `devicePixelRatio` of the test view (index.js:10-12).
 const double _devicePixelRatio = 1;
 
+/// Whether the run writes `rangeOnlyUpdates: true` into
+/// `Chart.defaults.plugins.zoom` (Chart.js ADR 0111, section 9):
+/// `flutter test --dart-define=ZOOM_RANGE_ONLY_UPDATES=true`, or
+/// `dart run melos run test:zoom:range-only`.
+const bool zoomRangeOnlyUpdates = bool.fromEnvironment(
+  'ZOOM_RANGE_ONLY_UPDATES',
+);
+
 /// The logical size of the test view: the flutter_test default (2400 x 1800
 /// physical pixels at a ratio of 3).
 const Size _logicalSize = Size(800, 600);
@@ -134,6 +142,17 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   ((defaults['plugins']! as JsObjectFace)['colors']!
           as JsObjectFace)['enabled'] =
       false;
+
+  // Chart.js ADR 0111, section 9: with the define, each test runs with the
+  // port-only option `rangeOnlyUpdates` in `Chart.defaults.plugins.zoom`, so
+  // each zoom and pan takes `chart.updateRanges` of the host. The results
+  // are those of the run without it. It runs before the snapshot of the
+  // restore, so the restore keeps it.
+  if (zoomRangeOnlyUpdates) {
+    ((defaults['plugins']! as JsObjectFace)['zoom']!
+            as JsObjectFace)['rangeOnlyUpdates'] =
+        true;
+  }
 
   // Upstream restores nothing. The restore keeps the order of the test
   // files from changing their results.

@@ -19,12 +19,12 @@ seams is `connects` or `zoom-side`. The column "Phase" gives the roadmap phase o
 | Upstream file | Lines | Dart file | Seams | Phase | Status |
 |---|---:|---|---|---:|---|
 | `src/types.ts` | 15 | `lib/src/types.dart` | none | 2 | ported |
-| `src/options.ts` | 209 | `lib/src/options.dart` | H1 | 2 | ported |
+| `src/options.ts` | 209 | `lib/src/options.dart` | H1, H28 | 2 | ported; the facade `ZoomPluginOptions` has the port-only getter `rangeOnlyUpdates` (row `adapt-range-only-updates`) |
 | `src/defaults.ts` | 26 | `lib/src/defaults.dart` | none | 2 | ported |
 | `src/state.ts` | 65 | `lib/src/state.dart` | H3, H6, H10 | 2 | ported |
 | `src/utils.ts` | 111 | `lib/src/utils.dart` | H6, H11, H21, H26 | 2 | ported |
 | `src/scale.types.ts` | 288 | `lib/src/scale.types.dart` | H1, H13, H14, H21 | 2 | ported |
-| `src/core.ts` | 286 | `lib/src/core.dart` | H1, H13, H14, H15, H21, H22, H26 | 2 | ported |
+| `src/core.ts` | 286 | `lib/src/core.dart` | H1, H13, H14, H15, H21, H22, H26, H28 | 2 | ported; with the port-only option `rangeOnlyUpdates`, the five updates take `chart.updateRanges` (Chart.js ADR 0111, row `adapt-range-only-updates`) |
 | `src/handlers.ts` | 322 | `lib/src/handlers.dart` | H1, H2, H3, H4, H5, H6, H7, H11 | 3 | ported |
 | `src/gestures.ts` | 395 | `lib/src/gestures.dart` | H1, H3, H4, H6, H7, H8 | 3 | ported |
 | `src/plugin.ts` | 152 | `lib/src/plugin.dart` | H9, H12, H16, H17, H19 | 3 | ported |

@@ -7,6 +7,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
     show Chart, JsObjectFace, Plugin, undefined;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../flutter_test_config.dart' show zoomRangeOnlyUpdates;
 import '../support/jasmine.dart';
 
 // `Chart.defaults.plugins.zoom` is the typed plugins scope of the host read
@@ -41,6 +42,9 @@ void main() {
         },
         'mode': 'xy',
       },
+      // The run with the port-only option of Chart.js ADR 0111 in the
+      // defaults (flutter_test_config.dart).
+      if (zoomRangeOnlyUpdates) 'rangeOnlyUpdates': true,
     };
 
     test('should be registered as global plugin options', () {
