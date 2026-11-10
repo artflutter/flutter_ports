@@ -1140,8 +1140,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/demo/gallery_components.dart` has `registerGalleryComponents` (it registers
     `registerables` once), `registerZoomComponents` (it also registers `zoomPlugin` of
     `flutter_chartjs_plugin_zoom_port` once for all charts, as the upstream docs of the plugin do;
-    only the zoom page calls it, so the stress and benchmark entries run no zoom hook) and
-    `unitScales` (the two hidden unit scales).
+    only the zoom page calls it, so the stress entry and the benchmark cases outside the mode
+    `zoom` run no zoom hook) and `unitScales` (the two hidden unit scales).
   - After the nine entries, the home list has the tile "Zoom and pan" (key `gallery.plugin.zoom`).
     It opens the zoom page `lib/plugins/zoom_page.dart`. Its variants are the ports of four samples
     of the docs of chartjs-plugin-zoom (`docs/samples/basic.md`, `drag/linear.md`,
@@ -1197,7 +1197,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `lib/bench/chart_bench.dart` is the frameless benchmark of the same cases
     (`packages/flutter_chartjs_port/doc/performance.md` §6). Its mode `motion` (`motion.line` and
     `motion.bar`) times an animated `update`, and its mode `theme` (`theme.switch`, `theme.anim`
-    and `theme.equal`) runs the internal theme switch of `ChartView`.
+    and `theme.equal`) runs the internal theme switch of `ChartView`. Its mode `zoom`
+    (`chartBenchZoomCases`, 1000 and 20000 points) times the plugin of chartjs-plugin-zoom on a
+    line chart with visible scales: `zoom.base` and `zoom.idle` (without and with the plugin),
+    and one input in each step (`zoom.wheel`, `zoom.pan`, `zoom.drag` and `zoom.pinch` dispatch
+    one event with `canvas.dispatchEvent`; `zoom.api` and `zoom.apiPan` call the zoom API). Each
+    zoom case registers the plugin for its own run only, puts the scale ranges back outside the
+    timing before each pair of steps, and gives `steps`, `stepP50Ms`, `stepP90Ms` and
+    `stepMaxMs`. The define `PROFILE_MARKS=true` prints `BENCH_MARK {json}` with `Timeline.now`
+    before and after the timed window of each case.
   - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A

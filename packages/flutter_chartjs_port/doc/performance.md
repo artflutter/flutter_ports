@@ -694,6 +694,19 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
     first). The define `N` gives the points of each dataset to all cases, also to the 100
     datasets of `plugins.line`. The stack fill at 1000 points takes about 0.1 s for each draw in
     V8, so a run of `fill` takes longer.
+  - The mode `zoom` (`chartBenchZoomCases`, after the mode `theme`, 1000 and 20000 points): the
+    plugin of chartjs-plugin-zoom on a line chart of one dataset with a visible x axis (linear,
+    and also time for `base`, `idle`, `wheel` and `pan`) and a visible linear y axis.
+    `zoom.base` and `zoom.idle` time `draw()` and `update('none')` without and with the plugin
+    and its default options. `zoom.wheel`, `zoom.pan`, `zoom.drag` and `zoom.pinch` dispatch one
+    input event in each step (`canvas.dispatchEvent`, Chart.js ADR 0108), and `zoom.api` and
+    `zoom.apiPan` call the zoom API; a step is the listener, its update and draw, and the end of
+    the recording. A case registers the plugin for its own run only. Before each pair of steps,
+    it puts the scale ranges back outside the timing, so the range stays bounded. Each line has
+    `id`, `scale`, `zoomPlugin`, `steps` and the percentiles of the single steps `stepP50Ms`,
+    `stepP90Ms` and `stepMaxMs`. The define `PROFILE_MARKS=true` prints `BENCH_MARK {json}`
+    (`id`, `n`, `scale`, `phase` and `t`, `Timeline.now` in microseconds) before and after the
+    timed window of each case.
   - Example: `flutter build apk --profile --target-platform android-arm64 -t lib/main_bench.dart
     --dart-define=CASES=c --dart-define=N=5000`. Install and start the APK, and read the lines
     with `adb logcat -d -s flutter:I`. On a cool Pixel 8a at 2.9 GHz, case c at 5000 gave an

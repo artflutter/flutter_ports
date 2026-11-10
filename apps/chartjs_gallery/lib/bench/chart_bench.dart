@@ -19,8 +19,12 @@
 /// options. The cases of the modes `motion` and `theme` (phase 9) have the
 /// default animations on a `BasicPlatform` that keeps them. The cases of
 /// the mode `theme` switch the theme with the internal theme switch of
-/// `ChartView` (Chart.js ADR 0050). Each iteration calls the chart directly
-/// and times three parts on the UI thread:
+/// `ChartView` (Chart.js ADR 0050). The cases of the mode `zoom` run the
+/// plugin of chartjs-plugin-zoom on a line chart with visible scales: each
+/// step is one input event through `canvas.dispatchEvent` (Chart.js ADR
+/// 0108), or one call of the zoom API ([chartBenchZoomCases]). Only these
+/// cases register the plugin, for their own runs. Each iteration calls the
+/// chart directly and times three parts on the UI thread:
 /// - update: `chart.update('none')` without its draw. Only the cases with
 ///   [ChartBenchCall.update] have it. For [ChartBenchCall.frame], it is the
 ///   frame without its draws: the event, the theme switch and its update,
@@ -58,6 +62,8 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show PanAmount, ScaleRange, ZoomAmount, ZoomChart, zoomPlugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: UiCanvasElement, the canvas of a chart with no host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -122,7 +128,8 @@ enum ChartBenchCall {
 
   /// One frame of [ChartBenchScene.frame]: an event or a theme switch, a
   /// tick of the animator, or both, with the draws that they cause. The data
-  /// does not change.
+  /// does not change. [ChartBenchScene.change] runs before each frame,
+  /// outside the timing.
   frame,
 
   /// `chart.update()` in the default mode, with the default animations
@@ -162,6 +169,7 @@ final class ChartBenchScene {
     this.describe,
     this.prepare,
     this.frame,
+    this.dispose,
   });
 
   /// The config of `new Chart(canvas, config)`.
@@ -176,9 +184,16 @@ final class ChartBenchScene {
   /// calls.
   final void Function(Chart chart)? frame;
 
-  /// Changes the data before each update, outside the timing. Dart `null`
-  /// for no change.
+  /// Changes the data before each update, or the state before each frame,
+  /// outside the timing. Dart `null` for no change.
   final VoidCallback? change;
+
+  /// Ends the scene after its chart is destroyed, also when the chart
+  /// throws at its construction: for example the unregister of a plugin
+  /// that the scene registered. Dart `null` for nothing to end. A caller
+  /// that makes the chart of the scene itself calls it after
+  /// `chart.destroy()`.
+  final VoidCallback? dispose;
 
   /// The ticks of a `Stopwatch` of each part of the update and the draw
   /// since the last call, by the name of the part. A call resets the parts.
@@ -214,7 +229,18 @@ final class ChartBenchCase {
     this.counts,
     this.primary,
     this.explicit = false,
+    this.stepTimes = false,
   });
+
+  /// Whether the BENCH line has the figures of the single timed steps: the
+  /// key `steps` (the count of the timed steps) and `stepP50Ms`,
+  /// `stepP90Ms` and `stepMaxMs`, the nearest-rank percentiles and the
+  /// largest time of one step, from the start of its call to the end of
+  /// its recording. The figures of the other parts are percentiles of the
+  /// batch means; these are percentiles of the steps themselves, so a slow
+  /// step (a collection of the garbage) shows in `stepP90Ms` and
+  /// `stepMaxMs`. The cases of the mode `zoom` have them.
+  final bool stepTimes;
 
   /// Whether only the full [id] selects the case ([selectedBy]). A mode, a
   /// name and the empty selection never select it. Thus an explicit case
@@ -1440,6 +1466,542 @@ final List<ChartBenchCase> _themeCases = [
   _themeEqualCase(),
 ];
 
+/// The point counts of the cases of the mode `zoom`.
+const List<int> chartBenchZoomCounts = [1000, 20000];
+
+/// The x scale types of the zoom cases `base`, `idle`, `wheel` and `pan`.
+/// The other zoom cases have a linear x axis only.
+const List<StressAxisType> chartBenchZoomScales = [
+  StressAxisType.linear,
+  StressAxisType.time,
+];
+
+/// The pan distance of the cases `zoom.pan` and `zoom.apiPan` in canvas
+/// pixels, and the move of the second finger of `zoom.pinch`.
+const double chartBenchZoomPixels = 20;
+
+/// The `deltaY` of the wheel events of `zoom.wheel`, with the sign of each
+/// step: -100 zooms in, +100 zooms out. The plugin caps it at one notch of
+/// 24 (handlers.ts:250 `MAX_DELTA`): the zoom factor is `1 + 0.1` in and
+/// `2 - 1 / (1 - 0.1)` out (handlers.ts:263-265, the default `speed`).
+const double chartBenchZoomWheelDelta = 100;
+
+/// The zoom factor of the even steps of `zoom.api` (`chart.zoom(1.05)`). The
+/// odd steps zoom by `1 / 1.05`.
+const double chartBenchZoomApiFactor = 1.05;
+
+/// The press point of `zoom.drag`, as fractions of the chart area.
+const ({double x, double y}) chartBenchDragStart = (x: 0.25, y: 0.25);
+
+/// The two end points of the moves of `zoom.drag`, in turn, as fractions of
+/// the chart area.
+const List<({double x, double y})> chartBenchDragEnds = [
+  (x: 0.75, y: 0.75),
+  (x: 0.6, y: 0.65),
+];
+
+/// The point at the fractions [fx] and [fy] of the chart area of [chart],
+/// rounded to whole canvas pixels: the points of the events of the zoom
+/// cases. `getRelativePosition` (helpers.dom.ts) rounds the position of an
+/// event, so the plugin reads the same point.
+({double x, double y}) chartBenchZoomPoint(Chart chart, double fx, double fy) {
+  final area = chart.chartArea!;
+  return (
+    x: (area.left + fx * (area.right - area.left)).roundToDouble(),
+    y: (area.top + fy * (area.bottom - area.top)).roundToDouble(),
+  );
+}
+
+/// Registers the zoom plugin for the run of one case
+/// (`Chart.register([zoomPlugin])`), unless the registry has it, and gives
+/// the unregister of that run, or Dart `null` when the plugin was there
+/// before. Thus no other case of the benchmark and no chart of the stress
+/// entry runs a hook of the plugin.
+VoidCallback? _registerZoomPlugin() {
+  if (registry.plugins.get(zoomPlugin.id) != null) return null;
+  Chart.register([zoomPlugin]);
+  return () => Chart.unregister([zoomPlugin]);
+}
+
+/// Dispatches the DOM event [type] at the canvas [point] on the canvas of
+/// [chart] with `canvas.dispatchEvent` (Chart.js ADR 0108), as the chart
+/// host does: a bubbling, cancelable event to the listeners of the canvas,
+/// then to those of its document. The fields are those of the host: a
+/// `pointer*` event has the pointer id and type, a `pointermove` has the
+/// button -1, and [buttons] are the pressed buttons. The canvas has no host,
+/// so its client box is `DOMRect.zero` (`getBoundingClientRect`) and the
+/// client point is the canvas point.
+void _zoomEvent(
+  Chart chart,
+  String type,
+  ({double x, double y}) point, {
+  int button = 0,
+  int buttons = 0,
+  int pointerId = 0,
+  String pointerType = '',
+  double deltaY = 0,
+}) {
+  chart.canvas!.dispatchEvent(
+    NativeEvent(
+      type: type,
+      offsetX: point.x,
+      offsetY: point.y,
+      clientX: point.x,
+      clientY: point.y,
+      bubbles: true,
+      cancelable: true,
+      button: button,
+      buttons: buttons,
+      pointerId: pointerId,
+      pointerType: pointerType,
+      deltaY: deltaY,
+    ),
+  );
+}
+
+/// Ends the recording of the canvas of [chart] outside the timing, as
+/// [_Loop.iterate] ends it after each step: the next step then starts from
+/// the same canvas state as after any other step.
+void _benchEndRecording(Chart chart) {
+  final recorder = ui.PictureRecorder();
+  (chart.canvas! as UiCanvasElement).getContext2d().paint(
+    ui.Canvas(recorder),
+    ui.Offset.zero,
+    1,
+    1,
+  );
+  recorder.endRecording().dispose();
+}
+
+/// Puts each scale of [chart] back to its range in [ranges] outside the
+/// timing: one call of the zoom API `chart.zoomScale(id, range, 'none')`
+/// (core.ts:125) for each scale, as an app writes a range, then the end of
+/// the recording ([_benchEndRecording]). The parts of [timing] keep their
+/// values: the updates of the restore do not count.
+void _benchRestoreRanges(
+  Chart chart,
+  Map<String, ScaleRange> ranges,
+  StressChartTiming timing,
+) {
+  final elements = timing.elementsTicks;
+  final layout = timing.layoutTicks;
+  final datasetsUpdate = timing.datasetsUpdateTicks;
+  final datasetsDraw = timing.datasetsDrawTicks;
+  for (final MapEntry(key: id, value: range) in ranges.entries) {
+    chart.zoomScale(id, range, 'none');
+  }
+  _benchEndRecording(chart);
+  timing
+    ..elementsTicks = elements
+    ..layoutTicks = layout
+    ..datasetsUpdateTicks = datasetsUpdate
+    ..datasetsDrawTicks = datasetsDraw;
+}
+
+/// The input of a zoom case: [setUp] brings the new chart into the state of
+/// the input (a pressed mouse, two fingers down), outside the timing, and
+/// [step] is the timed step `i` (from 0). With [restores], the ranges of the
+/// scales go back to their ranges after [setUp] before each even step,
+/// outside the timing ([_benchRestoreRanges]).
+final class _ZoomInput {
+  const _ZoomInput({
+    required this.setUp,
+    required this.step,
+    this.restores = true,
+  });
+
+  final void Function(Chart chart) setUp;
+  final void Function(Chart chart, int i) step;
+  final bool restores;
+}
+
+/// `zoom.wheel`: one `wheel` event at the center of the chart area in each
+/// step, with the `deltaY` -100 (zoom in) and +100 (zoom out) in turn
+/// ([chartBenchZoomWheelDelta]).
+_ZoomInput _wheelInput() {
+  var center = (x: 0.0, y: 0.0);
+  return _ZoomInput(
+    setUp: (chart) => center = chartBenchZoomPoint(chart, 0.5, 0.5),
+    step: (chart, i) => _zoomEvent(
+      chart,
+      'wheel',
+      center,
+      deltaY: i.isEven ? -chartBenchZoomWheelDelta : chartBenchZoomWheelDelta,
+    ),
+  );
+}
+
+/// `zoom.pan`: the mouse goes down at the center of the chart area and moves
+/// [chartBenchZoomPixels] to the right, past the pan threshold (10 px,
+/// gestures.ts:35): the pan starts and pans by 20 px. Each step is one
+/// `pointermove` of the pressed mouse, to the center and back in turn: a pan
+/// by -20 px, then by +20 px.
+_ZoomInput _panInput() {
+  var from = (x: 0.0, y: 0.0);
+  var to = from;
+  void move(Chart chart, ({double x, double y}) point) => _zoomEvent(
+    chart,
+    'pointermove',
+    point,
+    button: -1,
+    buttons: 1,
+    pointerId: 1,
+    pointerType: 'mouse',
+  );
+  return _ZoomInput(
+    setUp: (chart) {
+      from = chartBenchZoomPoint(chart, 0.5, 0.5);
+      to = (x: from.x + chartBenchZoomPixels, y: from.y);
+      _zoomEvent(
+        chart,
+        'pointerdown',
+        from,
+        buttons: 1,
+        pointerId: 1,
+        pointerType: 'mouse',
+      );
+      _zoomEvent(chart, 'mousedown', from, buttons: 1);
+      move(chart, to);
+    },
+    step: (chart, i) => move(chart, i.isEven ? from : to),
+  );
+}
+
+/// `zoom.drag`: the mouse goes down at [chartBenchDragStart]. Each step is
+/// one `mousemove` of the pressed mouse to an end of [chartBenchDragEnds], in
+/// turn: the plugin keeps the end and draws the chart with the drag box
+/// (handlers.ts:44-51). The mouse does not go up, so no step zooms.
+_ZoomInput _dragInput() {
+  var ends = const <({double x, double y})>[];
+  return _ZoomInput(
+    setUp: (chart) {
+      final start = chartBenchZoomPoint(
+        chart,
+        chartBenchDragStart.x,
+        chartBenchDragStart.y,
+      );
+      ends = [
+        for (final end in chartBenchDragEnds)
+          chartBenchZoomPoint(chart, end.x, end.y),
+      ];
+      _zoomEvent(
+        chart,
+        'pointerdown',
+        start,
+        buttons: 1,
+        pointerId: 1,
+        pointerType: 'mouse',
+      );
+      _zoomEvent(chart, 'mousedown', start, buttons: 1);
+    },
+    step: (chart, i) => _zoomEvent(chart, 'mousemove', ends[i % 2], buttons: 1),
+    restores: false,
+  );
+}
+
+/// `zoom.pinch`: two touch pointers go down 80 px apart on a horizontal line
+/// through the center of the chart area (the pointer ids 2 and 3, as the
+/// host gives them). Each step is one `pointermove` of the second finger,
+/// [chartBenchZoomPixels] out (a spread to 100 px, zoom 1.25) and back (a
+/// pinch to 80 px, zoom 0.8) in turn. The fingers are on a horizontal line,
+/// so only the x axis zooms (gestures.ts:63-79).
+_ZoomInput _pinchInput() {
+  var near = (x: 0.0, y: 0.0);
+  var far = near;
+  return _ZoomInput(
+    setUp: (chart) {
+      final center = chartBenchZoomPoint(chart, 0.5, 0.5);
+      near = (x: center.x + 40, y: center.y);
+      far = (x: near.x + chartBenchZoomPixels, y: center.y);
+      _zoomEvent(
+        chart,
+        'pointerdown',
+        (x: center.x - 40, y: center.y),
+        buttons: 1,
+        pointerId: 2,
+        pointerType: 'touch',
+      );
+      _zoomEvent(
+        chart,
+        'pointerdown',
+        near,
+        buttons: 1,
+        pointerId: 3,
+        pointerType: 'touch',
+      );
+    },
+    step: (chart, i) => _zoomEvent(
+      chart,
+      'pointermove',
+      i.isEven ? far : near,
+      button: -1,
+      buttons: 1,
+      pointerId: 3,
+      pointerType: 'touch',
+    ),
+  );
+}
+
+/// `zoom.api`: `chart.zoom(1.05)` and `chart.zoom(1 / 1.05)` in turn
+/// (`ZoomChart.zoom`, the mode `'none'`), around the center of the chart
+/// area.
+_ZoomInput _apiZoomInput() => _ZoomInput(
+  setUp: (_) {},
+  step: (chart, i) => chart.zoom(
+    ZoomAmount.all(
+      i.isEven ? chartBenchZoomApiFactor : 1 / chartBenchZoomApiFactor,
+    ),
+  ),
+);
+
+/// `zoom.apiPan`: `chart.pan({x: 20})` and `chart.pan({x: -20})` in turn
+/// (`ZoomChart.pan`, the mode `'none'`).
+_ZoomInput _apiPanInput() => _ZoomInput(
+  setUp: (_) {},
+  step: (chart, i) => chart.pan(
+    PanAmount(x: i.isEven ? chartBenchZoomPixels : -chartBenchZoomPixels),
+  ),
+);
+
+/// The config of a zoom case: a line chart of one dataset of the N data
+/// objects of [scene] (the x values sorted and fixed, the y values from 0 to
+/// 100, `parsing: false`) with the line and the points of the defaults, on a
+/// visible x axis of the type of [scene] and a visible linear y axis. The
+/// chart has `animation: false`, `events: []` and no legend. [zoom] is
+/// `options.plugins.zoom`, or Dart `null` for the default options of the
+/// plugin. [plugins] are the inline plugins.
+Map<String, Object?> _zoomConfig(
+  StressAxesScene scene, {
+  required Map<String, Object?>? zoom,
+  required List<Object?> plugins,
+}) => <String, Object?>{
+  'type': 'line',
+  'data': <String, Object?>{
+    'datasets': <Object?>[
+      <String, Object?>{
+        'label': 'Dataset 1',
+        'data': scene.data,
+        'borderColor': const ui.Color(0xFF36A2EB),
+        'backgroundColor': stressChartBackground,
+        'borderWidth': 1.0,
+      },
+    ],
+  },
+  'options': <String, Object?>{
+    ...chartBenchOptions,
+    'animation': false,
+    'events': <String>[],
+    'maintainAspectRatio': false,
+    'parsing': false,
+    'plugins': <String, Object?>{...stressPluginOptions(), 'zoom': ?zoom},
+    'scales': <String, Object?>{
+      'x': <String, Object?>{'type': scene.x.name},
+      'y': <String, Object?>{'type': scene.y.name},
+    },
+  },
+  'plugins': <Object?>[...plugins],
+};
+
+/// A case of the mode `zoom` with the name [name], the call [call] and an x
+/// axis of the type [scale]: the chart of [_zoomConfig] with N points and
+/// the parts of `StressChartTiming`.
+///
+/// With [plugin], the scene registers the zoom plugin for the run of the case
+/// and its dispose unregisters it ([_registerZoomPlugin]). Without it, the
+/// registry must not have the plugin. [zoom] makes `options.plugins.zoom`
+/// for each chart, or is Dart `null` for the default options.
+/// [input] makes the input of a case with [ChartBenchCall.frame]: its setup
+/// runs in the preparation, its steps in the frames, and its restores in the
+/// changes before the frames.
+///
+/// The BENCH line has the keys `id`, `scale` (the type of the x axis) and
+/// `zoomPlugin`, and the step figures ([ChartBenchCase.stepTimes]).
+ChartBenchCase _zoomCase(
+  String name,
+  ChartBenchCall call,
+  StressAxisType scale, {
+  bool plugin = true,
+  Map<String, Object?> Function()? zoom,
+  _ZoomInput Function()? input,
+}) => ChartBenchCase(
+  mode: 'zoom',
+  name: name,
+  call: call,
+  keys: {'id': 'zoom.$name', 'scale': scale.name, 'zoomPlugin': plugin},
+  counts: chartBenchZoomCounts,
+  primary: call.frameMetric,
+  stepTimes: true,
+  scene: (n) {
+    registerGalleryComponents();
+    final VoidCallback? unregister;
+    if (plugin) {
+      unregister = _registerZoomPlugin();
+    } else if (registry.plugins.get(zoomPlugin.id) != null) {
+      throw StateError('zoom.$name needs a registry without the zoom plugin');
+    } else {
+      unregister = null;
+    }
+    final axes = StressAxesScene(
+      n,
+      x: scale,
+      y: StressAxisType.linear,
+      positions: StressPointField(n),
+    );
+    final timing = StressChartTiming();
+    final steps = input?.call();
+    late Chart bound;
+    var ranges = const <String, ScaleRange>{};
+    var i = 0;
+    return ChartBenchScene(
+      config: _zoomConfig(axes, zoom: zoom?.call(), plugins: [timing.plugin]),
+      takeParts: timing.take,
+      prepare: steps == null
+          ? null
+          : (chart) {
+              bound = chart;
+              steps.setUp(chart);
+              ranges = {
+                for (final s in chart.scales.values)
+                  s.id: (min: s.min, max: s.max),
+              };
+            },
+      change: steps == null || !steps.restores
+          ? null
+          : () {
+              if (i.isEven) _benchRestoreRanges(bound, ranges, timing);
+            },
+      frame: steps == null ? null : (chart) => steps.step(chart, i++),
+      dispose: unregister,
+    );
+  },
+);
+
+/// The cases of the mode `zoom`, after the cases of the mode `theme`: the
+/// plugin of chartjs-plugin-zoom on a line chart of one dataset with a
+/// visible x axis and a visible linear y axis ([_zoomConfig]), for 1000 and
+/// 20000 points ([chartBenchZoomCounts]). Each BENCH line has the keys `id`,
+/// `scale` and `zoomPlugin`, the four parts of `StressChartTiming` and the
+/// figures of the single steps ([ChartBenchCase.stepTimes]).
+///
+/// - `zoom.base`: the chart without the zoom plugin, with `chart.draw()` and
+///   with `chart.update('none')` (no change of the data), for a linear and a
+///   time x axis.
+/// - `zoom.idle`: the same chart and calls with the zoom plugin and its
+///   default options (each input off). `zoom.idle` minus `zoom.base` is the
+///   cost of the hooks of the plugin.
+///
+/// The other cases have the call [ChartBenchCall.frame]: each step does the
+/// work of one frame with one input. The step dispatches one input event on
+/// the canvas (`canvas.dispatchEvent`, Chart.js ADR 0108), which runs the
+/// listener of the plugin at once; the listener zooms or pans the scales
+/// and updates the chart, and the update draws it (`animation: false`, so no
+/// animation waits for a frame); then the step ends the recording, as the
+/// paint of the host does. Thus `update` is the dispatch, the listener and
+/// the update without its draw, `draw` is the draw of the update, and `end`
+/// is the end of the recording. The chart has no platform listener (a
+/// `BasicPlatform`): as the host builds and dispatches only the event types
+/// that have a listener, each step dispatches only the type that the plugin
+/// listens to. No step runs the hover of the chart.
+///
+/// - `zoom.wheel` (a linear and a time x axis): `wheel.enabled`. One `wheel`
+///   event at the center of the chart area, `deltaY` -100 and +100 in turn.
+///   The listener calls `zoom(chart, amount, 'zoom', 'wheel')`
+///   (handlers.ts:275), so the update has the mode `'zoom'`, and both axes
+///   zoom (the default mode `'xy'`).
+/// - `zoom.pan` (a linear and a time x axis): `pan: {enabled: true, mode:
+///   'x'}`. The setup presses the mouse at the center (`pointerdown` and
+///   `mousedown`) and moves it past the pan threshold. One `pointermove` of
+///   the pressed mouse, -20 px and +20 px in turn: the gesture calls
+///   `pan(chart, delta, scales)` (gestures.ts:125-136), whose update has the
+///   mode `'none'` (core.ts:210).
+/// - `zoom.drag`: `zoom.drag.enabled`. The setup presses the mouse. One
+///   `mousemove` of the pressed mouse to one of two end points in turn: the
+///   listener keeps the end and calls `chart.draw()` (handlers.ts:44-51),
+///   with no update, and the hook `beforeDatasetsDraw` of the plugin draws
+///   the drag box. No step lifts the mouse.
+/// - `zoom.pinch`: `zoom.pinch.enabled`. The setup puts two touch pointers
+///   down, 80 px apart on a horizontal line. One `pointermove` of the second
+///   pointer, 20 px out and back in turn: the gesture calls `zoom(chart,
+///   amount, 'zoom', 'pinch')` (gestures.ts:98) on the x axis.
+/// - `zoom.api`: no event. `chart.zoom(1.05)` and `chart.zoom(1 / 1.05)` in
+///   turn, the mode `'none'`, both axes.
+/// - `zoom.apiPan`: no event. `chart.pan({x: 20})` and `chart.pan({x: -20})`
+///   in turn, the mode `'none'`.
+///
+/// A zoom by the factor `z` gives the range `range * (2 - z)`
+/// (scale.types.ts:36-42 and :172-176), so a zoom in and a zoom out by
+/// `1 / z` do not give the range back, and a change of the chart area
+/// between two steps (the width of the tick labels) moves the range of a
+/// pan or a zoom pair.
+/// Thus the cases that zoom or pan put the range of each scale back before
+/// each even step, outside the timing ([_benchRestoreRanges]): each pair of
+/// steps starts from the same state, and the range stays bounded. The timed
+/// steps are the input steps only. `notifies` above 0 shows that the last
+/// step reached the chart.
+final List<ChartBenchCase> chartBenchZoomCases = [
+  for (final scale in chartBenchZoomScales) ...[
+    for (final call in chartBenchDrawAndUpdate)
+      _zoomCase('base', call, scale, plugin: false),
+    for (final call in chartBenchDrawAndUpdate) _zoomCase('idle', call, scale),
+  ],
+  for (final scale in chartBenchZoomScales)
+    _zoomCase(
+      'wheel',
+      ChartBenchCall.frame,
+      scale,
+      zoom: () => <String, Object?>{
+        'zoom': <String, Object?>{
+          'wheel': <String, Object?>{'enabled': true},
+        },
+      },
+      input: _wheelInput,
+    ),
+  for (final scale in chartBenchZoomScales)
+    _zoomCase(
+      'pan',
+      ChartBenchCall.frame,
+      scale,
+      zoom: () => <String, Object?>{
+        'pan': <String, Object?>{'enabled': true, 'mode': 'x'},
+      },
+      input: _panInput,
+    ),
+  _zoomCase(
+    'drag',
+    ChartBenchCall.frame,
+    StressAxisType.linear,
+    zoom: () => <String, Object?>{
+      'zoom': <String, Object?>{
+        'drag': <String, Object?>{'enabled': true},
+      },
+    },
+    input: _dragInput,
+  ),
+  _zoomCase(
+    'pinch',
+    ChartBenchCall.frame,
+    StressAxisType.linear,
+    zoom: () => <String, Object?>{
+      'zoom': <String, Object?>{
+        'pinch': <String, Object?>{'enabled': true},
+      },
+    },
+    input: _pinchInput,
+  ),
+  _zoomCase(
+    'api',
+    ChartBenchCall.frame,
+    StressAxisType.linear,
+    input: _apiZoomInput,
+  ),
+  _zoomCase(
+    'apiPan',
+    ChartBenchCall.frame,
+    StressAxisType.linear,
+    input: _apiPanInput,
+  ),
+];
+
 /// The cases of the benchmark, in the order of a run.
 ///
 /// The mode `chart` has the cases of the stress mode chart. They have no
@@ -1483,9 +2045,10 @@ final List<ChartBenchCase> _themeCases = [
 /// BENCH lines have the key `primary`. Thus a default run times the cases
 /// of phases 5 to 7 first, in the same order as before. The cases
 /// `motion.line` and `motion.bar` of phase 9 come next ([_motionCases]),
-/// and the cases of the mode `theme` of phase 9 come last ([_themeCases]):
-/// `theme.switch`, `theme.anim` and `theme.equal`. The explicit cases of
-/// phase 10 are not in this list: see [chartBenchExplicitCases].
+/// and the cases of the mode `theme` of phase 9 come next ([_themeCases]):
+/// `theme.switch`, `theme.anim` and `theme.equal`. The cases of the mode
+/// `zoom` come last ([chartBenchZoomCases]). The explicit cases of phase 10
+/// are not in this list: see [chartBenchExplicitCases].
 final List<ChartBenchCase> chartBenchCases = [
   _stressCase('a', ChartBenchCall.draw, type: StressChartType.line),
   _stressCase('b', ChartBenchCall.update, type: StressChartType.line),
@@ -1504,6 +2067,7 @@ final List<ChartBenchCase> chartBenchCases = [
   ..._pluginCases,
   ..._motionCases,
   ..._themeCases,
+  ...chartBenchZoomCases,
 ];
 
 /// The cases of [selection], a comma list of selectors (see
@@ -1611,6 +2175,11 @@ final class _Loop {
   int drawTicks = 0;
   int endTicks = 0;
 
+  /// The ticks of each step since the list was set, from the start of the
+  /// call to the end of the recording, or Dart `null` for no step times
+  /// ([ChartBenchCase.stepTimes]). The warm-up keeps none.
+  List<int>? stepTicks;
+
   void reset() {
     updateTicks = 0;
     drawTicks = 0;
@@ -1618,11 +2187,14 @@ final class _Loop {
     takeParts?.call();
   }
 
-  /// One iteration: the change of the data for an update, then the call
-  /// and the end of the recording. The notify count of the chart starts at
-  /// 0: after the last iteration, it is the count of one iteration.
+  /// One iteration: the change of the data for an update or of the state
+  /// for a frame, then the call and the end of the recording. The notify
+  /// count of the chart starts at 0: after the last iteration, it is the
+  /// count of one iteration.
   void iterate() {
-    if (call == ChartBenchCall.update) change?.call();
+    if (call == ChartBenchCall.update || call == ChartBenchCall.frame) {
+      change?.call();
+    }
     // The animations of the last motion update end, outside the timing.
     if (call == ChartBenchCall.motion) chart.stop();
     chart
@@ -1643,7 +2215,9 @@ final class _Loop {
     final recorder = ui.PictureRecorder();
     context.paint(ui.Canvas(recorder), ui.Offset.zero, 1, 1);
     recorder.endRecording().dispose();
-    endTicks += _watch.elapsedTicks - called;
+    final ended = _watch.elapsedTicks;
+    endTicks += ended - called;
+    stepTicks?.add(ended - start);
     drawTicks += chart.drawTicks;
     updateTicks += called - start - chart.drawTicks;
   }
@@ -1680,13 +2254,21 @@ String get _buildMode => kReleaseMode
 ///   its chart to the end of the last batch. A run script can align its
 ///   samples of the core frequency with them.
 ///
+/// A case with [ChartBenchCase.stepTimes] also has the keys `steps`,
+/// `stepP50Ms`, `stepP90Ms` and `stepMaxMs` after `notifies`.
+///
 /// [onChart] receives the chart after the last batch, before the case
-/// destroys it. It lets a test examine the chart.
+/// destroys it. It lets a test examine the chart. [onWindow] gets `'start'`
+/// right before the first timed batch and `'end'` right after the last one:
+/// the timed window, without the construction, the preparation and the
+/// warm-up. After the last batch, the case destroys its chart and calls
+/// [ChartBenchScene.dispose].
 Map<String, Object?> runChartBenchCase(
   ChartBenchCase benchCase,
   int n,
   ChartBenchSettings settings, {
   ValueChanged<Chart>? onChart,
+  ValueChanged<String>? onWindow,
 }) {
   final startMs = DateTime.now().millisecondsSinceEpoch;
   final wall = Stopwatch()..start();
@@ -1695,7 +2277,13 @@ Map<String, Object?> runChartBenchCase(
     width: chartBenchWidth,
     height: chartBenchHeight,
   );
-  final chart = _BenchChart(canvas, scene.config);
+  final _BenchChart chart;
+  try {
+    chart = _BenchChart(canvas, scene.config);
+  } catch (_) {
+    scene.dispose?.call();
+    rethrow;
+  }
   final context = canvas.getContext2d();
   try {
     scene.prepare?.call(chart);
@@ -1736,6 +2324,8 @@ Map<String, Object?> runChartBenchCase(
     final draw = <double>[];
     final end = <double>[];
     final parts = <String, List<double>>{};
+    final stepTicks = loop.stepTicks = benchCase.stepTimes ? <int>[] : null;
+    onWindow?.call('start');
     for (var b = 0; b < settings.batches; b++) {
       loop.reset();
       for (var i = 0; i < batchIterations; i++) {
@@ -1749,6 +2339,7 @@ Map<String, Object?> runChartBenchCase(
         (name, ticks) => (parts[name] ??= []).add(ticks / perMs),
       );
     }
+    onWindow?.call('end');
     final wallMs = wall.elapsedMilliseconds;
     final described = scene.describe?.call(chart) ?? const {};
     onChart?.call(chart);
@@ -1763,6 +2354,17 @@ Map<String, Object?> runChartBenchCase(
       };
     }
 
+    Map<String, Object?> stepFigures(List<int> ticks) {
+      final samples = [for (final t in ticks) t / ticksPerMs]..sort();
+      String at(double p) => _percentile(samples, p).toStringAsFixed(3);
+      return {
+        'steps': samples.length,
+        'stepP50Ms': at(0.5),
+        'stepP90Ms': at(0.9),
+        'stepMaxMs': samples.last.toStringAsFixed(3),
+      };
+    }
+
     return {
       'mode': benchCase.mode,
       'case': benchCase.name,
@@ -1773,6 +2375,7 @@ Map<String, Object?> runChartBenchCase(
       'primary': ?benchCase.primary,
       'iterations': settings.batches * batchIterations,
       'notifies': chart.notifies,
+      if (stepTicks != null) ...stepFigures(stepTicks),
       if (benchCase.call != ChartBenchCall.draw) ...figures('update', update),
       ...figures('draw', draw),
       ...figures('end', end),
@@ -1792,8 +2395,12 @@ Map<String, Object?> runChartBenchCase(
       'wallMs': wallMs,
     };
   } finally {
-    chart.destroy();
-    context.dispose();
+    try {
+      chart.destroy();
+      context.dispose();
+    } finally {
+      scene.dispose?.call();
+    }
   }
 }
 

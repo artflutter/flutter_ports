@@ -1071,6 +1071,20 @@ Changes to the cited files:
   stay the same. Performance.md §31 records the bounded comparison. Canvas cut
   inventories, estimates and triggers are unchanged.
 
+- 2026-11-10, the mode `zoom` of the frameless benchmark. The gallery file of
+  A3 `lib/bench/chart_bench.dart` gets the cases `zoom.*` after the mode
+  `theme`: the zoom plugin on a line chart with visible scales, one input event
+  through `canvas.dispatchEvent` or one zoom API call in each step, and the
+  figures of the single steps. `ChartBenchScene` gets `dispose`, the loop runs
+  the untimed `change` before a frame too (no older frame case has one), and
+  `runChartBenchCase` gets the window callback of the define `PROFILE_MARKS` of
+  `main_bench.dart`. The older cases, their keys and their timed code do not
+  change, so their figures stay comparable. `stress_demo.dart`,
+  `apps/chartjs_gallery/lib/demo/chart_canvas.dart` and the library files
+  that this plan cites do not change. The references, the inventory (§1.1),
+  the tests of §2.6 and §3.5 and the estimates do not change. No trigger
+  occurred.
+
 ## 1. Why
 
 The maintainer asked to cut the code that implements again what Dart or Flutter already gives.
