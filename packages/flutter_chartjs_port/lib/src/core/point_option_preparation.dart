@@ -89,6 +89,45 @@ NativePointSizeFields? cachedNativePointSizeFields(
     ? NativePointSizeFields.of(controller.cachedPointOptions('default'))
     : null;
 
+/// The gap reads of one line or scatter loop (Chart.js ADR 0109), after the
+/// caller's exact-controller check, or Dart `null`: then each pass reads
+/// `prevParsed[iAxis]`.
+///
+/// These are the loop-wide guards: a direct update (no `updateElement`), no
+/// stack and no `segment` (no `applyStack`, no read of the dataset), the axes
+/// `x` and `y`, the chart of the controller with native reads (its pixel ratio
+/// in `getPixelForDecimal`), the native linear projection of both scales on
+/// that chart, a native list of points and a native parsed list. Each of these
+/// stays for the loop: the classes do not change, and the loop reads its
+/// locals. The live identity of the parsed list and the per-pass guards stay
+/// with [NativeGapReads] and the loop.
+@internal
+NativeGapReads? prepareNativeGapReads(
+  DatasetController controller,
+  List<types.Element> points, {
+  required bool directUpdate,
+  required bool hasStack,
+  required bool hasSegment,
+  required types.Scale iScale,
+  required types.Scale vScale,
+  required double maxGapLength,
+}) {
+  if (!directUpdate || hasStack || hasSegment) return null;
+  final chart = controller.chart;
+  return _gapAxis(iScale.axis) &&
+          _gapAxis(vScale.axis) &&
+          nativePointChart(chart) &&
+          nativePointProjection(iScale) &&
+          identical(iScale.chart, chart) &&
+          nativePointProjection(vScale) &&
+          identical(vScale.chart, chart) &&
+          nativePointList(points)
+      ? NativeGapReads.of(controller.cachedMeta, maxGapLength)
+      : null;
+}
+
+bool _gapAxis(String axis) => axis == 'x' || axis == 'y';
+
 /// Prepare a generation-checked line resolver after the exact-class check.
 /// The controller's owner guard still runs before each use. The plan validates
 /// its sources before context work. Config/resolver checks during callbacks

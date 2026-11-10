@@ -14,9 +14,10 @@
 ///   ADR 0036). The dataset options read typed ([OptionView.readKey]), and
 ///   so do the [LineOptions] of the line.
 /// - A pass of the loop of [ScatterController.updateElements] reads each
-///   key of its parsed item once, and keeps no value for the next pass (the
-///   3-read form of Chart.js ADR 0036, section 8). Each local of a parsed read
-///   names the upstream lines that it serves.
+///   key of its parsed item once (the one-read rule of Chart.js ADR 0036,
+///   section 8). It keeps its x for the next pass only under the guards of
+///   Chart.js ADR 0109. Each local of a parsed read names the upstream lines
+///   that it serves.
 /// - The properties of a point are a [PointProperties], and those of the
 ///   line a [LineProperties] (Chart.js ADR 0054 §9). The writes into the
 ///   point of a direct update and the four writes into the line
@@ -111,6 +112,10 @@ final class _PointWrites {
   /// another class, and the keys and values that the typed setters do not
   /// take.
   late types.PropertyAccess _access;
+
+  /// Whether the point of this pass takes the typed writes: an exact point of
+  /// a direct update, whose reads and writes run no user code.
+  bool get typed => _element != null;
 
   /// :127 `const properties = directUpdate ? point : {};`.
   void begin(types.Element point) {
@@ -426,14 +431,16 @@ class ScatterController extends DatasetController {
   ///   and :133 no statement writes the parsed item: `applyStack` only reads
   ///   it (core.datasetController.js:593-605), and the writes go to
   ///   `properties`.
-  /// - The read `prevParsed[iAxis]` of :133 stays a read at each pass (the
-  ///   3-read form of Chart.js ADR 0036, section 8). A local of the previous
-  ///   pass does not obey the one-read rule here: between the two reads,
+  /// - The read `prevParsed[iAxis]` of :133 is a read at each pass, unless
+  ///   the guards of Chart.js ADR 0109 prove that no user code ran since the
+  ///   read of `parsed[iAxis]` of the previous pass ([NativeGapReads]). Then
+  ///   the pass takes the x of the previous pass. Without that proof a local
+  ///   of the previous pass does not obey the one-read rule:
   ///   `resolveDataElementOptions` (:140) and the animated `updateElement`
-  ///   (:144) run the scriptable options of the user. Their context holds
-  ///   the parsed item (`ctx.parsed`), and a scriptable option can write
-  ///   its keys. The pin case `parsed: a scriptable option writes
-  ///   ctx.parsed` shows the upstream result.
+  ///   (:144) can run the scriptable options of the user. Their context holds
+  ///   the parsed item (`ctx.parsed`), and a scriptable option can write its
+  ///   keys. The pin case `parsed: a scriptable option writes ctx.parsed`
+  ///   shows the upstream result.
   @override
   void updateElements(
     List<types.Element> points,
@@ -494,9 +501,26 @@ class ScatterController extends DatasetController {
       count: count,
     );
 
+    // DIVERGES(chartjs): adapt-native-gap-reads, the x of the previous pass
+    // in place of the read of `prevParsed[iAxis]` (:133) under the guards.
+    final gaps = super.runtimeType == ScatterController
+        ? prepareNativeGapReads(
+            this,
+            points,
+            directUpdate: directUpdate,
+            hasStack: hasStack,
+            hasSegment: hasSegment,
+            iScale: iScale,
+            vScale: vScale,
+            maxGapLength: maxGapLength,
+          )
+        : null;
+
     for (var i = start; i < start + count; ++i) {
       final point = points[i.toInt()];
       final parsed = getParsed(i);
+      // The catch-up of the contexts is not part of the proof.
+      var caughtUp = false;
       if (colors != null &&
           (!nativePointElement(point) ||
               point.active ||
@@ -505,6 +529,7 @@ class ScatterController extends DatasetController {
         if (waitingFrom >= 0) {
           _catchUpContexts(contexts!, waitingFrom, i.toInt(), mode);
           waitingFrom = -1;
+          caughtUp = true;
         }
       }
       writes.begin(point);
@@ -521,18 +546,27 @@ class ScatterController extends DatasetController {
               hasStack ? applyStack(vScale, parsed, stacked) : vValue,
               i,
             );
+      // The x of a pass that qualifies (Chart.js ADR 0109), and the gap test
+      // from the x of the previous pass when that pass held it.
+      final x = gaps != null && !caughtUp && writes.typed
+          ? gaps.qualify(parsed, iValue, vValue)
+          : null;
+      final held = x == null ? null : gaps!.stopOf(x);
       writes
         ..axis(vKey, vAxis, vPixel)
         ..skip(iPixel.isNaN || vPixel.isNaN || nullData)
         // :133 `i > 0 && (Math.abs(parsed[iAxis] - prevParsed[iAxis])) >
-        // maxGapLength`. `prevParsed[iAxis]` is a read at each pass (the
-        // 3-read form, see above).
+        // maxGapLength`. `prevParsed[iAxis]` is a read at each pass without
+        // a held x (see above).
         ..stop(
-          i > 0 &&
-              (jsToNumber(iValue) -
-                          jsToNumber(parsedValueOf(prevParsed, iKey, iAxis)))
-                      .abs() >
-                  maxGapLength,
+          held ??
+              (i > 0 &&
+                  (jsToNumber(iValue) -
+                              jsToNumber(
+                                parsedValueOf(prevParsed, iKey, iAxis),
+                              ))
+                          .abs() >
+                      maxGapLength),
         );
       if (hasSegment) {
         writes
@@ -541,6 +575,9 @@ class ScatterController extends DatasetController {
           ..raw(jsGetIndex(jsGet(dataset, 'data'), i));
       }
 
+      // Whether the options of this pass can run user code: only the shared
+      // options and the prepared native plan cannot.
+      var userCode = false;
       if (includeOptions) {
         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
         // shared options.
@@ -552,6 +589,7 @@ class ScatterController extends DatasetController {
           }
           writes.options(prepared(i.toInt()));
         } else {
+          userCode = sharedOptions == null;
           writes.options(
             sharedOptions ??
                 resolveDataElementOptions(i, point.active ? 'active' : mode),
@@ -564,6 +602,7 @@ class ScatterController extends DatasetController {
       }
 
       prevParsed = parsed;
+      gaps?.held = userCode ? null : x;
       // Two ordinary resolutions populate the cached raw indexed plan. There
       // is one preparation attempt, never another after custom code runs.
       if (tryColors &&
@@ -571,6 +610,8 @@ class ScatterController extends DatasetController {
           coordinates.accepts(parsed) &&
           _nativeProjection(iScale) &&
           _nativeProjection(vScale)) {
+        // The preparation is not part of the proof.
+        gaps?.held = null;
         colors = _preparePointColors(points);
         if (colors != null) {
           contexts = prepareNativePointContexts(this, mode);
@@ -585,6 +626,7 @@ class ScatterController extends DatasetController {
     // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the plan held to the
     // end: the overflow pass of this `update_` writes each waiting context.
     _overflowPass = waitingFrom >= 0 ? overflowPass : null;
+    gaps?.finish();
     updateSharedOptions(sharedOptions, mode, firstOpts);
   }
 

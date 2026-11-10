@@ -17,7 +17,8 @@
 ///   of its parsed item once (the one-read rule of Chart.js ADR 0036,
 ///   section 8). Each local of a parsed read names the upstream lines that
 ///   it serves. The read of the previous item at :104 stays a read at each
-///   pass (the 3-read form of Chart.js ADR 0036, section 8).
+///   pass, unless the guards of Chart.js ADR 0109 prove that the x of the
+///   previous pass is still its value.
 /// - The properties of a point are a [PointProperties], and those of the
 ///   line a [LineProperties] (Chart.js ADR 0054 §9). The writes into the
 ///   point of a direct update and the four writes into the line
@@ -107,6 +108,10 @@ final class _PointWrites {
   /// another class, and the keys and values that the typed setters do not
   /// take.
   late types.PropertyAccess _access;
+
+  /// Whether the point of this pass takes the typed writes: an exact point of
+  /// a direct update, whose reads and writes run no user code.
+  bool get typed => _element != null;
 
   /// :91 `const properties = directUpdate ? point : {};`.
   void begin(types.Element point) {
@@ -356,14 +361,16 @@ class LineController extends DatasetController {
   ///   statement writes the parsed item: `applyStack` only reads it
   ///   (core.datasetController.js:593-605), and the writes go to
   ///   `properties`.
-  /// - The read `prevParsed[iAxis]` of :104 stays a read at each pass (the
-  ///   3-read form of Chart.js ADR 0036, section 8). A local of the previous
-  ///   pass does not obey the one-read rule here: between the two reads,
+  /// - The read `prevParsed[iAxis]` of :104 is a read at each pass, unless
+  ///   the guards of Chart.js ADR 0109 prove that no user code ran since the
+  ///   read of `parsed[iAxis]` of the previous pass ([NativeGapReads]). Then
+  ///   the pass takes the x of the previous pass. Without that proof a local
+  ///   of the previous pass does not obey the one-read rule:
   ///   `resolveDataElementOptions` (:111) and the animated `updateElement`
-  ///   (:115) run the scriptable options of the user. Their context holds
-  ///   the parsed item (`ctx.parsed`), and a scriptable option can write
-  ///   its keys. The pin case `parsed: a scriptable option writes
-  ///   ctx.parsed` shows the upstream result.
+  ///   (:115) can run the scriptable options of the user. Their context holds
+  ///   the parsed item (`ctx.parsed`), and a scriptable option can write its
+  ///   keys. The pin case `parsed: a scriptable option writes ctx.parsed`
+  ///   shows the upstream result.
   /// - A point out of the range takes `skip` only in a direct update: the
   ///   new object of another mode goes to no element (:93-95).
   @override
@@ -433,6 +440,21 @@ class LineController extends DatasetController {
       count: count,
     );
 
+    // DIVERGES(chartjs): adapt-native-gap-reads, the x of the previous pass
+    // in place of the read of `prevParsed[iAxis]` (:104) under the guards.
+    final gaps = super.runtimeType == LineController
+        ? prepareNativeGapReads(
+            this,
+            points,
+            directUpdate: directUpdate,
+            hasStack: hasStack,
+            hasSegment: hasSegment,
+            iScale: iScale,
+            vScale: vScale,
+            maxGapLength: maxGapLength,
+          )
+        : null;
+
     if (!tryColors) _coordinateCache.clear();
     for (var i = 0; i < pointsCount; ++i) {
       final point = points[i];
@@ -444,6 +466,7 @@ class LineController extends DatasetController {
             ..begin(point)
             ..skip(true);
         }
+        gaps?.held = null;
         continue;
       }
 
@@ -466,18 +489,27 @@ class LineController extends DatasetController {
               hasStack ? applyStack(vScale, parsed, stacked) : vValue,
               index,
             );
+      // The x of a pass that qualifies (Chart.js ADR 0109), and the gap test
+      // from the x of the previous pass when that pass held it.
+      final x = gaps != null && writes.typed
+          ? gaps.qualify(parsed, iValue, vValue)
+          : null;
+      final held = x == null ? null : gaps!.stopOf(x);
       writes
         ..axis(vKey, vAxis, vPixel)
         ..skip(iPixel.isNaN || vPixel.isNaN || nullData)
         // :104 `i > 0 && Math.abs(parsed[iAxis] - prevParsed[iAxis]) >
-        // maxGapLength`. `prevParsed[iAxis]` is a read at each pass (the
-        // 3-read form, see above).
+        // maxGapLength`. `prevParsed[iAxis]` is a read at each pass without
+        // a held x (see above).
         ..stop(
-          i > 0 &&
-              (jsToNumber(iValue) -
-                          jsToNumber(parsedValueOf(prevParsed, iKey, iAxis)))
-                      .abs() >
-                  maxGapLength,
+          held ??
+              (i > 0 &&
+                  (jsToNumber(iValue) -
+                              jsToNumber(
+                                parsedValueOf(prevParsed, iKey, iAxis),
+                              ))
+                          .abs() >
+                      maxGapLength),
         );
       if (hasSegment) {
         writes
@@ -486,6 +518,9 @@ class LineController extends DatasetController {
           ..raw(jsGetIndex(jsGet(dataset, 'data'), index));
       }
 
+      // Whether the options of this pass can run user code: only the shared
+      // options and the prepared native plan cannot.
+      var userCode = false;
       if (includeOptions) {
         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
         // shared options.
@@ -498,6 +533,7 @@ class LineController extends DatasetController {
         } else if (sharedOptions != null) {
           writes.options(sharedOptions);
         } else {
+          userCode = true;
           final optionMode = point.active ? 'active' : mode;
           resolutionIndex = i;
           ElementOptions? result;
@@ -521,11 +557,14 @@ class LineController extends DatasetController {
       }
 
       prevParsed = parsed;
+      gaps?.held = userCode ? null : x;
       if (tryColors &&
           i == start + 1 &&
           coordinates.accepts(parsed) &&
           _nativeProjection(iScale) &&
           _nativeProjection(vScale)) {
+        // The preparation is not part of the proof.
+        gaps?.held = null;
         colors = _preparePointColors(points);
         if (colors != null) _coordinateCache.prepare(pointsCount);
         resolution = _prepareLineResolution();
@@ -542,6 +581,7 @@ class LineController extends DatasetController {
       }
     }
     if (colors == null) _coordinateCache.clear();
+    gaps?.finish();
   }
 
   NativePointResolution? _prepareLineResolution() {
