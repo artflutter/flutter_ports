@@ -113,7 +113,10 @@ String? _reverseAlign(String? align) => align == 'left'
 /// `'bottom'` and `'right'`. Another position (`'chartArea'`) names no edge.
 /// JavaScript reads `undefined` there, and the arithmetic gives NaN.
 double _offsetFromEdge(Scale scale, Object? edge, double offset) {
-  final value = switch (edge) {
+  // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
+  // value that is neither null nor a String. Such a value switches as null
+  // and takes the default branch, as before.
+  final value = switch (edge is String ? edge : null) {
     'top' => scale.top,
     'left' => scale.left,
     'bottom' => scale.bottom,

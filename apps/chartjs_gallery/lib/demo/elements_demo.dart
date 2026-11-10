@@ -479,7 +479,10 @@ class ElementsDemoState extends State<ElementsDemo> {
     if (edge == true) {
       return {'top': true, 'right': true, 'bottom': true, 'left': true};
     }
-    final name = switch (edge) {
+    // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
+    // value that is neither null nor a String. Such a value switches as null
+    // and takes the default branch, as before.
+    final name = switch (edge is String ? edge : null) {
       'start' => 'bottom',
       'end' => 'top',
       _ => '$edge',

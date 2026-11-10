@@ -4,6 +4,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:test/test.dart';
 
 // The pure tests of `lttbDecimation` and `minMaxDecimation` of
@@ -17,6 +19,10 @@ import 'package:test/test.dart';
 // It logged one JSON line for each case, with the same case name, and each
 // expected value here is the value of that line. `'<undefined>'` there is
 // the `undefined` sentinel here.
+//
+// The group `beforeElementsUpdate` runs the hook of the plugin object over
+// fake chart members up to its switch on the option `algorithm`
+// (plugin.decimation.js:268-278).
 
 /// [n] items `{x: i, y: f(i)}`.
 List<Object?> _series(int n, Object? Function(int i) f) => <Object?>[
@@ -64,6 +70,83 @@ void _expectItems(List<Object?> actual, List<Object?> expected) {
 
 /// `{x, y}`.
 AnyObject _p(Object? x, Object? y) => <String, Object?>{'x': x, 'y': y};
+
+/// The chart members that `beforeElementsUpdate` reads before its switch
+/// on `algorithm`: one line dataset with [data] on a linear x scale, with
+/// `parsing: false`.
+final class _Chart implements types.Chart {
+  _Chart(List<Object?> data)
+    : data = <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{'data': data},
+        ],
+      };
+
+  @override
+  final Object data;
+
+  @override
+  final Object options = <String, Object?>{'parsing': false};
+
+  @override
+  double width = 10;
+
+  @override
+  final Map<String, types.Scale> scales = {'x': _Scale()};
+
+  @override
+  types.ChartMeta getDatasetMeta(num datasetIndex) => _Meta(scales['x']);
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// The meta of a line dataset on the scale `x`.
+final class _Meta implements types.ChartMeta {
+  _Meta(this.iScale);
+
+  @override
+  types.Scale? iScale;
+
+  @override
+  Object? xAxisID = 'x';
+
+  @override
+  final types.DatasetController controller = _Controller();
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A controller that supports the decimation, as the line controller does.
+final class _Controller implements types.DatasetController {
+  @override
+  bool get supportsDecimation => true;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A linear scale `x` without user bounds.
+final class _Scale implements types.Scale {
+  @override
+  String get type => 'linear';
+
+  @override
+  String get axis => 'x';
+
+  @override
+  ({double min, double max, bool minDefined, bool maxDefined})
+  getUserBounds() => (
+    min: double.nan,
+    max: double.nan,
+    minDefined: false,
+    maxDefined: false,
+  );
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   group('lttbDecimation', () {
@@ -404,6 +487,52 @@ void main() {
         ),
         [_p(0, 1)],
       );
+    });
+  });
+
+  group('beforeElementsUpdate', () {
+    // 50 points are above the threshold 4 x width (40). Thus the hook
+    // reaches its switch. Another algorithm throws the Error of :277, with
+    // the template text of the value. dart2wasm of Dart 3.14.0-315.3.beta
+    // trapped on the String switch for a value that is neither null nor a
+    // String.
+    for (final (algorithm, text) in <(Object?, String)>[
+      ('nope', 'nope'),
+      (null, 'null'),
+      (undefined, 'undefined'),
+      (5.0, '5'),
+      (true, 'true'),
+      (<String, Object?>{}, '[object Object]'),
+    ]) {
+      test('the algorithm $text throws', () {
+        final chart = _Chart(_series(50, _wave));
+        expect(
+          () => decimation.beforeElementsUpdate!(
+            chart,
+            PluginHookArgs(),
+            <String, Object?>{'enabled': true, 'algorithm': algorithm},
+          ),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              "Unsupported decimation algorithm '$text'",
+            ),
+          ),
+        );
+      });
+    }
+
+    test('the algorithm min-max decimates', () {
+      final chart = _Chart(_series(50, _wave));
+      decimation.beforeElementsUpdate!(chart, PluginHookArgs(), {
+        'enabled': true,
+        'algorithm': 'min-max',
+      });
+      final datasets = (chart.data as AnyObject)['datasets']! as List<Object?>;
+      final dataset = datasets.single! as AnyObject;
+      expect(dataset['_data'], hasLength(50));
+      expect(dataset['_decimated'], isA<List<Object?>>());
     });
   });
 }
