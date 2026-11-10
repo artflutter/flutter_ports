@@ -872,12 +872,19 @@ final class UiCanvasContext
     return true;
   }
 
+  /// Makes the canvas of each new recording from its recorder, for the tests
+  /// that log the native draw calls. With `null`, the recording draws on
+  /// `ui.Canvas(recorder)`.
+  @visibleForTesting
+  static ui.Canvas Function(ui.PictureRecorder recorder)? debugRecordingCanvas;
+
   /// Starts a recording. The clips of the saved states are replayed, with a
   /// save for each state with a clip of its own ([_ownsClips]), so that the
   /// `ui.Canvas` stack matches the clips of the state stack.
   ui.Canvas _begin() {
     final recorder = _recorder = ui.PictureRecorder();
-    final canvas = _canvas = ui.Canvas(recorder);
+    final canvas = _canvas =
+        debugRecordingCanvas?.call(recorder) ?? ui.Canvas(recorder);
     var applied = 0;
     for (var i = 0; i <= _depth; i++) {
       final clips = _states[i].clips;
@@ -1876,8 +1883,21 @@ final class UiCanvasContext
   double _circleRunWidth = 0;
   bool _circleRunStroke = false;
 
+  /// Whether [tryAddRunCircle] lets the batch hold a run
+  /// ([CircleBatch.hold]): its circles after the first then take no test of
+  /// [_batchCircle]. Only the tests set it to false, for a comparison of the
+  /// two forms.
+  @visibleForTesting
+  static bool debugHoldCircleRuns = true;
+
+  /// Whether the batch holds the current circle run, for tests.
+  @visibleForTesting
+  bool get debugCircleRunHeld => _batch.holdsRun;
+
   @override
   bool tryStartCircleRun(double radius, {required bool stroke}) {
+    // The radius, the width or the colors may differ from the last run.
+    _batch.release();
     final s = _s;
     final t = s.transform;
     final fill = s.fillColor;
@@ -1907,7 +1927,7 @@ final class UiCanvasContext
       }
       width = s.lineWidth * t.scaleFactor;
     }
-    // The tests of [_batchCircle] for each draw of the run.
+    // The radius test of [_batchCircle], once for the run.
     if (!(mapped + width / 2 <= maxBatchRadius)) return false;
     _circleRunRadius = mapped;
     _circleRunWidth = width;
@@ -1925,17 +1945,29 @@ final class UiCanvasContext
     if (!(px.abs() <= maxBatchCenter && py.abs() <= maxBatchCenter)) {
       return false;
     }
+    final fill = s.fillColor!;
+    final strokeColor = s.strokeColor;
+    // A held run: the tests of [_batchCircle] would pass again. The run proved
+    // the bounds of the radius and the width and the colors, the center is
+    // proved above, the first circle ended the sector run, and the batch takes
+    // each circle of the held run with no flush.
+    if (_batch.addHeld(px, py, fill, _circleRunStroke ? strokeColor : null)) {
+      _drew(batched: true);
+      return true;
+    }
     final radius = _circleRunRadius;
-    _batchCircle(px, py, radius, s.fillColor!, stroke: false);
+    final width = _circleRunWidth;
+    var added = _batchCircle(px, py, radius, fill, stroke: false);
     if (_circleRunStroke) {
-      _batchCircle(
-        px,
-        py,
-        radius,
-        s.strokeColor!,
-        stroke: true,
-        width: _circleRunWidth,
-      );
+      final stroke = strokeColor!;
+      added =
+          _batchCircle(px, py, radius, stroke, stroke: true, width: width) &&
+          added;
+      if (added && debugHoldCircleRuns) {
+        _batch.hold(radius, fill, stroke, width);
+      }
+    } else if (added && debugHoldCircleRuns) {
+      _batch.hold(radius, fill, null, width);
     }
     return true;
   }

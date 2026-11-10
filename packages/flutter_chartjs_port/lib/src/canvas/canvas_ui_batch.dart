@@ -37,6 +37,14 @@
 /// transform of each instance scales its master to the exact radius, at the
 /// exact center.
 ///
+/// A run of point markers (Chart.js ADR 0104) has one radius, one width and
+/// the same colors for each circle. Once [CircleBatch.accepts] has taken a
+/// circle of the run, [CircleBatch.hold] keeps the run, and
+/// [CircleBatch.addHeld] adds each further circle with no test:
+/// [CircleBatch.accepts] would take each one, and [CircleBatch.add] would
+/// change only the instances. Any other add, a flush and the start of
+/// another run end the held run.
+///
 /// The batch reads a color as 32 bits of sRGB, in `toARGB32`. A color that
 /// these bits do not keep draws directly (see [batchKeepsColor]).
 library;
@@ -259,6 +267,15 @@ final class CircleBatch {
   bool _varying = false;
   // The fills at the end of a varying run with its last radius.
   int _streak = 0;
+  // A run of circles that [hold] took: see [addHeld]. [add], [flush] and
+  // [clear] end it.
+  bool _held = false;
+  // The stroke color of the held run, or `null` for a run of fills only.
+  ui.Color? _heldStroke;
+  // The ARGB colors of the held run, for a run with a color for each
+  // instance: the values of `toARGB32` that [add] stores.
+  int _heldFillArgb = 0;
+  int _heldStrokeArgb = 0;
 
   // For each instance: x, y (the center), the kind (0 fill, 1 stroke) and,
   // in a run with a color for each instance, the ARGB color.
@@ -334,6 +351,7 @@ final class CircleBatch {
     required bool stroke,
     double width = 0,
   }) {
+    _held = false;
     if (length == 0) {
       _radius = radius;
       _fill = null;
@@ -363,14 +381,69 @@ final class CircleBatch {
     } else {
       _fill = color;
     }
-    if (length == _xs.length) _grow();
-    _xs[length] = x;
-    _ys[length] = y;
-    _kinds[length] = stroke ? 1 : 0;
-    if (_colored) _colors[length] = color.toARGB32();
-    if (length < minLadderRun) _exact[length] = color;
-    if (_varying) _radii[length] = radius;
-    length++;
+    final n = length;
+    _push(x, y, stroke ? 1 : 0, _colored ? color.toARGB32() : 0, color);
+    if (_varying) _radii[n] = radius;
+  }
+
+  /// Whether a run of circles of [radius] holds: [accepts] gives true for
+  /// each further fill in [fill] and, for a [stroke] color, each further
+  /// stroke in [stroke] of [width], and [add] then changes no state of the run
+  /// but its instances. The run holds while it has one radius and its last
+  /// fill and stroke were these colors, and it has no varying radii. A held
+  /// run takes [addHeld] until [add], [flush], [clear] or [release].
+  ///
+  /// The caller gives the radius, the colors and the width of the circles of
+  /// its last [add] calls, which [accepts] took.
+  bool hold(double radius, ui.Color fill, ui.Color? stroke, double width) {
+    if (length == 0 ||
+        _varying ||
+        radius != _radius ||
+        !identical(_fill, fill) ||
+        (stroke != null && (!identical(_stroke, stroke) || _width != width))) {
+      return false;
+    }
+    _held = true;
+    _heldStroke = stroke;
+    if (_colored) {
+      _heldFillArgb = fill.toARGB32();
+      _heldStrokeArgb = stroke == null ? 0 : stroke.toARGB32();
+    }
+    return true;
+  }
+
+  /// Whether the batch holds a run ([hold]).
+  bool get holdsRun => _held;
+
+  /// Ends the held run: the next circle takes [accepts] and [add].
+  void release() {
+    _held = false;
+  }
+
+  /// Adds the fill in [fill] and, for a [stroke] color, the stroke in
+  /// [stroke] of one more circle of the held run at (x, y), as [accepts] and
+  /// [add] would. Returns false, with no change, unless the batch holds a run
+  /// of these identical colors ([hold]).
+  bool addHeld(double x, double y, ui.Color fill, ui.Color? stroke) {
+    if (!_held || !identical(fill, _fill) || !identical(stroke, _heldStroke)) {
+      return false;
+    }
+    _push(x, y, 0, _heldFillArgb, fill);
+    if (stroke != null) _push(x, y, 1, _heldStrokeArgb, stroke);
+    return true;
+  }
+
+  /// Appends one instance: its center, its kind, its ARGB color (read only in
+  /// a run with a color for each instance) and its exact color.
+  void _push(double x, double y, int kind, int argb, ui.Color color) {
+    final n = length;
+    if (n == _xs.length) _grow();
+    _xs[n] = x;
+    _ys[n] = y;
+    _kinds[n] = kind;
+    if (_colored) _colors[n] = argb;
+    if (n < minLadderRun) _exact[n] = color;
+    length = n + 1;
   }
 
   /// Gives each instance of the run the fill or the stroke color of the run.
@@ -394,11 +467,13 @@ final class CircleBatch {
 
   /// Empties the run without a draw.
   void clear() {
+    _held = false;
     length = 0;
   }
 
   /// Draws the run on [canvas], in order, and empties it.
   void flush(ui.Canvas canvas) {
+    _held = false;
     final n = length;
     if (n == 0) return;
     final direct = directLength;
