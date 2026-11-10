@@ -100,6 +100,9 @@ melos:
     test:fixtures:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart --fixtures
       description: Run the fixture smoke tests of flutter_chartjs_port (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
+    test:fixtures:zoom:
+      run: cd packages/flutter_chartjs_plugin_zoom_port && flutter test --tags fixtures test/specs/fixtures_test.dart
+      description: Run the 12 upstream fixtures of flutter_chartjs_plugin_zoom_port (the tag fixtures, seam H24) and compare their scale ranges at the snapshot points with test/fixtures/fixtures_reference.dart. Without the submodule third_party/chartjs-plugin-zoom, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
     test:cases:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart
       description: Run the flutter_chartjs_port spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.

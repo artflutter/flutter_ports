@@ -118,6 +118,11 @@ jobs:
     # shallow checkout of third_party/Chart.js. FIXTURES_REQUIRED=1 makes a
     # fixture fail, not skip, when the checkout is missing.
     #
+    # The job also runs the 12 upstream fixtures of the add-on port
+    # flutter_chartjs_plugin_zoom_port (test:fixtures:zoom, seam H24) with the
+    # same runner, its manifest test/fixtures/manifest.json and a shallow
+    # checkout of third_party/chartjs-plugin-zoom.
+    #
     # The job is also the pinned runner of the theme goldens of
     # packages/flutter_chartjs_port/doc/theming.md section 8 test 9 (Chart.js
     # ADR 0050, "Goldens"). The font manager of the platform rasterizes the
@@ -137,11 +142,16 @@ jobs:
         run: |
           printf '{\n  "flutter": "%s"\n}\n' "$FLUTTER_VERSION" > .fvmrc
           cat .fvmrc
-      - name: Check out third_party/Chart.js
-        run: git submodule update --init --depth 1 -- third_party/Chart.js
+      - name: Check out third_party/Chart.js and third_party/chartjs-plugin-zoom
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/chartjs-plugin-zoom
       - uses: ./.github/actions/setup
       - if: ${{ !inputs.update_goldens }}
         run: dart run melos run test:fixtures
+        env:
+          FIXTURES_REQUIRED: "1"
+      - name: Run the zoom fixtures
+        if: ${{ !inputs.update_goldens }}
+        run: dart run melos run test:fixtures:zoom
         env:
           FIXTURES_REQUIRED: "1"
       - name: Compare the theme goldens
