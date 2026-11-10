@@ -283,8 +283,8 @@ const int _arcCode = 4; // cx, cy, rx, ry, start, sweep, forceMoveTo (1 or 0)
 const int _rrectCode = 5; // the ui.RRect in UiPathBuilder._rrects
 const int _closeCode = 6;
 
-/// The fewest commands of a path that the context draws in pieces (Chart.js ADR
-/// 0105). A shorter path costs little as one draw.
+/// The fewest commands of a path that the context fills in pieces, and of a
+/// stroke in pieces off a desktop system (Chart.js ADR 0113).
 const int minPieceCommands = 128;
 
 /// The most commands of a piece of a long path.
@@ -490,7 +490,7 @@ final class UiPathBuilder implements CanvasPath {
     return _path;
   }
 
-  /// Fills a long deferred path in pieces (Chart.js ADR 0105), when it has the
+  /// Fills a long deferred path in pieces (Chart.js ADR 0113), when it has the
   /// shape of a line over a horizontal base: one subpath with a top edge that
   /// goes up in x, in lines and cubic curves, then lines along the base back to
   /// its start, then a close.
@@ -1904,20 +1904,35 @@ final class _CachedPath {
 }
 
 /// A [CanvasPath] that cuts a stroke path into short `ui.Path` pieces, in user
-/// space (Chart.js ADR 0105). It has the rules of [UiPathBuilder] for a
+/// space (Chart.js ADR 0113). It has the rules of [UiPathBuilder] for a
 /// coordinate that is not finite and for a path with no subpath.
 ///
 /// A piece that ends at a cut also takes the commands after the cut, for a
-/// length of about [_strokePieceOverlap] bitmap pixels, so that the engine
-/// makes the join at the cut from the real segments, and the start of the next
-/// piece lies inside this piece. A long straight segment is cut to that length.
-/// A command that a line chart does not use fails the whole form.
+/// length of about [_strokePieceOverlap] bitmap pixels, and of at least
+/// [_curveOverlapWidths] line widths over a curve, so that the engine makes the
+/// join at the cut from the real segments, and the start of the next piece
+/// lies inside this piece. A longer segment is cut to that length: a straight
+/// one at that point, a curve at the parameter of that length (de Casteljau),
+/// so that its part has the geometry and the start tangent of the curve
+/// (Chart.js ADR 0113). The close of a path that a cut divided takes the first
+/// commands of the subpath with the same rule. A command that a line chart
+/// does not use fails the whole form.
 final class UiPathPieces implements CanvasPath {
   /// Pieces for a transform of the uniform scale [scale] and the line width
   /// [lineWidth].
   UiPathPieces(this.scale, this.lineWidth)
     : _area = maxPieceArea / (scale * scale),
-      _reach = _strokePieceOverlap / scale;
+      _reach = _strokePieceOverlap / scale,
+      _curveReach = math.max(
+        _strokePieceOverlap / scale,
+        _curveOverlapWidths * lineWidth,
+      );
+
+  /// The overlap of a piece over a curve, in line widths. On a curve that
+  /// turns within a line width of the cut, the start of the next piece has no
+  /// join, and the engine leaves a notch on the inner side of the turn. The
+  /// piece before the cut covers it with the turn and the join.
+  static const double _curveOverlapWidths = 2;
 
   /// The uniform scale that the limits of a piece use.
   final double scale;
@@ -1926,6 +1941,7 @@ final class UiPathPieces implements CanvasPath {
   final double lineWidth;
   final double _area;
   final double _reach;
+  final double _curveReach;
 
   /// The pieces.
   final List<ui.Path> pieces = [];
@@ -2040,10 +2056,26 @@ final class UiPathPieces implements CanvasPath {
   ) {
     final tail = _tail;
     if (tail == null) return;
+    final (t, length) = _curveLengthAt(
+      _x,
+      _y,
+      cp1x,
+      cp1y,
+      cp2x,
+      cp2y,
+      x,
+      y,
+      math.max(_tailLeft, _curveReach),
+    );
+    if (t < 1) {
+      // A longer curve: the join needs only its first part.
+      final part = _curvePart(_x, _y, cp1x, cp1y, cp2x, cp2y, x, y, t);
+      tail.cubicTo(part[0], part[1], part[2], part[3], part[4], part[5]);
+      _endTail();
+      return;
+    }
     tail.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
-    final dx = x - _x;
-    final dy = y - _y;
-    _tailLeft -= math.sqrt(dx * dx + dy * dy);
+    _tailLeft -= length;
     if (_tailLeft <= 0) _endTail();
   }
 
@@ -2055,11 +2087,53 @@ final class UiPathPieces implements CanvasPath {
     _include(x, y);
   }
 
-  void _noteFirst(List<double> numbers, double length) {
+  /// Notes a line from the current point to (x, y) of [length] as a first
+  /// command of the subpath, cut to the length that the close still needs.
+  void _noteFirstLine(double x, double y, double length) {
     if (_firstLeft <= 0) return;
-    _firstNumbers.addAll(numbers);
-    _firstSizes.add(numbers.length);
+    if (length > _firstLeft) {
+      final t = _firstLeft / length;
+      _firstNumbers
+        ..add(_x + (x - _x) * t)
+        ..add(_y + (y - _y) * t);
+    } else {
+      _firstNumbers
+        ..add(x)
+        ..add(y);
+    }
+    _firstSizes.add(2);
     _firstLeft -= length;
+  }
+
+  /// Notes a curve from the current point as a first command of the subpath,
+  /// cut to the length that the close still needs.
+  void _noteFirstCurve(
+    double cp1x,
+    double cp1y,
+    double cp2x,
+    double cp2y,
+    double x,
+    double y,
+  ) {
+    if (_firstLeft <= 0) return;
+    final (t, length) = _curveLengthAt(
+      _x,
+      _y,
+      cp1x,
+      cp1y,
+      cp2x,
+      cp2y,
+      x,
+      y,
+      math.max(_firstLeft, _curveReach),
+    );
+    _firstNumbers.addAll(
+      t < 1
+          ? _curvePart(_x, _y, cp1x, cp1y, cp2x, cp2y, x, y, t)
+          : [cp1x, cp1y, cp2x, cp2y, x, y],
+    );
+    _firstSizes.add(6);
+    _firstLeft = t < 1 ? 0 : _firstLeft - length;
   }
 
   void _openAfterClose() {
@@ -2103,7 +2177,7 @@ final class UiPathPieces implements CanvasPath {
     final dx = x - _x;
     final dy = y - _y;
     final length = math.sqrt(dx * dx + dy * dy);
-    _noteFirst([x, y], length);
+    _noteFirstLine(x, y, length);
     _cutBefore(x, y, zeroLength: length == 0);
     if (_tail != null) _tailLine(x, y);
     _current!.lineTo(x, y);
@@ -2145,7 +2219,7 @@ final class UiPathPieces implements CanvasPath {
     final dy = y - _y;
     final chord = math.sqrt(dx * dx + dy * dy);
     final zero = chord == 0 && cp1x == x && cp1y == y && cp2x == x && cp2y == y;
-    _noteFirst([cp1x, cp1y, cp2x, cp2y, x, y], chord);
+    _noteFirstCurve(cp1x, cp1y, cp2x, cp2y, x, y);
     _cutBefore(x, y, zeroLength: zero);
     if (_tail != null) _tailCurve(cp1x, cp1y, cp2x, cp2y, x, y);
     _current!.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
@@ -2241,6 +2315,75 @@ final class UiPathPieces implements CanvasPath {
   @override
   void roundRect(double x, double y, double w, double h, [Object? radii]) =>
       failed = true;
+}
+
+/// The parameter at which the cubic curve from (x0, y0), with the control
+/// points (x1, y1) and (x2, y2) and the end (x3, y3), reaches the length
+/// [need], and the length up to it. The length is that of the polyline of 16
+/// equal steps of the parameter, with a linear step inside the step that
+/// reaches [need]. A shorter curve gives the parameter 1 and its length.
+(double, double) _curveLengthAt(
+  double x0,
+  double y0,
+  double x1,
+  double y1,
+  double x2,
+  double y2,
+  double x3,
+  double y3,
+  double need,
+) {
+  const steps = 16;
+  var px = x0;
+  var py = y0;
+  var length = 0.0;
+  for (var i = 1; i <= steps; i++) {
+    final t = i / steps;
+    final u = 1 - t;
+    final a = u * u * u;
+    final b = 3 * u * u * t;
+    final c = 3 * u * t * t;
+    final d = t * t * t;
+    final x = a * x0 + b * x1 + c * x2 + d * x3;
+    final y = a * y0 + b * y1 + c * y2 + d * y3;
+    final dx = x - px;
+    final dy = y - py;
+    final step = math.sqrt(dx * dx + dy * dy);
+    if (step > 0 && length + step >= need) {
+      return ((i - 1 + (need - length) / step) / steps, need);
+    }
+    length += step;
+    px = x;
+    py = y;
+  }
+  return (1, length);
+}
+
+/// The control points and the end of the part of the cubic curve from
+/// (x0, y0) up to the parameter [t] (de Casteljau): the same geometry, with
+/// the start and the start tangent of the curve.
+List<double> _curvePart(
+  double x0,
+  double y0,
+  double x1,
+  double y1,
+  double x2,
+  double y2,
+  double x3,
+  double y3,
+  double t,
+) {
+  final ax = x0 + (x1 - x0) * t;
+  final ay = y0 + (y1 - y0) * t;
+  final mx = x1 + (x2 - x1) * t;
+  final my = y1 + (y2 - y1) * t;
+  final rx = x2 + (x3 - x2) * t;
+  final ry = y2 + (y3 - y2) * t;
+  final bx = ax + (mx - ax) * t;
+  final by = ay + (my - ay) * t;
+  final sx = mx + (rx - mx) * t;
+  final sy = my + (ry - my) * t;
+  return [ax, ay, bx, by, bx + (sx - bx) * t, by + (sy - by) * t];
 }
 
 final UiTransform _identity = UiTransform();

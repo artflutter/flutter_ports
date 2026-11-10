@@ -8,6 +8,10 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, debugDefaultTargetPlatformOverride;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
@@ -100,12 +104,15 @@ Future<(Render, Render, int)> _fills(
   return (await one(pieces: false), await one(pieces: true), draws);
 }
 
-/// Strokes [shape] as a `Path2D` in both forms.
+/// Strokes [shape] as a `Path2D` in both forms, with the line join [join], on
+/// a canvas of 500 x [height] pixels.
 Future<(Render, Render, int)> _strokes(
   void Function(CanvasPath) shape, {
   _Setup setup = _none,
   ui.Color color = _blue,
   double width = 2,
+  String join = 'miter',
+  int height = 300,
 }) async {
   var draws = -1;
   Future<Render> one({required bool pieces}) => renderContext(
@@ -114,25 +121,112 @@ Future<(Render, Render, int)> _strokes(
       setup(ctx);
       ctx.strokeStyle = color;
       ctx.lineWidth = width;
+      ctx.lineJoin = join;
       final path = Path2D();
       shape(path);
       ctx.stroke(path);
       if (pieces) draws = ctx.debugPieceDraws;
     },
     width: 500,
-    height: 300,
+    height: height,
   );
   return (await one(pieces: false), await one(pieces: true), draws);
+}
+
+/// The systems that Flutter reports for a browser on a desktop (Chart.js ADR
+/// 0113).
+const _desktop = <TargetPlatform>[
+  TargetPlatform.macOS,
+  TargetPlatform.windows,
+  TargetPlatform.linux,
+];
+
+/// The other systems. Null keeps the system of the test, Android, which
+/// Flutter also reports for a browser on an unknown system.
+const _otherSystems = <TargetPlatform?>[
+  null,
+  TargetPlatform.android,
+  TargetPlatform.iOS,
+  TargetPlatform.fuchsia,
+];
+
+/// Runs [body] with [platform] as the system of the browser, then restores
+/// the system of the test.
+Future<T> _on<T>(TargetPlatform? platform, Future<T> Function() body) async {
+  debugDefaultTargetPlatformOverride = platform;
+  try {
+    return await body();
+  } finally {
+    debugDefaultTargetPlatformOverride = null;
+  }
+}
+
+/// A short line of [commands] commands on a canvas of 500 x 400 pixels, with
+/// large jumps, so that the pieces cut it at most of its vertices. A [closed]
+/// line has the form of the line of a radar: a move, the segments to the other
+/// points, a segment back to the first point and a close.
+void _shortLine(
+  CanvasPath p,
+  int commands, {
+  required bool curved,
+  required bool closed,
+}) {
+  final r = math.Random(commands * 4 + (curved ? 2 : 0) + (closed ? 1 : 0));
+  final points = <(double, double)>[];
+  if (closed) {
+    // A move, the segments of the points after the first, a segment back to
+    // the first point and a close.
+    final count = math.max(commands - 2, 1);
+    for (var i = 0; i < count; i++) {
+      final a = -math.pi / 2 + i * 2 * math.pi / count;
+      final radius = 40 + 150 * r.nextDouble();
+      points.add((250 + radius * math.cos(a), 200 + radius * math.sin(a)));
+    }
+    if (commands >= 3) points.add(points.first);
+  } else {
+    for (var i = 0; i < commands; i++) {
+      final x = commands == 1 ? 20.0 : 20 + i * 460 / (commands - 1);
+      points.add((x, 30 + 340 * r.nextDouble()));
+    }
+  }
+  final (x0, y0) = points.first;
+  p.moveTo(x0, y0);
+  for (var i = 1; i < points.length; i++) {
+    final (px, py) = points[i - 1];
+    final (x, y) = points[i];
+    if (curved) {
+      // The control points of a monotone line in x, and of a smooth ring.
+      final dx = (x - px) * .3;
+      final dy = closed ? (y - py) * .3 : 0;
+      p.bezierCurveTo(px + dx, py + dy, x - dx, y - dy, x, y);
+    } else {
+      p.lineTo(x, y);
+    }
+  }
+  if (closed) p.closePath();
 }
 
 /// The look holds: no pixel flips, and the inked area stays within 1.5%. The
 /// test engine draws on the CPU and takes another anti-aliasing for a complex
 /// path, so that edge pixels differ with no change of shape.
-void _sameLook(Render a, Render b) {
+void _sameLook(Render a, Render b, [String why = '']) {
   final diff = comparePixels(a, b);
-  expect(diff.opaqueFlips, 0, reason: '$diff');
-  expect(diff.solidDiffering, 0, reason: '$diff');
-  expect(diff.inkRatio, lessThan(.015), reason: '$diff');
+  expect(diff.opaqueFlips, 0, reason: '$why $diff');
+  expect(diff.solidDiffering, 0, reason: '$why $diff');
+  expect(diff.inkRatio, lessThan(.015), reason: '$why $diff');
+}
+
+/// The bytes of the bitmap of [chart].
+Future<Render> _chartRender(WidgetTester tester, Chart chart) async {
+  final source = (chart.canvas! as UiCanvasElement).toImageSource();
+  final data = await tester.runAsync(source.image.toByteData);
+  final render = Render(
+    data!.buffer.asUint8List(),
+    source.image.width,
+    source.image.height,
+  );
+  source.image.dispose();
+  return render;
 }
 
 void main() {
@@ -483,25 +577,65 @@ void main() {
       _sameLook(a, b);
     });
 
-    test('short paths and other commands keep one draw', () async {
-      for (final shape in <void Function(CanvasPath)>[
-        (p) => _top(p, 100),
-        (p) {
-          _top(p, 300);
-          p.arc(100, 100, 20, 0, 3);
-        },
-        (p) {
-          _top(p, 300);
-          p.quadraticCurveTo(10, 10, 20, 20);
-        },
-        (p) {
-          _top(p, 300);
-          p.rect(10, 10, 20, 20);
-        },
-      ]) {
-        final (a, b, draws) = await _strokes(shape);
-        expect(draws, 0);
-        expect(comparePixels(a, b).differing, 0);
+    test('a short path keeps one draw off a desktop system', () async {
+      for (final platform in _otherSystems) {
+        await _on(platform, () async {
+          expect(UiCanvasContext.strokePieceMinCommands, minPieceCommands);
+          for (final commands in [2, 10, 100, minPieceCommands - 1]) {
+            final (a, b, draws) = await _strokes((p) => _top(p, commands));
+            expect(draws, 0, reason: '$platform $commands');
+            expect(comparePixels(a, b).differing, 0);
+          }
+          final (a, b, draws) = await _strokes(
+            (p) => _top(p, minPieceCommands),
+          );
+          expect(draws, 1, reason: '$platform');
+          _sameLook(a, b);
+        });
+      }
+    });
+
+    test('a desktop system strokes a path in pieces from 2 commands', () async {
+      for (final platform in _desktop) {
+        await _on(platform, () async {
+          expect(UiCanvasContext.strokePieceMinCommands, 2);
+          final (a, b, draws) = await _strokes((p) => p.moveTo(10, 10));
+          expect(draws, 0, reason: '$platform');
+          expect(comparePixels(a, b).differing, 0);
+          for (final commands in [2, 3, 100]) {
+            final (a, b, draws) = await _strokes((p) => _top(p, commands));
+            expect(draws, 1, reason: '$platform $commands');
+            _sameLook(a, b);
+          }
+        });
+      }
+    });
+
+    test('other commands keep one draw', () async {
+      for (final platform in [null, TargetPlatform.macOS]) {
+        await _on(platform, () async {
+          for (final shape in <void Function(CanvasPath)>[
+            (p) {
+              _top(p, 300);
+              p.arc(100, 100, 20, 0, 3);
+            },
+            (p) {
+              _top(p, 300);
+              p.quadraticCurveTo(10, 10, 20, 20);
+            },
+            (p) {
+              _top(p, 300);
+              p.rect(10, 10, 20, 20);
+            },
+            (p) => p
+              ..moveTo(10, 10)
+              ..arc(100, 100, 20, 0, 3),
+          ]) {
+            final (a, b, draws) = await _strokes(shape);
+            expect(draws, 0, reason: '$platform');
+            expect(comparePixels(a, b).differing, 0);
+          }
+        });
       }
     });
 
@@ -693,5 +827,135 @@ void main() {
         }
       });
     }
+  });
+
+  group('short strokes on a desktop system (Chart.js ADR 0113)', () {
+    setUp(() => debugDefaultTargetPlatformOverride = TargetPlatform.macOS);
+    tearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    for (final commands in [2, 3, 10, 40, 100]) {
+      for (final curved in [false, true]) {
+        for (final closed in [false, true]) {
+          test('$commands commands, curved $curved, closed $closed', () async {
+            void shape(CanvasPath p) =>
+                _shortLine(p, commands, curved: curved, closed: closed);
+            final path = Path2D();
+            shape(path);
+            expect(path.version, commands);
+            // From 10 commands, the cut gives several pieces: most vertices
+            // are joins at a cut. A move and a close give no piece, and the
+            // stroke keeps one draw.
+            final cut = uiPathPiecesOf(path, 1, 2)?.pieces.length ?? 0;
+            if (commands >= 10) expect(cut, greaterThan(1));
+            if (commands == 2 && closed) expect(cut, 0);
+            for (final setup in [_none, _shifted]) {
+              for (final color in [_blue, _half]) {
+                for (final width in [1.0, 2.0, 6.0, 12.0]) {
+                  for (final join in ['miter', 'round', 'bevel']) {
+                    final (a, b, draws) = await _strokes(
+                      shape,
+                      setup: setup,
+                      color: color,
+                      width: width,
+                      join: join,
+                      height: 400,
+                    );
+                    final why = '$cut pieces, $color, $width, $join';
+                    // A translucent line of one pixel keeps one draw.
+                    expect(
+                      draws,
+                      cut == 0 || (color == _half && width <= 1) ? 0 : 1,
+                      reason: why,
+                    );
+                    _sameLook(a, b, why);
+                  }
+                }
+              }
+            }
+          });
+        }
+      }
+    }
+  });
+
+  group('a filled line on a desktop system (Chart.js ADR 0113)', () {
+    test('a line of 100 points strokes in pieces and fills in one draw', () {
+      return _on(TargetPlatform.macOS, () async {
+        Future<Render> one({required bool pieces}) => renderContext(
+          (ctx) {
+            UiCanvasContext.debugDrawLongPathsInPieces = pieces;
+            if (pieces) expect(ctx.deferredFillMinPoints, minPieceCommands);
+            ctx.fillStyle = _soft;
+            ctx.beginPath();
+            // Also a deferred path of fewer commands fills in one draw.
+            if (pieces) ctx.deferCurrentPath();
+            _shape(ctx, 100);
+            ctx.fill();
+            if (pieces) expect(ctx.debugPieceDraws, 0);
+            ctx.strokeStyle = _blue;
+            ctx.lineWidth = 2;
+            final path = Path2D();
+            _top(path, 100);
+            ctx.stroke(path);
+            if (pieces) expect(ctx.debugPieceDraws, 1);
+          },
+          width: 500,
+          height: 300,
+        );
+        _sameLook(await one(pieces: false), await one(pieces: true));
+      });
+    });
+
+    testWidgets('a line chart with a fill', (tester) async {
+      Chart chartOf(int count) => acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'labels': <Object?>[for (var i = 0; i < count; i++) '$i'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[
+                for (var i = 0; i < count; i++) 50 + 40 * math.sin(i * .2),
+              ],
+              'borderColor': _blue,
+              'backgroundColor': _soft,
+              'fill': 'origin',
+              'pointRadius': 0.0,
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'display': false},
+            'y': <String, Object?>{'display': false, 'min': 0.0},
+          },
+          'plugins': <String, Object?>{'legend': false, 'title': false},
+        },
+      });
+      int pieceDraws(Chart chart) =>
+          (chart.ctx! as UiCanvasContext).debugPieceDraws;
+
+      try {
+        for (final (platform, count, draws) in <(TargetPlatform, int, int)>[
+          // The stroke in pieces, the fill in one draw.
+          (TargetPlatform.macOS, 100, 1),
+          // Both in one draw.
+          (TargetPlatform.android, 100, 0),
+          (TargetPlatform.iOS, 100, 0),
+          // From 128 points the fill takes pieces too.
+          (TargetPlatform.macOS, 200, 2),
+          (TargetPlatform.android, 200, 2),
+        ]) {
+          debugDefaultTargetPlatformOverride = platform;
+          UiCanvasContext.debugDrawLongPathsInPieces = false;
+          final whole = await _chartRender(tester, chartOf(count));
+          UiCanvasContext.debugDrawLongPathsInPieces = true;
+          final chart = chartOf(count);
+          expect(pieceDraws(chart), draws, reason: '$platform $count');
+          _sameLook(whole, await _chartRender(tester, chart));
+        }
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
   });
 }

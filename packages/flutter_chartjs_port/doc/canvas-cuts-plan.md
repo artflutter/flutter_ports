@@ -1130,19 +1130,19 @@ the cut inventory describe their original review snapshots.
 | The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:829-834`, `:844-874` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:1628-1739` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
 | N3 of §7: the deferred commands of the path builder (`deferredPathCommands`, the command codes, `_codes`, `_numbers`, `_rrects`, `path`, `debugBuilt`, `_build`, `_replay`, `_direct` and the `_path` writers) | `canvas_ui_path.dart:272-300`, `:411-807` | ~220 | None. `ui.Path` builds each command at once. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
-| N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:302-335`, `:428-455`, `:882-1056`; `canvas_ui.dart:523-525`, `:1375-1380`, `:1387-1419` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:302-335`, `:428-455`, `:882-1056`; `canvas_ui.dart:525-527`, `:1377-1382`, `:1389-1421` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:184-196`, `:199-345`, `:1008-1023`, `:1321-1343` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
-| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:404-411`, `:568-604`, `:1294-1296`, `:1355-1382`, `:1420-1454`, `:1496-1500` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
-| N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:563-566`, `:682-705`, `:999-1022`, `:1504-1511` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:406-413`, `:570-606`, `:1296-1298`, `:1357-1384`, `:1422-1456`, `:1498-1502` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
+| N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:565-568`, `:684-707`, `:1001-1024`, `:1506-1513` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `CircleBatch`, with a color for each instance of a run that meets another color below 16 circles (N5 of §7), and the held run of a run of markers (`hold`, `addHeld`, `release`; the held path of `UiCanvasContext.tryAddRunCircle`) | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
-| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1982-2003` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
+| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1984-2023` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
 | `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:1047-1060` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:143`, `:176-193` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
 | The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:1220-1224`, `:1247-1256`, `:1280-1281` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
 | `initCanvas` over the attributes (`getAttribute`) | `lib/src/platform/platform.flutter.dart:111-180` | 70 | A small attribute model on `UiCanvasElement` | **Done** (C2): line by line |
 | `releaseContext` over the attributes (`removeAttribute`, `setAttribute`) and `_Initial[prop]` | `platform.flutter.dart:477-512`, `:87-88` | 38 | The same attribute model | **Done** (C2): line by line |
-| The attribute model: `UiCanvasElement({int? width, int? height})`, `getAttribute`, `setAttribute`, `removeAttribute`, `_setSize`, and the 3 members of `HTMLCanvasElement` | `canvas_ui.dart:236-329`, `canvas.dart:479-491` | 107 | None. `dart:ui` has no attributes. | **Added** (C2). Chart.js ADR 0022 §4 adds the `style` attribute and the string attributes. |
-| The reflection of the `style` attribute in `UiCssStyleDeclaration`: `cssText`, `styleAttribute`, the declaration parser and the serialization after a CSSOM write | `canvas_ui.dart:98-224` | ~95 | None. `dart:ui` has no CSS. | **Added** (Chart.js ADR 0022 §4): `acquireChart` sets the canvas attributes with `setAttribute` |
+| The attribute model: `UiCanvasElement({int? width, int? height})`, `getAttribute`, `setAttribute`, `removeAttribute`, `_setSize`, and the 3 members of `HTMLCanvasElement` | `canvas_ui.dart:238-331`, `canvas.dart:479-491` | 107 | None. `dart:ui` has no attributes. | **Added** (C2). Chart.js ADR 0022 §4 adds the `style` attribute and the string attributes. |
+| The reflection of the `style` attribute in `UiCssStyleDeclaration`: `cssText`, `styleAttribute`, the declaration parser and the serialization after a CSSOM write | `canvas_ui.dart:100-226` | ~95 | None. `dart:ui` has no CSS. | **Added** (Chart.js ADR 0022 §4): `acquireChart` sets the canvas attributes with `setAttribute` |
 | `getMaximumSize`, `retinaScale`, `readUsedSize` (ported, with `DIVERGES` rows) | `lib/src/helpers/helpers.dom.dart` | — | None. `AspectRatio` and `SizedBox` give other sizes than upstream. | **Keep**, no change |
 | The first `ResizeObserver` notification at the next layout (`_pendingFirstResize`) and the mutation checkpoint (`flushCanvasMutations`, `_pendingConnectionChecks`) | `chart_host.dart:632-648`, `:692`, `:927-928`, `:979-996`, `:1021-1036`, `:1158-1185`, `:1202-1211` | ~60 | None. Flutter layout has no rendering step for observers and no microtask checkpoint for the tree. | **Added** (Chart.js ADR 0022 §10): the harness gives the specs the DOM timing |
 | Host attach at the first layout, resize observers, host follows the chart size, unbounded rule, clip | `chart_host.dart:578-695`, `:945-1032`, `:1080-1245`; `platform.flutter.dart:578-630` | ~340 | None. Flutter layout cannot know the size that Chart.js picks. | **Keep** |
@@ -1206,17 +1206,17 @@ and its own `Float64List`. Never reuse a scratch path or `_m4` for them.
 
 The same aliasing is a defect today, on the web only. Work package W fixes it before cut 1.
 
-- `canvas_ui.dart:1473`: `stroke()` under a transform that is not a similarity calls
+- `canvas_ui.dart:1475`: `stroke()` under a transform that is not a similarity calls
   `_strokeUser(_path.path.transform(t.writeInverseMatrix4(_m4)))`. `_strokeUser` then writes the
   forward matrix into `_m4` (`:936`) before `drawPath` builds the lazy path. The probe was
   `transform(1, 0, 0, 3, 0, 0)`, a line at y = 10 and `stroke()`. On the VM, rows 27 to 32 had ink.
   On CanvasKit and on skwasm, nothing was drawn.
-- `canvas_ui.dart:1491`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
+- `canvas_ui.dart:1493`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
   The state keeps the clip and replays it into later recordings. After the frame arena discards
   the built path, the path builds again with the value that `_m4` has then. The probe did not show
   it, because the probe rendered no second frame.
 - `canvas_ui_paint.dart:136` and `:373-377`: `shaderFor` keeps a copy in `_lastMatrix`, but
-  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:819`) to
+  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:821`) to
   `ui.ImageShader`. CanvasKit keeps that reference (`canvaskit/shader.dart:252`) and builds the
   shader again from it when the filter quality changes. The risk is low.
 
@@ -1259,8 +1259,8 @@ Do step 0 in work package W. Do steps 1 to 6 in work package C1.
 
 0. **Fix the web aliasing** (work package W, its own commit,
    `fix(flutter_chartjs_port): copy the matrices that the web paths read late`):
-   - `canvas_ui.dart:1473`: `t.writeInverseMatrix4(Float64List(16))`.
-   - `canvas_ui.dart:1491`: `s.transform.writeMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1475`: `t.writeInverseMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1493`: `s.transform.writeMatrix4(Float64List(16))`.
    - `canvas_ui_paint.dart` `shaderFor`: call `_build(_lastMatrix)`, so that the shader keeps the
      copy and not the buffer of the caller.
    - Add a comment at each place: the web renderers read the path and the matrix when they build
@@ -2650,3 +2650,16 @@ changes. No trigger occurred.
   line of these changes and no canvas operation. `doc/performance.md` gets section 69 at its end;
   this plan cites its sections, and no cited section number changes. No deferred cut changes. No
   trigger occurred.
+- 2026-11-10, [Chart.js ADR 0113](adr/0113-stroke-pieces-by-browser-system.md) (the stroke pieces of a desktop browser;
+  it supersedes Chart.js ADR 0105) changes `lib/src/canvas/canvas_ui.dart`, `canvas_ui_path.dart` and
+  `canvas_partitioned_fill.dart`. `canvas_ui.dart` imports `TargetPlatform` and `defaultTargetPlatform` of
+  `package:flutter/foundation.dart`, and `UiCanvasContext` gets `desktopStrokePieceCommands` and
+  `strokePieceMinCommands`, which `_tryStrokeInPieces` reads in place of `minPieceCommands`. `UiPathPieces` cuts the
+  overlap of a curve and the first commands of a divided close (`_curveReach`, `_noteFirstLine`, `_noteFirstCurve`, and
+  the top-level `_curveLengthAt` and `_curvePart`). The doc of `minPieceCommands` and the ADR citations of
+  `canvas_ui_path.dart` and `canvas_partitioned_fill.dart` change in place. The new code is outside this plan's cuts, as
+  the pieces of Chart.js ADR 0105. `canvas_ui.dart` (2916 to 2936 lines): the `canvas_ui.dart` references of §1.1, §2.3
+  and §2.5 moved by a diff against `96f6f9d`, the lines after 47 by +2 and after 1985 by +20; the reference `:936` of
+  §2.3 and the records keep their lines, as in the entry of the held run. `canvas_ui_path.dart` (2284 to 2427 lines)
+  changes in place at lines 286-287 and 493 and after line 1904, so that its references keep their lines. No deferred
+  cut changes. No trigger occurred.

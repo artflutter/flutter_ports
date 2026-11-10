@@ -45,6 +45,8 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
@@ -1978,10 +1980,28 @@ final class UiCanvasContext
   /// Whether this build runs in a browser: Skia on WebGL.
   static const bool _onWeb = bool.fromEnvironment('dart.library.js_interop');
 
-  /// Whether the context draws long paths in pieces (Chart.js ADR 0105). Only
+  /// Whether the context draws long paths in pieces (Chart.js ADR 0113). Only
   /// the tests set this switch on the VM, for a comparison of the two forms.
   @visibleForTesting
   static bool debugDrawLongPathsInPieces = _onWeb;
+
+  /// The fewest commands of a `Path2D` that a browser on a desktop system
+  /// strokes in pieces (Chart.js ADR 0113): there one draw of a short line
+  /// takes more raster time than its pieces.
+  static const int desktopStrokePieceCommands = 2;
+
+  /// The fewest commands of a `Path2D` that [stroke] draws in pieces (Chart.js
+  /// ADR 0113): [desktopStrokePieceCommands] when [defaultTargetPlatform], the
+  /// system of the browser, is macOS, Windows or Linux, else
+  /// [minPieceCommands], as for a fill.
+  static int get strokePieceMinCommands {
+    final platform = defaultTargetPlatform;
+    return platform == TargetPlatform.macOS ||
+            platform == TargetPlatform.windows ||
+            platform == TargetPlatform.linux
+        ? desktopStrokePieceCommands
+        : minPieceCommands;
+  }
 
   /// The count of the fills and strokes in pieces, for the tests.
   @visibleForTesting
@@ -2031,7 +2051,7 @@ final class UiCanvasContext
     final t = s.transform;
     if (!debugDrawLongPathsInPieces ||
         s.shadowOn ||
-        path2d.version < minPieceCommands ||
+        path2d.version < strokePieceMinCommands ||
         s.lineDash.isNotEmpty ||
         s.strokeShader != null ||
         s.strokeColor == null ||
