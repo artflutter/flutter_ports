@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "source": {
+    "project": "chartjs-plugin-zoom",
+    "version": "2.2.0+fb81d331",
+    "commit": "fb81d3316bbf3504903b10d1a9bc8cd99173b5c4"
+  },
+  "fixtures": {
+    "items": [
+      {
+        "path": "pan/category-x-1.js",
+        "sha256": "5571fc5558726d45402d947bba6cf8865e2285cca5d44341af2ce4a19800edfe",
+        "png": "pan/category-x-1.png",
+        "pngSha256": "8876a585fd7a9edb99de1534bb04916fb99f4ffa2e3b63f5c684a1379f10837a",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "pan/category-x-10.js",
+        "sha256": "cf1b969e03ad593346d218e9efc445e64b41b6f289516d8869f75f8c51816cf1",
+        "png": "pan/category-x-10.png",
+        "pngSha256": "c3373149765d32961c024e559b5e2edc76552d198ce0ab1f8908d0195b0cc264",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "pan/category-x-25.js",
+        "sha256": "6af636891640f5547b542db9bbb1dce2e0ef6ddd0db223f8cf027bf486e18631",
+        "png": "pan/category-x-25.png",
+        "pngSha256": "6a89ae6040faee8db09af0e0f975d9987eb9870bdbdc43983034105f8757d38e",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "pan/category-x-5.js",
+        "sha256": "f516efec65c12afae6e21c1184d281fef443a4e6efd3c08b15d9c807b7dbf5d5",
+        "png": "pan/category-x-5.png",
+        "pngSha256": "8cafca70e4efd1d4642efeb31cc93b5d045a089ceebb565a6fa4dff6ac985315",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "pan/category-x-50.js",
+        "sha256": "5fba1615e29a7a6b53531018c9636b442e3cab80bc5b84ec9800f258bad23358",
+        "png": "pan/category-x-50.png",
+        "pngSha256": "0795b960551110e11653ad00f6dceac9c1bdbd7997f0dbef411bcf15693b371a",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "pan/time-day-left.js",
+        "sha256": "fb37420f625f829c980ef4b6d7b9e4242022c985d1cf9ea645f8846d56550d6d",
+        "png": "pan/time-day-left.png",
+        "pngSha256": "3bc0467e655184bc5b1d5304583bf11e9e65214866066f75d120eb4bfa29bce3",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "pan/time-day-right.js",
+        "sha256": "9f3cc86f4ad3890565e6285d40e3faad5a8f789030bff87bb4c5923fc022f39a",
+        "png": "pan/time-day-right.png",
+        "pngSha256": "2a8fadfaafdd2e6ba3a9e2bd57ddba54f321ff09d9e4864b326779df54c46549",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "zoom/category-x.js",
+        "sha256": "2b2771ff25df9a204a4c6e4d62dec997cb4e608a7f868319558a6a7fea5fd05f",
+        "png": "zoom/category-x.png",
+        "pngSha256": "c76dc13e56dd69cea6ae5c1c8096194a160f57753cc002f693b931292f187f3a",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "zoom/drag.js",
+        "sha256": "b91a7443f7346aff5b77664e7a2c8a0e76609449dbadee56dde1639107936d2a",
+        "png": "zoom/drag.png",
+        "pngSha256": "247035887f5753078f9128f6ba0bfa0e2696e0b0ff43b4bfd1e17d6bc6363d37",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "zoom/dragDrawTime.js",
+        "sha256": "1b692b834cdfeb240a98698ba2d14d2303af549307a7347c58301b6a11b63af7",
+        "png": "zoom/dragDrawTime.png",
+        "pngSha256": "52a01e893759ff23ac9be277f39621356783d0b88644830b89f99b13f8e3ab75",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "zoom/update-reset.js",
+        "sha256": "d2b4b90107eb901487377f3f5700659437dc8804ac7accf7a2a3eddb31fd4d68",
+        "png": "zoom/update-reset.png",
+        "pngSha256": "013ff212146a668989d7595307a73395f9f7e0f230b8d91fa5b99a72d8904769",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "zoom/zoom-reset.js",
+        "sha256": "c11fd080f8bc4d0b4789ce9506a108d5550f43d1397f39deb01a3650a2a42819",
+        "png": "zoom/zoom-reset.png",
+        "pngSha256": "34288f4e5779afa7fa57e431ae134ee753f67f382e9fc0a6efa852721bea95f7",
+        "specs": [
+          "fixtures.spec.js"
+        ],
+        "data": false
+      }
+    ]
+  }
+}
