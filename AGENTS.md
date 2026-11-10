@@ -838,8 +838,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     one draw of a dense fill misses the true area by up to 57% there. A stroke takes pieces from
     `UiCanvasContext.strokePieceMinCommands` commands: 2 when `defaultTargetPlatform` (the system of
     the browser) is macOS, Windows or Linux, else 128 (`minPieceCommands`); the fill keeps 128. The
-    overlap of a piece cuts a straight segment at 1.5 bitmap pixels and a curve at two line widths
-    (de Casteljau). The switch `debugDrawLongPathsInPieces` turns the form on for a test on the VM,
+    overlap of a piece is about 1.5 bitmap pixels: a straight segment is cut at its end, and a curve
+    at the larger of the remaining overlap and two line widths (de Casteljau; a shorter curve stays
+    whole). The switch `debugDrawLongPathsInPieces` turns the form on for a test on the VM,
     and `debugDefaultTargetPlatformOverride` picks the rule. Native engines keep one draw. See
     performance.md §68 and §70, and the twins of `test/port/canvas/canvas_ui_pieces_test.dart`.
     Chart.js ADR 0104: `Path2D` packs unobserved cubic curves too. A filler walk that a partitioned
