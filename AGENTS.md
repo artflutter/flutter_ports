@@ -2024,7 +2024,9 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   pushes the tag of a new version. A deploy replaces the whole Pages site,
   so each page has its own folder in the job `deploy` of that workflow. `web/isolate.js` of the lab adds
   the COOP and COEP headers on `github.io` through a service worker, with one reload key for each page. `web/flutter_bootstrap.js` gives the
-  loader no service worker settings: else the worker of Flutter removes that worker. The header of a
+  loader no service worker settings: else the worker of Flutter removes that worker. The docs app has the
+  same two files, with the same code: without them, skwasm runs on one thread and writes a warning to the
+  console. The header of a
   web run shows its mode (`lib/benchmark/web_mode.dart`). A note that does not scroll
   (`lib/ui/page_note.dart`) says why that mode applies, or why a scroll or another outside cause stopped a test.
 - Toolchain: Flutter 3.50.0-0.4.pre (beta channel, Dart 3.14.0-315.3.beta), pinned in `.fvmrc`; CI reads the same file, and `.github/actions/setup/action.yaml` names its channel. All
