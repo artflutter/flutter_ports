@@ -47,6 +47,8 @@ include_paths = [
     "apps/chart_benchmark_lab/lib/**",
     "apps/chart_benchmark_lab/pubspec.yaml",
     "apps/chart_benchmark_lab/web/**",
+    "packages/flutter_chartjs_plugin_zoom_port/lib/**",
+    "packages/flutter_chartjs_plugin_zoom_port/pubspec.yaml",
     "packages/flutter_chartjs_port/lib/**",
     "packages/flutter_chartjs_port/pubspec.yaml",
     "pubspec.lock",

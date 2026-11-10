@@ -448,6 +448,46 @@ void main() {
     await tester.pump(const Duration(milliseconds: 20));
   });
 
+  testWidgets('the settings show zoom only for a type with an x axis', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    late BenchmarkController c;
+    await tester.pumpWidget(
+      ChartBenchmarkApp(onControllerReady: (value) => c = value),
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+    const zoom = ValueKey('feature.zoom');
+    expect(
+      find.text('X axis: pinch or wheel zooms, drag pans'),
+      findsOneWidget,
+    );
+    await tester.ensureVisible(find.byKey(zoom));
+    await tester.tap(find.byKey(zoom));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(c.config.zoom, isTrue);
+    for (final type in ChartType.values) {
+      await tester.ensureVisible(find.byKey(ValueKey('type.${type.name}')));
+      await tester.tap(find.byKey(ValueKey('type.${type.name}')));
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(c.config.type, type);
+      expect(
+        find.byKey(zoom),
+        type.hasZoom ? findsOneWidget : findsNothing,
+        reason: type.name,
+      );
+      // The toggle stays set, and only a type with an x axis zooms.
+      expect(c.config.zoom, isTrue, reason: type.name);
+      expect(c.config.toJson()['zoom'], type.hasZoom ? isTrue : isNull);
+    }
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 20));
+  });
+
   testWidgets(
     'library switch retains count and features and clears live metrics',
     (tester) async {

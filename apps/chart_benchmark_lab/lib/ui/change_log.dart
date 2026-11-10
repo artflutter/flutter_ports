@@ -19,6 +19,14 @@ class ChangeLogEntry {
 /// when a change of the library or of the lab moves a figure. The full records
 /// are in `doc/performance.md` of the Chart.js port.
 const List<ChangeLogEntry> changeLog = [
+  ChangeLogEntry('2026-11-10', [
+    'Lab: a Zoom and pan setting for line, bar, scatter and bubble charts. '
+        'Each library zooms and pans only the x axis through its public API, '
+        'inside the data and at most 100 times: a pinch or the mouse wheel '
+        'zooms, and a drag pans. The Chart.js port uses the port of '
+        'chartjs-plugin-zoom. A run without zoom is unchanged, and so is its '
+        'comparison key.',
+  ]),
   ChangeLogEntry('2026-11-06', [
     'Web: the lab now has one page for each Flutter channel, on the newest '
         'build of stable, of beta and of master. Figures of different pages do '

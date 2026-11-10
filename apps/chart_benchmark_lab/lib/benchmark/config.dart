@@ -50,16 +50,51 @@ enum ChartLibrary {
     syncfusion => false,
   };
 
+  /// Whether the public API of this library zooms and pans the x axis of a
+  /// chart of [type], with the y axis fixed.
+  ///
+  /// Each library has it on each type with an x axis ([ChartType.hasZoom]):
+  /// - the Chart.js port through the zoom port
+  ///   `flutter_chartjs_plugin_zoom_port` (chartjs-plugin-zoom), with the
+  ///   options `pan` and `zoom` (`wheel`, `pinch`) of mode `x`;
+  /// - fl_chart through `transformationConfig` (`FlTransformationConfig`) of
+  ///   `LineChart`, `BarChart` and `ScatterChart`, with
+  ///   `FlScaleAxis.horizontal`;
+  /// - Graphic through `horizontalRangeUpdater` of `RectCoord`, from
+  ///   `Defaults.horizontalRangeEvent`;
+  /// - Syncfusion through `ZoomPanBehavior` of `SfCartesianChart`, with
+  ///   `ZoomMode.x`.
+  ///
+  /// A pie, a doughnut, a polar area and a radar have no x axis, and the
+  /// settings hide the toggle for them.
+  bool zoomsWith(ChartType type) => type.hasZoom;
+
   /// Whether this library can run [config] with its public API.
   bool runs(BenchmarkConfig config) =>
       supports(config.type) &&
-      (!config.shadow || drawsShadow(config.type, blur: config.shadowBlur));
+      (!config.shadow || drawsShadow(config.type, blur: config.shadowBlur)) &&
+      (!config.zooms || zoomsWith(config.type));
 
   /// The reason that [config] does not run on this library.
-  String reasonFor(BenchmarkConfig config) => supports(config.type)
-      ? '$label $version has no ${config.shadowBlur ? 'blurred' : 'sharp'} '
-            'shadow on a ${config.type.label.toLowerCase()} chart.'
-      : unsupportedReason(config.type);
+  String reasonFor(BenchmarkConfig config) {
+    final type = config.type.label.toLowerCase();
+    if (!supports(config.type)) return unsupportedReason(config.type);
+    if (config.shadow && !drawsShadow(config.type, blur: config.shadowBlur)) {
+      return '$label $version has no '
+          '${config.shadowBlur ? 'blurred' : 'sharp'} shadow on a $type chart.';
+    }
+    return '$label $version has no zoom and pan on a $type chart.';
+  }
+
+  /// The short form of [reasonFor], for the library selector.
+  String shortReasonFor(BenchmarkConfig config) {
+    if (!supports(config.type)) {
+      return 'No ${config.type.label.toLowerCase()} chart';
+    }
+    return config.shadow && !drawsShadow(config.type, blur: config.shadowBlur)
+        ? 'No shadow here'
+        : 'No zoom here';
+  }
 }
 
 /// The eight chart types of Chart.js, on every adapter that has them.
@@ -107,6 +142,10 @@ enum ChartType {
 
   /// Whether the alternating item colors apply.
   bool get hasItemColors => !drawsLine;
+
+  /// Whether zoom and pan apply: the types with an x axis.
+  bool get hasZoom =>
+      this == line || this == bar || this == scatter || this == bubble;
 }
 
 /// Public-widget workload; these are not internal renderer draw-only calls.
@@ -141,6 +180,10 @@ const chartShadowOffset = Offset(0, 3);
 /// Common Gaussian sigma of a blurred series shadow, in logical pixels.
 const chartShadowSigma = 4.0;
 
+/// The largest zoom of the x axis, as a share of the full range: the default
+/// of Syncfusion (`maximumZoomLevel` 0.01). Each library takes the same limit.
+const chartMaxZoom = 100.0;
+
 /// Immutable test configuration; library selection is deliberately separate.
 @immutable
 class BenchmarkConfig {
@@ -158,6 +201,7 @@ class BenchmarkConfig {
     this.tooltips = false,
     this.shadow = false,
     this.shadowBlur = false,
+    this.zoom = false,
     this.overlayLabels = 0,
     this.rotateLabels = false,
     this.seed = 7,
@@ -199,6 +243,11 @@ class BenchmarkConfig {
   /// Blur the [shadow] with [chartShadowSigma].
   final bool shadowBlur;
 
+  /// Zoom and pan of the x axis with the input of a person: a pinch or the
+  /// mouse wheel zooms, a drag pans. It applies only to a type with an x axis
+  /// ([zooms]). Each test starts with a new chart at the full range.
+  final bool zoom;
+
   /// Common overlay text count, outside each library's renderer.
   final int overlayLabels;
 
@@ -222,6 +271,7 @@ class BenchmarkConfig {
     bool? tooltips,
     bool? shadow,
     bool? shadowBlur,
+    bool? zoom,
     int? overlayLabels,
     bool? rotateLabels,
     int? seed,
@@ -238,6 +288,7 @@ class BenchmarkConfig {
     tooltips: tooltips ?? this.tooltips,
     shadow: shadow ?? this.shadow,
     shadowBlur: shadowBlur ?? this.shadowBlur,
+    zoom: zoom ?? this.zoom,
     overlayLabels: overlayLabels ?? this.overlayLabels,
     rotateLabels: rotateLabels ?? this.rotateLabels,
     seed: seed ?? this.seed,
@@ -258,6 +309,7 @@ class BenchmarkConfig {
       other.tooltips == tooltips &&
       other.shadow == shadow &&
       other.shadowBlur == shadowBlur &&
+      other.zoom == zoom &&
       other.overlayLabels == overlayLabels &&
       other.rotateLabels == rotateLabels &&
       other.seed == seed;
@@ -276,10 +328,14 @@ class BenchmarkConfig {
     tooltips,
     shadow,
     shadowBlur,
+    zoom,
     overlayLabels,
     rotateLabels,
     seed,
   );
+
+  /// Whether the chart zooms and pans: [zoom] on a type with an x axis.
+  bool get zooms => zoom && type.hasZoom;
 
   /// Effective settings only; disabled controls cannot change comparability.
   Map<String, Object> toJson() => {
@@ -297,6 +353,8 @@ class BenchmarkConfig {
     // Only a set shadow adds a key, so the saved runs without one keep
     // their comparison keys.
     if (shadow) 'shadow': shadowBlur ? 'blurred' : 'sharp',
+    // The same rule for zoom.
+    if (zooms) 'zoom': true,
     'overlayLabels': overlayLabels,
     'rotateLabels': overlayLabels > 0 && rotateLabels,
     'nativeTransitions': false,
