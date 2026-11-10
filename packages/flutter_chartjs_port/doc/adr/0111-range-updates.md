@@ -1,6 +1,8 @@
 # Chart.js ADR 0111: An opt-in range update for scale range changes
 
-- Status: proposed (2026-11-10). The maintainer decides. No code yet.
+- Status: accepted (2026-11-10, the porting lead). The maintainer approved the ADR on 2026-11-10, and the code
+  and the tests of section 9 pass (section "Implementation"). By the maintainer's rule, the record does not wait
+  for the timing of the gate: the night run measures it (performance.md §69).
 - Date: 2026-11-10
 - Gate: the maintainer answers the questions of section "Open". Then the code and the tests of
   section 9 pass with the full pre-push list, and an old-against-new timing of the zoom cases of
@@ -357,6 +359,51 @@ the input.
 
 The timing of the gate adds zoom cases with the option to the frameless benchmark and runs the old
 and the new build on the three devices, 2 runs per side.
+
+## Implementation
+
+The answers to section "Open", taken by the porting lead in the implementing change:
+
+1. The names stay: `Chart.updateRanges` and the zoom key `rangeOnlyUpdates`.
+2. Data: the wider form. New values, a new data List and new labels go through the range update.
+3. Decimation: the wider form. Check 4 does not call `dataUpdateGuard`, and enabled decimation takes the range
+   update; the twins pin it.
+4. Subclasses: check 7 as written. A user controller subclass takes `update`.
+5. The gallery and the widget: the samples of the zoom page do not opt in, and `ChartView` gets no parameter. The
+   typed options slot of zoom phase 5 (seam H18) is the place for it.
+6. The docs: no page of `apps/chartjs_docs`.
+
+Where the code departs from the text above, and why:
+
+- Check 4 also reads an internal guard of a built-in plugin, `Plugin.rangeUpdateGuard` (a Dart field outside the
+  JavaScript own keys, not a constructor parameter). The colors plugin sets it: with `forceOverride`, its
+  `beforeLayout` writes new color Lists into the datasets in each update, a change of the config. A kept dataset
+  resolver keeps the old List, and with a new data length the colors of the new elements would differ. Such a chart
+  takes `update`. Without `forceOverride` the plugin writes once, before the first full update, and the guard
+  passes.
+- The boxes of the scales go and come back as in `update` (`layouts.removeBox`, then `layouts.configure` and
+  `layouts.addBox`), where section 4 says that no box is removed or added. `addBox` writes the defaults of `weight`
+  (0) and `position` after `configure`: without it, a scale with no `weight` option keeps `undefined`, and the sort
+  of the layout differs. The order of `chart.boxes` is the order of `update`.
+- The range update writes `meta.visible = isDatasetVisible(i)` for each dataset, the one field of
+  `buildOrUpdateControllers` that a write outside the options changes: `chart.getDatasetMeta(i).hidden = true`,
+  the form of the Chart.js docs. The other fields of the meta stay.
+- The second capture of check 6 is the class `RangeUpdateSnapshot` of `lib/src/core/data_update.dart`, beside
+  `DataUpdateSnapshot`, with the reads that section 3 names. A full update and a range update record it at their
+  end with the tokens of Chart.js ADR 0074 (section 7): one walk of the dataset List.
+- The cache test reads `Config.debugCacheSizes` (`@visibleForTesting`): the counts of the scope lists and of the
+  resolvers.
+- The zoom twins (`test/port/plugin_test.dart`, group `range-only updates (Chart.js ADR 0111)`) compare the pixels
+  of `chart.toBase64Image()` in place of the draw calls: the zoom tests import only the public libraries of the
+  host, and the recorder of the draw calls is a test helper of the host. The host twins compare the draw calls.
+- The zoom suite runs with the option in the defaults through a define:
+  `flutter test --dart-define=ZOOM_RANGE_ONLY_UPDATES=true` (`dart run melos run test:zoom:range-only`) writes
+  `rangeOnlyUpdates: true` into `Chart.defaults.plugins.zoom` before the snapshot of the restore, for the specs, the
+  fixtures and the tests of real input. The spec `defaults` then expects the key in the defaults. In that run, 372
+  zoom and pan updates of the suite and 176 of the 12 fixtures took the range path, and 4 took `update`.
+- A scriptable title text that reads `scale.min` or `chart.getZoomLevel()` shows the range of the last update in both
+  paths: the layout fits the title before the scales. The title test of the host reads the range options, which the
+  views give at once.
 
 ## Alternatives considered
 

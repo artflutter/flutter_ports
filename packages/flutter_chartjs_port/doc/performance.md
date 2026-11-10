@@ -8058,6 +8058,17 @@ linear chart and then a time chart reaches the slow state. Chrome and Firefox go
 `alignToPixels` part is reverted; the loop part of item 4 stays. Files:
 `.handover/zoom-perf/ab/mac-safari/` (bisect.md, confirm.md), outside the repository.
 
+**Chart.js ADR 0111, implemented** (2026-11-10). `Chart.updateRanges(mode)` and the zoom option `rangeOnlyUpdates`
+are in the tree, default off: no behavior of `update` changed (the observation digests hold). A full update of an
+exact chart now also records the snapshot of the range path (one pass over the dataset List). The twins of
+`test/port/core/range_update_test.dart` and of the group `range-only updates` of the zoom `test/port/plugin_test.dart`
+give the results of `update`. The bench define `--dart-define=ZOOM_RANGE_UPDATES=true` writes
+`rangeOnlyUpdates: true` into the input cases of the mode `zoom` (the key `rangeUpdates` of their BENCH lines); the
+cases `zoom.base` and `zoom.idle` stay as they are. The night run measures it on the Pixel 8a, the iPhone 17 Pro and
+the Mac: one build of the same commit without and with the define, 2 runs per side, with the gain of the ADR's
+section 10 as the estimate. It also times `zoom.base` and `zoom.idle` of the parent commit against this commit
+without the define, for the cost of the snapshot on the default path. Its figures go here.
+
 ## 70. Stroke pieces in desktop browsers
 
 Chart.js ADR 0113 strokes a `Path2D` in pieces from 2 commands when Flutter reports macOS, Windows or Linux for the

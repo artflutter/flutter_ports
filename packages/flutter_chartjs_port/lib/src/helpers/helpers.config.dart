@@ -1631,6 +1631,14 @@ final class OptionView implements ContextProxy {
   /// The `descriptorDefaults` parameter of `_attachContext`.
   final DescriptorDefaults? _descriptorDefaults;
 
+  /// The resolver under this view: the `proxy` parameter of
+  /// `_attachContext`. A range update of the chart attaches a new context to
+  /// it where `update` makes a new resolver (Chart.js ADR 0111). The read
+  /// takes the field: a delete of the slot `_proxy` does not hide it.
+  @internal
+  // DIVERGES(chartjs): adapt-range-updates, the kept resolver of a view.
+  Object? get resolver => _proxy;
+
   /// `setContext` of the target (helpers.config.ts:134).
   // One function value for each target, as the upstream cache object
   // holds one.

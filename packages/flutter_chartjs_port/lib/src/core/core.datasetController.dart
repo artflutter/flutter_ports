@@ -60,7 +60,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show ArrayListener, listenArrayEvents, unlistenArrayEvents;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show IndexedElementStyles, OptionView, readOption;
+    show IndexedElementStyles, OptionView, attachContext, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isFinite, isObject, resolveObjectKey, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -1507,6 +1507,23 @@ class DatasetController
     final scopes = config.getOptionScopes(getDataset(), scopeKeys, true);
     // The dataset context is an object: the result is a view.
     options = config.createResolver(scopes, getContext()) as OptionView;
+    parsing = options.readKey(OptionKey.parsing);
+    _cachedElementOptions.clear();
+    _cachedAnimations.clear();
+  }
+
+  /// [configure] in a range update of the chart (Chart.js ADR 0111): the
+  /// resolver of the last full update stays, with a new context view over it
+  /// where [configure] makes a new scope list and a new resolver. The reads
+  /// and the clears of [configure] stay: the dataset context, `parsing` and
+  /// the two caches of the resolved options and the animations. Under the
+  /// contract of `Chart.updateRanges` no option of the scopes changed, so
+  /// the kept resolver gives the values of a new one, and each scriptable
+  /// option runs again through the new view.
+  @internal
+  // DIVERGES(chartjs): adapt-range-updates, configure with a kept resolver.
+  void configureKeptResolver() {
+    options = attachContext(options.resolver, getContext());
     parsing = options.readKey(OptionKey.parsing);
     _cachedElementOptions.clear();
     _cachedAnimations.clear();

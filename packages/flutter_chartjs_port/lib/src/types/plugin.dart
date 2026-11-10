@@ -874,6 +874,17 @@ final class Plugin implements JsObjectFace {
   /// It must be observational only and must not modify the chart or options.
   final bool Function(Object options)? dataUpdateGuard;
 
+  /// The check of the resolved plugin options for `Chart.updateRanges`
+  /// (Chart.js ADR 0111), or Dart `null` for none. A false result sends the
+  /// range update to `update`. A built-in plugin whose hooks write the
+  /// configuration under some options sets it: the colors plugin with
+  /// `forceOverride` writes new color Lists into the datasets in each layout,
+  /// and a kept dataset resolver would keep the old List. It must be
+  /// observational only. It is a Dart field outside the JavaScript own keys.
+  @internal
+  // DIVERGES(chartjs): adapt-range-updates, the guard of a built-in plugin.
+  bool Function(Object options)? rangeUpdateGuard;
+
   /// The JS names of the fields, by slot.
   static const List<String> fieldNames = [
     'id',

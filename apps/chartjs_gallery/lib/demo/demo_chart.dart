@@ -237,6 +237,14 @@ final class DemoChart implements types.Chart {
     return false;
   }
 
+  /// The range update of Chart.js ADR 0111: the demo chart has only the
+  /// render of [update].
+  @override
+  bool updateRanges([Object? mode]) {
+    render();
+    return false;
+  }
+
   /// index.d.ts:543 `legend`. The demo chart has no legend plugin, so it
   /// stays `null`.
   @override

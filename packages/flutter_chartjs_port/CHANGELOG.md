@@ -14,6 +14,11 @@
 - Add `Chart.updateData()` for incremental native data updates across all eight
   chart types, with metadata/interaction refresh and conservative full fallback.
 
+- Add `Chart.updateRanges([mode])`, an opt-in update after a change of the
+  `min` and `max` options of the scales only: it keeps the configuration of the
+  last full update and runs each hook, the layout and the draw as `update`
+  does, with a full update when a check fails (Chart.js ADR 0111).
+
 - Reduce bar spacing preparation overhead with a linear duplicate scan for
   finite sorted indexes, preserving list identity and signed-zero behavior.
 

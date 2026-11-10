@@ -34,6 +34,13 @@ calls `updateData` when only the data Lists of a new config changed. It needs
 `updateMode: 'none'` and `animation: ChartAnimation.none`, and its doc states
 what it does not re-run.
 
+After a change of the `min` and `max` options of the scales only, written
+through the scale options (`chart.scales['x']!.options['min'] = 10`),
+`chart.updateRanges()` skips the rebuild of the configuration and gives the
+result of `chart.update()`. Change nothing else in place between full updates.
+The zoom port uses it with its option `rangeOnlyUpdates`
+([Chart.js ADR 0111](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/adr/0111-range-updates.md)).
+
 ## Features
 
 - The eight chart types of Chart.js: bar, bubble, doughnut, line, pie, polar area, radar and

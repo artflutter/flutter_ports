@@ -461,6 +461,15 @@ class Config implements types.ChartConfiguration {
   /// and [resolveNamedOptions], by scope list and by the joined prefixes.
   final Map<List<Object?>, Map<String, _CachedResolver>> _resolverCache = {};
 
+  /// The counts of the entries of the scope cache and of the resolver cache.
+  /// The tests of Chart.js ADR 0111 check that range updates add none.
+  @visibleForTesting
+  // DIVERGES(chartjs): adapt-range-updates, the cache sizes of the tests.
+  ({int scopeLists, int resolvers}) get debugCacheSizes => (
+    scopeLists: _scopeCache.values.fold(0, (n, lists) => n + lists.length),
+    resolvers: _resolverCache.values.fold(0, (n, byKey) => n + byKey.length),
+  );
+
   /// core.config.js:165 `get platform()`: the `platform` of the raw
   /// configuration, a class value, or [undefined].
   Object? get platform {

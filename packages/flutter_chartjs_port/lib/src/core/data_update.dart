@@ -359,3 +359,57 @@ final class DataUpdateSnapshot {
     return true;
   }
 }
+
+/// The second capture of the last full update for `Chart.updateRanges`
+/// (Chart.js ADR 0111, check 6): the `data` and `options` objects of the
+/// config and the dataset objects, read with [dataUpdateField] from native
+/// objects only. Unlike [DataUpdateSnapshot], it keeps no value List and no
+/// labels: a range update parses the data as `update` does, so new values,
+/// a new data List and new labels are allowed.
+@internal
+final class RangeUpdateSnapshot {
+  RangeUpdateSnapshot._(this.data, this.options, this.datasets);
+
+  /// The `data` object of the config.
+  final Object data;
+
+  /// The `options` object of the config.
+  final Object options;
+
+  /// The dataset objects, in their order.
+  final List<Object> datasets;
+
+  /// The capture of [data] and [options], or null when one of them, the
+  /// dataset List or a dataset is not a native object, or when a route of the
+  /// typed data scope could run code in a read.
+  static RangeUpdateSnapshot? capture(Object data, Object options) {
+    if (!nativeDataUpdateObject(data) || !nativeDataUpdateObject(options)) {
+      return null;
+    }
+    if (data is OptionScope && data.routeOf('datasets') != null) return null;
+    final raw = dataUpdateField(data, 'datasets');
+    if (!nativeDataUpdateList(raw)) return null;
+    final datasets = <Object>[];
+    for (final dataset in raw! as List<Object?>) {
+      if (!nativeDataUpdateObject(dataset)) return null;
+      datasets.add(dataset!);
+    }
+    return RangeUpdateSnapshot._(data, options, datasets);
+  }
+
+  /// Whether [currentData] and [currentOptions] are the captured objects,
+  /// with the same count of datasets and the same object at each index.
+  bool matches(Object currentData, Object currentOptions) {
+    if (!identical(data, currentData) || !identical(options, currentOptions)) {
+      return false;
+    }
+    final raw = dataUpdateField(data, 'datasets');
+    if (!nativeDataUpdateList(raw)) return false;
+    final current = raw! as List<Object?>;
+    if (current.length != datasets.length) return false;
+    for (var i = 0; i < current.length; i++) {
+      if (!identical(current[i], datasets[i])) return false;
+    }
+    return true;
+  }
+}

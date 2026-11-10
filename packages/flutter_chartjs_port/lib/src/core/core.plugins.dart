@@ -34,7 +34,7 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show DescriptorDefaults, readOption;
+    show DescriptorDefaults, OptionView, attachContext, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show callback, isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -42,6 +42,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToNumber, jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -102,12 +103,77 @@ final class PluginService {
       } else if (plugin is Map<String, Object?> &&
           nativeDataUpdateObject(plugin)) {
         // User plugin objects declare their partial-lifecycle compatibility.
-        if (plugin['supportsDataUpdates'] != true) return false;
+        if (!_mapPluginOptsIn(plugin)) return false;
       } else {
         return false;
       }
     }
     return true;
+  }
+
+  /// Whether each plugin of the cached descriptors keeps the promise of the
+  /// partial lifecycles for `Chart.updateRanges` (Chart.js ADR 0111): a
+  /// [Plugin] with [Plugin.supportsDataUpdates] and no failed
+  /// [Plugin.rangeUpdateGuard], a Map plugin with the own key
+  /// `supportsDataUpdates: true`. [Plugin.dataUpdateGuard] states a concern
+  /// of the data-only lifecycle, which skips the layout: the range update runs
+  /// each hook and the layout, so it does not call it. No cache (a
+  /// [invalidate] since the last notify) gives false, and so does the options
+  /// object of a descriptor that is not a view of `createResolver`.
+  @internal
+  // DIVERGES(chartjs): adapt-range-updates, the plugin opt-in of a range.
+  bool get supportsRangeUpdates {
+    final descriptors = cache;
+    if (descriptors == null) return false;
+    for (final descriptor in descriptors) {
+      final options = descriptor.options;
+      if (options is! OptionView) return false;
+      final plugin = descriptor.plugin;
+      if (plugin is Plugin) {
+        if (!plugin.supportsDataUpdates ||
+            !(plugin.rangeUpdateGuard?.call(options) ?? true)) {
+          return false;
+        }
+      } else if (plugin is Map<String, Object?> &&
+          nativeDataUpdateObject(plugin)) {
+        if (!_mapPluginOptsIn(plugin)) return false;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /// The descriptors of a range update of [chart] (Chart.js ADR 0111): each
+  /// cached descriptor with a new context view over its resolver, with the
+  /// descriptor defaults of `pluginOpts` (core.plugins.js:186-189).
+  ///
+  /// `update` calls [invalidate] (core.plugins.js:73-83), and its next notify
+  /// makes new scope lists and new resolvers (`_createDescriptors`,
+  /// core.plugins.js:101-111, :175-188). Under the contract of the range
+  /// update the plugins, their order and their options did not change, so the
+  /// kept resolvers give the values of new ones and `_notifyStateChanges`
+  /// would find no change: no `start` or `stop`. The old descriptors become
+  /// `_oldCache`, as after [invalidate]. The caller tested
+  /// [supportsRangeUpdates].
+  @internal
+  // DIVERGES(chartjs): adapt-range-updates, new views over kept resolvers.
+  void refreshDescriptorViews(types.Chart chart) {
+    final cached = cache!;
+    final context = chart.getContext();
+    _oldCache = cached;
+    cache = [
+      for (final descriptor in cached)
+        (
+          plugin: descriptor.plugin,
+          options: attachContext(
+            (descriptor.options as OptionView).resolver,
+            context,
+            undefined,
+            _pluginDescriptorDefaults,
+          ),
+        ),
+    ];
   }
 
   /// core.plugins.js:80 `_oldCache`: the descriptors before the last
@@ -407,13 +473,22 @@ Object _pluginOpts(
     context,
     [''],
     // These are just defaults that plugins can override
-    const DescriptorDefaults(
-      scriptable: false,
-      indexable: false,
-      allKeys: true,
-    ),
+    _pluginDescriptorDefaults,
   );
 }
+
+/// Whether the Map plugin [plugin] of user code opts into the partial
+/// lifecycles: its own key `supportsDataUpdates` is `true` (Chart.js ADRs
+/// 0074 and 0111).
+bool _mapPluginOptsIn(Map<String, Object?> plugin) =>
+    plugin['supportsDataUpdates'] == true;
+
+/// The descriptor defaults of `pluginOpts` (core.plugins.js:186-189).
+const DescriptorDefaults _pluginDescriptorDefaults = DescriptorDefaults(
+  scriptable: false,
+  indexable: false,
+  allKeys: true,
+);
 
 /// `plugin.id`: the typed field of a [Plugin], else the read by name of a
 /// plugin object of user code (a Map or a class value). `null` and
