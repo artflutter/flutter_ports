@@ -55,6 +55,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         elementsEqual,
         factorize,
         filterBetween,
+        formatNumberDigits,
         getParentNode,
         getStartAndCountOfVisiblePoints,
         int16Range,

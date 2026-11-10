@@ -40,4 +40,22 @@ void main() {
     Intl.defaultLocale = 'en_US';
     expect(formatNumber(1234.5, undefined, options), '1,234.5');
   });
+
+  test('formatNumberDigits follows a change of Intl.defaultLocale', () {
+    // The record key of formatters.numeric holds the resolved intl locale
+    // too (row adapt-numeric-tick-format-key).
+    expect(formatNumberDigits(1234.5, undefined, null, 1, 1), '1,234.5');
+    Intl.defaultLocale = 'de_DE';
+    expect(formatNumberDigits(1234.5, undefined, null, 1, 1), '1.234,5');
+    expect(
+      formatNumberDigits(1234.5, undefined, null, 1, 1),
+      formatNumber(1234.5, undefined, {
+        'notation': undefined,
+        'minimumFractionDigits': 1.0,
+        'maximumFractionDigits': 1.0,
+      }),
+    );
+    Intl.defaultLocale = 'en_US';
+    expect(formatNumberDigits(1234.5, undefined, null, 1, 1), '1,234.5');
+  });
 }

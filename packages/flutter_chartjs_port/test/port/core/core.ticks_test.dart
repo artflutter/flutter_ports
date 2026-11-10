@@ -208,6 +208,95 @@ void main() {
       );
     });
 
+    // Row adapt-numeric-tick-format-key: a ticks.format that is not an object
+    // takes the record key, and an object ticks.format (also an empty one)
+    // takes the options Map and formatNumber. Both give the same labels.
+    test('record key: the labels of an empty object format', () {
+      final tickLists = [
+        _ticks([0, 2.5, 5, 7.5, 10]),
+        _ticks([0, 1500, 3000, 4500]),
+        _ticks([0, 1.5, 3]),
+        _ticks([0, 0.00003, 0.00006]),
+        _ticks([0, 2e16, 4e16]),
+        _ticks([-1010, -500, 0, 500, 1010]),
+        _ticks([0, 0.125, 0.25, 0.375]),
+        _ticks([1234.5]),
+        _ticks([0, double.nan]),
+      ];
+      final mismatches = <String>[];
+      for (final locale in <Object?>[undefined, 'en-US', 'de-DE', 'fr', 'hi']) {
+        for (final ticks in tickLists) {
+          for (var i = 0; i < ticks.length; i++) {
+            final value = ticks[i].value;
+            final index = i.toDouble();
+            final empty = _apply(
+              numeric,
+              value,
+              index,
+              ticks,
+              _scale(locale, <String, Object?>{}),
+            );
+            for (final format in <Object?>[undefined, null, 0.0, 'x', true]) {
+              final got = _apply(
+                numeric,
+                value,
+                index,
+                ticks,
+                _scale(locale, format),
+              );
+              if (got != empty) {
+                mismatches.add('$locale $format $value: $got, $empty');
+              }
+            }
+          }
+        }
+      }
+      expect(mismatches, isEmpty);
+    });
+
+    test('record key: an object format still assigns its keys', () {
+      final ticks = _ticks([0, 1234.5, 2469]);
+      // The record key of the same locale and digits is in the cache first.
+      expect(
+        _apply(numeric, 1234.5, 1, ticks, _scale('en-US', null)),
+        '1,234.5',
+      );
+      expect(
+        _apply(
+          numeric,
+          1234.5,
+          1,
+          ticks,
+          _scale('en-US', <String, Object?>{'useGrouping': false}),
+        ),
+        '1234.5',
+      );
+      expect(
+        _apply(
+          numeric,
+          1234.5,
+          1,
+          ticks,
+          _scale('en-US', <String, Object?>{'notation': 'scientific'}),
+        ),
+        '1.2E3',
+      );
+    });
+
+    test('record key: the locale throws as before', () {
+      final ticks = _ticks([0, 1234.5, 2469]);
+      for (var i = 0; i < 2; i++) {
+        expect(
+          () => _apply(numeric, 1234.5, 1, ticks, _scale(null, undefined)),
+          throwsA(isA<TypeError>()),
+        );
+        expect(
+          () => _apply(numeric, 1234.5, 1, ticks, _scale('en_US', undefined)),
+          throwsArgumentError,
+        );
+      }
+    });
+
     test('throws a TypeError without options.ticks', () {
       // this.options.ticks.format reads a property of undefined.
       final scale = _Scale(
