@@ -8057,3 +8057,61 @@ first chart and loses that form when a time chart comes later. A Flutter web app
 linear chart and then a time chart reaches the slow state. Chrome and Firefox got faster on the same rows. The
 `alignToPixels` part is reverted; the loop part of item 4 stays. Files:
 `.handover/zoom-perf/ab/mac-safari/` (bisect.md, confirm.md), outside the repository.
+
+## 70. Stroke pieces in desktop browsers
+
+Chart.js ADR 0113 strokes a `Path2D` in pieces from 2 commands when Flutter reports macOS, Windows or Linux for the
+browser, and keeps the 128 commands of Chart.js ADR 0105 in other browsers and for the fill. Native apps keep one draw.
+The question came from §68: in a desktop browser a line of 100 points had a higher raster time than a line of 1,000
+points, because the shorter line takes one draw.
+
+**The experiment** (2026-11-10, by day). `apps/chart_benchmark_lab` with a patch on `8084b6b` that sets the stroke rule
+at run time and counts the strokes (not committed): the Chart.js port, type `line`, preset `plain`, one run of 4 s per
+cell, a warm-up capture before the first cell of each page load or app start. Targets: a MacBook Pro M3 Max (120 Hz,
+DPR 2, chart 1004 x 420 logical, 2008 x 840 bitmap pixels) with Chrome 157 (WebAssembly), Safari 27.0.1 and Firefox
+159.0 (JavaScript) and the macOS app; a Pixel 8a with Chrome (WebAssembly, 922 x 788 bitmap pixels), Firefox 159.0.1
+(JavaScript, 924 x 783) and the app; an iPhone 17 Pro with Safari 27.2 (JavaScript, 1026 x 900) and the app. The rules:
+one draw, pieces from 128 commands (today's web rule), pieces from 2 commands, pieces from 32 and 64 commands, and
+pieces of 20,000 and 80,000 pixels. Files: `.handover/pieces/` (`results/*.md`, `analysis.md`), outside the repository.
+
+Raster p90 / raster mean in ms. FPS stayed at the cap in each desktop cell below 1,000 points (Chrome 119.5 to 120.25,
+Safari 59.25 to 60.25, Firefox 57.75 to 60.25), and frame p90 did not move.
+
+| Points | Mac Chrome, one draw | Mac Chrome, pieces | Mac Safari, one draw | Mac Safari, pieces | Mac Firefox, one draw | Mac Firefox, pieces |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 10 | 1.62 / 1.47 | 1.48 / 1.30 | 1.34 / 1.23 | 0.70 / 0.65 | 2.92 / 2.29 | 2.02 / 1.71 |
+| 20 | 1.68 / 1.51 | 1.52 / 1.29 | 1.40 / 1.30 | 0.68 / 0.61 | 3.12 / 2.53 | 1.84 / 1.14 |
+| 40 | 1.85 / 1.64 | 1.40 / 1.20 | 1.52 / 1.45 | 0.66 / 0.62 | 3.24 / 2.21 | 0.92 / 0.79 |
+| 60 | 2.04 / 1.85 | 1.44 / 1.25 | 1.78 / 1.73 | 0.66 / 0.62 | 3.76 / 2.78 | 1.88 / 1.62 |
+| 80 | 2.21 / 2.01 | 1.46 / 1.27 | 1.92 / 1.72 | 0.70 / 0.63 | 4.10 / 2.97 | 1.88 / 1.64 |
+| 100 | 2.34 / 2.07 | 1.46 / 1.28 | 2.18 / 1.97 | 0.82 / 0.68 | 4.38 / 3.04 | 2.18 / 1.66 |
+
+| Points | Pixel Chrome, one draw | Pixel Chrome, pieces | Pixel Firefox, one draw | Pixel Firefox, pieces | iPhone Safari, one draw | iPhone Safari, pieces |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 10 | 11.45 / 6.24 | 11.20 / 7.36 | 2.50 / 2.06 | 3.14 / 2.27 | - | - |
+| 20 | 12.15 / 6.40 | 11.17 / 6.93 | 2.58 / 2.16 | 3.64 / 2.88 | - | - |
+| 40 | 11.88 / 6.42 | 11.21 / 7.41 | 2.78 / 2.32 | 3.70 / 2.92 | - | - |
+| 60 | 8.18 / 5.70 | 11.55 / 7.25 | 3.18 / 2.63 | 3.50 / 2.76 | - | - |
+| 80 | 9.02 / 6.48 | 11.54 / 7.37 | 3.40 / 2.85 | 3.66 / 2.95 | - | - |
+| 100 | 8.99 / 7.02 | 11.62 / 7.17 | 4.18 / 3.26 | 4.62 / 3.61 | 26 / 24.27 (32.25 FPS) | 49 / 34.98 (23.5 FPS) |
+
+At 1,000 and 20,000 points the line has more than 128 commands, so both rules cut the same pieces. Today's pieces
+against one draw there: Pixel Chrome 13.90 / 6.33 against 18.02 / 15.23 and 26.75 / 19.55 against 29.99 / 20.45; Pixel
+Firefox 7.08 / 6.60 against 8.16 / 8.15 and 8.12 / 7.78 (42.75 FPS) against 27.70 / 12.58 (35 FPS); iPhone Safari 65 /
+62.75 against 75 / 73.09 and 75 / 72.66 against 84 / 82.63. Pieces of 80,000 pixels hit a cliff in the Mac browsers
+(Chrome 13.13 ms and 85.5 FPS at 20,000 points). In the native apps the three rules tie within the noise at each count
+(macOS 4.33 / 3.33, 4.42 / 3.44 and 1.20 / 1.08 with one draw), and pieces add 0.04 to 0.39 ms of draw time on the UI
+thread. Chart.js ADR 0113 has the tables of each target, the noise of each target and the open points.
+
+The noise: the largest gap between two cells that draw the same thing is 0.12 / 0.16 ms in Mac Chrome, 0.34 / 0.10 in Mac
+Safari, 0.50 / 0.66 in Mac Firefox, 1.85 / 0.64 in Pixel Chrome, 0.58 / 0.31 in Pixel Firefox and 2 / 1.54 in iPhone
+Safari, from 3 to 6 single-run pairs.
+
+**The gain is raster headroom.** Against one draw, the desktop rule lowers raster p90 by 0.14 to 0.88 ms in Mac Chrome,
+by 0.64 to 1.36 ms in Mac Safari and by 0.90 to 2.32 ms in Mac Firefox at 10 to 100 points, with no change of FPS. The
+phone browsers keep one draw below 128 commands: there pieces cost raster mean in Pixel Chrome (+0.53 to +1.55 ms at 10 to
+80 points) and Pixel Firefox, and 23 ms of p90 and 9 FPS in iPhone Safari at 100 points.
+
+**The night run** (the night of 2026-11-10, pending). One lab run of the final build: the Mac browsers at 10 to 100
+points with a plain, a curved and a translucent line and a small chart, a chart with several datasets, and one phone
+batch for each browser that shows no change. Figures: to come.

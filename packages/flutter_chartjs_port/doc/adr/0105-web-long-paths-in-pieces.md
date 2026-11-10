@@ -1,6 +1,7 @@
 # Chart.js ADR 0105: Long paths in pieces on the web
 
 - Status: accepted
+- Superseded by: [Chart.js ADR 0113](0113-stroke-pieces-by-browser-system.md) (2026-11-10)
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0034, 0089, 0104. Measurements: performance.md §68.
 - Row of `differences.md`: `adapt-web-long-path-pieces`.
