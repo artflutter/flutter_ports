@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: native point-option loop contracts.
 
+import 'dart:collection' show LinkedHashMap;
+
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
     show BulkBarScale;
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
@@ -268,6 +270,122 @@ final class NativePointCoordinates {
 
 bool _number(Object? value) =>
     value == null || value is Undefined || value is num;
+
+/// Differential test switch of Chart.js ADR 0109; not a chart option. With
+/// it off, each gap test reads `prevParsed[iAxis]`.
+@visibleForTesting
+bool nativeGapReadsEnabled = const bool.fromEnvironment(
+  'CHARTJS_NATIVE_GAP_READS',
+  defaultValue: true,
+);
+
+/// The gap tests that took the held x of the previous pass, for differential
+/// tests. A loop adds its count when it ends.
+@visibleForTesting
+int nativeGapReadsTaken = 0;
+
+/// dart2wasm makes a type object for each `runtimeType` read. There the class
+/// test of a Map or a typed data item costs more than the read that it saves,
+/// and only a [ParsedItem] qualifies.
+const bool _sameTypeIsCheap = !bool.fromEnvironment('dart.tool.dart2wasm');
+
+/// The x value of the previous pass of one line or scatter loop, for the gap
+/// test `Math.abs(parsed[iAxis] - prevParsed[iAxis]) > maxGapLength`
+/// (controller.line.js:104, controller.scatter.js:133). Chart.js ADR 0109.
+///
+/// A pass holds its x ([held]) when the loop-wide guards of the caller of
+/// [of] hold, the pass qualifies ([qualify]) and no code of the pass after its
+/// read of x can run user code. The next pass that qualifies decides its gap
+/// test from that x ([stopOf]) in place of the read of `prevParsed[iAxis]`:
+/// between the two reads no code wrote the item, so the read would give the
+/// same value, with no effect and no throw, and its `ToNumber` is the held x.
+@internal
+final class NativeGapReads {
+  NativeGapReads._(this._meta, this._parsed, this._maxGapLength);
+
+  /// The gap reads of one loop over the parsed items of [meta] with the
+  /// `ToNumber` of `maxGapLength` [maxGapLength], or Dart `null` unless the
+  /// switch is on and the parsed list is native. The caller has proved the
+  /// loop-wide guards.
+  static NativeGapReads? of(types.ChartMeta meta, double maxGapLength) {
+    if (!nativeGapReadsEnabled) return null;
+    final parsed = meta.parsed;
+    return nativeDataUpdateList(parsed)
+        ? NativeGapReads._(meta, parsed, maxGapLength)
+        : null;
+  }
+
+  final types.ChartMeta _meta;
+  final List<Object?> _parsed;
+  final double _maxGapLength;
+
+  /// A native map item of this loop: a map of the same class qualifies by one
+  /// class compare.
+  Object? _map;
+
+  /// A registered typed item of this loop, as [_map].
+  TypedDataItem? _typed;
+
+  /// The x that a pass holds for the next one, or Dart `null` for none.
+  /// Each pass of the loop writes it once, after the last code of the pass
+  /// that can run user code.
+  double? held;
+
+  int _taken = 0;
+
+  /// The x of a pass as a double, or Dart `null` unless the pass qualifies:
+  /// `getParsed` read [item] from the native parsed list, [item] is a native
+  /// item ([ParsedItem], a registered immutable typed item, or a native map),
+  /// its x [iValue] is a number, and its value [vValue] is a number, `null` or
+  /// `undefined`. Then the reads of the item and the pixel conversions of both
+  /// values run no user code. The caller has the other per-pass guard: the
+  /// typed writes of an exact point.
+  double? qualify(Object? item, Object? iValue, Object? vValue) {
+    if (iValue is! num ||
+        !_number(vValue) ||
+        !identical(_meta.parsed, _parsed) ||
+        !_nativeItem(item)) {
+      return null;
+    }
+    return iValue.toDouble();
+  }
+
+  bool _nativeItem(Object? item) {
+    if (item is ParsedItem) return true;
+    if (!_sameTypeIsCheap) return false;
+    // An SDK map: no user class overrides its `runtimeType`. The class compare
+    // also rules out a map with user equality or hash functions.
+    if (item is LinkedHashMap) {
+      final map = _map;
+      if (map != null && item.runtimeType == map.runtimeType) return true;
+      if (!nativeDataUpdateObject(item)) return false;
+      _map = item;
+      return true;
+    }
+    if (item is TypedDataItem) {
+      final typed = _typed;
+      if (typed != null && item.runtimeType == typed.runtimeType) return true;
+      if (!nativeDataUpdatePoint(item)) return false;
+      _typed = item;
+      return true;
+    }
+    return false;
+  }
+
+  /// The result of the gap test of a pass that qualified with the x [x], from
+  /// the x that the previous pass held, or Dart `null` when it held none: then
+  /// the pass reads `prevParsed[iAxis]`. With `maxGapLength` +Infinity the
+  /// result is `false` for each x.
+  bool? stopOf(double x) {
+    final previous = held;
+    if (previous == null) return null;
+    _taken++;
+    return (x - previous).abs() > _maxGapLength;
+  }
+
+  /// Adds the count of this loop to [nativeGapReadsTaken].
+  void finish() => nativeGapReadsTaken += _taken;
+}
 
 /// A loop-local resolution over native sources. The validator must run before
 /// every scope shortcut. Its context shortcut is used only in a proven native
