@@ -332,7 +332,8 @@ bool retinaScale(
 /// Upstream runs the DOM test only when `_isDomSupported()` is true
 /// (:259-262). [isDomSupported] is false, so the value is the start value
 /// `false` (`platform-dom-supported`, differences.md). `platform.flutter`
-/// has no listener options.
+/// does not read it: it registers its listeners with `passive: true`, the
+/// port of `eventListenerOptions` (Chart.js ADR 0108).
 const bool supportsEventListenerOptions = false;
 
 /// The pattern of helpers.dom.ts:284. Dart `\d` is `[0-9]`, as in

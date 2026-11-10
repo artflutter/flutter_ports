@@ -1,6 +1,8 @@
 # Chart.js ADR 0108: The input surface and exports for add-on plugins
 
-- Status: proposed
+- Status: accepted (2026-11-10). The host wave of the zoom port (`140f081..0b09600`) is on `main`,
+  and the full pre-push list passed. The lead accepted it by the maintainer's rule of 2026-10-31: a
+  record is accepted when its code passes the tests.
 - Date: 2026-11-10
 - Gate: the code and the tests of section 13 pass. The lead then accepts this ADR (the maintainer
   rule of 2026-10-31). The device check of `touch-action: none` (Open 1) is evidence, not a gate.
@@ -368,7 +370,11 @@ With `none`:
   down of each touch-like pointer. It accepts the arena of a pointer that moves farther than
   `computeHitSlop(event.kind, gestureSettings)` from its down, and the arenas of all its
   touch-like pointers at a second touch-like down (a scale recognizer of an ancestor, for example
-  `InteractiveViewer`, can accept on the change of the span before a finger passes the slop). It
+  `InteractiveViewer`, can accept on the change of the span before a finger passes the slop). The
+  claim slop is the hit slop alone: it has no Chromium epsilon (the 0.05 of the slop limit of
+  Chart.js ADR 0037 §8) and no stylus factor (the 1.5 of that limit). Thus a stylus claims at the
+  hit slop, while its tap candidate ends at 1.5 times the touch slop; a case of
+  `chart_host_test.dart` pins it. It
   rejects the arena of a pointer that lifts or cancels before an accept, before the sweep of
   `GestureBinding.handleEvent`. Thus an ancestor tap inside the slop still wins: the DOM click of a
   `touch-action: none` canvas still bubbles to its ancestors. A detach, a dispose and a canvas swap
@@ -421,9 +427,14 @@ In `packages/chartjs_test_utils`:
   `rect = node.getBoundingClientRect()`, and calls `node.dispatchEvent(event)`. No Chart.js
   listener is on the document, so the Chart.js specs keep their results. The row
   `harness-trigger-mouse-event` of `differences.md` changes.
-- The DOM stand-in reads `left` and `top` (px) of an element with `position: absolute`. A spec of
-  the zoom plugin moves its wrapper by 50 px (`test/specs/zoom.drag.spec.js:409-412`), and the
-  spec has a meaning only when `getBoundingClientRect()` sees the move.
+- The DOM stand-in reads `left` and `top` (px, also negative) of an element with `position:
+  absolute`. They are measured from the padding box of the parent element, not from the nearest
+  positioned ancestor: the parent stands for the containing block, also for `position: fixed`.
+  Without one of them, that coordinate keeps the place of the element in the flow. They do not
+  change the width. For the shape of the zoom specs (a wrapper that is a child of the body), the
+  result is that of CSS. A spec of the zoom plugin moves its wrapper by 50 px
+  (`test/specs/zoom.drag.spec.js:409-412`), and the spec has a meaning only when
+  `getBoundingClientRect()` sees the move.
 - `FixtureSource` takes the path of its submodule for the skip reason of a missing checkout. The
   source of the Chart.js fixtures keeps the reason of Chart.js ADR 0029 §11 item 5.
 

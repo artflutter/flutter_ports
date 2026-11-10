@@ -19,9 +19,10 @@ test/ files whose header names a js project of tool/port_sources.yaml
 (porting-flow.md section 4, tool 3). A site passes with a
 "// js-ok: <reason>" comment at the end of its line, or alone on the line
 before. The default package is the package of this tool. The first package
-holds tool/port_sources.yaml. The check also examines the harness package
-chartjs_test_utils next to the first package when it exists. Exits with 1
-when a site is flagged.''';
+holds tool/port_sources.yaml. The tool/port_sources.yaml of each other
+package, for example of an add-on port, adds its projects. The check also
+examines the harness package chartjs_test_utils next to the first package
+when it exists. Exits with 1 when a site is flagged.''';
 
 Future<void> main(List<String> args) async {
   exitCode = await runCheck(

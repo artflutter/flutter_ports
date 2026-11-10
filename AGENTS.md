@@ -39,8 +39,9 @@ longer supported. No global color installer or intermediate option color exists.
   and `flutter_chartjs_plugin_zoom_port`.
 - `dart run melos run test:web`: the `flutter_chartjs_port` and `chartjs_test_utils` tests without
   `@TestOn('vm')`, in Chrome through Flutter (JavaScript/DDC and WebAssembly). `tool/test_web.dart`
-  selects browser-capable files before compilation. It needs a local Google
-  Chrome. CI job: `test-web`.
+  selects browser-capable files before compilation. A leg fails when it ends by a signal or exits
+  with 0 without the summary of a run that passed: `flutter test` exits with 0 when a SIGTERM stops
+  it. It needs a local Google Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8)
   and tool 9, and `options:gen:check`, as melos steps. The CI job `port-checks` runs the seven
@@ -1036,15 +1037,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       layer) is accepted (2026-10-31) and supersedes Chart.js ADR 0013. Chart.js ADR 0056
       (profile-guided color implementation) is proposed: its code is implemented and measured,
       but its gates are its local policy change and durable comparison evidence. Chart.js ADR 0108
-      (the input surface and exports for add-on plugins) is proposed: the lead accepts it when its
-      tests pass. It supersedes parts of Chart.js ADR 0022 (§3 the CSS subset, §6 the event and the
-      dispatch of `triggerMouseEvent`), Chart.js ADR 0037 (§8 the pan begin, §10 the claims, two
-      bullets of §11, Open 3), Chart.js ADR 0048 (§5 the library count and the export lists, §6 the
-      hide of `isPointInArea`), Chart.js ADR 0051 (§4 and §5, the fields and the bubbling of the
-      keyboard events) and Chart.js ADR 0054 (the sentence "`Plugin` stays internal" of §12, and the
-      plugin item of Open 2). The other ADRs are accepted. Docs name them
-      "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
-      `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
+      (the input surface and exports for add-on plugins) is accepted (2026-11-10): its code landed
+      with the full pre-push list green. It supersedes parts of Chart.js ADR 0022 (§3 the CSS
+      subset, §6 the event and the dispatch of `triggerMouseEvent`), Chart.js ADR 0037 (§8 the pan
+      begin, §10 the claims, two bullets of §11, Open 3), Chart.js ADR 0048 (§5 the library count
+      and the export lists, §6 the hide of `isPointInArea`), Chart.js ADR 0051 (§4 and §5, the
+      fields and the bubbling of the keyboard events) and Chart.js ADR 0054 (the sentence "`Plugin`
+      stays internal" of §12, and the plugin item of Open 2). The other ADRs are accepted. Docs
+      name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
+      file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
       `packages/flutter_chartjs_plugin_zoom_port/doc/adr/`. An accepted ADR does not change. A changed decision
       gets a new ADR that states the complete decision and supersedes the old ADR.
@@ -1083,8 +1084,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     runner of `lib/src/fixture.dart`.
   - `lib/src/fixture.dart` ports `src/fixture.js` (Chart.js ADR 0029): `specsFromFixtures`,
     `specFromFixture` and `FixtureSource` (the manifest and `fixtures.json` of tool 4, the folder
-    `upstream` of the upstream fixture files and `requireUpstream`; the skip reason of a missing
-    checkout names the submodule of the source, Chart.js ADR 0108 §11). Each fixture test has the tag
+    `upstream` of the upstream fixture files, `requireUpstream` and `submodule`, the submodule that
+    the skip reason of a missing checkout names, Chart.js ADR 0108 §11). Each fixture test has the tag
     `fixtures`. The rows are `harness-fixture-sources` and `harness-fixture-frame`. It is not a
     pure layer. `test/fixture_test.dart` runs the probe `test/fixture_probe/probe_fixture.dart` in
     a nested `flutter test --tags fixtures` with `FIXTURES_REQUIRED=1` and `FIXTURE_PROBE_CRLF` (a
