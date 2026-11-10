@@ -47,14 +47,21 @@ export 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 /// typed classes. Another value gives a [GenericElementOptions]. The result
 /// is not frozen.
 // DIVERGES(chartjs): adapt-typed-element-options, the class of the id.
+//
+// The test `is String` comes before the switch: dart2wasm of Dart
+// 3.14.0-315.3.beta traps on a switch with String cases over a value that is
+// neither null nor a String (5.0, `undefined`), and the trap stops the test
+// runner of the browser.
 ElementOptions createElementOptions(Object? elementType) =>
-    switch (elementType) {
-      'point' => PointOptions(),
-      'line' => LineOptions(),
-      'bar' => BarOptions(),
-      'arc' => ArcOptions(),
-      _ => GenericElementOptions(),
-    };
+    elementType is String
+    ? switch (elementType) {
+        'point' => PointOptions(),
+        'line' => LineOptions(),
+        'bar' => BarOptions(),
+        'arc' => ArcOptions(),
+        _ => GenericElementOptions(),
+      }
+    : GenericElementOptions();
 
 // The typed reads of the element classes (Chart.js ADR 0054 §6 and §9).
 //
