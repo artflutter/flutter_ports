@@ -139,14 +139,24 @@ abstract base class OptionScope
     _ => throw ArgumentError.value(key, 'key', 'Not an OptionKey or a String'),
   };
 
+  /// [key] (an [OptionKey] or a name) in the form of this scope: a declared
+  /// [OptionKey], or the name of an extra. The typed walks of `helpers.core`
+  /// pass it to [ownNormalized], [lookupNormalized], [classifyNormalized]
+  /// and [storeNormalized], which read no name for a declared key.
+  @internal
+  Object normalizeKey(Object key) => _normalize(key);
+
   /// The index of the extra [name], or -1.
   int _extraIndex(String name) => _extraNames?.indexOf(name) ?? -1;
 
   /// The cell of [key] (an [OptionKey] or a name), or Dart `null` when the
   /// scope does not own it. A routed key gives the cell of its routed value
   /// ([addRoute]).
-  Opt<Object?>? lookup(Object key) {
-    final k = _normalize(key);
+  Opt<Object?>? lookup(Object key) => lookupNormalized(_normalize(key));
+
+  /// [lookup] of the key [k] in the form of this scope ([normalizeKey]).
+  @internal
+  Opt<Object?>? lookupNormalized(Object k) {
     final own = _own(k);
     final names = _routeNames;
     if (names == null) return own;
@@ -170,6 +180,10 @@ abstract base class OptionScope
   /// the local value of a routed key (the hidden `_<name>` of
   /// core.defaults.js:136-140).
   Opt<Object?>? ownCell(Object key) => _own(_normalize(key));
+
+  /// [ownCell] of the key [k] in the form of this scope ([normalizeKey]).
+  @internal
+  Opt<Object?>? ownNormalized(Object k) => _own(k);
 
   /// The names of the routed keys. Dart `null` before the first route.
   List<String>? _routeNames;
@@ -239,7 +253,19 @@ abstract base class OptionScope
   void store(Object key, Opt<Object?> cell) {
     // A JavaScript TypeError: a write into a frozen object.
     if (_frozen) throw TypeError();
-    final k = _normalize(key);
+    _store(_normalize(key), cell);
+  }
+
+  /// [store] of the key [k] in the form of this scope ([normalizeKey]).
+  @internal
+  void storeNormalized(Object k, Opt<Object?> cell) {
+    // A JavaScript TypeError: a write into a frozen object.
+    if (_frozen) throw TypeError();
+    _store(k, cell);
+  }
+
+  /// [store] of the normalized key [k] into a scope that is not frozen.
+  void _store(Object k, Opt<Object?> cell) {
     if (k is OptionKey) {
       if (cellOf(k) == null) {
         _ownKeySnapshot = null;
@@ -349,15 +375,52 @@ abstract base class OptionScope
 
   /// The cell of the raw JS value [raw] for the name [name] in this scope:
   /// by the shape of a declared key, else by the shape `others` of the kind.
-  Opt<Object?> classifyName(String name, Object? raw) {
-    final k = keyOf(name);
+  Opt<Object?> classifyName(String name, Object? raw) =>
+      classifyNormalized(keyOf(name), raw);
+
+  /// [classifyName] of the key [k] in the form of this scope
+  /// ([normalizeKey]), with the same audit of a foreign cell.
+  @internal
+  Opt<Object?> classifyNormalized(Object k, Object? raw) {
     final cell = k is OptionKey ? classify(k, raw) : kind.classifyOther(raw);
     assert(
-      cell is! OptForeign || auditForeign('${kind.typeName}Scope', name, raw),
+      cell is! OptForeign ||
+          auditForeign(
+            '${kind.typeName}Scope',
+            k is OptionKey ? k.jsName : k as String,
+            raw,
+          ),
       'the audit hook of the oracle O2',
     );
     return cell;
   }
+
+  /// The own keys of this scope for the typed merge of `helpers.core`, in
+  /// the order of [jsKeys] ([nativeOwnKeySnapshot]), or Dart `null` when the
+  /// merge reads the scope by name: a scope without [nativeFace], or with an
+  /// extra whose name is an array index (`Object.keys` puts it first).
+  @internal
+  List<Object>? get typedMergeKeys {
+    // DIVERGES(chartjs): adapt-typed-scope-merge, the keys of the typed walk.
+    if (!debugTypedMerge || !nativeFace) return null;
+    final extras = _extraNames;
+    if (extras != null && extras.any((name) => jsArrayIndex(name) != null)) {
+      return null;
+    }
+    return nativeOwnKeySnapshot;
+  }
+
+  /// Whether the typed merge of `helpers.core` can read and write this
+  /// scope by its typed keys as a target: [nativeFace] and no route (a
+  /// routed key reads its route, and its own cell is the local value).
+  @internal
+  bool get typedMergeTarget => debugTypedMerge && nativeFace && !hasRoutes;
+
+  /// Whether [typedMergeKeys] and [typedMergeTarget] offer the typed merge.
+  /// Only the tests turn it off, for a comparison of the typed merge with
+  /// the merge by name.
+  @visibleForTesting
+  static bool debugTypedMerge = true;
 
   /// `object[name]` (`[[Get]]`): the JS value of [name], or [undefined]
   /// when the scope does not own it.

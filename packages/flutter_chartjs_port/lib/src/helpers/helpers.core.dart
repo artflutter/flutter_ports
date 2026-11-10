@@ -30,7 +30,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionScope, ScopeKind;
+    show OptionKey, OptionScope, ScopeKind;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
@@ -408,12 +408,54 @@ Object? _cloneFor(Object target, String key, Object? sval) {
   return clone(sval);
 }
 
+/// [_cloneFor] for the key [tk] of the typed scope [target] in the form of
+/// [target] (`OptionScope.normalizeKey`): `childKindFor` of its name is the
+/// nested kind of [tk], or the kind of the extras.
+Object? _cloneForKey(OptionScope target, Object tk, Object? sval) {
+  if (_isMapObject(sval)) {
+    final kind = tk is OptionKey
+        ? target.kind.childKind(tk)
+        : target.kind.othersKind;
+    if (kind != null) return _cloneToScope(kind, sval!);
+  }
+  return clone(sval);
+}
+
 /// The deep copy of the object [source] as a typed scope of [kind]: each
 /// own key of [source] in the [jsObjectKeys] order, an object under a key of
 /// a nested kind as a typed scope of that kind, any other value as [clone]
 /// gives it (Chart.js ADR 0054 §3).
+///
+/// A typed scope [source] with the keys of the typed merge
+/// (`OptionScope.typedMergeKeys`) is copied by its typed keys: the same
+/// keys in the same order, the values that `jsRead` gives (a routed key
+/// reads its route) and the cells that `jsWrite` stores, with no read of a
+/// name for a declared key (the row `adapt-typed-scope-merge`).
 OptionScope _cloneToScope(ScopeKind kind, Object source) {
   final scope = kind.create();
+  if (source is OptionScope) {
+    final keys = source.typedMergeKeys;
+    if (keys != null) {
+      // DIVERGES(chartjs): adapt-typed-scope-merge, a typed copy by its keys.
+      for (var k = 0, klen = keys.length; k < klen; ++k) {
+        final key = keys[k];
+        final cell = source.lookupNormalized(key);
+        final value = cell == null ? undefined : cell.raw;
+        final tk = scope.normalizeKey(key);
+        final child = tk is OptionKey ? kind.childKind(tk) : kind.othersKind;
+        scope.storeNormalized(
+          tk,
+          scope.classifyNormalized(
+            tk,
+            child != null && _isMapObject(value)
+                ? _cloneToScope(child, value!)
+                : clone(value),
+          ),
+        );
+      }
+      return scope;
+    }
+  }
   for (final key in jsObjectKeys(source)) {
     final value = _getProp(source, key);
     final child = scope.childKindFor(key);
@@ -493,6 +535,12 @@ Object? merge(
   final mergeOptions = options ?? const MergeOptions();
   // Upstream names it `merger`, the Dart name of `_merger`.
   final keyMerger = mergeOptions.merger ?? merger;
+  // DIVERGES(chartjs): adapt-typed-scope-merge, a typed scope by its keys.
+  final ifAbsent = identical(keyMerger, mergerIf);
+  final typed =
+      (ifAbsent || identical(keyMerger, merger)) &&
+      object is OptionScope &&
+      object.typedMergeTarget;
   Object? current;
 
   for (var i = 0; i < ilen; ++i) {
@@ -502,6 +550,19 @@ Object? merge(
     }
 
     final currentObject = current!;
+    if (typed && currentObject is OptionScope) {
+      final typedKeys = currentObject.typedMergeKeys;
+      if (typedKeys != null) {
+        _mergeScope(
+          object,
+          currentObject,
+          typedKeys,
+          mergeOptions,
+          ifAbsent,
+        );
+        continue;
+      }
+    }
     final keys = jsObjectKeys(currentObject);
     for (var k = 0, klen = keys.length; k < klen; ++k) {
       keyMerger(keys[k], object, currentObject, mergeOptions);
@@ -509,6 +570,63 @@ Object? merge(
   }
 
   return target;
+}
+
+/// The loop of [merge] over the own keys [keys] of the typed scope [source]
+/// (`OptionScope.typedMergeKeys`) into the typed scope [target]
+/// (`OptionScope.typedMergeTarget`), with the default [merger] or, for
+/// [ifAbsent], [mergerIf]: for each key, the steps of the merger by the
+/// typed keys of the two scopes (the row `adapt-typed-scope-merge`).
+///
+/// The steps are the ones of the merger by name. A reserved name is
+/// skipped. The value of [target] is its own cell: it has no route. The
+/// value of [source] is the cell that `jsRead` reads (`lookup`, also through
+/// a route). Two objects merge with the same recursion. A write stores the
+/// [_cloneFor] copy with the cell of `jsWrite` (the classification of the
+/// key, the audit of a foreign value, the throw of a frozen target). Only
+/// the lookups of the names go: a declared key is an `OptionKey` in both
+/// scopes.
+void _mergeScope(
+  OptionScope target,
+  OptionScope source,
+  List<Object> keys,
+  MergeOptions options,
+  bool ifAbsent,
+) {
+  for (var k = 0, klen = keys.length; k < klen; ++k) {
+    final key = keys[k];
+    if (!_isValidKey(key is OptionKey ? key.jsName : key as String)) {
+      continue;
+    }
+    final tk = target.normalizeKey(key);
+    final tcell = target.ownNormalized(tk);
+    final tval = tcell == null ? undefined : tcell.raw;
+    final scell = source.lookupNormalized(key);
+    final sval = scell == null ? undefined : scell.raw;
+
+    if (_isMapObject(tval) && _isMapObject(sval)) {
+      if (ifAbsent) {
+        mergeIf(tval, sval);
+      } else {
+        merge(tval, sval, options);
+      }
+    } else if (ifAbsent) {
+      // `hasOwnProperty`: the target has no route.
+      if (tcell == null) {
+        target.storeNormalized(
+          tk,
+          target.classifyNormalized(tk, _cloneForKey(target, tk, sval)),
+        );
+      }
+    } else if (_isMapObject(sval) && tval is PropertyAccess) {
+      merge(tval, sval, options);
+    } else {
+      target.storeNormalized(
+        tk,
+        target.classifyNormalized(tk, _cloneForKey(target, tk, sval)),
+      );
+    }
+  }
 }
 
 /// helpers.core.ts:301 `mergeIf`, with the overloads at :294-300.
