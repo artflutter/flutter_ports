@@ -16,8 +16,6 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart' show getParentNode;
 // Not public: the DOM listeners of the internal chart host.
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show addCanvasEventListener, removeCanvasEventListener;
-// Not public: NativeEvent, the stand-in of the DOM event.
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The event types of the demo chart: the Chart.js default `events` option

@@ -68,8 +68,6 @@ import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
 import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
 // Not public: jsGet, the reads of the scriptable delay of motion.line.delay.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-// Not public: NativeEvent, the DOM event that the cases give the chart.
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 // Not public: fromNativeEvent, the chart event of a NativeEvent.
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
