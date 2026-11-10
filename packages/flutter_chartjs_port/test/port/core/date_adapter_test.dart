@@ -291,137 +291,20 @@ void main() {
     });
   });
 
+  // The local reference values on the table of each zone (TableZone, no
+  // cache), and on the cache of LocalZone over the same table: its cached
+  // intervals give the same results (Chart.js ADR 0110).
   group('reference local', () {
     for (final reference in dateReferenceZones) {
-      group(reference.name, () {
-        final zone = TableZone.of(reference);
-        final times = reference.times;
-
-        test('startOf and endOf', () {
-          final mismatches = _Mismatches();
-          const units = dateReferenceLocalUnits;
-          for (var i = 0; i < times.length; i++) {
-            final t = times[i];
-            for (var j = 0; j < units.length; j++) {
-              final unit = normalizeDateUnit(units[j]);
-              _time(
-                mismatches,
-                'startOf($t, ${units[j]})',
-                t,
-                reference.startOf[i * units.length + j],
-                () => startOfUnit(t, unit, zone, 0),
-              );
-              _time(
-                mismatches,
-                'endOf($t, ${units[j]})',
-                t,
-                reference.endOf[i * units.length + j],
-                () => endOfUnit(t, unit, zone, 0),
-              );
-            }
-          }
-          mismatches.check();
-        });
-
-        test("startOf(time, 'isoWeek', weekday)", () {
-          final mismatches = _Mismatches();
-          const weekdays = dateReferenceLocalWeekdays;
-          for (var i = 0; i < times.length; i++) {
-            final t = times[i];
-            for (var j = 0; j < weekdays.length; j++) {
-              _time(
-                mismatches,
-                'isoWeek($t, ${weekdays[j]})',
-                t,
-                reference.isoWeek[i * weekdays.length + j],
-                () => startOfIsoWeekday(t, weekdays[j], zone),
-              );
-            }
-          }
-          mismatches.check();
-        });
-
-        test('add', () {
-          final mismatches = _Mismatches();
-          const adds = dateReferenceLocalAdds;
-          for (var i = 0; i < times.length; i++) {
-            final t = times[i];
-            for (var j = 0; j < adds.length; j++) {
-              final (amount, unit) = adds[j];
-              _time(
-                mismatches,
-                'add($t, $amount, $unit)',
-                t,
-                reference.add[i * adds.length + j],
-                () => addUnit(t, amount, normalizeDateUnit(unit), zone),
-              );
-            }
-          }
-          mismatches.check();
-        });
-
-        test('diff', () {
-          final mismatches = _Mismatches();
-          const units = dateReferenceLocalDiffUnits;
-          final others = reference.diffOthers.length ~/ times.length;
-          var index = 0;
-          for (var i = 0; i < times.length; i++) {
-            for (var k = 0; k < others; k++) {
-              final a = times[i];
-              final b = reference.diffOthers[i * others + k];
-              for (final unit in units) {
-                final expected = reference.diff[index++];
-                final got = diffUnit(a, b, normalizeDateUnit(unit), zone);
-                if (!_same(got, expected)) {
-                  mismatches.add(
-                    'diff($a, $b, $unit): $got, expected $expected',
-                  );
-                }
-              }
-            }
-          }
-          mismatches.check();
-        });
-
-        test('format', () {
-          final mismatches = _Mismatches();
-          for (var i = 0; i < times.length; i++) {
-            final t = times[i];
-            final iso = formatDate(t, undefined, zone, 'en_US');
-            if (iso != reference.formatDefault[i]) {
-              mismatches.add(
-                'format($t): $iso, expected ${reference.formatDefault[i]}',
-              );
-            }
-            final fields = formatDate(
-              t,
-              'yyyy-MM-dd HH:mm:ss.SSS',
-              zone,
-              'en_US',
-            );
-            if (fields != reference.formatFields[i]) {
-              mismatches.add(
-                'format($t, $dateReferenceLocalFieldsFormat): $fields, '
-                'expected ${reference.formatFields[i]}',
-              );
-            }
-          }
-          mismatches.check();
-        });
-
-        test('parse of the wall times near the offset changes', () {
-          final mismatches = _Mismatches();
-          for (var i = 0; i < reference.walls.length; i++) {
-            final text = _wallText(reference.walls[i]);
-            final got = dateInput(text, zone);
-            final expected = reference.wallInstants[i].toDouble();
-            if (got != expected) {
-              mismatches.add('parse($text): $got, expected $expected');
-            }
-          }
-          mismatches.check();
-        });
-      });
+      for (final (suffix, zone) in <(String, DateZone)>[
+        ('', TableZone.of(reference)),
+        (
+          ' (LocalZone cache)',
+          LocalZone.withOffsets(TableZone.of(reference).offsetAt),
+        ),
+      ]) {
+        _referenceLocal(reference, suffix, zone);
+      }
     }
   });
 
@@ -799,14 +682,16 @@ void main() {
   });
 
   group('formats() clears the zone cache', () {
-    test('formats() and the zone setter clear the cached interval', () {
-      final zone = LocalZone.instance..offsetAt(0);
-      expect(zone.cachedInterval, isNotNull);
+    test('formats() and the zone setter clear the cached intervals', () {
+      final zone = LocalZone.instance
+        ..offsetAt(0)
+        ..offsetAt(100 * 86400000);
+      expect(zone.cachedIntervals, isNotEmpty);
       DateAdapterBase().formats();
-      expect(zone.cachedInterval, isNull);
+      expect(zone.cachedIntervals, isEmpty);
       zone.offsetAt(0);
       setDefaultDateZone('UTC');
-      expect(zone.cachedInterval, isNull);
+      expect(zone.cachedIntervals, isEmpty);
     });
   });
 
@@ -838,5 +723,142 @@ void main() {
 
   test('weekStartOf(en_US) is Sunday', () {
     expect(weekStartOf('en_US'), 0);
+  });
+}
+
+/// The tests of the group `reference local` for [reference] on [zone]: a
+/// [TableZone], or the cache of [LocalZone] over it.
+void _referenceLocal(
+  DateReferenceZone reference,
+  String suffix,
+  DateZone zone,
+) {
+  group('${reference.name}$suffix', () {
+    final times = reference.times;
+
+    test('startOf and endOf', () {
+      final mismatches = _Mismatches();
+      const units = dateReferenceLocalUnits;
+      for (var i = 0; i < times.length; i++) {
+        final t = times[i];
+        for (var j = 0; j < units.length; j++) {
+          final unit = normalizeDateUnit(units[j]);
+          _time(
+            mismatches,
+            'startOf($t, ${units[j]})',
+            t,
+            reference.startOf[i * units.length + j],
+            () => startOfUnit(t, unit, zone, 0),
+          );
+          _time(
+            mismatches,
+            'endOf($t, ${units[j]})',
+            t,
+            reference.endOf[i * units.length + j],
+            () => endOfUnit(t, unit, zone, 0),
+          );
+        }
+      }
+      mismatches.check();
+    });
+
+    test("startOf(time, 'isoWeek', weekday)", () {
+      final mismatches = _Mismatches();
+      const weekdays = dateReferenceLocalWeekdays;
+      for (var i = 0; i < times.length; i++) {
+        final t = times[i];
+        for (var j = 0; j < weekdays.length; j++) {
+          _time(
+            mismatches,
+            'isoWeek($t, ${weekdays[j]})',
+            t,
+            reference.isoWeek[i * weekdays.length + j],
+            () => startOfIsoWeekday(t, weekdays[j], zone),
+          );
+        }
+      }
+      mismatches.check();
+    });
+
+    test('add', () {
+      final mismatches = _Mismatches();
+      const adds = dateReferenceLocalAdds;
+      for (var i = 0; i < times.length; i++) {
+        final t = times[i];
+        for (var j = 0; j < adds.length; j++) {
+          final (amount, unit) = adds[j];
+          _time(
+            mismatches,
+            'add($t, $amount, $unit)',
+            t,
+            reference.add[i * adds.length + j],
+            () => addUnit(t, amount, normalizeDateUnit(unit), zone),
+          );
+        }
+      }
+      mismatches.check();
+    });
+
+    test('diff', () {
+      final mismatches = _Mismatches();
+      const units = dateReferenceLocalDiffUnits;
+      final others = reference.diffOthers.length ~/ times.length;
+      var index = 0;
+      for (var i = 0; i < times.length; i++) {
+        for (var k = 0; k < others; k++) {
+          final a = times[i];
+          final b = reference.diffOthers[i * others + k];
+          for (final unit in units) {
+            final expected = reference.diff[index++];
+            final got = diffUnit(a, b, normalizeDateUnit(unit), zone);
+            if (!_same(got, expected)) {
+              mismatches.add(
+                'diff($a, $b, $unit): $got, expected $expected',
+              );
+            }
+          }
+        }
+      }
+      mismatches.check();
+    });
+
+    test('format', () {
+      final mismatches = _Mismatches();
+      for (var i = 0; i < times.length; i++) {
+        final t = times[i];
+        final iso = formatDate(t, undefined, zone, 'en_US');
+        if (iso != reference.formatDefault[i]) {
+          mismatches.add(
+            'format($t): $iso, expected ${reference.formatDefault[i]}',
+          );
+        }
+        final fields = formatDate(
+          t,
+          'yyyy-MM-dd HH:mm:ss.SSS',
+          zone,
+          'en_US',
+        );
+        if (fields != reference.formatFields[i]) {
+          mismatches.add(
+            'format($t, $dateReferenceLocalFieldsFormat): $fields, '
+            'expected ${reference.formatFields[i]}',
+          );
+        }
+      }
+      mismatches.check();
+    });
+
+    test('parse of the wall times near the offset changes', () {
+      final mismatches = _Mismatches();
+      for (var i = 0; i < reference.walls.length; i++) {
+        final text = _wallText(reference.walls[i]);
+        final got = dateInput(text, zone);
+        final expected = reference.wallInstants[i].toDouble();
+        if (got != expected) {
+          mismatches.add('parse($text): $got, expected $expected');
+        }
+      }
+      mismatches.check();
+    });
   });
 }
