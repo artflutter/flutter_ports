@@ -23,17 +23,19 @@ import 'fake_chart.dart';
 
 // Chart.js ADR 0037: the chart host sizes the chart at its first layout,
 // throttles later size and device pixel ratio changes, maps Flutter pointer
-// events to the DOM events of Chrome and claims nothing in the gesture
-// arena. A touch tap gives the compatibility mouse events, and a tap outside
-// gives mouseout to the host of the last tap. The group 'touch sequence'
-// pins the rules of the device check P4 (D1 to D5). The FakeChart makes the
-// platform calls of core.controller.js.
+// events to the DOM events of Chrome and, with the default touch-action,
+// claims nothing in the gesture arena. A touch tap gives the compatibility
+// mouse events, and a tap outside gives mouseout to the host of the last
+// tap. The group 'touch sequence' pins the rules of the device check P4 (D1
+// to D5). The FakeChart makes the platform calls of core.controller.js.
 //
-// Chart.js ADR 0108: the DOM fields of the events (group 'events'), the
-// canvas event target and the bubble phase (group 'canvas event target'),
-// the document of the canvas elements and its keyboard bridge (group
-// 'document target') and the box of the canvas (group
-// 'getBoundingClientRect').
+// Chart.js ADR 0108: the DOM fields of the events and the prevented wheel,
+// which takes the pointer signal (group 'events'), the canvas event target
+// and the bubble phase (group 'canvas event target'), the document of the
+// canvas elements and its keyboard bridge (group 'document target') and the
+// box of the canvas (group 'getBoundingClientRect'). A canvas with
+// `touch-action: none` begins no pan and claims its touch-like pointers in
+// the gesture arena (group 'touch sequence', subgroup 'touch-action: none').
 
 Widget _box(Widget child, {double width = 400, double height = 300}) =>
     Directionality(
@@ -131,6 +133,23 @@ final class _FakeCanvas implements HTMLCanvasElement {
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A member of the gesture arena that an ancestor `Listener` adds at each
+/// down ([add]): it records the result of the arena of each pointer, true
+/// for a win and false for a loss.
+final class _ArenaProbe implements GestureArenaMember {
+  final Map<int, bool> won = {};
+
+  void add(PointerDownEvent event) {
+    GestureBinding.instance.gestureArena.add(event.pointer, this);
+  }
+
+  @override
+  void acceptGesture(int pointer) => won[pointer] = true;
+
+  @override
+  void rejectGesture(int pointer) => won[pointer] = false;
 }
 
 /// The global routes of the pointer router.
@@ -1620,6 +1639,102 @@ void main() {
       expect((wheel.button, wheel.buttons, wheel.pointerId), (0, 0, 0));
     });
 
+    // Chart.js ADR 0108: a wheel whose dispatch gives false takes the pointer
+    // signal, and the host responds with allowPlatformDefault false.
+
+    testWidgets('a prevented wheel does not scroll a parent ListView, an '
+        'unprevented wheel scrolls it', (tester) async {
+      final canvas = UiCanvasElement();
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _box(
+          ListView(
+            controller: controller,
+            children: [
+              SizedBox(height: 200, child: ChartHost(canvas: canvas)),
+              const SizedBox(height: 1000),
+            ],
+          ),
+        ),
+      );
+      final log = <NativeEvent>[];
+      void prevent(NativeEvent event) {
+        log.add(event);
+        event.preventDefault();
+      }
+
+      addCanvasEventListener(canvas, 'wheel', prevent);
+      final responses = <bool>[];
+      void respond({required bool allowPlatformDefault}) =>
+          responses.add(allowPlatformDefault);
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+      await tester.sendEventToBinding(pointer.hover(const Offset(100, 100)));
+      await tester.sendEventToBinding(
+        pointer.scroll(const Offset(0, 50), onRespond: respond),
+      );
+      await tester.pump();
+      expect(log.single.defaultPrevented, isTrue);
+      expect(controller.offset, 0);
+      expect(responses, [false]);
+
+      // The same listener as a passive listener cannot prevent the default.
+      removeCanvasEventListener(canvas, 'wheel', prevent);
+      addCanvasEventListener(canvas, 'wheel', prevent, passive: true);
+      log.clear();
+      responses.clear();
+      await tester.sendEventToBinding(
+        pointer.scroll(const Offset(0, 50), onRespond: respond),
+      );
+      await tester.pump();
+      expect(log.single.defaultPrevented, isFalse);
+      expect(controller.offset, 50);
+      // The scrollable responds: it scrolled.
+      expect(responses, [false]);
+    });
+
+    testWidgets('a wheel that a listener prevents takes the platform default, '
+        'also from the document; an unprevented wheel keeps it', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final responses = <bool>[];
+      void respond({required bool allowPlatformDefault}) =>
+          responses.add(allowPlatformDefault);
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+      await tester.sendEventToBinding(pointer.hover(const Offset(140, 40)));
+      Future<void> scroll() => tester.sendEventToBinding(
+        pointer.scroll(const Offset(0, 20), onRespond: respond),
+      );
+
+      // No listener: the resolver gives the platform the default.
+      await scroll();
+      expect(responses, [true]);
+
+      // An unprevented canvas listener changes nothing.
+      addCanvasEventListener(canvas, 'wheel', log.add);
+      responses.clear();
+      await scroll();
+      expect(responses, [true]);
+
+      // A document listener that prevents the default of the bubbling wheel.
+      void prevent(NativeEvent event) => event.preventDefault();
+      _onDocument(const ['wheel'], prevent, passive: false);
+      responses.clear();
+      await scroll();
+      expect(responses, [false]);
+      expect(log.last.defaultPrevented, isTrue);
+
+      // A passive document listener cannot prevent it.
+      _document
+        ..removeEventListener('wheel', prevent)
+        ..addEventListener('wheel', prevent, passive: true);
+      responses.clear();
+      await scroll();
+      expect(responses, [true]);
+    });
+
     testWidgets('the events have the modifier keys of HardwareKeyboard', (
       tester,
     ) async {
@@ -3034,6 +3149,395 @@ void main() {
       }
       expect(_owner, isNull);
       expect(_globalRoutes(tester), routes);
+    });
+
+    group('touch-action: none', () {
+      // Chart.js ADR 0108: the host reads the touch-action of the canvas at
+      // the first touch-like down of a sequence. With none, no move begins
+      // the pan, and the host claims its touch-like pointers in the gesture
+      // arena: at the first move past the hit slop, or at a second finger.
+      // It gives up the arena of a pointer that it did not claim at its up.
+      // Each other value keeps Chart.js ADR 0037. The host is at (0, 0).
+
+      /// Shows a host for a new canvas with the inline style [touchAction]
+      /// in [wrap], and records its events in [log].
+      Future<UiCanvasElement> pumpStyled(
+        WidgetTester tester,
+        List<NativeEvent> log, {
+        String touchAction = 'none',
+        double touchSlop = kTouchSlop,
+        Widget Function(Widget host)? wrap,
+      }) async {
+        final canvas = UiCanvasElement();
+        _record(canvas, log);
+        canvas.style.touchAction = touchAction;
+        final host = ChartHost(canvas: canvas);
+        await tester.pumpWidget(
+          MediaQuery(
+            data: MediaQueryData(
+              gestureSettings: DeviceGestureSettings(touchSlop: touchSlop),
+            ),
+            child: _box(wrap?.call(host) ?? host),
+          ),
+        );
+        return canvas;
+      }
+
+      /// A host in a `Listener` that adds [probe] to each arena.
+      Widget Function(Widget host) probed(_ArenaProbe probe) =>
+          (host) => Listener(onPointerDown: probe.add, child: host);
+
+      testWidgets('no move begins the pan: the pointer and touch events go '
+          'on, and touchmove stays cancelable', (tester) async {
+        final log = <NativeEvent>[];
+        await pumpStyled(tester, log);
+        final gesture = await tester.startGesture(const Offset(100, 50));
+        expect(_types(log), [
+          'pointerover',
+          'pointerenter',
+          'pointerdown',
+          'touchstart',
+        ]);
+        final id = log.first.pointerId;
+        expect(id, greaterThanOrEqualTo(2));
+        log.clear();
+        await gesture.moveBy(const Offset(30, 0));
+        await gesture.moveBy(const Offset(0, 40));
+        expect(_types(log), [
+          'pointermove',
+          'touchmove',
+          'pointermove',
+          'touchmove',
+        ]);
+        expect(at(log[2]), (130.0, 90.0));
+        for (final event in log) {
+          expect(event.cancelable, isTrue);
+        }
+        for (final event in log.where((e) => e.type == 'pointermove')) {
+          expect(
+            (event.pointerId, event.pointerType, event.buttons),
+            (
+              id,
+              'touch',
+              1,
+            ),
+          );
+        }
+        log.clear();
+        await gesture.up();
+        // The tap candidate ended past its slop limit: no compatibility
+        // event and no click.
+        expect(_types(log), [
+          'pointerup',
+          'pointerout',
+          'pointerleave',
+          'touchend',
+        ]);
+        expect(_owner, isNull);
+      });
+
+      testWidgets('D1: inside the slop limit, the tap candidate gives only '
+          'pointermove, and the up gives the tap', (tester) async {
+        final log = <NativeEvent>[];
+        await pumpStyled(tester, log);
+        final gesture = await tester.startGesture(const Offset(100, 50));
+        log.clear();
+        await gesture.moveBy(const Offset(3, 0));
+        await gesture.moveBy(const Offset(15, 0));
+        expect(_types(log), ['pointermove', 'pointermove']);
+        await gesture.up();
+        expect(_types(log), containsAllInOrder(['touchend', 'click']));
+      });
+
+      testWidgets('a move back into the slop limit gives no tap', (
+        tester,
+      ) async {
+        final log = <NativeEvent>[];
+        await pumpStyled(tester, log);
+        final gesture = await tester.startGesture(const Offset(100, 50));
+        await gesture.moveBy(const Offset(30, 0));
+        log.clear();
+        await gesture.moveBy(const Offset(-30, 0));
+        expect(_types(log), ['pointermove', 'touchmove']);
+        await gesture.up();
+        expect(_types(log), isNot(contains('click')));
+        expect(_types(log), isNot(contains('mousedown')));
+      });
+
+      testWidgets('with 3 fingers in the sequence, a move begins no pan', (
+        tester,
+      ) async {
+        final log = <NativeEvent>[];
+        await pumpStyled(tester, log);
+        final first = await tester.startGesture(const Offset(100, 50));
+        final second = await tester.startGesture(const Offset(150, 60));
+        final third = await tester.startGesture(const Offset(200, 70));
+        await third.up();
+        log.clear();
+        await first.moveBy(const Offset(1, 0));
+        expect(_types(log), ['pointermove', 'touchmove']);
+        await first.up();
+        await second.up();
+        expect(_types(log), isNot(contains('pointercancel')));
+      });
+
+      testWidgets('the host claims a pointer at its first move past the hit '
+          'slop, and gives up an unclaimed pointer at its up', (tester) async {
+        final log = <NativeEvent>[];
+        final probe = _ArenaProbe();
+        await pumpStyled(tester, log, wrap: probed(probe));
+        // At the hit slop: the up gives the arena to the ancestor.
+        var gesture = await tester.startGesture(const Offset(100, 50));
+        await gesture.moveBy(const Offset(kTouchSlop, 0));
+        expect(probe.won, isEmpty);
+        await gesture.up();
+        expect(probe.won.values, [true]);
+        expect(_types(log), contains('click'));
+
+        // Past the hit slop: the host wins at that move.
+        probe.won.clear();
+        gesture = await tester.startGesture(const Offset(100, 50));
+        await gesture.moveBy(const Offset(0, kTouchSlop + 0.5));
+        expect(probe.won.values, [false]);
+        await gesture.up();
+        expect(probe.won.values, [false]);
+      });
+
+      testWidgets('a stylus claims past the hit slop, and its tap candidate '
+          'keeps the stylus slop limit', (tester) async {
+        final log = <NativeEvent>[];
+        final probe = _ArenaProbe();
+        await pumpStyled(tester, log, touchSlop: 8, wrap: probed(probe));
+        final gesture = await tester.startGesture(
+          const Offset(100, 50),
+          kind: PointerDeviceKind.stylus,
+        );
+        await gesture.moveBy(const Offset(8, 0));
+        expect(probe.won, isEmpty);
+        // computeHitSlop has no stylus factor.
+        await gesture.moveBy(const Offset(0.5, 0));
+        expect(probe.won.values, [false]);
+        // The slop limit of a stylus is 8 * 1.5 + 0.05.
+        log.clear();
+        await gesture.moveBy(const Offset(3.5, 0));
+        expect(_types(log), ['pointermove']);
+        await gesture.up();
+        expect(_types(log), contains('click'));
+      });
+
+      testWidgets('a second finger claims the arenas of both fingers', (
+        tester,
+      ) async {
+        final log = <NativeEvent>[];
+        final probe = _ArenaProbe();
+        await pumpStyled(tester, log, wrap: probed(probe));
+        final first = await tester.startGesture(const Offset(100, 50));
+        expect(probe.won, isEmpty);
+        final second = await tester.startGesture(const Offset(200, 50));
+        expect(probe.won.values, [false, false]);
+        await first.up();
+        await second.up();
+        expect(probe.won.values, [false, false]);
+        expect(_types(log), isNot(contains('pointercancel')));
+      });
+
+      testWidgets('auto claims nothing: the ancestor wins each arena, and a '
+          'move past the slop begins the pan (Chart.js ADR 0037)', (
+        tester,
+      ) async {
+        final log = <NativeEvent>[];
+        final probe = _ArenaProbe();
+        await pumpStyled(
+          tester,
+          log,
+          touchAction: 'auto',
+          wrap: probed(probe),
+        );
+        final first = await tester.startGesture(const Offset(100, 50));
+        final second = await tester.startGesture(const Offset(200, 50));
+        await first.moveBy(const Offset(30, 0));
+        await first.up();
+        await second.up();
+        expect(probe.won.values, [true, true]);
+        expect(_types(log), contains('pointercancel'));
+      });
+
+      for (final (value, scrolls) in const [
+        ('none', false),
+        (' None ', false),
+        ('auto', true),
+        ('pan-y', true),
+        ('', true),
+      ]) {
+        testWidgets('touch-action "$value": a drag on the host '
+            '${scrolls ? 'scrolls' : 'does not scroll'} a parent ListView', (
+          tester,
+        ) async {
+          final log = <NativeEvent>[];
+          final controller = ScrollController();
+          addTearDown(controller.dispose);
+          await pumpStyled(
+            tester,
+            log,
+            touchAction: value,
+            wrap: (host) => ListView(
+              controller: controller,
+              children: [
+                SizedBox(height: 200, child: host),
+                const SizedBox(height: 1000),
+              ],
+            ),
+          );
+          final gesture = await tester.startGesture(const Offset(100, 150));
+          for (var i = 0; i < 5; i++) {
+            await gesture.moveBy(const Offset(0, -20));
+          }
+          await gesture.up();
+          await tester.pumpAndSettle();
+          expect(controller.offset > 0, scrolls);
+          expect(_types(log).contains('pointercancel'), scrolls);
+          // The touch events go on in both cases; the pointer events stop at
+          // the pan begin.
+          expect(
+            _types(log).where((type) => type == 'touchmove'),
+            hasLength(5),
+          );
+          expect(
+            _types(log).where((type) => type == 'pointermove'),
+            hasLength(scrolls ? 1 : 5),
+          );
+        });
+      }
+
+      for (final (value, turns) in const [('none', false), ('auto', true)]) {
+        testWidgets('touch-action "$value": a drag on the host '
+            '${turns ? 'turns' : 'does not turn'} a parent PageView', (
+          tester,
+        ) async {
+          final log = <NativeEvent>[];
+          final controller = PageController();
+          addTearDown(controller.dispose);
+          await pumpStyled(
+            tester,
+            log,
+            touchAction: value,
+            wrap: (host) => PageView(
+              controller: controller,
+              children: [host, const SizedBox()],
+            ),
+          );
+          final gesture = await tester.startGesture(const Offset(300, 100));
+          for (var i = 0; i < 10; i++) {
+            await gesture.moveBy(const Offset(-25, 0));
+          }
+          await gesture.up();
+          await tester.pumpAndSettle();
+          expect(controller.page, turns ? 1 : 0);
+        });
+      }
+
+      for (final (value, zooms) in const [('none', false), ('auto', true)]) {
+        testWidgets('touch-action "$value": a pinch on the host '
+            '${zooms ? 'zooms' : 'does not zoom'} a parent '
+            'InteractiveViewer', (tester) async {
+          final log = <NativeEvent>[];
+          final controller = TransformationController();
+          addTearDown(controller.dispose);
+          await pumpStyled(
+            tester,
+            log,
+            touchAction: value,
+            wrap: (host) => InteractiveViewer(
+              transformationController: controller,
+              child: host,
+            ),
+          );
+          final first = await tester.startGesture(const Offset(100, 50));
+          final second = await tester.startGesture(const Offset(200, 50));
+          for (var i = 0; i < 4; i++) {
+            await first.moveBy(const Offset(-10, 0));
+            await second.moveBy(const Offset(10, 0));
+          }
+          await first.up();
+          await second.up();
+          await tester.pumpAndSettle();
+          expect(controller.value.getMaxScaleOnAxis() > 1, zooms);
+          expect(_types(log).contains('pointercancel'), zooms);
+        });
+      }
+
+      testWidgets('a tappable ancestor still gets a tap', (tester) async {
+        final log = <NativeEvent>[];
+        var parentTaps = 0;
+        await pumpStyled(
+          tester,
+          log,
+          wrap: (host) =>
+              GestureDetector(onTap: () => parentTaps++, child: host),
+        );
+        await tester.tapAt(const Offset(100, 50));
+        expect(parentTaps, 1);
+        expect(_types(log), contains('click'));
+      });
+
+      testWidgets('the host reads the style at the first down of a sequence', (
+        tester,
+      ) async {
+        final log = <NativeEvent>[];
+        final canvas = await pumpStyled(tester, log, touchAction: 'auto');
+        var gesture = await tester.startGesture(const Offset(100, 50));
+        canvas.style.touchAction = 'none';
+        log.clear();
+        await gesture.moveBy(const Offset(30, 0));
+        expect(_types(log), contains('pointercancel'));
+        await gesture.up();
+
+        // The next sequence has none, also for a second finger after a
+        // change of the style.
+        gesture = await tester.startGesture(const Offset(100, 50));
+        canvas.style.touchAction = 'auto';
+        final second = await tester.startGesture(const Offset(200, 50));
+        log.clear();
+        await gesture.moveBy(const Offset(30, 0));
+        await second.moveBy(const Offset(30, 0));
+        expect(_types(log), [
+          'pointermove',
+          'touchmove',
+          'pointermove',
+          'touchmove',
+        ]);
+        await gesture.up();
+        await second.up();
+      });
+
+      testWidgets('a canvas swap and a detach give up the open arena', (
+        tester,
+      ) async {
+        final probe = _ArenaProbe();
+        Widget tree(UiCanvasElement? canvas) => _box(
+          Listener(
+            onPointerDown: probe.add,
+            child: canvas == null
+                ? const SizedBox(width: 300, height: 150)
+                : ChartHost(canvas: canvas),
+          ),
+        );
+        final a = UiCanvasElement()..style.touchAction = 'none';
+        final b = UiCanvasElement()..style.touchAction = 'none';
+        await tester.pumpWidget(tree(a));
+        var gesture = await tester.startGesture(const Offset(100, 50));
+        expect(probe.won, isEmpty);
+        await tester.pumpWidget(tree(b));
+        expect(probe.won.values, [true]);
+        await gesture.up();
+
+        probe.won.clear();
+        gesture = await tester.startGesture(const Offset(100, 50));
+        expect(probe.won, isEmpty);
+        await tester.pumpWidget(tree(null));
+        expect(probe.won.values, [true]);
+        await gesture.up();
+      });
     });
   });
 
