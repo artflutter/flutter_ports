@@ -31,8 +31,6 @@ import 'package:flutter_chartjs_port/helpers.dart'
 // apart from the PointOptions of demo_chart.dart (the primitives mode).
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     as element_options;
-// Not public: NativeEvent, the DOM event that the scenes give the chart.
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 // Not public: fromNativeEvent, the chart event of a NativeEvent.
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;

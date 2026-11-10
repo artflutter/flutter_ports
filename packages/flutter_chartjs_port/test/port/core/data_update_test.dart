@@ -21,7 +21,6 @@ import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet, jsSet;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show ScopeRoute;
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'

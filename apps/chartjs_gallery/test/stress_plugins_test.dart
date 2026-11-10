@@ -16,9 +16,6 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
         addCanvasEventListener,
         hasCanvasEventListener,
         removeCanvasEventListener;
-// Not public: NativeEvent, the stand-in of the DOM event.
-import 'package:flutter_chartjs_port/src/platform/native_event.dart'
-    show NativeEvent;
 // Not public: Legend, the element class of plugin.legend (hit boxes).
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
