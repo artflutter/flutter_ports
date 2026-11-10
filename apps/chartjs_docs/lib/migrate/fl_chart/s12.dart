@@ -83,6 +83,7 @@ class _Sample12State extends State<Sample12> {
   }
 
   ChartConfig _config() => fills(
+    clip: true,
     ChartConfig(
       type: .line,
       datasets: [
