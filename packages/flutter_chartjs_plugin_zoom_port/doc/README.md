@@ -26,8 +26,7 @@ and the public API of the Chart.js port.
   2026-11-10, after the host wave of Chart.js ADR 0108, 18 seams connect, 6 need only a Dart form
   in the zoom port and 2 wait for later host decisions (H18, H19).
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
-- **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference. It
-  has no rows in phase 0.
+- **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md).
 - **Prior art:** the survey file of the zoom and pan code of other Dart and Flutter packages
   comes in a later change. Prior art is never a source (AGENTS.md rule 1).
@@ -60,7 +59,7 @@ in a spec can make more cases than its `it` calls.
 - [ADR 0009: Ports of add-on libraries](../../../docs/adr/0009-add-on-ports.md) (proposed): the
   rule for all add-on ports.
 - [Chart.js ADR 0108: The input surface and exports for add-on plugins](../../flutter_chartjs_port/doc/adr/0108-input-surface-and-exports-for-add-on-plugins.md)
-  (proposed): the host change of zoom phase 1.
+  (accepted 2026-11-10): the host change of zoom phase 1.
 
 The rules of the Chart.js port (AGENTS.md) apply, with the changes of these ADRs. The porting
 flow of the Chart.js port applies to each module: `packages/flutter_chartjs_port/doc/porting-flow.md`

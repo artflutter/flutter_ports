@@ -16,8 +16,14 @@
 /// chart from code, for example `chart.zoom(.all(1.5))` and
 /// `chart.resetZoom()`.
 ///
-/// The port follows the upstream modules file by file. The `doc/` folder of
-/// this package has the roadmap and the parity tracker.
+/// The plugin takes part in the data-only updates of the host
+/// (`ChartView.dataOnlyUpdates`): new data keeps the zoom range. With a
+/// function in the zoom options, for example an `onZoomComplete` callback,
+/// new data takes a full update, which keeps the range too.
+///
+/// The port follows the upstream modules file by file: each module of the
+/// pinned upstream `src/` folder is ported. The `doc/` folder of this
+/// package has the roadmap and the parity tracker.
 library;
 
 export 'src/gestures.dart' show ActivePointer, GestureEvent;
