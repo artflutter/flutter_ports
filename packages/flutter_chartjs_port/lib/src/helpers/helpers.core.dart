@@ -356,8 +356,11 @@ Object? clone(Object? source) {
 }
 
 /// helpers.core.ts:211 `isValidKey`.
+///
+/// `[...].indexOf(key) === -1` compares [key] with each name by `===`: three
+/// string compares give the same result with no list for each key.
 bool _isValidKey(String key) {
-  return !['__proto__', 'prototype', 'constructor'].contains(key);
+  return key != '__proto__' && key != 'prototype' && key != 'constructor';
 }
 
 /// helpers.core.ts:220 `_merger`.
