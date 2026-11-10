@@ -138,6 +138,11 @@ longer supported. No global color installer or intermediate option color exists.
   Without the submodule `third_party/chartjs-plugin-zoom`, each fixture skips with a reason that
   names it; with `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` also checks out that
   submodule and runs the script with `FIXTURES_REQUIRED=1`. `test --no-select` excludes the tag.
+- `dart run melos run test:zoom:range-only`: the tests of `flutter_chartjs_plugin_zoom_port`, the
+  fixtures among them, with `--dart-define=ZOOM_RANGE_ONLY_UPDATES=true`: `test/flutter_test_config.dart`
+  writes the zoom option `rangeOnlyUpdates: true` into `Chart.defaults.plugins.zoom`, so each zoom
+  and pan takes `chart.updateRanges` (Chart.js ADR 0111). The results are those of the run
+  without it; the spec `defaults` expects the key.
 - `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
   (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md §8 test 9, Chart.js ADR 0050).
   They skip unless `CHART_GOLDENS=1`. Their pinned runner is the CI job `fixtures` on
@@ -634,6 +639,22 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `prepareNativeGapReads` of `point_option_preparation.dart`. `nativeGapReadsEnabled`
       (define `CHARTJS_NATIVE_GAP_READS`) and `nativeGapReadsTaken` serve the twins of
       `test/port/controllers/native_gap_reads_test.dart`.
+    - Chart.js ADR 0111: `Chart.updateRanges([mode])` (also on `types.Chart`) is `update(mode)`
+      after a change of the `min` and `max` options of the scales only, written or deleted
+      through a view of the options. It keeps the configuration of the last full update: no
+      `config.update()`, no new resolver (a new context view over the kept one for the chart, each
+      plugin descriptor, `PluginService.refreshDescriptorViews`, and each dataset,
+      `configureKeptResolver`; `OptionView.resolver`), no scale id, type or position checks, no
+      `buildOrUpdateControllers` (it writes `meta.visible`). `scale.init` runs, the scale boxes go
+      and come back, and each hook, the layout, the dataset updates, the replay and the draw run
+      as in `update`. Checks (`_canUpdateRanges`) send it to `update(mode)`: a nested call, no
+      range state (`RangeUpdateSnapshot` of `data_update.dart`, the invalidation points of Chart.js
+      ADR 0074, a cancelled or thrown update), a chart or config of another class, a plugin
+      without the opt-in or with a failed `Plugin.rangeUpdateGuard` (the colors plugin with
+      `forceOverride`), a notified data change, another `data`, `options` or dataset object, a
+      controller of another class. It counts as a full update for re-entry, and ends as one
+      (`_recordUpdateState`). Row `adapt-range-updates`; twins in
+      `test/port/core/range_update_test.dart`.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the port of
       `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of
@@ -1108,8 +1129,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       offset cache) is accepted (2026-11-10) and supersedes the "one interval" and "not from
       `timeZoneOffset`" statements of Chart.js ADR 0024 decision 3. Chart.js ADR 0111 (an opt-in
       range update for scale range changes: `Chart.updateRanges(mode)` and the zoom option
-      `rangeOnlyUpdates`) is proposed (2026-11-10): it has no code, and the maintainer decides
-      its open questions. Chart.js ADR 0112 (frame-aligned coalescing of continuous input in the
+      `rangeOnlyUpdates`) is accepted (2026-11-10): the maintainer approved it, and its code passes
+      the tests; the night run times it (performance.md §69). Chart.js ADR 0112 (frame-aligned coalescing of continuous input in the
       host) is proposed (2026-11-10): the maintainer decides after the counts of the input probe
       on the Pixel 8a and the iPhone 17 Pro. Chart.js ADR 0113 (the stroke pieces of a desktop
       browser) is accepted (2026-11-10): its code passes the tests. It states the complete
@@ -1267,8 +1288,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     zoom case registers the plugin for its own run only, puts the scale ranges back outside the
     timing before each pair of steps, and gives `steps`, `stepP50Ms`, `stepP90Ms` and
     `stepMaxMs`. The define `PROFILE_MARKS=true` prints `BENCH_MARK {json}` with `Timeline.now`
-    before and after the timed window of each case. performance.md §69 has the figures of the
-    zoom cases.
+    before and after the timed window of each case. The define `ZOOM_RANGE_UPDATES=true`
+    (`chartBenchZoomRangeUpdates`, default off) writes the zoom option `rangeOnlyUpdates: true`
+    into the input cases (`chartBenchZoomCasesWith`), so each step takes `chart.updateRanges` of
+    Chart.js ADR 0111; each zoom BENCH line has the key `rangeUpdates`. performance.md §69 has the
+    figures of the zoom cases.
   - `lib/main_input_probe.dart` is the input probe of Chart.js ADR 0112: one `ChartView.raw` line
     chart of 20000 points (`--dart-define=POINTS=<n>`) with `animation: false` and the zoom plugin
     (`registerZoomComponents`; wheel, pinch, pan `'xy'`). For each frame it counts the
@@ -1421,7 +1445,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `chartjsPluginZoomPackageVersion` (`2.2.0`), port-only. An app gives the options in
     `ChartConfig.extra` as `{'plugins': {'zoom': {...}}}` or in a raw config, and registers the
     plugin with `Chart.register([zoomPlugin])`: the typed `ChartConfig.plugins` takes only plugin
-    Maps (seam H18).
+    Maps (seam H18). The port-only zoom option `rangeOnlyUpdates: true` (no default) makes the
+    five update calls of `core.dart` (`_updateChart`) call `chart.updateRanges(transition)` of
+    Chart.js ADR 0111 in place of `chart.update(transition)`; the app keeps the contract of
+    `updateRanges` (row `adapt-range-only-updates`, seam H28).
   - `lib/src/`: the 12 files of `src/` at their mapped paths: `types`, `options`, `defaults`,
     `state`, `utils`, `scale.types`, `core`, `handlers`, `gestures`, `plugin`, `index` and
     `index.umd`. `zoomPlugin` (`plugin.dart`) is a typed `Plugin` of the host with the upstream keys
@@ -1454,7 +1481,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `hand/pan/*.dart` and `hand/zoom/*.dart` of the 12 fixture configs, and
     `fixtures_reference.dart`, written by `tool/reference/fixtures_reference.mjs` from the upstream
     fixtures (`test:fixtures:zoom`).
-  - `test/port/` (port-only): `plugin_test.dart` (the data-only updates of a `ChartView`, the
+  - `test/port/` (port-only): `plugin_test.dart` (the range-only updates of Chart.js ADR 0111:
+    twins of each flow with and without the option; the data-only updates of a `ChartView`, the
     warnings of `start`, the range in the scale options), `public_library_test.dart` (the zoom
     library next to the app library of the host and `material_ui.dart`), `handlers_smoke_test.dart`
     (the listeners with synthetic events) and the tests of real input. `handlers_test.dart`,
