@@ -31,6 +31,15 @@
 /// `Chart` once: `Object? beforeEvent(Object chart, EventHookArgs args,
 /// Object options)`.
 ///
+/// It also exports the input surface of the canvas for plugins that listen
+/// to the input themselves (Chart.js ADR 0108): `NativeEvent` (the DOM event
+/// with its fields, `preventDefault()` and `stopPropagation()`),
+/// `NativeTouch`, `NativeEventListener`, `NativeEventTarget`, `DOMRect`, the
+/// extension `CanvasEventTarget` (`canvas.addEventListener`,
+/// `removeEventListener`, `dispatchEvent`, `ownerDocument`, `eventTarget`
+/// and `getBoundingClientRect()`) and the extension `CssStyleProperties`
+/// (`style.touchAction`, `style.userSelect` and `removeProperty`).
+///
 /// The Dart names of the upstream `_` exports, the other port-only
 /// declarations of `lib/src/types/` and `LayoutItem` stay internal (Chart.js
 /// ADR 0048, section 6).
@@ -45,6 +54,7 @@ export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
         CanvasPath,
         CanvasPattern,
         CanvasRenderingContext2D,
+        CssStyleProperties,
         HTMLCanvasElement,
         Path2D,
         TextMetrics;
@@ -58,6 +68,15 @@ export 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 export 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart'
     show Undefined, undefined;
+export 'package:flutter_chartjs_port/src/platform/chart_host.dart'
+    show CanvasEventTarget;
+export 'package:flutter_chartjs_port/src/platform/native_event.dart'
+    show
+        DOMRect,
+        NativeEvent,
+        NativeEventListener,
+        NativeEventTarget,
+        NativeTouch;
 export 'package:flutter_chartjs_port/src/types.dart'
     hide
         ArcElementWrites,

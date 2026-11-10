@@ -2,6 +2,8 @@
 
 - Status: proposed
 - Date: 2026-10-30
+- Revised: 2026-11-10, items 3, 4 and 6, with the host libraries of Chart.js ADR 0108 and the port
+  checks of the add-on.
 - Gate: zoom phase 0. Phase 0 applies the package name, the dependency on the host port and the
   rule of item 3 while the ADR is proposed (the D3 and ECharts precedent).
 - Related: [ADR 0001](0001-native-ports-not-wrappers.md) (native ports),
@@ -11,6 +13,8 @@
   another port"),
   [Chart.js ADR 0048](../../packages/flutter_chartjs_port/doc/adr/0048-entry-points-and-public-library.md)
   (the public libraries of the Chart.js port),
+  [Chart.js ADR 0108](../../packages/flutter_chartjs_port/doc/adr/0108-input-surface-and-exports-for-add-on-plugins.md)
+  (the input surface and exports for add-on plugins),
   [Zoom ADR 0001](../../packages/flutter_chartjs_plugin_zoom_port/doc/adr/0001-upstream-sources.md)
   (the first add-on port),
   [Zoom ADR 0003](../../packages/flutter_chartjs_plugin_zoom_port/doc/adr/0003-host-connection.md)
@@ -55,16 +59,20 @@ The rules of the repository do not cover an add-on:
    have a release. ADR 0008 item 1 applies to ports of independent libraries. An add-on port
    depends on no port other than its host port. A host port never depends on an add-on port.
 3. **Public libraries only.** An add-on port imports only the public libraries of its host port.
-   For the Chart.js port, these are the three libraries of Chart.js ADR 0048 §5:
-   `flutter_chartjs_port.dart`, `chartjs.dart` and `helpers.dart`. An add-on port never imports
-   `package:<host>/src/`. When the add-on needs a part of the host that the public libraries do not
-   give, the host port gets a change: a new export, a new member or a new port-only API. Each such
-   change has the decision of the host port (a host ADR, for example a Chart.js ADR). The add-on
-   port records each need in its doc `host-seams.md` until the host change lands.
+   For the Chart.js port, these are the public libraries of Chart.js ADR 0048 §5
+   (`flutter_chartjs_port.dart`, `chartjs.dart` and `helpers.dart`) and the libraries that a host
+   ADR adds for add-ons (Chart.js ADR 0108: `js_semantics.dart`). The tests of the add-on port also
+   import the public libraries of the harness of item 7 (`package:chartjs_test_utils/flutter.dart`
+   and `pure.dart`). An add-on port never imports `package:<host>/src/` or the `src/` of the
+   harness. When the add-on needs a part of the host that the public libraries do not give, the
+   host port gets a change: a new export, a new member or a new port-only API. Each such change has
+   the decision of the host port (a host ADR, for example a Chart.js ADR). The add-on port records
+   each need in its doc `host-seams.md` until the host change lands.
 4. **The JS runtime.** An add-on port takes the JS runtime functions (for example `jsRound` or
    `jsLog10`) from the shared package of ADR 0008, `js_semantics`, when it exists. Until then, the
    add-on port waits, or the host port exports the functions that the add-on needs, by item 3.
-   The add-on port does not copy the runtime.
+   The Chart.js port exports them in `js_semantics.dart` (Chart.js ADR 0108). The add-on port does
+   not copy the runtime.
 5. **The name.** The library package of an add-on port takes the name of ADR 0007 item 1:
    `flutter_<library>_port`. `<library>` is the npm name of the add-on in lower case, with `_` in
    place of `-`. The first add-on port is `flutter_chartjs_plugin_zoom_port`. An add-on port is
@@ -72,9 +80,15 @@ The rules of the repository do not cover an add-on:
 6. **Docs, ADRs and checks.** An add-on port has its own `doc/` folder, its own ADRs (named
    "<Add-on> ADR NNNN", for example "Zoom ADR 0001"), its own `tool/port_sources.yaml` and its
    own `test/upstream_test.dart`, as each port has. The port rules of the host port (AGENTS.md)
-   apply to the add-on port, with the changes of its ADRs. The port tools of the host
-   (`check:headers`, `check:lib-imports`, `check:js-semantics`, tools 5 to 8) examine the add-on
-   package when its first ported file lands, or when ADR 0008 moves the tools to `port_tools`.
+   apply to the add-on port, with the changes of its ADRs.
+   - The port tools 1 to 3 of the host (`check:lib-imports`, `check:headers` and
+     `check:js-semantics`) examine the add-on package at the latest when its first ported file
+     lands. The top-level keys of the `tool/port_sources.yaml` of the add-on name its host
+     (`host`) and the tag of its `DIVERGES` markers (`marker`). `check:lib-imports` then allows
+     the imports of item 3 and rejects the others.
+   - The other port tools of the host (tools 5 to 8 and `check:typed-reads`) examine the add-on
+     package when ADR 0008 moves the tools to `port_tools`. Until then, a person writes the
+     `parity.md` of the add-on port.
 7. **Test harness.** An add-on port uses the harness package of its host port as a dev
    dependency, when upstream uses the same upstream harness. chartjs-plugin-zoom uses
    chartjs-test-utils, and the zoom port uses `chartjs_test_utils`. Helpers that only the add-on
@@ -108,6 +122,7 @@ The rules of the repository do not cover an add-on:
   proposed. Thus the clause is a revision before acceptance, as ADR 0007 had.
 - Each gap of the host API that an add-on finds becomes a host change with a host ADR. The first
   list is the zoom inventory
-  ([host-seams.md](../../packages/flutter_chartjs_plugin_zoom_port/doc/host-seams.md)).
+  ([host-seams.md](../../packages/flutter_chartjs_plugin_zoom_port/doc/host-seams.md)). Chart.js
+  ADR 0108 is the first such host change.
 - The JS runtime need of an add-on can bring the gate of ADR 0008 forward.
 - `apps/chartjs_gallery` gets a zoom page when the zoom port has its first working gestures.
