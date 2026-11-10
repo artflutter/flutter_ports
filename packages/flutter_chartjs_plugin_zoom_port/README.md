@@ -20,6 +20,48 @@ uses only the public libraries of `flutter_chartjs_port`.
 [doc/host-seams.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_plugin_zoom_port/doc/host-seams.md)
 lists each place where the plugin needs a part of the host port.
 
+## Stable axes during zoom and pan
+
+Each zoom or pan step sets a new `min` and `max` on the scales. By default, a linear scale adds
+these two bounds as ticks (`ticks.includeBounds`). Their labels, for example `12.37`, change in
+each step. Then the axis width or height changes, and the plot area moves in each step: the chart
+shakes. The x axis also asks for room at its sides for half of its first and last label, from the
+positions of these ticks, and a pan moves them. Chart.js in a browser acts the same way.
+
+For a steady plot area, give the chart these options:
+
+```dart
+'layout': {
+  // Room for half of the last x label.
+  'padding': {'right': 24},
+},
+'scales': {
+  'x': {
+    'type': 'linear',
+    // No bound ticks, and no rotation of the x labels.
+    'ticks': {'includeBounds': false, 'maxRotation': 0, 'minRotation': 0},
+    // No room at the sides that changes with the tick positions.
+    'afterFit': (Object? scale) {
+      (scale! as Scale)
+        ..paddingLeft = 0
+        ..paddingRight = 0;
+    },
+  },
+  'y': {
+    'type': 'linear',
+    'ticks': {'includeBounds': false},
+    // A fixed width, so that a wider label does not move the plot area.
+    'afterFit': (Object? scale) {
+      (scale! as Scale).width = 56;
+    },
+  },
+},
+```
+
+Choose the y-axis width and the right padding for the widest labels of your data. The input
+probe of the gallery (`apps/chartjs_gallery/lib/main_input_probe.dart`) uses these options, and
+its test pins a plot area that stays in place during zoom and pan steps.
+
 ## Upstream
 
 The port tracks chartjs-plugin-zoom **2.2.0+fb81d331** (`chartjsPluginZoomVersion`): the commit

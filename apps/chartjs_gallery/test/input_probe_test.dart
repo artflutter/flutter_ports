@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:chartjs_gallery/main_input_probe.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -198,5 +199,45 @@ void main() {
     });
     expect(summary['buildMs'], isNull);
     expect(inputProbeText(summary), contains('3 of 4 frames with work'));
+  });
+
+  testWidgets('the plot area stays in place while the chart zooms and pans', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const InputProbeApp());
+    await tester.pumpAndSettle();
+    final chart = tester
+        .state<InputProbePageState>(find.byType(InputProbePage))
+        .chart!;
+    (double, double, double, double) area() {
+      final a = chart.chartArea!;
+      return (a.left, a.top, a.right, a.bottom);
+    }
+
+    final first = area();
+    final x = chart.scales['x']!;
+    final y = chart.scales['y']!;
+    final firstRange = (x.min, x.max, y.min, y.max);
+    expect(y.width, inputProbeYAxisWidth);
+
+    // Steps that give the bounds many decimals and new tick steps: without
+    // the options of the probe, the axis sizes change in most of them. A
+    // zoom by z sets the range to range * (2 - z), so each z stays below 2.
+    final steps = <void Function()>[
+      () => chart.pan(const PanAmount(x: 37.3, y: 11.7)),
+      () => chart.zoom(const ZoomAmount.all(1.7)),
+      () => chart.pan(const PanAmount(x: -123.9, y: -41.1)),
+      () => chart.zoom(const ZoomAmount.all(1.4)),
+      () => chart.pan(const PanAmount(x: 5.5, y: 77.7)),
+      () => chart.zoom(const ZoomAmount.all(0.6)),
+      () => chart.pan(const PanAmount(x: 301.1, y: -3.3)),
+    ];
+    for (final step in steps) {
+      step();
+      await tester.pump();
+      expect(area(), first);
+      expect(y.width, inputProbeYAxisWidth);
+    }
+    expect((x.min, x.max, y.min, y.max), isNot(firstRange));
   });
 }
