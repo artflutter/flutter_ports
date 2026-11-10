@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
@@ -31,7 +32,15 @@ const int inputProbePoints = int.fromEnvironment(
 /// `PointerScrollEvent`s, the `PointerPanZoomUpdateEvent`s, the chart
 /// updates (`afterUpdate`) and the chart draws (`afterDraw`)
 /// ([InputProbeRecorder]). Once per second with work, it shows a summary and
-/// prints the line `PROBE {json}` ([inputProbeSummary]).
+/// prints the line `PROBE {json}` ([inputProbeSummary]). It also appends the
+/// line to `probe_lines.txt` in the temporary folder of the app
+/// ([inputProbeLinesFile]): on an iPhone, `xcrun devicectl device copy from
+/// --domain-type appDataContainer --source tmp/probe_lines.txt` reads it.
+///
+/// The axes keep their size while the chart zooms and pans
+/// ([inputProbeConfig]): no bound ticks, a fixed y-axis width and no x-label
+/// rotation. Without these options, the labels of the bounds change in each
+/// step, the axis sizes change with them, and the plot area shakes.
 ///
 /// Example: `flutter build apk --profile -t lib/main_input_probe.dart
 /// --android-skip-build-dependency-validation`, then install and start the
@@ -314,6 +323,19 @@ List<Map<String, Object?>> inputProbeData(int count) => [
     <String, Object?>{'x': i.toDouble(), 'y': 50 + 40 * math.sin(i / 400)},
 ];
 
+/// The fixed width of the y axis in logical pixels: room for a label of
+/// six characters, for example `45.25`, with the tick marks and the padding.
+const double inputProbeYAxisWidth = 56;
+
+/// The fixed layout padding at the right in logical pixels: room for half of
+/// a label of eight characters, for example `19,999.5`.
+const double inputProbeRightPadding = 24;
+
+/// The file of the `PROBE` lines: `probe_lines.txt` in the temporary folder
+/// of the app.
+File get inputProbeLinesFile =>
+    File('${Directory.systemTemp.path}/probe_lines.txt');
+
 /// The config of the chart: a line chart of [points] points on linear
 /// scales, with the zoom options and the inline [plugin].
 Map<String, Object?> inputProbeConfig(
@@ -335,9 +357,37 @@ Map<String, Object?> inputProbeConfig(
     'animation': false,
     'maintainAspectRatio': false,
     'parsing': false,
+    'layout': <String, Object?>{
+      'padding': <String, Object?>{'right': inputProbeRightPadding},
+    },
+    // Stable axes for zoom and pan: only round tick values (no bounds),
+    // no rotation of the x labels, and a fixed y-axis width. Then a step
+    // changes no axis size, and the plot area stays in place.
     'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear'},
-      'y': <String, Object?>{'type': 'linear'},
+      'x': <String, Object?>{
+        'type': 'linear',
+        'ticks': <String, Object?>{
+          'includeBounds': false,
+          'maxRotation': 0,
+          'minRotation': 0,
+        },
+        // The x axis asks for room at the sides for half of its first and
+        // last label, from the positions of these ticks. A pan moves them,
+        // so the room changes in each step. The fixed layout padding at the
+        // right gives the last label its room.
+        'afterFit': (Object? scale) {
+          (scale! as Scale)
+            ..paddingLeft = 0
+            ..paddingRight = 0;
+        },
+      },
+      'y': <String, Object?>{
+        'type': 'linear',
+        'ticks': <String, Object?>{'includeBounds': false},
+        'afterFit': (Object? scale) {
+          (scale! as Scale).width = inputProbeYAxisWidth;
+        },
+      },
     },
     'plugins': <String, Object?>{
       'zoom': <String, Object?>{
@@ -426,7 +476,19 @@ class InputProbePageState extends State<InputProbePage> {
       'points': widget.points,
       ...inputProbeSummary(window.frames, window.timings),
     };
-    debugPrint('PROBE ${jsonEncode(summary)}');
+    final line = 'PROBE ${jsonEncode(summary)}';
+    debugPrint(line);
+    // Only on a phone: a test on a desktop leaves no file.
+    if (Platform.isIOS || Platform.isAndroid) {
+      try {
+        inputProbeLinesFile.writeAsStringSync(
+          '$line\n',
+          mode: FileMode.append,
+        );
+      } on FileSystemException {
+        // The console line stays; a probe needs no file.
+      }
+    }
     _summary.value = inputProbeText(summary);
   }
 
