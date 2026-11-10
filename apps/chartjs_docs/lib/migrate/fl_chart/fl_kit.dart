@@ -296,10 +296,22 @@ Widget flChart(
   onChartCreated: onChartCreated,
 );
 
-ChartConfig fills(ChartConfig config) => config.copyWith(
+/// The defaults of fl_chart. fl_chart draws the lines over the edges of the
+/// chart area (`FlClipData.none()`). Chart.js clips a dataset at an edge with
+/// a fixed `min` or `max`, which cuts thick lines at the edge. A sample that
+/// pans or zooms passes `clip: true`.
+ChartConfig fills(ChartConfig config, {bool clip = false}) => config.copyWith(
   maintainAspectRatio: false,
   legend: config.legend ?? noLegend,
   elements: config.elements ?? _touchRadius,
+  extra: clip
+      ? config.extra
+      : {
+          ...?config.extra,
+          'datasets': {
+            'line': {'clip': false},
+          },
+        },
 );
 
 /// fl_chart reacts within 10 pixels of a spot.
