@@ -9,6 +9,8 @@ import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show ZoomChart;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: UiCanvasElement, the canvas of the internal host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
@@ -122,12 +124,134 @@ ChartBenchCase _fade(int datasets) => _pluginCase(
 double _median(Map<String, Object?> line, String part) =>
     double.parse(line['${part}MedianMs']! as String);
 
+/// The zoom case of [selection] with the x axis [scale] and the call
+/// [call].
+ChartBenchCase _zoomCase(
+  String selection, {
+  String scale = 'linear',
+  ChartBenchCall call = ChartBenchCall.frame,
+}) => selectChartBenchCases(selection).singleWhere(
+  (c) => c.keys['scale'] == scale && c.call == call,
+);
+
+/// The scene of [benchCase] for [n] points and a chart of its config, as
+/// the benchmark makes them. The end of the test destroys the chart, then
+/// disposes the scene: the zoom plugin goes out of the registry.
+({ChartBenchScene scene, Chart chart}) _zoomChart(
+  ChartBenchCase benchCase, {
+  int n = 50,
+}) {
+  final scene = benchCase.scene(n);
+  final Chart chart;
+  try {
+    chart = Chart(
+      UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
+      scene.config,
+    );
+  } catch (_) {
+    scene.dispose?.call();
+    rethrow;
+  }
+  addTearDown(() {
+    chart.destroy();
+    scene.dispose?.call();
+  });
+  return (scene: scene, chart: chart);
+}
+
+/// One iteration of a frame case, as the loop of the benchmark runs it: the
+/// change outside the timing, then the frame.
+void _frame(ChartBenchScene scene, Chart chart) {
+  scene.change?.call();
+  scene.frame!(chart);
+}
+
+/// The `min` and `max` of a scale.
+typedef _Range = ({double min, double max});
+
+/// The range of the scale [id] of [chart].
+_Range _range(Chart chart, String id) {
+  final scale = chart.scales[id]!;
+  return (min: scale.min, max: scale.max);
+}
+
+/// The width of [range].
+double _width(_Range range) => range.max - range.min;
+
+/// The ranges of the scale [id] after each of [count] frames of [scene].
+List<_Range> _frames(
+  ChartBenchScene scene,
+  Chart chart,
+  int count, [
+  String id = 'x',
+]) {
+  final ranges = <_Range>[];
+  for (var i = 0; i < count; i++) {
+    _frame(scene, chart);
+    ranges.add(_range(chart, id));
+  }
+  return ranges;
+}
+
+/// The pixels of the canvas of [chart] in the default fill of the drag box,
+/// `rgba(225,225,225,0.3)` over the transparent canvas (plugin.ts:40), in
+/// straight (not premultiplied) RGBA, with a tolerance for the rounding of
+/// the alpha: their count and their bounds (the last pixel plus 1 on the
+/// right and at the bottom).
+Future<({int count, Rect bounds})> _boxPixels(
+  WidgetTester tester,
+  Chart chart,
+) async {
+  final canvas = chart.canvas! as UiCanvasElement;
+  final source = canvas.toImageSource();
+  final image = source.image;
+  final data = (await tester.runAsync(
+    () => image.toByteData(format: native_ui.ImageByteFormat.rawStraightRgba),
+  ))!;
+  final width = image.width;
+  final height = image.height;
+  image.dispose();
+  final bytes = data.buffer.asUint8List();
+  var count = 0;
+  var left = width;
+  var top = height;
+  var right = 0;
+  var bottom = 0;
+  bool near(int value, int to, int tolerance) =>
+      (value - to).abs() <= tolerance;
+  for (var y = 0; y < height; y++) {
+    for (var x = 0; x < width; x++) {
+      final i = (y * width + x) * 4;
+      if (near(bytes[i], 225, 3) &&
+          near(bytes[i + 1], 225, 3) &&
+          near(bytes[i + 2], 225, 3) &&
+          near(bytes[i + 3], 77, 4)) {
+        count++;
+        if (x < left) left = x;
+        if (y < top) top = y;
+        if (x + 1 > right) right = x + 1;
+        if (y + 1 > bottom) bottom = y + 1;
+      }
+    }
+  }
+  return (
+    count: count,
+    bounds: Rect.fromLTRB(
+      left.toDouble(),
+      top.toDouble(),
+      right.toDouble(),
+      bottom.toDouble(),
+    ),
+  );
+}
+
 void main() {
   test('the benchmark and stress charts run no zoom plugin', () {
     // The benchmark and the stress entries call registerGalleryComponents,
     // which registers `registerables` only. Only the zoom page registers
     // the zoom plugin (registerZoomComponents), so the figures stay
-    // comparable with the figures of earlier runs.
+    // comparable with the figures of earlier runs. The cases of the mode
+    // zoom register it for their own runs only (the zoom tests below).
     registerGalleryComponents();
     expect(() => registry.getPlugin('zoom'), throwsA(anything));
   });
@@ -681,10 +805,11 @@ void main() {
     final first = chartBenchCases.indexWhere(
       (c) => !_phase7Modes.contains(c.mode),
     );
-    // The cases of phase 9 (the modes motion and theme) come after them.
+    // The cases of phase 9 (the modes motion and theme) come after them,
+    // then the cases of the mode zoom.
     final phase8 = [
       for (final c in chartBenchCases.sublist(first))
-        if (c.mode != 'motion' && c.mode != 'theme') c,
+        if (c.mode != 'motion' && c.mode != 'theme' && c.mode != 'zoom') c,
     ];
     expect(
       [for (final c in chartBenchCases.sublist(first + phase8.length)) c.id],
@@ -694,6 +819,7 @@ void main() {
         for (final _ in chartBenchThemeTypes) 'theme.switch',
         for (final _ in chartBenchThemeTypes) 'theme.anim',
         'theme.equal',
+        for (final c in chartBenchZoomCases) c.id,
       ],
     );
     // The 24 cases of phases 5 to 7 keep their order before them.
@@ -1566,5 +1692,328 @@ void main() {
       },
     );
     expect(primitive, isTrue);
+  });
+
+  test('the cases of the mode zoom come last, with their scales and keys', () {
+    final cases = selectChartBenchCases('zoom');
+    expect(cases, chartBenchZoomCases);
+    expect(
+      chartBenchCases.sublist(chartBenchCases.length - cases.length),
+      cases,
+    );
+    expect(
+      [for (final c in cases) '${c.name} ${c.call.name} ${c.keys['scale']}'],
+      [
+        for (final scale in ['linear', 'time']) ...[
+          'base draw $scale',
+          'base update $scale',
+          'idle draw $scale',
+          'idle update $scale',
+        ],
+        'wheel frame linear',
+        'wheel frame time',
+        'pan frame linear',
+        'pan frame time',
+        'drag frame linear',
+        'pinch frame linear',
+        'api frame linear',
+        'apiPan frame linear',
+      ],
+    );
+    for (final c in cases) {
+      expect(c.keys, {
+        'id': c.id,
+        'scale': c.keys['scale'],
+        'zoomPlugin': c.name != 'base',
+      }, reason: c.id);
+      expect(c.counts, chartBenchZoomCounts, reason: c.id);
+      expect(c.primary, c.call.frameMetric, reason: c.id);
+      expect(c.explicit, isFalse, reason: c.id);
+    }
+    expect(chartBenchZoomCounts, [1000, 20000]);
+    // Only the zoom cases keep the times of the single steps.
+    for (final c in [...chartBenchCases, ...chartBenchExplicitCases]) {
+      expect(c.stepTimes, c.mode == 'zoom', reason: c.id);
+    }
+    expect(selectChartBenchCases('wheel,pan'), hasLength(4));
+    expect(selectChartBenchCases('zoom.base'), hasLength(4));
+  });
+
+  testWidgets('a tiny run of each zoom case gives its keys and step figures, '
+      'with the zoom plugin only in its run', (tester) async {
+    const n = 50;
+    final notifies = <String, Object?>{};
+    for (final benchCase in chartBenchZoomCases) {
+      final scale = benchCase.keys['scale']! as String;
+      final plugin = benchCase.keys['zoomPlugin']! as bool;
+      final reason = '${benchCase.id} ${benchCase.call.name} $scale';
+      var checked = false;
+      final line = runChartBenchCase(
+        benchCase,
+        n,
+        _settings,
+        onChart: (chart) {
+          checked = true;
+          expect(chart.isPluginEnabled('zoom'), plugin, reason: reason);
+          expect(registry.plugins.get('zoom') != null, plugin, reason: reason);
+          expect(chart.config.type, 'line', reason: reason);
+          expect(chart.options['animation'], false, reason: reason);
+          expect(chart.scales['x']!.type, scale, reason: reason);
+          expect(chart.scales['y']!.type, 'linear', reason: reason);
+          expect(chart.getDatasetMeta(0).data, hasLength(n), reason: reason);
+        },
+      );
+      expect(checked, isTrue, reason: reason);
+      // The dispose of the scene unregisters the plugin.
+      expect(registry.plugins.get('zoom'), isNull, reason: reason);
+      expect(line['mode'], 'zoom', reason: reason);
+      expect(line['case'], benchCase.name, reason: reason);
+      expect(line['id'], benchCase.id, reason: reason);
+      expect(line['scale'], scale, reason: reason);
+      expect(line['zoomPlugin'], plugin, reason: reason);
+      expect(line['n'], n, reason: reason);
+      expect(line['call'], benchCase.call.name, reason: reason);
+      expect(line['primary'], benchCase.call.frameMetric, reason: reason);
+      expect(line['steps'], line['iterations'], reason: reason);
+      expect(line['steps'], greaterThan(0), reason: reason);
+      for (final key in [
+        ..._figureKeys(benchCase.call, _parts),
+        'stepP50Ms',
+        'stepP90Ms',
+        'stepMaxMs',
+      ]) {
+        expect(line[key], _figure, reason: '$reason $key');
+      }
+      expect(
+        double.parse(line['stepP50Ms']! as String),
+        lessThanOrEqualTo(double.parse(line['stepMaxMs']! as String)),
+        reason: reason,
+      );
+      // Each step reaches the chart and draws it.
+      expect(line['notifies'], greaterThan(0), reason: reason);
+      expect(_median(line, 'draw'), greaterThan(0), reason: reason);
+      expect(_median(line, 'datasetsDraw'), greaterThan(0), reason: reason);
+      notifies['${benchCase.name} ${benchCase.call.name} $scale'] =
+          line['notifies'];
+    }
+    // The hooks of the plugin add no notify: zoom.idle notifies the hooks of
+    // zoom.base.
+    for (final scale in ['linear', 'time']) {
+      for (final call in ['draw', 'update']) {
+        expect(notifies['idle $call $scale'], notifies['base $call $scale']);
+      }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('zoom.wheel zooms in and out at the center in turn', (
+    tester,
+  ) async {
+    for (final scale in ['linear', 'time']) {
+      final (:scene, :chart) = _zoomChart(
+        _zoomCase('zoom.wheel', scale: scale),
+      );
+      scene.prepare!(chart);
+      final x0 = _range(chart, 'x');
+      final y0 = _range(chart, 'y');
+      final w = _width(x0);
+      final xs = <_Range>[];
+      final ys = <_Range>[];
+      for (var i = 0; i < 4; i++) {
+        _frame(scene, chart);
+        xs.add(_range(chart, 'x'));
+        ys.add(_range(chart, 'y'));
+      }
+      // Step 0 (deltaY -100) zooms in by 1 + 0.1 around the center: 0.9 of
+      // the width on both axes (the mode xy).
+      expect(_width(xs[0]), closeTo(0.9 * w, 1e-9 * w), reason: scale);
+      expect(xs[0].min, greaterThan(x0.min), reason: scale);
+      expect(xs[0].max, lessThan(x0.max), reason: scale);
+      expect(
+        _width(ys[0]),
+        closeTo(0.9 * _width(y0), 1e-9 * _width(y0)),
+        reason: scale,
+      );
+      // Step 1 (deltaY +100) zooms out by 2 - 1 / 0.9: the width comes back.
+      expect(_width(xs[1]), closeTo(w, 1e-9 * w), reason: scale);
+      expect(xs[1].min, closeTo(x0.min, 0.01 * w), reason: scale);
+      // The restore before step 2 puts the ranges back: each pair of steps
+      // gives the same ranges.
+      expect(xs[2], xs[0], reason: scale);
+      expect(xs[3], xs[1], reason: scale);
+      expect(ys[2], ys[0], reason: scale);
+      expect(ys[3], ys[1], reason: scale);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('zoom.pan pans the x axis by 20 px of the pressed mouse in '
+      'turn', (tester) async {
+    for (final scale in ['linear', 'time']) {
+      final (:scene, :chart) = _zoomChart(_zoomCase('zoom.pan', scale: scale));
+      final before = _range(chart, 'x');
+      final y0 = _range(chart, 'y');
+      final w = _width(before);
+      final area = chart.chartArea!;
+      final perPixel = w / (area.right - area.left);
+      scene.prepare!(chart);
+      // The setup moves the pressed mouse past the threshold: the pan starts
+      // and moves the range by 20 px to the left, with the same width.
+      final panned = _range(chart, 'x');
+      expect(chart.isZoomingOrPanning(), isTrue, reason: scale);
+      expect(before.min - panned.min, closeTo(20 * perPixel, 2 * perPixel));
+      expect(_width(panned), closeTo(w, 1e-6 * w), reason: scale);
+      final xs = _frames(scene, chart, 4);
+      // Step 0 moves the mouse back by 20 px, step 1 by 20 px again.
+      expect(xs[0].min, closeTo(before.min, 2 * perPixel), reason: scale);
+      expect(xs[1].min, closeTo(panned.min, 2 * perPixel), reason: scale);
+      expect(_width(xs[0]), closeTo(w, 1e-6 * w), reason: scale);
+      expect(xs[2], xs[0], reason: scale);
+      expect(xs[3], xs[1], reason: scale);
+      // The mode x: the y axis does not pan.
+      expect(_range(chart, 'y'), y0, reason: scale);
+      expect(chart.isZoomingOrPanning(), isTrue, reason: scale);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('zoom.drag draws the drag box from the press point to each '
+      'move point', (tester) async {
+    final (:scene, :chart) = _zoomChart(_zoomCase('zoom.drag'));
+    final x0 = _range(chart, 'x');
+    scene.prepare!(chart);
+    final start = chartBenchZoomPoint(
+      chart,
+      chartBenchDragStart.x,
+      chartBenchDragStart.y,
+    );
+    // Before the first move, the chart has no box.
+    expect((await _boxPixels(tester, chart)).count, 0);
+    for (var i = 0; i < 3; i++) {
+      _frame(scene, chart);
+      final end = chartBenchDragEnds[i % 2];
+      final point = chartBenchZoomPoint(chart, end.x, end.y);
+      final box = await _boxPixels(tester, chart);
+      // The mode xy: the box spans the two points (handlers.ts:160-191), and
+      // the fill covers most of it (the grid, the line and the points cover
+      // the rest).
+      expect(box.bounds.left, closeTo(start.x, 1), reason: '$i');
+      expect(box.bounds.top, closeTo(start.y, 1), reason: '$i');
+      expect(box.bounds.right, closeTo(point.x, 1), reason: '$i');
+      expect(box.bounds.bottom, closeTo(point.y, 1), reason: '$i');
+      expect(
+        box.count,
+        greaterThan(0.5 * (point.x - start.x) * (point.y - start.y)),
+        reason: '$i',
+      );
+    }
+    // A move only draws: the range stays, and the drag goes on.
+    expect(_range(chart, 'x'), x0);
+    expect(chart.isZoomingOrPanning(), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('zoom.pinch zooms the x axis by the spread and the pinch in '
+      'turn', (tester) async {
+    final (:scene, :chart) = _zoomChart(_zoomCase('zoom.pinch'));
+    scene.prepare!(chart);
+    final x0 = _range(chart, 'x');
+    final y0 = _range(chart, 'y');
+    final w = _width(x0);
+    final xs = _frames(scene, chart, 4);
+    // Step 0 spreads the fingers from 80 to 100 px: a zoom by 1.25, 0.75 of
+    // the width.
+    expect(_width(xs[0]), closeTo(0.75 * w, 1e-9 * w));
+    expect(xs[0].min, greaterThan(x0.min));
+    // Step 1 pinches them back to 80 px: a zoom by 0.8, 0.75 * 1.2 of the
+    // width. The restore before step 2 puts the start range back.
+    expect(_width(xs[1]), closeTo(0.9 * w, 1e-9 * w));
+    expect(xs[2], xs[0]);
+    expect(xs[3], xs[1]);
+    // The fingers are on a horizontal line: the y axis does not zoom.
+    expect(_range(chart, 'y'), y0);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('zoom.api and zoom.apiPan call the zoom API in turn', (
+    tester,
+  ) async {
+    final zoom = _zoomChart(_zoomCase('zoom.api'));
+    zoom.scene.prepare!(zoom.chart);
+    final x0 = _range(zoom.chart, 'x');
+    final w = _width(x0);
+    final xs = _frames(zoom.scene, zoom.chart, 4);
+    // zoom(1.05) gives (2 - 1.05) of the width, zoom(1 / 1.05) then
+    // (2 - 1 / 1.05) of that.
+    expect(_width(xs[0]), closeTo(0.95 * w, 1e-9 * w));
+    expect(_width(xs[1]), closeTo(0.95 * (2 - 1 / 1.05) * w, 1e-9 * w));
+    expect(xs[2], xs[0]);
+    expect(xs[3], xs[1]);
+
+    final pan = _zoomChart(_zoomCase('zoom.apiPan'));
+    pan.scene.prepare!(pan.chart);
+    final p0 = _range(pan.chart, 'x');
+    final y0 = _range(pan.chart, 'y');
+    final pw = _width(p0);
+    final area = pan.chart.chartArea!;
+    final perPixel = pw / (area.right - area.left);
+    final ps = _frames(pan.scene, pan.chart, 4);
+    // pan({x: 20}) moves the range 20 px to the left, pan({x: -20}) back.
+    expect(p0.min - ps[0].min, closeTo(20 * perPixel, 2 * perPixel));
+    expect(_width(ps[0]), closeTo(pw, 1e-6 * pw));
+    expect(ps[1].min, closeTo(p0.min, 2 * perPixel));
+    expect(ps[2], ps[0]);
+    expect(ps[3], ps[1]);
+    expect(_range(pan.chart, 'y'), y0);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('PROFILE_MARKS marks the timed window of each case', (
+    tester,
+  ) async {
+    final lines = await _benchLines(
+      () => _runApp(
+        tester,
+        ChartBenchApp(
+          cases: [
+            _zoomCase('zoom.wheel', scale: 'time'),
+            _case('chart.a'),
+          ],
+          counts: const [20],
+          settings: _settings,
+          profileMarks: true,
+        ),
+      ),
+    );
+    expect(lines, hasLength(7));
+    expect(lines[2], startsWith('BENCH {'));
+    expect(lines[5], startsWith('BENCH {'));
+    expect(lines[6], 'BENCH done');
+    Map<String, Object?> mark(int index) {
+      expect(lines[index], startsWith('BENCH_MARK {'));
+      return jsonDecode(lines[index].substring('BENCH_MARK '.length))
+          as Map<String, Object?>;
+    }
+
+    for (final (index, id, scale, phase) in [
+      (0, 'zoom.wheel', 'time', 'start'),
+      (1, 'zoom.wheel', 'time', 'end'),
+      (3, 'chart.a', null, 'start'),
+      (4, 'chart.a', null, 'end'),
+    ]) {
+      final line = mark(index);
+      expect(line.keys, ['id', 'n', 'scale', 'phase', 't'], reason: '$index');
+      expect(line['id'], id, reason: '$index');
+      expect(line['n'], 20, reason: '$index');
+      expect(line['scale'], scale, reason: '$index');
+      expect(line['phase'], phase, reason: '$index');
+      expect(line['t'], isA<int>(), reason: '$index');
+    }
+    // The window has the batches: the end comes after the start, and the
+    // next case starts after the end.
+    expect(mark(1)['t']! as int, greaterThan(mark(0)['t']! as int));
+    expect(mark(3)['t']! as int, greaterThanOrEqualTo(mark(1)['t']! as int));
+    expect(mark(4)['t']! as int, greaterThan(mark(3)['t']! as int));
+    expect(tester.takeException(), isNull);
   });
 }

@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' show Timeline;
 
 import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,8 +28,15 @@ import 'package:material_ui/material_ui.dart';
 /// `chartBenchExplicitCases`) run only when their full id is in the list:
 /// `motion.line.delay`, `chart.c.indexable` and `chart.line.primitive`, for
 /// example `CASES=chart,chart.c.indexable`. A mode, a name and a run
-/// without the define never select them. A selector that selects no case
-/// throws an [ArgumentError] at the start.
+/// without the define never select them. The cases of the mode `zoom` come
+/// after the mode `theme` (`chartBenchZoomCases`): `CASES=zoom` selects
+/// its 16 cases at 1000 and 20000 points, the chart of the plugin of
+/// chartjs-plugin-zoom with one input in each step. `zoom.base` and
+/// `zoom.idle` (without and with the plugin, `draw` and `update`) and
+/// `zoom.wheel` and `zoom.pan` have a linear and a time x axis; `zoom.drag`,
+/// `zoom.pinch`, `zoom.api` and `zoom.apiPan` a linear one. A name selects
+/// the cases of one input, for example `CASES=wheel,pan`. A selector that
+/// selects no case throws an [ArgumentError] at the start.
 final List<ChartBenchCase> benchCases = selectChartBenchCases(
   const String.fromEnvironment('CASES'),
 );
@@ -53,6 +61,18 @@ const ChartBenchSettings benchSettings = ChartBenchSettings(
   warmupMs: int.fromEnvironment('WARMUP_MS', defaultValue: 1000),
 );
 
+/// The marks of the timed windows: with `--dart-define=PROFILE_MARKS=true`,
+/// the app prints the line `BENCH_MARK {json}` right before and right after
+/// the timed window of each case and N, the batches without the
+/// construction, the preparation and the warm-up. The keys are `id` (the
+/// mode and the name of the case), `n`, `scale` (the key `scale` of the
+/// case, `null` for a case without it), `phase` (`start` or `end`) and `t`,
+/// `Timeline.now` of `dart:developer` in microseconds: the clock of the CPU
+/// samples and the timeline events of the VM service. A profile script cuts
+/// the samples of one case with them. Without the define, the app prints no
+/// mark.
+const bool benchProfileMarks = bool.fromEnvironment('PROFILE_MARKS');
+
 /// The point counts of [value], a comma list of integers above 0. Another
 /// value throws a [FormatException] or an [ArgumentError] at the start.
 List<int> parseChartBenchCounts(String value) => [
@@ -75,8 +95,12 @@ List<int> parseChartBenchCounts(String value) => [
 /// `datasetsUpdate` and `datasetsDraw`. The cases of the mode `chart` give
 /// the keys `type`, `sharing` and `scriptable`. The cases of the mode `axes`
 /// give the tick count `ticks` and the `labelRotation` `rotation` of the x
-/// axis. No frame drives the charts: the cases hold the
-/// UI thread. Thus the status shows the case of the last frame.
+/// axis. The cases of the mode `zoom` give the keys `id`, `scale` and
+/// `zoomPlugin`, the count of the timed steps `steps`, and `stepP50Ms`,
+/// `stepP90Ms` and `stepMaxMs` of the single steps. With
+/// `PROFILE_MARKS=true`, the lines `BENCH_MARK {json}` mark the timed window
+/// of each case ([benchProfileMarks]). No frame drives the charts: the cases
+/// hold the UI thread. Thus the status shows the case of the last frame.
 ///
 /// Keep the app in front: on a phone, a background app gets slower cores.
 /// Do not touch the screen during a run. On Android, the UI thread is also
@@ -86,7 +110,10 @@ List<int> parseChartBenchCounts(String value) => [
 ///
 /// Example: `flutter build apk --profile -t lib/main_bench.dart
 /// --dart-define=CASES=c --dart-define=N=5000`, then install the APK, start
-/// it and read the lines with `adb logcat -d -s flutter:I`.
+/// it and read the lines with `adb logcat -d -s flutter:I`. A CPU profile of
+/// the zoom cases: `--dart-define=CASES=zoom
+/// --dart-define=PROFILE_MARKS=true`, then read the samples of the VM
+/// service between the two marks of each case.
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const ChartBenchApp());
@@ -94,11 +121,17 @@ void main() {
 
 /// The app of the benchmark entry.
 class ChartBenchApp extends StatefulWidget {
-  /// Creates the app. [cases], [counts] and [settings] default to
-  /// [benchCases], [benchCounts] and [benchSettings], the values of the
-  /// defines. A test gives them. With no [counts] and no define `N`, each
-  /// case runs its own counts.
-  const ChartBenchApp({super.key, this.cases, this.counts, this.settings});
+  /// Creates the app. [cases], [counts], [settings] and [profileMarks]
+  /// default to [benchCases], [benchCounts], [benchSettings] and
+  /// [benchProfileMarks], the values of the defines. A test gives them.
+  /// With no [counts] and no define `N`, each case runs its own counts.
+  const ChartBenchApp({
+    super.key,
+    this.cases,
+    this.counts,
+    this.settings,
+    this.profileMarks,
+  });
 
   /// The cases, or Dart `null` for [benchCases].
   final List<ChartBenchCase>? cases;
@@ -108,6 +141,10 @@ class ChartBenchApp extends StatefulWidget {
 
   /// The timing, or Dart `null` for [benchSettings].
   final ChartBenchSettings? settings;
+
+  /// Whether the app prints the marks of the timed windows, or Dart `null`
+  /// for [benchProfileMarks].
+  final bool? profileMarks;
 
   @override
   State<ChartBenchApp> createState() => _ChartBenchAppState();
@@ -129,6 +166,7 @@ class _ChartBenchAppState extends State<ChartBenchApp> {
     final cases = widget.cases ?? benchCases;
     final counts = widget.counts ?? benchCounts;
     final settings = widget.settings ?? benchSettings;
+    final marks = widget.profileMarks ?? benchProfileMarks;
     final runs = [
       for (final benchCase in cases)
         for (final n in counts ?? benchCase.counts ?? chartBenchDefaultCounts)
@@ -145,13 +183,33 @@ class _ChartBenchAppState extends State<ChartBenchApp> {
       // The status shows before the case holds the UI thread.
       await WidgetsBinding.instance.endOfFrame;
       if (!mounted) return;
-      final line = runChartBenchCase(benchCase, n, settings);
+      final line = runChartBenchCase(
+        benchCase,
+        n,
+        settings,
+        onWindow: marks ? (phase) => _printMark(benchCase, n, phase) : null,
+      );
       debugPrint('BENCH ${jsonEncode(line)}');
     }
     debugPrint('BENCH done');
     if (mounted) {
       setState(() => _status = 'Done (${runs.length} of ${runs.length})');
     }
+  }
+
+  /// Prints the line `BENCH_MARK {json}` of the [phase] of the timed window
+  /// of [benchCase] with [n] points ([benchProfileMarks]). It reads
+  /// `Timeline.now` first, so the time is the time of the call.
+  static void _printMark(ChartBenchCase benchCase, int n, String phase) {
+    final t = Timeline.now;
+    final mark = jsonEncode({
+      'id': benchCase.id,
+      'n': n,
+      'scale': benchCase.keys['scale'],
+      'phase': phase,
+      't': t,
+    });
+    debugPrint('BENCH_MARK $mark');
   }
 
   @override

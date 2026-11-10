@@ -25,8 +25,11 @@ void registerGalleryComponents() {
 /// plugin its options. The stress and benchmark entries (`main_stress.dart`,
 /// `main_bench.dart`) never build that page: their charts run no hook of the
 /// plugin, so their figures stay comparable with the figures of earlier
-/// runs. After a visit of the page, the plugin runs on each chart of the
-/// app. With its default options, each zoom and pan is off: the plugin adds
+/// runs. Only the cases of the mode `zoom` of the benchmark
+/// (`chartBenchZoomCases` of `lib/bench/chart_bench.dart`) register the
+/// plugin, each for its own run, and unregister it at its end. After a visit
+/// of the page, the plugin runs on each chart of the app. With its default
+/// options, each zoom and pan is off: the plugin adds
 /// no event listener and changes no chart. It takes part in the data-only
 /// updates of the host (`supportsDataUpdates`), so it keeps each chart on
 /// that path.
