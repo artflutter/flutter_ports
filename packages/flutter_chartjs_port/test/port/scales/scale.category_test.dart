@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:collection';
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -331,6 +333,34 @@ CategoryScale _x(Chart chart) => chart.scales['x']! as CategoryScale;
 /// A matcher of [pixel]: [isNaN] for NaN, else [equals].
 Matcher _samePixel(double pixel) => pixel.isNaN ? isNaN : equals(pixel);
 
+/// A `List<String>` class of an app that counts the reads of its items.
+final class _CountingLabels extends ListBase<String> {
+  _CountingLabels(List<String> labels) : _labels = [...labels];
+
+  final List<String> _labels;
+
+  /// The number of item reads.
+  int reads = 0;
+
+  @override
+  int get length => _labels.length;
+
+  @override
+  set length(int value) => _labels.length = value;
+
+  @override
+  String operator [](int index) {
+    reads++;
+    return _labels[index];
+  }
+
+  @override
+  void operator []=(int index, String value) => _labels[index] = value;
+
+  @override
+  void add(String element) => _labels.add(element);
+}
+
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
@@ -568,6 +598,103 @@ void main() {
       final x = _x(labelsChart(<String>['a', 'b', 'c'], 'd'));
       expect(x.getLabels(), ['a', 'b', 'c', 'd']);
       expect(x.getPixelForValue('d'), x.getPixelForValue(3.0));
+    });
+  });
+
+  // differences.md row adapt-category-string-labels: a raw value that is not
+  // a String and a native List<String> skip the scan of findOrAddLabel. The
+  // reference is the scan: the same labels in a List<Object?>, and in a
+  // List<String> class of the app, which keeps the scan.
+  group('adapt-category-string-labels', () {
+    /// A chart of the test controller with the labels [labels].
+    Chart labelsChart(List<Object?> labels) => acquireChart({
+      'type': 'categoryTest',
+      'data': <String, Object?>{
+        'labels': labels,
+        'datasets': <Object?>[
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'x': 'a', 'y': 1.0},
+            ],
+          },
+        ],
+      },
+    });
+
+    /// The raw values that are not a String, and 'b', a label.
+    final notStrings = <Object?>[
+      0.0,
+      1.0,
+      2.0,
+      1.5,
+      -1.0,
+      -0.0,
+      99.0,
+      double.nan,
+      double.infinity,
+      true,
+      false,
+      DateTime.utc(2020),
+      <String, Object?>{},
+      <Object?>['a'],
+      'b',
+    ];
+    final indexes = <double?>[null, 0, 1, 2, 7, double.nan];
+
+    /// The results of `parse(raw, index)` for each of [raws] and [indexes],
+    /// as text (NaN and -0 are visible), and the labels after.
+    String parses(Chart chart, List<Object?> raws) {
+      final x = _x(chart);
+      return [
+        for (final raw in raws)
+          for (final index in indexes) '$raw $index: ${x.parse(raw, index)}',
+        '${x.getLabels()}',
+      ].join('\n');
+    }
+
+    testWidgets('a native List<String> gives the results of the scan', (
+      tester,
+    ) async {
+      final expected = parses(
+        labelsChart(<Object?>['a', 'b', 'c']),
+        notStrings,
+      );
+      for (final labels in <List<String>>[
+        <String>['a', 'b', 'c'],
+        List<String>.of(['a', 'b', 'c'], growable: false),
+        const <String>['a', 'b', 'c'],
+        List<String>.unmodifiable(['a', 'b', 'c']),
+      ]) {
+        expect(
+          parses(labelsChart(labels), notStrings),
+          expected,
+          reason: '${labels.runtimeType}',
+        );
+      }
+      final counting = _CountingLabels(['a', 'b', 'c']);
+      expect(parses(labelsChart(counting), notStrings), expected);
+    });
+
+    testWidgets('a String still adds a label to a native List<String>', (
+      tester,
+    ) async {
+      final raws = [...notStrings, 'zz', 1.0, '1', 3.0, 'zz'];
+      expect(
+        parses(labelsChart(<String>['a', 'b', 'c']), raws),
+        parses(labelsChart(<Object?>['a', 'b', 'c']), raws),
+      );
+    });
+
+    testWidgets('a List<String> class of the app keeps the scan', (
+      tester,
+    ) async {
+      final labels = _CountingLabels(['a', 'b', 'c']);
+      final x = _x(labelsChart(labels));
+      labels.reads = 0;
+      expect(x.parse(1.5), 2.0);
+      expect(labels.reads, greaterThanOrEqualTo(3));
+      // The native List skips the scan and gives the same index.
+      expect(_x(labelsChart(<String>['a', 'b', 'c'])).parse(1.5), 2.0);
     });
   });
 
