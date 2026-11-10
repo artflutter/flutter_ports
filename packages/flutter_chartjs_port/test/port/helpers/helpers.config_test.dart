@@ -1,4 +1,5 @@
 // Original code, not ported from Chart.js: helpers.config cases with no spec.
+import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
@@ -10,6 +11,10 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show ScopeRoute;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope, InteractionOptionsScope;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
 
@@ -967,4 +972,230 @@ void main() {
     expect(jsToString(resolver), '[object Object]');
     expect('$resolver', startsWith('Resolver(cache: '));
   });
+
+  // The row adapt-resolver-single-walk: the sub-resolver of a top-level
+  // resolver (its parent scopes are its root scopes) walks the list one time
+  // when a second time adds nothing. Each case compares the resolver of a
+  // list (the new path) with the resolver of the same list and a copy of it
+  // as the root scopes: `[...parentScopes, ...rootScopes]` of the walk over
+  // the list two times, the old path.
+  group('adapt-resolver-single-walk', () {
+    /// The resolver of [scopes] (one list) and its twin with a copy of
+    /// [scopes] as the root scopes.
+    (Resolver, Resolver) twins(List<Object?> scopes) => (
+      createResolver(scopes),
+      createResolver(scopes, const [''], [...scopes]),
+    );
+
+    /// The `_scopes` of the sub-resolver [prop] of [resolver].
+    List<Object?> subScopes(Resolver resolver, String prop) =>
+        (resolver[prop]! as Resolver).scopes;
+
+    test('gives the scopes and values of plain Maps and typed scopes', () {
+      List<Object?> scopes() => [
+        <String, Object?>{
+          'hover': <String, Object?>{'mode': 'x'},
+          'plugins': <String, Object?>{
+            'zoom': <String, Object?>{'speed': 0.2},
+          },
+        },
+        ChartOptionsScope()
+          ..jsWrite('hover', InteractionOptionsScope()..jsWrite('axis', 'y'))
+          ..jsWrite(
+            'interaction',
+            InteractionOptionsScope()..jsWrite('intersect', false),
+          ),
+        <String, Object?>{
+          'hover': <String, Object?>{'_fallback': 'interaction'},
+          'plugins': <String, Object?>{
+            'zoom': <String, Object?>{'_fallback': false},
+          },
+          'interaction': <String, Object?>{'mode': 'nearest'},
+        },
+      ];
+      final (single, full) = twins(scopes());
+      for (final prop in ['hover', 'interaction', 'plugins']) {
+        final a = subScopes(single, prop);
+        final b = subScopes(full, prop);
+        expect(a.length, b.length, reason: prop);
+        for (var i = 0; i < a.length; i++) {
+          expect(a[i], same(b[i]), reason: '$prop $i');
+        }
+      }
+      final hover = single['hover']! as Resolver;
+      expect(hover['mode'], 'x');
+      expect(hover['axis'], 'y');
+      expect(hover['intersect'], false);
+      final zoom = (single['plugins']! as Resolver)['zoom']! as Resolver;
+      expect(zoom['speed'], 0.2);
+    });
+
+    test('calls a function _fallback as the walk two times does', () {
+      var calls = 0;
+      Object? fallback(Object? prop, Object? value) {
+        calls++;
+        return undefined;
+      }
+
+      List<Object?> scopes() => [
+        <String, Object?>{
+          'x': <String, Object?>{'a': 1},
+        },
+        <String, Object?>{
+          'x': <String, Object?>{'_fallback': fallback},
+        },
+      ];
+      final (single, full) = twins(scopes());
+      expect(single['x'], isA<Resolver>());
+      final singleCalls = calls;
+      calls = 0;
+      expect(full['x'], isA<Resolver>());
+      expect(singleCalls, calls);
+      expect(calls, 2);
+    });
+
+    test('reads a Map of a user class as the walk two times does', () {
+      final first = _CountingMap({
+        'x': <String, Object?>{'a': 1},
+      });
+      final second = _CountingMap({
+        'x': <String, Object?>{'a': 1},
+      });
+      final (single, _) = twins([first]);
+      expect(single['x'], isA<Resolver>());
+      final (_, full) = twins([second]);
+      expect(full['x'], isA<Resolver>());
+      expect(first.reads, second.reads);
+      expect(first.reads, greaterThan(2));
+    });
+
+    test('reads a subclass of a scope class as the walk two times does', () {
+      final first = _CountingScope()
+        ..jsWrite('hover', <String, Object?>{'mode': 'x'});
+      final second = _CountingScope()
+        ..jsWrite('hover', <String, Object?>{'mode': 'x'});
+      expect(first.nativeFace, isFalse);
+      final (single, _) = twins([first]);
+      expect(single['hover'], isA<Resolver>());
+      final (_, full) = twins([second]);
+      expect(full['hover'], isA<Resolver>());
+      expect(first.reads, second.reads);
+    });
+
+    test('adds each new object of a route as the walk two times does', () {
+      // A route whose local value is an object gives a new merged object at
+      // each read (core.defaults.js:144-153).
+      List<Object?> scopes() => [
+        ChartOptionsScope()
+          ..jsWrite('font', <String, Object?>{'size': 12})
+          ..addRoute(
+            'font',
+            ScopeRoute(
+              (local) => <String, Object?>{...local! as Map<String, Object?>},
+              targetScope: null,
+              targetName: 'font',
+            ),
+          ),
+      ];
+
+      final (single, full) = twins(scopes());
+      final a = subScopes(single, 'font');
+      final b = subScopes(full, 'font');
+      expect(a.length, b.length);
+      expect(a.length, 3);
+      expect(a.toSet().length, 3);
+    });
+
+    test('reads a dotted _fallback as the walk two times does', () {
+      final first = _CountingMap({
+        'x': <String, Object?>{'_fallback': 'y.z'},
+        'y': <String, Object?>{
+          'z': <String, Object?>{'a': 1},
+        },
+      });
+      final second = _CountingMap({
+        'x': <String, Object?>{'_fallback': 'y.z'},
+        'y': <String, Object?>{
+          'z': <String, Object?>{'a': 1},
+        },
+      });
+      final (single, _) = twins([first]);
+      expect((single['x']! as Resolver)['a'], 1);
+      final (_, full) = twins([second]);
+      expect(full['x'], isA<Resolver>());
+      expect(first.reads, second.reads);
+    });
+
+    test('walks a list of plain scopes one time', () {
+      // A Map literal is a LinkedHashMap. Its key equality is a Dart thing
+      // with no JavaScript counterpart; its calls show the skipped second
+      // time.
+      var calls = 0;
+      LinkedHashMap<String, Object?> counted(Map<String, Object?> values) =>
+          LinkedHashMap<String, Object?>(
+            equals: (a, b) {
+              calls++;
+              return a == b;
+            },
+            hashCode: (key) => key.hashCode,
+          )..addAll(values);
+      final scopes = [
+        counted({
+          'x': <String, Object?>{'a': 1},
+        }),
+        <String, Object?>{
+          'x': <String, Object?>{'b': 2},
+        },
+      ];
+      final (single, full) = twins(scopes);
+      calls = 0;
+      final a = subScopes(single, 'x');
+      final singleCalls = calls;
+      calls = 0;
+      final b = subScopes(full, 'x');
+      expect(singleCalls, lessThan(calls));
+      expect(a.length, b.length);
+      for (var i = 0; i < a.length; i++) {
+        expect(a[i], same(b[i]));
+      }
+    });
+  });
+}
+
+/// A Map of a user class that counts its reads.
+final class _CountingMap extends MapBase<String, Object?> {
+  _CountingMap(this._values);
+
+  final Map<String, Object?> _values;
+
+  int reads = 0;
+
+  @override
+  Object? operator [](Object? key) {
+    reads++;
+    return _values[key];
+  }
+
+  @override
+  void operator []=(String key, Object? value) => _values[key] = value;
+
+  @override
+  void clear() => _values.clear();
+
+  @override
+  Iterable<String> get keys => _values.keys;
+
+  @override
+  Object? remove(Object? key) => _values.remove(key);
+}
+
+/// A subclass of a scope class that counts its reads by name.
+final class _CountingScope extends ChartOptionsScope {
+  int reads = 0;
+
+  @override
+  Object? jsRead(String name) {
+    reads++;
+    return super.jsRead(name);
+  }
 }

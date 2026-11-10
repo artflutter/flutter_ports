@@ -765,6 +765,16 @@ String _scopeKinds(Schema schema) {
           ('ScopeKind.${kind.enumName}', '${kind.className}()'),
       ], null),
     )
+    ..write(
+      '\n  /// The class of the scopes that [create] makes: a scope of this\n'
+      '  /// kind whose `runtimeType` is another class is a subclass.\n',
+    )
+    ..write(
+      _switchMember('Type get scopeType', 'this', [
+        for (final kind in schema.kinds)
+          ('ScopeKind.${kind.enumName}', kind.className),
+      ], null),
+    )
     ..write('\n  /// The declared keys, in schema order.\n')
     ..write(
       _switchMember('List<OptionKey> get keys', 'this', [

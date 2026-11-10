@@ -235,6 +235,12 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
     return predicate;
   }
 
+  /// [Defaults] keeps the face by name of its scope class: it overrides no
+  /// read, write or key of the face. A subclass of it can.
+  @internal
+  @core.override
+  bool get nativeFace => runtimeType == Defaults;
+
   /// core.defaults.js:90 `set`.
   ///
   /// @param {string|object} scope
