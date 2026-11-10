@@ -22,16 +22,19 @@ and the public API of the Chart.js port.
   [Chart.js ADR 0108](../../flutter_chartjs_port/doc/adr/0108-input-surface-and-exports-for-add-on-plugins.md)
   is the host change for the zoom port: the input surface of the canvas, the JS runtime and the
   typed plugin API.
-- **Host seams:** [host-seams.md](host-seams.md) lists each use of the host with its state. On
-  2026-11-10, after the host wave of Chart.js ADR 0108, 18 seams connect, 6 need only a Dart form
-  in the zoom port and 2 wait for later host decisions (H18, H19).
+- **Host seams:** [host-seams.md](host-seams.md) lists each use of the host with its state and
+  the tests that pin it. At the end of zoom phase 4 (2026-11-10), 18 seams connect, 6 need only a
+  Dart form in the zoom port and 2 wait for later host decisions (H18, H19).
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md).
 - **Prior art:** the survey file of the zoom and pan code of other Dart and Flutter packages
   comes in a later change. Prior art is never a source (AGENTS.md rule 1).
 - **Test harness:** `packages/chartjs_test_utils`, a dev dependency from phase 2 (ADR 0009 item 7).
-- **Gallery:** a zoom page in `apps/chartjs_gallery`, from phase 4 (ADR 0009 item 8).
+  `test/flutter_test_config.dart` ports the set-up of `test/index.js` with its event helpers. The
+  specs dispatch synthetic DOM events on the canvas. The port-only tests of `test/port/` also drive
+  a `ChartView` with the pointer and key events of Flutter.
+- **Gallery:** the zoom page of `apps/chartjs_gallery` (phase 4, ADR 0009 item 8).
 - **License:** MIT, as upstream ([LICENSE](../LICENSE)).
 
 ## What gets ported
@@ -70,12 +73,16 @@ flow of the Chart.js port applies to each module: `packages/flutter_chartjs_port
 Each phase ends with green checks of the whole workspace. A phase that changes the host port also
 runs the checks of the host (AGENTS.md, "Before a push").
 
-| Phase | Content | Exit |
-|---|---|---|
-| 0 | Scaffold: the package, the pin, the checks, the ADRs, the seam list, then the prior-art survey file. | The scaffold and the docs are in. The survey file follows. |
-| 1 | The host change of Chart.js ADR 0108: the input path (H2 to H8), the JS runtime `js_semantics.dart` with `jsHypot` (H13), the typed plugin API (H16) and the harness (H23), with host tests and a row update in `host-seams.md`. The port checks `check:lib-imports`, `check:headers` and `check:js-semantics` examine the zoom package (ADR 0009 item 6). | The seams H2 to H8, H13, H16 and H23 are `connects`. The Chart.js port passes its checks. |
-| 2 | The pure modules: `types`, `options`, `defaults`, `state`, `utils`, `scale.types`, `core`, with `src/*.test.ts`, and the base of the set-up `test/flutter_test_config.dart`. | `utils_test.dart` and `scale.types_test.dart` pass. |
-| 3 | The input modules `handlers` and `gestures`, the plugin `plugin`, `index` and `index.umd` (the input specs need the registered plugin), the helpers of the set-up (H23), the specs `api`, `defaults`, `module`, `zoom.wheel`, `zoom.drag`, `pan`, `zoom.pinch` and `gestures`, the check of H17 and the test of the data-only opt-in (H25). | The specs pass or have a reason. |
-| 4 | The fixtures: the 12 hand fixtures with the comparison of the scale ranges (H24). The zoom page of the gallery (H20). The tests of real input on a `ChartView`. A device check of H8 on Android and iOS. | All upstream cases pass or have a reason. |
-| 5 | The app surface: the typed options slot (H18) and the theme extension (H19), each after its Chart.js ADR. | The README shows the typed form. |
-| 6 | Release 0.1.0, after the release of `flutter_chartjs_port`, and the bump to the upstream tag of the next release (Zoom ADR 0001 item 7). | — |
+Phases 1 to 4 are done (2026-11-10). Two items stay open: the prior-art survey file of phase 0,
+and the device check of H8 of phase 4 on Android and iOS (Chart.js ADR 0108 Open 1), which needs a
+device run of the gallery page. Phase 5 is next.
+
+| Phase | Content | Exit | State |
+|---|---|---|---|
+| 0 | Scaffold: the package, the pin, the checks, the ADRs, the seam list, then the prior-art survey file. | The scaffold and the docs are in. The survey file follows. | Done 2026-10-30; the survey file is open. |
+| 1 | The host change of Chart.js ADR 0108: the input path (H2 to H8), the JS runtime `js_semantics.dart` with `jsHypot` (H13), the typed plugin API (H16) and the harness (H23), with host tests and a row update in `host-seams.md`. The port checks `check:lib-imports`, `check:headers` and `check:js-semantics` examine the zoom package (ADR 0009 item 6). | The seams H2 to H8, H13, H16 and H23 are `connects`. The Chart.js port passes its checks. | Done 2026-11-10 (Chart.js ADR 0108 accepted). |
+| 2 | The pure modules: `types`, `options`, `defaults`, `state`, `utils`, `scale.types`, `core`, with `src/*.test.ts`, and the base of the set-up `test/flutter_test_config.dart`. | `utils_test.dart` and `scale.types_test.dart` pass. | Done 2026-11-10. |
+| 3 | The input modules `handlers` and `gestures`, the plugin `plugin`, `index` and `index.umd` (the input specs need the registered plugin), the helpers of the set-up (H23), the specs `api`, `defaults`, `module`, `zoom.wheel`, `zoom.drag`, `pan`, `zoom.pinch` and `gestures`, the check of H17 and the test of the data-only opt-in (H25). | The specs pass or have a reason. | Done 2026-11-10: the 83 cases of the 8 specs pass, with no skip. |
+| 4 | The fixtures: the 12 hand fixtures with the comparison of the scale ranges (H24). The zoom page of the gallery (H20). The tests of real input on a `ChartView`. A device check of H8 on Android and iOS. | All upstream cases pass or have a reason. | Done 2026-11-10: the fixtures, the gallery page and the tests of real input (`test/port/handlers_test.dart`, `gestures_test.dart`, `index_test.dart`). The device check of H8 is open. |
+| 5 | The app surface: the typed options slot (H18), with the typed plugin in the inline plugins of a typed config, and the theme extension (H19), each after its Chart.js ADR. | The README shows the typed form. | Open. |
+| 6 | Release 0.1.0, after the release of `flutter_chartjs_port`, and the bump to the upstream tag of the next release (Zoom ADR 0001 item 7). | — | Open. |

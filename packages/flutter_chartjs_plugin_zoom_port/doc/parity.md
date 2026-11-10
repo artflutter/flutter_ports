@@ -53,13 +53,17 @@ gesture manager.
 | `test/specs/pan.spec.js` | 12 | `test/specs/pan_test.dart` | H23 | 3 | ported |
 | `test/specs/zoom.pinch.spec.js` | 4 | `test/specs/zoom.pinch_test.dart` | H23 | 3 | ported |
 | `test/specs/gestures.spec.js` | 2 | `test/specs/gestures_test.dart` | H23 | 3 | ported |
-| `test/specs/fixtures.spec.js` | 0 | `test/specs/fixtures_test.dart` | H24 | 4 | not started |
+| `test/specs/fixtures.spec.js` | 0 | `test/specs/fixtures_test.dart` | H24 | 4 | ported |
 | `test/index.js` | — | `test/flutter_test_config.dart` | H3, H6, H7, H23 | 3 | ported |
-| `test/fixtures/pan/*.js` (7) | — | `test/fixtures/hand/pan/*.dart` | H24 | 4 | not started |
-| `test/fixtures/zoom/*.js` (5) | — | `test/fixtures/hand/zoom/*.dart` | H24 | 4 | not started |
+| `test/fixtures/pan/*.js` (7) | — | `test/fixtures/hand/pan/*.dart` | H24 | 4 | ported |
+| `test/fixtures/zoom/*.js` (5) | — | `test/fixtures/hand/zoom/*.dart` | H24 | 4 | ported |
 
 `test/specs/fixtures.spec.js` has no `it` call. It calls `jasmine.fixture.specs('zoom')` and
-`jasmine.fixture.specs('pan')`, one case for each fixture.
+`jasmine.fixture.specs('pan')`, one case for each fixture. The port runs the 12 fixtures through
+`specsFromFixtures` of the host harness with the tag `fixtures`
+(`dart run melos run test:fixtures:zoom`). A fixture compares the ranges of the scales at its
+snapshot points with the data of the generator `tool/reference/fixtures_reference.mjs`, not an
+image (row `harness-fixture-observations` of [differences.md](differences.md), seam H24).
 
 The `it` calls of the two unit tests in `src/` run in loops: `src/utils.test.ts` has 6 cases and
 `src/scale.types.test.ts` has 14 (10 cases of `zoomDelta` and 4 of `panFunctions.category`). The 4
@@ -78,3 +82,29 @@ The 83 cases of the eight specs of phase 3 pass, with no skip: `api` 17, `defaul
 port-only `test/port/plugin_test.dart` tests the plugin object on the host: the data-only updates of
 a `ChartView` (seam H25), the warnings of `start` (H12, H17) and the range in the scale options
 (H14).
+
+Three port-only test files drive a `ChartView` with the pointer and key events of Flutter
+(`WidgetTester`), through the input path of the host (Chart.js ADR 0108), where the specs dispatch
+synthetic events on the canvas:
+
+- `test/port/handlers_test.dart` (`src/handlers.ts`): a wheel over a chart in a `ListView` zooms
+  and does not scroll the list, and `onZoomComplete` runs 250 ms after each wheel event; without
+  wheel zoom, the wheel scrolls the list; a mouse drag that leaves the box and lifts outside it
+  zooms (the document `mouseup`); a press on the legend starts no drag; Escape cancels a drag with
+  no focus on the chart; Enter, Enter on a keyboard target of the chart leaves no drag state.
+- `test/port/gestures_test.dart` (`src/gestures.ts`): a one-finger pan with `touch-action: none`
+  in a vertical `ListView` pans and does not scroll the list; without pan and pinch, the same drag
+  scrolls it; a two-finger pinch zooms both axes on a diagonal and only x in a row.
+- `test/port/index_test.dart` (`src/index.ts`): a rebuild with an equal config or with new data
+  keeps the zoomed range, a config with another option loses it, and a theme switch loses it (row
+  `theme-switch-zoom-range`, seam H20).
+
+`test/port/handlers_smoke_test.dart` tests the listeners of `addListeners` with synthetic events,
+`test/port/public_library_test.dart` the public library next to the app library of the host and
+Material, and `test/port/plugin_test.dart` the plugin object on the host (above).
+
+The zoom page of `apps/chartjs_gallery` (seam H20) shows samples of the upstream `docs/samples/`
+folder, in files with rule-2 headers.
+
+Open after zoom phase 4: the device check of `touch-action: none` (seam H8) on Android and iOS
+(Chart.js ADR 0108 Open 1).
