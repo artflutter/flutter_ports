@@ -119,17 +119,36 @@ int _lastIndexOf(List<Object?> labels, Object? raw) {
   return -1;
 }
 
+/// The runtime types of a native `List<String>`: a growable, a fixed-length,
+/// a const and an unmodifiable List. Each holds only Strings, and a read of
+/// its length or of an item runs no code of the app.
+final Set<Type> _nativeStringLists = {
+  <String>[].runtimeType,
+  List<String>.empty().runtimeType,
+  const <String>[].runtimeType,
+  List<String>.unmodifiable(const <String>[]).runtimeType,
+};
+
 /// scale.category.js:14 `findOrAddLabel`.
 ///
 /// `indexOf` and `lastIndexOf` of JavaScript compare with `===`. Thus
 /// [_indexOf] and [_lastIndexOf] compare with [_strictEquals], and not with
 /// Dart `==`: a copy of a label Date is not the label.
+///
+/// A [raw] that is not a String and the labels of a native `List<String>`
+/// ([_nativeStringLists]) skip the scan of `indexOf`: `===` of a String and
+/// a value that is not a String is false, so `indexOf` gives -1 for each
+/// label. Any other List or value takes the scan.
 Object? _findOrAddLabel(
   List<Object?> labels,
   Object? raw,
   Object? index,
   List<_AddedLabel> addedLabels,
 ) {
+  if (raw is! String && _nativeStringLists.contains(labels.runtimeType)) {
+    // DIVERGES(chartjs): adapt-category-string-labels, no scan for -1.
+    return _addIfString(labels, raw, index, addedLabels);
+  }
   final first = _indexOf(labels, raw);
   if (first == -1) {
     return _addIfString(labels, raw, index, addedLabels);
