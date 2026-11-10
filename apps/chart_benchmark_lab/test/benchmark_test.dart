@@ -122,6 +122,41 @@ void main() {
       }
     }
   });
+  test('each library names why it cannot run a config', () {
+    // No radar on Syncfusion.
+    const radar = BenchmarkConfig(type: ChartType.radar);
+    expect(ChartLibrary.syncfusion.runs(radar), isFalse);
+    expect(
+      ChartLibrary.syncfusion.reasonFor(radar),
+      'Syncfusion 35.1.43 has no radar chart.',
+    );
+    expect(ChartLibrary.syncfusion.shortReasonFor(radar), 'No radar chart');
+    // A missing chart wins over a missing shadow.
+    expect(
+      ChartLibrary.syncfusion.shortReasonFor(radar.copyWith(shadow: true)),
+      'No radar chart',
+    );
+    // No shadow on a Syncfusion line, nor a sharp one on a Graphic bar.
+    const line = BenchmarkConfig(shadow: true);
+    expect(ChartLibrary.syncfusion.runs(line), isFalse);
+    expect(
+      ChartLibrary.syncfusion.reasonFor(line),
+      'Syncfusion 35.1.43 has no sharp shadow on a line chart.',
+    );
+    expect(ChartLibrary.syncfusion.shortReasonFor(line), 'No shadow here');
+    const bar = BenchmarkConfig(type: ChartType.bar, shadow: true);
+    expect(ChartLibrary.graphic.runs(bar), isFalse);
+    expect(
+      ChartLibrary.graphic.reasonFor(bar),
+      'Graphic 2.7.0 has no sharp shadow on a bar chart.',
+    );
+    expect(ChartLibrary.graphic.runs(bar.copyWith(shadowBlur: true)), isTrue);
+    // A zoom stops no library.
+    expect(
+      ChartLibrary.syncfusion.runs(line.copyWith(shadow: false, zoom: true)),
+      isTrue,
+    );
+  });
   test('a set zoom adds a key, so earlier saved runs keep theirs', () {
     const off = BenchmarkConfig();
     const on = BenchmarkConfig(zoom: true);

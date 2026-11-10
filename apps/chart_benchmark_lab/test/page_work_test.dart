@@ -388,6 +388,14 @@ void staleSections() {
               const BenchmarkConfig(count: 100, overlayLabels: 50),
             );
         },
+        // The notes of the library selector follow the shadow and the zoom.
+        'a shadow': () => c.configure(c.config.copyWith(shadow: true)),
+        'a zoom': () => c.configure(c.config.copyWith(zoom: true)),
+        'a type without zoom': () =>
+            c.configure(c.config.copyWith(type: ChartType.pie)),
+        'no shadow and no zoom': () => c.configure(
+          const BenchmarkConfig(count: 100, overlayLabels: 50),
+        ),
         'a run': c.start,
         'a pause': c.pause,
         'a capture': () => c.start(capture: true),

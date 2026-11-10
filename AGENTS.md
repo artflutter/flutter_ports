@@ -1308,7 +1308,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   and bubble): the Chart.js port through the zoom port, which the adapter registers
   only for a chart with zoom (`ChartConfig.plugins` takes no typed plugin), fl_chart
   `transformationConfig`, Graphic `RectCoord.horizontalRangeUpdater` and Syncfusion
-  `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times.
+  `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times. The
+  adapter claims each wheel over a chart with zoom, so the page does not scroll
+  and a test goes on. A desktop trackpad differs by library (the host of the
+  Chart.js port maps no pan-zoom event, seam H27): `zoomsWith` states it.
   Run `dart run melos run benchmark:macos` for profile measurements. Dependencies
   are pinned; Syncfusion is included under the owner's confirmed eligible license.
   Shared seeded data and controls live in `lib/benchmark`, adapters in

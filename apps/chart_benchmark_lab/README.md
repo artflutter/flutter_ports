@@ -117,26 +117,44 @@ Two tools measure this:
 - **Features:** point markers and area fill (line and radar), smooth lines (line
   only: fl_chart has no smooth radar), axis labels and grid (not for pie, doughnut
   or polar area), alternating item colors (not for line or radar), tooltips,
-  0/50/200 overlay labels and label rotation.
-  Inapplicable controls are disabled; their values are excluded from the
-  effective configuration exported with a result.
+  a series shadow (sharp or blurred), 0/50/200 overlay labels and label
+  rotation. The settings hide a control that does not apply; its value is
+  excluded from the effective configuration exported with a result. A library
+  that cannot draw the shadow of a chart type shows the reason, and a batch
+  skips it.
 - **Zoom and pan** (line, bar, scatter and bubble; the settings hide it for the
   other types): each library zooms and pans only the x axis, through its public
-  API. A pinch or the mouse wheel zooms, and a drag pans a zoomed chart. Each
-  library stays inside the data and zooms at most 100 times (`chartMaxZoom`, the
-  default of Syncfusion). The Chart.js port uses the port of chartjs-plugin-zoom
-  (`packages/flutter_chartjs_plugin_zoom_port`): the adapter registers the plugin
-  only for a chart with zoom, so a run without zoom runs no hook of the plugin.
-  fl_chart uses `transformationConfig` with `FlScaleAxis.horizontal`, Graphic the
+  API. A touch pinch or the mouse wheel zooms, and a drag pans a zoomed chart.
+  Each library stays inside the data and zooms at most 100 times
+  (`chartMaxZoom`, the default of Syncfusion). The Chart.js port uses the port of
+  chartjs-plugin-zoom (`packages/flutter_chartjs_plugin_zoom_port`): the adapter
+  registers the plugin only for a chart with zoom, so a run without zoom builds
+  the same widgets as before and runs no hook of the plugin. fl_chart uses
+  `transformationConfig` with `FlScaleAxis.horizontal`, Graphic the
   `horizontalRangeUpdater` of `RectCoord` from `Defaults.horizontalRangeEvent`,
-  with the same bounds, and Syncfusion `ZoomPanBehavior` with `ZoomMode.x`. Only
-  the Chart.js port claims the wheel: on the other libraries, a wheel over the
-  chart also scrolls the page, and a scroll stops a test. Graphic also goes back
-  to the full range on a double tap. Each test starts with a new chart at the full
-  range; a zoom stays through the ticks of a live run, and a Recreate chart run
-  starts each tick at the full range. A set zoom adds the key `zoom` to the
-  settings, so saved runs without it keep their comparison keys, and a Chart.js
-  capture records the plugin pin as `zoomPlugin` in its `engineOptions`.
+  with the same bounds and without its double-tap reset, and Syncfusion
+  `ZoomPanBehavior` with `ZoomMode.x`. The lab claims each wheel over a chart
+  with zoom, so a wheel zoom does not scroll the page and does not stop a test:
+  only the Chart.js port claims it by itself. Each test starts with a new chart
+  at the full range; a zoom stays through the ticks of a live run, and a
+  Recreate chart run starts each tick at the full range. A set zoom adds the key
+  `zoom` to the settings, so saved runs without it keep their comparison keys,
+  and a Chart.js capture records the plugin pin as `zoomPlugin` in its
+  `engineOptions`. The libraries still differ in this input:
+  - A desktop trackpad sends its pinch and its two-finger scroll as pan-zoom
+    events, not as a wheel. A trackpad pinch zooms fl_chart and Graphic.
+    Syncfusion reads each pan-zoom step as a wheel step by its vertical pan: a
+    vertical two-finger scroll zooms it, and a pinch only zooms it out. The host
+    of the Chart.js port maps no pan-zoom event (Chart.js ADR 0108 Open 5), so
+    on the native macOS app a trackpad does not zoom or pan it. A trackpad
+    scroll over the chart also scrolls the page. The web build, where the
+    browser sends a trackpad scroll as a wheel, is not checked.
+  - A pinch with one finger above the other zooms only fl_chart: the others
+    read the horizontal spread of the fingers.
+  - A Graphic pinch or wheel zoom grows the range on both sides alike, around
+    the middle of the data, not at the fingers or the cursor.
+  - fl_chart rods and Graphic bars keep their width in pixels when zoomed;
+    Chart.js and Syncfusion bars grow.
 - **Live data:** a new deterministic dataset snapshot per display tick.
   Native transition animations are disabled for all libraries.
 - **Recreate chart:** dispose/remount the selected chart on every tick with
