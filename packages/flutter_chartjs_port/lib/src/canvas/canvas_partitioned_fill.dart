@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 abstract interface class PartitionedFillCanvas {
   /// Whether [tryFillPartitionedPath] can draw on this context. The web
   /// declines it: one compound path takes the slow route of Skia there, and
-  /// `fill` cuts a deferred path into pieces (Chart.js ADR 0105).
+  /// `fill` cuts a deferred path into pieces (Chart.js ADR 0113).
   bool get takesPartitionedFill;
 
   /// The fewest points of a line whose fill path [deferCurrentPath] keeps.
