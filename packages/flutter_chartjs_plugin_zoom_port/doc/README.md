@@ -24,7 +24,8 @@ and the public API of the Chart.js port.
   typed plugin API.
 - **Host seams:** [host-seams.md](host-seams.md) lists each use of the host with its state and
   the tests that pin it. At the end of zoom phase 4 (2026-11-10), 18 seams connect, 6 need only a
-  Dart form in the zoom port and 2 wait for later host decisions (H18, H19).
+  Dart form in the zoom port and 3 wait for later host decisions (H18, H19, and H27, the trackpad
+  of a native desktop app).
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md).
