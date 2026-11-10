@@ -811,11 +811,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     extras `shadowColor`, `shadowBlur`, `shadowOffsetX` and `shadowOffsetY`, so the data-only path
     stays. The `$chartView` plugin of `ChartView` sets them on the canvas around the draw of the
     dataset. The area fill has no shadow. See `test/port/widgets/chart_view_shadow_test.dart`.
-    Chart.js ADR 0105: on the web only, a stroke of a `Path2D` and a line fill to `origin`, `start` or
-    `end` with one color draw in pieces with small bounds (`UiPathPieces`,
-    `UiPathBuilder.tryFillColumns`). Skia on WebGL is slow for one long path, and one draw of a dense
-    fill misses the true area by up to 57% there. The switch `debugDrawLongPathsInPieces` turns the
-    form on for a test on the VM. Native engines keep one draw. See performance.md §68.
+    Chart.js ADR 0113 (it supersedes Chart.js ADR 0105): on the web only, a stroke of a `Path2D` and
+    a line fill to `origin`, `start` or `end` with one color draw in pieces with small bounds
+    (`UiPathPieces`, `UiPathBuilder.tryFillColumns`). Skia on WebGL is slow for one large path, and
+    one draw of a dense fill misses the true area by up to 57% there. A stroke takes pieces from
+    `UiCanvasContext.strokePieceMinCommands` commands: 2 when `defaultTargetPlatform` (the system of
+    the browser) is macOS, Windows or Linux, else 128 (`minPieceCommands`); the fill keeps 128. The
+    overlap of a piece cuts a straight segment at 1.5 bitmap pixels and a curve at two line widths
+    (de Casteljau). The switch `debugDrawLongPathsInPieces` turns the form on for a test on the VM,
+    and `debugDefaultTargetPlatformOverride` picks the rule. Native engines keep one draw. See
+    performance.md §68 and §70, and the twins of `test/port/canvas/canvas_ui_pieces_test.dart`.
     Chart.js ADR 0104: `Path2D` packs unobserved cubic curves too. A filler walk that a partitioned
     fill can replace keeps the original path out of the engine (`deferCurrentPath`), and a read gets
     the same path. `boundSegment` proves a whole ascending segment with one scan.
@@ -1106,7 +1111,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `rangeOnlyUpdates`) is proposed (2026-11-10): it has no code, and the maintainer decides
       its open questions. Chart.js ADR 0112 (frame-aligned coalescing of continuous input in the
       host) is proposed (2026-11-10): the maintainer decides after the counts of the input probe
-      on the Pixel 8a and the iPhone 17 Pro. The other ADRs are accepted. Docs
+      on the Pixel 8a and the iPhone 17 Pro. Chart.js ADR 0113 (the stroke pieces of a desktop
+      browser) is accepted (2026-11-10): its code passes the tests. It states the complete
+      decision of Chart.js ADR 0105 and supersedes it. The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
