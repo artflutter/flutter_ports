@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -83,6 +84,46 @@ void main() {
         chart,
       );
       expect(other.type, 'click');
+      chart.destroy();
+    });
+
+    testWidgets('ChartEvent.native keeps the DOM fields of the host event', (
+      tester,
+    ) async {
+      // Chart.js ADR 0108: the native event of a chart event is the event
+      // of the host, with its client point, buttons and pointer fields.
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(
+        _box(
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: ChartHost(canvas: canvas),
+          ),
+        ),
+      );
+      final chart = FakeChart(
+        canvas,
+        maintainAspectRatio: false,
+        events: const ['pointerdown'],
+      );
+      await tester.pump();
+      final gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+        buttons: kSecondaryMouseButton,
+      );
+      addTearDown(gesture.removePointer);
+      await gesture.down(const Offset(120, 50));
+      await tester.pump();
+      final event = chart.events.single;
+      expect(event.type, 'mousedown');
+      final native = event.native!;
+      expect(native.type, 'pointerdown');
+      expect((native.offsetX, native.clientX), (100.0, 120.0));
+      expect((native.button, native.buttons), (2, kSecondaryMouseButton));
+      expect((native.pointerId, native.pointerType), (1, 'mouse'));
+      expect((native.bubbles, native.cancelable), (true, true));
+      expect(native.target, same(canvas));
+      await gesture.up();
       chart.destroy();
     });
   });
@@ -231,6 +272,16 @@ void main() {
         });
       final proxy = chart.platformProxies!['click'];
       expect(proxy, isA<void Function(NativeEvent)>());
+      // platform.dom.js:95 `eventListenerOptions`: each proxy is passive
+      // (Chart.js ADR 0108).
+      expect(
+        debugCanvasEventListenerPassive(
+          canvas,
+          'click',
+          proxy! as NativeEventListener,
+        ),
+        isTrue,
+      );
 
       dispatchCanvasEvent(
         canvas,

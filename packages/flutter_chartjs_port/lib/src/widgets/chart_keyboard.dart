@@ -11,6 +11,10 @@
 /// mouse at that point. The keyboard has no hit test and no mode logic. It
 /// changes no ported file.
 ///
+/// The virtual mouse events bubble to the document of the canvas with the
+/// fields of a mouse. The key events of `options.events` do not bubble: the
+/// document gets each key from its own keyboard bridge (Chart.js ADR 0108).
+///
 /// Not a pure layer: the file imports Flutter. It imports no plugin: it
 /// reads the legend hit boxes through `types.LegendElement` (Chart.js ADR
 /// 0048, section 3).
@@ -30,7 +34,11 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show dispatchCanvasEvent, hasCanvasEventListener;
+    show
+        CanvasEventTarget,
+        dispatchCanvasEvent,
+        domKeyValue,
+        hasCanvasEventListener;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -368,42 +376,74 @@ final class ChartKeyboard {
   }
 
   /// Sends the mouse event [type] at [point], with the key event [source],
-  /// to the canvas listeners (section 4).
-  void _dispatch(String type, _Point point, KeyEvent? source) =>
-      dispatchCanvasEvent(
-        _canvas,
-        NativeEvent(
-          type: type,
-          offsetX: point.x,
-          offsetY: point.y,
-          target: _canvas,
-          source: source,
-        ),
-      );
+  /// to the canvas listeners (section 4). The event bubbles to the document
+  /// with the fields of a mouse (Chart.js ADR 0108): the client point of
+  /// [point] in the canvas box, `button` 0, `buttons` 1 for `mousedown`,
+  /// and the `pointerType` `'mouse'` and the `pointerId` 1 of a `click`.
+  /// Thus a plugin that starts a drag at the canvas `mousedown` ends it at
+  /// the document `mouseup` of the same key.
+  void _dispatch(String type, _Point point, KeyEvent? source) {
+    final rect = _canvas.getBoundingClientRect();
+    final keyboard = HardwareKeyboard.instance;
+    final click = type == 'click';
+    dispatchCanvasEvent(
+      _canvas,
+      NativeEvent(
+        type: type,
+        offsetX: point.x,
+        offsetY: point.y,
+        source: source,
+        bubbles: true,
+        cancelable: true,
+        clientX: rect.left + point.x,
+        clientY: rect.top + point.y,
+        buttons: type == 'mousedown' ? 1 : 0,
+        pointerId: click ? 1 : 0,
+        pointerType: click ? 'mouse' : '',
+        ctrlKey: keyboard.isControlPressed,
+        altKey: keyboard.isAltPressed,
+        shiftKey: keyboard.isShiftPressed,
+        metaKey: keyboard.isMetaPressed,
+      ),
+    );
+  }
 
   /// The key events of `options.events` (section 5): `keydown`, and then
   /// `keypress` for an event with a character, or `keyup`.
   void _sendKeyEvent(KeyEvent event) {
+    // The key value of a down is kept for its up: a Flutter up has no
+    // character.
+    final key = domKeyValue(event);
     if (event is KeyUpEvent) {
-      _sendKey('keyup', event);
+      _sendKey('keyup', event, key);
       return;
     }
-    _sendKey('keydown', event);
-    if (event.character != null) _sendKey('keypress', event);
+    _sendKey('keydown', event, key);
+    if (event.character != null) _sendKey('keypress', event, key);
   }
 
-  /// Sends the key event [type] with NaN offsets, only when the canvas has
-  /// a listener for it: when `options.events` lists it.
-  void _sendKey(String type, KeyEvent event) {
+  /// Sends the key event [type] with NaN offsets and the key value [key],
+  /// only when the canvas has a listener for it: when `options.events` lists
+  /// it. The event does not bubble: the document gets each key once, from
+  /// its keyboard bridge (Chart.js ADR 0108).
+  void _sendKey(String type, KeyEvent event, String key) {
     if (!hasCanvasEventListener(_canvas, type)) return;
+    final keyboard = HardwareKeyboard.instance;
     dispatchCanvasEvent(
       _canvas,
       NativeEvent(
         type: type,
         offsetX: double.nan,
         offsetY: double.nan,
-        target: _canvas,
         source: event,
+        cancelable: true,
+        clientX: double.nan,
+        clientY: double.nan,
+        key: key,
+        ctrlKey: keyboard.isControlPressed,
+        altKey: keyboard.isAltPressed,
+        shiftKey: keyboard.isShiftPressed,
+        metaKey: keyboard.isMetaPressed,
       ),
     );
   }

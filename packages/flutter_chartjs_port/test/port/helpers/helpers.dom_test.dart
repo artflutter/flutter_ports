@@ -490,6 +490,28 @@ void main() {
       expect(position.y, 0);
     });
 
+    test('an event with a client point still gives the offsets', () {
+      // Chart.js ADR 0108: a NativeEvent has clientX and clientY, but the
+      // port has no clientX fallback: each event of the host has offsets.
+      final event = NativeEvent(
+        type: 'mousemove',
+        offsetX: 10.4,
+        offsetY: 20.6,
+        clientX: 500,
+        clientY: 600,
+      );
+      expect(getRelativePosition(event, chart), _point(10, 21));
+      // A client point with NaN offsets stays NaN.
+      final noOffsets = NativeEvent(
+        type: 'mousemove',
+        offsetX: double.nan,
+        offsetY: double.nan,
+        clientX: 500,
+        clientY: 600,
+      );
+      expect(getRelativePosition(noOffsets, chart), _point(isNaN, isNaN));
+    });
+
     test('the scale of the canvas does not change the position', () {
       // Upstream multiplies by canvas.width / (chart.width * ratio), 1 here.
       final scaled = _Chart(400, 200);

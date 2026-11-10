@@ -214,7 +214,9 @@ void main() {
         skip: 'diverges: platform-relative-position',
       );
 
-      // The port has no clientX/clientY fallback.
+      // A NativeEvent has clientX and clientY (Chart.js ADR 0108), but the
+      // port has no clientX/clientY fallback: each event of the host has
+      // its offsets. test/port/helpers/helpers.dom_test.dart pins it.
       test(
         'should calculate from clientX/Y as fallback',
         () {},

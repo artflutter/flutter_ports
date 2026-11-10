@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -24,7 +25,9 @@ import '../scales/scale_chart_harness.dart' show drawCalls;
 // with the table of section 3: each move is a `mousemove` at the target
 // point through `dispatchCanvasEvent` (section 4). The key events of
 // `options.events` go to the canvas listeners first (section 5), and the
-// widget plugin `$chartView` draws the focus ring (section 6).
+// widget plugin `$chartView` draws the focus ring (section 6). The virtual
+// mouse events bubble to the document of the canvas, and the key events of
+// the canvas do not (Chart.js ADR 0108, group 'the document of the canvas').
 //
 // The oracle of a key move is a mouse at the same point: `triggerMouseEvent`
 // of chartjs_test_utils on a second ChartView of the same config and the
@@ -1039,6 +1042,143 @@ void main() {
       );
       await tester.pump();
       expect(_ring(chart), isEmpty);
+    });
+  });
+
+  group('the document of the canvas', () {
+    // Chart.js ADR 0108: the virtual mouse events bubble to the document
+    // with the fields of a mouse. The key events of the canvas do not
+    // bubble: the document gets each key once, from its keyboard bridge.
+
+    /// Adds [listener] for each type of [types] to [target] until the end
+    /// of the test.
+    void listen(
+      NativeEventTarget target,
+      List<String> types,
+      NativeEventListener listener,
+    ) {
+      for (final type in types) {
+        target.addEventListener(type, listener);
+        addTearDown(() => target.removeEventListener(type, listener));
+      }
+    }
+
+    testWidgets('the virtual mouse events bubble once to the document with '
+        'the fields of a mouse', (tester) async {
+      final charts = _Charts('bar');
+      await charts.pump(tester);
+      final canvas = charts.keys.canvas!;
+      final document = <NativeEvent>[];
+      listen(canvas.ownerDocument, const [
+        'mousemove',
+        'mousedown',
+        'mouseup',
+        'click',
+        'mouseout',
+      ], document.add);
+      await _key(tester, LogicalKeyboardKey.arrowDown);
+      await _key(tester, LogicalKeyboardKey.enter);
+      await _key(tester, LogicalKeyboardKey.escape);
+      expect(
+        [
+          for (final e in document)
+            (e.type, e.button, e.buttons, e.pointerId, e.pointerType),
+        ],
+        [
+          ('mousemove', 0, 0, 0, ''),
+          ('mousedown', 0, 1, 0, ''),
+          ('mouseup', 0, 0, 0, ''),
+          ('click', 0, 0, 1, 'mouse'),
+          ('mouseout', 0, 0, 0, ''),
+        ],
+      );
+      final rect = canvas.getBoundingClientRect();
+      expect(rect.width, greaterThan(0));
+      for (final e in document) {
+        expect(e.target, same(canvas), reason: e.type);
+        expect((e.bubbles, e.cancelable), (true, true), reason: e.type);
+        expect(e.clientX, rect.left + e.offsetX, reason: e.type);
+        expect(e.clientY, rect.top + e.offsetY, reason: e.type);
+        expect(e.key, '', reason: e.type);
+      }
+      expect((document.last.offsetX, document.last.offsetY), (-1.0, -1.0));
+    });
+
+    testWidgets('a key reaches a document listener once, from the bridge, '
+        'and a canvas listener with the key value', (tester) async {
+      final config = _config(
+        'bar',
+        options: <String, Object?>{
+          'events': <Object?>['mousemove', 'mouseout', 'click', 'keydown'],
+        },
+      );
+      final node = FocusNode();
+      addTearDown(node.dispose);
+      late Chart chart;
+      await tester.pumpWidget(
+        _top(_view(config, focusNode: node, onChartCreated: (c) => chart = c)),
+      );
+      node.requestFocus();
+      await tester.pump();
+      final canvas = chart.canvas!;
+      final onCanvas = <NativeEvent>[];
+      final onDocument = <NativeEvent>[];
+      listen(canvas.eventTarget, const ['keydown', 'keyup'], onCanvas.add);
+      listen(canvas.ownerDocument, const ['keydown', 'keyup'], onDocument.add);
+
+      await _key(tester, LogicalKeyboardKey.arrowDown);
+      expect(
+        [for (final e in onDocument) '${e.type} ${e.key} ${e.target}'],
+        ['keydown ArrowDown #document', 'keyup ArrowDown #document'],
+      );
+      expect(
+        [for (final e in onCanvas) '${e.type} ${e.key}'],
+        ['keydown ArrowDown', 'keyup ArrowDown'],
+      );
+      final down = onCanvas.first;
+      expect(down.target, same(canvas));
+      expect((down.bubbles, down.cancelable), (false, true));
+      expect([down.offsetX, down.clientX], everyElement(isNaN));
+
+      // A Flutter up has no character: the up takes the key of its down.
+      onCanvas.clear();
+      await _key(tester, LogicalKeyboardKey.keyA);
+      expect(
+        [for (final e in onCanvas) '${e.type} ${e.key}'],
+        ['keydown a', 'keyup a'],
+      );
+    });
+
+    testWidgets('Enter, Enter with a document mouseup listener ends each '
+        'drag', (tester) async {
+      // A plugin that starts a drag at the canvas mousedown and ends it at
+      // the document mouseup, as chartjs-plugin-zoom does
+      // (handlers.ts:97-110, :306).
+      final charts = _Charts('bar');
+      await charts.pump(tester);
+      final canvas = charts.keys.canvas!;
+      final document = canvas.ownerDocument;
+      var drags = 0;
+      var dragging = false;
+      void onUp(NativeEvent e) {
+        dragging = false;
+        document.removeEventListener('mouseup', onUp);
+      }
+
+      void onDown(NativeEvent e) {
+        drags++;
+        dragging = true;
+        document.addEventListener('mouseup', onUp);
+      }
+
+      listen(canvas.eventTarget, const ['mousedown'], onDown);
+      addTearDown(() => document.removeEventListener('mouseup', onUp));
+      await _key(tester, LogicalKeyboardKey.arrowDown);
+      await _key(tester, LogicalKeyboardKey.enter);
+      expect((drags, dragging), (1, false));
+      await _key(tester, LogicalKeyboardKey.enter);
+      expect((drags, dragging), (2, false));
+      expect(CanvasDocument.instance.hasListener('mouseup'), isFalse);
     });
   });
 }

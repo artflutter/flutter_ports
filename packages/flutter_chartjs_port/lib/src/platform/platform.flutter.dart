@@ -10,10 +10,11 @@
 /// - The canvas element is a `UiCanvasElement` of the canvas layer. While a
 ///   [RenderChartHost] shows it, its parent node is the host
 ///   (`getParentNode` of `helpers.dom.dart`).
-/// - `canvas.addEventListener` is [addCanvasEventListener]: the host sends
-///   the [NativeEvent]s that it makes from Flutter pointer events. The
-///   listener options `{passive: true}` have no port: the host never claims
-///   a pointer for an event listener.
+/// - `canvas.addEventListener` is the member of the extension
+///   [CanvasEventTarget] (Chart.js ADR 0108): the host sends the
+///   [NativeEvent]s that it makes from Flutter pointer events. The listener
+///   options `{passive: true}` make a passive listener, which cannot cancel
+///   an event.
 /// - The `MutationObserver` of the document is a [CanvasMutationObserver]
 ///   of the canvas. The host reports a net change of the attached state
 ///   once, after the frame of the change. The first layout of the host
@@ -191,26 +192,28 @@ int _toUint32(double value) {
   return uint32.toInt();
 }
 
-// platform.dom.js:95 `eventListenerOptions` has no port: the host never
-// claims a pointer for an event listener, which is what `passive: true`
-// promises the browser.
+/// platform.dom.js:95 `eventListenerOptions`: `{passive: true}` when the
+/// browser supports the options object, as each browser of the targets of
+/// Chart.js does. The host supports it (Chart.js ADR 0108). Thus the value
+/// does not read `supportsEventListenerOptions` of `helpers.dom.dart`, which
+/// is false in the port because `isDomSupported()` is false
+/// (`platform-dom-supported`). A passive listener cannot cancel an event.
+const bool _eventListenerPassive = true;
 
 /// platform.dom.js:97 `addListener(node, type, listener)`.
 void _addListener(
   HTMLCanvasElement? node,
   String type,
-  void Function(NativeEvent) listener,
+  NativeEventListener listener,
 ) {
-  if (node != null) {
-    addCanvasEventListener(node, type, listener);
-  }
+  node?.addEventListener(type, listener, passive: _eventListenerPassive);
 }
 
 /// platform.dom.js:103 `removeListener(chart, type, listener)`.
 void _removeListener(types.Chart chart, String type, Object? listener) {
   final canvas = chart.canvas;
-  if (canvas != null && listener is void Function(NativeEvent)) {
-    removeCanvasEventListener(canvas, type, listener);
+  if (canvas != null && listener is NativeEventListener) {
+    canvas.removeEventListener(type, listener);
   }
 }
 
