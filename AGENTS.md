@@ -257,7 +257,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `raw_scope.dart` has `RawScope`, an extension
     type over a user Map: the walk reads a user Map through it. `jsGet`, `jsObjectKeys`,
     `isObject`, `clone`, `merge` and `mergeIf` take a typed scope; a `merge` into a typed scope
-    makes typed children (`_cloneToScope` of `helpers.core`). The generated files have `OptionKey`
+    makes typed children (`_cloneToScope` of `helpers.core`). `OptionScope.nativeFace` (the class
+    of its kind, `ScopeKind.scopeType`; `Defaults` keeps its face) guards the typed walks: `merge`
+    and `mergeIf` of a typed scope into a typed scope with the default merger walk the typed keys
+    (`_mergeScope`, `typedMergeKeys`, `typedMergeTarget`, row `adapt-typed-scope-merge`); a Map, a
+    subclass, a routed target, an array-index extra or a custom merger keeps the walk by name.
+    `OptionScope.debugTypedMerge` turns the typed walk off for the twins of
+    `test/port/options/typed_merge_test.dart`. The generated files have `OptionKey`
     (one entry for each distinct key name, `optionKeyOf`), `ScopeKind` (one entry for each kind
     of the schema) and one class `<Kind>Scope` for each kind, with a field of an `Opt` cell for
     each key (`<key>Cell`) and a typed setter. A kind takes the name of its `index.d.ts`
@@ -285,7 +291,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `ownKeys` trap) and `hasProperty` (the `has` trap). `mergeScaleConfig` of `core.config.dart`
     writes a typed `ScaleOptionsByIdScope` of `ScaleOptionsScope`s into `options.scales`; the
     config, the data and the options of the user stay raw Maps (Chart.js ADR 0054 §5), and the
-    config boundary also takes the typed root, data and options of a typed config.
+    config boundary also takes the typed root, data and options of a typed config. The
+    sub-resolver of a top-level resolver (its parent scopes are its root scopes) walks the list
+    once when the second walk adds nothing: plain keys, SDK Maps or native-face scopes with no route
+    of the key, `_fallback` values that are not functions (row `adapt-resolver-single-walk`); any
+    other walk goes over the list twice, as upstream. A first read looks its name up once
+    (`_getKeyed`).
   - The face rules (Chart.js ADR 0054 §5, the close step): no class of `lib/src` outside
     `lib/src/js/` is a `Map`. A typed object (a typed scope, resolved options, a resolver or a
     view, a context, a parsed item, a props or hook-argument record, a plugin, a legend or
@@ -423,7 +434,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `date_format.dart` are the port-only default date adapter (Chart.js ADR 0024), pure layers.
       `DateAdapterBase.prototype` starts with `dateAdapterMembers`, the rules of
       chartjs-adapter-moment 1.0.1 on moment 2.29.4 with ICU patterns. `setDefaultDateZone`
-      selects local time (the default) or UTC.
+      selects local time (the default) or UTC. Chart.js ADR 0110: `LocalZone` of `date_zone.dart`
+      reads `timeZoneOffset` on the VM (the offset of the local fields there) and the local
+      fields on the web, and keeps up to 64 intervals of the 1-day rule, cleared by `formats()`
+      once per update. See `date_zone_test.dart` (group `cached intervals`, the VM
+      `timeZoneOffset` test) and the `(LocalZone cache)` groups of `date_adapter_test.dart`.
     - `core.interaction.dart` and `core.layouts.dart` are pure layers. `Interaction` is a class with
       the static members `evaluateInteractionItems` and `modes`. `layouts` is a record of `addBox`,
       `removeBox`, `configure` and `update`. A box is a `LayoutItem` of `lib/src/types/layout.dart`.
@@ -445,6 +460,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       at `core.scale.js:15`. `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
       `Scale` implements `MinMax`. Its value methods take `Object?` (Chart.js ADR 0025).
+      `Scale._alignToPixels` is a `bool`, the `ToBoolean` of the option at its write in
+      `configure` (row `adapt-loop-invariant-truthiness`).
     - Chart.js ADR 0064: the exact category scale reuses full string-label
       measurements under static-font/native-canvas guards. Tick objects, contexts,
       callbacks and geometry fitting remain live. `category_label_source.dart`
@@ -456,6 +473,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
       its type. A getter gives the raw JS value, and the readers keep their JS operators. A
       nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
+      `formatters.numeric` of `core.ticks.dart` with a `ticks.format` that is not an object formats
+      through the internal `formatNumberDigits` of `helpers.intl.dart` (hidden in
+      `lib/helpers.dart`): a record key in the same `intlCache` (row
+      `adapt-numeric-tick-format-key`).
     - Chart.js ADR 0074: `Chart.updateData()` is an explicit data-only lifecycle
       with fixed native ranges, stable configuration, metadata refresh and full
       fallback. `data_update.dart` owns native source/settings checks and
@@ -602,6 +623,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `Chart.updateData`, which keeps the entry. Its guard reads only the keys whose
       spacing fix-up fires on the entry, after an arc that is not active. See
       `direct_element_writes_test.dart`.
+    - Chart.js ADR 0109: the gap test `stop` of the line and scatter loops takes the `ToNumber`
+      of the x of the previous pass in place of the read `prevParsed[iAxis]` when no user code
+      can run between the two reads: the exact controller, a direct update, no stack and no
+      `segment`, the axes x and y, a native chart, the native linear projection of both scales,
+      native lists; at both passes a typed exact point, a native item (`ParsedItem`, a
+      registered typed item, an SDK map of a native class; only `ParsedItem` on dart2wasm), a
+      number x and a number, `null` or `undefined` value; the holding pass with shared options
+      or the indexed-color plan. Guards: `NativeGapReads` of `point_options.dart` and
+      `prepareNativeGapReads` of `point_option_preparation.dart`. `nativeGapReadsEnabled`
+      (define `CHARTJS_NATIVE_GAP_READS`) and `nativeGapReadsTaken` serve the twins of
+      `test/port/controllers/native_gap_reads_test.dart`.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the port of
       `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of
@@ -637,12 +669,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `_getStackIndex` of upstream with `@internal`, because the spec reads them (Chart.js ADR
       0012).
     - `controller.line.dart`: `updateElements` reads each key of a parsed item once in a loop
-      pass (`vValue`, `iValue`), and it reads `prevParsed[iAxis]` at each pass, because the
+      pass (`vValue`, `iValue`). It reads `prevParsed[iAxis]` at each pass, because the
       scriptable options of the user run between two passes (the 3-read form of Chart.js ADR
-      0036). `update` writes `_chart`, `_datasetIndex`, `_decimated` and `points` into the line
-      with the typed setters of `types.LineElementWrites` for a line of the built-in class
-      (`typedWrites`), by name (`types.PropertyAccess`) for another class, and `draw` casts the
-      line to `types.LineElement`.
+      0036), unless the guards of Chart.js ADR 0109 prove that no user code ran since the read of
+      the previous pass: then the gap test takes the held x of that pass. It tests `_stacked` and
+      `segment` once for each call (row `adapt-loop-invariant-truthiness`). `update` writes
+      `_chart`, `_datasetIndex`, `_decimated` and `points` into the line with the typed setters
+      of `types.LineElementWrites` for a line of the built-in class (`typedWrites`), by name
+      (`types.PropertyAccess`) for another class, and `draw` casts the line to
+      `types.LineElement`.
     - `controller.bubble.dart`: the parsed radius goes to `_custom`. `resolveDataElementOptions`
       copies the options with `values.clone()` and `storeKey(OptionKey.dollarShared, false)`
       (Chart.js ADR 0021 §3) and adds the radius with `jsAdd`: a string radius joins, as upstream.
@@ -670,7 +705,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       label.
     - `controller.scatter.dart`: it imports `core.registry.dart`: `this.chart.registry` is the
       singleton `registry` (row `adapt-chart-registry-getter`). Its `updateElements` keeps the
-      parsed values only inside one pass (the 3-read form, as the line). `delete meta.dataset` is
+      parsed values inside one pass (the 3-read form, as the line), and the x for the next pass
+      only under the guards of Chart.js ADR 0109: the built-in scatter shares no options, so only
+      the plan of indexed colors holds x. `delete meta.dataset` is
       `meta.dataset = null`. It has no `draw` override, as upstream.
   - `lib/src/plugins/` (Chart.js ADRs 0038-0041 and 0050): the seven plugins of phase 8.
     `index.dart` (the port of `src/plugins/index.js`) exports the plugin objects `colors`,
@@ -744,7 +781,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `value is double` fast path (Chart.js ADR 0025). The `_` members that another file or a spec
     reads drop the underscore: `startValue`, `endValue`, `valueRange`, `offsets`, `generate`,
     `unit`, `adapter`, `pointLabels`, `pointLabelItems`. The time scales read each date through
-    `adapters._date` (Chart.js ADR 0024).
+    `adapters._date` (Chart.js ADR 0024). A category `parse` of a value that is not a String skips
+    the label scan for a native `List<String>` (row `adapt-category-string-labels`).
   - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0055 and 0015). `canvas.dart` is
     the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its four parts
     (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart` and
@@ -784,6 +822,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `PointElement.drawCircleRun` (`canvas_circle_run.dart`) sends exact point elements with plain
     options and the style `circle` to the batch with one call each; the first other element or state
     ends the run, and `DatasetController.draw` draws the rest in order. See performance.md §66.
+    Once the batch took a circle of a run, `CircleBatch.hold` keeps the run while it has one
+    radius, no varying radii and the identical last colors, and `tryAddRunCircle` appends each
+    further fill and stroke with `addHeld`, with no test: the batches, the flush points, the draw
+    calls and the pixels stay. Another add, a flush, a clear and the start of a run end it. See
+    `test/port/canvas/canvas_ui_circle_run_test.dart` (`debugHoldCircleRuns`,
+    `debugRecordingCanvas`) and performance.md §69.
     Chart.js ADR 0103: on Impeller, the static angle-line plan sends the lines after the
     first through `LineFanCanvas` (`canvas_line_fan.dart`), one `drawRawPoints(PointMode.lines)`.
     Each line stays its own stroke; the last spoke stays the current path; the call counts as
@@ -1000,7 +1044,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0056. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0112. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1051,7 +1095,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       begin, §10 the claims, two bullets of §11, Open 3), Chart.js ADR 0048 (§5 the library count
       and the export lists, §6 the hide of `isPointInArea`), Chart.js ADR 0051 (§4 and §5, the
       fields and the bubbling of the keyboard events) and Chart.js ADR 0054 (the sentence "`Plugin`
-      stays internal" of §12, and the plugin item of Open 2). The other ADRs are accepted. Docs
+      stays internal" of §12, and the plugin item of Open 2). Chart.js ADR 0109 (the previous x of
+      the gap test) is accepted (2026-11-10): its code passes the tests. It supersedes, of
+      Chart.js ADR 0036 §8, the bullet of the read `prevParsed[iAxis]` at each pass, the 3-read
+      form as the only form of `line.js:98-104` and `scatter.js:127-133`, and the rejected 2-read
+      form of its Question 5, on the paths of its guards. Chart.js ADR 0110 (the local-zone
+      offset cache) is accepted (2026-11-10) and supersedes the "one interval" and "not from
+      `timeZoneOffset`" statements of Chart.js ADR 0024 decision 3. Chart.js ADR 0111 (an opt-in
+      range update for scale range changes: `Chart.updateRanges(mode)` and the zoom option
+      `rangeOnlyUpdates`) is proposed (2026-11-10): it has no code, and the maintainer decides
+      its open questions. Chart.js ADR 0112 (frame-aligned coalescing of continuous input in the
+      host) is proposed (2026-11-10): the maintainer decides after the counts of the input probe
+      on the Pixel 8a and the iPhone 17 Pro. The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
@@ -1140,8 +1195,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/demo/gallery_components.dart` has `registerGalleryComponents` (it registers
     `registerables` once), `registerZoomComponents` (it also registers `zoomPlugin` of
     `flutter_chartjs_plugin_zoom_port` once for all charts, as the upstream docs of the plugin do;
-    only the zoom page calls it, so the stress entry and the benchmark cases outside the mode
-    `zoom` run no zoom hook) and `unitScales` (the two hidden unit scales).
+    the zoom page and the input probe call it, so the stress entry and the benchmark cases
+    outside the mode `zoom` run no zoom hook) and `unitScales` (the two hidden unit scales).
   - After the nine entries, the home list has the tile "Zoom and pan" (key `gallery.plugin.zoom`).
     It opens the zoom page `lib/plugins/zoom_page.dart`. Its variants are the ports of four samples
     of the docs of chartjs-plugin-zoom (`docs/samples/basic.md`, `drag/linear.md`,
@@ -1205,7 +1260,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     zoom case registers the plugin for its own run only, puts the scale ranges back outside the
     timing before each pair of steps, and gives `steps`, `stepP50Ms`, `stepP90Ms` and
     `stepMaxMs`. The define `PROFILE_MARKS=true` prints `BENCH_MARK {json}` with `Timeline.now`
-    before and after the timed window of each case.
+    before and after the timed window of each case. performance.md §69 has the figures of the
+    zoom cases.
+  - `lib/main_input_probe.dart` is the input probe of Chart.js ADR 0112: one `ChartView.raw` line
+    chart of 20000 points (`--dart-define=POINTS=<n>`) with `animation: false` and the zoom plugin
+    (`registerZoomComponents`; wheel, pinch, pan `'xy'`). For each frame it counts the
+    `PointerMoveEvent`s of each pointer (a global route of the pointer router), the
+    `PointerScrollEvent`s, the `PointerPanZoomUpdateEvent`s, and the chart updates
+    (`afterUpdate`) and draws (`afterDraw`) of an inline plugin. Once per second with work it
+    shows a summary and prints `PROBE {json}` (`frames`, `active`, `frameNumbers`, `pointers`,
+    `{mean, max, hist}` of `movesPerPointer`, `moves`, `scrolls`, `panZooms`, `updates`, `draws`,
+    and the p50 and p90 of the `FrameTiming` build and raster). `FrameTiming` leaves the input
+    work out: the frame rate shows it. Build it with `flutter build apk --profile -t
+    lib/main_input_probe.dart --android-skip-build-dependency-validation` and read
+    `adb logcat -s flutter:I`. `test/input_probe_test.dart` pins the counts.
   - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
