@@ -1130,12 +1130,12 @@ the cut inventory describe their original review snapshots.
 | The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:829-834`, `:844-874` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:1628-1739` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
 | N3 of §7: the deferred commands of the path builder (`deferredPathCommands`, the command codes, `_codes`, `_numbers`, `_rrects`, `path`, `debugBuilt`, `_build`, `_replay`, `_direct` and the `_path` writers) | `canvas_ui_path.dart:272-300`, `:411-807` | ~220 | None. `ui.Path` builds each command at once. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
-| N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:302-335`, `:428-455`, `:882-1056`; `canvas_ui.dart:523-525`, `:1368-1373`, `:1380-1412` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:302-335`, `:428-455`, `:882-1056`; `canvas_ui.dart:523-525`, `:1375-1380`, `:1387-1419` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:184-196`, `:199-345`, `:1008-1023`, `:1321-1343` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
-| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:404-411`, `:568-604`, `:1287-1289`, `:1348-1375`, `:1413-1447`, `:1489-1493` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
-| N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:563-566`, `:682-705`, `:992-1015`, `:1497-1504` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
-| `CircleBatch`, with a color for each instance of a run that meets another color below 16 circles (N5 of §7) | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
-| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1950-1971` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
+| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:404-411`, `:568-604`, `:1294-1296`, `:1355-1382`, `:1420-1454`, `:1496-1500` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
+| N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:563-566`, `:682-705`, `:999-1022`, `:1504-1511` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| `CircleBatch`, with a color for each instance of a run that meets another color below 16 circles (N5 of §7), and the held run of a run of markers (`hold`, `addHeld`, `release`; the held path of `UiCanvasContext.tryAddRunCircle`) | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
+| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1982-2003` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
 | `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:1047-1060` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:143`, `:176-193` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
 | The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:1220-1224`, `:1247-1256`, `:1280-1281` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
@@ -1206,12 +1206,12 @@ and its own `Float64List`. Never reuse a scratch path or `_m4` for them.
 
 The same aliasing is a defect today, on the web only. Work package W fixes it before cut 1.
 
-- `canvas_ui.dart:1466`: `stroke()` under a transform that is not a similarity calls
+- `canvas_ui.dart:1473`: `stroke()` under a transform that is not a similarity calls
   `_strokeUser(_path.path.transform(t.writeInverseMatrix4(_m4)))`. `_strokeUser` then writes the
   forward matrix into `_m4` (`:936`) before `drawPath` builds the lazy path. The probe was
   `transform(1, 0, 0, 3, 0, 0)`, a line at y = 10 and `stroke()`. On the VM, rows 27 to 32 had ink.
   On CanvasKit and on skwasm, nothing was drawn.
-- `canvas_ui.dart:1484`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
+- `canvas_ui.dart:1491`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
   The state keeps the clip and replays it into later recordings. After the frame arena discards
   the built path, the path builds again with the value that `_m4` has then. The probe did not show
   it, because the probe rendered no second frame.
@@ -1259,8 +1259,8 @@ Do step 0 in work package W. Do steps 1 to 6 in work package C1.
 
 0. **Fix the web aliasing** (work package W, its own commit,
    `fix(flutter_chartjs_port): copy the matrices that the web paths read late`):
-   - `canvas_ui.dart:1466`: `t.writeInverseMatrix4(Float64List(16))`.
-   - `canvas_ui.dart:1484`: `s.transform.writeMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1473`: `t.writeInverseMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1491`: `s.transform.writeMatrix4(Float64List(16))`.
    - `canvas_ui_paint.dart` `shaderFor`: call `_build(_lastMatrix)`, so that the shader keeps the
      copy and not the buffer of the caller.
    - Add a comment at each place: the web renderers read the path and the matrix when they build
@@ -1874,7 +1874,8 @@ Impeller. Chrome's Skia does.
   `drawCircle` calls on Impeller (Vulkan and Metal) and on skwasm, so that baseline A reaches the
   figures of the batch within noise on the Pixel 8a at 20000 + 0. Then run the six scenarios of
   §6.3 with and without the batch, and remove the batch with its test group "circle batch" and
-  Chart.js ADR 0013 §8.1 (a new ADR if 0013 is accepted by then).
+  Chart.js ADR 0013 §8.1 (a new ADR if 0013 is accepted by then). The held run of
+  `tryAddRunCircle` goes with the batch, with `test/port/canvas/canvas_ui_circle_run_test.dart`.
 
 ### 4.2 Text rotation snap
 
@@ -2621,3 +2622,19 @@ changes. No trigger occurred.
   `canvas.dart` ranges of `roundRect` and of the attribute members of `HTMLCanvasElement` keep
   their line counts. The other references of §1.1 and the records keep their lines. No deferred
   cut changes. No trigger occurred.
+- 2026-11-10, the held run of the circle batch (the zoom performance campaign).
+  `CircleBatch` of `lib/src/canvas/canvas_ui_batch.dart` (552 to 627 lines) gets `hold`, `holdsRun`,
+  `release`, `addHeld` and `_push`. Once `accepts` and `add` took a circle of a run of markers
+  (Chart.js ADR 0104), the batch holds the run while it has one radius, no varying radii and the
+  identical last colors, and `addHeld` appends each further fill and stroke with no test: `accepts`
+  would take each one, and `add` would change only the instances. `add`, `flush`, `clear` and the
+  start of a run end it. `UiCanvasContext.tryAddRunCircle` takes `addHeld` before `_batchCircle`,
+  `tryStartCircleRun` releases the batch, and the context gets the test switches
+  `debugHoldCircleRuns`, `debugCircleRunHeld` and `debugRecordingCanvas` (read in `_begin`). The
+  batches, their flush points, the native draw calls and the pixels do not change:
+  `test/port/canvas/canvas_ui_circle_run_test.dart` compares the native calls, the pending circles
+  and the pictures at each step and the pixels of both forms. `canvas_ui.dart` (2884 to 2916 lines):
+  the references of §1.1 and §2 moved by a diff against `cc4fe90`, the lines after 874 by +6 to +7,
+  after 1878 by +18 to +31 and after 1938 by +32; the records keep their lines. The inventory row of
+  `CircleBatch` names the held run, and §4.1 names the new test file. No deferred cut changes. No
+  trigger occurred.
