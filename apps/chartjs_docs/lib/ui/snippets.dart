@@ -1,31 +1,54 @@
 // Original code, not ported from Chart.js: the code panels of the docs site.
 
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 
-/// The asset with the code of the live charts.
+/// The source file of the live charts of the line chart page.
 const String examplesAsset = 'lib/examples/line_examples.dart';
+
+/// The folders of the source files that the pages show. `pubspec.yaml` lists
+/// each folder as an asset folder.
+const List<String> snippetFolders = [
+  'lib/examples/',
+  'lib/migrate/fl_chart/',
+  'lib/migrate/graphic/',
+  'lib/migrate/syncfusion/',
+];
+
+/// Whether the asset [path] is a source file of [snippetFolders].
+bool isSnippetSource(String path) =>
+    path.endsWith('.dart') &&
+    snippetFolders.any((folder) => path.startsWith(folder));
 
 final RegExp _marker = RegExp(r'^\s*//\s*#(end)?docregion\s+(\S+)\s*$');
 
-/// The named code regions of a source file.
+/// The named code regions of the source files.
 class Snippets {
   /// The regions of [source], between `// #docregion <name>` and
   /// `// #enddocregion <name>`. The text of a region has no markers and no
   /// common indent.
-  factory Snippets.parse(String source) {
-    final open = <String, List<String>>{};
+  factory Snippets.parse(String source) => Snippets.parseAll([source]);
+
+  /// The regions of each source of [sources]. A name must be unique over all
+  /// the sources.
+  factory Snippets.parseAll(Iterable<String> sources) {
     final closed = <String, String>{};
-    for (final line in source.split('\n')) {
-      final match = _marker.firstMatch(line);
-      if (match == null) {
-        for (final lines in open.values) {
-          lines.add(line);
+    for (final source in sources) {
+      final open = <String, List<String>>{};
+      for (final line in source.split('\n')) {
+        final match = _marker.firstMatch(line);
+        if (match == null) {
+          for (final lines in open.values) {
+            lines.add(line);
+          }
+        } else if (match[1] == null) {
+          open[match[2]!] = [];
+        } else {
+          final name = match[2]!;
+          if (closed.containsKey(name)) {
+            throw ArgumentError.value(name, 'name', 'two regions');
+          }
+          closed[name] = _dedent(open.remove(name)!);
         }
-      } else if (match[1] == null) {
-        open[match[2]!] = [];
-      } else {
-        final name = match[2]!;
-        closed[name] = _dedent(open.remove(name)!);
       }
     }
     return Snippets._(closed);
@@ -33,9 +56,14 @@ class Snippets {
 
   const Snippets._(this._regions);
 
-  /// Loads the regions of [examplesAsset].
-  static Future<Snippets> load() async =>
-      Snippets.parse(await rootBundle.loadString(examplesAsset));
+  /// Loads the regions of the source files of [snippetFolders].
+  static Future<Snippets> load() async {
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final paths = manifest.listAssets().where(isSnippetSource).toList()..sort();
+    return Snippets.parseAll([
+      for (final path in paths) await rootBundle.loadString(path),
+    ]);
+  }
 
   final Map<String, String> _regions;
 

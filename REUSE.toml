@@ -155,3 +155,19 @@ path = "apps/chartjs_docs/assets/fonts/RobotoMono-Regular.ttf"
 precedence = "override"
 SPDX-FileCopyrightText = "2015 Google Inc."
 SPDX-License-Identifier = "Apache-2.0"
+
+# The data of the fl_chart line samples 12 and 13 of the docs site: files of
+# the fl_chart example app (MIT), unchanged.
+[[annotations]]
+path = "apps/chartjs_docs/assets/flchart/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2022 Flutter 4 Fun"
+SPDX-License-Identifier = "MIT"
+
+# The data of the Graphic demos of the docs site: a trimmed copy of the data of
+# the Graphic example app (MIT).
+[[annotations]]
+path = "apps/chartjs_docs/lib/migrate/graphic/graphic_data.dart"
+precedence = "override"
+SPDX-FileCopyrightText = ["2024 LIN Chen", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "MIT"
