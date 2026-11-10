@@ -18,40 +18,57 @@ seams is `connects` or `zoom-side`. The column "Phase" gives the roadmap phase o
 
 | Upstream file | Lines | Dart file | Seams | Phase | Status |
 |---|---:|---|---|---:|---|
-| `src/types.ts` | 15 | `lib/src/types.dart` | none | 2 | not started |
-| `src/options.ts` | 209 | `lib/src/options.dart` | H1 | 2 | not started |
-| `src/defaults.ts` | 26 | `lib/src/defaults.dart` | none | 2 | not started |
-| `src/state.ts` | 65 | `lib/src/state.dart` | H10 | 2 | not started |
-| `src/utils.ts` | 111 | `lib/src/utils.dart` | H6, H11, H21 | 2 | not started |
-| `src/scale.types.ts` | 288 | `lib/src/scale.types.dart` | H1, H13, H14, H21 | 2 | not started |
-| `src/core.ts` | 286 | `lib/src/core.dart` | H1, H13, H14, H15, H21, H22 | 2 | not started |
+| `src/types.ts` | 15 | `lib/src/types.dart` | none | 2 | ported |
+| `src/options.ts` | 209 | `lib/src/options.dart` | H1 | 2 | ported |
+| `src/defaults.ts` | 26 | `lib/src/defaults.dart` | none | 2 | ported |
+| `src/state.ts` | 65 | `lib/src/state.dart` | H3, H6, H10 | 2 | ported |
+| `src/utils.ts` | 111 | `lib/src/utils.dart` | H6, H11, H21, H26 | 2 | ported |
+| `src/scale.types.ts` | 288 | `lib/src/scale.types.dart` | H1, H13, H14, H21 | 2 | ported |
+| `src/core.ts` | 286 | `lib/src/core.dart` | H1, H13, H14, H15, H21, H22, H26 | 2 | ported |
 | `src/handlers.ts` | 322 | `lib/src/handlers.dart` | H1, H2, H3, H4, H5, H6, H7, H11 | 3 | not started |
-| `src/gestures.ts` | 395 | `lib/src/gestures.dart` | H1, H3, H4, H6, H7, H8 | 3 | not started |
-| `src/plugin.ts` | 152 | `lib/src/plugin.dart` | H9, H12, H16, H17, H19 | 4 | not started |
-| `src/index.ts` | 38 | `lib/src/index.dart` | H9, H18 | 4 | not started |
-| `src/index.umd.ts` | 6 | `lib/src/index.umd.dart` | H16 | 4 | not started |
+| `src/gestures.ts` | 395 | `lib/src/gestures.dart` | H1, H3, H4, H6, H7, H8 | 3 | partial: `GestureEvent`, `ActivePointer` |
+| `src/plugin.ts` | 152 | `lib/src/plugin.dart` | H9, H12, H16, H17, H19 | 3 | not started |
+| `src/index.ts` | 38 | `lib/src/index.dart` | H9, H18 | 3 | not started |
+| `src/index.umd.ts` | 6 | `lib/src/index.umd.dart` | H16 | 3 | not started |
 
 `src/utils.ts` uses H6 only for the types of its event parameters: `keyPressed` and
-`keyNotPressed` read the modifier flags of an event.
+`keyNotPressed` read the modifier flags of an event. `src/state.ts` uses H3 and H6 for the types
+of the listener targets and of the drag events.
+
+`src/options.ts` imports the type `GestureEvent` from `src/gestures.ts`. Thus zoom phase 2 ports
+the two public types of `src/gestures.ts`, `GestureEvent` and `ActivePointer`. The gesture manager
+comes in phase 3.
 
 ## Tests
 
 | Upstream file | `it` calls | Dart file | Seams | Phase | Status |
 |---|---:|---|---|---:|---|
-| `src/utils.test.ts` | 1 | `test/specs/utils_test.dart` | none | 2 | not started |
-| `src/scale.types.test.ts` | 5 | `test/specs/scale.types_test.dart` | H13 | 2 | not started |
-| `test/specs/api.spec.js` | 17 | `test/specs/api_test.dart` | H9, H20 | 2 | not started |
-| `test/specs/defaults.spec.js` | 2 | `test/specs/defaults_test.dart` | H16 | 4 | not started |
-| `test/specs/module.spec.js` | 4 | `test/specs/module_test.dart` | H16 | 4 | not started |
+| `src/utils.test.ts` | 1 | `test/specs/utils_test.dart` | none | 2 | ported |
+| `src/scale.types.test.ts` | 5 | `test/specs/scale.types_test.dart` | H13 | 2 | ported |
+| `test/specs/api.spec.js` | 17 | `test/specs/api_test.dart` | H9, H20 | 3 | not started |
+| `test/specs/defaults.spec.js` | 2 | `test/specs/defaults_test.dart` | H16 | 3 | not started |
+| `test/specs/module.spec.js` | 4 | `test/specs/module_test.dart` | H16 | 3 | not started |
 | `test/specs/zoom.wheel.spec.js` | 10 | `test/specs/zoom.wheel_test.dart` | H23 | 3 | not started |
 | `test/specs/zoom.drag.spec.js` | 11 | `test/specs/zoom.drag_test.dart` | H23 | 3 | not started |
 | `test/specs/pan.spec.js` | 12 | `test/specs/pan_test.dart` | H23 | 3 | not started |
 | `test/specs/zoom.pinch.spec.js` | 4 | `test/specs/zoom.pinch_test.dart` | H23 | 3 | not started |
 | `test/specs/gestures.spec.js` | 2 | `test/specs/gestures_test.dart` | H23 | 3 | not started |
 | `test/specs/fixtures.spec.js` | 0 | `test/specs/fixtures_test.dart` | H24 | 4 | not started |
-| `test/index.js` | — | `test/flutter_test_config.dart` | H3, H6, H7, H23 | 3 | not started |
+| `test/index.js` | — | `test/flutter_test_config.dart` | H3, H6, H7, H23 | 3 | partial: `testExecutable` (the set-up) |
 | `test/fixtures/pan/*.js` (7) | — | `test/fixtures/hand/pan/*.dart` | H24 | 4 | not started |
 | `test/fixtures/zoom/*.js` (5) | — | `test/fixtures/hand/zoom/*.dart` | H24 | 4 | not started |
 
 `test/specs/fixtures.spec.js` has no `it` call. It calls `jasmine.fixture.specs('zoom')` and
 `jasmine.fixture.specs('pan')`, one case for each fixture.
+
+The `it` calls of the two unit tests in `src/` run in loops: `src/utils.test.ts` has 6 cases and
+`src/scale.types.test.ts` has 14 (10 cases of `zoomDelta` and 4 of `panFunctions.category`). The 4
+cases of `panFunctions.category` are `testWidgets` cases on the category scale of a real chart
+(row `harness-category-scale-fake` of [differences.md](differences.md)). The port-only
+`test/support/jasmine.dart` has the Jasmine spies and matchers of the specs, with the
+`toBeCloseTo` formula of jasmine-core 5.4.0.
+
+`test/flutter_test_config.dart` has the set-up of `test/index.js` (the device pixel ratio, the
+date zone, the built-in components, the colors plugin, the restore of the defaults, the release of
+the charts and the test font). The registration of the plugin and the event helpers come in phase
+3.
