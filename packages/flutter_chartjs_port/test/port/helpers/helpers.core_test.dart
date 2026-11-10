@@ -311,6 +311,26 @@ void main() {
       expect(output.keys, ['ok']);
     });
 
+    test('merges the names that only resemble the reserved keys', () {
+      // isValidKey compares with ===: only the three exact names are skipped.
+      final output =
+          helpers.merge(
+                <String, Object?>{},
+                jsonDecode(
+                  '{"__proto":1,"Prototype":2,"constructor ":3,"":4, '
+                  '"__proto__x":5}',
+                ),
+              )!
+              as Map<String, Object?>;
+      expect(output.keys, [
+        '__proto',
+        'Prototype',
+        'constructor ',
+        '',
+        '__proto__x',
+      ]);
+    });
+
     test('merges the keys in the Object.keys order', () {
       final output =
           helpers.merge(<String, Object?>{'z': 0}, _ordered())!
