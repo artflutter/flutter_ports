@@ -2686,7 +2686,10 @@ class DatasetController
   /// call of `_insertElements` or `_removeElements` by its name. The two
   /// methods are private. No controller of upstream overrides them.
   void _call(Object? method, Object? arg1, Object? arg2) {
-    switch (method) {
+    // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
+    // value that is neither null nor a String. Such a value switches as null
+    // and takes the default branch, as before.
+    switch (method is String ? method : null) {
       case '_insertElements':
         _insertElements(jsToNumber(arg1), jsToNumber(arg2));
       case '_removeElements':

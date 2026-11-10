@@ -582,7 +582,10 @@ void _beforeElementsUpdate(
     // Point the chart to the decimated data
     final List<Object?> decimated;
     final algorithm = opts.algorithm;
-    switch (algorithm) {
+    // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
+    // value that is neither null nor a String. Such a value switches as null
+    // and takes the default branch, as before.
+    switch (algorithm is String ? algorithm : null) {
       case 'lttb':
         decimated = lttbDecimation(
           data! as List<Object?>,

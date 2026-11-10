@@ -76,7 +76,11 @@ class PackageHealth extends StatelessWidget {
           '$repoUrl/commits?${Uri(queryParameters: {
             if (path.isNotEmpty) 'path': path,
           }).query}';
-      final release = switch (data['release_status']) {
+      // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
+      // value that is neither null nor a String. Such a value switches as null
+      // and takes the default branch, as before.
+      final status = data['release_status'];
+      final release = switch (status is String ? status : null) {
         'published' =>
           '${data['release_version']} · '
               '${_date(data['release_date'])}',

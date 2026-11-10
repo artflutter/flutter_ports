@@ -215,6 +215,122 @@ Matcher _value(Object? expected) => switch (expected) {
   _ => equals(expected),
 };
 
+/// Runs [scene] and compares the calls, the chart area, the boxes and the
+/// box order with the reference.
+void _expectScene(LayoutsReferenceScene scene) {
+  final log = <(String, String, List<double>)>[];
+  final chart = _Chart(scene.padding);
+  final boxes = <_Box>[];
+  for (final spec in scene.boxes) {
+    final box = _box(spec, log);
+    layouts
+      ..configure(chart, box, _configureOptions(spec))
+      ..addBox(chart, box);
+    boxes.add(box);
+  }
+  if (scene.reconfigure) {
+    for (final box in boxes) {
+      layouts.configure(chart, box, _configureOptions(box.spec));
+    }
+  }
+
+  void update() => layouts.update(
+    chart,
+    scene.width,
+    scene.height,
+    scene.minPadding,
+  );
+  if (scene.error != null) {
+    expect(scene.error, 'TypeError');
+    expect(update, throwsA(isA<TypeError>()));
+  } else {
+    update();
+    final (left, top, right, bottom, width, height) = scene.chartArea!;
+    expect(chart.chartArea.left, left);
+    expect(chart.chartArea.top, top);
+    expect(chart.chartArea.right, right);
+    expect(chart.chartArea.bottom, bottom);
+    expect(chart.chartArea.width, width);
+    expect(chart.chartArea.height, height);
+  }
+
+  expect(_flat(log), _flat(scene.log));
+  for (final (i, r) in scene.results.indexed) {
+    final box = boxes[i];
+    expect(box.spec.name, r.name);
+    expect(box.left, _number(r.left), reason: '${r.name} left');
+    expect(box.top, _number(r.top), reason: '${r.name} top');
+    expect(box.right, _number(r.right), reason: '${r.name} right');
+    expect(box.bottom, _number(r.bottom), reason: '${r.name} bottom');
+    expect(box.width, _number(r.width), reason: '${r.name} width');
+    expect(box.height, _number(r.height), reason: '${r.name} height');
+    expect(box.fullSize, jsTruthy(r.fullSize), reason: r.name);
+    expect(box.position, r.position, reason: '${r.name} position');
+    expect(box.weight, _value(r.weight), reason: '${r.name} weight');
+  }
+  expect(
+    [for (final box in chart.boxes) (box as _Box).spec.name],
+    [
+      ...scene.order,
+    ],
+  );
+}
+
+/// [scene] with the position [position] for the box [name], in its boxes
+/// and in its results.
+LayoutsReferenceScene _withPosition(
+  LayoutsReferenceScene scene,
+  String name,
+  Object position,
+) => (
+  name: scene.name,
+  padding: scene.padding,
+  width: scene.width,
+  height: scene.height,
+  minPadding: scene.minPadding,
+  reconfigure: scene.reconfigure,
+  boxes: [
+    for (final box in scene.boxes)
+      if (box.name == name)
+        (
+          name: box.name,
+          position: position,
+          weight: box.weight,
+          fullSize: box.fullSize,
+          axis: box.axis,
+          horizontal: box.horizontal,
+          options: box.options,
+          size: box.size,
+          padding: box.padding,
+          beforeLayout: box.beforeLayout,
+        )
+      else
+        box,
+  ],
+  error: scene.error,
+  log: scene.log,
+  results: [
+    for (final result in scene.results)
+      if (result.name == name)
+        (
+          name: result.name,
+          left: result.left,
+          top: result.top,
+          right: result.right,
+          bottom: result.bottom,
+          width: result.width,
+          height: result.height,
+          fullSize: result.fullSize,
+          position: position,
+          weight: result.weight,
+        )
+      else
+        result,
+  ],
+  chartArea: scene.chartArea,
+  order: scene.order,
+);
+
 void main() {
   setUpSpecs();
 
@@ -228,63 +344,21 @@ void main() {
 
   group('update against upstream', () {
     for (final scene in layoutsReference) {
-      test(scene.name, () {
-        final log = <(String, String, List<double>)>[];
-        final chart = _Chart(scene.padding);
-        final boxes = <_Box>[];
-        for (final spec in scene.boxes) {
-          final box = _box(spec, log);
-          layouts
-            ..configure(chart, box, _configureOptions(spec))
-            ..addBox(chart, box);
-          boxes.add(box);
-        }
-        if (scene.reconfigure) {
-          for (final box in boxes) {
-            layouts.configure(chart, box, _configureOptions(box.spec));
-          }
-        }
+      test(scene.name, () => _expectScene(scene));
+    }
+  });
 
-        void update() => layouts.update(
-          chart,
-          scene.width,
-          scene.height,
-          scene.minPadding,
-        );
-        if (scene.error != null) {
-          expect(scene.error, 'TypeError');
-          expect(update, throwsA(isA<TypeError>()));
-        } else {
-          update();
-          final (left, top, right, bottom, width, height) = scene.chartArea!;
-          expect(chart.chartArea.left, left);
-          expect(chart.chartArea.top, top);
-          expect(chart.chartArea.right, right);
-          expect(chart.chartArea.bottom, bottom);
-          expect(chart.chartArea.width, width);
-          expect(chart.chartArea.height, height);
-        }
-
-        expect(_flat(log), _flat(scene.log));
-        for (final (i, r) in scene.results.indexed) {
-          final box = boxes[i];
-          expect(box.spec.name, r.name);
-          expect(box.left, _number(r.left), reason: '${r.name} left');
-          expect(box.top, _number(r.top), reason: '${r.name} top');
-          expect(box.right, _number(r.right), reason: '${r.name} right');
-          expect(box.bottom, _number(r.bottom), reason: '${r.name} bottom');
-          expect(box.width, _number(r.width), reason: '${r.name} width');
-          expect(box.height, _number(r.height), reason: '${r.name} height');
-          expect(box.fullSize, jsTruthy(r.fullSize), reason: r.name);
-          expect(box.position, r.position, reason: '${r.name} position');
-          expect(box.weight, _value(r.weight), reason: '${r.name} weight');
-        }
-        expect(
-          [for (final box in chart.boxes) (box as _Box).spec.name],
-          [
-            ...scene.order,
-          ],
-        );
+  // A position that is neither an object nor a string takes the path of
+  // another string, as 'center' does: upstream writes `chartArea[pos]`, a
+  // key that no code reads. dart2wasm of Dart 3.14.0-315.3.beta trapped on
+  // the String switch of `chartArea[pos]` for such a position.
+  group('a position that is neither an object nor a string', () {
+    final scene = layoutsReference.singleWhere(
+      (scene) => scene.name == 'dynamic positions',
+    );
+    for (final position in <Object>[5.0, true]) {
+      test('$position', () {
+        _expectScene(_withPosition(scene, 'xc', position));
       });
     }
   });

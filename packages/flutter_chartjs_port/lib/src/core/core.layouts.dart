@@ -272,7 +272,10 @@ final class _LayoutArea {
   final Map<Object?, double> _other = {};
 
   /// `chartArea[pos]`.
-  double operator [](Object? pos) => switch (pos) {
+  // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
+  // value that is neither null nor a String. Such a value switches as null
+  // and takes the default branch, as before.
+  double operator [](Object? pos) => switch (pos is String ? pos : null) {
     'left' => left,
     'top' => top,
     'right' => right,
@@ -282,7 +285,10 @@ final class _LayoutArea {
 
   /// `chartArea[pos] = value`.
   void operator []=(Object? pos, double value) {
-    switch (pos) {
+    // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
+    // value that is neither null nor a String. Such a value switches as null
+    // and takes the default branch, as before.
+    switch (pos is String ? pos : null) {
       case 'left':
         left = value;
       case 'top':

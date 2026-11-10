@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: Flutter browser test selection.
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'src/check_support.dart';
@@ -15,6 +17,65 @@ List<String> browserTestFiles(String package) => [
       relativePath(package, path),
 ]..sort();
 
+/// The summary line of a `flutter test` run that passed. The compact and
+/// the expanded reporter print `All tests passed!` (or `All tests
+/// skipped.`) after the time and the counts. The GitHub reporter, the
+/// default on GitHub Actions, prints `🎉 <n> tests passed.`, with
+/// `, <m> skipped` before the period when tests skipped.
+final RegExp _passedSummary = RegExp(
+  r'^(\d+:\d+ [^:]*: (All tests passed!|All tests skipped\.)'
+  r'|🎉 \d+ tests? passed(, \d+ skipped)?\.)$',
+);
+
+/// An ANSI color sequence of a reporter.
+final RegExp _ansiColor = RegExp('\x1B\\[[0-9;]*m');
+
+/// Whether [line] of the output of `flutter test` is the summary of a run
+/// that passed.
+bool isPassedSummary(String line) =>
+    _passedSummary.hasMatch(line.replaceAll(_ansiColor, '').trim());
+
+/// The failure of one leg of `flutter test`, or null when it passed. The
+/// leg passed only when it exited with 0 and printed the summary of a run
+/// that passed ([sawSummary]). A negative [exitCode] is the signal that
+/// ended the process (POSIX). `flutter test` exits with 0 when a SIGTERM
+/// stops it, also in the middle of a run (Flutter 3.50.0-0.4.pre). Thus a
+/// leg that stops without its summary fails too.
+String? legFailure(int exitCode, {required bool sawSummary}) {
+  if (exitCode < 0) return 'ended by the signal ${-exitCode}';
+  if (exitCode != 0) return 'exited with $exitCode';
+  if (!sawSummary) return 'exited with 0 without the summary of a run';
+  return null;
+}
+
+/// Runs `flutter test` with [arguments] in [directory]. It forwards the
+/// output and returns the exit code and whether the output had the
+/// summary of a run that passed.
+Future<({int exitCode, bool sawSummary})> _runLeg(
+  String directory,
+  List<String> arguments,
+) async {
+  final process = await Process.start(
+    'flutter',
+    arguments,
+    workingDirectory: directory,
+    runInShell: Platform.isWindows,
+  );
+  var sawSummary = false;
+  final out = process.stdout
+      .transform(const Utf8Decoder(allowMalformed: true))
+      .transform(const LineSplitter())
+      .listen((line) {
+        stdout.writeln(line);
+        if (isPassedSummary(line)) sawSummary = true;
+      })
+      .asFuture<void>();
+  final err = stderr.addStream(process.stderr);
+  final exitCode = await process.exitCode;
+  await Future.wait([out, err]);
+  return (exitCode: exitCode, sawSummary: sawSummary);
+}
+
 Future<void> main(List<String> args) async {
   if (args.isNotEmpty) {
     stderr.writeln('Usage: dart run tool/test_web.dart');
@@ -28,20 +89,24 @@ Future<void> main(List<String> args) async {
     final files = browserTestFiles(directory);
     if (files.isEmpty) throw StateError('No browser tests in $name');
     for (final wasm in [false, true]) {
-      stdout.writeln(
-        '$name: ${files.length} Flutter browser test files '
-        '(${wasm ? 'WebAssembly' : 'JavaScript'})',
+      final leg =
+          '$name: ${files.length} Flutter browser test files '
+          '(${wasm ? 'WebAssembly' : 'JavaScript'})';
+      stdout.writeln(leg);
+      final result = await _runLeg(directory, [
+        'test',
+        '--platform',
+        'chrome',
+        if (wasm) '--wasm',
+        ...files,
+      ]);
+      final failure = legFailure(
+        result.exitCode,
+        sawSummary: result.sawSummary,
       );
-      final process = await Process.start(
-        'flutter',
-        ['test', '--platform', 'chrome', if (wasm) '--wasm', ...files],
-        workingDirectory: directory,
-        runInShell: Platform.isWindows,
-        mode: ProcessStartMode.inheritStdio,
-      );
-      final code = await process.exitCode;
-      if (code != 0) {
-        exitCode = code;
+      if (failure != null) {
+        stderr.writeln('test:web: $leg $failure.');
+        exitCode = result.exitCode > 0 ? result.exitCode : 1;
         return;
       }
     }
