@@ -965,6 +965,8 @@ void main() {
       expect(chart.updateRanges(), isTrue);
     });
 
+    // Check 2 already refuses these charts: only the exact classes record
+    // the range state. The case pins the result, not check 3 alone.
     test('3. a chart or a config of another class', () {
       final log = _Log();
       final user = _canvasChart(_small(log), user: true);
@@ -1053,7 +1055,8 @@ void main() {
       _expectFallbackTwins(full, fullLog, ranges, rangeLog, expected: false);
     });
 
-    testWidgets('6. another data or options object, another dataset', (
+    testWidgets('6. another data or options object, another dataset, '
+        'another chart type, another inline plugin List', (
       tester,
     ) async {
       final changes = <String, void Function(Chart chart)>{
@@ -1077,6 +1080,13 @@ void main() {
           (jsGet(chart.data, 'datasets')! as List<Object?>).add(
             <String, Object?>{'label': 'b', 'data': _points(5, 2)},
           );
+        },
+        'config.type': (chart) => chart.config.type = 'scatter',
+        'an inline plugin added in place': (chart) {
+          (chart.config.plugins! as List<Object?>).add(<String, Object?>{
+            'id': 'added',
+            'supportsDataUpdates': true,
+          });
         },
       };
       for (final MapEntry(key: name, value: change) in changes.entries) {
@@ -1241,7 +1251,17 @@ void main() {
       final chart = acquireChart(_small(log));
       expect(chart.updateRanges(), isTrue);
       releaseChart(chart);
-      expect(chart.updateRanges, throwsA(anything));
+      // `destroy` drops the range state: the call is `update`, which throws
+      // on a destroyed chart, and the range steps do not run.
+      StackTrace? stack;
+      try {
+        chart.updateRanges();
+      } on Object catch (_, trace) {
+        stack = trace;
+      }
+      expect(stack, isNotNull);
+      expect(stack.toString(), contains('Chart.update '));
+      expect(stack.toString(), isNot(contains('Chart._updateRanges')));
     });
 
     testWidgets('a direct write of meta.hidden', (tester) async {

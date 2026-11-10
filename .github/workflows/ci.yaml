@@ -121,7 +121,10 @@ jobs:
     # The job also runs the 12 upstream fixtures of the add-on port
     # flutter_chartjs_plugin_zoom_port (test:fixtures:zoom, seam H24) with the
     # same runner, its manifest test/fixtures/manifest.json and a shallow
-    # checkout of third_party/chartjs-plugin-zoom.
+    # checkout of third_party/chartjs-plugin-zoom. It then runs the tests of
+    # that package, the fixtures among them, with the zoom option
+    # rangeOnlyUpdates in the defaults (test:zoom:range-only, Chart.js ADR
+    # 0111).
     #
     # The job is also the pinned runner of the theme goldens of
     # packages/flutter_chartjs_port/doc/theming.md section 8 test 9 (Chart.js
@@ -152,6 +155,11 @@ jobs:
       - name: Run the zoom fixtures
         if: ${{ !inputs.update_goldens }}
         run: dart run melos run test:fixtures:zoom
+        env:
+          FIXTURES_REQUIRED: "1"
+      - name: Run the zoom tests with range-only updates
+        if: ${{ !inputs.update_goldens }}
+        run: dart run melos run test:zoom:range-only
         env:
           FIXTURES_REQUIRED: "1"
       - name: Compare the theme goldens

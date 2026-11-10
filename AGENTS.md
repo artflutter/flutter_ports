@@ -142,7 +142,8 @@ longer supported. No global color installer or intermediate option color exists.
   fixtures among them, with `--dart-define=ZOOM_RANGE_ONLY_UPDATES=true`: `test/flutter_test_config.dart`
   writes the zoom option `rangeOnlyUpdates: true` into `Chart.defaults.plugins.zoom`, so each zoom
   and pan takes `chart.updateRanges` (Chart.js ADR 0111). The results are those of the run
-  without it; the spec `defaults` expects the key.
+  without it; the spec `defaults` expects the key. The CI job `fixtures` runs it with
+  `FIXTURES_REQUIRED=1`.
 - `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
   (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md §8 test 9, Chart.js ADR 0050).
   They skip unless `CHART_GOLDENS=1`. Their pinned runner is the CI job `fixtures` on
@@ -204,7 +205,7 @@ longer supported. No global color installer or intermediate option color exists.
   gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
 Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `test:cases`,
-`test:fixtures`, `test:fixtures:zoom` and `check:port`.
+`test:fixtures`, `test:fixtures:zoom`, `test:zoom:range-only` and `check:port`.
 
 ## Layout
 
@@ -645,14 +646,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `config.update()`, no new resolver (a new context view over the kept one for the chart, each
       plugin descriptor, `PluginService.refreshDescriptorViews`, and each dataset,
       `configureKeptResolver`; `OptionView.resolver`), no scale id, type or position checks, no
-      `buildOrUpdateControllers` (it writes `meta.visible`). `scale.init` runs, the scale boxes go
-      and come back, and each hook, the layout, the dataset updates, the replay and the draw run
+      `buildOrUpdateControllers` (it writes `meta.visible`). `scale.init` runs in the key order of
+      `options.scales`, the scale boxes go and come back, and each hook, the layout, the dataset updates, the replay and the draw run
       as in `update`. Checks (`_canUpdateRanges`) send it to `update(mode)`: a nested call, no
       range state (`RangeUpdateSnapshot` of `data_update.dart`, the invalidation points of Chart.js
       ADR 0074, a cancelled or thrown update), a chart or config of another class, a plugin
       without the opt-in or with a failed `Plugin.rangeUpdateGuard` (the colors plugin with
-      `forceOverride`), a notified data change, another `data`, `options` or dataset object, a
-      controller of another class. It counts as a full update for re-entry, and ends as one
+      `forceOverride`), a notified data change, another `data`, `options` or dataset object, another
+      chart type or inline plugin List, a controller of another class. Options that only the
+      skipped steps read (`responsive`, the chart `indexAxis`, the scale `axis` and `position`)
+      and a `Chart.register` or `Chart.unregister` fall under the contract. It counts as a full update for re-entry, and ends as one
       (`_recordUpdateState`). Row `adapt-range-updates`; twins in
       `test/port/core/range_update_test.dart`.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the port of

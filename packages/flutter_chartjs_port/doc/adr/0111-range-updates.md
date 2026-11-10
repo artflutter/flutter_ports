@@ -105,8 +105,8 @@ about two steps per frame (one for each finger move).
 /// view of the options (`scale.options`, `chart.options.scales[id]`).
 /// Data values, new data Lists and new labels are allowed. Each hook, the
 /// parse, the layout, the dataset updates, the replay and the draw run as
-/// in [update]; each scriptable option runs again. When a check fails, the
-/// call is `update(mode)`.
+/// in [update]; each scriptable option that these steps read runs again.
+/// When a check fails, the call is `update(mode)`.
 ///
 /// Returns true when the range lifecycle ran, also when a hook cancelled
 /// it; false when the call delegated to [update].
@@ -119,12 +119,14 @@ bool updateRanges([Object? mode = undefined]);
   animations of `update`.
 - `types.Chart` declares it, as it declares `updateData`. `lib/chartjs.dart` and the app library
   export `Chart` already. `doc/public_api.txt` lists no members, so the list does not change.
-- With no caller of `updateRanges`, no code path changes: `update` keeps its code.
+- With no caller of `updateRanges`, `update` keeps its behavior. A full update also records the
+  range state of check 6 at its end (section 3): one walk of the dataset List.
 
 ### 2. The contract
 
 Between the last full update and a call, neither the app nor a plugin changes these in place:
 
+- The chart type (`config.type`).
 - An option of the config: the chart options, the plugin options, the dataset options (also
   `type`, `label`, `order`, `stack`, `hidden`, `indexAxis` and the axis ids) and the scale
   options. The exception: `min` and `max` of a scale, written or deleted through a view of the
@@ -134,13 +136,17 @@ Between the last full update and a call, neither the app nor a plugin changes th
 - `Chart.defaults`, `Chart.overrides`, the descriptors and the theme.
 - The dataset list: no dataset added, removed, replaced or moved.
 - The scales: no scale added or removed.
-- The plugins: the registered plugins, the inline plugins and an option that turns a plugin off.
+- The plugins: the registered plugins (no `Chart.register` or `Chart.unregister`), the inline
+  plugins and an option that turns a plugin off.
 
 Allowed, because `update` reads them by name in each step and not through a resolver: the `data`
 of each dataset (new values, a new List, another length) and `labels`, `xLabels` and `yLabels`.
 A data change that an array listener notified goes to `update` (check 5). The event handlers
-`onClick` and `onHover` keep the rule of Chart.js ADR 0074. Scriptable options need no rule:
-section 5 runs each of them again, as `update` does.
+`onClick` and `onHover` keep the rule of Chart.js ADR 0074. A scriptable option that a step of the
+range update reads needs no rule: section 5 runs it again, as `update` does. The options that only
+the skipped structural steps read (`responsive` in `_checkEventBindings`, the chart `indexAxis` in
+`buildOrUpdateControllers`, the `axis` and `position` of a scale in `buildOrUpdateScales`) keep the
+results of the last full update: their functions fall under the contract.
 
 Call `update` after any other change. `ChartView` already does: a new config, a new theme and a
 change of the reduced-motion preference reach the chart through `chart.update` (or
@@ -159,22 +165,35 @@ full update.
    `beforeUpdate`, `beforeLayout` or `beforeDatasetsUpdate`, or a hook threw).
 3. The chart or its config is not of the exact class (`Chart.supportsDataUpdates`,
    `Config.supportsDataUpdates`: a native root with no route of `data`, `options` or
-   `plugins`).
-4. The plugin descriptors are not cached (`Chart.register` and `Chart.unregister` invalidate
-   them), or a plugin does not opt in to partial lifecycles: a `Plugin` with
-   `supportsDataUpdates`, a Map plugin with the own key `supportsDataUpdates: true` (Chart.js ADRs
-   0074 and 0108). Its promise, no change of the configuration, the data or the structure in a
-   hook, is the one that kept resolvers need. The `dataUpdateGuard` of a plugin is not called: it
+   `plugins`). Check 2 already covers it: only these classes record the range state. The check
+   stays as a guard.
+4. The plugin descriptors are not cached, or a plugin does not opt in to partial lifecycles: a
+   `Plugin` with `supportsDataUpdates`, a Map plugin with the own key `supportsDataUpdates: true`
+   (Chart.js ADRs 0074 and 0108). Its promise, no change of the configuration, the data or the
+   structure in a hook, is the one that kept resolvers need. A built-in plugin can also refuse
+   through `Plugin.rangeUpdateGuard`, a Dart field outside the JavaScript own keys and not a
+   constructor parameter. The colors plugin sets it: with `forceOverride`, its `beforeLayout`
+   writes new color Lists into the datasets in each update, a change of the config, and a kept
+   dataset resolver would keep the old List (with a new data length, the colors of the new
+   elements would differ). Such a chart takes `update`. Without `forceOverride` the plugin writes
+   once, before the first full update, and the guard passes. `Chart.register` and
+   `Chart.unregister` clear the descriptor cache, but the next notify of the chart (a mouse move)
+   builds it again: they are contract items (section 2), and the check sends only the calls
+   before that notify to `update`. The `dataUpdateGuard` of a plugin is not called: it
    states a concern of the data-only lifecycle, which skips the layout. The range update runs each
    hook and the layout (section 4). Enabled decimation thus takes the range update: its
    `beforeElementsUpdate` reads the new user bounds, as in `update` (Open 3).
 5. `dataChanges` is not empty: a notified array change moves the hidden indices
    (`_updateHiddenIndices`).
 6. The `data` or the `options` object of the config is another object than at the last range
-   state, or the datasets differ: another count, or another object at an index.
-   `DataUpdateSnapshot` (`lib/src/core/data_update.dart`) gets a second capture for this: the
-   `data` and `options` objects and the dataset objects, read with `dataUpdateField` from native
-   objects only, without the value Lists and the labels.
+   state; the datasets differ (another count, or another object at an index); the chart type
+   (`config.type`) is not `==` to the captured one; or the inline plugins (`config.plugins`) are
+   another value, or the same List with another length. The class `RangeUpdateSnapshot` of
+   `lib/src/core/data_update.dart`, beside `DataUpdateSnapshot`, captures them at the end of a
+   full update and of a range update (section 7): the `data` and `options` objects and the dataset
+   objects, read with `dataUpdateField` from native objects only, without the value Lists and the
+   labels, the chart type and the inline plugin value with its length. Each read is O(1) but the
+   dataset walk.
 7. A dataset has a controller that is not of its exact built-in class
    (`DatasetController.supportsDataUpdates`): the `configure` and the `linkScales` of a subclass
    may read more than the built-in ones.
@@ -189,11 +208,11 @@ The checks read identities and flags: O(datasets + plugins) for each call.
 | `config.update()`: `clearCache` and the scale merge | skipped. The merged scale options of the last update stay, with the `min` and `max` that the views wrote. |
 | `config.createResolver(config.chartOptionScopes(), getContext())` | a new context view over the chart resolver of the last update |
 | `animationsDisabled` from `options.animation` | the same, through the new view |
-| `_updateScales`: `removeBox` of each scale, `ensureScalesHaveIDs`, `buildOrUpdateScales` | for each scale of `chart.scales`: `scale.init(options.scales[id], options)` through the new chart view, then `layouts.configure(chart, scale, scale.options)`. No id writes, no axis, type and position checks, no box removed or added. |
+| `_updateScales`: `removeBox` of each scale, `ensureScalesHaveIDs`, `buildOrUpdateScales` | `layouts.removeBox` of each scale; for each key `id` of `options.scales` of the new chart view, in its order: `chart.scales[id].init(options.scales[id], options)`; for each scale of `chart.scales`: `layouts.configure(chart, scale, scale.options)` and `layouts.addBox`, as in `update` (`addBox` writes the default `weight` 0 and `position` after `configure`). No id writes, no axis, type and position checks, no scale made or removed. |
 | `_checkEventBindings`, `_updateHiddenIndices` | skipped: no change under the contract, and `dataChanges` is empty |
 | `plugins.invalidate()`, the new descriptors at the first notify | each cached descriptor gets a new context view over its resolver, with the descriptor defaults of `pluginOpts` (`scriptable: false`, `indexable: false`, `allKeys: true`). No new scope list, no new resolver, no `start` or `stop`. |
 | `beforeUpdate` (cancelable) | the same |
-| `buildOrUpdateControllers` | skipped |
+| `buildOrUpdateControllers` | skipped, except `meta.visible = isDatasetVisible(i)` for each dataset: the one field of the step that a write outside the options changes (`chart.getDatasetMeta(i).hidden = true`, the form of the Chart.js docs) |
 | `beforeElementsUpdate`; `buildOrUpdateElements(reset)` with the parse; `getMaxOverflow`; `layout.autoPadding` | the same. `reset` is `!animationsDisabled`, as `update` gives it to a controller that is not new. |
 | `_updateLayout(minPadding)`: the layout hooks, the data limits, the ticks, the fit | the same |
 | the reset of the new controllers | none is new |
@@ -201,15 +220,16 @@ The checks read identities and flags: O(datasets + plugins) for each call.
 | `afterUpdate`, the sort of the layers | the same |
 | the replay of the last event (Chart.js ADRs 0090 and 0091) or the hover styles | the same |
 | `render()` | the same |
-| the data-only tokens of Chart.js ADR 0074 | the same (section 7), and the range state |
+| the data-only tokens of Chart.js ADR 0074 | the same (section 7), and the range state (`RangeUpdateSnapshot`, check 6) |
 
 Each hook of `update` runs, in the same order, with the same arguments. The `options` argument of
 a plugin hook is a new view, as in `update`; it is a view over the resolver of the last full
 update, where `update` gives a view over a new resolver with the same values.
 
-`scale.init` runs in the order of `chart.scales`; `buildOrUpdateScales` runs it in the order of
-the keys of `options.scales`. Under the contract both hold the same ids, and `init` reads and
-writes only its own scale.
+`scale.init` runs in the key order of `options.scales`, as in `buildOrUpdateScales`. The order
+counts: the `init` of a category scale removes from the shared `data.labels` the labels that its
+last parse added, and its parse adds labels. `chart.scales` keeps the insertion order of the first
+update, which a later full update with reordered scale keys does not change.
 
 ### 5. Why the result is the result of `update(mode)`
 
@@ -225,7 +245,8 @@ Under the contract of section 2:
   results (`_attachContext`, `:118`, `_resolveWithContext`, `:233`). Upstream clears both in each
   `update`. The range update keeps the resolvers, whose raw values did not change, and makes a new
   view wherever `update` makes a new resolver. Thus each scriptable option of the chart, of a
-  plugin, of a scale and of a dataset runs again with its context, once per update as in `update`:
+  plugin, of a scale and of a dataset that a step of the range update reads runs again with its
+  context, once per update as in `update` (section 2 names the options of the skipped steps):
   for example the scriptable title text of the gallery sample that shows the zoom level. The
   element options resolve with a new context for each element in both paths.
 - A write of `min` or `max` through a view goes through the `set` trap of the view (`:189`) to the
@@ -237,9 +258,9 @@ Under the contract of section 2:
   parse added, the new date adapter of a time scale and its `formats()`, which clears the cache of
   the local zone once per update (Chart.js ADR 0024, `lib/src/core/date_adapter.dart`).
 - The skipped structural steps write the same values under the contract: the scale ids, the
-  positions, the boxes, the event bindings, the controllers, the fields of each meta and the order
-  of the metasets. The order of `chart.boxes` stays: `update` removes the scale boxes and adds them
-  again at the end, and no box came since the last update.
+  positions, the event bindings, the controllers, the fields of each meta other than `visible`
+  (which the range update writes) and the order of the metasets. The order of `chart.boxes` is
+  that of `update`: both remove the scale boxes and add them again at the end.
 - The plugins and their order are the same, so `_notifyStateChanges` of `update` would find no
   change.
 
@@ -263,7 +284,8 @@ pins it.
 - The range state has the invalidation points of the data-only state of Chart.js ADR 0074:
   `chart.data =`, `chart.options =`, `resize`, `reset`, `setDatasetVisibility`,
   `toggleDataVisibility` (`hide` and `show` run their own update), `destroy` and the start of each
-  full update. `Chart.register` and `Chart.unregister` clear the descriptor cache (check 4). A
+  full update. `Chart.register` and `Chart.unregister` are contract items: they clear the
+  descriptor cache, so check 4 sends a call to `update` only until the next notify (check 4). A
   range update that a hook cancels or that throws leaves the state invalid. The next call is then
   `update(mode)`, which arms the state again.
 - As in `_updateFull`, an update arms the state at its end only when no nested update invalidated
@@ -373,30 +395,32 @@ The answers to section "Open", taken by the porting lead in the implementing cha
    typed options slot of zoom phase 5 (seam H18) is the place for it.
 6. The docs: no page of `apps/chartjs_docs`.
 
-Where the code departs from the text above, and why:
+The implementing change and its review changed the proposed text of sections 1 to 6. The sections above state
+the result; the changes were:
 
-- Check 4 also reads an internal guard of a built-in plugin, `Plugin.rangeUpdateGuard` (a Dart field outside the
-  JavaScript own keys, not a constructor parameter). The colors plugin sets it: with `forceOverride`, its
-  `beforeLayout` writes new color Lists into the datasets in each update, a change of the config. A kept dataset
-  resolver keeps the old List, and with a new data length the colors of the new elements would differ. Such a chart
-  takes `update`. Without `forceOverride` the plugin writes once, before the first full update, and the guard
-  passes.
-- The boxes of the scales go and come back as in `update` (`layouts.removeBox`, then `layouts.configure` and
-  `layouts.addBox`), where section 4 says that no box is removed or added. `addBox` writes the defaults of `weight`
-  (0) and `position` after `configure`: without it, a scale with no `weight` option keeps `undefined`, and the sort
-  of the layout differs. The order of `chart.boxes` is the order of `update`.
-- The range update writes `meta.visible = isDatasetVisible(i)` for each dataset, the one field of
-  `buildOrUpdateControllers` that a write outside the options changes: `chart.getDatasetMeta(i).hidden = true`,
-  the form of the Chart.js docs. The other fields of the meta stay.
-- The second capture of check 6 is the class `RangeUpdateSnapshot` of `lib/src/core/data_update.dart`, beside
-  `DataUpdateSnapshot`, with the reads that section 3 names. A full update and a range update record it at their
-  end with the tokens of Chart.js ADR 0074 (section 7): one walk of the dataset List.
+- Check 4 reads `Plugin.rangeUpdateGuard` of a built-in plugin (the colors plugin with `forceOverride`).
+- The scale boxes go and come back as in `update`, where the proposed text kept them; `addBox` writes the default
+  `weight` and `position`, and without it the sort of the layout differs.
+- The range update writes `meta.visible` of each dataset.
+- Check 6 is the class `RangeUpdateSnapshot`, not a second capture inside `DataUpdateSnapshot`, and it also
+  compares the chart type and the inline plugin List (the review: `chart.config.type = 'bar'` is a documented
+  Chart.js form, and the `Config.type` setter invalidates nothing).
+- `scale.init` runs in the key order of `options.scales`, where the proposed text took the order of
+  `chart.scales` (the review: two category scales with string bounds can end with other labels).
+- The options that only the skipped steps read keep the results of the last full update (section 2), where the
+  proposed text said that each scriptable option runs again.
+- `Chart.register` and `Chart.unregister` are contract items (sections 2, 3 and 6), where the proposed text gave
+  them a fallback through check 4.
+
+The tests:
+
 - The cache test reads `Config.debugCacheSizes` (`@visibleForTesting`): the counts of the scope lists and of the
   resolvers.
 - The zoom twins (`test/port/plugin_test.dart`, group `range-only updates (Chart.js ADR 0111)`) compare the pixels
   of `chart.toBase64Image()` in place of the draw calls: the zoom tests import only the public libraries of the
   host, and the recorder of the draw calls is a test helper of the host. The host twins compare the draw calls.
-- The zoom suite runs with the option in the defaults through a define:
+- The zoom suite runs with the option in the defaults through a define, in the CI job `fixtures` and in the
+  pre-push list of AGENTS.md:
   `flutter test --dart-define=ZOOM_RANGE_ONLY_UPDATES=true` (`dart run melos run test:zoom:range-only`) writes
   `rangeOnlyUpdates: true` into `Chart.defaults.plugins.zoom` before the snapshot of the restore, for the specs, the
   fixtures and the tests of real input. The spec `defaults` then expects the key in the defaults. In that run, 372
@@ -441,7 +465,7 @@ Where the code departs from the text above, and why:
   The default path stays upstream; the doc of `updateRanges`, of the zoom option and the README
   of the zoom port state the contract.
 - Two `adapt` rows: `adapt-range-updates` in the `differences.md` of this package (`Chart.updateRanges`,
-  the range capture of `DataUpdateSnapshot`, the `configure` with a kept resolver, the descriptor
+  `RangeUpdateSnapshot`, the `configure` with a kept resolver, the descriptor
   views; the reuse of `src/core/core.controller.js`@v4.6.1:316-380, :415-455, :475-549,
   `src/core/core.datasetController.js`@v4.6.1:438-445 and `src/core/core.plugins.js`@v4.6.1:73-83,
   :175-188), and `adapt-range-only-updates` in the zoom `differences.md` (section 8). Each
@@ -457,18 +481,24 @@ Where the code departs from the text above, and why:
 
 ## Open
 
+The maintainer approved the ADR with the questions below open; the porting lead answered each in the
+implementing change (section "Implementation"). None stays open.
+
 1. The names: `Chart.updateRanges` and the zoom key `rangeOnlyUpdates`. Other forms:
-   `updateScaleRanges`; a key `updateRanges`.
+   `updateScaleRanges`; a key `updateRanges`. Answered: the names stay.
 2. Data in a range update. This ADR allows new data values, new data Lists and new labels, since
    the parse and the layout run as in `update`. The narrower form also requires the data snapshot
    of Chart.js ADR 0074 (the same lengths and labels): a zoom of a streaming chart would then take
-   `update`.
+   `update`. Answered: the wider form.
 3. Decimation. Check 4 does not call `dataUpdateGuard`, so enabled decimation takes the range
    update. The narrower form keeps the guard, and a zoom of a decimated chart takes `update`.
+   Answered: the wider form; the twins pin it.
 4. Subclasses. Check 7 sends a user controller subclass to `update`. A later opt-in could admit a
-   subclass that keeps `configure` and `linkScales`.
+   subclass that keeps `configure` and `linkScales`. Answered: check 7 as written.
 5. The gallery and the widget. Should the samples of the zoom page opt in (the basic sample has
    the scriptable title and `onZoomComplete`, both on the range path)? Should `ChartView` get a
    parameter that writes the zoom option, or wait for the typed options slot of zoom phase 5
-   (seam H18)?
+   (seam H18)? Answered: the samples do not opt in, and `ChartView` gets no parameter; the typed
+   options slot of zoom phase 5 is the place for it.
 6. The docs. Should `apps/chartjs_docs` show `updateRanges` for an app with its own range control?
+   Answered: no page.
