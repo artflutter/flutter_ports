@@ -21,13 +21,15 @@ void registerGalleryComponents() {
 /// the plugin of chartjs-plugin-zoom once, for all charts, as the docs of
 /// the plugin do (`docs/scripts/register.js:5` of chartjs-plugin-zoom).
 ///
-/// Only the page "Zoom and pan" calls it, at its first build, and gives the
-/// plugin its options. The stress and benchmark entries (`main_stress.dart`,
-/// `main_bench.dart`) never build that page: their charts run no hook of the
-/// plugin, so their figures stay comparable with the figures of earlier
-/// runs. Only the cases of the mode `zoom` of the benchmark
-/// (`chartBenchZoomCases` of `lib/bench/chart_bench.dart`) register the
-/// plugin, each for its own run, and unregister it at its end. After a visit
+/// Two callers call it: the page "Zoom and pan" at its first build, which
+/// gives the plugin its options, and the input probe of Chart.js ADR 0112
+/// (`main_input_probe.dart`) at its start. The stress and benchmark
+/// entries (`main_stress.dart`, `main_bench.dart`) never build that page:
+/// their charts run no hook of the plugin, so their figures stay
+/// comparable with the figures of earlier runs. Only the cases of the mode
+/// `zoom` of the benchmark (`chartBenchZoomCases` of
+/// `lib/bench/chart_bench.dart`) register the plugin, each for its own run,
+/// and unregister it at its end. After a visit
 /// of the page, the plugin runs on each chart of the app. With its default
 /// options, each zoom and pan is off: the plugin adds
 /// no event listener and changes no chart. It takes part in the data-only
