@@ -44,7 +44,10 @@ longer supported. No global color installer or intermediate option color exists.
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8)
   and tool 9, and `options:gen:check`, as melos steps. The CI job `port-checks` runs the seven
-  checks with a shallow checkout of the three Chart.js submodules.
+  checks with a shallow checkout of the three Chart.js submodules and
+  `third_party/chartjs-plugin-zoom`. `check:lib-imports`, `check:headers` and `check:js-semantics`
+  also examine the add-on port `flutter_chartjs_plugin_zoom_port` (ADR 0009 item 6). The other four
+  checks examine only `flutter_chartjs_port`.
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
@@ -52,16 +55,34 @@ longer supported. No global color installer or intermediate option color exists.
     `plugins/`, or `lib/src/index.dart` or `lib/src/index.umd.dart`: the widget registers no
     component (Chart.js ADR 0048 §3). It fails when a ported file imports `lib/src/typed/`, and
     when a file of `lib/src/typed/` imports a library outside the allowlist of Chart.js ADR 0052
-    §8. It keeps the `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer.
-  - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of
-    `flutter_chartjs_port` and `chartjs_test_utils`. It compares the project, license and holder with
-    `packages/flutter_chartjs_port/tool/port_sources.yaml`, the `LICENSE` of the package that contains
-    the file and `REUSE.toml`. It also fails on a source path that is not at the pin, or on a Dart
-    path that is not the mapped path. A port-only file at the mapped path of a pinned source also
-    fails. It compares each submodule gitlink with its `commit` in `port_sources.yaml`.
+    §8. It keeps the `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer. An
+    add-on port names its host in the top-level key `host` of its `tool/port_sources.yaml`. Its
+    `lib/` and `test/` import only the libraries directly in the `lib/` of the host
+    (`package:<host>/<name>.dart`), never `package:<host>/src/` (ADR 0009 item 3). Its `test/`
+    imports only `package:chartjs_test_utils/flutter.dart` and `pure.dart` of the harness. The
+    script passes `packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port`, host
+    first: the check examines the harness closure with the host only.
+  - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of the home
+    package and of each package that a `dart` target of its `tool/port_sources.yaml` names. The
+    script runs it twice: `flutter_chartjs_port` with `chartjs_test_utils`, then
+    `packages/flutter_chartjs_plugin_zoom_port` alone. The primary project of the home is the entry
+    whose `version_source` is `<constant> in <home>/lib/src/upstream.dart` (Chart.js,
+    chartjs-plugin-zoom). Its `version` is `v<constant value>`, the port-only marker names it, and
+    a backport line names the `<owner>/<repo>` of its `url`. The top-level key `marker` of the file
+    gives the tag of the `DIVERGES(<tag>)` markers (default `chartjs`). A directory target maps
+    `.tests.js` and `.spec.js` to `_test.dart`. Only a `differences.md` table with the first
+    header cell `ID` has rows; a `Reserved ID` table has none. It compares the project, license
+    and holder with the `tool/port_sources.yaml` of the home, the `LICENSE` of the package that
+    contains the file and `REUSE.toml`. It also fails on a source path that is not at the pin, or
+    on a Dart path that is not the mapped path. A port-only file at the mapped path of a pinned
+    source also fails. It compares each submodule gitlink with its `commit` in
+    `port_sources.yaml`.
   - `check:js-semantics`: Dart forms that give other results than JavaScript. It examines the
-    `lib/` and `test/` files of both packages whose header names a `js` project of
-    `port_sources.yaml`. It resolves types with `package:analyzer` to find the interpolation of
+    `lib/` and `test/` files of the given packages and of `chartjs_test_utils` whose header names a
+    `js` project. It reads the `language` of each project from the `tool/port_sources.yaml` of
+    each given package; the first entry of a project counts. Its advice names the JS runtime:
+    `lib/src/js/`, or `package:flutter_chartjs_port/js_semantics.dart` in an add-on. It resolves
+    types with `package:analyzer` to find the interpolation of
     `double` and `num` values. It also fails on `DateTime.now(`: ported code reads the time with
     `jsDateNow`.
   - `port:next:check`: the check mode of tool 8 (`port:next`, below).
@@ -160,7 +181,9 @@ longer supported. No global color installer or intermediate option color exists.
   `commit` in `packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml`, and is not the
   commit of the tag `v<last version>`, which must exist. The script reads the gitlinks from the
   index and the tags with `git ls-remote`. It needs no submodule checkout. It also fails on a submodule of `.gitmodules` that no entry of a
-  `packages/*/tool/port_sources.yaml` pins.
+  `packages/*/tool/port_sources.yaml` pins. The pin readers (the script and the
+  `test/upstream_test.dart` of each port) skip the top-level keys of a `port_sources.yaml` other
+  than `sources`.
 - `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
   run the gallery.
 - `dart run melos run gallery:build:web` / `gallery:build:android` / `gallery:build:ios`: build the
@@ -183,20 +206,28 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   one typed `ChartView` with a new data List in `setState` and an `onClick` tear-off with `int`
   indexes (Chart.js ADR 0052 §13). The workspace formats and analyzes it with the package
   rules. `check:headers` and `check:lib-imports` do not examine `example/`.
-  - The public libraries (Chart.js ADR 0048 §5), port-only and not pure layers:
+  - The four public libraries (Chart.js ADRs 0048 §5 and 0108), port-only and not pure layers:
     `lib/flutter_chartjs_port.dart` (the app library: `chartjs.dart` without `Animation` and
     `Element`, the two Flutter names, `ChartView`, `ChartTheme` and `ChartThemeData`, and the
     typed API of `lib/src/typed/typed.dart`),
     `lib/chartjs.dart` (the `chart.js` entry: `lib/src/types.dart` with a hide list, the Canvas 2D
     interface, `ChartMeta`, `defaultDateZone`, `setDefaultDateZone`, `notifyArrayListeners`,
-    `JsClass`, `Undefined`, `undefined` and `lib/src/upstream.dart`) and `lib/helpers.dart` (the
-    `chart.js/helpers` entry: `lib/src/helpers/index.dart` without the Dart names of the upstream
-    `_` exports). An app imports the app library next to `material_ui.dart` with no prefix.
-    `doc/public_api.txt` is the committed list of their export names.
-    `test/tool/public_api_test.dart` compares the list, checks that the app library shares no name
-    with the Flutter libraries and `dart:ui`, checks the `@internal` rule of Chart.js ADR 0048 §6,
-    and checks that the libraries cover the `exports` of `doc/upstream/manifest.json` (the
-    allowlist `_notExported` has the reasons). After a change of the public API,
+    `JsClass`, `JsObjectFace`, `Undefined`, `undefined` and `lib/src/upstream.dart`; the typed
+    plugin API of Chart.js ADR 0108: `Plugin`, `PluginHookFunction` and the eight hook argument
+    classes; and the input surface of Chart.js ADR 0108: `NativeEvent`, `NativeTouch`,
+    `NativeEventListener`, `NativeEventTarget`, `DOMRect` and the extensions `CanvasEventTarget`
+    and `CssStyleProperties`), `lib/helpers.dart` (the `chart.js/helpers` entry:
+    `lib/src/helpers/index.dart` without the Dart names of the upstream `_` exports, except
+    `isPointInArea`, which a ported add-on imports, Chart.js ADR 0108) and `lib/js_semantics.dart`
+    (the JS runtime for add-on ports, Chart.js ADR 0108: `jsObjectKeys`, `jsCall`, `jsGet`,
+    `jsHypot`, `jsMax`, `jsMin`, `jsRound`, `jsNumberToString`, `jsToNumber`, `jsToString` and
+    `jsTruthy`; no other library exports it). An app imports the app library next to
+    `material_ui.dart` with no prefix. `doc/public_api.txt` is the committed list of their export
+    names. `test/tool/public_api_test.dart` compares the list, checks that the app library shares
+    no name with the Flutter libraries and `dart:ui`, checks the `@internal` rule of Chart.js ADR
+    0048 §6, and checks that the libraries cover the `exports` of `doc/upstream/manifest.json` (the
+    allowlist `_notExported` has the reasons, and `_addOnHelpers` lists the `_` exports that a
+    ported add-on imports). After a change of the public API,
     `PUBLIC_API_UPDATE=1 flutter test test/tool/public_api_test.dart` writes the list again.
     `test/port/public_library_test.dart` imports the app library next to `material_ui.dart`,
     registers the line set and pumps a `ChartView`.
@@ -780,6 +811,29 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     it (Chart.js ADR 0049 §2). The keyboard of `ChartView` sends its events through
     `dispatchCanvasEvent` (`canvas.dispatchEvent`).
     `native_event.dart` is the stand-in for the DOM event, a pure layer.
+    Chart.js ADR 0108 (the input surface for add-on plugins): `NativeEvent` has the DOM fields with
+    the DOM init defaults (`bubbles`, `cancelable`, `clientX`, `clientY`, `button`, `buttons`,
+    `pointerId`, `pointerType`, `deltaX`, `deltaY`, `deltaMode`, `key` and the four modifiers),
+    `defaultPrevented`, `preventDefault()` and `stopPropagation()`; a dispatch sets `target`. The
+    host fills the fields with the Chrome values. `native_event.dart` also has
+    `NativeEventListener`, `NativeEventTarget` and `DOMRect`. The extension `CanvasEventTarget`
+    of `chart_host.dart` gives each canvas `addEventListener` (with `passive`),
+    `removeEventListener`, `dispatchEvent`, `ownerDocument`, `eventTarget` (one object for each
+    canvas) and `getBoundingClientRect()` (the canvas box in the logical pixels of the view,
+    `DOMRect.zero` without a laid-out host). The four registry functions stay internal;
+    `dispatchCanvasEvent` gives `!defaultPrevented`. `CanvasDocument.instance` is the one document
+    of the isolate: a bubbling canvas event reaches its listeners after the canvas listeners; a
+    mouse that went down on the host gives it `pointermove`, `mousemove`, `pointerup`, `mouseup`,
+    `click` and `pointercancel` while it is outside the box; while it has a key listener, one
+    `HardwareKeyboard` handler sends it each key (`domKeyValue`), before the focus tree. The key
+    events of `ChartKeyboard` do not bubble; its virtual mouse events bubble with the mouse fields.
+    With `touch-action: none` in the canvas style at the start of a touch sequence, the host
+    begins no pan and claims its touch pointers in the gesture arena past the slop or at a second
+    finger; a prevented `wheel` claims the pointer signal. `platform.flutter.dart` registers its
+    listeners with `passive: true`. `CssStyleProperties` of `lib/src/canvas/canvas.dart` gives
+    `style.touchAction`, `style.userSelect` and `removeProperty`. See
+    `test/port/platform/chart_host_test.dart` (groups `canvas event target`, `document target`,
+    `getBoundingClientRect`, `touch sequence`) and `native_event_test.dart`.
   - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` over
     raw Map themes, the emission guard and the deep freeze: `compileChartTheme` gives a deep-frozen
     typed `ChartOptionsScope` tree (Chart.js ADR 0054 §3). `presets.dart` has the internal
@@ -981,7 +1035,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       bench cells and the P3 page stay. Chart.js ADR 0055 (the native draw path of the canvas
       layer) is accepted (2026-10-31) and supersedes Chart.js ADR 0013. Chart.js ADR 0056
       (profile-guided color implementation) is proposed: its code is implemented and measured,
-      but its gates are its local policy change and durable comparison evidence. The other ADRs are accepted. Docs name them
+      but its gates are its local policy change and durable comparison evidence. Chart.js ADR 0108
+      (the input surface and exports for add-on plugins) is proposed: the lead accepts it when its
+      tests pass. It supersedes parts of Chart.js ADR 0022 (§3 the CSS subset, §6 the event and the
+      dispatch of `triggerMouseEvent`), Chart.js ADR 0037 (§8 the pan begin, §10 the claims, two
+      bullets of §11, Open 3), Chart.js ADR 0048 (§5 the library count and the export lists, §6 the
+      hide of `isPointInArea`), Chart.js ADR 0051 (§4 and §5, the fields and the bubbling of the
+      keyboard events) and Chart.js ADR 0054 (the sentence "`Plugin` stays internal" of §12, and the
+      plugin item of Open 2). The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
@@ -1022,7 +1083,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     runner of `lib/src/fixture.dart`.
   - `lib/src/fixture.dart` ports `src/fixture.js` (Chart.js ADR 0029): `specsFromFixtures`,
     `specFromFixture` and `FixtureSource` (the manifest and `fixtures.json` of tool 4, the folder
-    `upstream` of the upstream fixture files and `requireUpstream`). Each fixture test has the tag
+    `upstream` of the upstream fixture files and `requireUpstream`; the skip reason of a missing
+    checkout names the submodule of the source, Chart.js ADR 0108 §11). Each fixture test has the tag
     `fixtures`. The rows are `harness-fixture-sources` and `harness-fixture-frame`. It is not a
     pure layer. `test/fixture_test.dart` runs the probe `test/fixture_probe/probe_fixture.dart` in
     a nested `flutter test --tags fixtures` with `FIXTURES_REQUIRED=1` and `FIXTURE_PROBE_CRLF` (a
@@ -1030,7 +1092,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     upstream fixture files.
   - `lib/src/utils.dart` ports `src/utils.js`: `acquireChart` and `releaseChart` (the ports of
     `_acquireChart` and `_releaseChart`), `waitForResize`, `afterEvent`, `_resolveElementPoint` and
-    `triggerMouseEvent`. `lib/src/index.dart` ports `src/index.js`: `acquireChart`, `releaseChart`,
+    `triggerMouseEvent`. `triggerMouseEvent` builds its event with `bubbles: true`,
+    `cancelable: true` and the client point `rect.left + x`, `rect.top + y` of
+    `canvas.getBoundingClientRect()`, and calls `canvas.dispatchEvent` (Chart.js ADR 0108 §11, row
+    `harness-trigger-mouse-event`). The DOM stand-in reads `left` and `top` (px) of an element with
+    `position: absolute`. `lib/src/index.dart` ports `src/index.js`: `acquireChart`, `releaseChart`,
     `releaseCharts` and the registry `charts`. It imports `utils.dart` with the prefix `utils`
     (Chart.js ADR 0012, Collisions). Neither file is a pure layer.
   - `lib/fonts/`: the test font, Liberation Sans 2.1.5 (SIL OFL 1.1), with its `LICENSE`
@@ -1232,25 +1298,30 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `publish_to: none` until 0.1.0, MIT), the first add-on port (ADR 0009). Phase 0 has no ported
   code. `doc/README.md` has the plan and the roadmap of phases 0-6.
   - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
-    libraries (Zoom ADR 0003).
+    libraries, `js_semantics.dart` among them (Zoom ADR 0003, Chart.js ADR 0108).
   - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library. `lib/src/upstream.dart` has
     `chartjsPluginZoomVersion` (`2.2.0+fb81d331`, a commit pin) and
     `chartjsPluginZoomPackageVersion` (`2.2.0`). Both files are port-only.
   - `test/upstream_test.dart` (`@TestOn('vm')`) compares `chartjsPluginZoomPackageVersion` with
     `third_party/chartjs-plugin-zoom/package.json`, the entry of `tool/port_sources.yaml` with the
     version and the gitlink with its `commit`. It fails on a submodule of `.gitmodules` that no
-    `packages/*/tool/port_sources.yaml` pins.
-  - `tool/port_sources.yaml`: the pin in the schema of the Chart.js file (Zoom ADR 0001). For the
-    commit pin, `ref` and `commit` are the full commit.
+    `packages/*/tool/port_sources.yaml` pins. It also checks the top-level keys `marker: zoom` and
+    `host: flutter_chartjs_port`, and that its reader skips the top-level keys.
+  - `tool/port_sources.yaml`: the pin in the schema of the Chart.js file (Zoom ADR 0001), with the
+    top-level keys `marker: zoom` (the tag of `DIVERGES(zoom)`) and `host: flutter_chartjs_port`
+    (ADR 0009). For the commit pin, `ref` and `commit` are the full commit. The entry has no
+    `files`: `check:headers` reads the source paths from the submodule.
   - `doc/`: all zoom port docs: `README.md` (overview, roadmap, decisions), `host-seams.md` (each
     use of `chart.js` and of the DOM by the plugin, with the state of the host port: `connects`,
-    `zoom-side`, `gap` or `examine`), `parity.md`, `differences.md` and `upstream-ledger.md`. The
-    prior-art survey `prior-art/` comes in a later change.
+    `zoom-side`, `gap` or `examine`), `parity.md`, `differences.md` (its table of the reserved IDs
+    has the header cell `Reserved ID`, so `check:headers` reads no rows from it) and
+    `upstream-ledger.md`. The prior-art survey `prior-art/` comes in a later change.
     - `doc/adr/`: Zoom ADRs 0001-0003, all proposed. Zoom ADR 0001 (upstream source, name and
       license) has gate 0. Zoom ADR 0002 (file naming and layout) has gate 1. Zoom ADR 0003 (the
       connection to the host port) has gates 1 and 2. Docs name them "Zoom ADR NNNN".
-  - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
-    yet. `test --no-select` runs its tests.
+  - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
+    item 6). `test:web`, `test:cases`, `test:fixtures`, `parity`, `port:next` and
+    `check:typed-reads` do not examine it. `test --no-select` runs its tests.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the tag `v4.6.1`
@@ -1355,9 +1426,13 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036), `jsSin` and
   `jsCos` (`Math.sin` and `Math.cos` at a protected site: a site that reaches a layout, a scale, an
   element property, a hit test, a public return value or a discrete decision; a display-only site
-  keeps `dart:math` with `js-ok`, Chart.js ADR 0045) and the `undefined` sentinel (Chart.js ADR
-  0043). `JsStringList` of `js_array.dart` is a string as an array-like value: the reads `s[i]` and
-  `s.length`, and a `TypeError` for each write. `_dataCheck` keeps a string `data` in it.
+  keeps `dart:math` with `js-ok`, Chart.js ADR 0045), `jsHypot` (`Math.hypot` of two doubles in the
+  V8 form: the infinities first, then NaN, then the operands scaled by the larger magnitude;
+  `math.sqrt(a * a + b * b)` differs in the last bit for about one pair in three, Chart.js ADR
+  0108) and the `undefined` sentinel (Chart.js ADR 0043). `lib/js_semantics.dart` exports 11 of
+  these names for add-on ports (Chart.js ADR 0108). `JsStringList` of `js_array.dart` is a string
+  as an array-like value: the reads `s[i]` and `s.length`, and a `TypeError` for each write.
+  `_dataCheck` keeps a string `data` in it.
   `jsToString` of a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with
   the V8 zone name on the web and in UTC on the VM (Chart.js ADR 0036, differences.md row
   `platform-date-zone-name`). The conversions of `js_webidl.dart` (`canvasStyle`, `canvasNumber`,
@@ -1499,13 +1574,18 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `chartjsPluginZoomPackageVersion`, the entry in `tool/port_sources.yaml` and the headers (Zoom
   ADR 0001 item 7). `upstream:check` and `test/upstream_test.dart` fail on a mismatch.
 - The host connection (ADR 0009, Zoom ADR 0003): the zoom port imports only
-  `package:flutter_chartjs_port/chartjs.dart`, `package:flutter_chartjs_port/helpers.dart` and
-  the app library, never `package:flutter_chartjs_port/src/`. A part of the host that the public
+  `package:flutter_chartjs_port/chartjs.dart`, `package:flutter_chartjs_port/helpers.dart`,
+  `package:flutter_chartjs_port/js_semantics.dart` and the app library, never
+  `package:flutter_chartjs_port/src/`. Its tests also import
+  `package:chartjs_test_utils/flutter.dart` and `pure.dart`. `check:lib-imports` fails on another
+  import. A part of the host that the public
   libraries do not give is a host change with a Chart.js ADR, first. `host-seams.md` lists each
   use of the host with its state. A change that closes a seam updates its row.
 - A difference carries `// DIVERGES(zoom): <row id>, <reason>` and a row in `differences.md`.
+  `check:headers` pairs the markers and the rows.
 - The JS numeric rules of Chart.js ADRs 0045 and 0034 apply. The zoom port takes the JS runtime
-  from `js_semantics` (ADR 0008, seam H13). It does not copy `lib/src/js/` of the host.
+  from `package:flutter_chartjs_port/js_semantics.dart` (Chart.js ADR 0108, seam H13), and from the
+  package `js_semantics` when ADR 0008 makes it. It does not copy `lib/src/js/` of the host.
 
 ## Tests
 
@@ -1708,9 +1788,12 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
   tooltip, Chart.js ADR 0037 §17) and `test/port/index_umd_reference.dart` (the keys of the UMD
   `Chart`, Chart.js ADR 0048 §1). The other generators run on the reference engine of Chart.js
-  ADR 0045. `log10_reference.mjs`, `atan2_reference.mjs` and `trig_reference.mjs` stop unless
-  Node.js is the x64 build v24.12.0 (Chart.js ADR 0045 §2): on arm64, the log10 and trig data
-  differ in the last bits and in the NaN signs.
+  ADR 0045. `hypot_reference.mjs` (`test/port/js/hypot_reference.dart`, the 3,000 inputs of
+  `jsHypot`, Chart.js ADR 0108) is one of them: it does not stop on another engine, and
+  `js_math_hypot_test.dart` pins Node.js v24.22.1 on arm64. `log10_reference.mjs`,
+  `atan2_reference.mjs` and `trig_reference.mjs` stop unless Node.js is the x64 build v24.12.0
+  (Chart.js ADR 0045 §2): on arm64, the log10 and trig data differ in the last bits and in the NaN
+  signs.
   `theme_precedence_reference.mjs` also registers the 8 pinned controllers, and adds a JavaScript
   prototype of the hunks H4a-H5 to `plugin.colors.ts` in its prototype run. It and
   `controller_reference.mjs` register the seven plugins of `src/plugins/index.js` by name (a module

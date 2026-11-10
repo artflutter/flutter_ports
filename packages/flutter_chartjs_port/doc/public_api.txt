@@ -13,6 +13,7 @@ BubbleController
 CSSStyleDeclaration
 CancelableHookArgs
 CanvasCompositeOperation
+CanvasEventTarget
 CanvasFontSpec
 CanvasGradient
 CanvasImageSource
@@ -26,6 +27,8 @@ ChartConfiguration
 ChartEvent
 ChartMeta
 ChartMetaClip
+CssStyleProperties
+DOMRect
 DatasetController
 DatasetDrawHookArgs
 DatasetUpdateHookArgs
@@ -46,6 +49,10 @@ LineController
 LineElement
 LinearScale
 LogarithmicScale
+NativeEvent
+NativeEventListener
+NativeEventTarget
+NativeTouch
 Path2D
 PieController
 Plugin
@@ -118,6 +125,7 @@ BubbleDataset
 CSSStyleDeclaration
 CancelableHookArgs
 CanvasCompositeOperation
+CanvasEventTarget
 CanvasFontSpec
 CanvasGradient
 CanvasImageSource
@@ -165,6 +173,8 @@ ChartTooltip
 ChartTooltipItem
 ChartValue
 ChartView
+CssStyleProperties
+DOMRect
 DataPoint
 Dataset
 DatasetController
@@ -192,6 +202,10 @@ LinearAxis
 LinearScale
 LogarithmicAxis
 LogarithmicScale
+NativeEvent
+NativeEventListener
+NativeEventTarget
+NativeTouch
 Path2D
 PieController
 PieDataset
