@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
@@ -486,6 +487,83 @@ void main() {
       expect(event.target, same(chart.canvas));
       // The afterEvent replacement is gone after the callback.
       expect(jsIsFunction(chart.eventHandler), isTrue);
+    });
+
+    testWidgets('the event is cancelable and bubbles to the document of the '
+        'canvas', (tester) async {
+      final chart = eventChart(<String>[]);
+      final canvas = chart.canvas!;
+      final owner = canvas.ownerDocument;
+      final seen = <String>[];
+      void onCanvas(NativeEvent event) => seen.add('canvas');
+      void onDocument(NativeEvent event) {
+        seen.add('document ${identical(event.target, canvas)}');
+        event.preventDefault();
+      }
+
+      canvas.addEventListener('mousemove', onCanvas);
+      owner.addEventListener('mousemove', onDocument, passive: false);
+      addTearDown(() {
+        canvas.removeEventListener('mousemove', onCanvas);
+        owner.removeEventListener('mousemove', onDocument);
+      });
+
+      final event = await triggerMouseEvent(chart, 'mousemove', {
+        'x': 10,
+        'y': 20,
+      });
+      // utils.js:167-173: the event of the canvas reaches the document in
+      // the bubble phase, with the canvas as its target.
+      expect(seen, ['canvas', 'document true']);
+      expect(event.bubbles, isTrue);
+      expect(event.cancelable, isTrue);
+      expect(event.defaultPrevented, isTrue);
+      expect(event.target, same(canvas));
+    });
+
+    testWidgets('the client point is the box of the canvas plus the point', (
+      tester,
+    ) async {
+      // The wrapper of zoom.drag.spec.js:441 of chartjs-plugin-zoom.
+      final log = <String>[];
+      final chart = acquireChart(
+        <String, Object?>{
+          'plugins': [_eventLog(log)],
+        },
+        <String, Object?>{
+          'canvas': <String, Object?>{'height': 100, 'width': 200},
+          'wrapper': <String, Object?>{
+            'style': 'position: absolute; left: 50px; top: 30px;',
+          },
+        },
+      );
+      expect(
+        chart.canvas!.getBoundingClientRect(),
+        const DOMRect(50, 30, 200, 100),
+      );
+      log.clear();
+
+      final event = await triggerMouseEvent(chart, 'mousemove', {
+        'x': 10.5,
+        'y': 20,
+      });
+      expect((event.clientX, event.clientY), (60.5, 50.0));
+      // The offsets stay the point, which getRelativePosition reads.
+      expect((event.offsetX, event.offsetY), (10.5, 20.0));
+      expect(log[1], 'afterEvent mousemove mousemove 11,20');
+
+      // The default wrapper of acquireChart is at the top left corner of
+      // the body: the client point is the point.
+      final other = eventChart(<String>[]);
+      expect(
+        other.canvas!.getBoundingClientRect(),
+        const DOMRect(0, 0, 200, 100),
+      );
+      final second = await triggerMouseEvent(other, 'mousemove', {
+        'x': 7,
+        'y': 8,
+      });
+      expect((second.clientX, second.clientY), (7.0, 8.0));
     });
 
     testWidgets('the event types: click, mouseout, the custom types test and '

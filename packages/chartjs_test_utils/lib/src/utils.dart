@@ -14,8 +14,8 @@
 ///   chart, as upstream replaces a JS own property of the chart:
 ///   `Chart.resize` and `Chart.eventHandler` (`harness-method-fields`).
 ///   They are line-by-line ports with no hunk.
-/// - [triggerMouseEvent] dispatches a `NativeEvent` to the listeners of the
-///   canvas and pumps frames until the chart handled it.
+/// - [triggerMouseEvent] dispatches a bubbling `NativeEvent` on the canvas
+///   and pumps frames until the chart handled it.
 ///
 /// `createCanvas` and `readImageData` (:3-23) are `n/a`: the port compares
 /// no image (Chart.js ADR 0034). `injectCSS` (:117) is `n/a`: Flutter has no
@@ -55,7 +55,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 // the undefined sentinel,
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-// the EventTarget of the canvas,
+// the EventTarget and the box of the canvas,
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 // the native event,
@@ -313,21 +313,30 @@ Object? _property(Object el, String key) => switch (el) {
 
 /// utils.js:163 `triggerMouseEvent(chart, type, el)`.
 ///
-/// Dispatches an event of [type] at the point of [el] to the listeners of
-/// the canvas of [chart]. The Future completes with the event after the
-/// chart handled it. The hunks of `harness-trigger-mouse-event` (Chart.js
-/// ADR 0022, section 6):
-/// - The event is a `NativeEvent` with `offsetX` and `offsetY` at the point
-///   and the canvas as its target. The DOM `offsetX` of the upstream event
-///   is `clientX - rect.left`: the point, for a canvas without a border.
+/// Dispatches an event of [type] at the point of [el] on the canvas of
+/// [chart]. The Future completes with the event after the chart handled it.
+///
+/// As upstream, the event has `clientX: rect.left + point.x`,
+/// `clientY: rect.top + point.y`, `cancelable: true` and `bubbles: true`,
+/// where `rect` is `node.getBoundingClientRect()`, and
+/// `node.dispatchEvent(event)` dispatches it (the extension
+/// `CanvasEventTarget` of the chart host, Chart.js ADR 0108). The dispatch
+/// calls the listeners of the canvas, then the listeners of the document of
+/// `canvas.ownerDocument`, without a hit test and without the gesture
+/// arena, as the DOM call does. The throttled proxy of the platform then
+/// calls the chart in the next frame. `rect` is the box of the last layout
+/// of the chart host: the read does not force a layout. A canvas that no
+/// attached host shows has a box of zeros.
+///
+/// The hunks of `harness-trigger-mouse-event` (Chart.js ADR 0022, section
+/// 6, and Chart.js ADR 0108):
+/// - The event is a `NativeEvent` that also has `offsetX` and `offsetY` at
+///   the point. The DOM `offsetX` of the upstream event is
+///   `clientX - rect.left`: the point, for a canvas without a border.
 ///   Chrome rounds the offsets of a synthetic `MouseEvent` to integers.
 ///   `getRelativePosition` applies `Math.round` to the offsets. Thus the
 ///   chart event gets the Chrome position. Only `event.native.offsetX`
-///   keeps the fraction.
-/// - `dispatchCanvasEvent` replaces `node.dispatchEvent(event)` (:179). It
-///   calls the listeners of the canvas without a hit test and without the
-///   gesture arena, as the DOM call does. The throttled proxy of the
-///   platform then calls the chart in the next frame.
+///   keeps the fraction. `view: window` has no port: no listener reads it.
 /// - `await promise` (:181) pumps frames of 16 ms until the `afterEvent`
 ///   callback ran (`pumpFrames` of `dom.dart`). One frame is enough. A type
 ///   without a listener never resolves: `pumpFrames` then fails with the
@@ -340,22 +349,23 @@ Future<NativeEvent> triggerMouseEvent(
   Object? el,
 ]) async {
   final node = chart.canvas!;
-  // utils.js:165 `node.getBoundingClientRect()`: the event has the offsets
-  // in the canvas, which `getRelativePosition` reads.
+  final rect = node.getBoundingClientRect();
   final point = _resolveElementPoint(el);
   // DIVERGES(chartjs): harness-trigger-mouse-event, offsets in the canvas.
   final event = NativeEvent(
     type: type,
+    clientX: rect.left + point.x,
+    clientY: rect.top + point.y,
     offsetX: point.x,
     offsetY: point.y,
-    target: node,
+    cancelable: true,
+    bubbles: true,
   );
 
   var resolved = false;
   afterEvent(chart, type, () => resolved = true);
 
-  // DIVERGES(chartjs): harness-trigger-mouse-event, the canvas listeners.
-  dispatchCanvasEvent(node, event);
+  node.dispatchEvent(event);
 
   // DIVERGES(chartjs): harness-trigger-mouse-event, frames until resolved.
   await pumpFrames(() => resolved);
