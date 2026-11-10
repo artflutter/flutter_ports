@@ -103,6 +103,9 @@ melos:
     test:fixtures:zoom:
       run: cd packages/flutter_chartjs_plugin_zoom_port && flutter test --tags fixtures test/specs/fixtures_test.dart
       description: Run the 12 upstream fixtures of flutter_chartjs_plugin_zoom_port (the tag fixtures, seam H24) and compare their scale ranges at the snapshot points with test/fixtures/fixtures_reference.dart. Without the submodule third_party/chartjs-plugin-zoom, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
+    test:zoom:range-only:
+      run: cd packages/flutter_chartjs_plugin_zoom_port && flutter test --dart-define=ZOOM_RANGE_ONLY_UPDATES=true
+      description: Run the tests of flutter_chartjs_plugin_zoom_port, the fixtures among them, with the zoom option rangeOnlyUpdates true in Chart.defaults.plugins.zoom, so each zoom and pan takes chart.updateRanges (Chart.js ADR 0111). The results are those of the run without it.
     test:cases:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart
       description: Run the flutter_chartjs_port spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.

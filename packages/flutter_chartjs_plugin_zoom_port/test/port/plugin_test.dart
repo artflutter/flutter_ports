@@ -8,7 +8,9 @@ import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
 import 'package:flutter/widgets.dart'
     show Align, Alignment, Directionality, SizedBox, TextDirection, Widget;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Element, undefined;
+import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart' show getState;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show Element, JsObjectFace, undefined;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -119,7 +121,291 @@ Object _observe(Chart chart) => [
     ((element as Element).x, element.y),
 ];
 
+/// The resolver of the chart options of [chart]: `update` makes a new one,
+/// `updateRanges` keeps it (Chart.js ADR 0111).
+Object? _resolver(Chart chart) => chart.options.jsRead('_proxy');
+
+/// A line chart of 24 points on the linear scales `x` and `y` with the zoom
+/// options [zoom], and the port-only option `rangeOnlyUpdates` of
+/// [rangeOnly]. The title text is scriptable: it reads the zoom level and
+/// adds each text to [titles].
+Map<String, Object?> _rangeConfig(
+  Map<String, Object?> zoom, {
+  required bool rangeOnly,
+  required List<String> titles,
+}) => <String, Object?>{
+  'type': 'line',
+  'data': <String, Object?>{
+    'datasets': <Object?>[
+      <String, Object?>{
+        'label': 'a',
+        'data': <Object?>[
+          for (var i = 0; i < 24; i++)
+            <String, Object?>{
+              'x': i * 4.0,
+              'y': 10.0 + (i * 37) % 80,
+            },
+        ],
+        'pointRadius': 3.0,
+      },
+    ],
+  },
+  'options': <String, Object?>{
+    'animation': false,
+    'scales': <String, Object?>{
+      'x': <String, Object?>{'type': 'linear', 'min': 0.0, 'max': 100.0},
+      'y': <String, Object?>{'type': 'linear'},
+    },
+    'plugins': <String, Object?>{
+      'title': <String, Object?>{
+        'display': true,
+        'text': (Object? ctx) {
+          final chart = (ctx! as JsObjectFace).jsRead('chart')! as Chart;
+          final level = 'Zoom level ${chart.getZoomLevel()}';
+          titles.add(level);
+          return level;
+        },
+      },
+      'zoom': <String, Object?>{
+        ...zoom,
+        // An explicit false: the run with the option in the defaults keeps
+        // the full path for this chart.
+        'rangeOnlyUpdates': rangeOnly,
+      },
+    },
+  },
+};
+
+/// What a zoom step leaves: the ranges and the ticks of the scales, the zoom
+/// state, the chart area and the position of each point.
+Object _rangeObserve(Chart chart) => [
+  for (final id in const ['x', 'y']) ...[
+    chart.scales[id]!.min,
+    chart.scales[id]!.max,
+    [for (final t in chart.scales[id]!.ticks!) (t.value, t.label)],
+    chart.getZoomedScaleBounds()[id],
+    chart.getInitialScaleBounds()[id],
+  ],
+  chart.getZoomLevel(),
+  chart.isZoomedOrPanned(),
+  chart.isZoomingOrPanning(),
+  [
+    chart.chartArea!.left,
+    chart.chartArea!.top,
+    chart.chartArea!.right,
+    chart.chartArea!.bottom,
+  ],
+  for (final element in chart.getDatasetMeta(0).data)
+    ((element as Element).x, element.y),
+];
+
 void main() {
+  group('range-only updates (Chart.js ADR 0111)', () {
+    /// The zoom options of the flows: each input on.
+    Map<String, Object?> zoomOptions({
+      Object? mode = 'xy',
+      Object? onZoomComplete,
+    }) => <String, Object?>{
+      'zoom': <String, Object?>{
+        'wheel': <String, Object?>{'enabled': true},
+        'drag': <String, Object?>{'enabled': true},
+        'pinch': <String, Object?>{'enabled': true},
+        'mode': mode,
+        'onZoomComplete': ?onZoomComplete,
+      },
+      'pan': <String, Object?>{
+        'enabled': true,
+        'mode': 'xy',
+        'threshold': 0.0,
+      },
+    };
+
+    /// The flows of the ADR: each runs on one chart.
+    final flows = <String, void Function(Chart chart)>{
+      'wheel': (chart) {
+        final area = chart.chartArea!;
+        triggerWheelEvent(
+          chart,
+          x: area.left + area.width * 0.3,
+          y: area.top + area.height * 0.6,
+          deltaY: -100,
+        );
+      },
+      'drag box': (chart) {
+        final area = chart.chartArea!;
+        dispatchEvent(chart, 'mousedown', (
+          x: (area.left + 40).roundToDouble(),
+          y: (area.top + 30).roundToDouble(),
+        ));
+        dispatchEvent(chart, 'mousemove', (
+          x: (area.left + 160).roundToDouble(),
+          y: (area.top + 150).roundToDouble(),
+        ));
+        dispatchEvent(chart, 'mouseup', (
+          x: (area.left + 160).roundToDouble(),
+          y: (area.top + 150).roundToDouble(),
+        ));
+      },
+      'pinch': (chart) => simulatePinch(chart, scale: 1.5),
+      'mouse pan': (chart) => simulatePan(
+        chart,
+        deltaX: 60,
+        deltaY: -20,
+        init: const EventInit(pointerType: 'mouse'),
+      ),
+      'zoom': (chart) => chart.zoom(const .all(1.2)),
+      'zoomRect': (chart) => chart.zoomRect(
+        (x: 120.0, y: 90.0),
+        (
+          x: 300.0,
+          y: 260.0,
+        ),
+      ),
+      'zoomScale': (chart) => chart.zoomScale('x', (min: 10, max: 60)),
+      'pan': (chart) => chart.pan(const PanAmount(x: -30, y: 15)),
+      'resetZoom': (chart) => chart.resetZoom(),
+    };
+
+    testWidgets('each flow takes updateRanges and ends as without the '
+        'option', (tester) async {
+      final fullTitles = <String>[];
+      final rangeTitles = <String>[];
+      final full = acquireChart(
+        _rangeConfig(zoomOptions(), rangeOnly: false, titles: fullTitles),
+      );
+      final ranges = acquireChart(
+        _rangeConfig(zoomOptions(), rangeOnly: true, titles: rangeTitles),
+      );
+      final levels = <String>{};
+      for (final MapEntry(key: name, value: flow) in flows.entries) {
+        final fullResolver = _resolver(full);
+        final rangeResolver = _resolver(ranges);
+        fullTitles.clear();
+        rangeTitles.clear();
+        flow(full);
+        flow(ranges);
+        expect(
+          _resolver(ranges),
+          same(rangeResolver),
+          reason: '$name: the range path',
+        );
+        expect(
+          _resolver(full),
+          isNot(same(fullResolver)),
+          reason: '$name: the full path',
+        );
+        expect(_rangeObserve(ranges), _rangeObserve(full), reason: name);
+        expect(rangeTitles, fullTitles, reason: '$name: the title');
+        expect(rangeTitles, isNotEmpty, reason: '$name: the title runs');
+        levels.addAll(rangeTitles);
+        final pixels = await tester.runAsync(
+          () => Future.wait([full.toBase64Image(), ranges.toBase64Image()]),
+        );
+        expect(pixels![1], pixels[0], reason: '$name: the pixels');
+      }
+      // The scriptable title shows the level of the steps.
+      expect(levels.length, greaterThan(3));
+      // The debounced onZoomComplete of the wheel.
+      await tester.pump(const Duration(milliseconds: 300));
+    });
+
+    testWidgets('onZoomComplete and a mode function keep the range path', (
+      tester,
+    ) async {
+      final completed = <Chart>[];
+      final modes = <Chart>[];
+      final options = zoomOptions(
+        mode: (ZoomChartContext context) {
+          modes.add(context.chart);
+          return 'x';
+        },
+        onZoomComplete: (ZoomChartContext context) =>
+            completed.add(context.chart),
+      );
+      final chart = acquireChart(
+        _rangeConfig(options, rangeOnly: true, titles: <String>[]),
+      );
+      final resolver = _resolver(chart);
+      final area = chart.chartArea!;
+      chart.zoom(const .all(1.5));
+      triggerWheelEvent(
+        chart,
+        x: area.left + area.width / 2,
+        y: area.top + area.height / 2,
+        deltaY: -100,
+      );
+      chart.resetZoom();
+      expect(_resolver(chart), same(resolver));
+      expect(modes, isNotEmpty);
+      expect(completed, [chart]);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(completed, [chart, chart]);
+      expect(_resolver(chart), same(resolver));
+    });
+
+    testWidgets('the option in the defaults reaches the plugin options', (
+      tester,
+    ) async {
+      // The suite with --dart-define=ZOOM_RANGE_ONLY_UPDATES=true writes it
+      // into Chart.defaults.plugins.zoom (flutter_test_config.dart).
+      final chart = acquireChart(<String, Object?>{'type': 'line'});
+      expect(getState(chart).options.rangeOnlyUpdates, zoomRangeOnlyUpdates);
+    });
+
+    testWidgets('with the option off, a zoom takes update', (tester) async {
+      expect(
+        const ZoomPluginOptions(<String, Object?>{}).rangeOnlyUpdates,
+        isFalse,
+      );
+      final chart = acquireChart(
+        _rangeConfig(zoomOptions(), rangeOnly: false, titles: <String>[]),
+      );
+      final resolver = _resolver(chart);
+      chart.zoom(const .all(1.5));
+      expect(_resolver(chart), isNot(same(resolver)));
+    });
+
+    testWidgets('a ChartView with dataOnlyUpdates takes updateData for the '
+        'data tick after a zoom step', (tester) async {
+      final spy = _spyOnCharts();
+      final zoom = <String, Object?>{
+        'plugins': <String, Object?>{
+          'zoom': <String, Object?>{
+            'zoom': <String, Object?>{
+              'wheel': <String, Object?>{'enabled': true},
+            },
+            'rangeOnlyUpdates': true,
+          },
+        },
+      };
+      Chart? created;
+      Widget view(int step) => _view(
+        step,
+        zoom,
+        dataOnly: true,
+        onChartCreated: (chart) => created = chart,
+      );
+      await tester.pumpWidget(view(0));
+      await tester.pump();
+      await tester.pumpWidget(view(1));
+      final chart = created!;
+      final resolver = _resolver(chart);
+      spy.clear();
+      chart.zoom(const .all(1.5));
+      // The range update: its hooks and its layout run.
+      expect(spy.updates, 1);
+      expect(spy.layouts, 1);
+      expect(_resolver(chart), same(resolver));
+      spy.clear();
+      await tester.pumpWidget(view(2));
+      expect(spy.updates, 1);
+      expect(spy.layouts, 0);
+      expect(chart.scales['x']!.min, toBe(25));
+      expect(chart.scales['x']!.max, toBe(75));
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
+
   group('data-only updates (seam H25)', () {
     test('the plugin opts in', () {
       expect(zoomPlugin.supportsDataUpdates, isTrue);

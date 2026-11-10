@@ -25,7 +25,8 @@ and the public API of the Chart.js port.
 - **Host seams:** [host-seams.md](host-seams.md) lists each use of the host with its state and
   the tests that pin it. At the end of zoom phase 4 (2026-11-10), 18 seams connect, 6 need only a
   Dart form in the zoom port and 3 wait for later host decisions (H18, H19, and H27, the trackpad
-  of a native desktop app).
+  of a native desktop app). H28, the range update of Chart.js ADR 0111, connects since the same
+  day.
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md).
@@ -37,6 +38,45 @@ and the public API of the Chart.js port.
   a `ChartView` with the pointer and key events of Flutter.
 - **Gallery:** the zoom page of `apps/chartjs_gallery` (phase 4, ADR 0009 item 8).
 - **License:** MIT, as upstream ([LICENSE](../LICENSE)).
+
+## The option `rangeOnlyUpdates`
+
+The port has one option that upstream does not have: `plugins.zoom.rangeOnlyUpdates`, a `bool` with
+no default (an absent key is `false`). With `true`, each zoom and pan step updates the chart with
+`chart.updateRanges(transition)` of the host
+([Chart.js ADR 0111](../../flutter_chartjs_port/doc/adr/0111-range-updates.md)) in place of
+`chart.update(transition)`. The range update keeps the configuration of the last full update and
+skips its rebuild; each hook, the layout, the dataset updates and the draw run as in `update`, and
+each scriptable option runs again. The ranges, the ticks, the points and the pixels are those of
+`update`.
+
+```dart
+ChartView(
+  config: ChartConfig(
+    // ...
+    extra: {
+      'plugins': {
+        'zoom': {
+          'zoom': {'wheel': {'enabled': true}, 'pinch': {'enabled': true}},
+          'pan': {'enabled': true},
+          'rangeOnlyUpdates': true,
+        },
+      },
+    },
+  ),
+)
+```
+
+The app keeps the contract of `updateRanges`: between the full updates of the chart, nothing
+changes an option, a default (`Chart.defaults`, `Chart.overrides`), the theme, a dataset, a scale
+or a plugin in place. New data values, a new data List and new labels are allowed. A `ChartView`
+keeps the contract: a new config, a new theme and a change of the reduced-motion preference reach
+the chart through a full update. An app that writes `chart.options` or a dataset Map in place calls
+`chart.update()` after the write. The host takes `update` by itself when one of its checks fails:
+another class of chart, config or controller, a plugin that does not opt into the partial
+lifecycles, a notified change of a data array, another `data`, `options` or dataset object, or an
+update since which the state is not valid (a resize, a visibility change, a cancelled update). Row
+`adapt-range-only-updates` of [differences.md](differences.md), seam H28.
 
 ## What gets ported
 

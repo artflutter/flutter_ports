@@ -28,7 +28,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_chartjs_port/helpers.dart' show isNullOrUndef;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
+import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsTruthy;
 
 /// options.ts:5 `Mode = 'x' | 'y' | 'xy'`: the zoom or pan directions.
 extension type const Mode(String name) implements String {
@@ -313,4 +313,17 @@ extension type const ZoomPluginOptions(Object? raw) {
 
   /// options.ts:208 `zoom`: the zoom options.
   ZoomOptions get zoom => ZoomOptions(jsGet(raw, 'zoom'));
+
+  /// `rangeOnlyUpdates`, a port-only option with no default: whether each
+  /// zoom and pan updates the chart with `chart.updateRanges(transition)` of
+  /// the host in place of `chart.update(transition)` (Chart.js ADR 0111). The
+  /// ToBoolean of the read: an absent key is false.
+  ///
+  /// The app keeps the contract of `updateRanges`: between the full updates
+  /// of the chart, nothing changes an option, a default, the theme, a
+  /// dataset, a scale or a plugin in place, except the `min` and `max` that
+  /// the plugin writes. New data values, data Lists and labels are allowed.
+  /// The host takes `update` when one of its checks fails.
+  // DIVERGES(zoom): adapt-range-only-updates, the port-only opt-in.
+  bool get rangeOnlyUpdates => jsTruthy(jsGet(raw, 'rangeOnlyUpdates'));
 }

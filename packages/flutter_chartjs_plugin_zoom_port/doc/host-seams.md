@@ -30,7 +30,7 @@ States:
 
 | State | Seams |
 |---|---|
-| `connects` | H1, H2, H3, H4, H5, H6, H7, H8, H13, H14, H15, H16, H17, H20, H21, H22, H23, H25 |
+| `connects` | H1, H2, H3, H4, H5, H6, H7, H8, H13, H14, H15, H16, H17, H20, H21, H22, H23, H25, H28 |
 | `zoom-side` | H9, H10, H11, H12, H24, H26 |
 | `gap` | H18, H19, H27 |
 | `examine` | none |
@@ -44,7 +44,8 @@ host change. The typed options slot (H18) and the theme extension (H19) wait for
 Chart.js ADRs, in zoom phase 5 (Zoom ADR 0003 item 11). H18 also covers the inline plugins of a
 typed config: `ChartConfig.plugins` takes only plugin Maps. H25 and H26 are new: the data-only
 opt-in and the key order of the scales. H27 is the trackpad of a native desktop app, which Chart.js
-ADR 0108 leaves open (its Open 5).
+ADR 0108 leaves open (its Open 5). H28 is the opt-in range update of Chart.js ADR 0111 (accepted
+2026-11-10): the port-only option `rangeOnlyUpdates`.
 
 ## Imports
 
@@ -88,6 +89,7 @@ ADR 0108 leaves open (its Open 5).
 | H22 | Chart reads: `scales`, `chartArea`, `canvas`, `ctx`, `legend`, `draw()` (`src/core.ts`, `src/handlers.ts`, `src/plugin.ts:23-49`). | All are members of `Chart` (`core.controller.dart:821`, `:826`, `:873`, `:903`, `:954`, `:2060`). `legend` is `types.LegendElement?`. | `connects` | None. `chart.chartArea!`, `chart.ctx!` and `chart.canvas!` in `lib/src/core.dart`, `handlers.dart`, `gestures.dart` and `plugin.dart`. |
 | H25 | A registered plugin runs in each chart. | `Chart.updateData` (Chart.js ADR 0074) runs only when each plugin opts in (`PluginService.supportsDataUpdates`, `lib/src/core/core.plugins.dart:92-111`). A `Plugin` opts in with `supportsDataUpdates` (`lib/src/types/plugin.dart:871`). Without it, a global `Chart.register([zoomPlugin])` turns off `ChartView.dataOnlyUpdates` for each chart. The data-only lifecycle runs the `beforeUpdate` hook and keeps the layout, the ticks and the scale ranges of the last full update. It takes static user options only: a function in the options other than `onClick` and `onHover` makes each new config a full update (`staticDataUpdateOptions`, `lib/src/core/data_update.dart:133`). | `connects` | None. The plugin opts in (`Plugin(supportsDataUpdates: true)`, Zoom ADR 0003 item 14). The group `data-only updates (seam H25)` of `test/port/plugin_test.dart` runs a `ChartView` with `dataOnlyUpdates` through a zoom, a pan, a wheel zoom and a reset, each followed by new data: the new data takes `chart.updateData()` (no layout), and the scale ranges, the zoom state and the points equal those of the same steps with full updates. A zoom option with a function (a callback such as `onZoomComplete`, or a `mode` function) keeps the full update; the test pins it. |
 | H26 | `Object.keys(chart.scales)` and `Object.values(chart.scales)` (`src/core.ts:112`, `:145`, `:180`, `:223`, `:242-262`, `src/utils.ts:47-88`). JS puts the array index keys first. | `Chart.scales` is a Dart `Map<String, Scale>` in insertion order (`core.controller.dart:903`). | `zoom-side` | None. `lib/src/core.dart` and `lib/src/utils.dart` iterate `jsObjectKeys(chart.scales)` of `js_semantics.dart`. |
+| H28 | Each zoom and pan step calls `chart.update(transition)` (`src/core.ts:90`, `:120`, `:136`, `:156`, `:233`; H15), and the update rebuilds the configuration: the cache clear and the scale merge of `config.update()`, new resolvers for the chart, each plugin and each dataset, the checks of the scales. Only `min` and `max` of the scales changed. | `Chart.updateRanges([mode])` (Chart.js ADR 0111, `lib/src/core/core.controller.dart`, the row `adapt-range-updates` of the host) keeps the configuration of the last full update and makes new context views over the kept resolvers; each hook, the layout, the dataset updates and the draw run as in `update`. A check sends it to `update(mode)`: a nested call, no completed full update since an invalidation, another class of chart, config or controller, a plugin that does not opt in, a notified data change, another `data`, `options` or dataset object. The caller keeps its contract: no other change in place between the full updates. | `connects` | None. The port-only zoom option `rangeOnlyUpdates: true` (no default, `ZoomPluginOptions.rangeOnlyUpdates`) makes the five calls take `updateRanges` (`_updateChart` of `lib/src/core.dart`, row `adapt-range-only-updates`). The group `range-only updates (Chart.js ADR 0111)` of `test/port/plugin_test.dart` runs each flow (wheel, drag box, pinch, mouse pan, `zoom`, `zoomRect`, `zoomScale`, `pan`, `resetZoom`) with and without the option and compares the scale ranges, the ticks, the zoom state, the points, a scriptable title and the pixels; `onZoomComplete` and a `mode` function keep the range path; a `ChartView` with `dataOnlyUpdates` takes `updateData` for the data tick after a zoom step. `dart run melos run test:zoom:range-only` runs the suite with the option in `Chart.defaults.plugins.zoom`. |
 
 ## App surface and tests
 
