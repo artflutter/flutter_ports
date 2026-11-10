@@ -9,8 +9,9 @@ access at runtime.
 
 > **Status:** phase 3, work in progress. Each module of the plugin is ported: the zoom and pan
 > API, the wheel and drag zoom, the pointer pan and pinch, and the plugin object with its entries.
-> The specs of the API, the defaults and the module pass; the input specs, the fixtures and a
-> gallery page are in progress. It is not published. The plan, the roadmap and the decisions are in
+> The specs of the API, the defaults, the module, the wheel and drag zoom, the pan, the pinch and
+> the gestures pass; the fixtures and a gallery page are in progress. It is not published. The
+> plan, the roadmap and the decisions are in
 > [doc/README.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_plugin_zoom_port/doc/README.md).
 
 The port also tests the connection between a third-party plugin and the Chart.js port. The plugin
