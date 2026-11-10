@@ -38,6 +38,10 @@ dev_dependencies:
   # The specs that create a chart are testWidgets tests (Zoom ADR 0002).
   flutter_test:
     sdk: flutter
+  # test/port/public_library_test.dart imports the public library next to
+  # the host app library and Material, as an app does (Chart.js ADR 0048).
+  # The constraint is that of flutter_chartjs_port.
+  material_ui: ^1.10.0
   # test/upstream_test.dart uses package:test. The constraint is the test
   # constraint of flutter_chartjs_port. 1.31.1 matches the test_api pin of
   # flutter_test in Flutter 3.47.7 (0.7.12).
