@@ -8064,10 +8064,123 @@ exact chart now also records the snapshot of the range path (one pass over the d
 `test/port/core/range_update_test.dart` and of the group `range-only updates` of the zoom `test/port/plugin_test.dart`
 give the results of `update`. The bench define `--dart-define=ZOOM_RANGE_UPDATES=true` writes
 `rangeOnlyUpdates: true` into the input cases of the mode `zoom` (the key `rangeUpdates` of their BENCH lines); the
-cases `zoom.base` and `zoom.idle` stay as they are. The night run measures it on the Pixel 8a, the iPhone 17 Pro and
-the Mac: one build of the same commit without and with the define, 2 runs per side, with the gain of the ADR's
-section 10 as the estimate. It also times `zoom.base` and `zoom.idle` of the parent commit against this commit
-without the define, for the cost of the snapshot on the default path. Its figures go here.
+cases `zoom.base` and `zoom.idle` stay as they are.
+
+**Range updates, measured** (the night of 2026-11-10). Two builds of `lib/main_bench.dart` with `CASES=zoom` at
+`c05371a` for each target, without and with the define (off and on). Each side ran once on each target, off first, so
+each cell had one run. `zoom.base` and `zoom.idle` write no zoom option in either build: they are the control rows. The
+native apps are profile builds. The browsers loaded `flutter build web --wasm --profile`: Chrome ran WebAssembly with
+skwasm, and Firefox and Safari ran JavaScript with CanvasKit. Step p50 in ms.
+
+Native apps:
+
+| Case | Points | x axis | Mac app, off | Mac app, on | change | Pixel 8a app, off | Pixel 8a app, on | change | iPhone 17 Pro app, off | iPhone 17 Pro app, on | change |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `zoom.wheel` | 1,000 | linear | 0.498 | 0.336 | -32.5% | 1.069 | 0.740 | -30.8% | 0.446 | 0.322 | -27.8% |
+| `zoom.wheel` | 20,000 | linear | 3.090 | 2.864 | -7.3% | 6.789 | 6.414 | -5.5% | 3.170 | 2.921 | -7.9% |
+| `zoom.wheel` | 1,000 | time | 0.695 | 0.517 | -25.6% | 1.492 | 1.122 | -24.8% | 0.665 | 0.477 | -28.3% |
+| `zoom.wheel` | 20,000 | time | 3.404 | 3.183 | -6.5% | 7.580 | 7.113 | -6.2% | 3.657 | 3.181 | -13.0% |
+| `zoom.pan` | 1,000 | linear | 0.482 | 0.323 | -33.0% | 1.048 | 0.739 | -29.5% | 0.492 | 0.313 | -36.4% |
+| `zoom.pan` | 20,000 | linear | 3.147 | 2.942 | -6.5% | 6.983 | 6.656 | -4.7% (capped) | 3.362 | 2.936 | -12.7% |
+| `zoom.pan` | 1,000 | time | 0.688 | 0.520 | -24.4% | 1.580 | 1.204 | -23.8% (capped) | 0.686 | 0.478 | -30.3% |
+| `zoom.pan` | 20,000 | time | 3.463 | 3.225 | -6.9% | 8.175 | 7.676 | -6.1% (capped) | 3.657 | 3.247 | -11.2% |
+| `zoom.pinch` | 1,000 | linear | 0.487 | 0.320 | -34.3% | 1.278 | 0.821 | -35.8% (capped) | 0.479 | 0.314 | -34.4% |
+| `zoom.pinch` | 20,000 | linear | 2.927 | 2.780 | -5.0% | 8.029 | 7.205 | -10.3% (capped) | 2.981 | 2.783 | -6.6% |
+| `zoom.api` | 1,000 | linear | 0.493 | 0.345 | -30.0% | 1.756 | 1.066 | -39.3% (capped) | 0.480 | 0.332 | -30.8% |
+| `zoom.api` | 20,000 | linear | 3.087 | 2.915 | -5.6% | 10.233 | 8.065 | -21.2% (capped) | 3.243 | 2.933 | -9.6% |
+| `zoom.apiPan` | 1,000 | linear | 0.489 | 0.330 | -32.5% | 1.751 | 0.918 | -47.6% (capped) | 0.463 | 0.314 | -32.2% |
+| `zoom.apiPan` | 20,000 | linear | 3.141 | 2.942 | -6.3% | 9.572 | 8.087 | -15.5% (capped) | 3.191 | 2.924 | -8.4% |
+| `zoom.drag` | 1,000 | linear | 0.111 | 0.110 | -0.9% | 0.284 | 0.266 | -6.3% (capped) | 0.121 | 0.114 | -5.8% |
+| `zoom.drag` | 20,000 | linear | 1.179 | 1.165 | -1.2% | 3.299 | 3.243 | -1.7% (capped) | 1.264 | 1.264 | +0.0% |
+
+Mac browsers:
+
+| Case | Points | x axis | Mac Chrome, off | Mac Chrome, on | change | Mac Firefox, off | Mac Firefox, on | change | Mac Safari, off | Mac Safari, on | change |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `zoom.wheel` | 1,000 | linear | 0.586 | 0.384 | -34.5% | 1.620 | 0.940 | -42.0% | 1.020 | 0.680 | -33.3% |
+| `zoom.wheel` | 20,000 | linear | 3.735 | 3.460 | -7.4% | 7.880 | 6.400 | -18.8% | 4.920 | 4.200 | -14.6% |
+| `zoom.wheel` | 1,000 | time | 0.735 | 0.520 | -29.3% | 2.080 | 1.340 | -35.6% | 1.460 | 1.020 | -30.1% |
+| `zoom.wheel` | 20,000 | time | 4.029 | 3.635 | -9.8% | 8.300 | 7.720 | -7.0% | 4.940 | 4.020 | -18.6% |
+| `zoom.pan` | 1,000 | linear | 0.571 | 0.375 | -34.3% | 1.480 | 0.940 | -36.5% | 1.000 | 0.660 | -34.0% |
+| `zoom.pan` | 20,000 | linear | 4.160 | 3.655 | -12.1% | 7.480 | 6.680 | -10.7% | 4.920 | 4.100 | -16.7% |
+| `zoom.pan` | 1,000 | time | 0.740 | 0.520 | -29.7% | 2.020 | 1.360 | -32.7% | 1.460 | 1.000 | -31.5% |
+| `zoom.pan` | 20,000 | time | 4.475 | 3.920 | -12.4% | 7.960 | 7.980 | +0.3% | 5.320 | 3.840 | -27.8% |
+| `zoom.pinch` | 1,000 | linear | 0.561 | 0.360 | -35.8% | 1.520 | 0.900 | -40.8% | 0.960 | 0.600 | -37.5% |
+| `zoom.pinch` | 20,000 | linear | 3.940 | 3.495 | -11.3% | 7.280 | 6.540 | -10.2% | 4.600 | 3.940 | -14.3% |
+| `zoom.api` | 1,000 | linear | 0.585 | 0.390 | -33.3% | 1.560 | 0.980 | -37.2% | 1.020 | 0.680 | -33.3% |
+| `zoom.api` | 20,000 | linear | 4.219 | 3.910 | -7.3% | 8.020 | 7.160 | -10.7% | 4.680 | 4.240 | -9.4% |
+| `zoom.apiPan` | 1,000 | linear | 0.570 | 0.380 | -33.3% | 1.580 | 0.940 | -40.5% | 0.940 | 0.620 | -34.0% |
+| `zoom.apiPan` | 20,000 | linear | 4.335 | 3.995 | -7.8% | 7.380 | 6.560 | -11.1% | 4.540 | 4.040 | -11.0% |
+| `zoom.drag` | 1,000 | linear | 0.135 | 0.135 | +0.0% | 0.220 | 0.220 | +0.0% | 0.200 | 0.180 | -10.0% |
+| `zoom.drag` | 20,000 | linear | 1.799 | 1.806 | +0.4% | 1.540 | 1.560 | +1.3% | 1.320 | 1.240 | -6.1% |
+
+Pixel browsers:
+
+| Case | Points | x axis | Pixel Chrome, off | Pixel Chrome, on | change | Pixel Firefox, off | Pixel Firefox, on | change |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `zoom.wheel` | 1,000 | linear | 1.925 | 1.230 | -36.1% | 4.580 | 2.760 | -39.7% |
+| `zoom.wheel` | 20,000 | linear | 9.270 | 8.159 | -12.0% | 18.440 | 16.000 | -13.2% |
+| `zoom.wheel` | 1,000 | time | 1.986 | 1.589 | -20.0% | 5.780 | 3.840 | -33.6% |
+| `zoom.wheel` | 20,000 | time | 10.354 | 9.505 | -8.2% | 20.060 | 17.640 | -12.1% |
+| `zoom.pan` | 1,000 | linear | 1.795 | 1.191 | -33.6% | 4.380 | 2.620 | -40.2% |
+| `zoom.pan` | 20,000 | linear | 10.020 | 9.336 | -6.8% | 18.220 | 16.120 | -11.5% |
+| `zoom.pan` | 1,000 | time | 1.920 | 1.365 | -28.9% | 5.900 | 3.820 | -35.3% |
+| `zoom.pan` | 20,000 | time | 10.900 | 10.094 | -7.4% | 21.400 | 17.500 | -18.2% (capped) |
+| `zoom.pinch` | 1,000 | linear | 1.565 | 1.165 | -25.6% | 5.100 | 2.740 | -46.3% (capped) |
+| `zoom.pinch` | 20,000 | linear | 9.255 | 8.620 | -6.9% | 21.520 | 17.060 | -20.7% (capped) |
+| `zoom.api` | 1,000 | linear | 1.689 | 1.276 | -24.5% (capped) | 5.400 | 3.120 | -42.2% (capped) |
+| `zoom.api` | 20,000 | linear | 10.269 | 9.840 | -4.2% (capped) | 21.840 | 20.020 | -8.3% (capped) |
+| `zoom.apiPan` | 1,000 | linear | 1.725 | 1.304 | -24.4% (capped) | 5.260 | 3.360 | -36.1% (capped) |
+| `zoom.apiPan` | 20,000 | linear | 10.095 | 9.944 | -1.5% (capped) | 22.380 | 23.740 | +6.1% (capped) |
+| `zoom.drag` | 1,000 | linear | 0.324 | 0.325 | +0.3% | 0.720 | 0.700 | -2.8% (capped) |
+| `zoom.drag` | 20,000 | linear | 4.159 | 4.170 | +0.3% | 4.420 | 3.960 | -10.4% (capped) |
+
+**The capped rows.** A pass on the Pixel takes about 135 s, and the chip reaches about 37.5 C in it. The big core then fell
+below its top frequency: at about 97 s in the app, at about 105 s and 116 s in Firefox, and at about 126 s in the on pass
+of Chrome. Each of these passes was capped twice, and the second run is kept. The off pass of Pixel Chrome had no cap. A
+row marked `(capped)` ended after the last reading at the top frequency in one of its two passes. Its figures do not
+compare, because the two passes hit different caps at that moment, and it is left out of the means. The wheel rows of
+the Pixel all ran before the cap.
+
+The geometric mean of on/off of step p50, with the change. The input steps are wheel, pan, pinch, `zoom.api` and
+`zoom.apiPan`. The drag box is apart, because it only draws and takes no update:
+
+| Target | Input steps, 1,000 | Input steps, 20,000 | Drag box, 1,000 / 20,000 | Control rows, 1,000 | Control rows, 20,000 | Control rows, range |
+| --- | ---: | ---: | --- | ---: | ---: | --- |
+| Mac app | 0.696 (-30.4%) | 0.937 (-6.3%) | -0.9% / -1.2% | 0.998 (-0.2%) | 0.990 (-1.0%) | -1.9% to +1.3% |
+| Pixel 8a app | 0.716 (-28.4%) | 0.942 (-5.8%) | capped / capped | 0.978 (-2.2%) | 0.985 (-1.5%) | -4.8% to +1.5% |
+| iPhone 17 Pro app | 0.685 (-31.5%) | 0.901 (-9.9%) | -5.8% / +0.0% | 1.077 (+7.7%) | 1.053 (+5.3%) | +1.7% to +12.0% |
+| Mac Chrome | 0.671 (-32.9%) | 0.902 (-9.8%) | +0.0% / +0.4% | 0.997 (-0.3%) | 1.007 (+0.7%) | -3.0% to +7.6% |
+| Mac Firefox | 0.620 (-38.0%) | 0.901 (-9.9%) | +0.0% / +1.3% | 1.009 (+0.9%) | 1.014 (+1.4%) | -5.3% to +8.9% |
+| Mac Safari | 0.666 (-33.4%) | 0.837 (-16.3%) | -10.0% / -6.1% | 0.946 (-5.4%) | 0.920 (-8.0%) | -33.4% to +0.0% |
+| Pixel Chrome | 0.709 (-29.1%) | 0.917 (-8.3%) | +0.3% / +0.3% | 1.025 (+2.5%) | 1.017 (+1.7%) | -1.4% to +8.0% |
+| Pixel Firefox | 0.628 (-37.2%) | 0.877 (-12.3%) | capped / capped | 0.999 (-0.1%) | 0.992 (-0.8%) | -3.2% to +1.9% |
+
+On the Pixel the means cover the rows before the cap: 3 and 2 rows in the app, 5 and 5 in Chrome, and 4 and 3 in
+Firefox, at 1,000 and 20,000 points. Other targets have 7 rows at each count.
+
+**The range update helps on each target.** In the geometric means, it saves 28% to 38% of an input step at 1,000 points
+and 6% to 16% at 20,000 points. The estimate of Chart.js ADR 0111 was 23% to 32% of a linear step at 1,000 points, 18% to 25% with a time axis
+and 4.2% to 7.5% at 20,000 points. The native apps gave 28% to 36%, 24% to 30% and 5% to 13%. No input row got slower
+outside a cap, except `zoom.pan` on the time axis at 20,000 points in Mac Firefox (7.96 to 7.98 ms, one step of its
+timer). The drag box stays level within the noise. On the Pixel 8a app at 20,000 points, the wheel step falls from 6.79
+to 6.41 ms and on a time axis from 7.58 to 7.11 ms.
+
+**The noise.** The control rows run the same code on both sides, so they show the noise of one run. Most targets stay
+within -6% to +9%. Two are worse:
+
+- iPhone 17 Pro: the control rows are 1.7% to 12% slower in the on pass, which ran right after the off pass, probably
+  from heat. So its gain is, if anything, understated.
+- Mac Safari: the control rows that call `update` are 2% to 33% faster in the on pass, and its draw rows moved by at most
+  6%. The gain at 1,000 points is well above this. The gain at 20,000 points is not: divided by the control mean, it is
+  about 9%, not 16%.
+
+The Mac was in use during its passes, and other apps held most of its memory. Firefox and Safari give times in steps of
+0.020 ms.
+
+Not measured: the cost of the range snapshot on the default path (`zoom.base` and `zoom.idle` of the parent commit
+against this commit without the define), and a second run on each side. Files: `.handover/night-2026-11-10/`
+(`results.md`, `runs/range/`), outside the repository.
 
 ## 70. Stroke pieces in desktop browsers
 
@@ -8123,10 +8236,61 @@ by 0.64 to 1.36 ms in Mac Safari and by 0.90 to 2.32 ms in Mac Firefox at 10 to 
 phone browsers keep one draw below 128 commands: there pieces cost raster mean in Pixel Chrome (+0.53 to +1.55 ms at 10 to
 80 points) and Pixel Firefox, and 23 ms of p90 and 9 FPS in iPhone Safari at 100 points.
 
-**The night run** (the night of 2026-11-10, pending). One lab run of the final build: the Mac browsers at 10 to 100
-points with a plain, a curved and a translucent line and a small chart, a chart with several datasets, and one phone
-batch for each browser that shows no change; a repeat of the Pixel Firefox cells of pieces from 2 commands at 10 to 40
-points with the temperature gate; and a pixel compare of a long curved line (200 to 1,000 commands, widths 1, 2 and 6,
-opaque and translucent) between `96f6f9d` and this build in headless Chrome, for the new overlap of a curve, which also
-changes the long lines of phone browsers. A run on Windows, Linux, a Chromebook or an Android tablet in desktop-site
-mode waits for such hardware. Figures: to come.
+**The night run** (the night of 2026-11-10). Old code `96f6f9d` (main before the stroke rule) against new code
+`c05371a`, the final build. The lab matrix driver `apps/chart_benchmark_lab/tool/perf_matrix.dart`, built with
+`flutter build web --wasm --profile`, with a patch of the bench copy on both sides (not committed): the preset `curved`
+(one line with tension 0.35), the preset `translucent` (the plain line at 50% alpha, 2 logical pixels wide) and a small
+frame (a chart of 408 x 300 logical pixels in the same window). The Chart.js port, type `line`, one run of 4 s per
+cell, a warm-up capture before the first cell of each page load. Each pair alternated which side went first.
+
+- Mac: Chrome 157 (WebAssembly), Firefox 160.0 and Safari 27.0.1 (JavaScript with CanvasKit), each with
+  `crossOriginIsolated` true. One window of 1400 x 1000 on the built-in display, the chart 1004 x 420 logical pixels at
+  DPR 2. The Mac was not idle: it was in use, other apps held most of the memory (126 GB used, 59 GB compressed), and a
+  virtual machine took 20% to 30% of a core.
+- Pixel 8a: Chrome 157 (WebAssembly) and Firefox 159.0 (JavaScript), one page load for each cell, with the temperature
+  gate before each.
+- iPhone 17 Pro: Safari 27.2 (JavaScript with CanvasKit), both counts in one page load. The page came over the network, so it
+  had no `crossOriginIsolated` and a timer step of 1 ms. These cells ran last, at 23:21.
+
+Raster p90 / raster mean in ms:
+
+| Line | Mac Chrome, old | Mac Chrome, new | Mac Firefox, old | Mac Firefox, new | Mac Safari, old | Mac Safari, new |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Plain, 10 points | 1.62 / 1.43 | 1.43 / 1.27 | 3.08 / 2.38 | 2.36 / 1.72 | 1.60 / 1.33 | 0.88 / 0.70 |
+| Plain, 40 points | 1.92 / 1.71 | 1.46 / 1.27 | 3.76 / 2.78 | 2.14 / 1.53 | 1.80 / 1.49 | 0.80 / 0.66 |
+| Plain, 100 points | 2.58 / 2.27 | 1.45 / 1.26 | 4.30 / 2.93 | 2.36 / 1.72 | 2.28 / 2.04 | 0.84 / 0.70 |
+| Plain, 1,000 points | 1.60 / 1.43 | 1.66 / 1.43 | 2.36 / 1.62 | 2.28 / 1.82 | 1.06 / 0.88 | 0.98 / 0.84 |
+| Curved, 100 points | 2.75 / 2.46 | 1.70 / 1.44 | 4.50 / 3.54 | 2.54 / 1.80 | 2.56 / 2.30 | 1.14 / 0.91 |
+| Translucent, 100 points | 2.46 / 2.18 | 1.43 / 1.23 | 4.12 / 3.06 | 2.14 / 1.51 | 2.16 / 1.93 | 0.94 / 0.74 |
+| Small chart, plain, 100 points | 1.82 / 1.61 | 1.40 / 0.93 | - | - | - | - |
+
+| Points | Pixel Chrome, old | Pixel Chrome, new | Pixel Firefox, old | Pixel Firefox, new | iPhone Safari, old | iPhone Safari, new |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 100 | 9.21 / 6.64 | 8.71 / 6.54 | 3.50 / 2.99 | 3.56 / 2.96 | 26 / 24.05 | 26 / 24.87 |
+| 1,000 | 13.62 / 6.49 | 12.61 / 6.42 | 7.00 / 6.50 | 6.90 / 6.43 | 63 / 61.24 | 65 / 62.49 |
+
+**The desktop browsers gain at each count below 1,000 points.** The new rule lowers raster p90 by 12% to 44% in Mac
+Chrome, by 23% to 48% in Mac Firefox and by 45% to 63% in Mac Safari, and raster mean by about as much. The curved and
+the translucent line gain nearly as much as the plain line at 100 points. The small chart gains 0.42 ms of p90 and 0.68 ms of mean. FPS stayed
+at the cap in each cell (Chrome 119.75 to 120, Firefox and Safari 59.5 to 60.25), and frame p90 moved by at most 0.3 ms.
+At 1,000 points both sides cut the same pieces, so these cells give the noise of one run: at most 0.08 ms of p90 and
+0.20 ms of mean on the Mac.
+
+**The phone browsers show no change**, as the rule intends. On the phones both sides draw the same thing at each count
+(one draw at 100 points, pieces from 128 commands at 1,000), so these pairs also give the noise of one run. On the Pixel,
+raster mean moved by at most 0.10 ms (1.5%), and raster p90 by 0.06 to 1.01 ms, most in Pixel Chrome, whose day noise was
+1.85 ms. FPS stayed level: Pixel Chrome 59.75 to 60, Pixel Firefox 101 to 102.75 at 100 points and 78 to 79.25 at 1,000.
+In iPhone Safari, raster p90 moved by at most 2 ms and raster mean by 0.82 and 1.25 ms (3.4% and 2.0%), within the day noise
+of 2 / 1.54 ms. Its FPS went from 33 to 31.75 at 100 points and from 13.5 to 13.25 at 1,000.
+
+**One possible cost.** In Mac Firefox, UI p90 rose by 0.7 to 1.5 ms in four of the five cells below 1,000 points
+(2.12 to 3.42 ms at 100 points, 2.28 to 3.80 ms for the translucent line), and fell by 0.14 ms in one. At 1,000 points,
+where the code is the same, it rose by 0.28 ms. More draw calls in JavaScript can cost this, but one run per cell does
+not prove it. Frame p90 and FPS did not move. Chrome and Safari show no such rise: their UI p90 moved by at most 0.2 ms,
+in both directions.
+
+Open: a chart with several datasets, a repeat of the Pixel Firefox cells at 10 to 40 points with pieces from 2 commands
+(it needs the experiment patch, because the final build gives the Pixel the rule of 128), and a pixel compare of a long curved line (200 to 1,000 commands, widths 1, 2 and 6, opaque and translucent) between
+`96f6f9d` and this build in headless Chrome, for the new overlap of a curve, which also changes the long lines of phone
+browsers. A run on Windows, Linux, a Chromebook or an Android tablet in desktop-site mode waits for such hardware.
+Files: `.handover/night-2026-11-10/` (`results.md`, `runs/`), outside the repository.
