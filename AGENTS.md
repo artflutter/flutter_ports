@@ -6,8 +6,9 @@ libraries. First port: Chart.js v4.6.1 →
 `packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
 (scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
-of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, in phase 0
-(scaffold, design and the list of its host seams, no ported code).
+of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, phases 1-4 done
+(each file of `src/` ported; the specs, the fixtures and the tests of real input pass), phase 5
+next.
 
 ## Commands
 
@@ -130,6 +131,13 @@ longer supported. No global color installer or intermediate option color exists.
   manifest. Without the submodule, each fixture skips with `'n/a: the submodule third_party/Chart.js
   is not checked out'`. With `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` makes a shallow
   checkout of `third_party/Chart.js` and sets `FIXTURES_REQUIRED=1`.
+- `dart run melos run test:fixtures:zoom`: the 12 fixtures of `flutter_chartjs_plugin_zoom_port`
+  (`test/specs/fixtures_test.dart`, the tag `fixtures`, seam H24). Each fixture runs its upstream
+  steps on a chart and compares the scale ranges at its snapshot points with
+  `test/fixtures/fixtures_reference.dart`, not an image (row `harness-fixture-observations`).
+  Without the submodule `third_party/chartjs-plugin-zoom`, each fixture skips with a reason that
+  names it; with `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` also checks out that
+  submodule and runs the script with `FIXTURES_REQUIRED=1`. `test --no-select` excludes the tag.
 - `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
   (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md §8 test 9, Chart.js ADR 0050).
   They skip unless `CHART_GOLDENS=1`. Their pinned runner is the CI job `fixtures` on
@@ -191,7 +199,7 @@ longer supported. No global color installer or intermediate option color exists.
   gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
 Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `test:cases`,
-`test:fixtures` and `check:port`.
+`test:fixtures`, `test:fixtures:zoom` and `check:port`.
 
 ## Layout
 
@@ -1130,7 +1138,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `gallery.type.<stem>`, `type.<stem>.variant.<variant>`, `type.<stem>.host`,
     `type.<stem>.readout` and `type.<stem>.help`.
   - `lib/demo/gallery_components.dart` has `registerGalleryComponents` (it registers
-    `registerables` once) and `unitScales` (the two hidden unit scales).
+    `registerables` once, and `zoomPlugin` of `flutter_chartjs_plugin_zoom_port` for all charts, as
+    the upstream docs of the plugin do) and `unitScales` (the two hidden unit scales).
+  - After the nine entries, the home list has the tile "Zoom and pan" (key `gallery.plugin.zoom`).
+    It opens the zoom page `lib/plugins/zoom_page.dart`. Its variants are the ports of four samples
+    of the docs of chartjs-plugin-zoom (`docs/samples/basic.md`, `drag/linear.md`,
+    `wheel/category.md` and `pan/toggle.md`) in `lib/docs/zoom/samples/`, with rule-2 headers. The
+    chart is a `ChartView.raw`. The actions of a sample, for example "Reset zoom", call the zoom
+    API on the chart of `onChartCreated`. `test/zoom_page_test.dart` pins the page (seam H20).
   - The page "Phase 3: canvas and host" has the tabs Canvas, Events, Text, Stress, Elements, Core
     and Axes. The Core tab (`lib/demo/core_demo.dart`) runs a `LineController` chart with the
     typed config of Chart.js ADR 0052 §13, on two hidden linear axes (the typed form of
@@ -1296,13 +1311,68 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
     yet. `test --no-select` runs its tests.
 - `packages/flutter_chartjs_plugin_zoom_port`: the chartjs-plugin-zoom port (library,
-  `publish_to: none` until 0.1.0, MIT), the first add-on port (ADR 0009). Phase 0 has no ported
-  code. `doc/README.md` has the plan and the roadmap of phases 0-6.
+  `publish_to: none` until 0.1.0, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
+  done (2026-11-10): each file of `src/` is ported, and the specs, the fixtures and the tests of
+  real input pass. Two items stay open: the prior-art survey file and the device check of seam H8
+  on Android and iOS (Chart.js ADR 0108 Open 1). `doc/README.md` has the plan and the roadmap of
+  phases 0-6. Phase 5, next, adds the typed options slot (H18) and the theme extension (H19), each
+  after its Chart.js ADR.
   - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
     libraries, `js_semantics.dart` among them (Zoom ADR 0003, Chart.js ADR 0108).
-  - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library. `lib/src/upstream.dart` has
-    `chartjsPluginZoomVersion` (`2.2.0+fb81d331`, a commit pin) and
-    `chartjsPluginZoomPackageVersion` (`2.2.0`). Both files are port-only.
+  - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only): `zoomPlugin`, the
+    functions `pan`, `zoom`, `zoomRect`, `zoomScale` and `resetZoom`, the extension `ZoomChart`
+    (the ten chart methods of `bindApi`, row `adapt-chart-methods-extension`), `ZoomAmount` and
+    `PanAmount` (row `adapt-amount-classes`, `chart.zoom(.all(1.5))`), `ScaleRange`, the option
+    facades, `Mode`, `ModifierKey`, `DrawTime`, `ZoomTrigger`, the callback contexts (records) and
+    typedefs, `GestureEvent`, `ActivePointer`, the three function tables and `lib/src/upstream.dart`.
+    `lib/src/upstream.dart` has `chartjsPluginZoomVersion` (`2.2.0+fb81d331`, a commit pin) and
+    `chartjsPluginZoomPackageVersion` (`2.2.0`), port-only. An app gives the options in
+    `ChartConfig.extra` as `{'plugins': {'zoom': {...}}}` or in a raw config, and registers the
+    plugin with `Chart.register([zoomPlugin])`: the typed `ChartConfig.plugins` takes only plugin
+    Maps (seam H18).
+  - `lib/src/`: the 12 files of `src/` at their mapped paths: `types`, `options`, `defaults`,
+    `state`, `utils`, `scale.types`, `core`, `handlers`, `gestures`, `plugin`, `index` and
+    `index.umd`. `zoomPlugin` (`plugin.dart`) is a typed `Plugin` of the host with the upstream keys
+    in order and `supportsDataUpdates: true` (row `adapt-typed-plugin-object`, seam H25); its hooks
+    take `Object chart` and narrow it with `chart as Chart`. The options are extension-type facades
+    over the resolver of the host (`ZoomPluginOptions` of `options.dart`), read live; a user
+    function takes a typed call when it has the typedef type, else `jsCall`. The state of a chart
+    is an `Expando<State>` (`state.dart`); the gesture managers are an `Expando` too. The listeners
+    use `canvas.eventTarget` and `canvas.ownerDocument` of Chart.js ADR 0108 (row
+    `adapt-canvas-event-target`): after a drag, the `keydown` listener stays on the document until
+    `removeListeners` or the hook `stop`, as upstream. `debounce` runs on a `Timer`; each wheel zoom
+    updates the chart, and `beforeUpdate` puts a new debounced handler into the state, so each
+    wheel event gives its own `onZoomComplete` 250 ms later, as upstream. A limit is a number
+    (`jsToNumber`, row `js-semantics-numeric-limits`). The default drag colors are `Color` values
+    (row `adapt-native-colors`). The first read of `chartZoom` of `index.umd.dart` registers the
+    plugin.
+  - `test/flutter_test_config.dart` ports `test/index.js`: the set-up of the host tests (DPR 1 and
+    800 x 600, the date zone UTC, the built-in components and the plugin through `chartZoom`, the
+    colors plugin off, the defaults restore, the release of the charts and the test font) and the
+    event helpers `EventInit`, `triggerWheelEvent`, `dispatchEvent`, `dispatchPointer`,
+    `simulatePan`, `simulatePinch` (a named `done`) and a synchronous
+    `triggerMouseEvent(chart, type, (x: x, y: y))` (rows `harness-dom-events` and
+    `harness-trigger-mouse-event-sync`). Each helper builds a bubbling, cancelable `NativeEvent`
+    and calls `canvas.dispatchEvent`. `test/support/jasmine.dart` (port-only) has the spies and
+    the matchers of the specs, with the `toBeCloseTo` of jasmine-core 5.4.0.
+  - `test/specs/`: the 8 specs of `test/specs/*.spec.js` (83 cases) and the 2 unit tests of
+    `src/*.test.ts` (20 cases; the 4 category pan cases run on a real chart, row
+    `harness-category-scale-fake`), with no skip. `test/specs/fixtures_test.dart` runs the
+    fixtures of `test/fixtures/`: the registry `index.dart`, `manifest.json`, the hand ports
+    `hand/pan/*.dart` and `hand/zoom/*.dart` of the 12 fixture configs, and
+    `fixtures_reference.dart`, written by `tool/reference/fixtures_reference.mjs` from the upstream
+    fixtures (`test:fixtures:zoom`).
+  - `test/port/` (port-only): `plugin_test.dart` (the data-only updates of a `ChartView`, the
+    warnings of `start`, the range in the scale options), `public_library_test.dart` (the zoom
+    library next to the app library of the host and `material_ui.dart`), `handlers_smoke_test.dart`
+    (the listeners with synthetic events) and the tests of real input. `handlers_test.dart`,
+    `gestures_test.dart` and `index_test.dart` drive a `ChartView` with the pointer and key events
+    of Flutter through the input path of the host: a wheel in a `ListView` zooms and does not
+    scroll it, a mouse drag that lifts outside the box zooms, a press on the legend starts no drag,
+    Escape cancels a drag with no focus, Enter, Enter on a keyboard target leaves no drag state, a
+    one-finger pan and a two-finger pinch with `touch-action: none` in a vertical `ListView` do
+    not scroll it, and the range stays across an equal config and new data and goes at another
+    option and at a theme switch (row `theme-switch-zoom-range`).
   - `test/upstream_test.dart` (`@TestOn('vm')`) compares `chartjsPluginZoomPackageVersion` with
     `third_party/chartjs-plugin-zoom/package.json`, the entry of `tool/port_sources.yaml` with the
     version and the gitlink with its `commit`. It fails on a submodule of `.gitmodules` that no
@@ -1311,18 +1381,21 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `tool/port_sources.yaml`: the pin in the schema of the Chart.js file (Zoom ADR 0001), with the
     top-level keys `marker: zoom` (the tag of `DIVERGES(zoom)`) and `host: flutter_chartjs_port`
     (ADR 0009). For the commit pin, `ref` and `commit` are the full commit. The entry has no
-    `files`: `check:headers` reads the source paths from the submodule.
-  - `doc/`: all zoom port docs: `README.md` (overview, roadmap, decisions), `host-seams.md` (each
-    use of `chart.js` and of the DOM by the plugin, with the state of the host port: `connects`,
-    `zoom-side`, `gap` or `examine`), `parity.md`, `differences.md` (its table of the reserved IDs
-    has the header cell `Reserved ID`, so `check:headers` reads no rows from it) and
-    `upstream-ledger.md`. The prior-art survey `prior-art/` comes in a later change.
+    `files`: `check:headers` reads the source paths from the submodule. `tool/reference/` has the
+    Node.js generator of the fixture data.
+  - `doc/`: all zoom port docs: `README.md` (overview, roadmap with the state of each phase,
+    decisions), `host-seams.md` (each use of `chart.js` and of the DOM by the plugin, with the state
+    of the host port, `connects`, `zoom-side`, `gap` or `examine`, and the tests that pin it),
+    `parity.md` (a person writes it), `differences.md` (its table of the reserved IDs has the
+    header cell `Reserved ID`, so `check:headers` reads no rows from it) and `upstream-ledger.md`.
+    The prior-art survey `prior-art/` comes in a later change.
     - `doc/adr/`: Zoom ADRs 0001-0003, all proposed. Zoom ADR 0001 (upstream source, name and
       license) has gate 0. Zoom ADR 0002 (file naming and layout) has gate 1. Zoom ADR 0003 (the
       connection to the host port) has gates 1 and 2. Docs name them "Zoom ADR NNNN".
   - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
-    item 6). `test:web`, `test:cases`, `test:fixtures`, `parity`, `port:next` and
-    `check:typed-reads` do not examine it. `test --no-select` runs its tests.
+    item 6). `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
+    `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
+    tests without the tag `fixtures`.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the tag `v4.6.1`
@@ -1853,10 +1926,15 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 - The ECharts tests use `package:test` (ECharts ADR 0005). In phase 0, `test/upstream_test.dart`
   is the only ECharts test. It has `@TestOn('vm')`. Thus `test:web` does not run the ECharts
   package yet. The first pure ECharts test adds the package to `test:web`.
-- The chartjs-plugin-zoom tests use `package:test` in phase 0. `test/upstream_test.dart` is the
-  only zoom test. It has `@TestOn('vm')`. From phase 2, the specs that create a chart follow the
-  chart spec rules of the Chart.js port: `testWidgets`, `package:chartjs_test_utils/flutter.dart`
-  and `@TestOn('vm')`.
+- Each chartjs-plugin-zoom test file has `@TestOn('vm')`: `test:web` does not run the package.
+  The specs that create a chart follow the chart spec rules of the Chart.js port: `testWidgets`,
+  `package:chartjs_test_utils/flutter.dart` (without its `triggerMouseEvent`) and the event
+  helpers of `test/flutter_test_config.dart`. A test with a wheel zoom and an `onZoomComplete`
+  option pumps at least 250 ms before its end: the debounce timer is never cancelled, and
+  flutter_test fails on a pending timer. A drag test puts its corners on whole pixels: `getRelativePosition` rounds the
+  offsets. A test of real input drives a `ChartView` through `WidgetTester` (`startGesture`,
+  `TestPointer` with `sendEventToBinding`, `sendKeyEvent`), not through the synthetic dispatch of
+  the specs.
 
 ## Licensing
 
