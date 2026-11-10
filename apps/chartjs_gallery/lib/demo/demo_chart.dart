@@ -6,12 +6,11 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     hide Chart, ChartMeta, Scale;
 import 'package:flutter_chartjs_port/helpers.dart'
     show DrawPointOptions, clearCanvas, retinaScale;
-// Not public: UiCanvasElement, a canvas with no chart (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-// Not public: _isPointInArea, an upstream `_` helper (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+import 'package:flutter_chartjs_port/helpers.dart'
     as helpers
     show isPointInArea;
+// Not public: UiCanvasElement, a canvas with no chart (Chart.js ADR 0048).
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 // Not public: ChartHost, the host of a canvas with no chart.
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 // Not public: _detectPlatform, an upstream `_` export (Chart.js ADR 0048).

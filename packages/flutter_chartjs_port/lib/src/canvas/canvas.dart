@@ -399,7 +399,8 @@ abstract interface class TextMetrics {
 ///
 /// The canvas layer reads the `direction` property of the canvas style when
 /// [CanvasRenderingContext2D.direction] is `'inherit'`, as the DOM does. The
-/// chart host reads `width` and `height`.
+/// chart host reads `width` and `height`, and `touch-action` at the first
+/// touch-like down of a touch sequence (Chart.js ADR 0108).
 abstract interface class CSSStyleDeclaration {
   /// `getPropertyValue(property)`. An unset property gives `''`.
   String getPropertyValue(String property);

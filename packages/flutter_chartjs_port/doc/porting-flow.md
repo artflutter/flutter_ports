@@ -1059,15 +1059,29 @@ and 8. Tool 1 uses allowlists:
   imports only pure libraries, `package:test` and the pure layers of `flutter_chartjs_port`.
 - Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0050](adr/0050-public-theme-api.md)). `lib/`
   never imports `material`, `cupertino`, `material_ui` or `forui`.
+- An add-on port ([ADR 0009](../../../docs/adr/0009-add-on-ports.md) item 3) names its host in the
+  top-level key `host` of its `tool/port_sources.yaml`. Its `lib/` and `test/` import only the
+  libraries directly in the `lib/` of the host (`package:<host>/<name>.dart`), never
+  `package:<host>/src/`, and its `test/` imports only `pure.dart` and `flutter.dart` of the
+  harness. The melos script passes `packages/flutter_chartjs_port
+  packages/flutter_chartjs_plugin_zoom_port`, host first: the check examines the harness closure
+  with the host only.
 
 **2. Header check** (`tool/check_port_headers.dart`, `check:headers`, phase 1). It examines
-`packages/flutter_chartjs_port/{lib,test,tool}/**`. When `packages/chartjs_test_utils` exists, the
-check also examines that package. It fails unless all of these conditions are true:
+`{lib,test,tool}/**` of the home package and of each package that a `dart` target of its
+`tool/port_sources.yaml` names: `flutter_chartjs_port` with `chartjs_test_utils`. The melos script
+runs it again on the add-on port `flutter_chartjs_plugin_zoom_port` alone
+([ADR 0009](../../../docs/adr/0009-add-on-ports.md) item 6). The primary project of the home is the
+entry whose `version_source` is `<constant> in <home>/lib/src/upstream.dart` (Chart.js,
+chartjs-plugin-zoom): its `version` is `v<constant value>`, and the port-only marker names it. The
+top-level key `marker` of `tool/port_sources.yaml` gives the tag of the `DIVERGES(<tag>)` markers
+(default `chartjs`). It fails unless all of these conditions are true:
 - Line 1 matches `^// Ported from (\S+) (v?\d+(?:\.\d+)*) (\S+) \(([^,]+), (.+)\)\.$` or the
   port-only marker. Files under `test/port/` and `tool/` have the port-only marker. A file at the
   mapped path of a source that exists at a pin does not have the port-only marker.
 - Each next header line is a `// Ported from` line or matches
-  `^// Upstream backport: chartjs/Chart\.js@[0-9a-f]{8} \(#\d+\)\.$`. `upstream_status.dart
+  `^// Upstream backport: <owner>/<repo>@[0-9a-f]{8} \(#\d+\)\.$`, with the `<owner>/<repo>` of the
+  `url` of the primary project (`chartjs/Chart.js` for the host). `upstream_status.dart
   --check` pairs these lines with ledger rows.
 - Project, license and holder match `tool/port_sources.yaml`, the package `LICENSE` and
   `REUSE.toml`.
@@ -1080,7 +1094,8 @@ check also examines that package. It fails unless all of these conditions are tr
   `test/specs/<base>.tests.js` is `test/specs/<base>_test.dart` (section 1, step 5).
   `test/index.js` maps to `test/flutter_test_config.dart`. For other projects,
   `tool/port_sources.yaml` gives the target.
-- Each `DIVERGES` marker names a `differences.md` row. Each row has a marker. Marker lines fit 80
+- Each `DIVERGES(<tag>)` marker names a `differences.md` row. Each row has a marker. Only a
+  table with the first header cell `ID` has rows; a `Reserved ID` table has none. Marker lines fit 80
   columns, because the line-length exemption needs a path. A marker is a line comment. A
   `DIVERGES` block comment fails.
 
@@ -1096,9 +1111,13 @@ lowercase category, for example `theme-H1`. It has an HTML anchor. The marker te
 `adapt`, `platform`, `theme`, `js-semantics`, `harness` and `not-followed`. The file comes with the first `DIVERGES` hunk.
 
 **3. JS-semantics check** (`tool/check_js_semantics.dart`, `check:js-semantics`, phase 1). It
-examines the `lib/` and `test/` files whose header block names a `js` project of
-`tool/port_sources.yaml`. When `packages/chartjs_test_utils` exists, the check also examines that
-package. It flags these forms:
+examines the `lib/` and `test/` files of the given packages whose header block names a `js`
+project. When `packages/chartjs_test_utils` exists, the check also examines that package. It reads
+the `language` of each project from the `tool/port_sources.yaml` of each given package; the first
+entry of a project counts. Thus the melos script passes the host and the add-on port
+`flutter_chartjs_plugin_zoom_port` ([ADR 0009](../../../docs/adr/0009-add-on-ports.md) item 6). Its
+advice names the JS runtime: `lib/src/js/`, or `package:flutter_chartjs_port/js_semantics.dart` in
+an add-on. It flags these forms:
 - `.round()`, `.roundToDouble()`, `.floor()`, `.ceil()`, `.truncate()`, `.clamp(`, `%`, `pow(`
   with any base, every `.toString()` call, `is int` and `.sort(`. A `pow` call with `double`
   operands carries `// js-ok`.

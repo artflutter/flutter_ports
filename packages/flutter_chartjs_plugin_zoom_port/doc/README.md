@@ -23,8 +23,8 @@ and the public API of the Chart.js port.
   is the host change for the zoom port: the input surface of the canvas, the JS runtime and the
   typed plugin API.
 - **Host seams:** [host-seams.md](host-seams.md) lists each use of the host with its state. On
-  2026-11-10, 16 seams connect, 6 need only a Dart form in the zoom port and 4 need a host change:
-  two parts of Chart.js ADR 0108 (H8, H23) and two later host decisions (H18, H19).
+  2026-11-10, after the host wave of Chart.js ADR 0108, 18 seams connect, 6 need only a Dart form
+  in the zoom port and 2 wait for later host decisions (H18, H19).
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference. It
   has no rows in phase 0.
