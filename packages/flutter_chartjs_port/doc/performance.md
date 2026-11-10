@@ -7936,7 +7936,7 @@ give for the removed work, as a share of a step on Pixel / iPhone / Mac; the mea
 | 1 | The previous x of the gap test | the read `prevParsed[iAxis]` of each point in the line and scatter loops, when no user code can run between the two reads | Chart.js ADR 0109, row `adapt-native-gap-reads` | 0.8-1.2% / 1.3-2.2% / 1.4-1.6% | 3.5-4.4% / 4.4-5.8% / 4.1-5.0% |
 | 2 | The held circle run | the bound, color and batch tests of each fill and stroke after the first circle of a run | `CircleBatch.hold` and `addHeld` (port-only) | 0.4-1.4% / 0.8-1.5% / 1.5-2.0% | 1.7-2.6% / 2.8-3.5% / 3.5-5.2%; drag box 4.2% / 6.3% / 9.6% |
 | 3 | The typed scope merge | the walk by name of `mergeIf` and `merge` between typed scopes in `mergeScaleConfig` | row `adapt-typed-scope-merge` | 4.2-5.3% / 4.9-5.9% / 4.9-6.0% | 0.8-1.2% / 0.5-0.9% / 0.9-1.5% |
-| 4 | The loop-invariant truthiness | `jsTruthy` of `stacked` and `segment` at each point, and of `alignToPixels` at each pixel | row `adapt-loop-invariant-truthiness` | 0.0-0.4% / 0.5-1.3% / 0.6-1.7% | 0.3-0.8% / 1.9-3.0% / 2.3-4.3% |
+| 4 | The loop-invariant truthiness | `jsTruthy` of `stacked` and `segment` at each point (the `alignToPixels` part is reverted, see below) | row `adapt-loop-invariant-truthiness` | 0.0-0.4% / 0.5-1.3% / 0.6-1.7% | 0.3-0.8% / 1.9-3.0% / 2.3-4.3% |
 | 5 | The record key of the number format | the String key and the options Map of each tick label | row `adapt-numeric-tick-format-key` | 2.2-3.0% / 2.0-3.0% / 1.4-3.1% | 0.2-0.8% |
 | 6 | The local-zone offsets | the field form of the offset read on the VM and the misses of a cache of one interval | Chart.js ADR 0110 | time axis: 2.1-2.7% / 2.4-2.8% / 2.8-3.2% | time axis: 0.6-1.1% |
 | 7 | The first reads of the resolvers | the second walk of the scopes of a sub-resolver when it adds nothing, and the second key lookup of a miss | row `adapt-resolver-single-walk` | 0.9-1.4% / 1.3-2.0% / 1.5-2.0% | 0.1-0.5% |
@@ -8000,3 +8000,15 @@ frame rate shows it. The counts of a real pinch and pan on both phones go into C
 | `zoom.pinch` | 20,000 | linear | — | — | — | — | — | — |
 | `zoom.drag` | 20,000 | linear | — | — | — | — | — | — |
 | `zoom.api` | 20,000 | linear | — | — | — | — | — | — |
+
+**Safari and the `alignToPixels` field.** In the first Safari run, the base and idle updates on the time axis at
+20,000 points were 22% slower with the new code. A second run gave +17.5% and +13.2%. The extra time was all in the
+dataset update (60-79% slower). A bisect of the nine commits in Safari found commit `a06746b` (item 4), and a run
+with only its `Scale._alignToPixels` part reverted brought the dataset update back to the old time (1.97 ms against
+2.02-2.17 ms). The part made `_alignToPixels` a `bool` with the `ToBoolean` at its write, so that
+`getPixelForDecimal` became very small. With the time cases first in the page, the new code was not slower (time
+dataset update 2.195 → 2.115 ms). Thus Safari's engine probably optimizes the point loop for the linear scale of the
+first chart and loses that form when a time chart comes later. A Flutter web app is one page, so a dashboard with a
+linear chart and then a time chart reaches the slow state. Chrome and Firefox got faster on the same rows. The
+`alignToPixels` part is reverted; the loop part of item 4 stays. Files:
+`.handover/zoom-perf/ab/mac-safari/` (bisect.md, confirm.md), outside the repository.
