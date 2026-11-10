@@ -11,6 +11,30 @@ import 'package:test/test.dart';
 
 Object? _fn(Object? ctx) => ctx;
 
+/// A subclass of a scope class: it could change the face.
+final class _SubScope extends PointOptionsScope {}
+
+/// A scope class of its own that reports a generated kind.
+final class _OwnScope extends OptionScope {
+  final PointOptionsScope _source = PointOptionsScope();
+
+  @override
+  ScopeKind get kind => ScopeKind.pointOptions;
+
+  @override
+  Opt<Object?>? cellOf(OptionKey key) => _source.cellOf(key);
+
+  @override
+  void setCell(OptionKey key, Opt<Object?>? cell) => _source.setCell(key, cell);
+
+  @override
+  bool hasField(OptionKey key) => _source.hasField(key);
+
+  @override
+  Opt<Object?> classify(OptionKey key, Object? raw) =>
+      _source.classify(key, raw);
+}
+
 void main() {
   group('the key order', () {
     test('a set of an absent key appends it, extras included', () {
@@ -148,6 +172,28 @@ void main() {
       expect(optionKeyOf('pointRadius'), OptionKey.pointRadius);
       expect(optionKeyOf('noSuchOption'), isNull);
       expect(OptionKey.descScriptable.jsName, '_scriptable');
+    });
+
+    test('scopeType is the class of create, and nativeFace tests it', () {
+      for (final kind in ScopeKind.values) {
+        final scope = kind.create();
+        expect(scope.runtimeType, kind.scopeType, reason: '$kind');
+        expect(scope.nativeFace, isTrue, reason: '$kind');
+      }
+      expect(_SubScope().nativeFace, isFalse);
+      expect(_OwnScope().nativeFace, isFalse);
+    });
+
+    test('hasRoutes', () {
+      final scope = ChartOptionsScope()..jsWrite('color', 'red');
+      expect(scope.hasRoutes, isFalse);
+      scope.addRoute(
+        'color',
+        ScopeRoute((local) => local, targetScope: null, targetName: 'color'),
+      );
+      expect(scope.hasRoutes, isTrue);
+      scope.delete('color');
+      expect(scope.hasRoutes, isFalse);
     });
   });
 

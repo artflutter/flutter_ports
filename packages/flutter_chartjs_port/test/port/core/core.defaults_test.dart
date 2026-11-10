@@ -104,6 +104,13 @@ void main() {
   setUpSpecs();
 
   group('the singleton', () {
+    test('keeps the face of its scope class (nativeFace)', () {
+      // Defaults overrides no read, write or key by name: the typed walks of
+      // the merge and of the resolvers take it as a scope of its class.
+      expect(defaults.nativeFace, isTrue);
+      expect(defaults.kind.scopeType, isNot(Defaults));
+    });
+
     test('has the upstream keys, values and key order', () {
       expect(
         _keys(defaults),

@@ -398,6 +398,127 @@ enum ScopeKind {
     }
   }
 
+  /// The class of the scopes that [create] makes: a scope of this
+  /// kind whose `runtimeType` is another class is a subclass.
+  Type get scopeType {
+    switch (this) {
+      case ScopeKind.chartConfiguration:
+        return ChartConfigurationScope;
+      case ScopeKind.chartData:
+        return ChartDataScope;
+      case ScopeKind.chartOptions:
+        return ChartOptionsScope;
+      case ScopeKind.pluginOptionsByType:
+        return PluginOptionsByTypeScope;
+      case ScopeKind.elementOptionsByType:
+        return ElementOptionsByTypeScope;
+      case ScopeKind.datasetOptionsByType:
+        return DatasetOptionsByTypeScope;
+      case ScopeKind.overridesByType:
+        return OverridesByTypeScope;
+      case ScopeKind.scaleOptionsById:
+        return ScaleOptionsByIdScope;
+      case ScopeKind.animationsSpec:
+        return AnimationsSpecScope;
+      case ScopeKind.transitionsSpec:
+        return TransitionsSpecScope;
+      case ScopeKind.transitionOptions:
+        return TransitionOptionsScope;
+      case ScopeKind.animationOptions:
+        return AnimationOptionsScope;
+      case ScopeKind.fontSpec:
+        return FontSpecScope;
+      case ScopeKind.padding:
+        return PaddingScope;
+      case ScopeKind.layoutOptions:
+        return LayoutOptionsScope;
+      case ScopeKind.interactionOptions:
+        return InteractionOptionsScope;
+      case ScopeKind.parsingOptions:
+        return ParsingOptionsScope;
+      case ScopeKind.chartArea:
+        return ChartAreaScope;
+      case ScopeKind.pointOptions:
+        return PointOptionsScope;
+      case ScopeKind.lineOptions:
+        return LineOptionsScope;
+      case ScopeKind.barOptions:
+        return BarOptionsScope;
+      case ScopeKind.arcOptions:
+        return ArcOptionsScope;
+      case ScopeKind.genericElementOptions:
+        return GenericElementOptionsScope;
+      case ScopeKind.borderRadius:
+        return BorderRadiusScope;
+      case ScopeKind.fillTarget:
+        return FillTargetScope;
+      case ScopeKind.segmentOptions:
+        return SegmentOptionsScope;
+      case ScopeKind.barControllerDatasetOptions:
+        return BarControllerDatasetOptionsScope;
+      case ScopeKind.lineControllerDatasetOptions:
+        return LineControllerDatasetOptionsScope;
+      case ScopeKind.bubbleControllerDatasetOptions:
+        return BubbleControllerDatasetOptionsScope;
+      case ScopeKind.doughnutControllerDatasetOptions:
+        return DoughnutControllerDatasetOptionsScope;
+      case ScopeKind.polarAreaControllerDatasetOptions:
+        return PolarAreaControllerDatasetOptionsScope;
+      case ScopeKind.radarControllerDatasetOptions:
+        return RadarControllerDatasetOptionsScope;
+      case ScopeKind.genericDatasetOptions:
+        return GenericDatasetOptionsScope;
+      case ScopeKind.scaleOptions:
+        return ScaleOptionsScope;
+      case ScopeKind.scalePosition:
+        return ScalePositionScope;
+      case ScopeKind.tickOptions:
+        return TickOptionsScope;
+      case ScopeKind.majorTickOptions:
+        return MajorTickOptionsScope;
+      case ScopeKind.minorTickOptions:
+        return MinorTickOptionsScope;
+      case ScopeKind.gridLineOptions:
+        return GridLineOptionsScope;
+      case ScopeKind.borderOptions:
+        return BorderOptionsScope;
+      case ScopeKind.scaleTitleOptions:
+        return ScaleTitleOptionsScope;
+      case ScopeKind.timeScaleTimeOptions:
+        return TimeScaleTimeOptionsScope;
+      case ScopeKind.displayFormats:
+        return DisplayFormatsScope;
+      case ScopeKind.angleLineOptions:
+        return AngleLineOptionsScope;
+      case ScopeKind.pointLabelOptions:
+        return PointLabelOptionsScope;
+      case ScopeKind.legendOptions:
+        return LegendOptionsScope;
+      case ScopeKind.legendLabelOptions:
+        return LegendLabelOptionsScope;
+      case ScopeKind.legendTitleOptions:
+        return LegendTitleOptionsScope;
+      case ScopeKind.titleOptions:
+        return TitleOptionsScope;
+      case ScopeKind.tooltipOptions:
+        return TooltipOptionsScope;
+      case ScopeKind.tooltipCallbacks:
+        return TooltipCallbacksScope;
+      case ScopeKind.tooltipDatasetOptions:
+        return TooltipDatasetOptionsScope;
+      case ScopeKind.fillerOptions:
+        return FillerOptionsScope;
+      case ScopeKind.decimationOptions:
+        return DecimationOptionsScope;
+      case ScopeKind.colorsOptions:
+        return ColorsOptionsScope;
+      case ScopeKind.genericPluginOptions:
+        return GenericPluginOptionsScope;
+      case ScopeKind.descriptors:
+        return DescriptorsScope;
+    }
+  }
+
   /// The declared keys, in schema order.
   List<OptionKey> get keys {
     switch (this) {

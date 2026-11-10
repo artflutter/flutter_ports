@@ -58,6 +58,7 @@
 /// sub-resolver.
 library;
 
+import 'dart:collection' show LinkedHashMap;
 import 'dart:core' as core;
 import 'dart:core';
 import 'dart:typed_data' show Uint16List;
@@ -1271,8 +1272,11 @@ final class OptionResolver implements ResolverProxy {
 
   /// The own property [name] of the target, or [_absent]: a cached or set
   /// value, else a slot (helpers.config.ts:41-49, `_keys`, `_storage`).
-  Object? _own(String name) {
-    final cached = _cache.get(_keyOf(name));
+  Object? _own(String name) => _ownKeyed(name, _keyOf(name));
+
+  /// [_own] with [key], the cache key of [name] ([_keyOf]).
+  Object? _ownKeyed(String name, Object key) {
+    final cached = _cache.get(key);
     if (!identical(cached, _absent)) return cached;
     if (_deletedSlots?.contains(name) ?? false) return _absent;
     return switch (name) {
@@ -1313,17 +1317,22 @@ final class OptionResolver implements ResolverProxy {
 
   /// helpers.config.ts:64 the `get` trap for the option name [prop]:
   /// `_cached(target, prop, () => _resolveWithPrefixes(...))`.
-  Object? _get(String prop) {
+  Object? _get(String prop) => _getKeyed(prop, _keyOf(prop));
+
+  /// [_get] with [key], the cache key of [prop] ([_keyOf]): the cache read,
+  /// the typed scope reads of the empty prefix and the cache write of a
+  /// first read take one lookup of the name.
+  Object? _getKeyed(String prop, Object key) {
     // DIVERGES(chartjs): adapt-resolver-cached-read, _cached inline.
-    final own = _own(prop);
+    final own = _ownKeyed(prop, key);
     if (!identical(own, _absent)) return own;
     if (prop == 'constructor') {
       // DIVERGES(chartjs): js-semantics-resolver-objects, no constructor.
       return undefined;
     }
-    final value = _resolveWithPrefixes(prop, _prefixes, _scopes, this);
+    final value = _resolveWithPrefixes(prop, _prefixes, _scopes, this, key);
     // cache the resolved value
-    _cache.set(_keyOf(prop), value);
+    _cache.set(key, value);
     return value;
   }
 
@@ -1333,8 +1342,9 @@ final class OptionResolver implements ResolverProxy {
     final cached = _cache.get(key);
     if (!identical(cached, _absent)) return cached;
     final name = key.jsName;
-    if (name.startsWith('_') || _slotsTouched) return _get(name);
-    final value = _resolveWithPrefixes(name, _prefixes, _scopes, this);
+    // `_keyOf(name)` is [key]: one key for each name.
+    if (name.startsWith('_') || _slotsTouched) return _getKeyed(name, key);
+    final value = _resolveWithPrefixes(name, _prefixes, _scopes, this, key);
     _cache.set(key, value);
     return value;
   }
@@ -1938,8 +1948,11 @@ final class OptionView implements ContextProxy {
   }
 
   /// The own property [name] of the target, or [_absent].
-  Object? _own(String name) {
-    final cached = _cache.get(_keyOf(name));
+  Object? _own(String name) => _ownKeyed(name, _keyOf(name));
+
+  /// [_own] with [key], the cache key of [name] ([_keyOf]).
+  Object? _ownKeyed(String name, Object key) {
+    final cached = _cache.get(key);
     if (!identical(cached, _absent)) return cached;
     if (_removedSlots?.contains(name) ?? false) return _absent;
     return switch (name) {
@@ -1974,8 +1987,10 @@ final class OptionView implements ContextProxy {
   /// helpers.config.ts:150 the `get` trap for the option name [prop]. The
   /// receiver is this view.
   Object? _get(String prop) {
+    // One lookup of the name for the cache read and the cache write.
+    final key = _keyOf(prop);
     // DIVERGES(chartjs): adapt-resolver-cached-read, _cached inline.
-    final own = _own(prop);
+    final own = _ownKeyed(prop, key);
     if (!identical(own, _absent)) return own;
     if (prop == 'constructor') {
       // DIVERGES(chartjs): js-semantics-resolver-objects, no constructor.
@@ -1983,7 +1998,7 @@ final class OptionView implements ContextProxy {
     }
     final value = _resolveWithContext(this, prop, null);
     // cache the resolved value
-    _cache.set(_keyOf(prop), value);
+    _cache.set(key, value);
     return value;
   }
 
@@ -2418,36 +2433,106 @@ Object? _getScope(ResolverObjectKey key, Object? parent) => key == true
 /// helpers.config.ts:309 `addScopes`.
 ///
 /// `===` and `!==` are `==` and `!=`: the keys are strings and booleans.
+///
+/// With [twice], [parentScopes] stands for the list `[...parentScopes,
+/// ...parentScopes]` of `createSubResolver` when its parent scopes and its
+/// root scopes are one list: the walk goes over the list two times. The
+/// second time adds nothing to [set] and returns nothing when each step of
+/// the first time reads the same values again with no code of the user:
+/// each parent is read by a plain read ([_plainScopeRead]), each scope that
+/// it finds is a plain scope ([_plainScope]) with a `_fallback` that is not
+/// a function ([_plainFallback]), and [key] is a name with no dot or `true`
+/// ([_plainScopeKey]). A step that the first time took early ends the walk,
+/// as before. Then the walk skips the second time (the row
+/// `adapt-resolver-single-walk`). Any other walk goes over the list again.
 ResolverObjectKey _addScopes(
   Set<Object?> set,
   List<Object?> parentScopes,
   ResolverObjectKey key,
   ResolverObjectKey parentFallback,
-  Object? value,
-) {
-  for (final parent in parentScopes) {
-    final scope = _getScope(key, parent);
-    if (jsTruthy(scope)) {
-      set.add(scope);
-      final fallback = _resolveFallback(jsGet(scope, '_fallback'), key, value);
-      if (!identical(fallback, undefined) &&
-          fallback != key &&
-          fallback != parentFallback) {
-        // When we reach the descriptor that defines a new _fallback, return
-        // that. The fallback will resume to that new scope.
-        return fallback;
+  Object? value, [
+  bool twice = false,
+]) {
+  // DIVERGES(chartjs): adapt-resolver-single-walk, one pass when it is all.
+  var settled = twice && _plainScopeKey(key);
+  for (var pass = twice ? 2 : 1; pass > 0; pass--) {
+    if (pass == 1 && settled) break;
+    final first = pass == 2;
+    for (final parent in parentScopes) {
+      if (first && settled && !_plainScopeRead(parent, key)) settled = false;
+      final scope = _getScope(key, parent);
+      if (jsTruthy(scope)) {
+        set.add(scope);
+        final raw = jsGet(scope, '_fallback');
+        if (first && settled && !(_plainScope(scope) && _plainFallback(raw))) {
+          settled = false;
+        }
+        final fallback = _resolveFallback(raw, key, value);
+        if (!identical(fallback, undefined) &&
+            fallback != key &&
+            fallback != parentFallback) {
+          // When we reach the descriptor that defines a new _fallback, return
+          // that. The fallback will resume to that new scope.
+          return fallback;
+        }
+      } else if (scope == false &&
+          !identical(parentFallback, undefined) &&
+          key != parentFallback) {
+        // Fallback to `false` results to `false`, when falling back to
+        // different key. For example `interaction` from `hover` or
+        // `plugins.tooltip` and `animation` from `animations`
+        return null;
       }
-    } else if (scope == false &&
-        !identical(parentFallback, undefined) &&
-        key != parentFallback) {
-      // Fallback to `false` results to `false`, when falling back to
-      // different key. For example `interaction` from `hover` or
-      // `plugins.tooltip` and `animation` from `animations`
-      return null;
     }
   }
   return false;
 }
+
+/// Whether `getScope(key, parent)` of [_addScopes] reads no property for
+/// [key] (`true`), or reads one property with no code of the user (a name
+/// with no dot). A dotted name and any other key take the second walk.
+bool _plainScopeKey(ResolverObjectKey key) =>
+    identical(key, true) || (key is String && !key.contains('.'));
+
+/// Whether `getScope(key, parent)` for a key of [_plainScopeKey] reads
+/// [parent] with no code of the user, so that a second read gives the same
+/// value: a primitive value (`resolveObjectKey` reads no property of a
+/// falsy value, and the property of a string, a number or a boolean is an
+/// index, `length` or `undefined`), a Map of the SDK (`LinkedHashMap`, the
+/// class of a Map literal: a user Map class can run any code in a read), or
+/// a typed scope with the face of its class and no route of [key] (a route
+/// can give a new merged object at each read, core.defaults.js:144-153).
+bool _plainScopeRead(Object? parent, ResolverObjectKey key) {
+  if (parent is OptionScope) {
+    return parent.nativeFace && (key is! String || parent.routeOf(key) == null);
+  }
+  return parent is LinkedHashMap ||
+      parent == null ||
+      parent is Undefined ||
+      parent is bool ||
+      parent is num ||
+      parent is String;
+}
+
+/// Whether `set.add(scope)` and `scope._fallback` of [_addScopes] run no
+/// code of the user and read the same value again: a Map of the SDK, a
+/// typed scope with the face of its class and no route of `_fallback`, or a
+/// primitive value.
+bool _plainScope(Object? scope) {
+  if (scope is OptionScope) {
+    return scope.nativeFace && scope.routeOf('_fallback') == null;
+  }
+  return scope is LinkedHashMap ||
+      scope is bool ||
+      scope is num ||
+      scope is String;
+}
+
+/// Whether the `_fallback` value [raw] gives itself in [_resolveFallback]
+/// and compares with `!==` with no code of the user: not a function, and a
+/// string, a boolean, `null` or `undefined`.
+bool _plainFallback(Object? raw) =>
+    raw == null || raw is Undefined || raw is bool || raw is String;
 
 /// The own property [name] of the target of the resolver [resolver]: a
 /// field of an [OptionResolver], else the result of [jsGet] (the target of
@@ -2480,7 +2565,13 @@ Object _createSubResolver(
     prop,
     value,
   );
-  final allScopes = [...parentScopes, ...rootScopes];
+  // The parent scopes of a top-level resolver are its root scopes: then
+  // the copy holds the list once, and [_addScopes] walks it two times, or
+  // one time when the second time adds nothing (adapt-resolver-single-walk).
+  final twice = identical(parentScopes, rootScopes);
+  final allScopes = twice
+      ? [...parentScopes]
+      : [...parentScopes, ...rootScopes];
   final set = <Object?>{value};
   var key = _addScopesFromKey(
     set,
@@ -2488,12 +2579,13 @@ Object _createSubResolver(
     prop,
     jsTruthy(fallback) ? fallback : prop,
     value,
+    twice,
   );
   if (key == null) {
     return false;
   }
   if (!identical(fallback, undefined) && fallback != prop) {
-    key = _addScopesFromKey(set, allScopes, fallback, key, value);
+    key = _addScopesFromKey(set, allScopes, fallback, key, value, twice);
     if (key == null) {
       return false;
     }
@@ -2508,16 +2600,20 @@ Object _createSubResolver(
 }
 
 /// helpers.config.ts:360 `addScopesFromKey`.
+///
+/// [twice] is the flag of [_addScopes]: [allScopes] stands for itself two
+/// times.
 ResolverObjectKey _addScopesFromKey(
   Set<Object?> set,
   List<Object?> allScopes,
   ResolverObjectKey key,
   ResolverObjectKey fallback,
-  Object? item,
-) {
+  Object? item, [
+  bool twice = false,
+]) {
   var scopeKey = key;
   while (jsTruthy(scopeKey)) {
-    scopeKey = _addScopes(set, allScopes, scopeKey, fallback, item);
+    scopeKey = _addScopes(set, allScopes, scopeKey, fallback, item, twice);
   }
   return scopeKey;
 }
@@ -2547,15 +2643,24 @@ Object _newObject(Object? parent, String prop) =>
     <String, Object?>{};
 
 /// helpers.config.ts:390 `_resolveWithPrefixes`.
+///
+/// [key] is the cache key of [prop] ([_keyOf]) when the caller has it: the
+/// typed scopes read the empty prefix with it.
 Object? _resolveWithPrefixes(
   String prop,
   List<String> prefixes,
   List<Object?> scopes,
-  Object? proxy,
-) {
+  Object? proxy, [
+  Object? key,
+]) {
   Object? value;
   for (final prefix in prefixes) {
-    value = _resolve(_readKey(prefix, prop), scopes);
+    // `readKey('', prop)` is [prop], whose cache key is [key].
+    value = _resolve(
+      _readKey(prefix, prop),
+      scopes,
+      prefix.isEmpty ? key : null,
+    );
     if (!identical(value, undefined)) {
       return _needsSubResolver(prop, value)
           ? _createSubResolver(scopes, proxy, prop, value)
@@ -2570,8 +2675,8 @@ Object? _resolveWithPrefixes(
 /// An absent key and the [undefined] sentinel go to the next scope. Dart
 /// `null` (JS `null`) is the result. A typed scope is read by the typed
 /// lookup of its kind (Chart.js ADR 0054 §4); any other scope with [jsGet].
-Object? _resolve(String key, List<Object?> scopes) {
-  Object? scopeKey;
+/// [scopeKey] is `_keyOf(key)` when the caller has it, else Dart `null`.
+Object? _resolve(String key, List<Object?> scopes, [Object? scopeKey]) {
   for (final scope in scopes) {
     if (!jsTruthy(scope)) {
       continue;

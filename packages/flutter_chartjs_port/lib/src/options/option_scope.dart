@@ -74,6 +74,20 @@ abstract base class OptionScope
   /// The kind of the scope (`tool/options_schema.yaml`).
   ScopeKind get kind;
 
+  /// Whether the face by name of this scope is the one of this base class:
+  /// the scope is of the class of its kind ([ScopeKind.scopeType]). A
+  /// subclass can change the reads, the writes and the keys by name (a test
+  /// scope that counts its reads), so the typed walks of `helpers.core` and
+  /// `helpers.config` take such a scope by name. `Defaults` keeps the face
+  /// and overrides this getter.
+  @internal
+  bool get nativeFace => runtimeType == kind.scopeType;
+
+  /// Whether a key of the scope has a route ([addRoute]): then [lookup]
+  /// reads the route of that key.
+  @internal
+  bool get hasRoutes => _routeNames?.isNotEmpty ?? false;
+
   /// The cell of the declared key [key], or Dart `null` when the scope does
   /// not own it. A key that the kind does not declare gives Dart `null`.
   Opt<Object?>? cellOf(OptionKey key);
