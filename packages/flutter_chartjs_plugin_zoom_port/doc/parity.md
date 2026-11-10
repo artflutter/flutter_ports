@@ -48,11 +48,11 @@ gesture manager.
 | `test/specs/api.spec.js` | 17 | `test/specs/api_test.dart` | H9, H14, H20 | 3 | ported |
 | `test/specs/defaults.spec.js` | 2 | `test/specs/defaults_test.dart` | H16 | 3 | ported |
 | `test/specs/module.spec.js` | 4 | `test/specs/module_test.dart` | H16 | 3 | ported |
-| `test/specs/zoom.wheel.spec.js` | 10 | `test/specs/zoom.wheel_test.dart` | H23 | 3 | not started |
-| `test/specs/zoom.drag.spec.js` | 11 | `test/specs/zoom.drag_test.dart` | H23 | 3 | not started |
-| `test/specs/pan.spec.js` | 12 | `test/specs/pan_test.dart` | H23 | 3 | not started |
-| `test/specs/zoom.pinch.spec.js` | 4 | `test/specs/zoom.pinch_test.dart` | H23 | 3 | not started |
-| `test/specs/gestures.spec.js` | 2 | `test/specs/gestures_test.dart` | H23 | 3 | not started |
+| `test/specs/zoom.wheel.spec.js` | 10 | `test/specs/zoom.wheel_test.dart` | H23 | 3 | ported |
+| `test/specs/zoom.drag.spec.js` | 11 | `test/specs/zoom.drag_test.dart` | H23 | 3 | ported |
+| `test/specs/pan.spec.js` | 12 | `test/specs/pan_test.dart` | H23 | 3 | ported |
+| `test/specs/zoom.pinch.spec.js` | 4 | `test/specs/zoom.pinch_test.dart` | H23 | 3 | ported |
+| `test/specs/gestures.spec.js` | 2 | `test/specs/gestures_test.dart` | H23 | 3 | ported |
 | `test/specs/fixtures.spec.js` | 0 | `test/specs/fixtures_test.dart` | H24 | 4 | not started |
 | `test/index.js` | — | `test/flutter_test_config.dart` | H3, H6, H7, H23 | 3 | ported |
 | `test/fixtures/pan/*.js` (7) | — | `test/fixtures/hand/pan/*.dart` | H24 | 4 | not started |
@@ -72,7 +72,9 @@ cases of `panFunctions.category` are `testWidgets` cases on the category scale o
 date zone, the built-in components and the plugin, the colors plugin, the restore of the defaults,
 the release of the charts and the test font) and its event helpers.
 
-The 23 cases of the specs `api`, `defaults` and `module` pass, with no skip. The port-only
-`test/port/plugin_test.dart` tests the plugin object on the host: the data-only updates of a
-`ChartView` (seam H25), the warnings of `start` (H12, H17) and the range in the scale options
+The 83 cases of the eight specs of phase 3 pass, with no skip: `api` 17, `defaults` 2, `module` 4,
+`zoom.wheel` 17, `zoom.drag` 25, `pan` 12, `zoom.pinch` 4 and `gestures` 2. Some `it` calls of
+`zoom.wheel` and `zoom.drag` run in loops over the four modifier keys, pressed and not pressed. The
+port-only `test/port/plugin_test.dart` tests the plugin object on the host: the data-only updates of
+a `ChartView` (seam H25), the warnings of `start` (H12, H17) and the range in the scale options
 (H14).
