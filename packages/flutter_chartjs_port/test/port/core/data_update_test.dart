@@ -2154,4 +2154,51 @@ void main() {
       expect(lowering.lastApplyDataOnly, isFalse);
     });
   });
+
+  // Chart.js ADR 0111, section 7: a range update ends as a full update ends,
+  // with the tokens of the data-only lifecycle.
+  group('after a range update (Chart.js ADR 0111)', () {
+    for (final type in ['line', 'bar', 'scatter', 'radar']) {
+      test(
+        '$type: updateData takes the data-only path with the new ranges',
+        () {
+          final ca = config(type);
+          final cb = config(type);
+          final a = chart(ca);
+          final b = chart(cb);
+          final id = type == 'radar' ? 'r' : 'y';
+          for (final c in [a, b]) {
+            c.scales[id]!.options
+              ..jsWrite('min', 2.0)
+              ..jsWrite('max', 8.0);
+          }
+          expect(a.updateRanges('none'), isTrue);
+          b.update('none');
+          expect(a.scales[id]!.min, 2);
+          expect(a.scales[id]!.max, 8);
+          for (var step = 0; step < 2; step++) {
+            change(ca, step);
+            change(cb, step);
+            expect(a.updateData(), isTrue, reason: type);
+            b.update('none');
+            expect(observe(a), observe(b));
+            expect(a.scales[id]!.min, 2);
+            expect(a.scales[id]!.max, 8);
+          }
+        },
+      );
+    }
+
+    test('a range update after updateData takes the range path', () {
+      final cfg = config('line');
+      final a = chart(cfg);
+      change(cfg, 0);
+      expect(a.updateData(), isTrue);
+      a.scales['y']!.options.jsWrite('max', 9.0);
+      expect(a.updateRanges('none'), isTrue);
+      expect(a.scales['y']!.max, 9);
+      change(cfg, 1);
+      expect(a.updateData(), isTrue);
+    });
+  });
 }

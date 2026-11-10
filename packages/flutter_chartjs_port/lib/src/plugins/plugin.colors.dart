@@ -366,4 +366,16 @@ final Plugin colors = Plugin(supportsDataUpdates: true)
   ..defaults = (ColorsOptionsScope()
     ..enabled = true
     ..forceOverride = false)
-  ..beforeLayout = _beforeLayout;
+  ..beforeLayout = _beforeLayout
+  // With `forceOverride`, each layout writes new color Lists into the
+  // datasets, a change of the config that a kept resolver of a range update
+  // would miss (Chart.js ADR 0111): such a chart takes `update`.
+  // DIVERGES(chartjs): adapt-range-updates, the guard of forceOverride.
+  ..rangeUpdateGuard = _rangeUpdateGuard;
+
+/// Whether a range update keeps the colors of a full update: the plugin is
+/// off, or it writes no color of a dataset that it colored before.
+bool _rangeUpdateGuard(Object options) {
+  final opts = ColorsPluginOptions(options);
+  return !jsTruthy(opts.enabled) || !jsTruthy(opts.forceOverride);
+}

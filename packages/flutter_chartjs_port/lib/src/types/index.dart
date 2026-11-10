@@ -499,6 +499,11 @@ abstract interface class Chart {
   /// Configuration, labels and dataset structure must stay unchanged.
   bool updateData();
 
+  /// The range lifecycle of Chart.js ADR 0111: an update after a change of
+  /// the `min` and `max` options of the scales only; false means `update`
+  /// was selected.
+  bool updateRanges([Object? mode]);
+
   /// index.d.ts:568 `getVisibleDatasetCount()`.
   /// controller.polarArea.js:155 calls it.
   double getVisibleDatasetCount();

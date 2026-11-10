@@ -54,7 +54,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
+    show OptionView, attachContext, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show
         callback,
@@ -1599,19 +1599,37 @@ class Chart
     }
 
     render();
-    if (generation == _dataUpdateGeneration) {
-      // DIVERGES(chartjs): adapt-incremental-data-update, needs a layout.
-      _dataUpdateReady = datasetsUpdated && laidOut;
-      if (datasetsUpdated &&
-          supportsDataUpdates &&
-          config.supportsDataUpdates) {
-        _dataUpdateSnapshot = DataUpdateSnapshot.capture(data, config.options);
-        _dataUpdateEnvironment = (
-          width: width,
-          height: height,
-          dpr: currentDevicePixelRatio,
-          fonts: _dataUpdateFonts,
-        );
+    _recordUpdateState(
+      generation,
+      laidOut: laidOut,
+      datasetsUpdated: datasetsUpdated,
+    );
+  }
+
+  /// The end of a full update or of a range update: the tokens of the
+  /// data-only lifecycle (Chart.js ADR 0074) and the range state (Chart.js
+  /// ADR 0111), when no nested update invalidated them since [generation].
+  // DIVERGES(chartjs): adapt-incremental-data-update, needs a layout.
+  void _recordUpdateState(
+    int generation, {
+    required bool laidOut,
+    required bool datasetsUpdated,
+  }) {
+    if (generation != _dataUpdateGeneration) return;
+    _dataUpdateReady = datasetsUpdated && laidOut;
+    if (datasetsUpdated && supportsDataUpdates && config.supportsDataUpdates) {
+      final data = this.data;
+      final options = config.options;
+      _dataUpdateSnapshot = DataUpdateSnapshot.capture(data, options);
+      _dataUpdateEnvironment = (
+        width: width,
+        height: height,
+        dpr: currentDevicePixelRatio,
+        fonts: _dataUpdateFonts,
+      );
+      // DIVERGES(chartjs): adapt-range-updates, the range state.
+      if (laidOut) {
+        _rangeUpdateSnapshot = RangeUpdateSnapshot.capture(data, options);
       }
     }
   }
@@ -1624,7 +1642,13 @@ class Chart
     _dataUpdateReady = false;
     _dataUpdateSnapshot = null;
     _dataUpdateEnvironment = null;
+    _rangeUpdateSnapshot = null;
   }
+
+  /// The range state of Chart.js ADR 0111: the capture of the last full
+  /// update or range update that laid out and updated the datasets, or Dart
+  /// `null` after an invalidation.
+  RangeUpdateSnapshot? _rangeUpdateSnapshot;
 
   bool _dataUpdateReady = false;
   bool _updatingData = false;
@@ -1832,6 +1856,192 @@ class Chart
     }
   }
 
+  /// Updates the chart after a change of the `min` and `max` options of its
+  /// scales only (Chart.js ADR 0111).
+  ///
+  /// The caller keeps the contract of the ADR: no option, default, override,
+  /// theme, dataset, scale or plugin changed in place since the last full
+  /// update, except `min` and `max` of a scale written or deleted through a
+  /// view of the options (`scale.options['min'] = value`,
+  /// `scale.options.jsDelete('max')`, `chart.options.scales.x.min = value`).
+  /// A write into a Map of the config, past the views, is a change in place.
+  /// Data values, new data Lists and new labels are allowed. The dataset List
+  /// keeps its datasets, the chart keeps its scales and its plugins. Call
+  /// [update] after any other change.
+  ///
+  /// Each hook, the parse, the layout, the dataset updates, the replay and
+  /// the draw run as in [update], and each scriptable option runs again. The
+  /// configuration of the last full update stays: no scale merge, no new
+  /// resolver, no check of the scale ids, types and positions, no new
+  /// controller. When a check fails, the call is `update(mode)`: a call from
+  /// an update, no completed full update since an invalidation (a resize, a
+  /// visibility change, the `data` or `options` setter, a cancelled or thrown
+  /// update), a chart or config of another class, a plugin that does not opt
+  /// into the partial lifecycles, a notified change of a data array, another
+  /// `data` or `options` object or another dataset, and a controller that is
+  /// not of its exact built-in class.
+  ///
+  /// [mode] is the mode of [update]: the hooks, the transitions and the
+  /// contexts get it as in [update]. Each mode and running animations are
+  /// allowed.
+  ///
+  /// It counts as a full update for the re-entry rules: [updateData] from one
+  /// of its hooks or callbacks throws a [StateError], [update] from a hook
+  /// runs as from the hooks of [update], and [updateRanges] from a hook is
+  /// `update(mode)`.
+  ///
+  /// Returns true when the range lifecycle ran, also when a hook cancelled
+  /// it; false when the call delegated to [update].
+  // DIVERGES(chartjs): adapt-range-updates, the range lifecycle.
+  @override
+  bool updateRanges([Object? mode = undefined]) {
+    if (!_canUpdateRanges()) {
+      update(mode);
+      return false;
+    }
+    _fullUpdateDepth++;
+    try {
+      _updateRanges(mode);
+    } finally {
+      _fullUpdateDepth--;
+    }
+    return true;
+  }
+
+  /// The checks of a range update (Chart.js ADR 0111, section 3). They read
+  /// identities and flags: no walk of the options.
+  bool _canUpdateRanges() {
+    // 1. An update lifecycle runs: the call is a nested update.
+    if (_updatingData || _fullUpdateDepth > 0) return false;
+    // 2. The range state of the last full update or range update.
+    final snapshot = _rangeUpdateSnapshot;
+    if (snapshot == null) return false;
+    // 3. The exact classes of the chart and of its config.
+    final config = this.config;
+    if (!supportsDataUpdates || !config.supportsDataUpdates) return false;
+    // 4. The cached descriptors, each plugin opted in.
+    if (!plugins.supportsRangeUpdates) return false;
+    // 5. No notified change of a data array.
+    if (dataChanges.isNotEmpty) return false;
+    // 6. The same data and options objects and the same datasets.
+    if (!snapshot.matches(data, config.options)) return false;
+    // 7. The exact built-in controller of each dataset.
+    final count = snapshot.datasets.length;
+    if (_datasets.length != count) return false;
+    for (var i = 0; i < count; i++) {
+      final controller = getDatasetMeta(i.toDouble()).controller;
+      if (controller == null || !controller.supportsDataUpdates) return false;
+    }
+    return true;
+  }
+
+  /// The range lifecycle: `_updateFull` with the steps of the table of
+  /// Chart.js ADR 0111, section 4. The configuration and its resolvers stay;
+  /// each place where `update` makes a new resolver gets a new context view
+  /// over the kept one.
+  void _updateRanges(Object? mode) {
+    _invalidateDataUpdate();
+    final generation = _dataUpdateGeneration;
+    // No `config.update()`: the merged scale options of the last update stay,
+    // with the `min` and `max` that the views wrote.
+    final options = _options = attachContext(_options.resolver, getContext());
+    final animsDisabled = animationsDisabled = !jsTruthy(
+      options.readKey(OptionKey.animation),
+    );
+
+    _updateScaleRanges(options);
+    // No `_checkEventBindings` and no `_updateHiddenIndices`: no change under
+    // the contract, and `dataChanges` is empty.
+
+    // A new view over the resolver of each cached descriptor, where `update`
+    // invalidates the descriptors.
+    plugins.refreshDescriptorViews(this);
+
+    if (notifyPlugins(
+          'beforeUpdate',
+          UpdateHookArgs(mode: mode, cancelable: true),
+        ) ==
+        false) {
+      return;
+    }
+
+    // No `buildOrUpdateControllers`: the controllers, the scale links and the
+    // metasets stay. The visibility of a meta is the one field that a write
+    // outside the options (`meta.hidden`) changes.
+    final datasets = _datasets;
+    for (var i = 0, ilen = datasets.length; i < ilen; i++) {
+      getDatasetMeta(i.toDouble()).visible = isDatasetVisible(i);
+    }
+
+    notifyPlugins('beforeElementsUpdate');
+
+    // No new controller: `reset` is the value of a controller that is not
+    // new.
+    var minPadding = 0.0;
+    for (var i = 0, ilen = datasets.length; i < ilen; i++) {
+      final controller = getDatasetMeta(i.toDouble()).controller!
+        ..buildOrUpdateElements(!animsDisabled);
+      minPadding = jsMax(jsToNumber(controller.getMaxOverflow()), minPadding);
+    }
+    minPadding = _minPadding =
+        jsTruthy(
+          readOption(options.readKey(OptionKey.layout), OptionKey.autoPadding),
+        )
+        ? minPadding
+        : 0;
+    final laidOut = _updateLayout(minPadding);
+
+    final datasetsUpdated = _updateDatasets(mode, keepResolvers: true);
+
+    notifyPlugins('afterUpdate', UpdateHookArgs(mode: mode));
+
+    jsSort(
+      _layers,
+      _compare2Level<LayoutLayer>((layer) => layer.z, (layer) => layer.idx),
+    );
+
+    final active = this.active;
+    final lastEvent = _eventToReplay();
+    if (lastEvent != null) {
+      _replayLastEvent(lastEvent);
+    } else if (active.isNotEmpty) {
+      _updateHoverStyles(active, active, true);
+    }
+
+    render();
+    _recordUpdateState(
+      generation,
+      laidOut: laidOut,
+      datasetsUpdated: datasetsUpdated,
+    );
+  }
+
+  /// The scale steps of `_updateScales` in a range update (Chart.js ADR 0111,
+  /// section 4): the boxes of the scales go and come back as in `update`, and
+  /// `scale.init` takes the scale options of the new chart view. No id
+  /// writes, no axis, type and position checks, no scale made or removed:
+  /// under the contract the scales and their options are those of the last
+  /// full update. `init` runs in the order of [scales]; `buildOrUpdateScales`
+  /// runs it in the order of the keys of `options.scales`, which hold the
+  /// same ids, and `init` reads and writes only its own scale.
+  void _updateScaleRanges(OptionView options) {
+    final scales = this.scales;
+    for (final scale in scales.values) {
+      layouts.removeBox(this, scale);
+    }
+    if (scales.isNotEmpty) {
+      final byId = options.readKey(OptionKey.scales)! as OptionView;
+      for (final MapEntry(key: id, value: scale) in scales.entries) {
+        scale.init(byId.jsRead(id)! as OptionView, options);
+      }
+    }
+    for (final scale in scales.values) {
+      layouts
+        ..configure(this, scale, scale.options)
+        ..addBox(this, scale);
+    }
+  }
+
   /// core.controller.js:542 `_updateScales()`.
   /// @private
   void _updateScales() {
@@ -1972,7 +2182,11 @@ class Chart
   /// @private
   ///
   /// `mode({datasetIndex: i})` is [jsCall] of the function value.
-  bool _updateDatasets(Object? mode, {bool configure = true}) {
+  bool _updateDatasets(
+    Object? mode, {
+    bool configure = true,
+    bool keepResolvers = false,
+  }) {
     if (notifyPlugins(
           'beforeDatasetsUpdate',
           UpdateHookArgs(mode: mode, cancelable: true),
@@ -1983,7 +2197,10 @@ class Chart
 
     for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
       final controller = getDatasetMeta(i.toDouble()).controller!;
-      if (configure) {
+      if (keepResolvers) {
+        // DIVERGES(chartjs): adapt-range-updates, the kept dataset resolver.
+        controller.configureKeptResolver();
+      } else if (configure) {
         controller.configure();
       } else {
         // DIVERGES(chartjs): adapt-incremental-data-update, the context write
