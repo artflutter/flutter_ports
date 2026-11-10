@@ -20,6 +20,12 @@
 /// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
 ///   is a pure layer too. It also imports `package:test` and the pure layers
 ///   of the checked package (porting-flow.md 3).
+/// - An add-on port (ADR 0009) names its host package in the top-level key
+///   `host` of its `tool/port_sources.yaml`. Its `lib/` and `test/` import
+///   only the public libraries of the host, the libraries directly in the
+///   `lib/` of the host, never `package:<host>/src/` (ADR 0009, item 3).
+///   Its `test/` imports only [addOnHarnessLibraries] of the harness package
+///   (ADR 0009, item 7).
 library;
 
 import 'dart:collection';
@@ -28,6 +34,8 @@ import 'dart:io';
 import 'check_support.dart';
 import 'dart_source.dart';
 import 'headers.dart';
+import 'port_headers.dart'
+    show harnessPackageName, parsePortSourcesFile, portSourcesPath;
 
 /// The `dart:` libraries of framework-free core layers and Flutter web tests.
 /// The historical pure-layer names now include dart:ui Color (ADR 0061).
@@ -252,6 +260,25 @@ const String harnessPureRoot = 'lib/pure.dart';
 /// with `/` is a prefix.
 const Set<String> harnessPureLibraries = {'package:test/'};
 
+/// The libraries of the harness package that the tests of an add-on port can
+/// import (ADR 0009, item 7). Other `package:chartjs_test_utils/` URIs, for
+/// example `src/`, are errors.
+const Set<String> addOnHarnessLibraries = {
+  'package:$harnessPackageName/flutter.dart',
+  'package:$harnessPackageName/pure.dart',
+};
+
+/// The host of an add-on port: its package name and its public libraries.
+final class _Host {
+  const _Host(this.name, this.libraries);
+
+  /// The package name, for example `flutter_chartjs_port`.
+  final String name;
+
+  /// The URIs of the libraries directly in the `lib/` of the host, sorted.
+  final List<String> libraries;
+}
+
 /// One Dart file of the package.
 final class _Library {
   _Library(this.path, this.source) : header = Header.parse(source.lines);
@@ -279,6 +306,8 @@ final class _Edge {
 ///
 /// When [harnessDirectory] holds a [harnessPureRoot], the guard also checks
 /// the closure of that file. Its paths start with [harnessDisplayPrefix].
+/// The guard skips the closure for an add-on port: the harness imports the
+/// pure layers of the host, not of the add-on.
 ({List<Finding> findings, int files}) checkLibImports(
   String packageDirectory, {
   String displayPrefix = '',
@@ -292,6 +321,8 @@ final class _Edge {
   void report(_Library library, int line, String message) {
     findings.add(Finding('$displayPrefix${library.path}', line, message));
   }
+
+  final host = _readHost(packageDirectory, displayPrefix, findings);
 
   // lib/ allowlist.
   for (final library in libraries.values) {
@@ -310,8 +341,13 @@ final class _Edge {
         continue;
       }
       final forbidden = _forbiddenReason(edge.uri);
+      final hostImport = host == null ? null : _isHostAllowed(edge.uri, host);
       if (forbidden != null) {
         report(library, edge.line, 'imports ${edge.uri} ($forbidden).');
+      } else if (hostImport != null) {
+        if (!hostImport) {
+          report(library, edge.line, _hostMessage(edge.uri, host!));
+        }
       } else if (!_isLibAllowed(edge.uri)) {
         report(
           library,
@@ -319,6 +355,30 @@ final class _Edge {
           'imports ${edge.uri}, which is not on the lib/ allowlist '
           '(porting-flow.md 4, tool 1).',
         );
+      }
+    }
+  }
+
+  // The tests of an add-on port: the public libraries of the host and of
+  // the harness.
+  if (host != null) {
+    for (final library in libraries.values) {
+      if (!library.path.startsWith('test/')) continue;
+      for (final edge in library.edges) {
+        if (edge.target != null) continue;
+        final uri = edge.uri;
+        if (_isHostAllowed(uri, host) == false) {
+          report(library, edge.line, _hostMessage(uri, host));
+        } else if (uri.startsWith('package:$harnessPackageName/') &&
+            !addOnHarnessLibraries.contains(uri)) {
+          report(
+            library,
+            edge.line,
+            'imports $uri, but the tests of an add-on port import only '
+            '${addOnHarnessLibraries.join(' and ')} of the harness (ADR '
+            '0009, item 7).',
+          );
+        }
       }
     }
   }
@@ -465,6 +525,7 @@ final class _Edge {
 
   var files = libraries.length;
   if (harnessDirectory != null &&
+      host == null &&
       File('$harnessDirectory/$harnessPureRoot').existsSync()) {
     files += _checkHarness(
       harnessDirectory,
@@ -550,6 +611,72 @@ int _checkHarness(
     }
   }
   return closure.length;
+}
+
+/// The host of the package in [packageDirectory] when it is an add-on port:
+/// the top-level key `host` of its [portSourcesPath]. The host package is
+/// next to the package. Null for a package without the key. Adds a finding
+/// when the file or the host cannot be read.
+_Host? _readHost(
+  String packageDirectory,
+  String displayPrefix,
+  List<Finding> findings,
+) {
+  final file = File('$packageDirectory/$portSourcesPath');
+  if (!file.existsSync()) return null;
+  void report(String message) =>
+      findings.add(Finding('$displayPrefix$portSourcesPath', null, message));
+  final String? name;
+  try {
+    name = parsePortSourcesFile(file.readAsStringSync()).host;
+  } on FileSystemException catch (e) {
+    report(e.message);
+    return null;
+  } on FormatException catch (e) {
+    report(e.message);
+    return null;
+  }
+  if (name == null) return null;
+  final parent = posixPath(Directory(packageDirectory).parent.path);
+  final directory = '$parent/$name';
+  final lib = Directory('$directory/lib');
+  String? actual;
+  try {
+    actual = _packageName(directory);
+  } on FileSystemException {
+    actual = null;
+  } on FormatException {
+    actual = null;
+  }
+  if (actual != name || !lib.existsSync()) {
+    report('the host package $name is not next to the package (ADR 0009).');
+    return _Host(name, const []);
+  }
+  return _Host(
+    name,
+    [
+      for (final entity in lib.listSync())
+        if (entity is File && entity.path.endsWith('.dart'))
+          'package:$name/${posixPath(entity.path).split('/').last}',
+    ]..sort(),
+  );
+}
+
+/// Whether [uri] is a library of [host] that an add-on port can import, or
+/// null when [uri] is not a library of [host].
+bool? _isHostAllowed(String uri, _Host host) {
+  if (!uri.startsWith('package:${host.name}/')) return null;
+  return host.libraries.contains(uri);
+}
+
+/// The finding of an import of [uri], a library of [host] that is not a
+/// public library.
+String _hostMessage(String uri, _Host host) {
+  final libraries = host.libraries.isEmpty
+      ? ''
+      : ': ${host.libraries.join(', ')}';
+  return 'imports $uri, but an add-on port imports only the public libraries '
+      'of its host ${host.name}$libraries (ADR 0009, item 3).';
 }
 
 String _packageName(String packageDirectory) {

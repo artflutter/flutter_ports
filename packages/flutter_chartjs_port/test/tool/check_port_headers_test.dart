@@ -43,10 +43,15 @@ const String _testUtilsCopyright =
     'SPDX-FileCopyrightText = '
     '["2020 chartjs-test-utils Contributors", "2026 A"]';
 
+const String _zoomCopyright =
+    'SPDX-FileCopyrightText = '
+    '["2013-2024 chartjs-plugin-zoom contributors", "2026 A"]';
+
 const List<String> _portSources = [
   'sources:',
   '  - header: Chart.js',
   '    version: "v4.5.1"',
+  '    version_source: chartJsVersion in $_package/lib/src/upstream.dart',
   '    url: https://github.com/chartjs/Chart.js',
   '    language: js',
   '    spdx: MIT',
@@ -930,6 +935,18 @@ void main() {
       ).findings,
     );
 
+    test('is examined as the package of a dart target', () {
+      tree.write('$harness/lib/src/context.dart', ['/// Docs.']);
+      // The command passes only the home package.
+      expect(run(), [
+        startsWith(
+          'error: $harness/lib/src/context.dart:1: line 1 is neither a '
+          '"// Ported from" header',
+        ),
+      ]);
+      expect(check().files, 8 + 3);
+    });
+
     test('is added next to the home package when it exists', () {
       final home = tree.path(_package);
       expect(withHarnessPackage([home]), [home, tree.path(harness)]);
@@ -1031,6 +1048,287 @@ void main() {
     });
   });
 
+  group('add-on port', () {
+    const zoom = 'packages/flutter_chartjs_plugin_zoom_port';
+    const zoomCommit = 'fb81d3316bbf3504903b10d1a9bc8cd99173b5c4';
+    const zoomPortOnly =
+        '// Original code, not ported from chartjs-plugin-zoom: a test.';
+    String zoomHeader(String path) =>
+        '// Ported from chartjs-plugin-zoom v2.2.0+fb81d331 $path '
+        '(MIT, chartjs-plugin-zoom contributors).';
+    const versionSource = 'chartjsPluginZoomVersion in $zoom/lib/src';
+    const zoomSources = [
+      '# The source list of an add-on port.',
+      'marker: zoom',
+      'host: flutter_chartjs_port',
+      '',
+      'sources:',
+      '  - header: chartjs-plugin-zoom',
+      '    version: "v2.2.0+fb81d331"',
+      '    version_source: $versionSource/upstream.dart',
+      '    url: https://github.com/chartjs/chartjs-plugin-zoom',
+      '    language: js',
+      '    spdx: MIT',
+      '    holder: chartjs-plugin-zoom contributors',
+      '    pin:',
+      '      kind: submodule',
+      '      path: third_party/chartjs-plugin-zoom',
+      '      ref: "$zoomCommit"',
+      '      commit: $zoomCommit',
+      '    targets:',
+      '      - source: src/scale.types.test.ts',
+      '        dart: $zoom/test/specs/scale.types_test.dart',
+      '      - source: src/',
+      '        dart: $zoom/lib/src/',
+      '      - source: test/specs/',
+      '        dart: $zoom/test/specs/',
+      '      - source: test/index.js',
+      '        dart: $zoom/test/flutter_test_config.dart',
+    ];
+
+    setUp(() {
+      tree
+        ..write('REUSE.toml', [
+          'version = 1',
+          '[[annotations]]',
+          'path = "$_package/**"',
+          _chartJsCopyright,
+          'SPDX-License-Identifier = "MIT"',
+          '[[annotations]]',
+          'path = "$_package/lib/src/js/fdlibm_*.dart"',
+          'SPDX-FileCopyrightText = ["1993 Sun Microsystems, Inc.", "2026 A"]',
+          'SPDX-License-Identifier = "SunPro AND MIT"',
+          '[[annotations]]',
+          'path = "$zoom/**"',
+          _zoomCopyright,
+          'SPDX-License-Identifier = "MIT"',
+        ])
+        ..write('third_party/chartjs-plugin-zoom/src/utils.ts', ['//'])
+        ..write('third_party/chartjs-plugin-zoom/src/scale.types.test.ts', [
+          '//',
+        ])
+        ..write('third_party/chartjs-plugin-zoom/test/index.js', ['//'])
+        ..write(
+          'third_party/chartjs-plugin-zoom/test/specs/zoom.wheel.spec.js',
+          ['//'],
+        )
+        ..write('$zoom/pubspec.yaml', [
+          'name: flutter_chartjs_plugin_zoom_port',
+        ])
+        ..write('$zoom/LICENSE', [
+          'Copyright (c) 2013-2024 chartjs-plugin-zoom contributors',
+        ])
+        ..write('$zoom/tool/port_sources.yaml', zoomSources)
+        ..write('$zoom/doc/differences.md', [
+          '| Reserved ID | The difference |',
+          '|---|---|',
+          '| `adapt-canvas-event-target` | a |',
+          '',
+          '| ID | Dart file and symbol |',
+          '|---|---|',
+          '| `adapt-amount-classes` | `lib/src/utils.dart` |',
+        ])
+        ..write('$zoom/lib/flutter_chartjs_plugin_zoom_port.dart', [
+          zoomPortOnly,
+        ])
+        ..write('$zoom/lib/src/upstream.dart', [
+          zoomPortOnly,
+          "const String chartjsPluginZoomVersion = '2.2.0+fb81d331';",
+        ])
+        ..write('$zoom/lib/src/utils.dart', [
+          zoomHeader('src/utils.ts'),
+          '// Upstream backport: chartjs/chartjs-plugin-zoom@1234abcd (#99).',
+          '',
+          '// DIVERGES(zoom): adapt-amount-classes, a reason.',
+        ])
+        ..write('$zoom/test/flutter_test_config.dart', [
+          zoomHeader('test/index.js'),
+        ])
+        ..write('$zoom/test/specs/scale.types_test.dart', [
+          zoomHeader('src/scale.types.test.ts'),
+        ])
+        ..write('$zoom/test/specs/zoom.wheel_test.dart', [
+          zoomHeader('test/specs/zoom.wheel.spec.js'),
+        ])
+        ..write('$zoom/test/upstream_test.dart', [zoomPortOnly]);
+    });
+
+    ({List<Finding> findings, int files}) checkZoom() => checkPortHeaders(
+      HeaderCheckInput(
+        repository: tree.root,
+        home: tree.path(zoom),
+        packages: [tree.path(zoom)],
+        gitlink: (_, _) => null,
+        checkoutHead: (_) => null,
+      ),
+    );
+
+    List<String> runZoom() => describeFindings(checkZoom().findings);
+
+    void replaceZoomFile(String path, List<String> lines) =>
+        tree.write('$zoom/$path', lines);
+
+    /// An error in [message], which starts with a path in the zoom package.
+    String zoomError(String message) => 'error: $zoom/$message';
+
+    test('passes a tree in the zoom shape', () {
+      expect(runZoom(), isEmpty);
+      expect(checkZoom().files, 7);
+    });
+
+    test('examines only the add-on package', () {
+      replaceFile('lib/a.dart', ['/// Docs.']);
+      expect(runZoom(), isEmpty);
+      expect(run(), [startsWith(_error('lib/a.dart:1: line 1 is neither'))]);
+    });
+
+    test('needs the port-only marker of the primary project', () {
+      replaceZoomFile('test/upstream_test.dart', [_portOnly]);
+      expect(runZoom(), [
+        zoomError(
+          'test/upstream_test.dart:1: line 1 is neither a "// Ported from" '
+          'header (AGENTS.md rule 2) nor the port-only marker "// Original '
+          'code, not ported from chartjs-plugin-zoom: <reason>.".',
+        ),
+      ]);
+    });
+
+    test('needs the repository of the primary project in a backport', () {
+      replaceZoomFile('lib/src/utils.dart', [
+        zoomHeader('src/utils.ts'),
+        '// Upstream backport: chartjs/Chart.js@2898a6d1 (#12142).',
+        '// DIVERGES(zoom): adapt-amount-classes, a reason.',
+      ]);
+      replaceZoomFile('test/flutter_test_config.dart', [
+        _chartJs('test/index.js'),
+        '// Upstream backport: chartjs/chartjs-plugin-zoom@1234abcd (#99).',
+      ]);
+      expect(runZoom(), [
+        zoomError(
+          'lib/src/utils.dart:2: the header line does not match the grammar '
+          'of porting-flow.md 4, tool 2.',
+        ),
+        zoomError(
+          'test/flutter_test_config.dart:1: "Chart.js" is not in '
+          'tool/port_sources.yaml.',
+        ),
+        zoomError(
+          'test/flutter_test_config.dart:2: a backport line needs a '
+          '"// Ported from chartjs-plugin-zoom" line.',
+        ),
+      ]);
+    });
+
+    test('maps .spec.js to _test.dart', () {
+      tree.delete('$zoom/test/specs/zoom.wheel_test.dart');
+      replaceZoomFile('test/specs/zoom.wheel.spec.dart', [
+        zoomHeader('test/specs/zoom.wheel.spec.js'),
+      ]);
+      replaceZoomFile('test/specs/zoom.wheel_test.dart', [zoomPortOnly]);
+      expect(runZoom(), [
+        zoomError(
+          'test/specs/zoom.wheel.spec.dart:1: the Dart path of '
+          'test/specs/zoom.wheel.spec.js is '
+          '$zoom/test/specs/zoom.wheel_test.dart (porting-flow.md 2.5), not '
+          'this file.',
+        ),
+        zoomError(
+          'test/specs/zoom.wheel_test.dart:1: the file is at the Dart path of '
+          'chartjs-plugin-zoom test/specs/zoom.wheel.spec.js: start it with '
+          'its "// Ported from" header, not the port-only marker.',
+        ),
+      ]);
+    });
+
+    test('reads the DIVERGES markers with the tag of the marker key', () {
+      replaceZoomFile('lib/src/utils.dart', [
+        zoomHeader('src/utils.ts'),
+        '// DIVERGES(chartjs): adapt-amount-classes, a reason.',
+        '// DIVERGES(zoom): adapt-x, a reason.',
+        '// DIVERGES(zoom): x-y, a reason.',
+      ]);
+      const malformed =
+          'a malformed DIVERGES marker: write the line comment '
+          '"DIVERGES(zoom): <row id>, <reason>" (porting-flow.md 4).';
+      expect(runZoom(), [
+        zoomError('lib/src/utils.dart:2: $malformed'),
+        zoomError(
+          'lib/src/utils.dart:4: the DIVERGES(zoom) row ID "x-y" does not '
+          'start with a category (${differenceCategories.join(', ')}) and a '
+          'hyphen.',
+        ),
+        zoomError(
+          'lib/src/utils.dart:3: the DIVERGES(zoom) marker names "adapt-x", '
+          'which is not a row of $zoom/doc/differences.md.',
+        ),
+        zoomError(
+          'lib/src/utils.dart:4: the DIVERGES(zoom) marker names "x-y", '
+          'which is not a row of $zoom/doc/differences.md.',
+        ),
+        zoomError(
+          'doc/differences.md:7: row adapt-amount-classes has no '
+          'DIVERGES(zoom) marker in the code.',
+        ),
+      ]);
+    });
+
+    test('compares the version of the primary project with its constant', () {
+      replaceZoomFile('lib/src/upstream.dart', [
+        zoomPortOnly,
+        "const String chartjsPluginZoomVersion = '2.2.1';",
+      ]);
+      final findings = runZoom();
+      expect(
+        findings.first,
+        zoomError(
+          'tool/port_sources.yaml: chartjs-plugin-zoom version is '
+          'v2.2.0+fb81d331, but chartjsPluginZoomVersion is 2.2.1: write '
+          'v2.2.1.',
+        ),
+      );
+      expect(
+        findings,
+        contains(
+          'warning: $zoom/lib/src/utils.dart:1: stale header: '
+          'chartjs-plugin-zoom v2.2.0+fb81d331 is older than v2.2.1 '
+          '(chartjsPluginZoomVersion). Restamp it (upstream-tracking.md 4.8).',
+        ),
+      );
+
+      replaceZoomFile('lib/src/upstream.dart', [zoomPortOnly]);
+      expect(runZoom(), [
+        zoomError('lib/src/upstream.dart: no chartjsPluginZoomVersion found.'),
+      ]);
+    });
+
+    test('needs an entry with the version constant of the package', () {
+      tree.write('$zoom/tool/port_sources.yaml', [
+        for (final line in zoomSources)
+          if (!line.startsWith('    version_source:')) line,
+      ]);
+      expect(runZoom(), [
+        zoomError(
+          'tool/port_sources.yaml: no entry has the version_source '
+          '"<constant> in $zoom/lib/src/upstream.dart": the entry of the '
+          'project that the package ports names its version constant there.',
+        ),
+      ]);
+    });
+
+    test('reports a bad top-level key of port_sources.yaml', () {
+      tree.write('$zoom/tool/port_sources.yaml', [
+        for (final line in zoomSources)
+          if (line == 'marker: zoom') 'marker: DIVERGES(zoom)' else line,
+      ]);
+      expect(runZoom(), [
+        zoomError(
+          'tool/port_sources.yaml: "marker" is a tag of lowercase letters, '
+          'digits and hyphens',
+        ),
+      ]);
+    });
+  });
+
   test('parseDifferences reads the ID column', () {
     final rows = parseDifferences(
       [
@@ -1042,6 +1340,12 @@ void main() {
         '| Name | ID |',
         '|---|---|',
         '| no | theme-z |',
+        '',
+        // A table of reserved IDs, for example of an add-on port, has no
+        // rows of the check.
+        '| Reserved ID | Reason |',
+        '|---|---|',
+        '| `adapt-reserved` | c |',
       ].join('\n'),
     );
     expect(

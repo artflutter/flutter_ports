@@ -14,11 +14,10 @@ example `src/handlers.ts`@v2.2.0+fb81d331:41. Each bump checks every row.
 The table has no rows in phase 0. [Zoom ADR 0003](adr/0003-host-connection.md) reserves these
 IDs. A row with the ID comes with the change that ports the hunk.
 
-| ID | The difference | Seam |
+| Reserved ID | The difference | Seam |
 |---|---|---|
-| `adapt-canvas-event-listener` | `addCanvasEventListener(canvas, type, listener)` and `removeCanvasEventListener` of the host in place of `canvas.addEventListener` and `removeEventListener`, also on the document target | H3, H4, H5 |
+| `adapt-canvas-event-target` | `addHandler` takes a `NativeEventTarget`: the canvas passes `canvas.eventTarget` of the host extension `CanvasEventTarget`, and `chart.canvas.ownerDocument` stands in place of `window.document` (`src/handlers.ts:110`) | H3, H4, H5 |
 | `adapt-chart-methods-extension` | The extension `ZoomChart on Chart` in place of the ten run-time methods of `bindApi` | H9 |
-| `adapt-style-properties` | `getPropertyValue('touch-action')`, `setProperty('touch-action', 'none')` and `setProperty(name, null)` in place of `style.touchAction`, `style.userSelect` and `removeProperty` | H8 |
 | `harness-date-adapter` | The time-scale specs run on the default date adapter of the host, not on chartjs-adapter-date-fns | Zoom ADR 0003 item 10 |
 
 | ID | Dart file and symbol | Upstream file@version:lines | Category | Reason | Upstream reference | Pinning test | Re-check on bump |

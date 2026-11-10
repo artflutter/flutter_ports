@@ -15,14 +15,22 @@ final RegExp portedFromPattern = RegExp(
   r'\(([^,]+), (.+)\)\.$',
 );
 
-/// The port-only marker.
+/// The port-only marker, with the project and the reason.
+///
+/// The header check requires the primary project of the home package (the
+/// project of its `lib/src/upstream.dart`), for example `Chart.js` or
+/// `chartjs-plugin-zoom`.
 final RegExp portOnlyPattern = RegExp(
-  r'^// Original code, not ported from Chart\.js: (\S.*)\.$',
+  r'^// Original code, not ported from ([^:]+): (\S.*)\.$',
 );
 
-/// A backport line (upstream-tracking.md 4.2).
+/// A backport line (upstream-tracking.md 4.2), with the `<owner>/<repo>` of
+/// the upstream repository, the commit and the pull request.
+///
+/// The header check requires the repository of the primary project of the
+/// home package, for example `chartjs/Chart.js`.
 final RegExp backportPattern = RegExp(
-  r'^// Upstream backport: chartjs/Chart\.js@([0-9a-f]{8}) \(#(\d+)\)\.$',
+  r'^// Upstream backport: ([\w.-]+/[\w.-]+)@([0-9a-f]{8}) \(#(\d+)\)\.$',
 );
 
 /// The start of a `// Ported from` line, also of a malformed one.
@@ -67,11 +75,16 @@ final class PortedFrom {
 
 /// One backport line.
 final class Backport {
-  /// The backport of commit [sha] (8 hex digits) from pull request [pr].
-  const Backport(this.line, this.sha, this.pr);
+  /// The backport of commit [sha] (8 hex digits) of the upstream
+  /// [repository] from pull request [pr].
+  const Backport(this.line, this.repository, this.sha, this.pr);
 
   /// The 1-based line.
   final int line;
+
+  /// The `<owner>/<repo>` of the upstream repository, for example
+  /// `chartjs/Chart.js`.
+  final String repository;
 
   /// The abbreviated upstream commit.
   final String sha;
@@ -100,6 +113,7 @@ final class Header {
     required this.backports,
     required this.malformed,
     required this.lastLine,
+    this.portOnlyProject,
     this.portOnlyReason,
   });
 
@@ -114,7 +128,8 @@ final class Header {
         backports: const [],
         malformed: const [],
         lastLine: 1,
-        portOnlyReason: marker.group(1),
+        portOnlyProject: marker.group(1),
+        portOnlyReason: marker.group(2),
       );
     }
     if (portedFromPattern.firstMatch(first) == null) {
@@ -155,7 +170,12 @@ final class Header {
           malformed.add(line);
         } else {
           backports.add(
-            Backport(line, match.group(1)!, int.parse(match.group(2)!)),
+            Backport(
+              line,
+              match.group(1)!,
+              match.group(2)!,
+              int.parse(match.group(3)!),
+            ),
           );
         }
       } else {
@@ -187,6 +207,9 @@ final class Header {
 
   /// The last line of the block, or 0 when line 1 is not a header.
   final int lastLine;
+
+  /// The project of the port-only marker, for example `Chart.js`.
+  final String? portOnlyProject;
 
   /// The reason of the port-only marker.
   final String? portOnlyReason;

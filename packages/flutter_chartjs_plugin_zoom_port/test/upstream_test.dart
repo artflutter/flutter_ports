@@ -33,8 +33,10 @@ Directory? _repositoryRoot() {
 /// Each entry maps a key to its scalar value. The keys are the scalar keys
 /// of the entry (`header`, `version`) and the keys of its `pin` mapping
 /// with a `pin.` prefix (`pin.path`, `pin.commit`). The reader skips all
-/// other lines. The package has no YAML dependency. Thus this small reader
-/// reads only the block form of these files.
+/// other lines. An unindented line is a top-level key (`sources`, and the
+/// `marker` and `host` of an add-on port): it ends the current entry. The
+/// package has no YAML dependency. Thus this small reader reads only the
+/// block form of these files.
 List<Map<String, String>> _readSources(String text) {
   final entries = <Map<String, String>>[];
   final entryStart = RegExp(r'^  - ([a-z_]+): *(.*)$');
@@ -43,6 +45,11 @@ List<Map<String, String>> _readSources(String text) {
   String? section;
   for (final line in const LineSplitter().convert(text)) {
     if (line.trim().isEmpty || line.trimLeft().startsWith('#')) continue;
+    if (!line.startsWith(' ')) {
+      entry = null;
+      section = null;
+      continue;
+    }
     final start = entryStart.firstMatch(line);
     if (start != null) {
       entry = {start.group(1)!: _scalar(start.group(2)!)};
@@ -177,9 +184,45 @@ void main() {
       : const <Map<String, String>>[];
   final commit = _versionPattern.firstMatch(chartjsPluginZoomVersion)?.group(2);
 
+  test('the reader of port_sources.yaml skips the top-level keys', () {
+    const text = '''
+# A comment.
+marker: zoom
+host: flutter_chartjs_port
+
+sources:
+  - header: a
+    version: "v1.0.0"
+    pin:
+      kind: submodule
+      path: third_party/a
+      commit: 0123
+marker: x
+    path: third_party/b
+''';
+    expect(_readSources(text), [
+      {
+        'header': 'a',
+        'version': 'v1.0.0',
+        'pin.kind': 'submodule',
+        'pin.path': 'third_party/a',
+        'pin.commit': '0123',
+      },
+    ]);
+  });
+
   group(
     'tool/port_sources.yaml',
     () {
+      test('names the marker tag and the host of the add-on port', () {
+        final text = sourcesFile!.readAsStringSync();
+        expect(text, contains(RegExp(r'^marker: zoom$', multiLine: true)));
+        expect(
+          text,
+          contains(RegExp(r'^host: flutter_chartjs_port$', multiLine: true)),
+        );
+      });
+
       test('has one entry, chartjs-plugin-zoom at the version', () {
         expect(sources, hasLength(1));
         final zoom = sources.single;

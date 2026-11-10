@@ -194,10 +194,56 @@ void main() {
         '/// Docs.',
         '// Original code, not ported from Chart.js: .',
         '// Original code, not ported from Chart.js: no full stop',
+        '// Original code, not ported from : a reason.',
+        '// Original code, not ported: a reason.',
         '// Ported from Chart.js v4.5.1 src/a.ts (MIT).',
       ]) {
         expect(Header.parse([first]).kind, HeaderKind.missing, reason: first);
       }
+    });
+
+    test('reads the project of the port-only marker', () {
+      expect(
+        Header.parse([
+          '// Original code, not ported from Chart.js: a reason.',
+        ]).portOnlyProject,
+        'Chart.js',
+      );
+      final zoom = Header.parse([
+        '// Original code, not ported from chartjs-plugin-zoom: the pin: x.',
+      ]);
+      expect(zoom.kind, HeaderKind.portOnly);
+      expect(zoom.portOnlyProject, 'chartjs-plugin-zoom');
+      expect(zoom.portOnlyReason, 'the pin: x');
+      expect(
+        Header.parse([
+          '// Original code, not ported from Apache ECharts: a reason.',
+        ]).portOnlyProject,
+        'Apache ECharts',
+      );
+    });
+
+    test('reads the repository of a backport line', () {
+      expect(
+        Header.parse([chartJs, backport]).backports.single.repository,
+        'chartjs/Chart.js',
+      );
+      const zoom =
+          '// Ported from chartjs-plugin-zoom v2.2.0+fb81d331 src/utils.ts '
+          '(MIT, chartjs-plugin-zoom contributors).';
+      final header = Header.parse([
+        zoom,
+        '// Upstream backport: chartjs/chartjs-plugin-zoom@1234abcd (#99).',
+        '// Upstream backport: chartjs/Chart.js@2898a6d1 (#12142).',
+        '// Upstream backport: Chart.js@2898a6d1 (#12142).',
+      ]);
+      expect(header.portedFrom.single.version, 'v2.2.0+fb81d331');
+      expect(header.backports.map((b) => (b.repository, b.sha, b.pr)), [
+        ('chartjs/chartjs-plugin-zoom', '1234abcd', 99),
+        ('chartjs/Chart.js', '2898a6d1', 12142),
+      ]);
+      expect(header.malformed, [4]);
+      expect(header.isChartJsPort, isFalse);
     });
   });
 }
