@@ -278,11 +278,16 @@ Object? _applyStack(
 /// The JavaScript `value + other` for a finite number [other]: a number sum,
 /// or the text of [value] with the text of [other] when [value] is a string
 /// or an object.
-Object _plus(Object? value, num other) => switch (value) {
-  final double number => number + other,
-  null || Undefined() || bool() || num() => jsToNumber(value) + other,
-  _ => jsToString(value) + jsNumberToString(other),
-};
+Object _plus(Object? value, num other) {
+  // An add of a double and a num is a call in an AOT build (performance.md
+  // §72). The sum is the same number.
+  final add = other is double ? other : (other as int) * 1.0;
+  return switch (value) {
+    final double number => number + add,
+    null || Undefined() || bool() || num() => jsToNumber(value) + add,
+    _ => jsToString(value) + jsNumberToString(other),
+  };
+}
 
 /// core.datasetController.js:102 `convertObjectDataToArray`.
 ///
