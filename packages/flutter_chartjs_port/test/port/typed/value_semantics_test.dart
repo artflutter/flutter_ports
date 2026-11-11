@@ -677,6 +677,7 @@ void main() {
         'filler',
         'interaction',
         'animation',
+        'animations',
         'elements',
         'onClick',
         'onHover',

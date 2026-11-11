@@ -82,6 +82,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
 import 'package:flutter_chartjs_port/src/options/parsed.dart'
     show AxisKey, IndexValues, ItemStacks, ParsedItem, StackEntry;
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show propertyAnimationsOf;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -2409,9 +2411,15 @@ class DatasetController
         getContext(index, active, transition),
       ) as OptionView;
     }
+    // DIVERGES(chartjs): adapt-property-animations, the items of the app.
+    // A chart with no item makes no read of `animation` here.
+    final items = options == null ? null : propertyAnimationsOf(chart.canvas);
+    final hasItems = items != null && items.isNotEmpty;
     final animations = Animations(
       chart,
       options == null ? undefined : options.readKey(OptionKey.animations),
+      items: hasItems ? items : null,
+      base: hasItems ? options!.readKey(OptionKey.animation) : null,
     );
     if (options != null && options.cacheable) {
       cache[cacheKey] = jsObjectFreeze(animations);

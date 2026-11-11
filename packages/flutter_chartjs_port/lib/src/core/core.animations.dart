@@ -54,6 +54,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show PropertyAnimation, animatedPropertyOf;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show ArcProperties, BarProperties, LineProperties, PointProperties;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
@@ -65,8 +67,19 @@ import 'package:meta/meta.dart';
 /// core.animations.js:6 `Animations`.
 class Animations {
   /// core.animations.js:7 `constructor(chart, config)`.
-  Animations(types.Chart chart, Object? config) : _chart = chart {
+  ///
+  /// [items] are the items of `ChartConfig.animations` of the chart, or Dart
+  /// `null`. [base] is the `animation` options of the resolver of [config]:
+  /// the options of a property that has an item and no options of its own.
+  // DIVERGES(chartjs): adapt-property-animations, the items of the app.
+  Animations(
+    types.Chart chart,
+    Object? config, {
+    List<PropertyAnimation>? items,
+    Object? base,
+  }) : _chart = chart {
     configure(config);
+    if (items != null && items.isNotEmpty) _setItems(items, base);
   }
 
   /// core.animations.js:6 `class Animations` as a value (Chart.js ADR 0020,
@@ -110,6 +123,65 @@ class Animations {
   Map<Object?, AnimationSpec> get properties => {
     for (final key in _keys) key: _getKey(key)!,
   };
+
+  /// The item of `ChartConfig.animations` for each built-in [AnimatedProp]
+  /// id, or Dart `null` when the chart has no item.
+  List<PropertyAnimation?>? _items;
+
+  /// The item of `ChartConfig.animations` for the property [prop], or Dart
+  /// `null`: the object that the app made.
+  @internal
+  PropertyAnimation? itemOf(AnimatedProp prop) {
+    final items = _items;
+    return items == null || prop.id < 0 ? null : items[prop.id];
+  }
+
+  /// Keeps each item of [items] for its property. A property with no
+  /// options of its own gets the options of [base], the `animation` options:
+  /// upstream gives them to an entry of `animations` through `_fallback`.
+  void _setItems(List<PropertyAnimation> items, Object? base) {
+    final table = _items = List<PropertyAnimation?>.filled(
+      AnimatedProp.builtIns.length,
+      null,
+    );
+    AnimationSpec? baseSpec;
+    for (final item in items) {
+      final prop = animatedPropertyOf(item);
+      assert(
+        table[prop.id] == null,
+        'ChartConfig.animations has two items for ${prop.name}. Give one '
+        'item for each class.',
+      );
+      table[prop.id] = item;
+      if (_builtIn[prop.id] == null) {
+        _setKey(prop.name, baseSpec ??= _specOf(base));
+      }
+    }
+  }
+
+  /// The options of the object [cfg] as an [AnimationSpec]: each key of
+  /// `defaults.animation` (core.animations.js:28-30). An empty spec for a
+  /// value that is not an object.
+  AnimationSpec _specOf(Object? cfg) {
+    final resolved = AnimationSpec();
+    if (!isObject(cfg)) return resolved;
+    final animationOptions = _objectKeys(
+      defaults.lookup(OptionKey.animation)?.raw ?? undefined,
+    );
+    for (final option in animationOptions) {
+      resolved.storeKey(option, _read(cfg!, option));
+    }
+    return resolved;
+  }
+
+  /// Whether a change of a property with the options [cfg] and the item
+  /// [item] animates: `cfg.duration` is truthy (core.animations.js:99), or
+  /// the duration of the item is not 0.
+  static bool _animates(AnimationSpec cfg, PropertyAnimation? item) =>
+      switch (item?.duration) {
+        final Duration duration => duration > Duration.zero,
+        null => jsTruthy(cfg.durationValue),
+      };
 
   /// `this._properties.get(key)` for the built-in key [prop].
   AnimationSpec? _get(AnimatedProp prop) =>
@@ -248,23 +320,31 @@ class Animations {
       var animation = running[prop] as Animation?;
       final key = AnimatedProp.of(prop);
       final cfg = reduced ? null : _get(key);
+      // DIVERGES(chartjs): adapt-property-animations, the item of the app.
+      final item = cfg == null ? null : itemOf(key);
 
       if (animation != null) {
         if (cfg != null && animation.active()) {
           // There is an existing active animation, let's update that
-          animation.update(cfg, value, date);
+          animation.update(cfg, value, date, item);
           continue;
         } else {
           animation.cancel();
         }
       }
-      if (cfg == null || !jsTruthy(cfg.durationValue)) {
+      if (cfg == null || !_animates(cfg, item)) {
         // not animated, set directly to new value
         writeProperty(target, prop, value);
         continue;
       }
 
-      running[prop] = animation = Animation.typed(cfg, target, key, value);
+      running[prop] = animation = Animation.typed(
+        cfg,
+        target,
+        key,
+        value,
+        item,
+      );
       animations.add(animation);
     }
     return animations;
@@ -304,17 +384,19 @@ class Animations {
       }
       var animation = running[prop] as Animation?;
       final cfg = reduced ? null : _get(key);
+      // DIVERGES(chartjs): adapt-property-animations, the item of the app.
+      final item = cfg == null ? null : itemOf(key);
 
       if (animation != null) {
         if (cfg != null && animation.active()) {
           // There is an existing active animation, let's update that
-          animation.update(cfg, values.jsRead(prop), date);
+          animation.update(cfg, values.jsRead(prop), date, item);
           continue;
         } else {
           animation.cancel();
         }
       }
-      if (cfg == null || !jsTruthy(cfg.durationValue)) {
+      if (cfg == null || !_animates(cfg, item)) {
         // not animated, set directly to new value
         if (element != null) {
           element.writePropertyAt(values, i);
@@ -329,6 +411,7 @@ class Animations {
         target,
         key,
         values.jsRead(prop),
+        item,
       );
       animations.add(animation);
     }

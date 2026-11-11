@@ -14,7 +14,7 @@ import 'package:test/test.dart';
 
 import '../../../tool/src/js_semantics.dart' show dartSdkPath;
 
-// The name rules of Chart.js ADR 0052, section 8, over the 54 names of the
+// The name rules of Chart.js ADR 0052, section 8, over the 74 names of the
 // typed API (probe J5 of the design panel checked 43 of them; the details
 // class ChartAnimationDetails came with the typed animation callbacks, and
 // the 6 names of the filler and the element options with the keys of the
@@ -39,7 +39,7 @@ import '../../../tool/src/js_semantics.dart' show dartSdkPath;
 // library exports it. A new typed name thus joins the list and passes the
 // rules.
 
-/// The 54 public names of the typed API (Chart.js ADR 0052, section 8).
+/// The 74 public names of the typed API (Chart.js ADR 0052, section 8).
 const List<String> _typedNames = [
   // Config.
   'ChartConfig', 'ChartKind', 'IndexAxis',
@@ -60,6 +60,27 @@ const List<String> _typedNames = [
   'ChartValue', 'ChartConstant', 'ChartIndexed', 'ChartResolver',
   'ChartPosition', 'ChartAlign', 'ChartInteractionMode',
   'ChartPointStyle', 'ChartFill', 'ChartLength',
+  // Property animations.
+  'PropertyAnimation',
+  'XAnimation',
+  'YAnimation',
+  'BaseAnimation',
+  'WidthAnimation',
+  'HeightAnimation',
+  'RadiusAnimation',
+  'BorderWidthAnimation',
+  'TensionAnimation',
+  'ColorAnimation',
+  'BorderColorAnimation',
+  'BackgroundColorAnimation',
+  'VisibleAnimation',
+  'StartAngleAnimation',
+  'EndAngleAnimation',
+  'CircumferenceAnimation',
+  'InnerRadiusAnimation',
+  'OuterRadiusAnimation',
+  'OffsetAnimation',
+  'SpacingAnimation',
   // Callbacks and views.
   'ChartEventDetails', 'ChartLegendEventDetails', 'ChartAnimationDetails',
   'AxisTickInfo', 'ChartHit', 'ChartContext', 'ChartTooltipItem',
@@ -122,8 +143,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 54 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(54));
+  test('the list has 74 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(74));
   });
 
   test(

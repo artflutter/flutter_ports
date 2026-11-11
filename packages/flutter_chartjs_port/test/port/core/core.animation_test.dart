@@ -398,6 +398,29 @@ void main() {
     });
   });
 
+  group('adapt-color-animation-by-value', () {
+    test('a native color animates with no type', () {
+      const red = ui.Color(0xFFFF0000);
+      const blue = ui.Color(0xFF0000FF);
+      final target = <String, Object?>{'c': red};
+      final anim = Animation({'duration': 1000}, target, 'c', blue);
+      anim.tick(anim.start + 500);
+      final mid = target['c']! as ui.Color;
+      expect(mid.r, inExclusiveRange(0, 1));
+      expect(mid.b, inExclusiveRange(0, 1));
+      anim.tick(anim.start + 1000);
+      expect(target['c'], blue);
+    });
+
+    test('a value that is no number, boolean or color has no interpolator', () {
+      // core.animation.js:35 `interpolators[typeof from]` is undefined, and
+      // the call in tick throws a TypeError.
+      final target = <String, Object?>{'s': 'a'};
+      final anim = Animation({'duration': 1000}, target, 's', 'b');
+      expect(() => anim.tick(anim.start + 500), throwsA(isA<TypeError>()));
+    });
+  });
+
   group('Animation', () {
     test('from != to is the JS !== for NaN and -0', () {
       // NaN !== NaN is true: the animation runs until its end.

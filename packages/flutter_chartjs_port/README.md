@@ -199,6 +199,8 @@ The values of the options are Dart and Flutter values:
   targets.
 - The `easing` of an animation is a Flutter `Curve`: a constant of `Curves`, or a curve class of
   your app.
+- `animations` sets the animation of single properties. Each property has its class:
+  `animations: [RadiusAnimation(easing: Curves.elasticOut), YAnimation.off()]`.
 
 Dataset color migration:
 

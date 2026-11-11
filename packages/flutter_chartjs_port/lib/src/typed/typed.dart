@@ -9,6 +9,28 @@
 /// `lib/chartjs.dart` does not export the typed API.
 library;
 
+export 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show
+        BackgroundColorAnimation,
+        BaseAnimation,
+        BorderColorAnimation,
+        BorderWidthAnimation,
+        CircumferenceAnimation,
+        ColorAnimation,
+        EndAngleAnimation,
+        HeightAnimation,
+        InnerRadiusAnimation,
+        OffsetAnimation,
+        OuterRadiusAnimation,
+        PropertyAnimation,
+        RadiusAnimation,
+        SpacingAnimation,
+        StartAngleAnimation,
+        TensionAnimation,
+        VisibleAnimation,
+        WidthAnimation,
+        XAnimation,
+        YAnimation;
 export 'package:flutter_chartjs_port/src/typed/axes.dart'
     show
         AxisGrid,
