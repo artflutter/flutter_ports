@@ -132,6 +132,103 @@ void main() {
     });
   });
 
+  group('ChartConfig.animation', () {
+    /// A line chart with the border color [color] and the animation
+    /// [animation].
+    Widget chartOf(Color color, ChartAnimation animation) => _box(
+      ChartView(
+        config: ChartConfig(
+          type: .line,
+          labels: const ['a', 'b', 'c'],
+          datasets: [
+            LineDataset(
+              key: const ValueKey('line'),
+              data: const [1, 2, 3],
+              borderColor: ChartValue.constant(color),
+            ),
+          ],
+          animation: animation,
+        ),
+      ),
+    );
+
+    testWidgets('the options hold the object of the app, not a copy', (
+      tester,
+    ) async {
+      const animation = ChartAnimation(
+        duration: Duration(milliseconds: 400),
+        easing: Curves.linear,
+      );
+      await tester.pumpWidget(chartOf(_red, animation));
+      final options =
+          (_chart(tester).options as JsObjectFace)['animation']!
+              as JsObjectFace;
+      expect(options['duration'], same(animation));
+      expect(options['easing'], same(animation));
+      // A parameter that the app did not give has no cell of the app.
+      expect(options['delay'], isNot(same(animation)));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('an animation takes the duration and the curve of the object', (
+      tester,
+    ) async {
+      const animation = ChartAnimation(
+        duration: Duration(milliseconds: 400),
+        easing: Curves.linear,
+      );
+      await tester.pumpWidget(chartOf(_red, animation));
+      await tester.pumpAndSettle();
+      final chart = _chart(tester);
+
+      await tester.pumpWidget(chartOf(_blue, animation));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+      final mid = _borderColor(chart);
+      expect(mid.r, inExclusiveRange(0, 1));
+      expect(mid.b, inExclusiveRange(0, 1));
+      // 400 ms of the object, not the default 1000 ms.
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(_borderColor(chart), _blue);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('an item of animations goes before the object', (tester) async {
+      Widget chartOf(Color color) => _box(
+        ChartView(
+          config: ChartConfig(
+            type: .line,
+            labels: const ['a', 'b', 'c'],
+            datasets: [
+              LineDataset(
+                key: const ValueKey('line'),
+                data: const [1, 2, 3],
+                borderColor: ChartValue.constant(color),
+              ),
+            ],
+            animation: const ChartAnimation(
+              duration: Duration(milliseconds: 2000),
+              easing: Curves.linear,
+            ),
+            animations: const [
+              BorderColorAnimation(duration: Duration(milliseconds: 400)),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpWidget(chartOf(_red));
+      await tester.pumpAndSettle();
+      final chart = _chart(tester);
+
+      await tester.pumpWidget(chartOf(_blue));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 450));
+      // The item gives 400 ms. The curve comes from the object.
+      expect(_borderColor(chart), _blue);
+      await tester.pumpAndSettle();
+    });
+  });
+
   group('a chart', () {
     testWidgets('reads the item that the app made', (tester) async {
       const radius = RadiusAnimation(

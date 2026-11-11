@@ -595,11 +595,13 @@ void main() {
     final chart = state.chart!;
     await _tap(tester, 'core.animation.duration.3000');
     expect(_selected(tester, 'core.animation.duration.3000'), isTrue);
-    expect(
-      jsGet(readByName(chart.config.options, 'animation'), 'duration'),
-      3000,
-    );
-    expect(jsGet(chart.options['animation'], 'duration'), 3000);
+    // The options hold the ChartAnimation of the config itself, not a copy
+    // of its duration (row adapt-property-animations).
+    final animation =
+        jsGet(readByName(chart.config.options, 'animation'), 'duration')!
+            as ChartAnimation;
+    expect(animation.duration, const Duration(milliseconds: 3000));
+    expect(jsGet(chart.options['animation'], 'duration'), same(animation));
     await _settle(tester, chart);
 
     // A randomize animates for 3000 ms, not for the 1000 ms of the default.

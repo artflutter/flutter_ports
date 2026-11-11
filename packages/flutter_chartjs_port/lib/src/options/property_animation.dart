@@ -25,23 +25,45 @@ import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:meta/meta.dart';
 
+/// The four parameters of an animation that the core reads from an object
+/// of the app: an item of `ChartConfig.animations`, or the `ChartAnimation`
+/// of `ChartConfig.animation`. `Animation` of `core.animation.dart` reads
+/// the object itself. No option holds a copy of a parameter.
+abstract interface class AnimationSettings {
+  /// The length of the animation.
+  Duration? get duration;
+
+  /// The wait before the animation starts.
+  Duration? get delay;
+
+  /// The curve of the animation, a Flutter [Curve].
+  Curve? get easing;
+
+  /// Whether the animation repeats without end.
+  bool? get loop;
+}
+
 /// The animation of one property of the elements: an item of
 /// `ChartConfig.animations`. Each property has its ready class.
 @immutable
-sealed class PropertyAnimation {
+sealed class PropertyAnimation implements AnimationSettings {
   /// The animation options of one property.
   const PropertyAnimation({this.duration, this.delay, this.easing, this.loop});
 
   /// The length of the animation.
+  @override
   final Duration? duration;
 
   /// The wait before the animation starts.
+  @override
   final Duration? delay;
 
   /// The curve of the animation, a Flutter [Curve].
+  @override
   final Curve? easing;
 
   /// Whether the animation repeats without end.
+  @override
   final bool? loop;
 
   /// The property that this class animates. Each class of this library

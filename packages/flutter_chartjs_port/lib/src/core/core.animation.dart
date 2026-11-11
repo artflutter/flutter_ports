@@ -61,7 +61,7 @@ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show PropertyAnimation;
+    show AnimationSettings, PropertyAnimation;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -631,12 +631,29 @@ Object? _cfgRead(Object cfg, String name) => jsGet(cfg, name);
 
 /// `cfg.delay` (core.animation.js:37): the field of an [AnimationSpec], else
 /// [_cfgRead]. Both give [undefined] for an absent key.
-Object? _cfgDelay(Object cfg) =>
-    cfg is AnimationSpec ? cfg.delayValue : _cfgRead(cfg, 'delay');
+///
+/// The value can be the object of the app that sets the animation (an
+/// [AnimationSettings], row `adapt-property-animations`): then the result
+/// is its `delay` in milliseconds.
+Object? _cfgDelay(Object cfg) {
+  final value = cfg is AnimationSpec ? cfg.delayValue : _cfgRead(cfg, 'delay');
+  return value is AnimationSettings ? _milliseconds(value.delay) : value;
+}
 
 /// `cfg.duration` (core.animation.js:38, :59).
-Object? _cfgDuration(Object cfg) =>
-    cfg is AnimationSpec ? cfg.durationValue : _cfgRead(cfg, 'duration');
+///
+/// For an [AnimationSettings] value, its `duration` in milliseconds.
+Object? _cfgDuration(Object cfg) {
+  final value = cfg is AnimationSpec
+      ? cfg.durationValue
+      : _cfgRead(cfg, 'duration');
+  return value is AnimationSettings ? _milliseconds(value.duration) : value;
+}
+
+/// Whether an animation with the options [cfg] has a duration:
+/// `cfg.duration` is truthy (core.animations.js:99).
+@internal
+bool animationHasDuration(Object cfg) => jsTruthy(_cfgDuration(cfg));
 
 /// [duration] in milliseconds, the unit of `cfg.duration` and `cfg.delay`,
 /// or Dart `null`.
@@ -659,6 +676,8 @@ Curve _cfgEasing(Object cfg) {
     'The option easing takes a Flutter Curve, for example '
     'Curves.easeOutQuart, not the easing name "$value".',
   );
+  // The object of the app that sets the animation.
+  if (value is AnimationSettings) return value.easing ?? Curves.linear;
   return value is Curve ? value : Curves.linear;
 }
 
@@ -671,8 +690,12 @@ Object? _cfgFrom(Object cfg) =>
     cfg is AnimationSpec ? cfg.fromValue : _cfgRead(cfg, 'from');
 
 /// `cfg.loop` (core.animation.js:39, :61).
-Object? _cfgLoop(Object cfg) =>
-    cfg is AnimationSpec ? cfg.loopValue : _cfgRead(cfg, 'loop');
+///
+/// For an [AnimationSettings] value, its `loop`.
+Object? _cfgLoop(Object cfg) {
+  final value = cfg is AnimationSpec ? cfg.loopValue : _cfgRead(cfg, 'loop');
+  return value is AnimationSettings ? value.loop : value;
+}
 
 /// `cfg.to` (core.animation.js:31, :62).
 Object? _cfgTo(Object cfg) =>

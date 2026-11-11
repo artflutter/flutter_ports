@@ -970,7 +970,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     19 animated properties of the elements (`RadiusAnimation`, `BorderColorAnimation`, ...). An item
     has no name of a property and no key. No lowering copies it: `ChartView` puts the List on the
     canvas (`setPropertyAnimations`), `DatasetController.resolveAnimations` gives it to `Animations`,
-    and `Animation` reads the parameters of the item itself. A color animates with no `type` (row
+    and `Animation` reads the parameters of the item itself. The `ChartAnimation` of
+    `ChartConfig.animation` goes the same way for `duration`, `delay`, `easing` and `loop`: each of
+    these cells of `options.animation` holds the `ChartAnimation` itself, not a copy, and
+    `core.animation.dart` reads the parameter from it (`AnimationSettings`). Thus the lowering has
+    no `millisecondsOf` for an animation. A color animates with no `type` (row
     `adapt-color-animation-by-value`). `config.dart` has `ChartConfig`, `ChartKind` and
     `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
