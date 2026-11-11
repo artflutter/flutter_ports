@@ -180,7 +180,7 @@ class Animations {
   static bool _animates(AnimationSpec cfg, PropertyAnimation? item) =>
       switch (item?.duration) {
         final Duration duration => duration > Duration.zero,
-        null => jsTruthy(cfg.durationValue),
+        null => animationHasDuration(cfg),
       };
 
   /// `this._properties.get(key)` for the built-in key [prop].

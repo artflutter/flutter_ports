@@ -17,8 +17,11 @@ import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter_chartjs_port/src/options/opt.dart' show OptForeign;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show AnimationSettings;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -684,7 +687,7 @@ FillerOptionsScope lowerFiller(ChartFiller filler) {
 ///
 /// [ChartAnimation.none] turns the animations off: `animation: false`.
 @immutable
-final class ChartAnimation with Diagnosticable {
+final class ChartAnimation with Diagnosticable implements AnimationSettings {
   /// The animation options.
   const ChartAnimation({
     this.duration,
@@ -712,9 +715,11 @@ final class ChartAnimation with Diagnosticable {
 
   /// The length of the animations: `duration`. The default is 1000
   /// milliseconds.
+  @override
   final Duration? duration;
 
   /// The wait before the animations start: `delay`.
+  @override
   final Duration? delay;
 
   /// The curve of the animations: `easing`, a Flutter [Curve]. The default
@@ -723,9 +728,11 @@ final class ChartAnimation with Diagnosticable {
   /// A constant of `Curves` and a `const` curve of the app compare by
   /// identity. A curve that `build` makes anew at each call is a new value,
   /// and it gives a chart update, unless its class has `==`.
+  @override
   final Curve? easing;
 
   /// Whether the animations repeat without end: `loop`.
+  @override
   final bool? loop;
 
   /// The function of each step of the animations: `onProgress`.
@@ -792,7 +799,9 @@ final class ChartAnimation with Diagnosticable {
 }
 
 /// The `animation` option of [animation]: `false` for
-/// [ChartAnimation.none], else an `AnimationOptionsScope`. The callbacks
+/// [ChartAnimation.none], else an `AnimationOptionsScope`. The scope has no
+/// copy of `duration`, `delay`, `easing` and `loop`: each of these cells
+/// holds [animation], the object of the app. The callbacks
 /// lower to trampolines that call the callback of the newest config of
 /// [lowering].
 @internal
@@ -802,10 +811,22 @@ Object lowerAnimation(
 ) {
   if (animation._none) return false;
   final scope = AnimationOptionsScope();
-  put(scope, OptionKey.duration, millisecondsOf(animation.duration));
-  put(scope, OptionKey.delay, millisecondsOf(animation.delay));
-  put(scope, OptionKey.easing, animation.easing);
-  put(scope, OptionKey.loop, animation.loop);
+  // The cell of a parameter holds [animation] itself, not a copy of the
+  // parameter. The cascade of the options gives the object to the
+  // animation of a property, and `Animation` reads the parameter from it
+  // (row adapt-property-animations).
+  if (animation.duration != null) {
+    scope.durationCell = OptForeign<double>(animation);
+  }
+  if (animation.delay != null) {
+    scope.delayCell = OptForeign<double>(animation);
+  }
+  if (animation.easing != null) {
+    scope.easingCell = OptForeign<Curve>(animation);
+  }
+  if (animation.loop != null) {
+    scope.loopCell = OptForeign<bool>(animation);
+  }
   if (animation.onProgress != null) {
     scope.onProgress = animationTrampoline(
       () => lowering.config.animation?.onProgress,

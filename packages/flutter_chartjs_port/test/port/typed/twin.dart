@@ -23,6 +23,8 @@ library;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show AnimationSettings;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_test/flutter_test.dart';
@@ -43,7 +45,11 @@ void _twin(Object? actual, Object? expected, String path) {
     _expectWritable(map, path);
     expect(jsObjectKeys(map), jsObjectKeys(expected), reason: '$path keys');
     for (final key in jsObjectKeys(expected)) {
-      _twin(jsGet(map, key), jsGet(expected, key), '$path.$key');
+      _twin(
+        _parameterOf(key, jsGet(map, key)),
+        jsGet(expected, key),
+        '$path.$key',
+      );
     }
   } else if (expected is List<Object?>) {
     expect(actual, isA<List<Object?>>(), reason: path);
@@ -57,6 +63,23 @@ void _twin(Object? actual, Object? expected, String path) {
   } else {
     expect(actual, expected, reason: path);
   }
+}
+
+/// The value of the key [key] for the compare with the raw twin.
+///
+/// The cell of `duration`, `delay`, `easing` and `loop` of a typed
+/// animation holds the object of the app, not a copy of the parameter (row
+/// adapt-property-animations). The raw twin has the value of the parameter,
+/// a duration in milliseconds.
+Object? _parameterOf(String key, Object? value) {
+  if (value is! AnimationSettings) return value;
+  return switch (key) {
+    'duration' => value.duration!.inMicroseconds / 1000,
+    'delay' => value.delay!.inMicroseconds / 1000,
+    'easing' => value.easing,
+    'loop' => value.loop,
+    _ => value,
+  };
 }
 
 /// Expects [map] to take a write of any value: a typed scope, or a
