@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
@@ -17,6 +18,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 
 // Upstream behavior that test/specs/core.defaults.tests.js does not check
 // (AGENTS.md rule 3). The expected values come from src/core/core.defaults.js
@@ -41,6 +43,7 @@ String _jsonRaw(Object? value) => switch (value) {
   num() => throw ArgumentError.value(value, 'value', 'is an int'),
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
+  Curve() => curveJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -149,7 +152,7 @@ void main() {
         _json(defaults),
         referenceColorTokens(
           '{"animation":{"delay":"<undefined>","duration":1000,'
-          '"easing":"easeOutQuart","fn":"<undefined>","from":"<undefined>",'
+          '"easing":"<curve>","fn":"<undefined>","from":"<undefined>",'
           '"loop":"<undefined>","to":"<undefined>","type":"<undefined>"},'
           '"backgroundColor":"rgba(0,0,0,0.1)",'
           '"borderColor":"rgba(0,0,0,0.1)","color":"#666","datasets":{},'
@@ -186,7 +189,7 @@ void main() {
           '{"duration":0}},"show":{"animations":{"colors":'
           '{"from":"transparent"},"visible":{"type":"boolean","duration":0}}},'
           '"hide":{"animations":{"colors":{"to":"transparent"},"visible":'
-          '{"type":"boolean","easing":"linear","fn":"<fn>"}}}},'
+          '{"type":"boolean","easing":"<curve>","fn":"<fn>"}}}},'
           '"layout":{"autoPadding":true,"padding":{"top":0,"right":0,'
           '"bottom":0,"left":0}}}',
         ),

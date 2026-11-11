@@ -36,6 +36,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 import '../../support/jasmine.dart' show jasmineEquals;
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
@@ -536,7 +537,7 @@ void _replay(
     writeProperty(target, prop, scenario.current);
   }
   final anim = Animation(
-    scenario.cfg,
+    exactEasing(scenario.cfg),
     target,
     prop,
     identical(scenario.to, animationAbsent) ? undefined : scenario.to,
@@ -554,7 +555,7 @@ void _replay(
         case 'to':
           anim.to = step.$3;
         case 'update':
-          anim.update(step.$4!, step.$3, anim.start + step.$2);
+          anim.update(exactEasing(step.$4!), step.$3, anim.start + step.$2);
       }
       // The steps compare the error of the port with the error of upstream.
       // ignore: avoid_catches_without_on_clauses

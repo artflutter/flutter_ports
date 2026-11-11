@@ -66,3 +66,4 @@ export 'src/index.dart'
         triggerMouseEvent,
         waitForResize;
 export 'src/native_colors.dart' show nativeFixtureColors;
+export 'src/native_easing.dart' show EffectCurve, nativeFixtureEasing;

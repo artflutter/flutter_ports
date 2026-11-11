@@ -5,6 +5,7 @@ library;
 import 'dart:ui' as native_ui;
 import 'dart:ui' show Color, FontWeight;
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -988,8 +989,8 @@ const Map<String, (ChartAnimation, Object)> _animation = {
   ),
   'delay': (ChartAnimation(delay: Duration(seconds: 1)), {'delay': 1000}),
   'easing': (
-    ChartAnimation(easing: .easeInOutBack),
-    {'easing': 'easeInOutBack'},
+    ChartAnimation(easing: Curves.easeInOutBack),
+    {'easing': Curves.easeInOutBack},
   ),
   'loop': (ChartAnimation(loop: true), {'loop': true}),
   'onProgress': (
@@ -2238,7 +2239,7 @@ void main() {
           animation: ChartAnimation(
             duration: Duration(milliseconds: 500),
             delay: Duration(milliseconds: 20),
-            easing: .linear,
+            easing: Curves.linear,
             loop: false,
             onProgress: _onAnimation,
             onComplete: _onAnimation,
@@ -2308,7 +2309,7 @@ void main() {
         'animation': {
           'duration': 500,
           'delay': 20,
-          'easing': 'linear',
+          'easing': Curves.linear,
           'loop': false,
           'onProgress': _function,
           'onComplete': _function,

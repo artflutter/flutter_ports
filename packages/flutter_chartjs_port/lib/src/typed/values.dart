@@ -4,20 +4,23 @@
 /// sets and the lengths of the Chart.js options.
 ///
 /// Each type is an extension type with `const` constants. Thus a dot
-/// shorthand works (`position: .top`, `easing: .easeOutQuart`), and a new
+/// shorthand works (`position: .top`, `align: .center`), and a new
 /// constant is an addition that breaks no `switch` of an app.
 ///
-/// - [ChartPosition], [ChartAlign], [ChartInteractionMode] and [ChartEasing]
-///   are over `String`. The option value is their `name`.
+/// - [ChartPosition], [ChartAlign] and [ChartInteractionMode] are over
+///   `String`. The option value is their `name`.
 /// - [ChartPointStyle], [ChartFill] and [ChartLength] are over `Object`:
 ///   they also hold `false`, numbers and records. The internal getter
 ///   `optionValue` gives the option value. A record holds
 ///   [ChartFill.value] and [ChartLength.percent], so these constructors are
 ///   `const`, and two equal values are `==`.
 ///
-/// [ChartInteractionMode] and [ChartEasing] have a public constructor for a
-/// custom name. The other types have private constructors: Chart.js has no
-/// registry for their names.
+/// [ChartInteractionMode] has a public constructor for a custom name. The
+/// other types have private constructors: Chart.js has no registry for
+/// their names.
+///
+/// The `easing` option of an animation has no type here: it is a Flutter
+/// `Curve`.
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
@@ -91,108 +94,6 @@ extension type const ChartInteractionMode(String name) {
 
   /// `'y'`: the items at the y position of the point.
   static const ChartInteractionMode y = ChartInteractionMode('y');
-}
-
-/// An easing function by name: the `easing` option of an animation, a key
-/// of the easing effects (`helpers.easing.ts:12-122`).
-///
-/// The animation reads the name (`core.animation.js:36`). A name that is not
-/// a key of the effects gives [linear]. The constructor names a custom
-/// effect that the app adds to `easingEffects` of `helpers.dart`. A Flutter
-/// `Curve` has no name, so the typed API takes the name.
-extension type const ChartEasing(String name) {
-  /// `'linear'`.
-  static const ChartEasing linear = ChartEasing('linear');
-
-  /// `'easeInQuad'`.
-  static const ChartEasing easeInQuad = ChartEasing('easeInQuad');
-
-  /// `'easeOutQuad'`.
-  static const ChartEasing easeOutQuad = ChartEasing('easeOutQuad');
-
-  /// `'easeInOutQuad'`.
-  static const ChartEasing easeInOutQuad = ChartEasing('easeInOutQuad');
-
-  /// `'easeInCubic'`.
-  static const ChartEasing easeInCubic = ChartEasing('easeInCubic');
-
-  /// `'easeOutCubic'`.
-  static const ChartEasing easeOutCubic = ChartEasing('easeOutCubic');
-
-  /// `'easeInOutCubic'`.
-  static const ChartEasing easeInOutCubic = ChartEasing('easeInOutCubic');
-
-  /// `'easeInQuart'`.
-  static const ChartEasing easeInQuart = ChartEasing('easeInQuart');
-
-  /// `'easeOutQuart'`, the default of the Chart.js animations.
-  static const ChartEasing easeOutQuart = ChartEasing('easeOutQuart');
-
-  /// `'easeInOutQuart'`.
-  static const ChartEasing easeInOutQuart = ChartEasing('easeInOutQuart');
-
-  /// `'easeInQuint'`.
-  static const ChartEasing easeInQuint = ChartEasing('easeInQuint');
-
-  /// `'easeOutQuint'`.
-  static const ChartEasing easeOutQuint = ChartEasing('easeOutQuint');
-
-  /// `'easeInOutQuint'`.
-  static const ChartEasing easeInOutQuint = ChartEasing('easeInOutQuint');
-
-  /// `'easeInSine'`.
-  static const ChartEasing easeInSine = ChartEasing('easeInSine');
-
-  /// `'easeOutSine'`.
-  static const ChartEasing easeOutSine = ChartEasing('easeOutSine');
-
-  /// `'easeInOutSine'`.
-  static const ChartEasing easeInOutSine = ChartEasing('easeInOutSine');
-
-  /// `'easeInExpo'`.
-  static const ChartEasing easeInExpo = ChartEasing('easeInExpo');
-
-  /// `'easeOutExpo'`.
-  static const ChartEasing easeOutExpo = ChartEasing('easeOutExpo');
-
-  /// `'easeInOutExpo'`.
-  static const ChartEasing easeInOutExpo = ChartEasing('easeInOutExpo');
-
-  /// `'easeInCirc'`.
-  static const ChartEasing easeInCirc = ChartEasing('easeInCirc');
-
-  /// `'easeOutCirc'`.
-  static const ChartEasing easeOutCirc = ChartEasing('easeOutCirc');
-
-  /// `'easeInOutCirc'`.
-  static const ChartEasing easeInOutCirc = ChartEasing('easeInOutCirc');
-
-  /// `'easeInElastic'`.
-  static const ChartEasing easeInElastic = ChartEasing('easeInElastic');
-
-  /// `'easeOutElastic'`.
-  static const ChartEasing easeOutElastic = ChartEasing('easeOutElastic');
-
-  /// `'easeInOutElastic'`.
-  static const ChartEasing easeInOutElastic = ChartEasing('easeInOutElastic');
-
-  /// `'easeInBack'`.
-  static const ChartEasing easeInBack = ChartEasing('easeInBack');
-
-  /// `'easeOutBack'`.
-  static const ChartEasing easeOutBack = ChartEasing('easeOutBack');
-
-  /// `'easeInOutBack'`.
-  static const ChartEasing easeInOutBack = ChartEasing('easeInOutBack');
-
-  /// `'easeInBounce'`.
-  static const ChartEasing easeInBounce = ChartEasing('easeInBounce');
-
-  /// `'easeOutBounce'`.
-  static const ChartEasing easeOutBounce = ChartEasing('easeOutBounce');
-
-  /// `'easeInOutBounce'`.
-  static const ChartEasing easeInOutBounce = ChartEasing('easeInOutBounce');
 }
 
 /// The style of a point: the `pointStyle` option of a dataset and of the

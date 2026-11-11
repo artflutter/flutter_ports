@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject;
@@ -108,7 +109,8 @@ bool _fits(String kind, int shape) {
     'fn' || 'obj:JsFunction' || 'obj:JsClass' => true,
     'List' || 'null' || 'undefined' => true,
     'double' || 'int' => shape & ShapeBits.number != 0,
-    'String' => shape & ShapeBits.string != 0,
+    // Upstream data hold the easing name of a key of the shape `curve`.
+    'String' => shape & (ShapeBits.string | ShapeBits.curve) != 0,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' => shape & ShapeBits.scope != 0,
     _ when kind.startsWith('NarrowMap') => shape & ShapeBits.scope != 0,
@@ -180,6 +182,8 @@ String? _mismatch(Object? actual, Object? expected) {
         ? null
         : '$actual != $expected';
   }
+  // Upstream has an easing name where the port has a curve: no compare.
+  if (expected is String && actual is Curve) return null;
   switch (expected) {
     case null:
       return actual == null ? null : 'not null: $actual';

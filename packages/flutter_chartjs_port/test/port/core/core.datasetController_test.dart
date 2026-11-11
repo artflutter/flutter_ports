@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
@@ -36,6 +37,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 import 'dataset_controller_reference.dart';
 
 // The specs of core.datasetController.tests.js need the controllers of
@@ -668,6 +670,7 @@ String _enc(Object? v) => switch (v) {
   final _Tagged t => t.tag,
   Element() => 'element',
   Animation() => 'animation',
+  Curve() => curveJson,
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
   final Map<String, Object?> m => _encMap(m),
@@ -1124,7 +1127,9 @@ void main() {
         final run = _Run(spec);
         expect(
           run.runAll().map(referenceColorTokens).toList(),
-          observations.split('\n').map(referenceColorTokens).toList(),
+          withCurveMarkers(
+            observations,
+          ).split('\n').map(referenceColorTokens).toList(),
         );
       });
     }

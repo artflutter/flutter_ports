@@ -8,5 +8,5 @@
 # of user code (_cancelable). jsObjectKeys 1: the registry items by plugin
 # id, in the Object.keys order.
 jsGet 7
-jsObjectKeys 1
 stringIndex 1
+jsObjectKeys 1

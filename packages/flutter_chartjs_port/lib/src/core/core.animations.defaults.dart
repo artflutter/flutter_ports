@@ -13,6 +13,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
@@ -42,7 +43,8 @@ void applyAnimationsDefaults(Defaults defaults) {
       AnimationOptionsScope()
         ..delayCell = optUndefined
         ..duration = 1000.0
-        ..easing = 'easeOutQuart'
+        // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
+        ..easing = Curves.easeOutQuart
         ..fnCell = optUndefined
         ..fromCell = optUndefined
         ..loopCell = optUndefined
@@ -88,7 +90,8 @@ void applyAnimationsDefaults(Defaults defaults) {
               ..to = const ui.Color.fromRGBO(0, 0, 0, 0))
             ..visible = (AnimationOptionsScope()
               ..type = 'boolean'
-              ..easing = 'linear'
+              // DIVERGES(chartjs): adapt-flutter-curves, the curve.
+              ..easing = Curves.linear
               // for keeping the dataset visible all the way through the
               // animation
               ..fn = _visibleFn))),

@@ -16,6 +16,8 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
 
 Chart.js ADR 0061: the historical "pure layer" names below now mean framework-free
 core layers. They may use `dart:ui.Color`, but no `package:flutter` framework APIs.
+One exception: a core layer can import `package:flutter/animation.dart` for the curve
+classes (`Curve`, `Curves`), the value of the option `easing` (row `adapt-flutter-curves`).
 The chart core and harness run through Flutter; standalone Dart execution is no
 longer supported. No global color installer or intermediate option color exists.
 
@@ -288,7 +290,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     their base `ElementOptions` (the face, `$shared`, `$animations`, the extras, the frozen
     state, `storeKey`) and `GenericElementOptions`. `foreign_audit.dart` has the hook
     `foreignAudit` of the oracle O2: the typed classes call it inside `assert` for each value that
-    they keep in a foreign slot.
+    they keep in a foreign slot. The option `easing` holds a Flutter `Curve`
+    (row `adapt-flutter-curves`, the schema shape `curve`, `classifyCurve` of `opt.dart`), also in a
+    raw config. `lib/` has no easing names and no table from a name to a curve: a name is a
+    foreign value, a debug build stops on it in `_cfgEasing` of `core.animation.dart`, and a
+    release build takes `Curves.linear`. The animation calls `Curve.transform`; no animation reads
+    `helpers.easing.dart`. An app or a plugin gives its own `Curve` class, with no registration
+    (`test/port/options/curve_option_test.dart`). Upstream data hold a name in that place: no
+    test compares the value of `easing` with upstream data (the markers of
+    `test/support/easing_json.dart`), and no code maps a name to a constant of `Curves`. For an
+    upstream config, the adapter `nativeFixtureColors` of `chartjs_test_utils` gives an
+    `EffectCurve`, a curve with the formula of the upstream effect, so the animation reference
+    tests keep the upstream steps.
   - `lib/src/helpers/helpers.config.dart` (Chart.js ADR 0054 ยง4): the typed resolvers
     `OptionResolver` (the target of `_createResolver`) and `OptionView` (the target of
     `_attachContext`), with the typed read `readKey(OptionKey)` and a cache by `OptionKey`.
@@ -951,7 +964,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 55 names. `config.dart` has `ChartConfig`, `ChartKind` and
+    `typed.dart` is its export list of 54 names. `config.dart` has `ChartConfig`, `ChartKind` and
     `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver
@@ -1812,7 +1825,8 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `packages/flutter_chartjs_port/test/port/core/date_format_locale_test.dart` and the group
   `harness-release-at-unmount` of `packages/chartjs_test_utils/test/index_test.dart`.
 - A core (historically pure-layer) file may use `dart:ui.Color`, but reaches no
-  `package:flutter` framework library through its direct or indirect imports (ADR 0061).
+  `package:flutter` framework library through its direct or indirect imports (ADR 0061),
+  except `package:flutter/animation.dart` for the curve classes of the option `easing`.
   `check:lib-imports` computes the core layers from the roots in
   `packages/flutter_chartjs_port/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
   `lib/src/types/`, `lib/src/kurkle_color/`, the helpers except `helpers.extras`, the files of

@@ -3,51 +3,13 @@
 library;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
-    show effects;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, section 7: the constants and the option value of each
 // value type of lib/src/typed/values.dart, `==` of equal values and the dot
-// shorthands. The easing names are the keys of the effects of the port, and
-// the interaction modes are the keys of `Interaction.modes`.
+// shorthands. The interaction modes are the keys of `Interaction.modes`.
 //
 // VM only: the test imports the app library, which imports dart:ui.
-
-/// The 31 easing constants, in the order of `helpers.easing.ts:12-122`.
-const List<ChartEasing> _easings = [
-  .linear,
-  .easeInQuad,
-  .easeOutQuad,
-  .easeInOutQuad,
-  .easeInCubic,
-  .easeOutCubic,
-  .easeInOutCubic,
-  .easeInQuart,
-  .easeOutQuart,
-  .easeInOutQuart,
-  .easeInQuint,
-  .easeOutQuint,
-  .easeInOutQuint,
-  .easeInSine,
-  .easeOutSine,
-  .easeInOutSine,
-  .easeInExpo,
-  .easeOutExpo,
-  .easeInOutExpo,
-  .easeInCirc,
-  .easeOutCirc,
-  .easeInOutCirc,
-  .easeInElastic,
-  .easeOutElastic,
-  .easeInOutElastic,
-  .easeInBack,
-  .easeOutBack,
-  .easeInOutBack,
-  .easeInBounce,
-  .easeOutBounce,
-  .easeInOutBounce,
-];
 
 /// [value], as a value that is not a constant.
 T _runtime<T>(T value) => value;
@@ -104,18 +66,6 @@ void main() {
         ChartInteractionMode(_runtime('index')),
         ChartInteractionMode.index,
       );
-    });
-  });
-
-  group('ChartEasing', () {
-    test('the 31 constants are the keys of the effects, in order', () {
-      expect([for (final e in _easings) e.name], effects.keys);
-      expect(_easings.toSet(), hasLength(31));
-    });
-
-    test('a custom easing has its name', () {
-      expect(const ChartEasing('myEasing').name, 'myEasing');
-      expect(ChartEasing(_runtime('linear')), ChartEasing.linear);
     });
   });
 

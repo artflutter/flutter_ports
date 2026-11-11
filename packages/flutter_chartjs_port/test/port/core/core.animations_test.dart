@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'package:chartjs_test_utils/flutter.dart' show EffectCurve;
+import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
@@ -89,8 +91,22 @@ Map<String, Object?> _xConfig() => <String, Object?>{
 /// The animations of the transition [mode] of a line dataset: the
 /// `animations` of the resolver of `_resolveAnimations`
 /// (core.datasetController.js:851-856).
-Animations _resolveAnimations(types.Chart chart, String mode) {
-  final config = Config(<String, Object?>{'type': 'line'});
+///
+/// [easing] is the `animation.easing` of the chart options. The frame tests
+/// give the upstream formula ([EffectCurve]): their expected values come
+/// from upstream.
+Animations _resolveAnimations(
+  types.Chart chart,
+  String mode, {
+  Curve? easing,
+}) {
+  final config = Config(<String, Object?>{
+    'type': 'line',
+    if (easing != null)
+      'options': <String, Object?>{
+        'animation': <String, Object?>{'easing': easing},
+      },
+  });
   final scopeKeys = config.datasetAnimationScopeKeys('line', mode);
   final scopes = config.getOptionScopes(<String, Object?>{}, scopeKeys);
   final options = config.createResolver(scopes, <String, Object?>{
@@ -108,6 +124,9 @@ PointOptions _shared(String backgroundColor, double radius) => PointOptions()
   ..['backgroundColor'] = referenceColorInput(backgroundColor)
   ..['radius'] = radius
   ..freeze();
+
+/// The upstream formula of the default easing, for the frame tests.
+const EffectCurve _exact = EffectCurve('easeOutQuart');
 
 /// The radius at [elapsed] ms of the 400 ms transition from 3 to 4.
 double _radius(double elapsed) =>
@@ -128,7 +147,7 @@ void main() {
       final colors = anims.properties['backgroundColor']!;
       final numbers = anims.properties['radius']!;
       expect(colors.durationValue, 400);
-      expect(colors.easingValue, 'easeOutQuart');
+      expect(colors.easingValue, same(Curves.easeOutQuart));
       expect(colors.typeValue, 'color');
       expect(numbers.durationValue, 400);
       expect(numbers.typeValue, 'number');
@@ -152,7 +171,11 @@ void main() {
       // setHoverStyle: _setStyle(element, index, 'active', true).
       point.active = true;
       expect(
-        _resolveAnimations(chart, 'active').update(point, {'options': hover}),
+        _resolveAnimations(
+          chart,
+          'active',
+          easing: _exact,
+        ).update(point, {'options': hover}),
         isTrue,
       );
       // The animations change a copy of the shared options.
@@ -194,7 +217,11 @@ void main() {
       // removeHoverStyle: the shared options of the default mode.
       point.active = false;
       expect(
-        _resolveAnimations(chart, 'active').update(point, {'options': shared}),
+        _resolveAnimations(
+          chart,
+          'active',
+          easing: _exact,
+        ).update(point, {'options': shared}),
         isTrue,
       );
       final back = point.options! as JsObjectFace;
@@ -220,7 +247,11 @@ void main() {
         'options': _shared(animationHoverFrom, 3),
       });
       final hover = _shared(animationHoverTo, 4);
-      _resolveAnimations(chart, 'active').update(point, {'options': hover});
+      _resolveAnimations(
+        chart,
+        'active',
+        easing: _exact,
+      ).update(point, {'options': hover});
       animator.start(chart);
       for (var k = 1; k <= 12; k++) {
         await tester.pump(const Duration(milliseconds: 16));

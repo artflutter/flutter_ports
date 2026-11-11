@@ -41,6 +41,7 @@ library;
 import 'dart:collection' show ListBase;
 import 'dart:ui' as ui;
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
@@ -503,11 +504,14 @@ const Set<String> _paletteFields = {'colors', 'backgroundAlpha'};
 const double _paletteBackgroundAlpha = 0.5;
 
 /// The theme transitions of theming.md §3.8: `'theme'` animates for 200 ms
-/// with `'linear'`, the values of the `FThemeMotion` of forui.
+/// with `Curves.linear`, the values of the `FThemeMotion` of forui.
 /// `'themeFrame'` has the duration 0 (reduced motion).
 const Map<String, Object?> _transitions = {
   'theme': <String, Object?>{
-    'animation': <String, Object?>{'duration': 200.0, 'easing': 'linear'},
+    'animation': <String, Object?>{
+      'duration': 200.0,
+      'easing': Curves.linear,
+    },
   },
   'themeFrame': <String, Object?>{
     'animation': <String, Object?>{'duration': 0.0},

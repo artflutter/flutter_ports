@@ -39,6 +39,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -2567,7 +2568,8 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
     ..borderWidth = 0.0
     ..animation = (AnimationOptionsScope()
       ..duration = 400.0
-      ..easing = 'easeOutQuart')
+      // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
+      ..easing = Curves.easeOutQuart)
     ..animations = (AnimationsSpecScope()
       ..numbers = (AnimationOptionsScope()
         ..type = 'number'
@@ -2580,7 +2582,8 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
           'caretY',
         ])
       ..opacity = (AnimationOptionsScope()
-        ..easing = 'linear'
+        // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
+        ..easing = Curves.linear
         ..duration = 200.0))
     ..callbacks = _defaultCallbacks)
   // plugin.tooltip.js:1327-1331.

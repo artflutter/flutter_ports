@@ -194,9 +194,11 @@ The values of the options are Dart and Flutter values:
 - Durations are `Duration` values, and paddings are `EdgeInsets` values.
 - A pie or doughnut `cutout` or `radius` is a `ChartLength`: `ChartLength.percent(50)` or
   `ChartLength.pixels(80)`.
-- Names are dot shorthands: `position: .bottom`, `easing: .easeOutQuart`, `pointStyle: .star`,
-  `fill: .origin`. `ChartFill.dataset(0)`, `ChartFill.relative(-1)` and `ChartFill.value(10)` give
-  the other fill targets.
+- Names are dot shorthands: `position: .bottom`, `pointStyle: .star`, `fill: .origin`.
+  `ChartFill.dataset(0)`, `ChartFill.relative(-1)` and `ChartFill.value(10)` give the other fill
+  targets.
+- The `easing` of an animation is a Flutter `Curve`: a constant of `Curves`, or a curve class of
+  your app.
 
 Dataset color migration:
 
@@ -284,7 +286,7 @@ ChartConfig(
   interaction: const ChartInteraction(mode: .index, intersect: false),
   animation: const ChartAnimation(
     duration: Duration(milliseconds: 400),
-    easing: .easeOutQuart,
+    easing: Curves.easeOutQuart,
   ),
   elements: const ChartElements(bar: BarElementStyle(borderRadius: 4)),
 )

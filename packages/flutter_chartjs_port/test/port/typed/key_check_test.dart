@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' show Color;
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -342,7 +343,7 @@ List<ChartConfig> _configs() {
       animation: const ChartAnimation(
         duration: Duration(seconds: 1),
         delay: Duration.zero,
-        easing: .easeOutQuart,
+        easing: Curves.easeOutQuart,
         loop: false,
         onProgress: _onAnimation,
         onComplete: _onAnimation,

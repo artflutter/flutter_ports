@@ -1894,7 +1894,7 @@ enum ScopeKind {
           case OptionKey.duration:
             return 1;
           case OptionKey.easing:
-            return 4;
+            return 128;
           case OptionKey.delay:
             return 1;
           case OptionKey.loop:

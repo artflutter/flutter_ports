@@ -50,17 +50,17 @@ const Map<String, String> observationDigests = {
   'bench chart.radar (trace)':
       '6c11bb9bcc29e20936f201876cf74c7a0ca57fa7a78bffd25cb3f4633bfe83f5',
   'bench motion.bar (plain)':
-      'ff743fe18cc2f38f6275b00fb02bec38d5e124f2bbc5ae8bf6999e3bd71084a3',
+      '9ed17de0e133d65b5c30962d8f78e7030ccd882d190c60f06981e15bb75e281f',
   'bench motion.bar (trace)':
-      '61133e8449f4c2da4832c42e36476d2851063bec7ad58a612c25ee2cfb60dcb0',
+      'add822b78566c349db2d1f67c24885e59f2379b620b518ef8ed9050e33abbee7',
   'bench motion.line (plain)':
-      'a6242b244f642cfdc33dfc5f29fa75110e843af48dbb090d9a2feac27b5363b6',
+      '07d0831685e1eff9604059222e96a544be58be5b4434b6ce66a008ef1dbf162b',
   'bench motion.line (trace)':
-      '657e0b885ef33429269cfb18089feb4286afbf2e782745311852eeb0513cc1cf',
+      '7cb1f47a9d6a2722fe02cbbdb3aeb8a2181b3ad0d0b155cb7590bfdf39270a95',
   'bench motion.line.delay (plain)':
-      '2e87dcd2fd5788bdd10607cc231c20b4bc9fc0911daf6510eb706b55776d2390',
+      '458ecce2ea2459b6d987222ed7d349f476dabd69c34871388edd8281293a0c8a',
   'bench motion.line.delay (trace)':
-      '81d150c90820c436983b0b26eac9b5dd9079de31d3270682a02011e622afca7d',
+      '803220725df1935b6038514a77fe21aa0b20787933915c9869bf2dc54f932353',
   'fixture controller.bar/aligned-pixels.js (plain)':
       'de147adf56c2853049bd993786e6001e76d65cd5d9cc86af40bab7971333c473',
   'fixture controller.bar/aligned-pixels.js (trace)':
@@ -82,9 +82,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/backgroundColor/value.js (trace)':
       '004b66300a3705622384bb46b33e521caa76bbcf5b2cbb48a3da840c542f2e2c',
   'fixture controller.bar/bar-animation-hide-show.js (plain)':
-      'bbb84308c58077cb0aaa27fe37336ff2111b224ca36dd12db80a21c51e07ba23',
+      'b855126c41c204cf017fdc7967f8799ca76c6bc49ed13f959413edb2a5937080',
   'fixture controller.bar/bar-animation-hide-show.js (trace)':
-      '985aa8f75da64cae6ab9b1eeb4a0b8b935820c97c4be19ce080ba4cba76613aa',
+      '0aaf1a231e83565571c260244fda82e795488e6030af8a3c83a423b3edf0c91c',
   'fixture controller.bar/bar-base-value.js (plain)':
       '4950ae95a5e2afb2ffb79be1818a1b29a9df857e7fee030fb2662564eefcb1cc',
   'fixture controller.bar/bar-base-value.js (trace)':
@@ -534,9 +534,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.doughnut/doughnut-animation-hide-last.js (trace)':
       'ca06f0dd3f305d5e47e296005b075f7e5b536e200228221d0eb9fe5597825f4b',
   'fixture controller.doughnut/doughnut-animation.js (plain)':
-      'e34dd109c7838ad2383d0f6f5a0cbab2dcf1d08677d135806d73de9b6d3ab5ba',
+      '08b1cf0b92a9efb1cb4f99ba46ec7fda5c3b6a50ed223d1fbd03c5c22396b241',
   'fixture controller.doughnut/doughnut-animation.js (trace)':
-      '1c1a77d364635e2ef44de08986922486cbdc64e7ae0f62933bf34fc2b6e77f08',
+      '3b7bfb1449ba3054b13b87c707a145625248a61828fc68a8f5babeaea68b11b2',
   'fixture controller.doughnut/doughnut-border-align-center.json (plain)':
       '9a9e21306898b9cf7b05bcbfaa9efa0fb60ab9f1287dec7fa16b23718d7c9f6b',
   'fixture controller.doughnut/doughnut-border-align-center.json (trace)':
@@ -770,9 +770,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.line/cubicInterpolationMode/value.js (trace)':
       '36905c0701ded149b02ff1f4321a153926cd41a0e011f3b7d98470ef108ee8eb',
   'fixture controller.line/fill/no-border.js (plain)':
-      '5eda49a8be53e5373800efdd025f144a3b9b52fb3addec009816efd57a45863a',
+      '266a778025433ac61211921f6fe84a048cfe48b6def0a7401fe819563d95cb9f',
   'fixture controller.line/fill/no-border.js (trace)':
-      '7f38f3abeb84e47d1d02615497db79659ea3a9d5aabfb19ae752269f5f56629b',
+      '9f657e102ebb1ebe834a5870af21226b281e947d520dfe41d74e1167ab85fe8b',
   'fixture controller.line/fill/order-default.js (plain)':
       '733296eed211c902ac7f7aa6ad29ac01fb383d471d41d36514c9d7e201544312',
   'fixture controller.line/fill/order-default.js (trace)':
@@ -1150,13 +1150,13 @@ const Map<String, String> observationDigests = {
   'fixture controller.polarArea/pointLabels/withTitle/top-default.js (trace)':
       'd19e16a378e4f6ce78144dbccacd6a2a05b04d833afb226595f0405925572278',
   'fixture controller.polarArea/polar-area-animation-rotate.js (plain)':
-      'a65f74804c2b625fc6c9f1dc67fc65f509921e7d0a2a91a0cde87ab59e6aa1b2',
+      '68077957dd5ada654aaf2a8ccf439604468d01b8a5673b7580dbd2b1a40a2f4c',
   'fixture controller.polarArea/polar-area-animation-rotate.js (trace)':
-      'ff5d0f7eb5c2e1587f598a61296eb8805731940f3614baa14e48bb2461bc48e7',
+      '0dabebcb6eedf76f749d2caea1e6b686eeabd07f29e27a0fa224395be9b9e221',
   'fixture controller.polarArea/polar-area-animation-scale.js (plain)':
-      '6a9a7d5caedb00d92bdf1dad37914b07b31e95d8e3a18ff417d1ed03adfd6c5b',
+      'e940a41e7137068685c26c69f2ca1cb0872e70b1705e08513bd67f5d7424e38b',
   'fixture controller.polarArea/polar-area-animation-scale.js (trace)':
-      '284dfe51e0544bc2cf49f19c5b98d543d672da8802c030dc25fe390514f7fb71',
+      'fd476ac0ffb6e7f7184c6153440eef91a876a9fe4bdf40366f74e85bab27d1cc',
   'fixture controller.radar/backgroundColor/scriptable.js (plain)':
       '7c839f1a3fb32ba1c01713666babdf0c0b284a238246db6ecf974b2fca43f2b9',
   'fixture controller.radar/backgroundColor/scriptable.js (trace)':
@@ -2722,9 +2722,9 @@ const Map<String, String> observationDigests = {
   'focused a scriptable option adds a key to defaults.elements.point (trace)':
       '46ccd9b5eec601ce3bd5e5e94169bf65d1b93620b985fdbbafd59dfe2de6b320',
   'focused a scriptable option deletes defaults.animation.easing (plain)':
-      '0c3193ed04e501ac91fc3e1e1aa9a3c5e8ccb26dbcf4e54c13a3d15e79dfbc2e',
+      '010869a3d3ef4be9a05e61ea2fe22bdf19f121cf8371aa7f3cfa746cc63aaca0',
   'focused a scriptable option deletes defaults.animation.easing (trace)':
-      '6bcc6bd207614fdaac06c5ef04e28e3a7254fb997b53adb3f5a95479efc4dfbd',
+      '6e8a2249178a0604f13f6bc4f313367221c3a13fd52fcfa3f46c5f695bfc2621',
   'focused a scriptable option writes ctx.parsed (plain)':
       '5660761b57482cb5cf961ff395ec32a085d1039e3a2ac145fb0d9762cc40c91a',
   'focused a scriptable option writes ctx.parsed (trace)':
@@ -2734,25 +2734,25 @@ const Map<String, String> observationDigests = {
   'focused a write through the sub-resolver (trace)':
       'c1b909c2754c82af162f22985a819434f40c07143fae087406658344ffa3f676',
   'focused animation: an animations entry with properties (plain)':
-      '04817ff3d9bdf3eabd9cf6b849f17b33f8899f2c32cf6af6038124c8121c6b3d',
+      '3dfece9b67e1560678e56b05f43e791bbe0685fa50445ec37bafa960d9cb7ebf',
   'focused animation: an animations entry with properties (trace)':
-      'a804c8600178b2112d3f2d4cf7ff3a9784ef4016289af9dca1023d2ff552b692',
+      '8f55bcb4a1e542736be8f943a3c31b214e180015fe53220777052b6759fe8d4e',
   'focused animation: false on a dataset (plain)':
-      '28de420fe45cf6466f34667f352fc850c2de6bc397cdf39fe3fa1b533f159f72',
+      '6774f3a61aa76acaeee845dfbff5f9dc5efdf53a685f7267a30c115ac7ee90b3',
   'focused animation: false on a dataset (trace)':
-      'bf388b89aacab4ccfc723b5e450fc297d7b84bc8c3d3b2bc2e814178b14be15e',
+      '014ea0c9892e7946694d796fc8a6cbb846bc88f653831d93ba58a0c23f1326e4',
   'focused animation: scriptable delay (plain)':
-      'fa80f4fccabb6478fb130716a5dc83886264faafe8e9c45d278c1fa970e16953',
+      'e5ff3a1e6e4fefb0e409707d2bc02cb61de8a9b3371136a6ad19fd98c9d0b52d',
   'focused animation: scriptable delay (trace)':
-      'cb2ec1815e25216e512d3de576c2088447b37cada8cf6bd5f93e3c0de90d3c6a',
+      '487ffece86e6e5c121c33766c913329b70ff32f6e4343a074b186cb37f23a611',
   'focused animation: scriptable duration (plain)':
-      '0c48f1d0be22e28afb95b25d4b9557b9cdfce5fc2ab52e7bb4e4f0867f7d1c0a',
+      '950924b048928db05a2a7026d96cfa5bef5da288e2c82df48e3e54322d7eb213',
   'focused animation: scriptable duration (trace)':
-      '841c6ae991e663908d2de9b92bbb26baac3e868a21eb9eab5bf86179c607c8e1',
+      '76b5a70dee65e571d7f4d27d82ea75f5a76033b48f8b3aadc338718a061a88bb',
   'focused animation: transitions of hide and show (plain)':
-      '5ab38d56f26c353c387439a8ab5984bf9800701d3475a8f301d37b8e0e9a0733',
+      'a7aebde0c6a5d58eb7639973377994ea1b2d5568f1c07419db5e4c6c3c046f67',
   'focused animation: transitions of hide and show (trace)':
-      '2f87a87464e847fdba780e169045c6290a37e1699bbbdf0f7a7ac5a168d562df',
+      '2f01f21bb0073376629afe5ca667b0201cf62aafe586e65406dab825261c92e4',
   'focused bar: skipNull with two datasets (plain)':
       'e33fadefd7bf768fe850c0fecf83d109e9e513fc524d52f2d39f0b7c3aaf9ab6',
   'focused bar: skipNull with two datasets (trace)':
@@ -2814,41 +2814,41 @@ const Map<String, String> observationDigests = {
   'focused scriptable on the dataset (trace)':
       '2db49c5b28818ae30f4ef9063638d727483005109f902c58374c8958306ee0e0',
   'trace animation: a counted _fallback function of animation (plain)':
-      '8d6e08063bbe43ae17c55d1d1952c41d49d3ab74e4544338a60f579a5dd8a4a4',
+      'e12cb84ccbc9bf2d7b7f308e7f38beb3ef02428d7990cd289eec2afd2492eb68',
   'trace animation: a counted _fallback function of animation (trace)':
-      'c3f207651bb13b2a60f26f0b019e258ef0237a796ff534d265ae56950f8d255c',
+      '88efb0dc1cfaeaf6dbd50361b51581fa9e7211e692a6a40f92f0d8a1d13ec0a6',
   'trace animation: a properties override (plain)':
-      'c0d05f10c51907164df01bd6241be4ae99459c3c55bde753eb09e4b5cfc70e72',
+      'b916ea7bb39f57adb02265efeef68e71260d8e27d4a5e77b1b033bb40c3b4676',
   'trace animation: a properties override (trace)':
-      '40c189ac96528a9c718787d2703f1ab9a123ede30c68726e8ee362acc2b3417e',
+      'f9ee0cf8332c0954aab0e99d57afb9da159965a3d1e7a5d214b8726091a0eb9f',
   'trace animation: a scriptable data option deletes defaults.animation.easing (plain)':
-      '97ba2b7e2aa7b661617b0c87b2299750a24773a1a9bcad969f13d506fd0f7f16',
+      '869bdf88d34c96e68c47b2ef13e1cba6cc2cee9dec20daaf666a257826209ade',
   'trace animation: a scriptable data option deletes defaults.animation.easing (trace)':
-      'c4a0470815b62b87f08ab4ae9ddcd39be231e97bc75ee4c0083850b5f551f9de',
+      '92b0e37f1f192f6268c7f6d0883f6994a22f58107e5b348961e62ddb437e0b76',
   'trace animation: a scriptable entry of animations (plain)':
-      '4058d56b2af8e83228d8be9ec14b0d50183fd2a7882f6e46b83cf264b1e4c001',
+      '98ca6dcef9fe60e5d3ed0abe85c9a93410bd8bc98d8a69763fac55895b9c761a',
   'trace animation: a scriptable entry of animations (trace)':
-      '0cbaf90f618545c478a33da745621f73b82d576da8ed83bf2801eaf3024da3c5',
+      '3978751f9db2ee8ca757c2aec33263a827873dc54afcc3ae9022f18d7a4642c7',
   'trace animation: default (plain)':
-      '8d6e08063bbe43ae17c55d1d1952c41d49d3ab74e4544338a60f579a5dd8a4a4',
+      'e12cb84ccbc9bf2d7b7f308e7f38beb3ef02428d7990cd289eec2afd2492eb68',
   'trace animation: default (trace)':
-      'c3f207651bb13b2a60f26f0b019e258ef0237a796ff534d265ae56950f8d255c',
+      '88efb0dc1cfaeaf6dbd50361b51581fa9e7211e692a6a40f92f0d8a1d13ec0a6',
   'trace animation: false (plain)':
       '5e1f050ef49669714122318184ba0e6c60e3b860fd2ba8c75d30a6f5d42d7df6',
   'trace animation: false (trace)':
       'd2a95737efe1a05bf60856f3b8f06cc4953f15838527e8ce2042b10a72b950a6',
   'trace animation: hide and show (plain)':
-      '8d6e08063bbe43ae17c55d1d1952c41d49d3ab74e4544338a60f579a5dd8a4a4',
+      'e12cb84ccbc9bf2d7b7f308e7f38beb3ef02428d7990cd289eec2afd2492eb68',
   'trace animation: hide and show (trace)':
-      'c3f207651bb13b2a60f26f0b019e258ef0237a796ff534d265ae56950f8d255c',
+      '88efb0dc1cfaeaf6dbd50361b51581fa9e7211e692a6a40f92f0d8a1d13ec0a6',
   'trace animation: scriptable delay (plain)':
-      '57040949f9b6fe468f6502b26aff783b8a2f7df0050d3f4b704190171faee650',
+      '3050a07854d9f2f36aebbf06867af3ce6501ac51782a450cb11614b1bf526fc4',
   'trace animation: scriptable delay (trace)':
-      '037ee03561c2b28b095655cb8033ef7261be8d69c611f798bc444c35c9c6a5be',
+      '3b26e81c48cecda07157f6bef7fafd18e6b2e5aaecdc63053cf07e0242034ca3',
   'trace animation: scriptable duration (plain)':
-      'd405ddd695c13476d9839b0cf9b6be29e2bbefdd66b512fe9144e12113fb32b9',
+      '7e0e68143f808d24d429be6cc28b2d6ce353d35bd0fc5487495a34367dfa2c2d',
   'trace animation: scriptable duration (trace)':
-      '274924d56eeb4de203d321e8855e47fa7417dc0eb2ff77b217fa19c74df937b2',
+      '08de7c71c3697a737a2ca437fe5d1e920ac5505d0ceb885f3a7ca40f83c20ca4',
   'trace array of objects: indexable bar borderRadius and a chart option (plain)':
       'bcfd24c55ab1b1a634f2aaf04d0c563bed6c485e8b71101aedad0669e31559b6',
   'trace array of objects: indexable bar borderRadius and a chart option (trace)':

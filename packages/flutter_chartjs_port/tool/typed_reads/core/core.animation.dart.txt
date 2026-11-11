@@ -6,5 +6,4 @@
 # A user fn of the animation options, called with JS arity
 # (core.animation.js:35).
 jsGet 2
-stringIndex 1
 jsCall 1

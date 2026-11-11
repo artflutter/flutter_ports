@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: a Defaults fake for tests.
 import 'dart:convert';
 
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 
 /// A [Defaults] that records each call with its arguments, as
 /// `[method, ...arguments]`. It changes nothing.
@@ -56,6 +58,7 @@ String probeJson(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when identical(value, formatters['values']) => '"<values>"',
   Function() => '"<fn>"',
+  Curve() => curveJson,
   final List<Object?> list => '[${list.map(probeJson).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((key) => _entry(map, key)).join(',')}}',

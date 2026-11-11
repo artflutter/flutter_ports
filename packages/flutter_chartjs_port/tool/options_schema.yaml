@@ -22,7 +22,8 @@
 #   line in a comment).
 #
 # A shape is one atom or several atoms joined by ` | `: `number`, `bool`, `string`, `fn` (a
-# plain function value), `list` (a plain array value), `any` (any JS value: a color, a point
+# plain function value), `list` (a plain array value), `curve` (a Flutter `Curve`, the value of
+# `easing`; an easing name of a raw config becomes its curve), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -232,7 +233,7 @@ kinds:
     doc: Port-only name over index.d.ts:1741 AnimationSpec, the entry keys of index.d.ts:1766 AnimationsSpec, the callbacks of index.d.ts:1797 AnimationOptions `animation` and index.d.ts:293 DoughnutAnimationOptions, the scope `animation` and each entry of `animations`.
     keys:
       duration: number
-      easing: string
+      easing: curve
       delay: number
       loop: bool
       properties: list

@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1103,7 +1104,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
   legend: ChartLegend(usePointStyle: true, reverse: true),
   animation: ChartAnimation(
     duration: Duration(milliseconds: 400),
-    easing: .easeOutQuart,
+    easing: Curves.easeOutQuart,
   ),
   filler: ChartFiller(propagate: true),
 );
@@ -1184,7 +1185,10 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
       'intersect': false,
       'includeInvisible': true,
     },
-    'animation': <String, Object?>{'duration': 400, 'easing': 'easeOutQuart'},
+    'animation': <String, Object?>{
+      'duration': 400,
+      'easing': Curves.easeOutQuart,
+    },
     'plugins': <String, Object?>{
       'subtitle': <String, Object?>{
         'display': true,
@@ -1531,7 +1535,7 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
   animation: ChartAnimation(
     duration: Duration(milliseconds: 800),
     delay: Duration(milliseconds: 100),
-    easing: .easeInOutCubic,
+    easing: Curves.easeInOutCubic,
   ),
 );
 
@@ -1572,7 +1576,7 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
     'animation': <String, Object?>{
       'duration': 800,
       'delay': 100,
-      'easing': 'easeInOutCubic',
+      'easing': Curves.easeInOutCubic,
     },
     'elements': <String, Object?>{
       'arc': <String, Object?>{

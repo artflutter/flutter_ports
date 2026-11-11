@@ -27,6 +27,7 @@ const Map<String, int> shapeAtoms = {
   'list': 16,
   'scope': 32,
   'any': 64,
+  'curve': 128,
 };
 
 /// The shape of a key: the bits of its atoms and the kind of its `scope`
@@ -73,6 +74,7 @@ final class Shape {
     if (mask == shapeAtoms['number']) return 'double';
     if (mask == shapeAtoms['bool']) return 'bool';
     if (mask == shapeAtoms['string']) return 'String';
+    if (mask == shapeAtoms['curve']) return 'Curve';
     if (mask == shapeAtoms['scope']) return '${scope}Scope';
     return 'Object';
   }
@@ -82,6 +84,7 @@ final class Shape {
     if (mask == shapeAtoms['number']) return 'classifyNumber(raw)';
     if (mask == shapeAtoms['bool']) return 'classifyBool(raw)';
     if (mask == shapeAtoms['string']) return 'classifyString(raw)';
+    if (mask == shapeAtoms['curve']) return 'classifyCurve(raw)';
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>(raw)';
     return 'classifyUnion(raw, $mask)';
   }
@@ -91,6 +94,7 @@ final class Shape {
     if (mask == shapeAtoms['number']) return 'classifyNumber';
     if (mask == shapeAtoms['bool']) return 'classifyBool';
     if (mask == shapeAtoms['string']) return 'classifyString';
+    if (mask == shapeAtoms['curve']) return 'classifyCurve';
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>';
     return '(raw) => classifyUnion(raw, $mask)';
   }
@@ -882,6 +886,7 @@ String _scopes(Schema schema) {
       '///\n'
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
+      "import 'package:flutter/animation.dart' show Curve;\n"
       "import 'package:flutter_chartjs_port/src/options/opt.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_scope.dart';\n"
@@ -916,7 +921,7 @@ String _scopes(Schema schema) {
       final setter = _memberNames.contains(id) ? '${id}Value' : id;
       out.write('\n  /// Stores the plain value [value] of `$name`.\n');
       switch (type) {
-        case 'double' || 'bool' || 'String':
+        case 'double' || 'bool' || 'String' || 'Curve':
           out.write(
             '  set $setter($type value) => '
             'store(OptionKey.$id, OptValue<$type>(value));\n',
