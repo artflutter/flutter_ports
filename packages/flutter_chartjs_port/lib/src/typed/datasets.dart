@@ -1816,6 +1816,18 @@ final class RadarDataset extends Dataset with _LineStyle {
   ];
 }
 
+/// `value.toDouble()` in another form: a `double` stays, and an `int` is
+/// multiplied by 1.0.
+///
+/// In an AOT build `num.toDouble()` is a call, and for an `int` from 2^30 on
+/// Android it is a runtime call (dart-lang/sdk issue 64209). The product of
+/// a static `int` and 1.0 is an inline conversion. dart2js emits the same
+/// code for both forms.
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+double _toDouble(num value) => value is double ? value : (value as int) * 1.0;
+
 /// A data item in the object form `{x, y}` or `{x, y, r}`
 /// (`docs/general/data-structures.md`, "Object[]").
 ///
@@ -1834,21 +1846,28 @@ final class RadarDataset extends Dataset with _LineStyle {
 final class DataPoint implements TypedDataItem {
   /// `{x, y}` with a number [x]: a value of a linear or a logarithmic x
   /// axis, or an index of a category x axis.
-  DataPoint(num x, num? y) : x = x.toDouble(), y = y?.toDouble(), r = null;
+  DataPoint(num x, num? y)
+    : x = _toDouble(x),
+      y = y == null ? null : _toDouble(y),
+      r = null;
 
   /// `{x, y}` with a time [x], for a time or a time series x axis.
-  DataPoint.time(DateTime this.x, num? y) : y = y?.toDouble(), r = null;
+  DataPoint.time(DateTime this.x, num? y)
+    : y = y == null ? null : _toDouble(y),
+      r = null;
 
   /// `{x, y}` with a label [x], for a category x axis. A label that is not
   /// in the labels of the chart becomes a new label: the category scale adds
   /// it to `data.labels`.
-  DataPoint.label(String this.x, num? y) : y = y?.toDouble(), r = null;
+  DataPoint.label(String this.x, num? y)
+    : y = y == null ? null : _toDouble(y),
+      r = null;
 
   /// `{x, y, r}`: a bubble at ([x], [y]) with the radius [r] in pixels.
   DataPoint.bubble(num x, num y, num r)
-    : x = x.toDouble(),
-      y = y.toDouble(),
-      r = r.toDouble();
+    : x = _toDouble(x),
+      y = _toDouble(y),
+      r = _toDouble(r);
 
   /// The x value: a `double`, a `DateTime` or a `String`.
   @override

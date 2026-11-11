@@ -8378,3 +8378,79 @@ base, and one test of 8 line charts: 6 whose line ends inside a pixel column (ti
 legend at the right, a gap, three datasets) and 2 whose last 1 and 40 values lie on the base, on a chart area that ends
 on a whole pixel. Without the change, these 34 tests fail and the other 80 pass. Files:
 `.handover/line-perf-2026-11-11/` (`report.md`, `proto/fill-fix.md`, `proto/measure.md`), outside the repository.
+
+## 72. `int.toDouble()`: the form `i * 1.0`
+
+**What was slow.** In a release (AOT) build, `int.toDouble()` is a call, not an inline instruction
+(`dart-lang/sdk` issue 64209, open). Flutter builds for Android arm64 use compressed pointers, so an integer from 2^30
+is a boxed integer, and the call then goes to a runtime function. A time in milliseconds is in that range. On a time
+axis the port converted such a value for each point: 15% of an update of 20,000 time points on the Pixel 8a.
+
+**The change.** A static `int` converts with `i * 1.0`, which the compiler makes an inline conversion: `dateInput`
+(`date_parse.dart`, the `int` and `DateTime` cases) and `jsToNumber` (`js_number.dart`, the `DateTime` case and the
+number case, which keeps the pattern `num` so that dart2js emits the same code as before). The constructors of
+`DataPoint` (`typed/datasets.dart`) convert with `value is double ? value : (value as int) * 1.0`. Each form gives the
+same number as `toDouble()`. `num * 1.0` is not a fast form: it is as slow as the call.
+
+**The figures.** ns for each conversion, Pixel 8a (profile build, android-arm64) and the Mac (M3 Max, AOT):
+
+| Form | Pixel, below 2^30 | Pixel, from 2^30 | Mac |
+| --- | ---: | ---: | ---: |
+| `i.toDouble()` | 6.9 | 53.7 | 4.0 to 4.3 |
+| `i * 1.0` | 1.8 | 1.9 | 0.8 to 0.9 |
+| `dateTime.millisecondsSinceEpoch.toDouble()` | 4.7 | 58.2 | 3.8 |
+| `dateTime.millisecondsSinceEpoch * 1.0` | 4.1 | 5.5 | 1.1 |
+| `jsToNumber` of an `int`, before | 7.2 to 9.9 | 61 to 62 | 4.1 |
+| `jsToNumber` of an `int`, after | 3.6 to 3.9 | 4.1 to 5.3 | 2.5 |
+| `jsToNumber` of a `DateTime`, before, after | | 64, 5.6 to 5.9 | 4.5, 4.0 |
+| `DataPoint(x, y)` with an `int` x, before, after | 13.0, 8.9 | 65, 8.8 | 6.2, 4.0 |
+
+A `double` gains nothing from these forms and loses nothing: `jsToNumber` of a `double` reads 4.1 ns before and after
+on the Pixel, and `DataPoint` with two doubles 9.6 and 8.6 ns. The Mac loop has a floor of about 3.4 ns for a body with
+a call, so the Mac gain is about 1.5 ns for each call.
+
+The same form is at 64 other calls of `lib/src` whose value has the static type `int`: the loop indexes that the
+controllers and the scales give to `getContext`, `getParsed`, `getDataVisibility` and the tick callbacks, the time
+arithmetic of `date_calendar.dart`, `date_parse.dart`, `js_date.dart` and `scale.time.dart`, the `int` branch of the
+generated setters of `resolved.g.dart` (through `tool/src/options_gen.dart`), and single calls in the math, color,
+legend, filler and interaction files. A call on a `double` stays: it costs nothing.
+
+In the port: the frameless bench of the gallery with the mode `linechart`
+(`.handover/line-perf-2026-11-11/patches/line-perf.diff`, not committed), Pixel 8a, profile build, the pinned beta, two
+timing runs for each build in the order A B C A B C. A is `2bbba88`, B adds the date sites, `jsToNumber` and
+`DataPoint`, C is the complete change. Step p50 in ms, the mean of the two runs:
+
+| Window | A | B | C | C against A | Spread of the two A runs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `time_n20000` (time x axis, 20,000 points) | 9.340 | 9.331 | 7.731 | -1.61 ms (-17.2%) | 0.245 |
+| `full_n20000` (full line, 20,000 points) | 10.351 | 10.434 | 9.396 | -0.95 ms (-9.2%) | 0.183 |
+| `motion_n1000` (animated update) | 9.262 | 9.303 | 9.029 | -0.23 ms (-2.5%) | 0.298 |
+| `plain_n20000` | 3.415 | 3.417 | 3.367 | -0.05 ms (-1.4%) | 0.164 |
+| `dataonly_n20000` | 8.873 | 8.911 | 9.049 | +0.18 ms (+2.0%) | 0.113 |
+| `draw_n20000` | 3.990 | 4.038 | 4.069 | +0.08 ms (+2.0%) | 0.099 |
+| `hover_n20000` | 4.455 | 4.473 | 4.481 | +0.03 ms (+0.6%) | 0.073 |
+| `multi_n1000` | 3.184 | 3.219 | 3.142 | -0.04 ms (-1.3%) | 0.051 |
+| `full_n1000` | 0.984 | 1.020 | 1.026 | +0.04 ms (+4.3%) | 0.047 |
+| `build_n1000` | 1.315 | 1.343 | 1.341 | +0.03 ms (+2.0%) | 0.016 |
+| `plain_n1000` | 0.587 | 0.593 | 0.581 | -0.01 ms (-0.9%) | 0.000 |
+| `full_n100` | 0.671 | 0.679 | 0.666 | -0.01 ms (-0.7%) | 0.010 |
+
+Two windows gain more than the spread of their runs: the time axis and the full update of 20,000 points. The two C
+runs of `full_n20000` differ by 0.42 ms, and the part of the change that gives its gain was not examined. Each other
+difference is inside the spread, or is 0.03 ms. The first A run was the coolest run (29 to 33 C; the later runs 33 to
+36.5 C), and it is the fastest run of most light windows. In this run, B alone shows no gain for the time axis (9.001
+and 9.660 ms). An earlier A/B of the three date sites alone on Flutter master gave 0.71 ms (9.70 to 8.99 ms, two runs
+for each side).
+
+Conditions: the first four rows of the first table and the earlier A/B are from Flutter master (Dart
+3.15.0-132.0.dev). The `jsToNumber` and `DataPoint` rows and the bench table are from the pinned beta (Dart
+3.14.0-315.3.beta). The source of the conversion is the same at both Dart revisions. Not measured: browsers, the
+iPhone, the Mac app, and a frame cell. dart2js emits the bare value for `i.toDouble()` and for `i * 1.0` on a static
+`int`, and the same JavaScript for the old and the new `jsToNumber` and `DataPoint` forms (read at `-O2` and `-O4`);
+dart2wasm was not examined.
+
+The calls on a `num` inside the loops that run for each point (`point_options.dart:350`, `primitive_parse.dart:79`
+and `:122`, the bar bulk update) stay as they are: the fast form for a `num` that is a `double` most of the time tests
+`is double` first, and it needs a browser measurement before it goes into such a loop. The rule for new code: convert
+an `int` with `i * 1.0`, and never write `num * 1.0`. Files: `.handover/line-perf-2026-11-11/`
+(`dart-int-to-double-verify.md`, `dart-int-to-double/`, `ship/todouble-pixel/`), outside the repository.

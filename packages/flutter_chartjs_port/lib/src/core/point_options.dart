@@ -479,7 +479,7 @@ final class NativePointContextReader {
     return context..refresh(
       index < parsed.length ? parsed[index] : undefined,
       index < raw.length ? raw[index] : undefined,
-      index.toDouble(),
+      index * 1.0,
       false,
       _mode,
     );

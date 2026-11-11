@@ -140,7 +140,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       _int &= ~1;
       _clearForeign(0, 1);
     } else if (raw is int) {
-      _borderWidth = raw.toDouble();
+      _borderWidth = raw * 1.0;
       _int |= 1;
       _clearForeign(0, 1);
     } else {
@@ -180,7 +180,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       _int &= ~2;
       _clearForeign(1, 2);
     } else if (raw is int) {
-      _hitRadius = raw.toDouble();
+      _hitRadius = raw * 1.0;
       _int |= 2;
       _clearForeign(1, 2);
     } else {
@@ -220,7 +220,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       _int &= ~4;
       _clearForeign(2, 4);
     } else if (raw is int) {
-      _hoverBorderWidth = raw.toDouble();
+      _hoverBorderWidth = raw * 1.0;
       _int |= 4;
       _clearForeign(2, 4);
     } else {
@@ -260,7 +260,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       _int &= ~8;
       _clearForeign(3, 8);
     } else if (raw is int) {
-      _hoverRadius = raw.toDouble();
+      _hoverRadius = raw * 1.0;
       _int |= 8;
       _clearForeign(3, 8);
     } else {
@@ -325,7 +325,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       _int &= ~32;
       _clearForeign(5, 32);
     } else if (raw is int) {
-      _radius = raw.toDouble();
+      _radius = raw * 1.0;
       _int |= 32;
       _clearForeign(5, 32);
     } else {
@@ -365,7 +365,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       _int &= ~64;
       _clearForeign(6, 64);
     } else if (raw is int) {
-      _rotation = raw.toDouble();
+      _rotation = raw * 1.0;
       _int |= 64;
       _clearForeign(6, 64);
     } else {
@@ -794,7 +794,7 @@ final class LineOptions extends ElementOptions {
       _int &= ~4;
       _clearForeign(2, 4);
     } else if (raw is int) {
-      _borderDashOffset = raw.toDouble();
+      _borderDashOffset = raw * 1.0;
       _int |= 4;
       _clearForeign(2, 4);
     } else {
@@ -866,7 +866,7 @@ final class LineOptions extends ElementOptions {
       _int &= ~16;
       _clearForeign(4, 16);
     } else if (raw is int) {
-      _borderWidth = raw.toDouble();
+      _borderWidth = raw * 1.0;
       _int |= 16;
       _clearForeign(4, 16);
     } else {
@@ -1046,7 +1046,7 @@ final class LineOptions extends ElementOptions {
       _int &= ~1024;
       _clearForeign(10, 1024);
     } else if (raw is int) {
-      _tension = raw.toDouble();
+      _tension = raw * 1.0;
       _int |= 1024;
       _clearForeign(10, 1024);
     } else {
@@ -2011,7 +2011,7 @@ final class ArcOptions extends ElementOptions {
       _int &= ~8;
       _clearForeign(3, 8);
     } else if (raw is int) {
-      _borderDashOffset = raw.toDouble();
+      _borderDashOffset = raw * 1.0;
       _int |= 8;
       _clearForeign(3, 8);
     } else {
@@ -2108,7 +2108,7 @@ final class ArcOptions extends ElementOptions {
       _int &= ~64;
       _clearForeign(6, 64);
     } else if (raw is int) {
-      _borderWidth = raw.toDouble();
+      _borderWidth = raw * 1.0;
       _int |= 64;
       _clearForeign(6, 64);
     } else {
@@ -2148,7 +2148,7 @@ final class ArcOptions extends ElementOptions {
       _int &= ~128;
       _clearForeign(7, 128);
     } else if (raw is int) {
-      _offset = raw.toDouble();
+      _offset = raw * 1.0;
       _int |= 128;
       _clearForeign(7, 128);
     } else {
@@ -2188,7 +2188,7 @@ final class ArcOptions extends ElementOptions {
       _int &= ~256;
       _clearForeign(8, 256);
     } else if (raw is int) {
-      _spacing = raw.toDouble();
+      _spacing = raw * 1.0;
       _int |= 256;
       _clearForeign(8, 256);
     } else {
@@ -2260,7 +2260,7 @@ final class ArcOptions extends ElementOptions {
       _int &= ~1024;
       _clearForeign(10, 1024);
     } else if (raw is int) {
-      _angle = raw.toDouble();
+      _angle = raw * 1.0;
       _int |= 1024;
       _clearForeign(10, 1024);
     } else {

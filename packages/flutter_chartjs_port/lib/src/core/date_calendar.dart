@@ -159,8 +159,7 @@ double timeClip(double t) =>
     t.abs() <= _maxTime ? t.truncateToDouble() + 0.0 : double.nan;
 
 /// TimeClip of an integral time.
-double _clip(int t) =>
-    t <= _maxTime && t >= -_maxTime ? t.toDouble() : double.nan;
+double _clip(int t) => t <= _maxTime && t >= -_maxTime ? t * 1.0 : double.nan;
 
 /// The day number of a civil date (1970-01-01 is 0). [month] is 1-12. A
 /// [day] outside the month counts on from day 1, as `Date.UTC` does.

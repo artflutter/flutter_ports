@@ -565,7 +565,7 @@ String _resolved(Schema schema) {
             '      _int &= ~$bit;\n'
             '      _clearForeign($slot, $bit);\n'
             '    } else if (raw is int) {\n'
-            '      _$id = raw.toDouble();\n'
+            '      _$id = raw * 1.0;\n'
             '      _int |= $bit;\n'
             '      _clearForeign($slot, $bit);\n'
             '    } else {\n'

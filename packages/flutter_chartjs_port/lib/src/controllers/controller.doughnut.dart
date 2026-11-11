@@ -708,10 +708,10 @@ class DoughnutController extends DatasetController {
     int i;
 
     for (i = 0; i < metaData.length; i++) {
-      final value = jsGetIndex(meta.parsed, i.toDouble());
+      final value = jsGetIndex(meta.parsed, i * 1.0);
       if (value != null &&
           !jsIsNaN(value) &&
-          chart.getDataVisibility(i.toDouble()) &&
+          chart.getDataVisibility(i * 1.0) &&
           !jsTruthy(metaData[i].hidden)) {
         total += jsToNumber(value).abs();
       }

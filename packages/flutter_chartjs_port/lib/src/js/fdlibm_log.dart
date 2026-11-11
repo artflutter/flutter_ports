@@ -154,7 +154,7 @@ double ieee754Log(double x) {
       if (k == 0) {
         return _zero;
       } else {
-        dk = k.toDouble();
+        dk = k * 1.0;
         return dk * _ln2Hi + dk * _ln2Lo;
       }
     }
@@ -162,12 +162,12 @@ double ieee754Log(double x) {
     if (k == 0) {
       return f - r;
     } else {
-      dk = k.toDouble();
+      dk = k * 1.0;
       return dk * _ln2Hi - ((r - dk * _ln2Lo) - f);
     }
   }
   final s = f / (2.0 + f);
-  dk = k.toDouble();
+  dk = k * 1.0;
   final z = s * s;
   i = hx - 0x6147a;
   final w = z * z;
@@ -253,7 +253,7 @@ double ieee754Log10(double x) {
   k += (hx >> 20) - 1023;
   final i = (k & 0x80000000) >> 31; // ((unsigned)k&0x80000000)>>31
   hx = (hx & 0x000fffff) | ((0x3ff - i) << 20);
-  final y = (k + i).toDouble();
+  final y = (k + i) * 1.0;
   x = _setHi(x, hx);
   final z = y * _log10Of2Lo + _ivln10 * ieee754Log(x);
   return z + y * _log10Of2Hi;

@@ -489,7 +489,7 @@ int _ieee754RemPio2(double x, Float64List y) {
   if (ax < _medium) {
     var t = ax;
     final n = (t * _invpio2 + _half).toInt();
-    final fn = n.toDouble();
+    final fn = n * 1.0;
     var r = t - fn * _pio2_1;
     var w = fn * _pio2_1t; // 1st round good to 85 bit
     // n<32 && ix != npio2_hw[n-1]

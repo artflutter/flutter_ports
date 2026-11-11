@@ -401,5 +401,5 @@ double _mixByte(double value) {
   final integer = value > -2147483649.0 && value < 2147483648.0
       ? value.toInt()
       : jsToInt32(value).toInt();
-  return (integer & 255).toDouble();
+  return (integer & 255) * 1.0;
 }

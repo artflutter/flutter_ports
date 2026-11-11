@@ -24,4 +24,4 @@ import 'package:clock/clock.dart';
 ///
 /// Chart animations ignore `timeDilation`, as upstream ignores the speed of
 /// the browser animations.
-double jsDateNow() => clock.now().millisecondsSinceEpoch.toDouble();
+double jsDateNow() => clock.now().millisecondsSinceEpoch * 1.0;

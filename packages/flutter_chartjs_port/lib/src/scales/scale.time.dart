@@ -869,7 +869,7 @@ class TimeScale extends Scale {
     final formatter = options.ticks.callback;
 
     if (jsTruthy(formatter)) {
-      return callback(formatter, [time, index.toDouble(), ticks], this);
+      return callback(formatter, [time, index * 1.0, ticks], this);
     }
 
     final formats = options.time.displayFormats;

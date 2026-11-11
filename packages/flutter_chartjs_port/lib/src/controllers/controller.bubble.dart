@@ -439,7 +439,7 @@ class BubbleController extends DatasetController {
             : _notPlain;
         if (!identical(custom, _notPlain)) {
           if (indexed && contexts?.readQualified(point, i) == null) {
-            getContext(i.toDouble(), false, 'default');
+            getContext(i * 1.0, false, 'default');
           }
           max = jsMax(
             max,
@@ -458,7 +458,7 @@ class BubbleController extends DatasetController {
       }
       max = jsMax(
         max,
-        point.size(resolveDataElementOptions(i.toDouble())) / 2,
+        point.size(resolveDataElementOptions(i * 1.0)) / 2,
       );
       // The first ordinary resolution makes the entry of constant options, and
       // two warm the indexed plan. There is one attempt for each loop.

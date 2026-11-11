@@ -142,7 +142,7 @@ Object _computeCircularBoundary(
   }
 
   for (var i = 0; i < length; ++i) {
-    final p = scale.getPointPositionForValue(i.toDouble(), value);
+    final p = scale.getPointPositionForValue(i * 1.0, value);
     // DIVERGES(chartjs): adapt-line-points-elements, {x, y, angle} is a point.
     target.add(
       PointElement()

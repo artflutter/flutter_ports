@@ -640,7 +640,7 @@ class ScatterController extends DatasetController {
     String mode,
   ) {
     for (var i = from; i < to; i++) {
-      if (contexts.read(i) == null) getContext(i.toDouble(), false, mode);
+      if (contexts.read(i) == null) getContext(i * 1.0, false, mode);
     }
   }
 
@@ -714,7 +714,7 @@ class ScatterController extends DatasetController {
       final contexts = pass.contexts;
       for (var i = data.length - 1; i >= 0; --i) {
         if (contexts.readQualified(data[i], i) == null) {
-          getContext(i.toDouble(), false, 'default');
+          getContext(i * 1.0, false, 'default');
         }
       }
       return pass.overflow;
@@ -738,7 +738,7 @@ class ScatterController extends DatasetController {
         if (nativeSize == null) {
           max = jsMax(
             max,
-            point.size(resolveDataElementOptions(i.toDouble())) / 2,
+            point.size(resolveDataElementOptions(i * 1.0)) / 2,
           );
           // The first ordinary resolution makes the entry of constant options.
           if (i == last) nativeSize = _cachedPointSize();
@@ -762,7 +762,7 @@ class ScatterController extends DatasetController {
         } else {
           // Indexed options refresh the context of each point, as upstream.
           if (indexed && contexts?.readQualified(point, i) == null) {
-            getContext(i.toDouble(), false, 'default');
+            getContext(i * 1.0, false, 'default');
           }
           max = jsMax(max, nativeSize / 2);
         }

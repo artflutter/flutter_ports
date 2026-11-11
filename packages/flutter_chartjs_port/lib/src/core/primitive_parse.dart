@@ -73,7 +73,7 @@ List<ParsedItem>? tryParseNumericCategories(
     return ParsedItem.of(
       iKey,
       iAxis,
-      i < labels.length && labels[i] is String ? i.toDouble() : null,
+      i < labels.length && labels[i] is String ? i * 1.0 : null,
       vKey,
       vAxis,
       value is num && value.isFinite ? value.toDouble() : null,

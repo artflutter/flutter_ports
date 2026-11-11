@@ -361,7 +361,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
     final opts = pointLabelOpts.setContext(scale.getPointLabelContext(i)!);
     padding[i] = opts.padding;
     final pointPosition = scale.getPointPosition(
-      i.toDouble(),
+      i * 1.0,
       jsToNumber(jsAdd(scale.drawingArea, padding[i])),
       additionalAngle,
     );
@@ -374,7 +374,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
     labelSizes[i] = textSize;
 
     final angleRadians = normalizeAngle(
-      scale.getIndexAngle(i.toDouble()) + additionalAngle,
+      scale.getIndexAngle(i * 1.0) + additionalAngle,
     );
     final angle = jsRound(toDegrees(angleRadians));
     final hLimits = _determineLimits(
@@ -549,7 +549,7 @@ PointLabelItem _createPointLabelItem(
   // DIVERGES(chartjs): adapt-radial-static-plans, no option read per label.
   final pointLabelPosition = positions != null
       ? positions.positionAt(index, distance, additionalAngle)
-      : scale.getPointPosition(index.toDouble(), distance, additionalAngle);
+      : scale.getPointPosition(index * 1.0, distance, additionalAngle);
   final angle = jsRound(
     toDegrees(normalizeAngle(pointLabelPosition.angle + halfPi)),
   );
@@ -844,7 +844,7 @@ void _pathRadiusLine(
     ctx.moveTo(pointPosition.x, pointPosition.y);
 
     for (var i = 1; i < labelCount; i++) {
-      pointPosition = scale.getPointPosition(i.toDouble(), radius);
+      pointPosition = scale.getPointPosition(i * 1.0, radius);
       ctx.lineTo(pointPosition.x, pointPosition.y);
     }
   }
@@ -904,7 +904,7 @@ ScriptableScalePointLabelContext _createPointLabelContext(
   return ScriptableScalePointLabelContext.pointLabel(
     parent,
     label,
-    index.toDouble(),
+    index * 1.0,
   );
 }
 
@@ -1226,8 +1226,8 @@ class RadialLinearScale extends LinearScaleBase
       final direct = typed;
       mapped[index] = _pointLabelOf(
         direct != null
-            ? direct(labels[index], index.toDouble())
-            : callback(fn, [labels[index], index.toDouble()], this),
+            ? direct(labels[index], index * 1.0)
+            : callback(fn, [labels[index], index * 1.0], this),
       );
     }
     final chart = this.chart;
@@ -1243,7 +1243,7 @@ class RadialLinearScale extends LinearScaleBase
     }
     pointLabels = [
       for (var i = 0; i < mapped.length; i++)
-        if (chart.getDataVisibility(i.toDouble())) mapped[i],
+        if (chart.getDataVisibility(i * 1.0)) mapped[i],
     ];
   }
 
@@ -1488,7 +1488,7 @@ class RadialLinearScale extends LinearScaleBase
         final offset = getDistanceFromCenterForValue(
           jsTruthy(opts.reverse) ? min : max,
         );
-        final position = getPointPosition(i.toDouble(), offset);
+        final position = getPointPosition(i * 1.0, offset);
         ctx
           ..beginPath()
           ..moveTo(xCenter ?? double.nan, yCenter ?? double.nan)

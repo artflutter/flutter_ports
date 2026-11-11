@@ -1134,7 +1134,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       if (resolveColors != null) {
         // The preflight of this loop read the capability of each bar.
         if (contexts?.readQualified(bars[i], i) == null) {
-          getContext(i.toDouble(), false, 'none');
+          getContext(i * 1.0, false, 'none');
         }
         elementOptions = resolveColors(i);
       } else {
@@ -1388,8 +1388,8 @@ class BarController extends DatasetController implements NativeBarIndexReads {
 
     for (var i = 0; i < ilen; ++i) {
       pixels[i] = iScale!.getPixelForValue(
-        parsedValueOf(getParsed(i.toDouble()), iKey, iScale.axis),
-        i.toDouble(),
+        parsedValueOf(getParsed(i * 1.0), iKey, iScale.axis),
+        i * 1.0,
       );
     }
 
@@ -1645,7 +1645,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final vKey = vScale == null ? AxisKey.other : AxisKey.of(vScale.axis);
 
     for (; i < ilen; ++i) {
-      if (parsedValueOf(getParsed(i.toDouble()), vKey, vScale!.axis) != null &&
+      if (parsedValueOf(getParsed(i * 1.0), vKey, vScale!.axis) != null &&
           !jsTruthy(rects[i].hidden)) {
         (rects[i] as types.VisualElement).draw(ctx!);
       }
