@@ -299,7 +299,7 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
       final cb = opts.callback;
       if (!identical(cb, const JsFunction(_getLabelForValue))) {
         labels = null;
-        tick.label = callback(cb, [tick.value, i.toDouble(), ticks], this);
+        tick.label = callback(cb, [tick.value, i * 1.0, ticks], this);
         continue;
       }
       final source = labels;
@@ -424,7 +424,7 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
             _strictEquals(_labelAt(labels, index), raw)
         ? index
         : _findOrAddLabel(labels, raw, index ?? raw, _addedLabels);
-    return _validIndex(found, (labels.length - 1).toDouble());
+    return _validIndex(found, (labels.length - 1) * 1.0);
   }
 
   /// scale.category.js:80 `determineDataLimits()`.

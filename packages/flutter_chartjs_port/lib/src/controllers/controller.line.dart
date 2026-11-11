@@ -417,7 +417,7 @@ class LineController extends DatasetController {
     Config? resolutionConfig;
     var resolutionDataset = index;
     var resolutionIndex = 0;
-    Object context() => getContext(resolutionIndex.toDouble(), false, mode);
+    Object context() => getContext(resolutionIndex * 1.0, false, mode);
     Object preparedContext() =>
         contextReader?.read(resolutionIndex) ?? context();
     bool resolutionOwnerValid() =>
@@ -458,7 +458,7 @@ class LineController extends DatasetController {
     if (!tryColors) _coordinateCache.clear();
     for (var i = 0; i < pointsCount; ++i) {
       final point = points[i];
-      final index = i.toDouble();
+      final index = i * 1.0;
 
       if (i < start || i >= end) {
         if (directUpdate) {

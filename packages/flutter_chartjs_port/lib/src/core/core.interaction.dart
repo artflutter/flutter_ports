@@ -301,7 +301,7 @@ void _evaluateInteractionItems(
     for (var j = lo; j <= hi; ++j) {
       final element = data[j] as Element;
       if (!_skipped(element)) {
-        handler(element, index, j.toDouble());
+        handler(element, index, j * 1.0);
       }
     }
   }
@@ -763,7 +763,7 @@ List<InteractionItem> _dataset(
         InteractionItem(
           element: data[i] as Element,
           datasetIndex: datasetIndex,
-          index: i.toDouble(),
+          index: i * 1.0,
         ),
       );
     }

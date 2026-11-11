@@ -25,12 +25,17 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 /// A `DateTime` is a JS `Date`: its time value (Chart.js ADR 0024).
 double jsToNumber(Object? value) => switch (value) {
   final double d => d,
-  final num n => n.toDouble(),
+  // The value is an int here. `* 1.0` on a static int is an inline
+  // conversion in an AOT build, and `toDouble()` is a call (dart-lang/sdk
+  // issue 64209). The case stays `num`: dart2js then emits the same code as
+  // for `n.toDouble()`, with no int test for a value that is not a number.
+  // js-ok: the two branches give the same number.
+  final num n => n is int ? n * 1.0 : n as double,
   null => 0,
   Undefined() => double.nan,
   final bool b => b ? 1 : 0,
   final String s => _stringToNumber(s),
-  final DateTime d => d.millisecondsSinceEpoch.toDouble(),
+  final DateTime d => d.millisecondsSinceEpoch * 1.0,
   _ => _stringToNumber(jsToString(value)),
 };
 

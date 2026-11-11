@@ -363,9 +363,9 @@ class PolarAreaController extends DatasetController {
     // `return` that stops the loop.
     for (var index = 0; index < meta.data.length; index++) {
       // One read of `this.getParsed(index).r` (:128), as upstream.
-      final parsed = parsedValueOf(getParsed(index.toDouble()), AxisKey.r, 'r');
+      final parsed = parsedValueOf(getParsed(index * 1.0), AxisKey.r, 'r');
 
-      if (!jsIsNaN(parsed) && chart.getDataVisibility(index.toDouble())) {
+      if (!jsIsNaN(parsed) && chart.getDataVisibility(index * 1.0)) {
         if (jsLessThan(parsed, min)) {
           min = parsed;
         }
@@ -667,9 +667,9 @@ class PolarAreaController extends DatasetController {
     // `meta.data.forEach((element, index) => ...)`.
     for (var index = 0; index < meta.data.length; index++) {
       if (!jsIsNaN(
-            parsedValueOf(getParsed(index.toDouble()), AxisKey.r, 'r'),
+            parsedValueOf(getParsed(index * 1.0), AxisKey.r, 'r'),
           ) &&
-          chart.getDataVisibility(index.toDouble())) {
+          chart.getDataVisibility(index * 1.0)) {
         count++;
       }
     }

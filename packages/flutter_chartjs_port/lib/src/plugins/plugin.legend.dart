@@ -1504,12 +1504,12 @@ final class _IndexedItemStyles {
         context.refresh(
           i < parsedLength ? parsed[i] : undefined,
           i < rawLength ? raw[i] : undefined,
-          i.toDouble(),
+          i * 1.0,
           false,
           'default',
         );
       } else {
-        controller.getContext(i.toDouble(), false, 'default');
+        controller.getContext(i * 1.0, false, 'default');
       }
     }
     if (count > end) {

@@ -60,9 +60,11 @@ double dateInput(Object? value, DateZone? zone) {
     case final String text:
       return text.isEmpty ? double.nan : parseDateString(text, zone);
     case final int number:
-      return timeClip(number.toDouble());
+      // `* 1.0` on a static int is an inline conversion in an AOT build;
+      // `toDouble()` is a call (dart-lang/sdk issue 64209).
+      return timeClip(number * 1.0);
     case final DateTime date:
-      return date.millisecondsSinceEpoch.toDouble();
+      return date.millisecondsSinceEpoch * 1.0;
     case Undefined():
       return jsDateNow();
     case null || bool():
@@ -187,7 +189,7 @@ double? _aspNet(String s) {
   final significant = i + count - first;
   // 17 digits or more give at least 1e16, outside the range of a Date.
   if (significant > 16) return double.nan;
-  final value = _digitValue(s, first, significant).toDouble();
+  final value = _digitValue(s, first, significant) * 1.0;
   return timeClip(negative ? -value : value);
 }
 
@@ -805,9 +807,9 @@ double _isoTime(
     // `createUTCDate`, then `setUTCMinutes(getUTCMinutes() - tzm)`.
     return wall > _maxTime || wall < -_maxTime
         ? double.nan
-        : timeClip((wall - zoneMinutes * _minuteMs).toDouble());
+        : timeClip((wall - zoneMinutes * _minuteMs) * 1.0);
   }
-  return timeClip((zone == null ? wall : zone.fromWall(wall)).toDouble());
+  return timeClip((zone == null ? wall : zone.fromWall(wall)) * 1.0);
 }
 
 /// The day number of the Monday of ISO week 1 of [year] (moment
@@ -1005,7 +1007,7 @@ double? _rfc2822(String original) {
       hour * _hourMs +
       minute * _minuteMs +
       (second ?? 0) * 1000;
-  return timeClip((wall - zoneMinutes * _minuteMs).toDouble());
+  return timeClip((wall - zoneMinutes * _minuteMs) * 1.0);
 }
 
 /// `moment(value, format)` with an ICU pattern [format] (row
@@ -1047,7 +1049,7 @@ double parseWithFormat(
     return double.nan;
   }
   if (wall == null) return double.nan;
-  return timeClip((zone == null ? wall : zone.fromWall(wall)).toDouble());
+  return timeClip((zone == null ? wall : zone.fromWall(wall)) * 1.0);
 }
 
 /// The day number of the current date of moment `currentDateArray`
