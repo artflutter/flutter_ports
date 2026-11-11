@@ -51,6 +51,11 @@ browser. `web/flutter_bootstrap.js` sets `wasmAllowList` for Firefox and Safari
 too, and `web/isolate.js` also runs in them. Firefox before 147 and Safari
 before 26.2 keep the JavaScript build.
 
+The address selects the build: `?build=js` gives the JavaScript build, and
+`?build=wasm` gives the WebAssembly build in a browser that can run it. Each
+card of the root page of the site (`tool/pages/index.html`) has a link for each
+build.
+
 `web/flutter_bootstrap.js` also sets `preferWebParagraph: true`
 ([flutter/flutter#172561](https://github.com/flutter/flutter/issues/172561),
 from Flutter 3.50). With it, the browser lays out and draws the text with the

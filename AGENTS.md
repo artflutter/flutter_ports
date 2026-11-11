@@ -2229,7 +2229,10 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `renderer: 'canvaskit'`, the JavaScript build. The three scripts also set
   `wasmAllowList: {gecko: true, webkit: true}`: by default, the loader takes the WebAssembly build only in a
   Chromium browser. The loader of Flutter 3.50 keeps the JavaScript build in Firefox before 147 and in Safari
-  before 26.2. `web/isolate.js` also runs in Firefox and Safari. The scripts
+  before 26.2. `web/isolate.js` also runs in Firefox and Safari. The scripts of the lab and the docs read
+  the query parameter `build` of the address: `?build=js` gives the JavaScript build, and `?build=wasm` skips
+  the rule of the native text. Each lab card of the root page (`tool/pages/index.html`) has one link for each
+  build. The scripts
   `gallery`, `docs` and `benchmark:web` start Chrome with
   `--enable-blink-features=ExtendedTextMetrics`. `test:web` runs without that flag. The header of a
   web run shows its mode (`lib/benchmark/web_mode.dart`; `JAVASCRIPT · NATIVE TEXT` for that path). A note that does not scroll
