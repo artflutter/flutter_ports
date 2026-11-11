@@ -1134,11 +1134,28 @@ function num(v) {
 const CONTROL_ESCAPES = {'\n': '\\n', '\r': '\\r', '\t': '\\t'};
 
 /**
- * The Dart literal of a JS value. A named function is `'fn:<name>'`.
- * [state.undefined] becomes true when the literal has the sentinel
- * `undefined`.
+ * An interaction mode of upstream (a key of `Interaction.modes`) as a value
+ * of the Dart data: the mode class of the port, for example
+ * `NearestInteractionMode()`. The port has no table from a name to a mode
+ * (row adapt-interaction-mode-objects).
  */
-function dart(v, state) {
+export class DartMode {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+/** The keys of a config whose object holds an interaction `mode`. */
+const INTERACTION_SCOPES = new Set(['interaction', 'hover', 'tooltip']);
+
+/**
+ * The Dart literal of a JS value. A named function is `'fn:<name>'`. A
+ * DartMode, and a string `mode` of the object [owner] of
+ * INTERACTION_SCOPES, is the mode class of the port. [state.undefined]
+ * becomes true when the literal has the sentinel `undefined`, and
+ * [state.modes] when it has a mode class.
+ */
+function dart(v, state, owner) {
   if (v === null) return 'null';
   if (v === undefined) {
     state.undefined = true;
@@ -1176,9 +1193,19 @@ function dart(v, state) {
     const raw = /[\\$]/.test(v.text) ? 'r' : '';
     return `${raw}'''\n${v.text}\n'''`;
   }
-  if (Array.isArray(v)) return `<Object?>[${v.map((x) => dart(x, state)).join(', ')}]`;
+  if (v instanceof DartMode) {
+    state.modes = true;
+    return `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`;
+  }
+  if (Array.isArray(v)) return `<Object?>[${v.map((x) => dart(x, state, owner)).join(', ')}]`;
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map((k) => `${dart(k, state)}: ${dart(v[k], state)}`);
+    const entries = Object.keys(v).map((k) => {
+      const value =
+        k === 'mode' && INTERACTION_SCOPES.has(owner) && typeof v[k] === 'string'
+          ? new DartMode(v[k])
+          : v[k];
+      return `${dart(k, state)}: ${dart(value, state, k)}`;
+    });
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);
@@ -1232,7 +1259,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.undefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.modes || state.undefined ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

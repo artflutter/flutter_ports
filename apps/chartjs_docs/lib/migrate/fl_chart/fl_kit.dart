@@ -29,9 +29,8 @@ abstract final class Fl {
 
 typedef Scriptable = Object? Function(JsObjectFace context);
 
-/// The touch of fl_chart: the spots near the x of the pointer. A custom
-/// mode cannot be written, because `InteractionItem` is not public.
-const ChartInteractionMode flX = ChartInteractionMode.x;
+/// The touch of fl_chart: the spots near the x of the pointer.
+const InteractionMode flX = XInteractionMode();
 
 Chart chartOf(JsObjectFace context) => context['chart']! as Chart;
 

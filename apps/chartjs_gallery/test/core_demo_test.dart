@@ -356,7 +356,14 @@ void main() {
         of: find.byType(CoreDemo),
         matching: find.byType(SegmentChoice<String>),
       ),
-      findsNWidgets(2),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(CoreDemo),
+        matching: find.byType(SegmentChoice<InteractionMode>),
+      ),
+      findsOneWidget,
     );
     expect(
       find.descendant(
@@ -528,11 +535,17 @@ void main() {
   ) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
-    expect(jsGet(chart.options['interaction'], 'mode'), 'nearest');
+    expect(
+      jsGet(chart.options['interaction'], 'mode'),
+      isA<NearestInteractionMode>(),
+    );
     await _tap(tester, 'core.mode.index');
     expect(_selected(tester, 'core.mode.index'), isTrue);
     expect(_selected(tester, 'core.mode.nearest'), isFalse);
-    expect(jsGet(chart.options['interaction'], 'mode'), 'index');
+    expect(
+      jsGet(chart.options['interaction'], 'mode'),
+      isA<IndexInteractionMode>(),
+    );
     final point = _point(chart, 0, 7);
     final mouse = await _mouse(tester);
     await _moveTo(tester, mouse, point.x, point.y);

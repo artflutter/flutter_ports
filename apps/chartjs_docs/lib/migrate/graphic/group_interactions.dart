@@ -88,7 +88,10 @@ final ChartConfig _config = ChartConfig(
   animation: ChartAnimation.none,
   legend: const ChartLegend(display: false),
   // A `PointSelection` without `dim`: the point nearest to the pointer.
-  interaction: const ChartInteraction(mode: .nearest, intersect: false),
+  interaction: const ChartInteraction(
+    mode: NearestInteractionMode(),
+    intersect: false,
+  ),
   tooltip: graphicTooltip(
     position: atPointer,
     title: _dateAndName,

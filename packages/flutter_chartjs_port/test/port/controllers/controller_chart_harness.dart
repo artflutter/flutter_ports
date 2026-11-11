@@ -44,6 +44,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
@@ -122,7 +124,7 @@ Map<String, Object?> observeHits(Chart chart, Map<String, Object?> expected) {
                   (point[0]! as num).toDouble(),
                   (point[1]! as num).toDouble(),
                 ),
-                query[0],
+                query[0]! as InteractionMode,
                 <String, Object?>{
                   'intersect': query[1],
                   'axis': query[2],

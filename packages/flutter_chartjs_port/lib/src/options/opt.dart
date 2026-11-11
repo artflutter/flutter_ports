@@ -18,7 +18,8 @@
 ///
 /// The type parameter `T` is the type of the key. The classification
 /// functions ([classifyNumber], [classifyBool], [classifyString],
-/// [classifyCurve], [classifyScope] and [classifyUnion]) give the cell of a
+/// [classifyCurve], [classifyInteractionMode], [classifyScope] and
+/// [classifyUnion]) give the cell of a
 /// raw JS value for a key of a given shape. The order of their tests is the
 /// order of the resolver: `undefined`, `null`, a function, an array, an
 /// object, then the plain value.
@@ -27,6 +28,8 @@
 library;
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -174,6 +177,10 @@ abstract final class ShapeBits {
 
   /// `curve`: a Flutter [Curve], the value of `easing`.
   static const int curve = 128;
+
+  /// `interactionMode`: an [InteractionMode], the value of `mode` of the
+  /// interaction options.
+  static const int interactionMode = 256;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -217,6 +224,15 @@ Opt<Curve> classifyCurve(Object? raw) =>
     _special<Curve>(raw) ??
     (raw is Curve ? OptValue<Curve>(raw) : OptForeign<Curve>(raw!));
 
+/// The cell of [raw] for a key of the shape `interactionMode`: an
+/// [InteractionMode], the value of `mode`. A mode name of Chart.js is not a
+/// mode: it is a foreign value, as each other value is.
+Opt<InteractionMode> classifyInteractionMode(Object? raw) =>
+    _special<InteractionMode>(raw) ??
+    (raw is InteractionMode
+        ? OptValue<InteractionMode>(raw)
+        : OptForeign<InteractionMode>(raw!));
+
 /// The cell of [raw] for a key of the shape `scope <Kind>`: an object is an
 /// [OptScope], another plain value is foreign.
 Opt<S> classifyScope<S>(Object? raw) => _special<S>(raw) ?? OptForeign<S>(raw!);
@@ -242,13 +258,15 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
 
 /// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
 /// classification of [classifyNumber], [classifyBool], [classifyString],
-/// [classifyCurve] or [classifyScope] for a shape of one atom, else
+/// [classifyCurve], [classifyInteractionMode] or [classifyScope] for a shape
+/// of one atom, else
 /// [classifyUnion].
 Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.number => classifyNumber(raw),
   ShapeBits.boolean => classifyBool(raw),
   ShapeBits.string => classifyString(raw),
   ShapeBits.curve => classifyCurve(raw),
+  ShapeBits.interactionMode => classifyInteractionMode(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

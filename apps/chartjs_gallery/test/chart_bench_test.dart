@@ -992,7 +992,7 @@ void main() {
             expect(chart.options['animation'], false, reason: reason);
             expect(
               jsGet(chart.options['interaction'], 'mode'),
-              'index',
+              isA<IndexInteractionMode>(),
               reason: reason,
             );
             expect(chart.legend, isNull, reason: reason);

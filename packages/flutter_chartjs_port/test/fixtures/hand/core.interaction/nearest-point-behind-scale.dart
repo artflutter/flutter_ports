@@ -5,6 +5,8 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show NearestInteractionMode;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -27,7 +29,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'events': <Object?>['click'],
       'interaction': <String, Object?>{
-        'mode': 'nearest',
+        // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
+        'mode': const NearestInteractionMode(),
         'intersect': false,
       },
       'plugins': <String, Object?>{

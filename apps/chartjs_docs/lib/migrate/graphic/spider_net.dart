@@ -100,7 +100,7 @@ final ChartConfig _config = ChartConfig(
   // `PointSelection(dim: Dim.x, variable: 'index')`: all types at the index
   // of the point nearest to the pointer.
   interaction: const ChartInteraction(
-    mode: .index,
+    mode: IndexInteractionMode(),
     intersect: false,
     extra: {'axis': 'xy'},
   ),

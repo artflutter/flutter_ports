@@ -88,7 +88,7 @@ final ChartConfig _config = ChartConfig(
   legend: const ChartLegend(display: false),
   // ActivationMode.singleTap: the nearest point on the x axis.
   interaction: const ChartInteraction(
-    mode: .nearest,
+    mode: NearestInteractionMode(),
     intersect: false,
     extra: {'axis': 'x'},
   ),

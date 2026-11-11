@@ -23,7 +23,8 @@
 #
 # A shape is one atom or several atoms joined by ` | `: `number`, `bool`, `string`, `fn` (a
 # plain function value), `list` (a plain array value), `curve` (a Flutter `Curve`, the value of
-# `easing`; an easing name of a raw config becomes its curve), `any` (any JS value: a color, a point
+# `easing`; an easing name is a foreign value), `interactionMode` (an `InteractionMode`, the value
+# of `mode`; a mode name is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -270,7 +271,7 @@ kinds:
   InteractionOptions:
     doc: index.d.ts:751 InteractionOptions and index.d.ts:1605 CoreInteractionOptions, the scopes `interaction` and `hover`.
     keys:
-      mode: string
+      mode: interactionMode
       intersect: bool
       axis: string
       includeInvisible: bool
@@ -1054,7 +1055,7 @@ kinds:
   TooltipOptions:
     doc: index.d.ts:2795 TooltipOptions (index.d.ts:1605 CoreInteractionOptions), the scope `plugins.tooltip`.
     keys:
-      mode: string
+      mode: interactionMode
       intersect: bool
       axis: string
       includeInvisible: bool

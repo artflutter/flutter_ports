@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, section 7: the constants and the option value of each
 // value type of lib/src/typed/values.dart, `==` of equal values and the dot
-// shorthands. The interaction modes are the keys of `Interaction.modes`.
+// shorthands. An interaction mode is an `InteractionMode` object of the core.
 //
 // VM only: the test imports the app library, which imports dart:ui.
 
@@ -46,25 +46,19 @@ void main() {
     });
   });
 
-  group('ChartInteractionMode', () {
-    test('the constants are the keys of Interaction.modes', () {
-      const modes = <ChartInteractionMode>[
-        .index,
-        .dataset,
-        .point,
-        .nearest,
-        .x,
-        .y,
-      ];
-      expect([for (final m in modes) m.name], Interaction.modes.keys);
-    });
-
-    test('a custom mode has its name, and equal names are ==', () {
-      const custom = ChartInteractionMode('myMode');
-      expect(custom.name, 'myMode');
+  group('InteractionMode', () {
+    test('the dot shorthands give the mode objects of the core', () {
+      const interaction = ChartInteraction(mode: IndexInteractionMode());
+      const tooltip = ChartTooltip(mode: DatasetInteractionMode());
+      expect(interaction.mode, same(const IndexInteractionMode()));
+      expect(tooltip.mode, same(const DatasetInteractionMode()));
       expect(
-        ChartInteractionMode(_runtime('index')),
-        ChartInteractionMode.index,
+        const ChartInteraction(mode: XInteractionMode()),
+        const ChartInteraction(mode: XInteractionMode()),
+      );
+      expect(
+        const ChartInteraction(mode: XInteractionMode()),
+        isNot(const ChartInteraction(mode: YInteractionMode())),
       );
     });
   });

@@ -318,7 +318,7 @@ List<ChartConfig> _configs() {
       ),
       tooltip: const ChartTooltip(
         enabled: true,
-        mode: .index,
+        mode: IndexInteractionMode(),
         intersect: false,
         backgroundColor: _red,
         titleColor: _red,
@@ -336,7 +336,7 @@ List<ChartConfig> _configs() {
       ),
       filler: const ChartFiller(propagate: true),
       interaction: const ChartInteraction(
-        mode: .nearest,
+        mode: NearestInteractionMode(),
         intersect: true,
         includeInvisible: false,
       ),

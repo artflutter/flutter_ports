@@ -5,6 +5,7 @@
 // src/core/core.interaction.js at the pinned Chart.js. 38 scenes,
 // 712 queries.
 
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -45,7 +46,8 @@ typedef InteractionReferenceMeta = ({
   List<Map<String, Object?>> parsed,
 });
 
-/// A query `Interaction.modes[mode](chart, e, options, useFinalPosition)`
+/// A query `mode.itemsAt(chart, e, options, useFinalPosition)`, the
+/// upstream `Interaction.modes[mode](...)` of the mode of the class,
 /// of the event `{type: 'click', native: true, x, y}`, with the items
 /// `(datasetIndex, index, element name)` that it returns, the name of the
 /// error class that it throws (or null), and the calls of the element
@@ -54,7 +56,7 @@ typedef InteractionReferenceMeta = ({
 /// `useFinalPosition` is an absent argument. Null for `x` or `y` is JS
 /// `null`.
 typedef InteractionReferenceQuery = ({
-  String mode,
+  InteractionMode mode,
   Map<String, Object?> options,
   bool? useFinalPosition,
   double? x,
@@ -212,7 +214,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 50,
@@ -231,7 +233,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 151,
@@ -250,7 +252,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 150,
@@ -269,7 +271,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 250,
@@ -288,7 +290,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 200,
@@ -307,7 +309,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 349,
@@ -326,7 +328,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 452,
@@ -336,7 +338,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 470,
@@ -355,7 +357,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 10,
@@ -365,7 +367,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 600,
@@ -375,7 +377,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 250,
@@ -385,7 +387,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -395,7 +397,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 150,
@@ -405,7 +407,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 50,
@@ -425,7 +427,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 151,
@@ -445,7 +447,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 150,
@@ -465,7 +467,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 250,
@@ -485,7 +487,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 200,
@@ -505,7 +507,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 349,
@@ -525,7 +527,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 452,
@@ -545,7 +547,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 470,
@@ -565,7 +567,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 10,
@@ -585,7 +587,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 600,
@@ -605,7 +607,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 250,
@@ -625,7 +627,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -645,7 +647,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 150,
@@ -665,7 +667,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 50,
@@ -684,7 +686,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 151,
@@ -703,7 +705,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -722,7 +724,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -741,7 +743,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 200,
@@ -760,7 +762,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 349,
@@ -779,7 +781,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 452,
@@ -789,7 +791,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 470,
@@ -808,7 +810,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 10,
@@ -818,7 +820,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 600,
@@ -828,7 +830,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -838,7 +840,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -848,7 +850,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -858,7 +860,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 50,
@@ -877,7 +879,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 151,
@@ -894,7 +896,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -913,7 +915,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -930,7 +932,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 200,
@@ -947,7 +949,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 349,
@@ -964,7 +966,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -974,7 +976,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 470,
@@ -993,7 +995,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 10,
@@ -1003,7 +1005,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 600,
@@ -1013,7 +1015,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -1023,7 +1025,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -1033,7 +1035,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -1043,7 +1045,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 50,
@@ -1072,7 +1074,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 151,
@@ -1101,7 +1103,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 150,
@@ -1130,7 +1132,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 250,
@@ -1159,7 +1161,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 200,
@@ -1188,7 +1190,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 349,
@@ -1217,7 +1219,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 452,
@@ -1227,7 +1229,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 470,
@@ -1256,7 +1258,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 10,
@@ -1266,7 +1268,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 600,
@@ -1276,7 +1278,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 250,
@@ -1286,7 +1288,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -1296,7 +1298,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 150,
@@ -1306,7 +1308,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 50,
@@ -1335,7 +1337,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 151,
@@ -1364,7 +1366,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 150,
@@ -1393,7 +1395,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 250,
@@ -1422,7 +1424,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 200,
@@ -1451,7 +1453,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 349,
@@ -1480,7 +1482,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 452,
@@ -1490,7 +1492,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 470,
@@ -1519,7 +1521,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 10,
@@ -1529,7 +1531,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 600,
@@ -1539,7 +1541,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 250,
@@ -1549,7 +1551,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -1559,7 +1561,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 150,
@@ -1569,7 +1571,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 50,
@@ -1594,7 +1596,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 151,
@@ -1619,7 +1621,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -1644,7 +1646,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -1669,7 +1671,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 200,
@@ -1688,7 +1690,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 349,
@@ -1713,7 +1715,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 452,
@@ -1723,7 +1725,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 470,
@@ -1742,7 +1744,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 10,
@@ -1752,7 +1754,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 600,
@@ -1762,7 +1764,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -1772,7 +1774,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -1782,7 +1784,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -1792,7 +1794,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 50,
@@ -1827,7 +1829,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 151,
@@ -1862,7 +1864,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -1897,7 +1899,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -1932,7 +1934,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 200,
@@ -1967,7 +1969,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 349,
@@ -2002,7 +2004,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -2012,7 +2014,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 470,
@@ -2047,7 +2049,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 10,
@@ -2057,7 +2059,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 600,
@@ -2067,7 +2069,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -2077,7 +2079,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -2087,7 +2089,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -2097,7 +2099,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 50,
@@ -2122,7 +2124,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 151,
@@ -2145,7 +2147,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 150,
@@ -2170,7 +2172,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 250,
@@ -2193,7 +2195,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 200,
@@ -2216,7 +2218,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 349,
@@ -2239,7 +2241,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 452,
@@ -2249,7 +2251,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 470,
@@ -2274,7 +2276,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 10,
@@ -2284,7 +2286,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 600,
@@ -2294,7 +2296,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 250,
@@ -2304,7 +2306,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -2314,7 +2316,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 150,
@@ -2324,7 +2326,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 50,
@@ -2345,7 +2347,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 151,
@@ -2367,7 +2369,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -2389,7 +2391,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -2410,7 +2412,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 200,
@@ -2430,7 +2432,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 349,
@@ -2451,7 +2453,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 452,
@@ -2461,7 +2463,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 470,
@@ -2481,7 +2483,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 10,
@@ -2491,7 +2493,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 600,
@@ -2501,7 +2503,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -2511,7 +2513,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -2521,7 +2523,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -2531,7 +2533,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 50,
@@ -2560,7 +2562,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 151,
@@ -2589,7 +2591,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -2618,7 +2620,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -2647,7 +2649,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 200,
@@ -2676,7 +2678,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 349,
@@ -2705,7 +2707,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -2715,7 +2717,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 470,
@@ -2744,7 +2746,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 10,
@@ -2754,7 +2756,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 600,
@@ -2764,7 +2766,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -2774,7 +2776,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -2784,7 +2786,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -2794,7 +2796,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 50,
@@ -2813,7 +2815,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 151,
@@ -2830,7 +2832,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 150,
@@ -2849,7 +2851,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 250,
@@ -2866,7 +2868,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 200,
@@ -2883,7 +2885,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 349,
@@ -2900,7 +2902,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 452,
@@ -2910,7 +2912,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 470,
@@ -2929,7 +2931,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 10,
@@ -2939,7 +2941,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 600,
@@ -2949,7 +2951,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 250,
@@ -2959,7 +2961,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -2969,7 +2971,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 150,
@@ -2979,7 +2981,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 50,
@@ -3008,7 +3010,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 151,
@@ -3037,7 +3039,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 150,
@@ -3066,7 +3068,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 250,
@@ -3095,7 +3097,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 200,
@@ -3124,7 +3126,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 349,
@@ -3153,7 +3155,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 452,
@@ -3163,7 +3165,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 470,
@@ -3192,7 +3194,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 10,
@@ -3202,7 +3204,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 600,
@@ -3212,7 +3214,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 250,
@@ -3222,7 +3224,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -3232,7 +3234,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 150,
@@ -3242,7 +3244,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3274,7 +3276,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3306,7 +3308,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3338,7 +3340,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3370,7 +3372,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3402,7 +3404,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3434,7 +3436,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3466,7 +3468,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3498,7 +3500,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3530,7 +3532,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3562,7 +3564,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3594,7 +3596,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3626,7 +3628,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -3658,7 +3660,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 50,
@@ -3674,7 +3676,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 151,
@@ -3684,7 +3686,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inRange 0:1', 'inXRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -3700,7 +3702,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -3710,7 +3712,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 200,
@@ -3720,7 +3722,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 349,
@@ -3730,7 +3732,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:2', 'inXRange 0:3', 'inRange 0:3', 'inXRange 1:3'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -3747,7 +3749,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 470,
@@ -3757,7 +3759,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:3', 'inXRange 0:4', 'inXRange 1:3', 'inXRange 1:4'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 10,
@@ -3767,7 +3769,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inXRange 1:0', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 600,
@@ -3777,7 +3779,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:3', 'inXRange 0:4', 'inXRange 1:3', 'inXRange 1:4'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -3787,7 +3789,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -3797,7 +3799,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inXRange 1:0', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -3814,7 +3816,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 50,
@@ -3830,7 +3832,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 151,
@@ -3840,7 +3842,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inRange 0:1', 'inXRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -3856,7 +3858,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -3866,7 +3868,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 200,
@@ -3876,7 +3878,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 349,
@@ -3886,7 +3888,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:2', 'inXRange 0:3', 'inRange 0:3', 'inXRange 1:3'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 452,
@@ -3903,7 +3905,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 470,
@@ -3913,7 +3915,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:3', 'inXRange 0:4', 'inXRange 1:3', 'inXRange 1:4'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 10,
@@ -3923,7 +3925,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inXRange 1:0', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 600,
@@ -3933,7 +3935,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:3', 'inXRange 0:4', 'inXRange 1:3', 'inXRange 1:4'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -3943,7 +3945,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -3953,7 +3955,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inXRange 1:0', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -3970,7 +3972,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 50,
@@ -3991,7 +3993,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 151,
@@ -4012,7 +4014,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -4033,7 +4035,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -4054,7 +4056,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 200,
@@ -4074,7 +4076,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 349,
@@ -4095,7 +4097,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -4116,7 +4118,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 470,
@@ -4138,7 +4140,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 10,
@@ -4160,7 +4162,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 600,
@@ -4182,7 +4184,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -4202,7 +4204,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -4224,7 +4226,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -4244,7 +4246,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 50,
@@ -4265,7 +4267,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 151,
@@ -4286,7 +4288,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -4307,7 +4309,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -4328,7 +4330,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 200,
@@ -4348,7 +4350,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 349,
@@ -4369,7 +4371,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 452,
@@ -4390,7 +4392,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 470,
@@ -4412,7 +4414,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 10,
@@ -4434,7 +4436,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 600,
@@ -4456,7 +4458,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -4476,7 +4478,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -4498,7 +4500,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -4654,7 +4656,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: true,
         x: 160,
@@ -4673,7 +4675,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: true,
         x: 150,
@@ -4692,7 +4694,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: true,
         x: 250,
@@ -4711,7 +4713,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: true,
         x: 160,
@@ -4740,7 +4742,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: true,
         x: 150,
@@ -4769,7 +4771,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: true,
         x: 250,
@@ -4798,7 +4800,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: true,
         x: 160,
@@ -4808,7 +4810,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inRange 0:1', 'inXRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: true,
         x: 150,
@@ -4824,7 +4826,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: true,
         x: 250,
@@ -4834,7 +4836,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inRange 0:2', 'inXRange 1:1'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 160,
@@ -4853,7 +4855,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 150,
@@ -4872,7 +4874,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 160,
@@ -4901,7 +4903,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -5066,7 +5068,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -5085,7 +5087,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -5104,7 +5106,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 452,
@@ -5114,7 +5116,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -5133,7 +5135,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -5150,7 +5152,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -5160,7 +5162,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -5185,7 +5187,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 250,
@@ -5210,7 +5212,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 452,
@@ -5220,7 +5222,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -5255,7 +5257,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -5290,7 +5292,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -5300,7 +5302,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -5329,7 +5331,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -5358,7 +5360,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -5473,7 +5475,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 350,
@@ -5491,7 +5493,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 450,
@@ -5509,7 +5511,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -5527,7 +5529,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 350,
@@ -5546,7 +5548,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 450,
@@ -5565,7 +5567,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -5720,7 +5722,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 150,
@@ -5739,7 +5741,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 250,
@@ -5758,7 +5760,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 452,
@@ -5768,7 +5770,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 150,
@@ -5797,7 +5799,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 250,
@@ -5826,7 +5828,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 452,
@@ -5836,7 +5838,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -5857,7 +5859,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -5878,7 +5880,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 452,
@@ -5972,7 +5974,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 150,
@@ -5987,7 +5989,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 300,
@@ -6002,7 +6004,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 460,
@@ -6017,7 +6019,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 40,
@@ -6032,7 +6034,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -6053,7 +6055,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -6074,7 +6076,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 460,
@@ -6095,7 +6097,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 40,
@@ -6116,7 +6118,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -6131,7 +6133,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -6146,7 +6148,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 460,
@@ -6161,7 +6163,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 40,
@@ -6176,7 +6178,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -6186,7 +6188,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:3', 'inRange 0:3', 'inXRange 0:4'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -6196,7 +6198,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 460,
@@ -6206,7 +6208,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 40,
@@ -6278,7 +6280,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 100,
@@ -6293,7 +6295,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 10,
@@ -6303,7 +6305,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 150,
@@ -6318,7 +6320,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 400,
@@ -6333,7 +6335,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 100,
@@ -6348,7 +6350,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 10,
@@ -6358,7 +6360,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 150,
@@ -6373,7 +6375,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 400,
@@ -6388,7 +6390,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 100,
@@ -6398,7 +6400,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:0', 'inYRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 10,
@@ -6408,7 +6410,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:1', 'inYRange 0:2'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -6418,7 +6420,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:2', 'inRange 0:2', 'inYRange 0:3'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 400,
@@ -6428,7 +6430,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:2', 'inYRange 0:3'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 100,
@@ -6438,7 +6440,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:0', 'inYRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 10,
@@ -6448,7 +6450,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:1', 'inYRange 0:2'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -6458,7 +6460,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:2', 'inRange 0:2', 'inYRange 0:3'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 400,
@@ -6468,7 +6470,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inYRange 0:2', 'inYRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 100,
@@ -6478,7 +6480,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 10,
@@ -6488,7 +6490,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 150,
@@ -6498,7 +6500,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 400,
@@ -6614,7 +6616,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -6629,7 +6631,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 90,
@@ -6644,7 +6646,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -6659,7 +6661,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -6674,7 +6676,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -6689,7 +6691,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 330,
@@ -6704,7 +6706,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 390,
@@ -6719,7 +6721,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 450,
@@ -6840,7 +6842,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -6855,7 +6857,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -6976,7 +6978,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -6991,7 +6993,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -7049,7 +7051,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -7102,7 +7104,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 90,
@@ -7166,7 +7168,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -7230,7 +7232,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -7346,7 +7348,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -7361,7 +7363,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 90,
@@ -7376,7 +7378,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -7386,7 +7388,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:1', 'getCenterPoint 0:1'],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -7396,7 +7398,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -7406,7 +7408,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 330,
@@ -7416,7 +7418,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 390,
@@ -7426,7 +7428,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:6', 'getCenterPoint 0:6'],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 450,
@@ -7547,7 +7549,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -7557,7 +7559,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -7673,7 +7675,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -7683,7 +7685,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -7736,7 +7738,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -7789,7 +7791,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 90,
@@ -7853,7 +7855,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -7917,7 +7919,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -8033,7 +8035,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -8048,7 +8050,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 90,
@@ -8063,7 +8065,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -8078,7 +8080,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -8093,7 +8095,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -8108,7 +8110,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 330,
@@ -8123,7 +8125,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 390,
@@ -8138,7 +8140,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 450,
@@ -8259,7 +8261,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -8274,7 +8276,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -8395,7 +8397,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 210,
@@ -8410,7 +8412,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -8468,7 +8470,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -8521,7 +8523,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 90,
@@ -8585,7 +8587,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -8649,7 +8651,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 'x', 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -8785,7 +8787,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 95,
@@ -8804,7 +8806,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 124,
@@ -8823,7 +8825,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 149,
@@ -8842,7 +8844,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 40,
@@ -8861,7 +8863,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 480,
@@ -8880,7 +8882,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 300,
@@ -8899,7 +8901,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -8909,7 +8911,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -8919,7 +8921,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:1', 'inRange 0:2'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 149,
@@ -8929,7 +8931,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 40,
@@ -8939,7 +8941,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 480,
@@ -8949,7 +8951,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:6', 'inRange 0:7'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 300,
@@ -8959,7 +8961,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:4', 'inRange 0:5'],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -8979,7 +8981,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -8998,7 +9000,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 149,
@@ -9018,7 +9020,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 40,
@@ -9037,7 +9039,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 480,
@@ -9056,7 +9058,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 300,
@@ -9075,7 +9077,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -9102,7 +9104,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -9129,7 +9131,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 149,
@@ -9156,7 +9158,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 40,
@@ -9183,7 +9185,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 480,
@@ -9210,7 +9212,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -9237,7 +9239,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -9247,7 +9249,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -9257,7 +9259,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 149,
@@ -9267,7 +9269,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 40,
@@ -9277,7 +9279,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 480,
@@ -9287,7 +9289,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:6', 'inXRange 0:7'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -9297,7 +9299,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:4', 'inXRange 0:5', 'inRange 0:5'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -9327,7 +9329,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -9352,7 +9354,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 149,
@@ -9383,7 +9385,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 40,
@@ -9402,7 +9404,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 480,
@@ -9429,7 +9431,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 300,
@@ -9574,7 +9576,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 95,
@@ -9593,7 +9595,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 124,
@@ -9612,7 +9614,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 149,
@@ -9631,7 +9633,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 40,
@@ -9650,7 +9652,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 480,
@@ -9669,7 +9671,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 300,
@@ -9688,7 +9690,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -9707,7 +9709,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -9726,7 +9728,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 149,
@@ -9745,7 +9747,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 40,
@@ -9764,7 +9766,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 480,
@@ -9783,7 +9785,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 300,
@@ -9802,7 +9804,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -9822,7 +9824,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -9841,7 +9843,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 149,
@@ -9861,7 +9863,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 40,
@@ -9880,7 +9882,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 480,
@@ -9899,7 +9901,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 300,
@@ -9918,7 +9920,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -9945,7 +9947,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -9972,7 +9974,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 149,
@@ -9999,7 +10001,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 40,
@@ -10026,7 +10028,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 480,
@@ -10053,7 +10055,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -10080,7 +10082,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -10090,7 +10092,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -10100,7 +10102,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 149,
@@ -10110,7 +10112,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2', 'inRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 40,
@@ -10120,7 +10122,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 480,
@@ -10130,7 +10132,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:6', 'inXRange 0:7'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -10140,7 +10142,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:4', 'inXRange 0:5', 'inRange 0:5'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -10170,7 +10172,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -10195,7 +10197,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 149,
@@ -10226,7 +10228,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 40,
@@ -10245,7 +10247,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 480,
@@ -10272,7 +10274,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 300,
@@ -10417,7 +10419,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 95,
@@ -10427,7 +10429,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 124,
@@ -10437,7 +10439,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -10447,7 +10449,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -10457,7 +10459,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -10467,7 +10469,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 95,
@@ -10486,7 +10488,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 124,
@@ -10505,7 +10507,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -10533,7 +10535,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -10559,7 +10561,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -10578,7 +10580,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -10588,7 +10590,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -10598,7 +10600,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10608,7 +10610,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10618,7 +10620,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10628,7 +10630,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -10638,7 +10640,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -10648,7 +10650,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -10658,7 +10660,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -10668,7 +10670,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -10678,7 +10680,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 95,
@@ -10688,7 +10690,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 124,
@@ -10698,7 +10700,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -10708,7 +10710,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -10718,7 +10720,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -10728,7 +10730,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 95,
@@ -10738,7 +10740,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 124,
@@ -10748,7 +10750,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -10758,7 +10760,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -10768,7 +10770,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -10778,7 +10780,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -10788,7 +10790,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -10798,7 +10800,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10808,7 +10810,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10818,7 +10820,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10828,7 +10830,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -10838,7 +10840,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -10848,7 +10850,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -10858,7 +10860,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -10868,7 +10870,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -10878,7 +10880,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 95,
@@ -10888,7 +10890,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 124,
@@ -10898,7 +10900,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -10908,7 +10910,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -10918,7 +10920,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -10928,7 +10930,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -10938,7 +10940,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -10948,7 +10950,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10958,7 +10960,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10968,7 +10970,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -10978,7 +10980,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -10988,7 +10990,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -10998,7 +11000,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11008,7 +11010,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11018,7 +11020,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11028,7 +11030,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 95,
@@ -11038,7 +11040,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 124,
@@ -11048,7 +11050,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -11058,7 +11060,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -11068,7 +11070,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -11078,7 +11080,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 95,
@@ -11088,7 +11090,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 124,
@@ -11098,7 +11100,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -11108,7 +11110,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -11118,7 +11120,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -11128,7 +11130,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -11158,7 +11160,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -11188,7 +11190,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -11218,7 +11220,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -11248,7 +11250,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -11278,7 +11280,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -11288,7 +11290,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -11298,7 +11300,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11308,7 +11310,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11318,7 +11320,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11328,7 +11330,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -11338,7 +11340,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -11348,7 +11350,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11358,7 +11360,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11368,7 +11370,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11378,7 +11380,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -11397,7 +11399,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -11416,7 +11418,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11445,7 +11447,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11472,7 +11474,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11491,7 +11493,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -11510,7 +11512,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -11529,7 +11531,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11558,7 +11560,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11585,7 +11587,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11730,7 +11732,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 95,
@@ -11740,7 +11742,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 124,
@@ -11750,7 +11752,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -11760,7 +11762,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -11770,7 +11772,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -11780,7 +11782,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 95,
@@ -11799,7 +11801,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 124,
@@ -11818,7 +11820,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -11846,7 +11848,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -11872,7 +11874,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -11891,7 +11893,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -11901,7 +11903,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -11911,7 +11913,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11921,7 +11923,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11931,7 +11933,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -11941,7 +11943,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -11951,7 +11953,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -11961,7 +11963,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11971,7 +11973,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11981,7 +11983,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -11991,7 +11993,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 95,
@@ -12001,7 +12003,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 124,
@@ -12011,7 +12013,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -12021,7 +12023,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -12031,7 +12033,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -12041,7 +12043,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 95,
@@ -12051,7 +12053,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 124,
@@ -12061,7 +12063,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -12071,7 +12073,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -12081,7 +12083,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -12091,7 +12093,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -12101,7 +12103,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -12111,7 +12113,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12121,7 +12123,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12131,7 +12133,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12141,7 +12143,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -12151,7 +12153,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -12161,7 +12163,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12171,7 +12173,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12181,7 +12183,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12191,7 +12193,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 95,
@@ -12201,7 +12203,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 124,
@@ -12211,7 +12213,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -12221,7 +12223,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -12231,7 +12233,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -12241,7 +12243,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -12251,7 +12253,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -12261,7 +12263,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12271,7 +12273,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12281,7 +12283,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12291,7 +12293,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -12301,7 +12303,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -12311,7 +12313,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12321,7 +12323,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12331,7 +12333,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12341,7 +12343,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 95,
@@ -12351,7 +12353,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: 124,
@@ -12361,7 +12363,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -12371,7 +12373,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -12381,7 +12383,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'x'},
         useFinalPosition: null,
         x: null,
@@ -12391,7 +12393,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 95,
@@ -12401,7 +12403,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: 124,
@@ -12411,7 +12413,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -12421,7 +12423,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -12431,7 +12433,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'y'},
         useFinalPosition: null,
         x: null,
@@ -12441,7 +12443,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -12471,7 +12473,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -12501,7 +12503,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -12531,7 +12533,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -12561,7 +12563,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'intersect': false,
           'includeInvisible': true,
@@ -12591,7 +12593,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -12601,7 +12603,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -12611,7 +12613,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12621,7 +12623,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12631,7 +12633,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12641,7 +12643,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -12651,7 +12653,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1', 'inRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -12661,7 +12663,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:1', 'inXRange 0:2'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12671,7 +12673,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12681,7 +12683,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12691,7 +12693,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inXRange 0:0', 'inXRange 0:1'],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 95,
@@ -12710,7 +12712,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 124,
@@ -12729,7 +12731,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12758,7 +12760,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12785,7 +12787,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -12804,7 +12806,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 95,
@@ -12823,7 +12825,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 124,
@@ -12842,7 +12844,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12871,7 +12873,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12898,7 +12900,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: null,
@@ -12989,7 +12991,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 150,
@@ -13005,7 +13007,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 152,
@@ -13021,7 +13023,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 154,
@@ -13037,7 +13039,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 350,
@@ -13053,7 +13055,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -13063,7 +13065,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 152,
@@ -13073,7 +13075,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 154,
@@ -13083,7 +13085,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 350,
@@ -13093,7 +13095,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:2', 'inRange 0:3', 'inRange 0:4'],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -13110,7 +13112,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 152,
@@ -13127,7 +13129,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 154,
@@ -13143,7 +13145,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 350,
@@ -13232,7 +13234,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 150,
@@ -13248,7 +13250,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 150,
@@ -13362,7 +13364,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 270,
@@ -13372,7 +13374,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 300,
@@ -13382,7 +13384,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 200,
@@ -13392,7 +13394,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 230,
@@ -13402,7 +13404,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13412,7 +13414,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13422,7 +13424,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 470,
@@ -13432,7 +13434,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 270,
@@ -13448,7 +13450,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 300,
@@ -13464,7 +13466,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 200,
@@ -13480,7 +13482,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 230,
@@ -13496,7 +13498,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13506,7 +13508,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13516,7 +13518,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 470,
@@ -13526,7 +13528,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 270,
@@ -13536,7 +13538,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 300,
@@ -13546,7 +13548,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 200,
@@ -13556,7 +13558,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 230,
@@ -13566,7 +13568,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 250,
@@ -13576,7 +13578,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 250,
@@ -13586,7 +13588,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 470,
@@ -13596,7 +13598,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 'r'},
         useFinalPosition: null,
         x: 270,
@@ -13606,7 +13608,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 'r'},
         useFinalPosition: null,
         x: 300,
@@ -13616,7 +13618,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 'r'},
         useFinalPosition: null,
         x: 200,
@@ -13626,7 +13628,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 'r'},
         useFinalPosition: null,
         x: 230,
@@ -13636,7 +13638,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13646,7 +13648,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13656,7 +13658,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 'r'},
         useFinalPosition: null,
         x: 470,
@@ -13666,7 +13668,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 270,
@@ -13676,7 +13678,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 300,
@@ -13686,7 +13688,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 200,
@@ -13696,7 +13698,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 230,
@@ -13706,7 +13708,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13716,7 +13718,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13726,7 +13728,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 470,
@@ -13736,7 +13738,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 270,
@@ -13746,7 +13748,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 300,
@@ -13756,7 +13758,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 200,
@@ -13766,7 +13768,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 230,
@@ -13776,7 +13778,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13786,7 +13788,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 250,
@@ -13796,7 +13798,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'dataset',
+        mode: DatasetInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'r'},
         useFinalPosition: null,
         x: 470,
@@ -13806,7 +13808,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -13816,7 +13818,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -13826,7 +13828,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 200,
@@ -13836,7 +13838,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 230,
@@ -13846,7 +13848,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -13856,7 +13858,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -13866,7 +13868,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 470,
@@ -13876,7 +13878,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 270,
@@ -13886,7 +13888,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 300,
@@ -13896,7 +13898,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 200,
@@ -13906,7 +13908,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 230,
@@ -13916,7 +13918,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -13926,7 +13928,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 250,
@@ -13936,7 +13938,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'y',
+        mode: YInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 470,
@@ -14044,7 +14046,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -14054,7 +14056,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: 30,
@@ -14064,7 +14066,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{},
         useFinalPosition: null,
         x: null,
@@ -14074,7 +14076,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -14084,7 +14086,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: 30,
@@ -14094,7 +14096,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'includeInvisible': true},
         useFinalPosition: null,
         x: null,
@@ -14104,7 +14106,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: null,
@@ -14114,7 +14116,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: 30,
@@ -14124,7 +14126,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': true, 'axis': 'r'},
         useFinalPosition: null,
         x: null,
@@ -14134,7 +14136,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -14144,7 +14146,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: 30,
@@ -14154,7 +14156,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'intersect': false, 'axis': 'xy'},
         useFinalPosition: null,
         x: null,
@@ -14164,7 +14166,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -14174,7 +14176,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 30,
@@ -14184,7 +14186,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'x',
+        mode: XInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: null,
@@ -14292,7 +14294,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 180,
@@ -14302,7 +14304,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 60,
@@ -14312,7 +14314,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': true},
         useFinalPosition: null,
         x: 400,
@@ -14322,7 +14324,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: ['inRange 0:0', 'inRange 0:1', 'inRange 0:2', 'inRange 0:3'],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 180,
@@ -14337,7 +14339,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 60,
@@ -14352,7 +14354,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{'intersect': false},
         useFinalPosition: null,
         x: 400,
@@ -14503,7 +14505,7 @@ const List<InteractionReferenceScene> interactionReference = [
     ],
     queries: [
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{'axis': 5},
         useFinalPosition: null,
         x: 150,
@@ -14522,7 +14524,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': 5, 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -14532,7 +14534,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{'axis': true, 'intersect': false},
         useFinalPosition: null,
         x: 150,
@@ -14542,7 +14544,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'axis': <String, Object?>{},
           'intersect': false,
@@ -14555,7 +14557,7 @@ const List<InteractionReferenceScene> interactionReference = [
         trace: [],
       ),
       (
-        mode: 'point',
+        mode: PointInteractionMode(),
         options: <String, Object?>{
           'axis': <Object?>['x'],
         },
@@ -14576,7 +14578,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'axis': <Object?>['x'],
           'intersect': false,
@@ -14608,7 +14610,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'nearest',
+        mode: NearestInteractionMode(),
         options: <String, Object?>{
           'axis': <Object?>['xy'],
           'intersect': false,
@@ -14649,7 +14651,7 @@ const List<InteractionReferenceScene> interactionReference = [
         ],
       ),
       (
-        mode: 'index',
+        mode: IndexInteractionMode(),
         options: <String, Object?>{
           'axis': <Object?>['x'],
           'intersect': false,

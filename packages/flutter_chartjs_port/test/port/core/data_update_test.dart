@@ -810,12 +810,22 @@ void main() {
     expect(observe(a), observe(b));
     final e = a.getDatasetMeta(0).data[2];
     final hit = _Event(e.x, e.y + 1);
-    final ao = a.getElementsAtEventForMode(hit, 'nearest', <String, Object?>{
-      'intersect': true,
-    }, false);
-    final bo = b.getElementsAtEventForMode(hit, 'nearest', <String, Object?>{
-      'intersect': true,
-    }, false);
+    final ao = a.getElementsAtEventForMode(
+      hit,
+      const NearestInteractionMode(),
+      <String, Object?>{
+        'intersect': true,
+      },
+      false,
+    );
+    final bo = b.getElementsAtEventForMode(
+      hit,
+      const NearestInteractionMode(),
+      <String, Object?>{
+        'intersect': true,
+      },
+      false,
+    );
     expect(ao.map((x) => x.index), bo.map((x) => x.index));
   });
   test('typed immutable point input participates without copying its list', () {

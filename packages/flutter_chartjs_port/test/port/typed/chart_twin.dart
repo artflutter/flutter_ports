@@ -47,17 +47,17 @@ import '../scales/scale_chart_harness.dart' show drawCalls;
 /// The hit queries of each state: `[mode, intersect, axis,
 /// includeInvisible]` for `getElementsAtEventForMode`.
 const List<List<Object?>> hitQueries = [
-  ['index', true, 'x', false],
-  ['index', false, 'xy', false],
-  ['dataset', true, 'xy', false],
-  ['dataset', false, 'y', false],
-  ['point', true, 'xy', false],
-  ['point', false, 'xy', true],
-  ['nearest', true, 'xy', false],
-  ['nearest', false, 'x', false],
-  ['nearest', false, 'r', false],
-  ['x', true, 'x', false],
-  ['y', false, 'y', false],
+  [IndexInteractionMode(), true, 'x', false],
+  [IndexInteractionMode(), false, 'xy', false],
+  [DatasetInteractionMode(), true, 'xy', false],
+  [DatasetInteractionMode(), false, 'y', false],
+  [PointInteractionMode(), true, 'xy', false],
+  [PointInteractionMode(), false, 'xy', true],
+  [NearestInteractionMode(), true, 'xy', false],
+  [NearestInteractionMode(), false, 'x', false],
+  [NearestInteractionMode(), false, 'r', false],
+  [XInteractionMode(), true, 'x', false],
+  [YInteractionMode(), false, 'y', false],
 ];
 
 /// The columns of the grid of the hit points.

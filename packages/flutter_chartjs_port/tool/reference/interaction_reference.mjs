@@ -721,7 +721,7 @@ ${m.data
 
 function dartQuery(q) {
   return `      (
-        mode: '${q.mode}',
+        mode: ${q.mode[0].toUpperCase()}${q.mode.slice(1)}InteractionMode(),
         options: ${dart(q.options)},
         useFinalPosition: ${q.useFinalPosition === undefined ? 'null' : q.useFinalPosition},
         x: ${optNum(q.x)},
@@ -756,7 +756,9 @@ const out = `// Original code, not ported from Chart.js: core.interaction refere
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/core/core.interaction.js at the pinned Chart.js. ${scenes.length} scenes,
 // ${queryCount} queries.
-${usesUndefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
+${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String interactionReferenceNode = '${process.version}';
 
@@ -795,7 +797,8 @@ typedef InteractionReferenceMeta = ({
   List<Map<String, Object?>> parsed,
 });
 
-/// A query \`Interaction.modes[mode](chart, e, options, useFinalPosition)\`
+/// A query \`mode.itemsAt(chart, e, options, useFinalPosition)\`, the
+/// upstream \`Interaction.modes[mode](...)\` of the mode of the class,
 /// of the event \`{type: 'click', native: true, x, y}\`, with the items
 /// \`(datasetIndex, index, element name)\` that it returns, the name of the
 /// error class that it throws (or null), and the calls of the element
@@ -804,7 +807,7 @@ typedef InteractionReferenceMeta = ({
 /// \`useFinalPosition\` is an absent argument. Null for \`x\` or \`y\` is JS
 /// \`null\`.
 typedef InteractionReferenceQuery = ({
-  String mode,
+  InteractionMode mode,
   Map<String, Object?> options,
   bool? useFinalPosition,
   double? x,

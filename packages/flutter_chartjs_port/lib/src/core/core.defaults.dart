@@ -29,6 +29,8 @@ import 'dart:core';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.layouts.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
@@ -191,7 +193,7 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
     );
     indexAxis = 'x';
     interaction = InteractionOptionsScope()
-      ..mode = 'nearest'
+      ..mode = const NearestInteractionMode()
       ..intersect = true
       ..includeInvisible = false;
     maintainAspectRatio = true;

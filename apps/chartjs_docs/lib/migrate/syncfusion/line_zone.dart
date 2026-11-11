@@ -107,7 +107,7 @@ final ChartConfig _config = ChartConfig(
   legend: const ChartLegend(display: false),
   // TrackballBehavior(lineType: none): a tooltip at the nearest year.
   interaction: const ChartInteraction(
-    mode: .nearest,
+    mode: NearestInteractionMode(),
     intersect: false,
     extra: {'axis': 'x'},
   ),

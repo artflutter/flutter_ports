@@ -941,7 +941,8 @@ void main() {
         ..active = []
         ..setActiveElements([]);
       o.observe('cleared', _activeText(chart.getActiveElements(), o));
-      (chart.options['hover']! as JsObjectFace)['mode'] = 'dataset';
+      (chart.options['hover']! as JsObjectFace)['mode'] =
+          const DatasetInteractionMode();
       run('dataset mode', _Event('mousemove', p1.x, p1.y));
     });
 
@@ -960,23 +961,31 @@ void main() {
                 '${o.labelOf(i.element)}',
           )
           .join(' ');
-      for (final mode in [
-        'point',
-        'nearest',
-        'index',
-        'dataset',
-        'x',
-        'y',
-        'nope',
+      // The label of each observation is the mode name of the generator.
+      // `nope` is a name that is not a key of the upstream modes: Dart
+      // `null`.
+      for (final (label, mode) in const <(String, InteractionMode?)>[
+        ('point', PointInteractionMode()),
+        ('nearest', NearestInteractionMode()),
+        ('index', IndexInteractionMode()),
+        ('dataset', DatasetInteractionMode()),
+        ('x', XInteractionMode()),
+        ('y', YInteractionMode()),
+        ('nope', null),
       ]) {
         for (final intersect in [true, false]) {
           final e = _Event('mousemove', p1.x + 2, p1.y + 2);
           o.observe(
-            '$mode $intersect',
+            '$label $intersect',
             items(
-              chart.getElementsAtEventForMode(e, mode, <String, Object?>{
-                'intersect': intersect,
-              }, false),
+              chart.getElementsAtEventForMode(
+                e,
+                mode,
+                <String, Object?>{
+                  'intersect': intersect,
+                },
+                false,
+              ),
             ),
           );
         }
@@ -987,7 +996,7 @@ void main() {
           items(
             chart.getElementsAtEventForMode(
               _Event('mousemove', p1.x + 30, p1.y),
-              'nearest',
+              const NearestInteractionMode(),
               <String, Object?>{'intersect': false, 'axis': 'xy'},
               false,
             ),
@@ -998,7 +1007,7 @@ void main() {
           items(
             chart.getElementsAtEventForMode(
               _Event('mousemove', p1.x + 30, p1.y),
-              'nearest',
+              const NearestInteractionMode(),
               <String, Object?>{'intersect': false, 'axis': 'y'},
               false,
             ),
@@ -1181,10 +1190,6 @@ void main() {
       chart.notifyPlugins('afterDraw');
       o
         ..observe('after unregister', log.join(' '))
-        ..observe(
-          'getElementsAtEventForMode modes',
-          jsObjectKeys(Interaction.modes).join(','),
-        )
         ..observe('BasicPlatform', chart.platform is BasicPlatform);
       final own = Chart(_Canvas(), <String, Object?>{
         'platform': BasicPlatform.jsClass,

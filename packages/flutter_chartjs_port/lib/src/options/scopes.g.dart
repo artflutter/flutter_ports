@@ -13,6 +13,8 @@
 library;
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
@@ -5123,13 +5125,13 @@ base class InteractionOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.interactionOptions;
 
-  Opt<String>? _mode;
+  Opt<InteractionMode>? _mode;
 
   /// The cell of `mode`, or Dart `null` when absent.
-  Opt<String>? get modeCell => _mode;
+  Opt<InteractionMode>? get modeCell => _mode;
 
   /// Stores the cell of `mode`. Dart `null` deletes the key.
-  set modeCell(Opt<String>? cell) {
+  set modeCell(Opt<InteractionMode>? cell) {
     if (cell == null) {
       delete(OptionKey.mode);
     } else {
@@ -5138,7 +5140,8 @@ base class InteractionOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `mode`.
-  set mode(String value) => store(OptionKey.mode, OptValue<String>(value));
+  set mode(InteractionMode value) =>
+      store(OptionKey.mode, OptValue<InteractionMode>(value));
 
   Opt<bool>? _intersect;
 
@@ -5213,7 +5216,7 @@ base class InteractionOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.mode:
-        _mode = fitCell(cell, classifyString);
+        _mode = fitCell(cell, classifyInteractionMode);
       case OptionKey.intersect:
         _intersect = fitCell(cell, classifyBool);
       case OptionKey.axis:
@@ -5246,7 +5249,7 @@ base class InteractionOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.mode:
-        return classifyString(raw);
+        return classifyInteractionMode(raw);
       case OptionKey.intersect:
         return classifyBool(raw);
       case OptionKey.axis:
@@ -21659,13 +21662,13 @@ base class TooltipOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.tooltipOptions;
 
-  Opt<String>? _mode;
+  Opt<InteractionMode>? _mode;
 
   /// The cell of `mode`, or Dart `null` when absent.
-  Opt<String>? get modeCell => _mode;
+  Opt<InteractionMode>? get modeCell => _mode;
 
   /// Stores the cell of `mode`. Dart `null` deletes the key.
-  set modeCell(Opt<String>? cell) {
+  set modeCell(Opt<InteractionMode>? cell) {
     if (cell == null) {
       delete(OptionKey.mode);
     } else {
@@ -21674,7 +21677,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `mode`.
-  set mode(String value) => store(OptionKey.mode, OptValue<String>(value));
+  set mode(InteractionMode value) =>
+      store(OptionKey.mode, OptValue<InteractionMode>(value));
 
   Opt<bool>? _intersect;
 
@@ -22568,7 +22572,7 @@ base class TooltipOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.mode:
-        _mode = fitCell(cell, classifyString);
+        _mode = fitCell(cell, classifyInteractionMode);
       case OptionKey.intersect:
         _intersect = fitCell(cell, classifyBool);
       case OptionKey.axis:
@@ -22720,7 +22724,7 @@ base class TooltipOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.mode:
-        return classifyString(raw);
+        return classifyInteractionMode(raw);
       case OptionKey.intersect:
         return classifyBool(raw);
       case OptionKey.axis:

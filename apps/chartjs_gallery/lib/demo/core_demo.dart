@@ -18,9 +18,25 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsObjectIsFrozen;
 import 'package:material_ui/material_ui.dart';
 
-/// The interaction modes of the selector: the keys of `Interaction.modes`
-/// (core.interaction.js:257), in their order.
-final List<String> coreDemoModes = Interaction.modes.keys.toList();
+/// A mode of the selector: the id of its segment, the short text of the
+/// segment and the mode.
+typedef CoreDemoMode = ({String id, String text, InteractionMode mode});
+
+/// The interaction modes of the selector, in the order of the upstream modes
+/// (core.interaction.js:257).
+const List<CoreDemoMode> coreDemoModeChoices = [
+  (id: 'index', text: 'idx', mode: IndexInteractionMode()),
+  (id: 'dataset', text: 'set', mode: DatasetInteractionMode()),
+  (id: 'point', text: 'pt', mode: PointInteractionMode()),
+  (id: 'nearest', text: 'nrst', mode: NearestInteractionMode()),
+  (id: 'x', text: 'x', mode: XInteractionMode()),
+  (id: 'y', text: 'y', mode: YInteractionMode()),
+];
+
+/// The ids of the segments of the mode selector, in their order.
+final List<String> coreDemoModes = [
+  for (final choice in coreDemoModeChoices) choice.id,
+];
 
 /// The values of the `interaction.axis` option of the selector.
 const List<String> coreDemoAxes = ['x', 'y', 'xy'];
@@ -32,17 +48,6 @@ const List<double> coreDemoHoverDurations = [0, 200, 400, 1000, 2000];
 /// The values of the line `update`: the durations of an update
 /// (`animation.duration`), in ms.
 const List<double> coreDemoUpdateDurations = [0, 400, 1000, 2000, 3000];
-
-/// The short text of a mode segment, when the name of the mode is too long
-/// for a segment on a phone. The tooltip gives the name. At 360 x 640 a
-/// mode segment has 26 px for its text; in Roboto `labelLarge` the texts
-/// are at most 24.3 px wide (`index` 33.4, `point` 31.5, `near` 27.5).
-const Map<String, String> _modeText = {
-  'index': 'idx',
-  'dataset': 'set',
-  'point': 'pt',
-  'nearest': 'nrst',
-};
 
 /// The point count of each dataset at the start.
 const int _startCount = 12;
@@ -94,8 +99,8 @@ const Map<String, ChartAxis> _unitAxes = {
 /// The ported code does the work:
 /// - `core.config` resolves the options: the typed `PointOptions` of
 ///   Chart.js ADR 0021, shared by the points of a dataset.
-/// - The events of the host go through `Chart.eventHandler` and the mode of
-///   `Interaction.modes` that the selector gives. The hovered points get the
+/// - The events of the host go through `Chart.eventHandler` and the
+///   `InteractionMode` that the selector gives. The hovered points get the
 ///   hover options through `setHoverStyle`.
 /// - `core.animations` and `core.animator` animate the hover transition
 ///   (`transitions.active`, 400 ms by default), the data changes and the
@@ -135,7 +140,7 @@ class CoreDemoState extends State<CoreDemo> {
   String _event = '-';
 
   // The control values.
-  String _mode = 'nearest';
+  InteractionMode _mode = const NearestInteractionMode();
   bool _intersect = true;
   String _axis = 'xy';
   double _hoverDuration = 400;
@@ -227,7 +232,7 @@ class CoreDemoState extends State<CoreDemo> {
     maintainAspectRatio: false,
     padding: const EdgeInsets.all(20),
     interaction: ChartInteraction(
-      mode: ChartInteractionMode(_mode),
+      mode: _mode,
       intersect: _intersect,
       // `interaction.axis` has no typed parameter.
       extra: {'axis': _axis},
@@ -474,20 +479,25 @@ class CoreDemoState extends State<CoreDemo> {
           source:
               'ChartView · core.controller: new Chart(canvas, config), '
               'update(), hide(i), show(i) · LineController · core.interaction: '
-              'Interaction.modes · options: interaction, '
+              'InteractionMode · options: interaction, '
               'transitions.active.animation, animation · core.animations · '
               'core.animator · core.plugins: an inline plugin · '
               'plugins: legend, tooltip',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SegmentChoice<String>(
+              SegmentChoice<InteractionMode>(
                 label: 'mode',
-                items: _items(
-                  'mode',
-                  coreDemoModes,
-                  text: (mode) => _modeText[mode] ?? mode,
-                ),
+                items: [
+                  for (final choice in coreDemoModeChoices)
+                    (
+                      key: 'core.mode.${choice.id}',
+                      text: choice.text,
+                      icon: null,
+                      tooltip: 'mode ${choice.id}',
+                      value: choice.mode,
+                    ),
+                ],
                 value: _mode,
                 onChanged: (v) => _change(() => _mode = v),
               ),

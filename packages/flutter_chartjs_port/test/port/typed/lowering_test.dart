@@ -911,7 +911,10 @@ const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
 /// The cases of the parameters of [ChartTooltip] and the twin Map.
 const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
   'enabled': (ChartTooltip(enabled: false), {'enabled': false}),
-  'mode': (ChartTooltip(mode: .index), {'mode': 'index'}),
+  'mode': (
+    ChartTooltip(mode: IndexInteractionMode()),
+    {'mode': IndexInteractionMode()},
+  ),
   'intersect': (ChartTooltip(intersect: false), {'intersect': false}),
   'backgroundColor': (
     ChartTooltip(backgroundColor: _red),
@@ -963,10 +966,9 @@ const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
 
 /// The cases of the parameters of [ChartInteraction] and the twin Map.
 const Map<String, (ChartInteraction, Map<String, Object?>)> _interaction = {
-  'mode': (ChartInteraction(mode: .x), {'mode': 'x'}),
-  'mode, a custom mode': (
-    ChartInteraction(mode: ChartInteractionMode('myMode')),
-    {'mode': 'myMode'},
+  'mode': (
+    ChartInteraction(mode: XInteractionMode()),
+    {'mode': XInteractionMode()},
   ),
   'intersect': (ChartInteraction(intersect: false), {'intersect': false}),
   'includeInvisible': (
@@ -2213,7 +2215,7 @@ void main() {
           ),
           tooltip: ChartTooltip(
             enabled: true,
-            mode: .index,
+            mode: IndexInteractionMode(),
             intersect: false,
             backgroundColor: _red,
             titleColor: _blue,
@@ -2231,7 +2233,7 @@ void main() {
             extra: {'position': 'nearest'},
           ),
           interaction: ChartInteraction(
-            mode: .nearest,
+            mode: NearestInteractionMode(),
             intersect: false,
             includeInvisible: true,
             extra: {'axis': 'x'},
@@ -2280,7 +2282,7 @@ void main() {
           },
           'tooltip': {
             'enabled': true,
-            'mode': 'index',
+            'mode': const IndexInteractionMode(),
             'intersect': false,
             'backgroundColor': _redValue,
             'titleColor': _blueValue,
@@ -2301,7 +2303,7 @@ void main() {
           },
         },
         'interaction': {
-          'mode': 'nearest',
+          'mode': const NearestInteractionMode(),
           'intersect': false,
           'includeInvisible': true,
           'axis': 'x',

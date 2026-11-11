@@ -112,8 +112,8 @@ final class InteractionItem implements types.ActiveElement {
       'index: ${jsNumberToString(index)}}';
 }
 
-/// index.d.ts:763 `InteractionModeFunction`, the type of a function of
-/// [Interaction.modes].
+/// index.d.ts:763 `InteractionModeFunction`, the type of the function of a
+/// mode ([InteractionMode.itemsAt]).
 ///
 /// [e] is the event: a `types.ChartEvent`, or a `NativeEvent` of
 /// `lib/src/platform/native_event.dart`, as `getRelativePosition` takes
@@ -882,6 +882,155 @@ List<InteractionItem> _y(
   );
 }
 
+/// An interaction mode: the value of the option `mode` of `interaction`,
+/// `hover` and the tooltip. It finds the items at an event position.
+///
+/// Upstream holds the name of a mode in the option and reads the function
+/// `Interaction.modes[mode]` (core.controller.js:821). The port holds the
+/// mode itself: the chart calls [itemsAt] of the value of the option, and
+/// reads no table. Each mode of upstream is a ready class
+/// ([NearestInteractionMode]). A program gives its own mode as a subclass,
+/// with no registration:
+///
+/// ```dart
+/// final class FirstItemMode extends InteractionMode {
+///   const FirstItemMode();
+///
+///   @override
+///   List<InteractionItem> itemsAt(
+///     Chart chart,
+///     Object e,
+///     Object options, [
+///     bool? useFinalPosition,
+///   ]) => const NearestInteractionMode()
+///       .itemsAt(chart, e, options, useFinalPosition)
+///       .take(1)
+///       .toList();
+/// }
+/// ```
+// DIVERGES(chartjs): adapt-interaction-mode-objects, a mode object.
+@immutable
+abstract class InteractionMode {
+  /// A mode.
+  const InteractionMode();
+
+  /// The items of [chart] at the position of the event [e]: the function of
+  /// a mode (index.d.ts:763 `InteractionModeFunction`). [e] is a
+  /// `types.ChartEvent` or a `NativeEvent`. [options] are the interaction
+  /// options: a view of the options or a plain object. Dart `null` for
+  /// [useFinalPosition] stands for an absent argument.
+  List<InteractionItem> itemsAt(
+    covariant types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]);
+
+  /// The mode of [value], the value of an option `mode`, or Dart `null` for
+  /// a value that is not a mode: `Interaction.modes[mode]` of a name that
+  /// is not a key gives no function (core.controller.js:821-826). A mode
+  /// name of Chart.js is not a mode: a debug build stops on it.
+  static InteractionMode? of(Object? value) {
+    assert(
+      value is! String,
+      'The option mode takes an InteractionMode, not the name "$value".',
+    );
+    return value is InteractionMode ? value : null;
+  }
+}
+
+/// core.interaction.js:269 `modes.index`: the items at the same index as
+/// the item nearest to the event position.
+final class IndexInteractionMode extends InteractionMode {
+  /// The mode.
+  const IndexInteractionMode();
+
+  @override
+  List<InteractionItem> itemsAt(
+    types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => _index(chart, e, options, useFinalPosition);
+}
+
+/// core.interaction.js:306 `modes.dataset`: the items of the dataset of the
+/// item nearest to the event position. The chart gives the hover style to
+/// the dataset, and the tooltip takes the title of the dataset
+/// (core.controller.js:1070, plugin.tooltip.js:370, :389).
+final class DatasetInteractionMode extends InteractionMode {
+  /// The mode.
+  const DatasetInteractionMode();
+
+  @override
+  List<InteractionItem> itemsAt(
+    types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => _dataset(chart, e, options, useFinalPosition);
+}
+
+/// core.interaction.js:336 `modes.point`: the items that intersect the
+/// event position.
+final class PointInteractionMode extends InteractionMode {
+  /// The mode.
+  const PointInteractionMode();
+
+  @override
+  List<InteractionItem> itemsAt(
+    types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => _point(chart, e, options, useFinalPosition);
+}
+
+/// core.interaction.js:352 `modes.nearest`: the items nearest to the event
+/// position.
+final class NearestInteractionMode extends InteractionMode {
+  /// The mode.
+  const NearestInteractionMode();
+
+  @override
+  List<InteractionItem> itemsAt(
+    types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => _nearest(chart, e, options, useFinalPosition);
+}
+
+/// core.interaction.js:368 `modes.x`: the items at the x position of the
+/// event.
+final class XInteractionMode extends InteractionMode {
+  /// The mode.
+  const XInteractionMode();
+
+  @override
+  List<InteractionItem> itemsAt(
+    types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => _x(chart, e, options, useFinalPosition);
+}
+
+/// core.interaction.js:382 `modes.y`: the items at the y position of the
+/// event.
+final class YInteractionMode extends InteractionMode {
+  /// The mode.
+  const YInteractionMode();
+
+  @override
+  List<InteractionItem> itemsAt(
+    types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => _y(chart, e, options, useFinalPosition);
+}
+
 /// core.interaction.js:252 the default export, `Chart.Interaction`
 /// (index.d.ts:803).
 ///
@@ -889,8 +1038,10 @@ List<InteractionItem> _y(
 /// @namespace Chart.Interaction
 ///
 /// Upstream exports an object. Its name `Interaction` is a class name in
-/// Dart (Chart.js ADR 0012). Thus the object is a class with two static
-/// members.
+/// Dart (Chart.js ADR 0012). Thus the object is a class with a static
+/// member. It has no `modes` (core.interaction.js:257): a mode is a class
+/// ([InteractionMode]), and no table maps a name to a mode.
+// DIVERGES(chartjs): adapt-interaction-mode-objects, no table of modes.
 abstract final class Interaction {
   /// core.interaction.js:254 `evaluateInteractionItems`.
   ///
@@ -903,20 +1054,4 @@ abstract final class Interaction {
     InteractionHandler handler, [
     bool? intersect,
   ]) => _evaluateInteractionItems(chart, axis, position, handler, intersect);
-
-  /// core.interaction.js:257 `modes`.
-  ///
-  /// Helper function for different modes
-  ///
-  /// A plain object of the six modes, in the upstream key order. The Map can
-  /// change, as the JavaScript object can: a program adds a custom mode
-  /// under its name.
-  static final Map<String, InteractionModeFunction> modes = {
-    'index': _index,
-    'dataset': _dataset,
-    'point': _point,
-    'nearest': _nearest,
-    'x': _x,
-    'y': _y,
-  };
 }

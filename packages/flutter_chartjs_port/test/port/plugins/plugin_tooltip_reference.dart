@@ -12,6 +12,7 @@
 //     chart.canvas.style.getPropertyPriority('direction'),
 //   ]
 
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -90,7 +91,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'index', 'intersect': false},
+          'tooltip': <String, Object?>{
+            'mode': IndexInteractionMode(),
+            'intersect': false,
+          },
         },
       },
     },
@@ -2423,7 +2427,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'nearest', 'intersect': true},
+          'tooltip': <String, Object?>{
+            'mode': NearestInteractionMode(),
+            'intersect': true,
+          },
         },
       },
     },
@@ -4686,7 +4693,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'point', 'intersect': true},
+          'tooltip': <String, Object?>{
+            'mode': PointInteractionMode(),
+            'intersect': true,
+          },
         },
       },
     },
@@ -6949,7 +6959,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'dataset', 'intersect': true},
+          'tooltip': <String, Object?>{
+            'mode': DatasetInteractionMode(),
+            'intersect': true,
+          },
         },
       },
     },
@@ -9317,7 +9330,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'x', 'intersect': false},
+          'tooltip': <String, Object?>{
+            'mode': XInteractionMode(),
+            'intersect': false,
+          },
         },
       },
     },
@@ -11650,7 +11666,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'y', 'intersect': false},
+          'tooltip': <String, Object?>{
+            'mode': YInteractionMode(),
+            'intersect': false,
+          },
         },
       },
     },
@@ -13914,7 +13933,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'position': 'nearest',
           },
@@ -16251,7 +16270,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'position': 'custom',
           },
@@ -18588,7 +18607,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'callbacks': <String, Object?>{
               'title': 'fn:cbTitle',
@@ -20953,7 +20972,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'nearest',
+            'mode': NearestInteractionMode(),
             'intersect': true,
             'xAlign': 'right',
             'yAlign': 'bottom',
@@ -23220,7 +23239,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'index', 'intersect': false},
+          'tooltip': <String, Object?>{
+            'mode': IndexInteractionMode(),
+            'intersect': false,
+          },
         },
       },
     },
@@ -25553,7 +25575,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'index', 'intersect': false},
+          'tooltip': <String, Object?>{
+            'mode': IndexInteractionMode(),
+            'intersect': false,
+          },
         },
       },
     },
@@ -27887,7 +27912,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'legend': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'nearest', 'intersect': true},
+          'tooltip': <String, Object?>{
+            'mode': NearestInteractionMode(),
+            'intersect': true,
+          },
         },
       },
     },
@@ -30093,7 +30121,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'nearest',
+            'mode': NearestInteractionMode(),
             'intersect': true,
             'callbacks': <String, Object?>{'footer': 'fn:cbFooter'},
           },
@@ -32306,7 +32334,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'rtl': true,
           },
@@ -34646,7 +34674,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'rtl': true,
             'textDirection': 'rtl',
@@ -36987,7 +37015,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'displayColors': false,
           },
@@ -39297,7 +39325,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'usePointStyle': true,
             'boxWidth': 10.0,
@@ -41661,7 +41689,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'boxPadding': 4.0,
             'padding': <String, Object?>{
@@ -44004,7 +44032,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'filter': 'fn:tooltipFilter',
           },
@@ -46307,7 +46335,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'itemSort': 'fn:tooltipSort',
           },
@@ -48644,7 +48672,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'titleAlign': 'center',
             'bodyAlign': 'right',
@@ -50989,7 +51017,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'external': 'fn:tooltipExternal',
           },
@@ -54968,7 +54996,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'enabled': false,
           },
@@ -57169,7 +57197,10 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'nearest', 'intersect': true},
+          'tooltip': <String, Object?>{
+            'mode': NearestInteractionMode(),
+            'intersect': true,
+          },
         },
       },
     },
@@ -62269,7 +62300,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'nearest',
+            'mode': NearestInteractionMode(),
             'intersect': true,
             'events': <Object?>['click'],
           },

@@ -52,6 +52,7 @@
 
 import {
   CallsText,
+  DartMode,
   drawCalls,
   jsonValue,
   loadChartJs as loadDist,
@@ -220,7 +221,9 @@ export function hits(chart) {
       ),
     );
   });
-  return {points, queries, items: new CallsText(lines.join('\n'))};
+  // The data hold the mode class of the port, not the name.
+  const modeQueries = queries.map(([mode, ...rest]) => [new DartMode(mode), ...rest]);
+  return {points, queries: modeQueries, items: new CallsText(lines.join('\n'))};
 }
 
 // ---------------------------------------------------------------------------

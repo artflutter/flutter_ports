@@ -37,7 +37,7 @@ final ChartConfig _config = fills(
       ),
     ],
     interaction: const ChartInteraction(
-      mode: .nearest,
+      mode: NearestInteractionMode(),
       intersect: false,
       extra: {'axis': 'x'},
     ),

@@ -11,6 +11,8 @@ library;
 
 import 'dart:convert';
 
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -18,6 +20,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 import '../../support/color_json.dart';
+import '../../support/mode_json.dart';
 
 /// The observations of one scenario: one line `<label>: <value>` for each
 /// [observe] call, and the labels of the known objects.
@@ -60,6 +63,7 @@ final class Observations {
       final num n => n.isFinite ? jsNumberToString(n) : 'null',
       final String s => jsonEncode(s),
       _ when jsIsFunction(value) => '"<fn>"',
+      InteractionMode() => modeJson,
       final List<Object?> list => '[${list.map(json).join(',')}]',
       final Object map
           when map is Map<String, Object?> || map is JsObjectFace =>

@@ -17,6 +17,8 @@ import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/options/opt.dart'
     show OptForeign, OptScope;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -41,7 +43,7 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart'
-    show ChartAlign, ChartInteractionMode, ChartPosition;
+    show ChartAlign, ChartPosition;
 import 'package:meta/meta.dart' show internal;
 
 /// The legend: the options of the legend plugin, `options.plugins.legend`
@@ -380,7 +382,7 @@ final class ChartTooltip with Diagnosticable {
 
   /// The items of the tooltip: `mode`. The default is the mode of
   /// `ChartConfig.interaction`.
-  final ChartInteractionMode? mode;
+  final InteractionMode? mode;
 
   /// Whether the tooltip shows only when the pointer is on an item:
   /// `intersect`. The default is the value of `ChartConfig.interaction`.
@@ -442,7 +444,7 @@ final class ChartTooltip with Diagnosticable {
   /// parameter that is `null` keeps its value.
   ChartTooltip copyWith({
     bool? enabled,
-    ChartInteractionMode? mode,
+    InteractionMode? mode,
     bool? intersect,
     Color? backgroundColor,
     Color? titleColor,
@@ -538,7 +540,7 @@ TooltipOptionsScope lowerTooltip(
   }
   final scope = TooltipOptionsScope();
   put(scope, OptionKey.enabled, tooltip.enabled);
-  put(scope, OptionKey.mode, tooltip.mode?.name);
+  put(scope, OptionKey.mode, tooltip.mode);
   put(scope, OptionKey.intersect, tooltip.intersect);
   put(scope, OptionKey.backgroundColor, colorValue(tooltip.backgroundColor));
   put(scope, OptionKey.titleColor, colorValue(tooltip.titleColor));
@@ -569,8 +571,8 @@ final class ChartInteraction with Diagnosticable {
   });
 
   /// The elements that an event hits: `mode`. The default is
-  /// [ChartInteractionMode.nearest].
-  final ChartInteractionMode? mode;
+  /// `NearestInteractionMode()`.
+  final InteractionMode? mode;
 
   /// Whether an event hits only the elements under the pointer:
   /// `intersect`. The default is `true`.
@@ -587,7 +589,7 @@ final class ChartInteraction with Diagnosticable {
   /// A copy of these interaction options with the given parameters. A
   /// parameter that is `null` keeps its value.
   ChartInteraction copyWith({
-    ChartInteractionMode? mode,
+    InteractionMode? mode,
     bool? intersect,
     bool? includeInvisible,
     Map<String, Object?>? extra,
@@ -624,7 +626,7 @@ final class ChartInteraction with Diagnosticable {
 @internal
 InteractionOptionsScope lowerInteraction(ChartInteraction interaction) {
   final scope = InteractionOptionsScope();
-  put(scope, OptionKey.mode, interaction.mode?.name);
+  put(scope, OptionKey.mode, interaction.mode);
   put(scope, OptionKey.intersect, interaction.intersect);
   put(scope, OptionKey.includeInvisible, interaction.includeInvisible);
   return mergeExtra(scope, interaction.extra);

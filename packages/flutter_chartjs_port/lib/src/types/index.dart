@@ -38,6 +38,8 @@ library;
 // libraries (Chart.js ADR 0013, Chart.js ADR 0037).
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasPath, CanvasRenderingContext2D, HTMLCanvasElement;
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -425,14 +427,15 @@ abstract interface class Chart {
   /// useFinalPosition)`. plugin.tooltip.js:1200 calls it.
   ///
   /// [e] is a [ChartEvent] or a `NativeEvent`, as the interaction modes
-  /// take it. The concrete result is a `List<InteractionItem>` of
-  /// `core.interaction.dart`, a valid covariant override (Chart.js ADR 0038,
-  /// section 6). Thus a reader never adds an item to the result: it copies
-  /// the list or reorders it in place. Dart `null` for [useFinalPosition]
-  /// stands for JS `undefined`.
+  /// take it. [mode] is the mode itself, not a name (row
+  /// `adapt-interaction-mode-objects`). The concrete result is a
+  /// `List<InteractionItem>` of `core.interaction.dart`, a valid covariant
+  /// override (Chart.js ADR 0038, section 6). Thus a reader never adds an
+  /// item to the result: it copies the list or reorders it in place. Dart
+  /// `null` for [useFinalPosition] stands for JS `undefined`.
   List<ActiveElement> getElementsAtEventForMode(
     Object e,
-    Object? mode,
+    InteractionMode? mode,
     Object? options, [
     bool? useFinalPosition,
   ]);

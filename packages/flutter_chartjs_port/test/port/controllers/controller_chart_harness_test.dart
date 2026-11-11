@@ -8,6 +8,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show IndexInteractionMode, PointInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
@@ -224,7 +226,7 @@ void main() {
       final (x, y) = _center(chart, 0, 1);
       final items = chart.getElementsAtEventForMode(
         ReferenceEvent(x, y),
-        'point',
+        const PointInteractionMode(),
         <String, Object?>{'intersect': true, 'axis': 'xy'},
         false,
       );
@@ -243,8 +245,8 @@ void main() {
           <Object?>[-5.0, -5.0],
         ],
         'queries': <Object?>[
-          <Object?>['point', true, 'xy', false],
-          <Object?>['index', false, 'x', false],
+          <Object?>[const PointInteractionMode(), true, 'xy', false],
+          <Object?>[const IndexInteractionMode(), false, 'x', false],
         ],
         'items': '',
       });
@@ -409,7 +411,7 @@ void main() {
             <Object?>[x, y],
           ],
           'queries': <Object?>[
-            <Object?>['point', true, 'xy', false],
+            <Object?>[const PointInteractionMode(), true, 'xy', false],
           ],
           'items': '',
         },

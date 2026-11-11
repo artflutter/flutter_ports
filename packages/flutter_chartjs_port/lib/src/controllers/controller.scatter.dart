@@ -42,6 +42,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
@@ -251,7 +253,8 @@ class ScatterController extends DatasetController {
   /// controller.scatter.js:23 `static overrides`, a typed scope of the kind
   /// `ChartOptions` (Chart.js ADR 0054 §3).
   static final ChartOptionsScope overrides = ChartOptionsScope()
-    ..interaction = (InteractionOptionsScope()..mode = 'point')
+    ..interaction = (InteractionOptionsScope()
+      ..mode = const PointInteractionMode())
     ..scales = (ScaleOptionsByIdScope()
       ..jsWrite('x', ScaleOptionsScope()..type = 'linear')
       ..jsWrite('y', ScaleOptionsScope()..type = 'linear'));

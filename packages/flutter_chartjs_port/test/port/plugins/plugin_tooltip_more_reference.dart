@@ -6,6 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 8 cases, 75 widths.
 
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -84,7 +85,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': 'index'},
+          'tooltip': <String, Object?>{'mode': IndexInteractionMode()},
         },
       },
     },
@@ -3838,7 +3839,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'nearest',
+            'mode': NearestInteractionMode(),
             'intersect': false,
             'position': 'nearest',
           },
@@ -5294,7 +5295,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'callbacks': <String, Object?>{'labelColor': 'fn:roundLabelColor'},
           },
@@ -7130,7 +7131,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'nearest',
+            'mode': NearestInteractionMode(),
             'intersect': true,
             'cornerRadius': <String, Object?>{
               'topLeft': 2.0,
@@ -9406,7 +9407,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': 'index',
+            'mode': IndexInteractionMode(),
             'intersect': false,
             'bodyAlign': 'center',
             'boxPadding': 3.0,
@@ -11740,7 +11741,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       'options': <String, Object?>{
         'plugins': <String, Object?>{
           'title': <String, Object?>{'display': true, 'text': 'Chart title'},
-          'tooltip': <String, Object?>{'mode': 'index', 'intersect': false},
+          'tooltip': <String, Object?>{
+            'mode': IndexInteractionMode(),
+            'intersect': false,
+          },
         },
       },
     },

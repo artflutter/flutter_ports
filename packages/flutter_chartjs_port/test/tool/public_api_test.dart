@@ -116,7 +116,6 @@ const Map<String, String> _notExported = {
   'ArcProps': 'not in the ADR 0048 export list',
   'BarOptions': 'not in the ADR 0048 export list',
   'EasingFunction': 'not in the ADR 0048 export list',
-  'InteractionItem': 'not in the ADR 0048 export list',
   'InteractionModeFunction': 'not in the ADR 0048 export list',
   'LineOptions': 'not in the ADR 0048 export list',
   'PointOptions': 'not in the ADR 0048 export list',

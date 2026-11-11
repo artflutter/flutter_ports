@@ -4,6 +4,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -65,7 +67,8 @@ Map<String, Object?> fixture() {
           'title': false,
           'filler': false,
           'tooltip': <String, Object?>{
-            'mode': 'nearest',
+            // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
+            'mode': const NearestInteractionMode(),
             'intersect': false,
             'padding': 5,
             'usePointStyle': true,

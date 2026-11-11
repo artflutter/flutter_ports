@@ -74,7 +74,10 @@ final ChartConfig _config = ChartConfig(
   animation: ChartAnimation.none,
   legend: const ChartLegend(display: false),
   // `PointSelection(dim: Dim.x)`: the point nearest to the pointer in x.
-  interaction: const ChartInteraction(mode: .index, intersect: false),
+  interaction: const ChartInteraction(
+    mode: IndexInteractionMode(),
+    intersect: false,
+  ),
   tooltip: graphicTooltip(position: followY, title: _time, label: _sales),
   plugins: [
     regionColor(const Color(0xffdddddd)),

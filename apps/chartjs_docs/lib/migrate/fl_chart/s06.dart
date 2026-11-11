@@ -47,7 +47,10 @@ final ChartConfig _config = fills(
       _line(const [1, 5, 3, 5], _orange, _orangeDark, _orange),
       _line(const [3, 1, 2, 1], _blueDark, Fl.blue, Fl.blue),
     ],
-    interaction: const ChartInteraction(mode: .nearest, intersect: true),
+    interaction: const ChartInteraction(
+      mode: NearestInteractionMode(),
+      intersect: true,
+    ),
     tooltip: ChartTooltip(
       backgroundColor: Colors.white,
       cornerRadius: 0,

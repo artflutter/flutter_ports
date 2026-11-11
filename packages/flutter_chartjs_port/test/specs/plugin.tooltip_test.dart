@@ -12,6 +12,8 @@ import 'package:chartjs_test_utils/pure.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show IndexInteractionMode, NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -301,7 +303,7 @@ void main() {
           _line(_twoDatasets(), <String, Object?>{
             'plugins': <String, Object?>{
               'tooltip': <String, Object?>{
-                'mode': 'index',
+                'mode': const IndexInteractionMode(),
                 'intersect': false,
                 'padding': <String, Object?>{
                   'left': 6,
@@ -311,7 +313,10 @@ void main() {
                 },
               },
             },
-            'hover': <String, Object?>{'mode': 'index', 'intersect': false},
+            'hover': <String, Object?>{
+              'mode': const IndexInteractionMode(),
+              'intersect': false,
+            },
           }),
         );
 
@@ -456,7 +461,7 @@ void main() {
           _line(
             _twoDatasets(),
             _tooltipOptions(<String, Object?>{
-              'mode': 'index',
+              'mode': const IndexInteractionMode(),
               'intersect': true,
             }),
           ),
@@ -479,7 +484,7 @@ void main() {
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
-            'mode': 'nearest',
+            'mode': const NearestInteractionMode(),
             'intersect': true,
           }),
         ),
@@ -601,7 +606,7 @@ void main() {
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
-            'mode': 'index',
+            'mode': const IndexInteractionMode(),
             'callbacks': <String, Object?>{
               'beforeTitle': () => 'beforeTitle',
               'title': () => 'title',
@@ -762,7 +767,7 @@ void main() {
           },
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{
-              'mode': 'index',
+              'mode': const IndexInteractionMode(),
               'callbacks': <String, Object?>{
                 'beforeLabel': (Object? ctx) {
                   final parsed = jsGet(ctx, 'parsed');
@@ -793,7 +798,7 @@ void main() {
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
-            'mode': 'index',
+            'mode': const IndexInteractionMode(),
             'itemSort': (Object? a, Object? b) =>
                 (jsGet(a, 'datasetIndex')! as num) >
                     (jsGet(b, 'datasetIndex')! as num)
@@ -839,7 +844,10 @@ void main() {
       final chart = acquireChart(
         _line(
           _twoDatasets(),
-          _tooltipOptions(<String, Object?>{'mode': 'index', 'reverse': true}),
+          _tooltipOptions(<String, Object?>{
+            'mode': const IndexInteractionMode(),
+            'reverse': true,
+          }),
         ),
       );
 
@@ -882,7 +890,9 @@ void main() {
             extra1: const {'order': 10},
             extra2: const {'order': 5},
           ),
-          _tooltipOptions(<String, Object?>{'mode': 'index'}),
+          _tooltipOptions(<String, Object?>{
+            'mode': const IndexInteractionMode(),
+          }),
         ),
       );
 
@@ -925,7 +935,7 @@ void main() {
         _line(
           _twoDatasets(extra1: const {'tooltipHidden': true}),
           _tooltipOptions(<String, Object?>{
-            'mode': 'index',
+            'mode': const IndexInteractionMode(),
             'filter':
                 (
                   Object? tooltipItem,
@@ -1008,7 +1018,7 @@ void main() {
           'type': type,
           'data': _twoDatasets(),
           'options': _tooltipOptions(<String, Object?>{
-            'mode': 'nearest',
+            'mode': const NearestInteractionMode(),
             'intersect': true,
           }),
         });
@@ -1060,7 +1070,7 @@ void main() {
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
-            'mode': 'nearest',
+            'mode': const NearestInteractionMode(),
             'intersect': true,
             'callbacks': <String, Object?>{
               'title': () => 'registering callback...',
@@ -1103,7 +1113,7 @@ void main() {
             },
             'plugins': <String, Object?>{
               'tooltip': <String, Object?>{
-                'mode': 'nearest',
+                'mode': const NearestInteractionMode(),
                 'position': 'nearest',
                 'intersect': true,
                 'callbacks': <String, Object?>{
@@ -1160,7 +1170,7 @@ void main() {
             _line(
               _twoDatasets(),
               _tooltipOptions(<String, Object?>{
-                'mode': 'nearest',
+                'mode': const NearestInteractionMode(),
                 'position': 'test',
               }),
             ),
@@ -1249,7 +1259,9 @@ void main() {
               'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
             },
             'options': <String, Object?>{
-              'interaction': <String, Object?>{'mode': 'index'},
+              'interaction': <String, Object?>{
+                'mode': const IndexInteractionMode(),
+              },
               'plugins': <String, Object?>{'position': 'average'},
             },
           });
@@ -1386,7 +1398,7 @@ void main() {
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
-            'mode': 'index',
+            'mode': const IndexInteractionMode(),
             'callbacks': <String, Object?>{
               'beforeTitle': () => 'beforeTitle\nnewline',
               'title': () => 'title\nnewline',
@@ -1996,7 +2008,7 @@ void main() {
                 'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
               },
               _tooltipOptions(<String, Object?>{
-                'mode': 'nearest',
+                'mode': const NearestInteractionMode(),
                 'intersect': true,
               }),
             ),
@@ -2053,7 +2065,7 @@ void main() {
               'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
             },
             _tooltipOptions(<String, Object?>{
-              'mode': 'index',
+              'mode': const IndexInteractionMode(),
               'intersect': false,
             }),
           ),
@@ -2109,7 +2121,7 @@ void main() {
               'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
             },
             _tooltipOptions(<String, Object?>{
-              'mode': 'index',
+              'mode': const IndexInteractionMode(),
               'intersect': false,
             }),
           ),
