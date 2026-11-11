@@ -349,7 +349,8 @@ extension type const FillTargetOptions(Object? object) {
 /// `DecimationOptions` (`index.d.ts`): the options of the decimation plugin
 /// (`plugin.decimation.js:200-203`).
 extension type const DecimationOptions(Object? object) {
-  /// `algorithm`.
+  /// `algorithm`: the raw value. The plugin reads the algorithm with
+  /// `DecimationAlgorithm.of`, and names the raw value in its error.
   Object? get algorithm => optionOf(object, OptionKey.algorithm);
 
   /// `enabled`.

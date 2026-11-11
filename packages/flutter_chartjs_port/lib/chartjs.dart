@@ -77,6 +77,10 @@ export 'package:flutter_chartjs_port/src/platform/native_event.dart'
         NativeEventListener,
         NativeEventTarget,
         NativeTouch;
+export 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
+    show DecimationAlgorithm;
+export 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
+    show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
 export 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     show AverageTooltipPositioner, NearestTooltipPositioner;
 export 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'

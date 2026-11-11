@@ -606,7 +606,11 @@ void main() {
         extra: const {
           'parsing': false,
           'plugins': {
-            'decimation': {'enabled': true, 'algorithm': 'lttb', 'samples': 50},
+            'decimation': {
+              'enabled': true,
+              'algorithm': LttbDecimationAlgorithm(),
+              'samples': 50,
+            },
           },
         },
       );

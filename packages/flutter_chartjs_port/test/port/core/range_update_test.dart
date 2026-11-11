@@ -33,6 +33,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
+    show LttbDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
@@ -596,7 +598,7 @@ Map<String, Object?> _decimation(_Log log, {required bool animated}) => _config(
   plugins: <String, Object?>{
     'decimation': <String, Object?>{
       'enabled': true,
-      'algorithm': 'lttb',
+      'algorithm': const LttbDecimationAlgorithm(),
       'samples': 40.0,
     },
   },

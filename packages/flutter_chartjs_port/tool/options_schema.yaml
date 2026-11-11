@@ -28,7 +28,8 @@
 # of the tooltip `position`; a positioner name is a foreign value), `strokeCap` and `strokeJoin` (the
 # Flutter enums `StrokeCap` and `StrokeJoin`, the values of `borderCapStyle` and `borderJoinStyle`; a
 # keyword is a foreign value), `interactionAxis` (an `InteractionAxis`, the value of the
-# interaction `axis`; a keyword is a foreign value), `any` (any JS value: a color, a point
+# interaction `axis`; a keyword is a foreign value), `decimationAlgorithm` (a `DecimationAlgorithm`, the value of
+# the decimation `algorithm`; a name is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -1136,7 +1137,7 @@ kinds:
     keys:
       enabled: bool
       threshold: number
-      algorithm: string
+      algorithm: decimationAlgorithm
       samples: number
       events: list  # read at core.controller.js:1170
   ColorsOptions:

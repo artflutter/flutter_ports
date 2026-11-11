@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
+    show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:test/test.dart';
@@ -118,7 +120,8 @@ bool _fits(String kind, int shape) {
     // the mode name of a key of the shape `interactionMode`, the
     // positioner name of a key of the shape `tooltipPositioner` and the
     // keyword of a key of the shapes `strokeCap`, `strokeJoin` and
-    // `interactionAxis`.
+    // `interactionAxis`, and the algorithm name of a key of the shape
+    // `decimationAlgorithm`.
     'String' =>
       shape &
               (ShapeBits.string |
@@ -127,7 +130,8 @@ bool _fits(String kind, int shape) {
                   ShapeBits.tooltipPositioner |
                   ShapeBits.strokeCap |
                   ShapeBits.strokeJoin |
-                  ShapeBits.interactionAxis) !=
+                  ShapeBits.interactionAxis |
+                  ShapeBits.decimationAlgorithm) !=
           0,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' => shape & ShapeBits.scope != 0,
@@ -206,6 +210,8 @@ String? _mismatch(Object? actual, Object? expected) {
   if (expected is String && actual is InteractionMode) return null;
   // The same for a positioner name and a positioner object.
   if (expected is String && actual is TooltipPositioner) return null;
+  // The same for an algorithm name and an algorithm object.
+  if (expected is String && actual is DecimationAlgorithm) return null;
   // Upstream has the keyword of a line cap, a line join or an interaction
   // axis where the port has the enum: the name of the enum value is the
   // keyword.

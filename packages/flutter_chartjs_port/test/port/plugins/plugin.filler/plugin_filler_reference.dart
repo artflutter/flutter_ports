@@ -16,6 +16,7 @@
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 
 /// The Node.js version that generated the data.
 const String pluginFillerReferenceNode = 'v24.22.1';
@@ -58306,7 +58307,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'decimation': <String, Object?>{
             'enabled': true,
             'threshold': 20.0,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 12.0,
           },
         },
@@ -59628,7 +59629,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'decimation': <String, Object?>{
             'enabled': true,
             'threshold': 20.0,
-            'algorithm': 'min-max',
+            'algorithm': MinMaxDecimationAlgorithm(),
           },
         },
       },

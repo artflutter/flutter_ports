@@ -53,12 +53,48 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DecimationOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show DecimationOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
+
+/// plugin.decimation.js:270 `case 'lttb'`: the Largest Triangle Three
+/// Buckets algorithm ([lttbDecimation]). It reads the option `samples`.
+// DIVERGES(chartjs): adapt-decimation-algorithm-objects, an algorithm class.
+final class LttbDecimationAlgorithm extends DecimationAlgorithm {
+  /// The algorithm.
+  const LttbDecimationAlgorithm();
+
+  @override
+  List<Object?> decimate(
+    List<Object?> data,
+    double start,
+    double count,
+    double availableWidth,
+    Object options,
+  ) => lttbDecimation(data, start, count, availableWidth, options);
+}
+
+/// plugin.decimation.js:273 `case 'min-max'`: the min and max items of each
+/// pixel column ([minMaxDecimation]). The default of the option
+/// `algorithm`.
+// DIVERGES(chartjs): adapt-decimation-algorithm-objects, an algorithm class.
+final class MinMaxDecimationAlgorithm extends DecimationAlgorithm {
+  /// The algorithm.
+  const MinMaxDecimationAlgorithm();
+
+  @override
+  List<Object?> decimate(
+    List<Object?> data,
+    double start,
+    double count,
+    double availableWidth,
+    Object options,
+  ) => minMaxDecimation(data, start, count, availableWidth);
+}
 
 /// plugin.decimation.js:3 `lttbDecimation(data, start, count,
 /// availableWidth, options)`.
@@ -580,33 +616,21 @@ void _beforeElementsUpdate(
     }
 
     // Point the chart to the decimated data
-    final List<Object?> decimated;
-    final algorithm = opts.algorithm;
-    // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
-    // value that is neither null nor a String. Such a value switches as null
-    // and takes the default branch, as before.
-    switch (algorithm is String ? algorithm : null) {
-      case 'lttb':
-        decimated = lttbDecimation(
-          data! as List<Object?>,
-          start,
-          count,
-          availableWidth,
-          options,
-        );
-      case 'min-max':
-        decimated = minMaxDecimation(
-          data! as List<Object?>,
-          start,
-          count,
-          availableWidth,
-        );
-      default:
-        // A JavaScript Error.
-        throw StateError(
-          "Unsupported decimation algorithm '${jsToString(algorithm)}'",
-        );
+    // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the algorithm
+    // object of the option in place of the `switch` by its name.
+    final raw = opts.algorithm;
+    final algorithm = DecimationAlgorithm.of(raw);
+    if (algorithm == null) {
+      // A JavaScript Error.
+      throw StateError("Unsupported decimation algorithm '${jsToString(raw)}'");
     }
+    final decimated = algorithm.decimate(
+      data! as List<Object?>,
+      start,
+      count,
+      availableWidth,
+      options,
+    );
 
     target.write(OptionKey.descDecimated, decimated);
     final accessor = _dataAccessor[dataset!];
@@ -640,7 +664,8 @@ final Plugin decimation =
       ..id = 'decimation'
       // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
       ..defaults = (DecimationOptionsScope()
-        ..algorithm = 'min-max'
+        // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the class.
+        ..algorithm = const MinMaxDecimationAlgorithm()
         ..enabled = false)
       ..beforeElementsUpdate = _beforeElementsUpdate
       ..jsWrite('destroy', _destroy);

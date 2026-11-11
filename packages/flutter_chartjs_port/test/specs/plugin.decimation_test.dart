@@ -7,6 +7,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
+    show LttbDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -71,7 +73,7 @@ void main() {
             'plugins': <String, Object?>{
               'decimation': <String, Object?>{
                 'enabled': true,
-                'algorithm': 'lttb',
+                'algorithm': const LttbDecimationAlgorithm(),
                 'samples': 100,
               },
             },
@@ -101,7 +103,7 @@ void main() {
             'plugins': <String, Object?>{
               'decimation': <String, Object?>{
                 'enabled': true,
-                'algorithm': 'lttb',
+                'algorithm': const LttbDecimationAlgorithm(),
                 'samples': 7,
               },
             },
@@ -131,7 +133,7 @@ void main() {
             'plugins': <String, Object?>{
               'decimation': <String, Object?>{
                 'enabled': true,
-                'algorithm': 'lttb',
+                'algorithm': const LttbDecimationAlgorithm(),
                 'samples': 5,
                 'threshold': 7,
               },
@@ -159,7 +161,7 @@ void main() {
             'plugins': <String, Object?>{
               'decimation': <String, Object?>{
                 'enabled': true,
-                'algorithm': 'lttb',
+                'algorithm': const LttbDecimationAlgorithm(),
                 'samples': 7,
               },
             },
@@ -200,7 +202,7 @@ void main() {
               'plugins': <String, Object?>{
                 'decimation': <String, Object?>{
                   'enabled': true,
-                  'algorithm': 'lttb',
+                  'algorithm': const LttbDecimationAlgorithm(),
                 },
               },
             },

@@ -492,12 +492,12 @@ void main() {
 
   group('beforeElementsUpdate', () {
     // 50 points are above the threshold 4 x width (40). Thus the hook
-    // reaches its switch. Another algorithm throws the Error of :277, with
-    // the template text of the value. dart2wasm of Dart 3.14.0-315.3.beta
-    // trapped on the String switch for a value that is neither null nor a
-    // String.
+    // reaches the algorithm. A value that is not a DecimationAlgorithm throws
+    // the Error of :277, with the template text of the value.
+    // A name is not an algorithm (adapt-decimation-algorithm-objects): a
+    // debug build stops on it in `DecimationAlgorithm.of`, so the list has
+    // no String.
     for (final (algorithm, text) in <(Object?, String)>[
-      ('nope', 'nope'),
       (null, 'null'),
       (undefined, 'undefined'),
       (5.0, '5'),
@@ -527,7 +527,7 @@ void main() {
       final chart = _Chart(_series(50, _wave));
       decimation.beforeElementsUpdate!(chart, PluginHookArgs(), {
         'enabled': true,
-        'algorithm': 'min-max',
+        'algorithm': const MinMaxDecimationAlgorithm(),
       });
       final datasets = (chart.data as AnyObject)['datasets']! as List<Object?>;
       final dataset = datasets.single! as AnyObject;

@@ -954,7 +954,7 @@ void main() {
         as Map)['decimation'] = <String, Object?>{
       'enabled': true,
       'threshold': 2,
-      'algorithm': 'lttb',
+      'algorithm': const LttbDecimationAlgorithm(),
       'samples': 2,
     };
     final b = chart(decimated);

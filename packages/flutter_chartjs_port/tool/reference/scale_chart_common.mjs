@@ -1200,6 +1200,23 @@ class DartEnum {
   }
 }
 
+/**
+ * The algorithm classes of the decimation plugin of the port, by the
+ * upstream names of the option `algorithm` (row
+ * adapt-decimation-algorithm-objects): the data hold the class.
+ */
+const DECIMATION_ALGORITHMS = {
+  lttb: 'LttbDecimationAlgorithm()',
+  'min-max': 'MinMaxDecimationAlgorithm()',
+};
+
+/** A decimation algorithm of upstream as a value of the Dart data. */
+class DartAlgorithm {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
 /** The positioner classes of the port by their upstream keys. */
 const POSITIONER_CLASSES = {
   average: 'AverageTooltipPositioner()',
@@ -1260,6 +1277,12 @@ function dart(v, state, owner) {
     state.modes = true;
     return `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`;
   }
+  if (v instanceof DartAlgorithm) {
+    const type = DECIMATION_ALGORITHMS[v.name];
+    if (!type) throw new Error(`No algorithm class for ${v.name}`);
+    state.algorithms = true;
+    return type;
+  }
   if (v instanceof DartAxis) {
     state.modes = true;
     return `InteractionAxis.${v.name}`;
@@ -1281,6 +1304,7 @@ function dart(v, state, owner) {
       if (typeof value === 'string') {
         if (k === 'mode' && INTERACTION_SCOPES.has(owner)) value = new DartMode(value);
         if (k === 'axis' && INTERACTION_SCOPES.has(owner)) value = new DartAxis(value);
+        if (k === 'algorithm' && owner === 'decimation') value = new DartAlgorithm(value);
         if (k === 'position' && owner === 'tooltip') value = new DartPositioner(value);
         const stroke = STROKE_ENUMS[k];
         if (stroke && STROKE_VALUES[stroke].has(value)) value = new DartEnum(stroke, value);
@@ -1340,7 +1364,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

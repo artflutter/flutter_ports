@@ -9,6 +9,7 @@
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 
 /// The Node.js version that generated the data.
 const String pluginDecimationReferenceNode = 'v24.22.1';
@@ -134,7 +135,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 12.0,
             'threshold': 20.0,
           },
@@ -2723,7 +2724,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'min-max',
+            'algorithm': MinMaxDecimationAlgorithm(),
             'threshold': 20.0,
           },
           'filler': false,
@@ -5831,7 +5832,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 8.0,
             'threshold': 100.0,
           },
@@ -7584,7 +7585,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 8.0,
             'threshold': 10.0,
           },
@@ -9540,7 +9541,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 8.0,
             'threshold': 10.0,
           },
@@ -11269,7 +11270,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 8.0,
             'threshold': 10.0,
           },
@@ -13035,7 +13036,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 8.0,
             'threshold': 10.0,
           },
@@ -14253,7 +14254,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'min-max',
+            'algorithm': MinMaxDecimationAlgorithm(),
             'threshold': 20.0,
           },
           'filler': false,
@@ -19788,7 +19789,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 10.0,
             'threshold': 20.0,
           },
@@ -21764,7 +21765,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'colors': false,
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 6.0,
             'threshold': 10.0,
           },
@@ -24592,7 +24593,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'plugins': <String, Object?>{
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'lttb',
+            'algorithm': LttbDecimationAlgorithm(),
             'samples': 12.0,
             'threshold': 20.0,
           },
