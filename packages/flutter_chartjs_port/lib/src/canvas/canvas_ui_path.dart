@@ -493,7 +493,9 @@ final class UiPathBuilder implements CanvasPath {
   /// Fills a long deferred path in pieces (Chart.js ADR 0113), when it has the
   /// shape of a line over a horizontal base: one subpath with a top edge that
   /// goes up in x, in lines and cubic curves, then lines along the base back to
-  /// its start, then a close.
+  /// its start, then a close. The side between the top edge and the base is
+  /// vertical, or a line that goes on in x, which counts as the last line of
+  /// the top edge.
   ///
   /// Each piece writes its part of the shape into [scratch] and calls [draw]
   /// with a clip on whole bitmap pixels, so that each pixel column belongs to
@@ -543,9 +545,16 @@ final class UiPathBuilder implements CanvasPath {
       last--;
     }
     // [last] is the first line of the base, and the top edge ends before it.
-    final top = last - 1;
+    var top = last - 1;
+    // A side that goes on in x is the last line of the top edge. The fast path
+    // of a line ends its last pixel column at the average x of the column
+    // (element.line.js:118 `fastPathSegment`), before the x of its last point,
+    // where the filler starts the base.
+    if (top >= 1 && codes[last] == _lineCode && xs[last] - xs[top] > 1e-6) {
+      top = last;
+    }
     // A base point can come from another expression: within 1e-6 pixels, the
-    // side is vertical.
+    // side is vertical. A side that goes back in x by more declines.
     if (top < 1 ||
         codes[last] != _lineCode ||
         ys[last] != base ||
