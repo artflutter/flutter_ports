@@ -2,6 +2,8 @@
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show NearestInteractionMode, XInteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, each, merge, mergeIf, resolveObjectKey;
@@ -994,7 +996,7 @@ void main() {
     test('gives the scopes and values of plain Maps and typed scopes', () {
       List<Object?> scopes() => [
         <String, Object?>{
-          'hover': <String, Object?>{'mode': 'x'},
+          'hover': <String, Object?>{'mode': const XInteractionMode()},
           'plugins': <String, Object?>{
             'zoom': <String, Object?>{'speed': 0.2},
           },
@@ -1010,7 +1012,9 @@ void main() {
           'plugins': <String, Object?>{
             'zoom': <String, Object?>{'_fallback': false},
           },
-          'interaction': <String, Object?>{'mode': 'nearest'},
+          'interaction': <String, Object?>{
+            'mode': const NearestInteractionMode(),
+          },
         },
       ];
       final (single, full) = twins(scopes());
@@ -1023,7 +1027,7 @@ void main() {
         }
       }
       final hover = single['hover']! as Resolver;
-      expect(hover['mode'], 'x');
+      expect(hover['mode'], const XInteractionMode());
       expect(hover['axis'], 'y');
       expect(hover['intersect'], false);
       final zoom = (single['plugins']! as Resolver)['zoom']! as Resolver;
@@ -1071,9 +1075,9 @@ void main() {
 
     test('reads a subclass of a scope class as the walk two times does', () {
       final first = _CountingScope()
-        ..jsWrite('hover', <String, Object?>{'mode': 'x'});
+        ..jsWrite('hover', <String, Object?>{'mode': const XInteractionMode()});
       final second = _CountingScope()
-        ..jsWrite('hover', <String, Object?>{'mode': 'x'});
+        ..jsWrite('hover', <String, Object?>{'mode': const XInteractionMode()});
       expect(first.nativeFace, isFalse);
       final (single, _) = twins([first]);
       expect(single['hover'], isA<Resolver>());

@@ -183,21 +183,15 @@ void main() {
   });
 
   group('adapt-umd-namespace-objects', () {
-    test('Chart.Interaction is a Map of the two statics', () {
+    test('Chart.Interaction is a Map of its one static', () {
+      // Upstream also has `modes`. The port has no table of modes (row
+      // `adapt-interaction-mode-objects`).
       final interaction = jsGet(chartUmd, 'Interaction')! as AnyObject;
-      expect(jsObjectKeys(interaction), ['evaluateInteractionItems', 'modes']);
+      expect(jsObjectKeys(interaction), ['evaluateInteractionItems']);
       expect(
         interaction['evaluateInteractionItems'],
         same(Interaction.evaluateInteractionItems),
       );
-      expect(interaction['modes'], same(Interaction.modes));
-    });
-
-    test('a mode added through Chart.Interaction.modes reaches the class', () {
-      final modes = jsGet(jsGet(chartUmd, 'Interaction'), 'modes')! as Map;
-      addTearDown(() => Interaction.modes.remove('custom'));
-      modes['custom'] = Interaction.modes['index'];
-      expect(Interaction.modes['custom'], same(Interaction.modes['index']));
     });
 
     test('a write of a new key into Chart.Interaction throws', () {

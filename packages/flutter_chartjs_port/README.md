@@ -285,7 +285,10 @@ ChartConfig(
   ),
   title: const ChartTitle(display: true, text: 'Votes'),
   tooltip: const ChartTooltip(backgroundColor: Colors.black87, cornerRadius: 4),
-  interaction: const ChartInteraction(mode: .index, intersect: false),
+  interaction: const ChartInteraction(
+    mode: IndexInteractionMode(),
+    intersect: false,
+  ),
   animation: const ChartAnimation(
     duration: Duration(milliseconds: 400),
     easing: Curves.easeOutQuart,

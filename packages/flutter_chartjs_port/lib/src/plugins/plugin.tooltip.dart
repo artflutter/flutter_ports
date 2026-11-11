@@ -43,6 +43,8 @@ import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show DatasetInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
@@ -683,7 +685,7 @@ Object? _thisOptions(Object? self) => !jsTruthy(self)
 bool _isDatasetMode(Object? self) {
   final options = _thisOptions(self);
   return jsTruthy(options) &&
-      _strictEquals(TooltipOptions(options).mode, 'dataset');
+      TooltipOptions(options).mode is DatasetInteractionMode;
 }
 
 /// The chart of a tooltip item: `item.chart`. A `types.Chart` stays as it

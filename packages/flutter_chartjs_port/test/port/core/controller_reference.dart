@@ -163,7 +163,6 @@ register forms: Error: class does not have id: [object Object]
 cache after register: undefined
 late plugin: start() afterDraw()
 after unregister: stop()
-getElementsAtEventForMode modes: index,dataset,point,nearest,x,y
 BasicPlatform: true
 config platform: BasicPlatform''',
 };

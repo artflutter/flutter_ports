@@ -16,6 +16,12 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     show overrides;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show
+        IndexInteractionMode,
+        InteractionMode,
+        NearestInteractionMode,
+        PointInteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -197,7 +203,7 @@ List<List<Object?>> _hitsAt(
   Chart chart,
   double x,
   double y,
-  String mode, [
+  InteractionMode mode, [
   Map<String, Object?> extra = const {},
 ]) => [
   for (final item in chart.getElementsAtEventForMode(
@@ -536,18 +542,24 @@ void main() {
       expect([arc.x, arc.y], [256.0, 272.0]);
       const qx = 173.97561338236045;
       const qy = 189.9756133823605;
-      expect(_hitsAt(chart, qx, qy, 'point'), [
+      expect(_hitsAt(chart, qx, qy, const PointInteractionMode()), [
         [0, 3],
       ]);
-      expect(_hitsAt(chart, qx, qy, 'nearest'), [
+      expect(_hitsAt(chart, qx, qy, const NearestInteractionMode()), [
         [0, 3],
       ]);
-      expect(_hitsAt(chart, qx, qy, 'nearest', {'axis': 'r'}), [
-        [0, 3],
-      ]);
-      expect(_hitsAt(chart, qx, qy, 'index', {'axis': 'r'}), [
-        [0, 3],
-      ]);
+      expect(
+        _hitsAt(chart, qx, qy, const NearestInteractionMode(), {'axis': 'r'}),
+        [
+          [0, 3],
+        ],
+      );
+      expect(
+        _hitsAt(chart, qx, qy, const IndexInteractionMode(), {'axis': 'r'}),
+        [
+          [0, 3],
+        ],
+      );
       await tester.pump(const Duration(milliseconds: 600));
       expect([arc.x, arc.y], [256.0, 272.0]);
     });
@@ -642,13 +654,13 @@ void main() {
       const qy = 283.668481707598;
       await tester.pump(const Duration(milliseconds: 1));
       expect(arc.x, isNaN);
-      expect(_hitsAt(chart, qx, qy, 'nearest'), isEmpty);
+      expect(_hitsAt(chart, qx, qy, const NearestInteractionMode()), isEmpty);
       await tester.pump(const Duration(milliseconds: 499));
       expect(arc.x, isNaN);
-      expect(_hitsAt(chart, qx, qy, 'nearest'), isEmpty);
+      expect(_hitsAt(chart, qx, qy, const NearestInteractionMode()), isEmpty);
       await tester.pump(const Duration(milliseconds: 600));
       expect([arc.x, arc.y], [376.0, 272.0]);
-      expect(_hitsAt(chart, qx, qy, 'nearest'), [
+      expect(_hitsAt(chart, qx, qy, const NearestInteractionMode()), [
         [0, 1],
       ]);
     });

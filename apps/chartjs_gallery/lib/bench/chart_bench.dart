@@ -738,7 +738,10 @@ ChartBenchScene _tooltipScene(
     ],
     options: <String, Object?>{
       if (!animate) 'animation': false,
-      'interaction': <String, Object?>{'mode': 'index', 'intersect': false},
+      'interaction': <String, Object?>{
+        'mode': const IndexInteractionMode(),
+        'intersect': false,
+      },
       'plugins': <String, Object?>{
         'legend': false,
         if (!tooltip) 'tooltip': false,

@@ -465,8 +465,23 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       once per update. See `date_zone_test.dart` (group `cached intervals`, the VM
       `timeZoneOffset` test) and the `(LocalZone cache)` groups of `date_adapter_test.dart`.
     - `core.interaction.dart` and `core.layouts.dart` are pure layers. `Interaction` is a class with
-      the static members `evaluateInteractionItems` and `modes`. `layouts` is a record of `addBox`,
-      `removeBox`, `configure` and `update`. A box is a `LayoutItem` of `lib/src/types/layout.dart`.
+      the static member `evaluateInteractionItems`. The option `mode` of `interaction`, `hover`
+      and the tooltip holds an `InteractionMode` (row `adapt-interaction-mode-objects`, the schema
+      shape `interactionMode`), also in a raw config: an object with the method `itemsAt`. Each
+      upstream mode is a ready class (`IndexInteractionMode`, `DatasetInteractionMode`,
+      `PointInteractionMode`, `NearestInteractionMode`, `XInteractionMode`, `YInteractionMode`):
+      an app writes `mode: NearestInteractionMode()`, and an app or a plugin gives its own mode
+      as a subclass, with no registration. `lib/` has no mode names and no table from a name to a
+      mode: `Interaction` has no `modes`, and `InteractionMode` has no constants. The chart calls
+      the method of the value of the option: `Chart.getElementsAtEventForMode` and
+      `updateHoverStyle` take the mode itself, and the dataset test is
+      `mode is DatasetInteractionMode`. A mode name is a foreign value: a debug build stops on it
+      in `InteractionMode.of`, and a release build finds no item. The tests have no table either:
+      the generators write the mode class into the reference data (`DartMode` of
+      `tool/reference/scale_chart_common.mjs`), and a compare with upstream JSON text puts a
+      marker on both sides (`withModeMarkers` of `test/support/mode_json.dart`). The typed API
+      takes the same object (`ChartInteraction.mode`, `ChartTooltip.mode`). `layouts` is a record
+      of `addBox`, `removeBox`, `configure` and `update`. A box is a `LayoutItem` of `lib/src/types/layout.dart`.
       `layouts.removeBox` takes a `LayoutItem?` (Dart `null` is the JS `undefined` of a stop hook).
     - `core.animation.dart` and the port-only `animation_spec.dart` (`AnimationSpec`, the typed
       animation config) are pure layers. `core.animations.dart` and `core.animator.dart` are not:
@@ -970,7 +985,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 80 names. 26 of them are the classes of
+    `typed.dart` is its export list of 79 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1992,8 +2007,8 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   under `Helvetica Neue`, `Helvetica`, `Arial`, `Liberation Sans` and `sans-serif`. A text style
   with another family, or with no family, measures with the square FlutterTest font. A test file
   of `chartjs_test_utils` that measures text calls `installTestFont()` itself.
-- The defaults restore does not reset `Interaction.modes`. A test that adds a custom mode removes
-  it at its end, for example with `addTearDown`.
+- A custom interaction mode of a test is a subclass of `InteractionMode` in the option `mode`. It
+  needs no registration and no restore.
 - The defaults restore does not reset the `items` of `registry` (Chart.js ADR 0022 §8). A
   component that several tests of a file need registers in the `main()` of the file, before the
   snapshot of the restore. A component of one test registers in the test and unregisters at its

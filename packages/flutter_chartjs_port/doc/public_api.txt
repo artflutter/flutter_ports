@@ -31,6 +31,7 @@ CssStyleProperties
 DOMRect
 DatasetController
 DatasetDrawHookArgs
+DatasetInteractionMode
 DatasetUpdateHookArgs
 DateAdapter
 Defaults
@@ -40,7 +41,10 @@ EventHookArgs
 FlutterPlatform
 FontSpec
 HTMLCanvasElement
+IndexInteractionMode
 Interaction
+InteractionItem
+InteractionMode
 JsClass
 JsObjectFace
 LabelItem
@@ -53,6 +57,7 @@ NativeEvent
 NativeEventListener
 NativeEventTarget
 NativeTouch
+NearestInteractionMode
 Path2D
 PieController
 Plugin
@@ -60,6 +65,7 @@ PluginHookArgs
 PluginHookFunction
 Point
 PointElement
+PointInteractionMode
 PolarAreaController
 RadarController
 RadialLinearScale
@@ -79,6 +85,8 @@ TooltipModel
 Undefined
 UpdateHookArgs
 VisualElement
+XInteractionMode
+YInteractionMode
 animator
 chartJsPackageVersion
 chartJsVersion
@@ -156,7 +164,6 @@ ChartFiller
 ChartHit
 ChartIndexed
 ChartInteraction
-ChartInteractionMode
 ChartKind
 ChartLegend
 ChartLegendEventDetails
@@ -185,6 +192,7 @@ DataPoint
 Dataset
 DatasetController
 DatasetDrawHookArgs
+DatasetInteractionMode
 DatasetUpdateHookArgs
 DateAdapter
 Defaults
@@ -199,8 +207,11 @@ HeightAnimation
 HideTransition
 HoverTransition
 IndexAxis
+IndexInteractionMode
 InnerRadiusAnimation
 Interaction
+InteractionItem
+InteractionMode
 JsClass
 JsObjectFace
 LabelItem
@@ -217,6 +228,7 @@ NativeEvent
 NativeEventListener
 NativeEventTarget
 NativeTouch
+NearestInteractionMode
 OffsetAnimation
 OuterRadiusAnimation
 Path2D
@@ -228,6 +240,7 @@ PluginHookFunction
 Point
 PointElement
 PointElementStyle
+PointInteractionMode
 PolarAreaController
 PolarAreaDataset
 PropertyAnimation
@@ -264,7 +277,9 @@ VisibleAnimation
 VisualElement
 WidthAnimation
 XAnimation
+XInteractionMode
 YAnimation
+YInteractionMode
 animator
 chartJsPackageVersion
 chartJsVersion

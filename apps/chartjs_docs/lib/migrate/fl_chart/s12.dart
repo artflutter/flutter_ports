@@ -108,7 +108,7 @@ class _Sample12State extends State<Sample12> {
       ],
       animation: ChartAnimation.none,
       interaction: const ChartInteraction(
-        mode: .nearest,
+        mode: NearestInteractionMode(),
         intersect: false,
         extra: {'axis': 'x'},
       ),

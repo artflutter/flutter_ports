@@ -7,6 +7,8 @@ import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -230,7 +232,7 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       return [
         for (final item in chart.getElementsAtEventForMode(
           event,
-          'point',
+          const PointInteractionMode(),
           <String, Object?>{'intersect': true},
           false,
         ))

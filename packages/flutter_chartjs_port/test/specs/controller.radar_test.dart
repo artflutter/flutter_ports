@@ -11,6 +11,8 @@ import 'package:chartjs_test_utils/pure.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show DatasetInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
@@ -661,7 +663,7 @@ void main() {
       );
 
       (chart.options['plugins']! as JsObjectFace)['tooltip'] =
-          <String, Object?>{'mode': 'dataset'};
+          <String, Object?>{'mode': const DatasetInteractionMode()};
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);
 

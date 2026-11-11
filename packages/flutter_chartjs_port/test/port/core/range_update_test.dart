@@ -14,6 +14,15 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show controllerArgs;
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show
+        DatasetInteractionMode,
+        IndexInteractionMode,
+        InteractionMode,
+        NearestInteractionMode,
+        PointInteractionMode,
+        XInteractionMode,
+        YInteractionMode;
 import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show defaultDateZone, setDefaultDateZone;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
@@ -266,7 +275,14 @@ Map<String, Object?> _hits(Chart chart) => observeHits(chart, <String, Object?>{
       for (var y = 20; y < chart.height; y += 60) <Object?>[x, y],
   ],
   'queries': <Object?>[
-    for (final mode in ['point', 'nearest', 'index', 'dataset', 'x', 'y'])
+    for (final mode in const <InteractionMode>[
+      PointInteractionMode(),
+      NearestInteractionMode(),
+      IndexInteractionMode(),
+      DatasetInteractionMode(),
+      XInteractionMode(),
+      YInteractionMode(),
+    ])
       for (final intersect in [true, false])
         <Object?>[mode, intersect, 'xy', false],
   ],

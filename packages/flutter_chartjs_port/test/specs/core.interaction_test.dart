@@ -36,7 +36,7 @@ import '../support/jasmine.dart';
 //   `types.ChartEvent` for the same branch. Thus `native` of the `_Event`
 //   is Dart `null`.
 // - `Chart.Interaction.modes.point(chart, evt, {})` is
-//   `Interaction.modes['point']!(chart, evt, {})`.
+//   `const PointInteractionMode().itemsAt(chart, evt, {})`.
 //   `.map(item => item.element)` is `_elements`.
 // - `toEqual` is `jasmineEquals`. Jasmine compares two elements by their
 //   properties. The elements of the expected values are the same objects as
@@ -215,7 +215,7 @@ void main() {
         final evt = _Event(chart, point.x, point.y);
 
         final elements = _elements(
-          Interaction.modes['point']!(chart, evt, <String, Object?>{}),
+          const PointInteractionMode().itemsAt(chart, evt, <String, Object?>{}),
         );
         expect(elements, jasmineEquals(<Object?>[point, meta1.data[1]]));
       });
@@ -227,7 +227,7 @@ void main() {
         final evt = _Event(chart, 0, 0);
 
         final elements = _elements(
-          Interaction.modes['point']!(chart, evt, <String, Object?>{}),
+          const PointInteractionMode().itemsAt(chart, evt, <String, Object?>{}),
         );
         expect(elements, jasmineEquals(<Object?>[]));
       });
@@ -259,7 +259,7 @@ void main() {
           final evt = _Event(chart, point.x, point.y);
 
           final elements = _elements(
-            Interaction.modes['index']!(chart, evt, <String, Object?>{
+            const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': true,
             }),
           );
@@ -271,7 +271,7 @@ void main() {
           final evt = _Event(chart, 0, 0);
 
           final elements = _elements(
-            Interaction.modes['index']!(chart, evt, <String, Object?>{
+            const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': true,
             }),
           );
@@ -303,7 +303,7 @@ void main() {
           );
 
           final elements = _elements(
-            Interaction.modes['index']!(chart, evt, <String, Object?>{
+            const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': false,
             }),
           );
@@ -329,7 +329,7 @@ void main() {
           final evt = _Event(chart, center.x, center.y! + 30);
 
           final elements = _elements(
-            Interaction.modes['index']!(chart, evt, <String, Object?>{
+            const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'axis': 'y',
               'intersect': false,
             }),
@@ -352,7 +352,7 @@ void main() {
           );
 
           final elements = _elements(
-            Interaction.modes['index']!(chart, evt, <String, Object?>{
+            const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'axis': 'xy',
               'intersect': false,
             }),
@@ -392,9 +392,13 @@ void main() {
             final evt = _Event(chart, point.x, point.y);
 
             final elements = _elements(
-              Interaction.modes['dataset']!(chart, evt, <String, Object?>{
-                'intersect': true,
-              }),
+              const DatasetInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'intersect': true,
+                },
+              ),
             );
             expect(elements, jasmineEquals(meta.data));
           },
@@ -406,7 +410,7 @@ void main() {
           beforeEach();
           final evt = _Event(chart, 0, 0);
 
-          final elements = Interaction.modes['dataset']!(
+          final elements = const DatasetInteractionMode().itemsAt(
             chart,
             evt,
             <String, Object?>{'intersect': true},
@@ -442,10 +446,14 @@ void main() {
           );
 
           final elements = _elements(
-            Interaction.modes['dataset']!(chart, evt, <String, Object?>{
-              'axis': 'x',
-              'intersect': false,
-            }),
+            const DatasetInteractionMode().itemsAt(
+              chart,
+              evt,
+              <String, Object?>{
+                'axis': 'x',
+                'intersect': false,
+              },
+            ),
           );
           expect(elements, jasmineEquals(chart.getDatasetMeta(0).data));
         });
@@ -459,10 +467,14 @@ void main() {
           );
 
           final elements = _elements(
-            Interaction.modes['dataset']!(chart, evt, <String, Object?>{
-              'axis': 'y',
-              'intersect': false,
-            }),
+            const DatasetInteractionMode().itemsAt(
+              chart,
+              evt,
+              <String, Object?>{
+                'axis': 'y',
+                'intersect': false,
+              },
+            ),
           );
           expect(elements, jasmineEquals(chart.getDatasetMeta(1).data));
         });
@@ -476,9 +488,13 @@ void main() {
           );
 
           final elements = _elements(
-            Interaction.modes['dataset']!(chart, evt, <String, Object?>{
-              'intersect': false,
-            }),
+            const DatasetInteractionMode().itemsAt(
+              chart,
+              evt,
+              <String, Object?>{
+                'intersect': false,
+              },
+            ),
           );
           expect(elements, jasmineEquals(chart.getDatasetMeta(1).data));
         });
@@ -533,9 +549,13 @@ void main() {
 
             // Nearest to 0,0 (top left) will be first point of dataset 2
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'intersect': false,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'intersect': false,
+                },
+              ),
             );
             final meta = chart.getDatasetMeta(1);
             expect(elements, jasmineEquals(<Object?>[meta.data[0]]));
@@ -559,9 +579,13 @@ void main() {
 
             // Both points are nearest
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'intersect': false,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'intersect': false,
+                },
+              ),
             );
             expect(
               elements,
@@ -584,10 +608,14 @@ void main() {
 
             // Middle point from both series are nearest
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'axis': 'x',
-                'intersect': false,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'axis': 'x',
+                  'intersect': false,
+                },
+              ),
             );
             expect(
               elements,
@@ -613,10 +641,14 @@ void main() {
 
             // Should return all (4) points from 'Point 1' and 'Point 2'
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'axis': 'x',
-                'intersect': false,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'axis': 'x',
+                  'intersect': false,
+                },
+              ),
             );
             expect(
               elements,
@@ -643,10 +675,14 @@ void main() {
 
             // Middle point from both series are nearest
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'axis': 'y',
-                'intersect': false,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'axis': 'y',
+                  'intersect': false,
+                },
+              ),
             );
             expect(elements, jasmineEquals(<Object?>[meta0.data[2]]));
           });
@@ -664,10 +700,14 @@ void main() {
 
             // Should return points with value 40
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'axis': 'y',
-                'intersect': false,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'axis': 'y',
+                  'intersect': false,
+                },
+              ),
             );
             expect(
               elements,
@@ -690,9 +730,13 @@ void main() {
             final evt = _Event(chart, chart.width / 2, chart.height / 2 + 5);
 
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'axis': 'r',
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'axis': 'r',
+                },
+              ),
             );
             expect(elements, jasmineEquals(<Object?>[meta0.data[1]]));
           });
@@ -707,10 +751,14 @@ void main() {
               final evt = _Event(chart, chart.width, 0);
 
               final elements = _elements(
-                Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                  'axis': 'r',
-                  'intersect': false,
-                }),
+                const NearestInteractionMode().itemsAt(
+                  chart,
+                  evt,
+                  <String, Object?>{
+                    'axis': 'r',
+                    'intersect': false,
+                  },
+                ),
               );
               expect(elements, jasmineEquals(<Object?>[meta0.data[0]]));
             },
@@ -744,17 +792,25 @@ void main() {
 
             // Nothing intersects so find nothing
             var elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'intersect': true,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'intersect': true,
+                },
+              ),
             );
             expect(elements, jasmineEquals(<Object?>[]));
 
             evt = _Event(chart, point.x, point.y);
             elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'intersect': true,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'intersect': true,
+                },
+              ),
             );
             expect(elements, jasmineEquals(<Object?>[point]));
           });
@@ -779,9 +835,13 @@ void main() {
             final evt = _Event(chart, pt.x, pt.y);
 
             final elements = _elements(
-              Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                'intersect': true,
-              }),
+              const NearestInteractionMode().itemsAt(
+                chart,
+                evt,
+                <String, Object?>{
+                  'intersect': true,
+                },
+              ),
             );
             expect(elements, jasmineEquals(<Object?>[meta0.data[1]]));
           });
@@ -807,9 +867,13 @@ void main() {
               final evt = _Event(chart, pt.x, pt.y);
 
               final elements = _elements(
-                Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-                  'intersect': true,
-                }),
+                const NearestInteractionMode().itemsAt(
+                  chart,
+                  evt,
+                  <String, Object?>{
+                    'intersect': true,
+                  },
+                ),
               );
               expect(
                 elements,
@@ -852,7 +916,7 @@ void main() {
           var evt = _Event(chart, pt.x, 0);
 
           var elements = _elements(
-            Interaction.modes['x']!(chart, evt, <String, Object?>{
+            const XInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': false,
             }),
           );
@@ -864,7 +928,7 @@ void main() {
           evt = _Event(chart, pt.x + 20, 0);
 
           elements = _elements(
-            Interaction.modes['x']!(chart, evt, <String, Object?>{
+            const XInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': false,
             }),
           );
@@ -885,7 +949,7 @@ void main() {
           var evt = _Event(chart, pt.x, 0);
 
           var elements = _elements(
-            Interaction.modes['x']!(chart, evt, <String, Object?>{
+            const XInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': true,
             }),
           );
@@ -897,7 +961,7 @@ void main() {
           evt = _Event(chart, pt.x, pt.y);
 
           elements = _elements(
-            Interaction.modes['x']!(chart, evt, <String, Object?>{
+            const XInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': true,
             }),
           );
@@ -940,7 +1004,7 @@ void main() {
           var evt = _Event(chart, 0, pt.y);
 
           var elements = _elements(
-            Interaction.modes['y']!(chart, evt, <String, Object?>{
+            const YInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': false,
             }),
           );
@@ -957,7 +1021,7 @@ void main() {
           evt = _Event(chart, pt.x, pt.y + 20); // out of range
 
           elements = _elements(
-            Interaction.modes['y']!(chart, evt, <String, Object?>{
+            const YInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': false,
             }),
           );
@@ -978,7 +1042,7 @@ void main() {
           var evt = _Event(chart, 0, pt.y);
 
           var elements = _elements(
-            Interaction.modes['y']!(chart, evt, <String, Object?>{
+            const YInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': true,
             }),
           );
@@ -990,7 +1054,7 @@ void main() {
           evt = _Event(chart, pt.x, pt.y);
 
           elements = _elements(
-            Interaction.modes['y']!(chart, evt, <String, Object?>{
+            const YInteractionMode().itemsAt(chart, evt, <String, Object?>{
               'intersect': true,
             }),
           );
@@ -1036,7 +1100,7 @@ void main() {
         final evt = _Event(chart, firstElement.x, firstElement.y);
 
         final elements = _elements(
-          Interaction.modes['point']!(chart, evt, <String, Object?>{
+          const PointInteractionMode().itemsAt(chart, evt, <String, Object?>{
             'intersect': true,
           }),
         );
@@ -1071,7 +1135,7 @@ void main() {
         final evt = _Event(chart, firstElement.x, firstElement.y);
 
         final elements = _elements(
-          Interaction.modes['point']!(chart, evt, <String, Object?>{
+          const PointInteractionMode().itemsAt(chart, evt, <String, Object?>{
             'intersect': true,
             'includeInvisible': true,
           }),
@@ -1109,10 +1173,14 @@ void main() {
           final evt = _Event(chart, point.x, point.y);
 
           final elements = _elements(
-            Interaction.modes['nearest']!(chart, evt, <String, Object?>{
-              'axis': 'x',
-              'intersect': false,
-            }),
+            const NearestInteractionMode().itemsAt(
+              chart,
+              evt,
+              <String, Object?>{
+                'axis': 'x',
+                'intersect': false,
+              },
+            ),
           );
           expect(
             elements,

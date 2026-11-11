@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show DatasetInteractionMode, NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
@@ -374,7 +376,7 @@ void main() {
           'type': 'line',
           'options': <String, Object?>{
             'spanGaps': false,
-            'hover': <String, Object?>{'mode': 'dataset'},
+            'hover': <String, Object?>{'mode': const DatasetInteractionMode()},
             'plugins': <String, Object?>{
               'title': <String, Object?>{'position': 'bottom'},
             },
@@ -383,7 +385,7 @@ void main() {
 
         final options = chart.options;
         expect(options['spanGaps'], false);
-        expect(jsGet(options['hover'], 'mode'), 'dataset');
+        expect(jsGet(options['hover'], 'mode'), const DatasetInteractionMode());
         expect(
           jsGet(jsGet(options['plugins'], 'title'), 'position'),
           'bottom',
@@ -515,7 +517,9 @@ void main() {
               'type': 'line',
               'options': <String, Object?>{
                 'interaction': false,
-                'hover': <String, Object?>{'mode': 'nearest'},
+                'hover': <String, Object?>{
+                  'mode': const NearestInteractionMode(),
+                },
               },
             });
             expect(chart.options['hover'], isFalse);
@@ -2219,7 +2223,7 @@ void main() {
         });
 
         final newTooltipConfig = <String, Object?>{
-          'mode': 'dataset',
+          'mode': const DatasetInteractionMode(),
           'intersect': false,
         };
         (chart.options['plugins']! as JsObjectFace)['tooltip'] =
@@ -2242,7 +2246,9 @@ void main() {
           },
           'options': <String, Object?>{
             'responsive': true,
-            'tooltip': <String, Object?>{'mode': 'nearest'},
+            'tooltip': <String, Object?>{
+              'mode': const NearestInteractionMode(),
+            },
           },
         });
 

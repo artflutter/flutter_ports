@@ -11,6 +11,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode, NearestInteractionMode, PointInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
@@ -93,7 +95,7 @@ List<List<Object?>> _hitsAt(
   Chart chart,
   double x,
   double y,
-  String mode, [
+  InteractionMode mode, [
   Map<String, Object?> extra = const {},
 ]) => [
   for (final item in chart.getElementsAtEventForMode(
@@ -363,10 +365,10 @@ void main() {
       // no hit.
       await tester.pump(const Duration(milliseconds: 500));
       expect([point.x, point.y], [41.0, 272.0]);
-      expect(_hitsAt(chart, 41, 272, 'point'), [
+      expect(_hitsAt(chart, 41, 272, const PointInteractionMode()), [
         [0, 3],
       ]);
-      expect(_hitsAt(chart, 41, 272, 'nearest'), [
+      expect(_hitsAt(chart, 41, 272, const NearestInteractionMode()), [
         [0, 3],
       ]);
       await tester.pump(const Duration(milliseconds: 600));
@@ -420,13 +422,13 @@ void main() {
       const qy = 267.62998998399627;
       await tester.pump(const Duration(milliseconds: 1));
       expect(point.x, isNaN);
-      expect(_hitsAt(chart, qx, qy, 'point'), isEmpty);
+      expect(_hitsAt(chart, qx, qy, const PointInteractionMode()), isEmpty);
       await tester.pump(const Duration(milliseconds: 499));
       expect(point.x, isNaN);
-      expect(_hitsAt(chart, qx, qy, 'point'), isEmpty);
+      expect(_hitsAt(chart, qx, qy, const PointInteractionMode()), isEmpty);
       await tester.pump(const Duration(milliseconds: 600));
       expect(point.x, closeTo(389.4495078835456, 1e-9));
-      expect(_hitsAt(chart, qx, qy, 'point'), [
+      expect(_hitsAt(chart, qx, qy, const PointInteractionMode()), [
         [0, 1],
       ]);
     });
@@ -463,13 +465,13 @@ void main() {
       expect(y.to, 272.0);
       await tester.pump(const Duration(milliseconds: 1));
       expect(point.x, isNaN);
-      expect(_hitsAt(chart, 363.5, 272, 'point'), isEmpty);
+      expect(_hitsAt(chart, 363.5, 272, const PointInteractionMode()), isEmpty);
       await tester.pump(const Duration(milliseconds: 499));
       expect(point.x, isNaN);
-      expect(_hitsAt(chart, 363.5, 272, 'point'), isEmpty);
+      expect(_hitsAt(chart, 363.5, 272, const PointInteractionMode()), isEmpty);
       await tester.pump(const Duration(milliseconds: 600));
       expect([point.x, point.y], [363.5, 272.0]);
-      expect(_hitsAt(chart, 363.5, 272, 'point'), [
+      expect(_hitsAt(chart, 363.5, 272, const PointInteractionMode()), [
         [0, 1],
       ]);
     });

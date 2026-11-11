@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show IndexInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -309,7 +311,9 @@ void main() {
       final charts = _Charts(
         'bar',
         options: <String, Object?>{
-          'interaction': <String, Object?>{'mode': 'index'},
+          'interaction': <String, Object?>{
+            'mode': const IndexInteractionMode(),
+          },
         },
       );
       await charts.pump(tester);

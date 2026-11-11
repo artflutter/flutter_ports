@@ -1964,7 +1964,7 @@ enum ScopeKind {
       case ScopeKind.interactionOptions:
         switch (key) {
           case OptionKey.mode:
-            return 4;
+            return 256;
           case OptionKey.intersect:
             return 2;
           case OptionKey.axis:
@@ -3325,7 +3325,7 @@ enum ScopeKind {
       case ScopeKind.tooltipOptions:
         switch (key) {
           case OptionKey.mode:
-            return 4;
+            return 256;
           case OptionKey.intersect:
             return 2;
           case OptionKey.axis:

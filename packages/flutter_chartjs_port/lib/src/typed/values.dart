@@ -7,20 +7,20 @@
 /// shorthand works (`position: .top`, `align: .center`), and a new
 /// constant is an addition that breaks no `switch` of an app.
 ///
-/// - [ChartPosition], [ChartAlign] and [ChartInteractionMode] are over
-///   `String`. The option value is their `name`.
+/// - [ChartPosition] and [ChartAlign] are over `String`. The option value is
+///   their `name`.
 /// - [ChartPointStyle], [ChartFill] and [ChartLength] are over `Object`:
 ///   they also hold `false`, numbers and records. The internal getter
 ///   `optionValue` gives the option value. A record holds
 ///   [ChartFill.value] and [ChartLength.percent], so these constructors are
 ///   `const`, and two equal values are `==`.
 ///
-/// [ChartInteractionMode] has a public constructor for a custom name. The
-/// other types have private constructors: Chart.js has no registry for
+/// The types have private constructors: Chart.js has no registry for
 /// their names.
 ///
 /// The `easing` option of an animation has no type here: it is a Flutter
-/// `Curve`.
+/// `Curve`. The `mode` option of the interaction has none either: it is an
+/// `InteractionMode` of the core.
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
@@ -68,32 +68,6 @@ extension type const ChartAlign._(String name) {
 
   /// `'end'`: the right or the bottom end.
   static const ChartAlign end = ChartAlign._('end');
-}
-
-/// An interaction mode: the `mode` of the `interaction` and `tooltip`
-/// options, a key of `Interaction.modes` (`InteractionModeMap`,
-/// `index.d.ts:770-799`).
-///
-/// The constructor names a custom mode that the app adds to
-/// `Interaction.modes`.
-extension type const ChartInteractionMode(String name) {
-  /// `'index'`: the items at the same index.
-  static const ChartInteractionMode index = ChartInteractionMode('index');
-
-  /// `'dataset'`: the items of the same dataset.
-  static const ChartInteractionMode dataset = ChartInteractionMode('dataset');
-
-  /// `'point'`: the items that intersect the point.
-  static const ChartInteractionMode point = ChartInteractionMode('point');
-
-  /// `'nearest'`: the items nearest to the point.
-  static const ChartInteractionMode nearest = ChartInteractionMode('nearest');
-
-  /// `'x'`: the items at the x position of the point.
-  static const ChartInteractionMode x = ChartInteractionMode('x');
-
-  /// `'y'`: the items at the y position of the point.
-  static const ChartInteractionMode y = ChartInteractionMode('y');
 }
 
 /// The style of a point: the `pointStyle` option of a dataset and of the

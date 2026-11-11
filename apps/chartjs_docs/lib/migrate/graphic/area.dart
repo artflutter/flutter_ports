@@ -58,7 +58,10 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
   legend: const ChartLegend(display: false),
-  interaction: const ChartInteraction(mode: .index, intersect: false),
+  interaction: const ChartInteraction(
+    mode: IndexInteractionMode(),
+    intersect: false,
+  ),
   tooltip: graphicTooltip(position: followY, title: _date, label: _value),
   plugins: [crosshair(), tooltipShadow],
 );

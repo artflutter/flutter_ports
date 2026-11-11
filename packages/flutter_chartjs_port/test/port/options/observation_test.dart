@@ -15,6 +15,8 @@ import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -1232,7 +1234,10 @@ final List<_Case> _focusedCases = [
         <String, Object?>{'data': _values(6, 2), 'hidden': true},
       ],
       options: <String, Object?>{
-        'hover': <String, Object?>{'mode': 'nearest', 'intersect': false},
+        'hover': <String, Object?>{
+          'mode': const NearestInteractionMode(),
+          'intersect': false,
+        },
         'interaction': <String, Object?>{'axis': 'x'},
         'plugins': <String, Object?>{
           'tooltip': <String, Object?>{

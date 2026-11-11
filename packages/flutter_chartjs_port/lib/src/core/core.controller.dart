@@ -2455,19 +2455,21 @@ class Chart
   /// useFinalPosition)`.
   ///
   /// [e] is a `types.ChartEvent` or a `NativeEvent`, as the modes take it.
-  /// `Interaction.modes[mode]` reads the key `ToString(mode)`. A mode
-  /// function needs the options as a Map: another value throws a
-  /// [TypeError].
+  /// [mode] is the mode itself, not a name: upstream reads the function
+  /// `Interaction.modes[mode]`, and the port calls
+  /// [InteractionMode.itemsAt]. Dart `null` is a mode that is not a key of
+  /// the upstream table. A mode needs the options as a Map or a view:
+  /// another value throws a [TypeError].
   @override
   List<InteractionItem> getElementsAtEventForMode(
     Object e,
-    Object? mode,
+    InteractionMode? mode,
     Object? options, [
     bool? useFinalPosition,
   ]) {
-    final method = Interaction.modes[mode is String ? mode : jsToString(mode)];
-    if (method != null) {
-      return method(this, e, options!, useFinalPosition);
+    // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode object.
+    if (mode != null) {
+      return mode.itemsAt(this, e, options!, useFinalPosition);
     }
 
     return [];
@@ -2845,13 +2847,14 @@ class Chart
   /// element throws a [TypeError], as the hover style of `undefined` does.
   void updateHoverStyle(
     List<types.ActiveElement> items,
-    Object? mode,
+    InteractionMode? mode,
     bool enabled,
   ) {
     final prefix = enabled ? 'set' : 'remove';
     ChartMeta meta;
 
-    if (mode == 'dataset') {
+    // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode object.
+    if (mode is DatasetInteractionMode) {
       meta = getDatasetMeta((items.isNotEmpty ? items[0] : null)!.datasetIndex);
       final controller = meta.controller!;
       if (prefix == 'set') {
@@ -2994,18 +2997,18 @@ class Chart
     if (deactivated.isNotEmpty) {
       updateHoverStyle(
         deactivated,
-        readOption(hoverOptions, OptionKey.mode),
+        InteractionMode.of(readOption(hoverOptions, OptionKey.mode)),
         false,
       );
     }
 
-    if (activated.isNotEmpty &&
-        jsTruthy(readOption(hoverOptions, OptionKey.mode))) {
-      updateHoverStyle(
-        activated,
+    if (activated.isNotEmpty) {
+      final mode = InteractionMode.of(
         readOption(hoverOptions, OptionKey.mode),
-        true,
       );
+      if (mode != null) {
+        updateHoverStyle(activated, mode, true);
+      }
     }
   }
 
@@ -3233,7 +3236,7 @@ class Chart
     final hoverOptions = _options.readKey(OptionKey.hover);
     return getElementsAtEventForMode(
       e,
-      readOption(hoverOptions, OptionKey.mode),
+      InteractionMode.of(readOption(hoverOptions, OptionKey.mode)),
       hoverOptions,
       useFinalPosition,
     );

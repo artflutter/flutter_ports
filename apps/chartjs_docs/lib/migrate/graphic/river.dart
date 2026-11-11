@@ -99,7 +99,10 @@ final ChartConfig _config = ChartConfig(
   legend: const ChartLegend(display: false),
   // `PointSelection(dim: Dim.x, variable: 'date')`: all types at the date
   // nearest to the pointer.
-  interaction: const ChartInteraction(mode: .index, intersect: false),
+  interaction: const ChartInteraction(
+    mode: IndexInteractionMode(),
+    intersect: false,
+  ),
   tooltip: graphicTooltip(
     position: followY,
     title: _date,

@@ -902,7 +902,7 @@ ChartConfig _barTyped() => const ChartConfig(
     padding: EdgeInsets.only(top: 4, bottom: 8),
   ),
   tooltip: ChartTooltip(
-    mode: .index,
+    mode: IndexInteractionMode(),
     intersect: false,
     backgroundColor: Color(0xCC000000),
     padding: EdgeInsets.all(10),
@@ -1023,7 +1023,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'padding': <String, Object?>{'top': 4, 'bottom': 8},
       },
       'tooltip': <String, Object?>{
-        'mode': 'index',
+        'mode': const IndexInteractionMode(),
         'intersect': false,
         'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
         'titleFont': <String, Object?>{'size': 13},
@@ -1091,7 +1091,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
   },
   aspectRatio: 1.5,
   interaction: ChartInteraction(
-    mode: .index,
+    mode: IndexInteractionMode(),
     intersect: false,
     includeInvisible: true,
   ),
@@ -1181,7 +1181,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
     },
     'aspectRatio': 1.5,
     'interaction': <String, Object?>{
-      'mode': 'index',
+      'mode': const IndexInteractionMode(),
       'intersect': false,
       'includeInvisible': true,
     },

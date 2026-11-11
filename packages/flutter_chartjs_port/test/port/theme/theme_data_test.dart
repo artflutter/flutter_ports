@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -304,7 +306,7 @@ List<String> _hits(Chart chart) {
   return [
     for (final item in chart.getElementsAtEventForMode(
       _Event(chart, x + 6, y),
-      'point',
+      const PointInteractionMode(),
       <String, Object?>{'intersect': true},
       false,
     ))

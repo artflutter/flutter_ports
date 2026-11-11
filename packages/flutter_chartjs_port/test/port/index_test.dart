@@ -266,7 +266,7 @@ void main() {
     expect(defaults, same(Chart.defaults));
     expect(animator, isNotNull);
     expect(layouts.addBox, isNotNull);
-    expect(Interaction.modes, contains('nearest'));
+    expect(Interaction.evaluateInteractionItems, isNotNull);
     expect(adapters, contains('_date'));
     expect(ticks, contains('formatters'));
     expect(DatasetController.jsClass.name, 'DatasetController');

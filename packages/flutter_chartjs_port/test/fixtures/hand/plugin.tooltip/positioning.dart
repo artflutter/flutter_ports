@@ -3,6 +3,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -48,7 +50,8 @@ Map<String, Object?> fixture() {
           'title': false,
           'filler': false,
           'tooltip': <String, Object?>{
-            'mode': 'point',
+            // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
+            'mode': const PointInteractionMode(),
             'intersect': true,
             // spriteText: use white background to hide any gaps between fonts
             'backgroundColor': 'white',

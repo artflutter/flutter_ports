@@ -11,6 +11,8 @@ import 'package:chartjs_test_utils/pure.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show DatasetInteractionMode, NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
@@ -357,7 +359,10 @@ void main() {
         },
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
-          'hover': <String, Object?>{'mode': 'nearest', 'intersect': true},
+          'hover': <String, Object?>{
+            'mode': const NearestInteractionMode(),
+            'intersect': true,
+          },
           'scales': <String, Object?>{
             'x': <String, Object?>{'display': false},
             'y': <String, Object?>{'display': false, 'beginAtZero': true},
@@ -1033,7 +1038,9 @@ void main() {
             'hoverBorderWidth': 12,
           });
 
-          chart.options['hover'] = <String, Object?>{'mode': 'dataset'};
+          chart.options['hover'] = <String, Object?>{
+            'mode': const DatasetInteractionMode(),
+          };
           chart.update();
 
           await triggerMouseEvent(chart, 'mousemove', point);
@@ -1401,7 +1408,7 @@ void main() {
       );
 
       (chart.options['plugins']! as JsObjectFace)['tooltip'] =
-          <String, Object?>{'mode': 'dataset'};
+          <String, Object?>{'mode': const DatasetInteractionMode()};
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);
 

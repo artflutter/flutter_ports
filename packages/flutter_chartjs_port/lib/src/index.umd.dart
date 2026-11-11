@@ -226,7 +226,6 @@ JsClass _evaluate() {
   Chart.jsClass['Interaction'] = Map<String, Object?>.unmodifiable(
     <String, Object?>{
       'evaluateInteractionItems': Interaction.evaluateInteractionItems,
-      'modes': Interaction.modes,
     },
   );
   // DIVERGES(chartjs): adapt-umd-namespace-objects, the record of layouts.

@@ -377,19 +377,30 @@ void main() {
     for (final scene in interactionReference) {
       group(scene.name, () {
         for (final (i, q) in scene.queries.indexed) {
-          test('query $i: ${q.mode} ${q.options} at (${q.x}, ${q.y})', () {
+          test('query $i: ${q.mode.runtimeType} ${q.options} at '
+              '(${q.x}, ${q.y})', () {
             final trace = <String>[];
             final chart = _chart(scene, trace);
             final event = _Event(q.x, q.y, chart);
-            final mode = Interaction.modes[q.mode]!;
+            final mode = q.mode;
             if (q.error != null) {
               expect(
-                () => mode(chart, event, q.options, q.useFinalPosition),
+                () => mode.itemsAt(
+                  chart,
+                  event,
+                  q.options,
+                  q.useFinalPosition,
+                ),
                 throwsA(isA<TypeError>()),
               );
               expect(q.error, 'TypeError');
             } else {
-              final items = mode(chart, event, q.options, q.useFinalPosition);
+              final items = mode.itemsAt(
+                chart,
+                event,
+                q.options,
+                q.useFinalPosition,
+              );
               expect(_results(items), q.result);
             }
             expect(trace, q.trace);
@@ -400,28 +411,21 @@ void main() {
   });
 
   group('Interaction', () {
-    test('modes has the six modes in the upstream order', () {
-      expect(Interaction.modes.keys, [
-        'index',
-        'dataset',
-        'point',
-        'nearest',
-        'x',
-        'y',
-      ]);
+    test('a program gives its own mode as a subclass', () {
+      final trace = <String>[];
+      final scene = interactionReference.first;
+      final chart = _chart(scene, trace);
+      const mode = _NoItemsMode();
+
+      expect(mode.itemsAt(chart, _Event(0, 0, chart), const {}), isEmpty);
+      expect(InteractionMode.of(mode), same(mode));
+      expect(InteractionMode.of(null), isNull);
+      expect(InteractionMode.of(undefined), isNull);
+      expect(InteractionMode.of(3), isNull);
     });
 
-    test('a program adds a custom mode under its name', () {
-      List<InteractionItem> custom(
-        types.Chart chart,
-        Object e,
-        Object options, [
-        bool? useFinalPosition,
-      ]) => const [];
-      Interaction.modes['custom'] = custom;
-      addTearDown(() => Interaction.modes.remove('custom'));
-
-      expect(Interaction.modes['custom'], same(custom));
+    test('a mode name is not a mode: a debug build stops', () {
+      expect(() => InteractionMode.of('index'), throwsA(isA<AssertionError>()));
     });
 
     test('evaluateInteractionItems gives each element that is not '
@@ -491,7 +495,7 @@ void main() {
       );
       final trace = <String>[];
       final chart = _chart(scene, trace);
-      final items = Interaction.modes['index']!(
+      final items = const IndexInteractionMode().itemsAt(
         chart,
         _Event(95, 200, chart),
         const {'intersect': true},
@@ -509,9 +513,13 @@ void main() {
       );
       final trace = <String>[];
       final chart = _chart(scene, trace);
-      Interaction.modes['index']!(chart, _Event(180, 150, chart), const {
-        'intersect': true,
-      });
+      const IndexInteractionMode().itemsAt(
+        chart,
+        _Event(180, 150, chart),
+        const {
+          'intersect': true,
+        },
+      );
 
       expect(trace, [
         'inRange 0:0',
@@ -555,4 +563,17 @@ void main() {
       );
     });
   });
+}
+
+/// A mode of the test: it finds no item.
+final class _NoItemsMode extends InteractionMode {
+  const _NoItemsMode();
+
+  @override
+  List<InteractionItem> itemsAt(
+    types.Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => const [];
 }

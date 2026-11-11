@@ -45,7 +45,16 @@ export 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
 export 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 export 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 export 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show Interaction;
+    show
+        DatasetInteractionMode,
+        IndexInteractionMode,
+        Interaction,
+        InteractionItem,
+        InteractionMode,
+        NearestInteractionMode,
+        PointInteractionMode,
+        XInteractionMode,
+        YInteractionMode;
 export 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 export 'package:flutter_chartjs_port/src/core/core.plugins.dart'
     show PluginService;

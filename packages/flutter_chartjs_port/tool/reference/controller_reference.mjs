@@ -139,7 +139,6 @@ registerHooks({
 const {default: Chart} = await import(CONTROLLER.href);
 const {default: DatasetController} = await import(DATASET_CONTROLLER.href);
 const {default: Scale} = await import(SCALE.href);
-const {default: Interaction} = await import(INTERACTION.href);
 const {ArcElement, BarElement, LineElement, PointElement} = await import(
   ELEMENTS.href
 );
@@ -783,7 +782,6 @@ scenario('statics', (observe, charts) => {
   log.length = 0;
   chart.notifyPlugins('afterDraw');
   observe('after unregister', log.join(' '));
-  observe('getElementsAtEventForMode modes', Object.keys(Interaction.modes).join(','));
   observe('BasicPlatform', chart.platform instanceof BasicPlatform);
   const own = new Chart(fakeCanvas(), {platform: BasicPlatform, type: 'test'});
   charts.push(own);

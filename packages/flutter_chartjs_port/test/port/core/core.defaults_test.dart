@@ -5,6 +5,8 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -19,6 +21,7 @@ import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/mode_json.dart';
 
 // Upstream behavior that test/specs/core.defaults.tests.js does not check
 // (AGENTS.md rule 3). The expected values come from src/core/core.defaults.js
@@ -44,6 +47,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
+  InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -162,7 +166,7 @@ void main() {
           'sans-serif","size":12,"style":"normal","lineHeight":1.2,'
           '"weight":null},"hover":{},"hoverBackgroundColor":"<fn>",'
           '"hoverBorderColor":"<fn>","hoverColor":"<fn>","indexAxis":"x",'
-          '"interaction":{"mode":"nearest","intersect":true,'
+          '"interaction":{"mode":"<mode>","intersect":true,'
           '"includeInvisible":false},"maintainAspectRatio":true,'
           '"onHover":null,"onClick":null,"parsing":true,"plugins":{},'
           '"responsive":true,"scale":{"display":true,"offset":false,'

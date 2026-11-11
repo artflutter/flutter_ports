@@ -24,6 +24,8 @@
 /// This library is a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -263,8 +265,10 @@ extension type const TooltipOptions(Object? object) {
   /// `itemSort`.
   Object? get itemSort => optionOf(object, OptionKey.itemSort);
 
-  /// `mode`.
-  Object? get mode => optionOf(object, OptionKey.mode);
+  /// `mode`: the mode itself, or Dart `null` for a value that is not a
+  /// mode (row `adapt-interaction-mode-objects`).
+  InteractionMode? get mode =>
+      InteractionMode.of(optionOf(object, OptionKey.mode));
 
   /// `multiKeyBackground`.
   Object? get multiKeyBackground =>

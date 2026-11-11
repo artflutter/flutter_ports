@@ -6,6 +6,8 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show DatasetInteractionMode, IndexInteractionMode, InteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -17,6 +19,7 @@ import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/mode_json.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
@@ -51,6 +54,7 @@ String _jsonRaw(Object? value) => switch (value) {
   _ when jsIsFunction(value) => '"<fn>"',
   final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
   Curve() => curveJson,
+  InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -1989,18 +1993,25 @@ void main() {
         },
         {
           'raw': <String, Object?>{
-            'interaction': <String, Object?>{'mode': 'index'},
+            'interaction': <String, Object?>{
+              'mode': const IndexInteractionMode(),
+            },
           },
         },
         {
           'raw': <String, Object?>{
-            'hover': <String, Object?>{'mode': 'dataset', 'intersect': false},
+            'hover': <String, Object?>{
+              'mode': const DatasetInteractionMode(),
+              'intersect': false,
+            },
           },
         },
         {
           'raw': <String, Object?>{
             'plugins': <String, Object?>{
-              'tooltip': <String, Object?>{'mode': 'dataset'},
+              'tooltip': <String, Object?>{
+                'mode': const DatasetInteractionMode(),
+              },
             },
           },
         },

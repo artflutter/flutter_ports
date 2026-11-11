@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show DatasetInteractionMode, IndexInteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show noop;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -1207,7 +1209,9 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{
             'legend': false,
-            'tooltip': <String, Object?>{'mode': 'dataset'},
+            'tooltip': <String, Object?>{
+              'mode': const DatasetInteractionMode(),
+            },
           },
         },
       });
@@ -1264,7 +1268,10 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{
             'legend': false,
-            'tooltip': <String, Object?>{'mode': 'index', 'intersect': false},
+            'tooltip': <String, Object?>{
+              'mode': const IndexInteractionMode(),
+              'intersect': false,
+            },
           },
         },
       });
@@ -1683,7 +1690,7 @@ void main() {
       final seen = <List<String>>[];
       final chart = acquireChart(
         twoDatasets(<String, Object?>{
-          'mode': 'index',
+          'mode': const IndexInteractionMode(),
           'intersect': false,
           'filter': JsFunction(
             (Object? self, Object? a, Object? b, Object? c, Object? d) {
@@ -1712,7 +1719,7 @@ void main() {
       // [[two: 2], [one: 20]].
       final chart = acquireChart(
         twoDatasets(<String, Object?>{
-          'mode': 'index',
+          'mode': const IndexInteractionMode(),
           'intersect': false,
           'filter': JsFunction(
             (Object? self, Object? a, Object? b, Object? c, Object? d) =>
@@ -1720,7 +1727,7 @@ void main() {
           ),
           'itemSort': JsFunction(
             (Object? self, Object? a, Object? b, Object? c) =>
-                jsGet(self, 'mode') == 'index'
+                jsGet(self, 'mode') is IndexInteractionMode
                 ? jsToNumber(jsGet(b, 'datasetIndex')) -
                       jsToNumber(jsGet(a, 'datasetIndex'))
                 : 0,
