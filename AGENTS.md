@@ -297,9 +297,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     state, `storeKey`) and `GenericElementOptions`. `foreign_audit.dart` has the hook
     `foreignAudit` of the oracle O2: the typed classes call it inside `assert` for each value that
     they keep in a foreign slot. The option `easing` holds a Flutter `Curve`
-    (row `adapt-flutter-curves`, the schema shape `curve`, `classifyCurve` of `opt.dart`), also in a
-    raw config. `lib/` has no easing names and no table from a name to a curve: a name is a
-    foreign value, a debug build stops on it in `_cfgEasing` of `core.animation.dart`, and a
+    (row `adapt-flutter-curves`, the schema shape `curve`, `classifyTyped<Curve>` of `opt.dart`),
+    also in a raw config. `lib/` has no easing names and no table from a name to a curve: a name is
+    a foreign value, a debug build stops on it in `_cfgEasing` of `core.animation.dart`, and a
     release build takes `Curves.linear`. The animation calls `Curve.transform`; no animation reads
     `helpers.easing.dart`. An app or a plugin gives its own `Curve` class, with no registration
     (`test/port/options/curve_option_test.dart`). Upstream data hold a name in that place: no
@@ -809,6 +809,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       algorithms of upstream; an app or a plugin gives its own as a subclass, with no
       registration. The base class is in the pure `decimation_algorithm.dart`. A value that is not
       an algorithm throws the `StateError` of upstream, and an algorithm name stops a debug build.
+    - The scale options `bounds`, `ticks.source`, `ticks.align` and `ticks.crossAlign` hold the
+      enums `ScaleBounds`, `TickSource`, `TickAlign` and `TickCrossAlign` of the pure
+      `lib/src/core/scale_option_enums.dart` (row `adapt-scale-option-enums`), also in a raw
+      config; the names of the values are the keywords, and a keyword stops a debug build. The
+      typed API has `bounds` on the cartesian axes and `align`, `crossAlign` and `source` on
+      `AxisTicks`. Each typed atom of the option model (a native type of an option that was a name
+      in Chart.js) has the cell `classifyTyped<T>` of `opt.dart`, and `ShapeBits.typed` is the
+      mask of their bits; the generator lists them in its map `typedAtoms`.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
       is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream

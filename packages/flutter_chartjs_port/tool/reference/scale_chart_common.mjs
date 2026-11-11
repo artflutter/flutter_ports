@@ -1186,6 +1186,18 @@ const STROKE_ENUMS = {
   lineJoin: 'StrokeJoin',
 };
 
+/**
+ * The scale options whose value is an enum of `scale_option_enums.dart`
+ * with the name of the keyword (row adapt-scale-option-enums): the key, the
+ * key of the enclosing object (null for any), the enum and its values.
+ */
+const SCALE_ENUMS = {
+  bounds: {owner: null, type: 'ScaleBounds', values: new Set(['data', 'ticks'])},
+  source: {owner: 'ticks', type: 'TickSource', values: new Set(['auto', 'data', 'labels'])},
+  align: {owner: 'ticks', type: 'TickAlign', values: new Set(['start', 'center', 'end', 'inner'])},
+  crossAlign: {owner: 'ticks', type: 'TickCrossAlign', values: new Set(['near', 'center', 'far'])},
+};
+
 /** The values of the Flutter enums `StrokeCap` and `StrokeJoin`. */
 const STROKE_VALUES = {
   StrokeCap: new Set(['butt', 'round', 'square']),
@@ -1288,7 +1300,11 @@ function dart(v, state, owner) {
     return `InteractionAxis.${v.name}`;
   }
   if (v instanceof DartEnum) {
-    (state.strokes ??= new Set()).add(v.type);
+    if (v.type in STROKE_VALUES) {
+      (state.strokes ??= new Set()).add(v.type);
+    } else {
+      state.scaleEnums = true;
+    }
     return `${v.type}.${v.name}`;
   }
   if (v instanceof DartPositioner) {
@@ -1308,6 +1324,14 @@ function dart(v, state, owner) {
         if (k === 'position' && owner === 'tooltip') value = new DartPositioner(value);
         const stroke = STROKE_ENUMS[k];
         if (stroke && STROKE_VALUES[stroke].has(value)) value = new DartEnum(stroke, value);
+        const scaleEnum = SCALE_ENUMS[k];
+        if (
+          scaleEnum &&
+          (scaleEnum.owner === null || scaleEnum.owner === owner) &&
+          scaleEnum.values.has(value)
+        ) {
+          value = new DartEnum(scaleEnum.type, value);
+        }
       }
       return `${dart(k, state)}: ${dart(value, state, k)}`;
     });
@@ -1364,7 +1388,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

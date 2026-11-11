@@ -11,6 +11,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show ticks;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -1552,7 +1553,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'logarithmic', 'bounds': 'data'},
+            'y': <String, Object?>{
+              'type': 'logarithmic',
+              'bounds': ScaleBounds.data,
+            },
           },
         },
       });

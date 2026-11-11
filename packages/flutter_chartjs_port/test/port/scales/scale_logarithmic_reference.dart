@@ -6,6 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 55 cases, 365 widths.
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -41250,8 +41251,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'data'},
-          'y': <String, Object?>{'bounds': 'data'},
+          'x': <String, Object?>{'bounds': ScaleBounds.data},
+          'y': <String, Object?>{'bounds': ScaleBounds.data},
         },
       },
     },

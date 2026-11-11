@@ -41,6 +41,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds, TickSource;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show arrayUnique, filterBetween, lookup;
@@ -410,7 +412,8 @@ class TimeScale extends Scale {
     //   truncated
     // @see https://github.com/chartjs/Chart.js/pull/4556
     // @since 2.7.0
-    ..bounds = 'data'
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+    ..bounds = ScaleBounds.data
     ..adapters = <String, Object?>{}
     ..time = (TimeScaleTimeOptionsScope()
       // false == a pattern string from or a custom callback that converts
@@ -434,7 +437,8 @@ class TimeScale extends Scale {
       //   ONLY.
       // @see https://github.com/chartjs/Chart.js/pull/4507
       // @since 2.7.0
-      ..source = 'auto'
+      // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+      ..source = TickSource.auto
       ..callback = false
       ..major = (MajorTickOptionsScope()..enabled = false));
 
@@ -588,7 +592,9 @@ class TimeScale extends Scale {
 
       // If `bounds` is `'ticks'` and `ticks.source` is `'labels'`,
       // data bounds are ignored (and don't need to be determined)
-      if (options.bounds != 'ticks' || options.ticks.source != 'labels') {
+      // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+      if (options.bounds != ScaleBounds.ticks ||
+          options.ticks.source != TickSource.labels) {
         applyBounds(getMinMax(false));
       }
     }
@@ -632,11 +638,12 @@ class TimeScale extends Scale {
     final options = this.options;
     final timeOpts = options.time;
     final tickOpts = options.ticks;
-    final timestamps = tickOpts.source == 'labels'
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+    final timestamps = tickOpts.source == TickSource.labels
         ? getLabelTimestamps()
         : generate();
 
-    if (options.bounds == 'ticks' && timestamps.isNotEmpty) {
+    if (options.bounds == ScaleBounds.ticks && timestamps.isNotEmpty) {
       // DIVERGES(chartjs): adapt-time-null-timestamp, a null bound is 0.
       this.min = jsToNumber(jsTruthy(userMin) ? userMin : timestamps[0]);
       this.max = jsToNumber(
@@ -797,7 +804,8 @@ class TimeScale extends Scale {
       );
     }
 
-    final timestamps = options.ticks.source == 'data'
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+    final timestamps = options.ticks.source == TickSource.data
         ? getDataTimestamps()
         : null;
     for (time = first; time < max; count++) {
@@ -813,7 +821,8 @@ class TimeScale extends Scale {
       time = next;
     }
 
-    if (time == max || options.bounds == 'ticks' || count == 1) {
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+    if (time == max || options.bounds == ScaleBounds.ticks || count == 1) {
       _addTick(ticks, time, timestamps);
     }
 

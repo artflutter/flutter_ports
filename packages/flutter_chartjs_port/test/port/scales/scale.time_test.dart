@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -228,7 +229,7 @@ void main() {
       final scales = defaults['scales']! as JsObjectFace;
       final time = scales['time']! as JsObjectFace;
       expect(time.jsKeys(), ['bounds', 'adapters', 'time', 'ticks']);
-      expect(time['bounds'], 'data');
+      expect(time['bounds'], ScaleBounds.data);
       expect(plainObject(time['time']), {
         'parser': false,
         'unit': false,
@@ -238,7 +239,7 @@ void main() {
         'displayFormats': <String, Object?>{},
       });
       expect(plainObject(time['ticks']), {
-        'source': 'auto',
+        'source': TickSource.auto,
         'callback': false,
         'major': {'enabled': false},
       });
@@ -496,7 +497,7 @@ void main() {
     ) async {
       final x = _x(
         labelsChart({
-          'ticks': <String, Object?>{'source': 'labels'},
+          'ticks': <String, Object?>{'source': TickSource.labels},
         }),
       );
       final ticks = x.ticks!;
@@ -520,7 +521,7 @@ void main() {
       final x = _x(
         labelsChart({
           'ticks': <String, Object?>{
-            'source': 'labels',
+            'source': TickSource.labels,
             'callback': (Object? value) {
               values.add(value);
               return jsToString(value);
@@ -538,7 +539,7 @@ void main() {
         labelsChart({
           'offset': true,
           'offsetAfterAutoskip': true,
-          'ticks': <String, Object?>{'source': 'labels'},
+          'ticks': <String, Object?>{'source': TickSource.labels},
         }),
       );
       // `+tick.value` is `+null`, 0 (scale.time.js:405). Thus the offsets
@@ -551,8 +552,8 @@ void main() {
     testWidgets('a null bound of bounds ticks is 0', (tester) async {
       final x = _x(
         labelsChart({
-          'bounds': 'ticks',
-          'ticks': <String, Object?>{'source': 'labels'},
+          'bounds': ScaleBounds.ticks,
+          'ticks': <String, Object?>{'source': TickSource.labels},
         }),
       );
       // Upstream gives min the value null, which the arithmetic reads as 0.
@@ -698,7 +699,7 @@ void main() {
               },
               'position': 'bottom',
               'ticks': <String, Object?>{
-                'source': 'labels',
+                'source': TickSource.labels,
                 'autoSkip': false,
               },
             },
@@ -741,7 +742,7 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'type': 'time',
-              'ticks': <String, Object?>{'source': 'data'},
+              'ticks': <String, Object?>{'source': TickSource.data},
               'time': <String, Object?>{
                 'unit': 'week',
                 'round': 'week',
@@ -776,7 +777,7 @@ void main() {
               'x': <String, Object?>{
                 'type': 'time',
                 'time': <String, Object?>{'parser': 'yyyy'},
-                'ticks': <String, Object?>{'source': 'labels'},
+                'ticks': <String, Object?>{'source': TickSource.labels},
               },
             },
           },
@@ -862,7 +863,7 @@ void main() {
               'x': <String, Object?>{
                 'type': 'time',
                 'time': <String, Object?>{'parser': 'yyyy'},
-                'ticks': <String, Object?>{'source': 'data'},
+                'ticks': <String, Object?>{'source': TickSource.data},
               },
             },
           },
@@ -973,7 +974,7 @@ void main() {
                 'x': <String, Object?>{
                   'type': 'timeseries',
                   'time': <String, Object?>{'parser': 'yyyy'},
-                  'ticks': <String, Object?>{'source': 'labels'},
+                  'ticks': <String, Object?>{'source': TickSource.labels},
                 },
                 'y': <String, Object?>{'display': false},
               },
@@ -1099,7 +1100,7 @@ void main() {
                 'x': <String, Object?>{
                   'type': 'time',
                   'time': <String, Object?>{'parser': 'yyyy'},
-                  'ticks': <String, Object?>{'source': 'labels'},
+                  'ticks': <String, Object?>{'source': TickSource.labels},
                 },
                 'y': <String, Object?>{'display': false},
               },
@@ -1199,7 +1200,7 @@ void main() {
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
-                  'bounds': 'data',
+                  'bounds': ScaleBounds.data,
                   'time': <String, Object?>{
                     'parser': 'MM/dd HH:mm',
                     'unit': 'day',
@@ -1247,7 +1248,7 @@ void main() {
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
-                  'bounds': 'ticks',
+                  'bounds': ScaleBounds.ticks,
                   'time': <String, Object?>{
                     'parser': 'MM/dd HH:mm',
                     'unit': 'day',
@@ -1283,232 +1284,154 @@ void main() {
     });
 
     group('when min and/or max are defined', () {
-      for (final source in ['auto', 'data', 'labels']) {
-        for (final bounds in ['data', 'ticks']) {
-          group('and ticks.source is "$source" and bounds "$bounds"', () {
-            /// scale.time.tests.js:983-1008 `beforeEach`.
-            Chart rangeChart() => acquireChart(<String, Object?>{
+      for (final source in TickSource.values) {
+        for (final bounds in ScaleBounds.values) {
+          group(
+            'and ticks.source is "${source.name}" and bounds "${bounds.name}"',
+            () {
+              /// scale.time.tests.js:983-1008 `beforeEach`.
+              Chart rangeChart() => acquireChart(<String, Object?>{
+                'type': 'line',
+                'data': <String, Object?>{
+                  'labels': <Object?>[
+                    '02/20 08:00',
+                    '02/21 09:00',
+                    '02/22 10:00',
+                    '02/23 11:00',
+                  ],
+                  'datasets': <Object?>[
+                    <String, Object?>{
+                      'data': <Object?>[0, 1, 2, 3, 4, 5],
+                    },
+                  ],
+                },
+                'options': <String, Object?>{
+                  'scales': <String, Object?>{
+                    'x': <String, Object?>{
+                      'type': 'time',
+                      'bounds': bounds,
+                      'time': <String, Object?>{
+                        'parser': 'MM/dd HH:mm',
+                        'unit': 'day',
+                      },
+                      'ticks': <String, Object?>{'source': source},
+                    },
+                    'y': <String, Object?>{'display': false},
+                  },
+                },
+              });
+
+              _lineTwin('should expand scale to the min/max range', () {
+                final chart = rangeChart();
+                final scale = chart.scales['x']!;
+                final options = _scaleOptions(chart);
+                const min = '02/19 07:00';
+                const max = '02/24 08:00';
+                final minMillis = _ms(min, 'MM/dd HH:mm');
+                final maxMillis = _ms(max, 'MM/dd HH:mm');
+
+                options['min'] = min;
+                options['max'] = max;
+                chart.update();
+
+                expect(scale.min, minMillis);
+                expect(scale.max, maxMillis);
+                expect(
+                  scale.getPixelForValue(minMillis),
+                  toBeCloseToPixel(scale.left),
+                );
+                expect(
+                  scale.getPixelForValue(maxMillis),
+                  toBeCloseToPixel(scale.left + scale.width),
+                );
+                for (final tick in scale.getTicks()!) {
+                  expect(tick.value >= minMillis, isTrue);
+                  expect(tick.value <= maxMillis, isTrue);
+                }
+              });
+
+              _lineTwin('should shrink scale to the min/max range', () {
+                final chart = rangeChart();
+                final scale = chart.scales['x']!;
+                final options = _scaleOptions(chart);
+                const min = '02/21 07:00';
+                const max = '02/22 20:00';
+                final minMillis = _ms(min, 'MM/dd HH:mm');
+                final maxMillis = _ms(max, 'MM/dd HH:mm');
+
+                options['min'] = min;
+                options['max'] = max;
+                chart.update();
+
+                expect(scale.min, minMillis);
+                expect(scale.max, maxMillis);
+                expect(
+                  scale.getPixelForValue(minMillis),
+                  toBeCloseToPixel(scale.left),
+                );
+                expect(
+                  scale.getPixelForValue(maxMillis),
+                  toBeCloseToPixel(scale.left + scale.width),
+                );
+                for (final tick in scale.getTicks()!) {
+                  expect(tick.value >= minMillis, isTrue);
+                  expect(tick.value <= maxMillis, isTrue);
+                }
+              });
+            },
+          );
+        }
+      }
+    });
+
+    for (final source in TickSource.values) {
+      for (final type in ['timeseries', 'time']) {
+        group(
+          'when ticks.source is "${source.name}" and scale type is "$type"',
+          () {
+            /// scale.time.tests.js:1062-1084 `beforeEach`.
+            Chart offsetChart() => acquireChart(<String, Object?>{
               'type': 'line',
               'data': <String, Object?>{
-                'labels': <Object?>[
-                  '02/20 08:00',
-                  '02/21 09:00',
-                  '02/22 10:00',
-                  '02/23 11:00',
-                ],
+                'labels': <Object?>['2017', '2018', '2019', '2020', '2021'],
                 'datasets': <Object?>[
                   <String, Object?>{
-                    'data': <Object?>[0, 1, 2, 3, 4, 5],
+                    'data': <Object?>[0, 1, 2, 3, 4],
                   },
                 ],
               },
               'options': <String, Object?>{
                 'scales': <String, Object?>{
                   'x': <String, Object?>{
-                    'type': 'time',
-                    'bounds': bounds,
+                    'type': type,
                     'time': <String, Object?>{
-                      'parser': 'MM/dd HH:mm',
-                      'unit': 'day',
+                      'parser': 'yyyy',
+                      'unit': 'year',
                     },
                     'ticks': <String, Object?>{'source': source},
                   },
-                  'y': <String, Object?>{'display': false},
                 },
               },
             });
 
-            _lineTwin('should expand scale to the min/max range', () {
-              final chart = rangeChart();
-              final scale = chart.scales['x']!;
-              final options = _scaleOptions(chart);
-              const min = '02/19 07:00';
-              const max = '02/24 08:00';
-              final minMillis = _ms(min, 'MM/dd HH:mm');
-              final maxMillis = _ms(max, 'MM/dd HH:mm');
+            _lineTwin('should not add offset from the edges', () {
+              final scale = offsetChart().scales['x']!;
 
-              options['min'] = min;
-              options['max'] = max;
-              chart.update();
-
-              expect(scale.min, minMillis);
-              expect(scale.max, maxMillis);
               expect(
-                scale.getPixelForValue(minMillis),
+                scale.getPixelForValue(_ms('2017')),
                 toBeCloseToPixel(scale.left),
               );
               expect(
-                scale.getPixelForValue(maxMillis),
+                scale.getPixelForValue(_ms('2021')),
                 toBeCloseToPixel(scale.left + scale.width),
               );
-              for (final tick in scale.getTicks()!) {
-                expect(tick.value >= minMillis, isTrue);
-                expect(tick.value <= maxMillis, isTrue);
-              }
             });
 
-            _lineTwin('should shrink scale to the min/max range', () {
-              final chart = rangeChart();
-              final scale = chart.scales['x']!;
-              final options = _scaleOptions(chart);
-              const min = '02/21 07:00';
-              const max = '02/22 20:00';
-              final minMillis = _ms(min, 'MM/dd HH:mm');
-              final maxMillis = _ms(max, 'MM/dd HH:mm');
-
-              options['min'] = min;
-              options['max'] = max;
-              chart.update();
-
-              expect(scale.min, minMillis);
-              expect(scale.max, maxMillis);
-              expect(
-                scale.getPixelForValue(minMillis),
-                toBeCloseToPixel(scale.left),
-              );
-              expect(
-                scale.getPixelForValue(maxMillis),
-                toBeCloseToPixel(scale.left + scale.width),
-              );
-              for (final tick in scale.getTicks()!) {
-                expect(tick.value >= minMillis, isTrue);
-                expect(tick.value <= maxMillis, isTrue);
-              }
-            });
-          });
-        }
-      }
-    });
-
-    for (final source in ['auto', 'data', 'labels']) {
-      for (final type in ['timeseries', 'time']) {
-        group('when ticks.source is "$source" and scale type is "$type"', () {
-          /// scale.time.tests.js:1062-1084 `beforeEach`.
-          Chart offsetChart() => acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['2017', '2018', '2019', '2020', '2021'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4],
-                },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': type,
-                  'time': <String, Object?>{
-                    'parser': 'yyyy',
-                    'unit': 'year',
-                  },
-                  'ticks': <String, Object?>{'source': source},
-                },
-              },
-            },
-          });
-
-          _lineTwin('should not add offset from the edges', () {
-            final scale = offsetChart().scales['x']!;
-
-            expect(
-              scale.getPixelForValue(_ms('2017')),
-              toBeCloseToPixel(scale.left),
-            );
-            expect(
-              scale.getPixelForValue(_ms('2021')),
-              toBeCloseToPixel(scale.left + scale.width),
-            );
-          });
-
-          _lineTwin('should add offset from the edges if offset is true', () {
-            final chart = offsetChart();
-            final scale = chart.scales['x']!;
-            final options = _scaleOptions(chart);
-
-            options['offset'] = true;
-            chart.update();
-
-            final numTicks = scale.ticks!.length;
-            final firstTickInterval =
-                scale.getPixelForTick(1)! - scale.getPixelForTick(0)!;
-            final lastTickInterval =
-                scale.getPixelForTick(numTicks - 1)! -
-                scale.getPixelForTick(numTicks - 2)!;
-
-            expect(
-              scale.getPixelForValue(_ms('2017')),
-              toBeCloseToPixel(scale.left + firstTickInterval / 2),
-            );
-            expect(
-              scale.getPixelForValue(_ms('2021')),
-              toBeCloseToPixel(
-                scale.left + scale.width - lastTickInterval / 2,
-              ),
-            );
-          });
-
-          _lineTwin(
-            'should not add offset if min and max extend the labels range',
-            () {
+            _lineTwin('should add offset from the edges if offset is true', () {
               final chart = offsetChart();
               final scale = chart.scales['x']!;
               final options = _scaleOptions(chart);
 
-              options['min'] = '2012';
-              options['max'] = '2051';
-              chart.update();
-
-              expect(
-                scale.getPixelForValue(_ms('2012')),
-                toBeCloseToPixel(scale.left),
-              );
-              expect(
-                scale.getPixelForValue(_ms('2051')),
-                toBeCloseToPixel(scale.left + scale.width),
-              );
-            },
-          );
-        });
-      }
-    }
-
-    for (final source in ['data', 'labels']) {
-      for (final type in ['timeseries', 'time']) {
-        group('when ticks.source is "$source" and scale type is "$type"', () {
-          /// scale.time.tests.js:1164-1188 `beforeEach`.
-          Chart offsetChart() => acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4, 5],
-                },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'id': 'x',
-                  'type': type,
-                  'time': <String, Object?>{'parser': 'yyyy'},
-                  'ticks': <String, Object?>{'source': source},
-                },
-              },
-            },
-          });
-
-          _lineTwin(
-            'should add offset if min and max extend the labels range and '
-            'offset is true',
-            () {
-              final chart = offsetChart();
-              final scale = chart.scales['x']!;
-              final options = _scaleOptions(chart);
-
-              options['min'] = '2012';
-              options['max'] = '2051';
               options['offset'] = true;
               chart.update();
 
@@ -1518,19 +1441,106 @@ void main() {
               final lastTickInterval =
                   scale.getPixelForTick(numTicks - 1)! -
                   scale.getPixelForTick(numTicks - 2)!;
+
               expect(
-                scale.getPixelForValue(_ms('2012')),
+                scale.getPixelForValue(_ms('2017')),
                 toBeCloseToPixel(scale.left + firstTickInterval / 2),
               );
               expect(
-                scale.getPixelForValue(_ms('2051')),
+                scale.getPixelForValue(_ms('2021')),
                 toBeCloseToPixel(
                   scale.left + scale.width - lastTickInterval / 2,
                 ),
               );
-            },
-          );
-        });
+            });
+
+            _lineTwin(
+              'should not add offset if min and max extend the labels range',
+              () {
+                final chart = offsetChart();
+                final scale = chart.scales['x']!;
+                final options = _scaleOptions(chart);
+
+                options['min'] = '2012';
+                options['max'] = '2051';
+                chart.update();
+
+                expect(
+                  scale.getPixelForValue(_ms('2012')),
+                  toBeCloseToPixel(scale.left),
+                );
+                expect(
+                  scale.getPixelForValue(_ms('2051')),
+                  toBeCloseToPixel(scale.left + scale.width),
+                );
+              },
+            );
+          },
+        );
+      }
+    }
+
+    for (final source in [TickSource.data, TickSource.labels]) {
+      for (final type in ['timeseries', 'time']) {
+        group(
+          'when ticks.source is "${source.name}" and scale type is "$type"',
+          () {
+            /// scale.time.tests.js:1164-1188 `beforeEach`.
+            Chart offsetChart() => acquireChart(<String, Object?>{
+              'type': 'line',
+              'data': <String, Object?>{
+                'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[0, 1, 2, 3, 4, 5],
+                  },
+                ],
+              },
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{
+                    'id': 'x',
+                    'type': type,
+                    'time': <String, Object?>{'parser': 'yyyy'},
+                    'ticks': <String, Object?>{'source': source},
+                  },
+                },
+              },
+            });
+
+            _lineTwin(
+              'should add offset if min and max extend the labels range and '
+              'offset is true',
+              () {
+                final chart = offsetChart();
+                final scale = chart.scales['x']!;
+                final options = _scaleOptions(chart);
+
+                options['min'] = '2012';
+                options['max'] = '2051';
+                options['offset'] = true;
+                chart.update();
+
+                final numTicks = scale.ticks!.length;
+                final firstTickInterval =
+                    scale.getPixelForTick(1)! - scale.getPixelForTick(0)!;
+                final lastTickInterval =
+                    scale.getPixelForTick(numTicks - 1)! -
+                    scale.getPixelForTick(numTicks - 2)!;
+                expect(
+                  scale.getPixelForValue(_ms('2012')),
+                  toBeCloseToPixel(scale.left + firstTickInterval / 2),
+                );
+                expect(
+                  scale.getPixelForValue(_ms('2051')),
+                  toBeCloseToPixel(
+                    scale.left + scale.width - lastTickInterval / 2,
+                  ),
+                );
+              },
+            );
+          },
+        );
       }
     }
 

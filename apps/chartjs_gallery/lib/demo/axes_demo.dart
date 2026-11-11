@@ -24,11 +24,20 @@ const List<String> axesDemoYTypes = ['linear', 'logarithmic'];
 const List<int> axesDemoCounts = [12, 100, 1000];
 
 /// The values of the option `ticks.align`.
-const List<String> axesDemoAligns = ['start', 'center', 'end'];
+const List<TickAlign> axesDemoAligns = [
+  TickAlign.start,
+  TickAlign.center,
+  TickAlign.end,
+];
 
-/// The values of the option `bounds`. `auto` writes no option: each scale
-/// type keeps its default (`ticks` for linear, `data` for time).
-const List<String> axesDemoBounds = ['auto', 'data', 'ticks'];
+/// The values of the option `bounds`. Dart `null`, the segment `auto`,
+/// writes no option: each scale type keeps its default (`ticks` for linear,
+/// `data` for time).
+const List<ScaleBounds?> axesDemoBounds = [
+  null,
+  ScaleBounds.data,
+  ScaleBounds.ticks,
+];
 
 /// The values of the option `time.unit` of a time axis. `auto` writes no
 /// option: the scale finds the unit.
@@ -152,14 +161,14 @@ class AxesDemoState extends State<AxesDemo> {
   double _minRotation = 0;
   double _maxTicksLimit = 0;
   double _fontSize = 12;
-  String _align = 'center';
+  TickAlign _align = TickAlign.center;
   bool _gridDisplay = true;
   bool _gridOffset = false;
   bool _borderDisplay = true;
   bool _titleDisplay = false;
   bool _reverse = false;
   bool _beginAtZero = false;
-  String _bounds = 'auto';
+  ScaleBounds? _bounds;
   String _timeUnit = 'auto';
   String _locale = 'en-US';
 
@@ -327,7 +336,7 @@ class AxesDemoState extends State<AxesDemo> {
         'position': position,
         'reverse': _reverse,
         'beginAtZero': _beginAtZero,
-        if (_bounds != 'auto') 'bounds': _bounds,
+        if (_bounds != null) 'bounds': _bounds,
         if (type == 'time' && _timeUnit != 'auto')
           'time': <String, Object?>{'unit': _timeUnit},
         'ticks': <String, Object?>{
@@ -478,8 +487,14 @@ class AxesDemoState extends State<AxesDemo> {
   // Controls.
 
   /// The text of [value] in a key: the integer text of a number.
-  static String _keyText(Object? value) =>
-      value is double ? value.toInt().toString() : '$value';
+  static String _keyText(Object? value) => switch (value) {
+    final double number => number.toInt().toString(),
+    // The name of an enum value, for example `start` of [TickAlign.start].
+    final Enum value => value.name,
+    // The bounds Dart `null`: no option.
+    null => 'auto',
+    _ => '$value',
+  };
 
   /// The line [label] of the option [name]: a segment for each value of
   /// [values], with the key `axes.<name>.<value>`. [data] gives new data

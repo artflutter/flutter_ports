@@ -6,6 +6,8 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 84 cases, 1108 widths.
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+
 /// The Node.js version that generated the data.
 const String scaleTimeReferenceNode = 'v24.22.1';
 
@@ -24343,7 +24345,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'ticks'},
+          'x': <String, Object?>{'bounds': ScaleBounds.ticks},
         },
       },
     },
@@ -25357,7 +25359,10 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'ticks', 'min': 1609826400000.0},
+          'x': <String, Object?>{
+            'bounds': ScaleBounds.ticks,
+            'min': 1609826400000.0,
+          },
         },
       },
     },
@@ -26648,7 +26653,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -26786,7 +26791,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -27468,7 +27473,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -28055,7 +28060,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           'x': <String, Object?>{
             'min': '2021-01-05',
             'max': '2021-02-02',
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -28727,9 +28732,9 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'bounds': 'ticks',
+            'bounds': ScaleBounds.ticks,
             'reverse': true,
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -32774,7 +32779,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'offset': true,
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -33570,7 +33575,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'offset': true,
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -34142,7 +34147,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'offset': true,
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -34814,7 +34819,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           'x': <String, Object?>{
             'offset': true,
             'offsetAfterAutoskip': true,
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -47227,7 +47232,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'normalized': true,
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -60042,7 +60047,10 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'time': <String, Object?>{'minUnit': 'day'},
-            'ticks': <String, Object?>{'autoSkip': false, 'source': 'labels'},
+            'ticks': <String, Object?>{
+              'autoSkip': false,
+              'source': TickSource.labels,
+            },
           },
         },
       },
@@ -65106,7 +65114,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'ticks': <String, Object?>{
-              'source': 'labels',
+              'source': TickSource.labels,
               'callback': 'fn:valueString',
             },
           },
@@ -65759,7 +65767,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           'x': <String, Object?>{
             'offset': true,
             'offsetAfterAutoskip': true,
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -78760,7 +78768,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             'reverse': true,
             'offset': true,
             'offsetAfterAutoskip': true,
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -81841,8 +81849,8 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'bounds': 'ticks',
-            'ticks': <String, Object?>{'source': 'data'},
+            'bounds': ScaleBounds.ticks,
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -83095,7 +83103,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'offset': true,
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -84515,7 +84523,10 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'time': <String, Object?>{'minUnit': 'days'},
-            'ticks': <String, Object?>{'source': 'labels', 'autoSkip': false},
+            'ticks': <String, Object?>{
+              'source': TickSource.labels,
+              'autoSkip': false,
+            },
           },
         },
       },

@@ -5,6 +5,8 @@
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. 93 cases.
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = 'v24.22.1';
 
@@ -1315,8 +1317,8 @@ const List<ScaleReferenceCase> scaleReference = [
       'axis': 'x',
       'position': 'bottom',
       'ticks': <String, Object?>{
-        'align': 'start',
-        'crossAlign': 'far',
+        'align': TickAlign.start,
+        'crossAlign': TickCrossAlign.far,
         'labelOffset': 5.0,
         'padding': 6.0,
       },
@@ -1585,8 +1587,8 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': 'bottom',
       'reverse': true,
       'ticks': <String, Object?>{
-        'align': 'end',
-        'crossAlign': 'center',
+        'align': TickAlign.end,
+        'crossAlign': TickCrossAlign.center,
         'callback': 'fn:arrayLabel',
       },
     },
@@ -1802,8 +1804,8 @@ const List<ScaleReferenceCase> scaleReference = [
       'axis': 'x',
       'position': 'top',
       'ticks': <String, Object?>{
-        'align': 'inner',
-        'crossAlign': 'center',
+        'align': TickAlign.inner,
+        'crossAlign': TickCrossAlign.center,
         'showLabelBackdrop': true,
         'backdropPadding': 3.0,
         'backdropColor': 'yellow',
@@ -2087,8 +2089,8 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': 'top',
       'reverse': true,
       'ticks': <String, Object?>{
-        'align': 'inner',
-        'crossAlign': 'far',
+        'align': TickAlign.inner,
+        'crossAlign': TickCrossAlign.far,
         'callback': 'fn:arrayLabel',
       },
     },
@@ -5973,7 +5975,7 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'x',
       'position': 'bottom',
-      'ticks': <String, Object?>{'autoSkip': false, 'source': 'auto'},
+      'ticks': <String, Object?>{'autoSkip': false, 'source': TickSource.auto},
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -9056,7 +9058,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'right',
-      'ticks': <String, Object?>{'mirror': true, 'crossAlign': 'center'},
+      'ticks': <String, Object?>{
+        'mirror': true,
+        'crossAlign': TickCrossAlign.center,
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -9313,7 +9318,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'right',
-      'ticks': <String, Object?>{'mirror': true, 'crossAlign': 'far'},
+      'ticks': <String, Object?>{
+        'mirror': true,
+        'crossAlign': TickCrossAlign.far,
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -9502,7 +9510,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'right',
-      'ticks': <String, Object?>{'mirror': true, 'crossAlign': 'near'},
+      'ticks': <String, Object?>{
+        'mirror': true,
+        'crossAlign': TickCrossAlign.near,
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -9691,7 +9702,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'left',
-      'ticks': <String, Object?>{'mirror': true, 'crossAlign': 'center'},
+      'ticks': <String, Object?>{
+        'mirror': true,
+        'crossAlign': TickCrossAlign.center,
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -9880,7 +9894,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'left',
-      'ticks': <String, Object?>{'mirror': true, 'crossAlign': 'far'},
+      'ticks': <String, Object?>{
+        'mirror': true,
+        'crossAlign': TickCrossAlign.far,
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -10069,7 +10086,7 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'left',
-      'ticks': <String, Object?>{'crossAlign': 'center'},
+      'ticks': <String, Object?>{'crossAlign': TickCrossAlign.center},
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -10265,7 +10282,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'axis': 'y',
       'position': 'left',
       'ticks': <String, Object?>{
-        'align': 'start',
+        'align': TickAlign.start,
         'showLabelBackdrop': true,
         'backdropPadding': 2.0,
       },
@@ -10516,7 +10533,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'axis': 'y',
       'position': 'right',
       'ticks': <String, Object?>{
-        'align': 'end',
+        'align': TickAlign.end,
         'showLabelBackdrop': true,
         'backdropPadding': 2.0,
       },
@@ -10766,7 +10783,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'right',
-      'ticks': <String, Object?>{'crossAlign': 'far', 'align': 'start'},
+      'ticks': <String, Object?>{
+        'crossAlign': TickCrossAlign.far,
+        'align': TickAlign.start,
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -11002,8 +11022,8 @@ const List<ScaleReferenceCase> scaleReference = [
       'axis': 'y',
       'position': 'right',
       'ticks': <String, Object?>{
-        'crossAlign': 'center',
-        'align': 'end',
+        'crossAlign': TickCrossAlign.center,
+        'align': TickAlign.end,
         'showLabelBackdrop': true,
       },
     },
@@ -11253,8 +11273,8 @@ const List<ScaleReferenceCase> scaleReference = [
       'axis': 'y',
       'position': 'left',
       'ticks': <String, Object?>{
-        'crossAlign': 'far',
-        'align': 'end',
+        'crossAlign': TickCrossAlign.far,
+        'align': TickAlign.end,
         'callback': 'fn:arrayLabel',
       },
     },
@@ -20101,7 +20121,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': 'left',
       'ticks': <String, Object?>{
         'mirror': true,
-        'crossAlign': 'center',
+        'crossAlign': TickCrossAlign.center,
         'padding': '3',
       },
     },
@@ -20294,7 +20314,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': 'left',
       'ticks': <String, Object?>{
         'mirror': true,
-        'crossAlign': 'far',
+        'crossAlign': TickCrossAlign.far,
         'padding': '3',
       },
     },
@@ -20485,7 +20505,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'left',
-      'ticks': <String, Object?>{'crossAlign': 'center', 'padding': '3'},
+      'ticks': <String, Object?>{
+        'crossAlign': TickCrossAlign.center,
+        'padding': '3',
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -20681,7 +20704,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': 'right',
       'ticks': <String, Object?>{
         'mirror': true,
-        'crossAlign': 'center',
+        'crossAlign': TickCrossAlign.center,
         'padding': '3',
       },
     },
@@ -20874,7 +20897,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': 'right',
       'ticks': <String, Object?>{
         'mirror': true,
-        'crossAlign': 'far',
+        'crossAlign': TickCrossAlign.far,
         'padding': '3',
       },
     },
@@ -21065,7 +21088,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': 'y',
       'position': 'right',
-      'ticks': <String, Object?>{'crossAlign': 'center', 'padding': '3'},
+      'ticks': <String, Object?>{
+        'crossAlign': TickCrossAlign.center,
+        'padding': '3',
+      },
       'grid': <String, Object?>{'tickLength': '8'},
     },
     expected: <String, Object?>{

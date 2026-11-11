@@ -32,6 +32,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
+import '../../support/keyword_enum_json.dart';
 import '../core/resolver_trace_cases.dart'
     show resolverTraceFunctions, resolverTraceSetups;
 import '../core/resolver_trace_reference.dart' show resolverTraceReference;
@@ -630,15 +631,10 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
       return jsNumberToString(n);
     case final String s:
       return jsonEncode(s);
-    // The Flutter enums of a line cap and a line join, and the interaction
-    // axis, stand for the upstream keywords: the names of their values (rows
-    // `adapt-flutter-stroke-enums` and `adapt-interaction-axis-enum`).
-    case final native_ui.StrokeCap cap:
-      return jsonEncode(cap.name);
-    case final native_ui.StrokeJoin join:
-      return jsonEncode(join.name);
-    case final InteractionAxis axis:
-      return jsonEncode(axis.name);
+    // An enum whose value names are the upstream keywords stands for the
+    // keyword (keyword_enum_json.dart).
+    case final Enum keyword when isKeywordEnum(keyword):
+      return jsonEncode(keyword.name);
     case Function() || JsFunction():
       return '<fn>';
     case final JsClass c:

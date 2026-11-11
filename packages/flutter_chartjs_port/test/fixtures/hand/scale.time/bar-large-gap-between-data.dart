@@ -3,6 +3,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   // var date = moment('May 24 2020', 'MMM DD YYYY');
@@ -50,7 +52,8 @@ Map<String, Object?> fixture() {
             'display': false,
             'type': 'time',
             'ticks': <String, Object?>{
-              'source': 'auto',
+              // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+              'source': TickSource.auto,
             },
             'time': <String, Object?>{
               'unit': 'day',

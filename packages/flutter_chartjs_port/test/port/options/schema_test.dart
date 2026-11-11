@@ -116,23 +116,9 @@ bool _fits(String kind, int shape) {
     'fn' || 'obj:JsFunction' || 'obj:JsClass' => true,
     'List' || 'null' || 'undefined' => true,
     'double' || 'int' => shape & ShapeBits.number != 0,
-    // Upstream data hold the easing name of a key of the shape `curve`,
-    // the mode name of a key of the shape `interactionMode`, the
-    // positioner name of a key of the shape `tooltipPositioner` and the
-    // keyword of a key of the shapes `strokeCap`, `strokeJoin` and
-    // `interactionAxis`, and the algorithm name of a key of the shape
-    // `decimationAlgorithm`.
-    'String' =>
-      shape &
-              (ShapeBits.string |
-                  ShapeBits.curve |
-                  ShapeBits.interactionMode |
-                  ShapeBits.tooltipPositioner |
-                  ShapeBits.strokeCap |
-                  ShapeBits.strokeJoin |
-                  ShapeBits.interactionAxis |
-                  ShapeBits.decimationAlgorithm) !=
-          0,
+    // Upstream data hold a name where the port has a typed atom: a curve, an
+    // enum or a class of the port (`ShapeBits.typed`).
+    'String' => shape & (ShapeBits.string | ShapeBits.typed) != 0,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' => shape & ShapeBits.scope != 0,
     _ when kind.startsWith('NarrowMap') => shape & ShapeBits.scope != 0,

@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode, IndexInteractionMode, InteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -1822,7 +1824,7 @@ void main() {
         ('scale.min', 0.0, 'min is a behavior key'),
         ('scale.beginAtZero', true, 'beginAtZero is a behavior key'),
         ('scale.grace', '50%', 'grace is a behavior key'),
-        ('scale.bounds', 'data', 'bounds'),
+        ('scale.bounds', ScaleBounds.data, 'bounds'),
         ('base', 2.0, 'base'),
         ('skipNull', true, 'skipNull'),
         ('grouped', false, 'grouped'),

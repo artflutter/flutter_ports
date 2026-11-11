@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: the scale option facades.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -71,7 +72,7 @@ Map<String, Object?> _scaleValues() => {
   'axis': 'y',
   'position': 'left',
   'offset': true,
-  'bounds': 'ticks',
+  'bounds': ScaleBounds.ticks,
   'labels': <Object?>['a', 'b'],
   'beginAtZero': 0,
   'grace': '5%',

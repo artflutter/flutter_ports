@@ -2935,7 +2935,7 @@ enum ScopeKind {
           case OptionKey.afterUpdate:
             return 8;
           case OptionKey.bounds:
-            return 4;
+            return 16384;
           case OptionKey.position:
             return 36;
           case OptionKey.stack:
@@ -3016,13 +3016,13 @@ enum ScopeKind {
           case OptionKey.sampleSize:
             return 1;
           case OptionKey.align:
-            return 4;
+            return 65536;
           case OptionKey.autoSkip:
             return 2;
           case OptionKey.autoSkipPadding:
             return 1;
           case OptionKey.crossAlign:
-            return 4;
+            return 131072;
           case OptionKey.includeBounds:
             return 2;
           case OptionKey.labelOffset:
@@ -3044,7 +3044,7 @@ enum ScopeKind {
           case OptionKey.count:
             return 1;
           case OptionKey.source:
-            return 4;
+            return 32768;
           case OptionKey.minor:
             return 32;
           default:

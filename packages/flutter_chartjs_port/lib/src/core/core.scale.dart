@@ -52,6 +52,8 @@ import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
@@ -1362,7 +1364,7 @@ class Scale extends _ScalePrototype
 
     // Auto-skip
     if (jsTruthy(tickOpts.display) &&
-        (jsTruthy(tickOpts.autoSkip) || tickOpts.source == 'auto')) {
+        (jsTruthy(tickOpts.autoSkip) || tickOpts.source == TickSource.auto)) {
       ticks = autoSkip(this, ticks!);
       _labelSizes = null;
       afterAutoSkip();
@@ -1751,6 +1753,7 @@ class Scale extends _ScalePrototype
   ) {
     final options = this.options;
     final tickOpts = options.ticks;
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
     final align = tickOpts.align;
     final padding = tickOpts.padding;
     final position = options.position;
@@ -1774,11 +1777,11 @@ class Scale extends _ScalePrototype
           paddingLeft = sin * first.height;
           paddingRight = cos * last.width;
         }
-      } else if (align == 'start') {
+      } else if (align == TickAlign.start) {
         paddingRight = last.width;
-      } else if (align == 'end') {
+      } else if (align == TickAlign.end) {
         paddingLeft = first.width;
-      } else if (align != 'inner') {
+      } else if (align != TickAlign.inner) {
         paddingLeft = first.width / 2;
         paddingRight = last.width / 2;
       }
@@ -1800,10 +1803,10 @@ class Scale extends _ScalePrototype
       var paddingTop = last.height / 2;
       var paddingBottom = first.height / 2;
 
-      if (align == 'start') {
+      if (align == TickAlign.start) {
         paddingTop = 0;
         paddingBottom = first.height;
-      } else if (align == 'end') {
+      } else if (align == TickAlign.end) {
         paddingTop = last.height;
         paddingBottom = 0;
       }
@@ -2449,6 +2452,7 @@ class Scale extends _ScalePrototype
     final optionTicks = options.ticks;
     final isHorizontal = this.isHorizontal();
     final ticks = this.ticks!;
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
     final align = optionTicks.align;
     final crossAlign = optionTicks.crossAlign;
     final padding = optionTicks.padding;
@@ -2508,9 +2512,9 @@ class Scale extends _ScalePrototype
     }
 
     if (axis == 'y') {
-      if (align == 'start') {
+      if (align == TickAlign.start) {
         textBaseline = 'top';
-      } else if (align == 'end') {
+      } else if (align == TickAlign.end) {
         textBaseline = 'bottom';
       }
     }
@@ -2545,9 +2549,9 @@ class Scale extends _ScalePrototype
         }
 
         if (position == 'top') {
-          if (crossAlign == 'near' || rotation != 0) {
+          if (crossAlign == TickCrossAlign.near || rotation != 0) {
             textOffset = -lineCount * lineHeight + lineHeight / 2;
-          } else if (crossAlign == 'center') {
+          } else if (crossAlign == TickCrossAlign.center) {
             textOffset =
                 -labelSizes.highest.height / 2 -
                 halfCount * lineHeight +
@@ -2557,9 +2561,9 @@ class Scale extends _ScalePrototype
           }
         } else {
           // eslint-disable-next-line no-lonely-if
-          if (crossAlign == 'near' || rotation != 0) {
+          if (crossAlign == TickCrossAlign.near || rotation != 0) {
             textOffset = lineHeight / 2;
-          } else if (crossAlign == 'center') {
+          } else if (crossAlign == TickCrossAlign.center) {
             textOffset = labelSizes.highest.height / 2 - halfCount * lineHeight;
           } else {
             textOffset = labelSizes.highest.height - lineCount * lineHeight;
@@ -2656,12 +2660,13 @@ class Scale extends _ScalePrototype
 
     var align = 'center';
 
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
     final ticksAlign = ticks.align;
-    if (ticksAlign == 'start') {
+    if (ticksAlign == TickAlign.start) {
       align = 'left';
-    } else if (ticksAlign == 'end') {
+    } else if (ticksAlign == TickAlign.end) {
       align = 'right';
-    } else if (ticksAlign == 'inner') {
+    } else if (ticksAlign == TickAlign.inner) {
       align = 'inner';
     }
 
@@ -2696,9 +2701,9 @@ class Scale extends _ScalePrototype
       if (jsTruthy(mirror)) {
         x = jsAdd(right, padding);
 
-        if (crossAlign == 'near') {
+        if (crossAlign == TickCrossAlign.near) {
           textAlign = 'left';
-        } else if (crossAlign == 'center') {
+        } else if (crossAlign == TickCrossAlign.center) {
           textAlign = 'center';
           x = jsAdd(x, widest / 2);
         } else {
@@ -2708,9 +2713,9 @@ class Scale extends _ScalePrototype
       } else {
         x = right - jsToNumber(tickAndPadding);
 
-        if (crossAlign == 'near') {
+        if (crossAlign == TickCrossAlign.near) {
           textAlign = 'right';
-        } else if (crossAlign == 'center') {
+        } else if (crossAlign == TickCrossAlign.center) {
           textAlign = 'center';
           x = jsToNumber(x) - widest / 2;
         } else {
@@ -2722,9 +2727,9 @@ class Scale extends _ScalePrototype
       if (jsTruthy(mirror)) {
         x = jsAdd(left, padding);
 
-        if (crossAlign == 'near') {
+        if (crossAlign == TickCrossAlign.near) {
           textAlign = 'right';
-        } else if (crossAlign == 'center') {
+        } else if (crossAlign == TickCrossAlign.center) {
           textAlign = 'center';
           x = jsToNumber(x) - widest / 2;
         } else {
@@ -2734,9 +2739,9 @@ class Scale extends _ScalePrototype
       } else {
         x = jsAdd(left, tickAndPadding);
 
-        if (crossAlign == 'near') {
+        if (crossAlign == TickCrossAlign.near) {
           textAlign = 'left';
-        } else if (crossAlign == 'center') {
+        } else if (crossAlign == TickCrossAlign.center) {
           textAlign = 'center';
           x = jsAdd(x, widest / 2);
         } else {

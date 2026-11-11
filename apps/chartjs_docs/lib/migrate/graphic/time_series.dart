@@ -58,7 +58,7 @@ final ChartConfig _config = ChartConfig(
       min: _min,
       max: _max,
       grid: noGrid,
-      ticks: graphicTicks(format: _timeLabel, extra: {'source': 'labels'}),
+      ticks: graphicTicks(format: _timeLabel, source: .labels),
       extra: bottomAxis,
     ),
     'y': LinearAxis(

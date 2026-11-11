@@ -51,7 +51,7 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
     ),
     ('minimum, maximum, interval', '`min`, `max` and `ticks.stepSize`'),
     ('labelFormat', 'a tick `format` callback'),
-    ('edgeLabelPlacement: shift', "`'align': 'inner'` in the `extra` of ticks"),
+    ('edgeLabelPlacement: shift', '`align: .inner` of `AxisTicks`'),
     ('majorGridLines, axisLine', 'the `grid` and the `border` of each axis'),
     ('ChartTitle', '`title: ChartTitle(...)`'),
     ('Legend', '`legend: ChartLegend(...)`'),

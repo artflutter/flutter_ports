@@ -17,6 +17,8 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
@@ -2620,13 +2622,13 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         _pointHoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyStrokeCap);
+        _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -2946,13 +2948,13 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         return classifyNumber(raw);
       case OptionKey.borderCapStyle:
-        return classifyStrokeCap(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
@@ -4592,7 +4594,7 @@ base class AnimationOptionsScope extends OptionScope {
       case OptionKey.duration:
         _duration = fitCell(cell, classifyNumber);
       case OptionKey.easing:
-        _easing = fitCell(cell, classifyCurve);
+        _easing = fitCell(cell, classifyTyped<Curve>);
       case OptionKey.delay:
         _delay = fitCell(cell, classifyNumber);
       case OptionKey.loop:
@@ -4648,7 +4650,7 @@ base class AnimationOptionsScope extends OptionScope {
       case OptionKey.duration:
         return classifyNumber(raw);
       case OptionKey.easing:
-        return classifyCurve(raw);
+        return classifyTyped<Curve>(raw);
       case OptionKey.delay:
         return classifyNumber(raw);
       case OptionKey.loop:
@@ -5223,11 +5225,11 @@ base class InteractionOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.mode:
-        _mode = fitCell(cell, classifyInteractionMode);
+        _mode = fitCell(cell, classifyTyped<InteractionMode>);
       case OptionKey.intersect:
         _intersect = fitCell(cell, classifyBool);
       case OptionKey.axis:
-        _axis = fitCell(cell, classifyInteractionAxis);
+        _axis = fitCell(cell, classifyTyped<InteractionAxis>);
       case OptionKey.includeInvisible:
         _includeInvisible = fitCell(cell, classifyBool);
       default:
@@ -5256,11 +5258,11 @@ base class InteractionOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.mode:
-        return classifyInteractionMode(raw);
+        return classifyTyped<InteractionMode>(raw);
       case OptionKey.intersect:
         return classifyBool(raw);
       case OptionKey.axis:
-        return classifyInteractionAxis(raw);
+        return classifyTyped<InteractionAxis>(raw);
       case OptionKey.includeInvisible:
         return classifyBool(raw);
       default:
@@ -6426,13 +6428,13 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.backgroundColor:
         _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyStrokeCap);
+        _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -6512,13 +6514,13 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.backgroundColor:
         return classifyUnion(raw, 64);
       case OptionKey.borderCapStyle:
-        return classifyStrokeCap(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
@@ -7440,7 +7442,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.offset:
@@ -7523,7 +7525,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.offset:
@@ -8134,13 +8136,13 @@ base class SegmentOptionsScope extends OptionScope {
       case OptionKey.borderColor:
         _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyStrokeCap);
+        _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       default:
@@ -8172,13 +8174,13 @@ base class SegmentOptionsScope extends OptionScope {
       case OptionKey.borderColor:
         return classifyUnion(raw, 64);
       case OptionKey.borderCapStyle:
-        return classifyStrokeCap(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       default:
@@ -10515,13 +10517,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         _pointHoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyStrokeCap);
+        _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -10704,13 +10706,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         return classifyNumber(raw);
       case OptionKey.borderCapStyle:
-        return classifyStrokeCap(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
@@ -12726,7 +12728,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.offset:
@@ -12891,7 +12893,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.offset:
@@ -13997,7 +13999,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.offset:
@@ -14165,7 +14167,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.offset:
@@ -15537,13 +15539,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         _pointHoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyStrokeCap);
+        _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
+        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -15738,13 +15740,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         return classifyNumber(raw);
       case OptionKey.borderCapStyle:
-        return classifyStrokeCap(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyStrokeJoin(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
@@ -16914,13 +16916,13 @@ base class ScaleOptionsScope extends OptionScope {
   set afterUpdate(Object value) =>
       store(OptionKey.afterUpdate, classify(OptionKey.afterUpdate, value));
 
-  Opt<String>? _bounds;
+  Opt<ScaleBounds>? _bounds;
 
   /// The cell of `bounds`, or Dart `null` when absent.
-  Opt<String>? get boundsCell => _bounds;
+  Opt<ScaleBounds>? get boundsCell => _bounds;
 
   /// Stores the cell of `bounds`. Dart `null` deletes the key.
-  set boundsCell(Opt<String>? cell) {
+  set boundsCell(Opt<ScaleBounds>? cell) {
     if (cell == null) {
       delete(OptionKey.bounds);
     } else {
@@ -16929,7 +16931,8 @@ base class ScaleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `bounds`.
-  set bounds(String value) => store(OptionKey.bounds, OptValue<String>(value));
+  set bounds(ScaleBounds value) =>
+      store(OptionKey.bounds, OptValue<ScaleBounds>(value));
 
   Opt<Object>? _position;
 
@@ -17506,7 +17509,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.afterUpdate:
         _afterUpdate = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.bounds:
-        _bounds = fitCell(cell, classifyString);
+        _bounds = fitCell(cell, classifyTyped<ScaleBounds>);
       case OptionKey.position:
         _position = fitCell(cell, (raw) => classifyUnion(raw, 36));
       case OptionKey.stack:
@@ -17667,7 +17670,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.afterUpdate:
         return classifyUnion(raw, 8);
       case OptionKey.bounds:
-        return classifyString(raw);
+        return classifyTyped<ScaleBounds>(raw);
       case OptionKey.position:
         return classifyUnion(raw, 36);
       case OptionKey.stack:
@@ -17991,13 +17994,13 @@ base class TickOptionsScope extends OptionScope {
   set sampleSize(double value) =>
       store(OptionKey.sampleSize, OptValue<double>(value));
 
-  Opt<String>? _align;
+  Opt<TickAlign>? _align;
 
   /// The cell of `align`, or Dart `null` when absent.
-  Opt<String>? get alignCell => _align;
+  Opt<TickAlign>? get alignCell => _align;
 
   /// Stores the cell of `align`. Dart `null` deletes the key.
-  set alignCell(Opt<String>? cell) {
+  set alignCell(Opt<TickAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.align);
     } else {
@@ -18006,7 +18009,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `align`.
-  set align(String value) => store(OptionKey.align, OptValue<String>(value));
+  set align(TickAlign value) =>
+      store(OptionKey.align, OptValue<TickAlign>(value));
 
   Opt<bool>? _autoSkip;
 
@@ -18043,13 +18047,13 @@ base class TickOptionsScope extends OptionScope {
   set autoSkipPadding(double value) =>
       store(OptionKey.autoSkipPadding, OptValue<double>(value));
 
-  Opt<String>? _crossAlign;
+  Opt<TickCrossAlign>? _crossAlign;
 
   /// The cell of `crossAlign`, or Dart `null` when absent.
-  Opt<String>? get crossAlignCell => _crossAlign;
+  Opt<TickCrossAlign>? get crossAlignCell => _crossAlign;
 
   /// Stores the cell of `crossAlign`. Dart `null` deletes the key.
-  set crossAlignCell(Opt<String>? cell) {
+  set crossAlignCell(Opt<TickCrossAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.crossAlign);
     } else {
@@ -18058,8 +18062,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `crossAlign`.
-  set crossAlign(String value) =>
-      store(OptionKey.crossAlign, OptValue<String>(value));
+  set crossAlign(TickCrossAlign value) =>
+      store(OptionKey.crossAlign, OptValue<TickCrossAlign>(value));
 
   Opt<bool>? _includeBounds;
 
@@ -18239,13 +18243,13 @@ base class TickOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `count`.
   set count(double value) => store(OptionKey.count, OptValue<double>(value));
 
-  Opt<String>? _source;
+  Opt<TickSource>? _source;
 
   /// The cell of `source`, or Dart `null` when absent.
-  Opt<String>? get sourceCell => _source;
+  Opt<TickSource>? get sourceCell => _source;
 
   /// Stores the cell of `source`. Dart `null` deletes the key.
-  set sourceCell(Opt<String>? cell) {
+  set sourceCell(Opt<TickSource>? cell) {
     if (cell == null) {
       delete(OptionKey.source);
     } else {
@@ -18254,7 +18258,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `source`.
-  set source(String value) => store(OptionKey.source, OptValue<String>(value));
+  set source(TickSource value) =>
+      store(OptionKey.source, OptValue<TickSource>(value));
 
   Opt<MinorTickOptionsScope>? _minor;
 
@@ -18370,13 +18375,13 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.sampleSize:
         _sampleSize = fitCell(cell, classifyNumber);
       case OptionKey.align:
-        _align = fitCell(cell, classifyString);
+        _align = fitCell(cell, classifyTyped<TickAlign>);
       case OptionKey.autoSkip:
         _autoSkip = fitCell(cell, classifyBool);
       case OptionKey.autoSkipPadding:
         _autoSkipPadding = fitCell(cell, classifyNumber);
       case OptionKey.crossAlign:
-        _crossAlign = fitCell(cell, classifyString);
+        _crossAlign = fitCell(cell, classifyTyped<TickCrossAlign>);
       case OptionKey.includeBounds:
         _includeBounds = fitCell(cell, classifyBool);
       case OptionKey.labelOffset:
@@ -18398,7 +18403,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.count:
         _count = fitCell(cell, classifyNumber);
       case OptionKey.source:
-        _source = fitCell(cell, classifyString);
+        _source = fitCell(cell, classifyTyped<TickSource>);
       case OptionKey.minor:
         _minor = fitCell(cell, classifyScope<MinorTickOptionsScope>);
       default:
@@ -18474,13 +18479,13 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.sampleSize:
         return classifyNumber(raw);
       case OptionKey.align:
-        return classifyString(raw);
+        return classifyTyped<TickAlign>(raw);
       case OptionKey.autoSkip:
         return classifyBool(raw);
       case OptionKey.autoSkipPadding:
         return classifyNumber(raw);
       case OptionKey.crossAlign:
-        return classifyString(raw);
+        return classifyTyped<TickCrossAlign>(raw);
       case OptionKey.includeBounds:
         return classifyBool(raw);
       case OptionKey.labelOffset:
@@ -18502,7 +18507,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.count:
         return classifyNumber(raw);
       case OptionKey.source:
-        return classifyString(raw);
+        return classifyTyped<TickSource>(raw);
       case OptionKey.minor:
         return classifyScope<MinorTickOptionsScope>(raw);
       default:
@@ -22580,11 +22585,11 @@ base class TooltipOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.mode:
-        _mode = fitCell(cell, classifyInteractionMode);
+        _mode = fitCell(cell, classifyTyped<InteractionMode>);
       case OptionKey.intersect:
         _intersect = fitCell(cell, classifyBool);
       case OptionKey.axis:
-        _axis = fitCell(cell, classifyInteractionAxis);
+        _axis = fitCell(cell, classifyTyped<InteractionAxis>);
       case OptionKey.includeInvisible:
         _includeInvisible = fitCell(cell, classifyBool);
       case OptionKey.enabled:
@@ -22592,7 +22597,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.external:
         _external = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.position:
-        _position = fitCell(cell, classifyTooltipPositioner);
+        _position = fitCell(cell, classifyTyped<TooltipPositioner>);
       case OptionKey.xAlign:
         _xAlign = fitCell(cell, classifyString);
       case OptionKey.yAlign:
@@ -22732,11 +22737,11 @@ base class TooltipOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.mode:
-        return classifyInteractionMode(raw);
+        return classifyTyped<InteractionMode>(raw);
       case OptionKey.intersect:
         return classifyBool(raw);
       case OptionKey.axis:
-        return classifyInteractionAxis(raw);
+        return classifyTyped<InteractionAxis>(raw);
       case OptionKey.includeInvisible:
         return classifyBool(raw);
       case OptionKey.enabled:
@@ -22744,7 +22749,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.external:
         return classifyUnion(raw, 8);
       case OptionKey.position:
-        return classifyTooltipPositioner(raw);
+        return classifyTyped<TooltipPositioner>(raw);
       case OptionKey.xAlign:
         return classifyString(raw);
       case OptionKey.yAlign:
@@ -23538,7 +23543,7 @@ base class DecimationOptionsScope extends OptionScope {
       case OptionKey.threshold:
         _threshold = fitCell(cell, classifyNumber);
       case OptionKey.algorithm:
-        _algorithm = fitCell(cell, classifyDecimationAlgorithm);
+        _algorithm = fitCell(cell, classifyTyped<DecimationAlgorithm>);
       case OptionKey.samples:
         _samples = fitCell(cell, classifyNumber);
       case OptionKey.events:
@@ -23570,7 +23575,7 @@ base class DecimationOptionsScope extends OptionScope {
       case OptionKey.threshold:
         return classifyNumber(raw);
       case OptionKey.algorithm:
-        return classifyDecimationAlgorithm(raw);
+        return classifyTyped<DecimationAlgorithm>(raw);
       case OptionKey.samples:
         return classifyNumber(raw);
       case OptionKey.events:

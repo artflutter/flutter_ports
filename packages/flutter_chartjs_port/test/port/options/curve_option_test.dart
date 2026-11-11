@@ -55,12 +55,12 @@ void main() {
 
     test('a function stays a scriptable option', () {
       Object? script(Object? context, Object? options) => Curves.linear;
-      expect(classifyCurve(script), isA<OptFunction<Curve>>());
+      expect(classifyTyped<Curve>(script), isA<OptFunction<Curve>>());
     });
 
     test('an easing name is a value of the wrong type', () {
-      expect(classifyCurve('easeOutQuart'), isA<OptForeign<Curve>>());
-      expect(classifyCurve(12.0), isA<OptForeign<Curve>>());
+      expect(classifyTyped<Curve>('easeOutQuart'), isA<OptForeign<Curve>>());
+      expect(classifyTyped<Curve>(12.0), isA<OptForeign<Curve>>());
     });
 
     test('the audit of the typed model reports a name in a scope', () {
