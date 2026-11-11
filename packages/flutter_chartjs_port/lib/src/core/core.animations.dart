@@ -55,7 +55,7 @@ import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show PropertyAnimation, animatedPropertyOf;
+    show PropertyAnimation;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show ArcProperties, BarProperties, LineProperties, PointProperties;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
@@ -82,12 +82,9 @@ class Animations {
     Object? base,
   }) : _chart = chart {
     configure(config);
-    if (modeItems != null && modeItems.isNotEmpty) {
-      _setItems(modeItems, base, 'ChartTransition.animations');
-    }
-    if (items != null && items.isNotEmpty) {
-      _setItems(items, base, 'ChartConfig.animations', keep: true);
-    }
+    if (modeItems != null && modeItems.isNotEmpty) _modeItems = modeItems;
+    if (items != null && items.isNotEmpty) _chartItems = items;
+    if (_modeItems != null || _chartItems != null) _addBaseOptions(base);
   }
 
   /// core.animations.js:6 `class Animations` as a value (Chart.js ADR 0020,
@@ -132,52 +129,51 @@ class Animations {
     for (final key in _keys) key: _getKey(key)!,
   };
 
-  /// The item of `ChartConfig.animations` for each built-in [AnimatedProp]
-  /// id, or Dart `null` when the chart has no item.
-  List<PropertyAnimation?>? _items;
+  /// The items of the transition of the update mode
+  /// (`ChartTransition.animations`), or Dart `null`.
+  List<PropertyAnimation>? _modeItems;
 
-  /// The item of `ChartConfig.animations` for the property [prop], or Dart
-  /// `null`: the object that the app made.
+  /// The items of `ChartConfig.animations`, or Dart `null`.
+  List<PropertyAnimation>? _chartItems;
+
+  /// The item of the app for the property [prop], or Dart `null`: the object
+  /// that the app made. The type of an item selects its property
+  /// ([AnimatedProp.itemIn]). An item of the update mode goes before an item
+  /// of the chart.
   @internal
-  PropertyAnimation? itemOf(AnimatedProp prop) {
-    final items = _items;
-    return items == null || prop.id < 0 ? null : items[prop.id];
-  }
+  PropertyAnimation? itemOf(AnimatedProp prop) =>
+      prop.itemIn(_modeItems) ?? prop.itemIn(_chartItems);
 
-  /// Keeps each item of [items] for its property. A property with no
-  /// options of its own gets the options of [base], the `animation` options:
-  /// upstream gives them to an entry of `animations` through `_fallback`.
-  ///
-  /// [owner] names the List in a message. With [keep], a property that has
-  /// an item from an earlier List keeps it: the items of a transition go
-  /// before the items of the chart.
-  void _setItems(
-    List<PropertyAnimation> items,
-    Object? base,
-    String owner, {
-    bool keep = false,
-  }) {
-    final table = _items ??= List<PropertyAnimation?>.filled(
-      AnimatedProp.builtIns.length,
-      null,
+  /// Gives the options of [base], the `animation` options, to each property
+  /// that has an item and no options of its own: upstream gives them to an
+  /// entry of `animations` through `_fallback`.
+  void _addBaseOptions(Object? base) {
+    assert(
+      _oneItemForEachClass(_modeItems),
+      'ChartTransition.animations has two items of one class. Give one item '
+      'for each class.',
     );
-    final earlier = keep ? List<PropertyAnimation?>.of(table) : null;
+    assert(
+      _oneItemForEachClass(_chartItems),
+      'ChartConfig.animations has two items of one class. Give one item for '
+      'each class.',
+    );
     AnimationSpec? baseSpec;
-    for (final item in items) {
-      final prop = animatedPropertyOf(item);
-      // A class of another library: that library reads its items.
-      if (prop == null) continue;
-      if (earlier != null && earlier[prop.id] != null) continue;
-      assert(
-        table[prop.id] == null,
-        '$owner has two items for ${prop.name}. Give one item for each '
-        'class.',
-      );
-      table[prop.id] = item;
-      if (_builtIn[prop.id] == null) {
+    for (final prop in AnimatedProp.builtIns) {
+      if (_builtIn[prop.id] == null && itemOf(prop) != null) {
         _setKey(prop.name, baseSpec ??= _specOf(base));
       }
     }
+  }
+
+  /// Whether [items] has no two items of one class.
+  static bool _oneItemForEachClass(List<PropertyAnimation>? items) {
+    if (items == null) return true;
+    final classes = <Type>{};
+    for (final item in items) {
+      if (!classes.add(item.runtimeType)) return false;
+    }
+    return true;
   }
 
   /// The options of the object [cfg] as an [AnimationSpec]: each key of

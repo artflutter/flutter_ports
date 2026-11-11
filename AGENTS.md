@@ -973,8 +973,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `ResetTransition`). `AnimationSettings` is their base with the four parameters `duration`,
     `delay`, `easing` and `loop`; `ChartAnimation` extends it too. The type of an item names its
     property or its mode: an item has no other name of it and no key. The chart reads its own
-    classes by type and leaves a class of another library to that library. No lowering copies it: `ChartView` puts the List on the
-    canvas (`setPropertyAnimations`), `DatasetController.resolveAnimations` gives it to `Animations`,
+    classes by type and leaves a class of another library to that library. A built-in
+    `AnimatedProp` has its animation class as a type argument (`_AnimatedBy<RadiusAnimation>`), and
+    `AnimatedProp.itemIn` finds the item of a property by the type of the item, with no table. The
+    Lists are the fields `propertyAnimations` and `chartTransitions` of `Chart` (the interface
+    `ChartAnimationItems`): `ChartView` gives them to the constructor and at each new config. No
+    lowering copies an item: `DatasetController.resolveAnimations` gives the Lists to `Animations`,
     and `Animation` reads the parameters of the item itself. The `ChartAnimation` of
     `ChartConfig.animation` goes the same way for `duration`, `delay`, `easing` and `loop`: each of
     these cells of `options.animation` holds the `ChartAnimation` itself, not a copy, and

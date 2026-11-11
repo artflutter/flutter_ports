@@ -91,6 +91,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show ChartAnimationItems, ChartTransition, PropertyAnimation;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show OverridesByTypeScope;
 import 'package:flutter_chartjs_port/src/platform/index.dart'
@@ -637,7 +639,8 @@ class Chart
         SingleBarIndexSource,
         BulkBarChart,
         NativePointChart,
-        DatasetMetaSource {
+        DatasetMetaSource,
+        ChartAnimationItems {
   /// core.controller.js:123 `constructor(item, userConfig)`.
   ///
   /// [item] is a canvas element, a context, an object with a `canvas`, or
@@ -652,8 +655,17 @@ class Chart
   ///
   /// `console.error` is a `print` of the message.
   // eslint-disable-next-line max-statements
-  Chart(Object? item, [Object? userConfig])
-    : config = _colorConfig(userConfig) {
+  ///
+  /// [propertyAnimations] and [chartTransitions] are the items of
+  /// `ChartConfig.animations` and `ChartConfig.transitions` of a typed
+  /// config: the first update of the constructor reads them.
+  // DIVERGES(chartjs): adapt-property-animations, the items of the app.
+  Chart(
+    Object? item, [
+    Object? userConfig,
+    this.propertyAnimations,
+    this.chartTransitions,
+  ]) : config = _colorConfig(userConfig) {
     final config = this.config;
     final initialCanvas = _getCanvas(item);
     final existingChart = _getChart(initialCanvas);
@@ -3053,6 +3065,17 @@ class Chart
   /// no update takes the move. Dart `null` never holds a move.
   @internal
   bool Function()? holdMouseMove;
+
+  /// The items of `ChartConfig.animations`: the animation of single
+  /// properties, or Dart `null` (row `adapt-property-animations`). The
+  /// animations of the chart read each item as the object of the app.
+  @override
+  List<PropertyAnimation>? propertyAnimations;
+
+  /// The items of `ChartConfig.transitions`: the animation of single update
+  /// modes, or Dart `null`.
+  @override
+  List<ChartTransition>? chartTransitions;
 
   /// The mouse move that waits for the update of its frame.
   types.ChartEvent? _heldMove;
