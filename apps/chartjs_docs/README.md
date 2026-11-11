@@ -19,7 +19,8 @@ removes any other worker in its scope. The code of both files is the code of the
 
 `web/flutter_bootstrap.js` sets `wasmAllowList: {gecko: true, webkit: true}`. By default, the Flutter loader takes
 the WebAssembly build only in a Chromium browser. With the key, Firefox from 147 and Safari from 26.2 take that
-build too, and `web/isolate.js` also runs in them.
+build too, and `web/isolate.js` also runs in them. As in the lab, `?build=js` in the address gives the JavaScript
+build.
 
 `web/flutter_bootstrap.js` also sets `preferWebParagraph: true`
 ([flutter/flutter#172561](https://github.com/flutter/flutter/issues/172561), from Flutter 3.50): the browser lays

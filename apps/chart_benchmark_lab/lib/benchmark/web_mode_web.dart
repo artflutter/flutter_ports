@@ -15,6 +15,11 @@ external JSAny? get _textCluster;
 /// such text path.
 bool get _nativeText => !kIsWasm && _textCluster.isDefinedAndNotNull;
 
+/// Whether the address of the page selects the JavaScript build.
+///
+/// `web/flutter_bootstrap.js` reads the query parameter `build`.
+bool get _javaScriptByAddress => Uri.base.queryParameters['build'] == 'js';
+
 /// How this page runs: a figure of one mode does not compare with another.
 ///
 /// The Flutter loader gives skwasm its worker thread only on an isolated page.
@@ -26,12 +31,19 @@ String? webMode() {
 
 /// Why this page runs in its [webMode], for the note over the page.
 String? webModeWhy() {
+  if (!kIsWasm && _javaScriptByAddress) {
+    return 'The address of this page has build=js, so the page runs the '
+        'JavaScript build, which has no rendering thread. For WebAssembly, '
+        'open the page with build=wasm in the address.'
+        '${_nativeText ? ' This browser draws the text with the fonts of the '
+                  'system.' : ''}';
+  }
   if (_nativeText) {
     return 'This browser has the Enhanced TextMetrics API, so it lays out and '
         'draws the text with the fonts of the system. Flutter has this text '
         'path only in the JavaScript build, which has no rendering thread. '
-        'For WebAssembly, turn off the Chrome flag '
-        '"Experimental Web Platform features".';
+        'For WebAssembly, open the page with ?build=wasm in the address, or '
+        'turn off the Chrome flag "Experimental Web Platform features".';
   }
   if (!kIsWasm) {
     return 'This page uses WebAssembly in a current Chromium browser, in '

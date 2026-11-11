@@ -8,8 +8,14 @@
 // flag chrome://flags/#enable-experimental-web-platform-features. A --wasm build
 // ignores the setting on skwasm. Thus a browser with the API takes the
 // JavaScript build with CanvasKit.
+//
+// The address can select the build: ?build=js gives the JavaScript build, and
+// ?build=wasm skips the rule of the native text. The root page of the site has
+// a link for each build of the lab (tool/pages/index.html). The loader keeps the
+// JavaScript build for a browser that cannot run the WebAssembly build.
+const build = new URLSearchParams(location.search).get('build');
 const config = {preferWebParagraph: true};
-if (typeof window.TextCluster !== 'undefined') {
+if (build === 'js' || (build !== 'wasm' && typeof window.TextCluster !== 'undefined')) {
   config.renderer = 'canvaskit';
 }
 
