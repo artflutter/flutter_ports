@@ -79,7 +79,8 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
         lowerInteraction,
         lowerLegend,
         lowerTitle,
-        lowerTooltip;
+        lowerTooltip,
+        lowerTransitions;
 import 'package:flutter_chartjs_port/src/typed/props.dart' show byEntries;
 import 'package:flutter_chartjs_port/src/types/animation.dart'
     show AnimationEvent;
@@ -328,6 +329,11 @@ final class ChartConfigLowering {
     }
     if (config.animation case final animation?) {
       options.animation = lowerAnimation(animation, this);
+    }
+    if (config.transitions case final transitions?) {
+      if (lowerTransitions(transitions) case final spec?) {
+        options.transitions = spec;
+      }
     }
     if (config.elements case final elements?) {
       options.elements = lowerElements(elements);

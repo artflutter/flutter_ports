@@ -964,11 +964,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 74 names. 20 of them are the items of
-    `ChartConfig.animations`, of `lib/src/options/property_animation.dart` (row
-    `adapt-property-animations`): the sealed `PropertyAnimation` and one ready class for each of the
-    19 animated properties of the elements (`RadiusAnimation`, `BorderColorAnimation`, ...). An item
-    has no name of a property and no key. No lowering copies it: `ChartView` puts the List on the
+    `typed.dart` is its export list of 80 names. 26 of them are the classes of
+    `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
+    `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
+    19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
+    `ChartConfig.transitions` (the abstract `ChartTransition` and one ready class for each update
+    mode: `HoverTransition`, `ShowTransition`, `HideTransition`, `ResizeTransition`,
+    `ResetTransition`). `AnimationSettings` is their base with the four parameters `duration`,
+    `delay`, `easing` and `loop`; `ChartAnimation` extends it too. The type of an item names its
+    property or its mode: an item has no other name of it and no key. The chart reads its own
+    classes by type and leaves a class of another library to that library. No lowering copies it: `ChartView` puts the List on the
     canvas (`setPropertyAnimations`), `DatasetController.resolveAnimations` gives it to `Animations`,
     and `Animation` reads the parameters of the item itself. The `ChartAnimation` of
     `ChartConfig.animation` goes the same way for `duration`, `delay`, `easing` and `loop`: each of
@@ -1280,9 +1285,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     and Axes. The Core tab (`lib/demo/core_demo.dart`) runs a `LineController` chart with the
     typed config of Chart.js ADR 0052 §13, on two hidden linear axes (the typed form of
     `unitScales()`). `build` makes the `ChartConfig` from the control values: a control changes a
-    value in `setState`, and the data commands give new data Lists. `interaction.axis`,
-    `elements.point.hoverBorderWidth` and `transitions.active.animation.duration` go through
-    `extra`. Thus `gallery:build:web` compiles the typed path with dart2wasm. Its controls are
+    value in `setState`, and the data commands give new data Lists. `interaction.axis` and
+    `elements.point.hoverBorderWidth` go through `extra`. The duration of the hover transition is a
+    `HoverTransition` of `ChartConfig.transitions`. Thus `gallery:build:web` compiles the typed path with dart2wasm. Its controls are
     above the chart: `mode`, `axis`, one line of toggles and commands, `hover` and `update`. The
     Axes tab (`lib/demo/axes_demo.dart`) runs a `LineController` chart on the scales of phase 6.
     `x`, `y` and `N` are above the chart, and the other parameters are after the readout

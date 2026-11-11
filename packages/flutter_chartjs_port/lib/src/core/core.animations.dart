@@ -69,17 +69,25 @@ class Animations {
   /// core.animations.js:7 `constructor(chart, config)`.
   ///
   /// [items] are the items of `ChartConfig.animations` of the chart, or Dart
-  /// `null`. [base] is the `animation` options of the resolver of [config]:
-  /// the options of a property that has an item and no options of its own.
+  /// `null`. [modeItems] are the items of the transition of the update mode
+  /// (`ChartTransition.animations`): they go before [items]. [base] is the
+  /// `animation` options of the resolver of [config]: the options of a
+  /// property that has an item and no options of its own.
   // DIVERGES(chartjs): adapt-property-animations, the items of the app.
   Animations(
     types.Chart chart,
     Object? config, {
     List<PropertyAnimation>? items,
+    List<PropertyAnimation>? modeItems,
     Object? base,
   }) : _chart = chart {
     configure(config);
-    if (items != null && items.isNotEmpty) _setItems(items, base);
+    if (modeItems != null && modeItems.isNotEmpty) {
+      _setItems(modeItems, base, 'ChartTransition.animations');
+    }
+    if (items != null && items.isNotEmpty) {
+      _setItems(items, base, 'ChartConfig.animations', keep: true);
+    }
   }
 
   /// core.animations.js:6 `class Animations` as a value (Chart.js ADR 0020,
@@ -139,18 +147,31 @@ class Animations {
   /// Keeps each item of [items] for its property. A property with no
   /// options of its own gets the options of [base], the `animation` options:
   /// upstream gives them to an entry of `animations` through `_fallback`.
-  void _setItems(List<PropertyAnimation> items, Object? base) {
-    final table = _items = List<PropertyAnimation?>.filled(
+  ///
+  /// [owner] names the List in a message. With [keep], a property that has
+  /// an item from an earlier List keeps it: the items of a transition go
+  /// before the items of the chart.
+  void _setItems(
+    List<PropertyAnimation> items,
+    Object? base,
+    String owner, {
+    bool keep = false,
+  }) {
+    final table = _items ??= List<PropertyAnimation?>.filled(
       AnimatedProp.builtIns.length,
       null,
     );
+    final earlier = keep ? List<PropertyAnimation?>.of(table) : null;
     AnimationSpec? baseSpec;
     for (final item in items) {
       final prop = animatedPropertyOf(item);
+      // A class of another library: that library reads its items.
+      if (prop == null) continue;
+      if (earlier != null && earlier[prop.id] != null) continue;
       assert(
         table[prop.id] == null,
-        'ChartConfig.animations has two items for ${prop.name}. Give one '
-        'item for each class.',
+        '$owner has two items for ${prop.name}. Give one item for each '
+        'class.',
       );
       table[prop.id] = item;
       if (_builtIn[prop.id] == null) {

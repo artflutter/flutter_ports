@@ -248,17 +248,12 @@ class CoreDemoState extends State<CoreDemo> {
         extra: {'hoverBorderWidth': 3.0},
       ),
     ),
+    // The duration of the hover transition.
+    transitions: [
+      HoverTransition(duration: Duration(milliseconds: _hoverDuration.round())),
+    ],
     onHover: _onHover,
     plugins: [_valueLines],
-    // `transitions` has no typed parameter: the duration of the hover
-    // transition goes into `options` through `extra`.
-    extra: {
-      'transitions': <String, Object?>{
-        'active': <String, Object?>{
-          'animation': <String, Object?>{'duration': _hoverDuration},
-        },
-      },
-    },
   );
 
   /// The `onHover` of the chart: the readout shows the event type.

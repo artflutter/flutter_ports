@@ -160,6 +160,15 @@ Finder get _forbidden => find.descendant(
   ),
 );
 
+/// The [HoverTransition] of the config of [chart]: the object that the
+/// options of the mode `active` hold in the cell of the duration.
+HoverTransition _hoverTransition(Chart chart) =>
+    jsGet(
+          jsGet(jsGet(chart.options['transitions'], 'active'), 'animation'),
+          'duration',
+        )!
+        as HoverTransition;
+
 void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
@@ -464,16 +473,7 @@ void main() {
     await _tap(tester, 'core.hover.duration.0');
     expect(_selected(tester, 'core.hover.duration.0'), isTrue);
     expect(_selected(tester, 'core.hover.duration.400'), isFalse);
-    expect(
-      jsGet(
-        jsGet(
-          jsGet(readByName(chart.config.options, 'transitions'), 'active'),
-          'animation',
-        ),
-        'duration',
-      ),
-      0,
-    );
+    expect(_hoverTransition(chart).duration, Duration.zero);
     final point = _point(chart, 1, 5);
     final mouse = await _mouse(tester);
     await _moveTo(tester, mouse, point.x, point.y);
@@ -487,16 +487,15 @@ void main() {
       'longer', (tester) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
-    Object? resolved() => jsGet(
-      jsGet(jsGet(chart.options['transitions'], 'active'), 'animation'),
-      'duration',
-    );
-    expect(resolved(), 400);
+    // The resolved option of the chart holds the HoverTransition of the
+    // config itself (row adapt-property-animations).
+    Duration? resolved() => _hoverTransition(chart).duration;
+    expect(resolved(), const Duration(milliseconds: 400));
     await _tap(tester, 'core.hover.duration.1000');
     expect(_selected(tester, 'core.hover.duration.1000'), isTrue);
     expect(_selected(tester, 'core.hover.duration.400'), isFalse);
     // The resolved option of the chart, not only the user option.
-    expect(resolved(), 1000);
+    expect(resolved(), const Duration(seconds: 1));
     final point = _point(chart, 0, 4);
     final mouse = await _mouse(tester);
     await _moveTo(tester, mouse, point.x, point.y);

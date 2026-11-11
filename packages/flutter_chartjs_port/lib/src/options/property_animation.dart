@@ -1,7 +1,8 @@
 // Original code, not ported from Chart.js: the animation of one property.
 
-/// The animation of single properties of the elements: the items of
-/// `ChartConfig.animations` (row `adapt-property-animations`).
+/// The animation of single properties of the elements and of the update
+/// modes: the items of `ChartConfig.animations` and of
+/// `ChartConfig.transitions` (row `adapt-property-animations`).
 ///
 /// Each property of an element that Chart.js animates has one ready class,
 /// for example [RadiusAnimation] and [BorderColorAnimation]. A class has no
@@ -25,50 +26,44 @@ import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:meta/meta.dart';
 
-/// The four parameters of an animation that the core reads from an object
-/// of the app: an item of `ChartConfig.animations`, or the `ChartAnimation`
-/// of `ChartConfig.animation`. `Animation` of `core.animation.dart` reads
-/// the object itself. No option holds a copy of a parameter.
-abstract interface class AnimationSettings {
-  /// The length of the animation.
-  Duration? get duration;
-
-  /// The wait before the animation starts.
-  Duration? get delay;
-
-  /// The curve of the animation, a Flutter [Curve].
-  Curve? get easing;
-
-  /// Whether the animation repeats without end.
-  bool? get loop;
-}
-
-/// The animation of one property of the elements: an item of
-/// `ChartConfig.animations`. Each property has its ready class.
+/// The four parameters of an animation: the base of each object of the app
+/// that sets an animation (an item of `ChartConfig.animations`, an item of
+/// `ChartConfig.transitions` and the `ChartAnimation` of
+/// `ChartConfig.animation`). `Animation` of `core.animation.dart` reads the
+/// object itself. No option holds a copy of a parameter.
 @immutable
-sealed class PropertyAnimation implements AnimationSettings {
-  /// The animation options of one property.
-  const PropertyAnimation({this.duration, this.delay, this.easing, this.loop});
+abstract class AnimationSettings {
+  /// The parameters of an animation.
+  const AnimationSettings({this.duration, this.delay, this.easing, this.loop});
 
   /// The length of the animation.
-  @override
   final Duration? duration;
 
   /// The wait before the animation starts.
-  @override
   final Duration? delay;
 
   /// The curve of the animation, a Flutter [Curve].
-  @override
   final Curve? easing;
 
   /// Whether the animation repeats without end.
-  @override
   final bool? loop;
+}
 
-  /// The property that this class animates. Each class of this library
-  /// gives its own, and no other library sees the member.
-  AnimatedProp get _property;
+/// The animation of one property of the elements: an item of
+/// `ChartConfig.animations`. Each property has its ready class. The type of
+/// an item names its property: an item has no other name of it.
+///
+/// Another library can add a class for a property of its own element. The
+/// chart does not read such an item: the library that made the class finds
+/// its items in the List by their type.
+abstract class PropertyAnimation extends AnimationSettings {
+  /// The animation options of one property.
+  const PropertyAnimation({
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -97,9 +92,6 @@ final class XAnimation extends PropertyAnimation {
   /// No animation of `x`: a change shows at once. It is the
   /// duration 0.
   const XAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.x;
 }
 
 /// The animation of `y`: the vertical position of an element.
@@ -115,9 +107,6 @@ final class YAnimation extends PropertyAnimation {
   /// No animation of `y`: a change shows at once. It is the
   /// duration 0.
   const YAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.y;
 }
 
 /// The animation of `base`: the base of a bar.
@@ -133,9 +122,6 @@ final class BaseAnimation extends PropertyAnimation {
   /// No animation of `base`: a change shows at once. It is the
   /// duration 0.
   const BaseAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.base;
 }
 
 /// The animation of `width`: the width of a bar.
@@ -151,9 +137,6 @@ final class WidthAnimation extends PropertyAnimation {
   /// No animation of `width`: a change shows at once. It is the
   /// duration 0.
   const WidthAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.width;
 }
 
 /// The animation of `height`: the height of a bar.
@@ -169,9 +152,6 @@ final class HeightAnimation extends PropertyAnimation {
   /// No animation of `height`: a change shows at once. It is the
   /// duration 0.
   const HeightAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.height;
 }
 
 /// The animation of `radius`: the radius of a point.
@@ -187,9 +167,6 @@ final class RadiusAnimation extends PropertyAnimation {
   /// No animation of `radius`: a change shows at once. It is the
   /// duration 0.
   const RadiusAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.radius;
 }
 
 /// The animation of `borderWidth`: the width of the border of an element.
@@ -205,9 +182,6 @@ final class BorderWidthAnimation extends PropertyAnimation {
   /// No animation of `borderWidth`: a change shows at once. It is the
   /// duration 0.
   const BorderWidthAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.borderWidth;
 }
 
 /// The animation of `tension`: the tension of the curve of a line.
@@ -223,9 +197,6 @@ final class TensionAnimation extends PropertyAnimation {
   /// No animation of `tension`: a change shows at once. It is the
   /// duration 0.
   const TensionAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.tension;
 }
 
 /// The animation of `color`: the text color.
@@ -241,9 +212,6 @@ final class ColorAnimation extends PropertyAnimation {
   /// No animation of `color`: a change shows at once. It is the
   /// duration 0.
   const ColorAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.color;
 }
 
 /// The animation of `borderColor`: the color of the border of an element.
@@ -259,9 +227,6 @@ final class BorderColorAnimation extends PropertyAnimation {
   /// No animation of `borderColor`: a change shows at once. It is the
   /// duration 0.
   const BorderColorAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.borderColor;
 }
 
 /// The animation of `backgroundColor`: the fill color of an element.
@@ -277,9 +242,6 @@ final class BackgroundColorAnimation extends PropertyAnimation {
   /// No animation of `backgroundColor`: a change shows at once. It is the
   /// duration 0.
   const BackgroundColorAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.backgroundColor;
 }
 
 /// The animation of `visible`: whether a dataset shows.
@@ -295,9 +257,6 @@ final class VisibleAnimation extends PropertyAnimation {
   /// No animation of `visible`: a change shows at once. It is the
   /// duration 0.
   const VisibleAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.visible;
 }
 
 /// The animation of `startAngle`: the start angle of an arc.
@@ -313,9 +272,6 @@ final class StartAngleAnimation extends PropertyAnimation {
   /// No animation of `startAngle`: a change shows at once. It is the
   /// duration 0.
   const StartAngleAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.startAngle;
 }
 
 /// The animation of `endAngle`: the end angle of an arc.
@@ -331,9 +287,6 @@ final class EndAngleAnimation extends PropertyAnimation {
   /// No animation of `endAngle`: a change shows at once. It is the
   /// duration 0.
   const EndAngleAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.endAngle;
 }
 
 /// The animation of `circumference`: the circumference of an arc.
@@ -349,9 +302,6 @@ final class CircumferenceAnimation extends PropertyAnimation {
   /// No animation of `circumference`: a change shows at once. It is the
   /// duration 0.
   const CircumferenceAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.circumference;
 }
 
 /// The animation of `innerRadius`: the inner radius of an arc.
@@ -367,9 +317,6 @@ final class InnerRadiusAnimation extends PropertyAnimation {
   /// No animation of `innerRadius`: a change shows at once. It is the
   /// duration 0.
   const InnerRadiusAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.innerRadius;
 }
 
 /// The animation of `outerRadius`: the outer radius of an arc.
@@ -385,9 +332,6 @@ final class OuterRadiusAnimation extends PropertyAnimation {
   /// No animation of `outerRadius`: a change shows at once. It is the
   /// duration 0.
   const OuterRadiusAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.outerRadius;
 }
 
 /// The animation of `offset`: the offset of an arc from the center.
@@ -403,9 +347,6 @@ final class OffsetAnimation extends PropertyAnimation {
   /// No animation of `offset`: a change shows at once. It is the
   /// duration 0.
   const OffsetAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.offset;
 }
 
 /// The animation of `spacing`: the space between two arcs.
@@ -421,15 +362,207 @@ final class SpacingAnimation extends PropertyAnimation {
   /// No animation of `spacing`: a change shows at once. It is the
   /// duration 0.
   const SpacingAnimation.off() : super(duration: Duration.zero);
-
-  @override
-  AnimatedProp get _property => AnimatedProp.spacing;
 }
 
-/// The property that the class of [animation] animates.
+/// The animation of one update mode of a chart: an item of
+/// `ChartConfig.transitions`. Each mode has its ready class. The type of an
+/// item names its mode.
+///
+/// A parameter that is not `null` goes before the parameter of
+/// `ChartConfig.animation` in that mode. [animations] sets single properties
+/// in that mode, and goes before `ChartConfig.animations`. A List has one
+/// item for each class.
+abstract class ChartTransition extends AnimationSettings {
+  /// The animation options of one update mode.
+  const ChartTransition({
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
+    this.animations,
+  });
+
+  /// The animation of single properties in this mode. Each property has its
+  /// ready class ([PropertyAnimation]).
+  final List<PropertyAnimation>? animations;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ChartTransition &&
+          other.runtimeType == runtimeType &&
+          other.duration == duration &&
+          other.delay == delay &&
+          other.easing == easing &&
+          other.loop == loop &&
+          _sameItems(other.animations, animations);
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    duration,
+    delay,
+    easing,
+    loop,
+    animations == null ? null : Object.hashAll(animations!),
+  );
+}
+
+/// Whether [a] and [b] are both `null`, or have equal items in the same
+/// order.
+bool _sameItems(List<PropertyAnimation>? a, List<PropertyAnimation>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null || a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+/// The animation of the update mode `active`: an element is active, for
+/// example the pointer is over it.
+final class HoverTransition extends ChartTransition {
+  /// The animation options of the mode `active`.
+  const HoverTransition({
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
+    super.animations,
+  });
+
+  /// No animation in the mode `active`: a change shows at once. It is the
+  /// duration 0.
+  const HoverTransition.off() : super(duration: Duration.zero);
+}
+
+/// The animation of the update mode `show`: a dataset shows again.
+final class ShowTransition extends ChartTransition {
+  /// The animation options of the mode `show`.
+  const ShowTransition({
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
+    super.animations,
+  });
+
+  /// No animation in the mode `show`: a change shows at once. It is the
+  /// duration 0.
+  const ShowTransition.off() : super(duration: Duration.zero);
+}
+
+/// The animation of the update mode `hide`: a dataset hides.
+final class HideTransition extends ChartTransition {
+  /// The animation options of the mode `hide`.
+  const HideTransition({
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
+    super.animations,
+  });
+
+  /// No animation in the mode `hide`: a change shows at once. It is the
+  /// duration 0.
+  const HideTransition.off() : super(duration: Duration.zero);
+}
+
+/// The animation of the update mode `resize`: the chart changes its size.
+final class ResizeTransition extends ChartTransition {
+  /// The animation options of the mode `resize`.
+  const ResizeTransition({
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
+    super.animations,
+  });
+
+  /// No animation in the mode `resize`: a change shows at once. It is the
+  /// duration 0.
+  const ResizeTransition.off() : super(duration: Duration.zero);
+}
+
+/// The animation of the update mode `reset`: the chart resets.
+final class ResetTransition extends ChartTransition {
+  /// The animation options of the mode `reset`.
+  const ResetTransition({
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
+    super.animations,
+  });
+
+  /// No animation in the mode `reset`: a change shows at once. It is the
+  /// duration 0.
+  const ResetTransition.off() : super(duration: Duration.zero);
+}
+
+/// The update mode of the class of [transition], as `Chart.update` names
+/// it, or Dart `null` for a class of another library.
 @internal
-AnimatedProp animatedPropertyOf(PropertyAnimation animation) =>
-    animation._property;
+String? transitionModeOf(ChartTransition transition) => switch (transition) {
+  HoverTransition() => 'active',
+  ShowTransition() => 'show',
+  HideTransition() => 'hide',
+  ResizeTransition() => 'resize',
+  ResetTransition() => 'reset',
+  _ => null,
+};
+
+/// The transitions of the canvas of each chart.
+final Expando<List<ChartTransition>> _transitionsOfCanvas =
+    Expando<List<ChartTransition>>('chart transitions');
+
+/// Gives the chart on [canvas] the items [transitions], or no item for Dart
+/// `null`. Only `ChartView` calls it, with `ChartConfig.transitions`.
+@internal
+void setChartTransitions(Object canvas, List<ChartTransition>? transitions) {
+  _transitionsOfCanvas[canvas] = transitions;
+}
+
+/// The item of the chart on [canvas] for the update mode [mode], or Dart
+/// `null`: the object that the app made.
+@internal
+ChartTransition? chartTransitionOf(Object? canvas, String? mode) {
+  if (canvas == null || mode == null) return null;
+  final transitions = _transitionsOfCanvas[canvas];
+  if (transitions == null) return null;
+  for (final transition in transitions) {
+    if (transitionModeOf(transition) == mode) return transition;
+  }
+  return null;
+}
+
+/// The property that the class of [animation] animates, or Dart `null` for
+/// a class of another library: the library that made the class reads its
+/// items.
+@internal
+AnimatedProp? animatedPropertyOf(PropertyAnimation animation) =>
+    switch (animation) {
+      XAnimation() => AnimatedProp.x,
+      YAnimation() => AnimatedProp.y,
+      BaseAnimation() => AnimatedProp.base,
+      WidthAnimation() => AnimatedProp.width,
+      HeightAnimation() => AnimatedProp.height,
+      RadiusAnimation() => AnimatedProp.radius,
+      BorderWidthAnimation() => AnimatedProp.borderWidth,
+      TensionAnimation() => AnimatedProp.tension,
+      ColorAnimation() => AnimatedProp.color,
+      BorderColorAnimation() => AnimatedProp.borderColor,
+      BackgroundColorAnimation() => AnimatedProp.backgroundColor,
+      VisibleAnimation() => AnimatedProp.visible,
+      StartAngleAnimation() => AnimatedProp.startAngle,
+      EndAngleAnimation() => AnimatedProp.endAngle,
+      CircumferenceAnimation() => AnimatedProp.circumference,
+      InnerRadiusAnimation() => AnimatedProp.innerRadius,
+      OuterRadiusAnimation() => AnimatedProp.outerRadius,
+      OffsetAnimation() => AnimatedProp.offset,
+      SpacingAnimation() => AnimatedProp.spacing,
+      _ => null,
+    };
 
 /// The items of the canvas of each chart.
 final Expando<List<PropertyAnimation>> _ofCanvas =

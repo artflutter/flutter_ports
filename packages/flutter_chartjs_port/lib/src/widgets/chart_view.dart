@@ -49,7 +49,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show Opt, OptionKey;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show setPropertyAnimations;
+    show setChartTransitions, setPropertyAnimations;
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartConfigurationScope;
@@ -544,6 +544,7 @@ class _ChartViewState extends State<ChartView> {
     _appliedTyped = typed;
     // The animations of the chart read the items of the app as they are.
     setPropertyAnimations(_canvas, typed?.animations);
+    setChartTransitions(_canvas, typed?.transitions);
     return config;
   }
 
