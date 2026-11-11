@@ -7,9 +7,10 @@
 // The code is the code of web/isolate.js of apps/chart_benchmark_lab.
 //
 // It runs only on github.io, so a local run keeps its own server. It runs only
-// in a browser where the Flutter loader selects skwasm (getBrowserEngine of
-// flutter_js gives "blink"): another browser takes the JavaScript build, which
-// has no threads.
+// in a browser where the Flutter loader can select skwasm (getBrowserEngine of
+// flutter_js gives "blink", "gecko" or "webkit", and flutter_bootstrap.js
+// permits the last two): another browser takes the JavaScript build, which has
+// no threads.
 if (typeof window === 'undefined') {
   self.addEventListener('install', () => self.skipWaiting());
   self.addEventListener('activate', (event) => {
@@ -36,7 +37,9 @@ if (typeof window === 'undefined') {
   });
 } else if (!window.crossOriginIsolated && window.isSecureContext &&
     'serviceWorker' in navigator && location.hostname.endsWith('.github.io') &&
-    (navigator.vendor === 'Google Inc.' || navigator.userAgent.includes('Edg/'))) {
+    (navigator.vendor === 'Google Inc.' || navigator.userAgent.includes('Edg/') ||
+     navigator.vendor === 'Apple Computer, Inc.' ||
+     (navigator.vendor === '' && navigator.userAgent.includes('Firefox')))) {
   navigator.serviceWorker.register(document.currentScript.src).then((registration) => {
     // sessionStorage covers each page of the origin in this tab, and the docs
     // and each lab page have their own worker. Thus each page has its own key.

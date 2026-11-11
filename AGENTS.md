@@ -2211,7 +2211,10 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   text with the fonts of the system. The engine has that path only in CanvasKit, and only in a browser with
   the Enhanced TextMetrics API (`window.TextCluster`, in Chrome behind the flag "Experimental Web Platform
   features"). A `--wasm` build ignores the setting on skwasm, so the script gives a browser with the API
-  `renderer: 'canvaskit'`, the JavaScript build. Each other browser keeps its default build. The scripts
+  `renderer: 'canvaskit'`, the JavaScript build. The three scripts also set
+  `wasmAllowList: {gecko: true, webkit: true}`: by default, the loader takes the WebAssembly build only in a
+  Chromium browser. The loader of Flutter 3.50 keeps the JavaScript build in Firefox before 147 and in Safari
+  before 26.2. `web/isolate.js` also runs in Firefox and Safari. The scripts
   `gallery`, `docs` and `benchmark:web` start Chrome with
   `--enable-blink-features=ExtendedTextMetrics`. `test:web` runs without that flag. The header of a
   web run shows its mode (`lib/benchmark/web_mode.dart`; `JAVASCRIPT · NATIVE TEXT` for that path). A note that does not scroll

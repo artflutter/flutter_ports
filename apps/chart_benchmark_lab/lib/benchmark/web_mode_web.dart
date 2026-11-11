@@ -34,10 +34,9 @@ String? webModeWhy() {
         '"Experimental Web Platform features".';
   }
   if (!kIsWasm) {
-    return 'By default, Flutter uses WebAssembly only in a current Chromium '
-        'browser. This browser takes the JavaScript build, which has no '
-        'rendering thread. Open this page in a current Chrome or Edge for '
-        'WebAssembly.';
+    return 'This page uses WebAssembly in a current Chromium browser, in '
+        'Firefox from 147 and in Safari from 26.2. This browser takes the '
+        'JavaScript build, which has no rendering thread.';
   }
   if (_crossOriginIsolated == true) {
     return 'A worker thread does the rendering, so the main thread stays free '
