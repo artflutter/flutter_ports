@@ -44,9 +44,20 @@ GitHub Pages cannot send the COOP and COEP headers, so `web/isolate.js` adds the
 through a service worker, on `github.io` only. The first visit reloads once.
 `web/flutter_bootstrap.js` gives the Flutter loader no service worker settings,
 because the worker of Flutter removes any other worker in its scope. The
-header of a web run shows its mode: `WASM · THREADS`, `WASM · 1 THREAD` or
-`JAVASCRIPT`. The exported JSON has the same text as `webMode`. Only Chromium
-browsers take WebAssembly. Threads have the engine race of turned text
+header of a web run shows its mode: `WASM · THREADS`, `WASM · 1 THREAD`,
+`JAVASCRIPT` or `JAVASCRIPT · NATIVE TEXT`. The exported JSON has the same text
+as `webMode`. Only Chromium browsers take WebAssembly.
+
+`web/flutter_bootstrap.js` also sets `preferWebParagraph: true`
+([flutter/flutter#172561](https://github.com/flutter/flutter/issues/172561),
+from Flutter 3.50). With it, the browser lays out and draws the text with the
+fonts of the system. The engine has that path only in CanvasKit, and only in a
+browser with the Enhanced TextMetrics API. Chrome has the API behind the flag
+`chrome://flags/#enable-experimental-web-platform-features`. A `--wasm` build
+ignores the setting on skwasm. Thus the script gives a browser with the API the
+JavaScript build with CanvasKit, and the header shows `JAVASCRIPT · NATIVE TEXT`.
+For WebAssembly figures, turn off the flag. `dart run melos run benchmark:web`
+starts Chrome with the API. Threads have the engine race of turned text
 (`packages/flutter_chartjs_port/doc/performance.md` section 5), and the tag
 `3.50.0-0.4.pre` does not hold the merge commit of the Flutter fix #194139.
 
