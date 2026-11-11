@@ -369,7 +369,7 @@ void main() {
     test('has the reference of Node.js v24.22.1 on arm64', () {
       expect(interactionReferenceNode, 'v24.22.1');
       expect(interactionReferenceArch, 'arm64');
-      expect(interactionReference, hasLength(38));
+      expect(interactionReference, hasLength(37));
     });
   });
 
@@ -428,6 +428,69 @@ void main() {
       expect(() => InteractionMode.of('index'), throwsA(isA<AssertionError>()));
     });
 
+    test('an axis of another type takes the fallback axis of the mode', () {
+      // adapt-interaction-axis-enum: the option holds an InteractionAxis.
+      // Upstream gives a number, a boolean, an object or an array to
+      // `axis.indexOf` (core.interaction.js:95): a TypeError, or the result of
+      // Array.prototype.indexOf. The port has no such form: a value that is
+      // not an axis is the falsy `options.axis` of :272 and :354.
+      final scene = interactionReference.first;
+      List<(double, double, String)> run(
+        InteractionMode mode,
+        Map<String, Object?> options,
+      ) {
+        final chart = _chart(scene, <String>[]);
+        return _results(mode.itemsAt(chart, _Event(150, 100, chart), options));
+      }
+
+      for (final other in <Object>[5, true, <String, Object?>{}, <Object?>[]]) {
+        expect(
+          run(const NearestInteractionMode(), {
+            'axis': other,
+            'intersect': false,
+          }),
+          run(const NearestInteractionMode(), {
+            'axis': InteractionAxis.xy,
+            'intersect': false,
+          }),
+          reason: '$other',
+        );
+        expect(
+          run(const IndexInteractionMode(), {
+            'axis': other,
+            'intersect': false,
+          }),
+          run(const IndexInteractionMode(), {
+            'axis': InteractionAxis.x,
+            'intersect': false,
+          }),
+          reason: '$other',
+        );
+      }
+    });
+
+    test('an axis keyword is not an axis: a debug build stops', () {
+      expect(() => InteractionAxis.of('x'), throwsA(isA<AssertionError>()));
+      expect(InteractionAxis.of(null), isNull);
+      expect(InteractionAxis.of(InteractionAxis.r), InteractionAxis.r);
+    });
+
+    test('the axes of the distance of each value', () {
+      // `axis.indexOf('x') !== -1` and `axis.indexOf('y') !== -1` of :95-96.
+      expect(
+        [
+          for (final axis in InteractionAxis.values)
+            (axis.name, axis.usesX, axis.usesY),
+        ],
+        [
+          ('x', true, false),
+          ('y', false, true),
+          ('xy', true, true),
+          ('r', false, false),
+        ],
+      );
+    });
+
     test('evaluateInteractionItems gives each element that is not '
         'skipped', () {
       final trace = <String>[];
@@ -436,7 +499,7 @@ void main() {
       final visits = <(String, double, double)>[];
       Interaction.evaluateInteractionItems(
         chart,
-        'xy',
+        InteractionAxis.xy,
         const _Point(0, 0),
         (element, datasetIndex, index) =>
             visits.add(((element as _Spy).name, datasetIndex, index)),
@@ -465,7 +528,7 @@ void main() {
       // x: 200 lies between the elements 1 (150) and 2 (250).
       Interaction.evaluateInteractionItems(
         chart,
-        'x',
+        InteractionAxis.x,
         const _Point(200, 0),
         (element, datasetIndex, index) => visits.add((element as _Spy).name),
       );

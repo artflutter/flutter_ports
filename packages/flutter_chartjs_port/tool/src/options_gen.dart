@@ -32,6 +32,7 @@ const Map<String, int> shapeAtoms = {
   'tooltipPositioner': 512,
   'strokeCap': 1024,
   'strokeJoin': 2048,
+  'interactionAxis': 4096,
 };
 
 /// The shape of a key: the bits of its atoms and the kind of its `scope`
@@ -83,6 +84,7 @@ final class Shape {
     if (mask == shapeAtoms['tooltipPositioner']) return 'TooltipPositioner';
     if (mask == shapeAtoms['strokeCap']) return 'StrokeCap';
     if (mask == shapeAtoms['strokeJoin']) return 'StrokeJoin';
+    if (mask == shapeAtoms['interactionAxis']) return 'InteractionAxis';
     if (mask == shapeAtoms['scope']) return '${scope}Scope';
     return 'Object';
   }
@@ -101,6 +103,9 @@ final class Shape {
     }
     if (mask == shapeAtoms['strokeCap']) return 'classifyStrokeCap(raw)';
     if (mask == shapeAtoms['strokeJoin']) return 'classifyStrokeJoin(raw)';
+    if (mask == shapeAtoms['interactionAxis']) {
+      return 'classifyInteractionAxis(raw)';
+    }
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>(raw)';
     return 'classifyUnion(raw, $mask)';
   }
@@ -117,6 +122,7 @@ final class Shape {
     }
     if (mask == shapeAtoms['strokeCap']) return 'classifyStrokeCap';
     if (mask == shapeAtoms['strokeJoin']) return 'classifyStrokeJoin';
+    if (mask == shapeAtoms['interactionAxis']) return 'classifyInteractionAxis';
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>';
     return '(raw) => classifyUnion(raw, $mask)';
   }
@@ -914,7 +920,7 @@ String _scopes(Schema schema) {
       "import 'dart:ui' show StrokeCap, StrokeJoin;\n\n"
       "import 'package:flutter/animation.dart' show Curve;\n"
       "import 'package:flutter_chartjs_port/src/core/core.interaction.dart'\n"
-      '    show InteractionMode;\n'
+      '    show InteractionAxis, InteractionMode;\n'
       "import 'package:flutter_chartjs_port/src/options/opt.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_scope.dart';\n"
@@ -958,7 +964,8 @@ String _scopes(Schema schema) {
             'InteractionMode' ||
             'TooltipPositioner' ||
             'StrokeCap' ||
-            'StrokeJoin':
+            'StrokeJoin' ||
+            'InteractionAxis':
           out.write(
             '  set $setter($type value) => '
             'store(OptionKey.$id, OptValue<$type>(value));\n',

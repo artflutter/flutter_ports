@@ -1968,7 +1968,7 @@ enum ScopeKind {
           case OptionKey.intersect:
             return 2;
           case OptionKey.axis:
-            return 4;
+            return 4096;
           case OptionKey.includeInvisible:
             return 2;
           default:
@@ -3329,7 +3329,7 @@ enum ScopeKind {
           case OptionKey.intersect:
             return 2;
           case OptionKey.axis:
-            return 4;
+            return 4096;
           case OptionKey.includeInvisible:
             return 2;
           case OptionKey.enabled:

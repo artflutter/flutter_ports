@@ -90,7 +90,7 @@ final ChartConfig _config = ChartConfig(
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: false,
-    extra: {'axis': 'x'},
+    axis: .x,
   ),
   tooltip: const ChartTooltip(
     backgroundColor: _tooltip,

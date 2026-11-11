@@ -997,7 +997,7 @@ void main() {
             chart.getElementsAtEventForMode(
               _Event('mousemove', p1.x + 30, p1.y),
               const NearestInteractionMode(),
-              <String, Object?>{'intersect': false, 'axis': 'xy'},
+              <String, Object?>{'intersect': false, 'axis': InteractionAxis.xy},
               false,
             ),
           ),
@@ -1008,7 +1008,7 @@ void main() {
             chart.getElementsAtEventForMode(
               _Event('mousemove', p1.x + 30, p1.y),
               const NearestInteractionMode(),
-              <String, Object?>{'intersect': false, 'axis': 'y'},
+              <String, Object?>{'intersect': false, 'axis': InteractionAxis.y},
               false,
             ),
           ),

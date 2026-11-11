@@ -16,7 +16,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show NearestInteractionMode;
+    show InteractionAxis, NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -630,12 +630,15 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
       return jsNumberToString(n);
     case final String s:
       return jsonEncode(s);
-    // The Flutter enums of a line cap and a line join stand for the upstream
-    // keywords: the names of their values (row `adapt-flutter-stroke-enums`).
+    // The Flutter enums of a line cap and a line join, and the interaction
+    // axis, stand for the upstream keywords: the names of their values (rows
+    // `adapt-flutter-stroke-enums` and `adapt-interaction-axis-enum`).
     case final native_ui.StrokeCap cap:
       return jsonEncode(cap.name);
     case final native_ui.StrokeJoin join:
       return jsonEncode(join.name);
+    case final InteractionAxis axis:
+      return jsonEncode(axis.name);
     case Function() || JsFunction():
       return '<fn>';
     case final JsClass c:
@@ -1244,7 +1247,7 @@ final List<_Case> _focusedCases = [
           'mode': const NearestInteractionMode(),
           'intersect': false,
         },
-        'interaction': <String, Object?>{'axis': 'x'},
+        'interaction': <String, Object?>{'axis': InteractionAxis.x},
         'plugins': <String, Object?>{
           'tooltip': <String, Object?>{
             'backgroundColor': (Object? ctx) =>

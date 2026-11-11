@@ -484,7 +484,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       the generators write the mode class into the reference data (`DartMode` of
       `tool/reference/scale_chart_common.mjs`), and a compare with upstream JSON text puts a
       marker on both sides (`withModeMarkers` of `test/support/mode_json.dart`). The typed API
-      takes the same object (`ChartInteraction.mode`, `ChartTooltip.mode`). `layouts` is a record
+      takes the same object (`ChartInteraction.mode`, `ChartTooltip.mode`). The option `axis` of
+      the same scopes holds the enum `InteractionAxis` (`x`, `y`, `xy`, `r`; row
+      `adapt-interaction-axis-enum`, the schema shape `interactionAxis`): the search code tests
+      its values (`usesX`, `usesY`), a keyword stops a debug build in `InteractionAxis.of`, and the
+      typed API has `ChartInteraction.axis` and `ChartTooltip.axis`. The scale option `axis` stays
+      text. `layouts` is a record
       of `addBox`, `removeBox`, `configure` and `update`. A box is a `LayoutItem` of `lib/src/types/layout.dart`.
       `layouts.removeBox` takes a `LayoutItem?` (Dart `null` is the JS `undefined` of a stop hook).
     - `core.animation.dart` and the port-only `animation_spec.dart` (`AnimationSpec`, the typed

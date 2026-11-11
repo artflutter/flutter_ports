@@ -141,14 +141,12 @@ typedef InteractionHandler = void Function(
 ///
 /// Dart `null` stands for a JS `null` coordinate, and for the `undefined`
 /// of another axis. `binarySearch` reads the value only for the axis of the
-/// index scale, which is `'x'` or `'y'`. A key that is not a string is its
-/// `ToString` ([jsToString]), as the `ToPropertyKey` of the read gives.
-double? _positionValue(Point position, Object? axis) =>
-    switch (axis is String ? axis : jsToString(axis)) {
-      'x' => position.x,
-      'y' => position.y,
-      _ => null,
-    };
+/// index scale, which is `'x'` or `'y'`.
+double? _positionValue(Point position, InteractionAxis axis) => switch (axis) {
+  InteractionAxis.x => position.x,
+  InteractionAxis.y => position.y,
+  InteractionAxis.xy || InteractionAxis.r => null,
+};
 
 /// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:503):
 /// the typed axis value of a [ParsedItem] (Chart.js ADR 0054 §8), the Map
@@ -189,7 +187,7 @@ bool _skipped(Element element) => jsTruthy(switch (element) {
 /// test reads `vScale.axis` for each point that it tests, as upstream does.
 ({int lo, int hi}) _binarySearch(
   types.ChartMeta metaset,
-  Object? axis,
+  InteractionAxis axis,
   double? value, [
   bool? intersect,
 ]) {
@@ -204,13 +202,15 @@ bool _skipped(Element element) => jsTruthy(switch (element) {
             : null
       : null;
 
+  // `axis === iScale.axis`: the name of an axis value is the axis text of a
+  // scale (`x`, `y`, `r`).
   if (iScale != null &&
-      axis == iScale.axis &&
-      axis != 'r' &&
+      axis.name == iScale.axis &&
+      axis != InteractionAxis.r &&
       sorted &&
       data.isNotEmpty) {
-    // `axis === iScale.axis`. Thus the axis is a string here.
-    final key = axis! as String;
+    // The key of the parsed items: the axis text of the index scale.
+    final key = iScale.axis;
     final lookupMethod = iScale.reversePixels ? rlookupByKey : lookupByKey;
     if (intersect != true) {
       final result = lookupMethod(data, key, value ?? 0);
@@ -288,7 +288,7 @@ bool _skipped(Element element) => jsTruthy(switch (element) {
 /// but upstream returns `undefined`.
 void _evaluateInteractionItems(
   types.Chart chart,
-  Object? axis,
+  InteractionAxis axis,
   Point position,
   InteractionHandler handler, [
   bool? intersect,
@@ -315,15 +315,10 @@ void _evaluateInteractionItems(
 ///
 /// `Math.pow(delta, 2)` is [jsSquare] (Chart.js ADR 0045).
 double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
-  Object? axis,
+  InteractionAxis axis,
 ) {
-  final (useX, useY) = switch (axis) {
-    final String name => (name.contains('x'), name.contains('y')),
-    // Array.prototype.indexOf finds an item that is `===` to the string.
-    final List<Object?> list => (list.contains('x'), list.contains('y')),
-    // A JavaScript TypeError: the value has no `indexOf` method.
-    _ => throw TypeError(),
-  };
+  final useX = axis.usesX;
+  final useY = axis.usesY;
 
   return (pt1, pt2) {
     final deltaX = useX ? ((pt1.x ?? 0) - (pt2.x ?? 0)).abs() : 0.0;
@@ -347,7 +342,7 @@ double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
 List<InteractionItem> _getIntersectItems(
   types.Chart chart,
   Point position,
-  Object? axis,
+  InteractionAxis axis,
   bool? useFinalPosition,
   bool includeInvisible,
 ) {
@@ -404,7 +399,7 @@ List<InteractionItem> _getIntersectItems(
 List<InteractionItem> _getNearestRadialItems(
   types.Chart chart,
   Point position,
-  Object? axis, [
+  InteractionAxis axis, [
   bool? useFinalPosition,
 ]) {
   final items = <InteractionItem>[];
@@ -455,7 +450,7 @@ List<InteractionItem> _getNearestRadialItems(
 List<InteractionItem> _getNearestCartesianItems(
   types.Chart chart,
   Point position,
-  Object? axis,
+  InteractionAxis axis,
   bool intersect,
   bool? useFinalPosition,
   bool includeInvisible,
@@ -526,7 +521,7 @@ List<InteractionItem> _getNearestCartesianItems(
 List<InteractionItem> _getNearestItems(
   types.Chart chart,
   Point position,
-  Object? axis,
+  InteractionAxis axis,
   bool intersect,
   bool? useFinalPosition,
   bool includeInvisible,
@@ -535,7 +530,7 @@ List<InteractionItem> _getNearestItems(
     return [];
   }
 
-  return axis == 'r' && !intersect
+  return axis == InteractionAxis.r && !intersect
       ? _getNearestRadialItems(chart, position, axis, useFinalPosition)
       : _getNearestCartesianItems(
           chart,
@@ -560,19 +555,20 @@ List<InteractionItem> _getNearestItems(
 ///   instead of current position
 /// @return {InteractionItem[]} the nearest items
 ///
-/// The modes `x` and `y` pass the axis `'x'` or `'y'`. The test
+/// The modes `x` and `y` pass [InteractionAxis.x] or [InteractionAxis.y].
+/// The test
 /// `element[rangeMethod] &&` of :234 is a test for `types.VisualElement`,
 /// which declares `inXRange` and `inYRange`. `ArcElement` gives false for
 /// both (`adapt-arc-axis-range`, differences.md).
 List<InteractionItem> _getAxisItems(
   types.Chart chart,
   Point position,
-  String axis,
+  InteractionAxis axis,
   bool intersect, [
   bool? useFinalPosition,
 ]) {
   final items = <InteractionItem>[];
-  final rangeMethod = axis == 'x' ? 'inXRange' : 'inYRange';
+  final rangeMethod = axis == InteractionAxis.x ? 'inXRange' : 'inYRange';
   var intersectsItem = false;
 
   _evaluateInteractionItems(chart, axis, position, (
@@ -624,14 +620,10 @@ bool _inAxisRange(
 /// The option `options.axis || fallback` of core.interaction.js:272, :308,
 /// :338 and :354.
 ///
-/// index.d.ts:752 types `axis` as a string. The functions of this library
-/// take the value as it is, as upstream does: a value that is not a string
-/// or a `List` throws a `TypeError` where upstream calls `axis.indexOf`
-/// (core.interaction.js:95).
-Object? _axisOption(Object options, String fallback) {
-  final axis = readOption(options, OptionKey.axis);
-  return jsTruthy(axis) ? axis : fallback;
-}
+/// The option holds an [InteractionAxis]. A value that is not an axis gives
+/// [fallback], as a falsy value does upstream.
+InteractionAxis _axisOption(Object options, InteractionAxis fallback) =>
+    InteractionAxis.of(readOption(options, OptionKey.axis)) ?? fallback;
 
 /// The option `options.includeInvisible || false` of core.interaction.js:273,
 /// :309, :339 and :355. The readers test only its truthiness.
@@ -672,7 +664,7 @@ List<InteractionItem> _index(
 ]) {
   final position = getRelativePosition(e, chart);
   // Default axis for index mode is 'x' to match old behaviour
-  final axis = _axisOption(options, 'x');
+  final axis = _axisOption(options, InteractionAxis.x);
   final includeInvisible = _includeInvisibleOption(options);
   final items = _intersectOption(options)
       ? _getIntersectItems(
@@ -735,7 +727,7 @@ List<InteractionItem> _dataset(
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
-  final axis = _axisOption(options, 'xy');
+  final axis = _axisOption(options, InteractionAxis.xy);
   final includeInvisible = _includeInvisibleOption(options);
   var items = _intersectOption(options)
       ? _getIntersectItems(
@@ -790,7 +782,7 @@ List<InteractionItem> _point(
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
-  final axis = _axisOption(options, 'xy');
+  final axis = _axisOption(options, InteractionAxis.xy);
   final includeInvisible = _includeInvisibleOption(options);
   return _getIntersectItems(
     chart,
@@ -818,7 +810,7 @@ List<InteractionItem> _nearest(
   bool? useFinalPosition,
 ]) {
   final position = getRelativePosition(e, chart);
-  final axis = _axisOption(options, 'xy');
+  final axis = _axisOption(options, InteractionAxis.xy);
   final includeInvisible = _includeInvisibleOption(options);
   return _getNearestItems(
     chart,
@@ -850,7 +842,7 @@ List<InteractionItem> _x(
   return _getAxisItems(
     chart,
     position,
-    'x',
+    InteractionAxis.x,
     _intersectOption(options),
     useFinalPosition,
   );
@@ -876,10 +868,57 @@ List<InteractionItem> _y(
   return _getAxisItems(
     chart,
     position,
-    'y',
+    InteractionAxis.y,
     _intersectOption(options),
     useFinalPosition,
   );
+}
+
+/// The axes that an interaction mode uses for the distance from the event
+/// position to an item: the value of the option `axis` of `interaction`,
+/// `hover` and the tooltip (index.d.ts:752, `'x' | 'y' | 'xy' | 'r'`).
+///
+/// Upstream holds a keyword and tests it as text: `axis.indexOf('x')` for
+/// the distance (core.interaction.js:95), `axis === iScale.axis` for the
+/// binary search (:26) and `axis === 'r'` for the radial search (:214).
+/// The port holds this enum. The set is closed: the search code of this
+/// file reads it, and a mode of a program that needs another rule has its
+/// own fields.
+// DIVERGES(chartjs): adapt-interaction-axis-enum, an enum, not a keyword.
+enum InteractionAxis {
+  /// `'x'`: the distance along x only.
+  x(usesX: true, usesY: false),
+
+  /// `'y'`: the distance along y only.
+  y(usesX: false, usesY: true),
+
+  /// `'xy'`: the distance in the plane.
+  xy(usesX: true, usesY: true),
+
+  /// `'r'`: the angle around the center of a radial chart. The distance in
+  /// the plane uses no coordinate, as `'r'.indexOf('x')` gives -1.
+  r(usesX: false, usesY: false);
+
+  const InteractionAxis({required this.usesX, required this.usesY});
+
+  /// `axis.indexOf('x') !== -1` (core.interaction.js:95).
+  final bool usesX;
+
+  /// `axis.indexOf('y') !== -1` (core.interaction.js:96).
+  final bool usesY;
+
+  /// The axis of [value], the value of an option `axis`, or Dart `null` for
+  /// a value that is not an axis: the fallback of `options.axis || 'x'`
+  /// then applies (core.interaction.js:272). A keyword of Chart.js is not
+  /// an axis: a debug build stops on it.
+  static InteractionAxis? of(Object? value) {
+    assert(
+      value is! String,
+      'The option axis of the interaction takes an InteractionAxis, not '
+      'the name "$value".',
+    );
+    return value is InteractionAxis ? value : null;
+  }
 }
 
 /// An interaction mode: the value of the option `mode` of `interaction`,
@@ -1049,7 +1088,7 @@ abstract final class Interaction {
   /// modes. See [_evaluateInteractionItems].
   static void evaluateInteractionItems(
     types.Chart chart,
-    String axis,
+    InteractionAxis axis,
     Point position,
     InteractionHandler handler, [
     bool? intersect,

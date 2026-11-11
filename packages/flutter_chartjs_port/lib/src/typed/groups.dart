@@ -18,7 +18,7 @@ import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
+    show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/options/opt.dart'
     show OptForeign, OptScope;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -362,6 +362,7 @@ final class ChartTooltip with Diagnosticable {
     this.enabled,
     this.mode,
     this.intersect,
+    this.axis,
     this.position,
     this.backgroundColor,
     this.titleColor,
@@ -390,6 +391,10 @@ final class ChartTooltip with Diagnosticable {
   /// Whether the tooltip shows only when the pointer is on an item:
   /// `intersect`. The default is the value of `ChartConfig.interaction`.
   final bool? intersect;
+
+  /// The axes of the distance from the event to an item: `axis`. The
+  /// default is the value of `ChartConfig.interaction`.
+  final InteractionAxis? axis;
 
   /// The object that finds the position of the tooltip: `position`. The
   /// default is `AverageTooltipPositioner()`. `NearestTooltipPositioner()`
@@ -455,6 +460,7 @@ final class ChartTooltip with Diagnosticable {
     bool? enabled,
     InteractionMode? mode,
     bool? intersect,
+    InteractionAxis? axis,
     TooltipPositioner? position,
     Color? backgroundColor,
     Color? titleColor,
@@ -474,6 +480,7 @@ final class ChartTooltip with Diagnosticable {
     enabled: enabled ?? this.enabled,
     mode: mode ?? this.mode,
     intersect: intersect ?? this.intersect,
+    axis: axis ?? this.axis,
     position: position ?? this.position,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     titleColor: titleColor ?? this.titleColor,
@@ -495,6 +502,7 @@ final class ChartTooltip with Diagnosticable {
     ('enabled', enabled),
     ('mode', mode),
     ('intersect', intersect),
+    ('axis', axis),
     ('position', position),
     ('backgroundColor', backgroundColor),
     ('titleColor', titleColor),
@@ -554,6 +562,7 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.enabled, tooltip.enabled);
   put(scope, OptionKey.mode, tooltip.mode);
   put(scope, OptionKey.intersect, tooltip.intersect);
+  put(scope, OptionKey.axis, tooltip.axis);
   put(scope, OptionKey.position, tooltip.position);
   put(scope, OptionKey.backgroundColor, colorValue(tooltip.backgroundColor));
   put(scope, OptionKey.titleColor, colorValue(tooltip.titleColor));
@@ -579,6 +588,7 @@ final class ChartInteraction with Diagnosticable {
   const ChartInteraction({
     this.mode,
     this.intersect,
+    this.axis,
     this.includeInvisible,
     this.extra,
   });
@@ -591,12 +601,17 @@ final class ChartInteraction with Diagnosticable {
   /// `intersect`. The default is `true`.
   final bool? intersect;
 
+  /// The axes of the distance from the event to an element: `axis`. The
+  /// default is [InteractionAxis.x] for the mode index and
+  /// [InteractionAxis.xy] for the other modes.
+  final InteractionAxis? axis;
+
   /// Whether an event also hits the elements outside the chart area:
   /// `includeInvisible`. The default is `false`.
   final bool? includeInvisible;
 
-  /// The Chart.js interaction options that have no parameter, for example
-  /// `{'axis': 'x'}`. The rules of [ChartLegend.extra] apply.
+  /// The Chart.js interaction options that have no parameter. The rules of
+  /// [ChartLegend.extra] apply.
   final Map<String, Object?>? extra;
 
   /// A copy of these interaction options with the given parameters. A
@@ -604,11 +619,13 @@ final class ChartInteraction with Diagnosticable {
   ChartInteraction copyWith({
     InteractionMode? mode,
     bool? intersect,
+    InteractionAxis? axis,
     bool? includeInvisible,
     Map<String, Object?>? extra,
   }) => ChartInteraction(
     mode: mode ?? this.mode,
     intersect: intersect ?? this.intersect,
+    axis: axis ?? this.axis,
     includeInvisible: includeInvisible ?? this.includeInvisible,
     extra: extra ?? this.extra,
   );
@@ -616,6 +633,7 @@ final class ChartInteraction with Diagnosticable {
   List<TypedProperty> get _props => [
     ('mode', mode),
     ('intersect', intersect),
+    ('axis', axis),
     ('includeInvisible', includeInvisible),
     ('extra', byEntries(extra)),
   ];
@@ -641,6 +659,7 @@ InteractionOptionsScope lowerInteraction(ChartInteraction interaction) {
   final scope = InteractionOptionsScope();
   put(scope, OptionKey.mode, interaction.mode);
   put(scope, OptionKey.intersect, interaction.intersect);
+  put(scope, OptionKey.axis, interaction.axis);
   put(scope, OptionKey.includeInvisible, interaction.includeInvisible);
   return mergeExtra(scope, interaction.extra);
 }

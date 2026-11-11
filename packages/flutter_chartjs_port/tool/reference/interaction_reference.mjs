@@ -650,17 +650,10 @@ addScene(
   grid([['index', {intersect: true}], ['index', {intersect: false}]], [[180, 150], [60, 150], [400, 30]]),
 );
 
-// An axis option that is not a string.
-addScene('axis option of another type', LINES, [
-  ['point', {axis: 5}, undefined, 150, 100],
-  ['nearest', {axis: 5, intersect: false}, undefined, 150, 100],
-  ['nearest', {axis: true, intersect: false}, undefined, 150, 100],
-  ['nearest', {axis: {}, intersect: false}, undefined, 150, 100],
-  ['point', {axis: ['x']}, undefined, 150, 100],
-  ['nearest', {axis: ['x'], intersect: false}, undefined, 200, 125],
-  ['nearest', {axis: ['xy'], intersect: false}, undefined, 200, 125],
-  ['index', {axis: ['x'], intersect: false}, undefined, 200, 125],
-]);
+// The port has no scene of an axis option of another type (a number, a
+// boolean, an object or an array): the option holds an `InteractionAxis`,
+// and another value takes the fallback axis of the mode (row
+// adapt-interaction-axis-enum). core.interaction_test.dart tests that.
 
 /** The Dart literal of a number. */
 function num(v) {
@@ -686,7 +679,11 @@ function dart(v) {
   if (typeof v === 'string' && /^[\w :]*$/.test(v)) return `'${v}'`;
   if (Array.isArray(v)) return `<Object?>[${v.map(dart).join(', ')}]`;
   if (typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype) {
-    const entries = Object.keys(v).map((k) => `${dart(k)}: ${dart(v[k])}`);
+    // The option `axis` holds the enum value of the port with the name of
+    // the keyword (row adapt-interaction-axis-enum).
+    const entries = Object.keys(v).map(
+      (k) => `${dart(k)}: ${k === 'axis' ? `InteractionAxis.${v[k]}` : dart(v[k])}`,
+    );
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);

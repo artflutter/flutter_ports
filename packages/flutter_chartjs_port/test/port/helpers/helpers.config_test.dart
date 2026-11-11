@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show NearestInteractionMode, XInteractionMode;
+    show InteractionAxis, NearestInteractionMode, XInteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, each, merge, mergeIf, resolveObjectKey;
@@ -1002,7 +1002,10 @@ void main() {
           },
         },
         ChartOptionsScope()
-          ..jsWrite('hover', InteractionOptionsScope()..jsWrite('axis', 'y'))
+          ..jsWrite(
+            'hover',
+            InteractionOptionsScope()..jsWrite('axis', InteractionAxis.y),
+          )
           ..jsWrite(
             'interaction',
             InteractionOptionsScope()..jsWrite('intersect', false),
@@ -1028,7 +1031,7 @@ void main() {
       }
       final hover = single['hover']! as Resolver;
       expect(hover['mode'], const XInteractionMode());
-      expect(hover['axis'], 'y');
+      expect(hover['axis'], InteractionAxis.y);
       expect(hover['intersect'], false);
       final zoom = (single['plugins']! as Resolver)['zoom']! as Resolver;
       expect(zoom['speed'], 0.2);

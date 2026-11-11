@@ -1145,6 +1145,17 @@ export class DartMode {
   }
 }
 
+/**
+ * An interaction axis of upstream (`'x'`, `'y'`, `'xy'` or `'r'`) as a value
+ * of the Dart data: the enum value of the port with the name of the keyword
+ * (row adapt-interaction-axis-enum).
+ */
+export class DartAxis {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
 /** The keys of a config whose object holds an interaction `mode`. */
 const INTERACTION_SCOPES = new Set(['interaction', 'hover', 'tooltip']);
 
@@ -1198,7 +1209,8 @@ const POSITIONER_CLASSES = {
 /**
  * The Dart literal of a JS value. A named function is `'fn:<name>'`. A
  * DartMode, and a string `mode` of the object [owner] of
- * INTERACTION_SCOPES, is the mode class of the port. A DartPositioner, and
+ * INTERACTION_SCOPES, is the mode class of the port. A DartAxis, and a
+ * string `axis` of such an object, is the axis enum value of the port. A DartPositioner, and
  * a string `position` of the object `tooltip`, is the positioner class of
  * the port. A string of a key of STROKE_ENUMS is the Flutter enum value.
  * [state.undefined] becomes true when the literal has the sentinel
@@ -1248,6 +1260,10 @@ function dart(v, state, owner) {
     state.modes = true;
     return `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`;
   }
+  if (v instanceof DartAxis) {
+    state.modes = true;
+    return `InteractionAxis.${v.name}`;
+  }
   if (v instanceof DartEnum) {
     (state.strokes ??= new Set()).add(v.type);
     return `${v.type}.${v.name}`;
@@ -1264,6 +1280,7 @@ function dart(v, state, owner) {
       let value = v[k];
       if (typeof value === 'string') {
         if (k === 'mode' && INTERACTION_SCOPES.has(owner)) value = new DartMode(value);
+        if (k === 'axis' && INTERACTION_SCOPES.has(owner)) value = new DartAxis(value);
         if (k === 'position' && owner === 'tooltip') value = new DartPositioner(value);
         const stroke = STROKE_ENUMS[k];
         if (stroke && STROKE_VALUES[stroke].has(value)) value = new DartEnum(stroke, value);

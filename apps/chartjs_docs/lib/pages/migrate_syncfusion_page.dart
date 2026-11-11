@@ -113,7 +113,7 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
         '`pointColorMapper` is a scriptable `borderColor` in the `segment` '
             'Map. Each segment takes the color of its end point.',
         'The trackball is `interaction` with `mode: NearestInteractionMode()`, '
-            "`intersect: false` and `'axis': 'x'`. An inline plugin draws "
+            '`intersect: false` and `axis: .x`. An inline plugin draws '
             'its vertical line.',
         '`DateTimeAxis` is `TimeAxis(unit: .year)`, and `tooltipFormat` '
             'gives the year in the tooltip.',

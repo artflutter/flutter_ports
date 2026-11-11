@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show
         IndexInteractionMode,
+        InteractionAxis,
         InteractionMode,
         NearestInteractionMode,
         PointInteractionMode;
@@ -549,13 +550,17 @@ void main() {
         [0, 3],
       ]);
       expect(
-        _hitsAt(chart, qx, qy, const NearestInteractionMode(), {'axis': 'r'}),
+        _hitsAt(chart, qx, qy, const NearestInteractionMode(), {
+          'axis': InteractionAxis.r,
+        }),
         [
           [0, 3],
         ],
       );
       expect(
-        _hitsAt(chart, qx, qy, const IndexInteractionMode(), {'axis': 'r'}),
+        _hitsAt(chart, qx, qy, const IndexInteractionMode(), {
+          'axis': InteractionAxis.r,
+        }),
         [
           [0, 3],
         ],

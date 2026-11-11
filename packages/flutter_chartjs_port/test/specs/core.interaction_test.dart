@@ -330,7 +330,7 @@ void main() {
 
           final elements = _elements(
             const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{
-              'axis': 'y',
+              'axis': InteractionAxis.y,
               'intersect': false,
             }),
           );
@@ -353,7 +353,7 @@ void main() {
 
           final elements = _elements(
             const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{
-              'axis': 'xy',
+              'axis': InteractionAxis.xy,
               'intersect': false,
             }),
           );
@@ -450,7 +450,7 @@ void main() {
               chart,
               evt,
               <String, Object?>{
-                'axis': 'x',
+                'axis': InteractionAxis.x,
                 'intersect': false,
               },
             ),
@@ -471,7 +471,7 @@ void main() {
               chart,
               evt,
               <String, Object?>{
-                'axis': 'y',
+                'axis': InteractionAxis.y,
                 'intersect': false,
               },
             ),
@@ -612,7 +612,7 @@ void main() {
                 chart,
                 evt,
                 <String, Object?>{
-                  'axis': 'x',
+                  'axis': InteractionAxis.x,
                   'intersect': false,
                 },
               ),
@@ -645,7 +645,7 @@ void main() {
                 chart,
                 evt,
                 <String, Object?>{
-                  'axis': 'x',
+                  'axis': InteractionAxis.x,
                   'intersect': false,
                 },
               ),
@@ -679,7 +679,7 @@ void main() {
                 chart,
                 evt,
                 <String, Object?>{
-                  'axis': 'y',
+                  'axis': InteractionAxis.y,
                   'intersect': false,
                 },
               ),
@@ -704,7 +704,7 @@ void main() {
                 chart,
                 evt,
                 <String, Object?>{
-                  'axis': 'y',
+                  'axis': InteractionAxis.y,
                   'intersect': false,
                 },
               ),
@@ -734,7 +734,7 @@ void main() {
                 chart,
                 evt,
                 <String, Object?>{
-                  'axis': 'r',
+                  'axis': InteractionAxis.r,
                 },
               ),
             );
@@ -755,7 +755,7 @@ void main() {
                   chart,
                   evt,
                   <String, Object?>{
-                    'axis': 'r',
+                    'axis': InteractionAxis.r,
                     'intersect': false,
                   },
                 ),
@@ -1177,7 +1177,7 @@ void main() {
               chart,
               evt,
               <String, Object?>{
-                'axis': 'x',
+                'axis': InteractionAxis.x,
                 'intersect': false,
               },
             ),

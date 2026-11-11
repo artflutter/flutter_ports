@@ -242,7 +242,7 @@ void main() {
       'core.readout',
       'core.help',
       for (final mode in coreDemoModes) 'core.mode.$mode',
-      for (final axis in coreDemoAxes) 'core.axis.$axis',
+      for (final axis in coreDemoAxes) 'core.axis.${axis.name}',
       'core.intersect',
       'core.animation',
       'core.dataset.0',
@@ -354,7 +354,7 @@ void main() {
     expect(
       find.descendant(
         of: find.byType(CoreDemo),
-        matching: find.byType(SegmentChoice<String>),
+        matching: find.byType(SegmentChoice<InteractionAxis>),
       ),
       findsOneWidget,
     );
@@ -571,7 +571,7 @@ void main() {
     final chart = state.chart!;
     bool selected(String axis) => _selected(tester, 'core.axis.$axis');
     expect(selected('xy'), isTrue);
-    expect(jsGet(chart.options['interaction'], 'axis'), 'xy');
+    expect(jsGet(chart.options['interaction'], 'axis'), InteractionAxis.xy);
 
     // Without intersect, the mode nearest with the axis x finds the points
     // at the smallest x distance: the two points of index 3 have the same x.
@@ -579,9 +579,9 @@ void main() {
     await _tap(tester, 'core.axis.x');
     expect(selected('x'), isTrue);
     expect(selected('xy'), isFalse);
-    expect(jsGet(chart.options['interaction'], 'axis'), 'x');
+    expect(jsGet(chart.options['interaction'], 'axis'), InteractionAxis.x);
     // The chart reads the hover options (hover falls back to interaction).
-    expect(jsGet(chart.options['hover'], 'axis'), 'x');
+    expect(jsGet(chart.options['hover'], 'axis'), InteractionAxis.x);
     final point = _point(chart, 0, 3);
     final area = chart.chartArea!;
     final mouse = await _mouse(tester);
@@ -592,8 +592,8 @@ void main() {
     // With the axis y, only the y distance counts.
     await _tap(tester, 'core.axis.y');
     expect(selected('y'), isTrue);
-    expect(jsGet(chart.options['interaction'], 'axis'), 'y');
-    expect(jsGet(chart.options['hover'], 'axis'), 'y');
+    expect(jsGet(chart.options['interaction'], 'axis'), InteractionAxis.y);
+    expect(jsGet(chart.options['hover'], 'axis'), InteractionAxis.y);
     await _moveTo(tester, mouse, area.left + 2, point.y);
     await _frames(tester, 3);
     expect(state.activeLabel, 'd0#3');

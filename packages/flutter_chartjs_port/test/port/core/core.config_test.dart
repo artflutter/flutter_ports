@@ -25,7 +25,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
-import '../../support/stroke_json.dart';
+import '../../support/keyword_enum_json.dart';
 
 // Upstream has no spec for src/core/core.config.js (AGENTS.md rule 3). The
 // expected values come from src/core/core.config.js at v4.5.1, with the
@@ -60,7 +60,7 @@ String _jsonRaw(Object? value) => switch (value) {
   num() => throw ArgumentError.value(value, 'value', 'is an int'),
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
-  final Object stroke when isStroke(stroke) => strokeJson(stroke),
+  final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',

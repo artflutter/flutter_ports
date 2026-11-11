@@ -979,7 +979,14 @@ const Map<String, (ChartInteraction, Map<String, Object?>)> _interaction = {
     ChartInteraction(includeInvisible: true),
     {'includeInvisible': true},
   ),
-  'extra': (ChartInteraction(extra: {'axis': 'xy'}), {'axis': 'xy'}),
+  'axis': (
+    ChartInteraction(axis: .xy),
+    {'axis': InteractionAxis.xy},
+  ),
+  'extra': (
+    ChartInteraction(extra: {'unknownKey': 1}),
+    {'unknownKey': 1},
+  ),
 };
 
 /// The cases of the parameters of [ChartAnimation] and the twin value.
@@ -2240,7 +2247,7 @@ void main() {
             mode: NearestInteractionMode(),
             intersect: false,
             includeInvisible: true,
-            extra: {'axis': 'x'},
+            axis: .x,
           ),
           animation: ChartAnimation(
             duration: Duration(milliseconds: 500),
@@ -2309,8 +2316,8 @@ void main() {
         'interaction': {
           'mode': const NearestInteractionMode(),
           'intersect': false,
+          'axis': InteractionAxis.x,
           'includeInvisible': true,
-          'axis': 'x',
         },
         'animation': {
           'duration': 500,

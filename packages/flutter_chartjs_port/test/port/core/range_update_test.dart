@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show
         DatasetInteractionMode,
         IndexInteractionMode,
+        InteractionAxis,
         InteractionMode,
         NearestInteractionMode,
         PointInteractionMode,
@@ -284,7 +285,7 @@ Map<String, Object?> _hits(Chart chart) => observeHits(chart, <String, Object?>{
       YInteractionMode(),
     ])
       for (final intersect in [true, false])
-        <Object?>[mode, intersect, 'xy', false],
+        <Object?>[mode, intersect, InteractionAxis.xy, false],
   ],
 });
 
