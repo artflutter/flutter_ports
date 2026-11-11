@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: core.element cases with no spec.
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show PointOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -124,6 +126,20 @@ void main() {
     AnimatedProp.y.markUndefined(element);
     expect(AnimatedProp.y.isUndefined(element), isTrue);
     expect(AnimatedProp.x.isUndefined(element), isFalse);
+  });
+
+  // A style property reads and writes the typed field of the resolved
+  // options by its option key.
+  test('a style property reads and writes the options of an element', () {
+    final options = PointOptions()..['radius'] = 3.0;
+    expect(AnimatedProp.radius.valueOf(options), 3);
+    AnimatedProp.radius.store(options, 6.0);
+    expect(options.radius, 6);
+    // Another target takes the access by name.
+    final map = <String, Object?>{'radius': 1.0};
+    AnimatedProp.radius.store(map, 2.0);
+    expect(map['radius'], 2);
+    expect(AnimatedProp.radius.valueOf(map), 2);
   });
 
   group(r'$context', () {

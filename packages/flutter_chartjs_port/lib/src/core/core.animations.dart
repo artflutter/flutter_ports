@@ -351,7 +351,7 @@ class Animations {
       }
       if (cfg == null || !_animates(cfg, item)) {
         // not animated, set directly to new value
-        writeProperty(target, prop, value);
+        key.store(target, value);
         continue;
       }
 
@@ -418,7 +418,7 @@ class Animations {
         if (element != null) {
           element.writePropertyAt(values, i);
         } else {
-          writeProperty(target, prop, values.jsRead(prop));
+          key.store(target, values.jsRead(prop));
         }
         continue;
       }
