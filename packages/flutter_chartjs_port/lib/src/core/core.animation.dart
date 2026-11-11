@@ -194,7 +194,7 @@ final class _ColorInterpolator {
   }
 }
 
-/// core.animation.js:27 `Animation`, the animation of the property [_prop]
+/// core.animation.js:27 `Animation`, the animation of the property [_key]
 /// of the target [_target].
 class Animation implements types.Animation {
   /// core.animation.js:28 `constructor(cfg, target, prop, to)`.
@@ -236,7 +236,7 @@ class Animation implements types.Animation {
   ]) : _target = target,
        _key = prop,
        _element = target is Element ? target : null {
-    final currentValue = readProperty(target, prop.name);
+    final currentValue = prop.valueOf(target);
 
     // `resolve([cfg.to, to, currentValue, cfg.from])`.
     final cfgTo = _cfgTo(cfg);
@@ -321,11 +321,10 @@ class Animation implements types.Animation {
   /// core.animation.js:40 `_target`.
   final Object _target;
 
-  /// core.animation.js:41 `_prop`, as its key (Chart.js ADR 0054 §10).
+  /// core.animation.js:41 `_prop`, as its key (Chart.js ADR 0054 §10): the
+  /// property reads and writes the target (`AnimatedProp.valueOf`,
+  /// `AnimatedProp.store`). The animation has no name of the property.
   final AnimatedProp _key;
-
-  /// core.animation.js:41 `_prop`: the property name.
-  String get _prop => _key.name;
 
   /// core.animation.js:42 `_from`.
   Object? _from;
@@ -429,7 +428,7 @@ class Animation implements types.Animation {
     if (_active) {
       _notify(false);
 
-      final currentValue = readProperty(_target, _prop);
+      final currentValue = _key.valueOf(_target);
       final elapsed = date - _start;
       final remain = _duration - elapsed;
       _start = date;
@@ -474,7 +473,6 @@ class Animation implements types.Animation {
     }
     final elapsed = date - _start;
     final duration = _duration;
-    final prop = _prop;
     final from = _from;
     final loop = _loop;
     final to = _to;
@@ -485,13 +483,13 @@ class Animation implements types.Animation {
     _active = from != to && (loop || (elapsed < duration));
 
     if (!_active) {
-      writeProperty(_target, prop, to);
+      _key.store(_target, to);
       _notify(true);
       return;
     }
 
     if (elapsed < 0) {
-      writeProperty(_target, prop, from);
+      _key.store(_target, from);
       return;
     }
 
@@ -499,7 +497,7 @@ class Animation implements types.Animation {
     factor = loop && factor > 1 ? 2 - factor : factor;
     factor = _ease(jsMin(1, jsMax(0, factor)));
 
-    writeProperty(_target, prop, _fn!(from, to, factor));
+    _key.store(_target, _fn!(from, to, factor));
   }
 
   /// core.animation.js:105 `wait()`: a future that completes when the
@@ -604,7 +602,7 @@ class Animation implements types.Animation {
     if (element != null) {
       element.writeNumber(_key, value);
     } else {
-      writeProperty(_target, _prop, value);
+      _key.store(_target, value);
     }
   }
 }

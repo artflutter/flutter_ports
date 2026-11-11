@@ -5,6 +5,8 @@
 /// This library is a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/core.animation.dart'
+    show readProperty, writeProperty;
 import 'package:flutter_chartjs_port/src/core/core.element.dart'
     show Element, ElementXProp, ElementYProp;
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart'
@@ -18,6 +20,10 @@ import 'package:flutter_chartjs_port/src/elements/element.bar.dart'
     show BarBaseProp, BarHeightProp, BarWidthProp;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+    show ElementOptions;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart';
 import 'package:meta/meta.dart';
 
@@ -42,15 +48,21 @@ import 'package:meta/meta.dart';
 /// A numeric property of an element class has its own class, next to the
 /// element (`ElementXProp`, `BarBaseProp`, `ArcStartAngleProp`): it reads
 /// and writes the field of the element with no `switch` by an id ([write],
-/// [read], [markUndefined], [isUndefined]).
+/// [read], [markUndefined], [isUndefined]). A style property ([StyleProp]) has
+/// the key of the resolved options of an element: an animation reads and
+/// writes the typed field of the options ([valueOf], [store]).
 @immutable
 base class AnimatedProp {
   /// A built-in property with the name [name] and the index [id].
   @internal
-  const AnimatedProp.builtIn(this.name, this.id);
+  const AnimatedProp.builtIn(String name, this.id) : _name = name;
+
+  /// A built-in property that gives its own [name], with the index [id].
+  @internal
+  const AnimatedProp.keyed(this.id) : _name = null;
 
   /// A name that is not built in: [id] is -1.
-  const AnimatedProp.custom(this.name) : id = -1;
+  const AnimatedProp.custom(String name) : _name = name, id = -1;
 
   /// The instance of the name [name]: a built-in instance, or a new
   /// [AnimatedProp.custom].
@@ -80,8 +92,11 @@ base class AnimatedProp {
     _ => AnimatedProp.custom(name),
   };
 
+  /// The name of a property that has no typed key, or Dart `null`.
+  final String? _name;
+
   /// The JS property name.
-  final String name;
+  String get name => _name!;
 
   /// The index of a built-in name in [builtIns], or -1.
   final int id;
@@ -110,6 +125,18 @@ base class AnimatedProp {
   /// [element] does not have it.
   bool isUndefined(Element element) => identical(element[name], undefined);
 
+  /// The value of this property of [target], the target of an animation: an
+  /// element, the resolved options of an element or another object. A style
+  /// property reads the typed field of the options. This base reads by
+  /// name.
+  Object? valueOf(Object target) => readProperty(target, name);
+
+  /// Writes [value] to this property of [target], the target of an
+  /// animation. A style property writes the typed field of the options.
+  /// This base writes by name.
+  void store(Object target, Object? value) =>
+      writeProperty(target, name, value);
+
   /// `x`.
   static const AnimatedProp x = ElementXProp();
 
@@ -117,32 +144,38 @@ base class AnimatedProp {
   static const AnimatedProp y = ElementYProp();
 
   /// `borderWidth`.
-  static const AnimatedProp borderWidth = AnimatedBy<BorderWidthAnimation>(
-    'borderWidth',
+  static const AnimatedProp borderWidth = StyleProp<BorderWidthAnimation>(
+    OptionKey.borderWidth,
     2,
   );
 
   /// `radius`.
-  static const AnimatedProp radius = AnimatedBy<RadiusAnimation>('radius', 3);
+  static const AnimatedProp radius = StyleProp<RadiusAnimation>(
+    OptionKey.radius,
+    3,
+  );
 
   /// `tension`.
-  static const AnimatedProp tension = AnimatedBy<TensionAnimation>(
-    'tension',
+  static const AnimatedProp tension = StyleProp<TensionAnimation>(
+    OptionKey.tension,
     4,
   );
 
   /// `color`.
-  static const AnimatedProp color = AnimatedBy<ColorAnimation>('color', 5);
+  static const AnimatedProp color = StyleProp<ColorAnimation>(
+    OptionKey.color,
+    5,
+  );
 
   /// `borderColor`.
-  static const AnimatedProp borderColor = AnimatedBy<BorderColorAnimation>(
-    'borderColor',
+  static const AnimatedProp borderColor = StyleProp<BorderColorAnimation>(
+    OptionKey.borderColor,
     6,
   );
 
   /// `backgroundColor`.
   static const AnimatedProp backgroundColor =
-      AnimatedBy<BackgroundColorAnimation>('backgroundColor', 7);
+      StyleProp<BackgroundColorAnimation>(OptionKey.backgroundColor, 7);
 
   /// `visible` (the transitions `show` and `hide`).
   static const AnimatedProp visible = AnimatedBy<VisibleAnimation>(
@@ -175,11 +208,14 @@ base class AnimatedProp {
   static const AnimatedProp startAngle = ArcStartAngleProp();
 
   /// `offset`.
-  static const AnimatedProp offset = AnimatedBy<OffsetAnimation>('offset', 17);
+  static const AnimatedProp offset = StyleProp<OffsetAnimation>(
+    OptionKey.offset,
+    17,
+  );
 
   /// `spacing`.
-  static const AnimatedProp spacing = AnimatedBy<SpacingAnimation>(
-    'spacing',
+  static const AnimatedProp spacing = StyleProp<SpacingAnimation>(
+    OptionKey.spacing,
     18,
   );
 
@@ -236,6 +272,11 @@ base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
   @internal
   const AnimatedBy(super.name, super.id) : super.builtIn();
 
+  /// A built-in property with the animation class [T] that gives its own
+  /// name.
+  @internal
+  const AnimatedBy.keyed(super.id) : super.keyed();
+
   @override
   PropertyAnimation? itemIn(List<PropertyAnimation>? items) {
     if (items == null) return null;
@@ -243,5 +284,34 @@ base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
       if (item is T) return item;
     }
     return null;
+  }
+}
+
+/// A style property of an element: a key of its resolved options
+/// (`radius`, `borderColor`). An animation reads and writes the typed field
+/// of the options by the key, with no name.
+base class StyleProp<T extends PropertyAnimation> extends AnimatedBy<T> {
+  /// The style property of the option [key].
+  @internal
+  const StyleProp(this.key, super.id) : super.keyed();
+
+  /// The key of the resolved options of an element.
+  final OptionKey key;
+
+  /// The name of [key]: a style property has no name of its own.
+  @override
+  String get name => key.jsName;
+
+  @override
+  Object? valueOf(Object target) =>
+      target is ElementOptions ? target.valueOf(key) : super.valueOf(target);
+
+  @override
+  void store(Object target, Object? value) {
+    if (target is ElementOptions) {
+      target.storeKey(key, value);
+    } else {
+      super.store(target, value);
+    }
   }
 }

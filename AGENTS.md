@@ -358,7 +358,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `isUndefined` read and write the bit (Chart.js ADR 0054 §9). A numeric geometry property has
     its own class next to its element (`ElementXProp`, `BarBaseProp`, `ArcStartAngleProp`, a subclass
     of `AnimatedProp`): it reads and writes the field of the element (`write`, `read`,
-    `markUndefined`, `isUndefined`), and no element class has a `switch` by a property id. `Element.$context` is a
+    `markUndefined`, `isUndefined`), and no element class has a `switch` by a property id. A style property
+    (`StyleProp`: `radius`, `borderWidth`, `tension`, the three colors, `offset`, `spacing`) has the
+    `OptionKey` of the resolved options: an animation reads and writes the typed field of the
+    options (`valueOf`, `store`), and `Animation` has no name of its property. `Element.$context` is a
     `ContextObject?` with a `covariant` setter, narrowed to `ScriptableContext?` in the four
     element classes. `Element.assign` of a `*Properties` object of a controller takes the typed
     setters for an element of the built-in class (`typedWrites`, the exact-class rule); a user
