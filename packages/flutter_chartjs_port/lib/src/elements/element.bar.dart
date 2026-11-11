@@ -54,9 +54,11 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
+    show AnimatedBy, AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show BaseAnimation, HeightAnimation, WidthAnimation;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show BarProperties, BorderSkipped;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -565,37 +567,6 @@ class BarElement extends Element
     return number;
   }
 
-  /// [Element.markUndefined] for [base], [width] and [height]. The other
-  /// ids go to [Element].
-  @internal
-  @override
-  void markUndefined(AnimatedProp prop) {
-    switch (prop.id) {
-      case animatedPropBase:
-        _base = double.nan;
-        _undefinedBits |= _baseBit;
-      case animatedPropWidth:
-        _width = double.nan;
-        _undefinedBits |= _widthBit;
-      case animatedPropHeight:
-        _height = double.nan;
-        _undefinedBits |= _heightBit;
-      default:
-        super.markUndefined(prop);
-    }
-  }
-
-  /// [Element.isUndefined] for [base], [width] and [height]. The other ids
-  /// go to [Element].
-  @internal
-  @override
-  bool isUndefined(AnimatedProp prop) => switch (prop.id) {
-    animatedPropBase => _undefinedBits & _baseBit != 0,
-    animatedPropWidth => _undefinedBits & _widthBit != 0,
-    animatedPropHeight => _undefinedBits & _heightBit != 0,
-    _ => super.isUndefined(prop),
-  };
-
   /// core.datasetController.js:767-768 `element.$context`, the data context
   /// of the element: [Element.$context] narrowed to a [ScriptableContext]
   /// (Chart.js ADR 0054 §9). Another value gives Dart `null`.
@@ -710,28 +681,6 @@ class BarElement extends Element
       default:
         assignKey(values, position);
     }
-  }
-
-  /// [Element.writeNumber] for [base], [width] and [height]: the typed
-  /// setters for the class [BarElement] itself. The other ids, and an
-  /// element of a user subclass, go to [Element].
-  @internal
-  @override
-  void writeNumber(AnimatedProp prop, double value) {
-    if (_builtIn) {
-      switch (prop.id) {
-        case animatedPropBase:
-          base = value;
-          return;
-        case animatedPropWidth:
-          width = value;
-          return;
-        case animatedPropHeight:
-          height = value;
-          return;
-      }
-    }
-    super.writeNumber(prop, value);
   }
 
   /// The JS property read `bar[prop]` (Chart.js ADR 0017, section 5).
@@ -1042,4 +991,91 @@ final class _Rect implements RoundedRect {
   /// The corner radii. `addRoundedRectPath` reads them as a [TRBLCorners].
   @override
   final TRBLCorners radius;
+}
+
+/// The property `base` of a bar: the typed field of [BarElement]. An
+/// element of another class takes the access by name.
+final class BarBaseProp extends AnimatedBy<BaseAnimation> {
+  /// The property `base`.
+  const BarBaseProp() : super('base', 9);
+
+  @override
+  void write(Element element, double value) {
+    if (element is BarElement && element._builtIn) {
+      element.base = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! BarElement) return super.markUndefined(element);
+    element
+      .._base = double.nan
+      .._undefinedBits |= BarElement._baseBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is BarElement
+      ? element._undefinedBits & BarElement._baseBit != 0
+      : super.isUndefined(element);
+}
+
+/// The property `width` of a bar: the typed field of [BarElement]. An
+/// element of another class takes the access by name.
+final class BarWidthProp extends AnimatedBy<WidthAnimation> {
+  /// The property `width`.
+  const BarWidthProp() : super('width', 10);
+
+  @override
+  void write(Element element, double value) {
+    if (element is BarElement && element._builtIn) {
+      element.width = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! BarElement) return super.markUndefined(element);
+    element
+      .._width = double.nan
+      .._undefinedBits |= BarElement._widthBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is BarElement
+      ? element._undefinedBits & BarElement._widthBit != 0
+      : super.isUndefined(element);
+}
+
+/// The property `height` of a bar: the typed field of [BarElement]. An
+/// element of another class takes the access by name.
+final class BarHeightProp extends AnimatedBy<HeightAnimation> {
+  /// The property `height`.
+  const BarHeightProp() : super('height', 11);
+
+  @override
+  void write(Element element, double value) {
+    if (element is BarElement && element._builtIn) {
+      element.height = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! BarElement) return super.markUndefined(element);
+    element
+      .._height = double.nan
+      .._undefinedBits |= BarElement._heightBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is BarElement
+      ? element._undefinedBits & BarElement._heightBit != 0
+      : super.isUndefined(element);
 }

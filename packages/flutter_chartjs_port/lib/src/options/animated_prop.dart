@@ -5,6 +5,19 @@
 /// This library is a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/core.element.dart'
+    show Element, ElementXProp, ElementYProp;
+import 'package:flutter_chartjs_port/src/elements/element.arc.dart'
+    show
+        ArcCircumferenceProp,
+        ArcEndAngleProp,
+        ArcInnerRadiusProp,
+        ArcOuterRadiusProp,
+        ArcStartAngleProp;
+import 'package:flutter_chartjs_port/src/elements/element.bar.dart'
+    show BarBaseProp, BarHeightProp, BarWidthProp;
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/property_animation.dart';
 import 'package:meta/meta.dart';
 
@@ -25,9 +38,16 @@ import 'package:meta/meta.dart';
 /// (`RadiusAnimation` for [radius]). The class is a type argument of its
 /// instance, so [itemIn] finds the item of `ChartConfig.animations` for the
 /// property by the type of the item, with no table.
+///
+/// A numeric property of an element class has its own class, next to the
+/// element (`ElementXProp`, `BarBaseProp`, `ArcStartAngleProp`): it reads
+/// and writes the field of the element with no `switch` by an id ([write],
+/// [read], [markUndefined], [isUndefined]).
 @immutable
-final class AnimatedProp {
-  const AnimatedProp._(this.name, this.id);
+base class AnimatedProp {
+  /// A built-in property with the name [name] and the index [id].
+  @internal
+  const AnimatedProp.builtIn(this.name, this.id);
 
   /// A name that is not built in: [id] is -1.
   const AnimatedProp.custom(this.name) : id = -1;
@@ -74,102 +94,103 @@ final class AnimatedProp {
   /// property with no animation class has no item.
   PropertyAnimation? itemIn(List<PropertyAnimation>? items) => null;
 
+  /// Writes the number [value] to this property of [element]. A property
+  /// class of an element writes its own field. This base writes by name.
+  void write(Element element, double value) => element[name] = value;
+
+  /// The number of this property of [element]: NaN in the `undefined`
+  /// state. A property class of an element reads its own field. This base
+  /// reads by name.
+  double read(Element element) => jsToNumber(element[name]);
+
+  /// Puts this property of [element] in the `undefined` state.
+  void markUndefined(Element element) => element[name] = undefined;
+
+  /// Whether this property of [element] is in the `undefined` state, or
+  /// [element] does not have it.
+  bool isUndefined(Element element) => identical(element[name], undefined);
+
   /// `x`.
-  static const AnimatedProp x = _AnimatedBy<XAnimation>('x', 0);
+  static const AnimatedProp x = ElementXProp();
 
   /// `y`.
-  static const AnimatedProp y = _AnimatedBy<YAnimation>('y', 1);
+  static const AnimatedProp y = ElementYProp();
 
   /// `borderWidth`.
-  static const AnimatedProp borderWidth = _AnimatedBy<BorderWidthAnimation>(
+  static const AnimatedProp borderWidth = AnimatedBy<BorderWidthAnimation>(
     'borderWidth',
     2,
   );
 
   /// `radius`.
-  static const AnimatedProp radius = _AnimatedBy<RadiusAnimation>('radius', 3);
+  static const AnimatedProp radius = AnimatedBy<RadiusAnimation>('radius', 3);
 
   /// `tension`.
-  static const AnimatedProp tension = _AnimatedBy<TensionAnimation>(
+  static const AnimatedProp tension = AnimatedBy<TensionAnimation>(
     'tension',
     4,
   );
 
   /// `color`.
-  static const AnimatedProp color = _AnimatedBy<ColorAnimation>('color', 5);
+  static const AnimatedProp color = AnimatedBy<ColorAnimation>('color', 5);
 
   /// `borderColor`.
-  static const AnimatedProp borderColor = _AnimatedBy<BorderColorAnimation>(
+  static const AnimatedProp borderColor = AnimatedBy<BorderColorAnimation>(
     'borderColor',
     6,
   );
 
   /// `backgroundColor`.
   static const AnimatedProp backgroundColor =
-      _AnimatedBy<BackgroundColorAnimation>('backgroundColor', 7);
+      AnimatedBy<BackgroundColorAnimation>('backgroundColor', 7);
 
   /// `visible` (the transitions `show` and `hide`).
-  static const AnimatedProp visible = _AnimatedBy<VisibleAnimation>(
+  static const AnimatedProp visible = AnimatedBy<VisibleAnimation>(
     'visible',
     8,
   );
 
   /// `base`.
-  static const AnimatedProp base = _AnimatedBy<BaseAnimation>('base', 9);
+  static const AnimatedProp base = BarBaseProp();
 
   /// `width`.
-  static const AnimatedProp width = _AnimatedBy<WidthAnimation>('width', 10);
+  static const AnimatedProp width = BarWidthProp();
 
   /// `height`.
-  static const AnimatedProp height = _AnimatedBy<HeightAnimation>('height', 11);
+  static const AnimatedProp height = BarHeightProp();
 
   /// `circumference`.
-  static const AnimatedProp circumference = _AnimatedBy<CircumferenceAnimation>(
-    'circumference',
-    12,
-  );
+  static const AnimatedProp circumference = ArcCircumferenceProp();
 
   /// `endAngle`.
-  static const AnimatedProp endAngle = _AnimatedBy<EndAngleAnimation>(
-    'endAngle',
-    13,
-  );
+  static const AnimatedProp endAngle = ArcEndAngleProp();
 
   /// `innerRadius`.
-  static const AnimatedProp innerRadius = _AnimatedBy<InnerRadiusAnimation>(
-    'innerRadius',
-    14,
-  );
+  static const AnimatedProp innerRadius = ArcInnerRadiusProp();
 
   /// `outerRadius`.
-  static const AnimatedProp outerRadius = _AnimatedBy<OuterRadiusAnimation>(
-    'outerRadius',
-    15,
-  );
+  static const AnimatedProp outerRadius = ArcOuterRadiusProp();
 
   /// `startAngle`.
-  static const AnimatedProp startAngle = _AnimatedBy<StartAngleAnimation>(
-    'startAngle',
-    16,
-  );
+  static const AnimatedProp startAngle = ArcStartAngleProp();
 
   /// `offset`.
-  static const AnimatedProp offset = _AnimatedBy<OffsetAnimation>('offset', 17);
+  static const AnimatedProp offset = AnimatedBy<OffsetAnimation>('offset', 17);
 
   /// `spacing`.
-  static const AnimatedProp spacing = _AnimatedBy<SpacingAnimation>(
+  static const AnimatedProp spacing = AnimatedBy<SpacingAnimation>(
     'spacing',
     18,
   );
 
   /// `caretX`.
-  static const AnimatedProp caretX = AnimatedProp._('caretX', 19);
+  static const AnimatedProp caretX = AnimatedProp.builtIn('caretX', 19);
 
   /// `caretY`.
-  static const AnimatedProp caretY = AnimatedProp._('caretY', 20);
+  static const AnimatedProp caretY = AnimatedProp.builtIn('caretY', 20);
 
   /// `opacity`.
-  static const AnimatedProp opacity = AnimatedProp._('opacity', 21);
+  static const AnimatedProp opacity = AnimatedProp.builtIn('opacity', 21);
 
   /// The built-in names, by [id].
   static const List<AnimatedProp> builtIns = [
@@ -210,8 +231,10 @@ final class AnimatedProp {
 
 /// A built-in property with the animation class [T]: the type of an item of
 /// `ChartConfig.animations` selects the property.
-final class _AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
-  const _AnimatedBy(super.name, super.id) : super._();
+base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
+  /// A built-in property with the animation class [T].
+  @internal
+  const AnimatedBy(super.name, super.id) : super.builtIn();
 
   @override
   PropertyAnimation? itemIn(List<PropertyAnimation>? items) {

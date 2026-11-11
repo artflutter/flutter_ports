@@ -43,7 +43,9 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
+    show AnimatedBy, AnimatedProp;
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show XAnimation, YAnimation;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show GenericElementOptionsScope;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
@@ -343,18 +345,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// its own numeric properties and passes the other ids to `super`. Another
   /// property is the write by name `this[prop] = undefined`.
   @internal
-  void markUndefined(AnimatedProp prop) {
-    switch (prop.id) {
-      case animatedPropX:
-        _x = double.nan;
-        _undefinedXY |= _xBit;
-      case animatedPropY:
-        _y = double.nan;
-        _undefinedXY |= _yBit;
-      default:
-        this[prop.name] = undefined;
-    }
-  }
+  void markUndefined(AnimatedProp prop) => prop.markUndefined(this);
 
   /// Whether the property [prop] is in the `undefined` state, or the element
   /// does not have it: `this[prop] === undefined`.
@@ -363,11 +354,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// numeric properties and passes the other ids to `super`. Another
   /// property is the read by name.
   @internal
-  bool isUndefined(AnimatedProp prop) => switch (prop.id) {
-    animatedPropX => _undefinedXY & _xBit != 0,
-    animatedPropY => _undefinedXY & _yBit != 0,
-    _ => identical(this[prop.name], undefined),
-  };
+  bool isUndefined(AnimatedProp prop) => prop.isUndefined(this);
 
   /// `getProps([prop], useFinalPosition)[prop]` for the numeric property
   /// [prop] with the current value [current], through `ToNumber`: the typed
@@ -581,16 +568,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// own numeric properties and passes the other ids to `super`. Another
   /// property is the write by name.
   @internal
-  void writeNumber(AnimatedProp prop, double value) {
-    switch (prop.id) {
-      case animatedPropX:
-        x = value;
-      case animatedPropY:
-        y = value;
-      default:
-        this[prop.name] = value;
-    }
-  }
+  void writeNumber(AnimatedProp prop, double value) => prop.write(this, value);
 
   /// The `ToNumber` of the read `this[prop]` of the property [prop]: the
   /// current value of [prop] that [finalNumber] takes, for a caller that
@@ -602,11 +580,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// `super`. Another property is the read by name: NaN for an absent
   /// property, the `ToNumber` of `undefined`.
   @internal
-  double numberOf(AnimatedProp prop) => switch (prop.id) {
-    animatedPropX => x,
-    animatedPropY => y,
-    _ => jsToNumber(this[prop.name]),
-  };
+  double numberOf(AnimatedProp prop) => prop.read(this);
 
   /// The value that a write by name of [value] stores in the numeric
   /// property [prop] (Chart.js ADR 0017, section 5).
@@ -695,51 +669,51 @@ AnyObject? elementCfgArg(List<Object?> args) {
   };
 }
 
-// The ids of the built-in names of `AnimatedProp` (animated_prop.dart) that
-// the element classes declare as numeric properties, for the `switch` of
-// `markUndefined`, `isUndefined` and the typed writes. A constant pattern
-// needs a constant, and `AnimatedProp.x.id` is not one.
-// test/port/core/core.element_test.dart checks each value.
+/// The property `x` of an element: the typed field of [Element].
+final class ElementXProp extends AnimatedBy<XAnimation> {
+  /// The property `x`.
+  const ElementXProp() : super('x', 0);
 
-/// The id of [AnimatedProp.x].
-@internal
-const int animatedPropX = 0;
+  @override
+  void write(Element element, double value) => element.x = value;
 
-/// The id of [AnimatedProp.y].
-@internal
-const int animatedPropY = 1;
+  @override
+  double read(Element element) => element.x;
 
-/// The id of [AnimatedProp.base].
-@internal
-const int animatedPropBase = 9;
+  @override
+  void markUndefined(Element element) {
+    element
+      .._x = double.nan
+      .._undefinedXY |= Element._xBit;
+  }
 
-/// The id of [AnimatedProp.width].
-@internal
-const int animatedPropWidth = 10;
+  @override
+  bool isUndefined(Element element) =>
+      element._undefinedXY & Element._xBit != 0;
+}
 
-/// The id of [AnimatedProp.height].
-@internal
-const int animatedPropHeight = 11;
+/// The property `y` of an element: the typed field of [Element].
+final class ElementYProp extends AnimatedBy<YAnimation> {
+  /// The property `y`.
+  const ElementYProp() : super('y', 1);
 
-/// The id of [AnimatedProp.circumference].
-@internal
-const int animatedPropCircumference = 12;
+  @override
+  void write(Element element, double value) => element.y = value;
 
-/// The id of [AnimatedProp.endAngle].
-@internal
-const int animatedPropEndAngle = 13;
+  @override
+  double read(Element element) => element.y;
 
-/// The id of [AnimatedProp.innerRadius].
-@internal
-const int animatedPropInnerRadius = 14;
+  @override
+  void markUndefined(Element element) {
+    element
+      .._y = double.nan
+      .._undefinedXY |= Element._yBit;
+  }
 
-/// The id of [AnimatedProp.outerRadius].
-@internal
-const int animatedPropOuterRadius = 15;
-
-/// The id of [AnimatedProp.startAngle].
-@internal
-const int animatedPropStartAngle = 16;
+  @override
+  bool isUndefined(Element element) =>
+      element._undefinedXY & Element._yBit != 0;
+}
 
 /// core.element.ts:31-33 the result type of `getProps`: `Pick<T, P[number]>`
 /// or `Partial<Record<P, unknown>>`, an object that the caller destructures.

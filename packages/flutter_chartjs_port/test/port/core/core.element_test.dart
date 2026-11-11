@@ -105,18 +105,25 @@ void main() {
     });
   });
 
-  // The id constants of the typed switches match the ids of AnimatedProp.
-  test('the id constants are the ids of AnimatedProp', () {
-    expect(animatedPropX, AnimatedProp.x.id);
-    expect(animatedPropY, AnimatedProp.y.id);
-    expect(animatedPropBase, AnimatedProp.base.id);
-    expect(animatedPropWidth, AnimatedProp.width.id);
-    expect(animatedPropHeight, AnimatedProp.height.id);
-    expect(animatedPropCircumference, AnimatedProp.circumference.id);
-    expect(animatedPropEndAngle, AnimatedProp.endAngle.id);
-    expect(animatedPropInnerRadius, AnimatedProp.innerRadius.id);
-    expect(animatedPropOuterRadius, AnimatedProp.outerRadius.id);
-    expect(animatedPropStartAngle, AnimatedProp.startAngle.id);
+  // The table of the animation options is by id: the id of a built-in
+  // property is its index in AnimatedProp.builtIns.
+  test('the id of each built-in property is its index', () {
+    for (final (index, prop) in AnimatedProp.builtIns.indexed) {
+      expect(prop.id, index, reason: prop.name);
+    }
+  });
+
+  // A geometry property is a class that reads and writes its own field.
+  test('a property class reads and writes the field of its element', () {
+    final element = Element()
+      ..x = 1
+      ..y = 2;
+    AnimatedProp.x.write(element, 5);
+    expect(element.x, 5);
+    expect(AnimatedProp.y.read(element), 2);
+    AnimatedProp.y.markUndefined(element);
+    expect(AnimatedProp.y.isUndefined(element), isTrue);
+    expect(AnimatedProp.x.isUndefined(element), isFalse);
   });
 
   group(r'$context', () {
