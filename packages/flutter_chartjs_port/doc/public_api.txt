@@ -4,6 +4,7 @@ ActiveElement
 Animation
 Animations
 ArcElement
+AverageTooltipPositioner
 BackdropOptions
 BarController
 BarElement
@@ -58,6 +59,7 @@ NativeEventListener
 NativeEventTarget
 NativeTouch
 NearestInteractionMode
+NearestTooltipPositioner
 Path2D
 PieController
 Plugin
@@ -82,6 +84,8 @@ TimeSeriesScale
 TimeUnit
 TooltipDrawHookArgs
 TooltipModel
+TooltipPosition
+TooltipPositioner
 Undefined
 UpdateHookArgs
 VisualElement
@@ -117,6 +121,7 @@ ActiveElement
 Animations
 ArcElement
 ArcElementStyle
+AverageTooltipPositioner
 AxisGrid
 AxisTickInfo
 AxisTicks
@@ -229,6 +234,7 @@ NativeEventListener
 NativeEventTarget
 NativeTouch
 NearestInteractionMode
+NearestTooltipPositioner
 OffsetAnimation
 OuterRadiusAnimation
 Path2D
@@ -271,6 +277,8 @@ TimeSeriesScale
 TimeUnit
 TooltipDrawHookArgs
 TooltipModel
+TooltipPosition
+TooltipPositioner
 Undefined
 UpdateHookArgs
 VisibleAnimation

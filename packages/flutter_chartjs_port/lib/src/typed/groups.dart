@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         TooltipOptionsScope,
         TransitionOptionsScope,
         TransitionsSpecScope;
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
+    show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/theme/css.dart' show fontScopeOf;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show ChartAnimationDetails, ChartLegendEventDetails, ChartTooltipItem;
@@ -360,6 +362,7 @@ final class ChartTooltip with Diagnosticable {
     this.enabled,
     this.mode,
     this.intersect,
+    this.position,
     this.backgroundColor,
     this.titleColor,
     this.titleFont,
@@ -387,6 +390,12 @@ final class ChartTooltip with Diagnosticable {
   /// Whether the tooltip shows only when the pointer is on an item:
   /// `intersect`. The default is the value of `ChartConfig.interaction`.
   final bool? intersect;
+
+  /// The object that finds the position of the tooltip: `position`. The
+  /// default is `AverageTooltipPositioner()`. `NearestTooltipPositioner()`
+  /// puts the tooltip at the item nearest to the pointer. An app gives its
+  /// own positioner as a subclass of [TooltipPositioner].
+  final TooltipPositioner? position;
 
   /// The color of the tooltip box: `backgroundColor`.
   final Color? backgroundColor;
@@ -437,7 +446,7 @@ final class ChartTooltip with Diagnosticable {
   final String? Function(List<ChartTooltipItem> items)? footerText;
 
   /// The Chart.js tooltip options that have no parameter, for example
-  /// `{'position': 'nearest'}`. The rules of [ChartLegend.extra] apply.
+  /// `{'caretSize': 8}`. The rules of [ChartLegend.extra] apply.
   final Map<String, Object?>? extra;
 
   /// A copy of these tooltip options with the given parameters. A
@@ -446,6 +455,7 @@ final class ChartTooltip with Diagnosticable {
     bool? enabled,
     InteractionMode? mode,
     bool? intersect,
+    TooltipPositioner? position,
     Color? backgroundColor,
     Color? titleColor,
     TextStyle? titleFont,
@@ -464,6 +474,7 @@ final class ChartTooltip with Diagnosticable {
     enabled: enabled ?? this.enabled,
     mode: mode ?? this.mode,
     intersect: intersect ?? this.intersect,
+    position: position ?? this.position,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     titleColor: titleColor ?? this.titleColor,
     titleFont: titleFont ?? this.titleFont,
@@ -484,6 +495,7 @@ final class ChartTooltip with Diagnosticable {
     ('enabled', enabled),
     ('mode', mode),
     ('intersect', intersect),
+    ('position', position),
     ('backgroundColor', backgroundColor),
     ('titleColor', titleColor),
     ('titleFont', titleFont),
@@ -542,6 +554,7 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.enabled, tooltip.enabled);
   put(scope, OptionKey.mode, tooltip.mode);
   put(scope, OptionKey.intersect, tooltip.intersect);
+  put(scope, OptionKey.position, tooltip.position);
   put(scope, OptionKey.backgroundColor, colorValue(tooltip.backgroundColor));
   put(scope, OptionKey.titleColor, colorValue(tooltip.titleColor));
   put(scope, OptionKey.titleFont, fontScopeOf(tooltip.titleFont));

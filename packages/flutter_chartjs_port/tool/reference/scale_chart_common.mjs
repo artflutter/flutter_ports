@@ -1149,11 +1149,33 @@ export class DartMode {
 const INTERACTION_SCOPES = new Set(['interaction', 'hover', 'tooltip']);
 
 /**
+ * A tooltip positioner of upstream (a key of `Tooltip.positioners`) as a
+ * value of the Dart data: the positioner class of the port for `average`
+ * and `nearest`. The port has no table from a name to a positioner (row
+ * adapt-tooltip-positioner-objects). Another key is a positioner of the
+ * generator: the data hold `'fn:positioner:<key>'`, and the Dart test gives
+ * its positioner object of that name, as it gives a named function.
+ */
+export class DartPositioner {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+/** The positioner classes of the port by their upstream keys. */
+const POSITIONER_CLASSES = {
+  average: 'AverageTooltipPositioner()',
+  nearest: 'NearestTooltipPositioner()',
+};
+
+/**
  * The Dart literal of a JS value. A named function is `'fn:<name>'`. A
  * DartMode, and a string `mode` of the object [owner] of
- * INTERACTION_SCOPES, is the mode class of the port. [state.undefined]
- * becomes true when the literal has the sentinel `undefined`, and
- * [state.modes] when it has a mode class.
+ * INTERACTION_SCOPES, is the mode class of the port. A DartPositioner, and
+ * a string `position` of the object `tooltip`, is the positioner class of
+ * the port. [state.undefined] becomes true when the literal has the
+ * sentinel `undefined`, [state.modes] when it has a mode class, and
+ * [state.positioners] when it has a positioner class.
  */
 function dart(v, state, owner) {
   if (v === null) return 'null';
@@ -1197,13 +1219,20 @@ function dart(v, state, owner) {
     state.modes = true;
     return `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`;
   }
+  if (v instanceof DartPositioner) {
+    const type = POSITIONER_CLASSES[v.name];
+    if (!type) return dart(`fn:positioner:${v.name}`, state);
+    state.positioners = true;
+    return type;
+  }
   if (Array.isArray(v)) return `<Object?>[${v.map((x) => dart(x, state, owner)).join(', ')}]`;
   if (typeof v === 'object') {
     const entries = Object.keys(v).map((k) => {
-      const value =
-        k === 'mode' && INTERACTION_SCOPES.has(owner) && typeof v[k] === 'string'
-          ? new DartMode(v[k])
-          : v[k];
+      let value = v[k];
+      if (typeof value === 'string') {
+        if (k === 'mode' && INTERACTION_SCOPES.has(owner)) value = new DartMode(value);
+        if (k === 'position' && owner === 'tooltip') value = new DartPositioner(value);
+      }
       return `${dart(k, state)}: ${dart(value, state, k)}`;
     });
     return `<String, Object?>{${entries.join(', ')}}`;
@@ -1259,7 +1288,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.modes || state.undefined ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.modes || state.undefined || state.positioners ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

@@ -143,7 +143,6 @@ const Map<String, String> _notExported = {
   'TooltipItem': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipLabelStyle': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipOptions': 'an internal typed plugin type of Chart.js ADR 0054',
-  'TooltipPosition': 'an internal typed plugin type of Chart.js ADR 0054',
   // The typed scale option facades of Chart.js ADR 0054 section 4
   // (lib/src/core/scale_options.dart, extension types over the resolver
   // view): internal in 0.1.0.

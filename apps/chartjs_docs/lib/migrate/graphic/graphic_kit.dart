@@ -111,7 +111,7 @@ bool ordinalTick(int index, int length, int count) {
 
 /// The tooltip window of Graphic: a white box with 12 px gray text.
 ChartTooltip graphicTooltip({
-  required String position,
+  required TooltipPositioner position,
   String? Function(List<ChartTooltipItem> items)? title,
   String? Function(ChartTooltipItem item)? label,
   Map<String, Object?> extra = const {},
@@ -126,8 +126,8 @@ ChartTooltip graphicTooltip({
   displayColors: false,
   titleText: title,
   labelText: label,
+  position: position,
   extra: {
-    'position': position,
     'caretSize': 0,
     'caretPadding': 0,
     'titleMarginBottom': 0,
@@ -160,20 +160,6 @@ final Map<String, Object?> tooltipShadow = {
   },
 };
 
-typedef TooltipPositioner = Object? Function(
-  List<Object?> items,
-  Object? eventPosition,
-);
-
-/// Adds [position] to `Tooltip.positioners` under [name] once, and gives
-/// the name for the `position` option of the tooltip.
-String positioner(String name, TooltipPositioner position) {
-  final positioners =
-      (tooltip as JsObjectFace)['positioners']! as Map<String, Object?>;
-  positioners[name] ??= position;
-  return name;
-}
-
 /// The pointer of the event position of a positioner: a chart event or an
 /// object with `x` and `y`. `null` for a selection without an event.
 Offset? _pointer(Object? position) => switch (position) {
@@ -188,36 +174,68 @@ Offset? _pointer(Object? position) => switch (position) {
 /// `followPointer: [false, true]`, `align: topLeft`, `offset: (-20, -20)`:
 /// the bottom right corner 20 px left of the point and 20 px above the
 /// pointer.
-final String followY = positioner('graphicFollowY', (items, position) {
-  if (items.isEmpty) return false;
-  final element = (items.first! as ActiveElement).element!;
-  return {
-    'x': element.x - 20 - _radius,
-    'y': (_pointer(position)?.dy ?? element.y) - 20,
-    'xAlign': 'right',
-    'yAlign': 'bottom',
-  };
-});
+final class FollowYPositioner extends TooltipPositioner {
+  /// The positioner.
+  const FollowYPositioner();
+
+  @override
+  TooltipPosition? positionOf(
+    TooltipModel tooltip,
+    List<ActiveElement> items,
+    Object? eventPosition,
+  ) {
+    if (items.isEmpty) return null;
+    final element = items.first.element!;
+    return TooltipPosition()
+      ..x = element.x - 20 - _radius
+      ..y = (_pointer(eventPosition)?.dy ?? element.y) - 20
+      ..xAlign = 'right'
+      ..yAlign = 'bottom';
+  }
+}
 
 /// `followPointer: [true, true]`, `align: topLeft`: the bottom right corner
 /// at the pointer.
-final String atPointer = positioner('graphicPointer', (items, position) {
-  final pointer = _pointer(position);
-  if (items.isEmpty || pointer == null) return false;
-  return {
-    'x': pointer.dx - _radius,
-    'y': pointer.dy,
-    'xAlign': 'right',
-    'yAlign': 'bottom',
-  };
-});
+final class AtPointerPositioner extends TooltipPositioner {
+  /// The positioner.
+  const AtPointerPositioner();
+
+  @override
+  TooltipPosition? positionOf(
+    TooltipModel tooltip,
+    List<ActiveElement> items,
+    Object? eventPosition,
+  ) {
+    final pointer = _pointer(eventPosition);
+    if (items.isEmpty || pointer == null) return null;
+    return TooltipPosition()
+      ..x = pointer.dx - _radius
+      ..y = pointer.dy
+      ..xAlign = 'right'
+      ..yAlign = 'bottom';
+  }
+}
 
 /// `anchor: (_) => Offset.zero`, `align: bottomRight`: the top left corner
 /// of the chart.
-final String topLeft = positioner('graphicTopLeft', (items, position) {
-  if (items.isEmpty) return false;
-  return {'x': 0, 'y': 0, 'xAlign': 'left', 'yAlign': 'top'};
-});
+final class TopLeftPositioner extends TooltipPositioner {
+  /// The positioner.
+  const TopLeftPositioner();
+
+  @override
+  TooltipPosition? positionOf(
+    TooltipModel tooltip,
+    List<ActiveElement> items,
+    Object? eventPosition,
+  ) {
+    if (items.isEmpty) return null;
+    return TooltipPosition()
+      ..x = 0
+      ..y = 0
+      ..xAlign = 'left'
+      ..yAlign = 'top';
+  }
+}
 
 /// The last pointer position of each chart, `null` after the pointer left.
 final Expando<Offset> _pointers = Expando('graphic pointer');

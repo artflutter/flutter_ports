@@ -30,6 +30,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show optionKeyOf;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -89,6 +90,8 @@ void _log(types.Chart chart, String entry) =>
 /// The named functions of the configs of the generator, with the same
 /// bodies.
 final Map<String, Object?> _functions = {
+  // The custom positioner of the generator, `position: 'custom'`.
+  'positioner:custom': const _CustomPositioner(),
   // () => ['Title A', 'Title B']
   'cbTitle': () => <Object?>['Title A', 'Title B'],
   // () => 'After 1\nAfter 2'
@@ -159,22 +162,45 @@ final Map<String, Object?> _functions = {
 ///     yAlign: 'top'};
 /// }
 /// ```
-final JsFunction _customPositioner = JsFunction((
-  Object? self,
-  Object? items,
-  Object? eventPosition,
-) {
-  if (!jsTruthy(jsGet(items, 'length'))) {
-    return false;
+final class _CustomPositioner extends TooltipPositioner {
+  const _CustomPositioner();
+
+  @override
+  TooltipPosition? positionOf(
+    types.TooltipModel tooltip,
+    List<types.ActiveElement> items,
+    Object? eventPosition,
+  ) {
+    if (items.isEmpty) {
+      return null;
+    }
+    final area = tooltip.chart.chartArea!;
+    return TooltipPosition()
+      ..x = area.left + 20
+      ..y = eventPosition is Point ? eventPosition.y : jsGet(eventPosition, 'y')
+      ..xAlign = 'left'
+      ..yAlign = 'top';
   }
-  final area = (self! as types.TooltipModel).chart.chartArea!;
-  return <String, Object?>{
-    'x': area.left + 20,
-    'y': eventPosition is Point ? eventPosition.y : jsGet(eventPosition, 'y'),
-    'xAlign': 'left',
-    'yAlign': 'top',
-  };
-});
+}
+
+/// A positioner of a test: it gives the result of its function.
+final class _TestPositioner extends TooltipPositioner {
+  const _TestPositioner(this._position);
+
+  final TooltipPosition? Function(
+    types.TooltipModel tooltip,
+    List<types.ActiveElement> items,
+    Object? eventPosition,
+  )
+  _position;
+
+  @override
+  TooltipPosition? positionOf(
+    types.TooltipModel tooltip,
+    List<types.ActiveElement> items,
+    Object? eventPosition,
+  ) => _position(tooltip, items, eventPosition);
+}
 
 /// The observer `plugins.tooltip` of the generator (`observeTooltip`): Dart
 /// `null` without a tooltip, else the members of the model through the read
@@ -334,7 +360,8 @@ final List<ScaleChartCase> _themedReference = _mapObservations(
 const List<String> _upstreamKeys = [
   'id',
   '_element',
-  'positioners',
+  // Upstream has `positioners` here. The port has no table of positioners
+  // (row `adapt-tooltip-positioner-objects`).
   'afterInit',
   'beforeUpdate',
   'reset',
@@ -586,9 +613,6 @@ void _replay(
 Tooltip _newTooltip() => Tooltip((chart: _FakeChart(), options: null));
 
 void main() {
-  // The custom positioner of the generator.
-  Tooltip.positioners['custom'] = _customPositioner;
-
   testReferenceOrigin(
     node: pluginTooltipReferenceNode,
     arch: pluginTooltipReferenceArch,
@@ -697,14 +721,11 @@ void main() {
       expect(tooltip['_element'], same(Tooltip.jsClass));
     });
 
-    test('the three positioners are one Map', () {
-      // The probe output `samePositioners`: true.
-      expect(tooltip['positioners'], same(Tooltip.positioners));
-      expect(Tooltip.jsClass['positioners'], same(Tooltip.positioners));
-      expect(
-        jsGet(registry.getPlugin('tooltip'), 'positioners'),
-        same(Tooltip.positioners),
-      );
+    test('the plugin and the class have no table of positioners', () {
+      // Upstream: `tooltip.positioners`, `Tooltip.positioners` and the
+      // registered plugin share one object (the probe `samePositioners`).
+      expect(identical(tooltip['positioners'], undefined), isTrue);
+      expect(identical(Tooltip.jsClass['positioners'], undefined), isTrue);
     });
 
     test('new Tooltip(config) keeps the chart and the options', () {
@@ -941,25 +962,22 @@ void main() {
   });
 
   group('positioners', () {
-    testWidgets('a function positioner gets the tooltip as this', (
-      tester,
-    ) async {
+    testWidgets('a positioner gets the tooltip, the items and the event '
+        'position', (tester) async {
       // The probe output `thisIsTooltip` true, `thisArgs` [true, 150], and
       // `pos_thisProbe`: caretX 10, caretY 20, xAlign left, yAlign top.
-      Object? self;
+      types.TooltipModel? self;
       List<Object?>? args;
-      Tooltip.positioners['thisProbe'] = JsFunction((
-        Object? s,
-        Object? items,
-        Object? eventPosition,
-      ) {
-        self = s;
-        args = [items is List, jsGet(eventPosition, 'x')];
-        return <String, Object?>{'x': 10, 'y': 20};
-      });
-      addTearDown(() => Tooltip.positioners.remove('thisProbe'));
       final chart = acquireChart(
-        _probeChart(<String, Object?>{'position': 'thisProbe'}),
+        _probeChart(<String, Object?>{
+          'position': _TestPositioner((tooltip, items, eventPosition) {
+            self = tooltip;
+            args = [items.isNotEmpty, jsGet(eventPosition, 'x')];
+            return TooltipPosition()
+              ..x = 10
+              ..y = 20;
+          }),
+        }),
       );
       _activate(chart);
       final t = _tooltipOf(chart);
@@ -976,15 +994,16 @@ void main() {
     ) async {
       // The probe output `pos_fixedAlign`: x 44.962890625, y 46.2, caretX
       // 100, caretY 100, xAlign right, yAlign bottom.
-      Tooltip.positioners['fixedAlign'] = () => <String, Object?>{
-        'x': 100,
-        'y': 100,
-        'xAlign': 'right',
-        'yAlign': 'bottom',
-      };
-      addTearDown(() => Tooltip.positioners.remove('fixedAlign'));
       final chart = acquireChart(
-        _probeChart(<String, Object?>{'position': 'fixedAlign'}),
+        _probeChart(<String, Object?>{
+          'position': _TestPositioner(
+            (tooltip, items, eventPosition) => TooltipPosition()
+              ..x = 100
+              ..y = 100
+              ..xAlign = 'right'
+              ..yAlign = 'bottom',
+          ),
+        }),
       );
       _activate(chart);
       final t = _tooltipOf(chart);
@@ -996,13 +1015,15 @@ void main() {
       expect(t.y, closeTo(46.2, 1e-9));
     });
 
-    testWidgets('a result {} gives no coordinates', (tester) async {
+    testWidgets('a result without keys gives no coordinates', (tester) async {
       // The probe output `pos_empty`: x NaN, y NaN, caretX and caretY
       // undefined, xAlign right, yAlign center.
-      Tooltip.positioners['empty'] = () => <String, Object?>{};
-      addTearDown(() => Tooltip.positioners.remove('empty'));
       final chart = acquireChart(
-        _probeChart(<String, Object?>{'position': 'empty'}),
+        _probeChart(<String, Object?>{
+          'position': _TestPositioner(
+            (tooltip, items, eventPosition) => TooltipPosition(),
+          ),
+        }),
       );
       _activate(chart);
       final t = _tooltipOf(chart);
@@ -1018,13 +1039,14 @@ void main() {
       // Upstream stores it (the probe output `pos_strings`: caretX '100',
       // caretY '50', y 26.6). The write by name of caretX throws (Chart.js
       // ADR 0039, section 5).
-      Tooltip.positioners['strings'] = () => <String, Object?>{
-        'x': '100',
-        'y': '50',
-      };
-      addTearDown(() => Tooltip.positioners.remove('strings'));
       final chart = acquireChart(
-        _probeChart(<String, Object?>{'position': 'strings'}),
+        _probeChart(<String, Object?>{
+          'position': _TestPositioner(
+            (tooltip, items, eventPosition) => TooltipPosition()
+              ..x = '100'
+              ..y = '50',
+          ),
+        }),
       );
       expect(() => _activate(chart), throwsA(isA<ArgumentError>()));
     });
@@ -1037,13 +1059,14 @@ void main() {
       // animation, the write by name of caretX in update throws after the
       // writes of opacity, x, y, width and height (Chart.js ADR 0039,
       // section 5).
-      Tooltip.positioners['nulls'] = () => <String, Object?>{
-        'x': null,
-        'y': null,
-      };
-      addTearDown(() => Tooltip.positioners.remove('nulls'));
       final chart = acquireChart(
-        _probeChart(<String, Object?>{'position': 'nulls'}),
+        _probeChart(<String, Object?>{
+          'position': _TestPositioner(
+            (tooltip, items, eventPosition) => TooltipPosition()
+              ..x = null
+              ..y = null,
+          ),
+        }),
       );
       expect(() => _activate(chart), throwsA(isA<ArgumentError>()));
       final t = _tooltipOf(chart);
@@ -1067,14 +1090,15 @@ void main() {
       // callback keeps `_request` set, and the animator then stops for the
       // later tests of the file. The remove keeps Chart.destroy from the
       // second throw of Animation.cancel.
-      Tooltip.positioners['nulls'] = () => <String, Object?>{
-        'x': null,
-        'y': null,
-      };
-      addTearDown(() => Tooltip.positioners.remove('nulls'));
       final chart = acquireChart(
         _probeChart(
-          <String, Object?>{'position': 'nulls'},
+          <String, Object?>{
+            'position': _TestPositioner(
+              (tooltip, items, eventPosition) => TooltipPosition()
+                ..x = null
+                ..y = null,
+            ),
+          },
           <String, Object?>{
             'animation': <String, Object?>{'duration': 1000},
           },
@@ -1085,37 +1109,46 @@ void main() {
       expect(animator.remove(chart), isTrue);
     });
 
+    testWidgets('a positioner name is not a positioner: a debug build '
+        'stops', (tester) async {
+      expect(
+        () => TooltipPositioner.of('average'),
+        throwsA(isA<AssertionError>()),
+      );
+      expect(TooltipPositioner.of(null), isNull);
+      expect(TooltipPositioner.of(undefined), isNull);
+      const nearest = NearestTooltipPositioner();
+      expect(TooltipPositioner.of(nearest), same(nearest));
+    });
+
     test('average keeps the semantics of new Set()', () {
       // The probe outputs `averageNaN` {x: NaN, y: 1}, `averageZeros`
       // {x: 2, y: 1} and `averageMinusZero` {x: +0, y: 1}: the add step of
       // Set.prototype.add stores +0 for -0.
-      final average = jsGet(Tooltip.positioners, 'average');
-      Object? run(List<double> xs) => jsCall(average, [
-        [
-          for (final x in xs) <String, Object?>{'element': _FakeElement(x)},
-        ],
-      ]);
-      final nan = run([double.nan, double.nan, 2])! as JsObjectFace;
-      expect(nan['x'], isNaN);
-      expect(nan['y'], 1);
-      final zeros = run([0, -0.0, 4])! as JsObjectFace;
-      expect(zeros['x'], 2);
-      final minusZero = run([-0.0])! as JsObjectFace;
-      expect(minusZero['x'], 0);
-      expect((minusZero['x']! as double).isNegative, isFalse);
-      expect(minusZero['y'], 1);
+      final tooltip = _newTooltip();
+      TooltipPosition run(List<double> xs) =>
+          const AverageTooltipPositioner().positionOf(tooltip, [
+            for (final x in xs)
+              _Item(datasetIndex: 0, index: 0, element: _FakeElement(x)),
+          ], null)!;
+      final nan = run([double.nan, double.nan, 2]);
+      expect(nan.x, isNaN);
+      expect(nan.y, 1);
+      final zeros = run([0, -0.0, 4]);
+      expect(zeros.x, 2);
+      final minusZero = run([-0.0]);
+      expect(minusZero.x, 0);
+      expect((minusZero.x! as double).isNegative, isFalse);
+      expect(minusZero.y, 1);
     });
 
-    test('average of a plain item without element gives false', () {
+    test('average of an item without an element gives no position', () {
       // The probe output `averagePlain`: false.
-      final average = jsGet(Tooltip.positioners, 'average');
       expect(
-        jsCall(average, [
-          [
-            <String, Object?>{'x': 1, 'y': 2},
-          ],
-        ]),
-        false,
+        const AverageTooltipPositioner().positionOf(_newTooltip(), [
+          _Item(datasetIndex: 0, index: 0),
+        ], null),
+        isNull,
       );
     });
   });
@@ -1681,8 +1714,11 @@ void main() {
       <String, Object?>{'x': 150, 'y': 100},
     );
 
-    String position(Object? self) =>
-        identical(self, undefined) ? 'undefined' : '${jsGet(self, 'position')}';
+    // The probe prints the name of the positioner, `average`. The option of
+    // the port holds the positioner object: the test prints its class.
+    String position(Object? self) => identical(self, undefined)
+        ? 'undefined'
+        : '${jsGet(self, 'position').runtimeType}';
 
     testWidgets('filter and itemSort get the options as this', (tester) async {
       // The probe output `thisOfCallbacks`: [[filter, average], [filter,
@@ -1708,9 +1744,9 @@ void main() {
       );
       activateBoth(chart);
       expect(seen, [
-        ['filter', 'average'],
-        ['filter', 'average'],
-        ['itemSort', 'average'],
+        ['filter', 'AverageTooltipPositioner'],
+        ['filter', 'AverageTooltipPositioner'],
+        ['itemSort', 'AverageTooltipPositioner'],
       ]);
     });
 
@@ -1723,7 +1759,7 @@ void main() {
           'intersect': false,
           'filter': JsFunction(
             (Object? self, Object? a, Object? b, Object? c, Object? d) =>
-                jsGet(self, 'position') == 'average',
+                jsGet(self, 'position') is AverageTooltipPositioner,
           ),
           'itemSort': JsFunction(
             (Object? self, Object? a, Object? b, Object? c) =>

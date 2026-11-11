@@ -104,7 +104,7 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
   ),
   tooltip: graphicTooltip(
-    position: followY,
+    position: const FollowYPositioner(),
     title: _date,
     label: _typeValue,
     extra: const {'filter': _isBand},

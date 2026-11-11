@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
+    show TooltipPositioner;
 
 /// The option [key] of the options object [options]: `options[key]`, the
 /// shared typed read [readOption] of `helpers.config.dart`.
@@ -277,8 +279,10 @@ extension type const TooltipOptions(Object? object) {
   /// `padding`.
   Object? get padding => optionOf(object, OptionKey.padding);
 
-  /// `position`.
-  Object? get position => optionOf(object, OptionKey.position);
+  /// `position`: the positioner itself, or Dart `null` for a value that is
+  /// not a positioner (row `adapt-tooltip-positioner-objects`).
+  TooltipPositioner? get position =>
+      TooltipPositioner.of(optionOf(object, OptionKey.position));
 
   /// `reverse`.
   Object? get reverse => optionOf(object, OptionKey.reverse);

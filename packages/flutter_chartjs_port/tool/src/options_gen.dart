@@ -29,6 +29,7 @@ const Map<String, int> shapeAtoms = {
   'any': 64,
   'curve': 128,
   'interactionMode': 256,
+  'tooltipPositioner': 512,
 };
 
 /// The shape of a key: the bits of its atoms and the kind of its `scope`
@@ -77,6 +78,7 @@ final class Shape {
     if (mask == shapeAtoms['string']) return 'String';
     if (mask == shapeAtoms['curve']) return 'Curve';
     if (mask == shapeAtoms['interactionMode']) return 'InteractionMode';
+    if (mask == shapeAtoms['tooltipPositioner']) return 'TooltipPositioner';
     if (mask == shapeAtoms['scope']) return '${scope}Scope';
     return 'Object';
   }
@@ -90,6 +92,9 @@ final class Shape {
     if (mask == shapeAtoms['interactionMode']) {
       return 'classifyInteractionMode(raw)';
     }
+    if (mask == shapeAtoms['tooltipPositioner']) {
+      return 'classifyTooltipPositioner(raw)';
+    }
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>(raw)';
     return 'classifyUnion(raw, $mask)';
   }
@@ -101,6 +106,9 @@ final class Shape {
     if (mask == shapeAtoms['string']) return 'classifyString';
     if (mask == shapeAtoms['curve']) return 'classifyCurve';
     if (mask == shapeAtoms['interactionMode']) return 'classifyInteractionMode';
+    if (mask == shapeAtoms['tooltipPositioner']) {
+      return 'classifyTooltipPositioner';
+    }
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>';
     return '(raw) => classifyUnion(raw, $mask)';
   }
@@ -898,7 +906,9 @@ String _scopes(Schema schema) {
       "import 'package:flutter_chartjs_port/src/options/opt.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/option_scope.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';\n",
+      "import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';\n"
+      "import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'\n"
+      '    show TooltipPositioner;\n',
     );
   for (final kind in schema.kinds) {
     out
@@ -929,7 +939,12 @@ String _scopes(Schema schema) {
       final setter = _memberNames.contains(id) ? '${id}Value' : id;
       out.write('\n  /// Stores the plain value [value] of `$name`.\n');
       switch (type) {
-        case 'double' || 'bool' || 'String' || 'Curve' || 'InteractionMode':
+        case 'double' ||
+            'bool' ||
+            'String' ||
+            'Curve' ||
+            'InteractionMode' ||
+            'TooltipPositioner':
           out.write(
             '  set $setter($type value) => '
             'store(OptionKey.$id, OptValue<$type>(value));\n',

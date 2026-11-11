@@ -48,8 +48,10 @@
 // harness rounds the offsets of an event. Thus the step has integers.
 //
 // The custom positioner is the key `custom` of `Tooltip.positioners`: the
-// generator writes it before the cases, and the Dart test file writes the
-// same function in its `main()`.
+// generator writes it before the cases. The data hold
+// `'fn:positioner:custom'` in its place, and the Dart test file gives a
+// positioner class with the same body under that name (the port has no
+// table of positioners).
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
 // Node.js v24.22.1 (Chart.js ADR 0045):
@@ -91,8 +93,8 @@ function log(chart, entry) {
 }
 
 // The custom positioner (Chart.js ADR 0039, section 4): it reads `this`,
-// the tooltip, and gives the alignment. The Dart test file writes the same
-// function into `Tooltip.positioners`.
+// the tooltip, and gives the alignment. The Dart test file has a
+// positioner class with the same body.
 C.Tooltip.positioners.custom = function (items, eventPosition) {
   if (!items.length) {
     return false;

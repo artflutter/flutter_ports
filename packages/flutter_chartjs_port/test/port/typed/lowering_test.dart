@@ -958,9 +958,13 @@ const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
       'callbacks': {'footer': _function},
     },
   ),
+  'position': (
+    ChartTooltip(position: NearestTooltipPositioner()),
+    {'position': NearestTooltipPositioner()},
+  ),
   'extra': (
-    ChartTooltip(extra: {'position': 'nearest'}),
-    {'position': 'nearest'},
+    ChartTooltip(extra: {'caretSize': 8}),
+    {'caretSize': 8},
   ),
 };
 
@@ -2230,7 +2234,7 @@ void main() {
             titleText: _title2,
             labelText: _label,
             footerText: _title2,
-            extra: {'position': 'nearest'},
+            position: NearestTooltipPositioner(),
           ),
           interaction: ChartInteraction(
             mode: NearestInteractionMode(),
@@ -2284,6 +2288,7 @@ void main() {
             'enabled': true,
             'mode': const IndexInteractionMode(),
             'intersect': false,
+            'position': const NearestTooltipPositioner(),
             'backgroundColor': _redValue,
             'titleColor': _blueValue,
             'titleFont': _fontValue,
@@ -2299,7 +2304,6 @@ void main() {
               'label': _function,
               'footer': _function,
             },
-            'position': 'nearest',
           },
         },
         'interaction': {

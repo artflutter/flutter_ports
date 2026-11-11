@@ -77,6 +77,10 @@ export 'package:flutter_chartjs_port/src/platform/native_event.dart'
         NativeEventListener,
         NativeEventTarget,
         NativeTouch;
+export 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
+    show AverageTooltipPositioner, NearestTooltipPositioner;
+export 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
+    show TooltipPosition, TooltipPositioner;
 export 'package:flutter_chartjs_port/src/types.dart'
     hide
         ArcElementWrites,
