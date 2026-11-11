@@ -27,8 +27,8 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
 import 'package:flutter_chartjs_port/src/options/property_animation.dart';
 import 'package:meta/meta.dart';
 
-/// The name of an animated property, with an `id` for the `switch` of a
-/// target class (an element or a resolved options object).
+/// An animated property of a target of an animation (an element or the
+/// resolved options of an element).
 ///
 /// The built-in names have `const` instances: the names of U
 /// `core.animations.defaults.js:1-2` and of its transitions, and the
@@ -37,8 +37,8 @@ import 'package:meta/meta.dart';
 /// `controller.polarArea.js:20`, `controller.bubble.js:18`,
 /// `plugin.tooltip.js:1317`). [AnimatedProp.of] maps a name of a raw
 /// `properties` list to its instance. Another name gives
-/// [AnimatedProp.custom], whose [id] is -1: a target reads and writes it by
-/// name. There is no intern table.
+/// [AnimatedProp.custom]: a target reads and writes it by name. There is no
+/// intern table.
 ///
 /// A built-in property of an element has an animation class
 /// (`RadiusAnimation` for [radius]). The class is a type argument of its
@@ -53,16 +53,16 @@ import 'package:meta/meta.dart';
 /// writes the typed field of the options ([valueOf], [store]).
 @immutable
 base class AnimatedProp {
-  /// A built-in property with the name [name] and the index [id].
+  /// A built-in property with the name [name].
   @internal
-  const AnimatedProp.builtIn(String name, this.id) : _name = name;
+  const AnimatedProp.builtIn(String name) : _name = name;
 
-  /// A built-in property that gives its own [name], with the index [id].
+  /// A built-in property that gives its own [name].
   @internal
-  const AnimatedProp.keyed(this.id) : _name = null;
+  const AnimatedProp.keyed() : _name = null;
 
-  /// A name that is not built in: [id] is -1.
-  const AnimatedProp.custom(String name) : _name = name, id = -1;
+  /// A name that is not built in.
+  const AnimatedProp.custom(String name) : _name = name;
 
   /// The instance of the name [name]: a built-in instance, or a new
   /// [AnimatedProp.custom].
@@ -97,12 +97,6 @@ base class AnimatedProp {
 
   /// The JS property name.
   String get name => _name!;
-
-  /// The index of a built-in name in [builtIns], or -1.
-  final int id;
-
-  /// Whether the name is not built in.
-  bool get isCustom => id < 0;
 
   /// The item of [items] that sets the animation of this property, or Dart
   /// `null`: the first item of the animation class of the property. A
@@ -146,42 +140,32 @@ base class AnimatedProp {
   /// `borderWidth`.
   static const AnimatedProp borderWidth = StyleProp<BorderWidthAnimation>(
     OptionKey.borderWidth,
-    2,
   );
 
   /// `radius`.
   static const AnimatedProp radius = StyleProp<RadiusAnimation>(
     OptionKey.radius,
-    3,
   );
 
   /// `tension`.
   static const AnimatedProp tension = StyleProp<TensionAnimation>(
     OptionKey.tension,
-    4,
   );
 
   /// `color`.
-  static const AnimatedProp color = StyleProp<ColorAnimation>(
-    OptionKey.color,
-    5,
-  );
+  static const AnimatedProp color = StyleProp<ColorAnimation>(OptionKey.color);
 
   /// `borderColor`.
   static const AnimatedProp borderColor = StyleProp<BorderColorAnimation>(
     OptionKey.borderColor,
-    6,
   );
 
   /// `backgroundColor`.
   static const AnimatedProp backgroundColor =
-      StyleProp<BackgroundColorAnimation>(OptionKey.backgroundColor, 7);
+      StyleProp<BackgroundColorAnimation>(OptionKey.backgroundColor);
 
   /// `visible` (the transitions `show` and `hide`).
-  static const AnimatedProp visible = AnimatedBy<VisibleAnimation>(
-    'visible',
-    8,
-  );
+  static const AnimatedProp visible = AnimatedBy<VisibleAnimation>('visible');
 
   /// `base`.
   static const AnimatedProp base = BarBaseProp();
@@ -210,25 +194,23 @@ base class AnimatedProp {
   /// `offset`.
   static const AnimatedProp offset = StyleProp<OffsetAnimation>(
     OptionKey.offset,
-    17,
   );
 
   /// `spacing`.
   static const AnimatedProp spacing = StyleProp<SpacingAnimation>(
     OptionKey.spacing,
-    18,
   );
 
   /// `caretX`.
-  static const AnimatedProp caretX = AnimatedProp.builtIn('caretX', 19);
+  static const AnimatedProp caretX = AnimatedProp.builtIn('caretX');
 
   /// `caretY`.
-  static const AnimatedProp caretY = AnimatedProp.builtIn('caretY', 20);
+  static const AnimatedProp caretY = AnimatedProp.builtIn('caretY');
 
   /// `opacity`.
-  static const AnimatedProp opacity = AnimatedProp.builtIn('opacity', 21);
+  static const AnimatedProp opacity = AnimatedProp.builtIn('opacity');
 
-  /// The built-in names, by [id].
+  /// The built-in properties.
   static const List<AnimatedProp> builtIns = [
     x,
     y,
@@ -270,12 +252,12 @@ base class AnimatedProp {
 base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
   /// A built-in property with the animation class [T].
   @internal
-  const AnimatedBy(super.name, super.id) : super.builtIn();
+  const AnimatedBy(super.name) : super.builtIn();
 
   /// A built-in property with the animation class [T] that gives its own
   /// name.
   @internal
-  const AnimatedBy.keyed(super.id) : super.keyed();
+  const AnimatedBy.keyed() : super.keyed();
 
   @override
   PropertyAnimation? itemIn(List<PropertyAnimation>? items) {
@@ -293,7 +275,7 @@ base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
 base class StyleProp<T extends PropertyAnimation> extends AnimatedBy<T> {
   /// The style property of the option [key].
   @internal
-  const StyleProp(this.key, super.id) : super.keyed();
+  const StyleProp(this.key) : super.keyed();
 
   /// The key of the resolved options of an element.
   final OptionKey key;

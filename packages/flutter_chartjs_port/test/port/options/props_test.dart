@@ -104,18 +104,15 @@ void main() {
 
   group('AnimatedProp', () {
     test('the built-in names map to their instances', () {
-      for (final (id, prop) in AnimatedProp.builtIns.indexed) {
-        expect(prop.id, id);
+      for (final prop in AnimatedProp.builtIns) {
         expect(identical(AnimatedProp.of(prop.name), prop), isTrue);
-        expect(prop.isCustom, isFalse);
       }
       expect(AnimatedProp.builtIns.map((p) => p.name).toSet(), hasLength(22));
     });
 
     test('another name is a custom prop', () {
       final prop = AnimatedProp.of('foo');
-      expect(prop.id, -1);
-      expect(prop.isCustom, isTrue);
+      expect(AnimatedProp.builtIns, isNot(contains(prop)));
       expect(prop, const AnimatedProp.custom('foo'));
       expect(prop.hashCode, 'foo'.hashCode);
     });

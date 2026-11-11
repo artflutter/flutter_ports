@@ -504,14 +504,17 @@ void main() {
           expect(animatedPropOf(record, 0).name, name);
           // A built-in name gives its constant, as AnimatedProp.of does.
           final builtIn = AnimatedProp.of(name);
-          if (!builtIn.isCustom) {
+          if (AnimatedProp.builtIns.any((p) => identical(p, builtIn))) {
             expect(animatedPropOf(record, 0), same(builtIn), reason: name);
           }
         }
       }
       final extra = PointProperties()..['other'] = 1;
       expect(animatedPropOf(extra, 0).name, 'other');
-      expect(animatedPropOf(extra, 0).isCustom, isTrue);
+      expect(
+        AnimatedProp.builtIns,
+        isNot(contains(animatedPropOf(extra, 0))),
+      );
     });
 
     test('a property object animates as the same object by name', () {
