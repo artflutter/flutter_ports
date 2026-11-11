@@ -88,6 +88,17 @@ Color _borderColor(Chart chart) =>
 double _borderWidth(Chart chart) =>
     _optionsOf(chart.getDatasetMeta(0).data[0])['borderWidth']! as double;
 
+/// The animation of a property of an element of another library. The type
+/// is all that the library needs: it finds its items in the List by it.
+final class _BadgeAnimation extends PropertyAnimation {
+  const _BadgeAnimation({super.duration});
+}
+
+/// The transition of an update mode of another library.
+final class _PulseTransition extends ChartTransition {
+  const _PulseTransition({super.duration});
+}
+
 void main() {
   group('PropertyAnimation', () {
     test('two items of one class with equal parameters are equal', () {
@@ -326,6 +337,177 @@ void main() {
           contains('two items for radius'),
         ),
       );
+    });
+  });
+  group('ChartConfig.transitions', () {
+    /// A line chart with the border color [color] that updates in the mode
+    /// `active`.
+    Widget chartOf(
+      Color color, {
+      List<ChartTransition>? transitions,
+      ChartAnimation? animation,
+      List<PropertyAnimation>? animations,
+    }) => _box(
+      ChartView(
+        updateMode: 'active',
+        config: ChartConfig(
+          type: .line,
+          labels: const ['a', 'b', 'c'],
+          datasets: [
+            LineDataset(
+              key: const ValueKey('line'),
+              data: const [1, 2, 3],
+              borderColor: ChartValue.constant(color),
+            ),
+          ],
+          animation: animation,
+          animations: animations,
+          transitions: transitions,
+        ),
+      ),
+    );
+
+    test('two items of one class with equal parameters are equal', () {
+      const a = HoverTransition(
+        duration: Duration(milliseconds: 150),
+        animations: [RadiusAnimation.off()],
+      );
+      // The same value, not a constant.
+      // ignore: prefer_const_constructors
+      final b = HoverTransition(
+        duration: const Duration(milliseconds: 150),
+        // The same value, not a constant.
+        // ignore: prefer_const_literals_to_create_immutables
+        animations: [const RadiusAnimation.off()],
+      );
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(const HoverTransition()));
+      expect(const HoverTransition(), isNot(const HideTransition()));
+    });
+
+    testWidgets('an update in the mode takes the duration of its item', (
+      tester,
+    ) async {
+      const transitions = [
+        HoverTransition(
+          duration: Duration(milliseconds: 200),
+          easing: Curves.linear,
+        ),
+      ];
+      await tester.pumpWidget(chartOf(_red, transitions: transitions));
+      await tester.pumpAndSettle();
+      final chart = _chart(tester);
+
+      await tester.pumpWidget(chartOf(_blue, transitions: transitions));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      final mid = _borderColor(chart);
+      expect(mid.r, inExclusiveRange(0, 1));
+      // 200 ms of the item, not the 400 ms of the default of the mode: the
+      // color at 250 ms is the last color. The mode `active` gives the
+      // hover color of the line, so the last color is not the plain blue.
+      await tester.pump(const Duration(milliseconds: 150));
+      final at250 = _borderColor(chart);
+      expect(at250, isNot(mid));
+      await tester.pumpAndSettle();
+      expect(_borderColor(chart), at250);
+    });
+
+    testWidgets('the item of the mode goes before the chart animation', (
+      tester,
+    ) async {
+      const transitions = [
+        HoverTransition(duration: Duration(milliseconds: 200)),
+      ];
+      const animation = ChartAnimation(
+        duration: Duration(milliseconds: 2000),
+        easing: Curves.linear,
+      );
+      await tester.pumpWidget(
+        chartOf(_red, transitions: transitions, animation: animation),
+      );
+      await tester.pumpAndSettle();
+      final chart = _chart(tester);
+
+      await tester.pumpWidget(
+        chartOf(_blue, transitions: transitions, animation: animation),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
+      final at250 = _borderColor(chart);
+      await tester.pumpAndSettle();
+      // Done at 250 ms: the 200 ms of the item, not the 2000 ms.
+      expect(_borderColor(chart), at250);
+    });
+
+    testWidgets('the property items of the mode go before those of the chart', (
+      tester,
+    ) async {
+      const mode = BorderColorAnimation.off();
+      const transitions = [
+        HoverTransition(animations: [mode]),
+      ];
+      const animations = [
+        BorderColorAnimation(duration: Duration(milliseconds: 2000)),
+      ];
+      await tester.pumpWidget(
+        chartOf(_red, transitions: transitions, animations: animations),
+      );
+      await tester.pumpAndSettle();
+      final chart = _chart(tester);
+      final controller = chart.getDatasetMeta(0).controller!;
+      expect(
+        controller
+            .resolveAnimations(0, 'active')
+            .itemOf(
+              AnimatedProp.borderColor,
+            ),
+        same(mode),
+      );
+      expect(
+        controller.resolveAnimations(0).itemOf(AnimatedProp.borderColor),
+        same(animations.single),
+      );
+
+      await tester.pumpWidget(
+        chartOf(_blue, transitions: transitions, animations: animations),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
+      // Off in the mode: the color changes at once.
+      final atOnce = _borderColor(chart);
+      expect(atOnce.r, 0);
+      await tester.pumpAndSettle();
+      expect(_borderColor(chart), atOnce);
+    });
+  });
+
+  group('a class of another library', () {
+    testWidgets('is not an item of the chart', (tester) async {
+      const badge = _BadgeAnimation(duration: Duration(milliseconds: 200));
+      const pulse = _PulseTransition(duration: Duration(milliseconds: 300));
+      const radius = RadiusAnimation(loop: true);
+      await tester.pumpWidget(
+        _box(
+          const ChartView(
+            config: ChartConfig(
+              type: .line,
+              labels: ['a', 'b', 'c'],
+              datasets: [
+                LineDataset(data: [1, 2, 3]),
+              ],
+              animations: [badge, radius],
+              transitions: [pulse],
+            ),
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      // The chart reads its own classes and leaves the other ones.
+      final animations = _animations(_chart(tester));
+      expect(animations.itemOf(AnimatedProp.radius), same(radius));
+      await tester.pumpAndSettle();
     });
   });
 }

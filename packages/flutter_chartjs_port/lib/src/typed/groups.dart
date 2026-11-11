@@ -17,11 +17,12 @@ import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/options/opt.dart' show OptForeign;
+import 'package:flutter_chartjs_port/src/options/opt.dart'
+    show OptForeign, OptScope;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show AnimationSettings;
+    show AnimationSettings, ChartTransition, transitionModeOf;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -31,7 +32,9 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LegendOptionsScope,
         TitleOptionsScope,
         TooltipCallbacksScope,
-        TooltipOptionsScope;
+        TooltipOptionsScope,
+        TransitionOptionsScope,
+        TransitionsSpecScope;
 import 'package:flutter_chartjs_port/src/theme/css.dart' show fontScopeOf;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show ChartAnimationDetails, ChartLegendEventDetails, ChartTooltipItem;
@@ -687,24 +690,26 @@ FillerOptionsScope lowerFiller(ChartFiller filler) {
 ///
 /// [ChartAnimation.none] turns the animations off: `animation: false`.
 @immutable
-final class ChartAnimation with Diagnosticable implements AnimationSettings {
-  /// The animation options.
+final class ChartAnimation extends AnimationSettings with Diagnosticable {
+  /// The animation options: the length `duration` (the default is 1000
+  /// milliseconds), the wait `delay`, the curve `easing` (a Flutter [Curve],
+  /// the default is `Curves.easeOutQuart`) and the repeat `loop`.
+  ///
+  /// A constant of `Curves` and a `const` curve of the app compare by
+  /// identity. A curve that `build` makes anew at each call is a new value,
+  /// and it gives a chart update, unless its class has `==`.
   const ChartAnimation({
-    this.duration,
-    this.delay,
-    this.easing,
-    this.loop,
+    super.duration,
+    super.delay,
+    super.easing,
+    super.loop,
     this.onProgress,
     this.onComplete,
     this.extra,
   }) : _none = false;
 
   const ChartAnimation._none()
-    : duration = null,
-      delay = null,
-      easing = null,
-      loop = null,
-      onProgress = null,
+    : onProgress = null,
       onComplete = null,
       extra = null,
       _none = true;
@@ -712,28 +717,6 @@ final class ChartAnimation with Diagnosticable implements AnimationSettings {
   /// No animation: `animation: false`. A change of the data then shows at
   /// once. Its copies are [none] too.
   static const ChartAnimation none = ChartAnimation._none();
-
-  /// The length of the animations: `duration`. The default is 1000
-  /// milliseconds.
-  @override
-  final Duration? duration;
-
-  /// The wait before the animations start: `delay`.
-  @override
-  final Duration? delay;
-
-  /// The curve of the animations: `easing`, a Flutter [Curve]. The default
-  /// is `Curves.easeOutQuart`.
-  ///
-  /// A constant of `Curves` and a `const` curve of the app compare by
-  /// identity. A curve that `build` makes anew at each call is a new value,
-  /// and it gives a chart update, unless its class has `==`.
-  @override
-  final Curve? easing;
-
-  /// Whether the animations repeat without end: `loop`.
-  @override
-  final bool? loop;
 
   /// The function of each step of the animations: `onProgress`.
   final ValueChanged<ChartAnimationDetails>? onProgress;
@@ -798,6 +781,60 @@ final class ChartAnimation with Diagnosticable implements AnimationSettings {
   }
 }
 
+/// Gives [scope] the object [settings] of the app in the cell of each
+/// parameter that is not `null`: `duration`, `delay`, `easing` and `loop`.
+///
+/// The cell holds [settings] itself, not a copy of the parameter. The
+/// cascade of the options gives the object to the animation of a property,
+/// and `Animation` reads the parameter from it (row
+/// adapt-property-animations).
+void _putSettings(AnimationOptionsScope scope, AnimationSettings settings) {
+  if (settings.duration != null) {
+    scope.durationCell = OptForeign<double>(settings);
+  }
+  if (settings.delay != null) {
+    scope.delayCell = OptForeign<double>(settings);
+  }
+  if (settings.easing != null) {
+    scope.easingCell = OptForeign<Curve>(settings);
+  }
+  if (settings.loop != null) {
+    scope.loopCell = OptForeign<bool>(settings);
+  }
+}
+
+/// The `transitions` option of [transitions]: for each item with a
+/// parameter, the scope of its update mode with the item itself in the cell
+/// of each parameter. Dart `null` when no item has a parameter.
+///
+/// The items of `ChartTransition.animations` are not in the options: the
+/// animations of the chart read them from the item.
+@internal
+TransitionsSpecScope? lowerTransitions(List<ChartTransition> transitions) {
+  TransitionsSpecScope? spec;
+  final modes = <String>{};
+  for (final transition in transitions) {
+    final mode = transitionModeOf(transition);
+    // A class of another library: that library reads its items.
+    if (mode == null) continue;
+    assert(
+      modes.add(mode),
+      'ChartConfig.transitions has two items of the class '
+      '${transition.runtimeType}. Give one item for each class.',
+    );
+    final animation = AnimationOptionsScope();
+    _putSettings(animation, transition);
+    if (animation.ownKeyCount == 0) continue;
+    (spec ??= TransitionsSpecScope()).store(
+      mode,
+      OptScope<TransitionOptionsScope>(
+        TransitionOptionsScope()..animation = animation,
+      ),
+    );
+  }
+  return spec;
+}
+
 /// The `animation` option of [animation]: `false` for
 /// [ChartAnimation.none], else an `AnimationOptionsScope`. The scope has no
 /// copy of `duration`, `delay`, `easing` and `loop`: each of these cells
@@ -811,22 +848,7 @@ Object lowerAnimation(
 ) {
   if (animation._none) return false;
   final scope = AnimationOptionsScope();
-  // The cell of a parameter holds [animation] itself, not a copy of the
-  // parameter. The cascade of the options gives the object to the
-  // animation of a property, and `Animation` reads the parameter from it
-  // (row adapt-property-animations).
-  if (animation.duration != null) {
-    scope.durationCell = OptForeign<double>(animation);
-  }
-  if (animation.delay != null) {
-    scope.delayCell = OptForeign<double>(animation);
-  }
-  if (animation.easing != null) {
-    scope.easingCell = OptForeign<Curve>(animation);
-  }
-  if (animation.loop != null) {
-    scope.loopCell = OptForeign<bool>(animation);
-  }
+  _putSettings(scope, animation);
   if (animation.onProgress != null) {
     scope.onProgress = animationTrampoline(
       () => lowering.config.animation?.onProgress,

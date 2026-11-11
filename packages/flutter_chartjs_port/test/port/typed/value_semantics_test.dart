@@ -678,6 +678,7 @@ void main() {
         'interaction',
         'animation',
         'animations',
+        'transitions',
         'elements',
         'onClick',
         'onHover',
