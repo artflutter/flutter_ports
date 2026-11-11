@@ -272,6 +272,124 @@ void main() {
       }
     }
 
+    // The fast path of a line ends its last pixel column at the average x of
+    // the column, before the x of its last point, where the filler starts the
+    // base: the side goes on in x. A line whose last point lies on the base
+    // gives the same commands.
+    for (final (count, curved, noise) in [
+      (1000, false, 40.0),
+      (5000, false, 40.0),
+      (5000, false, 200.0),
+      (20000, false, 40.0),
+      (1000, true, 40.0),
+    ]) {
+      for (final step in [.37, .989, 30.0]) {
+        for (final color in [_soft, _blue]) {
+          test('a side that goes on in x by $step: $count points, curved '
+              '$curved, noise $noise, $color', () async {
+            void shape(CanvasPath p) {
+              _top(p, count, curved: curved, noise: noise);
+              p
+                ..lineTo(_end(count) + step, _base)
+                ..lineTo(_end(count) + step, _base)
+                ..lineTo(10, _base)
+                ..lineTo(10, _base)
+                ..closePath();
+            }
+
+            for (final setup in [_none, _shifted, _double]) {
+              final (a, b, draws) = await _fills(
+                shape,
+                setup: setup,
+                color: color,
+              );
+              expect(draws, 1);
+              _sameLook(a, b);
+            }
+          });
+        }
+      }
+    }
+
+    test('a side that goes on in x: no seam when sparse', () async {
+      // Few and wide segments with one straight edge and a slanted side: the
+      // pieces must give the bytes of the whole shape.
+      for (final step in [.37, 30.0]) {
+        void shape(CanvasPath p) {
+          p.moveTo(10, 100);
+          for (var i = 1; i < 200; i++) {
+            p.lineTo(10 + i * 2.4, 100);
+          }
+          p
+            ..lineTo(10 + 199 * 2.4 + step, _base)
+            ..lineTo(10, _base)
+            ..closePath();
+        }
+
+        for (final color in [_soft, _blue]) {
+          final (a, b, draws) = await _fills(shape, color: color);
+          expect(draws, 1);
+          expect(comparePixels(a, b).differing, 0, reason: '$step $color');
+        }
+      }
+    });
+
+    test(
+      'a side that goes on in x: a long side is a piece of its own',
+      () async {
+        // The side is the last line of the top edge, and its bounds pass the
+        // area of a piece: the last piece has this one segment, with the base
+        // below it, and ends at the first point of the base.
+        void shape(CanvasPath p) {
+          p.moveTo(10, 60);
+          for (var i = 1; i < 300; i++) {
+            p.lineTo(10 + i * .8, i.isEven ? 60 : 90);
+          }
+          p
+            ..lineTo(460, _base)
+            ..lineTo(460, _base)
+            ..lineTo(10, _base)
+            ..lineTo(10, _base)
+            ..closePath();
+        }
+
+        for (final color in [_soft, _blue]) {
+          for (final setup in [_none, _shifted, _double]) {
+            final (a, b, draws) = await _fills(
+              shape,
+              setup: setup,
+              color: color,
+            );
+            expect(draws, 1);
+            _sameLook(a, b, '$color');
+          }
+        }
+      },
+    );
+
+    test('a side that goes on in x: the top edge ends on the base', () async {
+      // The last points of the line lie on the base. The base walk stops at
+      // the last of them, which is then the end of the top edge.
+      void shape(CanvasPath p) {
+        _top(p, 1000, curved: false);
+        p
+          ..lineTo(_end(1000) + 2, _base)
+          ..lineTo(_end(1000) + 4, _base)
+          ..lineTo(_end(1000) + 4, _base)
+          ..lineTo(10, _base)
+          ..lineTo(10, _base)
+          ..closePath();
+      }
+
+      for (final color in [_soft, _blue]) {
+        for (final setup in [_none, _shifted, _double]) {
+          final (a, b, draws) = await _fills(shape, setup: setup, color: color);
+          expect(draws, 1);
+          _sameLook(a, b, '$color');
+        }
+      }
+    });
+
     test('each column belongs to one piece: no seam when sparse', () async {
       // Few and wide segments with one straight edge: the pieces must give the
       // bytes of the whole shape in a translucent and in an opaque color.
@@ -408,7 +526,7 @@ void main() {
         },
       ),
       (
-        'a slanted side',
+        'a side that goes back in x',
         (p) {
           _top(p, 1000);
           p
@@ -1008,6 +1126,105 @@ void main() {
         }
       } finally {
         debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets('a straight line with a fill ends inside a pixel column or on '
+        'the base', (
+      tester,
+    ) async {
+      // Tick labels on the x axis, a legend at the right and a gap put the
+      // end of a line between two whole pixels. Then the last pixel column of
+      // the fast path has several points, and the top edge ends at their
+      // average x, before the x of the base. A line whose last [zeros] points
+      // lie on the base has its last segment as the side, also when the chart
+      // area ends on a whole pixel.
+      const count = 2000;
+      Chart chartOf({
+        Object fill = 'origin',
+        bool ticks = true,
+        bool legend = false,
+        bool gap = false,
+        int datasets = 1,
+        int zeros = 0,
+      }) => acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            for (var d = 0; d < datasets; d++)
+              <String, Object?>{
+                'label': 'Series $d',
+                'data': <Object?>[
+                  for (var i = 0; i < count; i++)
+                    <String, Object?>{
+                      'x': i * 100 / (count - 1),
+                      'y': gap && i == count ~/ 2
+                          ? null
+                          : i >= count - zeros
+                          ? 0.0
+                          : 50 + 38 * math.sin(i * .02 + d),
+                    },
+                ],
+                'borderColor': _blue,
+                'backgroundColor': _soft,
+                'fill': fill,
+                'pointRadius': 0.0,
+              },
+          ],
+        },
+        'options': <String, Object?>{
+          'parsing': false,
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'type': 'linear',
+              'min': 0.0,
+              'max': 100.0,
+              'display': ticks,
+              'grid': <String, Object?>{'display': false},
+              'ticks': <String, Object?>{'maxRotation': 0.0},
+            },
+            'y': <String, Object?>{
+              'type': 'linear',
+              'min': 0.0,
+              'max': 100.0,
+              'display': false,
+            },
+          },
+          'plugins': <String, Object?>{
+            'legend': legend ? <String, Object?>{'position': 'right'} : false,
+            'title': false,
+          },
+        },
+      });
+      int pieceDraws(Chart chart) =>
+          (chart.ctx! as UiCanvasContext).debugPieceDraws;
+
+      for (final (name, make, draws, inside)
+          in <(String, Chart Function(), int, bool)>[
+            // The stroke and the fill.
+            ('origin', chartOf, 2, true),
+            ('start', () => chartOf(fill: 'start'), 2, true),
+            ('end', () => chartOf(fill: 'end'), 2, true),
+            ('legend', () => chartOf(ticks: false, legend: true), 2, true),
+            // The stroke and the fill of each of the two parts.
+            ('gap', () => chartOf(gap: true), 3, true),
+            ('three datasets', () => chartOf(datasets: 3), 6, true),
+            // The last points of the line lie on the base.
+            ('zero', () => chartOf(ticks: false, zeros: 1), 2, false),
+            ('zeros', () => chartOf(ticks: false, zeros: 40), 2, false),
+          ]) {
+        UiCanvasContext.debugDrawLongPathsInPieces = false;
+        final wholeChart = make();
+        expect(pieceDraws(wholeChart), 0, reason: name);
+        // The end of the line is not on a whole pixel, except in the cases of
+        // a line that ends on the base.
+        final right = wholeChart.chartArea!.right;
+        expect(right == right.roundToDouble(), !inside, reason: name);
+        final whole = await _chartRender(tester, wholeChart);
+        UiCanvasContext.debugDrawLongPathsInPieces = true;
+        final chart = make();
+        expect(pieceDraws(chart), draws, reason: name);
+        _sameLook(whole, await _chartRender(tester, chart), name);
       }
     });
   });

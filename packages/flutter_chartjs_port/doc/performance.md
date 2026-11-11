@@ -8294,3 +8294,87 @@ Open: a chart with several datasets, a repeat of the Pixel Firefox cells at 10 t
 `96f6f9d` and this build in headless Chrome, for the new overlap of a curve, which also changes the long lines of phone
 browsers. A run on Windows, Linux, a Chromebook or an Android tablet in desktop-site mode waits for such hardware.
 Files: `.handover/night-2026-11-10/` (`results.md`, `runs/`), outside the repository.
+
+## 71. A straight fill whose side is not vertical, on the web
+
+**What was slow.** In a browser, the fill of a dense straight line with tick labels on the x axis took one draw, and
+Skia rastered the path on the CPU: 18 to 29 ms of raster time for each frame from 5,000 points in Chrome, where the same
+fill with hidden axes takes 1.2 to 1.7 ms in pieces. The stroke of the same line took pieces. A line of 1,000 points on
+the same chart took pieces for both.
+
+**The cause.** `UiPathBuilder.tryFillColumns` declined when the side between the end of the top edge and the first line
+of the base was not vertical within 1e-6 bitmap pixels. The straight fast path of a line (`fastPathSegment`,
+`element.line.js:118`) ends its last pixel column at the average x of the points of the column, and the filler starts
+the base at the x of the last point, so the side slants when the last column holds more than two points.
+
+The last point is alone in its column when the chart area ends on a whole pixel, as it does with hidden axes or with a
+grid only. A probe on the test engine (a chart of 512 x 512 pixels, 2,000 points) found the decline with tick labels on
+the x axis (the area ends at 498.989), a legend or a title at the right, a y axis at the right, a layout padding of
+10.5, and a gap in the data, for the fill to `origin`, `start` and `end`. A curve and a stepped line do not use the
+fast path, and a line below about one point for each pixel has no column with several points: they took pieces before,
+except in the case below.
+
+A second cause gives the same decline: a straight line whose last points lie on the base, for example a last value of
+0 with the fill to `origin`. The last point of the line is then the first point of the base, so the walk back along
+the base goes on to that point, and the last segment of the line is the side. That side goes on in x by one point step.
+Such a fill took one draw at each density from 128 commands, also with hidden axes and a chart area that ends on a
+whole pixel: on the test engine, 300 and 2,000 points with a last value of 0 on a chart area that ends at 512 took one
+draw for the fill. A curve whose last point lies on the base took pieces before: its last command is a cubic curve,
+which stops the walk, so the side stayed vertical.
+
+**The change.** A side that goes on in x counts as the last line of the top edge. The shape is still the shape of
+Chart.js ADR 0113, Decision 2: a top edge that goes up in x, then lines along a horizontal base, then a close. The
+line path and the filler calls do not change. A side that goes back in x keeps one draw.
+
+**The figures.** `apps/chart_benchmark_lab` with the matrix driver `tool/perf_matrix.dart` and the lab patch of the run
+(not committed): the Chart.js port, type `line`, one dataset of live data with `parsing: false`, linear axes from 0 to
+100, `animation: false`, a line 2 logical pixels wide, a chart of 1004 x 420 logical pixels at DPR 2. The base is
+`d5373ac`. The other build adds the change and the dense-curve prototype of the same run, which a compile-time define
+keeps off and which is not shipped; the four control cells show that it moves no cell. Each tick takes the data-only
+update (Chart.js ADR 0098), the default of the lab. Chrome 157.0.8103.39 on the Mac, with dart2wasm (skwasm) and with
+dart2js (CanvasKit). The flags of a cell: `f` the fill to `origin` at 15% alpha, `a` the tick labels of both axes, `m`
+markers, `c` a curve with tension 0.35, `g` the grid, `l` the legend.
+
+Raster mean in ms for each frame, and FPS:
+
+| Cell | dart2wasm, raster, base | dart2wasm, raster, new | dart2wasm, FPS, base | dart2wasm, FPS, new | dart2js, raster, base | dart2js, raster, new | dart2js, FPS, base | dart2js, FPS, new |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 5,000 points, `fa` | 29.37 | 1.72 | 34.0 | 120.0 | 28.53 | 1.22 | 31.0 | 120.2 |
+| 20,000 points, `fa` | 19.95 | 1.65 | 49.6 | 120.2 | 18.39 | 1.23 | 39.2 | 120.0 |
+| 5,000 points, `mfagl` | 28.33 | 1.75 | 35.2 | 120.0 | 27.67 | 1.42 | 31.6 | 119.8 |
+| 20,000 points, `mfagl` | 20.10 | 1.89 | 49.4 | 120.0 | 18.62 | 2.15 | 38.0 | 101.2 |
+| Control: 5,000 points, `f` | 1.70 | 1.71 | 120.0 | 120.2 | 1.24 | 1.23 | 120.0 | 120.0 |
+| Control: 100 points, `mcfagl` | 2.13 | 2.12 | 120.0 | 120.2 | 2.07 | 2.06 | 120.0 | 120.0 |
+| Control: 1,000 points, `mcfagl` | 3.33 | 3.33 | 119.8 | 120.2 | 2.70 | 2.71 | 120.0 | 120.0 |
+| Control: 20,000 points, `mcfagl` | 19.84 | 20.05 | 49.8 | 49.4 | 15.15 | 15.10 | 30.2 | 30.2 |
+
+The four cells with a straight fill and tick labels go to the raster time of the fill with hidden axes, and to the
+frame rate of the display, except one. At 20,000 points with markers, dart2js gets 101.2 FPS: its busy time on the main
+thread (p50) goes from 25.59 to 9.16 ms, above the 8.33 ms of a frame at 120 Hz. The four control cells do not take
+the change (a fill that took pieces before, a line below 128 points, and curves): each stays within 0.3 ms of raster
+and 0.4 FPS.
+
+**The conditions.** Profile builds (`flutter build web --wasm --profile` and `flutter build web --profile -O4`, each
+with `-t tool/perf_matrix.dart`). One run of 5 s for each cell, with no trace. The screen of the Mac was locked for the
+whole pass, with the displays awake; the Chrome window of 1400 x 1000 did not move, and the page was visible at 120 Hz.
+The load average of the Mac was 3.8 to 8.4 during the dart2wasm runs and 4.4 to 9.9 during the dart2js runs. A raster
+time of a profile build reads a little lower than that of a release build: compare the rows of this table with each
+other.
+
+**The pixels.** The affected fills move from one draw to pieces, the form that Chart.js ADR 0113 records for a dense
+fill. On the test engine, 90 pairs of charts (DPR 1, 2 and 2.625; 2,000, 5,000 and 20,000 points) compared pieces with
+one draw: no pixel that flips, no solid pixel of another value, and an inked area that differs by at most 0.107%.
+
+**Not measured.** Safari, Firefox, the browsers of a phone and a release build. No cell was made for the second cause:
+the tests pin it, and no browser timed it. No browser pixels were compared for this change. Native apps do not take
+this code.
+
+**What keeps one draw**, as before: a reversed x axis (the top edge goes down in x), `indexAxis: 'y'`, a fill with two
+colors, a fill to a value, a fill to another dataset, and a fill below 128 commands.
+
+Tests: `test/port/canvas/canvas_ui_pieces_test.dart` gets 34 tests: 30 twins of a side that goes on in x by 0.37, 0.989
+and 30 pixels, a sparse shape with equal bytes, a long side that is a piece of its own, a top edge that ends on the
+base, and one test of 8 line charts: 6 whose line ends inside a pixel column (tick labels with the three fills, a
+legend at the right, a gap, three datasets) and 2 whose last 1 and 40 values lie on the base, on a chart area that ends
+on a whole pixel. Without the change, these 34 tests fail and the other 80 pass. Files:
+`.handover/line-perf-2026-11-11/` (`report.md`, `proto/fill-fix.md`, `proto/measure.md`), outside the repository.
