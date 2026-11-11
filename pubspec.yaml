@@ -27,14 +27,14 @@ melos:
       stdio: inherit
       description: Run the cross-library chart benchmark in native macOS profile mode.
     benchmark:web:
-      run: cd apps/chart_benchmark_lab && flutter run -d chrome
+      run: cd apps/chart_benchmark_lab && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics
       stdio: inherit
       description: Preview the cross-library chart benchmark in Chrome.
     benchmark:build:web:
       run: cd apps/chart_benchmark_lab && flutter build web --wasm
       description: Build the chart benchmark for web with a JavaScript fallback.
     docs:
-      run: cd apps/chartjs_docs && flutter run -d chrome
+      run: cd apps/chartjs_docs && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics
       stdio: inherit
       description: Run the documentation site in Chrome.
     docs:build:web:
@@ -130,7 +130,7 @@ melos:
       description: Write packages/flutter_chartjs_port/doc/upstream/manifest.json and fixtures.json from third_party/Chart.js (tool 4). Needs Node.js 22.18 or later (CI uses 24.12.0) and the submodule (melos run upstream).
 
     gallery:
-      run: cd apps/chartjs_gallery && flutter run -d chrome
+      run: cd apps/chartjs_gallery && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics
       # A real terminal, so flutter run's hot reload/restart/quit keys work.
       stdio: inherit
       description: Run the Chart.js gallery in Chrome.

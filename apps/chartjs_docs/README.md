@@ -16,3 +16,10 @@ adds them through a service worker, on `github.io` only. The first visit reloads
 `web/flutter_bootstrap.js` gives the Flutter loader no service worker settings, because the worker of Flutter
 removes any other worker in its scope. The code of both files is the code of the same files of
 `apps/chart_benchmark_lab`.
+
+`web/flutter_bootstrap.js` also sets `preferWebParagraph: true`
+([flutter/flutter#172561](https://github.com/flutter/flutter/issues/172561), from Flutter 3.50): the browser lays
+out and draws the text with the fonts of the system. That path needs CanvasKit and the Enhanced TextMetrics API,
+which Chrome has behind the flag `chrome://flags/#enable-experimental-web-platform-features`. A browser with the
+API takes the JavaScript build with CanvasKit. Each other browser keeps its default build.
+`dart run melos run docs` starts Chrome with the API.

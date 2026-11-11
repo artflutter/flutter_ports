@@ -28,6 +28,15 @@ dart run melos run gallery:build:ios      # iOS build without code signing
 
 CI builds the web, Android and iOS targets on every push and pull request.
 
+`web/flutter_bootstrap.js` sets `preferWebParagraph: true`
+([flutter/flutter#172561](https://github.com/flutter/flutter/issues/172561),
+from Flutter 3.50): the browser lays out and draws the text with the fonts of
+the system. That path needs CanvasKit and the Enhanced TextMetrics API, which
+Chrome has behind the flag
+`chrome://flags/#enable-experimental-web-platform-features`. A browser with the
+API takes the JavaScript build with CanvasKit. Each other browser keeps its
+default build. `dart run melos run gallery` starts Chrome with the API.
+
 Not published (`publish_to: none`).
 
 ## Indexed-color stress test

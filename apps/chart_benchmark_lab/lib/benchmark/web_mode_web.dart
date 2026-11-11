@@ -5,16 +5,34 @@ import 'package:flutter/foundation.dart' show kIsWasm;
 @JS('crossOriginIsolated')
 external bool? get _crossOriginIsolated;
 
+@JS('TextCluster')
+external JSAny? get _textCluster;
+
+/// Whether the browser draws the text (Flutter issue 172561).
+///
+/// `web/flutter_bootstrap.js` gives a browser with the Enhanced TextMetrics API
+/// the JavaScript build with `preferWebParagraph`. A WebAssembly build has no
+/// such text path.
+bool get _nativeText => !kIsWasm && _textCluster.isDefinedAndNotNull;
+
 /// How this page runs: a figure of one mode does not compare with another.
 ///
 /// The Flutter loader gives skwasm its worker thread only on an isolated page.
 String? webMode() {
+  if (_nativeText) return 'JAVASCRIPT · NATIVE TEXT';
   if (!kIsWasm) return 'JAVASCRIPT';
   return _crossOriginIsolated == true ? 'WASM · THREADS' : 'WASM · 1 THREAD';
 }
 
 /// Why this page runs in its [webMode], for the note over the page.
 String? webModeWhy() {
+  if (_nativeText) {
+    return 'This browser has the Enhanced TextMetrics API, so it lays out and '
+        'draws the text with the fonts of the system. Flutter has this text '
+        'path only in the JavaScript build, which has no rendering thread. '
+        'For WebAssembly, turn off the Chrome flag '
+        '"Experimental Web Platform features".';
+  }
   if (!kIsWasm) {
     return 'By default, Flutter uses WebAssembly only in a current Chromium '
         'browser. This browser takes the JavaScript build, which has no '

@@ -2196,8 +2196,15 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   the COOP and COEP headers on `github.io` through a service worker, with one reload key for each page. `web/flutter_bootstrap.js` gives the
   loader no service worker settings: else the worker of Flutter removes that worker. The docs app has the
   same two files, with the same code: without them, skwasm runs on one thread and writes a warning to the
-  console. The header of a
-  web run shows its mode (`lib/benchmark/web_mode.dart`). A note that does not scroll
+  console. The `web/flutter_bootstrap.js` of the lab, the docs and the gallery sets
+  `preferWebParagraph: true` (Flutter issue 172561, from Flutter 3.50): the browser lays out and draws the
+  text with the fonts of the system. The engine has that path only in CanvasKit, and only in a browser with
+  the Enhanced TextMetrics API (`window.TextCluster`, in Chrome behind the flag "Experimental Web Platform
+  features"). A `--wasm` build ignores the setting on skwasm, so the script gives a browser with the API
+  `renderer: 'canvaskit'`, the JavaScript build. Each other browser keeps its default build. The scripts
+  `gallery`, `docs` and `benchmark:web` start Chrome with
+  `--enable-blink-features=ExtendedTextMetrics`. `test:web` runs without that flag. The header of a
+  web run shows its mode (`lib/benchmark/web_mode.dart`; `JAVASCRIPT · NATIVE TEXT` for that path). A note that does not scroll
   (`lib/ui/page_note.dart`) says why that mode applies, or why a scroll or another outside cause stopped a test.
 - Toolchain: Flutter 3.50.0-0.4.pre (beta channel, Dart 3.14.0-315.3.beta), pinned in `.fvmrc`; CI reads the same file, and `.github/actions/setup/action.yaml` names its channel. All
   packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`
