@@ -96,7 +96,7 @@ final ChartConfig _config = ChartConfig(
         color: _text,
         font: TextStyle(fontSize: 12),
         format: _year,
-        extra: {'align': 'inner'},
+        align: .inner,
       ),
       extra: {
         'border': {'color': _axisLine},

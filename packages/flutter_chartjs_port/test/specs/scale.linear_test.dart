@@ -12,6 +12,7 @@ import 'package:chartjs_test_utils/pure.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -1220,7 +1221,7 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'y': <String, Object?>{'bounds': 'data'},
+            'y': <String, Object?>{'bounds': ScaleBounds.data},
           },
         },
       });

@@ -133,10 +133,8 @@ class _Sample3State extends State<Sample3> {
           ticks: AxisTicks(
             maxRotation: 0,
             font: const TextStyle(fontWeight: FontWeight.bold),
-            extra: {
-              'color': _bottomColor,
-              'align': _fitBottom ? 'inner' : 'center',
-            },
+            align: _fitBottom ? TickAlign.inner : TickAlign.center,
+            extra: {'color': _bottomColor},
           ),
         ),
         'y': LinearAxis(
@@ -155,7 +153,7 @@ class _Sample3State extends State<Sample3> {
             color: Fl.white54.withValues(alpha: 0.5),
             font: const TextStyle(fontSize: 10),
             format: (t) => t.value == 0 ? '' : '${t.value.toInt()}k calories',
-            extra: {'align': _fitLeft ? 'inner' : 'center'},
+            align: _fitLeft ? TickAlign.inner : TickAlign.center,
           ),
         ),
       },

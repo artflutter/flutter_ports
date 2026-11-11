@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -40,7 +41,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       'backgroundColor': 'blue',
       'hoverBackgroundColor': 'red',
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false, 'bounds': 'data'},
+        'x': <String, Object?>{'display': false, 'bounds': ScaleBounds.data},
         'y': <String, Object?>{'display': false},
       },
       'layout': <String, Object?>{

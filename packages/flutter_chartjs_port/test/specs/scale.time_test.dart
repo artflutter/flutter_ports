@@ -13,6 +13,7 @@ import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, mergeIf;
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
@@ -206,7 +207,7 @@ void main() {
       expect(
         defaultConfig,
         jasmineEquals(<String, Object?>{
-          'bounds': 'data',
+          'bounds': ScaleBounds.data,
           'adapters': <String, Object?>{},
           'time': <String, Object?>{
             // false == a pattern string from or a custom callback that
@@ -222,7 +223,7 @@ void main() {
             'displayFormats': <String, Object?>{},
           },
           'ticks': <String, Object?>{
-            'source': 'auto',
+            'source': TickSource.auto,
             'callback': false,
             'major': <String, Object?>{'enabled': false},
           },
@@ -249,7 +250,10 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'type': 'time',
-              'ticks': <String, Object?>{'source': 'data', 'autoSkip': true},
+              'ticks': <String, Object?>{
+                'source': TickSource.data,
+                'autoSkip': true,
+              },
             },
           },
         },
@@ -272,7 +276,7 @@ void main() {
       late JsObjectFace config;
       setUp(() {
         config = _cloneTimeDefaults();
-        (config['ticks']! as JsObjectFace)['source'] = 'labels';
+        (config['ticks']! as JsObjectFace)['source'] = TickSource.labels;
         (config['time']! as JsObjectFace)['unit'] = 'day';
       });
 
@@ -332,7 +336,7 @@ void main() {
 
       final config =
           mergeIf(<String, Object?>{
-                'bounds': 'ticks',
+                'bounds': ScaleBounds.ticks,
                 'time': <String, Object?>{
                   'unit': 'week',
                   'isoWeekday': 3, // Wednesday
@@ -457,7 +461,7 @@ void main() {
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
-                  'bounds': 'ticks',
+                  'bounds': ScaleBounds.ticks,
                   'position': 'bottom',
                 },
               },
@@ -564,7 +568,10 @@ void main() {
             'x': <String, Object?>{
               'type': 'time',
               'position': 'bottom',
-              'ticks': <String, Object?>{'source': 'labels', 'autoSkip': false},
+              'ticks': <String, Object?>{
+                'source': TickSource.labels,
+                'autoSkip': false,
+              },
             },
           },
         },
@@ -820,7 +827,7 @@ void main() {
                 'x': <String, Object?>{
                   'type': 'time',
                   'time': <String, Object?>{'parser': 'YYYY'},
-                  'ticks': <String, Object?>{'source': 'labels'},
+                  'ticks': <String, Object?>{'source': TickSource.labels},
                 },
               },
             },
@@ -922,7 +929,7 @@ void main() {
                 'x': <String, Object?>{
                   'type': 'time',
                   'time': <String, Object?>{'parser': 'YYYY'},
-                  'ticks': <String, Object?>{'source': 'data'},
+                  'ticks': <String, Object?>{'source': TickSource.data},
                 },
               },
             },
@@ -1199,7 +1206,7 @@ void main() {
                 'type': 'timeseries',
                 'offset': true,
                 'ticks': <String, Object?>{
-                  'source': 'data',
+                  'source': TickSource.data,
                   'autoSkip': true,
                   'autoSkipPadding': 0,
                   'maxRotation': 0,

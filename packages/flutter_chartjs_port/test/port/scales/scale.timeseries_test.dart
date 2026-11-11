@@ -9,6 +9,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -201,7 +202,7 @@ void main() {
         'options': <String, Object?>{
           'scales': <String, Object?>{
             'x': <String, Object?>{
-              'ticks': <String, Object?>{'source': 'labels'},
+              'ticks': <String, Object?>{'source': TickSource.labels},
             },
           },
         },

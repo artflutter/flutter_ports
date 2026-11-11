@@ -745,12 +745,12 @@ void main() {
   test('a category scale with bounds data falls back', () {
     final cfg = config('bar');
     (((cfg['options']! as Map)['scales'] as Map)['x'] as Map)['bounds'] =
-        'data';
+        ScaleBounds.data;
     expect(chart(cfg).updateData(), isFalse);
   });
   test('a category scale with bounds of a function falls back', () {
     final cfg = config('bar');
-    String bounds(Object? context) => 'ticks';
+    ScaleBounds bounds(Object? context) => ScaleBounds.ticks;
     (((cfg['options']! as Map)['scales'] as Map)['x'] as Map)['bounds'] =
         bounds;
     expect(chart(cfg).updateData(), isFalse);

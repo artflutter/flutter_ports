@@ -44,6 +44,8 @@
 /// `lib/src/options/`: a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextProxy, OptionView, readOption;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
@@ -157,8 +159,9 @@ extension type const CoreScaleOptions(OptionView _view) implements OptionView {
   Object? get offset => _view.readKey(OptionKey.offset);
 
   /// index.d.ts:3265 `bounds: 'ticks' | 'data'` of `CartesianScaleOptions`.
-  /// `scale.linearbase.js:182` reads it for the radial scale too.
-  Object? get bounds => _view.readKey(OptionKey.bounds);
+  /// `scale.linearbase.js:182` reads it for the radial scale too. The
+  /// option holds a [ScaleBounds] (row `adapt-scale-option-enums`).
+  ScaleBounds? get bounds => ScaleBounds.of(_view.readKey(OptionKey.bounds));
 
   /// index.d.ts:3347 `labels` of `CategoryScaleOptions`. `getLabels`
   /// (core.scale.js:359) reads it on each scale.
@@ -309,8 +312,9 @@ extension type const TickOptions(Object? raw) {
   /// index.d.ts:3184 `sampleSize: number`.
   Object? get sampleSize => readOption(raw, OptionKey.sampleSize);
 
-  /// index.d.ts:3189 `align: Align | 'inner'`.
-  Object? get align => readOption(raw, OptionKey.align);
+  /// index.d.ts:3189 `align: Align | 'inner'`, a [TickAlign] (row
+  /// `adapt-scale-option-enums`).
+  TickAlign? get align => TickAlign.of(readOption(raw, OptionKey.align));
 
   /// index.d.ts:3194 `autoSkip: boolean`.
   Object? get autoSkip => readOption(raw, OptionKey.autoSkip);
@@ -318,8 +322,10 @@ extension type const TickOptions(Object? raw) {
   /// index.d.ts:3199 `autoSkipPadding: number`.
   Object? get autoSkipPadding => readOption(raw, OptionKey.autoSkipPadding);
 
-  /// index.d.ts:3206 `crossAlign: 'near' | 'center' | 'far'`.
-  Object? get crossAlign => readOption(raw, OptionKey.crossAlign);
+  /// index.d.ts:3206 `crossAlign: 'near' | 'center' | 'far'`, a
+  /// [TickCrossAlign] (row `adapt-scale-option-enums`).
+  TickCrossAlign? get crossAlign =>
+      TickCrossAlign.of(readOption(raw, OptionKey.crossAlign));
 
   /// index.d.ts:3212 `includeBounds: boolean`.
   Object? get includeBounds => readOption(raw, OptionKey.includeBounds);
@@ -354,8 +360,8 @@ extension type const TickOptions(Object? raw) {
   Object? get count => readOption(raw, OptionKey.count);
 
   /// index.d.ts:3476 `source: 'labels' | 'auto' | 'data'` of the time
-  /// ticks.
-  Object? get source => readOption(raw, OptionKey.source);
+  /// ticks, a [TickSource] (row `adapt-scale-option-enums`).
+  TickSource? get source => TickSource.of(readOption(raw, OptionKey.source));
 }
 
 /// index.d.ts:1812 `FontSpec`: a font option object, for example the

@@ -6,6 +6,8 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 36 cases, 118 widths.
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+
 /// The Node.js version that generated the data.
 const String scaleTimeseriesReferenceNode = 'v24.22.1';
 
@@ -4548,7 +4550,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -5424,7 +5426,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -6140,7 +6142,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'ticks'},
+          'x': <String, Object?>{'bounds': ScaleBounds.ticks},
         },
       },
     },
@@ -21231,11 +21233,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'bounds': 'ticks',
+            'bounds': ScaleBounds.ticks,
             'offset': true,
             'offsetAfterAutoskip': true,
             'reverse': true,
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -22316,7 +22318,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -22988,7 +22990,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },
@@ -23614,7 +23616,10 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'ticks', 'min': 1609826400000.0},
+          'x': <String, Object?>{
+            'bounds': ScaleBounds.ticks,
+            'min': 1609826400000.0,
+          },
         },
       },
     },
@@ -25295,7 +25300,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'offset': true,
-            'ticks': <String, Object?>{'source': 'data'},
+            'ticks': <String, Object?>{'source': TickSource.data},
           },
         },
       },
@@ -26173,7 +26178,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         'normalized': true,
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': 'labels'},
+            'ticks': <String, Object?>{'source': TickSource.labels},
           },
         },
       },

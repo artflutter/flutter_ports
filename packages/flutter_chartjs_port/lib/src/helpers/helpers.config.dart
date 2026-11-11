@@ -67,6 +67,8 @@ import 'dart:ui' show Color, StrokeJoin;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show nativeOptionScope;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show capitalize, isArray, isFunction, isObject, resolveObjectKey;
@@ -1948,7 +1950,8 @@ final class OptionView implements ContextProxy {
         value is String ||
         (value is num && value.isFinite);
     final labels = proxy._cache.get(OptionKey.labels);
-    return proxy._cache.get(OptionKey.bounds) == 'ticks' &&
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+    return proxy._cache.get(OptionKey.bounds) == ScaleBounds.ticks &&
         bound(proxy._cache.get(OptionKey.min)) &&
         bound(proxy._cache.get(OptionKey.max)) &&
         !identical(labels, _absent) &&

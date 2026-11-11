@@ -40,6 +40,7 @@ Widget graphicBox(Widget chart) => Center(
 AxisTicks graphicTicks({
   String? Function(AxisTickInfo tick)? format,
   double? stepSize,
+  TickSource? source,
   Map<String, Object?> extra = const {},
 }) => AxisTicks(
   color: Gx.text,
@@ -48,6 +49,7 @@ AxisTicks graphicTicks({
   maxRotation: 0,
   autoSkip: false,
   stepSize: stepSize,
+  source: source,
   format: format,
   // The ticks at the ends of the range are not round numbers: Graphic
   // shows only the round ones.

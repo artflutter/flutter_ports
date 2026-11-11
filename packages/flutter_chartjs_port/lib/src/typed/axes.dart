@@ -16,6 +16,8 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show JsFunction;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -190,6 +192,7 @@ final class CategoryAxis extends ChartAxis {
     this.labels,
     this.min,
     this.max,
+    this.bounds,
     super.ticks,
     super.grid,
     super.title,
@@ -206,6 +209,12 @@ final class CategoryAxis extends ChartAxis {
   /// The last label that the axis shows: `max`.
   final String? max;
 
+  /// {@template flutter_chartjs_port.typed.bounds}
+  /// What the range of the axis keeps: `bounds`. [ScaleBounds.ticks] grows
+  /// the range to the outer ticks, and [ScaleBounds.data] keeps the data.
+  /// {@endtemplate}
+  final ScaleBounds? bounds;
+
   @override
   CategoryAxis copyWith({
     bool? display,
@@ -215,6 +224,7 @@ final class CategoryAxis extends ChartAxis {
     List<Object>? labels,
     String? min,
     String? max,
+    ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -227,6 +237,7 @@ final class CategoryAxis extends ChartAxis {
     labels: labels ?? this.labels,
     min: min ?? this.min,
     max: max ?? this.max,
+    bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     title: title ?? this.title,
@@ -241,6 +252,7 @@ final class CategoryAxis extends ChartAxis {
     put(scope, OptionKey.labels, labels);
     put(scope, OptionKey.min, min);
     put(scope, OptionKey.max, max);
+    put(scope, OptionKey.bounds, bounds);
   }
 
   @override
@@ -249,6 +261,7 @@ final class CategoryAxis extends ChartAxis {
     ('labels', labels),
     ('min', min),
     ('max', max),
+    ('bounds', bounds),
     ..._tailProps,
   ];
 }
@@ -267,6 +280,7 @@ final class LinearAxis extends ChartAxis {
     this.suggestedMin,
     this.suggestedMax,
     this.beginAtZero,
+    this.bounds,
     super.ticks,
     super.grid,
     super.title,
@@ -299,6 +313,9 @@ final class LinearAxis extends ChartAxis {
   /// {@endtemplate}
   final bool? beginAtZero;
 
+  /// {@macro flutter_chartjs_port.typed.bounds}
+  final ScaleBounds? bounds;
+
   @override
   LinearAxis copyWith({
     bool? display,
@@ -310,6 +327,7 @@ final class LinearAxis extends ChartAxis {
     double? suggestedMin,
     double? suggestedMax,
     bool? beginAtZero,
+    ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -324,6 +342,7 @@ final class LinearAxis extends ChartAxis {
     suggestedMin: suggestedMin ?? this.suggestedMin,
     suggestedMax: suggestedMax ?? this.suggestedMax,
     beginAtZero: beginAtZero ?? this.beginAtZero,
+    bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     title: title ?? this.title,
@@ -340,6 +359,7 @@ final class LinearAxis extends ChartAxis {
     put(scope, OptionKey.suggestedMin, suggestedMin);
     put(scope, OptionKey.suggestedMax, suggestedMax);
     put(scope, OptionKey.beginAtZero, beginAtZero);
+    put(scope, OptionKey.bounds, bounds);
   }
 
   @override
@@ -350,6 +370,7 @@ final class LinearAxis extends ChartAxis {
     ('suggestedMin', suggestedMin),
     ('suggestedMax', suggestedMax),
     ('beginAtZero', beginAtZero),
+    ('bounds', bounds),
     ..._tailProps,
   ];
 }
@@ -367,6 +388,7 @@ final class LogarithmicAxis extends ChartAxis {
     this.max,
     this.suggestedMin,
     this.suggestedMax,
+    this.bounds,
     super.ticks,
     super.grid,
     super.title,
@@ -385,6 +407,9 @@ final class LogarithmicAxis extends ChartAxis {
   /// {@macro flutter_chartjs_port.typed.suggestedMax}
   final double? suggestedMax;
 
+  /// {@macro flutter_chartjs_port.typed.bounds}
+  final ScaleBounds? bounds;
+
   @override
   LogarithmicAxis copyWith({
     bool? display,
@@ -395,6 +420,7 @@ final class LogarithmicAxis extends ChartAxis {
     double? max,
     double? suggestedMin,
     double? suggestedMax,
+    ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -408,6 +434,7 @@ final class LogarithmicAxis extends ChartAxis {
     max: max ?? this.max,
     suggestedMin: suggestedMin ?? this.suggestedMin,
     suggestedMax: suggestedMax ?? this.suggestedMax,
+    bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     title: title ?? this.title,
@@ -423,6 +450,7 @@ final class LogarithmicAxis extends ChartAxis {
     put(scope, OptionKey.max, max);
     put(scope, OptionKey.suggestedMin, suggestedMin);
     put(scope, OptionKey.suggestedMax, suggestedMax);
+    put(scope, OptionKey.bounds, bounds);
   }
 
   @override
@@ -432,6 +460,7 @@ final class LogarithmicAxis extends ChartAxis {
     ('max', max),
     ('suggestedMin', suggestedMin),
     ('suggestedMax', suggestedMax),
+    ('bounds', bounds),
     ..._tailProps,
   ];
 }
@@ -478,6 +507,7 @@ final class TimeAxis extends ChartAxis with _TimeOptions {
     this.max,
     this.unit,
     this.tooltipFormat,
+    this.bounds,
     super.ticks,
     super.grid,
     super.title,
@@ -510,6 +540,9 @@ final class TimeAxis extends ChartAxis with _TimeOptions {
   @override
   final String? tooltipFormat;
 
+  /// {@macro flutter_chartjs_port.typed.bounds}
+  final ScaleBounds? bounds;
+
   @override
   TimeAxis copyWith({
     bool? display,
@@ -520,6 +553,7 @@ final class TimeAxis extends ChartAxis with _TimeOptions {
     DateTime? max,
     TimeUnit? unit,
     String? tooltipFormat,
+    ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -533,6 +567,7 @@ final class TimeAxis extends ChartAxis with _TimeOptions {
     max: max ?? this.max,
     unit: unit ?? this.unit,
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
+    bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     title: title ?? this.title,
@@ -543,12 +578,16 @@ final class TimeAxis extends ChartAxis with _TimeOptions {
   String get _type => 'time';
 
   @override
-  void _lowerOwn(ScaleOptionsScope scope) => _lowerTime(scope);
+  void _lowerOwn(ScaleOptionsScope scope) {
+    _lowerTime(scope);
+    put(scope, OptionKey.bounds, bounds);
+  }
 
   @override
   List<TypedProperty> get _props => [
     ..._headProps,
     ..._timeProps,
+    ('bounds', bounds),
     ..._tailProps,
   ];
 }
@@ -569,6 +608,7 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
     this.max,
     this.unit,
     this.tooltipFormat,
+    this.bounds,
     super.ticks,
     super.grid,
     super.title,
@@ -591,6 +631,9 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
   @override
   final String? tooltipFormat;
 
+  /// {@macro flutter_chartjs_port.typed.bounds}
+  final ScaleBounds? bounds;
+
   @override
   TimeSeriesAxis copyWith({
     bool? display,
@@ -601,6 +644,7 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
     DateTime? max,
     TimeUnit? unit,
     String? tooltipFormat,
+    ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -614,6 +658,7 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
     max: max ?? this.max,
     unit: unit ?? this.unit,
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
+    bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     title: title ?? this.title,
@@ -624,12 +669,16 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
   String get _type => 'timeseries';
 
   @override
-  void _lowerOwn(ScaleOptionsScope scope) => _lowerTime(scope);
+  void _lowerOwn(ScaleOptionsScope scope) {
+    _lowerTime(scope);
+    put(scope, OptionKey.bounds, bounds);
+  }
 
   @override
   List<TypedProperty> get _props => [
     ..._headProps,
     ..._timeProps,
+    ('bounds', bounds),
     ..._tailProps,
   ];
 }
@@ -814,6 +863,9 @@ final class AxisTicks with Diagnosticable {
     this.stepSize,
     this.maxRotation,
     this.autoSkip,
+    this.align,
+    this.crossAlign,
+    this.source,
     this.format,
     this.extra,
   });
@@ -842,6 +894,18 @@ final class AxisTicks with Diagnosticable {
   /// default is `true`.
   final bool? autoSkip;
 
+  /// The place of a tick label along the axis: `align`. The default is
+  /// [TickAlign.center].
+  final TickAlign? align;
+
+  /// The place of a tick label across the axis: `crossAlign`. The default
+  /// is [TickCrossAlign.near].
+  final TickCrossAlign? crossAlign;
+
+  /// Where the ticks of a time axis come from: `source`. The default is
+  /// [TickSource.auto].
+  final TickSource? source;
+
   /// The label of each tick: `callback` (`docs/axes/labelling.md`,
   /// "Creating Custom Tick Formats").
   ///
@@ -866,6 +930,9 @@ final class AxisTicks with Diagnosticable {
     double? stepSize,
     double? maxRotation,
     bool? autoSkip,
+    TickAlign? align,
+    TickCrossAlign? crossAlign,
+    TickSource? source,
     String? Function(AxisTickInfo tick)? format,
     Map<String, Object?>? extra,
   }) => AxisTicks(
@@ -876,6 +943,9 @@ final class AxisTicks with Diagnosticable {
     stepSize: stepSize ?? this.stepSize,
     maxRotation: maxRotation ?? this.maxRotation,
     autoSkip: autoSkip ?? this.autoSkip,
+    align: align ?? this.align,
+    crossAlign: crossAlign ?? this.crossAlign,
+    source: source ?? this.source,
     format: format ?? this.format,
     extra: extra ?? this.extra,
   );
@@ -888,6 +958,9 @@ final class AxisTicks with Diagnosticable {
     ('stepSize', stepSize),
     ('maxRotation', maxRotation),
     ('autoSkip', autoSkip),
+    ('align', align),
+    ('crossAlign', crossAlign),
+    ('source', source),
     ('format', format),
     ('extra', byEntries(extra)),
   ];
@@ -919,6 +992,9 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   put(scope, OptionKey.stepSize, ticks.stepSize);
   put(scope, OptionKey.maxRotation, ticks.maxRotation);
   put(scope, OptionKey.autoSkip, ticks.autoSkip);
+  put(scope, OptionKey.align, ticks.align);
+  put(scope, OptionKey.crossAlign, ticks.crossAlign);
+  put(scope, OptionKey.source, ticks.source);
   put(
     scope,
     OptionKey.callback,

@@ -280,8 +280,35 @@ function num(v) {
   return Number.isInteger(v) ? `${v}.0` : String(v);
 }
 
+/**
+ * The scale options whose value is an enum of `scale_option_enums.dart`
+ * with the name of the keyword (row adapt-scale-option-enums): the key, the
+ * key of the enclosing object (null for any), the enum and its values.
+ */
+const SCALE_ENUMS = {
+  bounds: {owner: null, type: 'ScaleBounds', values: ['data', 'ticks']},
+  source: {owner: 'ticks', type: 'TickSource', values: ['auto', 'data', 'labels']},
+  align: {owner: 'ticks', type: 'TickAlign', values: ['start', 'center', 'end', 'inner']},
+  crossAlign: {owner: 'ticks', type: 'TickCrossAlign', values: ['near', 'center', 'far']},
+};
+
+/** Whether the data have a value of a scale enum, which needs its import. */
+let usesScaleEnums = false;
+
+/**
+ * The Dart literal of the value [x] of the key [k] in the object of the key
+ * [owner]: the enum value of a scale option, else `undefined` here.
+ */
+function scaleEnum(k, x, owner) {
+  const rule = SCALE_ENUMS[k];
+  if (!rule || typeof x !== 'string' || !rule.values.includes(x)) return undefined;
+  if (rule.owner !== null && rule.owner !== owner) return undefined;
+  usesScaleEnums = true;
+  return `${rule.type}.${x}`;
+}
+
 /** The Dart literal of a JS value. A named function is `'fn:<name>'`. */
-function dart(v) {
+function dart(v, owner) {
   if (v === null) return 'null';
   if (v === undefined) return 'undefined';
   if (typeof v === 'number') return num(v);
@@ -303,9 +330,11 @@ function dart(v) {
     const raw = /[\\$]/.test(v.text) ? 'r' : '';
     return `${raw}'''\n${v.text}\n'''`;
   }
-  if (Array.isArray(v)) return `<Object?>[${v.map(dart).join(', ')}]`;
+  if (Array.isArray(v)) return `<Object?>[${v.map((x) => dart(x, owner)).join(', ')}]`;
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map((k) => `${dart(k)}: ${dart(v[k])}`);
+    const entries = Object.keys(v).map(
+      (k) => `${dart(k)}: ${scaleEnum(k, v[k], owner) ?? dart(v[k], k)}`,
+    );
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);
@@ -1294,7 +1323,7 @@ const out = `// Original code, not ported from Chart.js: Scale reference data.
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. ${cases.length} cases.
-${usesUndefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${usesScaleEnums || usesUndefined ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = '${process.version}';
 

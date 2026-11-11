@@ -34,7 +34,108 @@ const Map<String, int> shapeAtoms = {
   'strokeJoin': 2048,
   'interactionAxis': 4096,
   'decimationAlgorithm': 8192,
+  'scaleBounds': 16384,
+  'tickSource': 32768,
+  'tickAlign': 65536,
+  'tickCrossAlign': 131072,
 };
+
+/// A typed atom: a key with this one atom holds a value of the Dart type
+/// `type` of the library `uri`. Its cell is `classifyTyped<type>` of
+/// `opt.dart`. `field` is the type of the field of resolved element
+/// options, or null for a key that no resolved class holds as a typed field.
+typedef TypedAtom = ({String type, String uri, String? field});
+
+/// The typed atoms of the schema: the native types of options that were
+/// names in Chart.js (a Flutter type, an enum or a class of the port).
+const Map<String, TypedAtom> typedAtoms = {
+  'curve': (type: 'Curve', uri: 'package:flutter/animation.dart', field: null),
+  'interactionMode': (
+    type: 'InteractionMode',
+    uri: 'package:flutter_chartjs_port/src/core/core.interaction.dart',
+    field: null,
+  ),
+  'tooltipPositioner': (
+    type: 'TooltipPositioner',
+    uri: 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart',
+    field: null,
+  ),
+  'strokeCap': (type: 'StrokeCap', uri: 'dart:ui', field: 'StrokeCap?'),
+  'strokeJoin': (type: 'StrokeJoin', uri: 'dart:ui', field: 'StrokeJoin?'),
+  'interactionAxis': (
+    type: 'InteractionAxis',
+    uri: 'package:flutter_chartjs_port/src/core/core.interaction.dart',
+    field: null,
+  ),
+  'decimationAlgorithm': (
+    type: 'DecimationAlgorithm',
+    uri: 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart',
+    field: null,
+  ),
+  'scaleBounds': (
+    type: 'ScaleBounds',
+    uri: 'package:flutter_chartjs_port/src/core/scale_option_enums.dart',
+    field: null,
+  ),
+  'tickSource': (
+    type: 'TickSource',
+    uri: 'package:flutter_chartjs_port/src/core/scale_option_enums.dart',
+    field: null,
+  ),
+  'tickAlign': (
+    type: 'TickAlign',
+    uri: 'package:flutter_chartjs_port/src/core/scale_option_enums.dart',
+    field: null,
+  ),
+  'tickCrossAlign': (
+    type: 'TickCrossAlign',
+    uri: 'package:flutter_chartjs_port/src/core/scale_option_enums.dart',
+    field: null,
+  ),
+};
+
+/// The import lines of the typed atoms whose types [types] lists, and of
+/// the libraries [others] with no `show` list: one line for each library,
+/// the `dart:` libraries first, then a blank line and the others in order.
+String typedAtomImports(
+  Iterable<String> types, [
+  List<String> others = const [],
+]) {
+  final byUri = <String, Set<String>>{for (final uri in others) uri: {}};
+  for (final atom in typedAtoms.values) {
+    if (types.contains(atom.type)) {
+      (byUri[atom.uri] ??= <String>{}).add(atom.type);
+    }
+  }
+  final uris = byUri.keys.toList()
+    ..sort((a, b) {
+      final dartA = a.startsWith('dart:');
+      final dartB = b.startsWith('dart:');
+      if (dartA != dartB) return dartA ? -1 : 1;
+      return a.compareTo(b);
+    });
+  final lines = <String>[];
+  var dart = false;
+  for (final uri in uris) {
+    final names = byUri[uri]!.toList()..sort();
+    if (dart && !uri.startsWith('dart:')) lines.add('\n');
+    dart = uri.startsWith('dart:');
+    lines.add(
+      names.isEmpty
+          ? "import '$uri';\n"
+          : "import '$uri' show ${names.join(', ')};\n",
+    );
+  }
+  return lines.join();
+}
+
+/// The typed atom of the one-atom shape [mask], or null.
+TypedAtom? typedAtomOf(int mask) {
+  for (final MapEntry(:key, :value) in typedAtoms.entries) {
+    if (mask == shapeAtoms[key]) return value;
+  }
+  return null;
+}
 
 /// The shape of a key: the bits of its atoms and the kind of its `scope`
 /// atom.
@@ -80,13 +181,7 @@ final class Shape {
     if (mask == shapeAtoms['number']) return 'double';
     if (mask == shapeAtoms['bool']) return 'bool';
     if (mask == shapeAtoms['string']) return 'String';
-    if (mask == shapeAtoms['curve']) return 'Curve';
-    if (mask == shapeAtoms['interactionMode']) return 'InteractionMode';
-    if (mask == shapeAtoms['tooltipPositioner']) return 'TooltipPositioner';
-    if (mask == shapeAtoms['strokeCap']) return 'StrokeCap';
-    if (mask == shapeAtoms['strokeJoin']) return 'StrokeJoin';
-    if (mask == shapeAtoms['interactionAxis']) return 'InteractionAxis';
-    if (mask == shapeAtoms['decimationAlgorithm']) return 'DecimationAlgorithm';
+    if (typedAtomOf(mask) case final atom?) return atom.type;
     if (mask == shapeAtoms['scope']) return '${scope}Scope';
     return 'Object';
   }
@@ -96,20 +191,8 @@ final class Shape {
     if (mask == shapeAtoms['number']) return 'classifyNumber(raw)';
     if (mask == shapeAtoms['bool']) return 'classifyBool(raw)';
     if (mask == shapeAtoms['string']) return 'classifyString(raw)';
-    if (mask == shapeAtoms['curve']) return 'classifyCurve(raw)';
-    if (mask == shapeAtoms['interactionMode']) {
-      return 'classifyInteractionMode(raw)';
-    }
-    if (mask == shapeAtoms['tooltipPositioner']) {
-      return 'classifyTooltipPositioner(raw)';
-    }
-    if (mask == shapeAtoms['strokeCap']) return 'classifyStrokeCap(raw)';
-    if (mask == shapeAtoms['strokeJoin']) return 'classifyStrokeJoin(raw)';
-    if (mask == shapeAtoms['interactionAxis']) {
-      return 'classifyInteractionAxis(raw)';
-    }
-    if (mask == shapeAtoms['decimationAlgorithm']) {
-      return 'classifyDecimationAlgorithm(raw)';
+    if (typedAtomOf(mask) case final atom?) {
+      return 'classifyTyped<${atom.type}>(raw)';
     }
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>(raw)';
     return 'classifyUnion(raw, $mask)';
@@ -120,16 +203,8 @@ final class Shape {
     if (mask == shapeAtoms['number']) return 'classifyNumber';
     if (mask == shapeAtoms['bool']) return 'classifyBool';
     if (mask == shapeAtoms['string']) return 'classifyString';
-    if (mask == shapeAtoms['curve']) return 'classifyCurve';
-    if (mask == shapeAtoms['interactionMode']) return 'classifyInteractionMode';
-    if (mask == shapeAtoms['tooltipPositioner']) {
-      return 'classifyTooltipPositioner';
-    }
-    if (mask == shapeAtoms['strokeCap']) return 'classifyStrokeCap';
-    if (mask == shapeAtoms['strokeJoin']) return 'classifyStrokeJoin';
-    if (mask == shapeAtoms['interactionAxis']) return 'classifyInteractionAxis';
-    if (mask == shapeAtoms['decimationAlgorithm']) {
-      return 'classifyDecimationAlgorithm';
+    if (typedAtomOf(mask) case final atom?) {
+      return 'classifyTyped<${atom.type}>';
     }
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>';
     return '(raw) => classifyUnion(raw, $mask)';
@@ -441,8 +516,7 @@ String _fieldType(Shape shape) {
   if (shape.mask == shapeAtoms['number']) return 'double';
   if (shape.mask == shapeAtoms['bool']) return 'bool';
   if (shape.mask == shapeAtoms['string']) return 'String?';
-  if (shape.mask == shapeAtoms['strokeCap']) return 'StrokeCap?';
-  if (shape.mask == shapeAtoms['strokeJoin']) return 'StrokeJoin?';
+  if (typedAtomOf(shape.mask)?.field case final field?) return field;
   return 'Object?';
 }
 
@@ -473,7 +547,8 @@ String _resolved(Schema schema) {
       '///\n'
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
-      "import 'dart:ui' show StrokeCap, StrokeJoin;\n\n"
+      '${typedAtomImports([for (final a in typedAtoms.values)
+        if (a.field != null) a.type])}\n'
       "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'\n"
       '    show DrawPointOptions;\n'
       "import 'package:flutter_chartjs_port/src/js/js_number.dart'\n"
@@ -629,7 +704,9 @@ String _resolved(Schema schema) {
             "      assert(auditForeign('$name', ${dartString(key)}, raw));\n"
             '    }\n',
           );
-        case 'String?' || 'StrokeCap?' || 'StrokeJoin?':
+        case final String t
+            when t == 'String?' ||
+                typedAtoms.values.any((atom) => atom.field == t):
           out.write(
             '    if (raw is ${type.substring(0, type.length - 1)}) {\n'
             '      _$id = raw;\n'
@@ -925,18 +1002,12 @@ String _scopes(Schema schema) {
       '///\n'
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
-      "import 'dart:ui' show StrokeCap, StrokeJoin;\n\n"
-      "import 'package:flutter/animation.dart' show Curve;\n"
-      "import 'package:flutter_chartjs_port/src/core/core.interaction.dart'\n"
-      '    show InteractionAxis, InteractionMode;\n'
-      "import 'package:flutter_chartjs_port/src/options/opt.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/option_scope.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';\n"
-      "import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'\n"
-      '    show DecimationAlgorithm;\n'
-      "import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'\n"
-      '    show TooltipPositioner;\n',
+      '${typedAtomImports([for (final a in typedAtoms.values) a.type], [
+        'package:flutter_chartjs_port/src/options/opt.dart',
+        'package:flutter_chartjs_port/src/options/option_keys.g.dart',
+        'package:flutter_chartjs_port/src/options/option_scope.dart',
+        'package:flutter_chartjs_port/src/options/scope_kinds.g.dart',
+      ])}',
     );
   for (final kind in schema.kinds) {
     out
@@ -967,16 +1038,11 @@ String _scopes(Schema schema) {
       final setter = _memberNames.contains(id) ? '${id}Value' : id;
       out.write('\n  /// Stores the plain value [value] of `$name`.\n');
       switch (type) {
-        case 'double' ||
-            'bool' ||
-            'String' ||
-            'Curve' ||
-            'InteractionMode' ||
-            'TooltipPositioner' ||
-            'StrokeCap' ||
-            'StrokeJoin' ||
-            'InteractionAxis' ||
-            'DecimationAlgorithm':
+        case final String t
+            when t == 'double' ||
+                t == 'bool' ||
+                t == 'String' ||
+                typedAtoms.values.any((atom) => atom.type == t):
           out.write(
             '  set $setter($type value) => '
             'store(OptionKey.$id, OptValue<$type>(value));\n',

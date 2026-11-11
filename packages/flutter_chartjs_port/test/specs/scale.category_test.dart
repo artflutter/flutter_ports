@@ -8,6 +8,7 @@ import 'package:chartjs_test_utils/pure.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -655,7 +656,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'bounds': 'data'},
+            'x': <String, Object?>{
+              'type': 'category',
+              'bounds': ScaleBounds.data,
+            },
           },
         },
       });
@@ -664,7 +668,7 @@ void main() {
       expect(chart.scales['x']!.max, jasmineEquals(2));
 
       (jsGet(jsGet(chart.options, 'scales'), 'x')! as JsObjectFace)['bounds'] =
-          'ticks';
+          ScaleBounds.ticks;
       chart.update();
 
       expect(chart.scales['x']!.min, jasmineEquals(0));

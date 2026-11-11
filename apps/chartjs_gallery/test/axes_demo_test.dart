@@ -222,14 +222,15 @@ void main() {
       for (final v in ['0', '30', '45', '90']) 'axes.ticks.minRotation.$v',
       for (final v in ['0', '5', '10', '20']) 'axes.ticks.maxTicksLimit.$v',
       for (final v in ['8', '12', '16', '24']) 'axes.ticks.font.size.$v',
-      for (final align in axesDemoAligns) 'axes.ticks.align.$align',
+      for (final align in axesDemoAligns) 'axes.ticks.align.${align.name}',
       'axes.grid.display',
       'axes.grid.offset',
       'axes.border.display',
       'axes.title.display',
       'axes.reverse',
       'axes.beginAtZero',
-      for (final bounds in axesDemoBounds) 'axes.bounds.$bounds',
+      for (final bounds in axesDemoBounds)
+        'axes.bounds.${bounds?.name ?? 'auto'}',
       for (final unit in axesDemoTimeUnits) 'axes.time.unit.$unit',
       for (final locale in axesDemoLocales) 'axes.locale.$locale',
       'axes.data.randomize',
@@ -475,11 +476,11 @@ void main() {
     // values 1 to 12. The bounds data give 1 to 12.
     expect(x.min, 0);
     await _tap(tester, 'axes.bounds.data');
-    expect(x.options['bounds'], 'data');
+    expect(x.options['bounds'], ScaleBounds.data);
     expect(x.min, 1);
     expect(x.max, 12);
     await _tap(tester, 'axes.bounds.auto');
-    expect(x.options['bounds'], 'ticks');
+    expect(x.options['bounds'], ScaleBounds.ticks);
     expect(x.min, 0);
     expect(tester.takeException(), isNull);
   });
@@ -537,8 +538,8 @@ void main() {
 
     await _tap(tester, 'axes.ticks.align.start');
     expect(_selected(tester, 'axes.ticks.align.start'), isTrue);
-    expect(_tickOption(chart, 'x', 'align'), 'start');
-    expect(_tickOption(chart, 'y', 'align'), 'start');
+    expect(_tickOption(chart, 'x', 'align'), TickAlign.start);
+    expect(_tickOption(chart, 'y', 'align'), TickAlign.start);
     expect(tester.takeException(), isNull);
   });
 

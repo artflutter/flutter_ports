@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -647,7 +648,8 @@ Map<String, Object?> fixture() {
                     ? <String, Object?>{'weight': 'bold'}
                     : undefined;
               },
-              'source': 'data',
+              // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+              'source': TickSource.data,
               'autoSkip': true,
               'autoSkipPadding': 75,
               'maxRotation': 0,

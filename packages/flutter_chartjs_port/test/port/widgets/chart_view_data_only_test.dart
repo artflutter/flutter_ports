@@ -1965,7 +1965,7 @@ void main() {
 
   group('a category axis', () {
     const dataBounds = <String, ChartAxis>{
-      'x': CategoryAxis(extra: {'bounds': 'data'}),
+      'x': CategoryAxis(extra: {'bounds': ScaleBounds.data}),
       'y': LinearAxis(min: 0, max: 100),
     };
 

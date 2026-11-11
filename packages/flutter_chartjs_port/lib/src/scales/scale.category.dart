@@ -26,6 +26,8 @@ library;
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView;
@@ -433,7 +435,8 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
     final (:minDefined, :maxDefined, min: _, max: _) = getUserBounds();
     var (:min, :max) = getMinMax(true);
 
-    if (options.bounds == 'ticks') {
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+    if (options.bounds == ScaleBounds.ticks) {
       if (!minDefined) {
         min = 0;
       }

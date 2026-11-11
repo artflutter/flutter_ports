@@ -13,6 +13,8 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds, TickAlign, TickCrossAlign;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show OptFunction;
@@ -50,7 +52,8 @@ void applyScaleDefaults(Defaults defaults) {
         //   truncated
         // @see https://github.com/chartjs/Chart.js/pull/4556
         // @since 3.0.0
-        ..bounds = 'ticks'
+        // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+        ..bounds = ScaleBounds.ticks
         ..clip = true
         // Addition grace added to max and reduced from min data value.
         // @since 3.0.0
@@ -97,8 +100,9 @@ void applyScaleDefaults(Defaults defaults) {
           ..callback = (ticks['formatters']! as Map<String, Object?>)['values']!
           ..minor = MinorTickOptionsScope()
           ..major = MajorTickOptionsScope()
-          ..align = 'center'
-          ..crossAlign = 'near'
+          // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+          ..align = TickAlign.center
+          ..crossAlign = TickCrossAlign.near
           ..showLabelBackdrop = false
           ..backdropColor = const ui.Color.fromRGBO(255, 255, 255, 0.75)
           ..backdropPadding = 2.0),

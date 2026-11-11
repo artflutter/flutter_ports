@@ -137,7 +137,7 @@ final ChartConfig _config = ChartConfig(
         maxRotation: 0,
         color: _text,
         font: TextStyle(fontSize: 12),
-        extra: {'align': 'inner'},
+        align: .inner,
       ),
       extra: const {
         'border': {'color': _axisLine},

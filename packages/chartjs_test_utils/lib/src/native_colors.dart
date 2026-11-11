@@ -12,6 +12,8 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/src/color_reference.dart';
 import 'package:chartjs_test_utils/src/native_easing.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 
 final _callbacks = Expando<Object>('fixture native color callback');
@@ -32,9 +34,24 @@ bool _isColor(String key) =>
 Object? _enumValue<T extends Enum>(List<T> values, Object? value) =>
     value is String ? values.asNameMap()[value] ?? value : value;
 
+/// The values of the enum of the scale option [key] of the object of the
+/// key [owner], or Dart `null` for another option: `bounds` of a scale, and
+/// `source`, `align` and `crossAlign` of `ticks`.
+List<Enum>? _scaleEnumValues(String key, String? owner) => switch ((
+  key,
+  owner,
+)) {
+  ('bounds', _) => ScaleBounds.values,
+  ('source', 'ticks') => TickSource.values,
+  ('align', 'ticks') => TickAlign.values,
+  ('crossAlign', 'ticks') => TickCrossAlign.values,
+  _ => null,
+};
+
 /// Migrates color options, an upstream easing name to its curve, and the
-/// keyword of a line cap or a line join to its Flutter enum value, leaving
-/// data, labels and ordinary text intact.
+/// keyword of a line cap, a line join or a scale option of
+/// `scale_option_enums.dart` to its enum value, leaving data, labels and
+/// ordinary text intact.
 void nativeFixtureColors(Object? config) {
   final seen = Set<Object>.identity();
   Object? color(Object? value) {
@@ -83,7 +100,7 @@ void nativeFixtureColors(Object? config) {
     return value;
   }
 
-  void walk(Object? value, {bool dataset = false}) {
+  void walk(Object? value, {bool dataset = false, String? owner}) {
     if (value is! Map<String, Object?> || !seen.add(value)) return;
     for (final key in value.keys.toList()) {
       if (dataset && (key == 'data' || key == 'label')) continue;
@@ -98,8 +115,12 @@ void nativeFixtureColors(Object? config) {
         value[key] = _enumValue(ui.StrokeCap.values, value[key]);
       } else if (key == 'borderJoinStyle' || key == 'lineJoin') {
         value[key] = _enumValue(ui.StrokeJoin.values, value[key]);
+      } else if (_scaleEnumValues(key, owner) case final values?) {
+        // A scale option takes its enum, not the upstream keyword (row
+        // adapt-scale-option-enums).
+        value[key] = _enumValue(values, value[key]);
       } else {
-        walk(value[key]);
+        walk(value[key], owner: key);
       }
     }
   }

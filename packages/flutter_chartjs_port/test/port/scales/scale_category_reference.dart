@@ -6,6 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 61 cases, 154 widths.
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -8913,7 +8914,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'data'},
+          'x': <String, Object?>{'bounds': ScaleBounds.data},
         },
       },
     },
@@ -9375,7 +9376,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'bounds': 'data',
+            'bounds': ScaleBounds.data,
             'suggestedMin': 'February',
             'suggestedMax': 5.0,
           },
@@ -16649,7 +16650,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'data'},
+          'x': <String, Object?>{'bounds': ScaleBounds.data},
         },
       },
     },
@@ -18045,7 +18046,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
       'options': <String, Object?>{
         'parsing': false,
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'data'},
+          'x': <String, Object?>{'bounds': ScaleBounds.data},
         },
       },
     },
@@ -18461,7 +18462,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'data'},
+          'x': <String, Object?>{'bounds': ScaleBounds.data},
         },
       },
     },
@@ -23668,7 +23669,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
           'y': <String, Object?>{
             'type': 'category',
             'stacked': true,
-            'bounds': 'data',
+            'bounds': ScaleBounds.data,
           },
         },
       },
@@ -28408,7 +28409,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': 'data'},
+          'x': <String, Object?>{'bounds': ScaleBounds.data},
         },
       },
     },

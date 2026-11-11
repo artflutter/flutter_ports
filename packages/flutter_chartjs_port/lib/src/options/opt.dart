@@ -18,10 +18,7 @@
 ///
 /// The type parameter `T` is the type of the key. The classification
 /// functions ([classifyNumber], [classifyBool], [classifyString],
-/// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner],
-/// [classifyStrokeCap], [classifyStrokeJoin], [classifyInteractionAxis],
-/// [classifyDecimationAlgorithm], [classifyScope] and [classifyUnion]) give
-/// the cell of a
+/// [classifyTyped], [classifyScope] and [classifyUnion]) give the cell of a
 /// raw JS value for a key of a given shape. The order of their tests is the
 /// order of the resolver: `undefined`, `null`, a function, an array, an
 /// object, then the plain value.
@@ -34,6 +31,8 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -207,6 +206,33 @@ abstract final class ShapeBits {
   /// `decimationAlgorithm`: a [DecimationAlgorithm], the value of
   /// `algorithm` of the decimation plugin.
   static const int decimationAlgorithm = 8192;
+
+  /// `scaleBounds`: a [ScaleBounds], the value of `bounds` of a scale.
+  static const int scaleBounds = 16384;
+
+  /// `tickSource`: a [TickSource], the value of `ticks.source`.
+  static const int tickSource = 32768;
+
+  /// `tickAlign`: a [TickAlign], the value of `ticks.align`.
+  static const int tickAlign = 65536;
+
+  /// `tickCrossAlign`: a [TickCrossAlign], the value of `ticks.crossAlign`.
+  static const int tickCrossAlign = 131072;
+
+  /// The bits of the typed atoms: the native types of options that were
+  /// names in Chart.js ([classifyTyped]).
+  static const int typed =
+      curve |
+      interactionMode |
+      tooltipPositioner |
+      strokeCap |
+      strokeJoin |
+      interactionAxis |
+      decimationAlgorithm |
+      scaleBounds |
+      tickSource |
+      tickAlign |
+      tickCrossAlign;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -243,67 +269,13 @@ Opt<String> classifyString(Object? raw) =>
     _special<String>(raw) ??
     (raw is String ? OptValue<String>(raw) : OptForeign<String>(raw!));
 
-/// The cell of [raw] for a key of the shape `curve`: a Flutter [Curve], the
-/// value of `easing`. An easing name of Chart.js is not a curve: it is a
-/// foreign value, as each other value is.
-Opt<Curve> classifyCurve(Object? raw) =>
-    _special<Curve>(raw) ??
-    (raw is Curve ? OptValue<Curve>(raw) : OptForeign<Curve>(raw!));
-
-/// The cell of [raw] for a key of the shape `interactionMode`: an
-/// [InteractionMode], the value of `mode`. A mode name of Chart.js is not a
-/// mode: it is a foreign value, as each other value is.
-Opt<InteractionMode> classifyInteractionMode(Object? raw) =>
-    _special<InteractionMode>(raw) ??
-    (raw is InteractionMode
-        ? OptValue<InteractionMode>(raw)
-        : OptForeign<InteractionMode>(raw!));
-
-/// The cell of [raw] for a key of the shape `tooltipPositioner`: a
-/// [TooltipPositioner], the value of `position` of the tooltip. A
-/// positioner name of Chart.js is not a positioner: it is a foreign value,
-/// as each other value is.
-Opt<TooltipPositioner> classifyTooltipPositioner(Object? raw) =>
-    _special<TooltipPositioner>(raw) ??
-    (raw is TooltipPositioner
-        ? OptValue<TooltipPositioner>(raw)
-        : OptForeign<TooltipPositioner>(raw!));
-
-/// The cell of [raw] for a key of the shape `strokeCap`: a Flutter
-/// [StrokeCap], the value of `borderCapStyle`. A keyword of Chart.js
-/// (`'round'`) is not a cap: it is a foreign value, as each other value is.
-Opt<StrokeCap> classifyStrokeCap(Object? raw) =>
-    _special<StrokeCap>(raw) ??
-    (raw is StrokeCap ? OptValue<StrokeCap>(raw) : OptForeign<StrokeCap>(raw!));
-
-/// The cell of [raw] for a key of the shape `strokeJoin`: a Flutter
-/// [StrokeJoin], the value of `borderJoinStyle`, as [classifyStrokeCap]
-/// gives the cap.
-Opt<StrokeJoin> classifyStrokeJoin(Object? raw) =>
-    _special<StrokeJoin>(raw) ??
-    (raw is StrokeJoin
-        ? OptValue<StrokeJoin>(raw)
-        : OptForeign<StrokeJoin>(raw!));
-
-/// The cell of [raw] for a key of the shape `interactionAxis`: an
-/// [InteractionAxis], the value of `axis` of the interaction options. A
-/// keyword of Chart.js (`'x'`) is not an axis: it is a foreign value, as
-/// each other value is.
-Opt<InteractionAxis> classifyInteractionAxis(Object? raw) =>
-    _special<InteractionAxis>(raw) ??
-    (raw is InteractionAxis
-        ? OptValue<InteractionAxis>(raw)
-        : OptForeign<InteractionAxis>(raw!));
-
-/// The cell of [raw] for a key of the shape `decimationAlgorithm`: a
-/// [DecimationAlgorithm], the value of `algorithm` of the decimation plugin.
-/// An algorithm name of Chart.js (`'lttb'`) is not an algorithm: it is a
-/// foreign value, as each other value is.
-Opt<DecimationAlgorithm> classifyDecimationAlgorithm(Object? raw) =>
-    _special<DecimationAlgorithm>(raw) ??
-    (raw is DecimationAlgorithm
-        ? OptValue<DecimationAlgorithm>(raw)
-        : OptForeign<DecimationAlgorithm>(raw!));
+/// The cell of [raw] for a key whose shape is one typed atom: a native type
+/// [T] of an option that was a name in Chart.js (a Flutter `Curve`, an enum
+/// such as `StrokeCap`, or a class of the port such as `InteractionMode`).
+/// A value of [T] is an [OptValue]. A name of Chart.js is not a [T]: it is
+/// a foreign value, as each other value is.
+Opt<T> classifyTyped<T extends Object>(Object? raw) =>
+    _special<T>(raw) ?? (raw is T ? OptValue<T>(raw) : OptForeign<T>(raw!));
 
 /// The cell of [raw] for a key of the shape `scope <Kind>`: an object is an
 /// [OptScope], another plain value is foreign.
@@ -330,22 +302,23 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
 
 /// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
 /// classification of [classifyNumber], [classifyBool], [classifyString],
-/// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner],
-/// [classifyStrokeCap], [classifyStrokeJoin], [classifyInteractionAxis],
-/// [classifyDecimationAlgorithm] or [classifyScope] for a shape of one atom,
-/// else
+/// [classifyTyped] or [classifyScope] for a shape of one atom, else
 /// [classifyUnion].
 Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.number => classifyNumber(raw),
   ShapeBits.boolean => classifyBool(raw),
   ShapeBits.string => classifyString(raw),
-  ShapeBits.curve => classifyCurve(raw),
-  ShapeBits.interactionMode => classifyInteractionMode(raw),
-  ShapeBits.tooltipPositioner => classifyTooltipPositioner(raw),
-  ShapeBits.strokeCap => classifyStrokeCap(raw),
-  ShapeBits.strokeJoin => classifyStrokeJoin(raw),
-  ShapeBits.interactionAxis => classifyInteractionAxis(raw),
-  ShapeBits.decimationAlgorithm => classifyDecimationAlgorithm(raw),
+  ShapeBits.curve => classifyTyped<Curve>(raw),
+  ShapeBits.interactionMode => classifyTyped<InteractionMode>(raw),
+  ShapeBits.tooltipPositioner => classifyTyped<TooltipPositioner>(raw),
+  ShapeBits.strokeCap => classifyTyped<StrokeCap>(raw),
+  ShapeBits.strokeJoin => classifyTyped<StrokeJoin>(raw),
+  ShapeBits.interactionAxis => classifyTyped<InteractionAxis>(raw),
+  ShapeBits.decimationAlgorithm => classifyTyped<DecimationAlgorithm>(raw),
+  ShapeBits.scaleBounds => classifyTyped<ScaleBounds>(raw),
+  ShapeBits.tickSource => classifyTyped<TickSource>(raw),
+  ShapeBits.tickAlign => classifyTyped<TickAlign>(raw),
+  ShapeBits.tickCrossAlign => classifyTyped<TickCrossAlign>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

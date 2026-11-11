@@ -258,6 +258,7 @@ const List<String> typedTargets = [
   'lib/src/core/core.interaction.dart',
   'lib/src/core/data_update.dart',
   'lib/src/core/core.scale.dart',
+  'lib/src/core/scale_option_enums.dart',
   'lib/src/js/js_function.dart',
   'lib/src/js/js_number.dart',
   'lib/src/js/js_undefined.dart',

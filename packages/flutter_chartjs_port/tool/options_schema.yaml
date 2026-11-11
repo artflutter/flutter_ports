@@ -29,7 +29,9 @@
 # Flutter enums `StrokeCap` and `StrokeJoin`, the values of `borderCapStyle` and `borderJoinStyle`; a
 # keyword is a foreign value), `interactionAxis` (an `InteractionAxis`, the value of the
 # interaction `axis`; a keyword is a foreign value), `decimationAlgorithm` (a `DecimationAlgorithm`, the value of
-# the decimation `algorithm`; a name is a foreign value), `any` (any JS value: a color, a point
+# the decimation `algorithm`; a name is a foreign value), `scaleBounds`, `tickSource`, `tickAlign` and `tickCrossAlign`
+# (the enums of `scale_option_enums.dart`, the values of `bounds`, `ticks.source`, `ticks.align` and
+# `ticks.crossAlign`; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -849,7 +851,7 @@ kinds:
       beforeFit: fn
       afterFit: fn
       afterUpdate: fn
-      bounds: string
+      bounds: scaleBounds
       position: string | scope ScalePosition
       stack: string
       stackWeight: number
@@ -893,10 +895,10 @@ kinds:
       z: number
       major: scope MajorTickOptions
       sampleSize: number
-      align: string
+      align: tickAlign
       autoSkip: bool
       autoSkipPadding: number
-      crossAlign: string
+      crossAlign: tickCrossAlign
       includeBounds: bool
       labelOffset: number
       minRotation: number
@@ -907,7 +909,7 @@ kinds:
       precision: number
       stepSize: number
       count: number
-      source: string
+      source: tickSource
       minor: scope MinorTickOptions  # core.scale.defaults.js:75 defaults
   MajorTickOptions:
     doc: Port-only name for index.d.ts:3170 TickOptions `major`, the major ticks (read at core.scale.autoskip.js:21 and scale.time.js).

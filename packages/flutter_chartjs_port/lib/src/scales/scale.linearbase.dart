@@ -31,6 +31,8 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -62,7 +64,7 @@ import 'package:meta/meta.dart';
 /// upstream does.
 typedef _GenerationOptions = ({
   double maxTicks,
-  Object? bounds,
+  ScaleBounds? bounds,
   Object? min,
   Object? max,
   Object? precision,
@@ -168,7 +170,8 @@ List<Tick> _generateTicks(
     spacing = (spacing * factor).ceilToDouble() / factor;
   }
 
-  if (bounds == 'ticks') {
+  // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+  if (bounds == ScaleBounds.ticks) {
     niceMin = (rmin / spacing).floorToDouble() * spacing;
     niceMax = (rmax / spacing).ceilToDouble() * spacing;
   } else {
@@ -492,7 +495,8 @@ class LinearScaleBase extends Scale {
 
     // At this point, we need to update our max and min given the tick values,
     // since we probably have expanded the range of the scale
-    if (opts.bounds == 'ticks') {
+    // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+    if (opts.bounds == ScaleBounds.ticks) {
       setMinAndMaxByKey(ticks, this, 'value');
     }
 

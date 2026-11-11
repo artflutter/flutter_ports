@@ -6,6 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 80 cases, 218 widths.
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -27929,7 +27930,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'r': <String, Object?>{'bounds': 'data'},
+          'r': <String, Object?>{'bounds': ScaleBounds.data},
         },
       },
     },

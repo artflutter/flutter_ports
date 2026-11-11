@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleBounds;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -270,7 +272,7 @@ final Map<String, void Function(Chart chart)> _actions = {
   'bounds data, then bounds ticks': (chart) {
     final scales =
         (chart.config.options as AnyObject)['scales']! as JsObjectFace;
-    (scales['x']! as JsObjectFace)['bounds'] = 'ticks';
+    (scales['x']! as JsObjectFace)['bounds'] = ScaleBounds.ticks;
     chart.update();
   },
   'a later update keeps a label that the user adds': (chart) {

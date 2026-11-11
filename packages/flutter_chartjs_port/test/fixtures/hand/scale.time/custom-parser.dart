@@ -3,6 +3,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
   'threshold': 0.01,
@@ -36,7 +38,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             },
           },
           'ticks': <String, Object?>{
-            'source': 'labels',
+            // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+            'source': TickSource.labels,
           },
         },
         'y': <String, Object?>{
