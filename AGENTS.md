@@ -846,6 +846,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     whole). The switch `debugDrawLongPathsInPieces` turns the form on for a test on the VM,
     and `debugDefaultTargetPlatformOverride` picks the rule. Native engines keep one draw. See
     performance.md §68 and §70, and the twins of `test/port/canvas/canvas_ui_pieces_test.dart`.
+    Chart.js ADR 0114 (it supersedes Chart.js ADR 0089): on a native context, a line with curves
+    writes a curve whose ends and control points lie within half a bitmap pixel in x as lines
+    through its start, its extremes in y and its end, and a bitmap pixel column with more than 3
+    such vertices after its first keeps the first, the lowest, the highest and the last
+    (`writeDenseCurve` of `lib/src/elements/line_dense_curve.dart`, `_denseCurveSegment` of
+    `element.line.dart`). The first and the last curve of a run stay. A merged stroke takes round
+    joins. The fill reads the same vertices, and the partitions of the native fill are cut from
+    them (`denseCurveScaleOfLine`). Below 2 points for each bitmap pixel the bytes are the same.
+    A line with no border (the maintainer's choice), a dash, a loop, a decimated line, a user
+    class, options that are not typed, a context without `DenseCurveCanvas`, a transform that is
+    not axis aligned and a shadow keep the upstream commands. Hit tests and `interpolate` read the
+    points and do not change. The switch `denseCurveMergeEnabled` (define
+    `CHARTJS_DENSE_CURVE_MERGE`) and the counter `denseCurvesMerged` serve the twins of
+    `test/port/elements/line_dense_curve_test.dart`. See performance.md §73.
     Chart.js ADR 0104: `Path2D` packs unobserved cubic curves too. A filler walk that a partitioned
     fill can replace keeps the original path out of the engine (`deferCurrentPath`), and a read gets
     the same path. `boundSegment` proves a whole ascending segment with one scan.
@@ -1074,7 +1088,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0112. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0114. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1138,7 +1152,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       host) is proposed (2026-11-10): the maintainer decides after the counts of the input probe
       on the Pixel 8a and the iPhone 17 Pro. Chart.js ADR 0113 (the stroke pieces of a desktop
       browser) is accepted (2026-11-10): its code passes the tests. It states the complete
-      decision of Chart.js ADR 0105 and supersedes it. The other ADRs are accepted. Docs
+      decision of Chart.js ADR 0105 and supersedes it. Chart.js ADR 0114 (the merge of the narrow
+      curves of a dense line) is accepted (2026-11-11): the maintainer approved it, and its code
+      passes the tests. It states the complete decision of Chart.js ADR 0089 (the partitioned
+      fill) and supersedes it. The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

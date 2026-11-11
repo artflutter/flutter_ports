@@ -5,6 +5,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_partitioned_fill.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart'
+    show writeDenseCurve;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
     show createBoundarySegment;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -147,7 +149,26 @@ bool tryPartitionedBaselineFill(
   // Flat, monotone and gently varying curves should not pay for a second path.
   // This conservative workload guard targets repeated vertical oscillation.
   if (!variation.isFinite || variation <= 16 * (maxY - minY)) return false;
+  // The partitions take the merged curves of the line (Chart.js ADR 0114):
+  // the vertices of the original path, cut into a partition after each 32
+  // commands. Null when the line writes its curves as upstream does.
+  final denseScale = denseCurveScaleOfLine(nativeLine, ctx);
   final drawn = (ctx as PartitionedFillCanvas).tryFillPartitionedPath((path) {
+    if (denseScale != null) {
+      final parts = _MergedPartitions(path, baseline);
+      writeDenseCurve(
+        parts,
+        points,
+        start: 0,
+        count: points.length.toDouble(),
+        ilen: (points.length - 1).toDouble(),
+        reverse: false,
+        move: true,
+        scale: denseScale,
+      );
+      parts.finish();
+      return;
+    }
     const chunk = 32;
     for (var begin = 0; begin < points.length - 1; begin += chunk) {
       final limit = (begin + chunk).clamp(0, points.length - 1);
@@ -173,4 +194,109 @@ bool tryPartitionedBaselineFill(
   });
   if (drawn) partitionedBaselineFillDraws++;
   return drawn;
+}
+
+/// The path of a line with merged curves (Chart.js ADR 0114), cut into the
+/// partitions of [tryPartitionedBaselineFill]. After each 32
+/// commands it closes a partition over the baseline and starts the next one at
+/// the same vertex.
+final class _MergedPartitions implements CanvasPath {
+  _MergedPartitions(this._path, this._baseline);
+
+  static const int _commands = 32;
+
+  final CanvasPath _path;
+  final double _baseline;
+  double _headX = 0;
+  int _count = 0;
+  double _x = 0;
+
+  void _close() {
+    _path
+      ..lineTo(_x, _baseline)
+      ..lineTo(_headX, _baseline)
+      ..closePath();
+  }
+
+  void _after(double x, double y) {
+    _x = x;
+    if (++_count < _commands) return;
+    _close();
+    _path.moveTo(x, y);
+    _headX = x;
+    _count = 0;
+  }
+
+  /// Closes the last partition.
+  void finish() {
+    if (_count > 0) _close();
+    _count = 0;
+  }
+
+  @override
+  void moveTo(double x, double y) {
+    _path.moveTo(x, y);
+    _headX = _x = x;
+    _count = 0;
+  }
+
+  @override
+  void lineTo(double x, double y) {
+    _path.lineTo(x, y);
+    _after(x, y);
+  }
+
+  @override
+  void bezierCurveTo(
+    double cp1x,
+    double cp1y,
+    double cp2x,
+    double cp2y,
+    double x,
+    double y,
+  ) {
+    _path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
+    _after(x, y);
+  }
+
+  @override
+  void closePath() => throw UnsupportedError('closePath');
+
+  @override
+  void quadraticCurveTo(double cpx, double cpy, double x, double y) =>
+      throw UnsupportedError('quadraticCurveTo');
+
+  @override
+  void arc(
+    double x,
+    double y,
+    double radius,
+    double startAngle,
+    double endAngle, [
+    bool counterclockwise = false,
+  ]) => throw UnsupportedError('arc');
+
+  @override
+  void arcTo(double x1, double y1, double x2, double y2, double radius) =>
+      throw UnsupportedError('arcTo');
+
+  @override
+  void ellipse(
+    double x,
+    double y,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle, [
+    bool counterclockwise = false,
+  ]) => throw UnsupportedError('ellipse');
+
+  @override
+  void rect(double x, double y, double w, double h) =>
+      throw UnsupportedError('rect');
+
+  @override
+  void roundRect(double x, double y, double w, double h, [Object? radii]) =>
+      throw UnsupportedError('roundRect');
 }

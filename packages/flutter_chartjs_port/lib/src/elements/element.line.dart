@@ -46,6 +46,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show LineOptions, plainOption, rawOption;
+import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show bezierCurveTo, steppedLineTo;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -600,7 +601,66 @@ _getSegmentMethod(LineElement line) {
       _cubicInterpolationMode(opts) != 'monotone' &&
       !jsTruthy(_stepped(opts)) &&
       !jsTruthy(dashLength);
+  // DIVERGES(chartjs): adapt-dense-curve-merge, a line with curves on a
+  // native context merges its narrow curves (Chart.js ADR 0114). The reads
+  // are those of the lines above, of `_getLineMethod` and of `draw`, of typed
+  // options. A line with no border keeps its curves: its fill has no line
+  // over its edge.
+  if (!useFastPath &&
+      line._denseScale != null &&
+      line._builtIn &&
+      opts is LineOptions &&
+      !line.decimated &&
+      !(line.loop ?? false) &&
+      !jsTruthy(dashLength) &&
+      _borderWidthTruthy(opts) &&
+      identical(_getLineMethod(opts), _bezierCurveTo)) {
+    return _denseCurveSegment;
+  }
   return useFastPath ? _fastPathSegment : _pathSegment;
+}
+
+/// `_pathSegment` for a line with curves whose narrow curves merge
+/// (`line_dense_curve.dart`, Chart.js ADR 0114). A loop keeps `_pathSegment`.
+bool? _denseCurveSegment(
+  CanvasPath ctx,
+  LineElement line,
+  types.Segment segment,
+  _PathParams params,
+) {
+  final scale = line._denseScale;
+  if (scale == null || segment.loop) {
+    return _pathSegment(ctx, line, segment, params);
+  }
+  final points = line.points;
+  final (:count, :start, loop: _, :ilen) = _pathVars(points, segment, params);
+  if (writeDenseCurve(
+    ctx,
+    points,
+    start: start,
+    count: count,
+    ilen: ilen,
+    reverse: params.reverse,
+    move: params.move ?? true,
+    scale: scale,
+  )) {
+    line._denseUsed = true;
+  }
+  return false;
+}
+
+/// The bitmap scale of x for the merge of the narrow curves of [line] on
+/// [ctx], or null when [line] writes its curves there as upstream does. The
+/// partitioned fill writes the same vertices as the path of the line.
+@internal
+double? denseCurveScaleOfLine(LineElement line, CanvasPath ctx) {
+  final scale = denseCurveScaleOf(ctx);
+  if (scale == null) return null;
+  final saved = line._denseScale;
+  line._denseScale = scale;
+  final merges = identical(_getSegmentMethod(line), _denseCurveSegment);
+  line._denseScale = saved;
+  return merges ? scale : null;
 }
 
 /// element.line.js:195 `_getInterpolationMethod(options)`.
@@ -638,13 +698,31 @@ void _strokePathWithCache(
   double? count,
 ) {
   var path = line._path;
+  // The cached path holds the merge of one bitmap scale (Chart.js ADR 0114).
+  // Null for a context that takes the upstream commands.
+  final scale = denseCurveScaleOf(ctx);
+  if (path != null && line._pathScaled && line._pathDenseScale != scale) {
+    path = null;
+  }
   if (path == null) {
     path = line._path = Path2D();
+    line
+      .._denseScale = scale
+      .._denseUsed = false;
     if (line.path(path, start, count)) {
       path.closePath();
     }
+    line
+      .._denseScale = null
+      .._pathScaled = true
+      .._pathDenseScale = scale
+      .._pathDense = line._denseUsed;
   }
   _setStyle(ctx, line.options);
+  // DIVERGES(chartjs): adapt-dense-curve-merge, the curves of a line meet
+  // with one tangent, so `borderJoinStyle` shows nowhere on them. Lines in
+  // their place have a corner at each vertex: a round join keeps the turn.
+  if (line._pathDense) ctx.lineJoin = 'round';
   ctx.stroke(path);
 }
 
@@ -661,10 +739,12 @@ void _strokePathDirect(
 ) {
   final segments = line.segments;
   final options = line.options;
+  line._denseScale = denseCurveScaleOf(ctx);
   final segmentMethod = _getSegmentMethod(line);
 
   for (final segment in segments) {
     _setStyle(ctx, options, segment.style);
+    line._denseUsed = false;
     ctx.beginPath();
     final params = (
       start: start,
@@ -675,8 +755,11 @@ void _strokePathDirect(
     if (segmentMethod(ctx, line, segment, params) ?? false) {
       ctx.closePath();
     }
+    // The round join of `_strokePathWithCache`.
+    if (line._denseUsed) ctx.lineJoin = 'round';
     ctx.stroke();
   }
+  line._denseScale = null;
 }
 
 /// element.line.js:233 `usePath2D = typeof Path2D === 'function'`.
@@ -817,6 +900,25 @@ class LineElement extends Element
   /// [_strokePathWithCache]. Dart `null` stands for JS `undefined`, the
   /// start value and the value after `delete this._path`.
   Path2D? _path;
+
+  /// The bitmap scale of x of the context of the call in progress, for
+  /// `_denseCurveSegment` (Chart.js ADR 0114). Null outside a call and for a
+  /// context that takes no merged curves.
+  double? _denseScale;
+
+  /// Whether the last segment method call merged a curve.
+  bool _denseUsed = false;
+
+  /// The bitmap scale of the merge of [_path], and whether [_path] has merged
+  /// curves.
+  double? _pathDenseScale;
+
+  /// See [_pathDenseScale].
+  bool _pathDense = false;
+
+  /// Whether `_strokePathWithCache` made [_path]. A path that other code
+  /// wrote stays.
+  bool _pathScaled = false;
 
   /// element.line.js:288 `_points`, the value of [points]. Dart `null`
   /// stands for JS `undefined`, the start value.
@@ -1119,8 +1221,11 @@ class LineElement extends Element
     types.Segment segment, [
     AnyObject? params,
   ]) {
+    _denseScale = denseCurveScaleOf(ctx);
     final segmentMethod = _getSegmentMethod(this);
-    return segmentMethod(ctx, this, segment, _pathParams(params));
+    final result = segmentMethod(ctx, this, segment, _pathParams(params));
+    _denseScale = null;
+    return result;
   }
 
   /// element.line.js:406 `path(ctx, start, count)`.
@@ -1138,6 +1243,10 @@ class LineElement extends Element
   /// evaluates both operands.
   bool path(CanvasPath ctx, [double? start, double? count]) {
     final segments = this.segments;
+    // `_strokePathWithCache` gives the scale of its context for its `Path2D`
+    // (Chart.js ADR 0114).
+    final preset = _denseScale;
+    if (preset == null) _denseScale = denseCurveScaleOf(ctx);
     final segmentMethod = _getSegmentMethod(this);
     var loop = _loop ?? false;
 
@@ -1158,6 +1267,7 @@ class LineElement extends Element
           )) ??
           false;
     }
+    if (preset == null) _denseScale = null;
     return loop;
   }
 
@@ -1364,6 +1474,8 @@ class LineElement extends Element
         _fullLoop = toBoolProp(prop, value);
       case '_path':
         _path = toObjectProp<Path2D>(prop, value);
+        _pathDense = false;
+        _pathScaled = false;
       case 'points':
         // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
         _setPoints(

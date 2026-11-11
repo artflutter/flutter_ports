@@ -51,6 +51,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_dense_curve.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_partitioned_fill.dart';
@@ -574,10 +575,25 @@ final class UiCanvasContext
         ArcSectorCanvas,
         LineFanCanvas,
         PartitionedFillCanvas,
-        CircleRunCanvas {
+        CircleRunCanvas,
+        DenseCurveCanvas {
   UiCanvasContext._(this._element) {
     _s = _states[0];
     _path = UiPathBuilder(_s.transform);
+  }
+
+  // The bitmap scale of x for the merge of the curves of a dense line
+  // (Chart.js ADR 0114). A shadow keeps the upstream geometry, as it does for
+  // each other fast path.
+  @override
+  double? get denseCurveScale {
+    final s = _s;
+    final t = s.transform;
+    if (_disposed || s.shadowOn || !t.isAxisAligned || !t.isInvertible) {
+      return null;
+    }
+    final scale = t.a.abs();
+    return scale.isFinite && scale > 0 ? scale : null;
   }
 
   final UiCanvasElement _element;

@@ -1,6 +1,7 @@
 # 0089 — Native compound paths for dense curved baseline fills
 
 - Status: accepted
+- Superseded by: [Chart.js ADR 0114](0114-dense-curve-merge.md) (2026-11-11)
 - Date: 2026-11-05
 
 ## Decision
