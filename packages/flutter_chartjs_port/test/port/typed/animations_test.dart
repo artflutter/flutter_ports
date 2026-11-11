@@ -334,7 +334,7 @@ void main() {
         isA<AssertionError>().having(
           (e) => '${e.message}',
           'message',
-          contains('two items for radius'),
+          contains('ChartConfig.animations has two items of one class'),
         ),
       );
     });

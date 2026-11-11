@@ -48,8 +48,6 @@ import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show Opt, OptionKey;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show setChartTransitions, setPropertyAnimations;
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartConfigurationScope;
@@ -543,8 +541,9 @@ class _ChartViewState extends State<ChartView> {
     }
     _appliedTyped = typed;
     // The animations of the chart read the items of the app as they are.
-    setPropertyAnimations(_canvas, typed?.animations);
-    setChartTransitions(_canvas, typed?.transitions);
+    _chart
+      ?..propertyAnimations = typed?.animations
+      ..chartTransitions = typed?.transitions;
     return config;
   }
 
@@ -613,7 +612,8 @@ class _ChartViewState extends State<ChartView> {
     final Chart chart;
     try {
       _debugCheckConfig(_applied);
-      chart = Chart(_canvas, _root);
+      final typed = widget.config;
+      chart = Chart(_canvas, _root, typed?.animations, typed?.transitions);
     } on Object catch (error, stack) {
       _reportError(error, stack, 'while the ChartView started its chart');
       SchedulerBinding.instance.addPostFrameCallback((_) {

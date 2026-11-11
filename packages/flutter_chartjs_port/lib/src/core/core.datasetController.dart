@@ -83,7 +83,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
 import 'package:flutter_chartjs_port/src/options/parsed.dart'
     show AxisKey, IndexValues, ItemStacks, ParsedItem, StackEntry;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show chartTransitionOf, propertyAnimationsOf;
+    show ChartAnimationItems, transitionIn;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -2413,10 +2413,14 @@ class DatasetController
     }
     // DIVERGES(chartjs): adapt-property-animations, the items of the app.
     // A chart with no item makes no read of `animation` here.
-    final items = options == null ? null : propertyAnimationsOf(chart.canvas);
-    final modeItems = options == null
-        ? null
-        : chartTransitionOf(chart.canvas, transition)?.animations;
+    final holder = options != null && chart is ChartAnimationItems
+        ? chart as ChartAnimationItems
+        : null;
+    final items = holder?.propertyAnimations;
+    final modeItems = transitionIn(
+      holder?.chartTransitions,
+      transition,
+    )?.animations;
     final hasItems =
         (items != null && items.isNotEmpty) ||
         (modeItems != null && modeItems.isNotEmpty);

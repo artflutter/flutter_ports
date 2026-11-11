@@ -13,17 +13,15 @@
 /// duration 0. A List has one item for each class.
 ///
 /// An item goes to the animations of a chart as the object that the app
-/// made: `ChartView` puts the List on the canvas ([setPropertyAnimations]),
-/// and `Animation` of `core.animation.dart` reads the fields of the item.
-/// No option scope holds a copy.
+/// made: `ChartView` gives the List to the chart, which keeps it in a field
+/// ([ChartAnimationItems]), and `Animation` of `core.animation.dart` reads
+/// the fields of the item. No option scope holds a copy.
 ///
 /// This library is a core layer: it imports `package:flutter/animation.dart`
 /// for [Curve] only.
 library;
 
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
 import 'package:meta/meta.dart';
 
 /// The four parameters of an animation: the base of each object of the app
@@ -512,73 +510,26 @@ String? transitionModeOf(ChartTransition transition) => switch (transition) {
   _ => null,
 };
 
-/// The transitions of the canvas of each chart.
-final Expando<List<ChartTransition>> _transitionsOfCanvas =
-    Expando<List<ChartTransition>>('chart transitions');
-
-/// Gives the chart on [canvas] the items [transitions], or no item for Dart
-/// `null`. Only `ChartView` calls it, with `ChartConfig.transitions`.
+/// The item of [transitions] for the update mode [mode], or Dart `null`:
+/// the object that the app made.
 @internal
-void setChartTransitions(Object canvas, List<ChartTransition>? transitions) {
-  _transitionsOfCanvas[canvas] = transitions;
-}
-
-/// The item of the chart on [canvas] for the update mode [mode], or Dart
-/// `null`: the object that the app made.
-@internal
-ChartTransition? chartTransitionOf(Object? canvas, String? mode) {
-  if (canvas == null || mode == null) return null;
-  final transitions = _transitionsOfCanvas[canvas];
-  if (transitions == null) return null;
+ChartTransition? transitionIn(
+  List<ChartTransition>? transitions,
+  String? mode,
+) {
+  if (transitions == null || mode == null) return null;
   for (final transition in transitions) {
     if (transitionModeOf(transition) == mode) return transition;
   }
   return null;
 }
 
-/// The property that the class of [animation] animates, or Dart `null` for
-/// a class of another library: the library that made the class reads its
-/// items.
-@internal
-AnimatedProp? animatedPropertyOf(PropertyAnimation animation) =>
-    switch (animation) {
-      XAnimation() => AnimatedProp.x,
-      YAnimation() => AnimatedProp.y,
-      BaseAnimation() => AnimatedProp.base,
-      WidthAnimation() => AnimatedProp.width,
-      HeightAnimation() => AnimatedProp.height,
-      RadiusAnimation() => AnimatedProp.radius,
-      BorderWidthAnimation() => AnimatedProp.borderWidth,
-      TensionAnimation() => AnimatedProp.tension,
-      ColorAnimation() => AnimatedProp.color,
-      BorderColorAnimation() => AnimatedProp.borderColor,
-      BackgroundColorAnimation() => AnimatedProp.backgroundColor,
-      VisibleAnimation() => AnimatedProp.visible,
-      StartAngleAnimation() => AnimatedProp.startAngle,
-      EndAngleAnimation() => AnimatedProp.endAngle,
-      CircumferenceAnimation() => AnimatedProp.circumference,
-      InnerRadiusAnimation() => AnimatedProp.innerRadius,
-      OuterRadiusAnimation() => AnimatedProp.outerRadius,
-      OffsetAnimation() => AnimatedProp.offset,
-      SpacingAnimation() => AnimatedProp.spacing,
-      _ => null,
-    };
+/// A chart that holds the items of the app as its own fields. `Chart` of
+/// `core.controller.dart` implements it.
+abstract interface class ChartAnimationItems {
+  /// The items of `ChartConfig.animations`, or Dart `null`.
+  List<PropertyAnimation>? get propertyAnimations;
 
-/// The items of the canvas of each chart.
-final Expando<List<PropertyAnimation>> _ofCanvas =
-    Expando<List<PropertyAnimation>>('property animations');
-
-/// Gives the chart on [canvas] the items [animations], or no item for Dart
-/// `null`. Only `ChartView` calls it, with `ChartConfig.animations`.
-///
-/// The List is keyed by the canvas, so that the first `update()` of the
-/// constructor of a chart reads it.
-@internal
-void setPropertyAnimations(Object canvas, List<PropertyAnimation>? animations) {
-  _ofCanvas[canvas] = animations;
+  /// The items of `ChartConfig.transitions`, or Dart `null`.
+  List<ChartTransition>? get chartTransitions;
 }
-
-/// The items of the chart on [canvas], or Dart `null`.
-@internal
-List<PropertyAnimation>? propertyAnimationsOf(Object? canvas) =>
-    canvas == null ? null : _ofCanvas[canvas];
