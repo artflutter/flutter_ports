@@ -8473,3 +8473,68 @@ second change: the gain is below the spread of the bench runs. No browser timing
 convert an `int` with `i * 1.0`, test `is double` before a conversion of a `num`, and never write `num * 1.0`. Files:
 `.handover/line-perf-2026-11-11/`
 (`dart-int-to-double-verify.md`, `dart-int-to-double/`, `ship/todouble-pixel/`), outside the repository.
+
+## 73. The merge of the narrow curves of a dense line
+
+**What was slow.** A line with curves writes one cubic curve for each point. At 20,000 points on 2,000 bitmap pixels,
+one curve covers a tenth of a pixel, and the stroke of these curves is the largest cost of a large line chart on each
+target. The night run of 2026-11-11 measured the full line of the benchmark lab (markers, a curve with tension 0.35,
+a fill, tick labels, grid and legend, live data) at 20,000 points, with the curve on and off:
+
+| Target | Raster, curve on | Raster, curve off | FPS, curve on |
+| --- | ---: | ---: | ---: |
+| Mac app (Impeller on Metal, M3 Max) | 8.44 ms | 1.31 ms | 117 |
+| iPhone 17 Pro (Impeller on Metal) | 7.86 ms | 0.46 ms | 115 |
+| Pixel 8a (Impeller on Vulkan) | 17.71 ms | 4.89 ms | 54 |
+| Chrome 157, dart2wasm, the curve alone | 16.53 ms | 1.67 ms | 60 |
+| Chrome 157, dart2js, the curve alone | 13.37 ms | 1.10 ms | 41 |
+
+On Impeller the stroke tessellation of the curves is 70.5% of the raster thread of the Mac app and 74.8% on the Pixel
+8a (`/usr/bin/sample` and `simpleperf` with the engine symbols). A still chart pays the same in each frame: 8.37 ms on
+the Mac and 14.48 ms on the Pixel with no chart update. On the web, Skia makes the outline of the stroke on the CPU:
+about 8 ms for each frame in both compilers. With dart2js each curve is also one call into CanvasKit of about 130 ns.
+A straight line of the same data costs 0.2 ms of stroke time, because the upstream fast path merges the points of a
+pixel column.
+
+**The change** (Chart.js ADR 0114). On a native context, a curve whose two ends and two control points lie within
+half a bitmap pixel in x goes out as lines through its start, its extremes in y and its end. A bitmap pixel column
+with more than 3 such vertices after its first keeps the first, the lowest, the highest and the last. The stroke of a
+merged path takes round joins, and the fill reads the same vertices. A chart below 2 points for each bitmap pixel is
+byte-identical. A line with no border keeps its curves, by the maintainer's choice.
+
+**The figures.** `apps/chart_benchmark_lab` with the matrix driver and the lab patch of the run (not committed),
+profile builds, two runs for each side, the prototype of this change behind a compile-time define. Raster mean for
+each frame and FPS, the full line with live data:
+
+| Target | Points | Raster, curves | Raster, merge | FPS, curves | FPS, merge | Chart draw, curves | Chart draw, merge |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Pixel 8a | 20,000 | 17.42, 17.69 | 6.37, 6.38 | 56.0, 54.4 | 94.4, 94.8 | 9.23, 9.17 | 5.68, 5.62 |
+| Pixel 8a | 10,000 | 9.80 | 5.57 | 98.0 | 119.6 | 4.19 | 3.12 |
+| Pixel 8a | 5,000 | 6.91 | 5.29 | 119.6 | 119.6 | 2.16 | 2.29 |
+| Pixel 8a | 1,000 | 4.61, 4.63 | 4.58, 4.68 | 119.4 | 119.6 | 1.63 | 1.69 |
+| Pixel 8a, still chart | 20,000 | 14.39, 14.70 | 4.97, 5.02 | 69.0, 67.6 | 119.6 | 0 | 0 |
+| Chrome dart2wasm | 20,000 | 19.46, 19.92 | 7.84, 7.92 | 51.0, 49.8 | 119.6 | 6.88, 6.97 | 3.70, 3.71 |
+| Chrome dart2wasm | 10,000 | 11.98 | 3.70 | 82.4 | 120.2 | 3.29 | 2.42 |
+| Chrome dart2wasm | 1,000 | 3.42, 3.41 | 3.33, 3.34 | 120 | 120 | 0.54 | 0.56 |
+| Chrome dart2wasm, still chart | 20,000 | 15.59, 15.49 | 3.72, 3.73 | 63.4, 64.0 | 120 | 0 | 0 |
+| Chrome dart2js | 20,000 | 15.29, 15.08 | 3.79, 3.84 | 29.8, 30.2 | 69.4, 67.8 | 12.63, 12.39 | 5.42, 5.50 |
+| Chrome dart2js | 10,000 | 9.73 | 3.12 | 52.4 | 100.2 | 6.09 | 3.90 |
+| Chrome dart2js | 1,000 | 2.72, 2.71 | 2.70, 2.71 | 120 | 120 | 0.95 | 1.01 |
+| Chrome dart2js, still chart | 20,000 | 15.00, 15.13 | 4.05, 4.02 | 60.8, 60.2 | 120 | 0 | 0 |
+
+The shipped code differs from the measured prototype in three points: the merge is on with no define, the knobs of the
+prototype are gone, and a line with no border keeps its curves. The lab chart has a border, so its path is the
+measured one. No timing run was made with the shipped build. Screenshots of the shipped build on the Pixel 8a, the merge
+off through the define against on: the full line at 20,000 points 0 pixels, the curved line alone 2,639 pixels (the
+counts of the prototype), a fill with `borderWidth: 0` 0 pixels.
+
+**The pixels.** Pixel 8a, screenshots of a still chart with the merge off and on: the full line at 20,000 points
+differs in 0 pixels; the curved line alone differs in 2,639 pixels (1.5% of the colored pixels), all on the edge of
+the line. On the test engine the curved line alone differs in 0.9% to 3.7% of the pixels of the line band by chart
+size and count, the monotone mode in 1.8% to 5.3%. The tables are in Chart.js ADR 0114.
+
+**Not measured.** The Mac app and the iPhone with the merge, in timing and on a screen. Safari and Firefox. A release
+build. A horizontal chart, a dashed line, a loop and a line with a shadow get no merge and keep their cost. With
+skwasm, the fill of a merged path adds about 3 ms of raster time at 20,000 points (the curve alone 3.52 ms, the curve
+with a fill 6.61 ms): the cause was not examined. Files: `.handover/line-perf-2026-11-11/` (`report.md`,
+`proto/measure.md`, `proto/curve-merge/decision.md`, `proto/curve-merge/device/`), outside the repository.
