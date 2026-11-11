@@ -382,8 +382,8 @@ void main() {
         // https://www.w3.org/TR/2dcontext/#conformance-requirements
         expect(context.fillStyle, const ui.Color.fromRGBO(0, 0, 0, 1));
         expect(context.font, '10px sans-serif');
-        expect(context.lineJoin, 'miter');
-        expect(context.lineCap, 'butt');
+        expect(context.lineJoin, ui.StrokeJoin.miter);
+        expect(context.lineCap, ui.StrokeCap.butt);
         expect(context.lineWidth, 1);
         expect(context.miterLimit, 10);
         expect(context.shadowBlur, 0);

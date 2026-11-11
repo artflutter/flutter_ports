@@ -212,11 +212,11 @@ void main() {
           'elements': <String, Object?>{
             'line': <String, Object?>{
               'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-              'borderCapStyle': 'round',
+              'borderCapStyle': native_ui.StrokeCap.round,
               'borderColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
               'borderDash': <Object?>[],
               'borderDashOffset': 0.1,
-              'borderJoinStyle': 'bevel',
+              'borderJoinStyle': native_ui.StrokeJoin.bevel,
               'borderWidth': 1.2,
               'fill': true,
               'tension': 0.1,
@@ -244,11 +244,11 @@ void main() {
         _options(meta.dataset!),
         objectContaining(<String, Object?>{
           'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-          'borderCapStyle': 'round',
+          'borderCapStyle': native_ui.StrokeCap.round,
           'borderColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
           'borderDash': <Object?>[],
           'borderDashOffset': 0.1,
-          'borderJoinStyle': 'bevel',
+          'borderJoinStyle': native_ui.StrokeJoin.bevel,
           'borderWidth': 1.2,
           'fill': true,
           'tension': 0.1,
@@ -325,10 +325,10 @@ void main() {
         1,
       );
       _dataset(chart, 0)['borderWidth'] = 0.55;
-      _dataset(chart, 0)['borderCapStyle'] = 'butt';
+      _dataset(chart, 0)['borderCapStyle'] = native_ui.StrokeCap.butt;
       _dataset(chart, 0)['borderDash'] = <Object?>[2, 3];
       _dataset(chart, 0)['borderDashOffset'] = 7;
-      _dataset(chart, 0)['borderJoinStyle'] = 'miter';
+      _dataset(chart, 0)['borderJoinStyle'] = native_ui.StrokeJoin.miter;
       _dataset(chart, 0)['fill'] = false;
 
       // point styles
@@ -350,11 +350,11 @@ void main() {
         _options(meta.dataset!),
         objectContaining(<String, Object?>{
           'backgroundColor': const native_ui.Color.fromRGBO(98, 98, 98, 1),
-          'borderCapStyle': 'butt',
+          'borderCapStyle': native_ui.StrokeCap.butt,
           'borderColor': const native_ui.Color.fromRGBO(8, 8, 8, 1),
           'borderDash': <Object?>[2, 3],
           'borderDashOffset': 7,
-          'borderJoinStyle': 'miter',
+          'borderJoinStyle': native_ui.StrokeJoin.miter,
           'borderWidth': 0.55,
           'fill': false,
           'tension': 0,

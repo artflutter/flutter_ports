@@ -12,6 +12,8 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
+import 'dart:ui' show StrokeCap, StrokeJoin;
+
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
@@ -1839,13 +1841,13 @@ base class ChartOptionsScope extends OptionScope {
   set pointHoverRadius(double value) =>
       store(OptionKey.pointHoverRadius, OptValue<double>(value));
 
-  Opt<String>? _borderCapStyle;
+  Opt<StrokeCap>? _borderCapStyle;
 
   /// The cell of `borderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get borderCapStyleCell => _borderCapStyle;
+  Opt<StrokeCap>? get borderCapStyleCell => _borderCapStyle;
 
   /// Stores the cell of `borderCapStyle`. Dart `null` deletes the key.
-  set borderCapStyleCell(Opt<String>? cell) {
+  set borderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.borderCapStyle);
     } else {
@@ -1854,8 +1856,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderCapStyle`.
-  set borderCapStyle(String value) =>
-      store(OptionKey.borderCapStyle, OptValue<String>(value));
+  set borderCapStyle(StrokeCap value) =>
+      store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _borderDash;
 
@@ -1893,13 +1895,13 @@ base class ChartOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -1908,8 +1910,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<bool>? _capBezierPoints;
 
@@ -2616,13 +2618,13 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         _pointHoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyString);
+        _borderCapStyle = fitCell(cell, classifyStrokeCap);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -2942,13 +2944,13 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         return classifyNumber(raw);
       case OptionKey.borderCapStyle:
-        return classifyString(raw);
+        return classifyStrokeCap(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
@@ -5989,13 +5991,13 @@ base class LineOptionsScope extends OptionScope {
     classify(OptionKey.backgroundColor, value),
   );
 
-  Opt<String>? _borderCapStyle;
+  Opt<StrokeCap>? _borderCapStyle;
 
   /// The cell of `borderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get borderCapStyleCell => _borderCapStyle;
+  Opt<StrokeCap>? get borderCapStyleCell => _borderCapStyle;
 
   /// Stores the cell of `borderCapStyle`. Dart `null` deletes the key.
-  set borderCapStyleCell(Opt<String>? cell) {
+  set borderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.borderCapStyle);
     } else {
@@ -6004,8 +6006,8 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderCapStyle`.
-  set borderCapStyle(String value) =>
-      store(OptionKey.borderCapStyle, OptValue<String>(value));
+  set borderCapStyle(StrokeCap value) =>
+      store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _borderDash;
 
@@ -6043,13 +6045,13 @@ base class LineOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -6058,8 +6060,8 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<bool>? _capBezierPoints;
 
@@ -6421,13 +6423,13 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.backgroundColor:
         _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyString);
+        _borderCapStyle = fitCell(cell, classifyStrokeCap);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -6507,13 +6509,13 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.backgroundColor:
         return classifyUnion(raw, 64);
       case OptionKey.borderCapStyle:
-        return classifyString(raw);
+        return classifyStrokeCap(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
@@ -7090,13 +7092,13 @@ base class ArcOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -7105,8 +7107,8 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<Object>? _borderRadius;
 
@@ -7435,7 +7437,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.offset:
@@ -7518,7 +7520,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.offset:
@@ -8009,13 +8011,13 @@ base class SegmentOptionsScope extends OptionScope {
   set borderColor(Object value) =>
       store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
 
-  Opt<String>? _borderCapStyle;
+  Opt<StrokeCap>? _borderCapStyle;
 
   /// The cell of `borderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get borderCapStyleCell => _borderCapStyle;
+  Opt<StrokeCap>? get borderCapStyleCell => _borderCapStyle;
 
   /// Stores the cell of `borderCapStyle`. Dart `null` deletes the key.
-  set borderCapStyleCell(Opt<String>? cell) {
+  set borderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.borderCapStyle);
     } else {
@@ -8024,8 +8026,8 @@ base class SegmentOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderCapStyle`.
-  set borderCapStyle(String value) =>
-      store(OptionKey.borderCapStyle, OptValue<String>(value));
+  set borderCapStyle(StrokeCap value) =>
+      store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _borderDash;
 
@@ -8063,13 +8065,13 @@ base class SegmentOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -8078,8 +8080,8 @@ base class SegmentOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<double>? _borderWidth;
 
@@ -8129,13 +8131,13 @@ base class SegmentOptionsScope extends OptionScope {
       case OptionKey.borderColor:
         _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyString);
+        _borderCapStyle = fitCell(cell, classifyStrokeCap);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       default:
@@ -8167,13 +8169,13 @@ base class SegmentOptionsScope extends OptionScope {
       case OptionKey.borderColor:
         return classifyUnion(raw, 64);
       case OptionKey.borderCapStyle:
-        return classifyString(raw);
+        return classifyStrokeCap(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       default:
@@ -9669,13 +9671,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set pointHoverRadius(double value) =>
       store(OptionKey.pointHoverRadius, OptValue<double>(value));
 
-  Opt<String>? _borderCapStyle;
+  Opt<StrokeCap>? _borderCapStyle;
 
   /// The cell of `borderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get borderCapStyleCell => _borderCapStyle;
+  Opt<StrokeCap>? get borderCapStyleCell => _borderCapStyle;
 
   /// Stores the cell of `borderCapStyle`. Dart `null` deletes the key.
-  set borderCapStyleCell(Opt<String>? cell) {
+  set borderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.borderCapStyle);
     } else {
@@ -9684,8 +9686,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderCapStyle`.
-  set borderCapStyle(String value) =>
-      store(OptionKey.borderCapStyle, OptValue<String>(value));
+  set borderCapStyle(StrokeCap value) =>
+      store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _borderDash;
 
@@ -9723,13 +9725,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -9738,8 +9740,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<bool>? _capBezierPoints;
 
@@ -10510,13 +10512,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         _pointHoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyString);
+        _borderCapStyle = fitCell(cell, classifyStrokeCap);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -10699,13 +10701,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         return classifyNumber(raw);
       case OptionKey.borderCapStyle:
-        return classifyString(raw);
+        return classifyStrokeCap(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
@@ -11983,13 +11985,13 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -11998,8 +12000,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<Object>? _borderRadius;
 
@@ -12721,7 +12723,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.offset:
@@ -12886,7 +12888,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.offset:
@@ -13235,13 +13237,13 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -13250,8 +13252,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<Object>? _borderRadius;
 
@@ -13992,7 +13994,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.offset:
@@ -14160,7 +14162,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.offset:
@@ -14793,13 +14795,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set pointHoverRadius(double value) =>
       store(OptionKey.pointHoverRadius, OptValue<double>(value));
 
-  Opt<String>? _borderCapStyle;
+  Opt<StrokeCap>? _borderCapStyle;
 
   /// The cell of `borderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get borderCapStyleCell => _borderCapStyle;
+  Opt<StrokeCap>? get borderCapStyleCell => _borderCapStyle;
 
   /// Stores the cell of `borderCapStyle`. Dart `null` deletes the key.
-  set borderCapStyleCell(Opt<String>? cell) {
+  set borderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.borderCapStyle);
     } else {
@@ -14808,8 +14810,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderCapStyle`.
-  set borderCapStyle(String value) =>
-      store(OptionKey.borderCapStyle, OptValue<String>(value));
+  set borderCapStyle(StrokeCap value) =>
+      store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _borderDash;
 
@@ -14847,13 +14849,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set borderDashOffset(double value) =>
       store(OptionKey.borderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _borderJoinStyle;
+  Opt<StrokeJoin>? _borderJoinStyle;
 
   /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get borderJoinStyleCell => _borderJoinStyle;
+  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
 
   /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<String>? cell) {
+  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.borderJoinStyle);
     } else {
@@ -14862,8 +14864,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(String value) =>
-      store(OptionKey.borderJoinStyle, OptValue<String>(value));
+  set borderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<bool>? _capBezierPoints;
 
@@ -15532,13 +15534,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         _pointHoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyString);
+        _borderCapStyle = fitCell(cell, classifyStrokeCap);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyString);
+        _borderJoinStyle = fitCell(cell, classifyStrokeJoin);
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
@@ -15733,13 +15735,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointHoverRadius:
         return classifyNumber(raw);
       case OptionKey.borderCapStyle:
-        return classifyString(raw);
+        return classifyStrokeCap(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
-        return classifyString(raw);
+        return classifyStrokeJoin(raw);
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:

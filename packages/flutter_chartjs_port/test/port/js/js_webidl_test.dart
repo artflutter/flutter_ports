@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: tests of lib/src/js/js_webidl.dart.
+import 'dart:ui' show StrokeCap, StrokeJoin;
+
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:test/test.dart';
@@ -35,10 +37,37 @@ void main() {
     test('gives null for undefined and null, else the ToString', () {
       expect(canvasKeyword(undefined), isNull);
       expect(canvasKeyword(null), isNull);
-      expect(canvasKeyword('round'), 'round');
+      expect(canvasKeyword('center'), 'center');
       expect(canvasKeyword(''), '');
       expect(canvasKeyword(1), '1');
       expect(canvasKeyword(true), 'true');
+    });
+  });
+
+  group('canvasLineCap and canvasLineJoin', () {
+    test('a Flutter enum value gives itself', () {
+      for (final cap in StrokeCap.values) {
+        expect(canvasLineCap(cap), cap);
+      }
+      for (final join in StrokeJoin.values) {
+        expect(canvasLineJoin(join), join);
+      }
+    });
+
+    test('a value of another type gives null, which the canvas ignores', () {
+      expect(canvasLineCap(undefined), isNull);
+      expect(canvasLineCap(null), isNull);
+      expect(canvasLineCap(1), isNull);
+      expect(canvasLineCap(StrokeJoin.round), isNull);
+      expect(canvasLineJoin(undefined), isNull);
+      expect(canvasLineJoin(null), isNull);
+      expect(canvasLineJoin(true), isNull);
+      expect(canvasLineJoin(StrokeCap.round), isNull);
+    });
+
+    test('a keyword is not an enum value: a debug build stops', () {
+      expect(() => canvasLineCap('round'), throwsA(isA<AssertionError>()));
+      expect(() => canvasLineJoin('bevel'), throwsA(isA<AssertionError>()));
     });
   });
 

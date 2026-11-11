@@ -43,7 +43,7 @@ ChartConfig _config(List<num> ys, {required bool average}) {
             'backgroundColor': horizontalGradient([
               for (final c in colors) c.withValues(alpha: average ? 0.1 : 0.3),
             ]),
-            'borderCapStyle': 'round',
+            'borderCapStyle': StrokeCap.round,
           },
         ),
       ],

@@ -49,6 +49,8 @@ const List<String> _lineStyle = [
   'fill',
   'tension',
   'borderDash',
+  'borderCapStyle',
+  'borderJoinStyle',
   'spanGaps',
   'showLine',
   'stepped',

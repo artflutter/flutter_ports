@@ -13,7 +13,7 @@
 /// (`docs/general/performance.md`).
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
@@ -237,6 +237,8 @@ final class LineElementStyle with Diagnosticable {
     this.borderColor,
     this.borderWidth,
     this.borderDash,
+    this.borderCapStyle,
+    this.borderJoinStyle,
     this.fill,
     this.stepped,
     this.extra,
@@ -259,6 +261,14 @@ final class LineElementStyle with Diagnosticable {
   /// `borderDash`. The default is a solid line.
   final List<double>? borderDash;
 
+  /// The shape of the ends of a line: `borderCapStyle`, a Flutter
+  /// [StrokeCap]. The default is [StrokeCap.butt].
+  final StrokeCap? borderCapStyle;
+
+  /// The shape of the corners of a line: `borderJoinStyle`, a Flutter
+  /// [StrokeJoin]. The default is [StrokeJoin.miter].
+  final StrokeJoin? borderJoinStyle;
+
   /// The fill of the area under or between the lines: `fill`. The default
   /// is no fill.
   final ChartFill? fill;
@@ -280,6 +290,8 @@ final class LineElementStyle with Diagnosticable {
     Color? borderColor,
     double? borderWidth,
     List<double>? borderDash,
+    StrokeCap? borderCapStyle,
+    StrokeJoin? borderJoinStyle,
     ChartFill? fill,
     bool? stepped,
     Map<String, Object?>? extra,
@@ -289,6 +301,8 @@ final class LineElementStyle with Diagnosticable {
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
     borderDash: borderDash ?? this.borderDash,
+    borderCapStyle: borderCapStyle ?? this.borderCapStyle,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
     fill: fill ?? this.fill,
     stepped: stepped ?? this.stepped,
     extra: extra ?? this.extra,
@@ -302,6 +316,8 @@ final class LineElementStyle with Diagnosticable {
     put(scope, OptionKey.borderColor, colorValue(borderColor));
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.borderDash, numberList(borderDash));
+    put(scope, OptionKey.borderCapStyle, borderCapStyle);
+    put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
     put(scope, OptionKey.fill, fill?.optionValue);
     put(scope, OptionKey.stepped, stepped);
     return mergeExtra(scope, extra);
@@ -313,6 +329,8 @@ final class LineElementStyle with Diagnosticable {
     ('borderColor', borderColor),
     ('borderWidth', borderWidth),
     ('borderDash', byItems(borderDash)),
+    ('borderCapStyle', borderCapStyle),
+    ('borderJoinStyle', borderJoinStyle),
     ('fill', fill),
     ('stepped', stepped),
     ('extra', byEntries(extra)),

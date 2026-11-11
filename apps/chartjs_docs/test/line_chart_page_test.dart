@@ -71,6 +71,8 @@ final Map<String, (Object?, String)> _defaultsOf = () {
 bool _sameDefault(Object? actual, String text) => switch (actual) {
   final num value => value == num.parse(text),
   final String value => "'$value'" == text,
+  // A Flutter enum value, for example `StrokeCap.butt`.
+  final Enum value => '$value' == text,
   final bool value => '$value' == text,
   final List<Object?> value => listEquals(value, const []) && text == '[]',
   _ => false,
@@ -178,8 +180,10 @@ void main() {
     // The compiler checks each name of this call.
     const dataset = LineDataset(
       backgroundColor: .constant(teal),
+      borderCapStyle: StrokeCap.butt,
       borderColor: .constant(teal),
       borderDash: [1],
+      borderJoinStyle: StrokeJoin.miter,
       borderWidth: 1,
       data: [1],
       fill: .none,
@@ -209,8 +213,10 @@ void main() {
     expect(dataset.label, '');
     final named = {
       'backgroundColor',
+      'borderCapStyle',
       'borderColor',
       'borderDash',
+      'borderJoinStyle',
       'borderWidth',
       'data',
       'fill',

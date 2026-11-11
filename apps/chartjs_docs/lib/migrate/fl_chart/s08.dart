@@ -76,7 +76,7 @@ final ChartConfig _config = fills(
         pointHoverRadius: 8,
         pointHoverBackgroundColor: Fl.orange,
         borderColor: const .constant(Fl.red),
-        extra: const {'borderCapStyle': 'round'},
+        borderCapStyle: StrokeCap.round,
       ),
     ],
     interaction: const ChartInteraction(mode: flX, intersect: false),

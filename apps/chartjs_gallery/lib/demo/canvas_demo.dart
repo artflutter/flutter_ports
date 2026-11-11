@@ -610,7 +610,7 @@ class _LinesCardState extends State<_LinesCard> {
       ctx
         ..strokeStyle = color
         ..lineWidth = 2.5
-        ..lineJoin = 'round';
+        ..lineJoin = StrokeJoin.round;
       if (path is Path2D) {
         ctx.stroke(path);
       } else {
@@ -791,7 +791,7 @@ class _PaintCardState extends State<_PaintCard>
       ..fillRect(0, 0, 16, 16)
       ..strokeStyle = const ui.Color(0xFFFF9F40)
       ..lineWidth = 3
-      ..lineCap = 'square'
+      ..lineCap = StrokeCap.square
       ..beginPath()
       ..moveTo(-4, 4)
       ..lineTo(4, -4)
@@ -914,7 +914,7 @@ class _PaintCardState extends State<_PaintCard>
             ..lineDashOffset = -_offset
             ..strokeRect(left + 2, top + 2, size - 4, size - 4)
             ..strokeStyle = const ui.Color(0xFF9966FF)
-            ..lineCap = 'round'
+            ..lineCap = StrokeCap.round
             ..setLineDash([0.5, 9])
             ..lineWidth = 6
             ..lineDashOffset = _offset
@@ -922,7 +922,7 @@ class _PaintCardState extends State<_PaintCard>
             ..arc(cx, cy, size * 0.3, 0, 2 * math.pi)
             ..stroke()
             ..setLineDash([])
-            ..lineCap = 'butt';
+            ..lineCap = StrokeCap.butt;
       }
       drawCaption(ctx, _panels[i], cx, top + size + 24);
     }

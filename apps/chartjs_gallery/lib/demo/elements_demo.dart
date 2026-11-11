@@ -64,13 +64,14 @@ const List<Object> _steppedValues = [false, 'before', 'after', 'middle'];
 const List<Object> _borderAlignValues = ['center', 'inner'];
 
 /// The values of the `borderJoinStyle` option of the arcs. [undefined] is
-/// the default: the arc border then joins with `'bevel'`, or with
-/// `'round'` for the inner border (element.arc.ts:330-336 `drawBorder`).
+/// the default: the arc border then joins with `StrokeJoin.bevel`, or
+/// with `StrokeJoin.round` for the inner border (element.arc.ts:330-336
+/// `drawBorder`).
 const List<Object> _borderJoinStyleValues = [
   undefined,
-  'round',
-  'bevel',
-  'miter',
+  ui.StrokeJoin.round,
+  ui.StrokeJoin.bevel,
+  ui.StrokeJoin.miter,
 ];
 
 /// The colors of the bar dataset and of the line dataset.
@@ -948,8 +949,12 @@ class _Choices extends StatelessWidget {
   final ValueChanged<Object> onSelected;
 
   /// The text of [value]: `undefined` for the sentinel.
-  static String _text(Object value) =>
-      value is Undefined ? 'undefined' : '$value';
+  static String _text(Object value) => switch (value) {
+    Undefined() => 'undefined',
+    // The name of a Flutter enum value, for example `round`.
+    final Enum value => value.name,
+    _ => '$value',
+  };
 
   @override
   Widget build(BuildContext context) {

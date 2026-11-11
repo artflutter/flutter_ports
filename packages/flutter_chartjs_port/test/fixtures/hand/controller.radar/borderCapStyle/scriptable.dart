@@ -2,6 +2,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'dart:ui' show StrokeCap;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
@@ -15,13 +17,14 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           // option in dataset
           'data': <Object?>[null, 3, 3],
+          // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
           'borderCapStyle': (Object? ctx) {
             final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(2);
             return index == 0
-                ? 'round'
+                ? StrokeCap.round
                 : index == 1
-                ? 'square'
-                : 'butt';
+                ? StrokeCap.square
+                : StrokeCap.butt;
           },
         },
         <String, Object?>{
@@ -40,10 +43,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderCapStyle': (Object? ctx) {
             final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(3);
             return index == 0
-                ? 'round'
+                ? StrokeCap.round
                 : index == 1
-                ? 'square'
-                : 'butt';
+                ? StrokeCap.square
+                : StrokeCap.butt;
           },
           'borderColor': '#ff0000',
           'borderWidth': 32,

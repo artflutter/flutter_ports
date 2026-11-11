@@ -111,7 +111,7 @@ Future<(Render, Render, int)> _strokes(
   _Setup setup = _none,
   ui.Color color = _blue,
   double width = 2,
-  String join = 'miter',
+  ui.StrokeJoin join = ui.StrokeJoin.miter,
   int height = 300,
 }) async {
   var draws = -1;
@@ -798,7 +798,7 @@ void main() {
       () async {
         for (final setup in <_Setup>[
           (ctx) => ctx.setLineDash(const [4, 2]),
-          (ctx) => ctx.lineCap = 'round',
+          (ctx) => ctx.lineCap = ui.StrokeCap.round,
           (ctx) =>
               ctx.globalCompositeOperation = CanvasCompositeOperation.multiply,
           (ctx) => ctx.setTransform(1, 0, .3, 1, 0, 0),
@@ -1005,7 +1005,7 @@ void main() {
             for (final setup in [_none, _shifted]) {
               for (final color in [_blue, _half]) {
                 for (final width in [1.0, 2.0, 6.0, 12.0]) {
-                  for (final join in ['miter', 'round', 'bevel']) {
+                  for (final join in ui.StrokeJoin.values) {
                     final (a, b, draws) = await _strokes(
                       shape,
                       setup: setup,

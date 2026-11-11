@@ -520,8 +520,10 @@ void main() {
         ..lineWidth = -1
         ..lineWidth = double.nan
         ..lineWidth = 0
-        ..lineCap = 'bogus'
-        ..lineJoin = 'bogus'
+        // A write of null does nothing. An invalid keyword has no form: the
+        // setters take the Flutter enums.
+        ..lineCap = null
+        ..lineJoin = null
         ..miterLimit = 0
         ..globalAlpha = 2
         ..globalAlpha = double.nan
@@ -533,8 +535,8 @@ void main() {
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
       expect(ctx.strokeStyle, const native_ui.Color.fromRGBO(0, 0, 255, 0.5));
       expect(ctx.lineWidth, 1);
-      expect(ctx.lineCap, 'butt');
-      expect(ctx.lineJoin, 'miter');
+      expect(ctx.lineCap, native_ui.StrokeCap.butt);
+      expect(ctx.lineJoin, native_ui.StrokeJoin.miter);
       expect(ctx.miterLimit, 10);
       expect(ctx.globalAlpha, 1);
       expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
@@ -547,16 +549,16 @@ void main() {
     test('valid values read back', () {
       final ctx = _context()
         ..fillStyle = const native_ui.Color.fromRGBO(170, 187, 204, 1)
-        ..lineCap = 'round'
-        ..lineJoin = 'bevel'
+        ..lineCap = native_ui.StrokeCap.round
+        ..lineJoin = native_ui.StrokeJoin.bevel
         ..globalCompositeOperation = CanvasCompositeOperation.destinationOver
         ..globalCompositeOperation = null
         ..textAlign = 'center'
         ..textBaseline = 'middle'
         ..direction = 'rtl';
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(170, 187, 204, 1));
-      expect(ctx.lineCap, 'round');
-      expect(ctx.lineJoin, 'bevel');
+      expect(ctx.lineCap, native_ui.StrokeCap.round);
+      expect(ctx.lineJoin, native_ui.StrokeJoin.bevel);
       expect(
         ctx.globalCompositeOperation,
         CanvasCompositeOperation.destinationOver,
@@ -1082,7 +1084,7 @@ void main() {
     });
 
     test('zero-length dashes draw the caps as dots', () async {
-      Future<_Pixels> dots(String cap) {
+      Future<_Pixels> dots(ui.StrokeCap cap) {
         final ctx = _context(width: 200)
           ..lineWidth = 6
           ..lineCap = cap
@@ -1095,18 +1097,18 @@ void main() {
       }
 
       // A dot at each 12 pixels from x = 10: 10, 22, ..., 178.
-      final round = await dots('round');
+      final round = await dots(ui.StrokeCap.round);
       expect(round.runs(50), 15);
       expect(round.inked(10, 50), isTrue);
       expect(round.inked(178, 50), isTrue);
       expect(round.inked(16, 50), isFalse);
-      final square = await dots('square');
+      final square = await dots(ui.StrokeCap.square);
       expect(square.runs(50), 15);
       // A square cap is 6 x 6, along the line: (19, 47) to (25, 53).
       expect(square.inked(22, 48), isTrue);
       expect(square.inked(20, 52), isTrue);
       expect(square.inked(26, 50), isFalse);
-      expect((await dots('butt')).ink(), isNull);
+      expect((await dots(ui.StrokeCap.butt)).ink(), isNull);
 
       // The same for a Path2D and for strokeRect.
       final path = Path2D()
@@ -1114,7 +1116,7 @@ void main() {
         ..lineTo(190, 50);
       final ctx = _context(width: 200)
         ..lineWidth = 6
-        ..lineCap = 'round'
+        ..lineCap = native_ui.StrokeCap.round
         ..setLineDash([0, 12])
         ..stroke(path)
         ..strokeRect(10, 80, 120, 0);

@@ -25,10 +25,8 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'borderCapStyle',
     section: 'line-styling',
-    type: 'String',
-    extra: true,
-    scriptable: true,
-    fallback: "'butt'",
+    type: 'StrokeCap',
+    fallback: 'StrokeCap.butt',
   ),
   DocProperty(
     'borderColor',
@@ -55,10 +53,8 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'borderJoinStyle',
     section: 'line-styling',
-    type: 'String',
-    extra: true,
-    scriptable: true,
-    fallback: "'miter'",
+    type: 'StrokeJoin',
+    fallback: 'StrokeJoin.miter',
   ),
   DocProperty(
     'borderWidth',
@@ -525,8 +521,8 @@ DocPageContent lineChartPage() => DocPageContent(
               ('backgroundColor', 'The fill color of the line.'),
               (
                 'borderCapStyle',
-                "The cap style of the line: `'butt'`, `'round'` or "
-                    "`'square'`.",
+                'The cap style of the line: a Flutter `StrokeCap` (`butt`, '
+                    '`round` or `square`).',
               ),
               ('borderColor', 'The color of the line.'),
               (
@@ -536,8 +532,8 @@ DocPageContent lineChartPage() => DocPageContent(
               ('borderDashOffset', 'The offset of the dashes, in pixels.'),
               (
                 'borderJoinStyle',
-                "The style of the line joints: `'round'`, `'bevel'` or "
-                    "`'miter'`.",
+                'The style of the line joints: a Flutter `StrokeJoin` '
+                    '(`round`, `bevel` or `miter`).',
               ),
               ('borderWidth', 'The width of the line in pixels.'),
               ('fill', 'How the chart fills the area under the line.'),

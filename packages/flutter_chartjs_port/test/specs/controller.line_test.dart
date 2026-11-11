@@ -643,10 +643,10 @@ void main() {
           'backgroundColor': const native_ui.Color.fromRGBO(170, 221, 221, 1),
           'borderWidth': '#daa',
           'borderColor': const native_ui.Color.fromRGBO(221, 170, 221, 1),
-          'borderCapStyle': 'round',
+          'borderCapStyle': native_ui.StrokeCap.round,
           'borderDash': <Object?>[0],
           'borderDashOffset': 0.871,
-          'borderJoinStyle': 'miter',
+          'borderJoinStyle': native_ui.StrokeJoin.miter,
           'fill': 'start',
           'cubicInterpolationMode': 'monotone',
         });
@@ -677,10 +677,10 @@ void main() {
           jsGet(options, 'borderColor'),
           const native_ui.Color.fromRGBO(221, 170, 221, 1),
         );
-        expect(jsGet(options, 'borderCapStyle'), 'round');
+        expect(jsGet(options, 'borderCapStyle'), native_ui.StrokeCap.round);
         expect(jsGet(options, 'borderDash'), jasmineEquals(<Object?>[0]));
         expect(jsGet(options, 'borderDashOffset'), 0.871);
-        expect(jsGet(options, 'borderJoinStyle'), 'miter');
+        expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
         expect(jsGet(options, 'fill'), 'start');
         expect(jsGet(options, 'cubicInterpolationMode'), 'monotone');
       });
@@ -748,10 +748,10 @@ void main() {
       'backgroundColor': native_ui.Color.fromRGBO(170, 221, 221, 1),
       'borderWidth': '#daa',
       'borderColor': native_ui.Color.fromRGBO(221, 170, 221, 1),
-      'borderCapStyle': 'round',
+      'borderCapStyle': native_ui.StrokeCap.round,
       'borderDash': <Object?>[0],
       'borderDashOffset': 0.871,
-      'borderJoinStyle': 'miter',
+      'borderJoinStyle': native_ui.StrokeJoin.miter,
       'fill': 'start',
       'cubicInterpolationMode': 'monotone',
     };
@@ -769,10 +769,10 @@ void main() {
         jsGet(options, 'borderColor'),
         const native_ui.Color.fromRGBO(221, 170, 221, 1),
       );
-      expect(jsGet(options, 'borderCapStyle'), 'round');
+      expect(jsGet(options, 'borderCapStyle'), native_ui.StrokeCap.round);
       expect(jsGet(options, 'borderDash'), jasmineEquals(<Object?>[0]));
       expect(jsGet(options, 'borderDashOffset'), 0.871);
-      expect(jsGet(options, 'borderJoinStyle'), 'miter');
+      expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
       expect(jsGet(options, 'fill'), 'start');
       expect(jsGet(options, 'cubicInterpolationMode'), 'monotone');
     }

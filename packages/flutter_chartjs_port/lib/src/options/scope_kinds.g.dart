@@ -1730,13 +1730,13 @@ enum ScopeKind {
           case OptionKey.pointHoverRadius:
             return 1;
           case OptionKey.borderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
@@ -2040,13 +2040,13 @@ enum ScopeKind {
           case OptionKey.backgroundColor:
             return 64;
           case OptionKey.borderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
@@ -2132,7 +2132,7 @@ enum ScopeKind {
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.offset:
@@ -2207,13 +2207,13 @@ enum ScopeKind {
           case OptionKey.borderColor:
             return 64;
           case OptionKey.borderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.borderWidth:
             return 1;
           default:
@@ -2351,13 +2351,13 @@ enum ScopeKind {
           case OptionKey.pointHoverRadius:
             return 1;
           case OptionKey.borderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
@@ -2535,7 +2535,7 @@ enum ScopeKind {
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.offset:
@@ -2636,7 +2636,7 @@ enum ScopeKind {
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.offset:
@@ -2769,13 +2769,13 @@ enum ScopeKind {
           case OptionKey.pointHoverRadius:
             return 1;
           case OptionKey.borderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:

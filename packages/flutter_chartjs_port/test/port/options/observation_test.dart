@@ -630,6 +630,12 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
       return jsNumberToString(n);
     case final String s:
       return jsonEncode(s);
+    // The Flutter enums of a line cap and a line join stand for the upstream
+    // keywords: the names of their values (row `adapt-flutter-stroke-enums`).
+    case final native_ui.StrokeCap cap:
+      return jsonEncode(cap.name);
+    case final native_ui.StrokeJoin join:
+      return jsonEncode(join.name);
     case Function() || JsFunction():
       return '<fn>';
     case final JsClass c:

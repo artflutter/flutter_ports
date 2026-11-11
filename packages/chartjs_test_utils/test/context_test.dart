@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: tests of the mock context.
+import 'dart:ui' show StrokeCap, StrokeJoin;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:chartjs_test_utils/src/context.dart' as context;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -70,9 +72,9 @@ void main() {
       final ctx = createMockContext()
         ..fillStyle = 'a'
         ..font = '12px Arial'
-        ..lineCap = 'round'
+        ..lineCap = StrokeCap.round
         ..lineDashOffset = 1.5
-        ..lineJoin = 'bevel'
+        ..lineJoin = StrokeJoin.bevel
         ..lineWidth = 3
         ..strokeStyle = 'b'
         ..textAlign = 'center'
@@ -93,9 +95,9 @@ void main() {
       );
       expect(ctx.fillStyle, 'a');
       expect(ctx.font, '12px Arial');
-      expect(ctx.lineCap, 'round');
+      expect(ctx.lineCap, StrokeCap.round);
       expect(ctx.lineDashOffset, 1.5);
-      expect(ctx.lineJoin, 'bevel');
+      expect(ctx.lineJoin, StrokeJoin.bevel);
       expect(ctx.lineWidth, 3);
       expect(ctx.strokeStyle, 'b');
       expect(ctx.textAlign, 'center');

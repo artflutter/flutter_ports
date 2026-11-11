@@ -262,9 +262,10 @@ void _clipSelf(
       outerRadius * normalizeAngle(startAngle - endAngle),
     );
 
-    if (borderJoinStyle == 'round') {
+    // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
+    if (borderJoinStyle == ui.StrokeJoin.round) {
       ctx.arc(x, y, clipWidth, endAngle - pi / 2, startAngle + pi / 2, true);
-    } else if (borderJoinStyle == 'bevel') {
+    } else if (borderJoinStyle == ui.StrokeJoin.bevel) {
       final r = 2 * clipWidth * clipWidth;
       // js-ok: display only (Chart.js ADR 0045)
       final endX = -r * math.cos(endAngle + pi / 2) + x;
@@ -825,15 +826,12 @@ void _drawBorder(
   if (inner) {
     ctx
       ..lineWidth = _number(options, OptionKey.borderWidth) * 2
-      ..lineJoin = canvasKeyword(
-        jsTruthy(borderJoinStyle) ? borderJoinStyle : 'round',
-      );
+      // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
+      ..lineJoin = canvasLineJoin(borderJoinStyle) ?? ui.StrokeJoin.round;
   } else {
     ctx
       ..lineWidth = _canvasNumber(options, OptionKey.borderWidth)
-      ..lineJoin = canvasKeyword(
-        jsTruthy(borderJoinStyle) ? borderJoinStyle : 'bevel',
-      );
+      ..lineJoin = canvasLineJoin(borderJoinStyle) ?? ui.StrokeJoin.bevel;
   }
 
   var endAngle = element.endAngle;
@@ -862,7 +860,7 @@ void _drawBorder(
       _selfJoin(options) &&
       endAngle - startAngle >= pi &&
       borderRadius == 0 &&
-      borderJoinStyle != 'miter') {
+      borderJoinStyle != ui.StrokeJoin.miter) {
     _clipSelf(ctx, element, endAngle);
   }
 

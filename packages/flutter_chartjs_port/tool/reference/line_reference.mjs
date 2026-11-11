@@ -432,6 +432,22 @@ function str(s) {
   return `'${body.replace(/'/g, "\\'")}'`;
 }
 
+/**
+ * The Dart literal of the value [x] of the key [k]: a line cap or a line
+ * join of upstream is the Flutter enum value with the name of the keyword
+ * (row adapt-flutter-stroke-enums). Another value is `undefined` here.
+ */
+function strokeEnum(k, x) {
+  if (typeof x !== 'string') return undefined;
+  if ((k === 'borderCapStyle' || k === 'lineCap') && ['butt', 'round', 'square'].includes(x)) {
+    return `StrokeCap.${x}`;
+  }
+  if ((k === 'borderJoinStyle' || k === 'lineJoin') && ['miter', 'round', 'bevel'].includes(x)) {
+    return `StrokeJoin.${x}`;
+  }
+  return undefined;
+}
+
 /** The Dart literal of a plain value: an option, a call argument. */
 function dart(v) {
   if (v === null || v === undefined) return 'null';
@@ -443,7 +459,7 @@ function dart(v) {
     return `(id: ${v.path}, calls: ${dartCalls(v.calls)})`;
   }
   if (typeof v === 'object') {
-    const entries = Object.entries(v).map(([k, x]) => `'${k}': ${dart(x)}`);
+    const entries = Object.entries(v).map(([k, x]) => `'${k}': ${strokeEnum(k, x) ?? dart(x)}`);
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${v}`);
@@ -662,6 +678,8 @@ const out = `// Original code, not ported from Chart.js: LineElement reference d
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/elements/element.line.js at the pinned Chart.js, with the mock context
 // of chartjs-test-utils. ${cases.length} cases.
+
+import 'dart:ui' show StrokeCap, StrokeJoin;
 
 /// The Node.js version that generated [lineReference].
 const String lineReferenceNode = '${process.version}';

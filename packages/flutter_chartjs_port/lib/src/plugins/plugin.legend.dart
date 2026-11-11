@@ -42,6 +42,8 @@
 /// Not a pure layer: it imports `helpers.extras`.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
     show nativeArcClass, nativeArcElement;
@@ -96,7 +98,12 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
-    show canvasKeyword, canvasLineDash, canvasNumber, canvasStyle;
+    show
+        canvasLineCap,
+        canvasLineDash,
+        canvasLineJoin,
+        canvasNumber,
+        canvasStyle;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optNull;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -991,12 +998,15 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         ..fillStyle = canvasStyle(
           valueOrDefault(legendItem.fillStyle, defaultColor),
         )
-        ..lineCap = canvasKeyword(valueOrDefault(legendItem.lineCap, 'butt'))
+        // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enums.
+        ..lineCap = canvasLineCap(
+          valueOrDefault(legendItem.lineCap, ui.StrokeCap.butt),
+        )
         ..lineDashOffset = canvasNumber(
           valueOrDefault(legendItem.lineDashOffset, 0),
         )
-        ..lineJoin = canvasKeyword(
-          valueOrDefault(legendItem.lineJoin, 'miter'),
+        ..lineJoin = canvasLineJoin(
+          valueOrDefault(legendItem.lineJoin, ui.StrokeJoin.miter),
         )
         ..lineWidth = canvasNumber(lineWidth)
         ..strokeStyle = canvasStyle(

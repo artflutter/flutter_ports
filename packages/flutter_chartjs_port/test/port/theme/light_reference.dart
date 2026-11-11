@@ -7,6 +7,8 @@
 // with the elements, the radial linear scale and the plugins registered.
 // 8 element cases.
 
+import 'dart:ui' show StrokeCap, StrokeJoin;
+
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -228,10 +230,10 @@ const List<ThemeLightElementCase> themeLightElements = [
     prefixes: <String>['line', ''],
     options: <String, Object?>{
       r'$shared': true,
-      'borderCapStyle': 'butt',
+      'borderCapStyle': StrokeCap.butt,
       'borderDash': <Object?>[],
       'borderDashOffset': 0.0,
-      'borderJoinStyle': 'miter',
+      'borderJoinStyle': StrokeJoin.miter,
       'borderWidth': 3.0,
       'capBezierPoints': true,
       'cubicInterpolationMode': 'default',
@@ -264,10 +266,10 @@ const List<ThemeLightElementCase> themeLightElements = [
     prefixes: <String>['lineHover', 'hover', 'line', ''],
     options: <String, Object?>{
       r'$shared': false,
-      'borderCapStyle': 'butt',
+      'borderCapStyle': StrokeCap.butt,
       'borderDash': <Object?>[],
       'borderDashOffset': 0.0,
-      'borderJoinStyle': 'miter',
+      'borderJoinStyle': StrokeJoin.miter,
       'borderWidth': 3.0,
       'capBezierPoints': true,
       'cubicInterpolationMode': 'default',

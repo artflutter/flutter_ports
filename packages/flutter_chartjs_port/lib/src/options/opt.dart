@@ -19,13 +19,16 @@
 /// The type parameter `T` is the type of the key. The classification
 /// functions ([classifyNumber], [classifyBool], [classifyString],
 /// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner],
-/// [classifyScope] and [classifyUnion]) give the cell of a
+/// [classifyStrokeCap], [classifyStrokeJoin], [classifyScope] and
+/// [classifyUnion]) give the cell of a
 /// raw JS value for a key of a given shape. The order of their tests is the
 /// order of the resolver: `undefined`, `null`, a function, an array, an
 /// object, then the plain value.
 ///
 /// This library is a pure layer.
 library;
+
+import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
@@ -187,6 +190,12 @@ abstract final class ShapeBits {
   /// `tooltipPositioner`: a [TooltipPositioner], the value of `position` of
   /// the tooltip options.
   static const int tooltipPositioner = 512;
+
+  /// `strokeCap`: a Flutter [StrokeCap], the value of `borderCapStyle`.
+  static const int strokeCap = 1024;
+
+  /// `strokeJoin`: a Flutter [StrokeJoin], the value of `borderJoinStyle`.
+  static const int strokeJoin = 2048;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -249,6 +258,22 @@ Opt<TooltipPositioner> classifyTooltipPositioner(Object? raw) =>
         ? OptValue<TooltipPositioner>(raw)
         : OptForeign<TooltipPositioner>(raw!));
 
+/// The cell of [raw] for a key of the shape `strokeCap`: a Flutter
+/// [StrokeCap], the value of `borderCapStyle`. A keyword of Chart.js
+/// (`'round'`) is not a cap: it is a foreign value, as each other value is.
+Opt<StrokeCap> classifyStrokeCap(Object? raw) =>
+    _special<StrokeCap>(raw) ??
+    (raw is StrokeCap ? OptValue<StrokeCap>(raw) : OptForeign<StrokeCap>(raw!));
+
+/// The cell of [raw] for a key of the shape `strokeJoin`: a Flutter
+/// [StrokeJoin], the value of `borderJoinStyle`, as [classifyStrokeCap]
+/// gives the cap.
+Opt<StrokeJoin> classifyStrokeJoin(Object? raw) =>
+    _special<StrokeJoin>(raw) ??
+    (raw is StrokeJoin
+        ? OptValue<StrokeJoin>(raw)
+        : OptForeign<StrokeJoin>(raw!));
+
 /// The cell of [raw] for a key of the shape `scope <Kind>`: an object is an
 /// [OptScope], another plain value is foreign.
 Opt<S> classifyScope<S>(Object? raw) => _special<S>(raw) ?? OptForeign<S>(raw!);
@@ -274,8 +299,9 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
 
 /// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
 /// classification of [classifyNumber], [classifyBool], [classifyString],
-/// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner]
-/// or [classifyScope] for a shape of one atom, else
+/// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner],
+/// [classifyStrokeCap], [classifyStrokeJoin] or [classifyScope] for a shape
+/// of one atom, else
 /// [classifyUnion].
 Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.number => classifyNumber(raw),
@@ -284,6 +310,8 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.curve => classifyCurve(raw),
   ShapeBits.interactionMode => classifyInteractionMode(raw),
   ShapeBits.tooltipPositioner => classifyTooltipPositioner(raw),
+  ShapeBits.strokeCap => classifyStrokeCap(raw),
+  ShapeBits.strokeJoin => classifyStrokeJoin(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

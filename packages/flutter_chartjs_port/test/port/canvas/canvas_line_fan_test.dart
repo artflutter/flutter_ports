@@ -296,7 +296,7 @@ void main() {
         _translucent,
         ui.Color(0x1A000000),
       ]) {
-        for (final cap in const ['butt', 'round', 'square']) {
+        for (final cap in ui.StrokeCap.values) {
           for (final width in const [0.25, 1.0, 1.5, 3.0, 9.0]) {
             final render = await _twin(
               setUp: (c) {

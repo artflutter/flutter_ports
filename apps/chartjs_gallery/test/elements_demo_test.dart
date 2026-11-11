@@ -233,11 +233,19 @@ void main() {
       ('stepped', false, () => state.line!.options),
       ('stepped', 'before', () => state.line!.options),
       ('borderAlign', 'inner', () => state.arcs.first.options),
-      ('borderJoinStyle', 'round', () => state.arcs.first.options),
+      (
+        'borderJoinStyle',
+        native_ui.StrokeJoin.round,
+        () => state.arcs.first.options,
+      ),
       ('borderJoinStyle', undefined, () => state.arcs.first.options),
     ];
     for (final (name, value, options) in choices) {
-      final text = value is Undefined ? 'undefined' : '$value';
+      final text = switch (value) {
+        Undefined() => 'undefined',
+        final Enum value => value.name,
+        _ => '$value',
+      };
       final key = 'elements.$name.$text';
       await expectDraw(() => _tapKey(tester, key));
       expect((options()! as JsObjectFace)[name], value, reason: key);
