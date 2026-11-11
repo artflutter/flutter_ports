@@ -17,6 +17,10 @@ adds them through a service worker, on `github.io` only. The first visit reloads
 removes any other worker in its scope. The code of both files is the code of the same files of
 `apps/chart_benchmark_lab`.
 
+`web/flutter_bootstrap.js` sets `wasmAllowList: {gecko: true, webkit: true}`. By default, the Flutter loader takes
+the WebAssembly build only in a Chromium browser. With the key, Firefox from 147 and Safari from 26.2 take that
+build too, and `web/isolate.js` also runs in them.
+
 `web/flutter_bootstrap.js` also sets `preferWebParagraph: true`
 ([flutter/flutter#172561](https://github.com/flutter/flutter/issues/172561), from Flutter 3.50): the browser lays
 out and draws the text with the fonts of the system. That path needs CanvasKit and the Enhanced TextMetrics API,

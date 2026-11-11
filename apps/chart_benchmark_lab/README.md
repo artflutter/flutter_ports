@@ -46,7 +46,10 @@ through a service worker, on `github.io` only. The first visit reloads once.
 because the worker of Flutter removes any other worker in its scope. The
 header of a web run shows its mode: `WASM · THREADS`, `WASM · 1 THREAD`,
 `JAVASCRIPT` or `JAVASCRIPT · NATIVE TEXT`. The exported JSON has the same text
-as `webMode`. Only Chromium browsers take WebAssembly.
+as `webMode`. By default, the Flutter loader takes WebAssembly only in a Chromium
+browser. `web/flutter_bootstrap.js` sets `wasmAllowList` for Firefox and Safari
+too, and `web/isolate.js` also runs in them. Firefox before 147 and Safari
+before 26.2 keep the JavaScript build.
 
 `web/flutter_bootstrap.js` also sets `preferWebParagraph: true`
 ([flutter/flutter#172561](https://github.com/flutter/flutter/issues/172561),
