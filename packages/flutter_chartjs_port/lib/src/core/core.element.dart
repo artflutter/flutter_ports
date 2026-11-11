@@ -672,7 +672,7 @@ AnyObject? elementCfgArg(List<Object?> args) {
 /// The property `x` of an element: the typed field of [Element].
 final class ElementXProp extends AnimatedBy<XAnimation> {
   /// The property `x`.
-  const ElementXProp() : super('x', 0);
+  const ElementXProp() : super('x');
 
   @override
   void write(Element element, double value) => element.x = value;
@@ -695,7 +695,7 @@ final class ElementXProp extends AnimatedBy<XAnimation> {
 /// The property `y` of an element: the typed field of [Element].
 final class ElementYProp extends AnimatedBy<YAnimation> {
   /// The property `y`.
-  const ElementYProp() : super('y', 1);
+  const ElementYProp() : super('y');
 
   @override
   void write(Element element, double value) => element.y = value;

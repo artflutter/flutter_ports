@@ -997,7 +997,7 @@ final class _Rect implements RoundedRect {
 /// element of another class takes the access by name.
 final class BarBaseProp extends AnimatedBy<BaseAnimation> {
   /// The property `base`.
-  const BarBaseProp() : super('base', 9);
+  const BarBaseProp() : super('base');
 
   @override
   void write(Element element, double value) {
@@ -1026,7 +1026,7 @@ final class BarBaseProp extends AnimatedBy<BaseAnimation> {
 /// element of another class takes the access by name.
 final class BarWidthProp extends AnimatedBy<WidthAnimation> {
   /// The property `width`.
-  const BarWidthProp() : super('width', 10);
+  const BarWidthProp() : super('width');
 
   @override
   void write(Element element, double value) {
@@ -1055,7 +1055,7 @@ final class BarWidthProp extends AnimatedBy<WidthAnimation> {
 /// element of another class takes the access by name.
 final class BarHeightProp extends AnimatedBy<HeightAnimation> {
   /// The property `height`.
-  const BarHeightProp() : super('height', 11);
+  const BarHeightProp() : super('height');
 
   @override
   void write(Element element, double value) {

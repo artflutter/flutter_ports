@@ -13,7 +13,7 @@
 ///   upstream makes a plain object (`adapt-animation-spec`). It reads each
 ///   option of a resolver with its [OptionKey] (`OptionView.readKey`).
 /// - `_properties`, the JS `Map` from a property to its animation options,
-///   is a table by the [AnimatedProp] id of a built-in name, with a Map for
+///   is one Map by the [AnimatedProp] of a name, with
 ///   the other keys and the key order of the JS `Map` (Chart.js ADR 0054
 ///   §10). [Animations.properties] gives it as a Map for the specs.
 /// - `_createAnimations` walks a property object of a controller (a
@@ -105,28 +105,20 @@ class Animations {
   /// core.animations.js:8 `_chart`.
   final types.Chart _chart;
 
-  /// core.animations.js:9 `_properties` for the built-in names: the
-  /// options of each [AnimatedProp] id, Dart `null` for an absent key
-  /// (Chart.js ADR 0054 §10).
-  final List<AnimationSpec?> _builtIn = List<AnimationSpec?>.filled(
-    AnimatedProp.builtIns.length,
-    null,
-  );
-
-  /// core.animations.js:9 `_properties` for the other keys: a name that is
-  /// not built in, or a key that is not a `String`. A JS `Map` takes a key
-  /// of any type. Dart `null` before the first such key.
-  Map<Object?, AnimationSpec>? _others;
-
-  /// The keys of `_properties` in the insertion order of the JS `Map`.
-  final List<Object?> _keys = <Object?>[];
+  /// core.animations.js:9 `_properties`, a JS `Map` from each property to
+  /// its animation options, in the insertion order. The key of a name is
+  /// its [AnimatedProp]: the object of a built-in property, or a property
+  /// with that name. A JS `Map` takes a key of any type: a key that is not
+  /// a `String` is the key itself.
+  final Map<Object?, AnimationSpec> _properties = <Object?, AnimationSpec>{};
 
   /// core.animations.js:9 `_properties`, a JS `Map` from each property to
   /// its animation options, as a new Map in the key order of the JS `Map`.
   /// The specs read it (core.animations.tests.js:13).
   @internal
   Map<Object?, AnimationSpec> get properties => {
-    for (final key in _keys) key: _getKey(key)!,
+    for (final MapEntry(:key, :value) in _properties.entries)
+      key is AnimatedProp ? key.name : key: value,
   };
 
   /// The items of the transition of the update mode
@@ -160,8 +152,8 @@ class Animations {
     );
     AnimationSpec? baseSpec;
     for (final prop in AnimatedProp.builtIns) {
-      if (_builtIn[prop.id] == null && itemOf(prop) != null) {
-        _setKey(prop.name, baseSpec ??= _specOf(base));
+      if (_get(prop) == null && itemOf(prop) != null) {
+        _properties[prop] = baseSpec ??= _specOf(base);
       }
     }
   }
@@ -200,24 +192,21 @@ class Animations {
         null => animationHasDuration(cfg),
       };
 
-  /// `this._properties.get(key)` for the built-in key [prop].
-  AnimationSpec? _get(AnimatedProp prop) =>
-      prop.id >= 0 ? _builtIn[prop.id] : _others?[prop.name];
+  /// `this._properties.get(key)` for the property [prop].
+  AnimationSpec? _get(AnimatedProp prop) => _properties[prop];
+
+  /// The key of `_properties` for the JS value [key]: the [AnimatedProp] of
+  /// a name, else [key] itself.
+  static Object? _keyOf(Object? key) =>
+      key is String ? AnimatedProp.of(key) : key;
 
   /// `this._properties.get(key)` for any JS value [key].
-  AnimationSpec? _getKey(Object? key) =>
-      key is String ? _get(AnimatedProp.of(key)) : _others?[key];
+  AnimationSpec? _getKey(Object? key) => _properties[_keyOf(key)];
 
   /// `this._properties.set(key, value)` for any JS value [key]: a new key
   /// goes to the end of the key order.
   void _setKey(Object? key, AnimationSpec value) {
-    if (_getKey(key) == null) _keys.add(key);
-    final prop = key is String ? AnimatedProp.of(key) : null;
-    if (prop != null && prop.id >= 0) {
-      _builtIn[prop.id] = value;
-    } else {
-      (_others ??= <Object?, AnimationSpec>{})[key] = value;
-    }
+    _properties[_keyOf(key)] = value;
   }
 
   /// core.animations.js:13 `configure(config)`.
@@ -448,7 +437,7 @@ class Animations {
   /// it writes each key of `Object.keys(values)` through [writeProperty], in
   /// that order.
   bool? update(Object target, Object values) {
-    if (_keys.isEmpty) {
+    if (_properties.isEmpty) {
       // Nothing is animated, just apply the new values.
       if (target is Element) {
         target.assign(values);

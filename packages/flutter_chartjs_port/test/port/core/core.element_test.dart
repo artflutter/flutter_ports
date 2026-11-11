@@ -107,14 +107,6 @@ void main() {
     });
   });
 
-  // The table of the animation options is by id: the id of a built-in
-  // property is its index in AnimatedProp.builtIns.
-  test('the id of each built-in property is its index', () {
-    for (final (index, prop) in AnimatedProp.builtIns.indexed) {
-      expect(prop.id, index, reason: prop.name);
-    }
-  });
-
   // A geometry property is a class that reads and writes its own field.
   test('a property class reads and writes the field of its element', () {
     final element = Element()

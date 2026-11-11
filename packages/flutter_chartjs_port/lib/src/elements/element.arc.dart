@@ -1578,7 +1578,7 @@ class ArcElement extends Element
 /// element of another class takes the access by name.
 final class ArcCircumferenceProp extends AnimatedBy<CircumferenceAnimation> {
   /// The property `circumference`.
-  const ArcCircumferenceProp() : super('circumference', 12);
+  const ArcCircumferenceProp() : super('circumference');
 
   @override
   void write(Element element, double value) {
@@ -1612,7 +1612,7 @@ final class ArcCircumferenceProp extends AnimatedBy<CircumferenceAnimation> {
 /// element of another class takes the access by name.
 final class ArcEndAngleProp extends AnimatedBy<EndAngleAnimation> {
   /// The property `endAngle`.
-  const ArcEndAngleProp() : super('endAngle', 13);
+  const ArcEndAngleProp() : super('endAngle');
 
   @override
   void write(Element element, double value) {
@@ -1646,7 +1646,7 @@ final class ArcEndAngleProp extends AnimatedBy<EndAngleAnimation> {
 /// element of another class takes the access by name.
 final class ArcInnerRadiusProp extends AnimatedBy<InnerRadiusAnimation> {
   /// The property `innerRadius`.
-  const ArcInnerRadiusProp() : super('innerRadius', 14);
+  const ArcInnerRadiusProp() : super('innerRadius');
 
   @override
   void write(Element element, double value) {
@@ -1680,7 +1680,7 @@ final class ArcInnerRadiusProp extends AnimatedBy<InnerRadiusAnimation> {
 /// element of another class takes the access by name.
 final class ArcOuterRadiusProp extends AnimatedBy<OuterRadiusAnimation> {
   /// The property `outerRadius`.
-  const ArcOuterRadiusProp() : super('outerRadius', 15);
+  const ArcOuterRadiusProp() : super('outerRadius');
 
   @override
   void write(Element element, double value) {
@@ -1714,7 +1714,7 @@ final class ArcOuterRadiusProp extends AnimatedBy<OuterRadiusAnimation> {
 /// element of another class takes the access by name.
 final class ArcStartAngleProp extends AnimatedBy<StartAngleAnimation> {
   /// The property `startAngle`.
-  const ArcStartAngleProp() : super('startAngle', 16);
+  const ArcStartAngleProp() : super('startAngle');
 
   @override
   void write(Element element, double value) {
