@@ -2024,8 +2024,8 @@ void main() {
       final context = chart.ctx!
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..font = 'bold 12px Arial'
-        ..lineJoin = 'round'
-        ..lineCap = 'square'
+        ..lineJoin = native_ui.StrokeJoin.round
+        ..lineCap = native_ui.StrokeCap.square
         ..lineWidth = 3
         ..miterLimit = 4
         ..shadowBlur = 5
@@ -2041,8 +2041,8 @@ void main() {
       // https://www.w3.org/TR/2dcontext/#conformance-requirements
       expect(context.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(context.font, '10px sans-serif');
-      expect(context.lineJoin, 'miter');
-      expect(context.lineCap, 'butt');
+      expect(context.lineJoin, native_ui.StrokeJoin.miter);
+      expect(context.lineCap, native_ui.StrokeCap.butt);
       expect(context.lineWidth, 1);
       expect(context.miterLimit, 10);
       expect(context.shadowBlur, 0);

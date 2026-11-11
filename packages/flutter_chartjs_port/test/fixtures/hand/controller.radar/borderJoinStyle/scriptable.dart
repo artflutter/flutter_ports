@@ -2,6 +2,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'dart:ui' show StrokeJoin;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
@@ -16,13 +18,14 @@ Map<String, Object?> fixture() => <String, Object?>{
           // option in dataset
           'data': <Object?>[3, 3, null, 3],
           'borderColor': '#ff0000',
+          // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
           'borderJoinStyle': (Object? ctx) {
             final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(3);
             return index == 0
-                ? 'round'
+                ? StrokeJoin.round
                 : index == 1
-                ? 'miter'
-                : 'bevel';
+                ? StrokeJoin.miter
+                : StrokeJoin.bevel;
           },
         },
         <String, Object?>{
@@ -43,10 +46,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderJoinStyle': (Object? ctx) {
             final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(3);
             return index == 0
-                ? 'round'
+                ? StrokeJoin.round
                 : index == 1
-                ? 'miter'
-                : 'bevel';
+                ? StrokeJoin.miter
+                : StrokeJoin.bevel;
           },
           'borderWidth': 25,
           'fill': false,

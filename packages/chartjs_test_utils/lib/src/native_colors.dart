@@ -27,8 +27,14 @@ bool _isColor(String key) =>
     key == r'$borderColors' ||
     key == r'$backgroundColors';
 
-/// Migrates color options, and an upstream easing name to its curve,
-/// leaving data, labels and ordinary text intact.
+/// The value of [values] with the name [value] for a String that is such a
+/// name, else [value] itself. A scriptable or an indexable value stays.
+Object? _enumValue<T extends Enum>(List<T> values, Object? value) =>
+    value is String ? values.asNameMap()[value] ?? value : value;
+
+/// Migrates color options, an upstream easing name to its curve, and the
+/// keyword of a line cap or a line join to its Flutter enum value, leaving
+/// data, labels and ordinary text intact.
 void nativeFixtureColors(Object? config) {
   final seen = Set<Object>.identity();
   Object? color(Object? value) {
@@ -86,6 +92,12 @@ void nativeFixtureColors(Object? config) {
       } else if (key == 'easing') {
         // The option takes a Flutter curve, not an upstream easing name.
         value[key] = nativeFixtureEasing(value[key]);
+      } else if (key == 'borderCapStyle' || key == 'lineCap') {
+        // The option takes the Flutter enum, not the upstream keyword. The
+        // names of the enum values are the keywords.
+        value[key] = _enumValue(ui.StrokeCap.values, value[key]);
+      } else if (key == 'borderJoinStyle' || key == 'lineJoin') {
+        value[key] = _enumValue(ui.StrokeJoin.values, value[key]);
       } else {
         walk(value[key]);
       }

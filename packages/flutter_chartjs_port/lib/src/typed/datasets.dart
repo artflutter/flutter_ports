@@ -9,7 +9,7 @@
 /// [DataPoint].
 library;
 
-import 'dart:ui' show Color, Offset;
+import 'dart:ui' show Color, Offset, StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
     show
@@ -557,6 +557,8 @@ base mixin _LineStyle on Dataset {
   ChartFill? get fill;
   double? get tension;
   List<double>? get borderDash;
+  StrokeCap? get borderCapStyle;
+  StrokeJoin? get borderJoinStyle;
   bool? get spanGaps;
   bool? get showLine;
   bool? get stepped;
@@ -574,6 +576,8 @@ base mixin _LineStyle on Dataset {
     put(scope, OptionKey.fill, fill?.optionValue);
     put(scope, OptionKey.tension, tension);
     put(scope, OptionKey.borderDash, numberList(borderDash));
+    put(scope, OptionKey.borderCapStyle, borderCapStyle);
+    put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
     put(scope, OptionKey.spanGaps, spanGaps);
     put(scope, OptionKey.showLine, showLine);
     put(scope, OptionKey.stepped, stepped);
@@ -604,6 +608,8 @@ base mixin _LineStyle on Dataset {
     ('fill', fill),
     ('tension', tension),
     ('borderDash', byItems(borderDash)),
+    ('borderCapStyle', borderCapStyle),
+    ('borderJoinStyle', borderJoinStyle),
     ('spanGaps', spanGaps),
     ('showLine', showLine),
     ('stepped', stepped),
@@ -646,6 +652,8 @@ final class LineDataset extends Dataset with _LineStyle {
     this.fill,
     this.tension,
     this.borderDash,
+    this.borderCapStyle,
+    this.borderJoinStyle,
     this.spanGaps,
     this.showLine,
     this.stepped,
@@ -699,6 +707,20 @@ final class LineDataset extends Dataset with _LineStyle {
   /// {@endtemplate}
   @override
   final List<double>? borderDash;
+
+  /// {@template flutter_chartjs_port.typed.borderCapStyle}
+  /// The shape of the ends of the line: `borderCapStyle`, a Flutter
+  /// [StrokeCap]. The default is [StrokeCap.butt].
+  /// {@endtemplate}
+  @override
+  final StrokeCap? borderCapStyle;
+
+  /// {@template flutter_chartjs_port.typed.borderJoinStyle}
+  /// The shape of the corners of the line: `borderJoinStyle`, a Flutter
+  /// [StrokeJoin]. The default is [StrokeJoin.miter].
+  /// {@endtemplate}
+  @override
+  final StrokeJoin? borderJoinStyle;
 
   /// {@template flutter_chartjs_port.typed.spanGaps}
   /// Whether the line spans the gaps of `null` values: `spanGaps` as a
@@ -793,6 +815,8 @@ final class LineDataset extends Dataset with _LineStyle {
     ChartFill? fill,
     double? tension,
     List<double>? borderDash,
+    StrokeCap? borderCapStyle,
+    StrokeJoin? borderJoinStyle,
     bool? spanGaps,
     bool? showLine,
     bool? stepped,
@@ -826,6 +850,8 @@ final class LineDataset extends Dataset with _LineStyle {
     fill: fill ?? this.fill,
     tension: tension ?? this.tension,
     borderDash: borderDash ?? this.borderDash,
+    borderCapStyle: borderCapStyle ?? this.borderCapStyle,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
     spanGaps: spanGaps ?? this.spanGaps,
     showLine: showLine ?? this.showLine,
     stepped: stepped ?? this.stepped,
@@ -899,6 +925,8 @@ final class ScatterDataset extends Dataset with _LineStyle {
     this.fill,
     this.tension,
     this.borderDash,
+    this.borderCapStyle,
+    this.borderJoinStyle,
     this.spanGaps,
     this.showLine,
     this.stepped,
@@ -939,6 +967,14 @@ final class ScatterDataset extends Dataset with _LineStyle {
   /// {@macro flutter_chartjs_port.typed.borderDash}
   @override
   final List<double>? borderDash;
+
+  /// {@macro flutter_chartjs_port.typed.borderCapStyle}
+  @override
+  final StrokeCap? borderCapStyle;
+
+  /// {@macro flutter_chartjs_port.typed.borderJoinStyle}
+  @override
+  final StrokeJoin? borderJoinStyle;
 
   /// {@macro flutter_chartjs_port.typed.spanGaps}
   @override
@@ -1007,6 +1043,8 @@ final class ScatterDataset extends Dataset with _LineStyle {
     ChartFill? fill,
     double? tension,
     List<double>? borderDash,
+    StrokeCap? borderCapStyle,
+    StrokeJoin? borderJoinStyle,
     bool? spanGaps,
     bool? showLine,
     bool? stepped,
@@ -1039,6 +1077,8 @@ final class ScatterDataset extends Dataset with _LineStyle {
     fill: fill ?? this.fill,
     tension: tension ?? this.tension,
     borderDash: borderDash ?? this.borderDash,
+    borderCapStyle: borderCapStyle ?? this.borderCapStyle,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
     spanGaps: spanGaps ?? this.spanGaps,
     showLine: showLine ?? this.showLine,
     stepped: stepped ?? this.stepped,
@@ -1663,6 +1703,8 @@ final class RadarDataset extends Dataset with _LineStyle {
     this.fill,
     this.tension,
     this.borderDash,
+    this.borderCapStyle,
+    this.borderJoinStyle,
     this.spanGaps,
     this.showLine,
     this.stepped,
@@ -1691,6 +1733,14 @@ final class RadarDataset extends Dataset with _LineStyle {
   /// {@macro flutter_chartjs_port.typed.borderDash}
   @override
   final List<double>? borderDash;
+
+  /// {@macro flutter_chartjs_port.typed.borderCapStyle}
+  @override
+  final StrokeCap? borderCapStyle;
+
+  /// {@macro flutter_chartjs_port.typed.borderJoinStyle}
+  @override
+  final StrokeJoin? borderJoinStyle;
 
   /// {@macro flutter_chartjs_port.typed.spanGaps}
   @override
@@ -1753,6 +1803,8 @@ final class RadarDataset extends Dataset with _LineStyle {
     ChartFill? fill,
     double? tension,
     List<double>? borderDash,
+    StrokeCap? borderCapStyle,
+    StrokeJoin? borderJoinStyle,
     bool? spanGaps,
     bool? showLine,
     bool? stepped,
@@ -1781,6 +1833,8 @@ final class RadarDataset extends Dataset with _LineStyle {
     fill: fill ?? this.fill,
     tension: tension ?? this.tension,
     borderDash: borderDash ?? this.borderDash,
+    borderCapStyle: borderCapStyle ?? this.borderCapStyle,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
     spanGaps: spanGaps ?? this.spanGaps,
     showLine: showLine ?? this.showLine,
     stepped: stepped ?? this.stepped,

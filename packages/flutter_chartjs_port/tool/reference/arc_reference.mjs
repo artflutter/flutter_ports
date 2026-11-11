@@ -109,6 +109,22 @@ function str(v) {
 }
 
 /**
+ * The Dart literal of the value [x] of the key [k]: a line cap or a line
+ * join of upstream is the Flutter enum value with the name of the keyword
+ * (row adapt-flutter-stroke-enums). Another value is `undefined` here.
+ */
+function strokeEnum(k, x) {
+  if (typeof x !== 'string') return undefined;
+  if ((k === 'borderCapStyle' || k === 'lineCap') && ['butt', 'round', 'square'].includes(x)) {
+    return `StrokeCap.${x}`;
+  }
+  if ((k === 'borderJoinStyle' || k === 'lineJoin') && ['miter', 'round', 'bevel'].includes(x)) {
+    return `StrokeJoin.${x}`;
+  }
+  return undefined;
+}
+
+/**
  * The Dart literal of a configuration value: `undefined` is the sentinel, an
  * array is a `List<Object?>` and an object is a `Map<String, Object?>`.
  */
@@ -120,7 +136,7 @@ function value(v) {
   if (typeof v === 'string') return str(v);
   if (Array.isArray(v)) return `<Object?>[${v.map(value).join(', ')}]`;
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map((k) => `${str(k)}: ${value(v[k])}`);
+    const entries = Object.keys(v).map((k) => `${str(k)}: ${strokeEnum(k, v[k]) ?? value(v[k])}`);
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${v}`);
@@ -499,6 +515,8 @@ const out = `// Original code, not ported from Chart.js: ArcElement reference da
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/elements/element.arc.ts at the pinned Chart.js, with the mock context of
 // chartjs-test-utils src/context.js. ${count} cases.
+
+import 'dart:ui' show StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 

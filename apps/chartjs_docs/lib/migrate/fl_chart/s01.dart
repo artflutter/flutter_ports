@@ -24,7 +24,7 @@ LineDataset _line(
   pointBackgroundColor: color,
   pointHoverRadius: 8,
   pointHoverBackgroundColor: color,
-  extra: const {'borderCapStyle': 'round'},
+  borderCapStyle: StrokeCap.round,
 );
 
 List<DataPoint> _p(List<(num, num)> s) => [

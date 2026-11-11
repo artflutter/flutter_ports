@@ -25,7 +25,9 @@
 # plain function value), `list` (a plain array value), `curve` (a Flutter `Curve`, the value of
 # `easing`; an easing name is a foreign value), `interactionMode` (an `InteractionMode`, the value
 # of `mode`; a mode name is a foreign value), `tooltipPositioner` (a `TooltipPositioner`, the value
-# of the tooltip `position`; a positioner name is a foreign value), `any` (any JS value: a color, a point
+# of the tooltip `position`; a positioner name is a foreign value), `strokeCap` and `strokeJoin` (the
+# Flutter enums `StrokeCap` and `StrokeJoin`, the values of `borderCapStyle` and `borderJoinStyle`; a
+# keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -140,10 +142,10 @@ kinds:
       pointHoverBorderColor: any
       pointHoverBorderWidth: number
       pointHoverRadius: number
-      borderCapStyle: string
+      borderCapStyle: strokeCap
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number
@@ -347,10 +349,10 @@ kinds:
       borderWidth: number
       borderColor: any
       backgroundColor: any
-      borderCapStyle: string
+      borderCapStyle: strokeCap
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number
@@ -423,7 +425,7 @@ kinds:
       borderAlign: string
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       borderRadius: number | scope BorderRadius
       offset: number
       circular: bool
@@ -465,10 +467,10 @@ kinds:
     keys:
       backgroundColor: any
       borderColor: any
-      borderCapStyle: string
+      borderCapStyle: strokeCap
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       borderWidth: number
   # ---------------------------------------------------------------------------------------------
   # The datasets. Each kind also holds the chart options of its controller, which live in
@@ -546,10 +548,10 @@ kinds:
       pointHoverBorderColor: any
       pointHoverBorderWidth: number
       pointHoverRadius: number
-      borderCapStyle: string
+      borderCapStyle: strokeCap
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number
@@ -639,7 +641,7 @@ kinds:
       borderAlign: string
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       borderRadius: number | scope BorderRadius
       offset: number
       circular: bool
@@ -690,7 +692,7 @@ kinds:
       borderAlign: string
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       borderRadius: number | scope BorderRadius
       offset: number
       circular: bool
@@ -757,10 +759,10 @@ kinds:
       pointHoverBorderColor: any
       pointHoverBorderWidth: number
       pointHoverRadius: number
-      borderCapStyle: string
+      borderCapStyle: strokeCap
       borderDash: list
       borderDashOffset: number
-      borderJoinStyle: string
+      borderJoinStyle: strokeJoin
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number

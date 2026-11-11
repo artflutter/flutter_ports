@@ -1891,7 +1891,7 @@ void main() {
         'borderColor': blue,
         'borderWidth': 3.0,
         'borderAlign': 'inner',
-        'borderJoinStyle': 'round',
+        'borderJoinStyle': ui.StrokeJoin.round,
         'borderDash': <double>[2, 3],
         'borderRadius': 4.0,
       }),

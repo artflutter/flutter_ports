@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/stroke_json.dart';
 
 /// A [Defaults] that records each call with its arguments, as
 /// `[method, ...arguments]`. It changes nothing.
@@ -62,6 +63,7 @@ String probeJson(Object? value) => switch (value) {
   _ when identical(value, formatters['values']) => '"<values>"',
   Function() => '"<fn>"',
   Curve() => curveJson,
+  final Object stroke when isStroke(stroke) => strokeJson(stroke),
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(probeJson).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>

@@ -42,6 +42,8 @@
 /// neither `dart:ui` nor `package:flutter`.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -228,12 +230,12 @@ void _setStyle(
     // of `options.x`. The typed fields give the raw values; a double field
     // with its value goes to the canvas with no box.
     ctx
-      ..lineCap = canvasKeyword(_borderCapStyle(options))
+      ..lineCap = canvasLineCap(_borderCapStyle(options))
       ..setLineDash(canvasLineDash(_borderDash(options)))
       ..lineDashOffset = plainOption(options, OptionKey.borderDashOffset)
           ? options.borderDashOffset
           : canvasNumber(_borderDashOffset(options))
-      ..lineJoin = canvasKeyword(_borderJoinStyle(options))
+      ..lineJoin = canvasLineJoin(_borderJoinStyle(options))
       ..lineWidth = plainOption(options, OptionKey.borderWidth)
           ? options.borderWidth
           : canvasNumber(_borderWidth(options))
@@ -242,7 +244,7 @@ void _setStyle(
   }
   final s = style ?? options;
   ctx
-    ..lineCap = canvasKeyword(
+    ..lineCap = canvasLineCap(
       valueOrDefault(_borderCapStyle(s), _borderCapStyle(options)),
     )
     ..setLineDash(
@@ -251,7 +253,7 @@ void _setStyle(
     ..lineDashOffset = canvasNumber(
       valueOrDefault(_borderDashOffset(s), _borderDashOffset(options)),
     )
-    ..lineJoin = canvasKeyword(
+    ..lineJoin = canvasLineJoin(
       valueOrDefault(_borderJoinStyle(s), _borderJoinStyle(options)),
     )
     ..lineWidth = canvasNumber(
@@ -722,7 +724,7 @@ void _strokePathWithCache(
   // DIVERGES(chartjs): adapt-dense-curve-merge, the curves of a line meet
   // with one tangent, so `borderJoinStyle` shows nowhere on them. Lines in
   // their place have a corner at each vertex: a round join keeps the turn.
-  if (line._pathDense) ctx.lineJoin = 'round';
+  if (line._pathDense) ctx.lineJoin = ui.StrokeJoin.round;
   ctx.stroke(path);
 }
 
@@ -756,7 +758,7 @@ void _strokePathDirect(
       ctx.closePath();
     }
     // The round join of `_strokePathWithCache`.
-    if (line._denseUsed) ctx.lineJoin = 'round';
+    if (line._denseUsed) ctx.lineJoin = ui.StrokeJoin.round;
     ctx.stroke();
   }
   line._denseScale = null;
@@ -832,10 +834,11 @@ class LineElement extends Element
   /// element.line.js:250 `static defaults`, a typed scope of the kind
   /// `LineOptions` (Chart.js ADR 0054 §3).
   static final LineOptionsScope defaults = LineOptionsScope()
-    ..borderCapStyle = 'butt'
+    // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enums.
+    ..borderCapStyle = ui.StrokeCap.butt
     ..borderDash = <Object?>[]
     ..borderDashOffset = 0.0
-    ..borderJoinStyle = 'miter'
+    ..borderJoinStyle = ui.StrokeJoin.miter
     ..borderWidth = 3.0
     ..capBezierPoints = true
     ..cubicInterpolationMode = 'default'

@@ -65,7 +65,7 @@ void main() {
     });
 
     test('each cap and each width', () async {
-      for (final cap in const ['butt', 'round', 'square']) {
+      for (final cap in ui.StrokeCap.values) {
         for (final width in const [0.25, 1.0, 1.5, 3.0, 9.0]) {
           final (a, b) = await _twin(
             setUp: (c) {
@@ -203,7 +203,7 @@ void main() {
     });
 
     test('no length gives the pixels of the path, for each cap', () async {
-      for (final cap in const ['butt', 'round', 'square']) {
+      for (final cap in ui.StrokeCap.values) {
         final (a, b) = await _twin(
           x0: 50,
           y0: 50,
@@ -211,7 +211,7 @@ void main() {
           y1: 50,
           setUp: (c) => c.lineCap = cap,
         );
-        _expectSame(a, b, cap);
+        _expectSame(a, b, cap.name);
       }
     });
   });

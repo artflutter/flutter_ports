@@ -16,6 +16,8 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
+import 'dart:ui' show StrokeCap, StrokeJoin;
+
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show DrawPointOptions;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
@@ -708,10 +710,10 @@ final class LineOptions extends ElementOptions {
     }
   }
 
-  String? _borderCapStyle = null;
+  StrokeCap? _borderCapStyle = null;
 
   /// `borderCapStyle`: the JS conversion of the value of the key.
-  String? get borderCapStyle => _borderCapStyle;
+  StrokeCap? get borderCapStyle => _borderCapStyle;
 
   /// `borderCapStyle`: the raw value, or [undefined] for an absent key.
   Object? get borderCapStyleValue => _present & 1 == 0 ? undefined : _raw0();
@@ -730,7 +732,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 1;
-    if (raw is String) {
+    if (raw is StrokeCap) {
       _borderCapStyle = raw;
       _clearForeign(0, 1);
     } else {
@@ -805,10 +807,10 @@ final class LineOptions extends ElementOptions {
     }
   }
 
-  String? _borderJoinStyle = null;
+  StrokeJoin? _borderJoinStyle = null;
 
   /// `borderJoinStyle`: the JS conversion of the value of the key.
-  String? get borderJoinStyle => _borderJoinStyle;
+  StrokeJoin? get borderJoinStyle => _borderJoinStyle;
 
   /// `borderJoinStyle`: the raw value, or [undefined] for an absent key.
   Object? get borderJoinStyleValue => _present & 8 == 0 ? undefined : _raw3();
@@ -827,7 +829,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 8;
-    if (raw is String) {
+    if (raw is StrokeJoin) {
       _borderJoinStyle = raw;
       _clearForeign(3, 8);
     } else {
@@ -2022,10 +2024,10 @@ final class ArcOptions extends ElementOptions {
     }
   }
 
-  String? _borderJoinStyle = null;
+  StrokeJoin? _borderJoinStyle = null;
 
   /// `borderJoinStyle`: the JS conversion of the value of the key.
-  String? get borderJoinStyle => _borderJoinStyle;
+  StrokeJoin? get borderJoinStyle => _borderJoinStyle;
 
   /// `borderJoinStyle`: the raw value, or [undefined] for an absent key.
   Object? get borderJoinStyleValue => _present & 16 == 0 ? undefined : _raw4();
@@ -2044,7 +2046,7 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 16;
-    if (raw is String) {
+    if (raw is StrokeJoin) {
       _borderJoinStyle = raw;
       _clearForeign(4, 16);
     } else {

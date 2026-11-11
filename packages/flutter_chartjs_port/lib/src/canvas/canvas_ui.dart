@@ -118,18 +118,6 @@ const double _textAngleStep = math.pi / 90;
 
 final CanvasFont _defaultFont = parseCanvasFont(_defaultFontString)!;
 
-const Map<String, ui.StrokeCap> _lineCaps = {
-  'butt': ui.StrokeCap.butt,
-  'round': ui.StrokeCap.round,
-  'square': ui.StrokeCap.square,
-};
-
-const Map<String, ui.StrokeJoin> _lineJoins = {
-  'miter': ui.StrokeJoin.miter,
-  'round': ui.StrokeJoin.round,
-  'bevel': ui.StrokeJoin.bevel,
-};
-
 const Set<String> _textAligns = {'start', 'end', 'left', 'right', 'center'};
 
 const Set<String> _textBaselines = {
@@ -475,9 +463,7 @@ final class _State {
   ui.Color? strokeColor = _black;
   UiShaderSource? strokeShader;
   double lineWidth = 1;
-  String lineCap = 'butt';
   ui.StrokeCap cap = ui.StrokeCap.butt;
-  String lineJoin = 'miter';
   ui.StrokeJoin join = ui.StrokeJoin.miter;
   double miterLimit = 10;
   List<double> lineDash = const [];
@@ -512,9 +498,7 @@ final class _State {
     strokeColor = other.strokeColor;
     strokeShader = other.strokeShader;
     lineWidth = other.lineWidth;
-    lineCap = other.lineCap;
     cap = other.cap;
-    lineJoin = other.lineJoin;
     join = other.join;
     miterLimit = other.miterLimit;
     lineDash = other.lineDash;
@@ -2502,27 +2486,21 @@ final class UiCanvasContext
   }
 
   @override
-  String? get lineCap => _s.lineCap;
+  ui.StrokeCap? get lineCap => _s.cap;
 
   @override
-  set lineCap(String? value) {
-    final cap = _lineCaps[value];
-    if (cap == null) return;
-    _s
-      ..lineCap = value!
-      ..cap = cap;
+  set lineCap(ui.StrokeCap? value) {
+    if (value == null) return;
+    _s.cap = value;
   }
 
   @override
-  String? get lineJoin => _s.lineJoin;
+  ui.StrokeJoin? get lineJoin => _s.join;
 
   @override
-  set lineJoin(String? value) {
-    final join = _lineJoins[value];
-    if (join == null) return;
-    _s
-      ..lineJoin = value!
-      ..join = join;
+  set lineJoin(ui.StrokeJoin? value) {
+    if (value == null) return;
+    _s.join = value;
   }
 
   @override

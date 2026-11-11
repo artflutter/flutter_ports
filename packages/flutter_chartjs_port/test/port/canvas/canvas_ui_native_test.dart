@@ -1083,7 +1083,7 @@ void main() {
       void doughnut(UiCanvasContext ctx, {required bool built}) {
         ctx
           ..scale(2, 2)
-          ..lineJoin = 'bevel'
+          ..lineJoin = native_ui.StrokeJoin.bevel
           ..lineWidth = 2
           ..strokeStyle = const native_ui.Color.fromRGBO(255, 255, 255, 1);
         var start = -math.pi / 2;

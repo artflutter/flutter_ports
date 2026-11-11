@@ -40,6 +40,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/stroke_json.dart';
 import 'precedence_reference.dart'
     as frozen
     show themePrecedencePrototype, themePrecedenceUpstream;
@@ -294,6 +295,7 @@ String _json(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
+  final Object stroke when isStroke(stroke) => strokeJson(stroke),
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>

@@ -133,7 +133,7 @@ void main() {
                   'borderColor': const native_ui.Color.fromRGBO(0, 0, 0, 1),
                   'borderDash': <Object?>[1, 2, 3],
                   'borderDashOffset': 1,
-                  'borderJoinStyle': 'miter',
+                  'borderJoinStyle': native_ui.StrokeJoin.miter,
                   'borderRadius': 3,
                 },
               ],
@@ -164,7 +164,7 @@ void main() {
               'pointStyle': undefined,
               'lineDash': <Object?>[1, 2, 3],
               'lineDashOffset': 1,
-              'lineJoin': 'miter',
+              'lineJoin': native_ui.StrokeJoin.miter,
               'borderRadius': 5,
             },
           ];

@@ -5,6 +5,8 @@
 // a build of Chart.js v4.6.1 at the commit
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb. 36 cases.
 
+import 'dart:ui' show StrokeCap, StrokeJoin;
+
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated the data.
@@ -632,10 +634,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -1249,10 +1251,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -1866,10 +1868,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -1977,10 +1979,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[4.0, 2.0],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -2065,10 +2067,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[4.0, 2.0],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -2305,10 +2307,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -2411,10 +2413,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -2500,10 +2502,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -4624,10 +4626,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -5664,10 +5666,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -6058,10 +6060,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -6351,10 +6353,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -6644,10 +6646,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -6874,10 +6876,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -7083,10 +7085,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -7313,10 +7315,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -7500,10 +7502,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -7710,10 +7712,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -7803,10 +7805,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -7900,10 +7902,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -8238,10 +8240,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -8576,10 +8578,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -9133,10 +9135,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -9688,10 +9690,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -10276,10 +10278,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -10831,10 +10833,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -11202,10 +11204,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -11540,10 +11542,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -11878,10 +11880,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -12249,10 +12251,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -12334,10 +12336,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -12528,10 +12530,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -12939,10 +12941,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -13317,10 +13319,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -13655,10 +13657,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -14047,10 +14049,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -14406,10 +14408,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -14972,10 +14974,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -15419,10 +15421,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16009,10 +16011,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16066,10 +16068,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16227,10 +16229,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16284,10 +16286,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16383,10 +16385,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16460,10 +16462,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16536,10 +16538,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16613,10 +16615,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16689,10 +16691,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -16766,10 +16768,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17269,10 +17271,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17406,10 +17408,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17496,10 +17498,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17623,10 +17625,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17712,10 +17714,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17789,10 +17791,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17866,10 +17868,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -17975,10 +17977,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -18054,10 +18056,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -18131,10 +18133,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -18361,10 +18363,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -18635,10 +18637,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -18880,10 +18882,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -19001,10 +19003,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -19077,10 +19079,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -19154,10 +19156,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -19231,10 +19233,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -19461,10 +19463,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -19537,10 +19539,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',
@@ -19613,10 +19615,10 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             <String, Object?>{
               'dataset': <String, Object?>{
                 r'$shared': false,
-                'borderCapStyle': 'butt',
+                'borderCapStyle': StrokeCap.butt,
                 'borderDash': <Object?>[],
                 'borderDashOffset': 0.0,
-                'borderJoinStyle': 'miter',
+                'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': 'default',

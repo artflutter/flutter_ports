@@ -777,12 +777,16 @@ void main() {
       expect(_named(ctx, 'setLineDashOffset').single['args'], [0.0]);
     });
 
-    test('a borderJoinStyle that is not a string is its ToString', () {
+    test('a borderJoinStyle that is not a StrokeJoin gives the default '
+        'join', () {
       // The DOM setter converts the value with ToString and ignores a value
-      // that is not a join. The JS mock records the value itself.
+      // that is not a join, and the JS mock records the value itself. The
+      // option of the port is a Flutter StrokeJoin (row
+      // `adapt-flutter-stroke-enums`): another value is no join, and the arc
+      // takes its default, `bevel` for an arc with the border outside.
       final ctx = _CanvasContext();
       _drawArc({'borderJoinStyle': 5}).draw(ctx);
-      expect(_named(ctx, 'setLineJoin').single['args'], ['5']);
+      expect(_named(ctx, 'setLineJoin').single['args'], ['bevel']);
     });
 
     test('a numeric option that is a string is its ToNumber', () {

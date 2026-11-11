@@ -20,6 +20,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/stroke_json.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
@@ -54,6 +55,7 @@ String _jsonRaw(Object? value) => switch (value) {
   _ when jsIsFunction(value) => '"<fn>"',
   final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
   Curve() => curveJson,
+  final Object stroke when isStroke(stroke) => strokeJson(stroke),
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>

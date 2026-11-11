@@ -18,9 +18,9 @@ LineDataset _line(List<num> ys, Color from, Color to, Color text) =>
       pointHoverRadius: 12,
       pointBorderColor: Colors.white,
       pointBorderWidth: 1,
+      borderCapStyle: StrokeCap.round,
       extra: {
         'borderColor': horizontalGradient([from, to]),
-        'borderCapStyle': 'round',
         'pointBackgroundColor': [
           for (var i = 0; i < ys.length; i++)
             Color.lerp(from, to, i / (ys.length - 1)),

@@ -24,6 +24,7 @@
 library;
 
 import 'dart:typed_data';
+import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:meta/meta.dart';
@@ -691,13 +692,15 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
   /// `lineWidth`. The DOM default is 1.
   abstract double? lineWidth;
 
-  /// `lineCap`: `'butt'`, `'round'` or `'square'`. The DOM default is
-  /// `'butt'`.
-  abstract String? lineCap;
+  /// `lineCap`: the Flutter [StrokeCap] of the DOM keyword (`butt`, `round`
+  /// or `square`). The DOM default is [StrokeCap.butt]. A write of Dart
+  /// `null` does nothing.
+  abstract StrokeCap? lineCap;
 
-  /// `lineJoin`: `'miter'`, `'round'` or `'bevel'`. The DOM default is
-  /// `'miter'`.
-  abstract String? lineJoin;
+  /// `lineJoin`: the Flutter [StrokeJoin] of the DOM keyword (`miter`,
+  /// `round` or `bevel`). The DOM default is [StrokeJoin.miter]. A write of
+  /// Dart `null` does nothing.
+  abstract StrokeJoin? lineJoin;
 
   /// `miterLimit`. The DOM default is 10.
   abstract double? miterLimit;

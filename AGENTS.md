@@ -1719,8 +1719,16 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `jsToString` of a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with
   the V8 zone name on the web and in UTC on the VM (Chart.js ADR 0036, differences.md row
   `platform-date-zone-name`). The conversions of `js_webidl.dart` (`canvasStyle`, `canvasNumber`,
-  `canvasKeyword` and `canvasLineDash`) apply the WebIDL conversion of a Canvas 2D setter or of
-  `setLineDash` to an option value (Chart.js ADR 0017 §8). Ported code calls them where upstream
+  `canvasKeyword`, `canvasLineCap`, `canvasLineJoin` and `canvasLineDash`) apply the WebIDL
+  conversion of a Canvas 2D setter or of `setLineDash` to an option value (Chart.js ADR 0017 §8).
+  The options `borderCapStyle` and `borderJoinStyle`, and `lineCap` and `lineJoin` of the canvas
+  interface and of a legend item, hold the Flutter enums `StrokeCap` and `StrokeJoin` (row
+  `adapt-flutter-stroke-enums`, the schema shapes `strokeCap` and `strokeJoin`), also in a raw
+  config: `lib/` has no keyword of a cap or a join and no table from a keyword to an enum value. A
+  keyword stops a debug build in `canvasLineCap` or `canvasLineJoin`. The enums are the complete
+  set that the engine draws, so they need no class for plugins. The mock context of the tests
+  records the name of the enum value, which is the upstream keyword. The typed API has
+  `borderCapStyle` and `borderJoinStyle` on the line datasets and on `LineElementStyle`. Ported code calls them where upstream
   uses the JS builtin or gives an option value to the canvas. A typed Map read stays `map[key]`. Use
   `jsGet` when the receiver can be a value that is not a Map, or when an absent key must give
   `undefined` and not `null`. `helpers.merge` also writes into a `types.PropertyAccess` target, for

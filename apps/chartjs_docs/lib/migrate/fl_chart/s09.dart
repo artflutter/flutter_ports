@@ -33,7 +33,7 @@ final ChartConfig _config = fills(
         pointRadius: 0,
         pointHoverRadius: 8,
         borderColor: const .constant(Fl.pink),
-        extra: const {'borderCapStyle': 'round'},
+        borderCapStyle: StrokeCap.round,
       ),
     ],
     interaction: const ChartInteraction(

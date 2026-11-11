@@ -357,10 +357,10 @@ void main() {
     test('has the id, defaults, defaultRoutes and descriptors', () {
       expect(LineElement.id, 'line');
       expect(_plain(LineElement.defaults), {
-        'borderCapStyle': 'butt',
+        'borderCapStyle': ui.StrokeCap.butt,
         'borderDash': <Object?>[],
         'borderDashOffset': 0,
-        'borderJoinStyle': 'miter',
+        'borderJoinStyle': ui.StrokeJoin.miter,
         'borderWidth': 3,
         'capBezierPoints': true,
         'cubicInterpolationMode': 'default',

@@ -1162,6 +1162,33 @@ export class DartPositioner {
   }
 }
 
+/**
+ * The keys whose string value is a line cap or a line join of upstream: the
+ * Dart data hold the Flutter enum value with the name of the keyword (row
+ * adapt-flutter-stroke-enums). The options have `borderCapStyle` and
+ * `borderJoinStyle`, and a legend item has `lineCap` and `lineJoin`.
+ */
+const STROKE_ENUMS = {
+  borderCapStyle: 'StrokeCap',
+  lineCap: 'StrokeCap',
+  borderJoinStyle: 'StrokeJoin',
+  lineJoin: 'StrokeJoin',
+};
+
+/** The values of the Flutter enums `StrokeCap` and `StrokeJoin`. */
+const STROKE_VALUES = {
+  StrokeCap: new Set(['butt', 'round', 'square']),
+  StrokeJoin: new Set(['miter', 'round', 'bevel']),
+};
+
+/** A value of a Flutter enum as a value of the Dart data. */
+class DartEnum {
+  constructor(type, name) {
+    this.type = type;
+    this.name = name;
+  }
+}
+
 /** The positioner classes of the port by their upstream keys. */
 const POSITIONER_CLASSES = {
   average: 'AverageTooltipPositioner()',
@@ -1173,9 +1200,11 @@ const POSITIONER_CLASSES = {
  * DartMode, and a string `mode` of the object [owner] of
  * INTERACTION_SCOPES, is the mode class of the port. A DartPositioner, and
  * a string `position` of the object `tooltip`, is the positioner class of
- * the port. [state.undefined] becomes true when the literal has the
- * sentinel `undefined`, [state.modes] when it has a mode class, and
- * [state.positioners] when it has a positioner class.
+ * the port. A string of a key of STROKE_ENUMS is the Flutter enum value.
+ * [state.undefined] becomes true when the literal has the sentinel
+ * `undefined`, [state.modes] when it has a mode class,
+ * [state.positioners] when it has a positioner class, and [state.strokes]
+ * gets the name of each Flutter enum of the literal.
  */
 function dart(v, state, owner) {
   if (v === null) return 'null';
@@ -1219,6 +1248,10 @@ function dart(v, state, owner) {
     state.modes = true;
     return `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`;
   }
+  if (v instanceof DartEnum) {
+    (state.strokes ??= new Set()).add(v.type);
+    return `${v.type}.${v.name}`;
+  }
   if (v instanceof DartPositioner) {
     const type = POSITIONER_CLASSES[v.name];
     if (!type) return dart(`fn:positioner:${v.name}`, state);
@@ -1232,6 +1265,8 @@ function dart(v, state, owner) {
       if (typeof value === 'string') {
         if (k === 'mode' && INTERACTION_SCOPES.has(owner)) value = new DartMode(value);
         if (k === 'position' && owner === 'tooltip') value = new DartPositioner(value);
+        const stroke = STROKE_ENUMS[k];
+        if (stroke && STROKE_VALUES[stroke].has(value)) value = new DartEnum(stroke, value);
       }
       return `${dart(k, state)}: ${dart(value, state, k)}`;
     });
@@ -1288,7 +1323,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.modes || state.undefined || state.positioners ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

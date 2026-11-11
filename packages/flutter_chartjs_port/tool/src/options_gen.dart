@@ -30,6 +30,8 @@ const Map<String, int> shapeAtoms = {
   'curve': 128,
   'interactionMode': 256,
   'tooltipPositioner': 512,
+  'strokeCap': 1024,
+  'strokeJoin': 2048,
 };
 
 /// The shape of a key: the bits of its atoms and the kind of its `scope`
@@ -79,6 +81,8 @@ final class Shape {
     if (mask == shapeAtoms['curve']) return 'Curve';
     if (mask == shapeAtoms['interactionMode']) return 'InteractionMode';
     if (mask == shapeAtoms['tooltipPositioner']) return 'TooltipPositioner';
+    if (mask == shapeAtoms['strokeCap']) return 'StrokeCap';
+    if (mask == shapeAtoms['strokeJoin']) return 'StrokeJoin';
     if (mask == shapeAtoms['scope']) return '${scope}Scope';
     return 'Object';
   }
@@ -95,6 +99,8 @@ final class Shape {
     if (mask == shapeAtoms['tooltipPositioner']) {
       return 'classifyTooltipPositioner(raw)';
     }
+    if (mask == shapeAtoms['strokeCap']) return 'classifyStrokeCap(raw)';
+    if (mask == shapeAtoms['strokeJoin']) return 'classifyStrokeJoin(raw)';
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>(raw)';
     return 'classifyUnion(raw, $mask)';
   }
@@ -109,6 +115,8 @@ final class Shape {
     if (mask == shapeAtoms['tooltipPositioner']) {
       return 'classifyTooltipPositioner';
     }
+    if (mask == shapeAtoms['strokeCap']) return 'classifyStrokeCap';
+    if (mask == shapeAtoms['strokeJoin']) return 'classifyStrokeJoin';
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>';
     return '(raw) => classifyUnion(raw, $mask)';
   }
@@ -419,6 +427,8 @@ String _fieldType(Shape shape) {
   if (shape.mask == shapeAtoms['number']) return 'double';
   if (shape.mask == shapeAtoms['bool']) return 'bool';
   if (shape.mask == shapeAtoms['string']) return 'String?';
+  if (shape.mask == shapeAtoms['strokeCap']) return 'StrokeCap?';
+  if (shape.mask == shapeAtoms['strokeJoin']) return 'StrokeJoin?';
   return 'Object?';
 }
 
@@ -449,6 +459,7 @@ String _resolved(Schema schema) {
       '///\n'
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
+      "import 'dart:ui' show StrokeCap, StrokeJoin;\n\n"
       "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'\n"
       '    show DrawPointOptions;\n'
       "import 'package:flutter_chartjs_port/src/js/js_number.dart'\n"
@@ -604,9 +615,9 @@ String _resolved(Schema schema) {
             "      assert(auditForeign('$name', ${dartString(key)}, raw));\n"
             '    }\n',
           );
-        case 'String?':
+        case 'String?' || 'StrokeCap?' || 'StrokeJoin?':
           out.write(
-            '    if (raw is String) {\n'
+            '    if (raw is ${type.substring(0, type.length - 1)}) {\n'
             '      _$id = raw;\n'
             '      _clearForeign($slot, $bit);\n'
             '    } else {\n'
@@ -900,6 +911,7 @@ String _scopes(Schema schema) {
       '///\n'
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
+      "import 'dart:ui' show StrokeCap, StrokeJoin;\n\n"
       "import 'package:flutter/animation.dart' show Curve;\n"
       "import 'package:flutter_chartjs_port/src/core/core.interaction.dart'\n"
       '    show InteractionMode;\n'
@@ -944,7 +956,9 @@ String _scopes(Schema schema) {
             'String' ||
             'Curve' ||
             'InteractionMode' ||
-            'TooltipPositioner':
+            'TooltipPositioner' ||
+            'StrokeCap' ||
+            'StrokeJoin':
           out.write(
             '  set $setter($type value) => '
             'store(OptionKey.$id, OptValue<$type>(value));\n',

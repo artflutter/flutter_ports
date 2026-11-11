@@ -7,6 +7,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
@@ -172,10 +173,10 @@ List<PointElement> _linePoints(int count) => [
 Map<String, Object?> _lineStyle() => <String, Object?>{
   'spanGaps': false,
   'backgroundColor': 'rgba(0,0,0,0.1)',
-  'borderCapStyle': 'butt',
+  'borderCapStyle': StrokeCap.butt,
   'borderDash': <Object?>[],
   'borderDashOffset': 0.0,
-  'borderJoinStyle': 'miter',
+  'borderJoinStyle': StrokeJoin.miter,
   'borderWidth': 3.0,
   'borderColor': 'rgb(75, 192, 192)',
 };

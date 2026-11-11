@@ -490,6 +490,22 @@ function num(v) {
   return Number.isInteger(v) ? `${v}.0` : String(v);
 }
 
+/**
+ * The Dart literal of the value [x] of the key [k]: a line cap or a line
+ * join of upstream is the Flutter enum value with the name of the keyword
+ * (row adapt-flutter-stroke-enums). Another value is `undefined` here.
+ */
+function strokeEnum(k, x) {
+  if (typeof x !== 'string') return undefined;
+  if ((k === 'borderCapStyle' || k === 'lineCap') && ['butt', 'round', 'square'].includes(x)) {
+    return `StrokeCap.${x}`;
+  }
+  if ((k === 'borderJoinStyle' || k === 'lineJoin') && ['miter', 'round', 'bevel'].includes(x)) {
+    return `StrokeJoin.${x}`;
+  }
+  return undefined;
+}
+
 /** The Dart literal of a JS value. */
 function dart(v) {
   if (v === null) return 'null';
@@ -508,7 +524,7 @@ function dart(v) {
   }
   if (Array.isArray(v)) return `<Object?>[${v.map(dart).join(', ')}]`;
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map((k) => `${dart(k)}: ${dart(v[k])}`);
+    const entries = Object.keys(v).map((k) => `${dart(k)}: ${strokeEnum(k, v[k]) ?? dart(v[k])}`);
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);
@@ -537,6 +553,8 @@ const out = `// Original code, not ported from Chart.js: light theme reference d
 // src/scales/scale.radialLinear.js and five plugins at the pinned Chart.js,
 // with the elements, the radial linear scale and the plugins registered.
 // ${elementCases.length} element cases.
+
+import 'dart:ui' show StrokeCap, StrokeJoin;
 ${usesUndefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = '${process.version}';

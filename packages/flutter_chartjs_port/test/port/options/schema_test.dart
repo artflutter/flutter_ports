@@ -42,6 +42,7 @@ import 'package:test/test.dart';
 //   keys of each declaration site keep their order in their object.
 
 import '../../support/color_json.dart';
+import '../../support/stroke_json.dart';
 
 /// The dataset kinds: a census path under `data.datasets[]` maps when one
 /// of them maps it.
@@ -114,14 +115,17 @@ bool _fits(String kind, int shape) {
     'List' || 'null' || 'undefined' => true,
     'double' || 'int' => shape & ShapeBits.number != 0,
     // Upstream data hold the easing name of a key of the shape `curve`,
-    // the mode name of a key of the shape `interactionMode` and the
-    // positioner name of a key of the shape `tooltipPositioner`.
+    // the mode name of a key of the shape `interactionMode`, the
+    // positioner name of a key of the shape `tooltipPositioner` and the
+    // keyword of a key of the shapes `strokeCap` and `strokeJoin`.
     'String' =>
       shape &
               (ShapeBits.string |
                   ShapeBits.curve |
                   ShapeBits.interactionMode |
-                  ShapeBits.tooltipPositioner) !=
+                  ShapeBits.tooltipPositioner |
+                  ShapeBits.strokeCap |
+                  ShapeBits.strokeJoin) !=
           0,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' => shape & ShapeBits.scope != 0,
@@ -200,6 +204,11 @@ String? _mismatch(Object? actual, Object? expected) {
   if (expected is String && actual is InteractionMode) return null;
   // The same for a positioner name and a positioner object.
   if (expected is String && actual is TooltipPositioner) return null;
+  // Upstream has the keyword of a line cap or a line join where the port has
+  // the Flutter enum: the name of the enum value is the keyword.
+  if (expected is String && isStroke(actual)) {
+    return (actual! as Enum).name == expected ? null : '$actual != $expected';
+  }
   switch (expected) {
     case null:
       return actual == null ? null : 'not null: $actual';

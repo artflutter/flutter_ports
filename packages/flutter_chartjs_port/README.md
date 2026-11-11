@@ -465,10 +465,8 @@ ChartConfig(
     LineDataset(
       label: 'Visitors',
       data: visitors,
-      extra: const {
-        'borderCapStyle': 'round',
-        'cubicInterpolationMode': 'monotone',
-      },
+      borderCapStyle: StrokeCap.round,
+      extra: const {'cubicInterpolationMode': 'monotone'},
     ),
   ],
   interaction: const ChartInteraction(intersect: false, extra: {'axis': 'x'}),

@@ -62,7 +62,7 @@ import 'dart:collection' show LinkedHashMap;
 import 'dart:core' as core;
 import 'dart:core';
 import 'dart:typed_data' show Uint16List;
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
@@ -591,7 +591,7 @@ bool _nativeIndexedValue(OptionKey key, Object? value) =>
       // its debug audit runs at the template build, not at each copy.
       OptionKey.borderAlign || OptionKey.spacingMode => value is String,
       OptionKey.circular || OptionKey.selfJoin => value is bool,
-      OptionKey.borderJoinStyle => value is String || value is Undefined,
+      OptionKey.borderJoinStyle => value is StrokeJoin || value is Undefined,
       OptionKey.angle => value is num || value is Undefined,
       _ => false,
     };

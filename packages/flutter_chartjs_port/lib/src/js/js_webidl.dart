@@ -14,8 +14,10 @@
 /// - [canvasStyle] for `fillStyle` and `strokeStyle`;
 /// - [canvasNumber] for an `unrestricted double`, for example `lineWidth`
 ///   and `lineDashOffset`;
-/// - [canvasKeyword] for a `DOMString` keyword, for example `lineCap` and
-///   `lineJoin`;
+/// - [canvasKeyword] for a `DOMString` keyword, for example `textAlign`;
+/// - [canvasLineCap] and [canvasLineJoin] for `lineCap` and `lineJoin`,
+///   whose values are the Flutter enums `StrokeCap` and `StrokeJoin` (row
+///   `adapt-flutter-stroke-enums`);
 /// - [canvasLineDash] for the `sequence<unrestricted double>` of
 ///   `setLineDash`.
 ///
@@ -31,6 +33,8 @@
 /// This library is a pure layer. It imports neither `dart:ui` nor
 /// `package:flutter`.
 library;
+
+import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -60,8 +64,34 @@ Object? canvasStyle(Object? value) => switch (value) {
 double? canvasNumber(Object? value) =>
     value is Undefined ? null : jsToNumber(value);
 
-/// The value that the canvas setter `lineCap` or `lineJoin` gets for the
-/// option value [value] (element.arc.ts:332, :335, element.line.js:13, :16).
+/// The value that the canvas setter `lineCap` gets for the option value
+/// [value] (element.line.js:13): the [StrokeCap] itself. Another value gives
+/// Dart `null`, which the canvas layer ignores, as the DOM ignores a string
+/// that is not a keyword. A keyword of Chart.js (`'round'`) is not a
+/// [StrokeCap]: a debug build stops on it.
+// DIVERGES(chartjs): adapt-flutter-stroke-enums, a Flutter enum.
+StrokeCap? canvasLineCap(Object? value) {
+  assert(
+    value is! String,
+    'The line cap takes a StrokeCap, not the name "$value".',
+  );
+  return value is StrokeCap ? value : null;
+}
+
+/// The value that the canvas setter `lineJoin` gets for the option value
+/// [value] (element.arc.ts:332, :335, element.line.js:16): the [StrokeJoin]
+/// itself, as [canvasLineCap] gives the cap.
+// DIVERGES(chartjs): adapt-flutter-stroke-enums, a Flutter enum.
+StrokeJoin? canvasLineJoin(Object? value) {
+  assert(
+    value is! String,
+    'The line join takes a StrokeJoin, not the name "$value".',
+  );
+  return value is StrokeJoin ? value : null;
+}
+
+/// The value that a canvas setter with a keyword gets for the option value
+/// [value].
 ///
 /// The setters of the DOM take a `DOMString`. They apply `ToString` and
 /// ignore a string that is not a keyword. A `String` gives itself. JS
