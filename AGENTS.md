@@ -355,7 +355,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `plainOption`, `numberOption` and `rawOption` (Chart.js ADR 0054 §6). These
     files are pure layers. Each numeric property of an element is a `double` field (NaN while
     `undefined`) with a bit of an `int` mask of the `undefined` state; `markUndefined` and
-    `isUndefined` read and write the bit (Chart.js ADR 0054 §9). `Element.$context` is a
+    `isUndefined` read and write the bit (Chart.js ADR 0054 §9). A numeric geometry property has
+    its own class next to its element (`ElementXProp`, `BarBaseProp`, `ArcStartAngleProp`, a subclass
+    of `AnimatedProp`): it reads and writes the field of the element (`write`, `read`,
+    `markUndefined`, `isUndefined`), and no element class has a `switch` by a property id. `Element.$context` is a
     `ContextObject?` with a `covariant` setter, narrowed to `ScriptableContext?` in the four
     element classes. `Element.assign` of a `*Properties` object of a controller takes the typed
     setters for an element of the built-in class (`typedWrites`, the exact-class rule); a user

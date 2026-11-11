@@ -75,9 +75,16 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
+    show AnimatedBy, AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show
+        CircumferenceAnimation,
+        EndAngleAnimation,
+        InnerRadiusAnimation,
+        OuterRadiusAnimation,
+        StartAngleAnimation;
 import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ArcOptionsScope, DescriptorsScope;
@@ -1170,45 +1177,6 @@ class ArcElement extends Element
     return number;
   }
 
-  /// [Element.markUndefined] for the properties of [ArcProps]. The other ids
-  /// go to [Element].
-  @internal
-  @override
-  void markUndefined(AnimatedProp prop) {
-    switch (prop.id) {
-      case animatedPropCircumference:
-        _circumference = double.nan;
-        _undefinedBits |= _circumferenceBit;
-      case animatedPropEndAngle:
-        _endAngle = double.nan;
-        _undefinedBits |= _endAngleBit;
-      case animatedPropInnerRadius:
-        _innerRadius = double.nan;
-        _undefinedBits |= _innerRadiusBit;
-      case animatedPropOuterRadius:
-        _outerRadius = double.nan;
-        _undefinedBits |= _outerRadiusBit;
-      case animatedPropStartAngle:
-        _startAngle = double.nan;
-        _undefinedBits |= _startAngleBit;
-      default:
-        super.markUndefined(prop);
-    }
-  }
-
-  /// [Element.isUndefined] for the properties of [ArcProps]. The other ids
-  /// go to [Element].
-  @internal
-  @override
-  bool isUndefined(AnimatedProp prop) => switch (prop.id) {
-    animatedPropCircumference => _undefinedBits & _circumferenceBit != 0,
-    animatedPropEndAngle => _undefinedBits & _endAngleBit != 0,
-    animatedPropInnerRadius => _undefinedBits & _innerRadiusBit != 0,
-    animatedPropOuterRadius => _undefinedBits & _outerRadiusBit != 0,
-    animatedPropStartAngle => _undefinedBits & _startAngleBit != 0,
-    _ => super.isUndefined(prop),
-  };
-
   /// core.datasetController.js:767-768 `element.$context`, the data context
   /// of the element: [Element.$context] narrowed to a [ScriptableContext]
   /// (Chart.js ADR 0054 §9). Another value gives Dart `null`.
@@ -1279,57 +1247,6 @@ class ArcElement extends Element
       default:
         assignKey(values, position);
     }
-  }
-
-  /// [Element.writeNumber] for the properties of [ArcProps]: the typed
-  /// setters for the class [ArcElement] itself. The other ids, and an
-  /// element of a user subclass, go to [Element].
-  @internal
-  @override
-  void writeNumber(AnimatedProp prop, double value) {
-    if (_builtIn) {
-      switch (prop.id) {
-        case animatedPropCircumference:
-          circumference = value;
-          return;
-        case animatedPropEndAngle:
-          endAngle = value;
-          return;
-        case animatedPropInnerRadius:
-          innerRadius = value;
-          return;
-        case animatedPropOuterRadius:
-          outerRadius = value;
-          return;
-        case animatedPropStartAngle:
-          startAngle = value;
-          return;
-      }
-    }
-    super.writeNumber(prop, value);
-  }
-
-  /// [Element.numberOf] for the properties of [ArcProps]: the typed getters
-  /// for the class [ArcElement] itself, NaN in the `undefined` state. The
-  /// other ids, and an element of a user subclass, go to [Element].
-  @internal
-  @override
-  double numberOf(AnimatedProp prop) {
-    if (_builtIn) {
-      switch (prop.id) {
-        case animatedPropCircumference:
-          return circumference;
-        case animatedPropEndAngle:
-          return endAngle;
-        case animatedPropInnerRadius:
-          return innerRadius;
-        case animatedPropOuterRadius:
-          return outerRadius;
-        case animatedPropStartAngle:
-          return startAngle;
-      }
-    }
-    return super.numberOf(prop);
   }
 
   /// The JS property read `element[prop]` (Chart.js ADR 0017, section 5),
@@ -1655,4 +1572,174 @@ class ArcElement extends Element
 
     ctx.restore();
   }
+}
+
+/// The property `circumference` of an arc: the typed field of [ArcElement]. An
+/// element of another class takes the access by name.
+final class ArcCircumferenceProp extends AnimatedBy<CircumferenceAnimation> {
+  /// The property `circumference`.
+  const ArcCircumferenceProp() : super('circumference', 12);
+
+  @override
+  void write(Element element, double value) {
+    if (element is ArcElement && element._builtIn) {
+      element.circumference = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  double read(Element element) => element is ArcElement && element._builtIn
+      ? element.circumference
+      : super.read(element);
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! ArcElement) return super.markUndefined(element);
+    element
+      .._circumference = double.nan
+      .._undefinedBits |= ArcElement._circumferenceBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is ArcElement
+      ? element._undefinedBits & ArcElement._circumferenceBit != 0
+      : super.isUndefined(element);
+}
+
+/// The property `endAngle` of an arc: the typed field of [ArcElement]. An
+/// element of another class takes the access by name.
+final class ArcEndAngleProp extends AnimatedBy<EndAngleAnimation> {
+  /// The property `endAngle`.
+  const ArcEndAngleProp() : super('endAngle', 13);
+
+  @override
+  void write(Element element, double value) {
+    if (element is ArcElement && element._builtIn) {
+      element.endAngle = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  double read(Element element) => element is ArcElement && element._builtIn
+      ? element.endAngle
+      : super.read(element);
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! ArcElement) return super.markUndefined(element);
+    element
+      .._endAngle = double.nan
+      .._undefinedBits |= ArcElement._endAngleBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is ArcElement
+      ? element._undefinedBits & ArcElement._endAngleBit != 0
+      : super.isUndefined(element);
+}
+
+/// The property `innerRadius` of an arc: the typed field of [ArcElement]. An
+/// element of another class takes the access by name.
+final class ArcInnerRadiusProp extends AnimatedBy<InnerRadiusAnimation> {
+  /// The property `innerRadius`.
+  const ArcInnerRadiusProp() : super('innerRadius', 14);
+
+  @override
+  void write(Element element, double value) {
+    if (element is ArcElement && element._builtIn) {
+      element.innerRadius = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  double read(Element element) => element is ArcElement && element._builtIn
+      ? element.innerRadius
+      : super.read(element);
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! ArcElement) return super.markUndefined(element);
+    element
+      .._innerRadius = double.nan
+      .._undefinedBits |= ArcElement._innerRadiusBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is ArcElement
+      ? element._undefinedBits & ArcElement._innerRadiusBit != 0
+      : super.isUndefined(element);
+}
+
+/// The property `outerRadius` of an arc: the typed field of [ArcElement]. An
+/// element of another class takes the access by name.
+final class ArcOuterRadiusProp extends AnimatedBy<OuterRadiusAnimation> {
+  /// The property `outerRadius`.
+  const ArcOuterRadiusProp() : super('outerRadius', 15);
+
+  @override
+  void write(Element element, double value) {
+    if (element is ArcElement && element._builtIn) {
+      element.outerRadius = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  double read(Element element) => element is ArcElement && element._builtIn
+      ? element.outerRadius
+      : super.read(element);
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! ArcElement) return super.markUndefined(element);
+    element
+      .._outerRadius = double.nan
+      .._undefinedBits |= ArcElement._outerRadiusBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is ArcElement
+      ? element._undefinedBits & ArcElement._outerRadiusBit != 0
+      : super.isUndefined(element);
+}
+
+/// The property `startAngle` of an arc: the typed field of [ArcElement]. An
+/// element of another class takes the access by name.
+final class ArcStartAngleProp extends AnimatedBy<StartAngleAnimation> {
+  /// The property `startAngle`.
+  const ArcStartAngleProp() : super('startAngle', 16);
+
+  @override
+  void write(Element element, double value) {
+    if (element is ArcElement && element._builtIn) {
+      element.startAngle = value;
+    } else {
+      super.write(element, value);
+    }
+  }
+
+  @override
+  double read(Element element) => element is ArcElement && element._builtIn
+      ? element.startAngle
+      : super.read(element);
+
+  @override
+  void markUndefined(Element element) {
+    if (element is! ArcElement) return super.markUndefined(element);
+    element
+      .._startAngle = double.nan
+      .._undefinedBits |= ArcElement._startAngleBit;
+  }
+
+  @override
+  bool isUndefined(Element element) => element is ArcElement
+      ? element._undefinedBits & ArcElement._startAngleBit != 0
+      : super.isUndefined(element);
 }
