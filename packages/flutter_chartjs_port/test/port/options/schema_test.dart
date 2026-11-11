@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
+    show TooltipPositioner;
 import 'package:test/test.dart';
 
 // The schema drift test of Chart.js ADR 0054 §2 and §15. It walks the
@@ -111,13 +113,15 @@ bool _fits(String kind, int shape) {
     'fn' || 'obj:JsFunction' || 'obj:JsClass' => true,
     'List' || 'null' || 'undefined' => true,
     'double' || 'int' => shape & ShapeBits.number != 0,
-    // Upstream data hold the easing name of a key of the shape `curve` and
-    // the mode name of a key of the shape `interactionMode`.
+    // Upstream data hold the easing name of a key of the shape `curve`,
+    // the mode name of a key of the shape `interactionMode` and the
+    // positioner name of a key of the shape `tooltipPositioner`.
     'String' =>
       shape &
               (ShapeBits.string |
                   ShapeBits.curve |
-                  ShapeBits.interactionMode) !=
+                  ShapeBits.interactionMode |
+                  ShapeBits.tooltipPositioner) !=
           0,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' => shape & ShapeBits.scope != 0,
@@ -194,6 +198,8 @@ String? _mismatch(Object? actual, Object? expected) {
   if (expected is String && actual is Curve) return null;
   // Upstream has a mode name where the port has a mode object: no compare.
   if (expected is String && actual is InteractionMode) return null;
+  // The same for a positioner name and a positioner object.
+  if (expected is String && actual is TooltipPositioner) return null;
   switch (expected) {
     case null:
       return actual == null ? null : 'not null: $actual';

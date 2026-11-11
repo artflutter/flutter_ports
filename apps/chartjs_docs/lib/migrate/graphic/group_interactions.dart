@@ -93,7 +93,7 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
   ),
   tooltip: graphicTooltip(
-    position: atPointer,
+    position: const AtPointerPositioner(),
     title: _dateAndName,
     label: _value,
   ),

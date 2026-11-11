@@ -24,7 +24,8 @@
 # A shape is one atom or several atoms joined by ` | `: `number`, `bool`, `string`, `fn` (a
 # plain function value), `list` (a plain array value), `curve` (a Flutter `Curve`, the value of
 # `easing`; an easing name is a foreign value), `interactionMode` (an `InteractionMode`, the value
-# of `mode`; a mode name is a foreign value), `any` (any JS value: a color, a point
+# of `mode`; a mode name is a foreign value), `tooltipPositioner` (a `TooltipPositioner`, the value
+# of the tooltip `position`; a positioner name is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -1061,7 +1062,7 @@ kinds:
       includeInvisible: bool
       enabled: bool
       external: fn
-      position: string
+      position: tooltipPositioner
       xAlign: string
       yAlign: string
       itemSort: fn

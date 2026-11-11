@@ -8,9 +8,10 @@
 /// the default export of the upstream file and `Tooltip` of
 /// `src/plugins/index.js:7` (Chart.js ADR 0038, section 1). It is a typed
 /// `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in the upstream
-/// order: `id`, `_element`, `positioners`, `afterInit`, `beforeUpdate`,
-/// `reset`, `afterDraw`, `afterEvent`, `defaults`, `defaultRoutes`,
-/// `descriptors` and `additionalOptionScopes`.
+/// order: `id`, `_element`, `afterInit`, `beforeUpdate`, `reset`,
+/// `afterDraw`, `afterEvent`, `defaults`, `defaultRoutes`, `descriptors`
+/// and `additionalOptionScopes`. It has no key `positioners`: a positioner
+/// is a class ([TooltipPositioner], row `adapt-tooltip-positioner-objects`).
 ///
 /// Each hook is a private function of the hook type `(types.Chart chart,
 /// args, AnyObject options)` (Chart.js ADR 0054 §12, in place of the
@@ -30,9 +31,11 @@
 /// [TooltipBodyItem], [TooltipLabelStyle], [TooltipLabelPointStyle] and
 /// [TooltipPosition], Chart.js ADR 0054 §12). Each has the face, so a user
 /// callback reads them by name. A value of user code in their place (the
-/// result of a user callback or positioner, an item of a spec) is read by
-/// name. The positioners are function values in one Map (Chart.js ADR 0039,
-/// section 4).
+/// result of a user callback, an item of a spec) is read by name. A
+/// positioner is an object of a subclass of [TooltipPositioner], the value
+/// of the option `position`: [AverageTooltipPositioner] and
+/// [NearestTooltipPositioner] are the two positioners of upstream, and the
+/// library has no table of positioners.
 ///
 /// Not a pure layer: it imports `core.animations`.
 library;
@@ -86,6 +89,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show TooltipOptions, optionOf;
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -93,17 +97,40 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show EventHookArgs, Plugin, TooltipDrawHookArgs;
 import 'package:meta/meta.dart';
 
-/// plugin.tooltip.js:17 `const positioners`.
-///
-/// `Tooltip.positioners`, the static `positioners` of [Tooltip.jsClass] and
-/// the key `positioners` of the plugin Map are this Map (Chart.js ADR 0039,
-/// section 4). The methods of [Tooltip] read it, as upstream reads the
-/// module constant (:651, :1012, :1218). A user adds a positioner with a
-/// write into it.
-final AnyObject _positioners = <String, Object?>{
-  'average': _average,
-  'nearest': _nearest,
-};
+/// plugin.tooltip.js:17 `positioners.average`: the average position of the
+/// elements of the active items. The default of the option `position`.
+// DIVERGES(chartjs): adapt-tooltip-positioner-objects, a positioner class.
+final class AverageTooltipPositioner extends TooltipPositioner {
+  /// The positioner.
+  const AverageTooltipPositioner();
+
+  @override
+  TooltipPosition? positionOf(
+    types.TooltipModel tooltip,
+    List<types.ActiveElement> items,
+    Object? eventPosition,
+  ) => _positionOrNull(_average(items));
+}
+
+/// plugin.tooltip.js:17 `positioners.nearest`: the tooltip position of the
+/// element nearest to the event position.
+// DIVERGES(chartjs): adapt-tooltip-positioner-objects, a positioner class.
+final class NearestTooltipPositioner extends TooltipPositioner {
+  /// The positioner.
+  const NearestTooltipPositioner();
+
+  @override
+  TooltipPosition? positionOf(
+    types.TooltipModel tooltip,
+    List<types.ActiveElement> items,
+    Object? eventPosition,
+  ) => _positionOrNull(_nearest(items, eventPosition));
+}
+
+/// The result of a ported positioner function as the result of
+/// [TooltipPositioner.positionOf]: Dart `null` for its `false`.
+TooltipPosition? _positionOrNull(Object? result) =>
+    result is TooltipPosition ? result : null;
 
 /// The element of the active item [item]: `items[i].element`.
 ///
@@ -1004,22 +1031,16 @@ class Tooltip extends Element implements types.TooltipModel {
     options = config.options;
   }
 
-  /// plugin.tooltip.js:462 `static positioners = positioners`.
-  ///
-  /// The namespace Chart.Tooltip.positioners: the Map of the module
-  /// (Chart.js ADR 0039, section 4).
-  static final AnyObject positioners = _positioners;
-
   /// plugin.tooltip.js:457 `class Tooltip` as a value (Chart.js ADR 0020,
   /// section 3).
   ///
-  /// Its superclass is [Element.jsClass]. Its one static property is
-  /// `positioners`. Its `construct` reads the `config` argument with
-  /// [_tooltipConfig].
+  /// Its superclass is [Element.jsClass]. It has no static `positioners`
+  /// (plugin.tooltip.js:462): a positioner is a class, and no table maps a
+  /// name to a positioner (row `adapt-tooltip-positioner-objects`). Its
+  /// `construct` reads the `config` argument with [_tooltipConfig].
   static final JsClass jsClass = JsClass(
     'Tooltip',
     superclass: Element.jsClass,
-    statics: {'positioners': positioners},
     construct: (newTarget, args) => Tooltip(_tooltipConfig(args)),
   );
 
@@ -1249,20 +1270,21 @@ class Tooltip extends Element implements types.TooltipModel {
   /// `positioners[options.position].call(this, active, eventPosition)`
   /// (plugin.tooltip.js:651, :1012, :1218).
   ///
-  /// An unknown name gives [undefined], and [jsCall] throws an
-  /// [ArgumentError] where upstream throws the `TypeError` of `.call`.
-  ///
-  /// The positioners are a dictionary by name (user positioners): the read
-  /// by the name of the option, and the call with JS arity.
+  /// The option holds the positioner itself. Its Dart `null` result is the
+  /// `false` of an upstream positioner. A value that is not a positioner
+  /// throws a [TypeError], as the `.call` of `undefined` does upstream.
+  // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the positioner.
   Object? _position(
     TooltipOptions options,
     List<types.ActiveElement> active,
     Object? eventPosition,
-  ) => jsCall(
-    jsGet(_positioners, options.position),
-    [active, eventPosition],
-    thisArg: this,
-  );
+  ) {
+    final positioner = options.position;
+    if (positioner == null) {
+      throw TypeError();
+    }
+    return positioner.positionOf(this, active, eventPosition) ?? false;
+  }
 
   /// plugin.tooltip.js:533 `getTitle(context, options)`.
   List<Object?> getTitle(Object? context, TooltipOptions options) {
@@ -2530,7 +2552,6 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
 final Plugin tooltip = Plugin(supportsDataUpdates: true)
   ..id = 'tooltip'
   ..jsWrite('_element', Tooltip.jsClass)
-  ..jsWrite('positioners', _positioners)
   ..afterInit = _afterInit
   ..beforeUpdate = _beforeUpdate
   ..reset = _reset
@@ -2541,7 +2562,8 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
   ..defaults = (TooltipOptionsScope()
     ..enabled = true
     ..externalCell = optNull
-    ..position = 'average'
+    // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the positioner.
+    ..position = const AverageTooltipPositioner()
     ..backgroundColor = const ui.Color.fromRGBO(0, 0, 0, 0.8)
     ..titleColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..titleFont = (FontSpecScope()..weight = 'bold')
@@ -3225,111 +3247,6 @@ final class TooltipLabelPointStyle extends TypedRecord {
         _pointStyle = null;
       default:
         _rotation = null;
-    }
-  }
-}
-
-/// `TooltipPosition` (`index.d.ts`): the position `{x, y}` of a built-in
-/// positioner (plugin.tooltip.js:53, :90) and the event position `{x, y}`
-/// of `handleEvent` (:1173), with the optional `xAlign` and `yAlign` of a
-/// position. Each field holds any JS value.
-final class TooltipPosition extends TypedRecord {
-  /// An object without own keys.
-  TooltipPosition();
-
-  static const List<String> _fieldNames = [
-    'x',
-    'y',
-    'xAlign',
-    'yAlign',
-  ];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'x' => 0,
-    'y' => 1,
-    'xAlign' => 2,
-    'yAlign' => 3,
-    _ => -1,
-  };
-
-  Object? _x;
-
-  Object? _y;
-
-  Object? _xAlign;
-
-  Object? _yAlign;
-
-  /// `x`, or [undefined] when absent.
-  Object? get x => hasSlot(0) ? _x : undefined;
-
-  set x(Object? value) {
-    _x = value;
-    touchSlot(0);
-  }
-
-  /// `y`, or [undefined] when absent.
-  Object? get y => hasSlot(1) ? _y : undefined;
-
-  set y(Object? value) {
-    _y = value;
-    touchSlot(1);
-  }
-
-  /// `xAlign`, or [undefined] when absent.
-  Object? get xAlign => hasSlot(2) ? _xAlign : undefined;
-
-  set xAlign(Object? value) {
-    _xAlign = value;
-    touchSlot(2);
-  }
-
-  /// `yAlign`, or [undefined] when absent.
-  Object? get yAlign => hasSlot(3) ? _yAlign : undefined;
-
-  set yAlign(Object? value) {
-    _yAlign = value;
-    touchSlot(3);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _x,
-    1 => _y,
-    2 => _xAlign,
-    _ => _yAlign,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _x = value;
-      case 1:
-        _y = value;
-      case 2:
-        _xAlign = value;
-      default:
-        _yAlign = value;
-    }
-    return true;
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _x = null;
-      case 1:
-        _y = null;
-      case 2:
-        _xAlign = null;
-      default:
-        _yAlign = null;
     }
   }
 }

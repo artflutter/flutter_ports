@@ -78,7 +78,11 @@ final ChartConfig _config = ChartConfig(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
-  tooltip: graphicTooltip(position: followY, title: _time, label: _sales),
+  tooltip: graphicTooltip(
+    position: const FollowYPositioner(),
+    title: _time,
+    label: _sales,
+  ),
   plugins: [
     regionColor(const Color(0xffdddddd)),
     crosshair(),

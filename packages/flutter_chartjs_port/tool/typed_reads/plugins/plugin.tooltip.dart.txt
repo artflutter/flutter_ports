@@ -16,7 +16,7 @@
 # callbacks (2), the filter, itemSort and external callbacks, the
 # positioners, setContext and override of objects of user code, with JS
 # arity. jsObjectKeys 1: the values of a borderWidth object of user code.
-jsGet 26
+jsGet 25
 stringIndex 2
-jsCall 8
+jsCall 7
 jsObjectKeys 1

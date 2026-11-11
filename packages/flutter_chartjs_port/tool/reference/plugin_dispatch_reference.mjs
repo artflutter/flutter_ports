@@ -172,7 +172,10 @@ const plugins = Object.keys(C.plugins).map((name) => {
   if (C.Chart.registry.getPlugin(plugin.id) !== plugin) {
     throw new Error(`The registry has another object for ${plugin.id}.`);
   }
-  return {id: plugin.id, keys: Object.keys(plugin).map((k) => keyText(plugin, k))};
+  // The port has no table of positioners: a positioner is a class (row
+  // adapt-tooltip-positioner-objects). Thus the data leave the key out.
+  const keys = Object.keys(plugin).filter((k) => k !== 'positioners');
+  return {id: plugin.id, keys: keys.map((k) => keyText(plugin, k))};
 });
 const registryIds = Object.keys(C.Chart.registry.plugins.items);
 

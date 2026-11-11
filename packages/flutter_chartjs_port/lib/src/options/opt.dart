@@ -18,8 +18,8 @@
 ///
 /// The type parameter `T` is the type of the key. The classification
 /// functions ([classifyNumber], [classifyBool], [classifyString],
-/// [classifyCurve], [classifyInteractionMode], [classifyScope] and
-/// [classifyUnion]) give the cell of a
+/// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner],
+/// [classifyScope] and [classifyUnion]) give the cell of a
 /// raw JS value for a key of a given shape. The order of their tests is the
 /// order of the resolver: `undefined`, `null`, a function, an array, an
 /// object, then the plain value.
@@ -33,6 +33,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
+    show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 
@@ -181,6 +183,10 @@ abstract final class ShapeBits {
   /// `interactionMode`: an [InteractionMode], the value of `mode` of the
   /// interaction options.
   static const int interactionMode = 256;
+
+  /// `tooltipPositioner`: a [TooltipPositioner], the value of `position` of
+  /// the tooltip options.
+  static const int tooltipPositioner = 512;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -233,6 +239,16 @@ Opt<InteractionMode> classifyInteractionMode(Object? raw) =>
         ? OptValue<InteractionMode>(raw)
         : OptForeign<InteractionMode>(raw!));
 
+/// The cell of [raw] for a key of the shape `tooltipPositioner`: a
+/// [TooltipPositioner], the value of `position` of the tooltip. A
+/// positioner name of Chart.js is not a positioner: it is a foreign value,
+/// as each other value is.
+Opt<TooltipPositioner> classifyTooltipPositioner(Object? raw) =>
+    _special<TooltipPositioner>(raw) ??
+    (raw is TooltipPositioner
+        ? OptValue<TooltipPositioner>(raw)
+        : OptForeign<TooltipPositioner>(raw!));
+
 /// The cell of [raw] for a key of the shape `scope <Kind>`: an object is an
 /// [OptScope], another plain value is foreign.
 Opt<S> classifyScope<S>(Object? raw) => _special<S>(raw) ?? OptForeign<S>(raw!);
@@ -258,8 +274,8 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
 
 /// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
 /// classification of [classifyNumber], [classifyBool], [classifyString],
-/// [classifyCurve], [classifyInteractionMode] or [classifyScope] for a shape
-/// of one atom, else
+/// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner]
+/// or [classifyScope] for a shape of one atom, else
 /// [classifyUnion].
 Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.number => classifyNumber(raw),
@@ -267,6 +283,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.string => classifyString(raw),
   ShapeBits.curve => classifyCurve(raw),
   ShapeBits.interactionMode => classifyInteractionMode(raw),
+  ShapeBits.tooltipPositioner => classifyTooltipPositioner(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

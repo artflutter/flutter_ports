@@ -233,7 +233,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     plugin API of Chart.js ADR 0108: `Plugin`, `PluginHookFunction` and the eight hook argument
     classes; and the input surface of Chart.js ADR 0108: `NativeEvent`, `NativeTouch`,
     `NativeEventListener`, `NativeEventTarget`, `DOMRect` and the extensions `CanvasEventTarget`
-    and `CssStyleProperties`), `lib/helpers.dart` (the `chart.js/helpers` entry:
+    and `CssStyleProperties`; and the option classes of the rows `adapt-interaction-mode-objects`
+    and `adapt-tooltip-positioner-objects`: `InteractionMode` with its six mode classes and
+    `InteractionItem`, and `TooltipPositioner` with `AverageTooltipPositioner`,
+    `NearestTooltipPositioner` and `TooltipPosition`), `lib/helpers.dart` (the `chart.js/helpers`
+    entry:
     `lib/src/helpers/index.dart` without the Dart names of the upstream `_` exports, except
     `isPointInArea`, which a ported add-on imports, Chart.js ADR 0108) and `lib/js_semantics.dart`
     (the JS runtime for add-on ports, Chart.js ADR 0108: `jsObjectKeys`, `jsCall`, `jsGet`,
@@ -823,10 +827,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       fields start as NaN, `undefined` and `false`. `draw` takes an optional chart area.
       `chart.titleBlock` is a field of `types.Chart`: Dart `null` is the JS `undefined` (Chart.js
       ADR 0038).
-    - `plugin.tooltip.dart` has `Tooltip extends Element implements types.TooltipModel`, the
-      positioners Map (`Tooltip.positioners`, the static of `Tooltip.jsClass` and the plugin key
-      `positioners` are one Map), the default callbacks and the plugin `tooltip` (Chart.js ADR
-      0039). The tooltip items, body items, label colors, label point styles and positions are typed
+    - `plugin.tooltip.dart` has `Tooltip extends Element implements types.TooltipModel`, the two
+      positioner classes, the default callbacks and the plugin `tooltip` (Chart.js ADR 0039). The
+      option `position` of the tooltip holds a `TooltipPositioner` (row
+      `adapt-tooltip-positioner-objects`, the schema shape `tooltipPositioner`), also in a raw
+      config: an object with the method `positionOf(tooltip, items, eventPosition)`, which gives a
+      `TooltipPosition` or Dart `null`. `AverageTooltipPositioner` (the default) and
+      `NearestTooltipPositioner` are the positioners of upstream. An app or a plugin gives its own
+      positioner as a subclass, with no registration. `lib/` has no positioner names and no table:
+      `Tooltip.positioners`, the static of `Tooltip.jsClass` and the plugin key `positioners` are
+      gone. A positioner name stops a debug build in `TooltipPositioner.of`. The base class and
+      `TooltipPosition` are in the pure `tooltip_position.dart`, because `opt.dart` reads the
+      type. The generators write the positioner class into the reference data (`DartPositioner`),
+      and a positioner of a test has the name `'fn:positioner:<key>'` there. The typed API has
+      `ChartTooltip.position`. The tooltip items, body items, label colors, label point styles and positions are typed
       records (`TooltipItem`, `TooltipBodyItem`, `TooltipLabelStyle`, `TooltipLabelPointStyle`,
       `TooltipPosition`); `invokeCallbackWithFallback` takes an `OptionKey`. The access by name
       covers its 28 own names and `_ignoreReplayEvents`: `operator []` and `operator []=` handle

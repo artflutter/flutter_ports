@@ -19,6 +19,8 @@ import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
+    show TooltipPositioner;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
@@ -21768,13 +21770,13 @@ base class TooltipOptionsScope extends OptionScope {
   set external(Object value) =>
       store(OptionKey.external, classify(OptionKey.external, value));
 
-  Opt<String>? _position;
+  Opt<TooltipPositioner>? _position;
 
   /// The cell of `position`, or Dart `null` when absent.
-  Opt<String>? get positionCell => _position;
+  Opt<TooltipPositioner>? get positionCell => _position;
 
   /// Stores the cell of `position`. Dart `null` deletes the key.
-  set positionCell(Opt<String>? cell) {
+  set positionCell(Opt<TooltipPositioner>? cell) {
     if (cell == null) {
       delete(OptionKey.position);
     } else {
@@ -21783,8 +21785,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `position`.
-  set position(String value) =>
-      store(OptionKey.position, OptValue<String>(value));
+  set position(TooltipPositioner value) =>
+      store(OptionKey.position, OptValue<TooltipPositioner>(value));
 
   Opt<String>? _xAlign;
 
@@ -22584,7 +22586,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.external:
         _external = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.position:
-        _position = fitCell(cell, classifyString);
+        _position = fitCell(cell, classifyTooltipPositioner);
       case OptionKey.xAlign:
         _xAlign = fitCell(cell, classifyString);
       case OptionKey.yAlign:
@@ -22736,7 +22738,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.external:
         return classifyUnion(raw, 8);
       case OptionKey.position:
-        return classifyString(raw);
+        return classifyTooltipPositioner(raw);
       case OptionKey.xAlign:
         return classifyString(raw);
       case OptionKey.yAlign:

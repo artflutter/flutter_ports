@@ -155,7 +155,6 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
           'keys': <Object?>[
             'id',
             '_element: class',
-            'positioners',
             'afterInit(3)',
             'beforeUpdate(3)',
             'reset(3)',
@@ -613,7 +612,6 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
           'keys': <Object?>[
             'id',
             '_element: class',
-            'positioners',
             'afterInit(3)',
             'beforeUpdate(3)',
             'reset(3)',

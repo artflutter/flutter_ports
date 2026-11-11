@@ -14,6 +14,7 @@
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 
 /// The Node.js version that generated the data.
 const String pluginTooltipReferenceNode = 'v24.22.1';
@@ -13935,7 +13936,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'tooltip': <String, Object?>{
             'mode': IndexInteractionMode(),
             'intersect': false,
-            'position': 'nearest',
+            'position': NearestTooltipPositioner(),
           },
         },
       },
@@ -16272,7 +16273,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'tooltip': <String, Object?>{
             'mode': IndexInteractionMode(),
             'intersect': false,
-            'position': 'custom',
+            'position': 'fn:positioner:custom',
           },
         },
       },

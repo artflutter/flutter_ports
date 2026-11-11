@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
+import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
+    show TooltipPosition, TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -56,10 +58,6 @@ Object _tooltipPlugin() => Chart.registry.getPlugin('tooltip');
 
 /// :3 `tooltipPlugin._element`, the class value `Tooltip`.
 JsClass _tooltipClass() => jsGet(_tooltipPlugin(), '_element')! as JsClass;
-
-/// `tooltipPlugin.positioners`.
-AnyObject _positioners() =>
-    jsGet(_tooltipPlugin(), 'positioners')! as AnyObject;
 
 /// `Chart.defaults`.
 JsObjectFace _defaults() => Chart.defaults;
@@ -1114,7 +1112,7 @@ void main() {
             'plugins': <String, Object?>{
               'tooltip': <String, Object?>{
                 'mode': const NearestInteractionMode(),
-                'position': 'nearest',
+                'position': const NearestTooltipPositioner(),
                 'intersect': true,
                 'callbacks': <String, Object?>{
                   'title': () => 'registering callback...',
@@ -1158,20 +1156,17 @@ void main() {
       testWidgets(
         'Should call custom positioner with correct parameters and scope',
         (tester) async {
-          final positioners = _positioners();
-          positioners['test'] = () => <String, Object?>{'x': 0, 'y': 0};
-          // Upstream keeps the key `test` after the case. The port removes
-          // it, so a case of a later shard sees the same positioners.
-          addTearDown(() => positioners.remove('test'));
-
-          spyOn(positioners, 'test').and.callThrough();
+          // Upstream writes the function `tooltipPlugin.positioners.test`
+          // and puts a spy on it. The port has no table of positioners:
+          // the option holds a positioner object, which records its calls.
+          final positioner = _RecordingPositioner();
 
           final chart = acquireChart(
             _line(
               _twoDatasets(),
               _tooltipOptions(<String, Object?>{
                 'mode': const NearestInteractionMode(),
-                'position': 'test',
+                'position': positioner,
               }),
             ),
           );
@@ -1181,18 +1176,25 @@ void main() {
           const datasetIndex = 0;
           final meta = chart.getDatasetMeta(datasetIndex);
           final point = meta.data[pointIndex];
-          final fn = positioners['test'];
 
           await triggerMouseEvent(chart, 'mousemove', point);
-          expect(fn.calls.count(), 2);
-          expect(fn.calls.first().args[0], isA<List<Object?>>());
-          expect(_hasOwnProperty(fn.calls.first().args[1], 'x'), isTrue);
-          expect(_hasOwnProperty(fn.calls.first().args[1], 'y'), isTrue);
+          expect(positioner.calls.length, 2);
+          // `args[0] instanceof Array`: the parameter is a List by its
+          // type.
+          expect(positioner.calls.first.items, isA<List<Object?>>());
+          expect(
+            _hasOwnProperty(positioner.calls.first.eventPosition, 'x'),
+            isTrue,
+          );
+          expect(
+            _hasOwnProperty(positioner.calls.first.eventPosition, 'y'),
+            isTrue,
+          );
           // `instanceof Tooltip` with `Tooltip = tooltipPlugin._element`
           // (:3): the object is a Dart `Tooltip`, and `_element` is the
           // class value of `Tooltip`. Thus the case has one assertion more
           // than upstream.
-          expect(fn.calls.first().object, isA<Tooltip>());
+          expect(positioner.calls.first.tooltip, isA<Tooltip>());
           expect(identical(_tooltipClass(), Tooltip.jsClass), isTrue);
         },
       );
@@ -1297,17 +1299,21 @@ void main() {
         'Should not fail with all hiden data elements on the average '
         'positioner',
         () {
-          final averagePositioner = jsGet(_positioners(), 'average');
+          const averagePositioner = AverageTooltipPositioner();
 
           // Simulate `hasValue` returns false
-          Object? call() => jsCall(averagePositioner, [
-            <Object?>[
-              <String, Object?>{'x': 'invalidNumber', 'y': 'invalidNumber'},
-            ],
-          ]);
+          // Upstream gives a plain object without an element. An active
+          // item of the port has the type `ActiveElement`: its element is
+          // Dart `null`.
+          TooltipPosition? call() => averagePositioner.positionOf(
+            Tooltip((chart: _NoChart(), options: null)),
+            const [_NoElementItem()],
+            null,
+          );
           expect(call, returnsNormally);
           final result = call();
-          expect(result, false);
+          // The `false` of upstream is Dart `null`.
+          expect(result, isNull);
         },
       );
     });
@@ -2238,4 +2244,51 @@ void main() {
       },
     );
   });
+}
+
+/// The positioner of the case `Should call custom positioner with correct
+/// parameters and scope`: the function `() => ({x: 0, y: 0})` of upstream,
+/// with a record of each call in place of the Jasmine spy.
+final class _RecordingPositioner extends TooltipPositioner {
+  /// The calls, in order.
+  final List<
+    ({
+      types.TooltipModel tooltip,
+      List<types.ActiveElement> items,
+      Object? eventPosition,
+    })
+  >
+  calls = [];
+
+  @override
+  TooltipPosition? positionOf(
+    types.TooltipModel tooltip,
+    List<types.ActiveElement> items,
+    Object? eventPosition,
+  ) {
+    calls.add((tooltip: tooltip, items: items, eventPosition: eventPosition));
+    return TooltipPosition()
+      ..x = 0
+      ..y = 0;
+  }
+}
+
+/// An active item without an element.
+final class _NoElementItem implements types.ActiveElement {
+  const _NoElementItem();
+
+  @override
+  Element? get element => null;
+
+  @override
+  double get datasetIndex => 0;
+
+  @override
+  double get index => 0;
+}
+
+/// A chart that no positioner of the tests reads.
+final class _NoChart implements types.Chart {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

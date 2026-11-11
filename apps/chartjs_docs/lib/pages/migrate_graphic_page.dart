@@ -61,7 +61,7 @@ DocPageContent graphicMigrationPage() => migrationPage(
     ('PointSelection and TooltipGuide', '`tooltip` and `interaction`'),
     (
       'TooltipGuide(anchor:, align:, offset:)',
-      'a custom `position` of `Tooltip.positioners`',
+      'a subclass of `TooltipPositioner` in `ChartTooltip.position`',
     ),
     ('CrosshairGuide', 'an inline plugin that draws in `afterDatasetsDraw`'),
     ('RectCoord(color: ...)', 'an inline plugin that fills the chart area'),
