@@ -35,6 +35,7 @@ DatasetDrawHookArgs
 DatasetInteractionMode
 DatasetUpdateHookArgs
 DateAdapter
+DecimationAlgorithm
 Defaults
 DoughnutController
 Element
@@ -55,6 +56,8 @@ LineController
 LineElement
 LinearScale
 LogarithmicScale
+LttbDecimationAlgorithm
+MinMaxDecimationAlgorithm
 NativeEvent
 NativeEventListener
 NativeEventTarget
@@ -201,6 +204,7 @@ DatasetDrawHookArgs
 DatasetInteractionMode
 DatasetUpdateHookArgs
 DateAdapter
+DecimationAlgorithm
 Defaults
 DoughnutController
 DoughnutDataset
@@ -231,6 +235,8 @@ LinearAxis
 LinearScale
 LogarithmicAxis
 LogarithmicScale
+LttbDecimationAlgorithm
+MinMaxDecimationAlgorithm
 NativeEvent
 NativeEventListener
 NativeEventTarget

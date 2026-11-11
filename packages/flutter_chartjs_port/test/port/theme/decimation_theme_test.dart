@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
+    show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -131,8 +133,17 @@ Future<(_State, _State)> _run(
 
 void main() {
   for (final (name, algorithm) in <(String, AnyObject)>[
-    ('min-max', <String, Object?>{'algorithm': 'min-max'}),
-    ('lttb', <String, Object?>{'algorithm': 'lttb', 'samples': 50}),
+    (
+      'min-max',
+      <String, Object?>{'algorithm': const MinMaxDecimationAlgorithm()},
+    ),
+    (
+      'lttb',
+      <String, Object?>{
+        'algorithm': const LttbDecimationAlgorithm(),
+        'samples': 50,
+      },
+    ),
   ]) {
     group(name, () {
       testWidgets('a theme leaves data, _data and the elements unchanged', (

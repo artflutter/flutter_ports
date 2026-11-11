@@ -3475,7 +3475,7 @@ enum ScopeKind {
           case OptionKey.threshold:
             return 1;
           case OptionKey.algorithm:
-            return 4;
+            return 8192;
           case OptionKey.samples:
             return 1;
           case OptionKey.events:

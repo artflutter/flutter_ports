@@ -233,10 +233,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     plugin API of Chart.js ADR 0108: `Plugin`, `PluginHookFunction` and the eight hook argument
     classes; and the input surface of Chart.js ADR 0108: `NativeEvent`, `NativeTouch`,
     `NativeEventListener`, `NativeEventTarget`, `DOMRect` and the extensions `CanvasEventTarget`
-    and `CssStyleProperties`; and the option classes of the rows `adapt-interaction-mode-objects`
-    and `adapt-tooltip-positioner-objects`: `InteractionMode` with its six mode classes and
-    `InteractionItem`, and `TooltipPositioner` with `AverageTooltipPositioner`,
-    `NearestTooltipPositioner` and `TooltipPosition`), `lib/helpers.dart` (the `chart.js/helpers`
+    and `CssStyleProperties`; and the option types of the rows `adapt-interaction-mode-objects`,
+    `adapt-interaction-axis-enum`, `adapt-tooltip-positioner-objects` and
+    `adapt-decimation-algorithm-objects`: `InteractionMode` with its six mode classes,
+    `InteractionAxis` and `InteractionItem`, `TooltipPositioner` with `AverageTooltipPositioner`,
+    `NearestTooltipPositioner` and `TooltipPosition`, and `DecimationAlgorithm` with
+    `LttbDecimationAlgorithm` and `MinMaxDecimationAlgorithm`), `lib/helpers.dart` (the `chart.js/helpers`
     entry:
     `lib/src/helpers/index.dart` without the Dart names of the upstream `_` exports, except
     `isPointInArea`, which a ported add-on imports, Chart.js ADR 0108) and `lib/js_semantics.dart`
@@ -800,7 +802,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `_data` and `_decimated`. `lttbDecimation` and `minMaxDecimation` are `@internal`:
       the pure test `test/port/plugins/plugin.decimation_algorithms_test.dart` calls them. They read
       the data items with the JS operators (`jsAdd`, `jsToNumber`, `jsToInt32`, `jsLessThan`). Data
-      that is not a List throws a `TypeError` (row `js-semantics-decimation-data`).
+      that is not a List throws a `TypeError` (row `js-semantics-decimation-data`). The option
+      `algorithm` holds a `DecimationAlgorithm` (row `adapt-decimation-algorithm-objects`, the
+      schema shape `decimationAlgorithm`), also in a raw config: an object with the method
+      `decimate`. `LttbDecimationAlgorithm` and `MinMaxDecimationAlgorithm` (the default) are the
+      algorithms of upstream; an app or a plugin gives its own as a subclass, with no
+      registration. The base class is in the pure `decimation_algorithm.dart`. A value that is not
+      an algorithm throws the `StateError` of upstream, and an algorithm name stops a debug build.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
       is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream

@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
+    show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 
@@ -23456,13 +23458,13 @@ base class DecimationOptionsScope extends OptionScope {
   set threshold(double value) =>
       store(OptionKey.threshold, OptValue<double>(value));
 
-  Opt<String>? _algorithm;
+  Opt<DecimationAlgorithm>? _algorithm;
 
   /// The cell of `algorithm`, or Dart `null` when absent.
-  Opt<String>? get algorithmCell => _algorithm;
+  Opt<DecimationAlgorithm>? get algorithmCell => _algorithm;
 
   /// Stores the cell of `algorithm`. Dart `null` deletes the key.
-  set algorithmCell(Opt<String>? cell) {
+  set algorithmCell(Opt<DecimationAlgorithm>? cell) {
     if (cell == null) {
       delete(OptionKey.algorithm);
     } else {
@@ -23471,8 +23473,8 @@ base class DecimationOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `algorithm`.
-  set algorithm(String value) =>
-      store(OptionKey.algorithm, OptValue<String>(value));
+  set algorithm(DecimationAlgorithm value) =>
+      store(OptionKey.algorithm, OptValue<DecimationAlgorithm>(value));
 
   Opt<double>? _samples;
 
@@ -23536,7 +23538,7 @@ base class DecimationOptionsScope extends OptionScope {
       case OptionKey.threshold:
         _threshold = fitCell(cell, classifyNumber);
       case OptionKey.algorithm:
-        _algorithm = fitCell(cell, classifyString);
+        _algorithm = fitCell(cell, classifyDecimationAlgorithm);
       case OptionKey.samples:
         _samples = fitCell(cell, classifyNumber);
       case OptionKey.events:
@@ -23568,7 +23570,7 @@ base class DecimationOptionsScope extends OptionScope {
       case OptionKey.threshold:
         return classifyNumber(raw);
       case OptionKey.algorithm:
-        return classifyString(raw);
+        return classifyDecimationAlgorithm(raw);
       case OptionKey.samples:
         return classifyNumber(raw);
       case OptionKey.events:

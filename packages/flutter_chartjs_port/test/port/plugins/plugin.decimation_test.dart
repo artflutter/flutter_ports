@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
+    show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
@@ -118,7 +120,7 @@ final Map<String, Object?> _functions = {'writeData': _writeData};
         'plugins': <String, Object?>{
           'decimation': <String, Object?>{
             'enabled': true,
-            'algorithm': 'min-max',
+            'algorithm': const MinMaxDecimationAlgorithm(),
             'samples': 50,
             'threshold': 100,
             ...decimation,
@@ -192,7 +194,7 @@ void main() {
       ]);
       expect(decimation['id'], 'decimation');
       expect(_plain(decimation['defaults']), <String, Object?>{
-        'algorithm': 'min-max',
+        'algorithm': const MinMaxDecimationAlgorithm(),
         'enabled': false,
       });
     });
@@ -468,15 +470,17 @@ void main() {
       expect(_metaCount(chart), 0);
     });
 
-    testWidgets('an unknown algorithm throws at two updates in a row', (
-      tester,
-    ) async {
+    testWidgets('a value that is not an algorithm throws at two updates in '
+        'a row', (tester) async {
+      // adapt-decimation-algorithm-objects: the option holds a
+      // DecimationAlgorithm. Upstream throws for a name that is not a case of
+      // its switch; the port throws for a value that is not an algorithm.
       final (:chart, :dataset, data: _) = _accessorChart(
         decimation: {'enabled': false},
       );
       _decimationOptions(chart)
         ..['enabled'] = true
-        ..['algorithm'] = 'nope';
+        ..['algorithm'] = 5;
       for (var k = 0; k < 2; k++) {
         // A9: the JS Error of plugin.decimation.js:277 is a StateError.
         expect(
@@ -485,7 +489,7 @@ void main() {
             isA<StateError>().having(
               (e) => e.message,
               'message',
-              "Unsupported decimation algorithm 'nope'",
+              "Unsupported decimation algorithm '5'",
             ),
           ),
         );
@@ -500,11 +504,37 @@ void main() {
         expect(_length(dataset['_data']), 2000);
         expect(_metaCount(chart), 2000);
       }
-      _decimationOptions(chart)['algorithm'] = 'lttb';
+      _decimationOptions(chart)['algorithm'] = const LttbDecimationAlgorithm();
       chart.update();
       expect(jsObjectKeys(dataset), _decimatedKeys);
       expect(_length(dataset['data']), 50);
       expect(_metaCount(chart), 50);
+    });
+
+    test('an algorithm name is not an algorithm: a debug build stops', () {
+      expect(
+        () => DecimationAlgorithm.of('lttb'),
+        throwsA(isA<AssertionError>()),
+      );
+      expect(DecimationAlgorithm.of(null), isNull);
+      const lttb = LttbDecimationAlgorithm();
+      expect(DecimationAlgorithm.of(lttb), same(lttb));
+    });
+
+    testWidgets('an algorithm of a program decimates the data', (
+      tester,
+    ) async {
+      // The option holds a subclass of a program, with no registration: the
+      // plugin calls its `decimate`.
+      final (:chart, :dataset, data: _) = _accessorChart(
+        decimation: {'enabled': false},
+      );
+      _decimationOptions(chart)
+        ..['enabled'] = true
+        ..['algorithm'] = const _EveryNth(100);
+      chart.update();
+      expect(_length(dataset['data']), 20);
+      expect(_metaCount(chart), 20);
     });
 
     testWidgets('a delete of data removes the accessor', (tester) async {
@@ -550,7 +580,7 @@ void main() {
 
     testWidgets('lttb on the same data', (tester) async {
       final (:chart, :dataset, data: _) = _accessorChart(
-        decimation: {'algorithm': 'lttb'},
+        decimation: {'algorithm': const LttbDecimationAlgorithm()},
       );
       // A13.
       expect(_length(dataset['data']), 50);
@@ -603,7 +633,7 @@ void main() {
           'plugins': <String, Object?>{
             'decimation': <String, Object?>{
               'enabled': enabled,
-              'algorithm': 'lttb',
+              'algorithm': const LttbDecimationAlgorithm(),
               'samples': 10,
               'threshold': 20,
             },
@@ -700,7 +730,7 @@ void main() {
               'tooltip': false,
               'decimation': <String, Object?>{
                 'enabled': true,
-                'algorithm': 'lttb',
+                'algorithm': const LttbDecimationAlgorithm(),
                 'samples': 8,
                 'threshold': 10,
               },
@@ -745,3 +775,19 @@ Object? _plain(Object? value) =>
         for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
       }
     : value;
+
+/// An algorithm of a program: each [n]-th item.
+final class _EveryNth extends DecimationAlgorithm {
+  const _EveryNth(this.n);
+
+  final int n;
+
+  @override
+  List<Object?> decimate(
+    List<Object?> data,
+    double start,
+    double count,
+    double availableWidth,
+    Object options,
+  ) => [for (var i = start.toInt(); i < start + count; i += n) data[i]];
+}

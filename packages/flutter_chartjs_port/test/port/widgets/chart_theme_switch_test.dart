@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartConfigurationScope;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
+    show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -490,8 +492,17 @@ void main() {
     });
 
     for (final (name, algorithm) in <(String, AnyObject)>[
-      ('min-max', <String, Object?>{'algorithm': 'min-max'}),
-      ('lttb', <String, Object?>{'algorithm': 'lttb', 'samples': 50}),
+      (
+        'min-max',
+        <String, Object?>{'algorithm': const MinMaxDecimationAlgorithm()},
+      ),
+      (
+        'lttb',
+        <String, Object?>{
+          'algorithm': const LttbDecimationAlgorithm(),
+          'samples': 50,
+        },
+      ),
     ]) {
       testWidgets('keeps the decimated data ($name)', (tester) async {
         final input = _decimationInput();
