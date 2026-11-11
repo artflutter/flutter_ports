@@ -347,7 +347,8 @@ final class NativeGapReads {
         !_nativeItem(item)) {
       return null;
     }
-    return iValue.toDouble();
+    // `toDouble()` on a num is a call in an AOT build (performance.md §72).
+    return iValue is double ? iValue : (iValue as int) * 1.0;
   }
 
   bool _nativeItem(Object? item) {

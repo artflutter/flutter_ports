@@ -20,6 +20,20 @@ abstract interface class NativeNumericParseScale {
   bool get supportsNativeNumericParse;
 }
 
+/// A finite number as a double, or Dart `null`.
+///
+/// The type tests come first: `isFinite` and `toDouble()` on a num are calls
+/// in an AOT build (performance.md §72). An int is always finite. On the web
+/// each number is a double, so the first branch takes it.
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+double? _finiteDouble(Object? value) {
+  if (value is double) return value.isFinite ? value : null;
+  // js-ok: only the VM and dart2wasm get here with a number, an int.
+  return value is int ? value * 1.0 : null;
+}
+
 /// Parse a callback-free primitive range, or decline before creating records.
 /// The caller has already performed its ordinary initial getLabels read.
 /// No result or qualification is cached between calls, and records stay fresh.
@@ -76,7 +90,7 @@ List<ParsedItem>? tryParseNumericCategories(
       i < labels.length && labels[i] is String ? i * 1.0 : null,
       vKey,
       vAxis,
-      value is num && value.isFinite ? value.toDouble() : null,
+      _finiteDouble(value),
     );
   });
 }
@@ -119,7 +133,7 @@ List<ParsedItem>? tryParseNumericSingleScale(
     return ParsedItem()..setValue(
       key,
       axis,
-      value is num && value.isFinite ? value.toDouble() : null,
+      _finiteDouble(value),
     );
   });
 }

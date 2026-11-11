@@ -8449,8 +8449,27 @@ iPhone, the Mac app, and a frame cell. dart2js emits the bare value for `i.toDou
 `int`, and the same JavaScript for the old and the new `jsToNumber` and `DataPoint` forms (read at `-O2` and `-O4`);
 dart2wasm was not examined.
 
-The calls on a `num` inside the loops that run for each point (`point_options.dart:350`, `primitive_parse.dart:79`
-and `:122`, the bar bulk update) stay as they are: the fast form for a `num` that is a `double` most of the time tests
-`is double` first, and it needs a browser measurement before it goes into such a loop. The rule for new code: convert
-an `int` with `i * 1.0`, and never write `num * 1.0`. Files: `.handover/line-perf-2026-11-11/`
+**The calls on a `num` in loops for each point** (a second change, the same day). A `num` holds an `int` or a
+`double`, so `toDouble()`, `isFinite` and an add with a `double` are calls on it. Four places now test the type first,
+`double` before `int`, because a parsed value is a `double` most of the time: the x of a pass in
+`NativeGapReads.qualify` (`point_options.dart`, the line and scatter updates), the value of
+`tryParseNumericCategories` and `tryParseNumbers` (`primitive_parse.dart`, a data List of plain numbers), the value of
+a bar in the bulk update (`controller.bar.dart`), and the sum of a stack (`_plus` of `core.datasetController.dart`).
+Each form gives the same number. On the web each number is a `double`, so the first branch takes it.
+
+ns for each conversion of a `num`, Pixel 8a, the pinned beta, the two loop forms of the benchmark:
+
+| Form | It holds a `double` | An `int` below 2^30 | An `int` from 2^30 |
+| --- | ---: | ---: | ---: |
+| `n.toDouble()` | 3.2 to 4.1 | 6.6 to 11.8 | 60 to 70 |
+| `n is double ? n : (n as int) * 1.0` | 1.9 to 2.3 | 2.6 to 4.1 | 3.0 to 3.9 |
+| `n is double ? n : (n is int ? n * 1.0 : nan)` | 1.6 to 1.8 | 1.8 | 1.9 |
+| a typed `double` read (control) | 1.3 to 1.8 | | |
+
+On the Mac a `double` in a `num` reads 1.7 to 3.4 ns with `toDouble()` and 1.2 to 1.6 ns with the first new form.
+The expected gain is about 2 ns for each value that is a `double` and 5 to 10 ns for each small `int`: about 0.04 ms
+for 20,000 points on the Pixel, and up to 0.2 ms when an app gives `int` data. No chart window was timed for this
+second change: the gain is below the spread of the bench runs. No browser timing exists for it. The rule for new code:
+convert an `int` with `i * 1.0`, test `is double` before a conversion of a `num`, and never write `num * 1.0`. Files:
+`.handover/line-perf-2026-11-11/`
 (`dart-int-to-double-verify.md`, `dart-int-to-double/`, `ship/todouble-pixel/`), outside the repository.

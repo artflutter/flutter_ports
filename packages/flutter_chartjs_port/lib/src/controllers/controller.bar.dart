@@ -1084,8 +1084,16 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       }
       // Data-only updates preflight native prepared values before these reads.
       final value = parsedValueOf(item, key, valueAxis);
-      if (value is! num || !value.isFinite) return false;
-      values[i - begin] = value.toDouble();
+      // The type tests come first: `isFinite` and `toDouble()` on a num are
+      // calls in an AOT build (performance.md §72).
+      if (value is double) {
+        if (!value.isFinite) return false;
+        values[i - begin] = value;
+        continue;
+      }
+      // js-ok: only the VM and dart2wasm get here with a number, an int.
+      if (value is! int) return false;
+      values[i - begin] = value * 1.0;
     }
     final stacks = ruler.stackCount;
     if (!stacks.isFinite || stacks <= 0) return false;
