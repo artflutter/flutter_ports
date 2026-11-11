@@ -102,7 +102,7 @@ final ChartConfig _config = ChartConfig(
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
-    extra: {'axis': 'xy'},
+    axis: .xy,
   ),
   tooltip: graphicTooltip(
     position: const TopLeftPositioner(),

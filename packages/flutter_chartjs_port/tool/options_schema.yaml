@@ -27,7 +27,8 @@
 # of `mode`; a mode name is a foreign value), `tooltipPositioner` (a `TooltipPositioner`, the value
 # of the tooltip `position`; a positioner name is a foreign value), `strokeCap` and `strokeJoin` (the
 # Flutter enums `StrokeCap` and `StrokeJoin`, the values of `borderCapStyle` and `borderJoinStyle`; a
-# keyword is a foreign value), `any` (any JS value: a color, a point
+# keyword is a foreign value), `interactionAxis` (an `InteractionAxis`, the value of the
+# interaction `axis`; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -276,7 +277,7 @@ kinds:
     keys:
       mode: interactionMode
       intersect: bool
-      axis: string
+      axis: interactionAxis
       includeInvisible: bool
   ParsingOptions:
     doc: Port-only name for the object form of index.d.ts:54 ParsingOptions `parsing`, the keys of the parsed data (core.datasetController.js:561, controller.doughnut.js:158, helpers.config.ts:444).
@@ -1060,7 +1061,7 @@ kinds:
     keys:
       mode: interactionMode
       intersect: bool
-      axis: string
+      axis: interactionAxis
       includeInvisible: bool
       enabled: bool
       external: fn

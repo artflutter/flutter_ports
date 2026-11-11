@@ -9,7 +9,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show IndexInteractionMode, PointInteractionMode;
+    show IndexInteractionMode, InteractionAxis, PointInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
@@ -227,7 +227,7 @@ void main() {
       final items = chart.getElementsAtEventForMode(
         ReferenceEvent(x, y),
         const PointInteractionMode(),
-        <String, Object?>{'intersect': true, 'axis': 'xy'},
+        <String, Object?>{'intersect': true, 'axis': InteractionAxis.xy},
         false,
       );
       expect(
@@ -245,8 +245,18 @@ void main() {
           <Object?>[-5.0, -5.0],
         ],
         'queries': <Object?>[
-          <Object?>[const PointInteractionMode(), true, 'xy', false],
-          <Object?>[const IndexInteractionMode(), false, 'x', false],
+          <Object?>[
+            const PointInteractionMode(),
+            true,
+            InteractionAxis.xy,
+            false,
+          ],
+          <Object?>[
+            const IndexInteractionMode(),
+            false,
+            InteractionAxis.x,
+            false,
+          ],
         ],
         'items': '',
       });
@@ -411,7 +421,12 @@ void main() {
             <Object?>[x, y],
           ],
           'queries': <Object?>[
-            <Object?>[const PointInteractionMode(), true, 'xy', false],
+            <Object?>[
+              const PointInteractionMode(),
+              true,
+              InteractionAxis.xy,
+              false,
+            ],
           ],
           'items': '',
         },

@@ -42,7 +42,7 @@ import 'package:test/test.dart';
 //   keys of each declaration site keep their order in their object.
 
 import '../../support/color_json.dart';
-import '../../support/stroke_json.dart';
+import '../../support/keyword_enum_json.dart';
 
 /// The dataset kinds: a census path under `data.datasets[]` maps when one
 /// of them maps it.
@@ -117,7 +117,8 @@ bool _fits(String kind, int shape) {
     // Upstream data hold the easing name of a key of the shape `curve`,
     // the mode name of a key of the shape `interactionMode`, the
     // positioner name of a key of the shape `tooltipPositioner` and the
-    // keyword of a key of the shapes `strokeCap` and `strokeJoin`.
+    // keyword of a key of the shapes `strokeCap`, `strokeJoin` and
+    // `interactionAxis`.
     'String' =>
       shape &
               (ShapeBits.string |
@@ -125,7 +126,8 @@ bool _fits(String kind, int shape) {
                   ShapeBits.interactionMode |
                   ShapeBits.tooltipPositioner |
                   ShapeBits.strokeCap |
-                  ShapeBits.strokeJoin) !=
+                  ShapeBits.strokeJoin |
+                  ShapeBits.interactionAxis) !=
           0,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' => shape & ShapeBits.scope != 0,
@@ -204,9 +206,10 @@ String? _mismatch(Object? actual, Object? expected) {
   if (expected is String && actual is InteractionMode) return null;
   // The same for a positioner name and a positioner object.
   if (expected is String && actual is TooltipPositioner) return null;
-  // Upstream has the keyword of a line cap or a line join where the port has
-  // the Flutter enum: the name of the enum value is the keyword.
-  if (expected is String && isStroke(actual)) {
+  // Upstream has the keyword of a line cap, a line join or an interaction
+  // axis where the port has the enum: the name of the enum value is the
+  // keyword.
+  if (expected is String && isKeywordEnum(actual)) {
     return (actual! as Enum).name == expected ? null : '$actual != $expected';
   }
   switch (expected) {

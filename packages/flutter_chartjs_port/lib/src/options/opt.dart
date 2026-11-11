@@ -19,8 +19,8 @@
 /// The type parameter `T` is the type of the key. The classification
 /// functions ([classifyNumber], [classifyBool], [classifyString],
 /// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner],
-/// [classifyStrokeCap], [classifyStrokeJoin], [classifyScope] and
-/// [classifyUnion]) give the cell of a
+/// [classifyStrokeCap], [classifyStrokeJoin], [classifyInteractionAxis],
+/// [classifyScope] and [classifyUnion]) give the cell of a
 /// raw JS value for a key of a given shape. The order of their tests is the
 /// order of the resolver: `undefined`, `null`, a function, an array, an
 /// object, then the plain value.
@@ -32,7 +32,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
+    show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -196,6 +196,10 @@ abstract final class ShapeBits {
 
   /// `strokeJoin`: a Flutter [StrokeJoin], the value of `borderJoinStyle`.
   static const int strokeJoin = 2048;
+
+  /// `interactionAxis`: an [InteractionAxis], the value of `axis` of the
+  /// interaction options.
+  static const int interactionAxis = 4096;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -274,6 +278,16 @@ Opt<StrokeJoin> classifyStrokeJoin(Object? raw) =>
         ? OptValue<StrokeJoin>(raw)
         : OptForeign<StrokeJoin>(raw!));
 
+/// The cell of [raw] for a key of the shape `interactionAxis`: an
+/// [InteractionAxis], the value of `axis` of the interaction options. A
+/// keyword of Chart.js (`'x'`) is not an axis: it is a foreign value, as
+/// each other value is.
+Opt<InteractionAxis> classifyInteractionAxis(Object? raw) =>
+    _special<InteractionAxis>(raw) ??
+    (raw is InteractionAxis
+        ? OptValue<InteractionAxis>(raw)
+        : OptForeign<InteractionAxis>(raw!));
+
 /// The cell of [raw] for a key of the shape `scope <Kind>`: an object is an
 /// [OptScope], another plain value is foreign.
 Opt<S> classifyScope<S>(Object? raw) => _special<S>(raw) ?? OptForeign<S>(raw!);
@@ -300,8 +314,8 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
 /// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
 /// classification of [classifyNumber], [classifyBool], [classifyString],
 /// [classifyCurve], [classifyInteractionMode], [classifyTooltipPositioner],
-/// [classifyStrokeCap], [classifyStrokeJoin] or [classifyScope] for a shape
-/// of one atom, else
+/// [classifyStrokeCap], [classifyStrokeJoin], [classifyInteractionAxis] or
+/// [classifyScope] for a shape of one atom, else
 /// [classifyUnion].
 Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.number => classifyNumber(raw),
@@ -312,6 +326,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.tooltipPositioner => classifyTooltipPositioner(raw),
   ShapeBits.strokeCap => classifyStrokeCap(raw),
   ShapeBits.strokeJoin => classifyStrokeJoin(raw),
+  ShapeBits.interactionAxis => classifyInteractionAxis(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

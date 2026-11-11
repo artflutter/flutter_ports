@@ -39,7 +39,7 @@ final ChartConfig _config = fills(
     interaction: const ChartInteraction(
       mode: NearestInteractionMode(),
       intersect: false,
-      extra: {'axis': 'x'},
+      axis: .x,
     ),
     tooltip: ChartTooltip(
       backgroundColor: Colors.black,

@@ -39,7 +39,11 @@ final List<String> coreDemoModes = [
 ];
 
 /// The values of the `interaction.axis` option of the selector.
-const List<String> coreDemoAxes = ['x', 'y', 'xy'];
+const List<InteractionAxis> coreDemoAxes = [
+  InteractionAxis.x,
+  InteractionAxis.y,
+  InteractionAxis.xy,
+];
 
 /// The values of the line `hover`: the durations of the hover transition
 /// (`transitions.active.animation.duration`), in ms.
@@ -92,9 +96,8 @@ const Map<String, ChartAxis> _unitAxes = {
 /// makes a `ChartConfig` from the control values and the data Lists. A
 /// control changes a value in `setState`, and a data command gives new
 /// Lists: the new config updates the chart after the frame. An equal config
-/// gives no update. Three options have no typed parameter and go through
-/// `extra`: `interaction.axis`, `elements.point.hoverBorderWidth` and
-/// `transitions.active.animation.duration`.
+/// gives no update. One option has no typed parameter and goes through
+/// `extra`: `elements.point.hoverBorderWidth`.
 ///
 /// The ported code does the work:
 /// - `core.config` resolves the options: the typed `PointOptions` of
@@ -142,7 +145,7 @@ class CoreDemoState extends State<CoreDemo> {
   // The control values.
   InteractionMode _mode = const NearestInteractionMode();
   bool _intersect = true;
-  String _axis = 'xy';
+  InteractionAxis _axis = InteractionAxis.xy;
   double _hoverDuration = 400;
   double _duration = 1000;
   bool _animation = true;
@@ -234,8 +237,7 @@ class CoreDemoState extends State<CoreDemo> {
     interaction: ChartInteraction(
       mode: _mode,
       intersect: _intersect,
-      // `interaction.axis` has no typed parameter.
-      extra: {'axis': _axis},
+      axis: _axis,
     ),
     animation: _animation
         ? ChartAnimation(
@@ -411,8 +413,12 @@ class CoreDemoState extends State<CoreDemo> {
   ];
 
   /// The text of [value] in a key: the integer text of a duration.
-  static String _keyText(Object? value) =>
-      value is double ? value.toInt().toString() : '$value';
+  static String _keyText(Object? value) => switch (value) {
+    final double number => number.toInt().toString(),
+    // The name of an enum value, for example `xy` of [InteractionAxis.xy].
+    final Enum value => value.name,
+    _ => '$value',
+  };
 
   /// A command segment: it is never on, and a tap runs [command].
   static SegmentToggleItem _command(
@@ -502,7 +508,7 @@ class CoreDemoState extends State<CoreDemo> {
                 onChanged: (v) => _change(() => _mode = v),
               ),
               gap,
-              SegmentChoice<String>(
+              SegmentChoice<InteractionAxis>(
                 label: 'axis',
                 items: _items('axis', coreDemoAxes),
                 value: _axis,

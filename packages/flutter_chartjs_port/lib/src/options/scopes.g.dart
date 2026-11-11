@@ -16,7 +16,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
+    show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
@@ -5165,13 +5165,13 @@ base class InteractionOptionsScope extends OptionScope {
   set intersect(bool value) =>
       store(OptionKey.intersect, OptValue<bool>(value));
 
-  Opt<String>? _axis;
+  Opt<InteractionAxis>? _axis;
 
   /// The cell of `axis`, or Dart `null` when absent.
-  Opt<String>? get axisCell => _axis;
+  Opt<InteractionAxis>? get axisCell => _axis;
 
   /// Stores the cell of `axis`. Dart `null` deletes the key.
-  set axisCell(Opt<String>? cell) {
+  set axisCell(Opt<InteractionAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.axis);
     } else {
@@ -5180,7 +5180,8 @@ base class InteractionOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `axis`.
-  set axis(String value) => store(OptionKey.axis, OptValue<String>(value));
+  set axis(InteractionAxis value) =>
+      store(OptionKey.axis, OptValue<InteractionAxis>(value));
 
   Opt<bool>? _includeInvisible;
 
@@ -5224,7 +5225,7 @@ base class InteractionOptionsScope extends OptionScope {
       case OptionKey.intersect:
         _intersect = fitCell(cell, classifyBool);
       case OptionKey.axis:
-        _axis = fitCell(cell, classifyString);
+        _axis = fitCell(cell, classifyInteractionAxis);
       case OptionKey.includeInvisible:
         _includeInvisible = fitCell(cell, classifyBool);
       default:
@@ -5257,7 +5258,7 @@ base class InteractionOptionsScope extends OptionScope {
       case OptionKey.intersect:
         return classifyBool(raw);
       case OptionKey.axis:
-        return classifyString(raw);
+        return classifyInteractionAxis(raw);
       case OptionKey.includeInvisible:
         return classifyBool(raw);
       default:
@@ -21702,13 +21703,13 @@ base class TooltipOptionsScope extends OptionScope {
   set intersect(bool value) =>
       store(OptionKey.intersect, OptValue<bool>(value));
 
-  Opt<String>? _axis;
+  Opt<InteractionAxis>? _axis;
 
   /// The cell of `axis`, or Dart `null` when absent.
-  Opt<String>? get axisCell => _axis;
+  Opt<InteractionAxis>? get axisCell => _axis;
 
   /// Stores the cell of `axis`. Dart `null` deletes the key.
-  set axisCell(Opt<String>? cell) {
+  set axisCell(Opt<InteractionAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.axis);
     } else {
@@ -21717,7 +21718,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `axis`.
-  set axis(String value) => store(OptionKey.axis, OptValue<String>(value));
+  set axis(InteractionAxis value) =>
+      store(OptionKey.axis, OptValue<InteractionAxis>(value));
 
   Opt<bool>? _includeInvisible;
 
@@ -22580,7 +22582,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.intersect:
         _intersect = fitCell(cell, classifyBool);
       case OptionKey.axis:
-        _axis = fitCell(cell, classifyString);
+        _axis = fitCell(cell, classifyInteractionAxis);
       case OptionKey.includeInvisible:
         _includeInvisible = fitCell(cell, classifyBool);
       case OptionKey.enabled:
@@ -22732,7 +22734,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.intersect:
         return classifyBool(raw);
       case OptionKey.axis:
-        return classifyString(raw);
+        return classifyInteractionAxis(raw);
       case OptionKey.includeInvisible:
         return classifyBool(raw);
       case OptionKey.enabled:

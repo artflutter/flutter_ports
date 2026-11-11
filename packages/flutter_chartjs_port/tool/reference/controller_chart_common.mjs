@@ -52,6 +52,7 @@
 
 import {
   CallsText,
+  DartAxis,
   DartMode,
   drawCalls,
   jsonValue,
@@ -221,8 +222,14 @@ export function hits(chart) {
       ),
     );
   });
-  // The data hold the mode class of the port, not the name.
-  const modeQueries = queries.map(([mode, ...rest]) => [new DartMode(mode), ...rest]);
+  // The data hold the mode class and the axis enum value of the port, not
+  // the names.
+  const modeQueries = queries.map(([mode, intersect, axis, includeInvisible]) => [
+    new DartMode(mode),
+    intersect,
+    new DartAxis(axis),
+    includeInvisible,
+  ]);
   return {points, queries: modeQueries, items: new CallsText(lines.join('\n'))};
 }
 

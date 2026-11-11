@@ -469,7 +469,7 @@ ChartConfig(
       extra: const {'cubicInterpolationMode': 'monotone'},
     ),
   ],
-  interaction: const ChartInteraction(intersect: false, extra: {'axis': 'x'}),
+  interaction: const ChartInteraction(intersect: false, axis: .x),
   extra: const {'locale': 'de-DE'},
 )
 ```

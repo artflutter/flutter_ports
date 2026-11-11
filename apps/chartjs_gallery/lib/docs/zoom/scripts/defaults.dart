@@ -1,5 +1,8 @@
 // Ported from chartjs-plugin-zoom v2.2.0+fb81d331 docs/scripts/defaults.js (MIT, chartjs-plugin-zoom contributors).
 
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show InteractionAxis;
+
 /// The options that the docs of chartjs-plugin-zoom set for each chart
 /// (`docs/scripts/defaults.js:3-17`), written into the options of one chart.
 ///
@@ -26,7 +29,7 @@
 void setZoomDocsDefaults(Map<String, Object?> options) {
   _object(_object(options, 'datasets'), 'line')['tension'] = 0.4;
   _object(options, 'interaction')
-    ..['axis'] = 'x'
+    ..['axis'] = InteractionAxis.x
     ..['intersect'] = false;
   _object(options, 'plugins')['legend'] = false;
 }

@@ -49,6 +49,7 @@ export 'package:flutter_chartjs_port/src/core/core.interaction.dart'
         DatasetInteractionMode,
         IndexInteractionMode,
         Interaction,
+        InteractionAxis,
         InteractionItem,
         InteractionMode,
         NearestInteractionMode,

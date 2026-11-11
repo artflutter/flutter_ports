@@ -20,8 +20,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 import '../../support/color_json.dart';
+import '../../support/keyword_enum_json.dart';
 import '../../support/mode_json.dart';
-import '../../support/stroke_json.dart';
 
 /// The observations of one scenario: one line `<label>: <value>` for each
 /// [observe] call, and the labels of the known objects.
@@ -64,7 +64,7 @@ final class Observations {
       final num n => n.isFinite ? jsNumberToString(n) : 'null',
       final String s => jsonEncode(s),
       _ when jsIsFunction(value) => '"<fn>"',
-      final Object stroke when isStroke(stroke) => strokeJson(stroke),
+      final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
       InteractionMode() => modeJson,
       final List<Object?> list => '[${list.map(json).join(',')}]',
       final Object map

@@ -21,8 +21,8 @@ import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/keyword_enum_json.dart';
 import '../../support/mode_json.dart';
-import '../../support/stroke_json.dart';
 
 // Upstream behavior that test/specs/core.defaults.tests.js does not check
 // (AGENTS.md rule 3). The expected values come from src/core/core.defaults.js
@@ -48,7 +48,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
-  final Object stroke when isStroke(stroke) => strokeJson(stroke),
+  final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>

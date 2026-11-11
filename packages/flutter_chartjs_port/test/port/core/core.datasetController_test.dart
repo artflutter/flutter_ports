@@ -38,7 +38,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
-import '../../support/stroke_json.dart';
+import '../../support/keyword_enum_json.dart';
 import 'dataset_controller_reference.dart';
 
 // The specs of core.datasetController.tests.js need the controllers of
@@ -672,7 +672,7 @@ String _enc(Object? v) => switch (v) {
   Element() => 'element',
   Animation() => 'animation',
   Curve() => curveJson,
-  final Object stroke when isStroke(stroke) => strokeJson(stroke),
+  final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
   final Map<String, Object?> m => _encMap(m),

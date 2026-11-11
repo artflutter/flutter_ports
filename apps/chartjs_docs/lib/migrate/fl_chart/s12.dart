@@ -110,7 +110,7 @@ class _Sample12State extends State<Sample12> {
       interaction: const ChartInteraction(
         mode: NearestInteractionMode(),
         intersect: false,
-        extra: {'axis': 'x'},
+        axis: .x,
       ),
       tooltip: ChartTooltip(
         backgroundColor: Colors.black,
