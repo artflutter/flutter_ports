@@ -964,7 +964,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 54 names. `config.dart` has `ChartConfig`, `ChartKind` and
+    `typed.dart` is its export list of 74 names. 20 of them are the items of
+    `ChartConfig.animations`, of `lib/src/options/property_animation.dart` (row
+    `adapt-property-animations`): the sealed `PropertyAnimation` and one ready class for each of the
+    19 animated properties of the elements (`RadiusAnimation`, `BorderColorAnimation`, ...). An item
+    has no name of a property and no key. No lowering copies it: `ChartView` puts the List on the
+    canvas (`setPropertyAnimations`), `DatasetController.resolveAnimations` gives it to `Animations`,
+    and `Animation` reads the parameters of the item itself. A color animates with no `type` (row
+    `adapt-color-animation-by-value`). `config.dart` has `ChartConfig`, `ChartKind` and
     `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver

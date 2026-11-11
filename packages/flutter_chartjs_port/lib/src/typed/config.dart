@@ -8,6 +8,8 @@ library;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/options/property_animation.dart'
+    show PropertyAnimation;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show ChartAxis;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show ChartEventDetails;
@@ -78,6 +80,7 @@ final class ChartConfig with Diagnosticable {
     this.filler,
     this.interaction,
     this.animation,
+    this.animations,
     this.elements,
     this.onClick,
     this.onHover,
@@ -152,6 +155,17 @@ final class ChartConfig with Diagnosticable {
   /// off.
   final ChartAnimation? animation;
 
+  /// The animation of single properties of the elements:
+  /// `options.animations`, for example
+  /// `[RadiusAnimation(easing: Curves.elasticOut), YAnimation.off()]`.
+  ///
+  /// Each property has its ready class ([PropertyAnimation]). A parameter of
+  /// an item that is `null` takes the value that the property has without
+  /// the item. The List has one item for each class. The animations of the
+  /// chart read each item as the object of this List: no option holds a
+  /// copy of it.
+  final List<PropertyAnimation>? animations;
+
   /// The options of the element types, a default of all datasets of the
   /// chart: `options.elements`, for example
   /// `ChartElements(line: LineElementStyle(borderWidth: 3))`.
@@ -202,6 +216,7 @@ final class ChartConfig with Diagnosticable {
     ChartFiller? filler,
     ChartInteraction? interaction,
     ChartAnimation? animation,
+    List<PropertyAnimation>? animations,
     ChartElements? elements,
     ValueChanged<ChartEventDetails>? onClick,
     ValueChanged<ChartEventDetails>? onHover,
@@ -224,6 +239,7 @@ final class ChartConfig with Diagnosticable {
     filler: filler ?? this.filler,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
+    animations: animations ?? this.animations,
     elements: elements ?? this.elements,
     onClick: onClick ?? this.onClick,
     onHover: onHover ?? this.onHover,
@@ -256,6 +272,7 @@ final class ChartConfig with Diagnosticable {
     ('filler', filler),
     ('interaction', interaction),
     ('animation', animation),
+    ('animations', byItems(animations)),
     ('elements', elements),
     ('onClick', byPresence(onClick)),
     ('onHover', byPresence(onHover)),
