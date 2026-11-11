@@ -12,6 +12,7 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
@@ -4333,13 +4334,13 @@ base class AnimationOptionsScope extends OptionScope {
   set duration(double value) =>
       store(OptionKey.duration, OptValue<double>(value));
 
-  Opt<String>? _easing;
+  Opt<Curve>? _easing;
 
   /// The cell of `easing`, or Dart `null` when absent.
-  Opt<String>? get easingCell => _easing;
+  Opt<Curve>? get easingCell => _easing;
 
   /// Stores the cell of `easing`. Dart `null` deletes the key.
-  set easingCell(Opt<String>? cell) {
+  set easingCell(Opt<Curve>? cell) {
     if (cell == null) {
       delete(OptionKey.easing);
     } else {
@@ -4348,7 +4349,7 @@ base class AnimationOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `easing`.
-  set easing(String value) => store(OptionKey.easing, OptValue<String>(value));
+  set easing(Curve value) => store(OptionKey.easing, OptValue<Curve>(value));
 
   Opt<double>? _delay;
 
@@ -4583,7 +4584,7 @@ base class AnimationOptionsScope extends OptionScope {
       case OptionKey.duration:
         _duration = fitCell(cell, classifyNumber);
       case OptionKey.easing:
-        _easing = fitCell(cell, classifyString);
+        _easing = fitCell(cell, classifyCurve);
       case OptionKey.delay:
         _delay = fitCell(cell, classifyNumber);
       case OptionKey.loop:
@@ -4639,7 +4640,7 @@ base class AnimationOptionsScope extends OptionScope {
       case OptionKey.duration:
         return classifyNumber(raw);
       case OptionKey.easing:
-        return classifyString(raw);
+        return classifyCurve(raw);
       case OptionKey.delay:
         return classifyNumber(raw);
       case OptionKey.loop:

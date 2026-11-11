@@ -7,6 +7,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
@@ -35,6 +36,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 import 'precedence_reference.dart'
     as frozen
     show themePrecedencePrototype, themePrecedenceUpstream;
@@ -288,6 +290,7 @@ String _json(Object? value) => switch (value) {
   final num n => jsNumberToString(n),
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
+  Curve() => curveJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -2522,7 +2525,7 @@ int _markerRgb(String label) {
 }
 
 String _referenceLines(String text) => [
-  for (final line in text.split('\n'))
+  for (final line in withCurveMarkers(text).split('\n'))
     if (line.contains(': '))
       line.substring(0, line.indexOf(': ') + 2) +
           referenceColorText(line.substring(line.indexOf(': ') + 2))

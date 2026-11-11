@@ -32,6 +32,8 @@ import 'package:test/test.dart';
 export 'package:chartjs_test_utils/src/color_reference.dart'
     show referenceColor;
 export 'package:chartjs_test_utils/src/color_values.dart' show equalColorValues;
+export 'package:chartjs_test_utils/src/native_easing.dart'
+    show EffectCurve, nativeFixtureEasing;
 
 export 'src/context.dart' show ContextCall, MockContext, createMockContext;
 export 'src/matchers.dart'

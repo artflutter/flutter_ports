@@ -43,12 +43,11 @@ library;
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show color, isPatternOrGradient;
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
-    show effects;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
@@ -246,8 +245,8 @@ class Animation implements types.Animation {
     }
     // DIVERGES(chartjs): adapt-animation-color-cache, one parse of each color.
     if (identical(_fn, _color)) _fn = _ColorInterpolator().call;
-    // `effects` is a mutable object: a user can add or replace an easing.
-    _easing = effects[_cfgEasing(cfg)] ?? effects['linear']!;
+    // DIVERGES(chartjs): adapt-flutter-curves, the curve of the config.
+    _easing = _cfgEasing(cfg);
     _start = (jsDateNow() + jsOrZero(_cfgDelay(cfg))).floorToDouble();
     _duration = _total = jsToNumber(_cfgDuration(cfg)).floorToDouble();
     _loop = jsTruthy(_cfgLoop(cfg));
@@ -285,8 +284,8 @@ class Animation implements types.Animation {
   /// `undefined`.
   Interpolator? _fn;
 
-  /// core.animation.js:36 `_easing`.
-  late double Function(double t) _easing;
+  /// core.animation.js:36 `_easing`: the Flutter curve of `cfg.easing`.
+  late Curve _easing;
 
   /// core.animation.js:37 `_start`.
   double _start = 0;
@@ -356,10 +355,18 @@ class Animation implements types.Animation {
   @internal
   bool get loop => _loop;
 
-  /// core.animation.js:36 `_easing`, the easing function of `effects`. The
+  /// core.animation.js:36 `_easing`, the curve of the animation. The
   /// differential test of the fast paths reads it (Chart.js ADR 0053).
   @internal
-  double Function(double t) get easing => _easing;
+  Curve get easing => _easing;
+
+  /// `this._easing(factor)` (core.animation.js:84): the curve at [factor].
+  ///
+  /// [factor] is in the range 0 to 1, or NaN for a loop with the duration
+  /// 0. `Curve.transform` takes only the range, so NaN stays NaN, as each
+  /// formula of `helpers.easing.ts` gives.
+  double _ease(double factor) =>
+      factor >= 0 ? _easing.transform(factor) : factor;
 
   /// core.animation.js:42 `_from`, the start value.
   @internal
@@ -464,7 +471,7 @@ class Animation implements types.Animation {
 
     factor = (elapsed / duration).remainder(2);
     factor = loop && factor > 1 ? 2 - factor : factor;
-    factor = _easing(jsMin(1, jsMax(0, factor)));
+    factor = _ease(jsMin(1, jsMax(0, factor)));
 
     writeProperty(_target, prop, _fn!(from, to, factor));
   }
@@ -556,7 +563,7 @@ class Animation implements types.Animation {
 
     factor = (elapsed / duration).remainder(2);
     factor = loop && factor > 1 ? 2 - factor : factor;
-    factor = _easing(jsMin(1, jsMax(0, factor)));
+    factor = _ease(jsMin(1, jsMax(0, factor)));
 
     _writeNumber(from + (to - from) * factor);
   }
@@ -605,9 +612,24 @@ Object? _cfgDelay(Object cfg) =>
 Object? _cfgDuration(Object cfg) =>
     cfg is AnimationSpec ? cfg.durationValue : _cfgRead(cfg, 'duration');
 
-/// `cfg.easing` (core.animation.js:36).
-Object? _cfgEasing(Object cfg) =>
-    cfg is AnimationSpec ? cfg.easingValue : _cfgRead(cfg, 'easing');
+/// `effects[cfg.easing] || effects.linear` (core.animation.js:36): the
+/// curve of the config, or the linear curve for an absent key and for a
+/// value that is not a curve.
+///
+/// The value of `easing` is a Flutter [Curve]. An easing name of Chart.js is
+/// not a value of the option: a debug build stops on it.
+// DIVERGES(chartjs): adapt-flutter-curves, a Flutter curve, not a name.
+Curve _cfgEasing(Object cfg) {
+  final value = cfg is AnimationSpec
+      ? cfg.easingValue
+      : _cfgRead(cfg, 'easing');
+  assert(
+    value is! String,
+    'The option easing takes a Flutter Curve, for example '
+    'Curves.easeOutQuart, not the easing name "$value".',
+  );
+  return value is Curve ? value : Curves.linear;
+}
 
 /// `cfg.fn` (core.animation.js:35).
 Object? _cfgFn(Object cfg) =>

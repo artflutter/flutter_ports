@@ -67,7 +67,6 @@ export 'package:flutter_chartjs_port/src/typed/groups.dart'
 export 'package:flutter_chartjs_port/src/typed/values.dart'
     show
         ChartAlign,
-        ChartEasing,
         ChartFill,
         ChartInteractionMode,
         ChartLength,

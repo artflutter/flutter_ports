@@ -6,6 +6,7 @@ library;
 import 'dart:async';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -42,7 +43,8 @@ Map<String, Object?> fixture() {
       'options': <String, Object?>{
         'animation': <String, Object?>{
           'duration': 0,
-          'easing': 'linear',
+          // DIVERGES(chartjs): adapt-flutter-curves, the curve.
+          'easing': Curves.linear,
         },
         'responsive': false,
         'plugins': <String, Object?>{

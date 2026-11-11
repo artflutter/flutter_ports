@@ -7,6 +7,7 @@ import 'dart:ui' as native_ui;
 import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
@@ -145,7 +146,7 @@ Map<String, Object?> _slots(Object? value, [String prefix = '']) {
   if (!_isObject(value) ||
       prefix.endsWith('.font') ||
       prefix.endsWith('Font')) {
-    return {prefix: value};
+    return {prefix: value is Curve ? '$value' : value};
   }
   return {
     for (final key in jsObjectKeys(value))
@@ -166,6 +167,8 @@ Object? _plain(Object? value) => _isObject(value)
     ? <String, Object?>{
         for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
       }
+    : value is Curve
+    ? '$value'
     : value;
 
 /// The value of the dot path [path] in [root].

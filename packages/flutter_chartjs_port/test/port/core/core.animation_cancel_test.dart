@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 import 'animation_reference.dart';
 
 // The behavior of Animation.cancel() that test/specs/core.animation.tests.js
@@ -67,13 +68,14 @@ String _errorName(Object error) =>
 Clock _at(double ms) =>
     Clock.fixed(DateTime.fromMillisecondsSinceEpoch(ms.toInt()));
 
-/// The plain Map form of the cfg of one replay.
-AnyObject _plain(Map<String, Object?> cfg) => cfg;
+/// The plain Map form of the cfg of one replay, with the upstream formula
+/// of its easing name ([exactEasing]).
+AnyObject _plain(Map<String, Object?> cfg) => exactEasing(cfg);
 
 /// [cfg] with a user `fn` that gives the result of the `number`
 /// interpolator. The animation then takes the generic path.
 AnyObject _withFn(Map<String, Object?> cfg) => {
-  ...cfg,
+  ...exactEasing(cfg),
   'fn': (Object? from, Object? to, double factor) =>
       jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor,
 };

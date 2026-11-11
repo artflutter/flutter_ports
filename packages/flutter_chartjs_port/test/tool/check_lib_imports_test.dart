@@ -76,7 +76,7 @@ void main() {
       "import 'dart:js_interop';",
       "import 'package:web/web.dart';",
       "import 'package:collection/algorithms.dart';",
-      "import 'package:flutter/animation.dart';",
+      "import 'package:flutter/physics.dart';",
     ]);
     expect(run(), [
       contains(
@@ -95,7 +95,7 @@ void main() {
         'which is not on the lib/ allowlist',
       ),
       contains(
-        'widget.dart:8: imports package:flutter/animation.dart, '
+        'widget.dart:8: imports package:flutter/physics.dart, '
         'which is not on the lib/ allowlist',
       ),
     ]);

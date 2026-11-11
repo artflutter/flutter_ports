@@ -13,6 +13,7 @@ library;
 
 import 'dart:ui' show Color;
 
+import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
@@ -34,7 +35,7 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart'
-    show ChartAlign, ChartEasing, ChartInteractionMode, ChartPosition;
+    show ChartAlign, ChartInteractionMode, ChartPosition;
 import 'package:meta/meta.dart' show internal;
 
 /// The legend: the options of the legend plugin, `options.plugins.legend`
@@ -716,9 +717,13 @@ final class ChartAnimation with Diagnosticable {
   /// The wait before the animations start: `delay`.
   final Duration? delay;
 
-  /// The easing function of the animations: `easing`. The default is
-  /// [ChartEasing.easeOutQuart].
-  final ChartEasing? easing;
+  /// The curve of the animations: `easing`, a Flutter [Curve]. The default
+  /// is `Curves.easeOutQuart`.
+  ///
+  /// A constant of `Curves` and a `const` curve of the app compare by
+  /// identity. A curve that `build` makes anew at each call is a new value,
+  /// and it gives a chart update, unless its class has `==`.
+  final Curve? easing;
 
   /// Whether the animations repeat without end: `loop`.
   final bool? loop;
@@ -741,7 +746,7 @@ final class ChartAnimation with Diagnosticable {
   ChartAnimation copyWith({
     Duration? duration,
     Duration? delay,
-    ChartEasing? easing,
+    Curve? easing,
     bool? loop,
     ValueChanged<ChartAnimationDetails>? onProgress,
     ValueChanged<ChartAnimationDetails>? onComplete,
@@ -799,7 +804,7 @@ Object lowerAnimation(
   final scope = AnimationOptionsScope();
   put(scope, OptionKey.duration, millisecondsOf(animation.duration));
   put(scope, OptionKey.delay, millisecondsOf(animation.delay));
-  put(scope, OptionKey.easing, animation.easing?.name);
+  put(scope, OptionKey.easing, animation.easing);
   put(scope, OptionKey.loop, animation.loop);
   if (animation.onProgress != null) {
     scope.onProgress = animationTrampoline(

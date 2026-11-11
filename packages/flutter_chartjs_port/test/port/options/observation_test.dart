@@ -10,12 +10,11 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
-    show effects;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -556,14 +555,10 @@ void _observeElement(String label, types.Element element, StringBuffer out) {
     out.writeln('    \$animations ${_canon(keys)}');
     for (final key in keys) {
       final animation = animations[key]! as Animation;
-      final easing = effects.entries
-          .where((e) => identical(e.value, animation.easing))
-          .map((e) => e.key)
-          .firstOrNull;
       out.writeln(
         '      $key from ${_canon(animation.from)} to ${_canon(animation.to)} '
         'duration ${_canon(animation.duration)} start ${_canon(animation.start)} '
-        'loop ${animation.loop} easing ${easing ?? '<other>'} '
+        'loop ${animation.loop} easing ${animation.easing} '
         'active ${animation.active()}',
       );
     }
@@ -1331,7 +1326,7 @@ final List<_Case> _focusedCases = [
             'type': 'number',
             'from': 0.0,
             'duration': 300.0,
-            'easing': 'easeOutBounce',
+            'easing': Curves.bounceOut,
           },
           'colors': <String, Object?>{
             'duration': (Object? ctx) => 50 + _index(ctx),

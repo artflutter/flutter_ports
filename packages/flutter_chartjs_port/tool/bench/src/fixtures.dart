@@ -10,6 +10,7 @@
 /// `defaults.elements.bar`, `defaults` and `descriptors`.
 library;
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -125,7 +126,10 @@ AnyObject barChartOptions() => <String, Object?>{
       'padding': <String, Object?>{'top': 6.0, 'bottom': 6.0},
     },
   },
-  'animation': <String, Object?>{'duration': 400.0, 'easing': 'easeOutQuart'},
+  'animation': <String, Object?>{
+    'duration': 400.0,
+    'easing': Curves.easeOutQuart,
+  },
 };
 
 /// A bar chart config with three datasets of 100 points, scales and

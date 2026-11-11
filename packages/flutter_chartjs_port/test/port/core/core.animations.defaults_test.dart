@@ -1,7 +1,9 @@
 // Original code, not ported from Chart.js: core.animations.defaults tests.
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
@@ -27,7 +29,7 @@ void main() {
     test('sets and describes the animation defaults', () {
       const setAnimation =
           '["set","animation",{"delay":"<undefined>","duration":1000,'
-          '"easing":"easeOutQuart","fn":"<undefined>","from":"<undefined>",'
+          '"easing":"<curve>","fn":"<undefined>","from":"<undefined>",'
           '"loop":"<undefined>","to":"<undefined>","type":"<undefined>"}]';
       const describeAnimation =
           '["describe","animation",{"_fallback":false,"_indexable":false,'
@@ -43,7 +45,7 @@ void main() {
           '"show":{"animations":{"colors":{"from":"transparent"},'
           '"visible":{"type":"boolean","duration":0}}},'
           '"hide":{"animations":{"colors":{"to":"transparent"},'
-          '"visible":{"type":"boolean","easing":"linear","fn":"<fn>"}}}}]';
+          '"visible":{"type":"boolean","easing":"<curve>","fn":"<fn>"}}}}]';
       expect(defaults.calls.map(probeJson), [
         setAnimation,
         describeAnimation,
@@ -51,6 +53,13 @@ void main() {
         '["describe","animations",{"_fallback":"animation"}]',
         setTransitions.replaceAll('"transparent"', '[0,0,0,0]'),
       ]);
+    });
+
+    test('the easing defaults are Flutter curves', () {
+      // core.animations.defaults.js:8 and :66 (row adapt-flutter-curves).
+      expect(values(0)['easing'], same(Curves.easeOutQuart));
+      final hide = jsGet(jsGet(values(4), 'hide'), 'animations');
+      expect(jsGet(jsGet(hide, 'visible'), 'easing'), same(Curves.linear));
     });
 
     test('stores undefined as own keys of animation', () {

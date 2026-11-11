@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -32,6 +31,7 @@ import 'package:flutter_test/flutter_test.dart';
 // each case (`setUpDefaultsRestore`).
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 import '../controllers/controller_chart_harness.dart' show ReferenceEvent;
 import '../scales/scale_chart_harness.dart'
     show copyReference, referenceMatcher, testReferenceOrigin;
@@ -84,14 +84,6 @@ Map<String, Object?>? _optionsOf(Object? o) {
   };
 }
 
-/// The name of [easing] in `effects` (`easingName` of the generator).
-String _easingName(double Function(double t) easing) {
-  for (final MapEntry(:key, :value) in effects.entries) {
-    if (identical(value, easing)) return key;
-  }
-  throw StateError('An easing function that is not an effect.');
-}
-
 /// `animationsOf` of the generator.
 Object? _animationsOf(Object? anims) {
   if (anims == null || identical(anims, undefined)) return 'none';
@@ -105,7 +97,8 @@ Object? _animationsOf(Object? anims) {
           'duration': a.duration,
           'start': a.start,
           'loop': a.loop,
-          'easing': _easingName(a.easing),
+          // Upstream gives an easing name here: no compare.
+          'easing': curveMarker,
         },
       },
   };
@@ -270,7 +263,11 @@ Object? _readPath(Object? root, String path) {
 /// Expects [actual] to equal [expected], with the key order of each Map and
 /// the number rules of [referenceMatcher]. [path] names the place in the
 /// reason of a failure.
-void _expectSame(Object? actual, Object? expected, String path) {
+void _expectSame(Object? actual, Object? expected, String path) =>
+    _expectSameData(actual, withCurveMarkersIn(expected), path);
+
+/// [_expectSame] for expected data with the curve markers.
+void _expectSameData(Object? actual, Object? expected, String path) {
   switch (expected) {
     case final Map<String, Object?> map:
       expect(actual, isA<Map<String, Object?>>(), reason: path);
@@ -281,14 +278,14 @@ void _expectSame(Object? actual, Object? expected, String path) {
         reason: '$path: the keys in order',
       );
       for (final MapEntry(:key, :value) in map.entries) {
-        _expectSame(actualMap[key], value, '$path.$key');
+        _expectSameData(actualMap[key], value, '$path.$key');
       }
     case final List<Object?> list:
       expect(actual, isA<List<Object?>>(), reason: path);
       final actualList = actual! as List<Object?>;
       expect(actualList.length, list.length, reason: '$path: the length');
       for (var i = 0; i < list.length; i++) {
-        _expectSame(actualList[i], list[i], '$path[$i]');
+        _expectSameData(actualList[i], list[i], '$path[$i]');
       }
     default:
       expect(actual, referenceMatcher(expected), reason: path);

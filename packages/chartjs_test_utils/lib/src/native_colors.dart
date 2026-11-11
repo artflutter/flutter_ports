@@ -11,6 +11,7 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/src/color_reference.dart';
+import 'package:chartjs_test_utils/src/native_easing.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 
 final _callbacks = Expando<Object>('fixture native color callback');
@@ -26,7 +27,8 @@ bool _isColor(String key) =>
     key == r'$borderColors' ||
     key == r'$backgroundColors';
 
-/// Migrates color options, leaving data, labels and ordinary text intact.
+/// Migrates color options, and an upstream easing name to its curve,
+/// leaving data, labels and ordinary text intact.
 void nativeFixtureColors(Object? config) {
   final seen = Set<Object>.identity();
   Object? color(Object? value) {
@@ -81,6 +83,9 @@ void nativeFixtureColors(Object? config) {
       if (dataset && (key == 'data' || key == 'label')) continue;
       if (_isColor(key)) {
         value[key] = color(value[key]);
+      } else if (key == 'easing') {
+        // The option takes a Flutter curve, not an upstream easing name.
+        value[key] = nativeFixtureEasing(value[key]);
       } else {
         walk(value[key]);
       }

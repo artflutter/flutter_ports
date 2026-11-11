@@ -144,7 +144,6 @@ ChartConfig
 ChartConfiguration
 ChartConstant
 ChartContext
-ChartEasing
 ChartElements
 ChartEvent
 ChartEventDetails

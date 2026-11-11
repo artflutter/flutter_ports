@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
@@ -48,6 +50,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
+  Curve() => curveJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -105,7 +108,7 @@ List<String> _path(String dotPath) => dotPath.split('.');
 /// The three `transitions` leaves that the compiler adds (theming.md §3.8).
 const Map<String, Object?> _transitionLeaves = {
   'transitions.theme.animation.duration': 200.0,
-  'transitions.theme.animation.easing': 'linear',
+  'transitions.theme.animation.easing': Curves.linear,
   'transitions.themeFrame.animation.duration': 0.0,
 };
 
@@ -2459,18 +2462,21 @@ void main() {
 
       final theme = compileChartTheme(ChartThemes.light);
       expect(animation(theme, 'theme', 'animation.duration'), 200.0);
-      expect(animation(theme, 'theme', 'animation.easing'), 'linear');
+      expect(animation(theme, 'theme', 'animation.easing'), Curves.linear);
       expect(animation(theme, 'themeFrame', 'animation.duration'), 0.0);
       expect(
         animation(theme, 'themeFrame', 'animation.easing'),
-        'easeOutQuart',
+        Curves.easeOutQuart,
       );
       // The other modes keep the upstream values.
       expect(animation(theme, 'active', 'animation.duration'), 400.0);
       expect(animation(theme, 'default', 'animation.duration'), 1000.0);
       // No theme: the upstream defaults (core.animations.defaults.js:4-5).
       expect(animation(null, 'theme', 'animation.duration'), 1000.0);
-      expect(animation(null, 'theme', 'animation.easing'), 'easeOutQuart');
+      expect(
+        animation(null, 'theme', 'animation.easing'),
+        Curves.easeOutQuart,
+      );
     });
   });
 

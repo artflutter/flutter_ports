@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/easing_json.dart';
 import 'animation_reference.dart';
 
 // The behavior of Chart.js ADR 0019 that test/specs/core.animation.tests.js
@@ -78,14 +79,15 @@ Matcher _isValue(Object? expected) => predicate<Object?>(
 String _errorName(Object error) =>
     error is TypeError ? 'TypeError' : error.runtimeType.toString();
 
-/// The plain Map form of the cfg of one replay.
-Object _plain(Map<String, Object?> cfg) => cfg;
+/// The plain Map form of the cfg of one replay, with the upstream formula
+/// of its easing name ([exactEasing]).
+Object _plain(Map<String, Object?> cfg) => exactEasing(cfg);
 
 /// An [AnimationSpec] with the entries of [cfg], in its key order, written
 /// through its face.
 Object _spec(Map<String, Object?> cfg) {
   final spec = AnimationSpec();
-  for (final MapEntry(:key, :value) in cfg.entries) {
+  for (final MapEntry(:key, :value) in exactEasing(cfg).entries) {
     spec[key] = value;
   }
   return spec;
@@ -94,7 +96,7 @@ Object _spec(Map<String, Object?> cfg) {
 /// [cfg] with a user `fn` that gives the result of the `number`
 /// interpolator. The animation then takes the generic path.
 AnyObject _withFn(Map<String, Object?> cfg) => {
-  ...cfg,
+  ...exactEasing(cfg),
   'fn': (Object? from, Object? to, double factor) =>
       jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor,
 };

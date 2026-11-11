@@ -56,11 +56,17 @@ const Set<String> pureDartLibraries = {
 const Set<String> purePackageLibraries = {
   collectionLibrary,
   'package:clock/clock.dart',
+  animationLibrary,
   'package:meta/meta.dart',
   'package:intl/intl.dart',
   'package:intl/number_symbols.dart',
   'package:intl/number_symbols_data.dart',
 };
+
+/// The Flutter library of the curve classes. A core layer imports it for
+/// the value of the option `easing`, a Flutter `Curve`, and for no other
+/// framework API.
+const String animationLibrary = 'package:flutter/animation.dart';
 
 /// The library of `package:collection` that `lib/` can import.
 const String collectionLibrary = 'package:collection/collection.dart';
@@ -185,9 +191,12 @@ const List<String> pureRootExceptions = [
 
 /// The test libraries that a test without `@TestOn('vm')` can import, in
 /// addition to [pureDartLibraries]. An entry that ends with `/` is a prefix.
+/// [animationLibrary] gives the curve classes of the option `easing`: the
+/// web legs run through Flutter.
 const Set<String> webTestLibraries = {
   'package:test/',
   'package:chartjs_test_utils/pure.dart',
+  animationLibrary,
 };
 
 /// The directory that ported files never import.
@@ -217,6 +226,7 @@ const String typedDirectory = 'lib/src/typed/';
 /// 0052, section 8).
 const Set<String> typedLibraries = {
   'dart:ui',
+  animationLibrary,
   'package:flutter/foundation.dart',
   'package:flutter/painting.dart',
   'package:meta/meta.dart',
