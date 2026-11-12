@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -1498,7 +1499,7 @@ void main() {
           'type': 'bar',
           'data': barData,
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'x': <String, Object?>{'stacked': true},
               'y': <String, Object?>{'stacked': true},
@@ -1543,7 +1544,7 @@ void main() {
           'type': 'bar',
           'data': barData,
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'x': <String, Object?>{'min': 20},
             },
@@ -1578,7 +1579,7 @@ void main() {
           'type': 'bar',
           'data': barData,
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'x': <String, Object?>{'min': 0, 'max': 3000},
             },
@@ -1612,7 +1613,7 @@ void main() {
           'type': 'bar',
           'data': barData,
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'x': <String, Object?>{'min': -3000, 'max': 0},
             },
@@ -1636,7 +1637,7 @@ void main() {
             ],
           },
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'linear'},
             },

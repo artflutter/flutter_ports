@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
@@ -73,7 +74,7 @@ Map<String, Object?> _scaleValues() => {
   'suggestedMax': undefined,
   'beforeUpdate': (Object? scale) => null,
   'afterFit': (Object? scale) => null,
-  'axis': 'y',
+  'axis': const YAxis(),
   'position': ChartPosition.left,
   'offset': true,
   'bounds': ScaleBounds.ticks,

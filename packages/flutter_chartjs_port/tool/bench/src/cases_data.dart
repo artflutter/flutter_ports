@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
@@ -196,7 +197,13 @@ BenchCase _curve(int count, String mode) => BenchCase(
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        updateBezierControlPoints(points, options, area, false, 'x');
+        updateBezierControlPoints(
+          points,
+          options,
+          area,
+          false,
+          const XAxis(),
+        );
         acc += points[count ~/ 2].cp1x.toInt();
       }
       return acc;

@@ -39,9 +39,12 @@ import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/axis_json.dart';
 
 import 'controller_reference.dart';
 import 'registry_observe.dart';
@@ -526,7 +529,9 @@ void main() {
         ..observe(
           'meta',
           '${meta.type} ${_n(meta.index)} ${_n(meta.order)} ${meta.label} '
-              '${meta.visible} ${meta.indexAxis} ${meta.xAxisID} '
+              '${meta.visible} '
+              '${meta.indexAxis is ScaleAxis ? axisMarker : meta.indexAxis} '
+              '${meta.xAxisID} '
               '${meta.yAxisID}',
         )
         ..observe(
@@ -1114,7 +1119,7 @@ void main() {
             'type': 'testlinear',
             'position': ChartPosition.bottom,
           },
-          'x2': <String, Object?>{'type': 'testlinear', 'axis': 'x'},
+          'x2': <String, Object?>{'type': 'testlinear', 'axis': const XAxis()},
         },
         'layout': <String, Object?>{'padding': 10},
       };
@@ -1256,7 +1261,7 @@ void main() {
           'scales': <String, Object?>{
             '1': <String, Object?>{
               'type': 'category',
-              'axis': 'x',
+              'axis': const XAxis(),
               'position': ChartPosition.top,
             },
           },

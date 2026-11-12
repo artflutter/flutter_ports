@@ -6,7 +6,7 @@ import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Scale, undefined;
+import 'package:flutter_chartjs_port/chartjs.dart' show Scale, XAxis, undefined;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsToString;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,7 +60,7 @@ Scale createCategoryScale({
   );
   final scale = chart.scales['x']!;
   expect(scale.id, 'x');
-  expect(scale.axis, 'x');
+  expect(scale.axis, isA<XAxis>());
   expect(scale.type, 'category');
   expect(scale.min, min);
   expect(scale.max, max);

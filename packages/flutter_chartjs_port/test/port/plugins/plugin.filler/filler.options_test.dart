@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary, RelativeFill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -55,7 +56,7 @@ List<FillerSource?> _sources(List<Object> fills, List<bool> visible) => [
       index: i.toDouble(),
       fill: fills[i],
       chart: _Chart(),
-      axis: 'x',
+      axis: const XAxis(),
       scale: null,
       line: LineElement(),
     ),

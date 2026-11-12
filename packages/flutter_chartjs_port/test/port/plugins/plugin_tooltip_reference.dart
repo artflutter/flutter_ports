@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -115,7 +116,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -144,7 +145,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -180,7 +181,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -391,7 +392,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -602,7 +603,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -884,7 +885,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -913,7 +914,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -949,7 +950,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1163,7 +1164,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1377,7 +1378,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2460,7 +2461,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -2489,7 +2490,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -2525,7 +2526,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -2736,7 +2737,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -2947,7 +2948,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -3229,7 +3230,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -3258,7 +3259,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -3294,7 +3295,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3508,7 +3509,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3722,7 +3723,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4729,7 +4730,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -4758,7 +4759,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -4794,7 +4795,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -5005,7 +5006,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -5216,7 +5217,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -5498,7 +5499,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -5527,7 +5528,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -5563,7 +5564,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5777,7 +5778,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5991,7 +5992,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -6998,7 +6999,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -7027,7 +7028,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -7063,7 +7064,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7274,7 +7275,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7485,7 +7486,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7767,7 +7768,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -7796,7 +7797,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -7832,7 +7833,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8046,7 +8047,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8260,7 +8261,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -9381,7 +9382,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -9410,7 +9411,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -9446,7 +9447,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9657,7 +9658,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9868,7 +9869,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10150,7 +10151,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -10179,7 +10180,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -10215,7 +10216,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -10429,7 +10430,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -10643,7 +10644,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -11726,7 +11727,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -11755,7 +11756,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -11791,7 +11792,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12002,7 +12003,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12213,7 +12214,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12495,7 +12496,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -12524,7 +12525,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -12560,7 +12561,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -12774,7 +12775,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -12988,7 +12989,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -13996,7 +13997,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -14025,7 +14026,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -14061,7 +14062,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14272,7 +14273,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14483,7 +14484,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14765,7 +14766,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -14794,7 +14795,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -14830,7 +14831,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -15044,7 +15045,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -15258,7 +15259,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -16342,7 +16343,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -16371,7 +16372,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -16407,7 +16408,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16618,7 +16619,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16829,7 +16830,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17111,7 +17112,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -17140,7 +17141,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -17176,7 +17177,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -17390,7 +17391,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -17604,7 +17605,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -18700,7 +18701,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -18729,7 +18730,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -18765,7 +18766,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18976,7 +18977,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19187,7 +19188,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19469,7 +19470,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -19498,7 +19499,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -19534,7 +19535,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -19748,7 +19749,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -19962,7 +19963,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -21063,7 +21064,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -21092,7 +21093,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -21128,7 +21129,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21339,7 +21340,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21550,7 +21551,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21832,7 +21833,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -21861,7 +21862,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -21897,7 +21898,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -22111,7 +22112,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -22325,7 +22326,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -23332,7 +23333,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -23361,7 +23362,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -23397,7 +23398,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23608,7 +23609,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23819,7 +23820,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24101,7 +24102,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -24130,7 +24131,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -24166,7 +24167,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -24380,7 +24381,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -24594,7 +24595,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -25677,7 +25678,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -25706,7 +25707,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -25742,7 +25743,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25953,7 +25954,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26164,7 +26165,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26446,7 +26447,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -26475,7 +26476,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -26511,7 +26512,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26725,7 +26726,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26939,7 +26940,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -28028,7 +28029,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -28062,7 +28063,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -28102,7 +28103,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28313,7 +28314,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28527,7 +28528,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28799,7 +28800,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -28833,7 +28834,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -28873,7 +28874,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -29087,7 +29088,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -29304,7 +29305,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -30240,7 +30241,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -30274,7 +30275,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -30314,7 +30315,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30525,7 +30526,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30739,7 +30740,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31011,7 +31012,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -31045,7 +31046,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -31085,7 +31086,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -31299,7 +31300,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -31516,7 +31517,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -32451,7 +32452,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -32480,7 +32481,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -32516,7 +32517,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32727,7 +32728,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32938,7 +32939,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -33220,7 +33221,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -33249,7 +33250,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -33285,7 +33286,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -33499,7 +33500,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -33713,7 +33714,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -34801,7 +34802,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -34830,7 +34831,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -34866,7 +34867,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35077,7 +35078,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35288,7 +35289,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35570,7 +35571,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -35599,7 +35600,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -35635,7 +35636,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -35849,7 +35850,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -36063,7 +36064,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -37150,7 +37151,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -37179,7 +37180,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -37215,7 +37216,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -37426,7 +37427,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -37637,7 +37638,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -37919,7 +37920,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -37948,7 +37949,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -37984,7 +37985,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -38198,7 +38199,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -38412,7 +38413,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -39471,7 +39472,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -39500,7 +39501,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -39536,7 +39537,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39747,7 +39748,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39958,7 +39959,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -40240,7 +40241,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -40269,7 +40270,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -40305,7 +40306,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -40519,7 +40520,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -40733,7 +40734,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -41848,7 +41849,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -41877,7 +41878,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -41913,7 +41914,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42124,7 +42125,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42335,7 +42336,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42617,7 +42618,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -42646,7 +42647,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -42682,7 +42683,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -42896,7 +42897,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -43110,7 +43111,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -44194,7 +44195,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -44223,7 +44224,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -44259,7 +44260,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -44470,7 +44471,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -44681,7 +44682,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -44963,7 +44964,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -44992,7 +44993,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -45028,7 +45029,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -45242,7 +45243,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -45456,7 +45457,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -46503,7 +46504,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -46532,7 +46533,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -46568,7 +46569,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -46779,7 +46780,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -46990,7 +46991,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -47272,7 +47273,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -47301,7 +47302,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -47337,7 +47338,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -47551,7 +47552,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -47765,7 +47766,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -48852,7 +48853,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -48881,7 +48882,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -48917,7 +48918,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -49128,7 +49129,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -49339,7 +49340,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -49621,7 +49622,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -49650,7 +49651,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -49686,7 +49687,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -49900,7 +49901,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -50114,7 +50115,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -51203,7 +51204,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -51232,7 +51233,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -51268,7 +51269,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -51479,7 +51480,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -51690,7 +51691,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -51972,7 +51973,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -52001,7 +52002,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -52037,7 +52038,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -52251,7 +52252,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -52465,7 +52466,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -52830,7 +52831,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -52859,7 +52860,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -52895,7 +52896,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53109,7 +53110,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53323,7 +53324,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53698,7 +53699,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -53727,7 +53728,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -53763,7 +53764,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53977,7 +53978,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -54191,7 +54192,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -55203,7 +55204,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -55232,7 +55233,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -55268,7 +55269,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -55479,7 +55480,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -55690,7 +55691,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -55972,7 +55973,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -56001,7 +56002,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -56037,7 +56038,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -56251,7 +56252,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -56465,7 +56466,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -57404,7 +57405,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -57433,7 +57434,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -57469,7 +57470,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -57680,7 +57681,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -57891,7 +57892,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -58173,7 +58174,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -58202,7 +58203,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -58238,7 +58239,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -58452,7 +58453,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -58666,7 +58667,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -58979,7 +58980,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -59008,7 +59009,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -59044,7 +59045,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -59258,7 +59259,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -59472,7 +59473,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -60432,7 +60433,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -60465,7 +60466,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
@@ -60503,7 +60504,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -60677,7 +60678,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -60854,7 +60855,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -61107,7 +61108,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -61140,7 +61141,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 40.0,
@@ -61178,7 +61179,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -61352,7 +61353,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -61529,7 +61530,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -62513,7 +62514,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -62542,7 +62543,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -62578,7 +62579,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -62789,7 +62790,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -63000,7 +63001,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -63282,7 +63283,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -63311,7 +63312,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -63347,7 +63348,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -63561,7 +63562,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -63775,7 +63776,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -64057,7 +64058,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -64086,7 +64087,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -64122,7 +64123,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -64336,7 +64337,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -64550,7 +64551,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,

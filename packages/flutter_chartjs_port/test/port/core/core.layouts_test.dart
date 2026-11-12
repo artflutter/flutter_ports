@@ -3,6 +3,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -75,7 +76,7 @@ class _Box implements LayoutItem {
   final Map<String, Object?>? options;
 
   @override
-  final String? axis;
+  final ScaleAxis? axis;
 
   @override
   List<LayoutLayer> Function()? layers;

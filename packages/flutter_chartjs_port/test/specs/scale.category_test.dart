@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -625,7 +626,7 @@ void main() {
             'labels': <Object?>[0, 1, 2, 3],
           },
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',

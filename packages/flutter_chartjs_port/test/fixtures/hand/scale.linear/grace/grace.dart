@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -25,7 +26,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       ],
     },
     'options': <String, Object?>{
-      'indexAxis': 'y',
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      'indexAxis': const YAxis(),
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'display': false,

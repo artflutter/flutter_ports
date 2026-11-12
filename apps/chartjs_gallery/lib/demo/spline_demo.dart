@@ -125,7 +125,7 @@ class _SplineDemoState extends State<SplineDemo> {
       },
       area,
       false,
-      'x',
+      const XAxis(),
     );
     return points;
   }

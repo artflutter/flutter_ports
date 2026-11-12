@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show Scale, TimeUnit, undefined;
+    show RAxis, Scale, TimeUnit, XAxis, YAxis, undefined;
 import 'package:flutter_chartjs_port/helpers.dart'
     show almostEquals, isNullOrUndef, isNumber, log10, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
@@ -124,9 +124,18 @@ ScaleLimits _getScaleLimits(Scale scale, LimitOptions? limits) {
       ? undefined
       : limits[scale.id].raw;
   if (jsTruthy(byId)) return ScaleLimits(byId);
-  final byAxis = limits == null || limits.isNullish
+  // `limits[scale.axis]`: the key of the axis class of the host (row
+  // `adapt-axis-classes`).
+  final axisKey = switch (scale.axis) {
+    XAxis() => 'x',
+    YAxis() => 'y',
+    RAxis() => 'r',
+    _ => null,
+  };
+  // DIVERGES(zoom): adapt-axis-classes, the key of the axis class.
+  final byAxis = limits == null || limits.isNullish || axisKey == null
       ? undefined
-      : limits[scale.axis].raw;
+      : limits[axisKey].raw;
   if (jsTruthy(byAxis)) return ScaleLimits(byAxis);
   return const ScaleLimits(emptyObject);
 }

@@ -16,13 +16,14 @@ library;
 
 import 'dart:collection';
 
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show capitalize;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
@@ -77,14 +78,16 @@ import 'package:meta/meta.dart';
 ///   for `'y'`, else [undefined].
 ///
 /// A parsed item of the typed model ([ParsedItem], Chart.js ADR 0054 §8)
-/// gives its typed axis value. [jsGet] reads every other entry that is not
-/// an [Element]: an item of the user data (`parsing: false`). An [Element]
-/// is a Dart object, not a Map, so it has its own branch. A key of these tables
-/// is never `length` or an array index. Thus any other entry gives
-/// [undefined]. `null` and [undefined] throw a [TypeError], as JavaScript
-/// does.
+/// reads by name through its face. [jsGet] reads every other entry that is
+/// not an [Element]: an item of the user data (`parsing: false`). An
+/// [Element] is a Dart object, not a Map, so it has its own branch. A key of
+/// these tables is never `length` or an array index. Thus any other entry
+/// gives [undefined]. `null` and [undefined] throw a [TypeError], as
+/// JavaScript does.
+///
+/// The tables of an axis read by the axis class: [_readAxis].
 Object? _readKey(Object? entry, String key) {
-  if (entry is ParsedItem) return entry.valueOf(AxisKey.of(key), key);
+  if (entry is ParsedItem) return entry.jsRead(key);
   if (entry is Element) {
     return switch (key) {
       'x' => entry.x,
@@ -94,6 +97,43 @@ Object? _readKey(Object? entry, String key) {
   }
   return jsGet(entry, key);
 }
+
+/// The JavaScript read `table[index][axis]` of [lookupByAxis] and
+/// [rlookupByAxis] (row `adapt-axis-objects`): the typed field of a
+/// [ParsedItem], [Element.x] or [Element.y] of an element, else the read of
+/// the key of the axis ([axisDataKey]) of an item of the user data, as
+/// [_readKey] does. An axis of another class gives [undefined].
+Object? _readAxis(Object? entry, ScaleAxis axis) {
+  if (entry is ParsedItem) return entry.valueOf(axis);
+  if (entry is Element) {
+    return switch (axis) {
+      XAxis() => entry.x,
+      YAxis() => entry.y,
+      _ => undefined,
+    };
+  }
+  final key = axisDataKey(axis);
+  return key == null ? undefined : jsGet(entry, key);
+}
+
+/// The binary search of [lookupByKey] and [lookupByAxis] with the read
+/// [read] of an entry.
+({int lo, int hi}) _lookupBy(
+  List<Object?> table,
+  Object? Function(Object? entry) read,
+  double value,
+  bool last,
+) => lookup(
+  table,
+  value,
+  last
+      ? (index) {
+          final ti = read(table[index]);
+          return jsToNumber(ti) < value ||
+              ti == value && read(table[index + 1]) == value;
+        }
+      : (index) => jsToNumber(read(table[index])) < value,
+);
 
 /// helpers.collection.ts:50 `_lookupByKey`.
 ///
@@ -112,17 +152,18 @@ Object? _readKey(Object? entry, String key) {
   String key,
   double value, [
   bool last = false,
-]) => lookup(
-  table,
-  value,
-  last
-      ? (index) {
-          final ti = _readKey(table[index], key);
-          return jsToNumber(ti) < value ||
-              ti == value && _readKey(table[index + 1], key) == value;
-        }
-      : (index) => jsToNumber(_readKey(table[index], key)) < value,
-);
+]) => _lookupBy(table, (entry) => _readKey(entry, key), value, last);
+
+/// helpers.collection.ts:50 `_lookupByKey` for a table of an axis: the key
+/// of upstream is the axis of a scale (`iScale.axis`), and the port reads
+/// each entry by the axis class ([_readAxis], row `adapt-axis-objects`).
+// DIVERGES(chartjs): adapt-axis-objects, the search by an axis class.
+({int lo, int hi}) lookupByAxis(
+  List<Object?> table,
+  ScaleAxis axis,
+  double value, [
+  bool last = false,
+]) => _lookupBy(table, (entry) => _readAxis(entry, axis), value, last);
 
 /// helpers.collection.ts:70 `_rlookupByKey`.
 ///
@@ -139,6 +180,19 @@ Object? _readKey(Object? entry, String key) {
   table,
   value,
   (index) => jsToNumber(_readKey(table[index], key)) >= value,
+);
+
+/// helpers.collection.ts:70 `_rlookupByKey` for a table of an axis, as
+/// [lookupByAxis] (row `adapt-axis-objects`).
+// DIVERGES(chartjs): adapt-axis-objects, the search by an axis class.
+({int lo, int hi}) rlookupByAxis(
+  List<Object?> table,
+  ScaleAxis axis,
+  double value,
+) => lookup(
+  table,
+  value,
+  (index) => jsToNumber(_readAxis(table[index], axis)) >= value,
 );
 
 /// helpers.collection.ts:84 `_filterBetween`.

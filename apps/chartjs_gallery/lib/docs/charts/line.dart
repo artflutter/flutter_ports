@@ -2,6 +2,8 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show YAxis;
+
 /// The line chart of `docs/charts/line.md:5-31`.
 ///
 /// The labels are the strings of `Utils.months({count: 7})`
@@ -50,7 +52,7 @@ Map<String, Object?> lineVerticalConfig() => <String, Object?>{
     ],
     'datasets': <Object?>[
       <String, Object?>{
-        'axis': 'y',
+        'axis': const YAxis(),
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
         'fill': false,
@@ -77,7 +79,7 @@ Map<String, Object?> lineVerticalConfig() => <String, Object?>{
     ],
   },
   'options': <String, Object?>{
-    'indexAxis': 'y',
+    'indexAxis': const YAxis(),
     'scales': <String, Object?>{
       'x': <String, Object?>{'beginAtZero': true},
     },

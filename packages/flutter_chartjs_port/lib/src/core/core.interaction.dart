@@ -33,11 +33,12 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show isPointInArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show lookupByKey, rlookupByKey;
+    show lookupByAxis, rlookupByAxis;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -49,12 +50,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSquare;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -148,17 +150,19 @@ double? _positionValue(Point position, InteractionAxis axis) => switch (axis) {
   InteractionAxis.xy || InteractionAxis.r => null,
 };
 
-/// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:503):
-/// the typed axis value of a [ParsedItem] (Chart.js ADR 0054 §8), the Map
-/// read for a Map, else [jsGet]: an item of the user data with `parsing:
-/// false`. The Map read gives Dart `null` for an absent key, where
-/// JavaScript gives `undefined`. `isNullOrUndef` gives the same result for
-/// both.
-Object? _parsedValue(Object? point, String key) => switch (point) {
-  final ParsedItem item => item.valueOf(AxisKey.of(key), key),
-  final Map<dynamic, dynamic> map => map[key],
-  _ => jsGet(point, key),
-};
+/// The JS read `point[axis]` of a parsed item (`unknown[]`, index.d.ts:503):
+/// the typed axis value of a [ParsedItem] (Chart.js ADR 0054 §8), else the
+/// read of the key of the axis ([axisDataKey]): the Map read for a Map, else
+/// [jsGet], an item of the user data with `parsing: false`. The Map read
+/// gives Dart `null` for an absent key, where JavaScript gives `undefined`.
+/// `isNullOrUndef` gives the same result for both. An axis of another class
+/// gives [undefined].
+Object? _parsedValue(Object? point, ScaleAxis axis) {
+  if (point is ParsedItem) return point.valueOf(axis);
+  final key = axisDataKey(axis);
+  if (key == null) return undefined;
+  return point is Map<dynamic, dynamic> ? point[key] : jsGet(point, key);
+}
 
 /// `element.skip` of core.interaction.js:85 and :188: the typed `skip` of a
 /// point element (Chart.js ADR 0054 §9), else the read by name of the
@@ -202,16 +206,16 @@ bool _skipped(Element element) => jsTruthy(switch (element) {
             : null
       : null;
 
-  // `axis === iScale.axis`: the name of an axis value is the axis text of a
-  // scale (`x`, `y`, `r`).
-  if (iScale != null &&
-      axis.name == iScale.axis &&
-      axis != InteractionAxis.r &&
-      sorted &&
-      data.isNotEmpty) {
-    // The key of the parsed items: the axis text of the index scale.
+  // `axis === iScale.axis && axis !== 'r'`: the interaction axis x with a
+  // scale of the axis x, or y with y.
+  final sameAxis = switch ((axis, iScale?.axis)) {
+    (InteractionAxis.x, XAxis()) || (InteractionAxis.y, YAxis()) => true,
+    _ => false,
+  };
+  if (iScale != null && sameAxis && sorted && data.isNotEmpty) {
+    // The key of the parsed items: the axis of the index scale.
     final key = iScale.axis;
-    final lookupMethod = iScale.reversePixels ? rlookupByKey : lookupByKey;
+    final lookupMethod = iScale.reversePixels ? rlookupByAxis : lookupByAxis;
     if (intersect != true) {
       final result = lookupMethod(data, key, value ?? 0);
       var lo = result.lo;

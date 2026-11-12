@@ -57,6 +57,9 @@ const Map<String, int> shapeAtoms = {
   'fillTarget': 3328,
   'radiusLength': 3456,
   'graceLength': 3584,
+  'scaleAxis': 3712,
+  'cartesianAxis': 3840,
+  'radialAxis': 3968,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -193,6 +196,21 @@ const Map<String, TypedAtom> typedAtoms = {
   'graceLength': (
     type: 'GraceLength',
     uri: 'package:flutter_chartjs_port/src/helpers/grace_length.dart',
+    field: null,
+  ),
+  'scaleAxis': (
+    type: 'ScaleAxis',
+    uri: 'package:flutter_chartjs_port/src/types/chart_axis.dart',
+    field: null,
+  ),
+  'cartesianAxis': (
+    type: 'CartesianAxis',
+    uri: 'package:flutter_chartjs_port/src/types/chart_axis.dart',
+    field: null,
+  ),
+  'radialAxis': (
+    type: 'RAxis',
+    uri: 'package:flutter_chartjs_port/src/types/chart_axis.dart',
     field: null,
   ),
 };

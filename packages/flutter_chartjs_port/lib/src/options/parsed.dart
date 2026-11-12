@@ -3,7 +3,8 @@
 /// The typed parsed data of Chart.js ADR 0054 §8: [ParsedItem], its
 /// `_stacks` ([ItemStacks]), the stack objects of `getOrCreateStack`
 /// ([StackEntry], [IndexValues]), the `_custom` of a floating bar
-/// ([FloatingBar]) and the axis key of the hot read ([AxisKey]).
+/// ([FloatingBar]). The axis of the hot read is a [ScaleAxis]: each read
+/// takes the field of its axis by pattern matching.
 ///
 /// The types replace the plain objects of the parse functions of
 /// `core.datasetController.js` and the controllers (lane L1). Each one is a
@@ -21,31 +22,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
-
-/// The key of an axis of a parsed item: the hot read
-/// [ParsedItem.valueOf]. A scale keeps the key of its `axis`. A user axis
-/// name (U `core.config.js:40-53`) is [other], with its name.
-enum AxisKey {
-  /// `x`.
-  x,
-
-  /// `y`.
-  y,
-
-  /// `r`.
-  r,
-
-  /// Another axis name: the read goes by name.
-  other;
-
-  /// The key of the axis name [axis].
-  static AxisKey of(String axis) => switch (axis) {
-    'x' => x,
-    'y' => y,
-    'r' => r,
-    _ => other,
-  };
-}
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// One parsed item of a dataset (U `core.datasetController.js:502-578`):
 /// the object that `getParsed(index)` gives each time, and that a
@@ -61,27 +38,30 @@ final class ParsedItem extends TypedRecord {
   ParsedItem();
 
   /// The item `{[a]: aValue, [b]: bValue}` of the parse functions, in this
-  /// key order (`{[iAxis]: ..., [vAxis]: ...}`). Two equal keys are one key
-  /// with the second value. The axes `x`, `y` and `r` write their fields at
-  /// once, because the index of an [AxisKey] is the slot of its field. A
-  /// user axis name goes by name: it can name a field (Chart.js ADR 0096).
-  ParsedItem.of(
-    AxisKey a,
-    String aName,
-    Object? aValue,
-    AxisKey b,
-    String bName,
-    Object? bValue,
-  ) {
-    if (a == AxisKey.other || b == AxisKey.other) {
-      setValue(a, aName, aValue);
-      setValue(b, bName, bValue);
+  /// key order (`{[iAxis]: ..., [vAxis]: ...}`). Two equal axes are one key
+  /// with the second value. The axes [XAxis], [YAxis] and [RAxis] write
+  /// their fields at once. Another axis class has no field: its value goes
+  /// (row `adapt-axis-objects`).
+  ParsedItem.of(ScaleAxis a, Object? aValue, ScaleAxis b, Object? bValue) {
+    final aSlot = _axisSlot(a);
+    final bSlot = _axisSlot(b);
+    if (aSlot < 0 || bSlot < 0) {
+      setValue(a, aValue);
+      setValue(b, bValue);
       return;
     }
     _setAxisField(a, aValue);
     _setAxisField(b, bValue);
-    initializeTwoSlots(a.index, b.index);
+    initializeTwoSlots(aSlot, bSlot);
   }
+
+  /// The slot of the field of [axis], or -1 for an axis class with no field.
+  static int _axisSlot(ScaleAxis axis) => switch (axis) {
+    XAxis() => 0,
+    YAxis() => 1,
+    RAxis() => 2,
+    _ => -1,
+  };
 
   static const List<String> _fieldNames = ['x', 'y', 'r', '_custom', '_stacks'];
 
@@ -145,39 +125,35 @@ final class ParsedItem extends TypedRecord {
   }
 
   /// The field of the axis [axis], with no change of the own keys.
-  void _setAxisField(AxisKey axis, Object? value) {
+  void _setAxisField(ScaleAxis axis, Object? value) {
     switch (axis) {
-      case AxisKey.x:
+      case XAxis():
         _x = value;
-      case AxisKey.y:
+      case YAxis():
         _y = value;
-      case AxisKey.r:
+      case RAxis():
         _r = value;
-      case AxisKey.other:
-        break;
     }
   }
 
-  /// The value of the axis [axis]: `item[axis]`. [name] is the axis name of
-  /// [AxisKey.other].
-  Object? valueOf(AxisKey axis, [String name = '']) => switch (axis) {
-    AxisKey.x => x,
-    AxisKey.y => y,
-    AxisKey.r => r,
-    AxisKey.other => jsRead(name),
+  /// The value of the axis [axis]: `item[axis]`. An axis class with no field
+  /// gives [undefined].
+  Object? valueOf(ScaleAxis axis) => switch (axis) {
+    XAxis() => x,
+    YAxis() => y,
+    RAxis() => r,
+    _ => undefined,
   };
 
-  /// `item[axis] = value`. [name] is the axis name of [AxisKey.other].
-  void setValue(AxisKey axis, String name, Object? value) {
+  /// `item[axis] = value`. An axis class with no field takes no write.
+  void setValue(ScaleAxis axis, Object? value) {
     switch (axis) {
-      case AxisKey.x:
+      case XAxis():
         x = value;
-      case AxisKey.y:
+      case YAxis():
         y = value;
-      case AxisKey.r:
+      case RAxis():
         r = value;
-      case AxisKey.other:
-        this[name] = value;
     }
   }
 
@@ -238,25 +214,21 @@ final class ItemStacks extends TypedRecord {
 
   final List<StackEntry?> _entries = List<StackEntry?>.filled(3, null);
 
-  /// The stack object of the axis [axis] ([name] for [AxisKey.other]), or
-  /// Dart `null`.
-  StackEntry? entryOf(AxisKey axis, [String name = '']) {
-    if (axis == AxisKey.other) {
-      final value = jsRead(name);
-      return value is StackEntry ? value : null;
-    }
-    final slot = axis.index;
+  /// The stack object of the axis [axis], or Dart `null`. An axis class
+  /// with no field gives Dart `null`.
+  StackEntry? entryOf(ScaleAxis axis) {
+    final slot = ParsedItem._axisSlot(axis);
+    if (slot < 0) return null;
     return hasSlot(slot) && !isForeignSlot(slot) ? _entries[slot] : null;
   }
 
-  /// `item._stacks[axis] = entry`.
-  void setEntry(AxisKey axis, String name, StackEntry entry) {
-    if (axis == AxisKey.other) {
-      this[name] = entry;
-      return;
-    }
-    _entries[axis.index] = entry;
-    touchSlot(axis.index);
+  /// `item._stacks[axis] = entry`. An axis class with no field takes no
+  /// write.
+  void setEntry(ScaleAxis axis, StackEntry entry) {
+    final slot = ParsedItem._axisSlot(axis);
+    if (slot < 0) return;
+    _entries[slot] = entry;
+    touchSlot(slot);
   }
 
   @override

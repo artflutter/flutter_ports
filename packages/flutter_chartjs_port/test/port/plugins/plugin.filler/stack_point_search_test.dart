@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.stack.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/stack_point_search.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -66,7 +67,7 @@ FillerSource _source(List<LineElement> lines) => FillerSource(
   index: (lines.length - 1).toDouble(),
   fill: FillBoundary.stack,
   chart: _Chart(),
-  axis: 'x',
+  axis: const XAxis(),
   scale: _Scale([
     for (final (index, line) in lines.indexed) _Meta(index.toDouble(), line),
   ]),

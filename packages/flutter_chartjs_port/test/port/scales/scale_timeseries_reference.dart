@@ -8,6 +8,7 @@
 
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -79,7 +80,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -223,7 +224,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -948,7 +949,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -1106,7 +1107,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -1832,7 +1833,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610496000000.0,
@@ -1979,7 +1980,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
@@ -2815,7 +2816,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -2959,7 +2960,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -3688,7 +3689,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -3832,7 +3833,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -4563,7 +4564,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -4707,7 +4708,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -5439,7 +5440,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -5570,7 +5571,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -6154,7 +6155,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609736400000.0,
           'max': 1618376400000.0,
@@ -6298,7 +6299,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -7027,7 +7028,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609891200000.0,
           'max': 1613260800000.0,
@@ -7163,7 +7164,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 9.0,
@@ -7750,7 +7751,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1606780800000.0,
           'max': 1620086400000.0,
@@ -7904,7 +7905,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -8679,7 +8680,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609743599999.0,
           'max': 1609743600001.0,
@@ -8786,7 +8787,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -1.0,
           'max': 1.0,
@@ -9322,7 +9323,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1623715200000.0,
           'max': 1623801600000.0,
@@ -9424,7 +9425,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
@@ -9937,7 +9938,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -10091,7 +10092,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -10930,7 +10931,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -11074,7 +11075,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -11837,7 +11838,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -11981,7 +11982,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -12764,7 +12765,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1625529600000.0,
@@ -13051,7 +13052,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
@@ -14121,7 +14122,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           },
         ],
       },
-      'options': <String, Object?>{'indexAxis': 'y'},
+      'options': <String, Object?>{'indexAxis': YAxis()},
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
@@ -14134,7 +14135,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -14258,7 +14259,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609000000000.0,
           'max': 1619000000000.0,
@@ -15097,7 +15098,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1625529600000.0,
@@ -15394,7 +15395,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
@@ -16978,7 +16979,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1625529600000.0,
@@ -17284,7 +17285,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
@@ -18813,7 +18814,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1635638400000.0,
@@ -18962,7 +18963,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -19756,7 +19757,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -19900,7 +19901,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -20621,7 +20622,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612310400000.0,
@@ -20737,7 +20738,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 5.0,
@@ -21250,7 +21251,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -21662,7 +21663,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1611100800000.0,
@@ -21767,7 +21768,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 3.0,
@@ -22331,7 +22332,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1611100800000.0,
@@ -22435,7 +22436,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 3.0,
@@ -23003,7 +23004,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1611100800000.0,
@@ -23120,7 +23121,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 8.0,
@@ -23631,7 +23632,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609826400000.0,
           'max': 1618376400000.0,
@@ -23775,7 +23776,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 9.0,
@@ -24440,7 +24441,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -24580,7 +24581,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -25313,7 +25314,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -25461,7 +25462,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -26191,7 +26192,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1614556800000.0,
@@ -26330,7 +26331,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 5.0,
@@ -26955,7 +26956,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'position': ChartPosition.right,
@@ -26975,7 +26976,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.right,
           'min': 0.0,
           'max': 10.0,
@@ -27118,7 +27119,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1608000000000.0,
           'max': 1626000000000.0,
@@ -28423,7 +28424,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.top,
           'min': 1609718400000.0,
           'max': 1618358400000.0,
@@ -28567,7 +28568,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -29303,7 +29304,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1608422400000.0,
           'max': 1620950400000.0,
@@ -29457,7 +29458,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
@@ -30247,7 +30248,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1610150400000.0,
           'max': 1610236800000.0,
@@ -30371,7 +30372,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
@@ -30893,7 +30894,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1610150400000.0,
           'max': 1618358400000.0,
@@ -31038,7 +31039,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 9.0,
@@ -31646,7 +31647,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612137600000.0,
@@ -31778,7 +31779,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 4.0,

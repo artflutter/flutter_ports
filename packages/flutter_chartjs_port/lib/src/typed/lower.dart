@@ -21,8 +21,9 @@
 /// 3. A `Color` lowers through [colorValue], a `TextStyle` through
 ///    `fontScopeOf` of `css.dart` (a `FontSpecScope`), a `Duration` through
 ///    [millisecondsOf] and an `EdgeInsets` through [paddingScope] (a
-///    `PaddingScope`). A name type lowers to its name or its `optionValue`,
-///    `IndexAxis` to its `name`. An object option value of a name type (the
+///    `PaddingScope`). A name type lowers to its name or its `optionValue`.
+///    An axis class (`XAxis`, `YAxis`) stays itself. An object option value
+///    of a name type (the
 ///    `{value}` of `ChartFill.value`) becomes a typed scope of the kind of
 ///    its key ([put]).
 /// 4. A plain value never lowers to a closure. Only a function parameter
@@ -316,7 +317,7 @@ final class ChartConfigLowering {
       }
       options.scales = byId;
     }
-    put(options, OptionKey.indexAxis, config.indexAxis?.name);
+    put(options, OptionKey.indexAxis, config.indexAxis);
     put(options, OptionKey.responsive, config.responsive);
     put(options, OptionKey.maintainAspectRatio, config.maintainAspectRatio);
     put(options, OptionKey.aspectRatio, config.aspectRatio);

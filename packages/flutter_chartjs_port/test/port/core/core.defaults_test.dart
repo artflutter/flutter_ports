@@ -20,9 +20,11 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
+import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
@@ -55,6 +57,7 @@ String _jsonRaw(Object? value) => switch (value) {
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
+  ScaleAxis() => axisJson,
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
@@ -173,7 +176,7 @@ void main() {
           '"font":{"family":"\'Helvetica Neue\', \'Helvetica\', \'Arial\', '
           'sans-serif","size":12,"style":"normal","lineHeight":1.2,'
           '"weight":null},"hover":{},"hoverBackgroundColor":"<fn>",'
-          '"hoverBorderColor":"<fn>","hoverColor":"<fn>","indexAxis":"x",'
+          '"hoverBorderColor":"<fn>","hoverColor":"<fn>","indexAxis":$axisJson,'
           '"interaction":{"mode":"<mode>","intersect":true,'
           '"includeInvisible":false},"maintainAspectRatio":true,'
           '"onHover":null,"onClick":null,"parsing":true,"plugins":{},'

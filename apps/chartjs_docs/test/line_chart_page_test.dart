@@ -195,7 +195,7 @@ void main() {
       hoverBackgroundColor: teal,
       hoverBorderColor: teal,
       hoverBorderWidth: 1,
-      indexAxis: .x,
+      indexAxis: XAxis(),
       label: '',
       order: 0,
       pointBackgroundColor: teal,

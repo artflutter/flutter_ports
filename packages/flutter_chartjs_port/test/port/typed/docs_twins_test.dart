@@ -187,7 +187,7 @@ Map<String, Object?> _barHorizontalRaw() => <String, Object?>{
     'labels': <Object?>[..._months],
     'datasets': <Object?>[
       <String, Object?>{
-        'axis': 'y',
+        'axis': const YAxis(),
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
         'fill': false,
@@ -197,7 +197,7 @@ Map<String, Object?> _barHorizontalRaw() => <String, Object?>{
       },
     ],
   },
-  'options': <String, Object?>{'indexAxis': 'y'},
+  'options': <String, Object?>{'indexAxis': const YAxis()},
 };
 
 /// The typed `bar.md:304-351`, without the keys `axis` and `fill` that
@@ -214,7 +214,7 @@ ChartConfig _barHorizontalTyped() => ChartConfig(
       borderWidth: 1,
     ),
   ],
-  indexAxis: .y,
+  indexAxis: const YAxis(),
 );
 
 /// The raw twin of `bubbleConfig` of the gallery
@@ -349,7 +349,7 @@ Map<String, Object?> _lineVerticalRaw() => <String, Object?>{
     'labels': <Object?>[..._months],
     'datasets': <Object?>[
       <String, Object?>{
-        'axis': 'y',
+        'axis': const YAxis(),
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
         'fill': false,
@@ -360,7 +360,7 @@ Map<String, Object?> _lineVerticalRaw() => <String, Object?>{
     ],
   },
   'options': <String, Object?>{
-    'indexAxis': 'y',
+    'indexAxis': const YAxis(),
     'scales': <String, Object?>{
       'x': <String, Object?>{'beginAtZero': true},
     },
@@ -382,7 +382,7 @@ ChartConfig _lineVerticalTyped() => ChartConfig(
       borderWidth: 1,
     ),
   ],
-  indexAxis: .y,
+  indexAxis: const YAxis(),
   scales: const {'x': LinearAxis(beginAtZero: true)},
 );
 

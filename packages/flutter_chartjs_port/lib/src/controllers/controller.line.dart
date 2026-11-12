@@ -38,6 +38,7 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
@@ -61,8 +62,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show LineProperties, PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -71,6 +71,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LineControllerDatasetOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The JS write `element[key] = value` by name into an element of a user
@@ -128,22 +129,23 @@ final class _PointWrites {
     }
   }
 
-  /// `properties[axis] = value` (:100-101), with [key] the key of [axis].
-  void axis(AxisKey key, String axis, double value) {
+  /// `properties[axis] = value` (:100-101).
+  void axis(ScaleAxis axis, double value) {
     final object = this.object;
     if (object != null) {
-      setPointAxis(object, key, axis, value);
+      setPointAxis(object, axis, value);
       return;
     }
     final element = _element;
-    if (element == null) {
-      _setProperty(_access, axis, value);
-    } else if (key == AxisKey.x) {
-      element.x = value;
-    } else if (key == AxisKey.y) {
-      element.y = value;
-    } else {
-      _setProperty(_access, axis, value);
+    switch ((element, axis)) {
+      case (final types.PointElementWrites point, XAxis()):
+        point.x = value;
+      case (final types.PointElementWrites point, YAxis()):
+        point.y = value;
+      default:
+        // The write by the key of the axis ([axisDataKey]).
+        final key = axisDataKey(axis);
+        if (key != null) _setProperty(_access, key, value);
     }
   }
 
@@ -389,8 +391,6 @@ class LineController extends DatasetController {
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     final iAxis = iScale!.axis;
     final vAxis = vScale!.axis;
-    final iKey = AxisKey.of(iAxis);
-    final vKey = AxisKey.of(vAxis);
     final options = this.options;
     final spanGaps = options.readKey(OptionKey.spanGaps);
     final segment = options.readKey(OptionKey.segment);
@@ -477,12 +477,12 @@ class LineController extends DatasetController {
       final parsed = getParsed(index);
       if (colors != null && !coordinates.accepts(parsed, i)) colors = null;
       // :99, also :101 (one-read rule).
-      final vValue = parsedValueOf(parsed, vKey, vAxis);
+      final vValue = parsedValueOf(parsed, vAxis);
       final nullData = isNullOrUndef(vValue);
       // :100, also :104 (one-read rule).
-      final iValue = parsedValueOf(parsed, iKey, iAxis);
+      final iValue = parsedValueOf(parsed, iAxis);
       final iPixel = iScale.getPixelForValue(iValue, index);
-      writes.axis(iKey, iAxis, iPixel);
+      writes.axis(iAxis, iPixel);
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
@@ -496,7 +496,7 @@ class LineController extends DatasetController {
           : null;
       final held = x == null ? null : gaps!.stopOf(x);
       writes
-        ..axis(vKey, vAxis, vPixel)
+        ..axis(vAxis, vPixel)
         ..skip(iPixel.isNaN || vPixel.isNaN || nullData)
         // :104 `i > 0 && Math.abs(parsed[iAxis] - prevParsed[iAxis]) >
         // maxGapLength`. `prevParsed[iAxis]` is a read at each pass without
@@ -506,7 +506,7 @@ class LineController extends DatasetController {
               (i > 0 &&
                   (jsToNumber(iValue) -
                               jsToNumber(
-                                parsedValueOf(prevParsed, iKey, iAxis),
+                                parsedValueOf(prevParsed, iAxis),
                               ))
                           .abs() >
                       maxGapLength),

@@ -14,8 +14,10 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
+import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
@@ -70,6 +72,7 @@ String probeJson(Object? value) => switch (value) {
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
+  ScaleAxis() => axisJson,
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(probeJson).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>

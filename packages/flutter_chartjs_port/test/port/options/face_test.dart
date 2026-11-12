@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:test/test.dart';
 
 Object? _fn(Object? ctx) => ctx;
@@ -161,10 +162,10 @@ void main() {
       mergeIf(scope, <String, Object?>{
         'color': const ui.Color.fromRGBO(255, 0, 0, 1),
         'font': <String, Object?>{'size': 20.0, 'style': 'italic'},
-        'indexAxis': 'y',
+        'indexAxis': const YAxis(),
       });
       expect(scope.jsRead('color'), same(undefined));
-      expect(scope.jsRead('indexAxis'), 'y');
+      expect(scope.jsRead('indexAxis'), isA<YAxis>());
       final font = scope.fontCell!.raw! as FontSpecScope;
       expect(font.jsKeys(), ['size', 'style']);
       expect(font.jsRead('size'), 12.0);

@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -1680,7 +1681,7 @@ void main() {
           'type': 'bar',
           'data': data,
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'y': <String, Object?>{'min': 'March', 'max': 'May'},
             },
@@ -1695,7 +1696,7 @@ void main() {
           'type': 'bar',
           'data': data,
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'x': <String, Object?>{'stacked': true},
               'y': <String, Object?>{'min': 'March', 'max': 'May'},
@@ -1826,7 +1827,7 @@ void main() {
           'data': <String, Object?>{
             'datasets': <Object?>[
               <String, Object?>{
-                'indexAxis': 'y',
+                'indexAxis': const YAxis(),
                 'minBarLength': minBarLength,
                 'data': <Object?>[0.05, -0.05, 10, 15, 20, 25, 30, 35],
               },

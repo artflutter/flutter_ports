@@ -27,9 +27,8 @@ library;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart'
     show LineElement;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsToString, jsTruthy;
+    show jsToNumber, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show FillerOptionsScope;
@@ -43,6 +42,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.da
     show decodeFill, resolveTarget;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show FillerOptions, optionOf;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show DatasetDrawHookArgs, Plugin;
@@ -91,13 +91,9 @@ final class FillerSource {
 }
 
 /// The axis argument of `source.line.updateControlPoints(area, source.axis)`
-/// (index.js:61): Dart `null` for the `undefined` of an absent option, else
-/// the String, or the `ToString` of another option value.
-String? _axisArgument(Object? axis) => switch (axis) {
-  final String value => value,
-  null || Undefined() => null,
-  _ => jsToString(axis),
-};
+/// (index.js:61): the [ScaleAxis] of the option, else Dart `null`, the
+/// `undefined` that the line takes as [XAxis] (row `adapt-axis-objects`).
+ScaleAxis? _axisArgument(Object? axis) => axis is ScaleAxis ? axis : null;
 
 /// index.js:15 `afterDatasetsUpdate(chart, _args, options)`.
 ///

@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -93,7 +94,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 4.0,
             'max': 20.0,
@@ -204,7 +205,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -411,7 +412,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -813,7 +814,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -924,7 +925,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -1131,7 +1132,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -1648,7 +1649,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -1759,7 +1760,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -1966,7 +1967,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -2478,7 +2479,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -2589,7 +2590,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -2796,7 +2797,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -3308,7 +3309,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -3419,7 +3420,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -3626,7 +3627,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -4138,7 +4139,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -4249,7 +4250,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -4495,7 +4496,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -5011,7 +5012,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -5122,7 +5123,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -5368,7 +5369,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -5924,7 +5925,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -6035,7 +6036,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -6269,7 +6270,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -6775,7 +6776,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -6886,7 +6887,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -7132,7 +7133,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -8212,7 +8213,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 2.0,
             'max': 16.0,
@@ -8257,7 +8258,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -8512,7 +8513,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -8765,7 +8766,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -9704,7 +9705,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 4.0,
             'max': 20.0,
@@ -9751,7 +9752,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -9997,7 +9998,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -10897,7 +10898,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 2.0,
             'max': 18.0,
@@ -10944,7 +10945,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -11190,7 +11191,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -11436,7 +11437,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -11915,7 +11916,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 2.0,
                 'max': 20.0,
@@ -11964,7 +11965,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -12210,7 +12211,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -12456,7 +12457,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -12987,7 +12988,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -13034,7 +13035,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -13280,7 +13281,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -13526,7 +13527,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -14786,7 +14787,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 5.0,
             'max': 14.0,
@@ -14835,7 +14836,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -15085,7 +15086,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -15950,7 +15951,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 4.0,
             'max': 20.0,
@@ -15997,7 +15998,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -16243,7 +16244,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -17145,7 +17146,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 30.0,
@@ -17253,7 +17254,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -17502,7 +17503,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -18311,7 +18312,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 4.0,
             'max': 20.0,
@@ -18358,7 +18359,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -18604,7 +18605,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -19010,7 +19011,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -19057,7 +19058,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -19303,7 +19304,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -19819,7 +19820,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 4.0,
                 'max': 20.0,
@@ -19866,7 +19867,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -20112,7 +20113,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               <String, Object?>{
                 'type': 'radar',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -21117,7 +21118,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -1.0,
             'max': 1.0,
@@ -21168,7 +21169,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -21841,7 +21842,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 2.0,
@@ -21892,7 +21893,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -22467,7 +22468,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 4.0,
             'max': 20.0,
@@ -22514,7 +22515,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -22682,7 +22683,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -23389,7 +23390,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 6.0,
@@ -23440,7 +23441,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -24325,7 +24326,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 6.0,
@@ -24376,7 +24377,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -25258,7 +25259,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'linear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 1.0,
@@ -25300,7 +25301,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',

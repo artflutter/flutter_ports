@@ -14,6 +14,8 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 
+import 'hand/controller.bar/aligned-pixels.dart'
+    as controller_bar_aligned_pixels;
 import 'hand/controller.bar/backgroundColor/scriptable.dart'
     as controller_bar_backgroundcolor_scriptable;
 import 'hand/controller.bar/bar-animation-hide-show.dart'
@@ -34,12 +36,32 @@ import 'hand/controller.bar/baseLine/value-y.dart'
     as controller_bar_baseline_value_y;
 import 'hand/controller.bar/borderColor/scriptable.dart'
     as controller_bar_bordercolor_scriptable;
+import 'hand/controller.bar/borderRadius/border-radius.dart'
+    as controller_bar_borderradius_border_radius;
 import 'hand/controller.bar/borderSkipped/scriptable.dart'
     as controller_bar_borderskipped_scriptable;
 import 'hand/controller.bar/borderWidth/scriptable-object.dart'
     as controller_bar_borderwidth_scriptable_object;
 import 'hand/controller.bar/borderWidth/scriptable.dart'
     as controller_bar_borderwidth_scriptable;
+import 'hand/controller.bar/data/object-index-axis-y.dart'
+    as controller_bar_data_object_index_axis_y;
+import 'hand/controller.bar/floatBar/data-as-objects-horizontal.dart'
+    as controller_bar_floatbar_data_as_objects_horizontal;
+import 'hand/controller.bar/floatBar/float-bar-horizontal.dart'
+    as controller_bar_floatbar_float_bar_horizontal;
+import 'hand/controller.bar/floatBar/float-bar-stacked-horizontal.dart'
+    as controller_bar_floatbar_float_bar_stacked_horizontal;
+import 'hand/controller.bar/horizontal-borders.dart'
+    as controller_bar_horizontal_borders;
+import 'hand/controller.bar/minBarLength/horizontal-neg.dart'
+    as controller_bar_minbarlength_horizontal_neg;
+import 'hand/controller.bar/minBarLength/horizontal-pos.dart'
+    as controller_bar_minbarlength_horizontal_pos;
+import 'hand/controller.bar/minBarLength/horizontal-stacked-no-overlap.dart'
+    as controller_bar_minbarlength_horizontal_stacked_no_overlap;
+import 'hand/controller.bar/minBarLength/horizontal-stacked.dart'
+    as controller_bar_minbarlength_horizontal_stacked;
 import 'hand/controller.bar/minBarLength/horizontal.dart'
     as controller_bar_minbarlength_horizontal;
 import 'hand/controller.bar/minBarLength/vertical.dart'
@@ -236,18 +258,57 @@ import 'hand/core.interaction/nearest-point-behind-scale.dart'
 import 'hand/core.layouts/hidden-vertical-boxes.dart'
     as core_layouts_hidden_vertical_boxes;
 import 'hand/core.layouts/scriptable.dart' as core_layouts_scriptable;
+import 'hand/core.scale/cartesian-axis-border-settings.dart'
+    as core_scale_cartesian_axis_border_settings;
+import 'hand/core.scale/crossAlignment/cross-align-left-center.dart'
+    as core_scale_crossalignment_cross_align_left_center;
 import 'hand/core.scale/crossAlignment/cross-align-left-far-clipped.dart'
     as core_scale_crossalignment_cross_align_left_far_clipped;
+import 'hand/core.scale/crossAlignment/cross-align-left-far.dart'
+    as core_scale_crossalignment_cross_align_left_far;
+import 'hand/core.scale/crossAlignment/cross-align-left-near.dart'
+    as core_scale_crossalignment_cross_align_left_near;
+import 'hand/core.scale/crossAlignment/cross-align-right-center.dart'
+    as core_scale_crossalignment_cross_align_right_center;
 import 'hand/core.scale/crossAlignment/cross-align-right-far-clipped.dart'
     as core_scale_crossalignment_cross_align_right_far_clipped;
+import 'hand/core.scale/crossAlignment/cross-align-right-far.dart'
+    as core_scale_crossalignment_cross_align_right_far;
+import 'hand/core.scale/crossAlignment/cross-align-right-near.dart'
+    as core_scale_crossalignment_cross_align_right_near;
+import 'hand/core.scale/crossAlignment/mirror-cross-align-left-center.dart'
+    as core_scale_crossalignment_mirror_cross_align_left_center;
+import 'hand/core.scale/crossAlignment/mirror-cross-align-left-far.dart'
+    as core_scale_crossalignment_mirror_cross_align_left_far;
+import 'hand/core.scale/crossAlignment/mirror-cross-align-left-near.dart'
+    as core_scale_crossalignment_mirror_cross_align_left_near;
+import 'hand/core.scale/crossAlignment/mirror-cross-align-right-center.dart'
+    as core_scale_crossalignment_mirror_cross_align_right_center;
+import 'hand/core.scale/crossAlignment/mirror-cross-align-right-far.dart'
+    as core_scale_crossalignment_mirror_cross_align_right_far;
+import 'hand/core.scale/crossAlignment/mirror-cross-align-right-near.dart'
+    as core_scale_crossalignment_mirror_cross_align_right_near;
 import 'hand/core.scale/grid/scriptable-borderDash.dart'
     as core_scale_grid_scriptable_borderdash;
+import 'hand/core.scale/label-offset-vertical-axes.dart'
+    as core_scale_label_offset_vertical_axes;
+import 'hand/core.scale/tick-drawing.dart' as core_scale_tick_drawing;
+import 'hand/core.scale/tick-override-styles.dart'
+    as core_scale_tick_override_styles;
 import 'hand/core.scale/ticks/rotated-long.dart'
     as core_scale_ticks_rotated_long;
 import 'hand/core.scale/ticks/rotated-multi-line.dart'
     as core_scale_ticks_rotated_multi_line;
 import 'hand/core.scale/ticks/skip-by-callback.dart'
     as core_scale_ticks_skip_by_callback;
+import 'hand/core.scale/x-axis-position-center.dart'
+    as core_scale_x_axis_position_center;
+import 'hand/core.scale/x-axis-position-dynamic.dart'
+    as core_scale_x_axis_position_dynamic;
+import 'hand/core.scale/y-axis-position-center.dart'
+    as core_scale_y_axis_position_center;
+import 'hand/core.scale/y-axis-position-dynamic.dart'
+    as core_scale_y_axis_position_dynamic;
 import 'hand/element.line/cubicInterpolationMode/monotone-horizontal.dart'
     as element_line_cubicinterpolationmode_monotone_horizontal;
 import 'hand/element.line/cubicInterpolationMode/monotone-vertical.dart'
@@ -281,6 +342,8 @@ import 'hand/element.point/point-style-star.dart'
 import 'hand/element.point/point-style-triangle.dart'
     as element_point_point_style_triangle;
 import 'hand/element.point/rotation.dart' as element_point_rotation;
+import 'hand/mixed/bar+line-stacked.dart' as mixed_bar_line_stacked;
+import 'hand/mixed/bar+line.dart' as mixed_bar_line;
 import 'hand/plugin.colors/dynamic-datasets-default.dart'
     as plugin_colors_dynamic_datasets_default;
 import 'hand/plugin.colors/dynamic-datasets-force-override.dart'
@@ -380,6 +443,8 @@ import 'hand/plugin.tooltip/opacity.dart' as plugin_tooltip_opacity;
 import 'hand/plugin.tooltip/point-style.dart' as plugin_tooltip_point_style;
 import 'hand/plugin.tooltip/positioning.dart' as plugin_tooltip_positioning;
 import 'hand/scale.category/invalid-data.dart' as scale_category_invalid_data;
+import 'hand/scale.category/ticks-from-data.dart'
+    as scale_category_ticks_from_data;
 import 'hand/scale.linear/grace/grace-10%25.dart'
     as scale_linear_grace_grace_10_;
 import 'hand/scale.linear/grace/grace-beginAtZero.dart'
@@ -406,6 +471,8 @@ import 'hand/scale.time/custom-parser.dart' as scale_time_custom_parser;
 import 'hand/scale.time/data-ty.dart' as scale_time_data_ty;
 import 'hand/scale.time/data-xy.dart' as scale_time_data_xy;
 import 'hand/scale.time/labels-date.dart' as scale_time_labels_date;
+import 'hand/scale.time/offset-auto-skip-ticks.dart'
+    as scale_time_offset_auto_skip_ticks;
 import 'hand/scale.time/offset-with-no-ticks.dart'
     as scale_time_offset_with_no_ticks;
 import 'hand/scale.timeseries/financial-daily.dart'
@@ -423,6 +490,10 @@ void Function() specs(String path) =>
 /// function of `hand/<path>.dart` and the first 12 hex digits of the
 /// `sha256` of the upstream file in `doc/upstream/manifest.json`.
 final Map<String, HandFixture> handFixtures = {
+  'controller.bar/aligned-pixels.js': (
+    load: controller_bar_aligned_pixels.fixture,
+    sha256: 'ead0a91b2318',
+  ),
   'controller.bar/backgroundColor/scriptable.js': (
     load: controller_bar_backgroundcolor_scriptable.fixture,
     sha256: '1d5df66bfb6c',
@@ -467,6 +538,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_bar_bordercolor_scriptable.fixture,
     sha256: '2a4ef42ba321',
   ),
+  'controller.bar/borderRadius/border-radius.js': (
+    load: controller_bar_borderradius_border_radius.fixture,
+    sha256: '91fac525cd94',
+  ),
   'controller.bar/borderSkipped/scriptable.js': (
     load: controller_bar_borderskipped_scriptable.fixture,
     sha256: '6b4cf1ab9ea3',
@@ -478,6 +553,42 @@ final Map<String, HandFixture> handFixtures = {
   'controller.bar/borderWidth/scriptable.js': (
     load: controller_bar_borderwidth_scriptable.fixture,
     sha256: '7e6144b33e6b',
+  ),
+  'controller.bar/data/object-index-axis-y.js': (
+    load: controller_bar_data_object_index_axis_y.fixture,
+    sha256: 'b335b7fe6d0e',
+  ),
+  'controller.bar/floatBar/data-as-objects-horizontal.js': (
+    load: controller_bar_floatbar_data_as_objects_horizontal.fixture,
+    sha256: '1ef1ac1789cd',
+  ),
+  'controller.bar/floatBar/float-bar-horizontal.json': (
+    load: controller_bar_floatbar_float_bar_horizontal.fixture,
+    sha256: '4da91e5ed576',
+  ),
+  'controller.bar/floatBar/float-bar-stacked-horizontal.json': (
+    load: controller_bar_floatbar_float_bar_stacked_horizontal.fixture,
+    sha256: '478af8960681',
+  ),
+  'controller.bar/horizontal-borders.js': (
+    load: controller_bar_horizontal_borders.fixture,
+    sha256: '7fdf894e038c',
+  ),
+  'controller.bar/minBarLength/horizontal-neg.js': (
+    load: controller_bar_minbarlength_horizontal_neg.fixture,
+    sha256: '6388b7924f94',
+  ),
+  'controller.bar/minBarLength/horizontal-pos.js': (
+    load: controller_bar_minbarlength_horizontal_pos.fixture,
+    sha256: '3ba3f75361f6',
+  ),
+  'controller.bar/minBarLength/horizontal-stacked-no-overlap.js': (
+    load: controller_bar_minbarlength_horizontal_stacked_no_overlap.fixture,
+    sha256: '61ba97083fbe',
+  ),
+  'controller.bar/minBarLength/horizontal-stacked.js': (
+    load: controller_bar_minbarlength_horizontal_stacked.fixture,
+    sha256: 'b4fbc2aadbcd',
   ),
   'controller.bar/minBarLength/horizontal.js': (
     load: controller_bar_minbarlength_horizontal.fixture,
@@ -884,17 +995,81 @@ final Map<String, HandFixture> handFixtures = {
     load: core_layouts_scriptable.fixture,
     sha256: '9fea029461b5',
   ),
+  'core.scale/cartesian-axis-border-settings.json': (
+    load: core_scale_cartesian_axis_border_settings.fixture,
+    sha256: 'e777d91ba7f2',
+  ),
+  'core.scale/crossAlignment/cross-align-left-center.js': (
+    load: core_scale_crossalignment_cross_align_left_center.fixture,
+    sha256: '011594b9014e',
+  ),
   'core.scale/crossAlignment/cross-align-left-far-clipped.js': (
     load: core_scale_crossalignment_cross_align_left_far_clipped.fixture,
     sha256: '8a1237e7e9bd',
+  ),
+  'core.scale/crossAlignment/cross-align-left-far.js': (
+    load: core_scale_crossalignment_cross_align_left_far.fixture,
+    sha256: '14ba9d5f1027',
+  ),
+  'core.scale/crossAlignment/cross-align-left-near.js': (
+    load: core_scale_crossalignment_cross_align_left_near.fixture,
+    sha256: '4ea6d0827174',
+  ),
+  'core.scale/crossAlignment/cross-align-right-center.js': (
+    load: core_scale_crossalignment_cross_align_right_center.fixture,
+    sha256: '4867a1f3c717',
   ),
   'core.scale/crossAlignment/cross-align-right-far-clipped.js': (
     load: core_scale_crossalignment_cross_align_right_far_clipped.fixture,
     sha256: '862e2f9a8fa2',
   ),
+  'core.scale/crossAlignment/cross-align-right-far.js': (
+    load: core_scale_crossalignment_cross_align_right_far.fixture,
+    sha256: 'b15a3433ac9f',
+  ),
+  'core.scale/crossAlignment/cross-align-right-near.js': (
+    load: core_scale_crossalignment_cross_align_right_near.fixture,
+    sha256: 'fc4eb1c5e51d',
+  ),
+  'core.scale/crossAlignment/mirror-cross-align-left-center.js': (
+    load: core_scale_crossalignment_mirror_cross_align_left_center.fixture,
+    sha256: 'b54e8fad0bd7',
+  ),
+  'core.scale/crossAlignment/mirror-cross-align-left-far.js': (
+    load: core_scale_crossalignment_mirror_cross_align_left_far.fixture,
+    sha256: '4b0329cd813e',
+  ),
+  'core.scale/crossAlignment/mirror-cross-align-left-near.js': (
+    load: core_scale_crossalignment_mirror_cross_align_left_near.fixture,
+    sha256: '7871be73004a',
+  ),
+  'core.scale/crossAlignment/mirror-cross-align-right-center.js': (
+    load: core_scale_crossalignment_mirror_cross_align_right_center.fixture,
+    sha256: 'b3c3e846b673',
+  ),
+  'core.scale/crossAlignment/mirror-cross-align-right-far.js': (
+    load: core_scale_crossalignment_mirror_cross_align_right_far.fixture,
+    sha256: '45273c43d3ab',
+  ),
+  'core.scale/crossAlignment/mirror-cross-align-right-near.js': (
+    load: core_scale_crossalignment_mirror_cross_align_right_near.fixture,
+    sha256: 'd231166d04c1',
+  ),
   'core.scale/grid/scriptable-borderDash.js': (
     load: core_scale_grid_scriptable_borderdash.fixture,
     sha256: 'bfa50f9c0576',
+  ),
+  'core.scale/label-offset-vertical-axes.json': (
+    load: core_scale_label_offset_vertical_axes.fixture,
+    sha256: 'de6c83a1cd77',
+  ),
+  'core.scale/tick-drawing.json': (
+    load: core_scale_tick_drawing.fixture,
+    sha256: '856a490fea99',
+  ),
+  'core.scale/tick-override-styles.json': (
+    load: core_scale_tick_override_styles.fixture,
+    sha256: '8111155a5266',
   ),
   'core.scale/ticks/rotated-long.js': (
     load: core_scale_ticks_rotated_long.fixture,
@@ -907,6 +1082,22 @@ final Map<String, HandFixture> handFixtures = {
   'core.scale/ticks/skip-by-callback.js': (
     load: core_scale_ticks_skip_by_callback.fixture,
     sha256: 'dd604eb26882',
+  ),
+  'core.scale/x-axis-position-center.json': (
+    load: core_scale_x_axis_position_center.fixture,
+    sha256: '2efc414f0f0c',
+  ),
+  'core.scale/x-axis-position-dynamic.json': (
+    load: core_scale_x_axis_position_dynamic.fixture,
+    sha256: 'dfcccd0f2cbf',
+  ),
+  'core.scale/y-axis-position-center.json': (
+    load: core_scale_y_axis_position_center.fixture,
+    sha256: 'afa1befaf57d',
+  ),
+  'core.scale/y-axis-position-dynamic.json': (
+    load: core_scale_y_axis_position_dynamic.fixture,
+    sha256: 'cc576da0a24b',
   ),
   'element.line/cubicInterpolationMode/monotone-horizontal.js': (
     load: element_line_cubicinterpolationmode_monotone_horizontal.fixture,
@@ -987,6 +1178,14 @@ final Map<String, HandFixture> handFixtures = {
   'element.point/rotation.js': (
     load: element_point_rotation.fixture,
     sha256: 'ba75d266affa',
+  ),
+  'mixed/bar+line-stacked.js': (
+    load: mixed_bar_line_stacked.fixture,
+    sha256: '9bc9ec2e5a3e',
+  ),
+  'mixed/bar+line.js': (
+    load: mixed_bar_line.fixture,
+    sha256: 'f125d76e617a',
   ),
   'plugin.colors/dynamic-datasets-default.js': (
     load: plugin_colors_dynamic_datasets_default.fixture,
@@ -1201,6 +1400,10 @@ final Map<String, HandFixture> handFixtures = {
     load: scale_category_invalid_data.fixture,
     sha256: 'ecf9428ec7ed',
   ),
+  'scale.category/ticks-from-data.js': (
+    load: scale_category_ticks_from_data.fixture,
+    sha256: 'fdce887c4022',
+  ),
   'scale.linear/grace/grace-10%.js': (
     load: scale_linear_grace_grace_10_.fixture,
     sha256: '0dc72726ef0f',
@@ -1268,6 +1471,10 @@ final Map<String, HandFixture> handFixtures = {
   'scale.time/labels-date.js': (
     load: scale_time_labels_date.fixture,
     sha256: '7c9efdf5f808',
+  ),
+  'scale.time/offset-auto-skip-ticks.js': (
+    load: scale_time_offset_auto_skip_ticks.fixture,
+    sha256: 'f82acaad46f8',
   ),
   'scale.time/offset-with-no-ticks.js': (
     load: scale_time_offset_with_no_ticks.fixture,

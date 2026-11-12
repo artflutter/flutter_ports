@@ -440,7 +440,7 @@ void main() {
       );
       final chart = _chart(tester);
       final options = chart.config.options;
-      chart.options['indexAxis'] = 'y';
+      chart.options['indexAxis'] = const YAxis();
       chart.update();
 
       await tester.pumpWidget(
@@ -451,8 +451,8 @@ void main() {
         ),
       );
       expect(chart.config.options, same(options));
-      expect(chart.options['indexAxis'], 'y');
-      expect(chart.getDatasetMeta(0).indexAxis, 'y');
+      expect(chart.options['indexAxis'], isA<YAxis>());
+      expect(chart.getDatasetMeta(0).indexAxis, isA<YAxis>());
 
       await tester.pumpWidget(
         _view(
@@ -462,7 +462,7 @@ void main() {
         ),
       );
       expect(chart.config.options, isNot(same(options)));
-      expect(chart.options['indexAxis'], 'x');
+      expect(chart.options['indexAxis'], isA<XAxis>());
       expect(chart.titleBlock, isNotNull);
     });
 

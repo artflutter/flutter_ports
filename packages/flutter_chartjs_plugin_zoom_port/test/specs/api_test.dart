@@ -7,7 +7,7 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
+import 'package:flutter_chartjs_port/chartjs.dart' show Chart, YAxis;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -458,7 +458,7 @@ void main() {
             ],
           },
           'options': <String, Object?>{
-            'indexAxis': 'y',
+            'indexAxis': const YAxis(),
             'scales': <String, Object?>{
               'y': <String, Object?>{
                 'min': 2,

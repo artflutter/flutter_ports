@@ -11,6 +11,7 @@ import 'dart:ui' show TextAlign;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -75,7 +76,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 20.0,
           'max': 80.0,
@@ -500,7 +501,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 30.0,
           'max': 90.0,
@@ -973,7 +974,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 90.0,
@@ -1584,7 +1585,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 10.0,
           'max': 100.0,
@@ -2246,7 +2247,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 10.0,
           'max': 90.0,
@@ -2943,7 +2944,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 100.0,
@@ -3743,7 +3744,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 10.0,
           'max': 100.0,
@@ -4582,7 +4583,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 90.0,
@@ -5470,7 +5471,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 100.0,
@@ -6446,7 +6447,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 10.0,
           'max': 100.0,
@@ -7419,7 +7420,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 10.0,
           'max': 60.0,
@@ -8114,7 +8115,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -8696,7 +8697,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -9320,7 +9321,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -9938,7 +9939,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -10545,7 +10546,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 50.0,
@@ -11564,7 +11565,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 12.0,
@@ -12444,7 +12445,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -12888,7 +12889,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -13130,7 +13131,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -13694,7 +13695,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 4.0,
@@ -14045,7 +14046,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 10.0,
           'max': 50.0,
@@ -14622,7 +14623,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 4.0,
@@ -14990,7 +14991,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -15529,7 +15530,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -16092,7 +16093,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 10.0,
@@ -16464,7 +16465,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -16927,7 +16928,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -17503,7 +17504,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -18043,7 +18044,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 6.0,
@@ -18727,7 +18728,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 3.0,
@@ -19261,7 +19262,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 4.0,
@@ -19745,7 +19746,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -20319,7 +20320,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': -20.0,
           'max': 50.0,
@@ -20899,7 +20900,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': -20.0,
           'max': 50.0,
@@ -21483,7 +21484,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 20.0,
           'max': 100.0,
@@ -22065,7 +22066,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 120.0,
@@ -22601,7 +22602,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 120.0,
@@ -23089,7 +23090,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 4.0,
@@ -23507,7 +23508,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 3.0,
           'max': 97.0,
@@ -23885,7 +23886,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 6.6000000000000005,
           'max': 7.4,
@@ -24369,7 +24370,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -24957,7 +24958,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -25492,7 +25493,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -25986,7 +25987,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -26551,7 +26552,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 3.0,
           'max': 41.0,
@@ -27112,7 +27113,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 3.0,
           'max': 21.0,
@@ -27944,7 +27945,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 3.0,
           'max': 41.0,
@@ -28532,7 +28533,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -29104,7 +29105,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 6.0,
@@ -29787,7 +29788,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -30260,7 +30261,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 3.0,
           'max': 12.0,
@@ -30815,7 +30816,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': -1.0,
           'max': 1.0,
@@ -31088,7 +31089,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': -1.0,
           'max': 1.0,
@@ -31604,7 +31605,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 65.0,
           'max': 90.0,
@@ -32132,7 +32133,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 4.0,
@@ -32584,7 +32585,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 3.0,
@@ -33103,7 +33104,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 50.0,
           'max': 90.0,
@@ -33586,7 +33587,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 7.0,
@@ -34228,7 +34229,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 50.0,
           'max': 100.0,
@@ -34641,7 +34642,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 50.0,
           'max': 100.0,
@@ -35050,7 +35051,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -35606,7 +35607,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -36171,7 +36172,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -36734,7 +36735,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -37337,7 +37338,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -37899,7 +37900,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 10.0,
@@ -38180,7 +38181,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 50.0,
           'max': 90.0,
@@ -38617,7 +38618,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -39179,7 +39180,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': -1.0,
           'max': 1.0,
@@ -39469,7 +39470,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 0.0,
           'max': 80.0,
@@ -40096,7 +40097,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -40642,7 +40643,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 4.75,
           'max': 5.25,
@@ -41048,7 +41049,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 5.0,
           'max': 9.0,
@@ -41466,7 +41467,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 4.0,
@@ -41953,7 +41954,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 55.0,
           'max': 90.0,
@@ -42445,7 +42446,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 3.0,
@@ -42992,7 +42993,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.left,
           'min': 55.0,
           'max': 90.0,
@@ -43386,7 +43387,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 1.0,
           'max': 4.0,
@@ -43815,7 +43816,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'scales': <String, Object?>{
         'rScale': <String, Object?>{
           'type': 'radialLinear',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': -1.0,
           'max': 1.0,

@@ -176,7 +176,7 @@ Map<String, Object?> config(
     'options': <String, Object?>{
       'responsive': false,
       'animation': false,
-      'indexAxis': horizontal ? 'y' : 'x',
+      'indexAxis': horizontal ? const YAxis() : const XAxis(),
       'plugins': <String, Object?>{
         'legend': false,
         'tooltip': false,

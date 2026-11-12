@@ -42,6 +42,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -191,7 +192,8 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
     hoverColor = _fn2(
       (ctx, options) => getHoverColor(jsGet(options, 'color')) ?? undefined,
     );
-    indexAxis = 'x';
+    // DIVERGES(chartjs): adapt-axis-objects, the axis class.
+    indexAxis = const XAxis();
     interaction = InteractionOptionsScope()
       ..mode = const NearestInteractionMode()
       ..intersect = true

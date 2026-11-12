@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -738,15 +739,15 @@ void main() {
       final config = _config();
       await tester.pumpWidget(_box(ChartView.raw(config: config)));
       final chart = _chart(tester)!;
-      expect(chart.options['indexAxis'], 'x');
-      chart.options['indexAxis'] = 'y';
+      expect(chart.options['indexAxis'], isA<XAxis>());
+      chart.options['indexAxis'] = const YAxis();
       chart.update();
-      expect(chart.options['indexAxis'], 'y');
-      expect(chart.getDatasetMeta(0).indexAxis, 'y');
+      expect(chart.options['indexAxis'], isA<YAxis>());
+      expect(chart.getDatasetMeta(0).indexAxis, isA<YAxis>());
 
       // A new config Map with the same options object keeps the edit.
       await tester.pumpWidget(_box(ChartView.raw(config: Map.of(config))));
-      expect(chart.options['indexAxis'], 'y');
+      expect(chart.options['indexAxis'], isA<YAxis>());
 
       // A new options object drops it. The chart writes into the options:
       // they are not const.
@@ -754,8 +755,8 @@ void main() {
       await tester.pumpWidget(
         _box(ChartView.raw(config: {...config, 'options': options})),
       );
-      expect(chart.options['indexAxis'], 'x');
-      expect(chart.getDatasetMeta(0).indexAxis, 'x');
+      expect(chart.options['indexAxis'], isA<XAxis>());
+      expect(chart.getDatasetMeta(0).indexAxis, isA<XAxis>());
     });
   });
 

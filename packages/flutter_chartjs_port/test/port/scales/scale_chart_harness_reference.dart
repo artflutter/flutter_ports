@@ -6,6 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 8 cases, 95 widths.
 
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -72,7 +73,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -1234.5,
           'max': 98765.0,
@@ -103,7 +104,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         },
         'y': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.001,
           'max': 12.75,
@@ -555,7 +556,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 50.0,
@@ -586,7 +587,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         },
         'y': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 11.0,
           'max': 111.0,
@@ -1034,7 +1035,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1000000.125,
           'max': 9999999.5,
@@ -1075,7 +1076,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         },
         'y': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
@@ -1520,7 +1521,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.top,
           'min': 2.0,
           'max': 18.0,
@@ -1551,7 +1552,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         },
         'y': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.right,
           'min': -40.0,
           'max': 260.0,
@@ -1974,7 +1975,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 4.0,
@@ -2005,7 +2006,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         },
         'y': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 10.0,
           'max': 30.0,
@@ -2465,7 +2466,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.25,
           'max': 6.25,
@@ -2492,7 +2493,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         },
         'x': <String, Object?>{
           'type': 'harnessLinear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.5,
           'max': 2.5,
@@ -2934,7 +2935,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessMeasure',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 3.0,
           'max': 7.0,
@@ -2966,7 +2967,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         },
         'y': <String, Object?>{
           'type': 'harnessMeasure',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 8.0,
           'max': 1250.0,
@@ -3381,7 +3382,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'harnessRadial',
-          'axis': 'r',
+          'axis': RAxis(),
           'position': ChartPosition.chartArea,
           'min': 59.0,
           'max': 90.0,

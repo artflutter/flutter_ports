@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
@@ -81,7 +82,10 @@ void main() {
     expect(drawCalls(chart), original);
     expect(target.calls, calls);
   });
-  for (final axis in ['x', 'y']) {
+  for (final (axis, indexAxis) in const <(String, CartesianAxis)>[
+    ('x', XAxis()),
+    ('y', YAxis()),
+  ]) {
     for (final fill in [
       FillBoundary.origin,
       FillBoundary.start,
@@ -115,7 +119,7 @@ void main() {
                 ],
               },
               'options': {
-                'indexAxis': axis,
+                'indexAxis': indexAxis,
                 'animation': false,
                 'responsive': false,
                 'plugins': {'legend': false, 'tooltip': false},

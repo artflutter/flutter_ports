@@ -121,7 +121,7 @@ Map<String, Object?> _config({
   'options': <String, Object?>{
     'responsive': false,
     'animation': false,
-    'indexAxis': horizontal ? 'y' : 'x',
+    'indexAxis': horizontal ? const YAxis() : const XAxis(),
     'plugins': <String, Object?>{'legend': false, 'tooltip': false},
     'scales': <String, Object?>{
       'x': <String, Object?>{
@@ -263,7 +263,7 @@ void main() {
     final chart = _chart(root);
     expect(_eligible(chart), isTrue);
     final source = SingleBarDatasetSource(root);
-    expect(source.read('x'), isTrue);
+    expect(source.read(const XAxis()), isTrue);
     var reads = 0;
     dataset.addRoute(
       'xAxisID',
@@ -276,7 +276,7 @@ void main() {
         targetName: 'x',
       ),
     );
-    expect(source.read('x'), isFalse);
+    expect(source.read(const XAxis()), isFalse);
     expect(reads, 0);
   });
 
@@ -285,26 +285,26 @@ void main() {
     () {
       final cfg = _config();
       final source = SingleBarDatasetSource(cfg);
-      expect(source.read('x'), isTrue);
+      expect(source.read(const XAxis()), isTrue);
       _dataset(cfg)['xAxisID'] = null;
-      expect(source.read('x'), isFalse);
+      expect(source.read(const XAxis()), isFalse);
       _dataset(cfg).remove('xAxisID');
-      expect(source.read('x'), isTrue);
+      expect(source.read(const XAxis()), isTrue);
       _datasets(cfg).add(<String, Object?>{});
-      expect(source.read('x'), isFalse);
+      expect(source.read(const XAxis()), isFalse);
       _datasets(cfg).removeLast();
-      expect(source.read('x'), isTrue);
+      expect(source.read(const XAxis()), isTrue);
       final list = _ReadList();
       (cfg['data']! as Map<String, Object?>)['datasets'] = list;
-      expect(source.read('x'), isFalse);
+      expect(source.read(const XAxis()), isFalse);
       expect(list.reads, 0);
       cfg['data'] = <String, Object?>{
         'datasets': <Object?>[<String, Object?>{}],
       };
-      expect(source.read('x'), isTrue);
+      expect(source.read(const XAxis()), isTrue);
       final reads = <String>[];
       cfg['data'] = _ReadMap(<String, Object?>{}, reads);
-      expect(source.read('x'), isFalse);
+      expect(source.read(const XAxis()), isFalse);
       expect(reads, isEmpty);
     },
   );
@@ -359,7 +359,7 @@ void main() {
         _dataset(cfg)['xAxisID'] = 'x';
         _scales(cfg)['0'] = <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': const XAxis(),
           'display': false,
         };
         double categoryPercentage(Object? context) {

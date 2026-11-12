@@ -4,13 +4,14 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:test/test.dart';
 
 void main() {
   // The typed parsed data of Chart.js ADR 0054 §8 and the base TypedRecord.
   group('ParsedItem', () {
     test('keeps the key order of the writes', () {
-      final item = ParsedItem.of(AxisKey.y, 'y', 1.0, AxisKey.x, 'x', 'a');
+      final item = ParsedItem.of(const YAxis(), 1.0, const XAxis(), 'a');
       expect(jsObjectKeys(item), ['y', 'x']);
       expect([item.x, item.y, item.r], ['a', 1.0, same(undefined)]);
       item
@@ -23,14 +24,13 @@ void main() {
     });
 
     test('of gives the record of the two writes for each pair of axes', () {
-      const axes = {
-        'x': AxisKey.x,
-        'y': AxisKey.y,
-        'r': AxisKey.r,
-        'u': AxisKey.other,
-        '_custom': AxisKey.other,
-        '_stacks': AxisKey.other,
-        '1': AxisKey.other,
+      // Each axis class with the key of its field. An axis of another class
+      // has no field: its value goes (row adapt-axis-objects).
+      final axes = <String, ScaleAxis>{
+        'x': const XAxis(),
+        'y': const YAxis(),
+        'r': const RAxis(),
+        'u': _OtherAxis(),
       };
       List<Object?> state(ParsedItem item) => [
         item.jsKeys(),
@@ -54,10 +54,10 @@ void main() {
       axes.forEach((aName, a) {
         axes.forEach((bName, b) {
           final reason = '$aName $bName';
-          final fast = ParsedItem.of(a, aName, 1.0, b, bName, null);
+          final fast = ParsedItem.of(a, 1.0, b, null);
           final writes = ParsedItem()
-            ..setValue(a, aName, 1.0)
-            ..setValue(b, bName, null);
+            ..setValue(a, 1.0)
+            ..setValue(b, null);
           expect(state(fast), state(writes), reason: reason);
           // A later key goes to the end, and a key of the two stays in place.
           for (final item in [fast, writes]) {
@@ -76,22 +76,22 @@ void main() {
     });
 
     test('of keeps the second value of two equal keys', () {
-      final item = ParsedItem.of(AxisKey.r, 'r', true, AxisKey.r, 'r', 4.0);
+      final item = ParsedItem.of(const RAxis(), true, const RAxis(), 4.0);
       expect(item.jsKeys(), ['r']);
       expect(item.r, 4.0);
       expect(item.x, same(undefined));
       expect(item.ownKeyCount, 1);
     });
 
-    test('reads by axis key and by name', () {
+    test('reads by axis class and by name', () {
       final item = ParsedItem()
-        ..setValue(AxisKey.x, 'x', 1.0)
-        ..setValue(AxisKey.other, 'u', 2.0);
-      expect(AxisKey.of('u'), AxisKey.other);
-      expect(AxisKey.of('r'), AxisKey.r);
-      expect(item.valueOf(AxisKey.x), 1.0);
-      expect(item.valueOf(AxisKey.other, 'u'), 2.0);
-      expect(item.valueOf(AxisKey.y), same(undefined));
+        ..setValue(const XAxis(), 1.0)
+        ..setValue(_OtherAxis(), 2.0)
+        ..['u'] = 2.0;
+      expect(item.valueOf(const XAxis()), 1.0);
+      expect(item.valueOf(_OtherAxis()), same(undefined));
+      expect(item.valueOf(const YAxis()), same(undefined));
+      expect(item.jsKeys(), ['x', 'u']);
       expect(jsGet(item, 'u'), 2.0);
       expect(jsGet(item, 'y'), same(undefined));
       expect(item['y'], same(undefined));
@@ -169,12 +169,12 @@ void main() {
     test('an entry by axis', () {
       final entry = StackEntry();
       final stacks = ItemStacks()
-        ..setEntry(AxisKey.y, 'y', entry)
-        ..setEntry(AxisKey.other, 'v', StackEntry());
-      expect(stacks.entryOf(AxisKey.y), same(entry));
-      expect(stacks.entryOf(AxisKey.x), isNull);
-      expect(stacks.entryOf(AxisKey.other, 'v'), isA<StackEntry>());
-      expect(jsObjectKeys(stacks), ['y', 'v']);
+        ..setEntry(const YAxis(), entry)
+        ..setEntry(_OtherAxis(), StackEntry());
+      expect(stacks.entryOf(const YAxis()), same(entry));
+      expect(stacks.entryOf(const XAxis()), isNull);
+      expect(stacks.entryOf(_OtherAxis()), isNull);
+      expect(jsObjectKeys(stacks), ['y']);
     });
 
     test('the dataset indices come first, in ascending order', () {
@@ -255,3 +255,7 @@ void main() {
     });
   });
 }
+
+/// An axis of a class that the core does not know: no field of a parsed
+/// item and no stack entry.
+final class _OtherAxis implements ScaleAxis {}

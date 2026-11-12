@@ -7,8 +7,9 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+    show parsedValueOf;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetKey;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show fixtureSkips;
@@ -130,7 +131,7 @@ Object? Function(Object?) _examine(
     for (final scale in [meta.iScale, meta.vScale]) {
       if (scale is! Scale || !_timeTypes.contains(scale.type)) continue;
       for (final item in meta.parsed) {
-        final time = jsGetKey(item, scale.axis);
+        final time = parsedValueOf(item, scale.axis);
         if (time is! num || !time.isFinite) {
           unparsed++;
         } else if (!differs) {

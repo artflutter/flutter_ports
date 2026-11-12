@@ -36,6 +36,7 @@
 /// [LayoutItemConfigure] has the same form.
 library;
 
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:meta/meta.dart' show immutable;
 
@@ -200,7 +201,8 @@ abstract interface class LayoutItem {
   /// core.layouts.js:15 `box.axis`, the axis of a scale. layout.d.ts does not
   /// declare it. Dart `null` stands for JS `undefined`, for example the axis
   /// of a legend. `filterDynamicPositionByAxis` compares it with `===`.
-  String? get axis;
+  /// The axis is a class (row `adapt-axis-objects`).
+  ScaleAxis? get axis;
 
   /// core.layouts.js:301 `_layers`, the function that gives the drawing
   /// layers of the box. layout.d.ts does not declare it.

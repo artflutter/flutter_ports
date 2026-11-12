@@ -65,8 +65,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
@@ -84,6 +83,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.polarArea.js:38 `generateLabels(chart)` of
@@ -222,7 +222,8 @@ class PolarAreaController extends DatasetController {
               'innerRadius',
               'outerRadius',
             ]))
-        ..indexAxis = 'r'
+        // DIVERGES(chartjs): adapt-axis-objects, the axis class.
+        ..indexAxis = const RAxis()
         ..startAngle = 0.0
         ..spacing = 0.0
         // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
@@ -298,7 +299,7 @@ class PolarAreaController extends DatasetController {
     final labelsValue = jsGet(chart.data, 'labels');
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
     final value = formatNumber(
-      jsToNumber(parsedValueOf(jsGetIndex(meta.parsed, index), AxisKey.r, 'r')),
+      jsToNumber(parsedValueOf(jsGetIndex(meta.parsed, index), const RAxis())),
       readOption(chart.options, OptionKey.locale),
     );
 
@@ -366,7 +367,7 @@ class PolarAreaController extends DatasetController {
     // `return` that stops the loop.
     for (var index = 0; index < meta.data.length; index++) {
       // One read of `this.getParsed(index).r` (:128), as upstream.
-      final parsed = parsedValueOf(getParsed(index * 1.0), AxisKey.r, 'r');
+      final parsed = parsedValueOf(getParsed(index * 1.0), const RAxis());
 
       if (!jsIsNaN(parsed) && chart.getDataVisibility(index * 1.0)) {
         if (jsLessThan(parsed, min)) {
@@ -498,7 +499,7 @@ class PolarAreaController extends DatasetController {
               : 0.0);
       var outerRadius = chart.getDataVisibility(i)
           ? scale.getDistanceFromCenterForValue(
-              parsedValueOf(getParsed(i), AxisKey.r, 'r'),
+              parsedValueOf(getParsed(i), const RAxis()),
             )
           : 0.0;
       angle = endAngle;
@@ -673,7 +674,7 @@ class PolarAreaController extends DatasetController {
     // `meta.data.forEach((element, index) => ...)`.
     for (var index = 0; index < meta.data.length; index++) {
       if (!jsIsNaN(
-            parsedValueOf(getParsed(index * 1.0), AxisKey.r, 'r'),
+            parsedValueOf(getParsed(index * 1.0), const RAxis()),
           ) &&
           chart.getDataVisibility(index * 1.0)) {
         count++;

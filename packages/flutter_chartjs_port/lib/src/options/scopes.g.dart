@@ -46,6 +46,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
+    show CartesianAxis, RAxis, ScaleAxis;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -509,13 +511,13 @@ base class ChartOptionsScope extends OptionScope {
   set datasets(DatasetOptionsByTypeScope value) =>
       store(OptionKey.datasets, OptScope<DatasetOptionsByTypeScope>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<CartesianAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<CartesianAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<CartesianAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -524,8 +526,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(CartesianAxis value) =>
+      store(OptionKey.indexAxis, OptValue<CartesianAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -2495,7 +2497,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.datasets:
         _datasets = fitCell(cell, classifyScope<DatasetOptionsByTypeScope>);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<CartesianAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.color:
@@ -2827,7 +2829,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.datasets:
         return classifyScope<DatasetOptionsByTypeScope>(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<CartesianAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.color:
@@ -8271,13 +8273,13 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   set normalized(bool value) =>
       store(OptionKey.normalized, OptValue<bool>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<CartesianAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<CartesianAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<CartesianAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -8286,8 +8288,8 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(CartesianAxis value) =>
+      store(OptionKey.indexAxis, OptValue<CartesianAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -9115,7 +9117,7 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         _normalized = fitCell(cell, classifyBool);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<CartesianAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.label:
@@ -9265,7 +9267,7 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         return classifyBool(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<CartesianAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.label:
@@ -9401,13 +9403,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set normalized(bool value) =>
       store(OptionKey.normalized, OptValue<bool>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<CartesianAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<CartesianAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<CartesianAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -9416,8 +9418,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(CartesianAxis value) =>
+      store(OptionKey.indexAxis, OptValue<CartesianAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -10518,7 +10520,7 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         _normalized = fitCell(cell, classifyBool);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<CartesianAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.label:
@@ -10713,7 +10715,7 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         return classifyBool(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<CartesianAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.label:
@@ -10872,13 +10874,13 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   set normalized(bool value) =>
       store(OptionKey.normalized, OptValue<bool>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<CartesianAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<CartesianAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<CartesianAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -10887,8 +10889,8 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(CartesianAxis value) =>
+      store(OptionKey.indexAxis, OptValue<CartesianAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -11556,7 +11558,7 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         _normalized = fitCell(cell, classifyBool);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<CartesianAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.label:
@@ -11682,7 +11684,7 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         return classifyBool(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<CartesianAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.label:
@@ -11800,13 +11802,13 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   set normalized(bool value) =>
       store(OptionKey.normalized, OptValue<bool>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<RAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<RAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<RAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -11815,8 +11817,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(RAxis value) =>
+      store(OptionKey.indexAxis, OptValue<RAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -12743,7 +12745,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         _normalized = fitCell(cell, classifyBool);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<RAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.label:
@@ -12908,7 +12910,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         return classifyBool(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<RAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.label:
@@ -13052,13 +13054,13 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   set normalized(bool value) =>
       store(OptionKey.normalized, OptValue<bool>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<RAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<RAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<RAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -13067,8 +13069,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(RAxis value) =>
+      store(OptionKey.indexAxis, OptValue<RAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -14014,7 +14016,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         _normalized = fitCell(cell, classifyBool);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<RAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.label:
@@ -14182,7 +14184,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         return classifyBool(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<RAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.label:
@@ -14328,13 +14330,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set normalized(bool value) =>
       store(OptionKey.normalized, OptValue<bool>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<RAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<RAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<RAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -14343,8 +14345,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(RAxis value) =>
+      store(OptionKey.indexAxis, OptValue<RAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -15524,7 +15526,7 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         _normalized = fitCell(cell, classifyBool);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<RAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.label:
@@ -15731,7 +15733,7 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         return classifyBool(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<RAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.label:
@@ -15898,13 +15900,13 @@ base class GenericDatasetOptionsScope extends OptionScope {
   set normalized(bool value) =>
       store(OptionKey.normalized, OptValue<bool>(value));
 
-  Opt<String>? _indexAxis;
+  Opt<ScaleAxis>? _indexAxis;
 
   /// The cell of `indexAxis`, or Dart `null` when absent.
-  Opt<String>? get indexAxisCell => _indexAxis;
+  Opt<ScaleAxis>? get indexAxisCell => _indexAxis;
 
   /// Stores the cell of `indexAxis`. Dart `null` deletes the key.
-  set indexAxisCell(Opt<String>? cell) {
+  set indexAxisCell(Opt<ScaleAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.indexAxis);
     } else {
@@ -15913,8 +15915,8 @@ base class GenericDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `indexAxis`.
-  set indexAxis(String value) =>
-      store(OptionKey.indexAxis, OptValue<String>(value));
+  set indexAxis(ScaleAxis value) =>
+      store(OptionKey.indexAxis, OptValue<ScaleAxis>(value));
 
   Opt<Object>? _clip;
 
@@ -16357,7 +16359,7 @@ base class GenericDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         _normalized = fitCell(cell, classifyBool);
       case OptionKey.indexAxis:
-        _indexAxis = fitCell(cell, classifyString);
+        _indexAxis = fitCell(cell, classifyTyped<ScaleAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.label:
@@ -16450,7 +16452,7 @@ base class GenericDatasetOptionsScope extends OptionScope {
       case OptionKey.normalized:
         return classifyBool(raw);
       case OptionKey.indexAxis:
-        return classifyString(raw);
+        return classifyTyped<ScaleAxis>(raw);
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.label:
@@ -17034,13 +17036,13 @@ base class ScaleOptionsScope extends OptionScope {
   set stackWeight(double value) =>
       store(OptionKey.stackWeight, OptValue<double>(value));
 
-  Opt<String>? _axis;
+  Opt<ScaleAxis>? _axis;
 
   /// The cell of `axis`, or Dart `null` when absent.
-  Opt<String>? get axisCell => _axis;
+  Opt<ScaleAxis>? get axisCell => _axis;
 
   /// Stores the cell of `axis`. Dart `null` deletes the key.
-  set axisCell(Opt<String>? cell) {
+  set axisCell(Opt<ScaleAxis>? cell) {
     if (cell == null) {
       delete(OptionKey.axis);
     } else {
@@ -17049,7 +17051,8 @@ base class ScaleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `axis`.
-  set axis(String value) => store(OptionKey.axis, OptValue<String>(value));
+  set axis(ScaleAxis value) =>
+      store(OptionKey.axis, OptValue<ScaleAxis>(value));
 
   Opt<bool>? _offset;
 
@@ -17564,7 +17567,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.stackWeight:
         _stackWeight = fitCell(cell, classifyNumber);
       case OptionKey.axis:
-        _axis = fitCell(cell, classifyString);
+        _axis = fitCell(cell, classifyTyped<ScaleAxis>);
       case OptionKey.offset:
         _offset = fitCell(cell, classifyBool);
       case OptionKey.grid:
@@ -17725,7 +17728,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.stackWeight:
         return classifyNumber(raw);
       case OptionKey.axis:
-        return classifyString(raw);
+        return classifyTyped<ScaleAxis>(raw);
       case OptionKey.offset:
         return classifyBool(raw);
       case OptionKey.grid:

@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -91,7 +92,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': -15.0,
             'max': 15.0,
@@ -168,7 +169,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -10.0,
             'max': 10.0,
@@ -256,7 +257,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -431,7 +432,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -699,7 +700,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
@@ -776,7 +777,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
@@ -864,7 +865,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1039,7 +1040,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1395,7 +1396,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
@@ -1472,7 +1473,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
@@ -1560,7 +1561,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1735,7 +1736,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2086,7 +2087,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
@@ -2163,7 +2164,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
@@ -2251,7 +2252,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2426,7 +2427,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2781,7 +2782,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
@@ -2858,7 +2859,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
@@ -2946,7 +2947,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3157,7 +3158,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3519,7 +3520,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 10.0,
@@ -3594,7 +3595,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
@@ -3682,7 +3683,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3893,7 +3894,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4282,7 +4283,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 10.0,
@@ -4357,7 +4358,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
@@ -4445,7 +4446,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4656,7 +4657,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5015,7 +5016,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 10.0,
@@ -5090,7 +5091,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
@@ -5178,7 +5179,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5389,7 +5390,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -6460,7 +6461,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -6491,7 +6492,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -6529,7 +6530,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6706,7 +6707,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7658,7 +7659,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
@@ -7693,7 +7694,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -7731,7 +7732,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7870,7 +7871,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8089,7 +8090,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
@@ -8124,7 +8125,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
@@ -8162,7 +8163,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8304,7 +8305,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8603,7 +8604,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
@@ -8638,7 +8639,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
@@ -8676,7 +8677,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8818,7 +8819,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -9117,7 +9118,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
@@ -9152,7 +9153,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
@@ -9190,7 +9191,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -9332,7 +9333,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -10311,7 +10312,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
         ],
       },
-      'options': <String, Object?>{'indexAxis': 'y'},
+      'options': <String, Object?>{'indexAxis': YAxis()},
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
@@ -10320,7 +10321,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
@@ -10359,7 +10360,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -10397,7 +10398,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10539,7 +10540,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11440,7 +11441,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
@@ -11475,7 +11476,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -11513,7 +11514,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11724,7 +11725,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11953,7 +11954,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
@@ -11988,7 +11989,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
@@ -12026,7 +12027,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -12240,7 +12241,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -12554,7 +12555,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
@@ -12585,7 +12586,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
@@ -12627,7 +12628,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -12922,7 +12923,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -13247,7 +13248,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
@@ -13278,7 +13279,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
@@ -13320,7 +13321,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -13687,7 +13688,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -14017,7 +14018,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
@@ -14048,7 +14049,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
@@ -14090,7 +14091,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -14457,7 +14458,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -14866,7 +14867,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
@@ -14897,7 +14898,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
@@ -14939,7 +14940,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -15294,7 +15295,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -15653,7 +15654,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
@@ -15684,7 +15685,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
@@ -15726,7 +15727,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -16093,7 +16094,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -17220,7 +17221,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
@@ -17259,7 +17260,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 10.0,
@@ -17301,7 +17302,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17440,7 +17441,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18453,7 +18454,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
@@ -18488,7 +18489,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 9.0,
@@ -18526,7 +18527,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18629,7 +18630,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18732,7 +18733,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19622,7 +19623,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
@@ -19665,7 +19666,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
@@ -19707,7 +19708,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20693,7 +20694,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 8.0,
@@ -20730,7 +20731,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 8.0,
@@ -20766,7 +20767,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21797,7 +21798,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
@@ -21840,7 +21841,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 3.0,
@@ -21882,7 +21883,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22133,7 +22134,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 3.0,
@@ -22176,7 +22177,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 3.0,
@@ -22218,7 +22219,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -23296,7 +23297,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 2.0,
@@ -23339,7 +23340,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 3.0,
@@ -23381,7 +23382,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24329,7 +24330,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
@@ -24368,7 +24369,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 5.0,
@@ -24402,7 +24403,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25188,7 +25189,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
@@ -25231,7 +25232,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -25265,7 +25266,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25410,7 +25411,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25516,7 +25517,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25789,7 +25790,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 9.0,
@@ -25824,7 +25825,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 9.0,
@@ -25862,7 +25863,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26043,7 +26044,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26149,7 +26150,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26512,7 +26513,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 9.0,
@@ -26547,7 +26548,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 9.0,
@@ -26585,7 +26586,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26766,7 +26767,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26908,7 +26909,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -27265,7 +27266,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 9.0,
@@ -27300,7 +27301,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 9.0,
@@ -27338,7 +27339,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -27519,7 +27520,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -27661,7 +27662,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               },
               <String, Object?>{
                 'type': 'bubble',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -28805,7 +28806,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 4.0,
@@ -28840,7 +28841,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -28874,7 +28875,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29692,7 +29693,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
@@ -29735,7 +29736,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -29777,7 +29778,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30940,7 +30941,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
@@ -30983,7 +30984,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -31025,7 +31026,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bubble',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,

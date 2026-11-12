@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -83,8 +84,8 @@ bool canPrepareNativePointUpdate({
   required bool includeOptions,
   required Object? stacked,
   required Object? segment,
-  required String iAxis,
-  required String vAxis,
+  required ScaleAxis iAxis,
+  required ScaleAxis vAxis,
   required double start,
   required double count,
 }) =>
@@ -93,8 +94,8 @@ bool canPrepareNativePointUpdate({
     includeOptions &&
     !jsTruthy(stacked) &&
     !jsTruthy(segment) &&
-    (iAxis == 'x' || iAxis == 'y') &&
-    (vAxis == 'x' || vAxis == 'y') &&
+    (iAxis is XAxis || iAxis is YAxis) &&
+    (vAxis is XAxis || vAxis is YAxis) &&
     start.isFinite &&
     start >= 0 &&
     start == start.truncateToDouble() &&

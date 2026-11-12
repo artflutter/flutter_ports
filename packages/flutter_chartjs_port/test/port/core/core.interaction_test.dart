@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -190,7 +191,7 @@ final class _Scale implements types.Scale {
   _Scale(this.axis, {this.reversePixels = false});
 
   @override
-  final String axis;
+  final ScaleAxis axis;
 
   @override
   final bool reversePixels;

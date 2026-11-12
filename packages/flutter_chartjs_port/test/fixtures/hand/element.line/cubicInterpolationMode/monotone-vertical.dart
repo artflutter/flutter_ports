@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -41,7 +42,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       ],
     },
     'options': <String, Object?>{
-      'indexAxis': 'y',
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      'indexAxis': const YAxis(),
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'display': false,

@@ -4,6 +4,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// Explicit contract for ordinary controller/scale metadata reads. Unknown
@@ -75,7 +76,7 @@ final class SingleBarDatasetSource {
   }
 
   /// No custom getter/list operator/route runs to qualify a fast path.
-  bool read(String axis) {
+  bool read(CartesianAxis axis) {
     final Object? data;
     if (_rootKind == 1) {
       final scope = _config as ChartConfigurationScope;
@@ -118,12 +119,13 @@ final class SingleBarDatasetSource {
       _dataset = dataset;
       _datasetKind = _kind(dataset, BarControllerDatasetOptionsScope);
     }
-    final key = axis == 'x' ? 'xAxisID' : 'yAxisID';
+    final horizontal = axis is XAxis;
+    final key = horizontal ? 'xAxisID' : 'yAxisID';
     final Object? id;
     if (_datasetKind == 1) {
       final scope = dataset! as BarControllerDatasetOptionsScope;
       if (scope.routeOf(key) != null) return false;
-      final cell = axis == 'x' ? scope.xAxisIDCell : scope.yAxisIDCell;
+      final cell = horizontal ? scope.xAxisIDCell : scope.yAxisIDCell;
       id = cell == null ? undefined : cell.raw;
     } else if (_datasetKind == 2) {
       id = RawScope(dataset! as Map<String, Object?>).jsRead(key);

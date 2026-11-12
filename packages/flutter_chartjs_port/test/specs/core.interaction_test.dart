@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -318,7 +319,7 @@ void main() {
           final chart = acquireChart(<String, Object?>{
             'type': 'bar',
             'data': data,
-            'options': <String, Object?>{'indexAxis': 'y'},
+            'options': <String, Object?>{'indexAxis': const YAxis()},
           });
 
           final meta0 = chart.getDatasetMeta(0);
@@ -436,7 +437,7 @@ void main() {
           final chart = acquireChart(<String, Object?>{
             'type': 'bar',
             'data': data,
-            'options': <String, Object?>{'indexAxis': 'y'},
+            'options': <String, Object?>{'indexAxis': const YAxis()},
           });
 
           final evt = _Event(

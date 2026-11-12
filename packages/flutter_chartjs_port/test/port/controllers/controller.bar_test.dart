@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -253,10 +254,22 @@ void main() {
     // v24.12.0 gives the labels ['b', 'a'], ['b', 'a'] and ['b'] (a probe
     // of these three configs on the pinned build). A parse of no item reads
     // no key and does not throw.
-    for (final (name, indexAxis, parsing, labels) in [
-      ('a yAxisKey null', 'x', {'yAxisKey': null}, ['b', 'a']),
-      ('an xAxisKey 5 with indexAxis y', 'y', {'xAxisKey': 5.0}, ['b', 'a']),
-      ('a yAxisKey 5 with indexAxis y', 'y', {'yAxisKey': 5.0}, ['b']),
+    for (final (name, indexAxis, axisClass, parsing, labels) in [
+      ('a yAxisKey null', 'x', const XAxis(), {'yAxisKey': null}, ['b', 'a']),
+      (
+        'an xAxisKey 5 with indexAxis y',
+        'y',
+        const YAxis(),
+        {'xAxisKey': 5.0},
+        ['b', 'a'],
+      ),
+      (
+        'a yAxisKey 5 with indexAxis y',
+        'y',
+        const YAxis(),
+        {'yAxisKey': 5.0},
+        ['b'],
+      ),
     ]) {
       testWidgets('$name throws in the order of the key reads', (
         tester,
@@ -277,7 +290,7 @@ void main() {
               ],
             },
             'options': <String, Object?>{
-              'indexAxis': indexAxis,
+              'indexAxis': axisClass,
               'parsing': <String, Object?>{...parsing},
               'scales': <String, Object?>{
                 indexAxis: <String, Object?>{'type': 'category'},

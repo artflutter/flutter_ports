@@ -1,3 +1,5 @@
-# - jsGet 1: _readKey reads an item of the user data (parsing: false) that is
-#   neither a ParsedItem nor an element (Chart.js ADR 0054 §8).
-jsGet 1
+# - jsGet 2: _readKey and _readAxis read an item of the user data (parsing:
+#   false) that is neither a ParsedItem nor an element (Chart.js ADR 0054
+#   §8); _readAxis reads it by the key of the axis class (row
+#   adapt-axis-objects).
+jsGet 2

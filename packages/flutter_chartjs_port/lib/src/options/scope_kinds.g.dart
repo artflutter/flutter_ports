@@ -1569,7 +1569,7 @@ enum ScopeKind {
           case OptionKey.datasets:
             return 32;
           case OptionKey.indexAxis:
-            return 4;
+            return 3840;
           case OptionKey.clip:
             return 35;
           case OptionKey.color:
@@ -2215,7 +2215,7 @@ enum ScopeKind {
           case OptionKey.normalized:
             return 2;
           case OptionKey.indexAxis:
-            return 4;
+            return 3840;
           case OptionKey.clip:
             return 35;
           case OptionKey.label:
@@ -2306,7 +2306,7 @@ enum ScopeKind {
           case OptionKey.normalized:
             return 2;
           case OptionKey.indexAxis:
-            return 4;
+            return 3840;
           case OptionKey.clip:
             return 35;
           case OptionKey.label:
@@ -2423,7 +2423,7 @@ enum ScopeKind {
           case OptionKey.normalized:
             return 2;
           case OptionKey.indexAxis:
-            return 4;
+            return 3840;
           case OptionKey.clip:
             return 35;
           case OptionKey.label:
@@ -2498,7 +2498,7 @@ enum ScopeKind {
           case OptionKey.normalized:
             return 2;
           case OptionKey.indexAxis:
-            return 4;
+            return 3968;
           case OptionKey.clip:
             return 35;
           case OptionKey.label:
@@ -2599,7 +2599,7 @@ enum ScopeKind {
           case OptionKey.normalized:
             return 2;
           case OptionKey.indexAxis:
-            return 4;
+            return 3968;
           case OptionKey.clip:
             return 35;
           case OptionKey.label:
@@ -2702,7 +2702,7 @@ enum ScopeKind {
           case OptionKey.normalized:
             return 2;
           case OptionKey.indexAxis:
-            return 4;
+            return 3968;
           case OptionKey.clip:
             return 35;
           case OptionKey.label:
@@ -2827,7 +2827,7 @@ enum ScopeKind {
           case OptionKey.normalized:
             return 2;
           case OptionKey.indexAxis:
-            return 4;
+            return 3712;
           case OptionKey.clip:
             return 35;
           case OptionKey.label:
@@ -2932,7 +2932,7 @@ enum ScopeKind {
           case OptionKey.stackWeight:
             return 1;
           case OptionKey.axis:
-            return 4;
+            return 3712;
           case OptionKey.offset:
             return 2;
           case OptionKey.grid:

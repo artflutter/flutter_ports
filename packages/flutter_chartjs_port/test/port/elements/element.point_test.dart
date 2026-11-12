@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -475,7 +476,7 @@ void main() {
         {'tension': 0.4},
         const _Area(0, 0, 100, 100),
         false,
-        'x',
+        const XAxis(),
       );
       for (final point in points) {
         for (final prop in ['cp1x', 'cp1y', 'cp2x', 'cp2y']) {
@@ -590,8 +591,8 @@ void main() {
       final point = PointElement({
         'options': <String, Object?>{'radius': 3, 'hitRadius': 1},
       });
-      expect(point.getRange('x'), 4);
-      expect(point.getRange('y'), 4);
+      expect(point.getRange(const XAxis()), 4);
+      expect(point.getRange(const YAxis()), 4);
     });
   });
 

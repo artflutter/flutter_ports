@@ -22,8 +22,9 @@ import 'dart:math' as math;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show lookupByKey;
+    show lookupByAxis;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -33,11 +34,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// helpers.extras.ts:7 `fontString`.
@@ -221,7 +223,7 @@ double textX(
 ///
 /// `start` and `count` are JS numbers, thus `double` values (Chart.js ADR
 /// 0045). They are always integers: list positions and lengths. The `lo`
-/// and `hi` of [lookupByKey] are `int` values, which the port converts.
+/// and `hi` of [lookupByAxis] are `int` values, which the port converts.
 /// `_parsed.slice(…)` is [_slice].
 ///
 /// Upstream reads the length and `_lookupByKey` of the points. Thus the
@@ -253,10 +255,10 @@ double textX(
 
     if (minDefined) {
       start = jsMin(
-        lookupByKey(parsed, axis, min).lo.toDouble(),
+        lookupByAxis(parsed, axis, min).lo.toDouble(),
         animationsDisabled
             ? pointCount
-            : lookupByKey(
+            : lookupByAxis(
                 points,
                 axis,
                 iScale.getPixelForValue(min),
@@ -274,10 +276,10 @@ double textX(
     }
     if (maxDefined) {
       var end = jsMax(
-        lookupByKey(parsed, iScale.axis, max, true).hi + 1.0,
+        lookupByAxis(parsed, iScale.axis, max, true).hi + 1.0,
         animationsDisabled
             ? 0.0
-            : lookupByKey(
+            : lookupByAxis(
                     points,
                     axis,
                     iScale.getPixelForValue(max),
@@ -317,17 +319,19 @@ List<T> _slice<T>(List<T> list, double begin, [double? end]) {
   return from < to ? list.sublist(from, to) : <T>[];
 }
 
-/// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:503):
-/// the typed axis value of a [ParsedItem] (Chart.js ADR 0054 §8), the Map
-/// read for a Map, else [jsGet]: an item of the user data with `parsing:
-/// false`. The Map read gives Dart `null` for an absent key, where
-/// JavaScript gives `undefined`. `isNullOrUndef` gives the same result for
-/// both.
-Object? _parsedValue(Object? point, String key) => switch (point) {
-  final ParsedItem item => item.valueOf(AxisKey.of(key), key),
-  final Map<dynamic, dynamic> map => map[key],
-  _ => jsGet(point, key),
-};
+/// The JS read `point[axis]` of a parsed item (`unknown[]`, index.d.ts:503):
+/// the typed axis value of a [ParsedItem] (Chart.js ADR 0054 §8), else the
+/// read of the key of the axis ([axisDataKey]): the Map read for a Map, else
+/// [jsGet], an item of the user data with `parsing: false`. The Map read
+/// gives Dart `null` for an absent key, where JavaScript gives `undefined`.
+/// `isNullOrUndef` gives the same result for both. An axis of another class
+/// gives [undefined].
+Object? _parsedValue(Object? point, ScaleAxis axis) {
+  if (point is ParsedItem) return point.valueOf(axis);
+  final key = axisDataKey(axis);
+  if (key == null) return undefined;
+  return point is Map<dynamic, dynamic> ? point[key] : jsGet(point, key);
+}
 
 /// helpers.extras.ts:146 `newRanges`, the object literal
 /// `{xmin, xmax, ymin, ymax}` of `_scaleRangesChanged`.

@@ -402,7 +402,7 @@ const stackedLines = ChartConfig(
 const verticalLine = ChartConfig(
   type: .line,
   labels: months,
-  indexAxis: .y,
+  indexAxis: YAxis(),
   datasets: [
     LineDataset(
       label: 'My First Dataset',
@@ -427,7 +427,7 @@ const verticalLine = ChartConfig(
         Color.fromRGBO(201, 203, 207, 1),
       ]),
       borderWidth: 1,
-      extra: {'axis': 'y'},
+      extra: {'axis': YAxis()},
     ),
   ],
   scales: {'x': LinearAxis(beginAtZero: true)},

@@ -461,7 +461,10 @@ scenario('construction', (observe, charts) => {
   observe('scales', Object.keys(chart.scales).join(','));
   const meta = chart.getDatasetMeta(0);
   labelElements(chart);
-  observe('meta', `${meta.type} ${meta.index} ${meta.order} ${meta.label} ${meta.visible} ${meta.indexAxis} ${meta.xAxisID} ${meta.yAxisID}`);
+  // The index axis is a class of the port: both sides print a marker (row
+  // adapt-axis-objects).
+  const axisMark = (axis) => (['x', 'y', 'r'].includes(axis) ? '<axis>' : String(axis));
+  observe('meta', `${meta.type} ${meta.index} ${meta.order} ${meta.label} ${meta.visible} ${axisMark(meta.indexAxis)} ${meta.xAxisID} ${meta.yAxisID}`);
   observe('elements', meta.data.map((el) => `${el.x},${el.y}`).join(' '));
   observe('dataset element', String(meta.dataset));
   observe('context', `${chart.getContext().type} ${chart.getContext().chart === chart}`);

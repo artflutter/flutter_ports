@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 
@@ -95,7 +96,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -168,7 +169,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -10.0,
             'max': 20.0,
@@ -248,7 +249,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -498,7 +499,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -886,7 +887,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -963,7 +964,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -1043,7 +1044,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1293,7 +1294,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1761,7 +1762,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -1838,7 +1839,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -1918,7 +1919,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2168,7 +2169,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2636,7 +2637,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -2713,7 +2714,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -2793,7 +2794,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3046,7 +3047,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3499,7 +3500,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -3576,7 +3577,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -3656,7 +3657,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3906,7 +3907,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4929,7 +4930,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -4956,7 +4957,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -4994,7 +4995,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -5886,7 +5887,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -5917,7 +5918,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -5955,7 +5956,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6196,7 +6197,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7193,7 +7194,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
@@ -7232,7 +7233,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -7274,7 +7275,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7593,7 +7594,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8905,7 +8906,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -8936,7 +8937,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
@@ -8970,7 +8971,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9220,7 +9221,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9470,7 +9471,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10505,7 +10506,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -10536,7 +10537,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 9.0,
@@ -10574,7 +10575,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10821,7 +10822,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11817,7 +11818,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -11848,7 +11849,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 9.0,
@@ -11886,7 +11887,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12133,7 +12134,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13119,7 +13120,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -13150,7 +13151,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -13192,7 +13193,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14211,7 +14212,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -15.0,
             'max': 25.0,
@@ -14246,7 +14247,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -14335,7 +14336,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14605,7 +14606,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14869,7 +14870,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -15960,7 +15961,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
         ],
       },
-      'options': <String, Object?>{'indexAxis': 'y'},
+      'options': <String, Object?>{'indexAxis': YAxis()},
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
@@ -15969,7 +15970,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 4.0,
@@ -15996,7 +15997,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': -3.0,
             'max': 6.0,
@@ -16040,7 +16041,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16281,7 +16282,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17325,7 +17326,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 2.0,
             'max': 7.0,
@@ -17368,7 +17369,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 4.0,
@@ -17410,7 +17411,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17727,7 +17728,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18172,7 +18173,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 2.0,
                 'max': 7.0,
@@ -18215,7 +18216,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 2.0,
                 'max': 4.0,
@@ -18257,7 +18258,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -18574,7 +18575,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -19900,7 +19901,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -19931,7 +19932,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 8.0,
@@ -19967,7 +19968,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20214,7 +20215,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21107,7 +21108,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -21138,7 +21139,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -21176,7 +21177,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21420,7 +21421,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21664,7 +21665,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22099,7 +22100,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -22130,7 +22131,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
@@ -22168,7 +22169,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -22412,7 +22413,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -22656,7 +22657,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -23128,7 +23129,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -23159,7 +23160,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
@@ -23197,7 +23198,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -23441,7 +23442,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -23685,7 +23686,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -24957,7 +24958,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -24988,7 +24989,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -2.0,
             'max': 5.0,
@@ -25024,7 +25025,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25855,7 +25856,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -25886,7 +25887,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -25924,7 +25925,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26167,7 +26168,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -27081,7 +27082,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -27108,7 +27109,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -27142,7 +27143,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -27386,7 +27387,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -27770,7 +27771,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -27797,7 +27798,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -27831,7 +27832,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -28078,7 +28079,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -29095,7 +29096,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -29126,7 +29127,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -29160,7 +29161,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29371,7 +29372,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29670,7 +29671,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -29701,7 +29702,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
@@ -29743,7 +29744,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -29990,7 +29991,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -30373,7 +30374,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -30404,7 +30405,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
@@ -30446,7 +30447,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -30693,7 +30694,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -31937,7 +31938,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
@@ -31959,7 +31960,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.85,
             'max': 2.1,
@@ -31991,7 +31992,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32580,7 +32581,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
@@ -32623,7 +32624,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 10.0,
             'max': 50.0,
@@ -32661,7 +32662,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -33642,7 +33643,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
@@ -33685,7 +33686,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 10.0,
             'max': 20.0,
@@ -33727,7 +33728,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34771,7 +34772,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 4.5,
             'max': 9.5,
@@ -34814,7 +34815,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -34848,7 +34849,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35311,7 +35312,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
@@ -35354,7 +35355,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -35388,7 +35389,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -35936,7 +35937,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
@@ -35979,7 +35980,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -36013,7 +36014,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -36597,7 +36598,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
@@ -36640,7 +36641,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -36674,7 +36675,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -37916,7 +37917,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
@@ -37955,7 +37956,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -37997,7 +37998,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39231,7 +39232,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -39266,7 +39267,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -39300,7 +39301,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -40159,7 +40160,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
@@ -40198,7 +40199,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
@@ -40232,7 +40233,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -40982,7 +40983,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -41011,7 +41012,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -41053,7 +41054,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42022,7 +42023,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -42055,7 +42056,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -42097,7 +42098,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,

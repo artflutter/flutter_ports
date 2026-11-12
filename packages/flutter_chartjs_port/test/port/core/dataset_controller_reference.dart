@@ -4,6 +4,8 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // src/core/core.datasetController.js at the pinned Chart.js. 34 scenarios.
 
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+
 /// The Node.js version that generated the data.
 const String datasetControllerReferenceNode = 'v24.22.1';
 
@@ -34,8 +36,8 @@ const List<DatasetControllerScenario> datasetControllerReference = [
       'name': 'parsePrimitiveData with labels',
       'labels': <Object?>['a', 'b', 'c', 'd'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -77,12 +79,12 @@ throws labelAndValue: TypeError''',
       'name': 'parsePrimitiveData with one scale',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'r', 'axis': 'r', 'kind': 'linear'},
+        <String, Object?>{'id': 'r', 'axis': RAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[3.0, 4.0],
-          'indexAxis': 'r',
+          'indexAxis': RAxis(),
         },
       ],
       'steps': <Object?>[
@@ -104,7 +106,7 @@ sorted 0: true''',
       'scales': <Object?>[
         <String, Object?>{
           'id': 'x',
-          'axis': 'x',
+          'axis': XAxis(),
           'kind': 'linear',
           'bounds': <String, Object?>{
             'min': 1.0,
@@ -113,7 +115,7 @@ sorted 0: true''',
             'maxDefined': true,
           },
         },
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -145,10 +147,10 @@ minmax 0 x false: {"min":0,"max":5}''',
     spec: <String, Object?>{
       'name': 'parseObjectData sorted',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'bounds': <String, Object?>{
             'min': 2.0,
@@ -189,8 +191,8 @@ labelAndValue 0 2: {"label":"4","value":"8"}''',
     spec: <String, Object?>{
       'name': 'parseObjectData with parsing keys',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'options': <String, Object?>{
         'parsing': <String, Object?>{'xAxisKey': 'a.b', 'yAxisKey': 'v'},
@@ -227,11 +229,11 @@ sorted 0: false''',
       'scales': <Object?>[
         <String, Object?>{
           'id': 'x',
-          'axis': 'x',
+          'axis': XAxis(),
           'kind': 'category',
           'labels': <Object?>['a', 'b', '10'],
         },
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -257,8 +259,8 @@ labelAndValue 0 0: {"label":"10","value":"3"}''',
     spec: <String, Object?>{
       'name': 'parsing false and the array listener',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'options': <String, Object?>{'parsing': false},
       'datasets': <Object?>[
@@ -333,8 +335,8 @@ elements 0: line#0 [point#6,point#2,point#5,point#3]''',
         'l',
       ],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -394,10 +396,10 @@ dataChanges: [[0,"_insertElements",6,3],[0,"_insertElements",9,1],[0,"_removeEle
       'name': 'stacks and getMinMax',
       'labels': <Object?>['a', 'b', 'c'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': true},
         },
@@ -476,8 +478,8 @@ props 1 1: [10,-40]''',
       'name': 'stacks of the stack option',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -521,10 +523,10 @@ stacks: {"x.y.1":{"0":{"0":1,"_top":0,"_bottom":null,"_visualValues":{"0":1}},"1
       'name': 'stacked single and null values',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': 'single'},
         },
@@ -573,10 +575,10 @@ props 2 0: [0,30]''',
     spec: <String, Object?>{
       'name': 'stacked strings with parsing false',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': 'single'},
         },
@@ -620,10 +622,10 @@ minmax 2 y true: {"min":-1,"max":-1}''',
     spec: <String, Object?>{
       'name': 'clearStacks continues after an item without a value',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': true},
         },
@@ -667,10 +669,10 @@ stacks: {"x.y.test":{"0":{"0":5,"1":1,"_top":1,"_bottom":null,"_visualValues":{"
       'name': 'updateIndex and destroy',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': true},
         },
@@ -708,10 +710,10 @@ dataChanges: []''',
     spec: <String, Object?>{
       'name': 'linkScales',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x1', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'x2', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'y1', 'axis': 'y', 'kind': 'linear'},
-        <String, Object?>{'id': 'r1', 'axis': 'r', 'kind': 'linear'},
+        <String, Object?>{'id': 'x1', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'x2', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'y1', 'axis': YAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'r1', 'axis': RAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -720,11 +722,11 @@ dataChanges: []''',
         },
         <String, Object?>{
           'data': <Object?>[1.0],
-          'indexAxis': 'y',
+          'indexAxis': YAxis(),
         },
         <String, Object?>{
           'data': <Object?>[1.0],
-          'indexAxis': 'r',
+          'indexAxis': RAxis(),
         },
       ],
       'steps': <Object?>[
@@ -753,13 +755,13 @@ meta 1: {"xAxisID":"x1","yAxisID":"nope","rAxisID":"r1","iAxisID":"nope","vAxisI
       'scales': <Object?>[
         <String, Object?>{
           'id': 'x',
-          'axis': 'x',
+          'axis': XAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'min': 0.0},
         },
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'reverse': true},
         },
@@ -802,8 +804,8 @@ clip 3: {"top":false,"right":false,"bottom":false,"left":false,"disabled":true}'
     spec: <String, Object?>{
       'name': 'clip without an overflow',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -831,8 +833,8 @@ clip 1: {"top":4,"right":4,"bottom":4,"left":4,"disabled":false}''',
       'name': 'draw',
       'labels': <Object?>['a', 'b', 'c', 'd'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -866,8 +868,8 @@ trace: ["line#0.draw(0,4)","point#1.draw","point#2.draw","point#4.draw"]''',
       'name': 'draw with hidden values',
       'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'elements': <String, Object?>{'dataset': null, 'data': 'point'},
       'datasets': <Object?>[
@@ -903,8 +905,8 @@ trace: ["point#3.draw","point#4.draw","point#5.draw","point#6.draw","point#7.dra
       'name': 'draw without a dataset element',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'elements': <String, Object?>{'dataset': null, 'data': 'bar'},
       'datasets': <Object?>[
@@ -932,8 +934,8 @@ options 0 0 null: opt#0 frozen=true {"$shared":true,"borderSkipped":"start","bor
       'name': 'shared options of a line chart',
       'labels': <Object?>['a', 'b', 'c'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -1023,8 +1025,8 @@ elementOptions 0 null: opt#8 frozen=false {"$shared":false,"borderCapStyle":"but
       'name': 'options without sharing',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'sharing': false,
       'datasets': <Object?>[
@@ -1060,8 +1062,8 @@ elementOptions 0 0: opt#3 frozen=false {"$shared":false,"borderWidth":1,"hitRadi
       'name': 'scriptable options',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -1094,8 +1096,8 @@ context 0 1 false x: ctx#4 {"active":false,"dataIndex":1,"parsed":{"x":1,"y":2},
       'name': 'custom element options',
       'labels': <Object?>['a'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'elements': <String, Object?>{'dataset': false, 'data': 'custom'},
       'datasets': <Object?>[
@@ -1126,8 +1128,8 @@ style 0 null null: opt#0 frozen=true {"$shared":true,"size":4,"label":"c"}''',
       'name': 'arc element options',
       'labels': <Object?>['a'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'elements': <String, Object?>{'dataset': null, 'data': 'arc'},
       'datasets': <Object?>[
@@ -1149,8 +1151,8 @@ options 0 0 null: opt#0 frozen=true {"$shared":true,"borderAlign":"center","bord
       'name': r'frozen options with $shared false',
       'labels': <Object?>['a', 'b'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'elements': <String, Object?>{'dataset': 'point', 'data': 'point'},
       'datasets': <Object?>[
@@ -1183,8 +1185,8 @@ throws update: TypeError''',
       'name': 'animations',
       'labels': <Object?>['a'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'options': <String, Object?>{
         'animation': <String, Object?>{'delay': 100.0},
@@ -1225,8 +1227,8 @@ animations 0 0 active: anims#4 [["x",{"delay":200,"duration":200,"easing":"easeO
       'name': 'animations disabled',
       'labels': <Object?>['a'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'options': <String, Object?>{'animation': false},
       'datasets': <Object?>[
@@ -1256,8 +1258,8 @@ animations 1 0 null: anims#1 []''',
     spec: <String, Object?>{
       'name': 'getContext',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -1291,8 +1293,8 @@ context 0 0 true null: ctx#2 {"active":true,"dataIndex":0,"parsed":{"x":1,"y":0}
     spec: <String, Object?>{
       'name': 'sorted raw values',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'raw'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'raw'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{
@@ -1420,10 +1422,10 @@ minmax 0 x false: {"min":Infinity,"max":-Infinity}''',
       'name': 'stacked removals',
       'labels': <Object?>['a', 'b', 'c', 'd'],
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'category'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'category'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': true},
         },
@@ -1477,8 +1479,8 @@ applyStack 1 y 0 true: 16''',
     spec: <String, Object?>{
       'name': 'parsing false with primitive data',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'options': <String, Object?>{'parsing': false},
       'datasets': <Object?>[
@@ -1516,10 +1518,10 @@ context 0 1 false x: ctx#0 {"active":false,"dataIndex":1,"parsed":2,"raw":2,"ele
     spec: <String, Object?>{
       'name': 'parsing false with stacked primitive data',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': true},
         },
@@ -1547,8 +1549,8 @@ parsed 0: [1,2]''',
     spec: <String, Object?>{
       'name': 'a null data item',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
-        <String, Object?>{'id': 'y', 'axis': 'y', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': XAxis(), 'kind': 'linear'},
+        <String, Object?>{'id': 'y', 'axis': YAxis(), 'kind': 'linear'},
       ],
       'datasets': <Object?>[
         <String, Object?>{

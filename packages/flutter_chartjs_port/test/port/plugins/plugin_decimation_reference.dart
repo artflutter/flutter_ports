@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -164,7 +165,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
@@ -204,7 +205,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -240,7 +241,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -819,7 +820,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 60.0,
@@ -859,7 +860,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 25.0,
@@ -895,7 +896,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1476,7 +1477,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 60.0,
@@ -1516,7 +1517,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 25.0,
@@ -1552,7 +1553,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2754,7 +2755,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 200.0,
@@ -2772,7 +2773,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -10.0,
             'max': 20.0,
@@ -2804,7 +2805,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -5861,7 +5862,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 25.0,
@@ -5899,7 +5900,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -5935,7 +5936,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7609,7 +7610,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 23.0,
@@ -7650,7 +7651,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -7686,7 +7687,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9570,7 +9571,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 25.0,
@@ -9608,7 +9609,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -9644,7 +9645,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11235,7 +11236,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'label': 'd0',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'data': <Object?>[
               <String, Object?>{'x': 0.0, 'y': 0.0},
               <String, Object?>{'x': 14.0, 'y': 1.0},
@@ -11299,7 +11300,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 25.0,
@@ -11337,7 +11338,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -11373,7 +11374,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13065,7 +13066,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 10.0,
             'max': 40.0,
@@ -13105,7 +13106,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 22.0,
@@ -13151,7 +13152,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14279,7 +14280,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 100.0,
@@ -14305,7 +14306,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 30.0,
@@ -14337,7 +14338,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16662,7 +16663,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 100.0,
@@ -16688,7 +16689,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 30.0,
@@ -16720,7 +16721,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -19822,7 +19823,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
@@ -19862,7 +19863,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -19898,7 +19899,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20396,7 +20397,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 80.0,
@@ -20440,7 +20441,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 18.0,
@@ -20484,7 +20485,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -21789,7 +21790,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 40.0,
@@ -21833,7 +21834,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -21869,7 +21870,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23333,7 +23334,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24612,7 +24613,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
@@ -24647,7 +24648,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -24679,7 +24680,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,

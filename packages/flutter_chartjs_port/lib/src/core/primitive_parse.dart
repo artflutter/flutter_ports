@@ -79,16 +79,12 @@ List<ParsedItem>? tryParseNumericCategories(
   }
   final iAxis = iScale.axis;
   final vAxis = vScale.axis;
-  final iKey = AxisKey.of(iAxis);
-  final vKey = AxisKey.of(vAxis);
   return List<ParsedItem>.generate(end - offset, (k) {
     final i = k + offset;
     final value = data[i];
     return ParsedItem.of(
-      iKey,
       iAxis,
       i < labels.length && labels[i] is String ? i * 1.0 : null,
-      vKey,
       vAxis,
       _finiteDouble(value),
     );
@@ -127,13 +123,8 @@ List<ParsedItem>? tryParseNumericSingleScale(
     }
   }
   final axis = scale.axis;
-  final key = AxisKey.of(axis);
   return List<ParsedItem>.generate(length, (i) {
     final value = data[i + offset];
-    return ParsedItem()..setValue(
-      key,
-      axis,
-      _finiteDouble(value),
-    );
+    return ParsedItem()..setValue(axis, _finiteDouble(value));
   });
 }

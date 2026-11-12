@@ -58,8 +58,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -70,6 +69,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ChartOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -492,8 +492,8 @@ class BubbleController extends DatasetController {
     final xScale = meta.xScale;
     final yScale = meta.yScale;
     final parsed = getParsed(index);
-    final x = xScale!.getLabelForValue(parsedValueOf(parsed, AxisKey.x, 'x'));
-    final y = yScale!.getLabelForValue(parsedValueOf(parsed, AxisKey.y, 'y'));
+    final x = xScale!.getLabelForValue(parsedValueOf(parsed, const XAxis()));
+    final y = yScale!.getLabelForValue(parsedValueOf(parsed, const YAxis()));
     final r = _customOf(parsed);
     final label = jsGetIndex(labels, index);
 
@@ -539,15 +539,13 @@ class BubbleController extends DatasetController {
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     final iAxis = iScale.axis;
     final vAxis = vScale.axis;
-    final iKey = AxisKey.of(iAxis);
-    final vKey = AxisKey.of(vAxis);
     // DIVERGES(chartjs): adapt-direct-element-writes, `updateElement` of the
     // exact controller only assigns in these modes, into two typed axes.
     final direct =
         _exact &&
         (reset || mode == 'none') &&
-        (iKey == AxisKey.x || iKey == AxisKey.y) &&
-        (vKey == AxisKey.x || vKey == AxisKey.y);
+        (iAxis is XAxis || iAxis is YAxis) &&
+        (vAxis is XAxis || vAxis is YAxis);
     // DIVERGES(chartjs): adapt-bubble-point-options, one synchronous loop.
     PointOptions Function(int)? prepared;
     NativePointContextReader? contexts;
@@ -580,10 +578,10 @@ class BubbleController extends DatasetController {
       }
       final iPixel = reset
           ? iScale.getPixelForDecimal(0.5)
-          : iScale.getPixelForValue(parsedValueOf(parsed, iKey, iAxis));
+          : iScale.getPixelForValue(parsedValueOf(parsed, iAxis));
       final vPixel = reset
           ? vScale.getBasePixel()
-          : vScale.getPixelForValue(parsedValueOf(parsed, vKey, vAxis));
+          : vScale.getPixelForValue(parsedValueOf(parsed, vAxis));
 
       final skip = iPixel.isNaN || vPixel.isNaN;
 
@@ -610,12 +608,12 @@ class BubbleController extends DatasetController {
       // properties with no object: the writes stay after the resolve above.
       if (point case final types.PointElementWrites target
           when direct && options != null && target.typedWrites) {
-        if (iKey == AxisKey.x) {
+        if (iAxis is XAxis) {
           target.x = iPixel;
         } else {
           target.y = iPixel;
         }
-        if (vKey == AxisKey.x) {
+        if (vAxis is XAxis) {
           target.x = vPixel;
         } else {
           target.y = vPixel;
@@ -625,8 +623,8 @@ class BubbleController extends DatasetController {
           ..options = options;
       } else {
         final properties = PointProperties();
-        setPointAxis(properties, iKey, iAxis, iPixel);
-        setPointAxis(properties, vKey, vAxis, vPixel);
+        setPointAxis(properties, iAxis, iPixel);
+        setPointAxis(properties, vAxis, vPixel);
         properties.skip = skip;
         if (options != null) properties.options = options;
 

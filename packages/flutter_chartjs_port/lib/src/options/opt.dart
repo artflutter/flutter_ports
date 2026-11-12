@@ -59,6 +59,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
+    show CartesianAxis, RAxis, ScaleAxis;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
@@ -307,6 +309,16 @@ abstract final class ShapeBits {
   /// `graceLength`: a `GraceLength`, the scale `grace`.
   static const int graceLength = 3584;
 
+  /// `scaleAxis`: a `ScaleAxis`, the `axis` of a scale.
+  static const int scaleAxis = 3712;
+
+  /// `cartesianAxis`: a `CartesianAxis` (`XAxis` or `YAxis`), the
+  /// `indexAxis` of a chart and of a cartesian dataset.
+  static const int cartesianAxis = 3840;
+
+  /// `radialAxis`: an `RAxis`, the `indexAxis` of a radial dataset.
+  static const int radialAxis = 3968;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -424,6 +436,9 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.fillTarget => classifyTyped<FillTarget>(raw),
   ShapeBits.radiusLength => classifyTyped<RadiusLength>(raw),
   ShapeBits.graceLength => classifyTyped<GraceLength>(raw),
+  ShapeBits.scaleAxis => classifyTyped<ScaleAxis>(raw),
+  ShapeBits.cartesianAxis => classifyTyped<CartesianAxis>(raw),
+  ShapeBits.radialAxis => classifyTyped<RAxis>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -24,7 +25,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       ],
     },
     'options': <String, Object?>{
-      'indexAxis': 'y',
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      'indexAxis': const YAxis(),
       'scales': <String, Object?>{
         'y': <String, Object?>{
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.

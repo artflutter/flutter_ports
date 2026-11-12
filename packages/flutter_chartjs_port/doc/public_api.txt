@@ -25,6 +25,7 @@ CanvasPath
 CanvasPattern
 CanvasRenderingContext2D
 CanvasTextBaseline
+CartesianAxis
 CategoryScale
 Chart
 ChartAlign
@@ -98,6 +99,7 @@ PointElement
 PointInteractionMode
 PointStyle
 PolarAreaController
+RAxis
 RadarController
 RadialLinearScale
 RadiusLength
@@ -108,6 +110,7 @@ RelativeFill
 RenderTextOpts
 ResizeHookArgs
 Scale
+ScaleAxis
 ScaleBounds
 ScaleValuePosition
 ScatterController
@@ -135,7 +138,9 @@ Undefined
 UpdateHookArgs
 ValueGrace
 VisualElement
+XAxis
 XInteractionMode
+YAxis
 YInteractionMode
 animator
 chartJsPackageVersion
@@ -199,6 +204,7 @@ CanvasPath
 CanvasPattern
 CanvasRenderingContext2D
 CanvasTextBaseline
+CartesianAxis
 CategoryAxis
 CategoryScale
 Chart
@@ -271,7 +277,6 @@ HeightAnimation
 HideTransition
 HoverTransition
 ImagePointStyle
-IndexAxis
 IndexInteractionMode
 InnerRadiusAnimation
 Interaction
@@ -321,6 +326,7 @@ PointStyle
 PolarAreaController
 PolarAreaDataset
 PropertyAnimation
+RAxis
 RadarController
 RadarDataset
 RadialLinearAxis
@@ -336,6 +342,7 @@ ResetTransition
 ResizeHookArgs
 ResizeTransition
 Scale
+ScaleAxis
 ScaleBounds
 ScaleValuePosition
 ScatterController
@@ -373,8 +380,10 @@ VisibleAnimation
 VisualElement
 WidthAnimation
 XAnimation
+XAxis
 XInteractionMode
 YAnimation
+YAxis
 YInteractionMode
 animator
 chartJsPackageVersion

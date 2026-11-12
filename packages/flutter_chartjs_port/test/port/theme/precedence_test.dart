@@ -40,9 +40,11 @@ import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
@@ -234,7 +236,7 @@ final JsClass _radialThemeController = JsClass(
     'defaults': <String, Object?>{
       'datasetElementType': false,
       'dataElementType': 'point',
-      'indexAxis': 'r',
+      'indexAxis': const RAxis(),
     },
     'overrides': <String, Object?>{
       'scales': <String, Object?>{
@@ -305,6 +307,7 @@ String _json(Object? value) => switch (value) {
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
+  ScaleAxis() => axisJson,
   InteractionMode() => modeJson,
   PointStyle() => pointStyleJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
@@ -2541,8 +2544,8 @@ int _markerRgb(String label) {
 }
 
 String _referenceLines(String text) => [
-  for (final line in withLengthMarkers(
-    withPointStyleMarkers(withCurveMarkers(text)),
+  for (final line in withAxisMarkers(
+    withLengthMarkers(withPointStyleMarkers(withCurveMarkers(text))),
   ).split('\n'))
     if (line.contains(': '))
       line.substring(0, line.indexOf(': ') + 2) +

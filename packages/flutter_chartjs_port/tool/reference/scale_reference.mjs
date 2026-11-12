@@ -301,11 +301,19 @@ let usesAligns = false;
 /** Whether the data has a position of the port, which needs its import. */
 let usesPositions = false;
 
+/** Whether the data has an axis class of the port, which needs its import. */
+let usesAxes = false;
+
 /**
  * The Dart literal of the value [x] of the key [k] in the object of the key
  * [owner]: the enum value of a scale option, else `undefined` here.
  */
 function scaleEnum(k, x, owner) {
+  // The axis of a scale is a class (row adapt-axis-objects).
+  if ((k === 'axis' || k === 'indexAxis') && ['x', 'y', 'r'].includes(x)) {
+    usesAxes = true;
+    return `${x.toUpperCase()}Axis()`;
+  }
   // The `align` of an axis title is a `ChartAlign` (row
   // adapt-chart-align-enum).
   if (k === 'align' && owner === 'title' && ['start', 'center', 'end'].includes(x)) {
@@ -1348,7 +1356,7 @@ const out = `// Original code, not ported from Chart.js: Scale reference data.
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. ${cases.length} cases.
-${usesScaleEnums || usesUndefined || usesAligns || usesPositions ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesAligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${usesPositions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}
+${usesScaleEnums || usesUndefined || usesAligns || usesPositions || usesAxes ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesAligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${usesAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${usesPositions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = '${process.version}';
 

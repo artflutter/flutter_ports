@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -764,7 +765,7 @@ void main() {
           construct: (newTarget, args) => _CustomScale1(scaleCfgArg(args)),
         );
         customScale1['id'] = 'customScale1';
-        customScale1['defaults'] = <String, Object?>{'axis': 'x'};
+        customScale1['defaults'] = <String, Object?>{'axis': const XAxis()};
         Chart.register([customScale1]);
 
         final chart = acquireChart({
@@ -966,7 +967,7 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'scaleX': <String, Object?>{
-                'axis': 'x',
+                'axis': const XAxis(),
                 'type': 'linear',
                 'min': -20,
                 'max': 20,
@@ -1056,7 +1057,7 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'xavier': <String, Object?>{
-                'axis': 'y',
+                'axis': const YAxis(),
                 'type': 'linear',
                 'min': -20,
                 'max': 20,
@@ -1065,7 +1066,7 @@ void main() {
           },
         });
 
-        expect(chart.scales['xavier']!.axis, 'y');
+        expect(chart.scales['xavier']!.axis, isA<YAxis>());
       });
 
       testWidgets('should center labels when rotated in x axis', (

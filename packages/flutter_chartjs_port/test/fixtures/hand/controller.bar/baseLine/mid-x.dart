@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -25,7 +26,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       ],
     },
     'options': <String, Object?>{
-      'indexAxis': 'y',
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      'indexAxis': const YAxis(),
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'display': false,

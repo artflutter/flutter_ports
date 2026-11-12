@@ -41,6 +41,7 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -113,7 +114,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -228,7 +229,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -479,7 +480,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           },
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -882,7 +883,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -997,7 +998,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -1248,7 +1249,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -1766,7 +1767,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -1881,7 +1882,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -2132,7 +2133,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -2645,7 +2646,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -2760,7 +2761,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -3011,7 +3012,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -3524,7 +3525,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -3639,7 +3640,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -3941,7 +3942,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -4458,7 +4459,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -4573,7 +4574,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -4875,7 +4876,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -5447,7 +5448,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -5562,7 +5563,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -5864,7 +5865,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -6436,7 +6437,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -6551,7 +6552,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -6853,7 +6854,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -8044,7 +8045,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
@@ -8095,7 +8096,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -8919,7 +8920,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 16.0,
@@ -8966,7 +8967,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -9214,7 +9215,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           },
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -9616,7 +9617,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 16.0,
@@ -9663,7 +9664,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -9911,7 +9912,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -10919,7 +10920,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 40.0,
@@ -10966,7 +10967,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -11355,7 +11356,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 40.0,
@@ -11402,7 +11403,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -12100,7 +12101,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 30.0,
@@ -12143,7 +12144,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -12834,7 +12835,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 30.0,
@@ -12877,7 +12878,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -13936,7 +13937,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
@@ -13987,7 +13988,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -14813,7 +14814,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
@@ -14864,7 +14865,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -15691,7 +15692,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 5.0,
             'max': 25.0,
@@ -15730,7 +15731,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -16409,7 +16410,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
@@ -16460,7 +16461,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -16850,7 +16851,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': -4.0,
                 'max': 16.0,
@@ -16901,7 +16902,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -17376,7 +17377,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': -4.0,
                 'max': 16.0,
@@ -17427,7 +17428,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -18378,7 +18379,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 8.0,
@@ -18425,7 +18426,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -19223,7 +19224,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -19266,7 +19267,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -19894,7 +19895,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -19937,7 +19938,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -20567,7 +20568,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 1.0,
@@ -20618,7 +20619,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -21245,7 +21246,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 1.0,
@@ -21296,7 +21297,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -21927,7 +21928,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 9.0,
@@ -21976,7 +21977,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -22667,7 +22668,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 30.0,
@@ -22710,7 +22711,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -23391,7 +23392,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 6.0,
@@ -23434,7 +23435,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -24355,7 +24356,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 6.0,
@@ -24398,7 +24399,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -25314,7 +25315,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -25365,7 +25366,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -25632,7 +25633,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -25683,7 +25684,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -26395,7 +26396,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -26446,7 +26447,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -26713,7 +26714,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -26764,7 +26765,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -27475,7 +27476,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -27526,7 +27527,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -27793,7 +27794,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -27844,7 +27845,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -28560,7 +28561,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -28611,7 +28612,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -28878,7 +28879,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -28929,7 +28930,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -29645,7 +29646,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -29696,7 +29697,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -29963,7 +29964,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -30014,7 +30015,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -30730,7 +30731,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -30781,7 +30782,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -31048,7 +31049,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -31099,7 +31100,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -31813,7 +31814,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -31864,7 +31865,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -32131,7 +32132,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -32182,7 +32183,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -32896,7 +32897,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -32947,7 +32948,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -33214,7 +33215,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -33265,7 +33266,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -33979,7 +33980,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -34030,7 +34031,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -34297,7 +34298,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -34348,7 +34349,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -35058,7 +35059,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -35109,7 +35110,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -35376,7 +35377,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -35427,7 +35428,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -36137,7 +36138,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -36188,7 +36189,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -36455,7 +36456,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -36506,7 +36507,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -37222,7 +37223,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -37273,7 +37274,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -37545,7 +37546,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -37596,7 +37597,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -37973,7 +37974,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -38024,7 +38025,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -38755,7 +38756,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -38806,7 +38807,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarAreaSharing',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -39047,7 +39048,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -39098,7 +39099,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarAreaSharing',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -39753,7 +39754,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -39804,7 +39805,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarAreaSharing',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -40045,7 +40046,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -40096,7 +40097,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarAreaSharing',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -40756,7 +40757,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -40807,7 +40808,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarAreaSharing',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -41048,7 +41049,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -41099,7 +41100,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarAreaSharing',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -41759,7 +41760,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -41810,7 +41811,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarAreaSharing',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -42051,7 +42052,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -42102,7 +42103,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarAreaSharing',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -42810,7 +42811,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -42861,7 +42862,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarAreaSharing',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -43102,7 +43103,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -43153,7 +43154,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarAreaSharing',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -43811,7 +43812,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
@@ -43862,7 +43863,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarAreaSharing',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -44103,7 +44104,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
@@ -44154,7 +44155,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarAreaSharing',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -44864,7 +44865,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -44907,7 +44908,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -45660,7 +45661,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -45703,7 +45704,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -46034,7 +46035,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 3.0,
@@ -46077,7 +46078,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -47153,7 +47154,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -47196,7 +47197,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -47527,7 +47528,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 3.0,
@@ -47570,7 +47571,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -48213,7 +48214,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
-                'axis': 'r',
+                'axis': RAxis(),
                 'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 3.0,
@@ -48256,7 +48257,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': undefined,
                 'yAxisID': undefined,
                 'rAxisID': 'r',
@@ -49116,7 +49117,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -49159,7 +49160,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -49743,7 +49744,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -49786,7 +49787,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'polarArea',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',

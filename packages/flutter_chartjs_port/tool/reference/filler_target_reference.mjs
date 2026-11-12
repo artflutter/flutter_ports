@@ -703,9 +703,12 @@ function dart(v, owner) {
   if (typeof v === 'string') return v.includes("'") ? `"${v}"` : `'${v}'`;
   if (Array.isArray(v)) return `<Object?>[${v.map((x) => dart(x)).join(', ')}]`;
   if (typeof v === 'object') {
+    // The `axis` of a source holds the axis class of the port (row
+    // adapt-axis-objects).
+    const axisDart = (x) => `${x.toUpperCase()}Axis()`;
     const entries = Object.keys(v).map(
       (k) =>
-        `${dart(k)}: ${k === 'fill' || (k === 'target' && owner === 'fill') ? fillDart(v[k]) : dart(v[k], k)}`,
+        `${dart(k)}: ${k === 'fill' || (k === 'target' && owner === 'fill') ? fillDart(v[k]) : k === 'axis' && ['x', 'y', 'r'].includes(v[k]) ? axisDart(v[k]) : dart(v[k], k)}`,
     );
     return `<String, Object?>{${entries.join(', ')}}`;
   }
@@ -728,6 +731,7 @@ const out = `// Original code, not ported from Chart.js: filler target reference
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The Node.js version that generated the data.
 const String fillerTargetReferenceNode = '${process.version}';

@@ -9,6 +9,7 @@
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -68,7 +69,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -101,7 +102,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -100.0,
           'max': 80.0,
@@ -773,7 +774,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -806,7 +807,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -100.0,
           'max': 80.0,
@@ -1496,7 +1497,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y2': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.right,
           'min': -1000.0,
           'max': 1000.0,
@@ -1567,7 +1568,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -1596,7 +1597,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -100.0,
           'max': 80.0,
@@ -2684,7 +2685,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 30.0,
           'max': 90.0,
@@ -2747,7 +2748,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 7.0,
@@ -3351,7 +3352,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 3.0,
@@ -3380,7 +3381,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
@@ -3987,7 +3988,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 3.0,
@@ -4016,7 +4017,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -4e-8,
           'max': 6e-8,
@@ -4641,7 +4642,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -4660,7 +4661,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
@@ -5250,7 +5251,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -10.0,
           'max': 15.0,
@@ -5311,7 +5312,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -5768,7 +5769,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -10.0,
           'max': 0.0,
@@ -6211,7 +6212,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 100.0,
@@ -6278,7 +6279,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
@@ -6996,7 +6997,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -5.0,
           'max': 40.0,
@@ -7065,7 +7066,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -4.0,
           'max': 10.0,
@@ -7782,7 +7783,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -5.0,
           'max': 20.0,
@@ -7843,7 +7844,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
@@ -8518,7 +8519,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 7.0,
@@ -8585,7 +8586,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 4.0,
           'max': 8.5,
@@ -9278,7 +9279,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 8.0,
@@ -9347,7 +9348,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -2.0,
           'max': 4.0,
@@ -9982,7 +9983,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -150.0,
           'max': 200.0,
@@ -10047,7 +10048,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -10789,7 +10790,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -150.0,
           'max': 200.0,
@@ -10854,7 +10855,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -11555,7 +11556,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -150.0,
           'max': 200.0,
@@ -11620,7 +11621,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -12359,7 +12360,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -12392,7 +12393,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -150.0,
           'max': 200.0,
@@ -13164,7 +13165,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -100.0,
           'max': 150.0,
@@ -13225,7 +13226,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -13829,7 +13830,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -150.0,
           'max': 200.0,
@@ -13894,7 +13895,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -14547,7 +14548,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{'stacked': true},
           'y': <String, Object?>{'stacked': true},
@@ -14560,7 +14561,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -14635,7 +14636,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -15182,7 +15183,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{'min': 20.0},
         },
@@ -15194,7 +15195,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 20.0,
           'max': 21.0,
@@ -15269,7 +15270,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -15789,7 +15790,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -15807,7 +15808,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 9500.0,
           'max': 10500.0,
@@ -16358,7 +16359,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -16380,7 +16381,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -10500.0,
           'max': -9500.0,
@@ -16936,7 +16937,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 50.0,
@@ -17007,7 +17008,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -17509,7 +17510,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -17531,7 +17532,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -1.0,
           'max': 1.0,
@@ -18087,7 +18088,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -10.0,
           'max': 10.0,
@@ -18158,7 +18159,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 4.0,
@@ -18784,7 +18785,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -1010.0,
           'max': 1010.0,
@@ -18843,7 +18844,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -19328,7 +19329,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{'min': 0.0, 'max': 3000.0},
           'y': <String, Object?>{'offset': false},
@@ -19341,7 +19342,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 3000.0,
@@ -19408,7 +19409,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -19823,7 +19824,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{'min': -3000.0, 'max': 0.0},
         },
@@ -19835,7 +19836,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -3000.0,
           'max': 0.0,
@@ -19902,7 +19903,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -20328,7 +20329,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 250.0,
           'max': 264.0,
@@ -20393,7 +20394,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 0.0,
@@ -20762,7 +20763,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 142.0,
           'max': 150.0,
@@ -20829,7 +20830,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 0.0,
@@ -21231,7 +21232,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 5.0,
           'max': 5.0,
@@ -21284,7 +21285,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -21550,7 +21551,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 40.0,
@@ -21617,7 +21618,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y2': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.right,
           'min': -40.0,
           'max': 0.0,
@@ -21684,7 +21685,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -22491,7 +22492,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 15.0,
           'max': 45.0,
@@ -22554,7 +22555,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -22980,7 +22981,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 45.0,
@@ -23049,7 +23050,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -23566,7 +23567,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 11.0,
@@ -23627,7 +23628,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -24123,7 +24124,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.4,
           'max': 2.6,
@@ -24186,7 +24187,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -24623,7 +24624,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -24674,7 +24675,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y2': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.right,
           'min': 0.1,
           'max': 0.35,
@@ -24735,7 +24736,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 3.0,
@@ -25336,7 +25337,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -11.0,
           'max': 103.5,
@@ -25397,7 +25398,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
@@ -25927,7 +25928,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 4.0,
@@ -25958,7 +25959,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 0.06,
@@ -26507,7 +26508,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.5,
           'max': 2.5,
@@ -26598,7 +26599,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -27395,7 +27396,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 99.0,
@@ -27466,7 +27467,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -27973,7 +27974,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -100.0,
           'max': 80.0,
@@ -28042,7 +28043,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -28683,7 +28684,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -100.0,
           'max': 80.0,
@@ -28752,7 +28753,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -29395,7 +29396,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 80.0,
@@ -29462,7 +29463,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 4.0,
@@ -30036,7 +30037,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 80.0,
@@ -30103,7 +30104,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 4.0,
@@ -30674,7 +30675,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 10000000.0,
@@ -30754,7 +30755,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -20000.0,
           'max': 100000.0,
@@ -31455,7 +31456,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -31516,7 +31517,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -31918,7 +31919,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -31979,7 +31980,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -32381,7 +32382,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -32452,7 +32453,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -32999,7 +33000,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -33070,7 +33071,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -33617,7 +33618,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -33688,7 +33689,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -34235,7 +34236,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -34306,7 +34307,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -34852,7 +34853,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -34923,7 +34924,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -35460,7 +35461,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
@@ -35479,7 +35480,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 1000.0,
@@ -36062,7 +36063,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'ticks': <String, Object?>{'maxTicksLimit': 1000.0},
@@ -36076,7 +36077,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1000.0,
@@ -36151,7 +36152,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -36682,7 +36683,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'ticks': <String, Object?>{
@@ -36699,7 +36700,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1000.0,
@@ -36770,7 +36771,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -37301,7 +37302,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'ticks': <String, Object?>{
@@ -37323,7 +37324,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1000.0,
@@ -37428,7 +37429,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -38249,7 +38250,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'ticks': <String, Object?>{
@@ -38271,7 +38272,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1000.0,
@@ -38371,7 +38372,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -39192,7 +39193,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'ticks': <String, Object?>{
@@ -39215,7 +39216,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1000.0,
@@ -39290,7 +39291,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 2.0,
@@ -39693,7 +39694,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 10000000.0,
@@ -39744,7 +39745,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
@@ -40344,7 +40345,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 10000000.0,
@@ -40413,7 +40414,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
@@ -41008,7 +41009,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.top,
           'min': -20.0,
           'max': 100.0,
@@ -41071,7 +41072,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.right,
           'min': 0.0,
           'max': 100.0,
@@ -41798,7 +41799,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ScaleValuePosition('x', 20.0),
           'min': 0.0,
           'max': 100.0,
@@ -41869,7 +41870,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 100.0,
@@ -42579,7 +42580,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ScaleValuePosition('x', '20'),
           'min': 0.0,
           'max': 100.0,
@@ -42650,7 +42651,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 100.0,
@@ -43360,7 +43361,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ScaleValuePosition('y', null),
           'min': -20.0,
           'max': 100.0,
@@ -43427,7 +43428,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
@@ -44146,7 +44147,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.center,
           'min': -20.0,
           'max': 100.0,
@@ -44209,7 +44210,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.center,
           'min': 0.0,
           'max': 100.0,
@@ -44923,7 +44924,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 100.0,
@@ -44982,7 +44983,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
@@ -45162,7 +45163,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 100.0,
@@ -45229,7 +45230,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
@@ -45983,7 +45984,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 8.0,
@@ -46009,7 +46010,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 50.0,
@@ -46115,7 +46116,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 90.0,
@@ -46184,7 +46185,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 7.0,
@@ -46883,7 +46884,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': -100.0,
           'max': 80.0,
@@ -46952,7 +46953,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 5.0,
@@ -47628,7 +47629,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'linear',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.3,
           'max': 2.8,
@@ -47689,7 +47690,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'category',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
@@ -48039,7 +48040,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
           },
         ],
       },
-      'options': <String, Object?>{'indexAxis': 'y'},
+      'options': <String, Object?>{'indexAxis': YAxis()},
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
@@ -48047,7 +48048,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'category',
-          'axis': 'y',
+          'axis': YAxis(),
           'position': ChartPosition.left,
           'min': 0.0,
           'max': 7.0,
@@ -48080,7 +48081,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
         'x': <String, Object?>{
           'type': 'linear',
-          'axis': 'x',
+          'axis': XAxis(),
           'position': ChartPosition.bottom,
           'min': -30.0,
           'max': 40.0,

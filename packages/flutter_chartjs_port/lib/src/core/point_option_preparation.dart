@@ -8,6 +8,7 @@ import 'package:flutter_chartjs_port/src/core/data_update.dart'
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -126,7 +127,7 @@ NativeGapReads? prepareNativeGapReads(
       : null;
 }
 
-bool _gapAxis(String axis) => axis == 'x' || axis == 'y';
+bool _gapAxis(ScaleAxis axis) => axis is XAxis || axis is YAxis;
 
 /// Prepare a generation-checked line resolver after the exact-class check.
 /// The controller's owner guard still runs before each use. The plan validates
