@@ -241,7 +241,9 @@ const Set<String> typedLibraries = {
 /// so the tree shaking of Chart.js ADR 0048, section 3, stays. It reads
 /// `Chart` of `core.controller`, `Scale` of `core.scale`, `TimeUnit` of
 /// `core.adapters`, `InteractionMode` of `core.interaction`,
-/// `TooltipPositioner` of `tooltip_position.dart` (a pure file with no plugin), the types of `lib/src/types/`, the typed option scopes
+/// `TooltipPositioner` of `tooltip_position.dart` and `FillerDrawTime` of
+/// `filler_draw_time.dart` (pure files with no plugin), the types of
+/// `lib/src/types/`, the typed option scopes
 /// of `lib/src/options/` (the lowering writes typed scopes, Chart.js ADR
 /// 0054 §7) and the typed contexts of `helpers.options.dart` (the view
 /// `ChartContext`, Chart.js ADR 0054 §11), three files of the JS runtime and
@@ -262,6 +264,7 @@ const List<String> typedTargets = [
   'lib/src/js/js_function.dart',
   'lib/src/js/js_number.dart',
   'lib/src/js/js_undefined.dart',
+  'lib/src/plugins/filler_draw_time.dart',
   'lib/src/plugins/tooltip_position.dart',
   'lib/src/theme/css.dart',
 ];

@@ -632,9 +632,19 @@ const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
 /// The cases of the parameters of [ChartFiller] and the twin `filler` Map.
 const Map<String, (ChartFiller, Map<String, Object?>)> _filler = {
   'propagate': (ChartFiller(propagate: false), {'propagate': false}),
+  'drawTime': (
+    ChartFiller(drawTime: FillerDrawTime.beforeDraw),
+    {'drawTime': FillerDrawTime.beforeDraw},
+  ),
   'extra': (
-    ChartFiller(extra: {'drawTime': 'beforeDraw'}),
-    {'drawTime': 'beforeDraw'},
+    ChartFiller(
+      extra: {
+        'events': ['click'],
+      },
+    ),
+    {
+      'events': ['click'],
+    },
   ),
 };
 

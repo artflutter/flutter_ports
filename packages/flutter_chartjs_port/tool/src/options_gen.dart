@@ -43,6 +43,7 @@ const Map<String, int> shapeAtoms = {
   'tooltipYAlign': 1048576,
   'arcBorderAlign': 2097152,
   'arcSpacingMode': 4194304,
+  'fillerDrawTime': 8388608,
 };
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
@@ -121,6 +122,11 @@ const Map<String, TypedAtom> typedAtoms = {
     type: 'ArcSpacingMode',
     uri: 'package:flutter_chartjs_port/src/types/arc_option_enums.dart',
     field: 'ArcSpacingMode?',
+  ),
+  'fillerDrawTime': (
+    type: 'FillerDrawTime',
+    uri: 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart',
+    field: null,
   ),
 };
 

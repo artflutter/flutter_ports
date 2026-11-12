@@ -842,6 +842,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `types.SimpleArc` (row `adapt-filler-target-classes`). `SimpleArc` of `simpleArc.dart` does
       not implement `types.LineElement`. `PointElement` stays the only implementer of the point
       interfaces in `lib/` (`test/port/plugins/plugin.filler/point_implementers_test.dart`).
+      The option `drawTime` holds the enum `FillerDrawTime` of the pure
+      `lib/src/plugins/filler_draw_time.dart` (row `adapt-filler-draw-time-enum`), also in a raw
+      config; the typed API has `ChartFiller.drawTime`.
     - `plugin.legend.dart`: `Legend` (extends `Element`, implements `types.LegendElement`,
       `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin `legend`. The items of the
       built-in `generateLabels`, the hit boxes (`legendHitBoxes`, also a port-only member of

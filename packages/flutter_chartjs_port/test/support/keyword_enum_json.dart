@@ -24,6 +24,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
@@ -42,7 +44,8 @@ bool isKeywordEnum(Object? value) =>
     value is TooltipXAlign ||
     value is TooltipYAlign ||
     value is ArcBorderAlign ||
-    value is ArcSpacingMode;
+    value is ArcSpacingMode ||
+    value is FillerDrawTime;
 
 /// The JSON text of the enum value [value]: the upstream keyword, the name
 /// of the value, as a JSON string.

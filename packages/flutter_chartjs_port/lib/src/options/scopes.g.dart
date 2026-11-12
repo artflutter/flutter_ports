@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/align.dart'
@@ -23318,13 +23320,13 @@ base class FillerOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.fillerOptions;
 
-  Opt<String>? _drawTime;
+  Opt<FillerDrawTime>? _drawTime;
 
   /// The cell of `drawTime`, or Dart `null` when absent.
-  Opt<String>? get drawTimeCell => _drawTime;
+  Opt<FillerDrawTime>? get drawTimeCell => _drawTime;
 
   /// Stores the cell of `drawTime`. Dart `null` deletes the key.
-  set drawTimeCell(Opt<String>? cell) {
+  set drawTimeCell(Opt<FillerDrawTime>? cell) {
     if (cell == null) {
       delete(OptionKey.drawTime);
     } else {
@@ -23333,8 +23335,8 @@ base class FillerOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `drawTime`.
-  set drawTime(String value) =>
-      store(OptionKey.drawTime, OptValue<String>(value));
+  set drawTime(FillerDrawTime value) =>
+      store(OptionKey.drawTime, OptValue<FillerDrawTime>(value));
 
   Opt<bool>? _propagate;
 
@@ -23390,7 +23392,7 @@ base class FillerOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.drawTime:
-        _drawTime = fitCell(cell, classifyString);
+        _drawTime = fitCell(cell, classifyTyped<FillerDrawTime>);
       case OptionKey.propagate:
         _propagate = fitCell(cell, classifyBool);
       case OptionKey.events:
@@ -23416,7 +23418,7 @@ base class FillerOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.drawTime:
-        return classifyString(raw);
+        return classifyTyped<FillerDrawTime>(raw);
       case OptionKey.propagate:
         return classifyBool(raw);
       case OptionKey.events:
