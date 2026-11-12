@@ -7,6 +7,8 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart'
     show InterpolatedPoint;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -363,7 +365,7 @@ void main() {
         'borderJoinStyle': ui.StrokeJoin.miter,
         'borderWidth': 3,
         'capBezierPoints': true,
-        'cubicInterpolationMode': 'default',
+        'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
         'fill': false,
         'spanGaps': false,
         'stepped': false,

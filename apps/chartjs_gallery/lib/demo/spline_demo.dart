@@ -7,8 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: _updateBezierControlPoints, an upstream `_` helper.
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show updateBezierControlPoints;
-// Not exported: SplinePoint, not in the list of Chart.js ADR 0048 §5.
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
 import 'package:material_ui/material_ui.dart';
 
 /// A point `{x, y}` whose control points the curve helpers write, as the
@@ -120,7 +118,9 @@ class _SplineDemoState extends State<SplineDemo> {
       points,
       <String, Object?>{
         'tension': _tension,
-        'cubicInterpolationMode': _monotone ? 'monotone' : 'default',
+        'cubicInterpolationMode': _monotone
+            ? const MonotoneCubicInterpolationMode()
+            : const DefaultCubicInterpolationMode(),
         'capBezierPoints': _cap,
       },
       area,
@@ -192,7 +192,8 @@ class _SplineDemoState extends State<SplineDemo> {
           title: 'Drag the points',
           source: _monotone
               ? 'updateBezierControlPoints(points, {cubicInterpolationMode: '
-                    "'monotone'}, …) → splineCurveMonotone"
+                    'MonotoneCubicInterpolationMode()}, …) → '
+                    'splineCurveMonotone'
               : 'updateBezierControlPoints(points, {tension: '
                     '${jsNumberText(_tension)}}, …) → splineCurve',
           child: Column(

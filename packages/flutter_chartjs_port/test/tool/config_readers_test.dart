@@ -384,6 +384,7 @@ list:
         'src/types/geometric.js',
         'src/types/geometric.ts',
         'src/types/geometric.d.ts',
+        'src/types/geometric.json',
       ]);
       expect(
         const PortTarget('test/specs/', 't/').sourcesOf('t/a.b_test.dart'),

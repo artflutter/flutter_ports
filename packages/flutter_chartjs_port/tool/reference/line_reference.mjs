@@ -435,7 +435,8 @@ function str(s) {
 /**
  * The Dart literal of the value [x] of the key [k]: a line cap or a line
  * join of upstream is the Flutter enum value with the name of the keyword
- * (row adapt-flutter-stroke-enums). Another value is `undefined` here.
+ * (row adapt-flutter-stroke-enums), and a cubic interpolation mode is the
+ * mode class of the port. Another value is `undefined` here.
  */
 function strokeEnum(k, x) {
   if (typeof x !== 'string') return undefined;
@@ -449,6 +450,10 @@ function strokeEnum(k, x) {
   if (k === 'stepped' && ['before', 'after', 'middle'].includes(x)) {
     return `SteppedLine.${x}`;
   }
+  // The mode class of `cubicInterpolationMode` (row
+  // adapt-cubic-interpolation-mode-objects).
+  if (k === 'cubicInterpolationMode' && x === 'default') return 'DefaultCubicInterpolationMode()';
+  if (k === 'cubicInterpolationMode' && x === 'monotone') return 'MonotoneCubicInterpolationMode()';
   return undefined;
 }
 
@@ -685,6 +690,7 @@ const out = `// Original code, not ported from Chart.js: LineElement reference d
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 
 /// The Node.js version that generated [lineReference].

@@ -9,6 +9,7 @@
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
@@ -238,7 +239,7 @@ const List<ThemeLightElementCase> themeLightElements = [
       'borderJoinStyle': StrokeJoin.miter,
       'borderWidth': 3.0,
       'capBezierPoints': true,
-      'cubicInterpolationMode': 'default',
+      'cubicInterpolationMode': DefaultCubicInterpolationMode(),
       'fill': false,
       'spanGaps': false,
       'stepped': false,
@@ -274,7 +275,7 @@ const List<ThemeLightElementCase> themeLightElements = [
       'borderJoinStyle': StrokeJoin.miter,
       'borderWidth': 3.0,
       'capBezierPoints': true,
-      'cubicInterpolationMode': 'default',
+      'cubicInterpolationMode': DefaultCubicInterpolationMode(),
       'fill': false,
       'spanGaps': false,
       'stepped': false,

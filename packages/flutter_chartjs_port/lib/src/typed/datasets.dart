@@ -22,6 +22,10 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/painting.dart' show ColorProperty;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show registerDataUpdateTypes;
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
@@ -564,6 +568,7 @@ base mixin _LineStyle on Dataset {
   bool? get spanGaps;
   bool? get showLine;
   SteppedLine? get stepped;
+  CubicInterpolationMode? get cubicInterpolationMode;
   double? get pointRadius;
   double? get pointHoverRadius;
   ChartPointStyle? get pointStyle;
@@ -583,6 +588,7 @@ base mixin _LineStyle on Dataset {
     put(scope, OptionKey.spanGaps, spanGaps);
     put(scope, OptionKey.showLine, showLine);
     put(scope, OptionKey.stepped, stepped);
+    put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
     put(scope, OptionKey.pointRadius, pointRadius);
     put(scope, OptionKey.pointHoverRadius, pointHoverRadius);
     put(scope, OptionKey.pointStyle, pointStyle?.optionValue);
@@ -615,6 +621,7 @@ base mixin _LineStyle on Dataset {
     ('spanGaps', spanGaps),
     ('showLine', showLine),
     ('stepped', stepped),
+    ('cubicInterpolationMode', cubicInterpolationMode),
     ('pointRadius', pointRadius),
     ('pointHoverRadius', pointHoverRadius),
     ('pointStyle', pointStyle),
@@ -659,6 +666,7 @@ final class LineDataset extends Dataset with _LineStyle {
     this.spanGaps,
     this.showLine,
     this.stepped,
+    this.cubicInterpolationMode,
     this.pointRadius,
     this.pointHoverRadius,
     this.pointStyle,
@@ -745,6 +753,15 @@ final class LineDataset extends Dataset with _LineStyle {
   @override
   final SteppedLine? stepped;
 
+  /// {@template flutter_chartjs_port.typed.cubicInterpolationMode}
+  /// The mode of the control points of a curved line:
+  /// `cubicInterpolationMode`, a [CubicInterpolationMode] (row
+  /// `adapt-cubic-interpolation-mode-objects`). Dart `null` keeps the
+  /// default, [DefaultCubicInterpolationMode].
+  /// {@endtemplate}
+  @override
+  final CubicInterpolationMode? cubicInterpolationMode;
+
   /// {@template flutter_chartjs_port.typed.pointRadius}
   /// The radius of the points in pixels: `pointRadius`. 0 draws no points.
   /// {@endtemplate}
@@ -822,6 +839,7 @@ final class LineDataset extends Dataset with _LineStyle {
     bool? spanGaps,
     bool? showLine,
     SteppedLine? stepped,
+    CubicInterpolationMode? cubicInterpolationMode,
     double? pointRadius,
     double? pointHoverRadius,
     ChartPointStyle? pointStyle,
@@ -857,6 +875,8 @@ final class LineDataset extends Dataset with _LineStyle {
     spanGaps: spanGaps ?? this.spanGaps,
     showLine: showLine ?? this.showLine,
     stepped: stepped ?? this.stepped,
+    cubicInterpolationMode:
+        cubicInterpolationMode ?? this.cubicInterpolationMode,
     pointRadius: pointRadius ?? this.pointRadius,
     pointHoverRadius: pointHoverRadius ?? this.pointHoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,
@@ -932,6 +952,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     this.spanGaps,
     this.showLine,
     this.stepped,
+    this.cubicInterpolationMode,
     this.pointRadius,
     this.pointHoverRadius,
     this.pointStyle,
@@ -992,6 +1013,10 @@ final class ScatterDataset extends Dataset with _LineStyle {
   @override
   final SteppedLine? stepped;
 
+  /// {@macro flutter_chartjs_port.typed.cubicInterpolationMode}
+  @override
+  final CubicInterpolationMode? cubicInterpolationMode;
+
   /// {@macro flutter_chartjs_port.typed.pointRadius}
   @override
   final double? pointRadius;
@@ -1050,6 +1075,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     bool? spanGaps,
     bool? showLine,
     SteppedLine? stepped,
+    CubicInterpolationMode? cubicInterpolationMode,
     double? pointRadius,
     double? pointHoverRadius,
     ChartPointStyle? pointStyle,
@@ -1084,6 +1110,8 @@ final class ScatterDataset extends Dataset with _LineStyle {
     spanGaps: spanGaps ?? this.spanGaps,
     showLine: showLine ?? this.showLine,
     stepped: stepped ?? this.stepped,
+    cubicInterpolationMode:
+        cubicInterpolationMode ?? this.cubicInterpolationMode,
     pointRadius: pointRadius ?? this.pointRadius,
     pointHoverRadius: pointHoverRadius ?? this.pointHoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,
@@ -1710,6 +1738,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     this.spanGaps,
     this.showLine,
     this.stepped,
+    this.cubicInterpolationMode,
     this.pointRadius,
     this.pointHoverRadius,
     this.pointStyle,
@@ -1755,6 +1784,10 @@ final class RadarDataset extends Dataset with _LineStyle {
   /// {@macro flutter_chartjs_port.typed.stepped}
   @override
   final SteppedLine? stepped;
+
+  /// {@macro flutter_chartjs_port.typed.cubicInterpolationMode}
+  @override
+  final CubicInterpolationMode? cubicInterpolationMode;
 
   /// {@macro flutter_chartjs_port.typed.pointRadius}
   @override
@@ -1810,6 +1843,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     bool? spanGaps,
     bool? showLine,
     SteppedLine? stepped,
+    CubicInterpolationMode? cubicInterpolationMode,
     double? pointRadius,
     double? pointHoverRadius,
     ChartPointStyle? pointStyle,
@@ -1840,6 +1874,8 @@ final class RadarDataset extends Dataset with _LineStyle {
     spanGaps: spanGaps ?? this.spanGaps,
     showLine: showLine ?? this.showLine,
     stepped: stepped ?? this.stepped,
+    cubicInterpolationMode:
+        cubicInterpolationMode ?? this.cubicInterpolationMode,
     pointRadius: pointRadius ?? this.pointRadius,
     pointHoverRadius: pointHoverRadius ?? this.pointHoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,

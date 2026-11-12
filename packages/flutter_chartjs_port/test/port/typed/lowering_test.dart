@@ -740,12 +740,20 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
       'line': {'stepped': SteppedLine.before},
     },
   ),
-  'line.extra': (
+  'line.cubicInterpolationMode': (
     ChartElements(
-      line: LineElementStyle(extra: {'cubicInterpolationMode': 'monotone'}),
+      line: LineElementStyle(
+        cubicInterpolationMode: MonotoneCubicInterpolationMode(),
+      ),
     ),
     {
-      'line': {'cubicInterpolationMode': 'monotone'},
+      'line': {'cubicInterpolationMode': MonotoneCubicInterpolationMode()},
+    },
+  ),
+  'line.extra': (
+    ChartElements(line: LineElementStyle(extra: {'capBezierPoints': false})),
+    {
+      'line': {'capBezierPoints': false},
     },
   ),
   'bar.backgroundColor': (

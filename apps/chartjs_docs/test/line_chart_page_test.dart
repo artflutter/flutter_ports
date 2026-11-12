@@ -26,9 +26,9 @@ const List<String> _variants = [
   'line-styling.Points only',
   'gaps.spanGaps: true',
   'stepped.true',
-  "stepped.'before'",
-  "stepped.'after'",
-  "stepped.'middle'",
+  'stepped..before',
+  'stepped..after',
+  'stepped..middle',
   'data.points',
 ];
 
@@ -73,6 +73,8 @@ bool _sameDefault(Object? actual, String text) => switch (actual) {
   final String value => "'$value'" == text,
   // A Flutter enum value, for example `StrokeCap.butt`.
   final Enum value => '$value' == text,
+  // The default mode of `cubicInterpolationMode`.
+  DefaultCubicInterpolationMode() => text == 'DefaultCubicInterpolationMode()',
   final bool value => '$value' == text,
   final List<Object?> value => listEquals(value, const []) && text == '[]',
   _ => false,
@@ -185,6 +187,7 @@ void main() {
       borderDash: [1],
       borderJoinStyle: StrokeJoin.miter,
       borderWidth: 1,
+      cubicInterpolationMode: MonotoneCubicInterpolationMode(),
       data: [1],
       fill: .none,
       hoverBackgroundColor: teal,
@@ -218,6 +221,7 @@ void main() {
       'borderDash',
       'borderJoinStyle',
       'borderWidth',
+      'cubicInterpolationMode',
       'data',
       'fill',
       'hoverBackgroundColor',

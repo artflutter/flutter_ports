@@ -18,6 +18,8 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 
@@ -914,10 +916,10 @@ final class LineOptions extends ElementOptions {
     }
   }
 
-  String? _cubicInterpolationMode = null;
+  CubicInterpolationMode? _cubicInterpolationMode = null;
 
   /// `cubicInterpolationMode`: the JS conversion of the value of the key.
-  String? get cubicInterpolationMode => _cubicInterpolationMode;
+  CubicInterpolationMode? get cubicInterpolationMode => _cubicInterpolationMode;
 
   /// `cubicInterpolationMode`: the raw value, or [undefined] for an absent key.
   Object? get cubicInterpolationModeValue =>
@@ -937,7 +939,7 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 64;
-    if (raw is String) {
+    if (raw is CubicInterpolationMode) {
       _cubicInterpolationMode = raw;
       _clearForeign(6, 64);
     } else {

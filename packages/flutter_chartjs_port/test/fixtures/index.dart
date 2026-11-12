@@ -109,6 +109,8 @@ import 'hand/controller.line/borderWidth/scriptable.dart'
 import 'hand/controller.line/clip/false.dart' as controller_line_clip_false;
 import 'hand/controller.line/cubicInterpolationMode/scriptable.dart'
     as controller_line_cubicinterpolationmode_scriptable;
+import 'hand/controller.line/cubicInterpolationMode/value.dart'
+    as controller_line_cubicinterpolationmode_value;
 import 'hand/controller.line/fill/no-border.dart'
     as controller_line_fill_no_border;
 import 'hand/controller.line/fill/scriptable.dart'
@@ -218,6 +220,10 @@ import 'hand/core.scale/ticks/rotated-multi-line.dart'
     as core_scale_ticks_rotated_multi_line;
 import 'hand/core.scale/ticks/skip-by-callback.dart'
     as core_scale_ticks_skip_by_callback;
+import 'hand/element.line/cubicInterpolationMode/monotone-horizontal.dart'
+    as element_line_cubicinterpolationmode_monotone_horizontal;
+import 'hand/element.line/cubicInterpolationMode/monotone-vertical.dart'
+    as element_line_cubicinterpolationmode_monotone_vertical;
 import 'hand/element.line/skip/all.dart' as element_line_skip_all;
 import 'hand/element.line/skip/first-span.dart' as element_line_skip_first_span;
 import 'hand/element.line/skip/first.dart' as element_line_skip_first;
@@ -231,8 +237,46 @@ import 'hand/plugin.colors/dynamic-datasets-default.dart'
     as plugin_colors_dynamic_datasets_default;
 import 'hand/plugin.colors/dynamic-datasets-force-override.dart'
     as plugin_colors_dynamic_datasets_force_override;
+import 'hand/plugin.filler/line/above-below-vertical-linechart.dart'
+    as plugin_filler_line_above_below_vertical_linechart;
+import 'hand/plugin.filler/line/before-dataset-draw.dart'
+    as plugin_filler_line_before_dataset_draw;
+import 'hand/plugin.filler/line/before-datasets-draw.dart'
+    as plugin_filler_line_before_datasets_draw;
+import 'hand/plugin.filler/line/boundary/above-below-line-null-start.dart'
+    as plugin_filler_line_boundary_above_below_line_null_start;
+import 'hand/plugin.filler/line/boundary/above-below-line-null.dart'
+    as plugin_filler_line_boundary_above_below_line_null;
+import 'hand/plugin.filler/line/boundary/origin-spline-above.dart'
+    as plugin_filler_line_boundary_origin_spline_above;
+import 'hand/plugin.filler/line/boundary/origin-spline-span.dart'
+    as plugin_filler_line_boundary_origin_spline_span;
+import 'hand/plugin.filler/line/boundary/origin-spline.dart'
+    as plugin_filler_line_boundary_origin_spline;
+import 'hand/plugin.filler/line/boundary/origin-stepped-span.dart'
+    as plugin_filler_line_boundary_origin_stepped_span;
+import 'hand/plugin.filler/line/boundary/origin-stepped.dart'
+    as plugin_filler_line_boundary_origin_stepped;
+import 'hand/plugin.filler/line/dataset/clip-bounds-x-off.dart'
+    as plugin_filler_line_dataset_clip_bounds_x_off;
+import 'hand/plugin.filler/line/dataset/clip-bounds-x.dart'
+    as plugin_filler_line_dataset_clip_bounds_x;
+import 'hand/plugin.filler/line/dataset/clip-bounds-y-off.dart'
+    as plugin_filler_line_dataset_clip_bounds_y_off;
+import 'hand/plugin.filler/line/dataset/clip-bounds-y.dart'
+    as plugin_filler_line_dataset_clip_bounds_y;
 import 'hand/plugin.filler/line/dataset/interpolated.dart'
     as plugin_filler_line_dataset_interpolated;
+import 'hand/plugin.filler/line/dataset/span-dual.dart'
+    as plugin_filler_line_dataset_span_dual;
+import 'hand/plugin.filler/line/dataset/spline-span-above.dart'
+    as plugin_filler_line_dataset_spline_span_above;
+import 'hand/plugin.filler/line/dataset/spline-span-below.dart'
+    as plugin_filler_line_dataset_spline_span_below;
+import 'hand/plugin.filler/line/dataset/spline-span.dart'
+    as plugin_filler_line_dataset_spline_span;
+import 'hand/plugin.filler/line/dataset/spline.dart'
+    as plugin_filler_line_dataset_spline;
 import 'hand/plugin.filler/line/points-outside-canvas-update.dart'
     as plugin_filler_line_points_outside_canvas_update;
 import 'hand/plugin.filler/line/segments/alignToPixels.dart'
@@ -289,7 +333,9 @@ import 'hand/scale.timeseries/financial-daily.dart'
 void Function() specs(String path) =>
     specsFromFixtures(path, hand: handFixtures, skips: fixtureSkips);
 
-/// The hand-ported configs by fixture path (Chart.js ADR 0029, section 5).
+/// The hand-ported configs by fixture path (Chart.js ADR 0029, section 5):
+/// the impure configs and the data configs with a class value (Chart.js ADR
+/// 0115).
 ///
 /// Each entry maps the path relative to `test/fixtures/` to the `fixture`
 /// function of `hand/<path>.dart` and the first 12 hex digits of the
@@ -490,6 +536,10 @@ final Map<String, HandFixture> handFixtures = {
   'controller.line/cubicInterpolationMode/scriptable.js': (
     load: controller_line_cubicinterpolationmode_scriptable.fixture,
     sha256: 'ce42a5d3d739',
+  ),
+  'controller.line/cubicInterpolationMode/value.js': (
+    load: controller_line_cubicinterpolationmode_value.fixture,
+    sha256: 'fb7f666ae6f0',
   ),
   'controller.line/fill/no-border.js': (
     load: controller_line_fill_no_border.fixture,
@@ -716,6 +766,14 @@ final Map<String, HandFixture> handFixtures = {
     load: core_scale_ticks_skip_by_callback.fixture,
     sha256: 'dd604eb26882',
   ),
+  'element.line/cubicInterpolationMode/monotone-horizontal.js': (
+    load: element_line_cubicinterpolationmode_monotone_horizontal.fixture,
+    sha256: 'e157fe78a7f9',
+  ),
+  'element.line/cubicInterpolationMode/monotone-vertical.js': (
+    load: element_line_cubicinterpolationmode_monotone_vertical.fixture,
+    sha256: 'cd7f69c2deb6',
+  ),
   'element.line/skip/all.js': (
     load: element_line_skip_all.fixture,
     sha256: 'db37d1922a70',
@@ -756,9 +814,85 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_colors_dynamic_datasets_force_override.fixture,
     sha256: 'f3ad48682a29',
   ),
+  'plugin.filler/line/above-below-vertical-linechart.js': (
+    load: plugin_filler_line_above_below_vertical_linechart.fixture,
+    sha256: 'd57e7980d449',
+  ),
+  'plugin.filler/line/before-dataset-draw.js': (
+    load: plugin_filler_line_before_dataset_draw.fixture,
+    sha256: 'f1c3e3ffd23d',
+  ),
+  'plugin.filler/line/before-datasets-draw.js': (
+    load: plugin_filler_line_before_datasets_draw.fixture,
+    sha256: '75c315ee70b7',
+  ),
+  'plugin.filler/line/boundary/above-below-line-null-start.json': (
+    load: plugin_filler_line_boundary_above_below_line_null_start.fixture,
+    sha256: '056a90d9f162',
+  ),
+  'plugin.filler/line/boundary/above-below-line-null.json': (
+    load: plugin_filler_line_boundary_above_below_line_null.fixture,
+    sha256: '5fd8772ba62b',
+  ),
+  'plugin.filler/line/boundary/origin-spline-above.json': (
+    load: plugin_filler_line_boundary_origin_spline_above.fixture,
+    sha256: '464229ae7cf8',
+  ),
+  'plugin.filler/line/boundary/origin-spline-span.json': (
+    load: plugin_filler_line_boundary_origin_spline_span.fixture,
+    sha256: '0857764d15ef',
+  ),
+  'plugin.filler/line/boundary/origin-spline.json': (
+    load: plugin_filler_line_boundary_origin_spline.fixture,
+    sha256: '64f80b7f22d1',
+  ),
+  'plugin.filler/line/boundary/origin-stepped-span.json': (
+    load: plugin_filler_line_boundary_origin_stepped_span.fixture,
+    sha256: '3297a1dbfef5',
+  ),
+  'plugin.filler/line/boundary/origin-stepped.json': (
+    load: plugin_filler_line_boundary_origin_stepped.fixture,
+    sha256: '1219a3329e87',
+  ),
+  'plugin.filler/line/dataset/clip-bounds-x-off.js': (
+    load: plugin_filler_line_dataset_clip_bounds_x_off.fixture,
+    sha256: '8836ab53d59c',
+  ),
+  'plugin.filler/line/dataset/clip-bounds-x.js': (
+    load: plugin_filler_line_dataset_clip_bounds_x.fixture,
+    sha256: 'bda46a00ed22',
+  ),
+  'plugin.filler/line/dataset/clip-bounds-y-off.js': (
+    load: plugin_filler_line_dataset_clip_bounds_y_off.fixture,
+    sha256: 'b5bbf8a1a659',
+  ),
+  'plugin.filler/line/dataset/clip-bounds-y.js': (
+    load: plugin_filler_line_dataset_clip_bounds_y.fixture,
+    sha256: '90bfcba6e0f9',
+  ),
   'plugin.filler/line/dataset/interpolated.js': (
     load: plugin_filler_line_dataset_interpolated.fixture,
     sha256: '6b037bf196dd',
+  ),
+  'plugin.filler/line/dataset/span-dual.json': (
+    load: plugin_filler_line_dataset_span_dual.fixture,
+    sha256: 'e3e6ad8a49ac',
+  ),
+  'plugin.filler/line/dataset/spline-span-above.json': (
+    load: plugin_filler_line_dataset_spline_span_above.fixture,
+    sha256: '1a335dcecb56',
+  ),
+  'plugin.filler/line/dataset/spline-span-below.json': (
+    load: plugin_filler_line_dataset_spline_span_below.fixture,
+    sha256: '8c509ad6ec22',
+  ),
+  'plugin.filler/line/dataset/spline-span.json': (
+    load: plugin_filler_line_dataset_spline_span.fixture,
+    sha256: '0eb077970b95',
+  ),
+  'plugin.filler/line/dataset/spline.json': (
+    load: plugin_filler_line_dataset_spline.fixture,
+    sha256: 'ffd7f1b534f6',
   ),
   'plugin.filler/line/points-outside-canvas-update.js': (
     load: plugin_filler_line_points_outside_canvas_update.fixture,

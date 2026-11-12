@@ -20,6 +20,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
@@ -1948,13 +1950,14 @@ base class ChartOptionsScope extends OptionScope {
   set capBezierPoints(bool value) =>
       store(OptionKey.capBezierPoints, OptValue<bool>(value));
 
-  Opt<String>? _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? _cubicInterpolationMode;
 
   /// The cell of `cubicInterpolationMode`, or Dart `null` when absent.
-  Opt<String>? get cubicInterpolationModeCell => _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? get cubicInterpolationModeCell =>
+      _cubicInterpolationMode;
 
   /// Stores the cell of `cubicInterpolationMode`. Dart `null` deletes the key.
-  set cubicInterpolationModeCell(Opt<String>? cell) {
+  set cubicInterpolationModeCell(Opt<CubicInterpolationMode>? cell) {
     if (cell == null) {
       delete(OptionKey.cubicInterpolationMode);
     } else {
@@ -1963,8 +1966,10 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `cubicInterpolationMode`.
-  set cubicInterpolationMode(String value) =>
-      store(OptionKey.cubicInterpolationMode, OptValue<String>(value));
+  set cubicInterpolationMode(CubicInterpolationMode value) => store(
+    OptionKey.cubicInterpolationMode,
+    OptValue<CubicInterpolationMode>(value),
+  );
 
   Opt<double>? _tension;
 
@@ -2645,7 +2650,10 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
-        _cubicInterpolationMode = fitCell(cell, classifyString);
+        _cubicInterpolationMode = fitCell(
+          cell,
+          classifyTyped<CubicInterpolationMode>,
+        );
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
@@ -2971,7 +2979,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
-        return classifyString(raw);
+        return classifyTyped<CubicInterpolationMode>(raw);
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:
@@ -6099,13 +6107,14 @@ base class LineOptionsScope extends OptionScope {
   set capBezierPoints(bool value) =>
       store(OptionKey.capBezierPoints, OptValue<bool>(value));
 
-  Opt<String>? _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? _cubicInterpolationMode;
 
   /// The cell of `cubicInterpolationMode`, or Dart `null` when absent.
-  Opt<String>? get cubicInterpolationModeCell => _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? get cubicInterpolationModeCell =>
+      _cubicInterpolationMode;
 
   /// Stores the cell of `cubicInterpolationMode`. Dart `null` deletes the key.
-  set cubicInterpolationModeCell(Opt<String>? cell) {
+  set cubicInterpolationModeCell(Opt<CubicInterpolationMode>? cell) {
     if (cell == null) {
       delete(OptionKey.cubicInterpolationMode);
     } else {
@@ -6114,8 +6123,10 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `cubicInterpolationMode`.
-  set cubicInterpolationMode(String value) =>
-      store(OptionKey.cubicInterpolationMode, OptValue<String>(value));
+  set cubicInterpolationMode(CubicInterpolationMode value) => store(
+    OptionKey.cubicInterpolationMode,
+    OptValue<CubicInterpolationMode>(value),
+  );
 
   Opt<double>? _tension;
 
@@ -6451,7 +6462,10 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
-        _cubicInterpolationMode = fitCell(cell, classifyString);
+        _cubicInterpolationMode = fitCell(
+          cell,
+          classifyTyped<CubicInterpolationMode>,
+        );
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
@@ -6537,7 +6551,7 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
-        return classifyString(raw);
+        return classifyTyped<CubicInterpolationMode>(raw);
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:
@@ -9779,13 +9793,14 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set capBezierPoints(bool value) =>
       store(OptionKey.capBezierPoints, OptValue<bool>(value));
 
-  Opt<String>? _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? _cubicInterpolationMode;
 
   /// The cell of `cubicInterpolationMode`, or Dart `null` when absent.
-  Opt<String>? get cubicInterpolationModeCell => _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? get cubicInterpolationModeCell =>
+      _cubicInterpolationMode;
 
   /// Stores the cell of `cubicInterpolationMode`. Dart `null` deletes the key.
-  set cubicInterpolationModeCell(Opt<String>? cell) {
+  set cubicInterpolationModeCell(Opt<CubicInterpolationMode>? cell) {
     if (cell == null) {
       delete(OptionKey.cubicInterpolationMode);
     } else {
@@ -9794,8 +9809,10 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `cubicInterpolationMode`.
-  set cubicInterpolationMode(String value) =>
-      store(OptionKey.cubicInterpolationMode, OptValue<String>(value));
+  set cubicInterpolationMode(CubicInterpolationMode value) => store(
+    OptionKey.cubicInterpolationMode,
+    OptValue<CubicInterpolationMode>(value),
+  );
 
   Opt<double>? _tension;
 
@@ -10540,7 +10557,10 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
-        _cubicInterpolationMode = fitCell(cell, classifyString);
+        _cubicInterpolationMode = fitCell(
+          cell,
+          classifyTyped<CubicInterpolationMode>,
+        );
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
@@ -10729,7 +10749,7 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
-        return classifyString(raw);
+        return classifyTyped<CubicInterpolationMode>(raw);
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:
@@ -14903,13 +14923,14 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set capBezierPoints(bool value) =>
       store(OptionKey.capBezierPoints, OptValue<bool>(value));
 
-  Opt<String>? _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? _cubicInterpolationMode;
 
   /// The cell of `cubicInterpolationMode`, or Dart `null` when absent.
-  Opt<String>? get cubicInterpolationModeCell => _cubicInterpolationMode;
+  Opt<CubicInterpolationMode>? get cubicInterpolationModeCell =>
+      _cubicInterpolationMode;
 
   /// Stores the cell of `cubicInterpolationMode`. Dart `null` deletes the key.
-  set cubicInterpolationModeCell(Opt<String>? cell) {
+  set cubicInterpolationModeCell(Opt<CubicInterpolationMode>? cell) {
     if (cell == null) {
       delete(OptionKey.cubicInterpolationMode);
     } else {
@@ -14918,8 +14939,10 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `cubicInterpolationMode`.
-  set cubicInterpolationMode(String value) =>
-      store(OptionKey.cubicInterpolationMode, OptValue<String>(value));
+  set cubicInterpolationMode(CubicInterpolationMode value) => store(
+    OptionKey.cubicInterpolationMode,
+    OptValue<CubicInterpolationMode>(value),
+  );
 
   Opt<double>? _tension;
 
@@ -15562,7 +15585,10 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         _capBezierPoints = fitCell(cell, classifyBool);
       case OptionKey.cubicInterpolationMode:
-        _cubicInterpolationMode = fitCell(cell, classifyString);
+        _cubicInterpolationMode = fitCell(
+          cell,
+          classifyTyped<CubicInterpolationMode>,
+        );
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
@@ -15763,7 +15789,7 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.capBezierPoints:
         return classifyBool(raw);
       case OptionKey.cubicInterpolationMode:
-        return classifyString(raw);
+        return classifyTyped<CubicInterpolationMode>(raw);
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:

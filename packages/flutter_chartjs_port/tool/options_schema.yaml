@@ -42,7 +42,9 @@
 # `ScaleValuePosition`; a keyword or an object is a foreign value), `textAlign` (a Flutter
 # `TextAlign`, the text align of the legend labels and of the tooltip; a keyword is a foreign value),
 # `steppedLine` and `borderSkippedEdge` (the keyword forms of the line `stepped` and the bar
-# `borderSkipped`, with `bool` in their unions; a keyword is a foreign value), `any` (any JS value: a color, a point
+# `borderSkipped`, with `bool` in their unions; a keyword is a foreign value), `cubicInterpolationMode` (a
+# `CubicInterpolationMode`, the value of the line `cubicInterpolationMode`; a mode name is a foreign
+# value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -162,7 +164,7 @@ kinds:
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
-      cubicInterpolationMode: string
+      cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
       segment: scope SegmentOptions
@@ -369,7 +371,7 @@ kinds:
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
-      cubicInterpolationMode: string
+      cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
       fill: number | string | bool | scope FillTarget
@@ -568,7 +570,7 @@ kinds:
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
-      cubicInterpolationMode: string
+      cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
       fill: number | string | bool | scope FillTarget
@@ -779,7 +781,7 @@ kinds:
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
-      cubicInterpolationMode: string
+      cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
       fill: number | string | bool | scope FillTarget

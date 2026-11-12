@@ -515,6 +515,12 @@ function strokeEnum(k, x) {
   }
   // The keyword forms of `stepped` and `borderSkipped` (rows
   // adapt-stepped-line-enum and adapt-border-skipped-enum).
+  // The mode class of `cubicInterpolationMode` (row
+  // adapt-cubic-interpolation-mode-objects).
+  if (k === 'cubicInterpolationMode' && (x === 'default' || x === 'monotone')) {
+    usesCubicModes = true;
+    return x === 'default' ? 'DefaultCubicInterpolationMode()' : 'MonotoneCubicInterpolationMode()';
+  }
   if (k === 'stepped' && ['before', 'after', 'middle'].includes(x)) {
     usesSteppedLines = true;
     return `SteppedLine.${x}`;
@@ -531,6 +537,9 @@ let usesArcEnums = false;
 
 /** Whether the data have a stepped line or a skipped edge, for the imports. */
 let usesSteppedLines = false;
+
+/** Whether the data have a cubic interpolation mode, for the imports. */
+let usesCubicModes = false;
 let usesBorderSkips = false;
 
 /** The Dart literal of a JS value. */
@@ -582,7 +591,7 @@ const out = `// Original code, not ported from Chart.js: light theme reference d
 // ${elementCases.length} element cases.
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
-${usesUndefined || usesArcEnums || usesSteppedLines || usesBorderSkips ? '\n' : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${usesBorderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${usesSteppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${usesUndefined || usesArcEnums || usesSteppedLines || usesBorderSkips || usesCubicModes ? '\n' : ''}${usesCubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${usesBorderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${usesSteppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = '${process.version}';
 

@@ -54,7 +54,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show updateBezierControlPoints;
+    show
+        DefaultCubicInterpolationMode,
+        cubicInterpolationModeOf,
+        updateBezierControlPoints;
 import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart'
     show
         InterpolatedPoint,
@@ -194,6 +197,22 @@ bool _tensionTruthy(Object? options) {
   );
 }
 
+/// Whether a line of [options] draws curves: upstream `options.tension ||
+/// options.cubicInterpolationMode === 'monotone'` (element.line.js:33, 188,
+/// 200 and 301). The mode of the option decides
+/// (`CubicInterpolationMode.drawsCurves`); the default mode tests `tension`
+/// through [_tensionTruthy], with no boxed value.
+// DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode decides.
+bool _drawsCurves(Object? options) {
+  final mode = cubicInterpolationModeOf(_cubicInterpolationMode(options));
+  if (mode is DefaultCubicInterpolationMode) return _tensionTruthy(options);
+  return mode.drawsCurves(
+    options is LineOptions
+        ? rawOption(options, OptionKey.tension, options.tension)
+        : _byName(options, 'tension'),
+  );
+}
+
 /// The `ToBoolean` of the option `borderWidth` of [options], as
 /// [_tensionTruthy] tests `tension`.
 bool _borderWidthTruthy(Object? options) {
@@ -312,8 +331,7 @@ _getLineMethod(Object? options) {
     return steppedLineTo;
   }
 
-  if (_tensionTruthy(options) ||
-      _cubicInterpolationMode(options) == 'monotone') {
+  if (_drawsCurves(options)) {
     return _bezierCurveTo;
   }
 
@@ -599,8 +617,7 @@ _getSegmentMethod(LineElement line) {
   final useFastPath =
       !line.decimated &&
       !(line.loop ?? false) &&
-      !_tensionTruthy(opts) &&
-      _cubicInterpolationMode(opts) != 'monotone' &&
+      !_drawsCurves(opts) &&
       !jsTruthy(_stepped(opts)) &&
       !jsTruthy(dashLength);
   // DIVERGES(chartjs): adapt-dense-curve-merge, a line with curves on a
@@ -682,8 +699,7 @@ _getInterpolationMethod(Object? options) {
     return steppedInterpolation;
   }
 
-  if (_tensionTruthy(options) ||
-      _cubicInterpolationMode(options) == 'monotone') {
+  if (_drawsCurves(options)) {
     return bezierInterpolation;
   }
 
@@ -841,7 +857,9 @@ class LineElement extends Element
     ..borderJoinStyle = ui.StrokeJoin.miter
     ..borderWidth = 3.0
     ..capBezierPoints = true
-    ..cubicInterpolationMode = 'default'
+    // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+    // class.
+    ..cubicInterpolationMode = const DefaultCubicInterpolationMode()
     ..fill = false
     ..spanGaps = false
     ..stepped = false
@@ -1018,8 +1036,7 @@ class LineElement extends Element
   @override
   void updateControlPoints(ChartArea? chartArea, [String? indexAxis]) {
     final options = this.options;
-    if ((_tensionTruthy(options) ||
-            _cubicInterpolationMode(options) == 'monotone') &&
+    if (_drawsCurves(options) &&
         !jsTruthy(_stepped(options)) &&
         !_pointsUpdated) {
       final loop = jsTruthy(_spanGaps(options)) ? _loop : _fullLoop;

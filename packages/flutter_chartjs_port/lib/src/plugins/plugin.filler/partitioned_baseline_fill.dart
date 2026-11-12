@@ -7,6 +7,8 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart'
     show writeDenseCurve;
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
     show createBoundarySegment;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -93,7 +95,9 @@ bool tryPartitionedBaselineFill(
       !options.tension.isFinite ||
       options.tension <= 0 ||
       options.stepped != false ||
-      options.cubicInterpolationMode != 'default' ||
+      // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+      // class.
+      options.cubicInterpolationMode is! DefaultCubicInterpolationMode ||
       start.runtimeType != PointElement ||
       end.runtimeType != PointElement ||
       bounds.any((p) => p.runtimeType != PointElement) ||

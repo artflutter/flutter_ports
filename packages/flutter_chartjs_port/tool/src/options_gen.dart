@@ -50,6 +50,7 @@ const Map<String, int> shapeAtoms = {
   'textAlign': 134217728,
   'steppedLine': 268435456,
   'borderSkippedEdge': 536870912,
+  'cubicInterpolationMode': 1073741824,
 };
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
@@ -159,6 +160,11 @@ const Map<String, TypedAtom> typedAtoms = {
     type: 'BorderSkippedEdge',
     uri: 'package:flutter_chartjs_port/src/types/bar_option_enums.dart',
     field: null,
+  ),
+  'cubicInterpolationMode': (
+    type: 'CubicInterpolationMode',
+    uri: 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart',
+    field: 'CubicInterpolationMode?',
   ),
 };
 

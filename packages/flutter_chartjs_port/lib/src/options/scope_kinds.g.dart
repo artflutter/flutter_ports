@@ -1729,7 +1729,7 @@ enum ScopeKind {
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 4;
+            return 1073741824;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
@@ -2039,7 +2039,7 @@ enum ScopeKind {
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 4;
+            return 1073741824;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
@@ -2350,7 +2350,7 @@ enum ScopeKind {
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 4;
+            return 1073741824;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
@@ -2768,7 +2768,7 @@ enum ScopeKind {
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 4;
+            return 1073741824;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:

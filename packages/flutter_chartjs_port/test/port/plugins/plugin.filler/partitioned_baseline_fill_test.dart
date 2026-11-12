@@ -15,6 +15,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart'
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/partitioned_baseline_fill.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -31,7 +33,7 @@ LineElement _line() => LineElement()
   ..options = LineOptions({
     'tension': .35,
     'stepped': false,
-    'cubicInterpolationMode': 'default',
+    'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
   })
   ..points = <types.PointElement>[
     for (var i = 0; i < 1057; i++)

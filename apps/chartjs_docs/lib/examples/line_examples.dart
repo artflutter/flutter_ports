@@ -238,7 +238,7 @@ const cubicLines = ChartConfig(
       data: [0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170],
       borderColor: .constant(blue),
       tension: 0.4,
-      extra: {'cubicInterpolationMode': 'monotone'},
+      cubicInterpolationMode: MonotoneCubicInterpolationMode(),
     ),
   ],
 );
@@ -302,7 +302,7 @@ const stepTrue = LineDataset(
 
 // #docregion stepped-before
 const stepBefore = LineDataset(
-  label: "stepped: 'before'",
+  label: 'stepped: .before',
   data: stepValues,
   borderColor: .constant(blue),
   stepped: SteppedLine.before,
@@ -311,7 +311,7 @@ const stepBefore = LineDataset(
 
 // #docregion stepped-after
 const stepAfter = LineDataset(
-  label: "stepped: 'after'",
+  label: 'stepped: .after',
   data: stepValues,
   borderColor: .constant(blue),
   stepped: SteppedLine.after,
@@ -320,7 +320,7 @@ const stepAfter = LineDataset(
 
 // #docregion stepped-middle
 const stepMiddle = LineDataset(
-  label: "stepped: 'middle'",
+  label: 'stepped: .middle',
   data: stepValues,
   borderColor: .constant(blue),
   stepped: SteppedLine.middle,
