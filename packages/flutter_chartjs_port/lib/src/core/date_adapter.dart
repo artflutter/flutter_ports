@@ -24,6 +24,7 @@
 /// `package:flutter`.
 library;
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
 import 'package:flutter_chartjs_port/src/core/date_format.dart';
 import 'package:flutter_chartjs_port/src/core/date_parse.dart';
@@ -37,9 +38,10 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// patterns. An unmodifiable Map. `core.adapters.dart` copies it into
 /// `prototype`.
 ///
-/// The keys are `formats`, `parse`, `format`, `add`, `diff`, `startOf` and
-/// `endOf`. The Map has no `init`, because chartjs-adapter-moment has none,
-/// and no `_id`, because no upstream code reads it.
+/// The keys are `formats`, `parse`, `format`, `add`, `diff`, `startOf`,
+/// `startOfIsoWeek` and `endOf`. The Map has no `init`, because
+/// chartjs-adapter-moment has none, and no `_id`, because no upstream code
+/// reads it.
 final AnyObject dateAdapterMembers = Map<String, Object?>.unmodifiable({
   'formats': _formats,
   'parse': _parse,
@@ -47,6 +49,7 @@ final AnyObject dateAdapterMembers = Map<String, Object?>.unmodifiable({
   'add': _add,
   'diff': _diff,
   'startOf': _startOf,
+  'startOfIsoWeek': _startOfIsoWeek,
   'endOf': _endOf,
 });
 
@@ -120,78 +123,56 @@ Object? _format(Object? time, Object? format) =>
 /// `add(time, amount, unit)` (`chartjs-adapter-moment.esm.js:43-45`):
 /// moment `add` (moment.js:3580-3597, :3463-3533, :3157-3190).
 ///
-/// When [unit] is not `null` and its `ToNumber` is not NaN, moment
-/// exchanges [amount] and [unit] (`createAdder`). A numeric amount with a
-/// truthy unit adds the amount of that unit. A numeric amount with a falsy
-/// unit adds milliseconds. NaN gives 0, as the `|| 0` of the moment
+/// [unit] is a [TimeUnit] (row `adapt-time-unit-enum`): moment does not
+/// read a unit name, so its aliases (`'ms'`, `'days'`) and its exchange of
+/// a numeric unit with the amount (`createAdder`) do not apply. Another
+/// value of [unit] adds nothing. NaN gives 0, as the `|| 0` of the moment
 /// `Duration`. An amount that is not numeric adds nothing.
 Object? _add(Object? time, Object? amount, Object? unit) {
-  var value = amount;
-  var key = unit;
-  if (key != null && _isNumeric(key)) {
-    value = unit;
-    key = amount;
-  }
   final t = dateInput(time, _zone);
-  final number = jsToNumber(value);
-  if (number.isNaN && value is! num) {
+  final number = jsToNumber(amount);
+  if (number.isNaN && amount is! num) {
     // moment reads a duration string (`'P1D'`, `'1.02:03:04'`) and a
     // duration object (`{days: 2}`) as an amount.
     // DIVERGES(chartjs): adapt-date-parse-fallback, no duration amount.
     return t;
   }
-  final String? name;
-  if (jsTruthy(key)) {
-    // The key of the duration object: `ToPropertyKey(key)`.
-    name = normalizeDateUnit(key is String ? key : jsToString(key));
-  } else {
-    name = 'millisecond';
-  }
+  final name = TimeUnit.of(unit);
+  if (name == null) return t;
   return addUnit(t, number.isNaN ? 0 : number, name, _zone);
 }
 
-/// Whether `ToNumber(value)` is not NaN.
-///
-/// A unit name starts with a letter. A numeric string starts with white
-/// space, a sign, a digit, a point or the `I` of `Infinity`. Thus a string
-/// that starts with another ASCII letter is not numeric, and the test skips
-/// the `RegExp` of [jsToNumber] for it.
-bool _isNumeric(Object? value) {
-  if (value is String && value.isNotEmpty) {
-    final lower = value.codeUnitAt(0) | 0x20;
-    if (lower >= 0x61 && lower <= 0x7A && lower != 0x69) return false;
-  }
-  return !jsToNumber(value).isNaN;
-}
-
 /// `diff(max, min, unit)` (`chartjs-adapter-moment.esm.js:47-49`):
-/// [diffUnit] of the two times.
+/// [diffUnit] of the two times. A [unit] that is not a [TimeUnit] gives
+/// the difference in ms, as moment gives it for an unknown unit.
 Object? _diff(Object? max, Object? min, Object? unit) => diffUnit(
   dateInput(max, _zone),
   dateInput(min, _zone),
-  normalizeDateUnit(unit),
+  TimeUnit.of(unit),
   _zone,
 );
 
-/// `startOf(time, unit, weekday)` (`chartjs-adapter-moment.esm.js:51-58`).
-///
-/// The unit `'isoWeek'` (an exact compare, as `unit === 'isoWeek'`) gives
-/// [startOfIsoWeekday]. Any other unit gives [startOfUnit] with the week
-/// start of the locale.
-Object? _startOf(Object? time, Object? unit, [Object? weekday = undefined]) {
-  final t = dateInput(time, _zone);
-  if (unit == 'isoWeek') return startOfIsoWeekday(t, weekday, _zone);
-  final name = normalizeDateUnit(unit);
-  return startOfUnit(t, name, _zone, _weekStart(name));
+/// `startOf(time, unit)` (`chartjs-adapter-moment.esm.js:51-58`):
+/// [startOfUnit] with the week start of the locale. A [unit] that is not a
+/// [TimeUnit] gives the time, as moment gives it for an unknown unit.
+Object? _startOf(Object? time, Object? unit) {
+  final name = TimeUnit.of(unit);
+  return startOfUnit(dateInput(time, _zone), name, _zone, _weekStart(name));
 }
+
+/// `startOf(time, 'isoWeek', weekday)` (`chartjs-adapter-moment.esm.js:53-56`):
+/// [startOfIsoWeekday].
+Object? _startOfIsoWeek(Object? time, Object? weekday) =>
+    startOfIsoWeekday(dateInput(time, _zone), weekday, _zone);
 
 /// `endOf(time, unit)` (`chartjs-adapter-moment.esm.js:60-62`): [endOfUnit]
 /// with the week start of the locale.
 Object? _endOf(Object? time, Object? unit) {
-  final name = normalizeDateUnit(unit);
+  final name = TimeUnit.of(unit);
   return endOfUnit(dateInput(time, _zone), name, _zone, _weekStart(name));
 }
 
 /// The week start of the locale for the unit [name]. Only `week` reads it,
 /// so the other units skip the locale.
-int _weekStart(String? name) => name == 'week' ? weekStartOf(dateLocale()) : 0;
+int _weekStart(TimeUnit? name) =>
+    name == TimeUnit.week ? weekStartOf(dateLocale()) : 0;

@@ -477,14 +477,9 @@ const cases = [
     data: {datasets: [{data: xy([T0, T0 + DAY, T0 + 10 * DAY, T0 + 12 * DAY])}]},
     options: {scales: {x: {offset: true, ticks: {source: 'data'}}}},
   }),
-  chartCase('the unit days, an alias that is not a unit', {
-    data: {datasets: [{data: xy(range(T0, DAY, 6))}]},
-    options: {scales: {x: {time: {unit: 'days'}}}},
-  }),
-  chartCase('minUnit days with ticks source labels and autoSkip false', {
-    data: {labels: ['2021-01-04', '2021-01-09'], datasets: [{data: [1, 2]}]},
-    options: {scales: {x: {time: {minUnit: 'days'}, ticks: {source: 'labels', autoSkip: false}}}},
-  }),
+  // No case of a unit alias of moment (`'days'`): the port holds the units
+  // as the enum TimeUnit (row adapt-time-unit-enum), and a name is a foreign
+  // value that stops a debug build.
 ];
 
 // The case 'an adapter add that gives NaN': `add` gives NaN, so the loop of

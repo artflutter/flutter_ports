@@ -46,38 +46,55 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// core.adapters.ts:10 `TimeUnit`: `'millisecond' | 'second' | 'minute' |
 /// 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year'`.
 ///
-/// Dart has no union of string literals. A time unit is an extension type
-/// over its string, and it is a `String`: the members of a date adapter
-/// and the options get the string. The constants name the 9 units of the
-/// union. The constructor names another unit, for example a unit of a
-/// custom date adapter (Chart.js ADR 0052, section 7).
-extension type const TimeUnit(String name) implements String {
+/// The step of a time axis and the unit of the calendar work of a date
+/// adapter (row `adapt-time-unit-enum`). The options `time.unit`,
+/// `time.minUnit` and `time.round` hold a value of this enum, also in a raw
+/// config. The time scale closes the set: its table of intervals has these
+/// nine units. A date adapter of a plugin gets the enum value in
+/// [DateAdapter.add], [DateAdapter.diff], [DateAdapter.startOf] and
+/// [DateAdapter.endOf]. The
+/// name of each value is the keyword of Chart.js. Dart has no type for these
+/// units: a `Duration` has no month, quarter or year.
+// DIVERGES(chartjs): adapt-time-unit-enum, an enum of the units.
+enum TimeUnit {
   /// `'millisecond'`.
-  static const TimeUnit millisecond = TimeUnit('millisecond');
+  millisecond,
 
   /// `'second'`.
-  static const TimeUnit second = TimeUnit('second');
+  second,
 
   /// `'minute'`.
-  static const TimeUnit minute = TimeUnit('minute');
+  minute,
 
   /// `'hour'`.
-  static const TimeUnit hour = TimeUnit('hour');
+  hour,
 
   /// `'day'`.
-  static const TimeUnit day = TimeUnit('day');
+  day,
 
-  /// `'week'`.
-  static const TimeUnit week = TimeUnit('week');
+  /// `'week'`: the week of the locale of the adapter.
+  week,
 
   /// `'month'`.
-  static const TimeUnit month = TimeUnit('month');
+  month,
 
   /// `'quarter'`.
-  static const TimeUnit quarter = TimeUnit('quarter');
+  quarter,
 
   /// `'year'`.
-  static const TimeUnit year = TimeUnit('year');
+  year;
+
+  /// The value of [value], the value of an option `time.unit`,
+  /// `time.minUnit` or `time.round`, or Dart `null` for a value that is not
+  /// a [TimeUnit] (`false` for the automatic unit). A keyword of Chart.js is
+  /// not a value: a debug build stops on it.
+  static TimeUnit? of(Object? value) {
+    assert(
+      value is! String,
+      'A time unit option takes a TimeUnit, not the name "$value".',
+    );
+    return value is TimeUnit ? value : null;
+  }
 }
 
 /// core.adapters.ts:12 `DateAdapter`.
@@ -127,8 +144,8 @@ abstract interface class DateAdapter {
   /// Adds the specified `amount` of `unit` to the given `timestamp`.
   /// @param timestamp - the input timestamp
   /// @param amount - the amount to add
-  /// @param unit - the unit as string
-  Object? add(Object? timestamp, Object? amount, Object? unit);
+  /// @param unit - the unit
+  Object? add(Object? timestamp, Object? amount, TimeUnit unit);
 
   /// core.adapters.ts:48 `diff(a: number, b: number, unit: TimeUnit):
   /// number`.
@@ -136,25 +153,36 @@ abstract interface class DateAdapter {
   /// Returns the number of `unit` between the given timestamps.
   /// @param a - the input timestamp (reference)
   /// @param b - the timestamp to subtract
-  /// @param unit - the unit as string
-  Object? diff(Object? a, Object? b, Object? unit);
+  /// @param unit - the unit
+  Object? diff(Object? a, Object? b, TimeUnit unit);
 
   /// core.adapters.ts:56 `startOf(timestamp: number, unit: TimeUnit |
   /// 'isoWeek', weekday?: number | boolean): number`.
   ///
   /// Returns start of `unit` for the given `timestamp`.
   /// @param timestamp - the input timestamp
-  /// @param unit - the unit as string
-  /// @param [weekday] - the ISO day of the week with 1 being Monday
-  /// and 7 being Sunday (only needed if param *unit* is `isoWeek`).
-  Object? startOf(Object? timestamp, Object? unit, [Object? weekday]);
+  /// @param unit - the unit
+  ///
+  /// The unit `'isoWeek'` of upstream, which is not a [TimeUnit], is the
+  /// member [startOfIsoWeek].
+  // DIVERGES(chartjs): adapt-time-unit-enum, the ISO week is its own member.
+  Object? startOf(Object? timestamp, TimeUnit unit);
+
+  /// core.adapters.ts:56 `startOf(timestamp, 'isoWeek', weekday)`: the
+  /// start of the day [weekday] of the ISO week of [timestamp].
+  ///
+  /// @param timestamp - the input timestamp
+  /// @param weekday - the ISO day of the week with 1 being Monday and 7
+  /// being Sunday, or `true` for Monday (the option `time.isoWeekday`).
+  // DIVERGES(chartjs): adapt-time-unit-enum, the ISO week is its own member.
+  Object? startOfIsoWeek(Object? timestamp, Object? weekday);
 
   /// core.adapters.ts:62 `endOf(timestamp: number, unit: TimeUnit): number`.
   ///
   /// Returns end of `unit` for the given `timestamp`.
   /// @param timestamp - the input timestamp
-  /// @param unit - the unit as string
-  Object? endOf(Object? timestamp, Object? unit);
+  /// @param unit - the unit
+  Object? endOf(Object? timestamp, TimeUnit unit);
 }
 
 /// core.adapters.ts:65 `abstract`.
@@ -304,7 +332,7 @@ class DateAdapterBase implements DateAdapter {
 
   /// core.adapters.ts:114 `add()`.
   @core.override
-  Object? add(Object? timestamp, Object? amount, Object? unit) {
+  Object? add(Object? timestamp, Object? amount, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
     final member = prototype['add'];
     if (member is _Member3) return member(timestamp, amount, unit);
@@ -316,7 +344,7 @@ class DateAdapterBase implements DateAdapter {
 
   /// core.adapters.ts:118 `diff()`.
   @core.override
-  Object? diff(Object? a, Object? b, Object? unit) {
+  Object? diff(Object? a, Object? b, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
     final member = prototype['diff'];
     if (member is _Member3) return member(a, b, unit);
@@ -328,23 +356,31 @@ class DateAdapterBase implements DateAdapter {
 
   /// core.adapters.ts:122 `startOf()`.
   @core.override
-  Object? startOf(
-    Object? timestamp,
-    Object? unit, [
-    Object? weekday = undefined,
-  ]) {
+  Object? startOf(Object? timestamp, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
     final member = prototype['startOf'];
-    if (member is _Member3) return member(timestamp, unit, weekday);
+    if (member is _Member2) return member(timestamp, unit);
     if (prototype.containsKey('startOf')) {
-      return _callMember(member, [timestamp, unit, weekday]);
+      return _callMember(member, [timestamp, unit]);
+    }
+    return _abstract();
+  }
+
+  /// core.adapters.ts:122 `startOf()` with the unit `'isoWeek'`.
+  @core.override
+  Object? startOfIsoWeek(Object? timestamp, Object? weekday) {
+    // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
+    final member = prototype['startOfIsoWeek'];
+    if (member is _Member2) return member(timestamp, weekday);
+    if (prototype.containsKey('startOfIsoWeek')) {
+      return _callMember(member, [timestamp, weekday]);
     }
     return _abstract();
   }
 
   /// core.adapters.ts:126 `endOf()`.
   @core.override
-  Object? endOf(Object? timestamp, Object? unit) {
+  Object? endOf(Object? timestamp, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
     final member = prototype['endOf'];
     if (member is _Member2) return member(timestamp, unit);

@@ -18,7 +18,8 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Scale, undefined;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show Scale, TimeUnit, undefined;
 import 'package:flutter_chartjs_port/helpers.dart'
     show almostEquals, isNullOrUndef, isNumber, log10, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
@@ -407,22 +408,22 @@ bool _panCategoryScale(Scale scale, double delta, LimitOptions limits) {
 /// scale.types.ts:240 `OFFSETS`: the pan offset of the `round` unit of a
 /// time scale, in milliseconds.
 ///
-/// A unit that the table does not name reads `undefined`, so the sum with
-/// the scale bound is NaN.
-double _offsets(Object? round) => round is String
-    ? switch (round) {
-        'millisecond' => 0,
-        'second' => 500, // 500 ms
-        'minute' => 30 * 1000.0, // 30 s
-        'hour' => 30 * 60 * 1000.0, // 30 m
-        'day' => 12 * 60 * 60 * 1000.0, // 12 h
-        'week' => 3.5 * 24 * 60 * 60 * 1000, // 3.5 d
-        'month' => 15 * 24 * 60 * 60 * 1000.0, // 15 d
-        'quarter' => 60 * 24 * 60 * 60 * 1000.0, // 60 d
-        'year' => 182 * 24 * 60 * 60 * 1000.0, // 182 d
-        _ => double.nan,
-      }
-    : double.nan;
+/// The host holds the unit as the enum `TimeUnit` (row
+/// `adapt-host-time-unit`). A value that is not a unit reads `undefined`,
+/// so the sum with the scale bound is NaN.
+// DIVERGES(zoom): adapt-host-time-unit, the enum of the host.
+double _offsets(Object? round) => switch (round) {
+  TimeUnit.millisecond => 0,
+  TimeUnit.second => 500, // 500 ms
+  TimeUnit.minute => 30 * 1000.0, // 30 s
+  TimeUnit.hour => 30 * 60 * 1000.0, // 30 m
+  TimeUnit.day => 12 * 60 * 60 * 1000.0, // 12 h
+  TimeUnit.week => 3.5 * 24 * 60 * 60 * 1000, // 3.5 d
+  TimeUnit.month => 15 * 24 * 60 * 60 * 1000.0, // 15 d
+  TimeUnit.quarter => 60 * 24 * 60 * 60 * 1000.0, // 60 d
+  TimeUnit.year => 182 * 24 * 60 * 60 * 1000.0, // 182 d
+  _ => double.nan,
+};
 
 /// scale.types.ts:252 `panNumericalScale(scale, delta, limits, canZoom)`.
 bool _panNumericalScale(

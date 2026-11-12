@@ -180,7 +180,7 @@ void main() {
         .quarter,
         .year,
       ];
-      expect(units, [
+      expect(units.map((unit) => unit.name), [
         'millisecond',
         'second',
         'minute',
@@ -191,13 +191,6 @@ void main() {
         'quarter',
         'year',
       ]);
-    });
-
-    test('a unit is its String, also a custom unit', () {
-      const String day = TimeUnit.day;
-      expect(day, 'day');
-      expect(const TimeUnit('fortnight').name, 'fortnight');
-      expect(TimeUnit(_runtime('day')), TimeUnit.day);
     });
   });
 }

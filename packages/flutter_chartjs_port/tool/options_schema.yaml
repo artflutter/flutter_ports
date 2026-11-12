@@ -35,7 +35,8 @@
 # box; a keyword is a foreign value), `tooltipXAlign` and `tooltipYAlign` (the `xAlign` and
 # `yAlign` of the tooltip; a keyword is a foreign value), `arcBorderAlign` and `arcSpacingMode` (the `borderAlign`
 # and `spacingMode` of an arc; a keyword is a foreign value), `fillerDrawTime` (a `FillerDrawTime`, the
-# `drawTime` of the filler; a keyword is a foreign value), `any` (any JS value: a color, a point
+# `drawTime` of the filler; a keyword is a foreign value), `timeUnit` (a `TimeUnit`, the `unit`,
+# `minUnit` and `round` of the time options; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -962,12 +963,12 @@ kinds:
     doc: index.d.ts:3429 TimeScaleTimeOptions, the scope `time` of a time scale.
     keys:
       parser: string | fn | bool
-      round: string | bool
+      round: timeUnit | bool
       isoWeekday: bool | number
       displayFormats: scope DisplayFormats
       tooltipFormat: string
-      unit: string | bool
-      minUnit: string
+      unit: timeUnit | bool
+      minUnit: timeUnit
   DisplayFormats:
     doc: Port-only name for index.d.ts:3447 TimeScaleTimeOptions `displayFormats`, the format of each time unit (the keys of core.adapters.ts:22 formats).
     others: string

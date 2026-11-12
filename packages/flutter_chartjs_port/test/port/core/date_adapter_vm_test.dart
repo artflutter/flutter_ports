@@ -8,7 +8,6 @@ import 'dart:io';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/date_adapter.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:intl/intl.dart';
 import 'package:test/test.dart';
@@ -60,6 +59,10 @@ Object? _result(Object? Function() run) {
     return error is TypeError ? 'throw:TypeError' : 'throw:$error';
   }
 }
+
+/// The units of the port by their own names: the names of the moment
+/// corpus that are a TimeUnit.
+final Map<String, TimeUnit> _timeUnits = TimeUnit.values.asNameMap();
 
 void main() {
   String? previousZone;
@@ -252,7 +255,7 @@ void main() {
           '2026-10-20 09:41',
         );
         expect(
-          adapter.startOf(undefined, 'day'),
+          adapter.startOf(undefined, TimeUnit.day),
           _at(2026, 10, 20),
         );
       });
@@ -270,7 +273,7 @@ void main() {
         'Jan 1, 2015, 8:00:00 pm',
       );
       expect(adapter.format(t, 'MMMM'), 'January');
-      expect(adapter.startOf(t, 'week'), _at(2014, 12, 28));
+      expect(adapter.startOf(t, TimeUnit.week), _at(2014, 12, 28));
       expect(adapter.parse('2015-03-04', 'yyyy-MM-dd'), _at(2015, 3, 4));
     });
   });
@@ -295,6 +298,10 @@ void main() {
 
         final units = (corpus['U']! as List).map(_decode).toList();
         for (var u = 0; u < units.length; u++) {
+          // The corpus of moment also has aliases and other inputs: the
+          // adapter of the port takes a TimeUnit (row adapt-time-unit-enum).
+          final unit = _timeUnits[units[u]];
+          if (unit == null) continue;
           final startOf = (corpus['startOf']! as List)[u] as List;
           final endOf = (corpus['endOf']! as List)[u] as List;
           for (var i = 0; i < times.length; i++) {
@@ -302,12 +309,12 @@ void main() {
             check(
               'startOf($t, ${units[u]})',
               startOf[i],
-              () => adapter.startOf(t, units[u]),
+              () => adapter.startOf(t, unit),
             );
             check(
               'endOf($t, ${units[u]})',
               endOf[i],
-              () => adapter.endOf(t, units[u]),
+              () => adapter.endOf(t, unit),
             );
           }
         }
@@ -319,7 +326,7 @@ void main() {
             check(
               'isoWeek($t, ${weekdays[w]})',
               results[i],
-              () => adapter.startOf(t, 'isoWeek', weekdays[w]),
+              () => adapter.startOfIsoWeek(t, weekdays[w]),
             );
           }
         }
@@ -331,12 +338,12 @@ void main() {
         const durations = {'P1D', 'PT1H', '1.02:03:04'};
         for (var u = 0; u < addUnits.length; u++) {
           final byAmount = (corpus['add']! as List)[u] as List;
-          final unit = addUnits[u];
+          final unit = _timeUnits[addUnits[u]];
+          if (unit == null) continue;
           for (var a = 0; a < amounts.length; a++) {
             final amount = amounts[a];
             final results = byAmount[a] as List;
-            final swaps = unit != null && !jsToNumber(unit).isNaN;
-            if (durations.contains(amount) && !swaps) continue;
+            if (durations.contains(amount)) continue;
             for (var i = 0; i < addTimes.length; i++) {
               final t = addTimes[i];
               check(
@@ -350,6 +357,8 @@ void main() {
         final pairs = (corpus['P']! as List).cast<List<Object?>>();
         final diffUnits = (corpus['UD']! as List).map(_decode).toList();
         for (var u = 0; u < diffUnits.length; u++) {
+          final unit = _timeUnits[diffUnits[u]];
+          if (unit == null) continue;
           final results = (corpus['diff']! as List)[u] as List;
           for (var p = 0; p < pairs.length; p++) {
             final a = _decode(pairs[p][0]);
@@ -357,7 +366,7 @@ void main() {
             check(
               'diff($a, $b, ${diffUnits[u]})',
               results[p],
-              () => adapter.diff(a, b, diffUnits[u]),
+              () => adapter.diff(a, b, unit),
             );
           }
         }

@@ -1300,7 +1300,10 @@ Map<String, Object?> _scatterTypeRaw() => <String, Object?>{
         'position': 'bottom',
         'min': DateTime.utc(2026, 2, 28),
         'max': DateTime.utc(2026, 3, 7),
-        'time': <String, Object?>{'unit': 'day', 'tooltipFormat': 'MMM d'},
+        'time': <String, Object?>{
+          'unit': TimeUnit.day,
+          'tooltipFormat': 'MMM d',
+        },
       },
       'y': <String, Object?>{
         'type': 'logarithmic',

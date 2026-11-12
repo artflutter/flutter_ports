@@ -263,6 +263,12 @@ const doubles = (list) => `[${list.map((x) => dartNumber(x)).join(', ')}]`;
 const ints = (list) => `[${list.join(', ')}]`;
 const objects = (list) => `[${list.map(dartValue).join(', ')}]`;
 const strings = (list) => `[${list.map(dartString).join(', ')}]`;
+/** A time unit of the port: the enum value of its name (row adapt-time-unit-enum). */
+const timeUnit = (u) => {
+  if (!TIME_UNITS.includes(u)) throw new Error(`Not a TimeUnit: ${u}`);
+  return `TimeUnit.${u}`;
+};
+const timeUnits = (list) => `[${list.map(timeUnit).join(', ')}]`;
 /** A list of time results: a number, or the TypeError marker. */
 const results = (list) =>
   `[${list
@@ -291,28 +297,14 @@ const T = [
 ];
 for (let i = 0; i < 50; i++) T.push(randomTime(1900, 2100));
 
-const UNITS = [
-  'millisecond', 'second', 'minute', 'hour', 'day', 'date', 'week',
-  'isoWeek', 'month', 'quarter', 'year', 'weekday', 'isoWeekday',
-  'dayOfYear', 'weekYear', 'isoWeekYear', 'foo', '', 'constructor', null,
-  undefined, 1, true,
+// The units of the port: the nine values of the enum TimeUnit (row
+// adapt-time-unit-enum). The adapter of the port gets no unit name, so the
+// aliases of moment and the other inputs have no case.
+const TIME_UNITS = [
+  'millisecond', 'second', 'minute', 'hour', 'day', 'week', 'month',
+  'quarter', 'year',
 ];
-const ALIAS_TIMES = [
-  utc(2015, 0, 1, 20, 5, 6, 7), utc(2015, 0, 4, 13), utc(2020, 1, 29, 6, 30),
-  utc(1999, 11, 31, 23, 59, 59, 999), utc(2021, 4, 17, 0, 0, 0, 1),
-  utc(1900, 6, 9, 9),
-];
-const ALIASES = [
-  'ms', 'milliseconds', 'MS', 'Ms', 's', 'seconds', 'S', 'm', 'minutes', 'M',
-  'h', 'hours', 'H', 'HOURS', 'd', 'days', 'Days', 'DAY', 'D', 'dates',
-  'Date', 'w', 'weeks', 'W', 'isoweek', 'isoweeks', 'ISOWEEK', 'months',
-  'Month', 'Q', 'q', 'quarters', 'y', 'Y', 'years', 'YEAR', 'e', 'weekdays',
-  'E', 'isoweekday', 'DDD', 'ddd', 'dayofyear', 'gg', 'GG', 'Gg',
-  'weekyear', 'isoweekyears', 'CONSTRUCTOR', 'toString', 'ToString',
-  'tostring', '__proto__', 'valueOf', 'hasOwnProperty', '__lookupGetter__',
-  // JS toLowerCase gives 'i' and U+0307 for U+0130: no alias.
-  'M\u0130NUTE', '\u0130SOWEEK',
-];
+const UNITS = TIME_UNITS;
 const WEEKDAYS = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 1.5, 6.9, -1, -0.5, true, false, '3', 'abc',
   null, undefined, NaN, Infinity,
@@ -324,14 +316,6 @@ for (const t of T) {
   for (const u of UNITS) {
     startOf.push(delta(call(() => adapter.startOf(t, u)), t));
     endOf.push(delta(call(() => adapter.endOf(t, u)), t));
-  }
-}
-const aliasStartOf = [];
-const aliasEndOf = [];
-for (const t of ALIAS_TIMES) {
-  for (const u of ALIASES) {
-    aliasStartOf.push(delta(adapter.startOf(t, u), t));
-    aliasEndOf.push(delta(adapter.endOf(t, u), t));
   }
 }
 const isoWeek = [];
@@ -351,11 +335,7 @@ const AMOUNTS = [
   -13, -2.5, -1, -0.5, 0, 0.1, 1 / 3, 0.4, 0.5, 1, 1.5, 2.5, 13, 1e9,
   Infinity, NaN, '2', ' 3 ', '', 'abc', 'P1D', true, null, undefined, [2],
 ];
-const ADD_UNITS = [
-  'millisecond', 'second', 'minute', 'hour', 'day', 'date', 'week',
-  'isoWeek', 'month', 'quarter', 'year', 'weekday', 'days', 'M', 'foo', '',
-  null, undefined, NaN, 1, true, false, ['day'],
-];
+const ADD_UNITS = TIME_UNITS;
 const add = [];
 for (const t of ADD_TIMES) {
   for (const n of AMOUNTS) {
@@ -383,11 +363,7 @@ for (const a of DIFF_GRID) {
     for (const u of GRID_UNITS) diffGrid.push(adapter.diff(a, b, u));
   }
 }
-const DIFF_UNITS = [
-  'millisecond', 'second', 'minute', 'hour', 'day', 'date', 'week',
-  'isoWeek', 'month', 'quarter', 'year', 'weekday', 'foo', 'constructor',
-  null, undefined,
-];
+const DIFF_UNITS = TIME_UNITS;
 const DIFF_PAIRS = [];
 for (let i = 0; i < 100; i++) {
   const a = randomTime(1900, 2100);
@@ -590,7 +566,7 @@ const offsetOf = (t) => {
     ) - t
   );
 };
-const LOCAL_UNITS = ['hour', 'day', 'week', 'isoweek', 'month', 'year'];
+const LOCAL_UNITS = ['hour', 'day', 'week', 'month', 'year'];
 const LOCAL_WEEKDAYS = [0, 3, 6];
 const LOCAL_ADDS = [
   [1, 'hour'], [-1, 'hour'], [1, 'day'], [-1, 'day'], [0.5, 'day'],
@@ -792,6 +768,8 @@ const out = `// Original code, not ported from Chart.js: date adapter reference 
 // loaded files:
 ${hashes}
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart'
+    show TimeUnit;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// NaN, short for the lists below.
@@ -822,7 +800,7 @@ const String dateReferenceTypeError = '<TypeError>';
 const List<double> dateReferenceTimes = ${doubles(T)};
 
 /// The units of the \`startOf\` and \`endOf\` cases.
-const List<Object?> dateReferenceUnits = ${objects(UNITS)};
+const List<TimeUnit> dateReferenceUnits = ${timeUnits(UNITS)};
 
 /// \`startOf(time, unit)\` minus the TimeClip of the time, or
 /// [dateReferenceTypeError], for each time of [dateReferenceTimes] and each
@@ -833,20 +811,6 @@ const List<Object> dateReferenceStartOf = ${results(startOf)};
 /// \`endOf(time, unit)\` minus the TimeClip of the time, in the order of
 /// [dateReferenceStartOf].
 const List<Object> dateReferenceEndOf = ${results(endOf)};
-
-/// The times of the alias cases.
-const List<double> dateReferenceAliasTimes = ${doubles(ALIAS_TIMES)};
-
-/// The unit spellings of the alias cases.
-const List<String> dateReferenceAliases = ${strings(ALIASES)};
-
-/// \`startOf(time, alias)\` minus the time, for each time of
-/// [dateReferenceAliasTimes] and each alias of [dateReferenceAliases].
-const List<double> dateReferenceAliasStartOf = ${doubles(aliasStartOf)};
-
-/// \`endOf(time, alias)\` minus the time, in the order of
-/// [dateReferenceAliasStartOf].
-const List<double> dateReferenceAliasEndOf = ${doubles(aliasEndOf)};
 
 /// The weekdays of the \`startOf(time, 'isoWeek', weekday)\` cases.
 const List<Object?> dateReferenceWeekdays = ${objects(WEEKDAYS)};
@@ -863,7 +827,7 @@ const List<double> dateReferenceAddTimes = ${doubles(ADD_TIMES)};
 const List<Object?> dateReferenceAmounts = ${objects(AMOUNTS)};
 
 /// The units of the \`add\` cases.
-const List<Object?> dateReferenceAddUnits = ${objects(ADD_UNITS)};
+const List<TimeUnit> dateReferenceAddUnits = ${timeUnits(ADD_UNITS)};
 
 /// \`add(time, amount, unit)\` minus the TimeClip of the time, for each time
 /// of [dateReferenceAddTimes], each amount of [dateReferenceAmounts] and
@@ -876,7 +840,7 @@ const List<double> dateReferenceAdd = ${doubles(add)};
 const List<double> dateReferenceDiffGrid = ${doubles(DIFF_GRID)};
 
 /// The units of the \`diff\` grid.
-const List<String> dateReferenceGridUnits = ${strings(GRID_UNITS)};
+const List<TimeUnit> dateReferenceGridUnits = ${timeUnits(GRID_UNITS)};
 
 /// \`diff(a, b, unit)\` for each time \`a\` and each time \`b\` of
 /// [dateReferenceDiffGrid] and each unit of [dateReferenceGridUnits] (the
@@ -888,7 +852,7 @@ const List<double> dateReferenceDiffGridResults = ${doubles(diffGrid)};
 const List<Object?> dateReferenceDiffPairs = ${objects(DIFF_PAIRS)};
 
 /// The units of the \`diff\` pairs.
-const List<Object?> dateReferenceDiffUnits = ${objects(DIFF_UNITS)};
+const List<TimeUnit> dateReferenceDiffUnits = ${timeUnits(DIFF_UNITS)};
 
 /// \`diff(a, b, unit)\` for each pair of [dateReferenceDiffPairs] and each
 /// unit of [dateReferenceDiffUnits].
@@ -925,18 +889,18 @@ ${formatEdges.map(([t, f, r]) => `  (${dartValue(t)}, ${dartValue(f)}, ${dartVal
 // --------------------------------------------------------- Part 2: local
 
 /// The units of the \`startOf\` and \`endOf\` cases of a zone.
-const List<String> dateReferenceLocalUnits = ${strings(LOCAL_UNITS)};
+const List<TimeUnit> dateReferenceLocalUnits = ${timeUnits(LOCAL_UNITS)};
 
 /// The weekdays of the \`startOf(time, 'isoWeek', weekday)\` cases of a
 /// zone.
 const List<double> dateReferenceLocalWeekdays = ${doubles(LOCAL_WEEKDAYS)};
 
 /// The amounts and units of the \`add\` cases of a zone.
-const List<(double, String)> dateReferenceLocalAdds = [
-${LOCAL_ADDS.map(([n, u]) => `  (${dartNumber(n)}, ${dartString(u)}),\n`).join('')}];
+const List<(double, TimeUnit)> dateReferenceLocalAdds = [
+${LOCAL_ADDS.map(([n, u]) => `  (${dartNumber(n)}, ${timeUnit(u)}),\n`).join('')}];
 
 /// The units of the \`diff\` cases of a zone.
-const List<String> dateReferenceLocalDiffUnits = ${strings(LOCAL_DIFF_UNITS)};
+const List<TimeUnit> dateReferenceLocalDiffUnits = ${timeUnits(LOCAL_DIFF_UNITS)};
 
 /// The moment format of the \`formatFields\` of [DateReferenceZone].
 const String dateReferenceLocalFieldsFormat = ${dartString(LOCAL_FIELDS_FORMAT)};
@@ -1012,7 +976,7 @@ writeFileSync(OUT, out);
 execFileSync('dart', ['format', OUT], {stdio: 'inherit'});
 const size = readFileSync(OUT).length;
 console.log(
-  `Wrote ${OUT}: ${size} bytes; ${startOf.length * 2 + aliasStartOf.length * 2} ` +
+  `Wrote ${OUT}: ${size} bytes; ${startOf.length * 2} ` +
     `startOf/endOf, ${isoWeek.length} isoWeek, ${add.length} add, ` +
     `${diffGrid.length + diffPairs.length} diff, ${parseCases.length} parse, ` +
     `${fallbackStrings.length} fallback, ${formatTexts.length + formatEdges.length} ` +

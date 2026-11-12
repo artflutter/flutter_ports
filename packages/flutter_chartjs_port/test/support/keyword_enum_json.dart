@@ -20,6 +20,7 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -45,7 +46,8 @@ bool isKeywordEnum(Object? value) =>
     value is TooltipYAlign ||
     value is ArcBorderAlign ||
     value is ArcSpacingMode ||
-    value is FillerDrawTime;
+    value is FillerDrawTime ||
+    value is TimeUnit;
 
 /// The JSON text of the enum value [value]: the upstream keyword, the name
 /// of the value, as a JSON string.

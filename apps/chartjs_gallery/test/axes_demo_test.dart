@@ -231,7 +231,8 @@ void main() {
       'axes.beginAtZero',
       for (final bounds in axesDemoBounds)
         'axes.bounds.${bounds?.name ?? 'auto'}',
-      for (final unit in axesDemoTimeUnits) 'axes.time.unit.$unit',
+      for (final unit in axesDemoTimeUnits)
+        'axes.time.unit.${unit?.name ?? 'auto'}',
       for (final locale in axesDemoLocales) 'axes.locale.$locale',
       'axes.data.randomize',
       'axes.data.add',
@@ -585,10 +586,10 @@ void main() {
     await _tap(tester, 'axes.x.type.time');
     await _tap(tester, 'axes.time.unit.day');
     final time = _scale(chart, 'x');
-    expect(jsGet(time.options['time'], 'unit'), 'day');
+    expect(jsGet(time.options['time'], 'unit'), TimeUnit.day);
     expect(time.ticks!.first.label, 'Jan 1');
     await _tap(tester, 'axes.time.unit.month');
-    expect(jsGet(time.options['time'], 'unit'), 'month');
+    expect(jsGet(time.options['time'], 'unit'), TimeUnit.month);
     expect(time.ticks!.first.label, 'Jan 2024');
     await _tap(tester, 'axes.time.unit.year');
     expect(

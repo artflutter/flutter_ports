@@ -4,8 +4,8 @@
 /// the option facades (Zoom ADR 0003, item 9).
 ///
 /// - A union of string literals is an extension type over its `String`, with
-///   a constant for each member ([Mode], [ModifierKey], [DrawTime]), as the
-///   host types `TimeUnit`. A raw `'xy'` in a Map config is the same value.
+///   a constant for each member ([Mode], [ModifierKey], [DrawTime]). A raw
+///   `'xy'` in a Map config is the same value.
 /// - [ZoomTrigger] is a value that only the plugin makes: an enum. Its
 ///   `name` is the upstream string.
 /// - The callback contexts are records: they compare by value in a spec. A

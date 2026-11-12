@@ -12,6 +12,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/src/color_reference.dart';
 import 'package:chartjs_test_utils/src/native_easing.dart';
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -138,6 +139,10 @@ void nativeFixtureColors(Object? config) {
         value[key] = _enumValue(ArcBorderAlign.values, value[key]);
       } else if (key == 'spacingMode') {
         value[key] = _enumValue(ArcSpacingMode.values, value[key]);
+      } else if ((key == 'unit' || key == 'minUnit' || key == 'round') &&
+          owner == 'time') {
+        // A time unit takes its enum (row adapt-time-unit-enum).
+        value[key] = _enumValue(TimeUnit.values, value[key]);
       } else if (key == 'drawTime' && owner == 'filler') {
         // The filler draw time takes its enum (row
         // adapt-filler-draw-time-enum).

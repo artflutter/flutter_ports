@@ -39,9 +39,15 @@ const List<ScaleBounds?> axesDemoBounds = [
   ScaleBounds.ticks,
 ];
 
-/// The values of the option `time.unit` of a time axis. `auto` writes no
-/// option: the scale finds the unit.
-const List<String> axesDemoTimeUnits = ['auto', 'day', 'week', 'month', 'year'];
+/// The values of the option `time.unit` of a time axis. Dart `null`, the
+/// segment `auto`, writes no option: the scale finds the unit.
+const List<TimeUnit?> axesDemoTimeUnits = [
+  null,
+  TimeUnit.day,
+  TimeUnit.week,
+  TimeUnit.month,
+  TimeUnit.year,
+];
 
 /// The values of the chart option `locale`.
 const List<String> axesDemoLocales = ['en-US', 'de-DE'];
@@ -67,11 +73,12 @@ const Map<String, String> _typeText = {
   'time': 'time',
 };
 
-/// The short text of a time unit segment, when the name of the unit is too
-/// long for a segment on a phone. The tooltip gives the name. At 360 x 640 a
-/// unit segment has 34.4 px for its text; `month` is 40.3 px wide in Roboto
-/// `labelLarge`, `mon` 28.0 px.
-const Map<String, String> _unitText = {'month': 'mon'};
+/// The text of a time unit segment: `mon` for [TimeUnit.month], whose name
+/// is too long for a segment on a phone, else the name. The tooltip gives
+/// the name. At 360 x 640 a unit segment has 34.4 px for its text; `month` is
+/// 40.3 px wide in Roboto `labelLarge`, `mon` 28.0 px.
+String _unitText(TimeUnit? unit) =>
+    unit == TimeUnit.month ? 'mon' : AxesDemoState._keyText(unit);
 
 /// The datasets of the chart: the label, the colors and the point style.
 const List<({String label, ui.Color background, ui.Color border, String style})>
@@ -169,7 +176,7 @@ class AxesDemoState extends State<AxesDemo> {
   bool _reverse = false;
   bool _beginAtZero = false;
   ScaleBounds? _bounds;
-  String _timeUnit = 'auto';
+  TimeUnit? _timeUnit;
   String _locale = 'en-US';
 
   /// The value of each point of each dataset, as a fraction from 0 to 1.
@@ -337,7 +344,7 @@ class AxesDemoState extends State<AxesDemo> {
         'reverse': _reverse,
         'beginAtZero': _beginAtZero,
         if (_bounds != null) 'bounds': _bounds,
-        if (type == 'time' && _timeUnit != 'auto')
+        if (type == 'time' && _timeUnit != null)
           'time': <String, Object?>{'unit': _timeUnit},
         'ticks': <String, Object?>{
           'autoSkip': _autoSkip,
@@ -723,7 +730,7 @@ class AxesDemoState extends State<AxesDemo> {
                 axesDemoTimeUnits,
                 _timeUnit,
                 (v) => _timeUnit = v,
-                text: (v) => _unitText[v] ?? v,
+                text: _unitText,
               ),
               gap,
               _choice(

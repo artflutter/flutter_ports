@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: the scale option facades.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
@@ -263,38 +264,27 @@ void main() {
       _view([
         <String, Object?>{
           'time': <String, Object?>{
-            'unit': 'day',
+            'unit': TimeUnit.day,
             'displayFormats': <String, Object?>{
               'day': 'MMM d',
-              'fortnight': 'w',
               'datetime': 'PPpp',
               'millisecond': 'h:mm:ss.SSS',
-              'false': 'no',
             },
           },
         },
       ]),
     ).time;
 
-    test('formatOf reads a unit of the schema', () {
-      expect(time().displayFormats.formatOf('day'), 'MMM d');
-    });
-
-    test('formatOf reads another unit by name', () {
-      expect(time().displayFormats.formatOf('fortnight'), 'w');
-      expect(time().displayFormats.formatOf('year'), same(undefined));
-    });
-
-    test('formatOf reads the property key of another value', () {
-      // `displayFormats[false]` reads the key 'false'.
-      expect(time().displayFormats.formatOf(false), 'no');
+    test('formatOf reads the format of a unit', () {
+      expect(time().displayFormats.formatOf(TimeUnit.day), 'MMM d');
+      expect(time().displayFormats.formatOf(TimeUnit.year), same(undefined));
     });
 
     test('datetime, millisecond and unit', () {
       final t = time();
       expect(t.displayFormats.datetime, 'PPpp');
       expect(t.displayFormats.millisecond, 'h:mm:ss.SSS');
-      expect(t.unit, 'day');
+      expect(t.unit, TimeUnit.day);
       expect(t.parser, same(undefined));
     });
   });

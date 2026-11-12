@@ -3133,7 +3133,7 @@ enum ScopeKind {
           case OptionKey.parser:
             return 14;
           case OptionKey.round:
-            return 6;
+            return 16777218;
           case OptionKey.isoWeekday:
             return 3;
           case OptionKey.displayFormats:
@@ -3141,9 +3141,9 @@ enum ScopeKind {
           case OptionKey.tooltipFormat:
             return 4;
           case OptionKey.unit:
-            return 6;
+            return 16777218;
           case OptionKey.minUnit:
-            return 4;
+            return 16777216;
           default:
             return 0;
         }

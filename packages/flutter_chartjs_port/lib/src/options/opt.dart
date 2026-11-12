@@ -29,6 +29,7 @@ library;
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -246,6 +247,10 @@ abstract final class ShapeBits {
   /// filler.
   static const int fillerDrawTime = 8388608;
 
+  /// `timeUnit`: a [TimeUnit], the value of `time.unit`, `time.minUnit` and
+  /// `time.round`.
+  static const int timeUnit = 16777216;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -265,7 +270,8 @@ abstract final class ShapeBits {
       tooltipYAlign |
       arcBorderAlign |
       arcSpacingMode |
-      fillerDrawTime;
+      fillerDrawTime |
+      timeUnit;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -315,7 +321,8 @@ Opt<T> classifyTyped<T extends Object>(Object? raw) =>
 Opt<S> classifyScope<S>(Object? raw) => _special<S>(raw) ?? OptForeign<S>(raw!);
 
 /// The cell of [raw] for a key whose shape is a union of the atoms of
-/// [mask] ([ShapeBits]), or `any`. A JS number is a `double`.
+/// [mask] ([ShapeBits]), or `any`. A JS number is a `double`. A typed atom
+/// of the union takes a value of its type ([classifyTyped]).
 Opt<Object> classifyUnion(Object? raw, int mask) {
   final special = _special<Object>(raw);
   if (special != null) return special;
@@ -329,8 +336,21 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
     ),
     bool() when mask & ShapeBits.boolean != 0 => OptValue<Object>(value),
     String() when mask & ShapeBits.string != 0 => OptValue<Object>(value),
+    _ when _typedFits(value, mask & ShapeBits.typed) => OptValue<Object>(
+      value,
+    ),
     _ => OptForeign<Object>(value),
   };
+}
+
+/// Whether [value] is of the type of one typed atom of [typedMask].
+bool _typedFits(Object value, int typedMask) {
+  for (var bit = 1; bit <= typedMask && bit > 0; bit <<= 1) {
+    if (typedMask & bit != 0 && classifyMask(value, bit) is OptValue) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
@@ -358,6 +378,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.arcBorderAlign => classifyTyped<ArcBorderAlign>(raw),
   ShapeBits.arcSpacingMode => classifyTyped<ArcSpacingMode>(raw),
   ShapeBits.fillerDrawTime => classifyTyped<FillerDrawTime>(raw),
+  ShapeBits.timeUnit => classifyTyped<TimeUnit>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

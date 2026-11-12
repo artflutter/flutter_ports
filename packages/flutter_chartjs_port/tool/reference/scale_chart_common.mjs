@@ -1215,7 +1215,7 @@ const STROKE_VALUES = {
 };
 
 /** A value of a Flutter enum as a value of the Dart data. */
-class DartEnum {
+export class DartEnum {
   constructor(type, name) {
     this.type = type;
     this.name = name;
@@ -1238,6 +1238,12 @@ class DartAlgorithm {
     this.name = name;
   }
 }
+
+/** The names of the nine values of the enum TimeUnit of the port. */
+const TIME_UNIT_NAMES = new Set([
+  'millisecond', 'second', 'minute', 'hour', 'day', 'week', 'month',
+  'quarter', 'year',
+]);
 
 /** The positioner classes of the port by their upstream keys. */
 const POSITIONER_CLASSES = {
@@ -1288,6 +1294,14 @@ function keyedValue(k, value, owner) {
     ['beforeDraw', 'beforeDatasetDraw', 'beforeDatasetsDraw'].includes(value)
   ) {
     return new DartEnum('FillerDrawTime', value);
+  }
+  // The time unit (row adapt-time-unit-enum): `time.unit`, `time.minUnit`
+  // and `time.round`, and the unit of a time scale in the observations.
+  if (
+    TIME_UNIT_NAMES.has(value) &&
+    (k === 'unit' || ((k === 'minUnit' || k === 'round') && owner === 'time'))
+  ) {
+    return new DartEnum('TimeUnit', value);
   }
   const scaleEnum = SCALE_ENUMS[k];
   if (
@@ -1373,6 +1387,8 @@ function dart(v, state, owner) {
       state.arcEnums = true;
     } else if (v.type === 'FillerDrawTime') {
       state.fillerEnums = true;
+    } else if (v.type === 'TimeUnit') {
+      state.timeUnits = true;
     } else {
       state.scaleEnums = true;
     }
@@ -1451,7 +1467,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 
