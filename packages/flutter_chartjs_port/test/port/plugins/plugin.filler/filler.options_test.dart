@@ -5,8 +5,9 @@
 // expected values are the values of the spec (plugin.filler.tests.js:51-297)
 // and of the Node.js run of the pinned source files of
 // tool/reference/filler_target_reference.mjs (Node.js v24.12.0 on x64, the
-// cases `decodeFill ...` of filler_target_reference.dart): `'-0'`, `''`,
-// `[]`, NaN, Infinity, `'+1'`, `{value: NaN}` and `{target: 'origin'}`.
+// cases `decodeFill ...` of filler_target_reference.dart): `'-0'`, `[]`,
+// NaN, Infinity, `'+1'`, `{value: NaN}` and `{target: 'origin'}`, with the
+// target values of the port for the texts (row adapt-fill-target-objects).
 // filler.target_test.dart compares all the cases of that run. The file is
 // a pure layer test: test:web runs it too.
 
@@ -14,6 +15,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary, RelativeFill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -61,9 +64,9 @@ List<FillerSource?> _sources(List<Object> fills, List<bool> visible) => [
 void main() {
   group('decodeFill', () {
     test('the boundaries (plugin.filler.tests.js:51)', () {
-      expect(_decode('origin'), 'origin');
-      expect(_decode('start'), 'start');
-      expect(_decode('end'), 'end');
+      expect(_decode(FillBoundary.origin), FillBoundary.origin);
+      expect(_decode(FillBoundary.start), FillBoundary.start);
+      expect(_decode(FillBoundary.end), FillBoundary.end);
     });
 
     test('the absolute dataset index (:66)', () {
@@ -74,43 +77,39 @@ void main() {
     });
 
     test('the relative dataset index (:82)', () {
-      expect(_decode('+3', index: 0), 3);
-      expect(_decode('-1'), 0);
-      expect(_decode('+1', index: 2), 3);
-      expect(_decode('-2', index: 3), 1);
+      expect(_decode(const RelativeFill(3), index: 0), 3);
+      expect(_decode(const RelativeFill(-1)), 0);
+      expect(_decode(const RelativeFill(1), index: 2), 3);
+      expect(_decode(const RelativeFill(-2), index: 3), 1);
     });
 
     test('true and false (:103)', () {
-      expect(_decode(true, index: 0), 'origin');
+      expect(_decode(true, index: 0), FillBoundary.origin);
       expect(_decode(false), false);
     });
 
     test('the self dataset index (:117)', () {
       expect(_decode(0, index: 0), false);
-      expect(_decode('-0'), false);
-      expect(_decode('+0', index: 2), false);
+      expect(_decode(const RelativeFill(0)), false);
+      expect(_decode(const RelativeFill(0), index: 2), false);
       expect(_decode(3, index: 3), false);
     });
 
     test('the out of bounds dataset index (:138)', () {
       expect(_decode(-2, index: 0), false);
       expect(_decode(4), false);
-      expect(_decode('-3', index: 2), false);
-      expect(_decode('+1', index: 3), false);
+      expect(_decode(const RelativeFill(-3), index: 2), false);
+      expect(_decode(const RelativeFill(1), index: 3), false);
     });
 
     test('the invalid values (:159)', () {
+      // A text is no fill target in the port (row adapt-fill-target-objects):
+      // the invalid texts of the spec are not here.
       for (final fill in <Object?>[
-        'foo',
-        '+foo',
-        '-foo',
-        '+1.1',
-        '-2.2',
         3.3,
         -4.4,
         double.nan,
         double.infinity,
-        '',
         null,
         <Object?>[],
       ]) {
@@ -119,14 +118,16 @@ void main() {
     });
 
     test('the values of the Node.js run', () {
-      expect(_decode('-0'), false);
-      expect(_decode(''), false);
+      expect(_decode(const RelativeFill(0)), false);
       expect(_decode(<Object?>[]), false);
       expect(_decode(double.nan), false);
       expect(_decode(double.infinity), false);
-      expect(_decode('+1'), 2);
+      expect(_decode(const RelativeFill(1)), 2);
       expect(_decode(<String, Object?>{'value': double.nan}), false);
-      expect(_decode(<String, Object?>{'target': 'origin'}), 'origin');
+      expect(
+        _decode(<String, Object?>{'target': FillBoundary.origin}),
+        FillBoundary.origin,
+      );
     });
 
     test('an option object with a value is the object itself', () {
@@ -142,7 +143,7 @@ void main() {
           undefined,
           backgroundColor: const ui.Color.fromRGBO(255, 0, 0, 1),
         ),
-        'origin',
+        FillBoundary.origin,
       );
       expect(_decode(undefined), false);
       expect(_decode(undefined, backgroundColor: ''), false);
@@ -151,7 +152,16 @@ void main() {
 
   group('resolveTarget', () {
     // plugin.filler.tests.js:197-269: the decoded fills of the spec chart.
-    const fills = <Object>['start', 0.0, 1.0, 1.0, 5.0, 7.0, 5.0, 'end'];
+    const fills = <Object>[
+      FillBoundary.start,
+      0.0,
+      1.0,
+      1.0,
+      5.0,
+      7.0,
+      5.0,
+      FillBoundary.end,
+    ];
     const visible = [false, false, false, false, true, true, true, false];
 
     test('propagate true (:198)', () {
@@ -161,7 +171,16 @@ void main() {
           for (var i = 0; i < fills.length; i++)
             resolveTarget(sources, i, true),
         ],
-        ['start', 'start', 'start', 'start', 5, 'end', 5, 'end'],
+        [
+          FillBoundary.start,
+          FillBoundary.start,
+          FillBoundary.start,
+          FillBoundary.start,
+          5,
+          FillBoundary.end,
+          5,
+          FillBoundary.end,
+        ],
       );
     });
 

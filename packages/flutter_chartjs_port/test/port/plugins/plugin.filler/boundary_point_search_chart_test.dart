@@ -6,6 +6,8 @@ import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
@@ -80,7 +82,11 @@ void main() {
     expect(target.calls, calls);
   });
   for (final axis in ['x', 'y']) {
-    for (final fill in ['origin', 'start', 'end']) {
+    for (final fill in [
+      FillBoundary.origin,
+      FillBoundary.start,
+      FillBoundary.end,
+    ]) {
       for (final reverse in [false, true]) {
         testWidgets(
           '$axis $fill reverse=$reverse preserves every draw command',

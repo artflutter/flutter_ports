@@ -926,9 +926,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.line/stacking/order-specified.js (trace)':
       '8620b9ddb1fd620f9741e7472eedfd2d6cab91d0f542467734f5955428ad4aa5',
   'fixture controller.line/stacking/single.js (plain)':
-      '73e6a115259b1e808dc2391502a6cf0128903eb3049222b1ddf950560064e9e3',
+      '3995450a00f755cb2c4d843a0ef22f4aabf8e8ab9150192990a23a05f1f47b52',
   'fixture controller.line/stacking/single.js (trace)':
-      '8da66b8519b6e6a0d72bf5fb44b1415996a46ddc4d391c6825f90d31069e6bd4',
+      'e02c847cc537e8a5b7e5e6f450f899c9622a86195833708ef9722d64d8e2d481',
   'fixture controller.line/stacking/stack-cache.js (plain)':
       '32f4b5772de5c13c6959c398b565f4be72f9ebb8a36e89ba3775e109b94e9df7',
   'fixture controller.line/stacking/stack-cache.js (trace)':
@@ -1842,13 +1842,13 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/line/before-datasets-draw.js (trace)':
       '23face507f973735e3b3c207d082857415586240824c879a157549986ba82f55',
   'fixture plugin.filler/line/boundary/above-below-line-null-start.json (plain)':
-      '8e90b04734072d0486c58df35fd9f4f402d5dd0c73a2723d4463b99209a40d16',
+      '4e60f845a5ca512448a9067a6924a63ba2201d52421e272b46b29b77577e9b5f',
   'fixture plugin.filler/line/boundary/above-below-line-null-start.json (trace)':
-      '96016c279db5797f131a826cd0e3fea158c7ae8103c225b00be6ca1741540642',
+      '5bebdcc594e0bb6c91dd6756a1e3dcf5ddb6615f344fbff52a843d75362bf4d3',
   'fixture plugin.filler/line/boundary/above-below-line-null.json (plain)':
-      '5aa221f3c15f5a85479b07c9e16495d73b1bc39a69f4e605d5ff2a6817721194',
+      '3d4c063a1e0e67ef6c1af05a87b94ee1940525f527c695eea89cb589f43b16a2',
   'fixture plugin.filler/line/boundary/above-below-line-null.json (trace)':
-      '1011cecb460ed5249c68195b3e174977d404b86717175b9e4d3958072303470c',
+      '361636b35843d9d1a918f36967e31141f1fc4b29b163c26ed9f70adc5499794d',
   'fixture plugin.filler/line/boundary/end-span.json (plain)':
       'f897c1e74c201c46d1f573b78a8b3d41b918e1356f135ffadcf3518da9750d1d',
   'fixture plugin.filler/line/boundary/end-span.json (trace)':
@@ -1898,65 +1898,65 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/line/boundary/start.json (trace)':
       'f0a94df2e0b51bb73af51e10a3ea54fc3e0cfc047adf7d8411088d0236596ad3',
   'fixture plugin.filler/line/dataset/border.json (plain)':
-      '476dfc2e51df4ddacc597e5bbd9b90b5aa6ec1dedb048d8c82356ab8701700e2',
+      '24f84ac838b4f5e91032414bd164b55ecccbed10636be6ee7236757a97121fc5',
   'fixture plugin.filler/line/dataset/border.json (trace)':
-      'fcbc6dba37e9388b8c8201ef9068f990e9168759ff5d068fd93f5fa795f0e319',
+      '70b109486eafc03e7e554740779ba01869812987f77b6de67c7a049489ead9ff',
   'fixture plugin.filler/line/dataset/clip-bounds-x-off.js (plain)':
-      'aea93052aa46ba15cb4c42bf82ec4aedd3fcca4ff04defb1ca6c1972e50d24a2',
+      '63959579e2333335bda0432088455b228305d915fd7d6d8aa6131b68e4adc709',
   'fixture plugin.filler/line/dataset/clip-bounds-x-off.js (trace)':
-      'd6d8d5e0a9230fcab57364d1d14f3b4c18dbb44d767ab90e4eec1915199ae8f2',
+      'e0fcd40037cec7d01b019b9909c1bcabc34987af71e3b1899eb7e3c9e49b6390',
   'fixture plugin.filler/line/dataset/clip-bounds-x.js (plain)':
-      '3bdfeb87154ff24e25c89effa49698d17e1b0888f00d172b95d77d920eb5cc16',
+      '6e2f1e89ae88fa18ed4acee384cefb69e1290542b4cd9a7150fd8cc34bf92ee7',
   'fixture plugin.filler/line/dataset/clip-bounds-x.js (trace)':
-      '5f4ae4cbbc7aca530869f7c567f366ca2092c9a081838e98d7e2ed68f51f2b85',
+      '1284b521f33c4251d0247057f67fbc649e399487d98db5d3d330a538a2d1dbb5',
   'fixture plugin.filler/line/dataset/clip-bounds-y-off.js (plain)':
-      '668440a6786600d0599222b51e92530ab6f0c9cfcc92469e394c3d8b0c58b494',
+      'e9069f2346f94e9f45b03fbf49f1f57bcf4031fb4032b8e84c376ce88933a074',
   'fixture plugin.filler/line/dataset/clip-bounds-y-off.js (trace)':
-      '30a3f05bf1c163ff42c7dbc4b8e3935ab99e7eaeed70dff15d31b2ccdcf4d320',
+      'fc1392161a770bc671d3a6b77fecf0e4ce45b936faebb234cab09edfe865e067',
   'fixture plugin.filler/line/dataset/clip-bounds-y.js (plain)':
-      '00b2a9efc6da46edf011e7bc8369441bc1e00c0c048e8abed7a7106073d7f4ad',
+      '45b2cd3e193714dc5d14d066f161deae6b6bd2f45558557423092fe6bd513b42',
   'fixture plugin.filler/line/dataset/clip-bounds-y.js (trace)':
-      'fc07a11470f7400967b66b4cb4c452ed01127df8110ab9457bcd10e439a6bee8',
+      '0a61277af88cdb998be031e2b6b94de651d69c1dd6abf50200c1dc6f5278294c',
   'fixture plugin.filler/line/dataset/dual.json (plain)':
-      'e69a857ce47b88edee34096a3a8595320622f579176fb9af732a5c9ae467ea3b',
+      '363a70229e3e3de5ea69d6a529f1bdbe35c6bb0d340792ddd08b15b2352d4d9a',
   'fixture plugin.filler/line/dataset/dual.json (trace)':
-      '49fefba15f8f2d692fe24cc4d35f6eb413fba7f4899472d8679ec49c4b216b11',
+      'cff44c6e6817a62b52247e6309dda8dd903ae6ca1a74172c15c131a0135af249',
   'fixture plugin.filler/line/dataset/interpolated.js (plain)':
       'ca9b3d0b9179bb99c02855e99469d5220904305475b6a0b90994637d81b8fbb5',
   'fixture plugin.filler/line/dataset/interpolated.js (trace)':
       '8ade4ecbf7c63d8556e77957ca2de6caa656c050724fffe08eb40c7c6601fc04',
   'fixture plugin.filler/line/dataset/no-border.json (plain)':
-      '1a57708fc5601926c5e4fe03d7881f74d1a4a7a3c34a9d2aa45dd15e0a76fe28',
+      '040bf99c2c6c3b1f7b9c86e056f895694df2a9f875d03789de5df1d6971ac9b5',
   'fixture plugin.filler/line/dataset/no-border.json (trace)':
-      '52dcfebd6fc5c3c11fbe7d0e469172c2359cce6001ff71370c413626f02d89a3',
+      'dba01c679dce7c5fdd4f977fbfcd884c635be5ab4c0d74ec6e345f348159e08d',
   'fixture plugin.filler/line/dataset/span-dual.json (plain)':
-      '6705d261cba7b167257152c69697591432c1adb3ab0eb31591e29f383caa3c8a',
+      '7be5e752200a5b4474e48b324aab29f379463cecacb39c20f21c7b658f6ec528',
   'fixture plugin.filler/line/dataset/span-dual.json (trace)':
-      'ebef68eb4242e16719edfeb83413f0cb7e6e5e95f3ccb5ff28eadc54895f0614',
+      'd86af36b9da302f651fadf3af4fa31bf7067513fc11a2dcbfbe8934b8b3982b8',
   'fixture plugin.filler/line/dataset/span.json (plain)':
-      'bf9aec164dcc6cdf0c9d1376124416df72a738479c6c7627260c32d1647c1ce0',
+      '5af57a22734cb931dbcbf50aac96e8aeecf0119e145ab99937a352c33a7ee230',
   'fixture plugin.filler/line/dataset/span.json (trace)':
-      '83fce56ab4da84dd206dbdcdd6ee64172b6dffd0269f2a999cb46ff643d95313',
+      '7b0291056a879932bd2cb1f0f26a75dc68879fecee000b3b8fa20c1c379ebfa8',
   'fixture plugin.filler/line/dataset/spline-span-above.json (plain)':
-      'af44a9300431a4b5067e17feb39e3950b43451616a96daddafbced07fee39b30',
+      '350e7c5566160d664be2ae4daca8626ed66b5f681aeaf63934f22f5ac043fb6c',
   'fixture plugin.filler/line/dataset/spline-span-above.json (trace)':
-      'e0264d9b9a7e9257e4a9508a13a5cb03a7daa1b48323376209199b7257dedb24',
+      'f59484e3a24af56a9932a563acbd976b126810957bcae2ab7948514248ed5461',
   'fixture plugin.filler/line/dataset/spline-span-below.json (plain)':
-      '85f7c8323eeb988146b0697e3f61aeb435806cd62e098eea8586fba71f820bc7',
+      'a86701636fd968bb846afd9dde5842ffd0fa4f24cbb7ec5960c209404af3eb0e',
   'fixture plugin.filler/line/dataset/spline-span-below.json (trace)':
-      '589eee6f9f9e14b5389b92c8ae3c8ae913d03c217babc623d6a2cdc08b76ed37',
+      'dd587983a4ac44382f0eb5a248859327ef18cfcfa309e14ef441d8b819a014d6',
   'fixture plugin.filler/line/dataset/spline-span.json (plain)':
-      '9e391712845c4c00c0620c8f0188c3a9dda00ee27944245c64641825f8aa0a71',
+      'eeaeef0de17c01097c8dd4543a7753aa02486cd4f5c5161e4dd097988cff15da',
   'fixture plugin.filler/line/dataset/spline-span.json (trace)':
-      '85a13dbba4a44751dbfbba2e688ce9c1b7839063453a72e5a69792d752ad3bc3',
+      '56ca1f35cb1ae58a1ef726e2ca56e7c600c3b6a79c8bd351bf00371eeb460bf8',
   'fixture plugin.filler/line/dataset/spline.json (plain)':
-      '3ad3501a0f0278e1ca8223285af1aef1b7b52aa35407a45327d8b222adbb3ac3',
+      'c77be4ea9a0d500e4001b531297cda637c1cf799b22020c321788da6a831f530',
   'fixture plugin.filler/line/dataset/spline.json (trace)':
-      'd10ce15d5a5f26dc4282ec7391d2b8f9efaefa51e86c61eec34223257dbde163',
+      '66140bb75f3d066924c82945338c78cd5df506330a5c80e7565442059a371173',
   'fixture plugin.filler/line/dataset/stepped.json (plain)':
-      'a33d153efb0d2d1e9cbad8c0ccbdb4b0b7dce8fdb28f2587c0f6b253cabe42da',
+      'f614388fd8009749f3465790926a74052e5e37f3c9a48f1e7a2b4a4e817515a9',
   'fixture plugin.filler/line/dataset/stepped.json (trace)':
-      '2821a6b32e64e798576a9af8f50308907531a30b55ee0a23417220b5de9e404c',
+      'd246fb59afb2ff0b72963185df7c9dc7b758234489b7e694db5415eefee63384',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.js (plain)':
       '67884eedf2d64d6c18c2a32d7265a6a7f99ca534ed0f9d762d5321456ced6853',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.js (trace)':
@@ -2010,9 +2010,9 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/line/value.json (trace)':
       '99c7d77a672e9a3c62a880681cf97fac584e18cce6145cf53f59d393256561a1',
   'fixture plugin.filler/line/vertical.js (plain)':
-      '722f364e333cc4174d9ff185d914b7afe748c8c46746acb353241e35396fe246',
+      '131cbb837253342a1b4b2eea5aeee03ade41823a83f0f08c0317151f637728a4',
   'fixture plugin.filler/line/vertical.js (trace)':
-      '3ba76a675fc2b433281e1bc59f5d117bbb0e0f680522be4b4dc8f3ed8b333c54',
+      '728cf96fe82d01cf4cb67dafa29f9bc5e1330cfdbbfa4f17e70de202bb6ea672',
   'fixture plugin.filler/radar/beforeDraw.js (plain)':
       '82227261b0ad6c28cd4e4d6c5d13e69bcadcbefed454d6cf3459d6669470a23e',
   'fixture plugin.filler/radar/beforeDraw.js (trace)':
@@ -2062,25 +2062,25 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/radar/boundary/start.json (trace)':
       '9bdff4aa19fb41e5c911c925efa03b5cd9e14c848d5add486dce39a51a596579',
   'fixture plugin.filler/radar/dataset/border.json (plain)':
-      'd387fe63400a35483370a5c6acffb6b54241cb82be05e97129a5a5a36907f77f',
+      '9358faa35689555481aee095123757ba09912edfc7b6811f7955cd73bc558562',
   'fixture plugin.filler/radar/dataset/border.json (trace)':
-      '0f5f8572147d72b3d503d2129c66589827fc899fafcb7c7de980bf81edc79168',
+      '7c37d0ab7a62c004974656478dd09ee5e8486bcce546872cac925b4569dd33b3',
   'fixture plugin.filler/radar/dataset/default.json (plain)':
-      '3922478dc81cfca5c57a0b80e9f8468b7c479e90b9631d37e830e7d865eba6d0',
+      '0e1595f14b15463f6aa3045090a682a353275fcc86644688bfbfbb0bf81cb329',
   'fixture plugin.filler/radar/dataset/default.json (trace)':
-      'e87423237be7aa89f7a3b5d2590c69509a6a89255258594001fd3bb5dfdba6b0',
+      '7b75691cff4cefebab4b542e014c66fb41b99383efe9ac9afaa7e4e1fabda03f',
   'fixture plugin.filler/radar/dataset/order.js (plain)':
       '3cdbab5016943608190a958c4f35349e4d20805915a8231346b121a46e2faa64',
   'fixture plugin.filler/radar/dataset/order.js (trace)':
       '7b494badad3e6401083e3a1d9c0563029e32cfad745492b12fae62ac2b4d75b8',
   'fixture plugin.filler/radar/dataset/span.json (plain)':
-      '80cf2a132b4021dffbacadb3229ae6f542e27d66d5bf3ef250ada052d0240931',
+      'b28f06ef2afce4a59308e5861efa38f96f0bef7fc62c25595ead61e94f8ee0ed',
   'fixture plugin.filler/radar/dataset/span.json (trace)':
-      '3d8f2085bf589f07ae79a3981f816d711065ce74a110ef755cd64d9e0d336457',
+      '63bc013e99dfeb5c4d7b9b4cfe48efdd770b22160d917b0810557458d65dd4bd',
   'fixture plugin.filler/radar/dataset/spline.json (plain)':
-      '6f42d6eb09478bc6dd795b9c4cff048866502f3ac04eeddaf199c9f78775b841',
+      '47411494c7c9146e670d0b04f434a9122ec83da27bd713c1d24f53f024f325b7',
   'fixture plugin.filler/radar/dataset/spline.json (trace)':
-      '071017daba1f4edfb11bd99b49299f73bdb6deeb57d7087475242336dffeb54d',
+      'b2eb6cfe4430a026bc3ba48001e11d0f93b329666bc3e55efa1d3690408b49dc',
   'fixture plugin.filler/radar/value.json (plain)':
       '2896450ef2a07b6f6e3391d600cd0c8d4a516bed59129ae7c7ac743423394472',
   'fixture plugin.filler/radar/value.json (trace)':

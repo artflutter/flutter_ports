@@ -594,12 +594,15 @@ ChartConfig _radarTyped() => const ChartConfig(
   elements: ChartElements(line: LineElementStyle(borderWidth: 3)),
 );
 
-/// [observation] with the value `'origin'` for each `fill: true`: the
-/// filler reads `fill: true` as `'origin'` (`filler.options.js:133`).
+/// [observation] with the value [FillBoundary.origin] for each
+/// `fill: true`: the filler reads `fill: true` as `'origin'`
+/// (`filler.options.js:133`).
 Object? _fillTrueAsOrigin(Object? observation) => switch (observation) {
   final Map<String, Object?> map => <String, Object?>{
     for (final MapEntry(:key, :value) in map.entries)
-      key: key == 'fill' && value == true ? 'origin' : _fillTrueAsOrigin(value),
+      key: key == 'fill' && value == true
+          ? FillBoundary.origin
+          : _fillTrueAsOrigin(value),
   },
   final List<Object?> list => [
     for (final item in list) _fillTrueAsOrigin(item),
@@ -700,8 +703,8 @@ Map<String, Object?> _areaRaw(Object fill) => <String, Object?>{
 Object _areaTitleText(Object? ctx) {
   final chart = _byName(ctx, 'chart')! as Chart;
   final datasets = _byName(chart.data, 'datasets')! as List<Object?>;
-  final dataset = datasets.first;
-  return 'Fill: ${_byName(dataset, 'fill')}';
+  final fill = _byName(datasets.first, 'fill');
+  return 'Fill: ${fill is FillBoundary ? fill.name : fill}';
 }
 
 /// The typed Area config at the fill [fill], with the constant title
@@ -793,15 +796,15 @@ final List<_Twin> _docsTwins = [
     raw: _scatterRaw,
     rawObservation: null,
   ),
-  for (final (fill, raw) in const [
-    (ChartFill.origin, 'origin'),
-    (ChartFill.start, 'start'),
-    (ChartFill.end, 'end'),
-    (ChartFill.none, false),
+  for (final (fill, raw, text) in const [
+    (ChartFill.origin, FillBoundary.origin, 'origin'),
+    (ChartFill.start, FillBoundary.start, 'start'),
+    (ChartFill.end, FillBoundary.end, 'end'),
+    (ChartFill.none, false, 'false'),
   ])
     (
-      name: 'line-boundaries.md:3-120, fill $raw',
-      typed: () => _areaTyped(fill, 'Fill: $raw'),
+      name: 'line-boundaries.md:3-120, fill $text',
+      typed: () => _areaTyped(fill, 'Fill: $text'),
       raw: () => _areaRaw(raw),
       rawObservation: null,
     ),
@@ -1043,14 +1046,16 @@ Map<String, Object?> _barRaw() => <String, Object?>{
 /// gap, a stepped line, a category and a linear axis, the interaction, the
 /// subtitle, the legend with point styles, the animation, the filler and the
 /// aspect ratio.
-ChartConfig _lineTypeTyped() => const ChartConfig(
+ChartConfig _lineTypeTyped() => ChartConfig(
   type: .line,
-  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  labels: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   datasets: [
-    LineDataset(
+    const LineDataset(
       label: 'This week',
       data: [3, 5, null, 8, 6, 9, 7],
-      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 0.25)),
+      backgroundColor: ChartValue.constant(
+        Color.fromRGBO(255, 99, 132, 0.25),
+      ),
       borderColor: ChartValue.constant(_red),
       borderWidth: 2,
       fill: .origin,
@@ -1067,16 +1072,18 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
     ),
     LineDataset(
       label: 'Last week',
-      data: [2, 4, 6, 5, 4, 6, 5],
-      backgroundColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 0.25)),
-      borderColor: ChartValue.constant(_blue),
+      data: const [2, 4, 6, 5, 4, 6, 5],
+      backgroundColor: const ChartValue.constant(
+        Color.fromRGBO(54, 162, 235, 0.25),
+      ),
+      borderColor: const ChartValue.constant(_blue),
       fill: ChartFill.relative(-1),
-      borderDash: [6, 4],
+      borderDash: const [6, 4],
       stepped: SteppedLine.before,
-      pointStyle: TrianglePointStyle(),
+      pointStyle: const TrianglePointStyle(),
     ),
   ],
-  scales: {
+  scales: const {
     'x': CategoryAxis(
       grid: AxisGrid(offset: true, drawTicks: false),
       ticks: AxisTicks(maxRotation: 0, autoSkip: false),
@@ -1093,23 +1100,23 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
     ),
   },
   aspectRatio: 1.5,
-  interaction: ChartInteraction(
+  interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
     includeInvisible: true,
   ),
-  subtitle: ChartTitle(
+  subtitle: const ChartTitle(
     display: true,
     text: 'Steps in thousands',
     color: _navy,
     position: .bottom,
   ),
-  legend: ChartLegend(usePointStyle: true, reverse: true),
-  animation: ChartAnimation(
+  legend: const ChartLegend(usePointStyle: true, reverse: true),
+  animation: const ChartAnimation(
     duration: Duration(milliseconds: 400),
     easing: Curves.easeOutQuart,
   ),
-  filler: ChartFiller(propagate: true),
+  filler: const ChartFiller(propagate: true),
 );
 
 /// The raw twin of `_lineTypeTyped`.
@@ -1124,7 +1131,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         'backgroundColor': const native_ui.Color.fromRGBO(255, 99, 132, 0.25),
         'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
         'borderWidth': 2,
-        'fill': 'origin',
+        'fill': FillBoundary.origin,
         'tension': 0.3,
         'spanGaps': true,
         'pointStyle': const RectRotPointStyle(),
@@ -1156,7 +1163,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         'data': <Object?>[2, 4, 6, 5, 4, 6, 5],
         'backgroundColor': const native_ui.Color.fromRGBO(54, 162, 235, 0.25),
         'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
-        'fill': '-1',
+        'fill': const RelativeFill(-1),
         'borderDash': <Object?>[6, 4],
         'stepped': SteppedLine.before,
         'pointStyle': const TrianglePointStyle(),
@@ -1771,7 +1778,7 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
         'data': <Object?>[7, 8, 5, 6, 4, 9],
         'backgroundColor': const native_ui.Color.fromRGBO(54, 162, 235, 0.2),
         'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
-        'fill': 'origin',
+        'fill': FillBoundary.origin,
         'tension': 0.1,
         'pointStyle': const StarPointStyle(),
         'pointRadius': 4,

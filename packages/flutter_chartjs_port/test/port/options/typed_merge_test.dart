@@ -19,6 +19,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -274,7 +276,7 @@ void main() {
         ..jsWrite('tension', 'loose');
       LineOptionsScope line() => LineOptionsScope()
         ..jsWrite('tension', 0.4)
-        ..jsWrite('fill', <String, Object?>{'target': 'origin'})
+        ..jsWrite('fill', <String, Object?>{'target': FillBoundary.origin})
         ..jsWrite('radius', 'wide')
         ..jsWrite('segment', <String, Object?>{'borderColor': _fn});
       _expectTwins(() => mergeIf(LineOptionsScope(), point()));

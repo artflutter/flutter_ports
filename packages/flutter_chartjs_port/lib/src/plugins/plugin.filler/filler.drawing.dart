@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 // DIVERGES(chartjs): adapt-boundary-exact-points, private boundary endpoints.
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart'
     show findSegmentEnd, getBounds, segments;
@@ -61,8 +63,9 @@ void drawfill(
   // boundary, not a dataset line accessible to callbacks during drawing.
   final fill = source.fill;
   final linearBoundary =
-      fill is String &&
-      (fill == 'origin' || fill == 'start' || fill == 'end') &&
+      (fill == FillBoundary.origin ||
+          fill == FillBoundary.start ||
+          fill == FillBoundary.end) &&
       source.scale is! types.RadialLinearScale;
   final target = getTarget(source);
   final chart = source.chart;

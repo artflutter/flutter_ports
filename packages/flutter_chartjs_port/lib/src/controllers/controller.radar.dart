@@ -64,6 +64,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         RadarControllerDatasetOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.radar.js:4 `RadarController extends DatasetController`.
@@ -94,7 +96,8 @@ class RadarController extends DatasetController {
         ..indexAxis = 'r'
         ..showLine = true
         ..elements = (ElementOptionsByTypeScope()
-          ..line = (LineOptionsScope()..fill = 'start'));
+          // DIVERGES(chartjs): adapt-fill-target-objects, the enum value.
+          ..line = (LineOptionsScope()..fill = FillBoundary.start));
 
   /// controller.radar.js:26 `static overrides`, a typed scope of the kind
   /// `ChartOptions` (Chart.js ADR 0054 §3).

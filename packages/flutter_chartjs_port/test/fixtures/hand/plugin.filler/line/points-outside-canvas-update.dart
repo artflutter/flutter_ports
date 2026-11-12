@@ -4,6 +4,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -26,7 +28,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': 8, 'y': -5},
             <String, Object?>{'x': 10, 'y': 0},
           ],
-          'fill': 'origin',
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillBoundary.origin,
         },
       ],
     },

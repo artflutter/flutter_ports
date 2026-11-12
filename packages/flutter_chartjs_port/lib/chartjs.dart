@@ -101,6 +101,8 @@ export 'package:flutter_chartjs_port/src/platform/native_event.dart'
         NativeTouch;
 export 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
+export 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary, FillTarget, RelativeFill;
 export 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 export 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'

@@ -126,7 +126,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
       line('a', points),
       line('b', [
         for (var i = 0; i < count; i++) DataPoint(x(i), a[i] + 8),
-      ], fill: const ChartFill.relative(-1)),
+      ], fill: ChartFill.relative(-1)),
     ],
     'segment' => [
       line(

@@ -45,7 +45,9 @@
 # `borderSkipped`, with `bool` in their unions; a keyword is a foreign value), `cubicInterpolationMode` (a
 # `CubicInterpolationMode`, the value of the line `cubicInterpolationMode`; a mode name is a foreign
 # value), `pointStyle` (a `PointStyle`, the value of `pointStyle`, with `bool` in its unions for
-# `false`; a style name is a foreign value), `any` (any JS value: a color, an object that
+# `false`; a style name is a foreign value), `fillTarget` (a `FillTarget`, a `FillBoundary` or a
+# `RelativeFill` of `fill`; a keyword or a relative index as text is a foreign value), `any` (any
+# JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -147,7 +149,7 @@ kinds:
       data: list
       hoverBorderRadius: number | scope BorderRadius
       rAxisID: string
-      fill: number | string | bool | scope FillTarget
+      fill: number | fillTarget | bool | scope FillTarget
       datasetElementType: string | bool
       dataElementType: string | bool
       pointBackgroundColor: any
@@ -375,7 +377,7 @@ kinds:
       cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
-      fill: number | string | bool | scope FillTarget
+      fill: number | fillTarget | bool | scope FillTarget
       spanGaps: bool | number
       segment: scope SegmentOptions
       hoverBorderWidth: number
@@ -476,7 +478,7 @@ kinds:
   FillTarget:
     doc: index.d.ts:2302 ComplexFillTarget and the object `{value}` of index.d.ts:2300 FillTarget, the object form of `fill`.
     keys:
-      target: number | string | bool | scope FillTarget
+      target: number | fillTarget | bool | scope FillTarget
       above: any
       below: any
       value: number
@@ -537,7 +539,7 @@ kinds:
       skipNull: bool  # index.d.ts:149 BarControllerChartOptions
       hoverBorderRadius: number | scope BorderRadius  # index.d.ts:2187 BarHoverOptions, the hover prefix of core.datasetController.js:815
       rAxisID: string  # read at core.datasetController.js:308
-      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      fill: number | fillTarget | bool | scope FillTarget  # read at core.datasetController.js:287
       drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
@@ -574,7 +576,7 @@ kinds:
       cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
-      fill: number | string | bool | scope FillTarget
+      fill: number | fillTarget | bool | scope FillTarget
       spanGaps: bool | number
       segment: scope SegmentOptions
       borderWidth: number
@@ -635,7 +637,7 @@ kinds:
       animations: bool | scope AnimationsSpec
       transitions: scope TransitionsSpec
       rAxisID: string  # read at core.datasetController.js:308
-      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      fill: number | fillTarget | bool | scope FillTarget  # read at core.datasetController.js:287
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
@@ -685,7 +687,7 @@ kinds:
       xAxisID: string  # read at core.datasetController.js:306
       yAxisID: string  # read at core.datasetController.js:307
       rAxisID: string  # read at core.datasetController.js:308
-      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      fill: number | fillTarget | bool | scope FillTarget  # read at core.datasetController.js:287
       drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
@@ -737,7 +739,7 @@ kinds:
       xAxisID: string  # read at core.datasetController.js:306
       yAxisID: string  # read at core.datasetController.js:307
       rAxisID: string  # read at core.datasetController.js:308
-      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      fill: number | fillTarget | bool | scope FillTarget  # read at core.datasetController.js:287
       drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
@@ -785,7 +787,7 @@ kinds:
       cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
-      fill: number | string | bool | scope FillTarget
+      fill: number | fillTarget | bool | scope FillTarget
       spanGaps: bool | number
       segment: scope SegmentOptions
       hoverBorderCapStyle: strokeCap
@@ -825,7 +827,7 @@ kinds:
       xAxisID: string  # read at core.datasetController.js:306
       yAxisID: string  # read at core.datasetController.js:307
       rAxisID: string  # read at core.datasetController.js:308
-      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      fill: number | fillTarget | bool | scope FillTarget  # read at core.datasetController.js:287
       drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
       animation: bool | scope AnimationOptions  # read through core.config.js:229
       animations: bool | scope AnimationsSpec

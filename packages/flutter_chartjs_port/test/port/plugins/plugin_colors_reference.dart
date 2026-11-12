@@ -11,6 +11,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -5574,7 +5575,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 'start',
+                'fill': FillBoundary.start,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -5820,7 +5821,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 'start',
+                'fill': FillBoundary.start,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -13386,7 +13387,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 'start',
+                'fill': FillBoundary.start,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -13632,7 +13633,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 'start',
+                'fill': FillBoundary.start,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,

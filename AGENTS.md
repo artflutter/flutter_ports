@@ -845,6 +845,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `adapt-arc-option-enums`), also in a raw config; the typed API has
       `ArcElementStyle.borderAlign` and `spacingMode`. The native option plans count an enum
       value as a scalar (`_indexedScalar` of `helpers.config.dart`).
+    - The option `fill` holds a number, a boolean, an object `{value}`, a `FillBoundary`
+      (`origin`, `start`, `end`, `stack`, `shape`) or a `RelativeFill(offset)` of the pure
+      `lib/src/plugins/fill_target.dart` (row `adapt-fill-target-objects`), also in a raw
+      config: `_decodeFill` parses no text, and a text stops a debug build. The typed
+      `ChartFill` holds these values (`ChartFill.relative` is not `const`).
     - The option `pointStyle` holds a `PointStyle` or `false` (row `adapt-point-style-objects`),
       also in a raw config: an object with the method `draw(ctx, x:, y:, radius:, rad:,
       rotated:, width:, borderWidth:)`. The base classes `PointStyle` and `PathPointStyle` (the
@@ -1220,11 +1225,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (194 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (205 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
-    `cubicInterpolationMode` and the 25 with `pointStyle`) also has a hand port, of `<path>.js` or `<path>.json`, with the
+    `cubicInterpolationMode`, the 25 with `pointStyle` and the 11 with a relative `fill` as
+    text) also has a hand port, of `<path>.js` or `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.
     `test/port/fixtures/index_test.dart` checks the registry against the manifest, the files of

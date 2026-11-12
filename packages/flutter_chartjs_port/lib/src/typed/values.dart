@@ -26,6 +26,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary, RelativeFill;
 import 'package:meta/meta.dart' show internal;
 
 /// The fill of a line or a radar dataset: the `fill` option
@@ -38,35 +40,37 @@ extension type const ChartFill._(Object _value) {
   /// the number.
   const ChartFill.dataset(int index) : _value = index;
 
-  /// The fill to the dataset at [offset] from this dataset: `'+1'` for 1,
-  /// `'-1'` for -1.
-  const ChartFill.relative(int offset)
-    : _value = offset >= 0 ? '+$offset' : '$offset';
+  /// The fill to the dataset at [offset] from this dataset: a
+  /// [RelativeFill], the `'+1'` and `'-1'` of Chart.js (row
+  /// `adapt-fill-target-objects`). Not `const`: the target object takes
+  /// the offset at run time.
+  ChartFill.relative(int offset) : _value = RelativeFill(offset);
 
   /// The fill to the line at [value] of the value axis: `{value: n}`.
   const ChartFill.value(num value) : _value = (value: value);
 
-  /// `'origin'`: the fill to the origin of the value axis. Chart.js gives
-  /// it also for `fill: true`.
-  static const ChartFill origin = ChartFill._('origin');
+  /// [FillBoundary.origin]: the fill to the origin of the value axis.
+  /// Chart.js gives it also for `fill: true`.
+  static const ChartFill origin = ChartFill._(FillBoundary.origin);
 
-  /// `'start'`: the fill to the start of the value axis.
-  static const ChartFill start = ChartFill._('start');
+  /// [FillBoundary.start]: the fill to the start of the value axis.
+  static const ChartFill start = ChartFill._(FillBoundary.start);
 
-  /// `'end'`: the fill to the end of the value axis.
-  static const ChartFill end = ChartFill._('end');
+  /// [FillBoundary.end]: the fill to the end of the value axis.
+  static const ChartFill end = ChartFill._(FillBoundary.end);
 
-  /// `'stack'`: the fill to the dataset below in the stack.
-  static const ChartFill stack = ChartFill._('stack');
+  /// [FillBoundary.stack]: the fill to the dataset below in the stack.
+  static const ChartFill stack = ChartFill._(FillBoundary.stack);
 
-  /// `'shape'`: the fill of the closed shape, for a radar dataset.
-  static const ChartFill shape = ChartFill._('shape');
+  /// [FillBoundary.shape]: the fill of the closed shape, for a radar dataset.
+  static const ChartFill shape = ChartFill._(FillBoundary.shape);
 
   /// `false`: no fill.
   static const ChartFill none = ChartFill._(false);
 
-  /// The option value: a name, `false`, a number, a `'+n'` or `'-n'`
-  /// string, or a new Map `{value: n}` for [ChartFill.value].
+  /// The option value: a [FillBoundary], `false`, a number, a
+  /// [RelativeFill] for [ChartFill.relative], or a new Map `{value: n}` for
+  /// [ChartFill.value].
   @internal
   Object get optionValue => switch (_value) {
     (value: final num value) => <String, Object?>{'value': value},

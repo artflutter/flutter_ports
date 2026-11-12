@@ -886,11 +886,12 @@ ChartBenchCase _fadeCase(int datasets) => _pluginCase(
 /// hidden scales, with `pointRadius: 0`, `animation: false`, `events: []`
 /// and no legend.
 /// - `fill.gaps`: a line chart, the values from -1 to 1 with a gap every
-///   12 points, and `fill: {target: 'origin', above, below}` on each
-///   dataset. `above` and `below` make the path clips of the filler
+///   12 points, and `fill: {target: FillBoundary.origin, above, below}` on
+///   each dataset. `above` and `below` make the path clips of the filler
 ///   (`filler.drawing.js`, `clipVertical` and `clipHorizontal`).
-/// - `fill.stack`: a line chart with stacked y values and `fill: 'stack'`
-///   on each dataset. The stack target is quadratic in N, as upstream.
+/// - `fill.stack`: a line chart with stacked y values and
+///   `fill: FillBoundary.stack` on each dataset. The stack target is
+///   quadratic in N, as upstream.
 /// - `fill.radar`: a radar chart on a hidden polygon grid with the fills
 ///   `origin`, `-1` and `-1`.
 ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
@@ -913,19 +914,23 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
         fills = [
           for (var k = 0; k < 3; k++)
             <String, Object?>{
-              'target': 'origin',
+              'target': FillBoundary.origin,
               'above': _benchFills[1],
               'below': _benchFills[0],
             },
         ];
       case 'stack':
         scales = _benchHiddenScales(min: 0, max: 3, stacked: true);
-        fills = ['stack', 'stack', 'stack'];
+        fills = [FillBoundary.stack, FillBoundary.stack, FillBoundary.stack];
       default:
         scales = <String, Object?>{
           'r': stressHiddenScale('radialLinear', min: 0, max: 1),
         };
-        fills = ['origin', '-1', '-1'];
+        fills = [
+          FillBoundary.origin,
+          const RelativeFill(-1),
+          const RelativeFill(-1),
+        ];
     }
     return ChartBenchScene(
       config: _benchConfig(

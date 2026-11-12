@@ -152,6 +152,8 @@ import 'hand/controller.line/segments/slope.dart'
     as controller_line_segments_slope;
 import 'hand/controller.line/segments/spanGaps.dart'
     as controller_line_segments_spangaps;
+import 'hand/controller.line/stacking/single.dart'
+    as controller_line_stacking_single;
 import 'hand/controller.line/stacking/stack-cache.dart'
     as controller_line_stacking_stack_cache;
 import 'hand/controller.line/stacking/updates.dart'
@@ -299,6 +301,8 @@ import 'hand/plugin.filler/line/boundary/origin-stepped-span.dart'
     as plugin_filler_line_boundary_origin_stepped_span;
 import 'hand/plugin.filler/line/boundary/origin-stepped.dart'
     as plugin_filler_line_boundary_origin_stepped;
+import 'hand/plugin.filler/line/dataset/border.dart'
+    as plugin_filler_line_dataset_border;
 import 'hand/plugin.filler/line/dataset/clip-bounds-x-off.dart'
     as plugin_filler_line_dataset_clip_bounds_x_off;
 import 'hand/plugin.filler/line/dataset/clip-bounds-x.dart'
@@ -307,10 +311,16 @@ import 'hand/plugin.filler/line/dataset/clip-bounds-y-off.dart'
     as plugin_filler_line_dataset_clip_bounds_y_off;
 import 'hand/plugin.filler/line/dataset/clip-bounds-y.dart'
     as plugin_filler_line_dataset_clip_bounds_y;
+import 'hand/plugin.filler/line/dataset/dual.dart'
+    as plugin_filler_line_dataset_dual;
 import 'hand/plugin.filler/line/dataset/interpolated.dart'
     as plugin_filler_line_dataset_interpolated;
+import 'hand/plugin.filler/line/dataset/no-border.dart'
+    as plugin_filler_line_dataset_no_border;
 import 'hand/plugin.filler/line/dataset/span-dual.dart'
     as plugin_filler_line_dataset_span_dual;
+import 'hand/plugin.filler/line/dataset/span.dart'
+    as plugin_filler_line_dataset_span;
 import 'hand/plugin.filler/line/dataset/spline-span-above.dart'
     as plugin_filler_line_dataset_spline_span_above;
 import 'hand/plugin.filler/line/dataset/spline-span-below.dart'
@@ -319,6 +329,8 @@ import 'hand/plugin.filler/line/dataset/spline-span.dart'
     as plugin_filler_line_dataset_spline_span;
 import 'hand/plugin.filler/line/dataset/spline.dart'
     as plugin_filler_line_dataset_spline;
+import 'hand/plugin.filler/line/dataset/stepped.dart'
+    as plugin_filler_line_dataset_stepped;
 import 'hand/plugin.filler/line/points-outside-canvas-update.dart'
     as plugin_filler_line_points_outside_canvas_update;
 import 'hand/plugin.filler/line/segments/alignToPixels.dart'
@@ -327,6 +339,15 @@ import 'hand/plugin.filler/line/segments/gap.dart'
     as plugin_filler_line_segments_gap;
 import 'hand/plugin.filler/line/segments/slope.dart'
     as plugin_filler_line_segments_slope;
+import 'hand/plugin.filler/line/vertical.dart' as plugin_filler_line_vertical;
+import 'hand/plugin.filler/radar/dataset/border.dart'
+    as plugin_filler_radar_dataset_border;
+import 'hand/plugin.filler/radar/dataset/default.dart'
+    as plugin_filler_radar_dataset_default;
+import 'hand/plugin.filler/radar/dataset/span.dart'
+    as plugin_filler_radar_dataset_span;
+import 'hand/plugin.filler/radar/dataset/spline.dart'
+    as plugin_filler_radar_dataset_spline;
 import 'hand/plugin.legend/borderRadius/legend-border-radius.dart'
     as plugin_legend_borderradius_legend_border_radius;
 import 'hand/plugin.legend/horizontal-rtl-hitbox.dart'
@@ -677,6 +698,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_line_segments_spangaps.fixture,
     sha256: '84de0635c353',
   ),
+  'controller.line/stacking/single.js': (
+    load: controller_line_stacking_single.fixture,
+    sha256: '08e1bf476162',
+  ),
   'controller.line/stacking/stack-cache.js': (
     load: controller_line_stacking_stack_cache.fixture,
     sha256: 'e4bff4bd0de9',
@@ -990,6 +1015,10 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_filler_line_boundary_origin_stepped.fixture,
     sha256: '1219a3329e87',
   ),
+  'plugin.filler/line/dataset/border.json': (
+    load: plugin_filler_line_dataset_border.fixture,
+    sha256: 'f09a964e16e9',
+  ),
   'plugin.filler/line/dataset/clip-bounds-x-off.js': (
     load: plugin_filler_line_dataset_clip_bounds_x_off.fixture,
     sha256: '8836ab53d59c',
@@ -1006,13 +1035,25 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_filler_line_dataset_clip_bounds_y.fixture,
     sha256: '90bfcba6e0f9',
   ),
+  'plugin.filler/line/dataset/dual.json': (
+    load: plugin_filler_line_dataset_dual.fixture,
+    sha256: 'd83b84901d83',
+  ),
   'plugin.filler/line/dataset/interpolated.js': (
     load: plugin_filler_line_dataset_interpolated.fixture,
     sha256: '6b037bf196dd',
   ),
+  'plugin.filler/line/dataset/no-border.json': (
+    load: plugin_filler_line_dataset_no_border.fixture,
+    sha256: 'bd4bb11fd06e',
+  ),
   'plugin.filler/line/dataset/span-dual.json': (
     load: plugin_filler_line_dataset_span_dual.fixture,
     sha256: 'e3e6ad8a49ac',
+  ),
+  'plugin.filler/line/dataset/span.json': (
+    load: plugin_filler_line_dataset_span.fixture,
+    sha256: '86f8063a20bf',
   ),
   'plugin.filler/line/dataset/spline-span-above.json': (
     load: plugin_filler_line_dataset_spline_span_above.fixture,
@@ -1030,6 +1071,10 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_filler_line_dataset_spline.fixture,
     sha256: 'ffd7f1b534f6',
   ),
+  'plugin.filler/line/dataset/stepped.json': (
+    load: plugin_filler_line_dataset_stepped.fixture,
+    sha256: 'ccfddf63096b',
+  ),
   'plugin.filler/line/points-outside-canvas-update.js': (
     load: plugin_filler_line_points_outside_canvas_update.fixture,
     sha256: 'cff53652abd9',
@@ -1045,6 +1090,26 @@ final Map<String, HandFixture> handFixtures = {
   'plugin.filler/line/segments/slope.js': (
     load: plugin_filler_line_segments_slope.fixture,
     sha256: '2c5be7cc3c3d',
+  ),
+  'plugin.filler/line/vertical.js': (
+    load: plugin_filler_line_vertical.fixture,
+    sha256: 'ea3de3ba05d4',
+  ),
+  'plugin.filler/radar/dataset/border.json': (
+    load: plugin_filler_radar_dataset_border.fixture,
+    sha256: '94b5a3ac3142',
+  ),
+  'plugin.filler/radar/dataset/default.json': (
+    load: plugin_filler_radar_dataset_default.fixture,
+    sha256: '7f9fa3d736bc',
+  ),
+  'plugin.filler/radar/dataset/span.json': (
+    load: plugin_filler_radar_dataset_span.fixture,
+    sha256: '49fce1b429f2',
+  ),
+  'plugin.filler/radar/dataset/spline.json': (
+    load: plugin_filler_radar_dataset_spline.fixture,
+    sha256: 'f9bd42c61ec9',
   ),
   'plugin.legend/borderRadius/legend-border-radius.js': (
     load: plugin_legend_borderradius_legend_border_radius.fixture,

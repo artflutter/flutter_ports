@@ -54,6 +54,7 @@ const Map<String, int> shapeAtoms = {
   'borderSkippedEdge': 2944,
   'cubicInterpolationMode': 3072,
   'pointStyle': 3200,
+  'fillTarget': 3328,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -175,6 +176,11 @@ const Map<String, TypedAtom> typedAtoms = {
   'pointStyle': (
     type: 'PointStyle',
     uri: 'package:flutter_chartjs_port/src/helpers/point_style.dart',
+    field: null,
+  ),
+  'fillTarget': (
+    type: 'FillTarget',
+    uri: 'package:flutter_chartjs_port/src/plugins/fill_target.dart',
     field: null,
   ),
 };

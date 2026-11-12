@@ -11,6 +11,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -24584,7 +24585,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               <String, Object?>{'x': 58.0, 'y': 7.0},
               <String, Object?>{'x': 59.0, 'y': 21.0},
             ],
-            'fill': 'origin',
+            'fill': FillBoundary.origin,
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
           },
         ],
@@ -24731,7 +24732,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 'origin',
+                'fill': FillBoundary.origin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,

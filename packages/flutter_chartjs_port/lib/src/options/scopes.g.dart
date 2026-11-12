@@ -30,6 +30,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget;
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
@@ -2613,7 +2615,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.datasetElementType:
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
@@ -2945,7 +2947,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.datasetElementType:
         return classifyUnion(raw, 6);
       case OptionKey.dataElementType:
@@ -6473,7 +6475,7 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.stepped:
         _stepped = fitCell(cell, (raw) => classifyUnion(raw, 2818));
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
@@ -6559,7 +6561,7 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.stepped:
         return classifyUnion(raw, 2818);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
@@ -7956,7 +7958,7 @@ base class FillTargetScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.target:
-        _target = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _target = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.above:
         _above = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.below:
@@ -7985,7 +7987,7 @@ base class FillTargetScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.target:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.above:
         return classifyUnion(raw, 64);
       case OptionKey.below:
@@ -9177,7 +9179,7 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.elements:
@@ -9327,7 +9329,7 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.elements:
@@ -10568,7 +10570,7 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.stepped:
         _stepped = fitCell(cell, (raw) => classifyUnion(raw, 2818));
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
@@ -10757,7 +10759,7 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.stepped:
         return classifyUnion(raw, 2818);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
@@ -11604,7 +11606,7 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.elements:
         _elements = fitCell(cell, classifyScope<ElementOptionsByTypeScope>);
       case OptionKey.datasetElementType:
@@ -11730,7 +11732,7 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.elements:
         return classifyScope<ElementOptionsByTypeScope>(raw);
       case OptionKey.datasetElementType:
@@ -12815,7 +12817,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.elements:
@@ -12980,7 +12982,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.elements:
@@ -14088,7 +14090,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.elements:
@@ -14256,7 +14258,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.elements:
@@ -15596,7 +15598,7 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.stepped:
         _stepped = fitCell(cell, (raw) => classifyUnion(raw, 2818));
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
@@ -15797,7 +15799,7 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.stepped:
         return classifyUnion(raw, 2818);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
@@ -16375,7 +16377,7 @@ base class GenericDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
+        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.animation:
@@ -16468,7 +16470,7 @@ base class GenericDatasetOptionsScope extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 39);
+        return classifyUnion(raw, 3363);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.animation:

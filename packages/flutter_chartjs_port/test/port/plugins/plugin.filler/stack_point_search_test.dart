@@ -5,6 +5,8 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.stack.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/stack_point_search.dart';
@@ -62,7 +64,7 @@ LineElement _line(
 FillerSource _source(List<LineElement> lines) => FillerSource(
   visible: true,
   index: (lines.length - 1).toDouble(),
-  fill: 'stack',
+  fill: FillBoundary.stack,
   chart: _Chart(),
   axis: 'x',
   scale: _Scale([

@@ -43,6 +43,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget;
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
@@ -291,6 +293,10 @@ abstract final class ShapeBits {
   /// `pointStyle`: a `PointStyle`, the value of `pointStyle`.
   static const int pointStyle = 3200;
 
+  /// `fillTarget`: a `FillTarget` (a `FillBoundary` or a `RelativeFill`),
+  /// the text forms of `fill`.
+  static const int fillTarget = 3328;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -405,6 +411,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
     raw,
   ),
   ShapeBits.pointStyle => classifyTyped<PointStyle>(raw),
+  ShapeBits.fillTarget => classifyTyped<FillTarget>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };
