@@ -58,7 +58,7 @@ longer supported. No global color installer or intermediate option color exists.
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
     file of `lib/src/widgets/` imports a file of `controllers/`, `scales/`, `elements/` or
-    `plugins/`, or `lib/src/index.dart` or `lib/src/index.umd.dart`: the widget registers no
+    `plugins/`, or `lib/src/index.dart`: the widget registers no
     component (Chart.js ADR 0048 §3). It fails when a ported file imports `lib/src/typed/`, and
     when a file of `lib/src/typed/` imports a library outside the allowlist of Chart.js ADR 0052
     §8. It fails when a core layer imports `package:flutter/painting.dart` with a name other
@@ -715,13 +715,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of
       `lib/src/plugins/index.dart`, both in code unit order. Thus `flutter_test_config.dart`
-      registers them with the built-in components. `lib/src/index.umd.dart` is the port of
-      `src/index.umd.ts` (Chart.js ADR 0048 §1): the lazy `chartUmd`, the value `Chart.jsClass`
-      with the UMD statics, which registers the four namespaces at its first read (row
-      `platform-umd-entry`). `Chart.platforms.DomPlatform` is `FlutterPlatform.jsClass` (row
-      `platform-umd-dom-platform`). No public library exports the file, and no widget imports it.
-      The specs read the UMD statics through `chartUmd`. `test/port/index.umd_test.dart` compares
-      its keys with `index_umd_reference.dart` of `tool/reference/index_umd_reference.mjs`.
+      registers them with the built-in components. The port has no UMD entry (Chart.js ADR 0120):
+      `src/index.umd.ts` is `n/a`, the namespace cases of the spec `global.namespace` skip, and the
+      spec `platform.dom` takes `FlutterPlatform.jsClass` as `DomPlatform` (row
+      `platform-dom-platform-class`).
       `lib/src/types.dart` is the port of `src/types.ts`: `lib/src/index.dart` and
       `lib/src/types/index.dart` without the 8 names that both declare (row `adapt-types-entry`).
   - `lib/src/controllers/`: the eight dataset controllers of phase 7. `index.dart` exports them
@@ -1306,7 +1303,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0119. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0120. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1384,7 +1381,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       accepted (2026-11-12): its code passes the tests. It supersedes item 6 of Chart.js ADR 0117
       and parts of Chart.js ADRs 0050 and 0054. Chart.js ADR 0119 (the number format is package:intl
       as it is) is accepted (2026-11-12): its code passes the tests. It supersedes Chart.js ADR
-      0026. The other ADRs are accepted. Docs
+      0026. Chart.js ADR 0120 (the port has no UMD entry) is accepted (2026-11-12): its code passes
+      the tests. It supersedes Chart.js ADR 0048 §1 and §7. The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
@@ -1701,8 +1699,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Chart.js ADR 0111 in place of `chart.update(transition)`; the app keeps the contract of
     `updateRanges` (row `adapt-range-only-updates`, seam H28).
   - `lib/src/`: the 12 files of `src/` at their mapped paths: `types`, `options`, `defaults`,
-    `state`, `utils`, `scale.types`, `core`, `handlers`, `gestures`, `plugin`, `index` and
-    `index.umd`. `zoomPlugin` (`plugin.dart`) is a typed `Plugin` of the host with the upstream keys
+    `state`, `utils`, `scale.types`, `core`, `handlers`, `gestures`, `plugin` and `index`;
+    `src/index.umd.ts` has no Dart file (Zoom ADR 0002 item 8, Chart.js ADR 0120). `zoomPlugin` (`plugin.dart`) is a typed `Plugin` of the host with the upstream keys
     in order and `supportsDataUpdates: true` (row `adapt-typed-plugin-object`, seam H25); its hooks
     take `Object chart` and narrow it with `chart as Chart`. The options are extension-type facades
     over the resolver of the host (`ZoomPluginOptions` of `options.dart`), read live; a user
@@ -1714,10 +1712,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     updates the chart, and `beforeUpdate` puts a new debounced handler into the state, so each
     wheel event gives its own `onZoomComplete` 250 ms later, as upstream. A limit is a number
     (`jsToNumber`, row `js-semantics-numeric-limits`). The default drag colors are `Color` values
-    (row `adapt-native-colors`). The first read of `chartZoom` of `index.umd.dart` registers the
-    plugin.
+    (row `adapt-native-colors`).
   - `test/flutter_test_config.dart` ports `test/index.js`: the set-up of the host tests (DPR 1 and
-    800 x 600, the date zone UTC, the built-in components and the plugin through `chartZoom`, the
+    800 x 600, the date zone UTC, the built-in components and `Chart.register([zoomPlugin])`, the
     colors plugin off, the defaults restore, the release of the charts and the test font) and the
     event helpers `EventInit`, `triggerWheelEvent`, `dispatchEvent`, `dispatchPointer`,
     `simulatePan`, `simulatePinch` (a named `done`) and a synchronous
@@ -2241,8 +2238,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   writes two files, `plugin_tooltip_reference.dart` and `plugin_tooltip_more_reference.dart`,
   because a data file stays below 2,500,000 bytes),
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
-  tooltip, Chart.js ADR 0037 §17) and `test/port/index_umd_reference.dart` (the keys of the UMD
-  `Chart`, Chart.js ADR 0048 §1). The other generators run on the reference engine of Chart.js
+  tooltip, Chart.js ADR 0037 §17). The other generators run on the reference engine of Chart.js
   ADR 0045. `hypot_reference.mjs` (`test/port/js/hypot_reference.dart`, the 3,000 inputs of
   `jsHypot`, Chart.js ADR 0108) is one of them: it does not stop on another engine, and
   `js_math_hypot_test.dart` pins Node.js v24.22.1 on arm64. `log10_reference.mjs`,

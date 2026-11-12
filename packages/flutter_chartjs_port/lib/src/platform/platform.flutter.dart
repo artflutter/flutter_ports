@@ -425,10 +425,9 @@ class FlutterPlatform extends BasePlatform {
   /// 7).
   ///
   /// It extends [BasePlatform.jsClass] and has no statics, as
-  /// `BasicPlatform.jsClass`. Its name is `FlutterPlatform`. The key
-  /// `DomPlatform` of `Chart.platforms` (`lib/src/index.umd.dart`) gives it
-  /// (`platform-umd-dom-platform`).
-  // DIVERGES(chartjs): platform-umd-dom-platform, the class of DomPlatform.
+  /// `BasicPlatform.jsClass`. Its name is `FlutterPlatform`. The spec
+  /// `platform.dom` reads it as `DomPlatform` (`platform-dom-platform-class`).
+  // DIVERGES(chartjs): platform-dom-platform-class, the class of DomPlatform.
   static final JsClass jsClass = JsClass(
     'FlutterPlatform',
     superclass: BasePlatform.jsClass,

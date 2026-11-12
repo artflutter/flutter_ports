@@ -800,8 +800,8 @@ class Chart
   /// [instances], [overrides], [registry], [version], [getChart], [register]
   /// and [unregister], the same objects as the Dart statics. Its `construct`
   /// gives `Chart(item, userConfig)`, with [undefined] for an absent
-  /// argument. The UMD entry (`lib/src/index.umd.dart`) writes the statics
-  /// of `src/index.umd.ts:30-47` into it at the first read of `chartUmd`.
+  /// argument. The port has no UMD bundle (Chart.js ADR 0120), so no code
+  /// writes the statics of `src/index.umd.ts:30-47` into it.
   static final JsClass jsClass = JsClass(
     'Chart',
     statics: {

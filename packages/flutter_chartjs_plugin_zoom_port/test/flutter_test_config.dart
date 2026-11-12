@@ -43,8 +43,6 @@ import 'package:chartjs_test_utils/flutter.dart'
     show afterEachChart, installTestFont, releaseCharts;
 import 'package:chartjs_test_utils/pure.dart'
     show setUpBuiltins, setUpDefaultsRestore;
-import 'package:flutter_chartjs_plugin_zoom_port/src/index.umd.dart'
-    show chartZoom;
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart'
     show ModifierKey;
 import 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart'
@@ -121,15 +119,15 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // built-in components (`src/index.umd.ts:28` of Chart.js), then
   // `src/index.umd.ts` of the plugin, which registers the plugin
   // (`src/index.umd.ts:4`), before the specs. Dart has no import side
-  // effect: the registration runs before `main()` of the test file and
-  // before the snapshot of the restore below. The first read of `chartZoom`
-  // registers the plugin. Thus the restore keeps the defaults of the
+  // effect, and the port has no UMD bundle (Chart.js ADR 0120): the
+  // registration runs before `main()` of the test file and before the
+  // snapshot of the restore below. Thus the restore keeps the defaults of the
   // components and `defaults.plugins.zoom`.
   // DIVERGES(zoom): harness-register-builtins, the UMD entries of karma.
   setUpBuiltins(
     () {
       Chart.register([controllers, scales, elements, plugins]);
-      final _ = chartZoom;
+      Chart.register([zoomPlugin]);
     },
     () =>
         Chart.unregister([zoomPlugin, controllers, scales, elements, plugins]),

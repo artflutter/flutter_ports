@@ -2705,3 +2705,8 @@ changes. No trigger occurred.
   `helpers.intl.dart`, and removes `lib/src/js/js_intl.dart`. This plan cites no line of these files, and no canvas
   file changes. The tests of §2.6 and §3.5 and the estimates do not change. No deferred cut changes. No trigger
   occurred.
+- 2026-11-12, [Chart.js ADR 0120](adr/0120-no-umd-entry.md) (the port has no UMD entry). It removes
+  `lib/src/index.umd.dart`, edits a doc comment of `lib/src/platform/platform.flutter.dart` (the row
+  `platform-umd-dom-platform` becomes `platform-dom-platform-class`) and `test/specs/platform.dom_test.dart`, which
+  takes `FlutterPlatform.jsClass` as `DomPlatform`. This plan cites no line of these files, and no canvas file changes.
+  The tests of §2.6 and §3.5 and the estimates do not change. No deferred cut changes. No trigger occurred.

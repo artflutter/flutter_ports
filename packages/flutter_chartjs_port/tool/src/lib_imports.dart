@@ -219,8 +219,8 @@ const String themeDirectory = 'lib/src/theme/';
 const String widgetsDirectory = 'lib/src/widgets/';
 
 /// The files that a file of [widgetsDirectory] never imports: the
-/// controllers, the scales, the elements, the plugins and the two indexes
-/// that register them (Chart.js ADR 0048, section 3). An entry that ends
+/// controllers, the scales, the elements, the plugins and the index that
+/// registers them (Chart.js ADR 0048, section 3). An entry that ends
 /// with `/` is a directory.
 const List<String> widgetForbiddenTargets = [
   'lib/src/controllers/',
@@ -228,7 +228,6 @@ const List<String> widgetForbiddenTargets = [
   'lib/src/elements/',
   'lib/src/plugins/',
   'lib/src/index.dart',
-  'lib/src/index.umd.dart',
 ];
 
 /// The directory of the typed API (Chart.js ADR 0052). Ported files never

@@ -13,7 +13,6 @@ import 'package:flutter/painting.dart' show TextStyle;
 // lib/src, which no public library exports (Chart.js ADR 0048, section 1).
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/index.umd.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
@@ -25,11 +24,11 @@ import 'package:flutter_test/flutter_test.dart';
 // Chart.js ADR 0022. The spec runs on the VM: a chart reaches the chart host
 // and dart:ui.
 //
-// :1 `const DomPlatform = Chart.platforms.DomPlatform` reads `chartUmd` of
-// lib/src/index.umd.dart, the `Chart` of the UMD bundle that the specs run
-// on. The key `DomPlatform` gives the class value of `FlutterPlatform`, which
-// replaces `DomPlatform` for a canvas that a chart host shows
-// (`platform-umd-dom-platform`, `platform-detect-host`).
+// :1 `const DomPlatform = Chart.platforms.DomPlatform` reads the UMD bundle
+// that the specs run on. The port has no UMD bundle (Chart.js ADR 0120): the
+// spec takes the class value of `FlutterPlatform`, which replaces
+// `DomPlatform` for a canvas that a chart host shows
+// (`platform-dom-platform-class`, `platform-detect-host`).
 // `window.document.body` is `document.body` of the harness.
 //
 // The beforeEach of 'context acquisition' appends a canvas to the document.
@@ -48,7 +47,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   // :1
-  final domPlatform = jsGet(jsGet(chartUmd, 'platforms'), 'DomPlatform');
+  // DIVERGES(chartjs): platform-dom-platform-class, no Chart.platforms.
+  final domPlatform = FlutterPlatform.jsClass;
 
   group('Platform.dom', () {
     group('context acquisition', () {
