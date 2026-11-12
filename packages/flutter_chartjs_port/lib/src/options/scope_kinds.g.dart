@@ -1748,13 +1748,13 @@ enum ScopeKind {
           case OptionKey.segment:
             return 32;
           case OptionKey.hoverBorderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.hitRadius:
             return 1;
           case OptionKey.hoverRadius:
@@ -2068,13 +2068,13 @@ enum ScopeKind {
           case OptionKey.hoverBackgroundColor:
             return 64;
           case OptionKey.hoverBorderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.dollarShared:
             return 2;
           case OptionKey.dollarAnimations:
@@ -2379,13 +2379,13 @@ enum ScopeKind {
           case OptionKey.backgroundColor:
             return 64;
           case OptionKey.hoverBorderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2791,13 +2791,13 @@ enum ScopeKind {
           case OptionKey.segment:
             return 32;
           case OptionKey.hoverBorderCapStyle:
-            return 4;
+            return 1024;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 4;
+            return 2048;
           case OptionKey.animation:
             return 34;
           case OptionKey.animations:

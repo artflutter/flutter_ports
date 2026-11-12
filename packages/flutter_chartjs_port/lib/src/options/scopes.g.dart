@@ -2013,13 +2013,13 @@ base class ChartOptionsScope extends OptionScope {
   set segment(SegmentOptionsScope value) =>
       store(OptionKey.segment, OptScope<SegmentOptionsScope>(value));
 
-  Opt<String>? _hoverBorderCapStyle;
+  Opt<StrokeCap>? _hoverBorderCapStyle;
 
   /// The cell of `hoverBorderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
+  Opt<StrokeCap>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
 
   /// Stores the cell of `hoverBorderCapStyle`. Dart `null` deletes the key.
-  set hoverBorderCapStyleCell(Opt<String>? cell) {
+  set hoverBorderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderCapStyle);
     } else {
@@ -2028,8 +2028,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderCapStyle`.
-  set hoverBorderCapStyle(String value) =>
-      store(OptionKey.hoverBorderCapStyle, OptValue<String>(value));
+  set hoverBorderCapStyle(StrokeCap value) =>
+      store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _hoverBorderDash;
 
@@ -2069,13 +2069,13 @@ base class ChartOptionsScope extends OptionScope {
   set hoverBorderDashOffset(double value) =>
       store(OptionKey.hoverBorderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? _hoverBorderJoinStyle;
 
   /// The cell of `hoverBorderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
 
   /// Stores the cell of `hoverBorderJoinStyle`. Dart `null` deletes the key.
-  set hoverBorderJoinStyleCell(Opt<String>? cell) {
+  set hoverBorderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderJoinStyle);
     } else {
@@ -2084,8 +2084,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderJoinStyle`.
-  set hoverBorderJoinStyle(String value) =>
-      store(OptionKey.hoverBorderJoinStyle, OptValue<String>(value));
+  set hoverBorderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.hoverBorderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<double>? _hitRadius;
 
@@ -2646,13 +2646,13 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.segment:
         _segment = fitCell(cell, classifyScope<SegmentOptionsScope>);
       case OptionKey.hoverBorderCapStyle:
-        _hoverBorderCapStyle = fitCell(cell, classifyString);
+        _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
         _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
-        _hoverBorderJoinStyle = fitCell(cell, classifyString);
+        _hoverBorderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.hitRadius:
         _hitRadius = fitCell(cell, classifyNumber);
       case OptionKey.hoverRadius:
@@ -2972,13 +2972,13 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.segment:
         return classifyScope<SegmentOptionsScope>(raw);
       case OptionKey.hoverBorderCapStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.hitRadius:
         return classifyNumber(raw);
       case OptionKey.hoverRadius:
@@ -6258,13 +6258,13 @@ base class LineOptionsScope extends OptionScope {
     classify(OptionKey.hoverBackgroundColor, value),
   );
 
-  Opt<String>? _hoverBorderCapStyle;
+  Opt<StrokeCap>? _hoverBorderCapStyle;
 
   /// The cell of `hoverBorderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
+  Opt<StrokeCap>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
 
   /// Stores the cell of `hoverBorderCapStyle`. Dart `null` deletes the key.
-  set hoverBorderCapStyleCell(Opt<String>? cell) {
+  set hoverBorderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderCapStyle);
     } else {
@@ -6273,8 +6273,8 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderCapStyle`.
-  set hoverBorderCapStyle(String value) =>
-      store(OptionKey.hoverBorderCapStyle, OptValue<String>(value));
+  set hoverBorderCapStyle(StrokeCap value) =>
+      store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _hoverBorderDash;
 
@@ -6314,13 +6314,13 @@ base class LineOptionsScope extends OptionScope {
   set hoverBorderDashOffset(double value) =>
       store(OptionKey.hoverBorderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? _hoverBorderJoinStyle;
 
   /// The cell of `hoverBorderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
 
   /// Stores the cell of `hoverBorderJoinStyle`. Dart `null` deletes the key.
-  set hoverBorderJoinStyleCell(Opt<String>? cell) {
+  set hoverBorderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderJoinStyle);
     } else {
@@ -6329,8 +6329,8 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderJoinStyle`.
-  set hoverBorderJoinStyle(String value) =>
-      store(OptionKey.hoverBorderJoinStyle, OptValue<String>(value));
+  set hoverBorderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.hoverBorderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<bool>? _dollarShared;
 
@@ -6462,13 +6462,13 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.hoverBorderCapStyle:
-        _hoverBorderCapStyle = fitCell(cell, classifyString);
+        _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
         _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
-        _hoverBorderJoinStyle = fitCell(cell, classifyString);
+        _hoverBorderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.dollarShared:
         _dollarShared = fitCell(cell, classifyBool);
       case OptionKey.dollarAnimations:
@@ -6548,13 +6548,13 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         return classifyUnion(raw, 64);
       case OptionKey.hoverBorderCapStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.dollarShared:
         return classifyBool(raw);
       case OptionKey.dollarAnimations:
@@ -9936,13 +9936,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
     classify(OptionKey.backgroundColor, value),
   );
 
-  Opt<String>? _hoverBorderCapStyle;
+  Opt<StrokeCap>? _hoverBorderCapStyle;
 
   /// The cell of `hoverBorderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
+  Opt<StrokeCap>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
 
   /// Stores the cell of `hoverBorderCapStyle`. Dart `null` deletes the key.
-  set hoverBorderCapStyleCell(Opt<String>? cell) {
+  set hoverBorderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderCapStyle);
     } else {
@@ -9951,8 +9951,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderCapStyle`.
-  set hoverBorderCapStyle(String value) =>
-      store(OptionKey.hoverBorderCapStyle, OptValue<String>(value));
+  set hoverBorderCapStyle(StrokeCap value) =>
+      store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _hoverBorderDash;
 
@@ -9992,13 +9992,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderDashOffset(double value) =>
       store(OptionKey.hoverBorderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? _hoverBorderJoinStyle;
 
   /// The cell of `hoverBorderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
 
   /// Stores the cell of `hoverBorderJoinStyle`. Dart `null` deletes the key.
-  set hoverBorderJoinStyleCell(Opt<String>? cell) {
+  set hoverBorderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderJoinStyle);
     } else {
@@ -10007,8 +10007,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderJoinStyle`.
-  set hoverBorderJoinStyle(String value) =>
-      store(OptionKey.hoverBorderJoinStyle, OptValue<String>(value));
+  set hoverBorderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.hoverBorderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<double>? _hoverBorderWidth;
 
@@ -10551,13 +10551,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.backgroundColor:
         _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.hoverBorderCapStyle:
-        _hoverBorderCapStyle = fitCell(cell, classifyString);
+        _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
         _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
-        _hoverBorderJoinStyle = fitCell(cell, classifyString);
+        _hoverBorderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
@@ -10740,13 +10740,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.backgroundColor:
         return classifyUnion(raw, 64);
       case OptionKey.hoverBorderCapStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
@@ -15004,13 +15004,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set segment(SegmentOptionsScope value) =>
       store(OptionKey.segment, OptScope<SegmentOptionsScope>(value));
 
-  Opt<String>? _hoverBorderCapStyle;
+  Opt<StrokeCap>? _hoverBorderCapStyle;
 
   /// The cell of `hoverBorderCapStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
+  Opt<StrokeCap>? get hoverBorderCapStyleCell => _hoverBorderCapStyle;
 
   /// Stores the cell of `hoverBorderCapStyle`. Dart `null` deletes the key.
-  set hoverBorderCapStyleCell(Opt<String>? cell) {
+  set hoverBorderCapStyleCell(Opt<StrokeCap>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderCapStyle);
     } else {
@@ -15019,8 +15019,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderCapStyle`.
-  set hoverBorderCapStyle(String value) =>
-      store(OptionKey.hoverBorderCapStyle, OptValue<String>(value));
+  set hoverBorderCapStyle(StrokeCap value) =>
+      store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
   Opt<Object>? _hoverBorderDash;
 
@@ -15060,13 +15060,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderDashOffset(double value) =>
       store(OptionKey.hoverBorderDashOffset, OptValue<double>(value));
 
-  Opt<String>? _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? _hoverBorderJoinStyle;
 
   /// The cell of `hoverBorderJoinStyle`, or Dart `null` when absent.
-  Opt<String>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
+  Opt<StrokeJoin>? get hoverBorderJoinStyleCell => _hoverBorderJoinStyle;
 
   /// Stores the cell of `hoverBorderJoinStyle`. Dart `null` deletes the key.
-  set hoverBorderJoinStyleCell(Opt<String>? cell) {
+  set hoverBorderJoinStyleCell(Opt<StrokeJoin>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderJoinStyle);
     } else {
@@ -15075,8 +15075,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderJoinStyle`.
-  set hoverBorderJoinStyle(String value) =>
-      store(OptionKey.hoverBorderJoinStyle, OptValue<String>(value));
+  set hoverBorderJoinStyle(StrokeJoin value) =>
+      store(OptionKey.hoverBorderJoinStyle, OptValue<StrokeJoin>(value));
 
   Opt<Object>? _animation;
 
@@ -15567,13 +15567,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.segment:
         _segment = fitCell(cell, classifyScope<SegmentOptionsScope>);
       case OptionKey.hoverBorderCapStyle:
-        _hoverBorderCapStyle = fitCell(cell, classifyString);
+        _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
         _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
-        _hoverBorderJoinStyle = fitCell(cell, classifyString);
+        _hoverBorderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
       case OptionKey.animation:
         _animation = fitCell(cell, (raw) => classifyUnion(raw, 34));
       case OptionKey.animations:
@@ -15768,13 +15768,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.segment:
         return classifyScope<SegmentOptionsScope>(raw);
       case OptionKey.hoverBorderCapStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
-        return classifyString(raw);
+        return classifyTyped<StrokeJoin>(raw);
       case OptionKey.animation:
         return classifyUnion(raw, 34);
       case OptionKey.animations:

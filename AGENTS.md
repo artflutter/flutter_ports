@@ -1760,8 +1760,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `platform-date-zone-name`). The conversions of `js_webidl.dart` (`canvasStyle`, `canvasNumber`,
   `canvasKeyword`, `canvasLineCap`, `canvasLineJoin` and `canvasLineDash`) apply the WebIDL
   conversion of a Canvas 2D setter or of `setLineDash` to an option value (Chart.js ADR 0017 §8).
-  The options `borderCapStyle` and `borderJoinStyle`, and `lineCap` and `lineJoin` of the canvas
-  interface and of a legend item, hold the Flutter enums `StrokeCap` and `StrokeJoin` (row
+  The options `borderCapStyle` and `borderJoinStyle` (also their hover keys of a line), and
+  `lineCap` and `lineJoin` of the canvas interface and of a legend item, hold the Flutter enums `StrokeCap` and `StrokeJoin` (row
   `adapt-flutter-stroke-enums`, the schema shapes `strokeCap` and `strokeJoin`), also in a raw
   config: `lib/` has no keyword of a cap or a join and no table from a keyword to an enum value. A
   keyword stops a debug build in `canvasLineCap` or `canvasLineJoin`. The enums are the complete
