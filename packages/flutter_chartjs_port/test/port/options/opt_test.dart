@@ -4,9 +4,13 @@
 // classification order of the resolver (undefined, null, function, array,
 // object, plain value) and the foreign values.
 
+import 'dart:ui' show StrokeCap, StrokeJoin;
+
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
+    show foreignAudit;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:test/test.dart';
@@ -94,6 +98,44 @@ void main() {
       expect(classifyUnion(7, ShapeBits.any).raw, isA<double>());
       expect(classifyUnion(false, ShapeBits.any), isA<OptValue<Object>>());
     });
+  });
+
+  group('the stroke enums of the hover keys of a line', () {
+    // In the active mode, `hoverBorderCapStyle` and `hoverBorderJoinStyle`
+    // resolve into `borderCapStyle` and `borderJoinStyle` (the prefix
+    // `hover` of `resolveDatasetElementOptions`), which hold the Flutter
+    // enums (row `adapt-flutter-stroke-enums`).
+    for (final (name, create) in <(String, OptionScope Function())>[
+      ('ChartOptions', ChartOptionsScope.new),
+      ('LineOptions', LineOptionsScope.new),
+      ('LineControllerDatasetOptions', LineControllerDatasetOptionsScope.new),
+      ('RadarControllerDatasetOptions', RadarControllerDatasetOptionsScope.new),
+    ]) {
+      test('$name takes a StrokeCap and a StrokeJoin, not a keyword', () {
+        final scope = create()
+          ..jsWrite('hoverBorderCapStyle', StrokeCap.round)
+          ..jsWrite('hoverBorderJoinStyle', StrokeJoin.bevel);
+        expect(
+          scope.ownCell(OptionKey.hoverBorderCapStyle),
+          isA<OptValue<Object?>>(),
+        );
+        expect(
+          scope.ownCell(OptionKey.hoverBorderJoinStyle),
+          isA<OptValue<Object?>>(),
+        );
+        expect(scope['hoverBorderCapStyle'], StrokeCap.round);
+        expect(scope['hoverBorderJoinStyle'], StrokeJoin.bevel);
+        // A keyword is a foreign value: this test reviews its own pair.
+        final saved = foreignAudit;
+        foreignAudit = (owner, key, raw) {};
+        addTearDown(() => foreignAudit = saved);
+        scope.jsWrite('hoverBorderCapStyle', 'round');
+        expect(
+          scope.ownCell(OptionKey.hoverBorderCapStyle),
+          isA<OptForeign<Object?>>(),
+        );
+      });
+    }
   });
 
   group('classifyBool and classifyString', () {

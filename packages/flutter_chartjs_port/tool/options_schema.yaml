@@ -159,10 +159,10 @@ kinds:
       tension: number
       stepped: string | bool
       segment: scope SegmentOptions
-      hoverBorderCapStyle: string
+      hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number
-      hoverBorderJoinStyle: string
+      hoverBorderJoinStyle: strokeJoin
       hitRadius: number
       hoverRadius: number
       selfJoin: bool
@@ -371,10 +371,10 @@ kinds:
       hoverBorderWidth: number
       hoverBorderColor: any
       hoverBackgroundColor: any
-      hoverBorderCapStyle: string
+      hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number
-      hoverBorderJoinStyle: string
+      hoverBorderJoinStyle: strokeJoin
       $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
       $animations: any  # written at core.animations.js:71 and :159
   BarOptions:
@@ -570,10 +570,10 @@ kinds:
       borderWidth: number
       borderColor: any
       backgroundColor: any
-      hoverBorderCapStyle: string
+      hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number
-      hoverBorderJoinStyle: string
+      hoverBorderJoinStyle: strokeJoin
       hoverBorderWidth: number
       hoverBorderColor: any
       hoverBackgroundColor: any
@@ -778,10 +778,10 @@ kinds:
       fill: number | string | bool | scope FillTarget
       spanGaps: bool | number
       segment: scope SegmentOptions
-      hoverBorderCapStyle: string
+      hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number
-      hoverBorderJoinStyle: string
+      hoverBorderJoinStyle: strokeJoin
       animation: bool | scope AnimationOptions
       animations: bool | scope AnimationsSpec
       transitions: scope TransitionsSpec
