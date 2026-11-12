@@ -6,7 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 76 cases, 277 widths.
 
-import 'dart:ui' show FontStyle;
+import 'dart:ui' show FontStyle, Locale;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
@@ -30670,7 +30670,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
           },
         ],
       },
-      'options': <String, Object?>{'locale': 'de-DE'},
+      'options': <String, Object?>{'locale': Locale('de', 'DE')},
     },
     options: <String, Object?>{},
     expected: <String, Object?>{

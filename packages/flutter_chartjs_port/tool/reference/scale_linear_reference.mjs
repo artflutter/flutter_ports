@@ -415,7 +415,7 @@ const cases = [
   }),
   // The value range is 0: getPixelForValue divides by 0. The ticks callback
   // keeps the labels short: the numeric format gives 20 fraction digits for
-  // a tick spacing of 0, and package:intl gives 15
+  // a tick spacing of 0, and package:intl writes other digits than V8 there
   // (differences.md#adapt-intl-number-format).
   chartCase('equal user min and max', {
     data: {labels: letters(3), datasets: [{data: [0, 500, 1000]}]},

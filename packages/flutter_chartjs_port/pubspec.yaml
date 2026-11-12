@@ -28,7 +28,7 @@ dependencies:
   collection: ^1.19.1
   flutter:
     sdk: flutter
-  # Numbers (js_intl.dart, Chart.js ADR 0026) and the date adapter
+  # Numbers (helpers.intl.dart, Chart.js ADR 0119) and the date adapter
   # (porting-flow.md 2.10) format through intl. 0.20.2 is the constraint of
   # Chart.js ADR 0045 (the pin of flutter_localizations in Flutter 3.44.9).
   # flutter_localizations in Flutter 3.47.7 requires ^0.20.3.

@@ -20,13 +20,9 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show log10;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsIsObjectLike;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -81,8 +77,8 @@ String _numeric(Scale self, double tickValue, double index, List<Tick> ticks) {
     return '0'; // never show decimal places for 0
   }
 
-  final locale = readOption(self.chart.options, OptionKey.locale);
-  Object? notation = undefined;
+  final locale = localeOf(readOption(self.chart.options, OptionKey.locale));
+  var scientific = false;
   // This is used when there are less than 2 ticks as the tick interval.
   var delta = tickValue;
 
@@ -93,7 +89,7 @@ String _numeric(Scale self, double tickValue, double index, List<Tick> ticks) {
       ticks[ticks.length - 1].value.abs(),
     );
     if (maxTick < 1e-4 || maxTick > 1e+15) {
-      notation = 'scientific';
+      scientific = true;
     }
 
     delta = _calculateDelta(tickValue, ticks);
@@ -114,29 +110,16 @@ String _numeric(Scale self, double tickValue, double index, List<Tick> ticks) {
           0,
         );
 
-  // The read of `this.options.ticks.format` comes before the options object
-  // here. The object literal runs no code, so the reads keep their order.
+  // DIVERGES(chartjs): adapt-intl-number-format, a NumberFormat formats the
+  // tick as it is: Dart cannot copy it to merge the digits of the tick.
   final format = TickOptions(readOption(self.options, OptionKey.ticks)).format;
-  if (!jsIsObjectLike(format)) {
-    // `Object.assign` copies nothing from a value that is not an object
-    // ([_assign]): the options are the three keys of the literal.
-    // DIVERGES(chartjs): adapt-numeric-tick-format-key, a record key.
-    return formatNumberDigits(
-      tickValue,
-      locale,
-      notation is String ? notation : null,
-      numDecimal,
-      numDecimal,
-    );
-  }
-  final options = <String, Object?>{
-    'notation': notation,
-    'minimumFractionDigits': numDecimal,
-    'maximumFractionDigits': numDecimal,
-  };
-  _assign(options, format);
-
-  return formatNumber(tickValue, locale, options);
+  if (format != null) return format.format(tickValue);
+  return formatNumberDigits(
+    tickValue,
+    locale,
+    scientific: scientific,
+    fractionDigits: numDecimal.toInt(),
+  );
 }
 
 /// core.ticks.js:71 `logarithmic`.
@@ -206,19 +189,3 @@ double _calculateDelta(double tickValue, List<Tick> ticks) {
 /// and a Dart variable has a lowerCamelCase name (Chart.js ADR 0012). Thus
 /// the port names it `ticks`. It is an object literal: a Map that can change.
 final Map<String, Object?> ticks = {'formatters': formatters};
-
-/// `Object.assign(target, source)` with one source, at core.ticks.js:57.
-///
-/// An object source (a Map, or a resolver or another typed object with a
-/// face) copies its keys in the [jsObjectKeys] order, also a key with the
-/// value [undefined], each value read by name ([jsGet]). `null` and
-/// [undefined] copy nothing, as in JavaScript. A String or a List source
-/// copies its indices in JavaScript. [formatNumber] ignores such keys. Thus
-/// the port copies nothing for them.
-void _assign(Map<String, Object?> target, Object? source) {
-  if (jsIsObjectLike(source)) {
-    for (final key in jsObjectKeys(source)) {
-      target[key] = jsGet(source, key);
-    }
-  }
-}

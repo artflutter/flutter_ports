@@ -58,7 +58,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject, resolveObjectKey, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber;
+    show formatNumber, localeOf;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show angleBetween, halfPi, pi, tau, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
@@ -754,7 +754,7 @@ class DoughnutController extends DatasetController {
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
     final value = formatNumber(
       jsToNumber(jsGetIndex(meta.parsed, index)),
-      readOption(chart.options, OptionKey.locale),
+      localeOf(readOption(chart.options, OptionKey.locale)),
     );
 
     // `labels[index] || ''`

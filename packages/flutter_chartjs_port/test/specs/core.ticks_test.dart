@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' show Locale;
+
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
@@ -190,11 +192,12 @@ void main() {
 
     group('formatters.numeric', () {
       test('should not fail on empty or 1 item array', () {
+        // DIVERGES(chartjs): adapt-intl-number-format, the locale is a
+        // Locale, and the empty format object of upstream (no options) is
+        // no format.
         final scale = _Scale(
-          _Chart(<String, Object?>{'locale': 'en'}),
-          <String, Object?>{
-            'ticks': <String, Object?>{'format': <String, Object?>{}},
-          },
+          _Chart(<String, Object?>{'locale': const Locale('en')}),
+          <String, Object?>{'ticks': <String, Object?>{}},
         );
         // numeric.apply(scale, args) is jsCall with scale as thisArg.
         final numeric = _member(ticks['formatters'], 'numeric');

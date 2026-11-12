@@ -4,15 +4,16 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // a build of Chart.js v4.6.1 at the commit
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 54 cases, 237 widths.
+// context of tool/reference/scale_chart_common.mjs. 55 cases, 243 widths.
 
-import 'dart:ui' show FontStyle;
+import 'dart:ui' show FontStyle, Locale;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:intl/intl.dart';
 
 /// The Node.js version that generated the data.
 const String scaleLinearBaseReferenceNode = 'v24.22.1';
@@ -56,10 +57,13 @@ typedef ScaleLinearBaseReferenceWidth = ({
 });
 
 /// The cases.
-const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
+///
+/// A `NumberFormat` of package:intl has no const constructor, so the
+/// list is final.
+final List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   (
     name: 'objects',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -73,8 +77,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -743,7 +747,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'primitives and labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'labels': <Object?>['1', '2.5', '4'],
@@ -754,8 +758,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -1521,7 +1525,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'primitives without labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -1531,8 +1535,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -2279,7 +2283,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'empty data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -2287,8 +2291,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -3148,7 +3152,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'null, NaN and string values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -3165,8 +3169,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -3908,7 +3912,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -3928,8 +3932,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -4717,7 +4721,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -4737,8 +4741,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -5507,7 +5511,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'suggestedMin and suggestedMax',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -5527,8 +5531,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -6259,7 +6263,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'grace',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -6279,8 +6283,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -7042,7 +7046,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'beginAtZero with positive and negative data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -7061,8 +7065,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -7753,7 +7757,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'beginAtZero with mixed data and with a user min',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -7772,8 +7776,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -8464,7 +8468,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'beginAtZero with a user max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -8482,8 +8486,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -9236,7 +9240,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'one value',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -9249,8 +9253,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -10131,7 +10135,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'one value with beginAtZero',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -10150,8 +10154,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.677734375, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -10908,7 +10912,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'one value with a user min',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -10927,8 +10931,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -11468,7 +11472,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'all values zero with beginAtZero',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -11486,8 +11490,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -12368,7 +12372,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'min only and max only',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -12388,8 +12392,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -13108,7 +13112,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'min above max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -13127,8 +13131,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -13712,7 +13716,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'NaN bounds',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -13731,8 +13735,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.005859375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -14440,7 +14444,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'truthy and falsy option values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -14458,13 +14462,13 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           'y': <String, Object?>{
             'beginAtZero': 'yes',
             'max': 99.5,
-            'ticks': <String, Object?>{'includeBounds': 0.0, 'format': 'abc'},
+            'ticks': <String, Object?>{'includeBounds': 0.0},
           },
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -15341,7 +15345,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'stepSize',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -15362,8 +15366,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -16435,7 +16439,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'stepSize with min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -16463,8 +16467,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -17109,7 +17113,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'stepSize with maxTicksLimit',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -17132,8 +17136,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 495.76953125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -17759,7 +17763,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'stepSize over 1000 ticks',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -17780,8 +17784,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -18355,7 +18359,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'stepSize with maxTicksLimit 0',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -18376,8 +18380,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -18983,7 +18987,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'a string stepSize with min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -19006,8 +19010,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 495.76953125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -19602,7 +19606,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'a negative and a NaN stepSize',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -19626,8 +19630,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.005859375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -19906,7 +19910,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'count',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -19930,8 +19934,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -20476,7 +20480,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'count with min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -20503,8 +20507,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -21029,7 +21033,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'count 1 and count 0',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -21053,8 +21057,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.005859375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -21322,7 +21326,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'precision',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -21345,8 +21349,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -21824,7 +21828,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'precision with count and with min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -21849,8 +21853,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -22405,7 +22409,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'a negative precision',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -22429,8 +22433,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -22971,7 +22975,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'precision with stepSize, min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -22994,8 +22998,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -23639,7 +23643,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'maxTicksLimit',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -23663,8 +23667,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -24089,7 +24093,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'string tick options',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -24113,8 +24117,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -24597,7 +24601,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'includeBounds',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -24617,8 +24621,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[41.3515625, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -25209,7 +25213,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'includeBounds false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -25237,8 +25241,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -25852,7 +25856,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'includeBounds with close ticks',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -25872,8 +25876,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -26662,7 +26666,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'bounds data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -26686,8 +26690,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[33.130859375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -27197,7 +27201,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'offset',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -27217,8 +27221,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -27891,7 +27895,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'offset with one tick',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -27918,8 +27922,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -28473,7 +28477,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'offset without ticks',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -28500,8 +28504,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[8.0, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -29020,7 +29024,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'reverse',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -29040,8 +29044,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 500.328125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -29671,7 +29675,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'reverse with offset and bounds data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -29695,8 +29699,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -30377,7 +30381,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'positions top and right',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -30397,8 +30401,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         11.671875,
         60.4,
@@ -31076,7 +31080,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'a tiny range',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -31092,8 +31096,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[134.78515625, 32.0, 453.9423828125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -31410,7 +31414,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'a tiny range with a user min',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -31431,8 +31435,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         37.35546875,
         32.0,
@@ -32212,7 +32216,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'a tick callback',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -32233,8 +32237,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[50.029296875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -32902,8 +32906,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
   ),
   (
-    name: 'locale and format',
-    config: <String, Object?>{
+    name: 'locale',
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -32915,19 +32919,10 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           },
         ],
       },
-      'options': <String, Object?>{
-        'locale': 'de-DE',
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
-              'format': <String, Object?>{'maximumFractionDigits': 1.0},
-            },
-          },
-        },
-      },
+      'options': <String, Object?>{'locale': Locale('de', 'DE')},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 487.3115234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -32976,7 +32971,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             '100.000',
             '1.234,5',
             '-0',
-            '98.765,4',
+            '98.765,432',
             '0',
             '7,5',
             '1',
@@ -33528,10 +33523,637 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
   ),
   (
+    name: 'format',
+    config: <String, Object?>{
+      'type': 'linearBaseChart',
+      'data': const <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'x': -1234.5, 'y': 0.5},
+              <String, Object?>{'x': 98765.25, 'y': 2.75},
+            ],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'ticks': <String, Object?>{
+              'format': (NumberFormat.decimalPattern()
+                ..maximumFractionDigits = 1
+                ..minimumFractionDigits = 0),
+            },
+          },
+        },
+      },
+    },
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
+      'chartArea': <Object?>[30.681640625, 32.0, 487.3115234375, 483.6],
+      'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': 'testLinearBase',
+          'axis': XAxis(),
+          'position': ChartPosition.bottom,
+          'min': -20000.0,
+          'max': 100000.0,
+          'ticks': <Object?>[
+            <Object?>[-20000.0, '-20,000', false],
+            <Object?>[0.0, '0', false],
+            <Object?>[20000.0, '20,000', false],
+            <Object?>[40000.0, '40,000', false],
+            <Object?>[60000.0, '60,000', false],
+            <Object?>[80000.0, '80,000', false],
+            <Object?>[100000.0, '100,000', false],
+          ],
+          'box': <Object?>[30.681640625, 483.6, 487.3115234375, 512.0],
+          'labelRotation': 0.0,
+          'paddings': <Object?>[23.349609375, 0.0, 24.6884765625, 0.0],
+          'tickPixels': <Object?>[
+            30.681640625,
+            106.78662109375,
+            182.8916015625,
+            258.99658203125,
+            335.1015625,
+            411.20654296875,
+            487.3115234375,
+          ],
+          'valuePixels': <Object?>[
+            30.681640625,
+            258.99658203125,
+            487.3115234375,
+          ],
+          'valueForPixel': <Object?>[-20000.0, 40000.0, 100000.0],
+          'basePixel': 106.78662109375,
+          'warnings': <Object?>[],
+          'start': -20000.0,
+          'end': 100000.0,
+          'startValue': -20000.0,
+          'endValue': 100000.0,
+          'valueRange': 120000.0,
+          'tickLimit': 11.0,
+          'labels': <Object?>[
+            '-20,000',
+            '100,000',
+            '1,234.5',
+            '-0',
+            '98,765.4',
+            '0',
+            '7.5',
+            '1',
+          ],
+          'parsed': <Object?>[
+            null,
+            null,
+            null,
+            null,
+            null,
+            12.0,
+            <String, Object?>{'num': '-0'},
+            12.5,
+            26.0,
+            <String, Object?>{'num': 'Infinity'},
+            <String, Object?>{'num': 'NaN'},
+            0.0,
+            1.0,
+            0.0,
+            7.0,
+            <String, Object?>{'num': 'NaN'},
+          ],
+        },
+        'y': <String, Object?>{
+          'type': 'testLinearBase',
+          'axis': YAxis(),
+          'position': ChartPosition.left,
+          'min': 0.5,
+          'max': 3.0,
+          'ticks': <Object?>[
+            <Object?>[0.5, '0.5', false],
+            <Object?>[1.0, '1.0', false],
+            <Object?>[1.5, '1.5', false],
+            <Object?>[2.0, '2.0', false],
+            <Object?>[2.5, '2.5', false],
+            <Object?>[3.0, '3.0', false],
+          ],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
+          'labelRotation': 0.0,
+          'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
+          'tickPixels': <Object?>[
+            483.6,
+            393.28000000000003,
+            302.96,
+            212.64000000000001,
+            122.31999999999998,
+            32.0,
+          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
+          'valueForPixel': <Object?>[3.0, 1.75, 0.5],
+          'basePixel': 483.6,
+          'warnings': <Object?>[],
+          'start': 0.5,
+          'end': 3.0,
+          'startValue': 0.5,
+          'endValue': 3.0,
+          'valueRange': 2.5,
+          'tickLimit': 11.0,
+          'labels': <Object?>[
+            '0.5',
+            '3',
+            '1,234.5',
+            '-0',
+            '98,765.432',
+            '0',
+            '7.5',
+            '1',
+          ],
+          'parsed': <Object?>[
+            null,
+            null,
+            null,
+            null,
+            null,
+            12.0,
+            <String, Object?>{'num': '-0'},
+            12.5,
+            26.0,
+            <String, Object?>{'num': 'Infinity'},
+            <String, Object?>{'num': 'NaN'},
+            0.0,
+            1.0,
+            0.0,
+            7.0,
+            <String, Object?>{'num': 'NaN'},
+          ],
+        },
+      },
+      'points': <Object?>[
+        <Object?>[
+          <Object?>[102.0890411743164, 483.6],
+          <Object?>[482.61299220581054, 77.16],
+        ],
+      ],
+      'drawCalls': '''
+["save"]
+["resetTransform"]
+["clearRect",0,0,512,512]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",30.5,32]
+["lineTo",30.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",30.5,484]
+["lineTo",30.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",106.5,32]
+["lineTo",106.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",106.5,484]
+["lineTo",106.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",182.5,32]
+["lineTo",182.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",182.5,484]
+["lineTo",182.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",258.5,32]
+["lineTo",258.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",258.5,484]
+["lineTo",258.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",335.5,32]
+["lineTo",335.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",335.5,484]
+["lineTo",335.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",411.5,32]
+["lineTo",411.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",411.5,484]
+["lineTo",411.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",487.5,32]
+["lineTo",487.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",487.5,484]
+["lineTo",487.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",31,483.5]
+["lineTo",487.3115234375,483.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",22.681640625,483.5]
+["lineTo",30,483.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",31,393.5]
+["lineTo",487.3115234375,393.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",22.681640625,393.5]
+["lineTo",30,393.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",31,302.5]
+["lineTo",487.3115234375,302.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",22.681640625,302.5]
+["lineTo",30,302.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",31,212.5]
+["lineTo",487.3115234375,212.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",22.681640625,212.5]
+["lineTo",30,212.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",31,122.5]
+["lineTo",487.3115234375,122.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",22.681640625,122.5]
+["lineTo",30,122.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",31,32.5]
+["lineTo",487.3115234375,32.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",30,483.5]
+["lineTo",488,483.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,483.6,512,28.399999999999977]
+["clip",null,null]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",30.681640625,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","-20,000",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",106.78662109375,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",182.8916015625,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","20,000",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",258.99658203125,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","40,000",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",335.1015625,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","60,000",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",411.20654296875,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","80,000",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",487.3115234375,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","100,000",0,7.199999999999999,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",30.5,32]
+["lineTo",30.5,484]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,30.681640625,512]
+["clip",null,null]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",19.681640625,483.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","0.5",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",19.681640625,393.28000000000003]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","1.0",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",19.681640625,302.96]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","1.5",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",19.681640625,212.64000000000001]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","2.0",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",19.681640625,122.31999999999998]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","2.5",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",19.681640625,32]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","3.0",0,0,null]
+["restore"]
+["restore"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["arc",102.0890411743164,483.6,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["arc",482.61299220581054,77.16,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+''',
+    },
+  ),
+  (
     name: 'percent format',
     config: <String, Object?>{
       'type': 'linearBaseChart',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[
@@ -33545,15 +34167,17 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'ticks': <String, Object?>{
-              'format': <String, Object?>{'style': 'percent'},
+              'format': (NumberFormat.percentPattern()
+                ..maximumFractionDigits = 0
+                ..minimumFractionDigits = 0),
             },
           },
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
-      'chartArea': <Object?>[54.69921875, 32.0, 500.6591796875, 483.6],
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
+      'chartArea': <Object?>[44.69140625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -33563,18 +34187,18 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           'max': 1.0,
           'ticks': <Object?>[
             <Object?>[0.0, '0', false],
-            <Object?>[0.1, '10.0%', false],
-            <Object?>[0.2, '20.0%', false],
-            <Object?>[0.3, '30.0%', false],
-            <Object?>[0.4, '40.0%', false],
-            <Object?>[0.5, '50.0%', false],
-            <Object?>[0.6, '60.0%', false],
-            <Object?>[0.7, '70.0%', false],
-            <Object?>[0.8, '80.0%', false],
-            <Object?>[0.9, '90.0%', false],
-            <Object?>[1.0, '100.0%', false],
+            <Object?>[0.1, '10%', false],
+            <Object?>[0.2, '20%', false],
+            <Object?>[0.3, '30%', false],
+            <Object?>[0.4, '40%', false],
+            <Object?>[0.5, '50%', false],
+            <Object?>[0.6, '60%', false],
+            <Object?>[0.7, '70%', false],
+            <Object?>[0.8, '80%', false],
+            <Object?>[0.9, '90%', false],
+            <Object?>[1.0, '100%', false],
           ],
-          'box': <Object?>[0.0, 32.0, 54.69921875, 483.6],
+          'box': <Object?>[0.0, 32.0, 44.69140625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
@@ -33648,29 +34272,29 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[54.69921875, 483.6, 500.6591796875, 512.0],
+          'box': <Object?>[44.69140625, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
-            54.69921875,
-            99.29521484375,
-            143.8912109375,
-            188.48720703125,
-            233.083203125,
-            277.67919921875,
-            322.2751953125,
-            366.87119140625,
-            411.4671875,
-            456.06318359375,
+            44.69140625,
+            90.28818359375,
+            135.8849609375,
+            181.48173828125,
+            227.07851562500002,
+            272.67529296875,
+            318.2720703125,
+            363.86884765624995,
+            409.46562500000005,
+            455.06240234375,
             500.6591796875,
           ],
           'valuePixels': <Object?>[
-            54.69921875,
-            277.67919921875,
+            44.69140625,
+            272.67529296875,
             500.6591796875,
           ],
           'valueForPixel': <Object?>[0.0, 0.5, 1.0],
-          'basePixel': 54.69921875,
+          'basePixel': 44.69140625,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 1.0,
@@ -33710,7 +34334,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[54.69921875, 461.02],
+          <Object?>[44.69140625, 461.02],
           <Object?>[500.6591796875, 54.58000000000002],
         ],
       ],
@@ -33725,7 +34349,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,483.5]
+["moveTo",45,483.5]
 ["lineTo",500.6591796875,483.5]
 ["stroke",null]
 ["restore"]
@@ -33735,8 +34359,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,483.5]
-["lineTo",54,483.5]
+["moveTo",36.69140625,483.5]
+["lineTo",44,483.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33745,7 +34369,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,438.5]
+["moveTo",45,438.5]
 ["lineTo",500.6591796875,438.5]
 ["stroke",null]
 ["restore"]
@@ -33755,8 +34379,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,438.5]
-["lineTo",54,438.5]
+["moveTo",36.69140625,438.5]
+["lineTo",44,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33765,7 +34389,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,393.5]
+["moveTo",45,393.5]
 ["lineTo",500.6591796875,393.5]
 ["stroke",null]
 ["restore"]
@@ -33775,8 +34399,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,393.5]
-["lineTo",54,393.5]
+["moveTo",36.69140625,393.5]
+["lineTo",44,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33785,7 +34409,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,348.5]
+["moveTo",45,348.5]
 ["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
@@ -33795,8 +34419,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,348.5]
-["lineTo",54,348.5]
+["moveTo",36.69140625,348.5]
+["lineTo",44,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33805,7 +34429,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,302.5]
+["moveTo",45,302.5]
 ["lineTo",500.6591796875,302.5]
 ["stroke",null]
 ["restore"]
@@ -33815,8 +34439,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,302.5]
-["lineTo",54,302.5]
+["moveTo",36.69140625,302.5]
+["lineTo",44,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33825,7 +34449,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,257.5]
+["moveTo",45,257.5]
 ["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
@@ -33835,8 +34459,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,257.5]
-["lineTo",54,257.5]
+["moveTo",36.69140625,257.5]
+["lineTo",44,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33845,7 +34469,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,212.5]
+["moveTo",45,212.5]
 ["lineTo",500.6591796875,212.5]
 ["stroke",null]
 ["restore"]
@@ -33855,8 +34479,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,212.5]
-["lineTo",54,212.5]
+["moveTo",36.69140625,212.5]
+["lineTo",44,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33865,7 +34489,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,167.5]
+["moveTo",45,167.5]
 ["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
@@ -33875,8 +34499,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,167.5]
-["lineTo",54,167.5]
+["moveTo",36.69140625,167.5]
+["lineTo",44,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33885,7 +34509,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,122.5]
+["moveTo",45,122.5]
 ["lineTo",500.6591796875,122.5]
 ["stroke",null]
 ["restore"]
@@ -33895,8 +34519,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,122.5]
-["lineTo",54,122.5]
+["moveTo",36.69140625,122.5]
+["lineTo",44,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33905,7 +34529,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,77.5]
+["moveTo",45,77.5]
 ["lineTo",500.6591796875,77.5]
 ["stroke",null]
 ["restore"]
@@ -33915,8 +34539,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,77.5]
-["lineTo",54,77.5]
+["moveTo",36.69140625,77.5]
+["lineTo",44,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33925,7 +34549,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,32.5]
+["moveTo",45,32.5]
 ["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
@@ -33935,8 +34559,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,32.5]
-["lineTo",54,32.5]
+["moveTo",36.69140625,32.5]
+["lineTo",44,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33945,8 +34569,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54.5,32]
-["lineTo",54.5,483]
+["moveTo",44.5,32]
+["lineTo",44.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33955,8 +34579,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",54.5,484]
-["lineTo",54.5,491.6]
+["moveTo",44.5,484]
+["lineTo",44.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33965,8 +34589,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",99.5,32]
-["lineTo",99.5,483]
+["moveTo",90.5,32]
+["lineTo",90.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33975,8 +34599,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",99.5,484]
-["lineTo",99.5,491.6]
+["moveTo",90.5,484]
+["lineTo",90.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33985,8 +34609,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",143.5,32]
-["lineTo",143.5,483]
+["moveTo",135.5,32]
+["lineTo",135.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33995,8 +34619,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",143.5,484]
-["lineTo",143.5,491.6]
+["moveTo",135.5,484]
+["lineTo",135.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34005,8 +34629,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",188.5,32]
-["lineTo",188.5,483]
+["moveTo",181.5,32]
+["lineTo",181.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34015,8 +34639,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",188.5,484]
-["lineTo",188.5,491.6]
+["moveTo",181.5,484]
+["lineTo",181.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34025,8 +34649,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",233.5,32]
-["lineTo",233.5,483]
+["moveTo",227.5,32]
+["lineTo",227.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34035,8 +34659,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",233.5,484]
-["lineTo",233.5,491.6]
+["moveTo",227.5,484]
+["lineTo",227.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34045,8 +34669,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",277.5,32]
-["lineTo",277.5,483]
+["moveTo",272.5,32]
+["lineTo",272.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34055,8 +34679,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",277.5,484]
-["lineTo",277.5,491.6]
+["moveTo",272.5,484]
+["lineTo",272.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34065,8 +34689,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",322.5,32]
-["lineTo",322.5,483]
+["moveTo",318.5,32]
+["lineTo",318.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34075,8 +34699,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",322.5,484]
-["lineTo",322.5,491.6]
+["moveTo",318.5,484]
+["lineTo",318.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34085,8 +34709,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",366.5,32]
-["lineTo",366.5,483]
+["moveTo",363.5,32]
+["lineTo",363.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34095,8 +34719,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",366.5,484]
-["lineTo",366.5,491.6]
+["moveTo",363.5,484]
+["lineTo",363.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34105,8 +34729,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",411.5,32]
-["lineTo",411.5,483]
+["moveTo",409.5,32]
+["lineTo",409.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34115,8 +34739,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",411.5,484]
-["lineTo",411.5,491.6]
+["moveTo",409.5,484]
+["lineTo",409.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34125,8 +34749,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",456.5,32]
-["lineTo",456.5,483]
+["moveTo",455.5,32]
+["lineTo",455.5,483]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34135,8 +34759,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",456.5,484]
-["lineTo",456.5,491.6]
+["moveTo",455.5,484]
+["lineTo",455.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34192,17 +34816,17 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",54.5,32]
-["lineTo",54.5,484]
+["moveTo",44.5,32]
+["lineTo",44.5,484]
 ["stroke",null]
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,0,54.69921875,512]
+["rect",0,0,44.69140625,512]
 ["clip",null,null]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,483.6]
+["translate",33.69140625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34211,100 +34835,100 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,438.44000000000005]
+["translate",33.69140625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","10.0%",0,0,null]
+["fillText","10%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,393.28000000000003]
+["translate",33.69140625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","20.0%",0,0,null]
+["fillText","20%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,348.12]
+["translate",33.69140625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","30.0%",0,0,null]
+["fillText","30%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,302.96]
+["translate",33.69140625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","40.0%",0,0,null]
+["fillText","40%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,257.8]
+["translate",33.69140625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","50.0%",0,0,null]
+["fillText","50%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,212.64000000000001]
+["translate",33.69140625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","60.0%",0,0,null]
+["fillText","60%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,167.48000000000002]
+["translate",33.69140625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","70.0%",0,0,null]
+["fillText","70%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,122.31999999999998]
+["translate",33.69140625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","80.0%",0,0,null]
+["fillText","80%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,77.16]
+["translate",33.69140625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","90.0%",0,0,null]
+["fillText","90%",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",43.69921875,32]
+["translate",33.69140625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","100.0%",0,0,null]
+["fillText","100%",0,0,null]
 ["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",54,483.5]
+["moveTo",44,483.5]
 ["lineTo",501,483.5]
 ["stroke",null]
 ["restore"]
@@ -34314,7 +34938,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",54.69921875,494.6]
+["translate",44.69140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34323,7 +34947,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",99.29521484375,494.6]
+["translate",90.28818359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34332,7 +34956,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",143.8912109375,494.6]
+["translate",135.8849609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34341,7 +34965,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",188.48720703125,494.6]
+["translate",181.48173828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34350,7 +34974,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",233.083203125,494.6]
+["translate",227.07851562500002,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34359,7 +34983,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",277.67919921875,494.6]
+["translate",272.67529296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34368,7 +34992,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",322.2751953125,494.6]
+["translate",318.2720703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34377,7 +35001,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",366.87119140625,494.6]
+["translate",363.86884765624995,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34386,7 +35010,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",411.4671875,494.6]
+["translate",409.46562500000005,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34395,7 +35019,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
-["translate",456.06318359375,494.6]
+["translate",455.06240234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34416,7 +35040,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",54.69921875,461.02,3,0,6.283185307179586,false]
+["arc",44.69140625,461.02,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -34433,7 +35057,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'the limit scale on a narrow canvas',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -34452,10 +35076,10 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 166.970703125, 271.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -35080,7 +35704,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'minRotation with bounds',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -35108,10 +35732,10 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 300.0, 'height': 200.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         35.64672455805252,
         32.0,
@@ -35697,7 +36321,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
   ),
   (
     name: 'rotation and autoskip without a limit',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'linearBaseChart',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -35717,10 +36341,10 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         37.35546875,
         32.0,
@@ -38708,98 +39332,158 @@ const List<ScaleLinearBaseReferenceWidth> scaleLinearBaseReferenceWidths = [
       fontSize: 12,
       fontStyle: FontStyle.normal,
     ),
-    text: '10.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '20.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '30.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '40.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '50.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '60.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '70.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '80.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '90.0%',
-    width: 34.025390625,
-  ),
-  (
-    font: ChartTextStyle(
-      fontFamily: 'Helvetica Neue',
-      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-      fontSize: 12,
-      fontStyle: FontStyle.normal,
-    ),
-    text: '100.0%',
+    text: '-20,000',
     width: 40.69921875,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '20,000',
+    width: 36.703125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '40,000',
+    width: 36.703125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '60,000',
+    width: 36.703125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '80,000',
+    width: 36.703125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '100,000',
+    width: 43.376953125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '10%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '20%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '30%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '40%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '50%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '60%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '70%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '80%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '90%',
+    width: 24.017578125,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
+    text: '100%',
+    width: 30.69140625,
   ),
   (
     font: ChartTextStyle(

@@ -251,7 +251,8 @@ const cases = [
     chart([{data: points([10, 30], [50, 80])}], {
       scales: {
         x: {beginAtZero: ''},
-        y: {beginAtZero: 'yes', max: 99.5, ticks: {includeBounds: 0, format: 'abc'}},
+        // A text format is no format of the port (row adapt-intl-number-format).
+        y: {beginAtZero: 'yes', max: 99.5, ticks: {includeBounds: 0}},
       },
     }),
   ),
@@ -385,8 +386,9 @@ const cases = [
     chart([{data: points([1, 1.000000000000001], [-100, -99.99999999999999])}]),
   ),
   // A user min: generateTicks does not stop at MIN_SPACING. The numeric
-  // labels would need 16 fraction digits, and package:intl gives at most 15
-  // (adapt-intl-number-format): the callback withUnit writes the labels.
+  // labels would need 16 fraction digits, and package:intl writes other
+  // digits than V8 there (adapt-intl-number-format): the callback withUnit
+  // writes the labels.
   run(
     'a tiny range with a user min',
     chart([{data: points([1, 1.000000000000001], [1, 2])}], {
@@ -396,17 +398,29 @@ const cases = [
 
   // The labels.
   run('a tick callback', chart(data, {scales: {y: {ticks: {callback: withUnit}}}})),
+  // The port holds the locale as a Locale and the format as a NumberFormat
+  // of package:intl, which formats a tick as it is (row
+  // adapt-intl-number-format). A format thus gives both digit keys, and a
+  // NumberFormat has its own locale: the cases set the locale and the format
+  // apart.
   run(
-    'locale and format',
+    'locale',
+    chart([{data: points([-1234.5, 98765.25], [0.5, 2.75])}], {locale: 'de-DE'}),
+  ),
+  run(
+    'format',
     chart([{data: points([-1234.5, 98765.25], [0.5, 2.75])}], {
-      locale: 'de-DE',
-      scales: {x: {ticks: {format: {maximumFractionDigits: 1}}}},
+      scales: {x: {ticks: {format: {minimumFractionDigits: 0, maximumFractionDigits: 1}}}},
     }),
   ),
   run(
     'percent format',
     chart([{data: points([0, 1], [0.05, 0.95])}], {
-      scales: {y: {ticks: {format: {style: 'percent'}}}},
+      scales: {
+        y: {
+          ticks: {format: {style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0}},
+        },
+      },
     }),
   ),
 

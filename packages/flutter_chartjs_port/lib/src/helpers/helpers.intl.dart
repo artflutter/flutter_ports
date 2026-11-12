@@ -1,137 +1,114 @@
 // Ported from Chart.js v4.6.1 src/helpers/helpers.intl.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-intl-number-format, a NumberFormat of package:intl.
 
 /// Port of `src/helpers/helpers.intl.ts`.
 ///
 /// `Intl.NumberFormat` is the `NumberFormat` of package:intl (Chart.js ADR
-/// 0026). [jsNumberFormat] in `lib/src/js/js_intl.dart` maps the
-/// locale and the options. The strings are the strings of package:intl, not
-/// of V8. The guards of the adapter write the digits of V8 for numbers from
-/// `2^53`, in scientific notation and for more than 15 fraction digits, and
-/// the affixes of the pattern for NaN and the infinities.
+/// 0119). The chart option `locale` holds a Flutter `Locale`, and the tick
+/// option `format` holds a `NumberFormat`. The strings are the strings of
+/// package:intl, with its defects: the port does not correct them.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsProxyObject;
-import 'package:flutter_chartjs_port/src/js/js_intl.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'dart:ui' show Locale;
+
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:intl/intl.dart';
 
 /// helpers.intl.ts:2 `intlCache`.
 ///
-/// A key is the String of [_cacheKey], or the record of
-/// [formatNumberDigits]. A record never equals a String, so the two kinds
-/// of keys never share an entry.
-final Map<Object, JsNumberFormat> _intlCache = <Object, JsNumberFormat>{};
+/// A key is the record of the intl locale name, the scientific notation and
+/// the fraction digits (Dart `null` for the defaults of the decimal
+/// pattern).
+final Map<(String, bool, int?), NumberFormat> _intlCache =
+    <(String, bool, int?), NumberFormat>{};
 
 /// helpers.intl.ts:4 `getNumberFormat`.
 ///
-/// [locale] is a resolved option value (Chart.js ADR 0043): `undefined`,
-/// JS `null` (Dart `null`), a String or a List of Strings. The cache key is
-/// [_cacheKey], not `locale + JSON.stringify(options)`.
-JsNumberFormat _getNumberFormat(
-  Object? locale, [
-  Map<String, Object?>? options,
-]) {
-  // Upstream reassigns its parameter.
-  // ignore: parameter_assignments
-  options = options ?? <String, Object?>{};
-  // DIVERGES(chartjs): adapt-intl-number-format, locale and entries key.
-  final cacheKey = _cacheKey(locale, options);
+/// The formatter of the decimal pattern of [locale], or of the scientific
+/// pattern when [scientific] is true. [fractionDigits] sets the minimum and
+/// the maximum fraction digits. Dart `null` keeps the defaults of the
+/// pattern. A [locale] without intl data, and Dart `null`, give the current
+/// locale of package:intl (`Intl.defaultLocale`, `'en_US'` when the app does
+/// not set it). The resolved locale is in the cache key, so a change of
+/// `Intl.defaultLocale` reaches the next call.
+NumberFormat _getNumberFormat(
+  Locale? locale, {
+  bool scientific = false,
+  int? fractionDigits,
+}) {
+  final name = _localeName(locale) ?? Intl.getCurrentLocale();
+  final cacheKey = (name, scientific, fractionDigits);
   var formatter = _intlCache[cacheKey];
   if (formatter == null) {
-    // DIVERGES(chartjs): adapt-intl-number-format, package:intl NumberFormat.
-    formatter = jsNumberFormat(locale, options);
+    formatter = scientific
+        ? NumberFormat.scientificPattern(name)
+        : NumberFormat.decimalPattern(name);
+    if (fractionDigits != null) {
+      formatter
+        ..maximumFractionDigits = fractionDigits
+        ..minimumFractionDigits = fractionDigits;
+    }
     _intlCache[cacheKey] = formatter;
   }
   return formatter;
 }
 
-/// The key of [_intlCache]: the intl locale of [jsNumberFormatLocale], then
-/// each entry of [options] as `key: value`.
-///
-/// It reads the entries, as `JSON.stringify` reads the values of a
-/// resolver. The `toString` of a `Resolver` lists only its cache. A String
-/// value is in quotes, as in JSON. Thus `false` and `'false'` give two keys.
-String _cacheKey(Object? locale, Map<String, Object?> options) => [
-  jsNumberFormatLocale(locale),
-  for (final MapEntry(:key, :value) in options.entries)
-    '$key: ${value is String ? "'$value'" : value}',
-].join(', ');
+/// The intl locale of [locale], or Dart `null` when [locale] is Dart `null`
+/// or has no intl data.
+String? _localeName(Locale? locale) => locale == null
+    ? null
+    : Intl.verifiedLocale(
+        locale.toLanguageTag(),
+        NumberFormat.localeExists,
+        onFailure: (_) => null,
+      );
 
 /// helpers.intl.ts:15 `formatNumber`.
 ///
 /// Upstream names the first parameter `num`, a Dart type name. [locale] is
-/// `chart.options.locale`, a resolved option value (Chart.js ADR 0043). A
-/// String is a BCP 47 tag, and a List is a list of tags. `undefined` gives
-/// the current locale of package:intl (`Intl.defaultLocale`, `'en_US'` when
-/// the app does not set it). In [options], an absent key and `undefined` are
-/// `undefined`.
-///
-/// The cache key holds the resolved intl locale. Thus a change of
-/// `Intl.defaultLocale` also changes a chart without a `locale` option.
-///
-/// Throws a [TypeError] for Dart `null` (JS `null`), as V8 does. Throws an
-/// [ArgumentError] for a tag that is not valid, for example `'en_US'`, and
-/// for a digit option out of range, as V8 throws a `RangeError`
-/// ([jsNumberFormatLocale] and [jsNumberFormat]). [jsNumberFormat] ignores
-/// the options that it does not support.
-String formatNumber(
-  double number,
-  Object? locale, [
-  Object? options,
-]) {
-  return _getNumberFormat(locale, _entriesOf(options)).format(number);
+/// `chart.options.locale`. [format] is the tick option `format`: it formats
+/// [number] as it is. Without it, the decimal pattern of [locale] formats
+/// [number], as `new Intl.NumberFormat(locale)` does.
+String formatNumber(double number, Locale? locale, [NumberFormat? format]) {
+  return (format ?? _getNumberFormat(locale)).format(number);
 }
 
-/// [formatNumber] for the options object `{notation, minimumFractionDigits,
-/// maximumFractionDigits}` with no other key: the options of
-/// `formatters.numeric` (core.ticks.js:56) when `ticks.format` adds no key.
-///
-/// [notation] `null` stands for `undefined`. The cache key is the record of
-/// the intl locale of [jsNumberFormatLocale] and the three options, not the
-/// String of [_cacheKey]: the three entries map one-to-one to the fields of
-/// the record. The function builds the options Map only on a miss, and
-/// [jsNumberFormat] gets the same Map as from [formatNumber]. A formatter is
-/// stateless, so a second entry for the same options gives the same text.
-/// The resolved locale stays in the key: a change of `Intl.defaultLocale`
-/// reaches the next call. It throws where [formatNumber] throws: the locale
-/// first, then a digit option out of range.
-// DIVERGES(chartjs): adapt-numeric-tick-format-key, a record key.
+/// [formatNumber] with the options of `formatters.numeric`
+/// (core.ticks.js:56): the scientific notation when [scientific] is true,
+/// and [fractionDigits] as the minimum and the maximum fraction digits.
 String formatNumberDigits(
   double number,
-  Object? locale,
-  String? notation,
-  double minimumFractionDigits,
-  double maximumFractionDigits,
-) {
-  final cacheKey = (
-    jsNumberFormatLocale(locale),
-    notation,
-    minimumFractionDigits,
-    maximumFractionDigits,
+  Locale? locale, {
+  required bool scientific,
+  required int fractionDigits,
+}) => _getNumberFormat(
+  locale,
+  scientific: scientific,
+  fractionDigits: fractionDigits,
+).format(number);
+
+/// The chart option `locale` of the resolved option value [value]: a
+/// [Locale], or Dart `null` when the option is absent. Another value stops
+/// a debug build, for example a language tag as text (Chart.js ADR 0119).
+/// A release build takes Dart `null`, the current locale.
+Locale? localeOf(Object? value) {
+  assert(
+    value == null || value is Locale || value is Undefined,
+    'The option locale holds a Locale (Chart.js ADR 0119), not $value.',
   );
-  var formatter = _intlCache[cacheKey];
-  if (formatter == null) {
-    formatter = jsNumberFormat(locale, <String, Object?>{
-      'notation': notation ?? undefined,
-      'minimumFractionDigits': minimumFractionDigits,
-      'maximumFractionDigits': maximumFractionDigits,
-    });
-    _intlCache[cacheKey] = formatter;
-  }
-  return formatter.format(number);
+  return value is Locale ? value : null;
 }
 
-/// The options [options] as a Map of their entries: a Map itself; a
-/// resolver of `helpers.config` the keys of its `ownKeys` trap with the
-/// values of its `get` trap; another typed object its own keys with their
-/// values; any other value Dart `null` (no options).
-Map<String, Object?>? _entriesOf(Object? options) => switch (options) {
-  final Map<String, Object?> map => map,
-  final JsProxyObject proxy => {
-    for (final key in proxy.ownKeys()) key: proxy.jsRead(key),
-  },
-  final JsObjectFace face => {
-    for (final key in face.jsKeys()) key: face.jsRead(key),
-  },
-  _ => null,
-};
+/// The tick option `format` of the resolved option value [value]: a
+/// [NumberFormat], or Dart `null` when the option is absent. Another value
+/// stops a debug build, for example an object of number format options
+/// (Chart.js ADR 0119). A release build takes Dart `null`, the formatter of
+/// the chart.
+NumberFormat? numberFormatOf(Object? value) {
+  assert(
+    value == null || value is NumberFormat || value is Undefined,
+    'The tick option format holds a NumberFormat (Chart.js ADR 0119), '
+    'not $value.',
+  );
+  return value is NumberFormat ? value : null;
+}

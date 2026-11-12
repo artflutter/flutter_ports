@@ -2,7 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, Locale;
 
 import 'package:flutter/widgets.dart' show EdgeInsets, ValueKey;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -212,7 +212,7 @@ void main() {
             [
               BarDataset(data: _data()),
             ],
-            extra: const {'locale': 'de-DE'},
+            extra: const {'locale': Locale('de', 'DE')},
           ),
         ),
         isFalse,

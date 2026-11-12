@@ -3,6 +3,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' show Locale;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
@@ -1093,7 +1094,8 @@ void main() {
             'labels': <Object?>[],
           },
           'options': <String, Object?>{
-            'locale': 'de-DE',
+            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+            'locale': const Locale('de', 'DE'),
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic'},
               'y1': <String, Object?>{

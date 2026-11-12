@@ -38,7 +38,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber;
+    show formatNumber, localeOf;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show
         almostEquals,
@@ -51,7 +51,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsIsObjectLike;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:meta/meta.dart';
@@ -550,16 +549,15 @@ class LinearScaleBase extends Scale {
   /// decimal is not the shortest round-trip form of its double gets other
   /// digits. For example, `'9007199254740993'` gives `9,007,199,254,740,993`
   /// in V8 and `9,007,199,254,740,992` in the port. Only the digits of the
-  /// label change (Chart.js ADR 0034). The `ticks.format` option is a Map of
-  /// the number format options, or another value, which gives no options:
-  /// `new Intl.NumberFormat(locale, options)` reads no option from it.
+  /// label change (Chart.js ADR 0034). The `ticks.format` option is a
+  /// `NumberFormat` of package:intl, which formats the value as it is
+  /// (Chart.js ADR 0119).
   @override
   Object? getLabelForValue(Object? value) {
-    final format = options.ticks.format;
     return formatNumber(
       jsToNumber(value),
-      readOption(chart.options, OptionKey.locale),
-      jsIsObjectLike(format) ? format : null,
+      localeOf(readOption(chart.options, OptionKey.locale)),
+      options.ticks.format,
     );
   }
 }

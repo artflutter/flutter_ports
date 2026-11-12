@@ -1141,8 +1141,12 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     {'onHover': _function},
   ),
   'extra': (
-    ChartConfig(type: .bar, datasets: [], extra: {'locale': 'de-DE'}),
-    {'locale': 'de-DE'},
+    ChartConfig(
+      type: .bar,
+      datasets: [],
+      extra: {'locale': native_ui.Locale('de', 'DE')},
+    ),
+    {'locale': native_ui.Locale('de', 'DE')},
   ),
   'all options, in parameter order': (
     ChartConfig(
@@ -1162,7 +1166,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       animation: ChartAnimation.none,
       onClick: _onEvent,
       onHover: _onEvent,
-      extra: {'locale': 'en-US'},
+      extra: {'locale': native_ui.Locale('en', 'US')},
     ),
     {
       'scales': {
@@ -1185,7 +1189,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       'animation': false,
       'onClick': _function,
       'onHover': _function,
-      'locale': 'en-US',
+      'locale': native_ui.Locale('en', 'US'),
     },
   ),
 };
@@ -2458,7 +2462,7 @@ void main() {
                 },
                 'decimation': {'enabled': true},
               },
-              'locale': 'de-DE',
+              'locale': native_ui.Locale('de', 'DE'),
             },
           ),
         ),
@@ -2471,7 +2475,7 @@ void main() {
             },
             'decimation': {'enabled': true},
           },
-          'locale': 'de-DE',
+          'locale': const native_ui.Locale('de', 'DE'),
         },
       );
     });

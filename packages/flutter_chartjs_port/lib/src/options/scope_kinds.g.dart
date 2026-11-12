@@ -1577,7 +1577,7 @@ enum ScopeKind {
           case OptionKey.aspectRatio:
             return 1;
           case OptionKey.locale:
-            return 4;
+            return 4224;
           case OptionKey.onResize:
             return 8;
           case OptionKey.devicePixelRatio:
@@ -2992,7 +2992,7 @@ enum ScopeKind {
           case OptionKey.maxTicksLimit:
             return 1;
           case OptionKey.format:
-            return 64;
+            return 4352;
           case OptionKey.precision:
             return 1;
           case OptionKey.stepSize:

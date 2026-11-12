@@ -26,7 +26,7 @@
 /// This library is a pure layer.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show TextStyle;
@@ -68,6 +68,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:intl/intl.dart' show NumberFormat;
 
 /// One option value of a typed scope (Chart.js ADR 0054 §1).
 sealed class Opt<T> {
@@ -323,6 +324,14 @@ abstract final class ShapeBits {
   /// `textStyle`: a Flutter `TextStyle`, the value of a font option.
   static const int textStyle = 4096;
 
+  /// `locale`: a Flutter `Locale`, the chart option `locale` (Chart.js ADR
+  /// 0119).
+  static const int locale = 4224;
+
+  /// `numberFormat`: a `NumberFormat` of package:intl, the tick option
+  /// `format` (Chart.js ADR 0119).
+  static const int numberFormat = 4352;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -444,6 +453,8 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.cartesianAxis => classifyTyped<CartesianAxis>(raw),
   ShapeBits.radialAxis => classifyTyped<RAxis>(raw),
   ShapeBits.textStyle => classifyTyped<TextStyle>(raw),
+  ShapeBits.locale => classifyTyped<Locale>(raw),
+  ShapeBits.numberFormat => classifyTyped<NumberFormat>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

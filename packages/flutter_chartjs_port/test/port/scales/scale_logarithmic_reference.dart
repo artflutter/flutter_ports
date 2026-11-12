@@ -4,9 +4,9 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // a build of Chart.js v4.6.1 at the commit
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 55 cases, 365 widths.
+// context of tool/reference/scale_chart_common.mjs. 56 cases, 365 widths.
 
-import 'dart:ui' show FontStyle;
+import 'dart:ui' show FontStyle, Locale;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:intl/intl.dart';
 
 /// The Node.js version that generated the data.
 const String scaleLogarithmicReferenceNode = 'v24.22.1';
@@ -57,10 +58,13 @@ typedef ScaleLogarithmicReferenceWidth = ({
 });
 
 /// The cases.
-const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
+///
+/// A `NumberFormat` of package:intl has no const constructor, so the
+/// list is final.
+final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   (
     name: 'log x and log y from 1 to 1e6',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -74,8 +78,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -1572,7 +1576,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'values from 0.001 to 1000',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -1586,8 +1590,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -3052,7 +3056,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'primitives and labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -3063,8 +3067,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -3881,7 +3885,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'string values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -3892,8 +3896,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -4861,7 +4865,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'null, NaN, negative, string and boolean values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -4880,8 +4884,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -5967,7 +5971,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'data with zeros',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -5978,8 +5982,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -6904,7 +6908,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'data with zeros and a min that is not a power of ten',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -6915,8 +6919,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -7621,7 +7625,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'zeros on both axes',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -7635,8 +7639,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -8730,7 +8734,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'only zeros',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -8741,8 +8745,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -9632,7 +9636,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'empty data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -9640,8 +9644,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
         32.0,
@@ -11168,7 +11172,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -11188,8 +11192,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
         32.0,
@@ -12671,7 +12675,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'stacked values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['category 1', 'category 2'],
@@ -12692,8 +12696,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[31.0166015625, 32.0, 480.9833984375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -13555,7 +13559,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'stacked values with zeros',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -13576,8 +13580,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -14551,7 +14555,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'parsing false with an absent x',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -14566,8 +14570,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
       },
       'options': <String, Object?>{'parsing': false},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.021484375,
         32.0,
@@ -16160,7 +16164,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'parsing false with zero, negative and string values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -16176,8 +16180,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
       },
       'options': <String, Object?>{'parsing': false},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.021484375,
         32.0,
@@ -17574,7 +17578,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -17594,8 +17598,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -18773,7 +18777,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min and max that are not powers of ten',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -18802,8 +18806,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -19392,7 +19396,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'string min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -19412,8 +19416,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -20883,7 +20887,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'negative and invalid min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -20903,8 +20907,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -22369,7 +22373,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min 0 and max 0',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -22389,8 +22393,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -23759,7 +23763,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min 0 with empty data and a max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -23773,8 +23777,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -25166,7 +25170,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min 0 with zeros in the data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -25188,8 +25192,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -26621,7 +26625,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'suggestedMin and suggestedMax',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -26641,8 +26645,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -28047,7 +28051,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'suggested bounds and empty data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -28061,8 +28065,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.021484375,
         32.0,
@@ -29589,7 +29593,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'suggestedMin 0 and empty data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -29602,8 +29606,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         18.01260593092117,
         32.0,
@@ -30539,7 +30543,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -30555,8 +30559,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -31286,7 +31290,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero with the suggestedMin at the data min',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -31302,8 +31306,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -32193,7 +32197,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero with a min',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -32209,8 +32213,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -32880,7 +32884,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero and empty data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -32893,8 +32897,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
         32.0,
@@ -34421,7 +34425,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'one value',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -34434,8 +34438,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
         32.0,
@@ -35983,7 +35987,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'one value with a min and a max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -36002,8 +36006,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -37412,7 +37416,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'empty data with a max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -37426,8 +37430,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -38815,7 +38819,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min above max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -38834,8 +38838,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         27.34765625,
         32.0,
@@ -39758,7 +39762,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'grace',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -39778,8 +39782,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -41244,7 +41248,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'bounds data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -41263,8 +41267,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
         32.0,
@@ -42427,7 +42431,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture small range',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -42454,8 +42458,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -43072,7 +43076,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture medium range',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -43099,8 +43103,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -43657,7 +43661,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture large range',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -43684,8 +43688,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -44722,7 +44726,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture large values in a small range',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -44757,8 +44761,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[74.05859375, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -45443,7 +45447,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture null values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -45487,8 +45491,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -45841,7 +45845,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a range from 0.5 to 10.4',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -45854,8 +45858,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -47204,7 +47208,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a range from 5000 to 6000',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -47215,8 +47219,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -47822,7 +47826,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a range from 1000 to 10000',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -47833,8 +47837,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[50.703125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -48720,7 +48724,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'reverse with zeros',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -48740,8 +48744,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         30.681640625,
         32.0,
@@ -49950,7 +49954,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'positions top and right',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -49970,8 +49974,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         14.031039980913285,
         96.15124463372645,
@@ -51468,7 +51472,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'offset',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -51488,8 +51492,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -52762,7 +52766,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a tick callback',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -52783,8 +52787,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         60.037109375,
         32.0,
@@ -54248,8 +54252,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
     },
   ),
   (
-    name: 'locale and format',
-    config: <String, Object?>{
+    name: 'locale',
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -54261,21 +54265,137 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
           },
         ],
       },
-      'options': <String, Object?>{
-        'locale': 'de-DE',
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
-              'format': <String, Object?>{'maximumFractionDigits': 1.0},
-            },
-          },
-        },
-      },
+      'options': <String, Object?>{'locale': Locale('de', 'DE')},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
       'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': 'logarithmic',
+          'axis': XAxis(),
+          'position': ChartPosition.bottom,
+          'min': 0.5,
+          'max': 15000.0,
+          'ticks': <Object?>[
+            <Object?>[0.7, '', false],
+            <Object?>[1.0, '1,0', true],
+            <Object?>[3.0, '3,0', false],
+            <Object?>[7.0, '', false],
+            <Object?>[10.0, '10,0', true],
+            <Object?>[30.0, '30,0', false],
+            <Object?>[70.0, '', false],
+            <Object?>[100.0, '100,0', true],
+            <Object?>[300.0, '300,0', false],
+            <Object?>[700.0, '', false],
+            <Object?>[1000.0, '1.000,0', true],
+            <Object?>[3000.0, '3.000,0', false],
+            <Object?>[7000.0, '7.000,0', false],
+            <Object?>[10000.0, '10.000,0', true],
+          ],
+          'box': <Object?>[44.029296875, 452.96120431576094, 512.0, 512.0],
+          'labelRotation': 50.0,
+          'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
+          'tickPixels': <Object?>[
+            59.30331687848592,
+            75.49443054411476,
+            125.36548748984033,
+            163.82822842330452,
+            180.01934208893337,
+            229.89039903465894,
+            268.3531399681232,
+            284.54425363375196,
+            334.41531057947753,
+            372.87805151294174,
+            389.06916517857053,
+            438.94022212429616,
+            477.4029630577603,
+            493.59407672338915,
+          ],
+          'valuePixels': <Object?>[44.029296875, 480.53637945874345, 512.0],
+          'valueForPixel': <Object?>[
+            0.5,
+            86.60254037844388,
+            15000.000000000004,
+          ],
+          'basePixel': 44.029296875,
+          'start': 0.5,
+          'end': 15000.0,
+          'significands': <Object?>[
+            7.0,
+            10.0,
+            3.0,
+            7.0,
+            10.0,
+            3.0,
+            7.0,
+            10.0,
+            3.0,
+            7.0,
+            10.0,
+            3.0,
+            7.0,
+            10.0,
+          ],
+          'labelForValue': <Object?>[
+            '0,5',
+            '15.000',
+            '1.234,5',
+            '0',
+            '98.765,432',
+            '0',
+            '0',
+            '7,5',
+            '1',
+            '0',
+          ],
+          'parse': <Object?>[
+            null,
+            null,
+            null,
+            null,
+            null,
+            12.0,
+            null,
+            undefined,
+            undefined,
+            12.5,
+            undefined,
+            null,
+            undefined,
+            1.0,
+            undefined,
+            7.0,
+            null,
+          ],
+          'pixelForValue': <Object?>[
+            44.029296875,
+            44.029296875,
+            44.029296875,
+            44.029296875,
+            <String, Object?>{'num': 'NaN'},
+            <String, Object?>{'num': 'NaN'},
+            284.54425363375196,
+            284.54425363375196,
+            284.54425363375196,
+            75.49443054411476,
+            44.029296875,
+            44.029296875,
+            512.0,
+            32767.0,
+            <String, Object?>{'num': 'NaN'},
+            -31281.979032901472,
+            <String, Object?>{'num': 'NaN'},
+            -32768.0,
+            284.54425363375196,
+            <String, Object?>{'num': 'NaN'},
+          ],
+          'valuesForPixels': <Object?>[
+            0.16619392277788075,
+            22.67278493931523,
+            45128.00392842168,
+          ],
+        },
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': YAxis(),
@@ -54353,10 +54473,1127 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
             '3.000',
             '1.234,5',
             '0',
-            '98.765,4',
+            '98.765,432',
             '0',
             '0',
             '7,5',
+            '1',
+            '0',
+          ],
+          'parse': <Object?>[
+            null,
+            null,
+            null,
+            null,
+            null,
+            12.0,
+            null,
+            undefined,
+            undefined,
+            12.5,
+            undefined,
+            null,
+            undefined,
+            1.0,
+            undefined,
+            7.0,
+            null,
+          ],
+          'pixelForValue': <Object?>[
+            452.96120431576094,
+            452.96120431576094,
+            452.96120431576094,
+            452.96120431576094,
+            <String, Object?>{'num': 'NaN'},
+            <String, Object?>{'num': 'NaN'},
+            220.36870404812055,
+            220.36870404812055,
+            220.36870404812055,
+            475.4171009840516,
+            452.96120431576094,
+            452.96120431576094,
+            32.0,
+            -32768.0,
+            <String, Object?>{'num': 'NaN'},
+            32767.0,
+            <String, Object?>{'num': 'NaN'},
+            32767.0,
+            220.36870404812055,
+            <String, Object?>{'num': 'NaN'},
+          ],
+          'valuesForPixels': <Object?>[
+            7399.52264132448,
+            180.19392960491712,
+            0.6081473384335134,
+          ],
+        },
+      },
+      'points': <Object?>[
+        <Object?>[
+          <Object?>[44.029296875, 452.96120431576094],
+          <Object?>[503.15717525888545, 36.81895593867859],
+        ],
+      ],
+      'drawCalls': '''
+["save"]
+["resetTransform"]
+["clearRect",0,0,512,512]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",59.5,32]
+["lineTo",59.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",59.5,453]
+["lineTo",59.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",75.5,32]
+["lineTo",75.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",75.5,453]
+["lineTo",75.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",125.5,32]
+["lineTo",125.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",125.5,453]
+["lineTo",125.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",163.5,32]
+["lineTo",163.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",163.5,453]
+["lineTo",163.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",180.5,32]
+["lineTo",180.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",180.5,453]
+["lineTo",180.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",229.5,32]
+["lineTo",229.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",229.5,453]
+["lineTo",229.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",268.5,32]
+["lineTo",268.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",268.5,453]
+["lineTo",268.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",284.5,32]
+["lineTo",284.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",284.5,453]
+["lineTo",284.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",334.5,32]
+["lineTo",334.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",334.5,453]
+["lineTo",334.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",372.5,32]
+["lineTo",372.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",372.5,453]
+["lineTo",372.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",389.5,32]
+["lineTo",389.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",389.5,453]
+["lineTo",389.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",438.5,32]
+["lineTo",438.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",438.5,453]
+["lineTo",438.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",477.5,32]
+["lineTo",477.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",477.5,453]
+["lineTo",477.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",493.5,32]
+["lineTo",493.5,452]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",493.5,453]
+["lineTo",493.5,460.96120431576094]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,437.5]
+["lineTo",512,437.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,437.5]
+["lineTo",44,437.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,398.5]
+["lineTo",512,398.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,398.5]
+["lineTo",44,398.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,376.5]
+["lineTo",512,376.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,376.5]
+["lineTo",44,376.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,360.5]
+["lineTo",512,360.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,360.5]
+["lineTo",44,360.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,347.5]
+["lineTo",512,347.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,347.5]
+["lineTo",44,347.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,309.5]
+["lineTo",512,309.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,309.5]
+["lineTo",44,309.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,271.5]
+["lineTo",512,271.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,271.5]
+["lineTo",44,271.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,248.5]
+["lineTo",512,248.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,248.5]
+["lineTo",44,248.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,232.5]
+["lineTo",512,232.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,232.5]
+["lineTo",44,232.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,220.5]
+["lineTo",512,220.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,220.5]
+["lineTo",44,220.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,181.5]
+["lineTo",512,181.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,181.5]
+["lineTo",44,181.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,143.5]
+["lineTo",512,143.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,143.5]
+["lineTo",44,143.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,121.5]
+["lineTo",512,121.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,121.5]
+["lineTo",44,121.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,105.5]
+["lineTo",512,105.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,105.5]
+["lineTo",44,105.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,92.5]
+["lineTo",512,92.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,92.5]
+["lineTo",44,92.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",45,54.5]
+["lineTo",512,54.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",36.029296875,54.5]
+["lineTo",44,54.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",44,452.5]
+["lineTo",513,452.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,452.96120431576094,512,59.03879568423906]
+["clip",null,null]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",53.787796888029284,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",69.97891055365812,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","1,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",119.8499674993837,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","3,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",158.31270843284787,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",174.50382209847672,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","10,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",224.3748790442023,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","30,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",262.8376199776665,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",279.0287336432953,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","100,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",328.8997905890209,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","300,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",367.3625315224851,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",383.5536451881139,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","1.000,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",433.4247021338395,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","3.000,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",471.88744306730365,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","7.000,0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",488.0785567329325,463.96120431576094]
+["rotate",-0.8726646259971648]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","10.000,0",0,7.199999999999999,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",44.5,32]
+["lineTo",44.5,453]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,44.029296875,512]
+["clip",null,null]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,437.02849207218725]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","2",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,398.6398831603229]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,376.18398649203226]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,360.25127424845857]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,347.89290251608605]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","10",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,309.5042936042217]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","20",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,271.1156846923574]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,248.6597880240667]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,232.72707578049298]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,220.36870404812055]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","100",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,181.98009513625618]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","200",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,143.59148622439182]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,121.13558955610124]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,105.20287731252748]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","800",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,92.84450558015499]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","1.000",0,0,null]
+["restore"]
+["save"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
+["translate",33.029296875,54.45589666829066]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","2.000",0,0,null]
+["restore"]
+["restore"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["arc",44.029296875,452.96120431576094,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["arc",503.15717525888545,36.81895593867859,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+''',
+    },
+  ),
+  (
+    name: 'format',
+    config: <String, Object?>{
+      'type': 'logTest',
+      'data': const <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'x': 0.5, 'y': 1.5},
+              <String, Object?>{'x': 12345.0, 'y': 2750.0},
+            ],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'ticks': <String, Object?>{
+              'format': (NumberFormat.decimalPattern()
+                ..maximumFractionDigits = 1
+                ..minimumFractionDigits = 0),
+            },
+          },
+        },
+      },
+    },
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
+      'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'type': 'logarithmic',
+          'axis': YAxis(),
+          'position': ChartPosition.left,
+          'min': 1.5,
+          'max': 3000.0,
+          'ticks': <Object?>[
+            <Object?>[2.0, '2', false],
+            <Object?>[4.0, '', false],
+            <Object?>[6.0, '', false],
+            <Object?>[8.0, '', false],
+            <Object?>[10.0, '10', true],
+            <Object?>[20.0, '20', false],
+            <Object?>[40.0, '', false],
+            <Object?>[60.0, '', false],
+            <Object?>[80.0, '', false],
+            <Object?>[100.0, '100', true],
+            <Object?>[200.0, '200', false],
+            <Object?>[400.0, '', false],
+            <Object?>[600.0, '', false],
+            <Object?>[800.0, '800', false],
+            <Object?>[1000.0, '1,000', true],
+            <Object?>[2000.0, '2,000', false],
+          ],
+          'box': <Object?>[0.0, 32.0, 44.029296875, 452.96120431576094],
+          'labelRotation': 0.0,
+          'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
+          'tickPixels': <Object?>[
+            437.02849207218725,
+            398.6398831603229,
+            376.18398649203226,
+            360.25127424845857,
+            347.89290251608605,
+            309.5042936042217,
+            271.1156846923574,
+            248.6597880240667,
+            232.72707578049298,
+            220.36870404812055,
+            181.98009513625618,
+            143.59148622439182,
+            121.13558955610124,
+            105.20287731252748,
+            92.84450558015499,
+            54.45589666829066,
+          ],
+          'valuePixels': <Object?>[452.96120431576094, 70.36092430458768, 32.0],
+          'valueForPixel': <Object?>[
+            3000.0000000000014,
+            67.08203932499372,
+            1.5,
+          ],
+          'basePixel': 452.96120431576094,
+          'start': 1.5,
+          'end': 3000.0,
+          'significands': <Object?>[
+            2.0,
+            4.0,
+            6.0,
+            8.0,
+            10.0,
+            2.0,
+            4.0,
+            6.0,
+            8.0,
+            10.0,
+            2.0,
+            4.0,
+            6.0,
+            8.0,
+            10.0,
+            2.0,
+          ],
+          'labelForValue': <Object?>[
+            '1.5',
+            '3,000',
+            '1,234.5',
+            '0',
+            '98,765.4',
+            '0',
+            '0',
+            '7.5',
             '1',
             '0',
           ],
@@ -54415,19 +55652,19 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
           'max': 15000.0,
           'ticks': <Object?>[
             <Object?>[0.7, '', false],
-            <Object?>[1.0, '1,0', true],
-            <Object?>[3.0, '3,0', false],
+            <Object?>[1.0, '1.0', true],
+            <Object?>[3.0, '3.0', false],
             <Object?>[7.0, '', false],
-            <Object?>[10.0, '10,0', true],
-            <Object?>[30.0, '30,0', false],
+            <Object?>[10.0, '10.0', true],
+            <Object?>[30.0, '30.0', false],
             <Object?>[70.0, '', false],
-            <Object?>[100.0, '100,0', true],
-            <Object?>[300.0, '300,0', false],
+            <Object?>[100.0, '100.0', true],
+            <Object?>[300.0, '300.0', false],
             <Object?>[700.0, '', false],
-            <Object?>[1000.0, '1.000,0', true],
-            <Object?>[3000.0, '3.000,0', false],
-            <Object?>[7000.0, '7.000,0', false],
-            <Object?>[10000.0, '10.000,0', true],
+            <Object?>[1000.0, '1,000.0', true],
+            <Object?>[3000.0, '3,000.0', false],
+            <Object?>[7000.0, '7,000.0', false],
+            <Object?>[10000.0, '10,000.0', true],
           ],
           'box': <Object?>[44.029296875, 452.96120431576094, 512.0, 512.0],
           'labelRotation': 50.0,
@@ -54474,14 +55711,14 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
             10.0,
           ],
           'labelForValue': <Object?>[
-            '0,5',
-            '15.000',
-            '1.234,5',
+            '0.5',
+            '15,000',
+            '1,234.5',
             '0',
-            '98.765,432',
+            '98,765.432',
             '0',
             '0',
-            '7,5',
+            '7.5',
             '1',
             '0',
           ],
@@ -55318,7 +56555,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","1.000",0,0,null]
+["fillText","1,000",0,0,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55327,7 +56564,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","2.000",0,0,null]
+["fillText","2,000",0,0,null]
 ["restore"]
 ["restore"]
 ["save"]
@@ -55358,7 +56595,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","1,0",0,7.199999999999999,null]
+["fillText","1.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55367,7 +56604,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","3,0",0,7.199999999999999,null]
+["fillText","3.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55385,7 +56622,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","10,0",0,7.199999999999999,null]
+["fillText","10.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55394,7 +56631,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","30,0",0,7.199999999999999,null]
+["fillText","30.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55412,7 +56649,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","100,0",0,7.199999999999999,null]
+["fillText","100.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55421,7 +56658,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","300,0",0,7.199999999999999,null]
+["fillText","300.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55439,7 +56676,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","1.000,0",0,7.199999999999999,null]
+["fillText","1,000.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55448,7 +56685,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","3.000,0",0,7.199999999999999,null]
+["fillText","3,000.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55457,7 +56694,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","7.000,0",0,7.199999999999999,null]
+["fillText","7,000.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
 ["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
@@ -55466,7 +56703,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["fillText","10.000,0",0,7.199999999999999,null]
+["fillText","10,000.0",0,7.199999999999999,null]
 ["restore"]
 ["restore"]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
@@ -55490,7 +56727,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'linear tick options',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -55516,8 +56753,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -56982,7 +58219,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'scientific labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -56995,8 +58232,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         89.3984375,
         32.0,
@@ -58515,7 +59752,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a narrow canvas',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -58529,10 +59766,10 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 150.0, 'height': 200.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
         32.0,
@@ -59050,7 +60287,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a narrow canvas without major ticks',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -59078,10 +60315,10 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 150.0, 'height': 200.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[57.376953125, 32.0, 150.0, 161.40651157205164],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -59744,7 +60981,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'maxTicksLimit',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logTest',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -59768,10 +61005,10 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 300.0, 'height': 250.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[57.376953125, 32.0, 270.3076171875, 221.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -60221,7 +61458,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'data without zeros after data with zeros',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -60232,8 +61469,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -61158,7 +62395,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero removed after the creation',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'logValueTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -61174,8 +62411,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{

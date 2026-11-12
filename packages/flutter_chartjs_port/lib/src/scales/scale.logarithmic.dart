@@ -57,14 +57,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show finiteOrDefault, isFinite;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber;
+    show formatNumber, localeOf;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, log10, setMinAndMaxByKey;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsMax, jsMin, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsIsObjectLike;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -379,18 +378,18 @@ class LogarithmicScale extends Scale {
   /// decimal is not the shortest round-trip form of its double gets other
   /// digits. For example, `'9007199254740993'` gives `9,007,199,254,740,993`
   /// in V8 and `9,007,199,254,740,992` in the port. Only the digits of the
-  /// label change (Chart.js ADR 0034). The `ticks.format` option is a Map of
-  /// the number format options, or another value, which gives no options.
+  /// label change (Chart.js ADR 0034). The `ticks.format` option is a
+  /// `NumberFormat` of package:intl, which formats the value as it is
+  /// (Chart.js ADR 0119).
   @override
   Object? getLabelForValue(Object? value) {
     if (identical(value, undefined)) {
       return '0';
     }
-    final format = options.ticks.format;
     return formatNumber(
       jsToNumber(value),
-      readOption(chart.options, OptionKey.locale),
-      jsIsObjectLike(format) ? format : null,
+      localeOf(readOption(chart.options, OptionKey.locale)),
+      options.ticks.format,
     );
   }
 

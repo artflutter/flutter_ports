@@ -978,7 +978,8 @@ void main() {
           'data': <Object?>[],
           'options': <String, Object?>{
             'animation': false,
-            'locale': 'en-US',
+            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+            'locale': const native_ui.Locale('en', 'US'),
             'responsive': false,
           },
         });
@@ -986,7 +987,8 @@ void main() {
         chart
           ..options = <String, Object?>{
             'animation': false,
-            'locale': 'en-US',
+            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+            'locale': const native_ui.Locale('en', 'US'),
             'responsive': false,
           }
           ..update();

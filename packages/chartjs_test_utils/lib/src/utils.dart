@@ -29,6 +29,8 @@ library;
 // The harness replaces a member of the chart that only the harness reads.
 // ignore_for_file: invalid_use_of_internal_member
 
+import 'dart:ui' show Locale;
+
 import 'package:chartjs_test_utils/src/dom.dart';
 // flutter_chartjs_port does not export lib/src. The harness reads the canvas
 // interface,
@@ -176,7 +178,12 @@ Chart acquireChart([
     'responsive',
     identical(responsive, undefined) ? false : responsive,
   );
-  jsSet(chartOptions, 'locale', _or(jsGet(chartOptions, 'locale'), 'en-US'));
+  // DIVERGES(chartjs): adapt-intl-number-format, the locale is a Locale.
+  jsSet(
+    chartOptions,
+    'locale',
+    _or(jsGet(chartOptions, 'locale'), const Locale('en', 'US')),
+  );
 
   if (jsTruthy(options['useShadowDOM'])) {
     // If shadowDOM is not supported by the browsers, mark test as 'pending'.

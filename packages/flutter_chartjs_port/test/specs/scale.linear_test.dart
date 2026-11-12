@@ -492,7 +492,8 @@ void main() {
             ],
           },
           'options': <String, Object?>{
-            'locale': 'de-DE',
+            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+            'locale': const native_ui.Locale('de', 'DE'),
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',

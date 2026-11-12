@@ -636,7 +636,8 @@ void main() {
     testWidgets('an entry of extra', (tester) async {
       final spy = await afterChange(
         tester,
-        (labels) => _bars(1, labels, extra: const {'locale': 'de-DE'}),
+        (labels) =>
+            _bars(1, labels, extra: const {'locale': ui.Locale('de', 'DE')}),
       );
       expect(spy.layouts, 1);
     });

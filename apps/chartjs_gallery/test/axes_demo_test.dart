@@ -1,9 +1,12 @@
 // Original code, not ported from Chart.js: tests of the gallery Axes tab.
 
+import 'dart:ui' as ui;
+
 import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/axes_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: jsToNumber, the JS ToNumber of a raw chart value.
@@ -233,7 +236,8 @@ void main() {
         'axes.bounds.${bounds?.name ?? 'auto'}',
       for (final unit in axesDemoTimeUnits)
         'axes.time.unit.${unit?.name ?? 'auto'}',
-      for (final locale in axesDemoLocales) 'axes.locale.$locale',
+      for (final locale in axesDemoLocales)
+        'axes.locale.${locale.toLanguageTag()}',
       'axes.data.randomize',
       'axes.data.add',
       'axes.data.remove',
@@ -575,7 +579,7 @@ void main() {
     final labels = [for (final tick in _scale(chart, 'x').ticks!) tick.label];
     expect(labels, contains('1,000'));
     await _tap(tester, 'axes.locale.de-DE');
-    expect(chart.options['locale'], 'de-DE');
+    expect(chart.options['locale'], const ui.Locale('de', 'DE'));
     expect(
       [for (final tick in _scale(chart, 'x').ticks!) tick.label],
       contains('1.000'),
