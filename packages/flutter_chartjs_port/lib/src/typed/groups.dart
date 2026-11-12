@@ -347,7 +347,7 @@ TitleOptionsScope lowerTitle(ChartTitle title) {
   put(scope, OptionKey.font, title.font);
   put(scope, OptionKey.align, title.align);
   put(scope, OptionKey.position, title.position);
-  put(scope, OptionKey.padding, paddingScope(title.padding));
+  put(scope, OptionKey.padding, title.padding);
   put(scope, OptionKey.fullSize, title.fullSize);
   return mergeExtra(scope, title.extra);
 }
@@ -591,7 +591,7 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.bodyFont, tooltip.bodyFont);
   put(scope, OptionKey.footerColor, colorValue(tooltip.footerColor));
   put(scope, OptionKey.footerFont, tooltip.footerFont);
-  put(scope, OptionKey.padding, paddingScope(tooltip.padding));
+  put(scope, OptionKey.padding, tooltip.padding);
   put(scope, OptionKey.cornerRadius, tooltip.cornerRadius);
   put(scope, OptionKey.displayColors, tooltip.displayColors);
   if (callbacks.ownKeyCount != 0) scope.callbacks = callbacks;

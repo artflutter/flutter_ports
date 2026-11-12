@@ -33,6 +33,7 @@
 //
 // The path can also be the first argument.
 
+import {DartPadding} from './scale_chart_common.mjs';
 import {fileURLToPath} from 'node:url';
 
 import {
@@ -66,7 +67,7 @@ function observeBox(box) {
   const text = box.options.text;
   return {
     lines: Array.isArray(text) ? text.length : 1,
-    options: plain(box.options),
+    options: {...plain(box.options), padding: new DartPadding(box.options.padding)},
   };
 }
 

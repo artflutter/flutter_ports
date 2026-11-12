@@ -8,6 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -1740,12 +1741,12 @@ void main() {
               'options': <String, Object?>{
                 'plugins': false,
                 'layout': <String, Object?>{
-                  'padding': <String, Object?>{
-                    'top': 30,
-                    'left': 1,
-                    'right': 1,
-                    'bottom': 1,
-                  },
+                  'padding': const EdgeInsets.only(
+                    left: 1,
+                    top: 30,
+                    right: 1,
+                    bottom: 1,
+                  ),
                 },
               },
             },

@@ -4,6 +4,7 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
@@ -141,10 +142,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'layout': <String, Object?>{
-        'padding': <String, Object?>{
-          'left': 24,
-          'right': 24,
-        },
+        'padding': const EdgeInsets.only(left: 24, right: 24),
       },
     },
   },

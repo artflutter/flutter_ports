@@ -10,7 +10,7 @@ import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -346,12 +346,12 @@ void main() {
               'tooltip': <String, Object?>{
                 'mode': const IndexInteractionMode(),
                 'intersect': false,
-                'padding': <String, Object?>{
-                  'left': 6,
-                  'top': 6,
-                  'right': 6,
-                  'bottom': 6,
-                },
+                'padding': const EdgeInsets.only(
+                  left: 6,
+                  top: 6,
+                  right: 6,
+                  bottom: 6,
+                ),
               },
             },
             'hover': <String, Object?>{
@@ -376,13 +376,8 @@ void main() {
 
         final options = tooltip.options!;
         expect(
-          jsGet(options, 'padding')! as JsObjectFace,
-          toEqualOptions(<String, Object?>{
-            'left': 6,
-            'top': 6,
-            'right': 6,
-            'bottom': 6,
-          }),
+          jsGet(options, 'padding'),
+          const EdgeInsets.all(6),
         );
         expect(tooltip.xAlign, TooltipXAlign.left);
         expect(tooltip.yAlign, TooltipYAlign.center);
@@ -528,7 +523,7 @@ void main() {
       final tooltip = _tooltipOf(chart);
       final options = tooltip.options!;
 
-      expect(jsGet(options, 'padding'), 6);
+      expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
       expect(tooltip.xAlign, TooltipXAlign.left);
       expect(tooltip.yAlign, TooltipYAlign.center);
 
@@ -655,7 +650,7 @@ void main() {
       final tooltip = _tooltipOf(chart);
       final options = tooltip.options!;
 
-      expect(jsGet(options, 'padding'), 6);
+      expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
       expect(tooltip.xAlign, TooltipXAlign.left);
       expect(tooltip.yAlign, TooltipYAlign.center);
 
@@ -1440,7 +1435,7 @@ void main() {
       final tooltip = _tooltipOf(chart);
       final options = tooltip.options!;
 
-      expect(jsGet(options, 'padding'), 6);
+      expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
       expect(tooltip.xAlign, TooltipXAlign.center);
       expect(tooltip.yAlign, TooltipYAlign.top);
 
@@ -1561,7 +1556,7 @@ void main() {
             'setContext': () => model['options'],
             'enabled': true,
 
-            'padding': 5,
+            'padding': const EdgeInsets.all(5),
 
             // Body
             'bodyFont': _modelFont(),
@@ -1945,7 +1940,7 @@ void main() {
                 'x': <String, Object?>{'display': false},
                 'y': <String, Object?>{'display': false},
               },
-              'layout': <String, Object?>{'padding': 5},
+              'layout': <String, Object?>{'padding': const EdgeInsets.all(5)},
             },
           });
 

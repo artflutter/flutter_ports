@@ -6,6 +6,7 @@ import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart';
@@ -371,7 +372,7 @@ void main() {
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{
-                'padding': 10,
+                'padding': const EdgeInsets.all(10),
               },
             },
           },
@@ -412,12 +413,12 @@ void main() {
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{
-                'padding': <String, Object?>{
-                  'left': 5,
-                  'right': 15,
-                  'top': 8,
-                  'bottom': 12,
-                },
+                'padding': const EdgeInsets.only(
+                  left: 5,
+                  top: 8,
+                  right: 15,
+                  bottom: 12,
+                ),
               },
             },
           },
@@ -460,7 +461,7 @@ void main() {
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{
-                'padding': <String, Object?>{},
+                'padding': EdgeInsets.zero,
               },
             },
           },

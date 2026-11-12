@@ -8,6 +8,7 @@
 
 import 'dart:ui' show FontStyle, Locale;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -45973,12 +45974,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'layout': <String, Object?>{
-          'padding': <String, Object?>{
-            'top': 30.0,
-            'left': 1.0,
-            'right': 1.0,
-            'bottom': 1.0,
-          },
+          'padding': EdgeInsets.fromLTRB(1, 30, 1, 1),
         },
       },
     },

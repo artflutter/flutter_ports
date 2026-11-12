@@ -36,6 +36,7 @@
 // The reference is V8 13.6 on arm64 (Chart.js ADR 0045). The script does not
 // stop on another architecture.
 
+import {dartPadding} from './scale_chart_common.mjs';
 import {fontRecord} from './font_record.mjs';
 import {execFileSync} from 'node:child_process';
 import {existsSync, writeFileSync} from 'node:fs';
@@ -310,6 +311,7 @@ let usesAxes = false;
  * [owner]: the enum value of a scale option, else `undefined` here.
  */
 function scaleEnum(k, x, owner) {
+  if (k === 'backdropPadding' || k === 'padding' && owner === 'title') return dartPadding(x);
   // The axis of a scale is a class (row adapt-axis-objects).
   if ((k === 'axis' || k === 'indexAxis') && ['x', 'y', 'r'].includes(x)) {
     usesAxes = true;
@@ -1186,13 +1188,13 @@ add('bottom, string autoSkipPadding', {
   scale: {ticks: range(40), min: 0, max: 39, maxWidth: 440, maxHeight: 200, box: [40, 350]},
   options: {axis: 'x', position: 'bottom', ticks: {autoSkipPadding: '3'}},
 });
-add('bottom, title with a string padding', {
+add('bottom, title with a uniform padding', {
   chart: wide,
   scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 330]},
   options: {
     axis: 'x',
     position: 'bottom',
-    title: {display: true, text: 'Time', padding: '4'},
+    title: {display: true, text: 'Time', padding: 4},
   },
 });
 add('left, string padding and tickLength', {
@@ -1363,6 +1365,7 @@ const out = `// Original code, not ported from Chart.js: Scale reference data.
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. ${cases.length} cases.
+import 'package:flutter/painting.dart' show EdgeInsets;
 ${usesScaleEnums || usesUndefined || usesAligns || usesPositions || usesAxes ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesAligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${usesAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${usesPositions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = '${process.version}';

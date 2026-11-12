@@ -335,14 +335,13 @@ void main() {
     }
   });
 
-  test('lets a core layer import the painting library for TextStyle only', () {
-    // Chart.js ADR 0116 item 6: show TextStyle and TextOverflow, no other
-    // name.
+  test('lets a core layer import native fonts and padding', () {
+    // Chart.js ADRs 0116 and 0123: only the native font and padding types.
     const path = 'lib/src/core/tick_font_cache.dart';
-    tree.write(path, [
-      _portOnly,
-      "import 'package:flutter/painting.dart' show TextOverflow, TextStyle;",
-    ]);
+    const nativeTypes =
+        "import 'package:flutter/painting.dart' "
+        'show EdgeInsets, TextOverflow, TextStyle;';
+    tree.write(path, [_portOnly, nativeTypes]);
     expect(run(), isEmpty);
     for (final directive in [
       "import 'package:flutter/painting.dart';",
@@ -352,8 +351,8 @@ void main() {
       expect(run(), [
         equals(
           'error: $path:2: imports package:flutter/painting.dart without '
-          '"show TextOverflow, TextStyle" in a core layer (Chart.js ADR '
-          '0116).',
+          '"show EdgeInsets, TextOverflow, TextStyle" in a core layer '
+          '(Chart.js ADRs 0116 and 0123).',
         ),
       ], reason: directive);
     }

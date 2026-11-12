@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: core.layouts cases with no spec.
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -369,7 +370,7 @@ void main() {
 
     test('gives a box without layers one layer that draws the box', () {
       final log = <(String, String, List<double>)>[];
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final box = _box(spec, log);
       layouts.addBox(chart, box);
 
@@ -385,7 +386,7 @@ void main() {
     });
 
     test('keeps the layers of a box', () {
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final box = _box(spec, []);
       List<LayoutLayer> own() => const [];
       box.layers = own;
@@ -395,7 +396,7 @@ void main() {
     });
 
     test('gives the start values of an unconfigured box', () {
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final box = _box(spec, []);
       layouts.addBox(chart, box);
 
@@ -412,7 +413,7 @@ void main() {
     final spec = layoutsReference.first.boxes.first;
 
     test('removes the box', () {
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final a = _box(spec, []);
       final b = _box(spec, []);
       layouts
@@ -424,7 +425,7 @@ void main() {
     });
 
     test('ignores a box that the chart does not have', () {
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final a = _box(spec, []);
       layouts
         ..addBox(chart, a)
@@ -438,7 +439,7 @@ void main() {
     // be undefined (plugin.title.js:134-135, plugin.subtitle.js:22).
     // `indexOf(undefined)` gives -1 (core.layouts.js:319).
     test('ignores null (JS undefined)', () {
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final a = _box(spec, []);
       final b = _box(spec, []);
       layouts
@@ -458,7 +459,7 @@ void main() {
     test('writes the three options', () {
       final box = _box(spec, []);
       const position = ScaleValuePosition('x', 0);
-      layouts.configure(_Chart(0), box, {
+      layouts.configure(_Chart(EdgeInsets.zero), box, {
         'fullSize': true,
         'position': position,
         'weight': 7,
@@ -475,12 +476,15 @@ void main() {
 
     test('writes the truthiness of fullSize', () {
       final box = _box(spec, []);
-      layouts.configure(_Chart(0), box, {'fullSize': 1, 'weight': null});
+      layouts.configure(_Chart(EdgeInsets.zero), box, {
+        'fullSize': 1,
+        'weight': null,
+      });
 
       expect(box.fullSize, isTrue);
       expect(box.position, same(undefined));
 
-      layouts.configure(_Chart(0), box, const {});
+      layouts.configure(_Chart(EdgeInsets.zero), box, const {});
       expect(box.fullSize, isFalse);
     });
   });
@@ -491,13 +495,13 @@ void main() {
 
     test('stores null, undefined and a string as they are', () {
       final box = _box(spec, []);
-      layouts.configure(_Chart(0), box, {'weight': null});
+      layouts.configure(_Chart(EdgeInsets.zero), box, {'weight': null});
       expect(box.weight, isNull);
 
-      layouts.configure(_Chart(0), box, const {});
+      layouts.configure(_Chart(EdgeInsets.zero), box, const {});
       expect(box.weight, same(undefined));
 
-      layouts.configure(_Chart(0), box, {'weight': '5'});
+      layouts.configure(_Chart(EdgeInsets.zero), box, {'weight': '5'});
       expect(box.weight, '5');
     });
 
@@ -505,7 +509,7 @@ void main() {
       // Upstream `undefined === undefined` is true, so the comparator
       // returns the index difference (core.layouts.js:22-24). A NaN weight
       // would keep the order.
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final a = _box(spec, []);
       final b = _box(spec, []);
       for (final box in [a, b]) {
@@ -524,7 +528,7 @@ void main() {
     test('keeps the order of a null and a 0 weight on the left', () {
       // Upstream `null === 0` is false, and `null - 0` is 0, so the order
       // stays. Equal numbers would reverse it.
-      final chart = _Chart(0);
+      final chart = _Chart(EdgeInsets.zero);
       final a = _box(spec, []);
       final b = _box(spec, []);
       for (final box in [a, b]) {

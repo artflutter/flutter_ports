@@ -3,6 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
@@ -29,7 +30,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'legend': <String, Object?>{'position': ChartPosition.left},
       },
       'layout': <String, Object?>{
-        'padding': <String, Object?>{'top': 55, 'left': 30, 'right': 30},
+        'padding': const EdgeInsets.only(left: 30, top: 55, right: 30),
       },
     },
   },

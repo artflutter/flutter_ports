@@ -3,6 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
@@ -83,12 +84,12 @@ Map<String, Object?> fixture() {
             // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
             'mode': const NearestInteractionMode(),
             'intersect': false,
-            'padding': 5,
+            'padding': const EdgeInsets.all(5),
             'usePointStyle': true,
             'callbacks': <String, Object?>{'label': () => '​'},
           },
         },
-        'layout': <String, Object?>{'padding': 15},
+        'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},
       },
       'plugins': <Object?>[
         <String, Object?>{

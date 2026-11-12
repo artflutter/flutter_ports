@@ -75,8 +75,8 @@ const String animationLibrary = 'package:flutter/animation.dart';
 const String paintingLibrary = 'package:flutter/painting.dart';
 
 /// The names that a core layer shows from [paintingLibrary]: `TextStyle`,
-/// and `TextOverflow`, the type of one field of `TextStyle`.
-const Set<String> paintingNames = {'TextOverflow', 'TextStyle'};
+/// `TextOverflow`, and `EdgeInsets` for padding (Chart.js ADR 0123).
+const Set<String> paintingNames = {'EdgeInsets', 'TextOverflow', 'TextStyle'};
 
 /// The library of `package:collection` that `lib/` can import.
 const String collectionLibrary = 'package:collection/collection.dart';
@@ -461,7 +461,7 @@ final class _Edge {
     }
   }
 
-  // The painting library in a pure layer: TextStyle only (Chart.js ADR 0116).
+  // Native fonts and padding in a pure layer (Chart.js ADRs 0116 and 0123).
   for (final path in pure.keys) {
     final library = libraries[path]!;
     for (final directive in library.source.directives) {
@@ -472,8 +472,8 @@ final class _Edge {
           library,
           directive.line,
           '${directive.keyword}s $paintingLibrary without '
-          '"show ${paintingNames.join(', ')}" in a core layer (Chart.js ADR '
-          '0116).',
+          '"show ${paintingNames.join(', ')}" in a core layer '
+          '(Chart.js ADRs 0116 and 0123).',
         );
       }
     }

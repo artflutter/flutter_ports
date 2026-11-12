@@ -23,9 +23,10 @@
 /// option keys and the type libraries.
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
+    show paddingOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show each, isObject;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -153,8 +154,8 @@ final class _LayoutParams {
   /// `outerHeight`.
   final double outerHeight;
 
-  /// `padding`, the `toPadding` of the `layout.padding` option.
-  final ChartArea padding;
+  /// The native `layout.padding` option.
+  final EdgeInsets padding;
 
   /// `availableWidth`.
   final double availableWidth;
@@ -185,7 +186,7 @@ final class _Edges implements TRBL {
 
   /// `Object.assign({}, padding)` (:404). The copy also has the `width` and
   /// `height` of the padding. No reader reads them.
-  _Edges.copy(TRBL padding)
+  _Edges.copy(EdgeInsets padding)
     : top = padding.top,
       right = padding.right,
       bottom = padding.bottom,
@@ -245,7 +246,7 @@ final class _LayoutArea {
     required this.h,
     required this.x,
     required this.y,
-    required ChartArea padding,
+    required EdgeInsets padding,
   }) : top = padding.top,
        right = padding.right,
        bottom = padding.bottom,
@@ -918,11 +919,11 @@ void _update(
     return;
   }
 
-  final padding = toPadding(
+  final padding = paddingOption(
     readOption(readOption(chart.options, OptionKey.layout), OptionKey.padding),
   );
-  final availableWidth = jsMax(width - padding.width, 0);
-  final availableHeight = jsMax(height - padding.height, 0);
+  final availableWidth = jsMax(width - padding.horizontal, 0);
+  final availableHeight = jsMax(height - padding.vertical, 0);
   final boxes = _buildLayoutBoxes(chart.boxes);
   final verticalBoxes = boxes.vertical;
   final horizontalBoxes = boxes.horizontal;

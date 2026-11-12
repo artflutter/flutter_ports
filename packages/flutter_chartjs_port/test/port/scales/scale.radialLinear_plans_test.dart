@@ -2,16 +2,17 @@
 @TestOn('vm')
 library;
 
-// Keep each step of a twin as its own statement.
-// ignore_for_file: cascade_invocations
-
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter/widgets.dart' show Directionality, SizedBox, TextStyle;
+// Keep each step of a twin as its own statement.
+// ignore_for_file: cascade_invocations
+
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter/widgets.dart' as widgets show TextDirection;
+import 'package:flutter/widgets.dart' show Directionality, SizedBox, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show
         AxisGrid,
@@ -485,7 +486,7 @@ final List<_Case> _cases = [
     expected: const _Expect(labels: false),
     pointLabels: () => {
       'backdropColor': const ui.Color(0xFFFFCC00),
-      'backdropPadding': 3.0,
+      'backdropPadding': const EdgeInsets.all(3),
       'borderRadius': 0.0,
     },
   ),

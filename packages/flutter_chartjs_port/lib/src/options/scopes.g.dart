@@ -15,7 +15,7 @@ library;
 import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
@@ -4926,13 +4926,13 @@ base class LayoutOptionsScope extends OptionScope {
   set autoPadding(bool value) =>
       store(OptionKey.autoPadding, OptValue<bool>(value));
 
-  Opt<Object>? _padding;
+  Opt<EdgeInsets>? _padding;
 
   /// The cell of `padding`, or Dart `null` when absent.
-  Opt<Object>? get paddingCell => _padding;
+  Opt<EdgeInsets>? get paddingCell => _padding;
 
   /// Stores the cell of `padding`. Dart `null` deletes the key.
-  set paddingCell(Opt<Object>? cell) {
+  set paddingCell(Opt<EdgeInsets>? cell) {
     if (cell == null) {
       delete(OptionKey.padding);
     } else {
@@ -4941,8 +4941,8 @@ base class LayoutOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `padding`.
-  set padding(Object value) =>
-      store(OptionKey.padding, classify(OptionKey.padding, value));
+  set padding(EdgeInsets value) =>
+      store(OptionKey.padding, OptValue<EdgeInsets>(value));
 
   @override
   Opt<Object?>? cellOf(OptionKey key) {
@@ -4962,7 +4962,7 @@ base class LayoutOptionsScope extends OptionScope {
       case OptionKey.autoPadding:
         _autoPadding = fitCell(cell, classifyBool);
       case OptionKey.padding:
-        _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _padding = fitCell(cell, classifyTyped<EdgeInsets>);
       default:
         throw ArgumentError.value(key, 'key', 'Not a key of LayoutOptions');
     }
@@ -4985,7 +4985,7 @@ base class LayoutOptionsScope extends OptionScope {
       case OptionKey.autoPadding:
         return classifyBool(raw);
       case OptionKey.padding:
-        return classifyUnion(raw, 33);
+        return classifyTyped<EdgeInsets>(raw);
       default:
         return kind.classifyOther(raw);
     }
@@ -17639,13 +17639,13 @@ base class TickOptionsScope extends OptionScope {
   set backdropColor(Object value) =>
       store(OptionKey.backdropColor, classify(OptionKey.backdropColor, value));
 
-  Opt<Object>? _backdropPadding;
+  Opt<EdgeInsets>? _backdropPadding;
 
   /// The cell of `backdropPadding`, or Dart `null` when absent.
-  Opt<Object>? get backdropPaddingCell => _backdropPadding;
+  Opt<EdgeInsets>? get backdropPaddingCell => _backdropPadding;
 
   /// Stores the cell of `backdropPadding`. Dart `null` deletes the key.
-  set backdropPaddingCell(Opt<Object>? cell) {
+  set backdropPaddingCell(Opt<EdgeInsets>? cell) {
     if (cell == null) {
       delete(OptionKey.backdropPadding);
     } else {
@@ -17654,10 +17654,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backdropPadding`.
-  set backdropPadding(Object value) => store(
-    OptionKey.backdropPadding,
-    classify(OptionKey.backdropPadding, value),
-  );
+  set backdropPadding(EdgeInsets value) =>
+      store(OptionKey.backdropPadding, OptValue<EdgeInsets>(value));
 
   Opt<Object>? _callback;
 
@@ -18214,7 +18212,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.backdropColor:
         _backdropColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.backdropPadding:
-        _backdropPadding = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _backdropPadding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.callback:
         _callback = fitCell(cell, (raw) => classifyUnion(raw, 10));
       case OptionKey.display:
@@ -18318,7 +18316,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.backdropColor:
         return classifyUnion(raw, 64);
       case OptionKey.backdropPadding:
-        return classifyUnion(raw, 33);
+        return classifyTyped<EdgeInsets>(raw);
       case OptionKey.callback:
         return classifyUnion(raw, 10);
       case OptionKey.display:
@@ -19158,13 +19156,13 @@ base class ScaleTitleOptionsScope extends OptionScope {
   set font(TextStyle value) =>
       store(OptionKey.font, OptValue<TextStyle>(value));
 
-  Opt<Object>? _padding;
+  Opt<EdgeInsets>? _padding;
 
   /// The cell of `padding`, or Dart `null` when absent.
-  Opt<Object>? get paddingCell => _padding;
+  Opt<EdgeInsets>? get paddingCell => _padding;
 
   /// Stores the cell of `padding`. Dart `null` deletes the key.
-  set paddingCell(Opt<Object>? cell) {
+  set paddingCell(Opt<EdgeInsets>? cell) {
     if (cell == null) {
       delete(OptionKey.padding);
     } else {
@@ -19173,8 +19171,8 @@ base class ScaleTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `padding`.
-  set padding(Object value) =>
-      store(OptionKey.padding, classify(OptionKey.padding, value));
+  set padding(EdgeInsets value) =>
+      store(OptionKey.padding, OptValue<EdgeInsets>(value));
 
   @override
   Opt<Object?>? cellOf(OptionKey key) {
@@ -19218,7 +19216,7 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.font:
         _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.padding:
-        _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _padding = fitCell(cell, classifyTyped<EdgeInsets>);
       default:
         throw ArgumentError.value(key, 'key', 'Not a key of ScaleTitleOptions');
     }
@@ -19259,7 +19257,7 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.font:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.padding:
-        return classifyUnion(raw, 33);
+        return classifyTyped<EdgeInsets>(raw);
       default:
         return kind.classifyOther(raw);
     }
@@ -19967,13 +19965,13 @@ base class PointLabelOptionsScope extends OptionScope {
   set backdropColor(Object value) =>
       store(OptionKey.backdropColor, classify(OptionKey.backdropColor, value));
 
-  Opt<Object>? _backdropPadding;
+  Opt<EdgeInsets>? _backdropPadding;
 
   /// The cell of `backdropPadding`, or Dart `null` when absent.
-  Opt<Object>? get backdropPaddingCell => _backdropPadding;
+  Opt<EdgeInsets>? get backdropPaddingCell => _backdropPadding;
 
   /// Stores the cell of `backdropPadding`. Dart `null` deletes the key.
-  set backdropPaddingCell(Opt<Object>? cell) {
+  set backdropPaddingCell(Opt<EdgeInsets>? cell) {
     if (cell == null) {
       delete(OptionKey.backdropPadding);
     } else {
@@ -19982,10 +19980,8 @@ base class PointLabelOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backdropPadding`.
-  set backdropPadding(Object value) => store(
-    OptionKey.backdropPadding,
-    classify(OptionKey.backdropPadding, value),
-  );
+  set backdropPadding(EdgeInsets value) =>
+      store(OptionKey.backdropPadding, OptValue<EdgeInsets>(value));
 
   Opt<Object>? _borderRadius;
 
@@ -20145,7 +20141,7 @@ base class PointLabelOptionsScope extends OptionScope {
       case OptionKey.backdropColor:
         _backdropColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.backdropPadding:
-        _backdropPadding = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _backdropPadding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.display:
@@ -20189,7 +20185,7 @@ base class PointLabelOptionsScope extends OptionScope {
       case OptionKey.backdropColor:
         return classifyUnion(raw, 64);
       case OptionKey.backdropPadding:
-        return classifyUnion(raw, 33);
+        return classifyTyped<EdgeInsets>(raw);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.display:
@@ -21126,13 +21122,13 @@ base class LegendTitleOptionsScope extends OptionScope {
   set position(ChartAlign value) =>
       store(OptionKey.position, OptValue<ChartAlign>(value));
 
-  Opt<Object>? _padding;
+  Opt<EdgeInsets>? _padding;
 
   /// The cell of `padding`, or Dart `null` when absent.
-  Opt<Object>? get paddingCell => _padding;
+  Opt<EdgeInsets>? get paddingCell => _padding;
 
   /// Stores the cell of `padding`. Dart `null` deletes the key.
-  set paddingCell(Opt<Object>? cell) {
+  set paddingCell(Opt<EdgeInsets>? cell) {
     if (cell == null) {
       delete(OptionKey.padding);
     } else {
@@ -21141,8 +21137,8 @@ base class LegendTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `padding`.
-  set padding(Object value) =>
-      store(OptionKey.padding, classify(OptionKey.padding, value));
+  set padding(EdgeInsets value) =>
+      store(OptionKey.padding, OptValue<EdgeInsets>(value));
 
   Opt<String>? _text;
 
@@ -21193,7 +21189,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.position:
         _position = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.padding:
-        _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _padding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.text:
         _text = fitCell(cell, classifyString);
       default:
@@ -21232,7 +21228,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.position:
         return classifyTyped<ChartAlign>(raw);
       case OptionKey.padding:
-        return classifyUnion(raw, 33);
+        return classifyTyped<EdgeInsets>(raw);
       case OptionKey.text:
         return classifyString(raw);
       default:
@@ -21356,13 +21352,13 @@ base class TitleOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `fullSize`.
   set fullSize(bool value) => store(OptionKey.fullSize, OptValue<bool>(value));
 
-  Opt<Object>? _padding;
+  Opt<EdgeInsets>? _padding;
 
   /// The cell of `padding`, or Dart `null` when absent.
-  Opt<Object>? get paddingCell => _padding;
+  Opt<EdgeInsets>? get paddingCell => _padding;
 
   /// Stores the cell of `padding`. Dart `null` deletes the key.
-  set paddingCell(Opt<Object>? cell) {
+  set paddingCell(Opt<EdgeInsets>? cell) {
     if (cell == null) {
       delete(OptionKey.padding);
     } else {
@@ -21371,8 +21367,8 @@ base class TitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `padding`.
-  set padding(Object value) =>
-      store(OptionKey.padding, classify(OptionKey.padding, value));
+  set padding(EdgeInsets value) =>
+      store(OptionKey.padding, OptValue<EdgeInsets>(value));
 
   Opt<Object>? _text;
 
@@ -21471,7 +21467,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.fullSize:
         _fullSize = fitCell(cell, classifyBool);
       case OptionKey.padding:
-        _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _padding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.text:
         _text = fitCell(cell, (raw) => classifyUnion(raw, 20));
       case OptionKey.weight:
@@ -21518,7 +21514,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.fullSize:
         return classifyBool(raw);
       case OptionKey.padding:
-        return classifyUnion(raw, 33);
+        return classifyTyped<EdgeInsets>(raw);
       case OptionKey.text:
         return classifyUnion(raw, 20);
       case OptionKey.weight:
@@ -22027,13 +22023,13 @@ base class TooltipOptionsScope extends OptionScope {
   set footerAlign(TextAlign value) =>
       store(OptionKey.footerAlign, OptValue<TextAlign>(value));
 
-  Opt<Object>? _padding;
+  Opt<EdgeInsets>? _padding;
 
   /// The cell of `padding`, or Dart `null` when absent.
-  Opt<Object>? get paddingCell => _padding;
+  Opt<EdgeInsets>? get paddingCell => _padding;
 
   /// Stores the cell of `padding`. Dart `null` deletes the key.
-  set paddingCell(Opt<Object>? cell) {
+  set paddingCell(Opt<EdgeInsets>? cell) {
     if (cell == null) {
       delete(OptionKey.padding);
     } else {
@@ -22042,8 +22038,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `padding`.
-  set padding(Object value) =>
-      store(OptionKey.padding, classify(OptionKey.padding, value));
+  set padding(EdgeInsets value) =>
+      store(OptionKey.padding, OptValue<EdgeInsets>(value));
 
   Opt<double>? _caretPadding;
 
@@ -22507,7 +22503,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerAlign:
         _footerAlign = fitCell(cell, classifyTyped<TextAlign>);
       case OptionKey.padding:
-        _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _padding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.caretPadding:
         _caretPadding = fitCell(cell, classifyNumber);
       case OptionKey.caretSize:
@@ -22659,7 +22655,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerAlign:
         return classifyTyped<TextAlign>(raw);
       case OptionKey.padding:
-        return classifyUnion(raw, 33);
+        return classifyTyped<EdgeInsets>(raw);
       case OptionKey.caretPadding:
         return classifyNumber(raw);
       case OptionKey.caretSize:

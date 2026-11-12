@@ -214,7 +214,7 @@ class AxesDemoState extends State<AxesDemo> {
     'maintainAspectRatio': false,
     'animation': false,
     'locale': _locale,
-    'layout': <String, Object?>{'padding': 8.0},
+    'layout': <String, Object?>{'padding': const EdgeInsets.all(8)},
     'elements': <String, Object?>{
       'point': <String, Object?>{
         'radius': 4.0,

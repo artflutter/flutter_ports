@@ -8,6 +8,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight, TextAlign;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -8105,7 +8106,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
           'r': <String, Object?>{
             'pointLabels': <String, Object?>{
               'backdropColor': 'rgba(0, 0, 255, 0.5)',
-              'backdropPadding': 4.0,
+              'backdropPadding': EdgeInsets.all(4),
             },
           },
         },
@@ -8681,12 +8682,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
           'r': <String, Object?>{
             'pointLabels': <String, Object?>{
               'backdropColor': 'yellow',
-              'backdropPadding': <String, Object?>{
-                'top': 1.0,
-                'left': 2.0,
-                'right': 3.0,
-                'bottom': 4.0,
-              },
+              'backdropPadding': EdgeInsets.fromLTRB(2, 1, 3, 4),
               'borderRadius': 4.0,
             },
           },
@@ -24356,7 +24352,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
           'r': <String, Object?>{
             'ticks': <String, Object?>{
               'backdropColor': 'yellow',
-              'backdropPadding': <String, Object?>{'x': 4.0, 'y': 1.0},
+              'backdropPadding': EdgeInsets.fromLTRB(4, 1, 4, 1),
               'color': 'blue',
               'textStrokeColor': 'red',
               'textStrokeWidth': 2.0,

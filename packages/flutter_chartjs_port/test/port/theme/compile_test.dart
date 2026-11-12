@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
@@ -58,6 +58,12 @@ String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
 
 String _jsonRaw(Object? value) => switch (value) {
   _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
+  final EdgeInsets p => _jsonRaw({
+    'top': p.top,
+    'right': p.right,
+    'bottom': p.bottom,
+    'left': p.left,
+  }),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',

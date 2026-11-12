@@ -5,6 +5,7 @@ library;
 import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/controllers/controller.line.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
@@ -122,7 +123,7 @@ Map<String, Object?> _titleOf(_Log log, String axis) => <String, Object?>{
 
 Object? Function(Object?) _padding(_Log log) => (ctx) {
   log.context('layout.padding', ctx);
-  return 4.0;
+  return const EdgeInsets.all(4);
 };
 
 Object? Function(Object?) _clip(_Log log) => (ctx) {

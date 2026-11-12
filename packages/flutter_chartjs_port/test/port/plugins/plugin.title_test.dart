@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -290,7 +291,7 @@ void main() {
       AnyObject options() => <String, Object?>{
         'display': true,
         'text': 'a',
-        'padding': 10,
+        'padding': const EdgeInsets.all(10),
         'font': const ChartTextStyle(fontSize: 12),
         'position': ChartPosition.top,
       };

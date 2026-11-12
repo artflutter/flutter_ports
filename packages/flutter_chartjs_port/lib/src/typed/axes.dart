@@ -1208,6 +1208,6 @@ ScaleTitleOptionsScope? _lowerTitle(AxisTitle? title) {
   put(scope, OptionKey.color, colorValue(title.color));
   put(scope, OptionKey.font, title.font);
   put(scope, OptionKey.align, title.align);
-  put(scope, OptionKey.padding, paddingScope(title.padding));
+  put(scope, OptionKey.padding, title.padding);
   return mergeExtra(scope, title.extra);
 }

@@ -6,6 +6,7 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -39,12 +40,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'layout': <String, Object?>{
-        'padding': <String, Object?>{
-          'top': 50,
-          'left': 30,
-          'right': 30,
-          'bottom': 50,
-        },
+        'padding': const EdgeInsets.only(
+          left: 30,
+          top: 50,
+          right: 30,
+          bottom: 50,
+        ),
       },
     },
     'plugins': <Object?>[

@@ -78,7 +78,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, halfPi, int16Range, limitValue, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext, addGrace, createContext, toFont, toPadding;
+    show ScriptableScaleContext, addGrace, createContext, toFont;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -348,11 +348,11 @@ double _getTitleHeight(ScaleTitleOptions options, Object? fallback) {
   }
 
   final font = toFont(options.font, fallback);
-  final padding = toPadding(options.padding);
+  final padding = options.padding;
   final text = options.text;
   final lines = isArray(text) ? (text! as List<Object?>).length : 1;
 
-  return (lines * font.lineHeight!) + padding.height;
+  return (lines * font.lineHeight!) + padding.vertical;
 }
 
 /// core.scale.js:107 `createScaleContext`.
@@ -2589,7 +2589,7 @@ class Scale extends _ScalePrototype
       _LabelBackdrop? backdrop;
 
       if (optsAtIndex.showLabelBackdrop) {
-        final labelPadding = toPadding(optsAtIndex.backdropPadding);
+        final labelPadding = optsAtIndex.backdropPadding;
         final height = _at(labelSizes.heights, i) ?? double.nan;
         final width = _at(labelSizes.widths, i) ?? double.nan;
 
@@ -2627,8 +2627,8 @@ class Scale extends _ScalePrototype
         backdrop = _LabelBackdrop(
           left,
           top,
-          width + labelPadding.width,
-          height + labelPadding.height,
+          width + labelPadding.horizontal,
+          height + labelPadding.vertical,
           optsAtIndex.backdropColor,
         );
       }
@@ -2980,7 +2980,7 @@ class Scale extends _ScalePrototype
     }
 
     final font = toFont(title.font);
-    final padding = toPadding(title.padding);
+    final padding = title.padding;
     final align = title.align;
     var offset = font.lineHeight! / 2;
 

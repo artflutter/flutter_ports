@@ -61,6 +61,8 @@ String _fixturePath(String stem, Set<String> paths) =>
 /// such a key in its config gets a hand port (Chart.js ADR 0115).
 const Set<String> _classValueKeys = {
   'axis',
+  'padding',
+  'backdropPadding',
   'cubicInterpolationMode',
   'cutout',
   'fill',

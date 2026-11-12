@@ -1,6 +1,7 @@
 # Chart.js ADR 0052: The typed public API
 
 - Status: accepted (2026-10-31). The lead accepted it when its code passed the tests, by the
+- Superseded in part by [ADR 0123](0123-edge-insets-padding.md): padding stays an `EdgeInsets` through lowering and option storage.
   maintainer's rule of 2026-10-31: no record waits for a measurement night.
 - Date: 2026-10-30
 - Background-color follow-up: [ADR 0077](0077-background-chart-value.md) replaces

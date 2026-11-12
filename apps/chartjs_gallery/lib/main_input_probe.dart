@@ -360,7 +360,7 @@ Map<String, Object?> inputProbeConfig(
     'maintainAspectRatio': false,
     'parsing': false,
     'layout': <String, Object?>{
-      'padding': <String, Object?>{'right': inputProbeRightPadding},
+      'padding': const EdgeInsets.only(right: inputProbeRightPadding),
     },
     // Stable axes for zoom and pan: only round tick values (no bounds),
     // no rotation of the x labels, and a fixed y-axis width. Then a step

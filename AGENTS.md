@@ -19,7 +19,7 @@ core layers. They may use `dart:ui.Color`, but no `package:flutter` framework AP
 One exception: a core layer can import `package:flutter/animation.dart` for the curve
 classes (`Curve`, `Curves`), the value of the option `easing` (row `adapt-flutter-curves`).
 A second exception: a core layer can import `package:flutter/painting.dart` with `show` of
-`TextStyle` and `TextOverflow`, for the font (Chart.js ADR 0116).
+`EdgeInsets`, `TextStyle` and `TextOverflow`, for padding and fonts (Chart.js ADRs 0123 and 0116).
 The chart core and harness run through Flutter; standalone Dart execution is no
 longer supported. No global color installer or intermediate option color exists.
 
@@ -62,7 +62,7 @@ longer supported. No global color installer or intermediate option color exists.
     component (Chart.js ADR 0048 §3). It fails when a ported file imports `lib/src/typed/`, and
     when a file of `lib/src/typed/` imports a library outside the allowlist of Chart.js ADR 0052
     §8. It fails when a core layer imports `package:flutter/painting.dart` with a name other
-    than `TextStyle` and `TextOverflow` (Chart.js ADR 0116 item 6). It keeps the
+    than `EdgeInsets`, `TextStyle` and `TextOverflow` (Chart.js ADRs 0123 and 0116). It keeps the
     `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer. An
     add-on port names its host in the top-level key `host` of its `tool/port_sources.yaml`. Its
     `lib/` and `test/` import only the libraries directly in the `lib/` of the host
@@ -1794,6 +1794,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     add-on libraries) is proposed. Its gate is zoom phase 0. An add-on port depends on its host
     port and imports only the public libraries of the host. ADR 0008 item 1 has the clause for it.
 
+Padding options hold `EdgeInsets` through raw and typed configs (Chart.js ADR 0123). A supplied inset replaces all
+four sides; omitted options inherit. Scalar label spacing remains numeric. `PaddingScope` and `toPadding` remain
+for border widths and internal minimum padding, not padding option conversion.
+
 ## Porting rules
 
 1. **Port from the pinned source.** Read the upstream file in `third_party/Chart.js` (check it out
@@ -2049,8 +2053,8 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 - A core (historically pure-layer) file may use `dart:ui.Color`, but reaches no
   `package:flutter` framework library through its direct or indirect imports (ADR 0061),
   except `package:flutter/animation.dart` for the curve classes of the option `easing`, and
-  `package:flutter/painting.dart` with `show TextOverflow, TextStyle` for the font (Chart.js ADR
-  0116). `check:lib-imports` computes the core layers from the roots in
+  `package:flutter/painting.dart` with `show EdgeInsets, TextOverflow, TextStyle` for padding and fonts (Chart.js ADRs
+  0123 and 0116). `check:lib-imports` computes the core layers from the roots in
   `packages/flutter_chartjs_port/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
   `lib/src/types/`, `lib/src/kurkle_color/`, the helpers except `helpers.extras`, the files of
   `lib/src/elements/`, `plugin.decimation` and the files of `plugin.filler/` of `lib/src/plugins/`,

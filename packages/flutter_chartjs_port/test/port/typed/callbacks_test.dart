@@ -6,6 +6,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/foundation.dart' show ValueChanged;
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart'
     show AnimationEvent;
@@ -162,7 +163,7 @@ void main() {
           'layout': <String, Object?>{
             'padding': (Object? context, Object? options) {
               contexts.add(context! as ChartContext);
-              return 0;
+              return EdgeInsets.zero;
             },
           },
         },

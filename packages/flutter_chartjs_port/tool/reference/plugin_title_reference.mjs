@@ -31,6 +31,7 @@
 //
 // The path can also be the first argument.
 
+import {DartPadding} from './scale_chart_common.mjs';
 import {fileURLToPath} from 'node:url';
 
 import {
@@ -64,7 +65,7 @@ function observeTitle(chart) {
   const text = title.options.text;
   return {
     lines: Array.isArray(text) ? text.length : 1,
-    options: plain(title.options),
+    options: {...plain(title.options), padding: new DartPadding(title.options.padding)},
   };
 }
 

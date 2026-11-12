@@ -5,11 +5,11 @@ library;
 import 'dart:typed_data';
 import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart'
     show Directionality, SizedBox, TextDirection, TextStyle, TickerMode, Widget;
@@ -45,7 +45,6 @@ import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
-
 import 'controller_reference.dart';
 import 'registry_observe.dart';
 
@@ -1121,19 +1120,28 @@ void main() {
           },
           'x2': <String, Object?>{'type': 'testlinear', 'axis': const XAxis()},
         },
-        'layout': <String, Object?>{'padding': 10},
+        'layout': <String, Object?>{'padding': const EdgeInsets.all(10)},
       };
+      EdgeInsets padding() =>
+          jsGet(chart.options['layout'], 'padding')! as EdgeInsets;
+      final initialPadding = padding();
+      final initialPaddingText = o.json({
+        'top': initialPadding.top,
+        'right': initialPadding.right,
+        'bottom': initialPadding.bottom,
+        'left': initialPadding.left,
+      });
       o.observe(
         'options before update',
         '${identical(chart.options, before)} '
-            '${o.json(jsGet(chart.options['layout'], 'padding'))}',
+            '$initialPaddingText',
       );
       chart.update();
       o
         ..observe(
           'options after update',
           '${identical(chart.options, before)} '
-              '${o.json(jsGet(chart.options['layout'], 'padding'))}',
+              '${o.json(padding().left)}',
         )
         ..observe(
           'scale ids',

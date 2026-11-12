@@ -7,7 +7,7 @@ import 'dart:io';
 import 'dart:ui' show FontWeight;
 
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
@@ -130,16 +130,20 @@ bool _fits(String kind, int shape) {
     'double' || 'int' =>
       shape & ShapeBits.number != 0 ||
           shape & ShapeBits.typed == ShapeBits.radiusLength ||
-          shape & ShapeBits.typed == ShapeBits.graceLength,
+          shape & ShapeBits.typed == ShapeBits.graceLength ||
+          shape & ShapeBits.typed == ShapeBits.edgeInsets,
     // Upstream data hold a name where the port has a typed atom: a curve, an
     // enum or a class of the port (`ShapeBits.typed`).
     'String' => shape & (ShapeBits.string | ShapeBits.typed) != 0,
     // Upstream data hold an image where the port has an `ImagePointStyle`.
     'obj:UiImageSource' => shape & ShapeBits.typed == ShapeBits.pointStyle,
     // A font is a `ChartTextStyle` (Chart.js ADR 0116).
+    'obj:EdgeInsets' => shape & ShapeBits.typed == ShapeBits.edgeInsets,
     'obj:ChartTextStyle' => shape & ShapeBits.typed == ShapeBits.textStyle,
     'bool' => shape & ShapeBits.boolean != 0,
-    'Map' => shape & ShapeBits.scope != 0,
+    'Map' =>
+      shape & ShapeBits.scope != 0 ||
+          shape & ShapeBits.typed == ShapeBits.edgeInsets,
     _ when kind.startsWith('NarrowMap') => shape & ShapeBits.scope != 0,
     _ => false,
   };
@@ -172,6 +176,25 @@ bool _isFontPath(ScopeKind root, String fontPath) {
       shape != null &&
       shape & ShapeBits.typed == ShapeBits.textStyle;
 }
+
+// Upstream padding fields belong to one native atom in the port.
+final RegExp _paddingField = RegExp(
+  r'^(.+\.(?:padding|backdropPadding))\.(top|right|bottom|left|x|y)$',
+);
+bool _isPaddingField(ScopeKind root, String path) {
+  final match = _paddingField.firstMatch(path);
+  if (match == null) return false;
+  final walk = _walk(root, match[1]!.split('.'));
+  return walk.shape != null &&
+      walk.shape! & ShapeBits.typed == ShapeBits.edgeInsets;
+}
+
+Map<String, double> _paddingSides(EdgeInsets p) => {
+  'top': p.top,
+  'right': p.right,
+  'bottom': p.bottom,
+  'left': p.left,
+};
 
 /// The families of the upstream family list [text] of a font object,
 /// without quotes: the rule of `families` of
@@ -285,6 +308,23 @@ String? _mismatch(Object? actual, Object? expected) {
   if (expected is String && isKeywordEnum(actual)) {
     return (actual! as Enum).name == expected ? null : '$actual != $expected';
   }
+  if (actual is EdgeInsets) {
+    if (expected is num) {
+      return actual == EdgeInsets.all(expected.toDouble())
+          ? null
+          : '$actual != $expected';
+    }
+    if (expected is Map<String, Object?>) {
+      for (final entry in expected.entries) {
+        final mismatch = _mismatch(
+          _paddingSides(actual)[entry.key],
+          entry.value,
+        );
+        if (mismatch != null) return mismatch;
+      }
+      return null;
+    }
+  }
   switch (expected) {
     case null:
       return actual == null ? null : 'not null: $actual';
@@ -379,6 +419,7 @@ void main() {
           // A field of a font object: the font path holds a TextStyle.
           final font = _fontField.firstMatch(path);
           if (font != null && _isFontPath(root, font[1]!)) continue;
+          if (_isPaddingField(root, path)) continue;
           final walk = _walk(root, path.split('.'));
           final shape = walk.shape;
           if (walk.depth != path.split('.').length || shape == null) {
@@ -460,6 +501,18 @@ void main() {
             if (mismatch != null) problems.add('$path: $mismatch');
             continue;
           }
+          final padding = _paddingField.firstMatch(path);
+          final paddingValue = padding == null
+              ? null
+              : _read(root, padding[1]!);
+          if (padding != null && paddingValue is EdgeInsets) {
+            final mismatch = _mismatch(
+              _paddingSides(paddingValue)[padding[2]],
+              expected,
+            );
+            if (mismatch != null) problems.add('$path: $mismatch');
+            continue;
+          }
           final Object? actual;
           try {
             actual = _read(root, path);
@@ -479,7 +532,8 @@ void main() {
         _leaves(root, '', leaves);
         // A font is one leaf: the inventory has its fields.
         bool hasFields(String leaf) =>
-            _read(root, leaf) is TextStyle &&
+            (_read(root, leaf) is TextStyle ||
+                _read(root, leaf) is EdgeInsets) &&
             paths.any((path) => path.startsWith('$leaf.'));
         expect(
           leaves.where((leaf) => !paths.contains(leaf) && !hasFields(leaf)),
@@ -607,7 +661,10 @@ void main() {
           }
           continue;
         }
-        if (_skipped(path)) continue;
+        if (_skipped(path) ||
+            _isPaddingField(ScopeKind.chartConfiguration, path)) {
+          continue;
+        }
         final segments = path.split('.');
         final walks = path.startsWith('data.datasets[].')
             ? [

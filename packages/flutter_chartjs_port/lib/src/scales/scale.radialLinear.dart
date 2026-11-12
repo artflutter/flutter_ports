@@ -41,7 +41,7 @@ import 'dart:math' as math;
 
 import 'dart:ui' show TextAlign;
 
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
@@ -67,7 +67,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, normalizeAngle, pi, tau, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScalePointLabelContext, toFont, toPadding, toTRBLCorners;
+    show ScriptableScalePointLabelContext, toFont, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsMax, jsMin, jsRound;
@@ -243,7 +243,7 @@ double _getTickBackdropHeight(CoreScaleOptions opts) {
   final tickOpts = opts.ticks;
 
   if (tickOpts.display && jsTruthy(opts.display)) {
-    final padding = toPadding(tickOpts.backdropPadding);
+    final padding = tickOpts.backdropPadding;
     final font = tickOpts.font;
     // DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
     // `tickOpts.font && tickOpts.font.size`: a null font stays null, which
@@ -256,7 +256,7 @@ double _getTickBackdropHeight(CoreScaleOptions opts) {
               : font,
           _defaultFontSize(),
         ),
-        padding.height,
+        padding.vertical,
       ),
     );
   }
@@ -686,13 +686,13 @@ void _drawPointLabelBox(
 
   if (!isNullOrUndef(backdropColor)) {
     final borderRadius = toTRBLCorners(opts.borderRadius);
-    final padding = toPadding(opts.backdropPadding);
+    final padding = opts.backdropPadding;
     ctx.fillStyle = canvasStyle(backdropColor);
 
     final backdropLeft = left - padding.left;
     final backdropTop = top - padding.top;
-    final backdropWidth = right - left + padding.width;
-    final backdropHeight = bottom - top + padding.height;
+    final backdropWidth = right - left + padding.horizontal;
+    final backdropHeight = bottom - top + padding.vertical;
 
     if (borderRadius.topLeft != 0 ||
         borderRadius.topRight != 0 ||
@@ -1067,7 +1067,7 @@ class RadialLinearScale extends LinearScaleBase
     ..pointLabels = (PointLabelOptionsScope()
       ..backdropColorCell = optUndefined
       // Number - The backdrop padding above & below the label in pixels
-      ..backdropPadding = 2.0
+      ..backdropPadding = const EdgeInsets.all(2)
       // Boolean - if true, show point labels
       ..display = true
       // Number - Point label font size in pixels
@@ -1156,15 +1156,17 @@ class RadialLinearScale extends LinearScaleBase
   /// scale.radialLinear.js:428 `_padding`, the padding of the tick
   /// backdrop. [setDimensions] writes it. Dart `null` stands for JS
   /// `undefined`: the constructor does not declare it.
-  types.ChartArea? _padding;
+  EdgeInsets? _padding;
 
   /// scale.radialLinear.js:426 `setDimensions()`.
   @override
   void setDimensions() {
     // Set the unconstrained dimension before label rotation
-    final padding = _padding = toPadding(_getTickBackdropHeight(options) / 2);
-    final w = width = maxWidth - padding.width;
-    final h = height = maxHeight - padding.height;
+    final padding = _padding = EdgeInsets.all(
+      _getTickBackdropHeight(options) / 2,
+    );
+    final w = width = maxWidth - padding.horizontal;
+    final h = height = maxHeight - padding.vertical;
     xCenter = (left + w / 2 + padding.left).floorToDouble();
     yCenter = (top + h / 2 + padding.top).floorToDouble();
     drawingArea = (jsMin(w, h) / 2).floorToDouble();
@@ -1627,12 +1629,12 @@ class RadialLinearScale extends LinearScaleBase
         final width = ctx.measureText(jsToString(tick.label)).width;
         ctx.fillStyle = canvasStyle(optsAtIndex.backdropColor);
 
-        final padding = toPadding(optsAtIndex.backdropPadding);
+        final padding = optsAtIndex.backdropPadding;
         ctx.fillRect(
           -width / 2 - padding.left,
           -offset - tickFont.fontSize! / 2 - padding.top,
-          width + padding.width,
-          tickFont.fontSize! + padding.height,
+          width + padding.horizontal,
+          tickFont.fontSize! + padding.vertical,
         );
       }
 

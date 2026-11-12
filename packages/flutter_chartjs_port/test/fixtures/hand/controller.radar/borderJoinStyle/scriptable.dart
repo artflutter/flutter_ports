@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' show StrokeJoin;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
@@ -57,7 +58,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'layout': <String, Object?>{
-        'padding': 32,
+        'padding': const EdgeInsets.all(32),
       },
       'scales': <String, Object?>{
         'r': <String, Object?>{

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -69,6 +70,12 @@ String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
 
 String _jsonRaw(Object? value) => switch (value) {
   _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
+  final EdgeInsets p => _jsonRaw({
+    'top': p.top,
+    'right': p.right,
+    'bottom': p.bottom,
+    'left': p.left,
+  }),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
@@ -952,7 +959,7 @@ void main() {
           '"color":"rgba(0,0,0,0.1)"}';
       const title =
           '"title":{"display":false,"text":"","padding":{"top":4,'
-          '"bottom":4},"color":"#666"}';
+          '"right":0,"bottom":4,"left":0},"color":"#666"}';
       const ticks =
           '"ticks":{"minRotation":0,"maxRotation":50,"mirror":false,'
           '"textStrokeWidth":0,"textStrokeColor":"","padding":3,'
@@ -961,7 +968,8 @@ void main() {
           '"align":"center","crossAlign":"near","showLabelBackdrop":false,'
           // The CSS scalar is frozen upstream reference data.
           // ignore: missing_whitespace_between_adjacent_strings
-          '"backdropColor":"rgba(255, 255, 255, 0.75)","backdropPadding":2,'
+          '"backdropColor":"rgba(255, 255, 255, 0.75)",'
+          '"backdropPadding":{"top":2,"right":2,"bottom":2,"left":2},'
           '"color":"#666"}';
       expect(
         _json(_at(config.options, 'scales.x')),

@@ -1915,7 +1915,7 @@ enum ScopeKind {
           case OptionKey.autoPadding:
             return 2;
           case OptionKey.padding:
-            return 33;
+            return 4480;
           default:
             return 0;
         }
@@ -2948,7 +2948,7 @@ enum ScopeKind {
           case OptionKey.backdropColor:
             return 64;
           case OptionKey.backdropPadding:
-            return 33;
+            return 4480;
           case OptionKey.callback:
             return 10;
           case OptionKey.display:
@@ -3080,7 +3080,7 @@ enum ScopeKind {
           case OptionKey.font:
             return 4096;
           case OptionKey.padding:
-            return 33;
+            return 4480;
           default:
             return 0;
         }
@@ -3148,7 +3148,7 @@ enum ScopeKind {
           case OptionKey.backdropColor:
             return 64;
           case OptionKey.backdropPadding:
-            return 33;
+            return 4480;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.display:
@@ -3247,7 +3247,7 @@ enum ScopeKind {
           case OptionKey.position:
             return 1536;
           case OptionKey.padding:
-            return 33;
+            return 4480;
           case OptionKey.text:
             return 4;
           default:
@@ -3268,7 +3268,7 @@ enum ScopeKind {
           case OptionKey.fullSize:
             return 2;
           case OptionKey.padding:
-            return 33;
+            return 4480;
           case OptionKey.text:
             return 20;
           case OptionKey.weight:
@@ -3335,7 +3335,7 @@ enum ScopeKind {
           case OptionKey.footerAlign:
             return 2688;
           case OptionKey.padding:
-            return 33;
+            return 4480;
           case OptionKey.caretPadding:
             return 1;
           case OptionKey.caretSize:
@@ -3653,12 +3653,7 @@ enum ScopeKind {
       case ScopeKind.padding:
         return null;
       case ScopeKind.layoutOptions:
-        switch (key) {
-          case OptionKey.padding:
-            return ScopeKind.padding;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.interactionOptions:
         return null;
       case ScopeKind.parsingOptions:
@@ -3889,8 +3884,6 @@ enum ScopeKind {
         }
       case ScopeKind.tickOptions:
         switch (key) {
-          case OptionKey.backdropPadding:
-            return ScopeKind.padding;
           case OptionKey.major:
             return ScopeKind.majorTickOptions;
           case OptionKey.minor:
@@ -3907,12 +3900,7 @@ enum ScopeKind {
       case ScopeKind.borderOptions:
         return null;
       case ScopeKind.scaleTitleOptions:
-        switch (key) {
-          case OptionKey.padding:
-            return ScopeKind.padding;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.timeScaleTimeOptions:
         switch (key) {
           case OptionKey.displayFormats:
@@ -3926,8 +3914,6 @@ enum ScopeKind {
         return null;
       case ScopeKind.pointLabelOptions:
         switch (key) {
-          case OptionKey.backdropPadding:
-            return ScopeKind.padding;
           case OptionKey.borderRadius:
             return ScopeKind.borderRadius;
           default:
@@ -3945,23 +3931,11 @@ enum ScopeKind {
       case ScopeKind.legendLabelOptions:
         return null;
       case ScopeKind.legendTitleOptions:
-        switch (key) {
-          case OptionKey.padding:
-            return ScopeKind.padding;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.titleOptions:
-        switch (key) {
-          case OptionKey.padding:
-            return ScopeKind.padding;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.tooltipOptions:
         switch (key) {
-          case OptionKey.padding:
-            return ScopeKind.padding;
           case OptionKey.cornerRadius:
             return ScopeKind.borderRadius;
           case OptionKey.animation:

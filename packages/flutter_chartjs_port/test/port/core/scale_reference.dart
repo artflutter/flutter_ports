@@ -4,6 +4,7 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. 93 cases.
+import 'package:flutter/painting.dart' show EdgeInsets;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
@@ -1810,7 +1811,7 @@ const List<ScaleReferenceCase> scaleReference = [
         'align': TickAlign.inner,
         'crossAlign': TickCrossAlign.center,
         'showLabelBackdrop': true,
-        'backdropPadding': 3.0,
+        'backdropPadding': EdgeInsets.all(3),
         'backdropColor': 'yellow',
       },
     },
@@ -7489,7 +7490,7 @@ const List<ScaleReferenceCase> scaleReference = [
         'text': 'Time',
         'align': ChartAlign.end,
         'color': 'purple',
-        'padding': <String, Object?>{'top': 2.0, 'bottom': 6.0},
+        'padding': EdgeInsets.fromLTRB(0, 2, 0, 6),
       },
     },
     expected: <String, Object?>{
@@ -10290,7 +10291,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'ticks': <String, Object?>{
         'align': TickAlign.start,
         'showLabelBackdrop': true,
-        'backdropPadding': 2.0,
+        'backdropPadding': EdgeInsets.all(2),
       },
     },
     expected: <String, Object?>{
@@ -10541,7 +10542,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'ticks': <String, Object?>{
         'align': TickAlign.end,
         'showLabelBackdrop': true,
-        'backdropPadding': 2.0,
+        'backdropPadding': EdgeInsets.all(2),
       },
     },
     expected: <String, Object?>{
@@ -19569,7 +19570,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
   ),
   (
-    name: 'bottom, title with a string padding',
+    name: 'bottom, title with a uniform padding',
     chart: <String, Object?>{
       'width': 500.0,
       'height': 400.0,
@@ -19595,7 +19596,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'title': <String, Object?>{
         'display': true,
         'text': 'Time',
-        'padding': '4',
+        'padding': EdgeInsets.all(4),
       },
     },
     expected: <String, Object?>{

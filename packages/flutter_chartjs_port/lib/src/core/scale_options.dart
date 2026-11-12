@@ -44,11 +44,13 @@
 /// `lib/src/options/`: a pure layer.
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
+
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextProxy, OptionView, boolOption, readOption;
+    show ContextProxy, OptionView, boolOption, paddingOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
     show numberFormatOf;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -287,7 +289,8 @@ extension type const TickOptions(Object? raw) {
   Object? get backdropColor => readOption(raw, OptionKey.backdropColor);
 
   /// index.d.ts:3125 `backdropPadding: number | ChartArea`.
-  Object? get backdropPadding => readOption(raw, OptionKey.backdropPadding);
+  EdgeInsets get backdropPadding =>
+      paddingOption(readOption(raw, OptionKey.backdropPadding));
 
   /// index.d.ts:3130 `callback`, the tick label callback.
   Object? get callback => readOption(raw, OptionKey.callback);
@@ -503,7 +506,7 @@ extension type const ScaleTitleOptions(Object? raw) {
   Object? get font => readOption(raw, OptionKey.font);
 
   /// index.d.ts:3325 `padding`.
-  Object? get padding => readOption(raw, OptionKey.padding);
+  EdgeInsets get padding => paddingOption(readOption(raw, OptionKey.padding));
 }
 
 /// index.d.ts:3429 `TimeScaleTimeOptions`.
@@ -589,7 +592,8 @@ extension type const PointLabelOptions(Object? raw) {
   Object? get backdropColor => readOption(raw, OptionKey.backdropColor);
 
   /// index.d.ts:3623 `backdropPadding`.
-  Object? get backdropPadding => readOption(raw, OptionKey.backdropPadding);
+  EdgeInsets get backdropPadding =>
+      paddingOption(readOption(raw, OptionKey.backdropPadding));
 
   /// index.d.ts:3630 `borderRadius`.
   Object? get borderRadius => readOption(raw, OptionKey.borderRadius);

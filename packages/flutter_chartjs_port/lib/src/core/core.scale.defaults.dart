@@ -12,6 +12,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign;
@@ -27,7 +28,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         GridLineOptionsScope,
         MajorTickOptionsScope,
         MinorTickOptionsScope,
-        PaddingScope,
         ScaleOptionsScope,
         ScaleTitleOptionsScope,
         TickOptionsScope;
@@ -83,9 +83,7 @@ void applyScaleDefaults(Defaults defaults) {
           // actual label
           ..text = ''
           // top/bottom padding
-          ..padding = (PaddingScope()
-            ..top = 4.0
-            ..bottom = 4.0))
+          ..padding = const EdgeInsets.symmetric(vertical: 4))
         // label settings
         ..ticks = (TickOptionsScope()
           ..minRotation = 0.0
@@ -108,7 +106,7 @@ void applyScaleDefaults(Defaults defaults) {
           ..crossAlign = TickCrossAlign.near
           ..showLabelBackdrop = false
           ..backdropColor = const ui.Color.fromRGBO(255, 255, 255, 0.75)
-          ..backdropPadding = 2.0),
+          ..backdropPadding = const EdgeInsets.all(2)),
     )
     ..route('scale.ticks', 'color', '', 'color')
     ..route('scale.grid', 'color', '', 'borderColor')

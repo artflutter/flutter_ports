@@ -2,6 +2,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -41,7 +42,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'layout': <String, Object?>{
-        'padding': 32,
+        'padding': const EdgeInsets.all(32),
       },
       'scales': <String, Object?>{
         'x': <String, Object?>{'display': false},

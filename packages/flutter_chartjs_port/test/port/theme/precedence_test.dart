@@ -9,7 +9,7 @@ import 'dart:ui' show FontStyle;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
@@ -304,6 +304,12 @@ final AnyObject _themeProbe = <String, Object?>{
 String _json(Object? value) => switch (value) {
   final _ColorMarker marker => jsonEncode(marker.label),
   _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
+  final EdgeInsets p => _json({
+    'top': p.top,
+    'right': p.right,
+    'bottom': p.bottom,
+    'left': p.left,
+  }),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
