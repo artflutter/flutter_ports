@@ -398,8 +398,8 @@ List<ChartConfig> _configs() {
             weight: 1,
             circumference: 360,
             rotation: 0,
-            cutout: const .percent(50),
-            radius: const .pixels(100),
+            cutout: const PercentRadius(50),
+            radius: const PixelRadius(100),
           ),
           DoughnutDataset(
             data: data,
@@ -409,8 +409,8 @@ List<ChartConfig> _configs() {
             weight: 1,
             circumference: 360,
             rotation: 0,
-            cutout: const .percent(50),
-            radius: const .pixels(100),
+            cutout: const PercentRadius(50),
+            radius: const PixelRadius(100),
           ),
         ])
           dataset,

@@ -101,27 +101,6 @@ void main() {
     });
   });
 
-  group('ChartLength', () {
-    test('pixels give the number', () {
-      expect(const ChartLength.pixels(0).optionValue, 0);
-      expect(const ChartLength.pixels(12.5).optionValue, 12.5);
-    });
-
-    test('a percent gives the JS form of the number with %', () {
-      expect(const ChartLength.percent(50).optionValue, '50%');
-      expect(const ChartLength.percent(12.5).optionValue, '12.5%');
-      expect(const ChartLength.percent(100).optionValue, '100%');
-    });
-
-    test('equal lengths are ==, a percent is not a pixel count', () {
-      final percent = ChartLength.percent(_runtime(50));
-      expect(percent, const ChartLength.percent(50));
-      expect(percent.hashCode, const ChartLength.percent(50).hashCode);
-      expect(ChartLength.pixels(_runtime(50)), const ChartLength.pixels(50));
-      expect(percent, isNot(const ChartLength.pixels(50)));
-    });
-  });
-
   group('TimeUnit', () {
     // core.adapters.ts:10: the 9 units of the union, in its order.
     test('the constants name the 9 units of the union', () {

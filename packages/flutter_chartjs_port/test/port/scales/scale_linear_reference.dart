@@ -7,6 +7,7 @@
 // context of tool/reference/scale_chart_common.mjs. 76 cases, 277 widths.
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -22480,7 +22481,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'grace': '10%'},
+          'y': <String, Object?>{'grace': PercentGrace(10)},
         },
       },
     },
@@ -22969,7 +22970,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'grace': 5.0, 'beginAtZero': true},
+          'y': <String, Object?>{'grace': ValueGrace(5), 'beginAtZero': true},
         },
       },
     },

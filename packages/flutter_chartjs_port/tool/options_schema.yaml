@@ -46,7 +46,9 @@
 # `CubicInterpolationMode`, the value of the line `cubicInterpolationMode`; a mode name is a foreign
 # value), `pointStyle` (a `PointStyle`, the value of `pointStyle`, with `bool` in its unions for
 # `false`; a style name is a foreign value), `fillTarget` (a `FillTarget`, a `FillBoundary` or a
-# `RelativeFill` of `fill`; a keyword or a relative index as text is a foreign value), `any` (any
+# `RelativeFill` of `fill`; a keyword or a relative index as text is a foreign value),
+# `radiusLength` (a `RadiusLength`, the doughnut `cutout` and `radius`) and `graceLength` (a
+# `GraceLength`, the scale `grace`; a number or a percent text is a foreign value), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -111,9 +113,9 @@ kinds:
       spanGaps: bool | number  # index.d.ts:216 LineControllerChartOptions
       showLine: bool
       circumference: number  # index.d.ts:307 DoughnutControllerChartOptions
-      cutout: number | string
+      cutout: radiusLength
       offset: number
-      radius: number | string
+      radius: radiusLength
       rotation: number
       spacing: number
       spacingMode: arcSpacingMode
@@ -682,8 +684,8 @@ kinds:
       tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
       type: string  # index.d.ts:3859 ChartDatasetProperties
       data: list
-      cutout: number | string  # index.d.ts:307 DoughnutControllerChartOptions
-      radius: number | string
+      cutout: radiusLength  # index.d.ts:307 DoughnutControllerChartOptions
+      radius: radiusLength
       xAxisID: string  # read at core.datasetController.js:306
       yAxisID: string  # read at core.datasetController.js:307
       rAxisID: string  # read at core.datasetController.js:308
@@ -880,7 +882,7 @@ kinds:
       ticks: scope TickOptions
       labels: list
       beginAtZero: bool
-      grace: number | string
+      grace: graceLength
       offsetAfterAutoskip: bool
       adapters: any
       time: scope TimeScaleTimeOptions

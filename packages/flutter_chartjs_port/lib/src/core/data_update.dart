@@ -7,8 +7,12 @@ import 'dart:ui' show Color;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
@@ -145,6 +149,8 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         node is Enum ||
         node is PointStyle ||
         node is CubicInterpolationMode ||
+        node is RadiusLength ||
+        node is GraceLength ||
         node.runtimeType == Color) {
       return true;
     }

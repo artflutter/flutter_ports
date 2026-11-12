@@ -10,6 +10,10 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode, IndexInteractionMode, InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -23,6 +27,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
@@ -59,6 +64,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
+  RadiusLength() || GraceLength() => lengthJson,
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>

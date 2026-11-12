@@ -7,8 +7,12 @@ import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -22,6 +26,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
 
 // Upstream behavior that test/specs/core.defaults.tests.js does not check
@@ -49,6 +54,7 @@ String _jsonRaw(Object? value) => switch (value) {
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
+  RadiusLength() || GraceLength() => lengthJson,
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
@@ -173,7 +179,7 @@ void main() {
           '"onHover":null,"onClick":null,"parsing":true,"plugins":{},'
           '"responsive":true,"scale":{"display":true,"offset":false,'
           '"reverse":false,"beginAtZero":false,"bounds":"ticks","clip":true,'
-          '"grace":0,"grid":{"display":true,"lineWidth":1,'
+          '"grace":"<length>","grid":{"display":true,"lineWidth":1,'
           '"drawOnChartArea":true,"drawTicks":true,"tickLength":8,'
           '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
           '"color":"rgba(0,0,0,0.1)"},"border":{"display":true,"dash":[],'

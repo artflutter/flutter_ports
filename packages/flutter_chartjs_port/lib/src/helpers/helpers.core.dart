@@ -196,23 +196,11 @@ T valueOrDefault<T>(T value, T defaultValue) {
   return identical(value, undefined) ? defaultValue : value;
 }
 
-/// helpers.core.ts:86 `toPercentage`.
-///
-/// [value] is a `number | string` upstream. Here it is any value, coerced as
-/// unary `+` coerces it.
-double toPercentage(Object? value, double dimension) =>
-    value is String && value.endsWith('%')
-    ? jsParseFloat(value) / 100
-    : jsToNumber(value) / dimension;
-
-/// helpers.core.ts:91 `toDimension`.
-///
-/// [value] is a `number | string` upstream. Here it is any value, coerced as
-/// unary `+` coerces it.
-double toDimension(Object? value, double dimension) =>
-    value is String && value.endsWith('%')
-    ? jsParseFloat(value) / 100 * dimension
-    : jsToNumber(value);
+// DIVERGES(chartjs): adapt-length-objects, toPercentage and toDimension.
+// helpers.core.ts:86 `toPercentage` and :91 `toDimension` parse a number or
+// a text that ends with `%`. In the port, `cutout` and `radius` hold a
+// `RadiusLength` (`fractionOf`, `pixelsOf`) and `grace` holds a
+// `GraceLength` (`amountOf`): the value computes itself.
 
 /// helpers.core.ts:103 `callback`.
 ///

@@ -4,6 +4,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show PercentRadius;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -28,7 +30,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       'borderWidth': 0,
       'hoverBorderWidth': 4,
       'hoverBorderColor': 'black',
-      'cutout': '80%',
+      // DIVERGES(chartjs): adapt-length-objects, the length class.
+      'cutout': const PercentRadius(80),
     },
   },
   'options': <String, Object?>{

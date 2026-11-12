@@ -13,6 +13,10 @@ import 'dart:convert';
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -21,6 +25,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
 
 /// The observations of one scenario: one line `<label>: <value>` for each
@@ -65,6 +70,7 @@ final class Observations {
       final String s => jsonEncode(s),
       _ when jsIsFunction(value) => '"<fn>"',
       final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
+      RadiusLength() || GraceLength() => lengthJson,
       InteractionMode() => modeJson,
       final List<Object?> list => '[${list.map(json).join(',')}]',
       final Object map

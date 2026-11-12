@@ -20,12 +20,14 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show toFontString;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isNullOrUndef, isObject, toDimension, valueOrDefault;
+    show isArray, isNullOrUndef, isObject, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -512,13 +514,17 @@ Object? resolve(
 /// function only reads. Thus it is a record. `core.scale.js:429` passes the
 /// scale itself: its Dart caller passes `(min: min, max: max)`. The result
 /// is the object `{min, max}`, also a record.
+///
+/// [grace] is a [GraceLength] (row `adapt-length-objects`): it computes its
+/// amount, with no text parse.
+// DIVERGES(chartjs): adapt-length-objects, the grace computes itself.
 ({double min, double max}) addGrace(
   ({double min, double max}) minmax,
-  Object? grace,
+  GraceLength grace,
   bool beginAtZero,
 ) {
   final (:min, :max) = minmax;
-  final change = toDimension(grace, (max - min) / 2);
+  final change = grace.amountOf((max - min) / 2);
   double keepZero(double value, double add) =>
       beginAtZero && value == 0 ? 0 : value + add;
   return (min: keepZero(min, -change.abs()), max: keepZero(max, change));

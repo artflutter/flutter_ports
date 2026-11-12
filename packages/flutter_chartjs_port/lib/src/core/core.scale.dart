@@ -58,6 +58,8 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength, ValueGrace;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show alignPixel, clipArea, measureText, renderText, unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -1317,7 +1319,17 @@ class Scale extends _ScalePrototype
       beforeDataLimits();
       determineDataLimits();
       afterDataLimits();
-      range = addGrace((min: min, max: max), grace, jsTruthy(beginAtZero));
+      // DIVERGES(chartjs): adapt-length-objects, the grace object. Upstream
+      // converts another value with the unary `+`: JS `null` gives 0, and
+      // another value NaN.
+      range = addGrace(
+        (min: min, max: max),
+        GraceLength.of(grace) ??
+            (grace == null
+                ? const ValueGrace(0)
+                : const ValueGrace(double.nan)),
+        jsTruthy(beginAtZero),
+      );
       _dataLimitsCached = true;
     }
 

@@ -1625,11 +1625,11 @@ enum ScopeKind {
           case OptionKey.circumference:
             return 1;
           case OptionKey.cutout:
-            return 5;
+            return 3456;
           case OptionKey.offset:
             return 1;
           case OptionKey.radius:
-            return 5;
+            return 3456;
           case OptionKey.rotation:
             return 1;
           case OptionKey.spacing:
@@ -2566,9 +2566,9 @@ enum ScopeKind {
           case OptionKey.data:
             return 16;
           case OptionKey.cutout:
-            return 5;
+            return 3456;
           case OptionKey.radius:
-            return 5;
+            return 3456;
           case OptionKey.xAxisID:
             return 4;
           case OptionKey.yAxisID:
@@ -2950,7 +2950,7 @@ enum ScopeKind {
           case OptionKey.beginAtZero:
             return 2;
           case OptionKey.grace:
-            return 5;
+            return 3584;
           case OptionKey.offsetAfterAutoskip:
             return 2;
           case OptionKey.adapters:

@@ -56,11 +56,13 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isObject, resolveObjectKey, toDimension, toPercentage, valueOrDefault;
+    show isObject, resolveObjectKey, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
     show formatNumber;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show angleBetween, halfPi, pi, tau, toRadians;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show PercentRadius, PixelRadius, RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsSetIndex;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -217,13 +219,14 @@ class DoughnutController extends DatasetController {
               'spacing',
             ]))
         // The percentage of the chart that we cut out of the middle.
-        ..cutout = '50%'
+        // DIVERGES(chartjs): adapt-length-objects, the length class.
+        ..cutout = const PercentRadius(50)
         // The rotation of the chart, where the first data arc begins.
         ..rotation = 0.0
         // The total circumference of the chart.
         ..circumference = 360.0
         // The outer radius of the chart
-        ..radius = '100%'
+        ..radius = const PercentRadius(100)
         // Spacing between arcs
         ..spacing = 0.0
         // Geometry used to apply spacing between arcs
@@ -445,8 +448,9 @@ class DoughnutController extends DatasetController {
       (jsMin(chartArea.width, chartArea.height) - jsToNumber(spacing)) / 2,
       0,
     );
+    // DIVERGES(chartjs): adapt-length-objects, the length computes itself.
     final cutout = jsMin(
-      toPercentage(options.readKey(OptionKey.cutout), maxSize),
+      _radiusLength(options.readKey(OptionKey.cutout)).fractionOf(maxSize),
       1,
     );
     final chartWeight = _getRingWeight(index);
@@ -464,10 +468,10 @@ class DoughnutController extends DatasetController {
     final maxWidth = (chartArea.width - jsToNumber(spacing)) / ratioX;
     final maxHeight = (chartArea.height - jsToNumber(spacing)) / ratioY;
     final maxRadius = jsMax(jsMin(maxWidth, maxHeight) / 2, 0);
-    final outerRadius = toDimension(
+    // DIVERGES(chartjs): adapt-length-objects, the length computes itself.
+    final outerRadius = _radiusLength(
       options.readKey(OptionKey.radius),
-      maxRadius,
-    );
+    ).pixelsOf(maxRadius);
     final innerRadius = jsMax(outerRadius * cutout, 0);
     final radiusLength =
         (outerRadius - innerRadius) / _getVisibleDatasetWeightTotal();
@@ -966,3 +970,11 @@ void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
   legend.chart.toggleDataVisibility(jsGet(legendItem, 'index'));
   legend.chart.update();
 }
+
+/// The length of the option value [value] (`cutout`, `radius`): the
+/// [RadiusLength] itself. Upstream converts another value with the unary
+/// `+` (helpers.core.ts:86-95): JS `null` gives 0, and another value NaN.
+// DIVERGES(chartjs): adapt-length-objects, no text parse.
+RadiusLength _radiusLength(Object? value) =>
+    RadiusLength.of(value) ??
+    (value == null ? const PixelRadius(0) : const PixelRadius(double.nan));

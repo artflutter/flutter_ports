@@ -15,6 +15,8 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show ValueGrace;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show OptFunction;
@@ -57,7 +59,8 @@ void applyScaleDefaults(Defaults defaults) {
         ..clip = true
         // Addition grace added to max and reduced from min data value.
         // @since 3.0.0
-        ..grace = 0.0
+        // DIVERGES(chartjs): adapt-length-objects, the grace class.
+        ..grace = const ValueGrace(0)
         // grid line settings
         ..grid = (GridLineOptionsScope()
           ..display = true

@@ -192,8 +192,9 @@ The values of the options are Dart and Flutter values:
   the height. It does not read the color of a `TextStyle`: each font parameter has a color
   parameter next to it, for example `labelFont` and `labelColor`.
 - Durations are `Duration` values, and paddings are `EdgeInsets` values.
-- A pie or doughnut `cutout` or `radius` is a `ChartLength`: `ChartLength.percent(50)` or
-  `ChartLength.pixels(80)`.
+- A pie or doughnut `cutout` or `radius` is a `RadiusLength`: `const PercentRadius(50)` or
+  `const PixelRadius(80)`. A scale `grace` is a `GraceLength`: `const PercentGrace(5)` or
+  `const ValueGrace(0.3)`, through `extra`.
 - Names are dot shorthands: `position: .bottom`, `fill: .origin`.
 - A point style is a class: `pointStyle: const StarPointStyle()`. An app or a plugin can add its
   own style as a subclass of `PathPointStyle`. The cubic interpolation mode of a line is a class

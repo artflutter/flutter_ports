@@ -22,8 +22,12 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
@@ -1012,13 +1016,13 @@ base class ChartOptionsScope extends OptionScope {
   set circumference(double value) =>
       store(OptionKey.circumference, OptValue<double>(value));
 
-  Opt<Object>? _cutout;
+  Opt<RadiusLength>? _cutout;
 
   /// The cell of `cutout`, or Dart `null` when absent.
-  Opt<Object>? get cutoutCell => _cutout;
+  Opt<RadiusLength>? get cutoutCell => _cutout;
 
   /// Stores the cell of `cutout`. Dart `null` deletes the key.
-  set cutoutCell(Opt<Object>? cell) {
+  set cutoutCell(Opt<RadiusLength>? cell) {
     if (cell == null) {
       delete(OptionKey.cutout);
     } else {
@@ -1027,8 +1031,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `cutout`.
-  set cutout(Object value) =>
-      store(OptionKey.cutout, classify(OptionKey.cutout, value));
+  set cutout(RadiusLength value) =>
+      store(OptionKey.cutout, OptValue<RadiusLength>(value));
 
   Opt<double>? _offset;
 
@@ -1047,13 +1051,13 @@ base class ChartOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `offset`.
   set offset(double value) => store(OptionKey.offset, OptValue<double>(value));
 
-  Opt<Object>? _radius;
+  Opt<RadiusLength>? _radius;
 
   /// The cell of `radius`, or Dart `null` when absent.
-  Opt<Object>? get radiusCell => _radius;
+  Opt<RadiusLength>? get radiusCell => _radius;
 
   /// Stores the cell of `radius`. Dart `null` deletes the key.
-  set radiusCell(Opt<Object>? cell) {
+  set radiusCell(Opt<RadiusLength>? cell) {
     if (cell == null) {
       delete(OptionKey.radius);
     } else {
@@ -1062,8 +1066,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `radius`.
-  set radius(Object value) =>
-      store(OptionKey.radius, classify(OptionKey.radius, value));
+  set radius(RadiusLength value) =>
+      store(OptionKey.radius, OptValue<RadiusLength>(value));
 
   Opt<double>? _rotation;
 
@@ -2547,11 +2551,11 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.circumference:
         _circumference = fitCell(cell, classifyNumber);
       case OptionKey.cutout:
-        _cutout = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _cutout = fitCell(cell, classifyTyped<RadiusLength>);
       case OptionKey.offset:
         _offset = fitCell(cell, classifyNumber);
       case OptionKey.radius:
-        _radius = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _radius = fitCell(cell, classifyTyped<RadiusLength>);
       case OptionKey.rotation:
         _rotation = fitCell(cell, classifyNumber);
       case OptionKey.spacing:
@@ -2879,11 +2883,11 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.circumference:
         return classifyNumber(raw);
       case OptionKey.cutout:
-        return classifyUnion(raw, 5);
+        return classifyTyped<RadiusLength>(raw);
       case OptionKey.offset:
         return classifyNumber(raw);
       case OptionKey.radius:
-        return classifyUnion(raw, 5);
+        return classifyTyped<RadiusLength>(raw);
       case OptionKey.rotation:
         return classifyNumber(raw);
       case OptionKey.spacing:
@@ -12407,13 +12411,13 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   set data(Object value) =>
       store(OptionKey.data, classify(OptionKey.data, value));
 
-  Opt<Object>? _cutout;
+  Opt<RadiusLength>? _cutout;
 
   /// The cell of `cutout`, or Dart `null` when absent.
-  Opt<Object>? get cutoutCell => _cutout;
+  Opt<RadiusLength>? get cutoutCell => _cutout;
 
   /// Stores the cell of `cutout`. Dart `null` deletes the key.
-  set cutoutCell(Opt<Object>? cell) {
+  set cutoutCell(Opt<RadiusLength>? cell) {
     if (cell == null) {
       delete(OptionKey.cutout);
     } else {
@@ -12422,16 +12426,16 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `cutout`.
-  set cutout(Object value) =>
-      store(OptionKey.cutout, classify(OptionKey.cutout, value));
+  set cutout(RadiusLength value) =>
+      store(OptionKey.cutout, OptValue<RadiusLength>(value));
 
-  Opt<Object>? _radius;
+  Opt<RadiusLength>? _radius;
 
   /// The cell of `radius`, or Dart `null` when absent.
-  Opt<Object>? get radiusCell => _radius;
+  Opt<RadiusLength>? get radiusCell => _radius;
 
   /// Stores the cell of `radius`. Dart `null` deletes the key.
-  set radiusCell(Opt<Object>? cell) {
+  set radiusCell(Opt<RadiusLength>? cell) {
     if (cell == null) {
       delete(OptionKey.radius);
     } else {
@@ -12440,8 +12444,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `radius`.
-  set radius(Object value) =>
-      store(OptionKey.radius, classify(OptionKey.radius, value));
+  set radius(RadiusLength value) =>
+      store(OptionKey.radius, OptValue<RadiusLength>(value));
 
   Opt<String>? _xAxisID;
 
@@ -12807,9 +12811,9 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.data:
         _data = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.cutout:
-        _cutout = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _cutout = fitCell(cell, classifyTyped<RadiusLength>);
       case OptionKey.radius:
-        _radius = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _radius = fitCell(cell, classifyTyped<RadiusLength>);
       case OptionKey.xAxisID:
         _xAxisID = fitCell(cell, classifyString);
       case OptionKey.yAxisID:
@@ -12972,9 +12976,9 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.data:
         return classifyUnion(raw, 16);
       case OptionKey.cutout:
-        return classifyUnion(raw, 5);
+        return classifyTyped<RadiusLength>(raw);
       case OptionKey.radius:
-        return classifyUnion(raw, 5);
+        return classifyTyped<RadiusLength>(raw);
       case OptionKey.xAxisID:
         return classifyString(raw);
       case OptionKey.yAxisID:
@@ -17190,13 +17194,13 @@ base class ScaleOptionsScope extends OptionScope {
   set beginAtZero(bool value) =>
       store(OptionKey.beginAtZero, OptValue<bool>(value));
 
-  Opt<Object>? _grace;
+  Opt<GraceLength>? _grace;
 
   /// The cell of `grace`, or Dart `null` when absent.
-  Opt<Object>? get graceCell => _grace;
+  Opt<GraceLength>? get graceCell => _grace;
 
   /// Stores the cell of `grace`. Dart `null` deletes the key.
-  set graceCell(Opt<Object>? cell) {
+  set graceCell(Opt<GraceLength>? cell) {
     if (cell == null) {
       delete(OptionKey.grace);
     } else {
@@ -17205,8 +17209,8 @@ base class ScaleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `grace`.
-  set grace(Object value) =>
-      store(OptionKey.grace, classify(OptionKey.grace, value));
+  set grace(GraceLength value) =>
+      store(OptionKey.grace, OptValue<GraceLength>(value));
 
   Opt<bool>? _offsetAfterAutoskip;
 
@@ -17578,7 +17582,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.beginAtZero:
         _beginAtZero = fitCell(cell, classifyBool);
       case OptionKey.grace:
-        _grace = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _grace = fitCell(cell, classifyTyped<GraceLength>);
       case OptionKey.offsetAfterAutoskip:
         _offsetAfterAutoskip = fitCell(cell, classifyBool);
       case OptionKey.adapters:
@@ -17739,7 +17743,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.beginAtZero:
         return classifyBool(raw);
       case OptionKey.grace:
-        return classifyUnion(raw, 5);
+        return classifyTyped<GraceLength>(raw);
       case OptionKey.offsetAfterAutoskip:
         return classifyBool(raw);
       case OptionKey.adapters:

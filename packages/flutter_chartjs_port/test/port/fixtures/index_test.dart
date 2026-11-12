@@ -61,8 +61,11 @@ String _fixturePath(String stem, Set<String> paths) =>
 /// such a key in its config gets a hand port (Chart.js ADR 0115).
 const Set<String> _classValueKeys = {
   'cubicInterpolationMode',
+  'cutout',
   'fill',
+  'grace',
   'pointStyle',
+  'radius',
 };
 
 /// Whether [value] holds a key of [_classValueKeys] at any depth.

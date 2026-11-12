@@ -31,6 +31,8 @@ import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart'
     show DoughnutController;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show controllerArgs;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show PercentRadius, PixelRadius;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DoughnutControllerDatasetOptionsScope;
@@ -63,13 +65,14 @@ class PieController extends DoughnutController {
   static final DoughnutControllerDatasetOptionsScope defaults =
       DoughnutControllerDatasetOptionsScope()
         // The percentage of the chart that we cut out of the middle.
-        ..cutout = 0.0
+        // DIVERGES(chartjs): adapt-length-objects, the length classes.
+        ..cutout = const PixelRadius(0)
         // The rotation of the chart, where the first data arc begins.
         ..rotation = 0.0
         // The total circumference of the chart.
         ..circumference = 360.0
         // The outer radius of the chart
-        ..radius = '100%';
+        ..radius = const PercentRadius(100);
 
   /// controller.pie.js:4 `class PieController extends DoughnutController`
   /// as a value (Chart.js ADR 0020, section 3).

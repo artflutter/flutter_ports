@@ -11,6 +11,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
@@ -2221,10 +2222,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'total': 38.0,
             'maxOverflow': false,
             'datasetOptions': <String, Object?>{
-              'cutout': 0.0,
+              'cutout': PixelRadius(0),
               'rotation': 0.0,
               'circumference': 360.0,
-              'radius': '100%',
+              'radius': PercentRadius(100),
               'spacing': 0.0,
               'spacingMode': ArcSpacingMode.angular,
             },
@@ -2464,10 +2465,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 'total': 38.0,
                 'maxOverflow': false,
                 'datasetOptions': <String, Object?>{
-                  'cutout': 0.0,
+                  'cutout': PixelRadius(0),
                   'rotation': 0.0,
                   'circumference': 360.0,
-                  'radius': '100%',
+                  'radius': PercentRadius(100),
                   'spacing': 0.0,
                   'spacingMode': ArcSpacingMode.angular,
                 },

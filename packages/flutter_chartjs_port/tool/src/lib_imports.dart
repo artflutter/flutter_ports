@@ -260,6 +260,7 @@ const List<String> typedTargets = [
   'lib/src/helpers/cubic_interpolation_mode.dart',
   'lib/src/helpers/helpers.curve.dart',
   'lib/src/helpers/point_style.dart',
+  'lib/src/helpers/radius_length.dart',
   'lib/src/core/core.adapters.dart',
   'lib/src/core/core.controller.dart',
   'lib/src/core/core.interaction.dart',

@@ -71,6 +71,8 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show capitalize, isArray, isFunction, isObject, resolveObjectKey;
@@ -78,6 +80,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -260,8 +264,8 @@ final _nativeIndexedLists = <Type>{
 
 // An enum value (a `StrokeJoin`, an `ArcBorderAlign`) is a constant of its
 // type: its identity is its equality, and a read of it runs no user code. A
-// point style and a cubic interpolation mode are such values too: the
-// resolution keeps the object, and only the draw calls its methods.
+// point style, a cubic interpolation mode and a length are such values too:
+// the resolution keeps the object, and only the draw calls its methods.
 bool _indexedScalar(Object? value) =>
     value == null ||
     value is Undefined ||
@@ -271,6 +275,8 @@ bool _indexedScalar(Object? value) =>
     value is Enum ||
     value is PointStyle ||
     value is CubicInterpolationMode ||
+    value is RadiusLength ||
+    value is GraceLength ||
     (value is Color && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list

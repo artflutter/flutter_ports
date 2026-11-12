@@ -10,6 +10,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
@@ -3103,10 +3104,10 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
             'total': 12.0,
             'maxOverflow': false,
             'datasetOptions': <String, Object?>{
-              'cutout': '50%',
+              'cutout': PercentRadius(50),
               'rotation': 0.0,
               'circumference': 360.0,
-              'radius': '100%',
+              'radius': PercentRadius(100),
               'spacing': 0.0,
               'spacingMode': ArcSpacingMode.angular,
             },
@@ -3297,10 +3298,10 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
             'total': 22.0,
             'maxOverflow': false,
             'datasetOptions': <String, Object?>{
-              'cutout': '50%',
+              'cutout': PercentRadius(50),
               'rotation': 0.0,
               'circumference': 360.0,
-              'radius': '100%',
+              'radius': PercentRadius(100),
               'spacing': 0.0,
               'spacingMode': ArcSpacingMode.angular,
             },
@@ -3728,10 +3729,10 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
             'total': 51.0,
             'maxOverflow': false,
             'datasetOptions': <String, Object?>{
-              'cutout': 0.0,
+              'cutout': PixelRadius(0),
               'rotation': 0.0,
               'circumference': 360.0,
-              'radius': '100%',
+              'radius': PercentRadius(100),
               'spacing': 0.0,
               'spacingMode': ArcSpacingMode.angular,
             },
@@ -11885,10 +11886,10 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
             'total': 36.0,
             'maxOverflow': false,
             'datasetOptions': <String, Object?>{
-              'cutout': 0.0,
+              'cutout': PixelRadius(0),
               'rotation': 0.0,
               'circumference': 360.0,
-              'radius': '100%',
+              'radius': PercentRadius(100),
               'spacing': 0.0,
               'spacingMode': ArcSpacingMode.angular,
             },

@@ -8,24 +8,22 @@
 /// that breaks no `switch` of an app. The position of a box is the enum
 /// `ChartPosition` of the core (row `adapt-chart-position-enum`).
 ///
-/// - [ChartFill] and [ChartLength] are over `Object`: they also hold
-///   `false`, numbers and records. The internal getter
-///   `optionValue` gives the option value. A record holds
-///   [ChartFill.value] and [ChartLength.percent], so these constructors are
-///   `const`, and two equal values are `==`.
+/// - [ChartFill] is over `Object`: it also holds `false`, numbers and
+///   records. The internal getter `optionValue` gives the option value. A
+///   record holds [ChartFill.value], so this constructor is `const`, and
+///   two equal values are `==`.
 ///
 /// The types have private constructors: Chart.js has no registry for
 /// their names.
 ///
 /// The `easing` option of an animation has no type here: it is a Flutter
 /// `Curve`. The `mode` option of the interaction has none either: it is an
-/// `InteractionMode` of the core. The `align` option of a box is the enum
+/// `InteractionMode` of the core. The `cutout` and `radius` options are a
+/// `RadiusLength` of the core. The `align` option of a box is the enum
 /// `ChartAlign` of the core. The `pointStyle` option is a `PointStyle` of
 /// the core.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsNumberToString;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary, RelativeFill;
 import 'package:meta/meta.dart' show internal;
@@ -74,28 +72,6 @@ extension type const ChartFill._(Object _value) {
   @internal
   Object get optionValue => switch (_value) {
     (value: final num value) => <String, Object?>{'value': value},
-    final other => other,
-  };
-}
-
-/// A length in pixels or in percent: the `cutout` and `radius` options of
-/// a pie or a doughnut dataset (`index.d.ts:319`, `:330`).
-///
-/// A number gives pixels. A string that ends with `%` gives a percent:
-/// of the outer radius for `cutout`, of the largest radius for `radius`.
-extension type const ChartLength._(Object _value) {
-  /// [pixels] pixels: the number.
-  const ChartLength.pixels(double pixels) : _value = pixels;
-
-  /// [percent] percent: the string `'<percent>%'`, for example `'50%'`.
-  const ChartLength.percent(double percent) : _value = (percent: percent);
-
-  /// The option value: the number of [ChartLength.pixels], or the string of
-  /// [ChartLength.percent] with the JS form of the number (`'50%'`, not
-  /// `'50.0%'`).
-  @internal
-  Object get optionValue => switch (_value) {
-    (percent: final double percent) => '${jsNumberToString(percent)}%',
     final other => other,
   };
 }

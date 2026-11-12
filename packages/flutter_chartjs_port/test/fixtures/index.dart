@@ -88,6 +88,10 @@ import 'hand/controller.doughnut/doughnut-hidden-single.dart'
     as controller_doughnut_doughnut_hidden_single;
 import 'hand/controller.doughnut/doughnut-hidden.dart'
     as controller_doughnut_doughnut_hidden;
+import 'hand/controller.doughnut/doughnut-outer-radius-percent.dart'
+    as controller_doughnut_doughnut_outer_radius_percent;
+import 'hand/controller.doughnut/doughnut-outer-radius-pixels.dart'
+    as controller_doughnut_doughnut_outer_radius_pixels;
 import 'hand/controller.doughnut/doughnut-rotation-circumference-8x8.dart'
     as controller_doughnut_doughnut_rotation_circumference_8x8;
 import 'hand/controller.doughnut/doughnut-set-active-elements.dart'
@@ -376,6 +380,15 @@ import 'hand/plugin.tooltip/opacity.dart' as plugin_tooltip_opacity;
 import 'hand/plugin.tooltip/point-style.dart' as plugin_tooltip_point_style;
 import 'hand/plugin.tooltip/positioning.dart' as plugin_tooltip_positioning;
 import 'hand/scale.category/invalid-data.dart' as scale_category_invalid_data;
+import 'hand/scale.linear/grace/grace-10%25.dart'
+    as scale_linear_grace_grace_10_;
+import 'hand/scale.linear/grace/grace-beginAtZero.dart'
+    as scale_linear_grace_grace_beginatzero;
+import 'hand/scale.linear/grace/grace-neg.dart' as scale_linear_grace_grace_neg;
+import 'hand/scale.linear/grace/grace-pos.dart' as scale_linear_grace_grace_pos;
+import 'hand/scale.linear/grace/grace.dart' as scale_linear_grace_grace;
+import 'hand/scale.linear/grace/issue-8912.dart'
+    as scale_linear_grace_issue_8912;
 import 'hand/scale.linear/tick-count-data-limits.dart'
     as scale_linear_tick_count_data_limits;
 import 'hand/scale.radialLinear/anglelines-scriptable.dart'
@@ -561,6 +574,14 @@ final Map<String, HandFixture> handFixtures = {
   'controller.doughnut/doughnut-hidden.js': (
     load: controller_doughnut_doughnut_hidden.fixture,
     sha256: '9bf0028a556b',
+  ),
+  'controller.doughnut/doughnut-outer-radius-percent.js': (
+    load: controller_doughnut_doughnut_outer_radius_percent.fixture,
+    sha256: '73d3f8802949',
+  ),
+  'controller.doughnut/doughnut-outer-radius-pixels.js': (
+    load: controller_doughnut_doughnut_outer_radius_pixels.fixture,
+    sha256: 'fb490602a898',
   ),
   'controller.doughnut/doughnut-rotation-circumference-8x8.js': (
     load: controller_doughnut_doughnut_rotation_circumference_8x8.fixture,
@@ -1179,6 +1200,30 @@ final Map<String, HandFixture> handFixtures = {
   'scale.category/invalid-data.js': (
     load: scale_category_invalid_data.fixture,
     sha256: 'ecf9428ec7ed',
+  ),
+  'scale.linear/grace/grace-10%.js': (
+    load: scale_linear_grace_grace_10_.fixture,
+    sha256: '0dc72726ef0f',
+  ),
+  'scale.linear/grace/grace-beginAtZero.js': (
+    load: scale_linear_grace_grace_beginatzero.fixture,
+    sha256: '5b2a4a7e4b8d',
+  ),
+  'scale.linear/grace/grace-neg.js': (
+    load: scale_linear_grace_grace_neg.fixture,
+    sha256: '627ac78c9874',
+  ),
+  'scale.linear/grace/grace-pos.js': (
+    load: scale_linear_grace_grace_pos.fixture,
+    sha256: '4df42ffe516b',
+  ),
+  'scale.linear/grace/grace.js': (
+    load: scale_linear_grace_grace.fixture,
+    sha256: 'ec3dadb2725a',
+  ),
+  'scale.linear/grace/issue-8912.js': (
+    load: scale_linear_grace_issue_8912.fixture,
+    sha256: '187500e243fa',
   ),
   'scale.linear/tick-count-data-limits.js': (
     load: scale_linear_tick_count_data_limits.fixture,

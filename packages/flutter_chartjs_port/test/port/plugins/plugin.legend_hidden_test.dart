@@ -2202,7 +2202,7 @@ void main() {
       ) async {
         final labels = <String>[for (var i = 0; i < 200; i++) '$i'];
         const color = typed.ChartValue<Color>.constant(Color(0xff4f6bed));
-        const radius = typed.ChartLength.percent(90);
+        const radius = typed.PercentRadius(90);
         Widget frame(int step) {
           final data = <double>[for (var i = 0; i < 200; i++) 1.0 + step + i];
           return Directionality(
@@ -2232,7 +2232,7 @@ void main() {
                           backgroundColor: color,
                           borderWidth: 0,
                           radius: radius,
-                          cutout: const typed.ChartLength.percent(50),
+                          cutout: const typed.PercentRadius(50),
                         ),
                         _ => typed.PieDataset(
                           key: const ValueKey('series'),
@@ -4058,7 +4058,7 @@ void main() {
           const blue = Color(0xff4f6bed);
           const teal = Color(0xff14b8a6);
           const color = typed.ChartValue<Color>.indexed([blue, teal]);
-          const radius = typed.ChartLength.percent(90);
+          const radius = typed.PercentRadius(90);
           final labels = <String>[for (var i = 0; i < 200; i++) '$i'];
 
           Widget frame(int step, {required bool eager}) {
@@ -4092,7 +4092,7 @@ void main() {
                             backgroundColor: color,
                             borderWidth: 0,
                             radius: radius,
-                            cutout: const typed.ChartLength.percent(50),
+                            cutout: const typed.PercentRadius(50),
                           ),
                           _ => typed.PieDataset(
                             key: const ValueKey('series'),

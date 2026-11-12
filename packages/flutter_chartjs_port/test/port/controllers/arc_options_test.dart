@@ -770,7 +770,7 @@ void main() {
           final chart = jsGet(ctx, 'chart')! as Chart;
           final data = chart.getDatasetMeta(0).data;
           trace.add(data.isEmpty ? null : _contextState(data.last));
-          return '40%';
+          return const PercentRadius(40);
         },
         'circumference': (Object? ctx) {
           trace.add('circumference');
@@ -1124,7 +1124,7 @@ void main() {
         probeChart(
           type,
           probes,
-          fields: {'cutout': (Object? ctx) => '30%'},
+          fields: {'cutout': (Object? ctx) => const PercentRadius(30)},
         ).update('none');
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });

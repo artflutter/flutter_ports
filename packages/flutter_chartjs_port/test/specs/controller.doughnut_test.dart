@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show PercentRadius;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
@@ -192,7 +194,8 @@ void main() {
             'animateRotate': true,
             'animateScale': false,
           },
-          'cutout': '50%',
+          // DIVERGES(chartjs): adapt-length-objects, the length class.
+          'cutout': const PercentRadius(50),
           'rotation': 0.0,
           'circumference': 360.0,
           'elements': _arcOptions(),
@@ -298,7 +301,8 @@ void main() {
         },
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
-          'cutout': '50%',
+          // DIVERGES(chartjs): adapt-length-objects, the length class.
+          'cutout': const PercentRadius(50),
           'rotation': 270.0,
           'circumference': 90.0,
           'elements': _arcOptions(),
@@ -342,7 +346,8 @@ void main() {
         },
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
-          'cutout': '50%',
+          // DIVERGES(chartjs): adapt-length-objects, the length class.
+          'cutout': const PercentRadius(50),
           'rotation': 270.0,
           'circumference': 90.0,
           'elements': _arcOptions(),
@@ -462,7 +467,8 @@ void main() {
             ],
           },
           'options': <String, Object?>{
-            'cutout': '50%',
+            // DIVERGES(chartjs): adapt-length-objects, the length class.
+            'cutout': const PercentRadius(50),
             'elements': <String, Object?>{
               'arc': <String, Object?>{
                 'backgroundColor': const native_ui.Color.fromRGBO(

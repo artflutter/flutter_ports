@@ -1657,7 +1657,7 @@ void main() {
         'a function of a dataset option in the defaults of the datasets',
         () {
           final datasets = jsGet(jsGet(defaults, 'datasets'), 'doughnut');
-          jsSet(datasets, 'cutout', (Object? _) => '40%');
+          jsSet(datasets, 'cutout', (Object? _) => const PercentRadius(40));
           expectTwin(() => indexed('doughnut'), path: false, ticks: 2);
         },
       );

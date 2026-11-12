@@ -34,7 +34,7 @@ void main() {
     test('sets, routes and describes the scale defaults', () {
       const setScale =
           '["set","scale",{"display":true,"offset":false,"reverse":false,'
-          '"beginAtZero":false,"bounds":"ticks","clip":true,"grace":0,'
+          '"beginAtZero":false,"bounds":"ticks","clip":true,"grace":"<length>",'
           '"grid":{"display":true,"lineWidth":1,"drawOnChartArea":true,'
           '"drawTicks":true,"tickLength":8,"tickWidth":"<fn>",'
           '"tickColor":"<fn>","offset":false},'

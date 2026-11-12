@@ -10,6 +10,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
@@ -62896,10 +62897,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'total': 10.0,
             'maxOverflow': false,
             'datasetOptions': <String, Object?>{
-              'cutout': '50%',
+              'cutout': PercentRadius(50),
               'rotation': 0.0,
               'circumference': 360.0,
-              'radius': '100%',
+              'radius': PercentRadius(100),
               'spacing': 0.0,
               'spacingMode': ArcSpacingMode.angular,
             },
@@ -63280,10 +63281,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 'total': 7.0,
                 'maxOverflow': false,
                 'datasetOptions': <String, Object?>{
-                  'cutout': '50%',
+                  'cutout': PercentRadius(50),
                   'rotation': 0.0,
                   'circumference': 360.0,
-                  'radius': '100%',
+                  'radius': PercentRadius(100),
                   'spacing': 0.0,
                   'spacingMode': ArcSpacingMode.angular,
                 },
