@@ -6,6 +6,8 @@ library;
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show Mode;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsToNumber;
@@ -55,7 +57,8 @@ Map<String, Object?> fixture() {
           'legend': false,
           'tooltip': false,
           'zoom': <String, Object?>{
-            'pan': <String, Object?>{'enabled': true, 'mode': 'x'},
+            // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
+            'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
           },
         },
         'layout': <String, Object?>{'padding': 2},

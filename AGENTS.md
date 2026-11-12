@@ -1573,7 +1573,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     functions `pan`, `zoom`, `zoomRect`, `zoomScale` and `resetZoom`, the extension `ZoomChart`
     (the ten chart methods of `bindApi`, row `adapt-chart-methods-extension`), `ZoomAmount` and
     `PanAmount` (row `adapt-amount-classes`, `chart.zoom(.all(1.5))`), `ScaleRange`, the option
-    facades, `Mode`, `ModifierKey`, `DrawTime`, `ZoomTrigger`, the callback contexts (records) and
+    facades, the enums `Mode`, `ModifierKey` and `DrawTime` (row `adapt-zoom-option-enums`; a
+    name in a raw config stops a debug build), `ZoomTrigger`, the callback contexts (records) and
     typedefs, `GestureEvent`, `ActivePointer`, the three function tables and `lib/src/upstream.dart`.
     `lib/src/upstream.dart` has `chartjsPluginZoomVersion` (`2.2.0+fb81d331`, a commit pin) and
     `chartjsPluginZoomPackageVersion` (`2.2.0`), port-only. An app gives the options in

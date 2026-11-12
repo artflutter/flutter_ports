@@ -32,22 +32,12 @@ Object? callUser(Object? f, Object context) =>
     isNullOrUndef(f) ? undefined : jsCall(f, [context]);
 
 /// utils.ts:5 `eventKey(key)`: the flag ``event[`${key}Key`]`` of the
-/// modifier [key] of [event].
+/// modifier [key] of [event]: the field of the [ModifierKey].
 ///
-/// Another key names no property of the event: its `undefined` is false.
-///
-/// The test `is String` comes before the switch: dart2wasm of Dart
-/// 3.14.0-315.3.beta traps on a switch with String cases over a value that
-/// is neither null nor a String.
+/// Another value names no property of the event: its `undefined` is false.
+// DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
 bool _eventKey(Object? key, NativeEvent event) =>
-    key is String &&
-    switch (key) {
-      'ctrl' => event.ctrlKey,
-      'alt' => event.altKey,
-      'shift' => event.shiftKey,
-      'meta' => event.metaKey,
-      _ => false,
-    };
+    ModifierKey.of(key)?.pressedIn(event) ?? false;
 
 /// utils.ts:7 `getModifierKey(opts)`: the `modifierKey` of the drag or pan
 /// options [opts] when they are enabled, else `undefined`.
@@ -82,18 +72,18 @@ Object? _callMode(Function mode, Chart chart) =>
 /// the `ModeFn` [mode] has the direction [dir] (`'x'` or `'y'`).
 ///
 /// `undefined` enables each direction. A function gets `{ chart }`, and its
-/// result must be a string: JavaScript calls `indexOf` on it, so another
-/// value throws a `TypeError`.
+/// result must be a [Mode]: JavaScript calls `indexOf` on it, so another
+/// value throws a `TypeError`. Another value of [mode] enables nothing.
+// DIVERGES(zoom): adapt-zoom-option-enums, the fields of the mode.
 bool directionEnabled(Object? mode, String dir, Chart chart) {
   if (identical(mode, undefined)) {
     return true;
-  } else if (mode is String) {
-    return mode.contains(dir);
   } else if (mode is Function) {
-    return (_callMode(mode, chart)! as String).contains(dir);
+    final value = Mode.of(_callMode(mode, chart)) ?? (throw TypeError());
+    return value.hasAxis(dir);
   }
 
-  return false;
+  return Mode.of(mode)?.hasAxis(dir) ?? false;
 }
 
 /// utils.ts:58 `EnabledDirections`: the enabled state of the `x` and `y`
@@ -124,13 +114,11 @@ final class _Directions {
 
 /// utils.ts:26 `directionsEnabled(mode, chart)`: the directions of the
 /// [Mode] or the `ModeFn` [mode].
+// DIVERGES(zoom): adapt-zoom-option-enums, the fields of the mode.
 _Directions _directionsEnabled(Object? mode, Chart chart) {
-  final value = mode is Function ? _callMode(mode, chart) : mode;
-  if (value is String) {
-    return _Directions(
-      x: value.contains('x'),
-      y: value.contains('y'),
-    );
+  final value = Mode.of(mode is Function ? _callMode(mode, chart) : mode);
+  if (value != null) {
+    return _Directions(x: value.usesX, y: value.usesY);
   }
 
   return _Directions(x: false, y: false);

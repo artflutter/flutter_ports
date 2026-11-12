@@ -45,6 +45,8 @@ import 'package:chartjs_test_utils/pure.dart'
     show setUpBuiltins, setUpDefaultsRestore;
 import 'package:flutter_chartjs_plugin_zoom_port/src/index.umd.dart'
     show chartZoom;
+import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart'
+    show ModifierKey;
 import 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart'
     show zoomPlugin;
 import 'package:flutter_chartjs_port/chartjs.dart'
@@ -205,12 +207,11 @@ final class EventInit {
   /// zoom.wheel.spec.js:70): the init with the modifier [key] down. [key]
   /// is `'ctrl'`, `'alt'`, `'shift'` or `'meta'`. Another key names no
   /// member of the DOM init, which ignores it: no modifier is down.
-  factory EventInit.withKey(String key) => switch (key) {
-    'ctrl' => const EventInit(ctrlKey: true),
-    'alt' => const EventInit(altKey: true),
-    'shift' => const EventInit(shiftKey: true),
-    'meta' => const EventInit(metaKey: true),
-    _ => const EventInit(),
+  factory EventInit.withKey(ModifierKey key) => switch (key) {
+    ModifierKey.ctrl => const EventInit(ctrlKey: true),
+    ModifierKey.alt => const EventInit(altKey: true),
+    ModifierKey.shift => const EventInit(shiftKey: true),
+    ModifierKey.meta => const EventInit(metaKey: true),
   };
 
   /// `button`: the button that changed. 0 is the main button.

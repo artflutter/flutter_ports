@@ -5,7 +5,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart;
+    show Mode, ZoomChart;
 
 /// The sample `Category Scale` of `docs/samples/wheel/category.md:3-93`: a
 /// bar chart of 20 months that shows the months 5 to 11 first, zooms with
@@ -162,13 +162,13 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
         'zoom': <String, Object?>{
           'pan': <String, Object?>{
             'enabled': true,
-            'mode': 'xy',
+            'mode': Mode.xy,
             'threshold': 5.0,
           },
           'zoom': <String, Object?>{
             'wheel': <String, Object?>{'enabled': true},
             'pinch': <String, Object?>{'enabled': true},
-            'mode': 'xy',
+            'mode': Mode.xy,
           },
         },
       },

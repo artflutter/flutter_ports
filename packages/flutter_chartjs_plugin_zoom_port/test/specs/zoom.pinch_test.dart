@@ -4,7 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChartContext;
+    show Mode, ZoomChartContext;
 import 'package:flutter_chartjs_port/chartjs.dart' show CanvasEventTarget;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,7 +45,7 @@ void main() {
               'plugins': <String, Object?>{
                 'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                     'onZoomStart': startSpy.call,
                     'pinch': <String, Object?>{
                       'enabled': true,
@@ -80,7 +80,7 @@ void main() {
                 'plugins': <String, Object?>{
                   'zoom': <String, Object?>{
                     'zoom': <String, Object?>{
-                      'mode': 'xy',
+                      'mode': Mode.xy,
                       'onZoomStart': () => false,
                       'onZoomRejected': rejectSpy.call,
                       'pinch': <String, Object?>{
@@ -113,7 +113,7 @@ void main() {
               'plugins': <String, Object?>{
                 'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                     'onZoomComplete': (ZoomChartContext ctx) {
                       expect(ctx.chart.scales['x']!.min, isNot(toBe(1)));
                       done();
@@ -142,7 +142,7 @@ void main() {
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
-                  'mode': 'xy',
+                  'mode': Mode.xy,
                   'onZoomStart': startSpy.call,
                   'onZoomComplete': completeSpy.call,
                   'pinch': <String, Object?>{

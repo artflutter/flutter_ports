@@ -5,7 +5,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart;
+    show Mode, ZoomChart;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, JsObjectFace;
 
@@ -51,7 +51,7 @@ ZoomDocsSample zoomPanToggleSample(ZoomDocsLog log) {
       'x': <String, Object?>{'min': -200.0, 'max': 200.0, 'minRange': 50.0},
       'y': <String, Object?>{'min': -200.0, 'max': 200.0, 'minRange': 50.0},
     },
-    'pan': <String, Object?>{'enabled': false, 'mode': 'xy'},
+    'pan': <String, Object?>{'enabled': false, 'mode': Mode.xy},
     'zoom': <String, Object?>{
       'wheel': <String, Object?>{'enabled': false},
       'pinch': <String, Object?>{'enabled': true},

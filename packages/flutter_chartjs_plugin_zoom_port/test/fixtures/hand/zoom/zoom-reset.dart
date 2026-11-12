@@ -6,7 +6,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart;
+    show Mode, ZoomChart;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
 
@@ -49,7 +49,8 @@ Map<String, Object?> fixture() {
           'zoom': <String, Object?>{
             'zoom': <String, Object?>{
               'wheel': <String, Object?>{'enabled': true},
-              'mode': 'x',
+              // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
+              'mode': Mode.x,
             },
           },
         },

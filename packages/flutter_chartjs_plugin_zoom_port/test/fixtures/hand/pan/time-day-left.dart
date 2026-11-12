@@ -4,7 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show PanAmount, ZoomChart;
+    show Mode, PanAmount, ZoomChart;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart, TimeUnit;
 import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
 
@@ -52,7 +52,8 @@ Map<String, Object?> fixture() {
         'plugins': <String, Object?>{
           'legend': false,
           'zoom': <String, Object?>{
-            'pan': <String, Object?>{'enabled': true, 'mode': 'x'},
+            // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
+            'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
           },
         },
       },

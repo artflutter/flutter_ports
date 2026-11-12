@@ -4,7 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart, ZoomTrigger;
+    show Mode, ModifierKey, ZoomChart, ZoomTrigger;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show CanvasEventTarget, Chart, NativeEvent, Scale, undefined;
 import 'package:flutter_test/flutter_test.dart';
@@ -48,7 +48,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
-                  'mode': 'x',
+                  'mode': Mode.x,
                 },
               },
             },
@@ -89,7 +89,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
                   'mode': () {
-                    return 'x';
+                    return Mode.x;
                   },
                 },
               },
@@ -128,7 +128,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
-                  'mode': 'y',
+                  'mode': Mode.y,
                 },
               },
             },
@@ -169,7 +169,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
                   'mode': () {
-                    return 'y';
+                    return Mode.y;
                   },
                 },
               },
@@ -210,7 +210,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
-                  'mode': 'xy',
+                  'mode': Mode.xy,
                 },
               },
             },
@@ -237,14 +237,14 @@ void main() {
     });
 
     group('with modifierKey', () {
-      for (final key in ['ctrl', 'alt', 'shift', 'meta']) {
+      for (final key in ModifierKey.values) {
         for (final pressed in [true, false]) {
           late Chart chart;
           late Scale scaleX;
           late Scale scaleY;
           testWidgets(
             'should ${pressed ? '' : 'not '}change '
-            '${pressed ? 'with' : 'without'} key $key',
+            '${pressed ? 'with' : 'without'} key ${key.name}',
             (tester) async {
               final rejectedSpy = createSpy('wheelFailed');
               chart = acquireChart(<String, Object?>{
@@ -266,7 +266,7 @@ void main() {
                           'enabled': true,
                           'modifierKey': key,
                         },
-                        'mode': 'x',
+                        'mode': Mode.x,
                         'onZoomRejected': rejectedSpy.call,
                       },
                     },
@@ -307,14 +307,14 @@ void main() {
     });
 
     group('drag with pan.modifierKey', () {
-      for (final key in ['ctrl', 'alt', 'shift', 'meta']) {
+      for (final key in ModifierKey.values) {
         for (final pressed in [true, false]) {
           late Chart chart;
           late Scale scaleX;
           late Scale scaleY;
           testWidgets(
             'should ${pressed ? 'not ' : ''}change '
-            '${pressed ? 'without' : 'with'} key $key',
+            '${pressed ? 'without' : 'with'} key ${key.name}',
             (tester) async {
               final rejectedSpy = createSpy('zoomRejected');
               final clickSpy = createSpy('clicked');
@@ -338,7 +338,7 @@ void main() {
                       },
                       'zoom': <String, Object?>{
                         'drag': <String, Object?>{'enabled': true},
-                        'mode': 'x',
+                        'mode': Mode.x,
                         'onZoomRejected': rejectedSpy.call,
                       },
                     },
@@ -411,7 +411,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
                     'drag': <String, Object?>{'enabled': true},
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                   },
                 },
               },
@@ -468,7 +468,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
                     'drag': <String, Object?>{'enabled': true},
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                   },
                 },
               },
@@ -530,7 +530,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
                     'drag': <String, Object?>{'enabled': true},
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                     'onZoomStart': startSpy.call,
                     'onZoom': zoomSpy.call,
                     'onZoomComplete': () => done(),
@@ -581,7 +581,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
-                  'mode': 'xy',
+                  'mode': Mode.xy,
                   'onZoomStart': () => false,
                   'onZoom': zoomSpy.call,
                   'onZoomComplete': doneSpy.call,

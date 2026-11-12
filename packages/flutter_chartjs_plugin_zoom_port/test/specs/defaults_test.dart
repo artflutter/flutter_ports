@@ -3,6 +3,8 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show DrawTime, Mode;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show Chart, JsObjectFace, Plugin, undefined;
 import 'package:flutter_test/flutter_test.dart';
@@ -22,7 +24,7 @@ void main() {
     final expected = <String, Object?>{
       'pan': <String, Object?>{
         'enabled': false,
-        'mode': 'xy',
+        'mode': Mode.xy,
         'threshold': 10,
         'modifierKey': null,
       },
@@ -34,13 +36,13 @@ void main() {
         },
         'drag': <String, Object?>{
           'enabled': false,
-          'drawTime': 'beforeDatasetsDraw',
+          'drawTime': DrawTime.beforeDatasetsDraw,
           'modifierKey': null,
         },
         'pinch': <String, Object?>{
           'enabled': false,
         },
-        'mode': 'xy',
+        'mode': Mode.xy,
       },
       // The run with the port-only option of Chart.js ADR 0111 in the
       // defaults (flutter_test_config.dart).

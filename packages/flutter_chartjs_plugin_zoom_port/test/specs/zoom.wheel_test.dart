@@ -4,7 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart, ZoomTrigger;
+    show Mode, ModifierKey, ZoomChart, ZoomTrigger;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show Chart, JsObjectFace, Scale;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsRound;
@@ -32,14 +32,14 @@ void main() {
     };
 
     group('with modifierKey', () {
-      for (final key in ['ctrl', 'alt', 'shift', 'meta']) {
+      for (final key in ModifierKey.values) {
         for (final pressed in [true, false]) {
           late Chart chart;
           late Scale scaleX;
           late Scale scaleY;
           testWidgets(
             'should ${pressed ? '' : 'not '}change '
-            '${pressed ? 'with' : 'without'} key $key',
+            '${pressed ? 'with' : 'without'} key ${key.name}',
             (tester) async {
               final rejectedSpy = createSpy('wheelFailed');
               chart = acquireChart(<String, Object?>{
@@ -61,7 +61,7 @@ void main() {
                           'enabled': true,
                           'modifierKey': key,
                         },
-                        'mode': 'x',
+                        'mode': Mode.x,
                         'onZoomRejected': rejectedSpy.call,
                       },
                     },
@@ -121,8 +121,8 @@ void main() {
             'zoom': <String, Object?>{
               'zoom': <String, Object?>{
                 'wheel': <String, Object?>{'enabled': true},
-                'mode': 'xy',
-                'overScaleMode': 'y',
+                'mode': Mode.xy,
+                'overScaleMode': Mode.y,
               },
             },
           },
@@ -212,8 +212,8 @@ void main() {
             'zoom': <String, Object?>{
               'zoom': <String, Object?>{
                 'wheel': <String, Object?>{'enabled': true},
-                'mode': 'xy',
-                'scaleMode': 'y',
+                'mode': Mode.xy,
+                'scaleMode': Mode.y,
               },
             },
           },
@@ -307,7 +307,7 @@ void main() {
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
-                  'mode': 'y',
+                  'mode': Mode.y,
                   'wheel': <String, Object?>{'enabled': true},
                 },
               },
@@ -409,7 +409,7 @@ void main() {
                   'enabled': true,
                   'maintainAspectRatio': true,
                 },
-                'mode': 'xy',
+                'mode': Mode.xy,
               },
             },
           },
@@ -449,7 +449,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
                     'wheel': <String, Object?>{'enabled': true},
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                     'onZoomStart': startSpy.call,
                     'onZoom': zoomSpy.call,
                     'onZoomComplete': () => done(),
@@ -490,7 +490,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'wheel': <String, Object?>{'enabled': false},
-                  'mode': 'xy',
+                  'mode': Mode.xy,
                   'onZoomStart': startSpy.call,
                 },
               },
@@ -541,7 +541,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'wheel': <String, Object?>{'enabled': true},
-                  'mode': 'xy',
+                  'mode': Mode.xy,
                   'onZoomStart': () => false,
                   'onZoomRejected': rejectSpy.call,
                 },

@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart, ZoomChartContext;
+    show Mode, ZoomChart, ZoomChartContext;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, ChartEvent, JsObjectFace, Scale;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsNumberToString;
@@ -66,7 +66,7 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
   // `zoomOptions.pan`, `zoomOptions.zoom.wheel` and
   // `zoomOptions.zoom.pinch` are locals, so that the actions read and write
   // them as the upstream handlers do.
-  final pan = <String, Object?>{'enabled': true, 'mode': 'xy'};
+  final pan = <String, Object?>{'enabled': true, 'mode': Mode.xy};
   final wheel = <String, Object?>{'enabled': true};
   final pinch = <String, Object?>{'enabled': true};
   final zoomOptions = <String, Object?>{
@@ -78,7 +78,7 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
     'zoom': <String, Object?>{
       'wheel': wheel,
       'pinch': pinch,
-      'mode': 'xy',
+      'mode': Mode.xy,
       'onZoomComplete': (ZoomChartContext context) {
         // This update is needed to display up to date zoom level in the
         // title. Without this, previous zoom level is displayed. The reason
