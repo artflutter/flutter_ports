@@ -31,6 +31,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 
 /// The option [key] of the options object [options]: `options[key]`, the
 /// shared typed read [readOption] of `helpers.config.dart`.
@@ -49,8 +50,8 @@ Object? optionOf(Object? options, OptionKey key) => readOption(options, key);
 /// `TitleOptions` (`index.d.ts`): the options of the title and the subtitle
 /// plugins (`plugin.title.js:145-156`, `plugin.subtitle.js:32-43`).
 extension type const TitleOptions(Object? object) {
-  /// `align`.
-  Object? get align => optionOf(object, OptionKey.align);
+  /// `align`, a [ChartAlign] (row `adapt-chart-align-enum`).
+  ChartAlign? get align => ChartAlign.of(optionOf(object, OptionKey.align));
 
   /// `color`.
   Object? get color => optionOf(object, OptionKey.color);
@@ -74,8 +75,8 @@ extension type const TitleOptions(Object? object) {
 /// `LegendOptions` (`index.d.ts`): the options of the legend plugin
 /// (`plugin.legend.js:636-712`).
 extension type const LegendOptions(Object? object) {
-  /// `align`.
-  Object? get align => optionOf(object, OptionKey.align);
+  /// `align`, a [ChartAlign] (row `adapt-chart-align-enum`).
+  ChartAlign? get align => ChartAlign.of(optionOf(object, OptionKey.align));
 
   /// `display`.
   Object? get display => optionOf(object, OptionKey.display);
@@ -181,8 +182,9 @@ extension type const LegendTitleOptions(Object? object) {
   /// `padding`.
   Object? get padding => optionOf(object, OptionKey.padding);
 
-  /// `position`.
-  Object? get position => optionOf(object, OptionKey.position);
+  /// `position`, a [ChartAlign] (row `adapt-chart-align-enum`).
+  ChartAlign? get position =>
+      ChartAlign.of(optionOf(object, OptionKey.position));
 
   /// `text`.
   Object? get text => optionOf(object, OptionKey.text);

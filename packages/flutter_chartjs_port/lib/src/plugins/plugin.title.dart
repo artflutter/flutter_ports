@@ -45,6 +45,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, FontSpecScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show TitleOptions;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -190,13 +191,14 @@ class Title extends Element implements LayoutItem {
   /// plugin.title.js:59 `_drawArgs(offset)`: the object `{titleX, titleY,
   /// maxWidth, rotation}`, a record.
   ///
-  /// `_alignStartEnd` takes the `align` option through [_alignName].
+  /// `_alignStartEnd` takes the `align` option, a [ChartAlign].
   ({double titleX, double titleY, double maxWidth, double rotation}) _drawArgs(
     double offset,
   ) {
     final Title(:top, :left, :bottom, :right) = this;
     final options = TitleOptions(this.options);
-    final alignName = _alignName(options.align);
+    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+    final alignName = options.align;
     var rotation = 0.0;
     double maxWidth;
     double titleX;
@@ -257,19 +259,13 @@ class Title extends Element implements LayoutItem {
       color: opts.color,
       maxWidth: maxWidth,
       rotation: rotation,
-      textAlign: toLeftRightCenter(_alignName(opts.align)),
+      textAlign: toLeftRightCenter(opts.align),
       textBaseline: 'middle',
       translation: (titleX, titleY),
     );
     renderText(ctx!, text, 0, 0, fontOpts, textOpts);
   }
 }
-
-/// The `align` option as the `String` of the helpers of helpers.extras.ts:
-/// `_toLeftRightCenter` and `_alignStartEnd` compare it with `'start'` and
-/// `'end'`. A value that is not a `String` equals neither, so it passes as
-/// `''`.
-String _alignName(Object? align) => align is String ? align : '';
 
 /// The text options of the title (plugin.title.js:97-104), the object
 /// literal of the `renderText` call. The members that the literal leaves
@@ -399,7 +395,8 @@ final Plugin title = Plugin(supportsDataUpdates: true)
   // plugin.title.js:145-156. A typed scope of the kind `TitleOptions`
   // (Chart.js ADR 0054 §3).
   ..defaults = (TitleOptionsScope()
-    ..align = 'center'
+    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+    ..align = ChartAlign.center
     ..display = false
     ..font = (FontSpecScope()..weight = 'bold')
     ..fullSize = true

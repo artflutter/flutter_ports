@@ -1198,6 +1198,16 @@ const SCALE_ENUMS = {
   crossAlign: {owner: 'ticks', type: 'TickCrossAlign', values: new Set(['near', 'center', 'far'])},
 };
 
+/**
+ * The owners of a box `align` (row adapt-chart-align-enum): the legend, the
+ * title, the subtitle, an axis title, and the `options` of a box in the
+ * observations. The `position` of a legend title is a `ChartAlign` too.
+ */
+const ALIGN_OWNERS = new Set(['legend', 'title', 'subtitle', 'options']);
+
+/** The values of `ChartAlign`. */
+const ALIGN_VALUES = new Set(['start', 'center', 'end']);
+
 /** The values of the Flutter enums `StrokeCap` and `StrokeJoin`. */
 const STROKE_VALUES = {
   StrokeCap: new Set(['butt', 'round', 'square']),
@@ -1234,6 +1244,37 @@ const POSITIONER_CLASSES = {
   average: 'AverageTooltipPositioner()',
   nearest: 'NearestTooltipPositioner()',
 };
+
+/**
+ * The value [value] of the key [k] in the object of the key [owner], as a
+ * value of the Dart data: a name of upstream becomes the native value of
+ * the port (a mode or positioner class, an enum value), each by the rule of
+ * its row. Another value stays.
+ */
+function keyedValue(k, value, owner) {
+  if (typeof value !== 'string') return value;
+  if (k === 'mode' && INTERACTION_SCOPES.has(owner)) return new DartMode(value);
+  if (k === 'axis' && INTERACTION_SCOPES.has(owner)) return new DartAxis(value);
+  if (k === 'algorithm' && owner === 'decimation') return new DartAlgorithm(value);
+  if (k === 'position' && owner === 'tooltip') return new DartPositioner(value);
+  const stroke = STROKE_ENUMS[k];
+  if (stroke && STROKE_VALUES[stroke].has(value)) return new DartEnum(stroke, value);
+  if (
+    ALIGN_VALUES.has(value) &&
+    ((k === 'align' && ALIGN_OWNERS.has(owner)) || (k === 'position' && owner === 'title'))
+  ) {
+    return new DartEnum('ChartAlign', value);
+  }
+  const scaleEnum = SCALE_ENUMS[k];
+  if (
+    scaleEnum &&
+    (scaleEnum.owner === null || scaleEnum.owner === owner) &&
+    scaleEnum.values.has(value)
+  ) {
+    return new DartEnum(scaleEnum.type, value);
+  }
+  return value;
+}
 
 /**
  * The Dart literal of a JS value. A named function is `'fn:<name>'`. A
@@ -1302,6 +1343,8 @@ function dart(v, state, owner) {
   if (v instanceof DartEnum) {
     if (v.type in STROKE_VALUES) {
       (state.strokes ??= new Set()).add(v.type);
+    } else if (v.type === 'ChartAlign') {
+      state.aligns = true;
     } else {
       state.scaleEnums = true;
     }
@@ -1313,28 +1356,20 @@ function dart(v, state, owner) {
     state.positioners = true;
     return type;
   }
-  if (Array.isArray(v)) return `<Object?>[${v.map((x) => dart(x, state, owner)).join(', ')}]`;
+  if (Array.isArray(v)) {
+    // A step `['setOption', path, value]` writes the option of the last key
+    // of the path: its value takes the form of that key.
+    if (v.length === 3 && v[0] === 'setOption' && typeof v[1] === 'string') {
+      const keys = v[1].split('.');
+      const value = keyedValue(keys[keys.length - 1], v[2], keys[keys.length - 2]);
+      return `<Object?>[${[v[0], v[1]].map((x) => dart(x, state)).join(', ')}, ${dart(value, state)}]`;
+    }
+    return `<Object?>[${v.map((x) => dart(x, state, owner)).join(', ')}]`;
+  }
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map((k) => {
-      let value = v[k];
-      if (typeof value === 'string') {
-        if (k === 'mode' && INTERACTION_SCOPES.has(owner)) value = new DartMode(value);
-        if (k === 'axis' && INTERACTION_SCOPES.has(owner)) value = new DartAxis(value);
-        if (k === 'algorithm' && owner === 'decimation') value = new DartAlgorithm(value);
-        if (k === 'position' && owner === 'tooltip') value = new DartPositioner(value);
-        const stroke = STROKE_ENUMS[k];
-        if (stroke && STROKE_VALUES[stroke].has(value)) value = new DartEnum(stroke, value);
-        const scaleEnum = SCALE_ENUMS[k];
-        if (
-          scaleEnum &&
-          (scaleEnum.owner === null || scaleEnum.owner === owner) &&
-          scaleEnum.values.has(value)
-        ) {
-          value = new DartEnum(scaleEnum.type, value);
-        }
-      }
-      return `${dart(k, state)}: ${dart(value, state, k)}`;
-    });
+    const entries = Object.keys(v).map(
+      (k) => `${dart(k, state)}: ${dart(keyedValue(k, v[k], owner), state, k)}`,
+    );
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);
@@ -1388,7 +1423,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns ? '\n' : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

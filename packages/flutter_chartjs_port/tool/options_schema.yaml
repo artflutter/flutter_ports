@@ -31,7 +31,8 @@
 # interaction `axis`; a keyword is a foreign value), `decimationAlgorithm` (a `DecimationAlgorithm`, the value of
 # the decimation `algorithm`; a name is a foreign value), `scaleBounds`, `tickSource`, `tickAlign` and `tickCrossAlign`
 # (the enums of `scale_option_enums.dart`, the values of `bounds`, `ticks.source`, `ticks.align` and
-# `ticks.crossAlign`; a keyword is a foreign value), `any` (any JS value: a color, a point
+# `ticks.crossAlign`; a keyword is a foreign value), `chartAlign` (a `ChartAlign`, the `align` of a
+# box; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -947,7 +948,7 @@ kinds:
     doc: Port-only name for index.d.ts:3309 CartesianScaleOptions `title`, the title of a scale.
     keys:
       display: bool
-      align: string
+      align: chartAlign
       text: string | list
       color: any
       strokeColor: any
@@ -1006,7 +1007,7 @@ kinds:
     keys:
       display: bool
       position: string | scope ScalePosition
-      align: string
+      align: chartAlign
       maxHeight: number
       maxWidth: number
       fullSize: bool
@@ -1043,13 +1044,13 @@ kinds:
       display: bool
       color: any
       font: scope FontSpec
-      position: string
+      position: chartAlign
       padding: number | scope Padding
       text: string
   TitleOptions:
     doc: index.d.ts:2579 TitleOptions, the scopes `plugins.title` and `plugins.subtitle`.
     keys:
-      align: string
+      align: chartAlign
       display: bool
       position: string
       color: any

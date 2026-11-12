@@ -115,6 +115,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show LegendLabelOptions, LegendOptions, optionOf;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -190,10 +191,10 @@ bool _strictEquals(Object? a, Object? b) {
   return identical(a, b);
 }
 
-/// The `align` option or the title `position` as the `String` of the helpers
-/// of helpers.extras.ts: `_alignStartEnd`, `_textX` and `_toLeftRightCenter`
-/// compare it with `===`. A value that is not a `String` equals no keyword,
-/// so it passes as `''` (the form of `plugin.title.dart` `_alignName`).
+/// The `textAlign` of the labels as the `String` of `_textX` of
+/// helpers.extras.ts, which compares it with `===`. A value that is not a
+/// `String` equals no keyword, so it passes as `''`. The `align` option and
+/// the title `position` are a [ChartAlign] (row `adapt-chart-align-enum`).
 String _alignName(Object? align) => align is String ? align : '';
 
 /// The `textAlign` of the text options of `renderText` (:370), the result
@@ -852,7 +853,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     }
     final titleHeight = _computeTitleHeight();
     final hitboxes = legendHitBoxes;
-    final align = _alignName(options.align);
+    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+    final align = options.align;
     final padding = _labelPadding(options.labels);
     final rtlHelper = getRtlAdapter(options.rtl, left, width);
     if (isHorizontal()) {
@@ -958,7 +960,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final opts = LegendOptions(options);
     final lineWidths = this.lineWidths;
     final ctx = this.ctx!;
-    final align = _alignName(opts.align);
+    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+    final align = opts.align;
     final labelOpts = opts.labels;
     // The singleton read of `defaults.color` (:286): the typed read of the
     // key, with the result of the Map read of the defaults.
@@ -1215,7 +1218,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
     final rtlHelper = getRtlAdapter(opts.rtl, this.left, width);
     final ctx = this.ctx!;
-    final position = _alignName(titleOpts.position);
+    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+    final position = titleOpts.position;
     final halfFontSize = (titleFont.size ?? double.nan) / 2;
     final topPaddingPlusHalfFontSize = titlePadding.top + halfFontSize;
     double y;
@@ -1229,7 +1233,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       // Move left / right so that the title is above the legend lines
       maxWidth = lineWidths!.fold(double.negativeInfinity, jsMax);
       y = top + topPaddingPlusHalfFontSize;
-      left = alignStartEnd(_alignName(opts.align), left, right - maxWidth);
+      left = alignStartEnd(opts.align, left, right - maxWidth);
     } else {
       // Move down so that the title is above the legend stack in every
       // alignment
@@ -1240,7 +1244,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       y =
           topPaddingPlusHalfFontSize +
           alignStartEnd(
-            _alignName(opts.align),
+            opts.align,
             top,
             bottom -
                 maxHeight -
@@ -1961,7 +1965,8 @@ final Plugin legend = Plugin(supportsDataUpdates: true)
   ..defaults = (LegendOptionsScope()
     ..display = true
     ..position = 'top'
-    ..align = 'center'
+    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+    ..align = ChartAlign.center
     ..fullSize = true
     ..reverse = false
     ..weight = 1000.0
@@ -1978,7 +1983,8 @@ final Plugin legend = Plugin(supportsDataUpdates: true)
     ..title = (LegendTitleOptionsScope()
       ..color = _chartColor
       ..display = false
-      ..position = 'center'
+      // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+      ..position = ChartAlign.center
       ..text = ''))
   // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
   ..descriptors = (DescriptorsScope()

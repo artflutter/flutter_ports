@@ -35,8 +35,8 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show AxisTickInfo;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/typed/values.dart'
-    show ChartAlign, ChartPosition;
+import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/index.dart' show Tick;
 import 'package:meta/meta.dart' show internal;
 
@@ -1208,7 +1208,7 @@ ScaleTitleOptionsScope? _lowerTitle(AxisTitle? title) {
   put(scope, OptionKey.text, title.text);
   put(scope, OptionKey.color, colorValue(title.color));
   put(scope, OptionKey.font, fontScopeOf(title.font));
-  put(scope, OptionKey.align, title.align?.name);
+  put(scope, OptionKey.align, title.align);
   put(scope, OptionKey.padding, paddingScope(title.padding));
   return mergeExtra(scope, title.extra);
 }

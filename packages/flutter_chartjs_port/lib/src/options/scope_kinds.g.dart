@@ -3112,7 +3112,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.align:
-            return 4;
+            return 262144;
           case OptionKey.text:
             return 20;
           case OptionKey.color:
@@ -3217,7 +3217,7 @@ enum ScopeKind {
           case OptionKey.position:
             return 36;
           case OptionKey.align:
-            return 4;
+            return 262144;
           case OptionKey.maxHeight:
             return 1;
           case OptionKey.maxWidth:
@@ -3289,7 +3289,7 @@ enum ScopeKind {
           case OptionKey.font:
             return 32;
           case OptionKey.position:
-            return 4;
+            return 262144;
           case OptionKey.padding:
             return 33;
           case OptionKey.text:
@@ -3300,7 +3300,7 @@ enum ScopeKind {
       case ScopeKind.titleOptions:
         switch (key) {
           case OptionKey.align:
-            return 4;
+            return 262144;
           case OptionKey.display:
             return 2;
           case OptionKey.position:

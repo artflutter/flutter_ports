@@ -91,6 +91,7 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/static_font.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
@@ -380,11 +381,11 @@ ScriptableScaleContext _createTickContext(
 
 /// core.scale.js:122 `titleAlign`.
 ///
-/// `_toLeftRightCenter` compares [align] with `'start'` and `'end'`. A value
-/// that is not a `String` equals neither, so it passes as `''`.
-String? _titleAlign(Object? align, Object? position, Object? reverse) {
+/// [align] is a [ChartAlign] (row `adapt-chart-align-enum`); Dart `null`, a
+/// value that is not an align, gives `'center'`.
+String? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
   /** @type {CanvasTextAlign} */
-  String? ret = toLeftRightCenter(align is String ? align : '');
+  String? ret = toLeftRightCenter(align);
   if ((jsTruthy(reverse) && position != 'right') ||
       (!jsTruthy(reverse) && position == 'right')) {
     ret = _reverseAlign(ret);
@@ -399,7 +400,7 @@ String? _titleAlign(Object? align, Object? position, Object? reverse) {
   Scale scale,
   double offset,
   Object? position,
-  Object? align,
+  ChartAlign? align,
 ) {
   final Scale(:top, :left, :bottom, :right, :chart) = scale;
   final chartArea = chart.chartArea;
@@ -410,7 +411,8 @@ String? _titleAlign(Object? align, Object? position, Object? reverse) {
   double titleY;
   final height = bottom - top;
   final width = right - left;
-  final alignName = align is String ? align : '';
+  // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+  final alignName = align;
 
   if (scale.isHorizontal()) {
     titleX = alignStartEnd(alignName, left, right);

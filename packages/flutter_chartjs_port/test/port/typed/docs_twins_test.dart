@@ -1006,7 +1006,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
     'plugins': <String, Object?>{
       'legend': <String, Object?>{
         'position': 'bottom',
-        'align': 'start',
+        'align': ChartAlign.start,
         'labels': <String, Object?>{
           'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
           'font': <String, Object?>{'size': 11},
@@ -1018,7 +1018,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
       'title': <String, Object?>{
         'display': true,
         'text': 'Sales by quarter',
-        'align': 'start',
+        'align': ChartAlign.start,
         'font': <String, Object?>{'size': 16, 'weight': 600},
         'padding': <String, Object?>{'top': 4, 'bottom': 8},
       },
@@ -1407,7 +1407,7 @@ Map<String, Object?> _bubbleTypeRaw() => <String, Object?>{
         'title': <String, Object?>{
           'display': true,
           'text': 'Score',
-          'align': 'end',
+          'align': ChartAlign.end,
         },
       },
     },
@@ -1679,7 +1679,10 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
       },
     },
     'plugins': <String, Object?>{
-      'legend': <String, Object?>{'position': 'left', 'align': 'center'},
+      'legend': <String, Object?>{
+        'position': 'left',
+        'align': ChartAlign.center,
+      },
     },
   },
 };

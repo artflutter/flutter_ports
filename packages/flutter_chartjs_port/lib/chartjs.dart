@@ -110,6 +110,7 @@ export 'package:flutter_chartjs_port/src/types.dart'
         VisualElementRange,
         adapters,
         detectPlatform;
+export 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 export 'package:flutter_chartjs_port/src/types/plugin.dart'
     show
         CancelableHookArgs,

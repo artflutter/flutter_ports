@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -222,7 +223,7 @@ void main() {
         jasmineEquals(<String, Object?>{
           'display': true,
           'position': 'top',
-          'align': 'center',
+          'align': ChartAlign.center,
           'fullSize': true,
           'reverse': false,
           'weight': 1000,
@@ -242,7 +243,7 @@ void main() {
           'title': <String, Object?>{
             'color': jsGet(title, 'color'),
             'display': false,
-            'position': 'center',
+            'position': ChartAlign.center,
             'text': '',
           },
         }),
@@ -506,7 +507,7 @@ void main() {
                 'pointStyle': 'rect',
               },
               'position': 'right',
-              'align': 'center',
+              'align': ChartAlign.center,
               'maxWidth': 860,
             },
           },

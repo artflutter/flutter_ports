@@ -38,6 +38,7 @@ const Map<String, int> shapeAtoms = {
   'tickSource': 32768,
   'tickAlign': 65536,
   'tickCrossAlign': 131072,
+  'chartAlign': 262144,
 };
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
@@ -90,6 +91,11 @@ const Map<String, TypedAtom> typedAtoms = {
   'tickCrossAlign': (
     type: 'TickCrossAlign',
     uri: 'package:flutter_chartjs_port/src/core/scale_option_enums.dart',
+    field: null,
+  ),
+  'chartAlign': (
+    type: 'ChartAlign',
+    uri: 'package:flutter_chartjs_port/src/types/align.dart',
     field: null,
   ),
 };

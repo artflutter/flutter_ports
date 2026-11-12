@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -1108,7 +1109,7 @@ void main() {
     Chart leftChart(List<String> log) => acquireChart(
       _line(<String, Object?>{
         'position': 'left',
-        'align': 'start',
+        'align': ChartAlign.start,
         'labels': <String, Object?>{'padding': 0},
         'onClick': (Object? e, Object? item, Object? l) => log.add(
           'click ${jsToString(jsGet(item, 'text'))}',

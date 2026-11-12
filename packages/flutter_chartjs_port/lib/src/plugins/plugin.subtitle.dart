@@ -26,6 +26,7 @@ import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, FontSpecScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
@@ -77,7 +78,8 @@ final Plugin subTitle = Plugin(supportsDataUpdates: true)
   // plugin.subtitle.js:32-43. A typed scope of the kind `TitleOptions`
   // (Chart.js ADR 0054 §3).
   ..defaults = (TitleOptionsScope()
-    ..align = 'center'
+    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+    ..align = ChartAlign.center
     ..display = false
     ..font = (FontSpecScope()..weight = 'normal')
     ..fullSize = true

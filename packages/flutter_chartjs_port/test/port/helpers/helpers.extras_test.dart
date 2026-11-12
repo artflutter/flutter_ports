@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -232,23 +233,28 @@ void main() {
 
   group('_toLeftRightCenter', () {
     test('converts start and end, and others to center', () {
-      expect(toLeftRightCenter('start'), 'left');
-      expect(toLeftRightCenter('end'), 'right');
-      expect(toLeftRightCenter('center'), 'center');
-      expect(toLeftRightCenter('left'), 'center');
-      expect(toLeftRightCenter('right'), 'center');
-      expect(toLeftRightCenter(''), 'center');
+      // adapt-chart-align-enum: the align is a ChartAlign; Dart null is a
+      // value that is not an align.
+      expect(toLeftRightCenter(ChartAlign.start), 'left');
+      expect(toLeftRightCenter(ChartAlign.end), 'right');
+      expect(toLeftRightCenter(ChartAlign.center), 'center');
+      expect(toLeftRightCenter(null), 'center');
     });
   });
 
   group('_alignStartEnd', () {
     test('returns start, end or the middle', () {
-      expect(alignStartEnd('start', 1, 4), 1);
-      expect(alignStartEnd('end', 1, 4), 4);
-      expect(alignStartEnd('center', 1, 4), 2.5);
-      expect(alignStartEnd('left', 1, 4), 2.5);
-      expect(alignStartEnd('', 1, 4), 2.5);
-      expect(alignStartEnd('center', double.nan, 4), isNaN);
+      expect(alignStartEnd(ChartAlign.start, 1, 4), 1);
+      expect(alignStartEnd(ChartAlign.end, 1, 4), 4);
+      expect(alignStartEnd(ChartAlign.center, 1, 4), 2.5);
+      expect(alignStartEnd(null, 1, 4), 2.5);
+      expect(alignStartEnd(ChartAlign.center, double.nan, 4), isNaN);
+    });
+
+    test('an align keyword is not an align: a debug build stops', () {
+      expect(() => ChartAlign.of('start'), throwsA(isA<AssertionError>()));
+      expect(ChartAlign.of(null), isNull);
+      expect(ChartAlign.of(ChartAlign.end), ChartAlign.end);
     });
   });
 

@@ -817,6 +817,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `AxisTicks`. Each typed atom of the option model (a native type of an option that was a name
       in Chart.js) has the cell `classifyTyped<T>` of `opt.dart`, and `ShapeBits.typed` is the
       mask of their bits; the generator lists them in its map `typedAtoms`.
+    - The `align` of the legend, the title, the subtitle and an axis title, and the `position` of
+      the legend title, hold the enum `ChartAlign` (`start`, `center`, `end`) of the pure
+      `lib/src/types/align.dart` (row `adapt-chart-align-enum`), also in a raw config. The
+      helpers `alignStartEnd` and `toLeftRightCenter` take a `ChartAlign?`. The typed API takes
+      the same enum; `values.dart` has no `ChartAlign`. The text align of the legend labels stays
+      text.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
       is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream
@@ -1020,7 +1026,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 79 names. 26 of them are the classes of
+    `typed.dart` is its export list of 78 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of

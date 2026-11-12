@@ -27,6 +27,7 @@ import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
@@ -19187,13 +19188,13 @@ base class ScaleTitleOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `display`.
   set display(bool value) => store(OptionKey.display, OptValue<bool>(value));
 
-  Opt<String>? _align;
+  Opt<ChartAlign>? _align;
 
   /// The cell of `align`, or Dart `null` when absent.
-  Opt<String>? get alignCell => _align;
+  Opt<ChartAlign>? get alignCell => _align;
 
   /// Stores the cell of `align`. Dart `null` deletes the key.
-  set alignCell(Opt<String>? cell) {
+  set alignCell(Opt<ChartAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.align);
     } else {
@@ -19202,7 +19203,8 @@ base class ScaleTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `align`.
-  set align(String value) => store(OptionKey.align, OptValue<String>(value));
+  set align(ChartAlign value) =>
+      store(OptionKey.align, OptValue<ChartAlign>(value));
 
   Opt<Object>? _text;
 
@@ -19342,7 +19344,7 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.display:
         _display = fitCell(cell, classifyBool);
       case OptionKey.align:
-        _align = fitCell(cell, classifyString);
+        _align = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.text:
         _text = fitCell(cell, (raw) => classifyUnion(raw, 20));
       case OptionKey.color:
@@ -19383,7 +19385,7 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.display:
         return classifyBool(raw);
       case OptionKey.align:
-        return classifyString(raw);
+        return classifyTyped<ChartAlign>(raw);
       case OptionKey.text:
         return classifyUnion(raw, 20);
       case OptionKey.color:
@@ -20389,13 +20391,13 @@ base class LegendOptionsScope extends OptionScope {
   set position(Object value) =>
       store(OptionKey.position, classify(OptionKey.position, value));
 
-  Opt<String>? _align;
+  Opt<ChartAlign>? _align;
 
   /// The cell of `align`, or Dart `null` when absent.
-  Opt<String>? get alignCell => _align;
+  Opt<ChartAlign>? get alignCell => _align;
 
   /// Stores the cell of `align`. Dart `null` deletes the key.
-  set alignCell(Opt<String>? cell) {
+  set alignCell(Opt<ChartAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.align);
     } else {
@@ -20404,7 +20406,8 @@ base class LegendOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `align`.
-  set align(String value) => store(OptionKey.align, OptValue<String>(value));
+  set align(ChartAlign value) =>
+      store(OptionKey.align, OptValue<ChartAlign>(value));
 
   Opt<double>? _maxHeight;
 
@@ -20684,7 +20687,7 @@ base class LegendOptionsScope extends OptionScope {
       case OptionKey.position:
         _position = fitCell(cell, (raw) => classifyUnion(raw, 36));
       case OptionKey.align:
-        _align = fitCell(cell, classifyString);
+        _align = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.maxHeight:
         _maxHeight = fitCell(cell, classifyNumber);
       case OptionKey.maxWidth:
@@ -20749,7 +20752,7 @@ base class LegendOptionsScope extends OptionScope {
       case OptionKey.position:
         return classifyUnion(raw, 36);
       case OptionKey.align:
-        return classifyString(raw);
+        return classifyTyped<ChartAlign>(raw);
       case OptionKey.maxHeight:
         return classifyNumber(raw);
       case OptionKey.maxWidth:
@@ -21243,13 +21246,13 @@ base class LegendTitleOptionsScope extends OptionScope {
   set font(FontSpecScope value) =>
       store(OptionKey.font, OptScope<FontSpecScope>(value));
 
-  Opt<String>? _position;
+  Opt<ChartAlign>? _position;
 
   /// The cell of `position`, or Dart `null` when absent.
-  Opt<String>? get positionCell => _position;
+  Opt<ChartAlign>? get positionCell => _position;
 
   /// Stores the cell of `position`. Dart `null` deletes the key.
-  set positionCell(Opt<String>? cell) {
+  set positionCell(Opt<ChartAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.position);
     } else {
@@ -21258,8 +21261,8 @@ base class LegendTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `position`.
-  set position(String value) =>
-      store(OptionKey.position, OptValue<String>(value));
+  set position(ChartAlign value) =>
+      store(OptionKey.position, OptValue<ChartAlign>(value));
 
   Opt<Object>? _padding;
 
@@ -21326,7 +21329,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.font:
         _font = fitCell(cell, classifyScope<FontSpecScope>);
       case OptionKey.position:
-        _position = fitCell(cell, classifyString);
+        _position = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.padding:
         _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.text:
@@ -21365,7 +21368,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.font:
         return classifyScope<FontSpecScope>(raw);
       case OptionKey.position:
-        return classifyString(raw);
+        return classifyTyped<ChartAlign>(raw);
       case OptionKey.padding:
         return classifyUnion(raw, 33);
       case OptionKey.text:
@@ -21385,13 +21388,13 @@ base class TitleOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.titleOptions;
 
-  Opt<String>? _align;
+  Opt<ChartAlign>? _align;
 
   /// The cell of `align`, or Dart `null` when absent.
-  Opt<String>? get alignCell => _align;
+  Opt<ChartAlign>? get alignCell => _align;
 
   /// Stores the cell of `align`. Dart `null` deletes the key.
-  set alignCell(Opt<String>? cell) {
+  set alignCell(Opt<ChartAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.align);
     } else {
@@ -21400,7 +21403,8 @@ base class TitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `align`.
-  set align(String value) => store(OptionKey.align, OptValue<String>(value));
+  set align(ChartAlign value) =>
+      store(OptionKey.align, OptValue<ChartAlign>(value));
 
   Opt<bool>? _display;
 
@@ -21593,7 +21597,7 @@ base class TitleOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.align:
-        _align = fitCell(cell, classifyString);
+        _align = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.display:
         _display = fitCell(cell, classifyBool);
       case OptionKey.position:
@@ -21640,7 +21644,7 @@ base class TitleOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.align:
-        return classifyString(raw);
+        return classifyTyped<ChartAlign>(raw);
       case OptionKey.display:
         return classifyBool(raw);
       case OptionKey.position:

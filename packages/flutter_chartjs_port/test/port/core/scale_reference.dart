@@ -6,6 +6,7 @@
 // chartjs-test-utils. 93 cases.
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart';
 
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = 'v24.22.1';
@@ -7484,7 +7485,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'title': <String, Object?>{
         'display': true,
         'text': 'Time',
-        'align': 'end',
+        'align': ChartAlign.end,
         'color': 'purple',
         'padding': <String, Object?>{'top': 2.0, 'bottom': 6.0},
       },
@@ -7764,7 +7765,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'title': <String, Object?>{
         'display': true,
         'text': <Object?>['Line one', 'Line two'],
-        'align': 'start',
+        'align': ChartAlign.start,
       },
     },
     expected: <String, Object?>{
@@ -11532,7 +11533,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'title': <String, Object?>{
         'display': true,
         'text': 'Value',
-        'align': 'start',
+        'align': ChartAlign.start,
       },
     },
     expected: <String, Object?>{
@@ -11775,7 +11776,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'title': <String, Object?>{
         'display': true,
         'text': <Object?>['Two', 'lines'],
-        'align': 'end',
+        'align': ChartAlign.end,
       },
     },
     expected: <String, Object?>{
