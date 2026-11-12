@@ -333,12 +333,12 @@ void main() {
       expect(copy.data, same(data));
       expect([copy.borderRadius, copy.stack, copy.grouped], [4, 's', false]);
       final doughnut = const DoughnutDataset(
-        cutout: .percent(70),
+        cutout: PercentRadius(70),
       ).copyWith(rotation: 90);
       expect(
         [doughnut.cutout, doughnut.rotation],
         [
-          const ChartLength.percent(70),
+          const PercentRadius(70),
           90,
         ],
       );

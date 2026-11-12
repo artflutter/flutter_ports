@@ -2,6 +2,8 @@
 import 'dart:async';
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show PercentGrace, ValueGrace;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
@@ -562,20 +564,43 @@ void main() {
 
   group('_addGrace', () {
     test('adds the grace to both ends', () {
-      expect(addGrace((min: 0, max: 10), '10%', false), (min: -0.5, max: 10.5));
-      expect(addGrace((min: 0, max: 10), '-10%', false), (min: -0.5, max: 9.5));
-      expect(addGrace((min: -5, max: 5), 2.0, true), (min: -7.0, max: 7.0));
-      expect(addGrace((min: 1, max: 3), '0.5', false), (min: 0.5, max: 3.5));
-      expect(addGrace((min: 5, max: 6), null, false), (min: 5.0, max: 6.0));
+      // The grace is a GraceLength (row adapt-length-objects).
+      expect(
+        addGrace((min: 0, max: 10), const PercentGrace(10), false),
+        (min: -0.5, max: 10.5),
+      );
+      expect(
+        addGrace((min: 0, max: 10), const PercentGrace(-10), false),
+        (min: -0.5, max: 9.5),
+      );
+      expect(
+        addGrace((min: -5, max: 5), const ValueGrace(2), true),
+        (min: -7.0, max: 7.0),
+      );
+      expect(
+        addGrace((min: 1, max: 3), const ValueGrace(0.5), false),
+        (min: 0.5, max: 3.5),
+      );
+      expect(
+        addGrace((min: 5, max: 6), const ValueGrace(0), false),
+        (min: 5.0, max: 6.0),
+      );
     });
     test('keeps a zero end at 0 with beginAtZero', () {
-      expect(addGrace((min: 0, max: 10), '10%', true), (min: 0.0, max: 10.5));
-      final range = addGrace((min: -0.0, max: 6), 1.0, true);
+      expect(
+        addGrace((min: 0, max: 10), const PercentGrace(10), true),
+        (min: 0.0, max: 10.5),
+      );
+      final range = addGrace((min: -0.0, max: 6), const ValueGrace(1), true);
       expect(range.min, _isNumber(0));
       expect(range.max, 7);
     });
-    test('gives NaN for an undefined grace', () {
-      final range = addGrace((min: 1, max: 2), undefined, false);
+    test('gives NaN for a NaN grace', () {
+      final range = addGrace(
+        (min: 1, max: 2),
+        const ValueGrace(double.nan),
+        false,
+      );
       expect(range.min, isNaN);
       expect(range.max, isNaN);
     });

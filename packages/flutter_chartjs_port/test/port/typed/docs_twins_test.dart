@@ -45,10 +45,11 @@ import 'chart_twin.dart';
 // titles, the legend, the title and the subtitle, the tooltip with its text
 // callbacks, the interaction, the animation, the filler, the elements, the
 // padding, the time and logarithmic axes, the scriptable forms of the
-// colors in Lists, `ChartLength`, `ChartFill` and the point styles. Each raw
-// twin is the raw form of the same chart: the Chart.js option paths with
-// the values of the typed lowering (Chart.js ADR 0052, section 7). The
-// callbacks of the raw twins read the raw objects and give the same text.
+// colors in Lists, the radius lengths, `ChartFill` and the point styles.
+// Each raw twin is the raw form of the same chart: the Chart.js option
+// paths with the values of the typed lowering (Chart.js ADR 0052, section
+// 7). The callbacks of the raw twins read the raw objects and give the same
+// text.
 //
 // VM only: the twins are `testWidgets` cases with a `ChartView`.
 
@@ -1452,7 +1453,7 @@ ChartConfig _pieTypeTyped() => const ChartConfig(
       borderWidth: 2,
       offset: 4,
       hoverOffset: 12,
-      radius: ChartLength.percent(90),
+      radius: PercentRadius(90),
       rotation: -45,
       circumference: 300,
     ),
@@ -1487,7 +1488,7 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
         'borderWidth': 2,
         'offset': 4,
         'hoverOffset': 12,
-        'radius': '90%',
+        'radius': const PercentRadius(90),
         'rotation': -45,
         'circumference': 300,
       },
@@ -1525,14 +1526,14 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
       hoverBorderWidth: 3,
       spacing: 2,
       weight: 2,
-      cutout: ChartLength.percent(60),
+      cutout: PercentRadius(60),
     ),
     DoughnutDataset(
       label: 'Sprint 2',
       data: [5, 6, 2],
       backgroundColor: ChartValue.indexed([_green, _blue, _red]),
       weight: 1,
-      radius: ChartLength.pixels(150),
+      radius: PixelRadius(150),
     ),
   ],
   title: ChartTitle(
@@ -1570,7 +1571,7 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
         'hoverBorderWidth': 3,
         'spacing': 2,
         'weight': 2,
-        'cutout': '60%',
+        'cutout': const PercentRadius(60),
       },
       <String, Object?>{
         'label': 'Sprint 2',
@@ -1581,7 +1582,7 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
           const native_ui.Color.fromRGBO(255, 99, 132, 1),
         ],
         'weight': 1,
-        'radius': 150,
+        'radius': const PixelRadius(150),
       },
     ],
   },

@@ -194,8 +194,8 @@ List<Dataset> _arcs({
   double? weight,
   double? circumference,
   double? rotation,
-  ChartLength? cutout,
-  ChartLength? radius,
+  RadiusLength? cutout,
+  RadiusLength? radius,
 }) => [
   PieDataset(
     offset: offset,
@@ -357,10 +357,22 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   'weight': (_arcs(weight: 2), {'weight': 2}),
   'circumference': (_arcs(circumference: 180), {'circumference': 180}),
   'rotation': (_arcs(rotation: -90), {'rotation': -90}),
-  'cutout, a percent': (_arcs(cutout: const .percent(50)), {'cutout': '50%'}),
-  'cutout, pixels': (_arcs(cutout: const .pixels(20)), {'cutout': 20}),
-  'radius, a percent': (_arcs(radius: const .percent(90)), {'radius': '90%'}),
-  'radius, pixels': (_arcs(radius: const .pixels(100)), {'radius': 100}),
+  'cutout, a percent': (
+    _arcs(cutout: const PercentRadius(50)),
+    {'cutout': const PercentRadius(50)},
+  ),
+  'cutout, pixels': (
+    _arcs(cutout: const PixelRadius(20)),
+    {'cutout': const PixelRadius(20)},
+  ),
+  'radius, a percent': (
+    _arcs(radius: const PercentRadius(90)),
+    {'radius': const PercentRadius(90)},
+  ),
+  'radius, pixels': (
+    _arcs(radius: const PixelRadius(100)),
+    {'radius': const PixelRadius(100)},
+  ),
 };
 
 /// A font and its `FontSpec` Map.
@@ -447,7 +459,10 @@ _axisCommon = {
       'title': {'text': 'T'},
     },
   ),
-  'extra': ((a) => a.copyWith(extra: {'grace': '5%'}), {'grace': '5%'}),
+  'extra': (
+    (a) => a.copyWith(extra: {'grace': const PercentGrace(5)}),
+    {'grace': const PercentGrace(5)},
+  ),
 };
 
 /// The cases of the parameters of the axis classes: the typed axes with
@@ -1668,8 +1683,8 @@ void main() {
         'weight': 2,
         'circumference': 180,
         'rotation': -90,
-        'cutout': '60%',
-        'radius': 120,
+        'cutout': const PercentRadius(60),
+        'radius': const PixelRadius(120),
         'clip': 5,
       };
 
@@ -1692,8 +1707,8 @@ void main() {
             weight: 2,
             circumference: 180,
             rotation: -90,
-            cutout: const .percent(60),
-            radius: const .pixels(120),
+            cutout: const PercentRadius(60),
+            radius: const PixelRadius(120),
             extra: const {'clip': 5},
           ),
         );
@@ -1719,8 +1734,8 @@ void main() {
             weight: 2,
             circumference: 180,
             rotation: -90,
-            cutout: const .percent(60),
-            radius: const .pixels(120),
+            cutout: const PercentRadius(60),
+            radius: const PixelRadius(120),
             extra: const {'clip': 5},
           ),
         );
@@ -1891,14 +1906,14 @@ void main() {
             grid: AxisGrid(color: _red),
             extra: {
               'grid': {'tickLength': 4},
-              'grace': '5%',
+              'grace': PercentGrace(5),
             },
           ),
         ),
         {
           'type': 'linear',
           'grid': {'color': _redValue, 'tickLength': 4},
-          'grace': '5%',
+          'grace': const PercentGrace(5),
         },
       );
     });
@@ -1911,7 +1926,7 @@ void main() {
         'ticks': {'display': true, 'color': _redValue},
         'grid': {'display': false},
         'title': {'display': true, 'text': 'T'},
-        'grace': 1,
+        'grace': ValueGrace(1),
       };
       const head = <String, Object?>{
         'display': true,
@@ -1933,7 +1948,7 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: const {'grace': 1},
+            extra: const {'grace': ValueGrace(1)},
           ),
           {
             'type': 'category',
@@ -1958,7 +1973,7 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: {'grace': 1},
+            extra: {'grace': ValueGrace(1)},
           ),
           {
             'type': 'linear',
@@ -1984,7 +1999,7 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: {'grace': 1},
+            extra: {'grace': ValueGrace(1)},
           ),
           {
             'type': 'logarithmic',
@@ -2010,7 +2025,7 @@ void main() {
               ticks: ticks,
               grid: grid,
               title: title,
-              extra: const {'grace': 1},
+              extra: const {'grace': ValueGrace(1)},
             ),
             'time',
           ),
@@ -2027,7 +2042,7 @@ void main() {
               ticks: ticks,
               grid: grid,
               title: title,
-              extra: const {'grace': 1},
+              extra: const {'grace': ValueGrace(1)},
             ),
             'timeseries',
           ),
@@ -2065,7 +2080,7 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: {'grace': 1},
+            extra: {'grace': ValueGrace(1)},
           ),
           {
             'type': 'radialLinear',

@@ -139,8 +139,14 @@ void main() {
 
     test('Chart.helpers has the helpers keys in order', () {
       final helpers = jsGet(chartUmd, 'helpers')! as AnyObject;
-      expect(jsObjectKeys(helpers), indexUmdReferenceHelpersKeys);
-      for (final key in indexUmdReferenceHelpersKeys) {
+      // toDimension and toPercentage are the methods of the lengths in the
+      // port (row adapt-length-objects).
+      final keys = [
+        for (final key in indexUmdReferenceHelpersKeys)
+          if (key != 'toDimension' && key != 'toPercentage') key,
+      ];
+      expect(jsObjectKeys(helpers), keys);
+      for (final key in keys) {
         expect(helpers[key], isNotNull, reason: key);
         expect(helpers[key], isNot(same(undefined)), reason: key);
       }

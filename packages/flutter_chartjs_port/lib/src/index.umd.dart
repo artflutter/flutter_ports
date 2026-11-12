@@ -170,12 +170,11 @@ final AnyObject _helpers = Map<String, Object?>.unmodifiable(
     'supportsEventListenerOptions': helpers.supportsEventListenerOptions,
     'throttled': helpers.throttled,
     'toDegrees': helpers.toDegrees,
-    'toDimension': helpers.toDimension,
+    // DIVERGES(chartjs): adapt-length-objects, no toDimension or toPercentage.
     'toFont': helpers.toFont,
     'toFontString': helpers.toFontString,
     'toLineHeight': helpers.toLineHeight,
     'toPadding': helpers.toPadding,
-    'toPercentage': helpers.toPercentage,
     'toRadians': helpers.toRadians,
     'toTRBL': helpers.toTRBL,
     'toTRBLCorners': helpers.toTRBLCorners,

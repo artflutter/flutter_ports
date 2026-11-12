@@ -17,12 +17,16 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show resolveObjectKey;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -42,6 +46,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
 import '../../support/point_style_json.dart';
 import 'precedence_reference.dart'
@@ -299,6 +304,7 @@ String _json(Object? value) => switch (value) {
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
+  RadiusLength() || GraceLength() => lengthJson,
   InteractionMode() => modeJson,
   PointStyle() => pointStyleJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
@@ -2535,7 +2541,9 @@ int _markerRgb(String label) {
 }
 
 String _referenceLines(String text) => [
-  for (final line in withPointStyleMarkers(withCurveMarkers(text)).split('\n'))
+  for (final line in withLengthMarkers(
+    withPointStyleMarkers(withCurveMarkers(text)),
+  ).split('\n'))
     if (line.contains(': '))
       line.substring(0, line.indexOf(': ') + 2) +
           referenceColorText(line.substring(line.indexOf(': ') + 2))

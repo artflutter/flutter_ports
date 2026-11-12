@@ -55,6 +55,16 @@ const List<String> _libraries = [
 /// `helpers.dart` exports their Dart names (Chart.js ADR 0108).
 const Set<String> _addOnHelpers = {'_isPointInArea'};
 
+/// The runtime helpers of `src/helpers/index.ts` that `helpers.dart` does
+/// not export, with the reason.
+const Map<String, String> _notExportedHelpers = {
+  'toDimension':
+      'the method pixelsOf of RadiusLength and amountOf of GraceLength '
+      '(row adapt-length-objects)',
+  'toPercentage':
+      'the method fractionOf of RadiusLength (row adapt-length-objects)',
+};
+
 /// The Flutter libraries of case 2.
 const List<String> _flutterLibraries = [
   'package:flutter/widgets.dart',
@@ -389,7 +399,7 @@ void main() {
           } else if (!_addOnHelpers.contains(name) && exported) {
             findings.add('helpers.dart: $name is exported');
           }
-        } else {
+        } else if (!_notExportedHelpers.containsKey(name)) {
           final dart = _helperConstants[name] ?? name;
           if (!helpers.contains(dart)) {
             findings.add('helpers.dart: $name ($dart) is not exported');

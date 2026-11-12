@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show DefaultCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
@@ -46,8 +48,7 @@ import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartKind, IndexAxis;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/typed/values.dart'
-    show ChartFill, ChartLength;
+import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -1288,8 +1289,8 @@ base mixin _ArcStyle on Dataset {
   double? get weight;
   double? get circumference;
   double? get rotation;
-  ChartLength? get cutout;
-  ChartLength? get radius;
+  RadiusLength? get cutout;
+  RadiusLength? get radius;
 
   /// Writes the keys of the arcs into [scope].
   void _lowerArc(OptionScope scope) {
@@ -1299,8 +1300,8 @@ base mixin _ArcStyle on Dataset {
     put(scope, OptionKey.weight, weight);
     put(scope, OptionKey.circumference, circumference);
     put(scope, OptionKey.rotation, rotation);
-    put(scope, OptionKey.cutout, cutout?.optionValue);
-    put(scope, OptionKey.radius, radius?.optionValue);
+    put(scope, OptionKey.cutout, cutout);
+    put(scope, OptionKey.radius, radius);
   }
 
   /// The properties of the arcs, in parameter order.
@@ -1396,20 +1397,22 @@ final class PieDataset extends Dataset with _ArcStyle {
   final double? rotation;
 
   /// {@template flutter_chartjs_port.typed.cutout}
-  /// The radius of the hole in the center: `cutout`. A percent is a part of
-  /// the outer radius.
+  /// The radius of the hole in the center: `cutout`, a [RadiusLength] (row
+  /// `adapt-length-objects`): `PercentRadius(50)` is a part of the outer
+  /// radius, `PixelRadius(40)` pixels.
   /// {@endtemplate}
   ///
   /// The default of a pie is 0, no hole.
   @override
-  final ChartLength? cutout;
+  final RadiusLength? cutout;
 
   /// {@template flutter_chartjs_port.typed.radius}
-  /// The outer radius: `radius`. A percent is a part of the largest radius
-  /// that fits the chart area. The default is 100 percent.
+  /// The outer radius: `radius`, a [RadiusLength]: `PercentRadius(100)`, the
+  /// default, is a part of the largest radius that fits the chart area,
+  /// `PixelRadius(150)` pixels.
   /// {@endtemplate}
   @override
-  final ChartLength? radius;
+  final RadiusLength? radius;
 
   @override
   PieDataset copyWith({
@@ -1431,8 +1434,8 @@ final class PieDataset extends Dataset with _ArcStyle {
     double? weight,
     double? circumference,
     double? rotation,
-    ChartLength? cutout,
-    ChartLength? radius,
+    RadiusLength? cutout,
+    RadiusLength? radius,
     Map<String, Object?>? extra,
   }) => PieDataset(
     key: key ?? this.key,
@@ -1540,11 +1543,11 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
   ///
   /// The default of a doughnut is 50 percent.
   @override
-  final ChartLength? cutout;
+  final RadiusLength? cutout;
 
   /// {@macro flutter_chartjs_port.typed.radius}
   @override
-  final ChartLength? radius;
+  final RadiusLength? radius;
 
   @override
   DoughnutDataset copyWith({
@@ -1566,8 +1569,8 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     double? weight,
     double? circumference,
     double? rotation,
-    ChartLength? cutout,
-    ChartLength? radius,
+    RadiusLength? cutout,
+    RadiusLength? radius,
     Map<String, Object?>? extra,
   }) => DoughnutDataset(
     key: key ?? this.key,

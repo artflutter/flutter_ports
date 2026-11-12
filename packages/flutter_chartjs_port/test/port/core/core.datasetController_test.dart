@@ -23,6 +23,8 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show MinMax;
@@ -30,6 +32,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, createContext;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -44,6 +48,7 @@ import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/length_json.dart';
 import '../../support/point_style_json.dart';
 import 'dataset_controller_reference.dart';
 
@@ -681,6 +686,7 @@ String _enc(Object? v) => switch (v) {
   CubicInterpolationMode() => cubicModeJson,
   PointStyle() => pointStyleJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
+  RadiusLength() || GraceLength() => lengthJson,
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
   final Map<String, Object?> m => _encMap(m),

@@ -7,6 +7,7 @@
 // context of tool/reference/scale_chart_common.mjs. 55 cases, 365 widths.
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -39767,8 +39768,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'grace': 3.0},
-          'y': <String, Object?>{'grace': '50%'},
+          'x': <String, Object?>{'grace': ValueGrace(3)},
+          'y': <String, Object?>{'grace': PercentGrace(50)},
         },
       },
     },

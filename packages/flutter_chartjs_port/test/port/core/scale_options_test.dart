@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show PercentGrace;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -77,7 +79,7 @@ Map<String, Object?> _scaleValues() => {
   'bounds': ScaleBounds.ticks,
   'labels': <Object?>['a', 'b'],
   'beginAtZero': 0,
-  'grace': '5%',
+  'grace': const PercentGrace(5),
   'fullSize': false,
   'stack': 'group',
   'stackWeight': 2,

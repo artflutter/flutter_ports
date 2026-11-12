@@ -126,31 +126,6 @@ void main() {
     });
   });
 
-  group('toPercentage', () {
-    test('reads a percentage string or divides a number', () {
-      expect(helpers.toPercentage('50%', 200), 0.5);
-      expect(helpers.toPercentage(50, 200), 0.25);
-      expect(helpers.toPercentage('50', 200), 0.25);
-      expect(helpers.toPercentage(' 12.5%', 10), 0.125);
-      expect(helpers.toPercentage('abc%', 10), isNaN);
-      expect(helpers.toPercentage(null, 10), 0);
-      expect(helpers.toPercentage(undefined, 10), isNaN);
-      expect(helpers.toPercentage(true, 4), 0.25);
-    });
-  });
-
-  group('toDimension', () {
-    test('reads a percentage string or returns the number', () {
-      expect(helpers.toDimension('50%', 200), 100);
-      expect(helpers.toDimension(50, 200), 50);
-      expect(helpers.toDimension('50', 200), 50);
-      expect(helpers.toDimension('1e2%', 10), 10);
-      expect(helpers.toDimension('', 10), 0);
-      expect(helpers.toDimension(null, 10), 0);
-      expect(helpers.toDimension(undefined, 10), isNaN);
-    });
-  });
-
   group('callback', () {
     test('passes no argument for null args, and thisArg', () {
       final result = helpers.callback(

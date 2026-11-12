@@ -9,6 +9,7 @@
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -22588,7 +22589,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'suggestedMin': 10.0,
-            'grace': '10%',
+            'grace': PercentGrace(10),
             'ticks': <String, Object?>{'stepSize': 15.0},
           },
         },

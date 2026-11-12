@@ -407,7 +407,7 @@ void main() {
         // The default radius '100%' of the controller applies: the dataset
         // has no radius (controller.doughnut.js:216-229, with borderWidth 1,
         // no offset and no spacing).
-        expect(meta.controller!.options['radius'], '100%');
+        expect(meta.controller!.options['radius'], const PercentRadius(100));
         final area = chart.chartArea!;
         final expected =
             (math.min(area.right - area.left, area.bottom - area.top) - 1) / 2;

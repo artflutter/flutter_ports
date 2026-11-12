@@ -57,6 +57,7 @@ FillTarget
 FillerDrawTime
 FlutterPlatform
 FontSpec
+GraceLength
 HTMLCanvasElement
 ImagePointStyle
 IndexInteractionMode
@@ -85,7 +86,10 @@ NearestInteractionMode
 NearestTooltipPositioner
 Path2D
 PathPointStyle
+PercentGrace
+PercentRadius
 PieController
+PixelRadius
 Plugin
 PluginHookArgs
 PluginHookFunction
@@ -96,6 +100,7 @@ PointStyle
 PolarAreaController
 RadarController
 RadialLinearScale
+RadiusLength
 RectPointStyle
 RectRotPointStyle
 RectRoundedPointStyle
@@ -128,6 +133,7 @@ TooltipYAlign
 TrianglePointStyle
 Undefined
 UpdateHookArgs
+ValueGrace
 VisualElement
 XInteractionMode
 YInteractionMode
@@ -217,7 +223,6 @@ ChartKind
 ChartLegend
 ChartLegendEventDetails
 ChartLegendItem
-ChartLength
 ChartMeta
 ChartMetaClip
 ChartPosition
@@ -260,6 +265,7 @@ FillTarget
 FillerDrawTime
 FlutterPlatform
 FontSpec
+GraceLength
 HTMLCanvasElement
 HeightAnimation
 HideTransition
@@ -299,8 +305,11 @@ OffsetAnimation
 OuterRadiusAnimation
 Path2D
 PathPointStyle
+PercentGrace
+PercentRadius
 PieController
 PieDataset
+PixelRadius
 Plugin
 PluginHookArgs
 PluginHookFunction
@@ -317,6 +326,7 @@ RadarDataset
 RadialLinearAxis
 RadialLinearScale
 RadiusAnimation
+RadiusLength
 RectPointStyle
 RectRotPointStyle
 RectRoundedPointStyle
@@ -358,6 +368,7 @@ TooltipYAlign
 TrianglePointStyle
 Undefined
 UpdateHookArgs
+ValueGrace
 VisibleAnimation
 VisualElement
 WidthAnimation
@@ -474,12 +485,10 @@ supportsEventListenerOptions
 tau
 throttled
 toDegrees
-toDimension
 toFont
 toFontString
 toLineHeight
 toPadding
-toPercentage
 toRadians
 toTRBL
 toTRBLCorners

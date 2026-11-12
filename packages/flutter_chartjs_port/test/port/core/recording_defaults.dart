@@ -5,6 +5,10 @@ import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -15,6 +19,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
 
 /// A [Defaults] that records each call with its arguments, as
@@ -64,6 +69,7 @@ String probeJson(Object? value) => switch (value) {
   Function() => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
+  RadiusLength() || GraceLength() => lengthJson,
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(probeJson).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>

@@ -15,12 +15,16 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -34,6 +38,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/length_json.dart';
 import '../../support/point_style_json.dart';
 
 // Upstream has no spec for src/core/core.config.js (AGENTS.md rule 3). The
@@ -72,6 +77,7 @@ String _jsonRaw(Object? value) => switch (value) {
   CubicInterpolationMode() => cubicModeJson,
   PointStyle() => pointStyleJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
+  RadiusLength() || GraceLength() => lengthJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -187,21 +193,23 @@ void _setUpScaleTypes() {
 const String _tbarX =
     '"axis":"x","type":"tcat","offset":true,"grid":"{...}","cat":1,'
     '"display":true,"reverse":false,"beginAtZero":false,"bounds":"ticks",'
-    '"clip":true,"grace":0,"border":"{...}","title":"{...}","ticks":"{...}"';
+    '"clip":true,"grace":"<length>","border":"{...}","title":"{...}",'
+    '"ticks":"{...}"';
 
 /// The summary of the scale `y` of the scale probe for the chart type
 /// `tbar` and one dataset.
 const String _tbarY =
     '"axis":"y","type":"tlin","beginAtZero":true,"lin":1,"display":true,'
-    '"offset":false,"reverse":false,"bounds":"ticks","clip":true,"grace":0,'
-    '"grid":"{...}","border":"{...}","title":"{...}","ticks":"{...}"';
+    '"offset":false,"reverse":false,"bounds":"ticks","clip":true,'
+    '"grace":"<length>","grid":"{...}","border":"{...}","title":"{...}",'
+    '"ticks":"{...}"';
 
 /// The keys of the scope objects that follow the main keys of a merged
 /// scale: the defaults of `defaults.scale`.
 const String _scaleTail =
     '"display":true,"offset":false,"reverse":false,"beginAtZero":false,'
-    '"bounds":"ticks","clip":true,"grace":0,"grid":"{...}","border":"{...}",'
-    '"title":"{...}","ticks":"{...}"';
+    '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
+    '"border":"{...}","title":"{...}","ticks":"{...}"';
 
 /// The test element type and chart type of the scope probe.
 void _setUpScopeTypes() {
@@ -601,7 +609,7 @@ void main() {
         }),
         '{"x":{$_tbarX},"y":{$_tbarY},"right":{"axis":"y","type":"tlin",'
         '"beginAtZero":false,"lin":1,"display":true,"offset":false,'
-        '"reverse":false,"bounds":"ticks","clip":true,"grace":0,'
+        '"reverse":false,"bounds":"ticks","clip":true,"grace":"<length>",'
         '"grid":"{...}","border":"{...}","title":"{...}","ticks":"{...}"}}',
       );
     });
@@ -627,7 +635,7 @@ void main() {
         }),
         '{"x":{"axis":"x","offset":false,"type":"tlin","extra":1,'
         '"grid":"{...}","beginAtZero":false,"lin":1,"display":true,'
-        '"reverse":false,"bounds":"ticks","clip":true,"grace":0,'
+        '"reverse":false,"bounds":"ticks","clip":true,"grace":"<length>",'
         '"border":"{...}","title":"{...}","ticks":"{...}"},'
         '"myY":{"axis":"y","position":"left",${_tbarY.substring(11)}},'
         '"r2":{"axis":"r",${_tbarY.substring(11)}},'
@@ -661,11 +669,11 @@ void main() {
         }),
         '{"foo":{"axis":"y","type":"tlin","beginAtZero":false,"lin":1,'
         '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
-        '"clip":true,"grace":0,"grid":"{...}","border":"{...}",'
+        '"clip":true,"grace":"<length>","grid":"{...}","border":"{...}",'
         '"title":"{...}","ticks":"{...}"},'
         '"x":{"axis":"x","type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
-        '"bounds":"ticks","clip":true,"grace":0,"grid":"{...}",'
+        '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"}}',
       );
       expect(
@@ -682,7 +690,7 @@ void main() {
         }),
         '{"foo":{"axis":"x","type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
-        '"bounds":"ticks","clip":true,"grace":0,"grid":"{...}",'
+        '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"}}',
       );
     });
@@ -746,7 +754,7 @@ void main() {
         proxy,
         '{"y":{"axis":"y","a":1,"type":"tlin","beginAtZero":false,"lin":1,'
         '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
-        '"clip":true,"grace":0,"grid":"{...}","border":"{...}",'
+        '"clip":true,"grace":"<length>","grid":"{...}","border":"{...}",'
         '"title":"{...}","ticks":"{...}"}}',
       );
       expect(scalesString, '{}');
@@ -783,7 +791,7 @@ void main() {
         }),
         '{"0":{"axis":"x","type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
-        '"bounds":"ticks","clip":true,"grace":0,"grid":"{...}",'
+        '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"}}',
       );
       expect(
@@ -800,11 +808,11 @@ void main() {
         }),
         '{"x":{"axis":"x","type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
-        '"bounds":"ticks","clip":true,"grace":0,"grid":"{...}",'
+        '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"},'
         '"y":{"axis":"y","type":"tlin","beginAtZero":false,"lin":1,'
         '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
-        '"clip":true,"grace":0,"grid":"{...}","border":"{...}",'
+        '"clip":true,"grace":"<length>","grid":"{...}","border":"{...}",'
         '"title":"{...}","ticks":"{...}"}}',
       );
     });
@@ -893,7 +901,7 @@ void main() {
           '"tickLength":8,"tickWidth":"<fn>","tickColor":"<fn>"},'
           '"type":"tcat","offset":true,"cat":1,"display":true,'
           '"reverse":false,"beginAtZero":false,"bounds":"ticks","clip":true,'
-          '"grace":0,$border,$title,$ticks}',
+          '"grace":"<length>",$border,$title,$ticks}',
         ),
       );
       expect(
@@ -901,7 +909,7 @@ void main() {
         referenceColorTokens(
           '{"axis":"y","type":"tlin","beginAtZero":true,"lin":1,'
           '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
-          '"clip":true,"grace":0,"grid":{"display":true,"lineWidth":1,'
+          '"clip":true,"grace":"<length>","grid":{"display":true,"lineWidth":1,'
           '"drawOnChartArea":true,"drawTicks":true,"tickLength":8,'
           '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
           '"color":"rgba(0,0,0,0.1)"},$border,$title,$ticks}',
@@ -937,7 +945,7 @@ void main() {
         referenceColorTokens(
           '{"axis":"x","min":1,"type":"tcat","offset":true,"grid":"{...}",'
           '"cat":1,"display":true,"reverse":false,"beginAtZero":false,'
-          '"bounds":"ticks","clip":true,"grace":0,"border":"{...}",'
+          '"bounds":"ticks","clip":true,"grace":"<length>","border":"{...}",'
           '"title":"{...}","ticks":"{...}","max":9}',
         ),
       );

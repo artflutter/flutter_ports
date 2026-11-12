@@ -11,10 +11,14 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -119,7 +123,11 @@ bool _fits(String kind, int shape) {
   return switch (kind) {
     'fn' || 'obj:JsFunction' || 'obj:JsClass' => true,
     'List' || 'null' || 'undefined' => true,
-    'double' || 'int' => shape & ShapeBits.number != 0,
+    // Upstream data hold a number where the port has a length.
+    'double' || 'int' =>
+      shape & ShapeBits.number != 0 ||
+          shape & ShapeBits.typed == ShapeBits.radiusLength ||
+          shape & ShapeBits.typed == ShapeBits.graceLength,
     // Upstream data hold a name where the port has a typed atom: a curve, an
     // enum or a class of the port (`ShapeBits.typed`).
     'String' => shape & (ShapeBits.string | ShapeBits.typed) != 0,
@@ -207,6 +215,11 @@ String? _mismatch(Object? actual, Object? expected) {
   // The same for a cubic interpolation mode and a point style.
   if (expected is String && actual is CubicInterpolationMode) return null;
   if (expected is String && actual is PointStyle) return null;
+  // The same for a length: upstream has a number or a percent text.
+  if ((expected is String || expected is num) &&
+      (actual is RadiusLength || actual is GraceLength)) {
+    return null;
+  }
   // Upstream has the keyword of a line cap, a line join or an interaction
   // axis where the port has the enum: the name of the enum value is the
   // keyword.

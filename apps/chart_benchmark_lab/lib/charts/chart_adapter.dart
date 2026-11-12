@@ -315,7 +315,7 @@ class BenchmarkChart extends StatelessWidget {
         data: [for (final p in values) p.y],
         backgroundColor: color,
         borderWidth: 0,
-        radius: const cj.ChartLength.percent(_sliceExtent * 100),
+        radius: const cj.PercentRadius(_sliceExtent * 100),
       ),
       ChartType.doughnut => cj.DoughnutDataset(
         key: const ValueKey('series'),
@@ -324,8 +324,8 @@ class BenchmarkChart extends StatelessWidget {
         data: [for (final p in values) p.y],
         backgroundColor: color,
         borderWidth: 0,
-        radius: const cj.ChartLength.percent(_sliceExtent * 100),
-        cutout: const cj.ChartLength.percent(_doughnutCutout * 100),
+        radius: const cj.PercentRadius(_sliceExtent * 100),
+        cutout: const cj.PercentRadius(_doughnutCutout * 100),
       ),
       ChartType.polarArea => cj.PolarAreaDataset(
         key: const ValueKey('series'),

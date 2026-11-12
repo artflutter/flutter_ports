@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/controllers/controller.pie.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     show defaults, overrides;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show PixelRadius;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -256,7 +258,9 @@ void main() {
         // The plain Maps of the merge: `equals` compares them deeply.
         expect(
           plainValue(jsGet(pie, key)),
-          key == 'cutout' ? 0.0 : plainValue(jsGet(doughnut, key)),
+          key == 'cutout'
+              ? const PixelRadius(0)
+              : plainValue(jsGet(doughnut, key)),
           reason: key,
         );
       }

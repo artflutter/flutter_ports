@@ -36,8 +36,12 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
+    show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
+import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
+    show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -297,6 +301,12 @@ abstract final class ShapeBits {
   /// the text forms of `fill`.
   static const int fillTarget = 3328;
 
+  /// `radiusLength`: a `RadiusLength`, the doughnut `cutout` and `radius`.
+  static const int radiusLength = 3456;
+
+  /// `graceLength`: a `GraceLength`, the scale `grace`.
+  static const int graceLength = 3584;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -412,6 +422,8 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ),
   ShapeBits.pointStyle => classifyTyped<PointStyle>(raw),
   ShapeBits.fillTarget => classifyTyped<FillTarget>(raw),
+  ShapeBits.radiusLength => classifyTyped<RadiusLength>(raw),
+  ShapeBits.graceLength => classifyTyped<GraceLength>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };
