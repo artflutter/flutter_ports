@@ -27,7 +27,7 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
+    show boolOption, readOption;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
@@ -58,7 +58,8 @@ extension type const TitleOptions(Object? object) {
   Object? get color => optionOf(object, OptionKey.color);
 
   /// `display`.
-  Object? get display => optionOf(object, OptionKey.display);
+  bool get display =>
+      boolOption(optionOf(object, OptionKey.display), OptionKey.display);
 
   /// `font`.
   Object? get font => optionOf(object, OptionKey.font);
@@ -80,7 +81,8 @@ extension type const LegendOptions(Object? object) {
   ChartAlign? get align => ChartAlign.of(optionOf(object, OptionKey.align));
 
   /// `display`.
-  Object? get display => optionOf(object, OptionKey.display);
+  bool get display =>
+      boolOption(optionOf(object, OptionKey.display), OptionKey.display);
 
   /// `labels`.
   LegendLabelOptions get labels =>
@@ -109,10 +111,11 @@ extension type const LegendOptions(Object? object) {
   Object? get position => optionOf(object, OptionKey.position);
 
   /// `reverse`.
-  Object? get reverse => optionOf(object, OptionKey.reverse);
+  bool get reverse =>
+      boolOption(optionOf(object, OptionKey.reverse), OptionKey.reverse);
 
   /// `rtl`.
-  Object? get rtl => optionOf(object, OptionKey.rtl);
+  bool get rtl => boolOption(optionOf(object, OptionKey.rtl), OptionKey.rtl);
 
   /// `textDirection`.
   Object? get textDirection => optionOf(object, OptionKey.textDirection);
@@ -162,10 +165,16 @@ extension type const LegendLabelOptions(Object? object) {
   Object? get textAlign => optionOf(object, OptionKey.textAlign);
 
   /// `useBorderRadius`.
-  Object? get useBorderRadius => optionOf(object, OptionKey.useBorderRadius);
+  bool get useBorderRadius => boolOption(
+    optionOf(object, OptionKey.useBorderRadius),
+    OptionKey.useBorderRadius,
+  );
 
   /// `usePointStyle`.
-  Object? get usePointStyle => optionOf(object, OptionKey.usePointStyle);
+  bool get usePointStyle => boolOption(
+    optionOf(object, OptionKey.usePointStyle),
+    OptionKey.usePointStyle,
+  );
 }
 
 /// The `title` of `LegendOptions` (`index.d.ts`, an inline type): the title
@@ -175,7 +184,8 @@ extension type const LegendTitleOptions(Object? object) {
   Object? get color => optionOf(object, OptionKey.color);
 
   /// `display`.
-  Object? get display => optionOf(object, OptionKey.display);
+  bool get display =>
+      boolOption(optionOf(object, OptionKey.display), OptionKey.display);
 
   /// `font`.
   Object? get font => optionOf(object, OptionKey.font);
@@ -241,10 +251,14 @@ extension type const TooltipOptions(Object? object) {
   Object? get cornerRadius => optionOf(object, OptionKey.cornerRadius);
 
   /// `displayColors`.
-  Object? get displayColors => optionOf(object, OptionKey.displayColors);
+  bool get displayColors => boolOption(
+    optionOf(object, OptionKey.displayColors),
+    OptionKey.displayColors,
+  );
 
   /// `enabled`.
-  Object? get enabled => optionOf(object, OptionKey.enabled);
+  bool get enabled =>
+      boolOption(optionOf(object, OptionKey.enabled), OptionKey.enabled);
 
   /// `external`.
   Object? get external => optionOf(object, OptionKey.external);
@@ -288,10 +302,11 @@ extension type const TooltipOptions(Object? object) {
       TooltipPositioner.of(optionOf(object, OptionKey.position));
 
   /// `reverse`.
-  Object? get reverse => optionOf(object, OptionKey.reverse);
+  bool get reverse =>
+      boolOption(optionOf(object, OptionKey.reverse), OptionKey.reverse);
 
   /// `rtl`.
-  Object? get rtl => optionOf(object, OptionKey.rtl);
+  bool get rtl => boolOption(optionOf(object, OptionKey.rtl), OptionKey.rtl);
 
   /// `textDirection`.
   Object? get textDirection => optionOf(object, OptionKey.textDirection);
@@ -313,7 +328,10 @@ extension type const TooltipOptions(Object? object) {
   Object? get titleSpacing => optionOf(object, OptionKey.titleSpacing);
 
   /// `usePointStyle`.
-  Object? get usePointStyle => optionOf(object, OptionKey.usePointStyle);
+  bool get usePointStyle => boolOption(
+    optionOf(object, OptionKey.usePointStyle),
+    OptionKey.usePointStyle,
+  );
 
   /// `xAlign`.
   TooltipXAlign? get xAlign =>
@@ -331,7 +349,8 @@ extension type const FillerOptions(Object? object) {
   Object? get drawTime => optionOf(object, OptionKey.drawTime);
 
   /// `propagate`.
-  Object? get propagate => optionOf(object, OptionKey.propagate);
+  bool get propagate =>
+      boolOption(optionOf(object, OptionKey.propagate), OptionKey.propagate);
 }
 
 /// The fill option object `{target, above, below}` or `{value}` of a line
@@ -359,7 +378,8 @@ extension type const DecimationOptions(Object? object) {
   Object? get algorithm => optionOf(object, OptionKey.algorithm);
 
   /// `enabled`.
-  Object? get enabled => optionOf(object, OptionKey.enabled);
+  bool get enabled =>
+      boolOption(optionOf(object, OptionKey.enabled), OptionKey.enabled);
 
   /// `samples`.
   Object? get samples => optionOf(object, OptionKey.samples);
@@ -372,8 +392,12 @@ extension type const DecimationOptions(Object? object) {
 /// plugin.
 extension type const ColorsPluginOptions(Object? object) {
   /// `enabled`.
-  Object? get enabled => optionOf(object, OptionKey.enabled);
+  bool get enabled =>
+      boolOption(optionOf(object, OptionKey.enabled), OptionKey.enabled);
 
   /// `forceOverride`.
-  Object? get forceOverride => optionOf(object, OptionKey.forceOverride);
+  bool get forceOverride => boolOption(
+    optionOf(object, OptionKey.forceOverride),
+    OptionKey.forceOverride,
+  );
 }

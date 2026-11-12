@@ -382,7 +382,7 @@ double _lengthOf(Object? list) =>
   }
   if (jsTruthy(combinedBodyLength)) {
     // Body lines may include some extra height depending on boxHeight
-    final bodyLineHeight = jsTruthy(options.displayColors)
+    final bodyLineHeight = options.displayColors
         ? jsMax(boxHeight, bodyFont.lineHeight!)
         : bodyFont.lineHeight!;
     height +=
@@ -416,7 +416,7 @@ double _lengthOf(Object? list) =>
   each([...tooltip.beforeBody!, ...tooltip.afterBody!], maxLineWidth);
 
   // Body lines may include some extra width due to the color box
-  widthPadding = jsTruthy(options.displayColors)
+  widthPadding = options.displayColors
       ? (boxWidth + 2 + jsToNumber(options.boxPadding))
       : 0;
   each(body, (Object? bodyItem) {
@@ -1252,7 +1252,7 @@ class Tooltip extends Element implements types.TooltipModel {
     final chart = this.chart;
     final options = _resolveOptions();
     final enabled = options.enabled;
-    final animation = jsTruthy(enabled)
+    final animation = enabled
         ? optionOf(chart.options, OptionKey.animation)
         : enabled;
     final opts = jsTruthy(animation) ? options.animations : animation;
@@ -1765,7 +1765,7 @@ class Tooltip extends Element implements types.TooltipModel {
         : 0;
     final colorY = pt.y + yOffSet;
 
-    if (jsTruthy(options.usePointStyle)) {
+    if (options.usePointStyle) {
       final drawOptions = PointOptions()
         // fit the circle in the box
         ..storeKey(OptionKey.radius, jsMin(boxWidth, boxHeight) / 2)
@@ -1928,8 +1928,7 @@ class Tooltip extends Element implements types.TooltipModel {
     ctx.fillStyle = canvasStyle(options.bodyColor);
     each(beforeBody, fillLineOfText);
 
-    xLinePadding =
-        jsTruthy(displayColors) && bodyAlignForCalculation != TextAlign.right
+    xLinePadding = displayColors && bodyAlignForCalculation != TextAlign.right
         ? bodyAlign == TextAlign.center
               ? (boxWidth / 2 + boxPadding)
               : (boxWidth + 2 + boxPadding)
@@ -1945,7 +1944,7 @@ class Tooltip extends Element implements types.TooltipModel {
 
       lines = bodyItem.lines! as List<Object?>;
       // Draw Legend-like boxes if needed
-      if (jsTruthy(displayColors) && lines.isNotEmpty) {
+      if (displayColors && lines.isNotEmpty) {
         _drawColorBox(ctx, pt, i, rtlHelper, options);
         bodyLineHeight = jsMax(bodyFont.lineHeight!, boxHeight);
       }
@@ -2148,7 +2147,7 @@ class Tooltip extends Element implements types.TooltipModel {
         afterBody!.isNotEmpty ||
         footer!.isNotEmpty;
 
-    if (jsTruthy(options.enabled) && hasTooltipContent) {
+    if (options.enabled && hasTooltipContent) {
       ctx
         ..save()
         ..globalAlpha = opacity;
@@ -2278,7 +2277,7 @@ class Tooltip extends Element implements types.TooltipModel {
     if (changed) {
       _active = active;
 
-      if (jsTruthy(options.enabled) || jsTruthy(options.external)) {
+      if (options.enabled || jsTruthy(options.external)) {
         _eventPosition = TooltipPosition()
           ..x = e.x
           ..y = e.y;
@@ -2339,7 +2338,7 @@ class Tooltip extends Element implements types.TooltipModel {
       replay is bool ? replay : (jsTruthy(replay) ? true : null),
     );
 
-    if (jsTruthy(options.reverse)) {
+    if (options.reverse) {
       _reverseInPlace(active);
     }
 

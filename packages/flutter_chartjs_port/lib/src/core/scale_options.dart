@@ -48,7 +48,7 @@ import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextProxy, OptionView, readOption;
+    show ContextProxy, OptionView, boolOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
     show numberFormatOf;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -77,16 +77,20 @@ extension type const CoreScaleOptions(OptionView _view) implements OptionView {
   Object? get display => _view.readKey(OptionKey.display);
 
   /// index.d.ts:1209 `alignToPixels: boolean`.
-  Object? get alignToPixels => _view.readKey(OptionKey.alignToPixels);
+  bool get alignToPixels => boolOption(
+    _view.readKey(OptionKey.alignToPixels),
+    OptionKey.alignToPixels,
+  );
 
   /// index.d.ts:1213 `backgroundColor: Color`.
   Object? get backgroundColor => _view.readKey(OptionKey.backgroundColor);
 
   /// index.d.ts:1218 `reverse: boolean`.
-  Object? get reverse => _view.readKey(OptionKey.reverse);
+  bool get reverse =>
+      boolOption(_view.readKey(OptionKey.reverse), OptionKey.reverse);
 
   /// index.d.ts:1223 `clip: boolean`.
-  Object? get clip => _view.readKey(OptionKey.clip);
+  bool get clip => boolOption(_view.readKey(OptionKey.clip), OptionKey.clip);
 
   /// index.d.ts:1228 `weight: number`.
   Object? get weight => _view.readKey(OptionKey.weight);
@@ -159,7 +163,8 @@ extension type const CoreScaleOptions(OptionView _view) implements OptionView {
   Object? get position => _view.readKey(OptionKey.position);
 
   /// index.d.ts:3302 `offset: boolean` of `CartesianScaleOptions`.
-  Object? get offset => _view.readKey(OptionKey.offset);
+  bool get offset =>
+      boolOption(_view.readKey(OptionKey.offset), OptionKey.offset);
 
   /// index.d.ts:3265 `bounds: 'ticks' | 'data'` of `CartesianScaleOptions`.
   /// `scale.linearbase.js:182` reads it for the radial scale too. The
@@ -172,7 +177,8 @@ extension type const CoreScaleOptions(OptionView _view) implements OptionView {
 
   /// index.d.ts:3362 `beginAtZero` of `LinearScaleOptions`. `update`
   /// (core.scale.js:394) reads it on each scale.
-  Object? get beginAtZero => _view.readKey(OptionKey.beginAtZero);
+  bool get beginAtZero =>
+      boolOption(_view.readKey(OptionKey.beginAtZero), OptionKey.beginAtZero);
 
   /// index.d.ts:3374 `grace` of `LinearScaleOptions`. `update`
   /// (core.scale.js:394) reads it on each scale.
@@ -180,7 +186,8 @@ extension type const CoreScaleOptions(OptionView _view) implements OptionView {
 
   /// `fullSize`, the option of the layout box (`layout.d.ts:17`).
   /// `isFullSize` (core.scale.js:768) reads it.
-  Object? get fullSize => _view.readKey(OptionKey.fullSize);
+  bool get fullSize =>
+      boolOption(_view.readKey(OptionKey.fullSize), OptionKey.fullSize);
 
   /// index.d.ts:3341 `ticks`.
   TickOptions get ticks => TickOptions(_view.readKey(OptionKey.ticks));
@@ -251,7 +258,8 @@ extension type const TimeScaleOptions(OptionView _view)
 extension type const RadialLinearScaleOptions(OptionView _view)
     implements CoreScaleOptions {
   /// index.d.ts:3564 `animate: boolean`.
-  Object? get animate => _view.readKey(OptionKey.animate);
+  bool get animate =>
+      boolOption(_view.readKey(OptionKey.animate), OptionKey.animate);
 
   /// index.d.ts:3566 `startAngle: number`. A string `startAngle` stays a
   /// string (a foreign value of the scope).
@@ -285,7 +293,8 @@ extension type const TickOptions(Object? raw) {
   Object? get callback => readOption(raw, OptionKey.callback);
 
   /// index.d.ts:3135 `display: boolean`.
-  Object? get display => readOption(raw, OptionKey.display);
+  bool get display =>
+      boolOption(readOption(raw, OptionKey.display), OptionKey.display);
 
   /// index.d.ts:3140 `color`.
   Object? get color => readOption(raw, OptionKey.color);
@@ -297,7 +306,10 @@ extension type const TickOptions(Object? raw) {
   Object? get padding => readOption(raw, OptionKey.padding);
 
   /// index.d.ts:3153 `showLabelBackdrop`.
-  Object? get showLabelBackdrop => readOption(raw, OptionKey.showLabelBackdrop);
+  bool get showLabelBackdrop => boolOption(
+    readOption(raw, OptionKey.showLabelBackdrop),
+    OptionKey.showLabelBackdrop,
+  );
 
   /// index.d.ts:3158 `textStrokeColor`.
   Object? get textStrokeColor => readOption(raw, OptionKey.textStrokeColor);
@@ -320,7 +332,8 @@ extension type const TickOptions(Object? raw) {
   TickAlign? get align => TickAlign.of(readOption(raw, OptionKey.align));
 
   /// index.d.ts:3194 `autoSkip: boolean`.
-  Object? get autoSkip => readOption(raw, OptionKey.autoSkip);
+  bool get autoSkip =>
+      boolOption(readOption(raw, OptionKey.autoSkip), OptionKey.autoSkip);
 
   /// index.d.ts:3199 `autoSkipPadding: number`.
   Object? get autoSkipPadding => readOption(raw, OptionKey.autoSkipPadding);
@@ -331,7 +344,13 @@ extension type const TickOptions(Object? raw) {
       TickCrossAlign.of(readOption(raw, OptionKey.crossAlign));
 
   /// index.d.ts:3212 `includeBounds: boolean`.
-  Object? get includeBounds => readOption(raw, OptionKey.includeBounds);
+  // `tickOpts.includeBounds !== false` (scale.linearbase.js:266): an absent
+  // value is true.
+  bool get includeBounds => boolOption(
+    readOption(raw, OptionKey.includeBounds),
+    OptionKey.includeBounds,
+    absent: true,
+  );
 
   /// index.d.ts:3218 `labelOffset: number`.
   Object? get labelOffset => readOption(raw, OptionKey.labelOffset);
@@ -343,7 +362,8 @@ extension type const TickOptions(Object? raw) {
   Object? get maxRotation => readOption(raw, OptionKey.maxRotation);
 
   /// index.d.ts:3234 `mirror: boolean`.
-  Object? get mirror => readOption(raw, OptionKey.mirror);
+  bool get mirror =>
+      boolOption(readOption(raw, OptionKey.mirror), OptionKey.mirror);
 
   /// index.d.ts:3244 `maxTicksLimit: number`.
   Object? get maxTicksLimit => readOption(raw, OptionKey.maxTicksLimit);
@@ -372,7 +392,8 @@ extension type const TickOptions(Object? raw) {
 /// index.d.ts:3170 the `major` object of [TickOptions].
 extension type const MajorTickOptions(Object? raw) {
   /// index.d.ts:3175 `enabled: boolean`.
-  Object? get enabled => readOption(raw, OptionKey.enabled);
+  bool get enabled =>
+      boolOption(readOption(raw, OptionKey.enabled), OptionKey.enabled);
 }
 
 /// index.d.ts:3060 `GridLineOptions`.
@@ -382,10 +403,12 @@ extension type const GridLineOptions(Object? raw) {
       GridLineOptions(_setContext(raw, context));
 
   /// index.d.ts:3064 `display: boolean`.
-  Object? get display => readOption(raw, OptionKey.display);
+  bool get display =>
+      boolOption(readOption(raw, OptionKey.display), OptionKey.display);
 
   /// index.d.ts:3068 `circular: boolean`.
-  Object? get circular => readOption(raw, OptionKey.circular);
+  bool get circular =>
+      boolOption(readOption(raw, OptionKey.circular), OptionKey.circular);
 
   /// index.d.ts:3072 `color`.
   Object? get color => readOption(raw, OptionKey.color);
@@ -394,10 +417,14 @@ extension type const GridLineOptions(Object? raw) {
   Object? get lineWidth => readOption(raw, OptionKey.lineWidth);
 
   /// index.d.ts:3080 `drawOnChartArea: boolean`.
-  Object? get drawOnChartArea => readOption(raw, OptionKey.drawOnChartArea);
+  bool get drawOnChartArea => boolOption(
+    readOption(raw, OptionKey.drawOnChartArea),
+    OptionKey.drawOnChartArea,
+  );
 
   /// index.d.ts:3084 `drawTicks: boolean`.
-  Object? get drawTicks => readOption(raw, OptionKey.drawTicks);
+  bool get drawTicks =>
+      boolOption(readOption(raw, OptionKey.drawTicks), OptionKey.drawTicks);
 
   /// index.d.ts:3088 `tickBorderDash`.
   Object? get tickBorderDash => readOption(raw, OptionKey.tickBorderDash);
@@ -417,7 +444,8 @@ extension type const GridLineOptions(Object? raw) {
   Object? get tickWidth => readOption(raw, OptionKey.tickWidth);
 
   /// index.d.ts:3108 `offset: boolean`.
-  Object? get offset => readOption(raw, OptionKey.offset);
+  bool get offset =>
+      boolOption(readOption(raw, OptionKey.offset), OptionKey.offset);
 
   /// index.d.ts:3112 `z: number`.
   Object? get z => readOption(raw, OptionKey.z);
@@ -430,7 +458,8 @@ extension type const BorderOptions(Object? raw) {
       BorderOptions(_setContext(raw, context));
 
   /// index.d.ts:3046 `display: boolean`.
-  Object? get display => readOption(raw, OptionKey.display);
+  bool get display =>
+      boolOption(readOption(raw, OptionKey.display), OptionKey.display);
 
   /// index.d.ts:3050 `dash`.
   Object? get dash => readOption(raw, OptionKey.dash);
@@ -451,7 +480,8 @@ extension type const BorderOptions(Object? raw) {
 /// index.d.ts:3309 the `title` object of `CartesianScaleOptions`.
 extension type const ScaleTitleOptions(Object? raw) {
   /// index.d.ts:3311 `display: boolean`.
-  Object? get display => readOption(raw, OptionKey.display);
+  bool get display =>
+      boolOption(readOption(raw, OptionKey.display), OptionKey.display);
 
   /// index.d.ts:3313 `align: Align`, a [ChartAlign] (row
   /// `adapt-chart-align-enum`).
@@ -533,7 +563,8 @@ extension type const AngleLineOptions(Object? raw) {
       AngleLineOptions(_setContext(raw, context));
 
   /// index.d.ts:3573 `display: boolean`.
-  Object? get display => readOption(raw, OptionKey.display);
+  bool get display =>
+      boolOption(readOption(raw, OptionKey.display), OptionKey.display);
 
   /// index.d.ts:3578 `color`.
   Object? get color => readOption(raw, OptionKey.color);
@@ -580,5 +611,8 @@ extension type const PointLabelOptions(Object? raw) {
   Object? get padding => readOption(raw, OptionKey.padding);
 
   /// index.d.ts:3661 `centerPointLabels: boolean`.
-  Object? get centerPointLabels => readOption(raw, OptionKey.centerPointLabels);
+  bool get centerPointLabels => boolOption(
+    readOption(raw, OptionKey.centerPointLabels),
+    OptionKey.centerPointLabels,
+  );
 }

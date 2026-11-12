@@ -660,7 +660,7 @@ class TimeScale extends Scale {
     final minUnit = TimeUnit.of(timeOpts.minUnit);
     unit =
         TimeUnit.of(timeOpts.unit) ??
-        (jsTruthy(tickOpts.autoSkip)
+        (tickOpts.autoSkip
             ? _determineUnitForAutoTicks(
                 minUnit,
                 this.min,
@@ -674,12 +674,12 @@ class TimeScale extends Scale {
                 this.min,
                 this.max,
               ));
-    _majorUnit = !jsTruthy(tickOpts.major.enabled) || unit == TimeUnit.year
+    _majorUnit = !tickOpts.major.enabled || unit == TimeUnit.year
         ? null
         : _determineMajorUnit(unit);
     initOffsets(timestamps);
 
-    if (jsTruthy(options.reverse)) {
+    if (options.reverse) {
       _reverse(ticks);
     }
 
@@ -716,7 +716,7 @@ class TimeScale extends Scale {
     double first;
     double last;
 
-    if (jsTruthy(options.offset) && timestamps.isNotEmpty) {
+    if (options.offset && timestamps.isNotEmpty) {
       first = getDecimalForValue(timestamps[0]);
       if (timestamps.length == 1) {
         start = 1 - first;

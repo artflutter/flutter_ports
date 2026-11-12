@@ -1603,6 +1603,21 @@ Object? readOption(Object? options, OptionKey key) => switch (options) {
   _ => jsGet(options, key.jsName),
 };
 
+/// The value [value] of the on/off option [key] (Chart.js ADR 0121): the
+/// bool itself, or [absent] when the option is absent (Dart `null` or
+/// [undefined]). [absent] is `false`, as JS truthiness gives, unless
+/// upstream compares the option with `!== false`. Another value, for example
+/// the text `'yes'`, stops a debug build and gives [absent] in a release
+/// build. Port-only.
+bool boolOption(Object? value, OptionKey key, {bool absent = false}) {
+  if (value is bool) return value;
+  assert(
+    value == null || value is Undefined,
+    'The option ${key.jsName} holds a bool (Chart.js ADR 0121), not $value.',
+  );
+  return absent;
+}
+
 /// helpers.config.ts:118 `_attachContext`.
 ///
 /// Returns an Proxy for resolving option values with context.

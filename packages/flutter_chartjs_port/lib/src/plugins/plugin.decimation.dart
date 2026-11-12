@@ -541,7 +541,7 @@ void _beforeElementsUpdate(
   Object options,
 ) {
   final opts = DecimationOptions(options);
-  if (!jsTruthy(opts.enabled)) {
+  if (!opts.enabled) {
     // The decimation plugin may have been previously enabled. Need to remove
     // old `dataset._data` handlers
     _cleanDecimatedData(chart);
@@ -660,8 +660,7 @@ void _destroy(types.Chart chart) {
 final Plugin decimation =
     Plugin(
         supportsDataUpdates: true,
-        dataUpdateGuard: (options) =>
-            !jsTruthy(DecimationOptions(options).enabled),
+        dataUpdateGuard: (options) => !DecimationOptions(options).enabled,
       )
       ..id = 'decimation'
       // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).

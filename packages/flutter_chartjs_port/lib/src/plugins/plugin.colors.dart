@@ -321,7 +321,7 @@ bool _isDefaultColor(Object? value) {
 /// ([optionOf]), by name for a Map of the user.
 void _beforeLayout(types.Chart chart, Object _, Object options) {
   final opts = ColorsPluginOptions(options);
-  if (!jsTruthy(opts.enabled)) {
+  if (!opts.enabled) {
     return;
   }
 
@@ -336,7 +336,7 @@ void _beforeLayout(types.Chart chart, Object _, Object options) {
       (jsTruthy(elements) && _containsColorsDefinitions(elements)) ||
       _containsDefaultColorsDefenitions();
 
-  if (!jsTruthy(opts.forceOverride) && containsColorDefenition) {
+  if (!opts.forceOverride && containsColorDefenition) {
     return;
   }
 
@@ -377,5 +377,5 @@ final Plugin colors = Plugin(supportsDataUpdates: true)
 /// off, or it writes no color of a dataset that it colored before.
 bool _rangeUpdateGuard(Object options) {
   final opts = ColorsPluginOptions(options);
-  return !jsTruthy(opts.enabled) || !jsTruthy(opts.forceOverride);
+  return !opts.enabled || !opts.forceOverride;
 }

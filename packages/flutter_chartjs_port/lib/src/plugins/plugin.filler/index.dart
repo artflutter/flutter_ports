@@ -136,7 +136,7 @@ void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
     source.fill = resolveTarget(
       sources,
       i,
-      jsTruthy(FillerOptions(options).propagate),
+      FillerOptions(options).propagate,
     );
   }
 }

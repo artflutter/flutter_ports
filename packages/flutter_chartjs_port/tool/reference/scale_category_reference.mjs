@@ -639,10 +639,6 @@ const cases = [
     data: {labels: [...months], datasets: [{data: [...values]}]},
     options: {indexAxis: 'y', scales: {y: {position: 'left', reverse: true, offset: true}}},
   }),
-  chartCase('offset as a truthy string', {
-    data: {labels: [...abc], datasets: [{data: [1, 2, 3]}]},
-    options: {scales: {x: {offset: 'yes'}}},
-  }),
   // Chart.js ADR 0025, probe P2 (d): the border and the labels of y are at
   // the pixel of 'B'. The position null gives NaN.
   chartCase('a y axis at the position of a label', {

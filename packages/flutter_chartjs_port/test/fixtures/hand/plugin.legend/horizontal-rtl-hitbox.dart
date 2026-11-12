@@ -33,7 +33,9 @@ Map<String, Object?> fixture() => <String, Object?>{
         // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
         'legend': <String, Object?>{
           'position': ChartPosition.top,
-          'rtl': 'true',
+          // DIVERGES(chartjs): adapt-bool-options, the text 'true' of
+          // upstream is the bool true.
+          'rtl': true,
         },
       },
       'layout': <String, Object?>{

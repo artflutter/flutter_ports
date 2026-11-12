@@ -151,7 +151,7 @@ const double _sqrt2 = 1.4142135623730951;
       ? fontSize
       : jsToNumber(rawWidth);
 
-  if (jsTruthy(labelOpts.usePointStyle)) {
+  if (labelOpts.usePointStyle) {
     boxHeight = jsMin(boxHeight, fontSize);
     final pointStyleWidth = labelOpts.pointStyleWidth;
     boxWidth = jsTruthy(pointStyleWidth)
@@ -647,7 +647,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       });
     }
 
-    if (jsTruthy(opts.reverse)) {
+    if (opts.reverse) {
       _reverseInPlace(legendItems);
     }
 
@@ -664,7 +664,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final options = LegendOptions(this.options);
     final ctx = this.ctx;
 
-    if (!jsTruthy(options.display)) {
+    if (!options.display) {
       this.width = this.height = 0;
       return;
     }
@@ -839,7 +839,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:230 `adjustHitBoxes()`.
   void adjustHitBoxes() {
     final options = LegendOptions(this.options);
-    if (!jsTruthy(options.display)) {
+    if (!options.display) {
       return;
     }
     final titleHeight = _computeTitleHeight();
@@ -936,7 +936,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// (Chart.js ADR 0038, section 7).
   @override
   void draw([ChartArea? chartArea]) {
-    if (jsTruthy(LegendOptions(options).display)) {
+    if (LegendOptions(options).display) {
       final ctx = this.ctx!;
       clipArea(ctx, this);
 
@@ -1012,7 +1012,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
           canvasLineDash(valueOrDefault(legendItem.lineDash, <Object?>[])),
         );
 
-      if (jsTruthy(labelOpts.usePointStyle)) {
+      if (labelOpts.usePointStyle) {
         // Recalculate x and y for drawPoint() because its expecting
         // x and y to be center of figure (instead of top left)
         final drawOptions = _LegendPointOptions(
@@ -1168,7 +1168,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         textAlign,
         x + boxWidth + halfFontSize,
         isHorizontal ? x + width : right,
-        jsTruthy(opts.rtl),
+        opts.rtl,
       );
 
       // Fill the actual label
@@ -1207,7 +1207,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final titleFont = toFont(titleOpts.font);
     final titlePadding = toPadding(titleOpts.padding);
 
-    if (!jsTruthy(titleOpts.display)) {
+    if (!titleOpts.display) {
       return;
     }
 
@@ -1270,9 +1270,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final titleOpts = LegendOptions(options).title;
     final titleFont = toFont(titleOpts.font);
     final titlePadding = toPadding(titleOpts.padding);
-    return jsTruthy(titleOpts.display)
-        ? titleFont.lineHeight! + titlePadding.height
-        : 0;
+    return titleOpts.display ? titleFont.lineHeight! + titlePadding.height : 0;
   }
 
   /// plugin.legend.js:503 `_getLegendItemAt(x, y)`.
@@ -1815,7 +1813,9 @@ List<Object?> _generateLabels(types.Chart chart) {
   final pointStyle = labels.pointStyle;
   final textAlign = labels.textAlign;
   final color = labels.color;
-  final useBorderRadius = labels.useBorderRadius;
+  // `useBorderRadius && (…)` (plugin.legend.js:697) gives the value of the
+  // item field, `undefined` for an absent option: the raw read.
+  final useBorderRadius = optionOf(labels.object, OptionKey.useBorderRadius);
   final borderRadius = labels.borderRadius;
 
   return [
@@ -1823,7 +1823,7 @@ List<Object?> _generateLabels(types.Chart chart) {
       _datasetItem(
         datasets,
         meta,
-        meta.controller!.getStyle(jsTruthy(usePointStyle) ? 0 : null),
+        meta.controller!.getStyle(usePointStyle ? 0 : null),
         pointStyle,
         textAlign,
         color,
