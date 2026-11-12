@@ -64,18 +64,11 @@ void main() {
   });
 
   group('ChartFill', () {
-    test('the names and none', () {
+    test('the boundaries and none', () {
       const fills = <ChartFill>[.origin, .start, .end, .stack, .shape, .none];
       expect(
         [for (final f in fills) f.optionValue],
-        [
-          'origin',
-          'start',
-          'end',
-          'stack',
-          'shape',
-          false,
-        ],
+        [...FillBoundary.values, false],
       );
     });
 
@@ -84,10 +77,10 @@ void main() {
       expect(const ChartFill.dataset(2).optionValue, 2);
     });
 
-    test('a relative index is a signed string', () {
-      expect(const ChartFill.relative(1).optionValue, '+1');
-      expect(const ChartFill.relative(-1).optionValue, '-1');
-      expect(const ChartFill.relative(-12).optionValue, '-12');
+    test('a relative index is a RelativeFill', () {
+      expect(ChartFill.relative(1).optionValue, const RelativeFill(1));
+      expect(ChartFill.relative(-1).optionValue, const RelativeFill(-1));
+      expect(ChartFill.relative(-12).optionValue, const RelativeFill(-12));
     });
 
     test('a value is a new Map {value: n} at each read', () {
@@ -103,11 +96,8 @@ void main() {
       expect(value, const ChartFill.value(25));
       expect(value.hashCode, const ChartFill.value(25).hashCode);
       expect(value, isNot(const ChartFill.value(26)));
-      expect(ChartFill.relative(_runtime(1)), const ChartFill.relative(1));
-      expect(
-        ChartFill.dataset(_runtime(1)),
-        isNot(const ChartFill.relative(1)),
-      );
+      expect(ChartFill.relative(_runtime(1)), ChartFill.relative(1));
+      expect(ChartFill.dataset(_runtime(1)), isNot(ChartFill.relative(1)));
     });
   });
 

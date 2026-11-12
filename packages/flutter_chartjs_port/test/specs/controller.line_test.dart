@@ -23,6 +23,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -650,7 +652,8 @@ void main() {
           'borderDash': <Object?>[0],
           'borderDashOffset': 0.871,
           'borderJoinStyle': native_ui.StrokeJoin.miter,
-          'fill': 'start',
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillBoundary.start,
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
           'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
@@ -686,7 +689,7 @@ void main() {
         expect(jsGet(options, 'borderDash'), jasmineEquals(<Object?>[0]));
         expect(jsGet(options, 'borderDashOffset'), 0.871);
         expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
-        expect(jsGet(options, 'fill'), 'start');
+        expect(jsGet(options, 'fill'), FillBoundary.start);
         expect(
           jsGet(options, 'cubicInterpolationMode'),
           const MonotoneCubicInterpolationMode(),
@@ -760,7 +763,8 @@ void main() {
       'borderDash': <Object?>[0],
       'borderDashOffset': 0.871,
       'borderJoinStyle': native_ui.StrokeJoin.miter,
-      'fill': 'start',
+      // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+      'fill': FillBoundary.start,
       // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
       // class.
       'cubicInterpolationMode': MonotoneCubicInterpolationMode(),
@@ -783,7 +787,7 @@ void main() {
       expect(jsGet(options, 'borderDash'), jasmineEquals(<Object?>[0]));
       expect(jsGet(options, 'borderDashOffset'), 0.871);
       expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
-      expect(jsGet(options, 'fill'), 'start');
+      expect(jsGet(options, 'fill'), FillBoundary.start);
       expect(
         jsGet(options, 'cubicInterpolationMode'),
         const MonotoneCubicInterpolationMode(),

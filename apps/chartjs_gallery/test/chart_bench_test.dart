@@ -1168,13 +1168,21 @@ void main() {
                   expect(data[11], isNull, reason: reason);
                   expect(data[23], isNull, reason: reason);
                   expect(data[10], isA<double>(), reason: reason);
-                  expect(fill, containsPair('target', 'origin'));
+                  expect(fill, containsPair('target', FillBoundary.origin));
                   expect(fill, contains('above'));
                   expect(fill, contains('below'));
                 case 'stack':
-                  expect(fill, 'stack', reason: reason);
+                  expect(fill, FillBoundary.stack, reason: reason);
                 default:
-                  expect(fill, ['origin', '-1', '-1'][k], reason: reason);
+                  expect(
+                    fill,
+                    [
+                      FillBoundary.origin,
+                      const RelativeFill(-1),
+                      const RelativeFill(-1),
+                    ][k],
+                    reason: reason,
+                  );
               }
               // The filler made the source of each dataset.
               expect(

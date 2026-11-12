@@ -394,6 +394,10 @@ function add(c) {
 // ---------------------------------------------------------------------------
 // decodeFill (filler.options.js:46-73).
 
+// The port has no fill text (row adapt-fill-target-objects): a keyword is a
+// FillBoundary and a relative index a RelativeFill. The cases of the other
+// texts (an absolute index as text, an empty, a padded or a bad text) are
+// not here: a text stops a debug build of the port.
 const FILLS = [
   ['undefined with a backgroundColor', {backgroundColor: 'red'}],
   ['undefined without a backgroundColor', {}],
@@ -412,26 +416,17 @@ const FILLS = [
   ['NaN', {fill: NaN}],
   ['Infinity', {fill: Infinity}],
   ['-Infinity', {fill: -Infinity}],
-  ["'0'", {fill: '0'}],
   ["'-0'", {fill: '-0'}],
   ["'+0'", {fill: '+0'}],
-  ["''", {fill: ''}],
   ["'+1'", {fill: '+1'}],
   ["'-1'", {fill: '-1'}],
   ["'+2'", {fill: '+2'}],
   ["'-2'", {fill: '-2'}],
-  ["'2'", {fill: '2'}],
-  ["'2.0'", {fill: '2.0'}],
-  ["'1.5'", {fill: '1.5'}],
-  ["' 2'", {fill: ' 2'}],
-  ["'2e0'", {fill: '2e0'}],
-  ["'+1foo'", {fill: '+1foo'}],
   ["'origin'", {fill: 'origin'}],
   ["'start'", {fill: 'start'}],
   ["'end'", {fill: 'end'}],
   ["'stack'", {fill: 'stack'}],
   ["'shape'", {fill: 'shape'}],
-  ["'foo'", {fill: 'foo'}],
   ['[]', {fill: []}],
   ['[2]', {fill: [2]}],
   ["['+1']", {fill: ['+1']}],
@@ -680,16 +675,38 @@ function num(v) {
   return Number.isInteger(v) ? `${v}.0` : String(v);
 }
 
-/** The Dart literal of a value. */
-function dart(v) {
+/** The fill keywords of upstream: the values of FillBoundary of the port. */
+const FILL_KEYWORDS = new Set(['origin', 'start', 'end', 'stack', 'shape']);
+
+/**
+ * The Dart literal of a fill value: a keyword is a FillBoundary and a
+ * relative index as text a RelativeFill (row adapt-fill-target-objects).
+ */
+function fillDart(v) {
+  if (typeof v === 'string') {
+    if (FILL_KEYWORDS.has(v)) return `FillBoundary.${v}`;
+    const m = /^([+-])(\d+)$/.exec(v);
+    if (m) return `RelativeFill(${m[1] === '-' ? -Number(m[2]) : Number(m[2])})`;
+  }
+  return dart(v, 'fill');
+}
+
+/**
+ * The Dart literal of a value. [owner] is the key of the object of the
+ * value: the `target` of a fill object is a fill value too.
+ */
+function dart(v, owner) {
   if (v === null) return 'null';
   if (v === undefined) return 'undefined';
   if (typeof v === 'number') return num(v);
   if (typeof v === 'boolean') return String(v);
   if (typeof v === 'string') return v.includes("'") ? `"${v}"` : `'${v}'`;
-  if (Array.isArray(v)) return `<Object?>[${v.map(dart).join(', ')}]`;
+  if (Array.isArray(v)) return `<Object?>[${v.map((x) => dart(x)).join(', ')}]`;
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map((k) => `${dart(k)}: ${dart(v[k])}`);
+    const entries = Object.keys(v).map(
+      (k) =>
+        `${dart(k)}: ${k === 'fill' || (k === 'target' && owner === 'fill') ? fillDart(v[k]) : dart(v[k], k)}`,
+    );
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);
@@ -698,7 +715,8 @@ function dart(v) {
 const body = cases
   .map((c) => {
     const {name, kind, result, ...input} = c;
-    return `  (name: ${dart(name)}, kind: '${kind}', input: ${dart(input)}, result: ${dart(result)}),\n`;
+    const fillResult = kind === 'decodeFill' || kind === 'resolveTarget';
+    return `  (name: ${dart(name)}, kind: '${kind}', input: ${dart(input)}, result: ${fillResult ? fillDart(result) : dart(result)}),\n`;
   })
   .join('');
 
@@ -709,6 +727,7 @@ const out = `// Original code, not ported from Chart.js: filler target reference
 // src/plugins/plugin.filler/ at the pinned Chart.js. ${cases.length} cases.
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The Node.js version that generated the data.
 const String fillerTargetReferenceNode = '${process.version}';

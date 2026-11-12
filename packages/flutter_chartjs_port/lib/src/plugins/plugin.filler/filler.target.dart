@@ -24,6 +24,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFinite;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
     show createBoundaryLine;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart'
@@ -52,11 +54,11 @@ Object? getTarget(FillerSource source) {
     return _getLineByIndex(chart, (fill as num).toDouble());
   }
 
-  if (fill == 'stack') {
+  if (fill == FillBoundary.stack) {
     return buildStackLine(source);
   }
 
-  if (fill == 'shape') {
+  if (fill == FillBoundary.shape) {
     return true;
   }
 

@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
@@ -11752,7 +11753,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'data': <Object?>[10.0, 30.0, 20.0, 40.0],
             'borderColor': 'blue',
             'backgroundColor': 'red',
-            'fill': 'origin',
+            'fill': FillBoundary.origin,
           },
           <String, Object?>{
             'label': 'Dataset 2',
@@ -11897,7 +11898,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 'origin',
+                'fill': FillBoundary.origin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -12687,7 +12688,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': 'origin',
+                    'fill': FillBoundary.origin,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,
@@ -13486,7 +13487,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': 'origin',
+                    'fill': FillBoundary.origin,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,

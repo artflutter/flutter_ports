@@ -432,7 +432,7 @@ void main() {
     final dataset =
         (readByName(chart.data, 'datasets')! as List<Object?>).single!
             as Map<Object?, Object?>;
-    expect(dataset['fill'], 'origin');
+    expect(dataset['fill'], FillBoundary.origin);
     expect(dataset['data'], [
       97.81,
       -42.3,
@@ -462,9 +462,9 @@ void main() {
     // value) gave the title `Fill: <value>` and `meta.$filler.fill` `<value>`
     // for `origin`, `start`, `end` and `false`.
     const fills = <String, Object>{
-      'origin': 'origin',
-      'start': 'start',
-      'end': 'end',
+      'origin': FillBoundary.origin,
+      'start': FillBoundary.start,
+      'end': FillBoundary.end,
       'false': false,
     };
     expect([for (final v in area.variants) v.key], fills.keys.toList());

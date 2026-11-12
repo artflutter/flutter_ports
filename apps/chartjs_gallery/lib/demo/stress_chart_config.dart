@@ -276,9 +276,9 @@ final class StressChartScene {
 /// The other plugins need no opt-out: the charts listen to no event (the
 /// tooltip), the datasets give their colors (the colors plugin), and the
 /// title, the subtitle and the decimation are off by default. The filler
-/// fills the radar, as the default `fill: 'start'` of the radar controller
-/// asks (controller.radar.js:16-20). The line of a line chart has the
-/// default `fill: false` (element.line.js:258).
+/// fills the radar, as the default `fill: FillBoundary.start` of the radar
+/// controller asks (controller.radar.js:16-20). The line of a line chart
+/// has the default `fill: false` (element.line.js:258).
 ///
 /// Each call gives a new Map: the chart can write into its options.
 Map<String, Object?> stressPluginOptions() => <String, Object?>{

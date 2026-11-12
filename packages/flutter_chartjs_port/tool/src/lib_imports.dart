@@ -269,6 +269,7 @@ const List<String> typedTargets = [
   'lib/src/js/js_function.dart',
   'lib/src/js/js_number.dart',
   'lib/src/js/js_undefined.dart',
+  'lib/src/plugins/fill_target.dart',
   'lib/src/plugins/filler_draw_time.dart',
   'lib/src/plugins/tooltip_position.dart',
   'lib/src/theme/css.dart',

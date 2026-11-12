@@ -1,12 +1,14 @@
 // Ported from Chart.js v4.6.1 src/plugins/plugin.filler/filler.options.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-fill-target-objects, no text targets.
 
 /// Port of `src/plugins/plugin.filler/filler.options.js`.
 ///
 /// The fill option of a line is any option value (Chart.js ADR 0043):
-/// `false`, `true`, a number, a String, an option object (`{value}`,
-/// `{target, above, below}`), Dart `null` for JS `null`, or the
-/// `undefined` sentinel. The JS operators keep their JS meaning through the
-/// runtime of `lib/src/js/` (`jsTruthy`, `jsParseFloat`). The line options
+/// `false`, `true`, a number, a [FillBoundary], a [RelativeFill], an option
+/// object (`{value}`, `{target, above, below}`), Dart `null` for JS `null`,
+/// or the `undefined` sentinel (row `adapt-fill-target-objects`). The JS
+/// operators keep their JS meaning through the runtime of `lib/src/js/`
+/// (`jsTruthy`). The line options
 /// (the typed `LineOptions`) and the scale options are read through their
 /// typed reads (`optionOf`), and the option objects through the facade
 /// `FillTargetOptions` (Chart.js ADR 0054 §4).
@@ -21,6 +23,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
     show FillerSource;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
@@ -31,7 +34,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 ///
 /// [sources] has a [FillerSource] or Dart `null` (JS `null`) for each
 /// dataset, and [index] is the index of a source that is not `null`. The
-/// result is `false`, a `double` dataset index, a `String` mode or the
+/// result is `false`, a `double` dataset index, a [FillBoundary] or the
 /// option object `{value}`. `sources[fill]` is `jsGetIndex`: an index out of
 /// range gives `undefined`, and `!target` returns `false`.
 Object resolveTarget(
@@ -75,8 +78,13 @@ Object resolveTarget(
 /// @param {number} index
 /// @param {number} count
 ///
-/// The result is `false`, a `double` dataset index, a `String` mode or the
+/// The result is `false`, a `double` dataset index, a [FillBoundary] or the
 /// option object `{value}`. It is never Dart `null`.
+///
+/// Upstream parses the text of `fill` (`parseFloat(fill)` and `fill[0]`).
+/// The port has no text: a [RelativeFill] is the relative index, as `'+n'`
+/// or `'-n'` upstream, and a number is the absolute index. The `fill[0]` of
+/// a number or an array is no sign.
 Object decodeFill(types.LineElement line, double index, double count) {
   // @type {string | {value: number}}
   final fill = _parseFillOption(line);
@@ -85,26 +93,27 @@ Object decodeFill(types.LineElement line, double index, double count) {
     return jsToNumber(FillTargetOptions(fill).value).isNaN ? false : fill;
   }
 
-  final target = jsParseFloat(fill);
+  // DIVERGES(chartjs): adapt-fill-target-objects, a relative index is a class.
+  if (fill case RelativeFill(:final offset)) {
+    return _decodeTargetIndex('+', index, offset.toDouble(), count);
+  }
+
+  // A text is no fill target: [FillTarget.of] below stops a debug build on
+  // it. Another value (a number, an array) takes the `parseFloat` of
+  // upstream.
+  final target = fill is String ? double.nan : jsParseFloat(fill);
 
   if (target.isFinite && target.floorToDouble() == target) {
-    return _decodeTargetIndex(_firstChar(fill), index, target, count);
+    return _decodeTargetIndex(undefined, index, target, count);
   }
 
   // `indexOf(fill) >= 0 && fill`: the mode itself, or `false`.
-  return const ['origin', 'start', 'end', 'stack', 'shape'].contains(fill)
-      ? fill
-      : false;
+  return FillTarget.of(fill) is FillBoundary ? fill : false;
 }
 
-/// `fill[0]` (filler.options.js:58): the first code unit of a non-empty
-/// String, else `undefined` (a number has no index property).
-Object? _firstChar(Object? fill) =>
-    fill is String && fill.isNotEmpty ? fill[0] : undefined;
-
 /// filler.options.js:63 `decodeTargetIndex(firstCh, index, target, count)`.
-/// [firstCh] is `fill[0]`: the first character of a String, else
-/// `undefined`.
+/// [firstCh] is `'+'` for a [RelativeFill], else `undefined` (the `fill[0]`
+/// of a number).
 Object _decodeTargetIndex(
   Object? firstCh,
   double index,
@@ -136,9 +145,9 @@ Object _decodeTargetIndex(
 /// Another fill gives Dart `null`, because `{}.getBasePixel` is falsy.
 double? getTargetPixel(Object fill, types.Scale? scale) {
   double? pixel;
-  if (fill == 'start') {
+  if (fill == FillBoundary.start) {
     pixel = scale?.bottom;
-  } else if (fill == 'end') {
+  } else if (fill == FillBoundary.end) {
     pixel = scale?.top;
   } else if (isObject(fill)) {
     pixel = scale!.getPixelForValue(FillTargetOptions(fill).value);
@@ -159,9 +168,9 @@ double? getTargetPixel(Object fill, types.Scale? scale) {
 Object? getTargetValue(Object fill, types.Scale scale, double startValue) {
   Object? value;
 
-  if (fill == 'start') {
+  if (fill == FillBoundary.start) {
     value = startValue;
-  } else if (fill == 'end') {
+  } else if (fill == FillBoundary.end) {
     value = jsTruthy(optionOf(scale.options, OptionKey.reverse))
         ? scale.min
         : scale.max;
@@ -196,7 +205,7 @@ Object _parseFillOption(types.LineElement line) {
   }
 
   if (fill == true) {
-    return 'origin';
+    return FillBoundary.origin;
   }
   return fill;
 }

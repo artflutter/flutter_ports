@@ -1295,6 +1295,16 @@ const POINT_STYLES = {
   triangle: 'TrianglePointStyle()',
 };
 
+/**
+ * A relative fill index of upstream (`'+1'`, `'-2'`) as a value of the Dart
+ * data: the RelativeFill of the port (row adapt-fill-target-objects).
+ */
+export class DartRelativeFill {
+  constructor(offset) {
+    this.offset = offset;
+  }
+}
+
 /** A point style name of upstream as a value of the Dart data. */
 export class DartPointStyle {
   constructor(name) {
@@ -1355,6 +1365,15 @@ function keyedValue(k, value, owner) {
     return Array.isArray(value) ? value.map(style) : style(value);
   }
   if (typeof value !== 'string') return value;
+  // A fill keyword is a FillBoundary, a relative index a RelativeFill (row
+  // adapt-fill-target-objects).
+  if (k === 'fill' || (k === 'target' && owner === 'fill')) {
+    if (['origin', 'start', 'end', 'stack', 'shape'].includes(value)) {
+      return new DartEnum('FillBoundary', value);
+    }
+    const m = /^([+-])(\d+)$/.exec(value);
+    if (m) return new DartRelativeFill(m[1] === '-' ? -Number(m[2]) : Number(m[2]));
+  }
   if (k === 'mode' && INTERACTION_SCOPES.has(owner)) return new DartMode(value);
   if (k === 'axis' && INTERACTION_SCOPES.has(owner)) return new DartAxis(value);
   if (k === 'algorithm' && owner === 'decimation') return new DartAlgorithm(value);
@@ -1492,6 +1511,10 @@ function dart(v, state, owner) {
     state.cubicModes = true;
     return CUBIC_MODES[v.name];
   }
+  if (v instanceof DartRelativeFill) {
+    state.fillTargets = true;
+    return `RelativeFill(${v.offset})`;
+  }
   if (v instanceof DartPointStyle) {
     state.pointStyles = true;
     return POINT_STYLES[v.name];
@@ -1517,6 +1540,8 @@ function dart(v, state, owner) {
       state.steppedLines = true;
     } else if (v.type === 'BorderSkippedEdge') {
       state.borderSkips = true;
+    } else if (v.type === 'FillBoundary') {
+      state.fillTargets = true;
     } else {
       state.scaleEnums = true;
     }
@@ -1599,7 +1624,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

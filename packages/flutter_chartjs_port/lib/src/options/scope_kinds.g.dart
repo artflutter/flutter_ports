@@ -1693,7 +1693,7 @@ enum ScopeKind {
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.datasetElementType:
             return 6;
           case OptionKey.dataElementType:
@@ -2045,7 +2045,7 @@ enum ScopeKind {
           case OptionKey.stepped:
             return 2818;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
@@ -2179,7 +2179,7 @@ enum ScopeKind {
       case ScopeKind.fillTarget:
         switch (key) {
           case OptionKey.target:
-            return 39;
+            return 3363;
           case OptionKey.above:
             return 64;
           case OptionKey.below:
@@ -2283,7 +2283,7 @@ enum ScopeKind {
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.elements:
@@ -2356,7 +2356,7 @@ enum ScopeKind {
           case OptionKey.stepped:
             return 2818;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
@@ -2477,7 +2477,7 @@ enum ScopeKind {
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.elements:
             return 32;
           case OptionKey.datasetElementType:
@@ -2576,7 +2576,7 @@ enum ScopeKind {
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.elements:
@@ -2679,7 +2679,7 @@ enum ScopeKind {
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.elements:
@@ -2774,7 +2774,7 @@ enum ScopeKind {
           case OptionKey.stepped:
             return 2818;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
@@ -2851,7 +2851,7 @@ enum ScopeKind {
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 39;
+            return 3363;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.animation:

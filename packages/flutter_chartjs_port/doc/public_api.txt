@@ -52,6 +52,8 @@ Defaults
 DoughnutController
 Element
 EventHookArgs
+FillBoundary
+FillTarget
 FillerDrawTime
 FlutterPlatform
 FontSpec
@@ -97,6 +99,7 @@ RadialLinearScale
 RectPointStyle
 RectRotPointStyle
 RectRoundedPointStyle
+RelativeFill
 RenderTextOpts
 ResizeHookArgs
 Scale
@@ -252,6 +255,8 @@ DoughnutController
 DoughnutDataset
 EndAngleAnimation
 EventHookArgs
+FillBoundary
+FillTarget
 FillerDrawTime
 FlutterPlatform
 FontSpec
@@ -315,6 +320,7 @@ RadiusAnimation
 RectPointStyle
 RectRotPointStyle
 RectRoundedPointStyle
+RelativeFill
 RenderTextOpts
 ResetTransition
 ResizeHookArgs

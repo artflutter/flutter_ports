@@ -4,7 +4,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, JsObjectFace;
+    show Chart, FillBoundary, JsObjectFace;
 
 /// The area chart of `docs/samples/area/line-boundaries.md:3-120` at the
 /// fill `'origin'`: the action `Fill: origin` of `:48-56`.
@@ -27,17 +27,17 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 /// The options are those of `:95-113`. The gallery registers
 /// `registerables`, with the filler and the title: the chart fills the
 /// area to the origin, and the title is `Fill: origin`.
-Map<String, Object?> areaOriginConfig() => _config('origin');
+Map<String, Object?> areaOriginConfig() => _config(FillBoundary.origin);
 
 /// The config of the action `Fill: start` (`line-boundaries.md:57-65`):
 /// the chart fills the area to the bottom of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:82-83`).
-Map<String, Object?> areaStartConfig() => _config('start');
+Map<String, Object?> areaStartConfig() => _config(FillBoundary.start);
 
 /// The config of the action `Fill: end` (`line-boundaries.md:66-74`): the
 /// chart fills the area to the top of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:84-85`).
-Map<String, Object?> areaEndConfig() => _config('end');
+Map<String, Object?> areaEndConfig() => _config(FillBoundary.end);
 
 /// The config of the action `Fill: false (default)`
 /// (`line-boundaries.md:39-47`), the first state of the sample (`:29`):
@@ -90,11 +90,13 @@ Map<String, Object?> _config(Object fill) => <String, Object?>{
 /// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
 /// (`line-boundaries.md:106`). The context is a typed object, read by name
 /// through its face (`JsObjectFace`), and the fill of each variant is a
-/// string or `false`: the interpolation gives the text of the JS `+`.
+/// `FillBoundary` or `false`: the text of a boundary is its name, the
+/// keyword of the JS `+`.
 Object _titleText(Object? ctx) {
   final chart = (ctx! as JsObjectFace)['chart']! as Chart;
   final datasets = _byName(chart.data, 'datasets')! as List<Object?>;
-  return 'Fill: ${_byName(datasets.first, 'fill')}';
+  final fill = _byName(datasets.first, 'fill');
+  return 'Fill: ${fill is FillBoundary ? fill.name : fill}';
 }
 
 /// `object[key]` of an object of the chart: a Map of the app, or a typed

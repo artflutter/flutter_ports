@@ -290,12 +290,12 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
     const [BarDataset(grouped: false)],
     {'grouped': false},
   ),
-  'fill, a name': (_lineStyle(fill: .origin), {'fill': 'origin'}),
+  'fill, a name': (_lineStyle(fill: .origin), {'fill': FillBoundary.origin}),
   'fill, none': (_lineStyle(fill: .none), {'fill': false}),
   'fill, a dataset index': (_lineStyle(fill: const .dataset(1)), {'fill': 1}),
   'fill, a relative index': (
-    _lineStyle(fill: const .relative(-1)),
-    {'fill': '-1'},
+    _lineStyle(fill: .relative(-1)),
+    {'fill': const RelativeFill(-1)},
   ),
   'fill, a value': (
     _lineStyle(fill: const .value(25)),
@@ -728,7 +728,7 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
   'line.fill': (
     ChartElements(line: LineElementStyle(fill: .origin)),
     {
-      'line': {'fill': 'origin'},
+      'line': {'fill': FillBoundary.origin},
     },
   ),
   'line.stepped': (
@@ -1487,7 +1487,7 @@ void main() {
 
       /// The twin keys of the line style parameters of the cases below.
       const lineStyleTwin = <String, Object?>{
-        'fill': 'origin',
+        'fill': FillBoundary.origin,
         'tension': 0.4,
         'borderDash': [5, 5],
         'spanGaps': true,

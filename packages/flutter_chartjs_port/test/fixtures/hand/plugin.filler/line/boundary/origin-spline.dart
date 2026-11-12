@@ -5,6 +5,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -102,7 +104,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           // class.
           'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
           'borderColor': 'transparent',
-          'fill': 'origin',
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillBoundary.origin,
         },
       },
       'plugins': <String, Object?>{

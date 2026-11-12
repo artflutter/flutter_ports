@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillBoundary;
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/types/align.dart'
@@ -55,6 +57,7 @@ bool isKeywordEnum(Object? value) =>
     value is TextAlign ||
     value is SteppedLine ||
     value is BorderSkippedEdge ||
+    value is FillBoundary ||
     value is TimeUnit ||
     value is ChartPosition;
 

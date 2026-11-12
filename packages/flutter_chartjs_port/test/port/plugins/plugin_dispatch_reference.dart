@@ -11,6 +11,8 @@
 // ids of the registry) and `steps` (`do`, `calls` and `notifies` of each
 // step). See the header of tool/reference/plugin_dispatch_reference.mjs.
 
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+
 /// The Node.js version that generated the data.
 const String pluginDispatchReferenceNode = 'v24.22.1';
 
@@ -63,7 +65,7 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
           <String, Object?>{
             'label': 'd0',
             'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': 'origin',
+            'fill': FillBoundary.origin,
           },
           <String, Object?>{
             'label': 'd1',
@@ -525,7 +527,7 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
           <String, Object?>{
             'label': 'd0',
             'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': 'origin',
+            'fill': FillBoundary.origin,
           },
           <String, Object?>{
             'label': 'd1',

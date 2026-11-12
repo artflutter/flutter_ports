@@ -528,7 +528,7 @@ void main() {
         expect(options['scales'], unitScales(hideTicks: true));
         expect(dataset['showLine'], false);
         expect(dataset['clip'], false);
-        expect(dataset['pointStyle'], 'circle');
+        expect(dataset['pointStyle'], const CirclePointStyle());
         expect(dataset['radius'], 3.0);
       } else {
         expect(options.containsKey('parsing'), isFalse);

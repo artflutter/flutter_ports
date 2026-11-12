@@ -5,6 +5,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show RelativeFill;
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -48,7 +50,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             180,
           ],
           'fill': <String, Object?>{
-            'target': '+1',
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            'target': const RelativeFill(1),
             'above': 'rgba(4, 142, 43, 0.5)',
             'below': 'rgba(241, 49, 34, 0.5)',
           },
