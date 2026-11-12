@@ -530,7 +530,7 @@ void main() {
         ..globalCompositeOperation = null
         ..font = 'not a font'
         ..textAlign = 'bogus'
-        ..textBaseline = 'bogus'
+        ..textBaseline = null
         ..direction = 'bogus';
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
       expect(ctx.strokeStyle, const native_ui.Color.fromRGBO(0, 0, 255, 0.5));
@@ -542,7 +542,7 @@ void main() {
       expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
       expect(ctx.font, '10px sans-serif');
       expect(ctx.textAlign, 'start');
-      expect(ctx.textBaseline, 'alphabetic');
+      expect(ctx.textBaseline, CanvasTextBaseline.alphabetic);
       expect(ctx.direction, 'inherit');
     });
 
@@ -554,7 +554,7 @@ void main() {
         ..globalCompositeOperation = CanvasCompositeOperation.destinationOver
         ..globalCompositeOperation = null
         ..textAlign = 'center'
-        ..textBaseline = 'middle'
+        ..textBaseline = CanvasTextBaseline.middle
         ..direction = 'rtl';
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(170, 187, 204, 1));
       expect(ctx.lineCap, native_ui.StrokeCap.round);
@@ -564,7 +564,7 @@ void main() {
         CanvasCompositeOperation.destinationOver,
       );
       expect(ctx.textAlign, 'center');
-      expect(ctx.textBaseline, 'middle');
+      expect(ctx.textBaseline, CanvasTextBaseline.middle);
       expect(ctx.direction, 'rtl');
     });
   });
@@ -1214,15 +1214,15 @@ void main() {
     });
 
     test('textBaseline places the text around the anchor', () async {
-      Future<ui.Rect> at(String baseline) => inkOf(
+      Future<ui.Rect> at(CanvasTextBaseline baseline) => inkOf(
         (ctx) => ctx
           ..textBaseline = baseline
           ..fillText('H', 100, 50),
       );
-      final top = await at('top');
-      final middle = await at('middle');
-      final alphabetic = await at('alphabetic');
-      final bottom = await at('bottom');
+      final top = await at(CanvasTextBaseline.top);
+      final middle = await at(CanvasTextBaseline.middle);
+      final alphabetic = await at(CanvasTextBaseline.alphabetic);
+      final bottom = await at(CanvasTextBaseline.bottom);
       expect(top.top, greaterThanOrEqualTo(49));
       expect(alphabetic.bottom, lessThanOrEqualTo(51));
       expect(middle.top, lessThan(50));
@@ -1245,7 +1245,12 @@ void main() {
       expect(centered.actualBoundingBoxRight, closeTo(metrics.width / 2, 1e-9));
 
       final ascents = [
-        for (final baseline in ['top', 'middle', 'alphabetic', 'bottom'])
+        for (final baseline in [
+          CanvasTextBaseline.top,
+          CanvasTextBaseline.middle,
+          CanvasTextBaseline.alphabetic,
+          CanvasTextBaseline.bottom,
+        ])
           (ctx..textBaseline = baseline).measureText('Hello'),
       ];
       for (var i = 1; i < ascents.length; i++) {

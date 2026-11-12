@@ -151,7 +151,7 @@ const fonts = result.fonts
     fontDescent: ${f.fontDescent},
     baselines: {
 ${Object.entries(f.baselines)
-  .map(([k, v]) => `      ${str(k)}: ${v},\n`)
+  .map(([k, v]) => `      CanvasTextBaseline.${k}: ${v},\n`)
   .join('')}    },
   ),
 `,
@@ -178,6 +178,9 @@ const dart = `// Original code, not ported from Chart.js: Chrome text-metric ref
 // Do not edit. ${chrome} on ${machine}, headless:
 // canvas measureText with Liberation Sans 2.1.5. ${result.cases.length} cases.
 
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show CanvasTextBaseline;
+
 /// The Chrome version that generated the reference.
 const String textMetricsChrome = ${str(chrome)};
 
@@ -202,7 +205,7 @@ typedef TextMetricsFont = ({
   String font,
   double fontAscent,
   double fontDescent,
-  Map<String, double> baselines,
+  Map<CanvasTextBaseline, double> baselines,
 });
 
 /// One measured text: the index of its font in [textMetricsFonts], the text

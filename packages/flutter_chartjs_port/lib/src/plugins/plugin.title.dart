@@ -260,7 +260,8 @@ class Title extends Element implements LayoutItem {
       maxWidth: maxWidth,
       rotation: rotation,
       textAlign: toLeftRightCenter(opts.align),
-      textBaseline: 'middle',
+      // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+      textBaseline: CanvasTextBaseline.middle,
       translation: (titleX, titleY),
     );
     renderText(ctx!, text, 0, 0, fontOpts, textOpts);
@@ -293,7 +294,7 @@ final class _TitleTextOpts implements types.RenderTextOpts {
   final String? textAlign;
 
   @override
-  final String? textBaseline;
+  final CanvasTextBaseline? textBaseline;
 
   @override
   final (double, double)? translation;

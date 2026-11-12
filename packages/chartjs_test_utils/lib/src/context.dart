@@ -95,7 +95,7 @@ class MockContext implements CanvasRenderingContext2D {
   double? _lineWidth;
   Object? _strokeStyle;
   String? _textAlign;
-  String? _textBaseline;
+  CanvasTextBaseline? _textBaseline;
 
   /// context.js:156 `record`.
   void record(String methodName, List<Object?> args) {
@@ -189,12 +189,14 @@ class MockContext implements CanvasRenderingContext2D {
   }
 
   @override
-  String? get textBaseline => _textBaseline;
+  CanvasTextBaseline? get textBaseline => _textBaseline;
 
+  // The port holds the enum where upstream holds the keyword. The record
+  // keeps the keyword of upstream: the name of the enum value.
   @override
-  set textBaseline(String? baseline) {
+  set textBaseline(CanvasTextBaseline? baseline) {
     _textBaseline = baseline;
-    record('setTextBaseline', [baseline]);
+    record('setTextBaseline', [baseline?.name]);
   }
 
   // context.js:106-147 the recorded methods. Each method records its name

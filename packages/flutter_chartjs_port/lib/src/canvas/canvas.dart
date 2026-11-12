@@ -125,6 +125,31 @@ enum CanvasCompositeOperation {
   luminosity,
 }
 
+/// The Canvas 2D `CanvasTextBaseline`: the line of the text that the y of
+/// `fillText` and `strokeText` places (row `adapt-canvas-text-baseline-enum`).
+///
+/// The canvas closes the set, and `dart:ui` has no enum with these six
+/// values. The name of each value is the keyword of the DOM.
+enum CanvasTextBaseline {
+  /// `'top'`: the top of the em box.
+  top,
+
+  /// `'hanging'`: the hanging baseline.
+  hanging,
+
+  /// `'middle'`: the middle of the em box.
+  middle,
+
+  /// `'alphabetic'`: the alphabetic baseline, the DOM default.
+  alphabetic,
+
+  /// `'ideographic'`: the ideographic baseline.
+  ideographic,
+
+  /// `'bottom'`: the bottom of the em box.
+  bottom,
+}
+
 /// lib.dom.d.ts `CanvasPath`: the path methods that
 /// [CanvasRenderingContext2D] and [Path2D] share.
 abstract interface class CanvasPath {
@@ -725,9 +750,11 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
   /// The DOM default is `'start'`.
   abstract String? textAlign;
 
-  /// `textBaseline`: `'top'`, `'hanging'`, `'middle'`, `'alphabetic'`,
-  /// `'ideographic'` or `'bottom'`. The DOM default is `'alphabetic'`.
-  abstract String? textBaseline;
+  /// `textBaseline`: the [CanvasTextBaseline] of the DOM keyword. The DOM
+  /// default is [CanvasTextBaseline.alphabetic]. A write of Dart `null` does
+  /// nothing.
+  // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+  abstract CanvasTextBaseline? textBaseline;
 
   /// `direction`: `'ltr'`, `'rtl'` or `'inherit'`. The DOM default is
   /// `'inherit'`: the direction of [HTMLCanvasElement.style].

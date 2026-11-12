@@ -33,14 +33,7 @@ import 'package:material_ui/material_ui.dart';
 const List<String> textAligns = ['left', 'center', 'right', 'start', 'end'];
 
 /// The `textBaseline` values of the canvas.
-const List<String> textBaselines = [
-  'top',
-  'hanging',
-  'middle',
-  'alphabetic',
-  'ideographic',
-  'bottom',
-];
+const List<CanvasTextBaseline> textBaselines = CanvasTextBaseline.values;
 
 /// The labels of the `_longestText` card. A list is a multi-line label,
 /// and `null` is skipped, as upstream.
@@ -121,7 +114,7 @@ class _TextDemoState extends State<TextDemo> {
         const TextOpts(
           color: labelColor,
           textAlign: 'center',
-          textBaseline: 'bottom',
+          textBaseline: CanvasTextBaseline.bottom,
         ),
       );
     }
@@ -130,14 +123,14 @@ class _TextDemoState extends State<TextDemo> {
         final top = _headerHeight + r * cellHeight;
         renderText(
           ctx,
-          textBaselines[r],
+          textBaselines[r].name,
           4,
           top + cellHeight / 2,
           small,
           const TextOpts(
             color: labelColor,
             textAlign: 'left',
-            textBaseline: 'middle',
+            textBaseline: CanvasTextBaseline.middle,
           ),
         );
         for (var c = 0; c < textAligns.length; c++) {
@@ -228,7 +221,7 @@ class _TextDemoState extends State<TextDemo> {
     _withDirection(ctx, () {
       ctx
         ..font = font.string
-        ..textBaseline = 'middle';
+        ..textBaseline = CanvasTextBaseline.middle;
       const boxWidth = 30.0;
       const boxHeight = 12.0;
       const y = 26.0;
@@ -312,7 +305,7 @@ class _TextDemoState extends State<TextDemo> {
         ..fillRect(x, y, width, rowHeight - 4)
         ..font = font.string
         ..textAlign = 'left'
-        ..textBaseline = 'middle'
+        ..textBaseline = CanvasTextBaseline.middle
         ..fillStyle = skipped
             ? const ui.Color(0xFF999999)
             : const ui.Color(0xFF333333)
@@ -335,7 +328,7 @@ class _TextDemoState extends State<TextDemo> {
     final ctx = _measureCanvas.getContext2d()
       ..font = font.string
       ..textAlign = 'left'
-      ..textBaseline = 'alphabetic';
+      ..textBaseline = CanvasTextBaseline.alphabetic;
     final metrics = ctx.measureText(_text);
     final longest = longestText(ctx, font.string, _labels, _cache);
     // + 0 turns -0 into 0.

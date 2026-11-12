@@ -6,6 +6,8 @@ library;
 import 'dart:io';
 
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show CanvasTextBaseline;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -34,7 +36,11 @@ typedef _Measured = ({
 });
 
 /// The canvas layer metrics of [text] in [font] with [baseline].
-_Measured _measure(String font, String text, {String baseline = 'alphabetic'}) {
+_Measured _measure(
+  String font,
+  String text, {
+  CanvasTextBaseline baseline = CanvasTextBaseline.alphabetic,
+}) {
   final ctx = UiCanvasElement().getContext2d()
     ..font = font
     ..textAlign = 'start'
@@ -53,8 +59,10 @@ _Measured _measure(String font, String text, {String baseline = 'alphabetic'}) {
 /// The position of the alphabetic baseline below the anchor of
 /// [baseline], from the `actualBoundingBoxAscent` values: the ink box is
 /// fixed to the alphabetic baseline.
-double _shift(Map<String, double> ascents, String baseline) =>
-    ascents['alphabetic']! - ascents[baseline]!;
+double _shift(
+  Map<CanvasTextBaseline, double> ascents,
+  CanvasTextBaseline baseline,
+) => ascents[CanvasTextBaseline.alphabetic]! - ascents[baseline]!;
 
 /// Whether [actual] is within the toBeCloseToPixel tolerance of [expected].
 bool _closeToPixel(double actual, double expected) =>
@@ -76,18 +84,11 @@ String _px(double v) {
   return text == '-0.000' ? '0.000' : text;
 }
 
-const List<String> _baselines = [
-  'top',
-  'hanging',
-  'middle',
-  'alphabetic',
-  'ideographic',
-  'bottom',
-];
+const List<CanvasTextBaseline> _baselines = CanvasTextBaseline.values;
 
 void main() {
   late List<_Measured> measured;
-  late List<Map<String, double>> flutterAscents;
+  late List<Map<CanvasTextBaseline, double>> flutterAscents;
 
   setUpAll(() {
     measured = [
@@ -144,7 +145,7 @@ void main() {
           expect(
             _shift(flutterAscents[i], b),
             closeTo(_shift(f.baselines, b), 1),
-            reason: b,
+            reason: b.name,
           );
         }
       });
@@ -161,7 +162,10 @@ void main() {
 }
 
 /// The comparison tables of doc/text-metrics.md.
-String _report(List<_Measured> measured, List<Map<String, double>> ascents) {
+String _report(
+  List<_Measured> measured,
+  List<Map<CanvasTextBaseline, double>> ascents,
+) {
   final out = StringBuffer()
     ..writeln('Widths:')
     ..writeln()
@@ -223,7 +227,7 @@ String _report(List<_Measured> measured, List<Map<String, double>> ascents) {
       final chrome = _shift(font.baselines, b);
       final flutter = _shift(ascents[i], b);
       out.writeln(
-        '| ${_fontName(font.font)} | `$b` | ${_px(chrome)} '
+        '| ${_fontName(font.font)} | `${b.name}` | ${_px(chrome)} '
         '| ${_px(flutter)} | ${_px(flutter - chrome)} |',
       );
     }

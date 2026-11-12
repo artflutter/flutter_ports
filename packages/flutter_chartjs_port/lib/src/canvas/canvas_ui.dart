@@ -120,15 +120,6 @@ final CanvasFont _defaultFont = parseCanvasFont(_defaultFontString)!;
 
 const Set<String> _textAligns = {'start', 'end', 'left', 'right', 'center'};
 
-const Set<String> _textBaselines = {
-  'top',
-  'hanging',
-  'middle',
-  'alphabetic',
-  'ideographic',
-  'bottom',
-};
-
 const Set<String> _directions = {'ltr', 'rtl', 'inherit'};
 
 /// A map-backed [CSSStyleDeclaration]: the inline style of a
@@ -471,7 +462,7 @@ final class _State {
   String font = _defaultFontString;
   CanvasFont fontValue = _defaultFont;
   String textAlign = 'start';
-  String textBaseline = 'alphabetic';
+  CanvasTextBaseline textBaseline = CanvasTextBaseline.alphabetic;
   String direction = 'inherit';
   double globalAlpha = 1;
   ui.BlendMode blendMode = ui.BlendMode.srcOver;
@@ -2574,12 +2565,14 @@ final class UiCanvasContext
   }
 
   @override
-  String? get textBaseline => _s.textBaseline;
+  CanvasTextBaseline? get textBaseline => _s.textBaseline;
 
+  // The WebIDL setter ignores a value outside the enum: the type keeps out
+  // each value but Dart `null`.
   @override
-  set textBaseline(String? value) {
-    if (!_textBaselines.contains(value)) return;
-    _s.textBaseline = value!;
+  set textBaseline(CanvasTextBaseline? value) {
+    if (value == null) return;
+    _s.textBaseline = value;
   }
 
   @override

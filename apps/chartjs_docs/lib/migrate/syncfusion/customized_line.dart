@@ -47,10 +47,10 @@ final Map<String, Object?> _highLow = {
       ..stroke()
       ..font = '12px sans-serif'
       ..textAlign = 'left'
-      ..textBaseline = 'bottom'
+      ..textBaseline = CanvasTextBaseline.bottom
       ..fillStyle = Colors.green.shade800
       ..fillText('High point', left + 5, high - 10)
-      ..textBaseline = 'top'
+      ..textBaseline = CanvasTextBaseline.top
       ..fillStyle = Colors.red.shade800
       ..fillText('Low point', points[lowIndex].x, low + 10)
       ..restore();

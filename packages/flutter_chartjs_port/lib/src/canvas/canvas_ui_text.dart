@@ -21,6 +21,9 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show CanvasTextBaseline;
+
 /// A parsed CSS font: what a `ui.TextStyle` needs.
 final class CanvasFont {
   /// A font of [size] CSS pixels.
@@ -535,7 +538,7 @@ CanvasTextMetricsData measureCanvasText(CanvasFont font, String text) {
 /// 80% of the ascent and `ideographic` at the descent. `dart:ui` gives the
 /// ascent and descent of the font. The em box here scales them.
 double canvasBaselineShift(
-  String baseline,
+  CanvasTextBaseline baseline,
   double size,
   double ascent,
   double descent,
@@ -545,11 +548,11 @@ double canvasBaselineShift(
   final emAscent = sum > 0 ? ascent * size / sum : size * 0.8;
   final emDescent = sum > 0 ? descent * size / sum : size * 0.2;
   return switch (baseline) {
-    'top' => emAscent,
-    'hanging' => ascent * 0.8,
-    'middle' => (emAscent - emDescent) / 2,
-    'ideographic' => ascent - ideographic,
-    'bottom' => -emDescent,
-    _ => 0,
+    CanvasTextBaseline.top => emAscent,
+    CanvasTextBaseline.hanging => ascent * 0.8,
+    CanvasTextBaseline.middle => (emAscent - emDescent) / 2,
+    CanvasTextBaseline.ideographic => ascent - ideographic,
+    CanvasTextBaseline.bottom => -emDescent,
+    CanvasTextBaseline.alphabetic => 0,
   };
 }

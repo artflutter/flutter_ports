@@ -61,7 +61,7 @@ final Map<String, Object?> _zoneKey = {
     final ctx = chart.ctx!
       ..save()
       ..font = '14px sans-serif'
-      ..textBaseline = 'middle'
+      ..textBaseline = CanvasTextBaseline.middle
       ..textAlign = 'left';
     for (final (color, text) in [
       (_high, 'High'),

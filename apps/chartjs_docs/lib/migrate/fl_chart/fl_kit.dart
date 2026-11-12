@@ -233,7 +233,7 @@ Map<String, Object?> annotations(List<Annotation> items) => {
               ..fillStyle = Colors.white
               ..font = 'bold 9px sans-serif'
               ..textAlign = 'right'
-              ..textBaseline = 'bottom'
+              ..textBaseline = CanvasTextBaseline.bottom
               ..fillText(text, area.right - 5, pixel - 5);
           }
         case VLine(:final x, :final color, :final width, :final dash):
@@ -254,7 +254,7 @@ Map<String, Object?> annotations(List<Annotation> items) => {
               ..fillStyle = Colors.white
               ..font = 'bold 9px sans-serif'
               ..textAlign = 'left'
-              ..textBaseline = 'top'
+              ..textBaseline = CanvasTextBaseline.top
               ..fillText(text, 0, 0)
               ..restore();
           }

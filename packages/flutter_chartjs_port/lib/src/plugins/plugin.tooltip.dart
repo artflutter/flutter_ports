@@ -1705,7 +1705,8 @@ class Tooltip extends Element implements types.TooltipModel {
 
       ctx
         ..textAlign = canvasKeyword(rtlHelper.textAlign(options.titleAlign))
-        ..textBaseline = 'middle';
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+        ..textBaseline = CanvasTextBaseline.middle;
 
       final titleFont = toFont(options.titleFont);
       final titleSpacing = jsToNumber(options.titleSpacing);
@@ -1906,7 +1907,8 @@ class Tooltip extends Element implements types.TooltipModel {
 
     ctx
       ..textAlign = canvasKeyword(bodyAlign)
-      ..textBaseline = 'middle'
+      // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+      ..textBaseline = CanvasTextBaseline.middle
       ..font = bodyFont.string;
 
     pt.x = _getAlignedX(this, bodyAlignForCalculation, options);
@@ -1973,7 +1975,8 @@ class Tooltip extends Element implements types.TooltipModel {
 
       ctx
         ..textAlign = canvasKeyword(rtlHelper.textAlign(options.footerAlign))
-        ..textBaseline = 'middle';
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+        ..textBaseline = CanvasTextBaseline.middle;
 
       final footerFont = toFont(options.footerFont);
 

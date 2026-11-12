@@ -639,7 +639,7 @@ final class _RenderTextOpts implements types.RenderTextOpts {
   final String? textAlign;
 
   @override
-  final String? textBaseline;
+  final CanvasTextBaseline? textBaseline;
 
   @override
   final (double, double)? translation;
@@ -2474,7 +2474,8 @@ class Scale extends _ScalePrototype
     double lineHeight;
     int lineCount;
     double textOffset;
-    var textBaseline = 'middle';
+    // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+    var textBaseline = CanvasTextBaseline.middle;
 
     if (position == 'top') {
       y = bottom - jsToNumber(hTickAndPadding);
@@ -2515,9 +2516,11 @@ class Scale extends _ScalePrototype
 
     if (axis == 'y') {
       if (align == TickAlign.start) {
-        textBaseline = 'top';
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+        textBaseline = CanvasTextBaseline.top;
       } else if (align == TickAlign.end) {
-        textBaseline = 'bottom';
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+        textBaseline = CanvasTextBaseline.bottom;
       }
     }
 
@@ -2593,12 +2596,16 @@ class Scale extends _ScalePrototype
         var top = textOffset - labelPadding.top;
         var left = 0 - labelPadding.left;
 
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum values.
         switch (textBaseline) {
-          case 'middle':
+          case CanvasTextBaseline.middle:
             top -= height / 2;
-          case 'bottom':
+          case CanvasTextBaseline.bottom:
             top -= height;
-          default:
+          case CanvasTextBaseline.top ||
+              CanvasTextBaseline.hanging ||
+              CanvasTextBaseline.alphabetic ||
+              CanvasTextBaseline.ideographic:
             break;
         }
 
@@ -3002,7 +3009,8 @@ class Scale extends _ScalePrototype
         maxWidth: maxWidth,
         rotation: rotation,
         textAlign: _titleAlign(align, position, reverse),
-        textBaseline: 'middle',
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+        textBaseline: CanvasTextBaseline.middle,
         translation: (titleX, titleY),
         strokeColor: title.strokeColor,
         strokeWidth: canvasNumber(title.strokeWidth),

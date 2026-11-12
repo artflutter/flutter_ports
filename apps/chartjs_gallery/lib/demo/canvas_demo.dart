@@ -56,7 +56,7 @@ void drawCaption(
     const TextOpts(
       color: labelColor,
       textAlign: 'center',
-      textBaseline: 'bottom',
+      textBaseline: CanvasTextBaseline.bottom,
     ),
   );
 }
@@ -365,7 +365,7 @@ class _RenderTextCardState extends State<_RenderTextCard> {
         rotation: rotation,
         color: const ui.Color(0xFF36A2EB),
         textAlign: 'center',
-        textBaseline: 'middle',
+        textBaseline: CanvasTextBaseline.middle,
         underline: _underline,
         strikethrough: _strikethrough,
         decorationWidth: 3,
@@ -633,7 +633,7 @@ class _LinesCardState extends State<_LinesCard> {
         12,
         top + 4,
         toFont(<String, Object?>{'size': 12}),
-        const TextOpts(color: labelColor, textBaseline: 'top'),
+        const TextOpts(color: labelColor, textBaseline: CanvasTextBaseline.top),
       );
     }
   }

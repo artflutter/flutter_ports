@@ -735,7 +735,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
     ctx
       ..textAlign = 'left'
-      ..textBaseline = 'middle';
+      // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+      ..textBaseline = CanvasTextBaseline.middle;
 
     var row = -1.0;
     var top = -lineHeight;
@@ -978,7 +979,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     // Canvas setup
     ctx
       ..textAlign = _textAlignOf(rtlHelper.textAlign('left'))
-      ..textBaseline = 'middle'
+      // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+      ..textBaseline = CanvasTextBaseline.middle
       ..lineWidth = 0.5
       ..font = labelFont.string;
 
@@ -1263,7 +1265,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       ..textAlign = _textAlignOf(
         rtlHelper.textAlign(toLeftRightCenter(position)),
       )
-      ..textBaseline = 'middle'
+      // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+      ..textBaseline = CanvasTextBaseline.middle
       ..strokeStyle = color
       ..fillStyle = color
       ..font = titleFont.string;
@@ -1699,7 +1702,7 @@ final class _LegendTextOpts implements types.RenderTextOpts {
   double? get rotation => null;
 
   @override
-  String? get textBaseline => null;
+  CanvasTextBaseline? get textBaseline => null;
 
   @override
   (double, double)? get translation => null;

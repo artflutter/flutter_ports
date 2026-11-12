@@ -4,6 +4,9 @@
 // Do not edit. Google Chrome 155.0.8059.80 on macOS 26.5.1 (arm64), headless:
 // canvas measureText with Liberation Sans 2.1.5. 80 cases.
 
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show CanvasTextBaseline;
+
 /// The Chrome version that generated the reference.
 const String textMetricsChrome = 'Google Chrome 155.0.8059.80';
 
@@ -31,7 +34,7 @@ typedef TextMetricsFont = ({
   String font,
   double fontAscent,
   double fontDescent,
-  Map<String, double> baselines,
+  Map<CanvasTextBaseline, double> baselines,
 });
 
 /// One measured text: the index of its font in [textMetricsFonts], the text
@@ -55,12 +58,12 @@ const List<TextMetricsFont> textMetricsFonts = [
     fontAscent: 11,
     fontDescent: 3,
     baselines: {
-      'top': -1.056641,
-      'hanging': -0.544141,
-      'middle': 4.943359,
-      'alphabetic': 8.255859,
-      'ideographic': 11.255859,
-      'bottom': 10.943359,
+      CanvasTextBaseline.top: -1.056641,
+      CanvasTextBaseline.hanging: -0.544141,
+      CanvasTextBaseline.middle: 4.943359,
+      CanvasTextBaseline.alphabetic: 8.255859,
+      CanvasTextBaseline.ideographic: 11.255859,
+      CanvasTextBaseline.bottom: 10.943359,
     },
   ),
   (
@@ -68,12 +71,12 @@ const List<TextMetricsFont> textMetricsFonts = [
     fontAscent: 11,
     fontDescent: 3,
     baselines: {
-      'top': -1.056641,
-      'hanging': -0.544141,
-      'middle': 4.943359,
-      'alphabetic': 8.255859,
-      'ideographic': 11.255859,
-      'bottom': 10.943359,
+      CanvasTextBaseline.top: -1.056641,
+      CanvasTextBaseline.hanging: -0.544141,
+      CanvasTextBaseline.middle: 4.943359,
+      CanvasTextBaseline.alphabetic: 8.255859,
+      CanvasTextBaseline.ideographic: 11.255859,
+      CanvasTextBaseline.bottom: 10.943359,
     },
   ),
   (
@@ -81,12 +84,12 @@ const List<TextMetricsFont> textMetricsFonts = [
     fontAscent: 14,
     fontDescent: 3,
     baselines: {
-      'top': -1.398437,
-      'hanging': -0.192187,
-      'middle': 6.601563,
-      'alphabetic': 11.007813,
-      'ideographic': 14.007813,
-      'bottom': 14.601563,
+      CanvasTextBaseline.top: -1.398437,
+      CanvasTextBaseline.hanging: -0.192187,
+      CanvasTextBaseline.middle: 6.601563,
+      CanvasTextBaseline.alphabetic: 11.007813,
+      CanvasTextBaseline.ideographic: 14.007813,
+      CanvasTextBaseline.bottom: 14.601563,
     },
   ),
   (
@@ -94,12 +97,12 @@ const List<TextMetricsFont> textMetricsFonts = [
     fontAscent: 9,
     fontDescent: 2,
     baselines: {
-      'top': -0.870117,
-      'hanging': -0.320117,
-      'middle': 4.129883,
-      'alphabetic': 6.879883,
-      'ideographic': 8.879883,
-      'bottom': 9.129883,
+      CanvasTextBaseline.top: -0.870117,
+      CanvasTextBaseline.hanging: -0.320117,
+      CanvasTextBaseline.middle: 4.129883,
+      CanvasTextBaseline.alphabetic: 6.879883,
+      CanvasTextBaseline.ideographic: 8.879883,
+      CanvasTextBaseline.bottom: 9.129883,
     },
   ),
   (
@@ -107,12 +110,12 @@ const List<TextMetricsFont> textMetricsFonts = [
     fontAscent: 22,
     fontDescent: 5,
     baselines: {
-      'top': -2.113281,
-      'hanging': -1.088282,
-      'middle': 9.886719,
-      'alphabetic': 16.511719,
-      'ideographic': 21.511719,
-      'bottom': 21.886719,
+      CanvasTextBaseline.top: -2.113281,
+      CanvasTextBaseline.hanging: -1.088282,
+      CanvasTextBaseline.middle: 9.886719,
+      CanvasTextBaseline.alphabetic: 16.511719,
+      CanvasTextBaseline.ideographic: 21.511719,
+      CanvasTextBaseline.bottom: 21.886719,
     },
   ),
 ];

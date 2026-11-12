@@ -1878,7 +1878,7 @@ class StressDemoState extends State<StressDemo> {
                 : -math.pi / 4,
             color: labelColor,
             textAlign: 'center',
-            textBaseline: 'middle',
+            textBaseline: CanvasTextBaseline.middle,
           ),
         );
       }
@@ -1898,7 +1898,7 @@ class StressDemoState extends State<StressDemo> {
       _titleFont,
       TextOpts(
         color: const ui.Color(0xFF333333),
-        textBaseline: 'top',
+        textBaseline: CanvasTextBaseline.top,
         backdrop: Backdrop(
           4,
           4,

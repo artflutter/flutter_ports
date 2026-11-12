@@ -392,7 +392,7 @@ void main() {
         expect(context.shadowOffsetY, 0);
         expect(context.strokeStyle, const ui.Color.fromRGBO(0, 0, 0, 1));
         expect(context.textAlign, 'start');
-        expect(context.textBaseline, 'alphabetic');
+        expect(context.textBaseline, CanvasTextBaseline.alphabetic);
 
         wrapper.parentNode!.removeChild(wrapper);
       });
