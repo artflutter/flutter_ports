@@ -138,6 +138,7 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         node is num ||
         node is bool ||
         node is String ||
+        node is Enum ||
         node.runtimeType == Color) {
       return true;
     }

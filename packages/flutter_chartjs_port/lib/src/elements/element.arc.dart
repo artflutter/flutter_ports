@@ -90,6 +90,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ArcOptionsScope, DescriptorsScope;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
     show TypedRecord;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -518,10 +520,11 @@ void _pathArc(
   ) = element;
   final options = element.options;
   // `const {spacingMode = 'angular'} = element.options`: the default
-  // replaces only undefined. The code compares the value with two strings
+  // replaces only undefined. The code compares the value with two values
   // only. Every other value, also JS undefined and JS null, takes the branch
   // of 'angular'. Thus the raw value gives the same branch.
-  final spacingMode = _spacingMode(options);
+  // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+  final spacingMode = ArcSpacingMode.of(_spacingMode(options));
   final alpha = end - start;
 
   if (circular && _selfJoin(options) && alpha.abs() >= tau - 1e-4) {
@@ -567,7 +570,7 @@ void _pathArc(
     // js-ok: display only (Chart.js ADR 0045)
     final maxOffsetSin = math.sin(maxOffset);
 
-    if (spacingMode == 'parallel') {
+    if (spacingMode == ArcSpacingMode.parallel) {
       if (innerRadius == 0 && maxOffsetSin > 0) {
         // A root radius of zero cannot realize a non-zero parallel separator
         // width.
@@ -593,7 +596,7 @@ void _pathArc(
           // js-ok: the last bit of asin changes only the pixels of the arc.
           ? math.asin(jsMin(1, parallelSpacing / innerRadius))
           : outerSpacingOffset;
-    } else if (spacingMode == 'proportional') {
+    } else if (spacingMode == ArcSpacingMode.proportional) {
       outerSpacingOffset = jsMin(maxOffset, proportionalOffset);
       innerSpacingOffset = jsMin(maxOffset, proportionalOffset);
     } else {
@@ -810,7 +813,9 @@ void _drawBorder(
   final borderJoinStyle = _borderJoinStyle(options);
   final borderDash = _borderDash(options);
   final borderRadius = _borderRadius(options);
-  final inner = _borderAlign(options) == 'inner';
+  // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+  final inner =
+      ArcBorderAlign.of(_borderAlign(options)) == ArcBorderAlign.inner;
 
   if (!_truthyNumber(options, OptionKey.borderWidth)) {
     return;
@@ -954,7 +959,8 @@ class ArcElement extends Element
   /// element.arc.ts:377 `static defaults`, in the upstream key order: a
   /// typed scope of the kind `ArcOptions` (Chart.js ADR 0054 §3).
   static final ArcOptionsScope defaults = ArcOptionsScope()
-    ..borderAlign = 'center'
+    // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+    ..borderAlign = ArcBorderAlign.center
     ..borderColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..borderDash = <Object?>[]
     ..borderDashOffset = 0.0
@@ -963,7 +969,7 @@ class ArcElement extends Element
     ..borderWidth = 2.0
     ..offset = 0.0
     ..spacing = 0.0
-    ..spacingMode = 'angular'
+    ..spacingMode = ArcSpacingMode.angular
     ..angleCell = optUndefined
     ..circular = true
     ..selfJoin = false;
@@ -1525,7 +1531,11 @@ class ArcElement extends Element
     final spacing = _orZero(options, OptionKey.spacing) / 2;
     // pathArc tests it with `if (circular)`.
     final circular = _circular(options);
-    pixelMargin = (_borderAlign(options) == 'inner') ? 0.33 : 0;
+    // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+    pixelMargin =
+        (ArcBorderAlign.of(_borderAlign(options)) == ArcBorderAlign.inner)
+        ? 0.33
+        : 0;
     fullCircles = circumference > tau
         ? (circumference / tau).floorToDouble()
         : 0;

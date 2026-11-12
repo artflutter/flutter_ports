@@ -82,6 +82,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         PolarAreaControllerDatasetOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.polarArea.js:38 `generateLabels(chart)` of
@@ -223,7 +225,8 @@ class PolarAreaController extends DatasetController {
         ..indexAxis = 'r'
         ..startAngle = 0.0
         ..spacing = 0.0
-        ..spacingMode = 'proportional';
+        // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+        ..spacingMode = ArcSpacingMode.proportional;
 
   /// controller.polarArea.js:32 `static overrides`, a typed scope of the
   /// kind `ChartOptions` (Chart.js ADR 0054 §3).
@@ -595,7 +598,9 @@ class PolarAreaController extends DatasetController {
         options.readKey(OptionKey.spacing),
       );
     }
-    if (elementOptions.valueOf(OptionKey.spacingMode) == 'angular') {
+    // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+    if (elementOptions.valueOf(OptionKey.spacingMode) ==
+        ArcSpacingMode.angular) {
       elementOptions.storeKey(
         OptionKey.spacingMode,
         options.readKey(OptionKey.spacingMode),
@@ -630,7 +635,8 @@ class PolarAreaController extends DatasetController {
       return null;
     }
     final fixesSpacing = entry.valueOf(OptionKey.spacing) == 0;
-    final fixesMode = entry.valueOf(OptionKey.spacingMode) == 'angular';
+    final fixesMode =
+        entry.valueOf(OptionKey.spacingMode) == ArcSpacingMode.angular;
     if ((fixesSpacing || fixesMode) &&
         !options.rawOptionsAreScalar([
           if (fixesSpacing) OptionKey.spacing,

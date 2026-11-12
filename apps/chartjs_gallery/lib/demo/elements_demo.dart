@@ -61,7 +61,10 @@ const List<String> _pointStyles = [
 const List<Object> _steppedValues = [false, 'before', 'after', 'middle'];
 
 /// The values of the `borderAlign` option of the arcs.
-const List<Object> _borderAlignValues = ['center', 'inner'];
+const List<Object> _borderAlignValues = [
+  ArcBorderAlign.center,
+  ArcBorderAlign.inner,
+];
 
 /// The values of the `borderJoinStyle` option of the arcs. [undefined] is
 /// the default: the arc border then joins with `StrokeJoin.bevel`, or
@@ -175,7 +178,7 @@ class ElementsDemoState extends State<ElementsDemo> {
   double _borderRadius = 6;
   double _spacing = 0;
   double _offset = 0;
-  Object _borderAlign = 'center';
+  Object _borderAlign = ArcBorderAlign.center;
   Object _borderJoinStyle = undefined;
 
   // The scene: the size of the chart for the last layout, the area of the
@@ -350,7 +353,7 @@ class ElementsDemoState extends State<ElementsDemo> {
     var maxBorderWidth = 0.0;
     var maxOffset = 0.0;
     for (final (:base, active: _) in arcOptions) {
-      if (base['borderAlign'] != 'inner') {
+      if (base['borderAlign'] != ArcBorderAlign.inner) {
         maxBorderWidth = math.max(
           maxBorderWidth,
           jsOrZero(base['borderWidth']),

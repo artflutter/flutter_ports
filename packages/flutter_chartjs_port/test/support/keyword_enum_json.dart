@@ -11,7 +11,9 @@
 /// `scale_option_enums.dart`, and the `align` of a box holds a `ChartAlign`
 /// (row `adapt-chart-align-enum`), and the `xAlign` and `yAlign` of the
 /// tooltip hold a `TooltipXAlign` and a `TooltipYAlign` (row
-/// `adapt-tooltip-align-enums`). Upstream data hold a keyword in that place.
+/// `adapt-tooltip-align-enums`), and the `borderAlign` and `spacingMode` of
+/// an arc hold an `ArcBorderAlign` and an `ArcSpacingMode` (row
+/// `adapt-arc-option-enums`). Upstream data hold a keyword in that place.
 /// The names of the enum values are the keywords, so a test compares the
 /// name of the value with the upstream text: [keywordJson] gives it as JSON.
 library;
@@ -24,6 +26,8 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 
 /// Whether [value] is a value of an enum whose names are upstream keywords.
 bool isKeywordEnum(Object? value) =>
@@ -36,7 +40,9 @@ bool isKeywordEnum(Object? value) =>
     value is TickCrossAlign ||
     value is ChartAlign ||
     value is TooltipXAlign ||
-    value is TooltipYAlign;
+    value is TooltipYAlign ||
+    value is ArcBorderAlign ||
+    value is ArcSpacingMode;
 
 /// The JSON text of the enum value [value]: the upstream keyword, the name
 /// of the value, as a JSON string.

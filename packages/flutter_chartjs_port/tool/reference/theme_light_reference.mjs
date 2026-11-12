@@ -493,7 +493,9 @@ function num(v) {
 /**
  * The Dart literal of the value [x] of the key [k]: a line cap or a line
  * join of upstream is the Flutter enum value with the name of the keyword
- * (row adapt-flutter-stroke-enums). Another value is `undefined` here.
+ * (row adapt-flutter-stroke-enums), and an arc `borderAlign` or
+ * `spacingMode` is the enum value of the port (row adapt-arc-option-enums).
+ * Another value is `undefined` here.
  */
 function strokeEnum(k, x) {
   if (typeof x !== 'string') return undefined;
@@ -503,8 +505,19 @@ function strokeEnum(k, x) {
   if ((k === 'borderJoinStyle' || k === 'lineJoin') && ['miter', 'round', 'bevel'].includes(x)) {
     return `StrokeJoin.${x}`;
   }
+  if (k === 'borderAlign' && ['center', 'inner'].includes(x)) {
+    usesArcEnums = true;
+    return `ArcBorderAlign.${x}`;
+  }
+  if (k === 'spacingMode' && ['angular', 'proportional', 'parallel'].includes(x)) {
+    usesArcEnums = true;
+    return `ArcSpacingMode.${x}`;
+  }
   return undefined;
 }
+
+/** Whether the data have a value of an arc enum, which needs its import. */
+let usesArcEnums = false;
 
 /** The Dart literal of a JS value. */
 function dart(v) {
@@ -555,7 +568,7 @@ const out = `// Original code, not ported from Chart.js: light theme reference d
 // ${elementCases.length} element cases.
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
-${usesUndefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${usesUndefined || usesArcEnums ? '\n' : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = '${process.version}';
 

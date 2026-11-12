@@ -276,9 +276,12 @@ class _Counted {
 /// controller store the values of the polar area into each arc.
 Map<String, Object?> _maskedSpacing() => <String, Object?>{
   'spacing': 4.0,
-  'spacingMode': 'parallel',
+  'spacingMode': ArcSpacingMode.parallel,
   'elements': <String, Object?>{
-    'arc': <String, Object?>{'spacing': 0.0, 'spacingMode': 'angular'},
+    'arc': <String, Object?>{
+      'spacing': 0.0,
+      'spacingMode': ArcSpacingMode.angular,
+    },
   },
 };
 
@@ -619,7 +622,7 @@ void main() {
     (type, _) => _config(type, {
       'backgroundColor': red,
       'spacing': 3.0,
-      'spacingMode': 'parallel',
+      'spacingMode': ArcSpacingMode.parallel,
       'offset': 2.0,
     }),
     types: _arcTypes,
@@ -1332,7 +1335,7 @@ void main() {
           expect(options.valueOf(OptionKey.spacing), 4.0, reason: kind);
           expect(
             options.valueOf(OptionKey.spacingMode),
-            'parallel',
+            ArcSpacingMode.parallel,
             reason: kind,
           );
         }
@@ -1355,7 +1358,7 @@ void main() {
         final cfg = _config(kind, {
           'backgroundColor': red,
           'spacing': 3.0,
-          'spacingMode': 'parallel',
+          'spacingMode': ArcSpacingMode.parallel,
         });
         final chart = _chart(cfg);
         chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
@@ -1408,28 +1411,30 @@ void main() {
               options: {
                 'spacingMode': (Object? ctx) {
                   calls.add('spacingMode');
-                  return 'parallel';
+                  return ArcSpacingMode.parallel;
                 },
                 'elements': <String, Object?>{
-                  'arc': <String, Object?>{'spacingMode': 'angular'},
+                  'arc': <String, Object?>{
+                    'spacingMode': ArcSpacingMode.angular,
+                  },
                 },
               },
             ),
             key: OptionKey.spacingMode,
-            written: 'written',
+            written: ArcSpacingMode.proportional,
           ),
         );
         expect(calls, isNotEmpty);
       }
       expect(results[0], const [
-        'parallel',
-        'parallel',
-        'parallel',
-        'parallel',
-        'parallel',
-        'written',
-        'written',
-        'written',
+        ArcSpacingMode.parallel,
+        ArcSpacingMode.parallel,
+        ArcSpacingMode.parallel,
+        ArcSpacingMode.parallel,
+        ArcSpacingMode.parallel,
+        ArcSpacingMode.proportional,
+        ArcSpacingMode.proportional,
+        ArcSpacingMode.proportional,
       ]);
       expect(results[0], results[1]);
     });
@@ -1469,7 +1474,7 @@ void main() {
         final own = <String, Object?>{
           'backgroundColor': red,
           'spacing': 3.0,
-          'spacingMode': 'parallel',
+          'spacingMode': ArcSpacingMode.parallel,
         };
         expect(
           planProbe(
@@ -1555,11 +1560,22 @@ void main() {
     });
 
     group('the guard reads no key that no fix-up reads', () {
+      // The mode that the plugin writes at each value: no write is `angular`,
+      // the mode of the fix-up of a polar area, and a stale read of the second
+      // write gives the mode of the first.
+      final modeAt = {
+        10.0: ArcSpacingMode.proportional,
+        20.0: ArcSpacingMode.parallel,
+        30.0: ArcSpacingMode.proportional,
+      };
       for (final MapEntry(key: name, value: own)
           in const <String, Map<String, Object?>>{
-            'both own': {'spacing': 3.0, 'spacingMode': 'parallel'},
+            'both own': {
+              'spacing': 3.0,
+              'spacingMode': ArcSpacingMode.parallel,
+            },
             'spacing own': {'spacing': 3.0},
-            'mode own': {'spacingMode': 'parallel'},
+            'mode own': {'spacingMode': ArcSpacingMode.parallel},
             'none own': {},
           }.entries) {
         test(name, () {
@@ -1582,7 +1598,7 @@ void main() {
                         dataset['spacing'] = value;
                       }
                       if (own.containsKey('spacingMode')) {
-                        dataset['spacingMode'] = 'mode$value';
+                        dataset['spacingMode'] = modeAt[value];
                       }
                       trace.add([view['spacing'], view['spacingMode']]);
                     },
@@ -1598,7 +1614,9 @@ void main() {
           expect(results[0], results[1]);
           final last = (results[0]! as List)[1] as List;
           if (own.containsKey('spacing')) expect(last[0], 20.0);
-          if (own.containsKey('spacingMode')) expect(last[1], 'mode20.0');
+          if (own.containsKey('spacingMode')) {
+            expect(last[1], ArcSpacingMode.parallel);
+          }
         });
       }
     });
@@ -1759,7 +1777,7 @@ void main() {
       dataOnlyTwin('an own spacing', {
         'backgroundColor': red,
         'spacing': 3.0,
-        'spacingMode': 'parallel',
+        'spacingMode': ArcSpacingMode.parallel,
         'offset': 2.0,
       });
       dataOnlyTwin('a static angle', {'backgroundColor': red, 'angle': 40.0});
@@ -1777,7 +1795,11 @@ void main() {
       );
       dataOnlyTwin(
         'a shared result',
-        {'backgroundColor': red, 'spacing': 3.0, 'spacingMode': 'parallel'},
+        {
+          'backgroundColor': red,
+          'spacing': 3.0,
+          'spacingMode': ArcSpacingMode.parallel,
+        },
         prepare: (chart) {
           chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
           chart.update('none');
@@ -1830,7 +1852,7 @@ void main() {
           expect((arc.options! as ArcOptions).isFrozen, isFalse);
           expect(
             (arc.options! as ArcOptions).valueOf(OptionKey.spacingMode),
-            'proportional',
+            ArcSpacingMode.proportional,
           );
         }
         (data[3].options! as ArcOptions).storeKey(OptionKey.spacing, 4.0);
@@ -1856,8 +1878,8 @@ void main() {
         ..storeKey(OptionKey.borderRadius, 'a')
         ..storeKey(OptionKey.borderDash, 2.0);
       final plain = ArcOptions()
-        ..storeKey(OptionKey.borderAlign, 'inner')
-        ..storeKey(OptionKey.spacingMode, 'parallel')
+        ..storeKey(OptionKey.borderAlign, ArcBorderAlign.inner)
+        ..storeKey(OptionKey.spacingMode, ArcSpacingMode.parallel)
         ..storeKey(OptionKey.borderJoinStyle, 'round')
         ..storeKey(OptionKey.borderColor, red)
         ..storeKey(OptionKey.backgroundColor, blue)
@@ -1890,7 +1912,7 @@ void main() {
         'backgroundColor': red,
         'borderColor': blue,
         'borderWidth': 3.0,
-        'borderAlign': 'inner',
+        'borderAlign': ArcBorderAlign.inner,
         'borderJoinStyle': ui.StrokeJoin.round,
         'borderDash': <double>[2, 3],
         'borderRadius': 4.0,

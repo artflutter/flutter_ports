@@ -30,6 +30,8 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart'
     show ChartFill, ChartPointStyle;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 import 'package:meta/meta.dart' show internal;
 
 /// The options of the element types: `options.elements`
@@ -447,6 +449,8 @@ final class ArcElementStyle with Diagnosticable {
     this.borderWidth,
     this.offset,
     this.spacing,
+    this.borderAlign,
+    this.spacingMode,
     this.extra,
   });
 
@@ -466,8 +470,16 @@ final class ArcElementStyle with Diagnosticable {
   /// The space between two arcs, in pixels: `spacing`.
   final double? spacing;
 
+  /// Where the border of an arc lies: `borderAlign`. The default is
+  /// [ArcBorderAlign.center].
+  final ArcBorderAlign? borderAlign;
+
+  /// The geometry of the space between two arcs: `spacingMode`. The default
+  /// is [ArcSpacingMode.angular].
+  final ArcSpacingMode? spacingMode;
+
   /// The Chart.js arc options that have no parameter, for example
-  /// `{'borderAlign': 'inner'}`. The rules of [ChartElements.extra] apply.
+  /// `{'circular': false}`. The rules of [ChartElements.extra] apply.
   final Map<String, Object?>? extra;
 
   /// A copy of these arc options with the given parameters. A parameter
@@ -478,6 +490,8 @@ final class ArcElementStyle with Diagnosticable {
     double? borderWidth,
     double? offset,
     double? spacing,
+    ArcBorderAlign? borderAlign,
+    ArcSpacingMode? spacingMode,
     Map<String, Object?>? extra,
   }) => ArcElementStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -485,6 +499,8 @@ final class ArcElementStyle with Diagnosticable {
     borderWidth: borderWidth ?? this.borderWidth,
     offset: offset ?? this.offset,
     spacing: spacing ?? this.spacing,
+    borderAlign: borderAlign ?? this.borderAlign,
+    spacingMode: spacingMode ?? this.spacingMode,
     extra: extra ?? this.extra,
   );
 
@@ -496,6 +512,8 @@ final class ArcElementStyle with Diagnosticable {
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.offset, offset);
     put(scope, OptionKey.spacing, spacing);
+    put(scope, OptionKey.borderAlign, borderAlign);
+    put(scope, OptionKey.spacingMode, spacingMode);
     return mergeExtra(scope, extra);
   }
 
@@ -505,6 +523,8 @@ final class ArcElementStyle with Diagnosticable {
     ('borderWidth', borderWidth),
     ('offset', offset),
     ('spacing', spacing),
+    ('borderAlign', borderAlign),
+    ('spacingMode', spacingMode),
     ('extra', byEntries(extra)),
   ];
 

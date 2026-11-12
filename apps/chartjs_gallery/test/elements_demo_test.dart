@@ -232,7 +232,7 @@ void main() {
       ('stepped', 'middle', () => state.line!.options),
       ('stepped', false, () => state.line!.options),
       ('stepped', 'before', () => state.line!.options),
-      ('borderAlign', 'inner', () => state.arcs.first.options),
+      ('borderAlign', ArcBorderAlign.inner, () => state.arcs.first.options),
       (
         'borderJoinStyle',
         native_ui.StrokeJoin.round,

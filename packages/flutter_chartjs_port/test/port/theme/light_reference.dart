@@ -10,6 +10,7 @@
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = 'v24.22.1';
@@ -351,7 +352,7 @@ const List<ThemeLightElementCase> themeLightElements = [
     prefixes: <String>['arc', ''],
     options: <String, Object?>{
       r'$shared': true,
-      'borderAlign': 'center',
+      'borderAlign': ArcBorderAlign.center,
       'borderColor': '#fff',
       'borderDash': <Object?>[],
       'borderDashOffset': 0.0,
@@ -360,7 +361,7 @@ const List<ThemeLightElementCase> themeLightElements = [
       'borderWidth': 2.0,
       'offset': 0.0,
       'spacing': 0.0,
-      'spacingMode': 'angular',
+      'spacingMode': ArcSpacingMode.angular,
       'angle': undefined,
       'circular': true,
       'selfJoin': false,
@@ -389,7 +390,7 @@ const List<ThemeLightElementCase> themeLightElements = [
     prefixes: <String>['arcHover', 'hover', 'arc', ''],
     options: <String, Object?>{
       r'$shared': false,
-      'borderAlign': 'center',
+      'borderAlign': ArcBorderAlign.center,
       'borderColor': '#E6E6E6',
       'borderDash': <Object?>[],
       'borderDashOffset': 0.0,
@@ -398,7 +399,7 @@ const List<ThemeLightElementCase> themeLightElements = [
       'borderWidth': 2.0,
       'offset': 0.0,
       'spacing': 0.0,
-      'spacingMode': 'angular',
+      'spacingMode': ArcSpacingMode.angular,
       'angle': undefined,
       'circular': true,
       'selfJoin': false,

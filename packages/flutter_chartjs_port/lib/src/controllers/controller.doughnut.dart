@@ -83,6 +83,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LegendLabelOptionsScope,
         LegendOptionsScope,
         PluginOptionsByTypeScope;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.doughnut.js:34 the object `{ratioX, ratioY, offsetX,
@@ -225,7 +227,8 @@ class DoughnutController extends DatasetController {
         // Spacing between arcs
         ..spacing = 0.0
         // Geometry used to apply spacing between arcs
-        ..spacingMode = 'angular'
+        // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+        ..spacingMode = ArcSpacingMode.angular
         ..indexAxis = 'r';
 
   /// controller.doughnut.js:80 `static descriptors`, in the form of
@@ -784,7 +787,9 @@ class DoughnutController extends DatasetController {
 
     for (var i = 0.0, ilen = arcs.length.toDouble(); i < ilen; ++i) {
       final options = controller!.resolveDataElementOptions(i);
-      if (readOption(options, OptionKey.borderAlign) != 'inner') {
+      // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+      if (ArcBorderAlign.of(readOption(options, OptionKey.borderAlign)) !=
+          ArcBorderAlign.inner) {
         max = jsMax(
           jsMax(max, jsOrZero(readOption(options, OptionKey.borderWidth))),
           jsOrZero(readOption(options, OptionKey.hoverBorderWidth)),

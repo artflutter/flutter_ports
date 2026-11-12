@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign;
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -3111,16 +3113,16 @@ void main() {
             // An object entry gives a sub resolver.
             'borderAlign': <Object?>[
               <String, Object?>{'a': 1},
-              'inner',
+              ArcBorderAlign.inner,
             ],
           },
           {
             // A function entry is a value.
-            'borderAlign': <Object?>[_keepItem, 'inner'],
+            'borderAlign': <Object?>[_keepItem, ArcBorderAlign.inner],
           },
           {
             // A function entry past the first item.
-            'borderAlign': <Object?>['inner', _keepItem],
+            'borderAlign': <Object?>[ArcBorderAlign.inner, _keepItem],
           },
           {
             // A number key with a string.
@@ -3142,7 +3144,10 @@ void main() {
           },
           {
             // A list of a key that its descriptor makes not indexable.
-            'borderAlign': <Object?>['inner', 'center'],
+            'borderAlign': <Object?>[
+              ArcBorderAlign.inner,
+              ArcBorderAlign.center,
+            ],
             'backgroundColor': <Object?>[_red, _green],
             '_indexable': (String name) => name != 'borderAlign',
           },
@@ -3184,7 +3189,10 @@ void main() {
         // With `_indexable: false`, no value needs a context: the entry of the
         // cached options is the proof of Chart.js ADR 0092.
         final dataset = <String, Object?>{
-          'borderAlign': <Object?>['inner', 'center'],
+          'borderAlign': <Object?>[
+            ArcBorderAlign.inner,
+            ArcBorderAlign.center,
+          ],
           '_indexable': false,
         };
         final chart = acquireChart(_config(type, dataset: dataset))

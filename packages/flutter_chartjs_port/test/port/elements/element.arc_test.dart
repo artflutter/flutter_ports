@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -233,7 +234,7 @@ void main() {
                 'offset': 0.0,
                 'circular': true,
                 'selfJoin': false,
-                'borderAlign': 'center',
+                'borderAlign': ArcBorderAlign.center,
               }),
             ))
           .draw(ctx);
@@ -455,7 +456,7 @@ void main() {
             key: ArcElement.defaults[key],
         },
         {
-          'borderAlign': 'center',
+          'borderAlign': ArcBorderAlign.center,
           'borderColor': const ui.Color.fromRGBO(255, 255, 255, 1),
           'borderDash': isEmpty,
           'borderDashOffset': 0.0,
@@ -464,7 +465,7 @@ void main() {
           'borderWidth': 2.0,
           'offset': 0.0,
           'spacing': 0.0,
-          'spacingMode': 'angular',
+          'spacingMode': ArcSpacingMode.angular,
           'angle': _isUndefined,
           'circular': true,
           'selfJoin': false,
@@ -791,7 +792,8 @@ void main() {
 
     test('a numeric option that is a string is its ToNumber', () {
       final ctx = _CanvasContext();
-      _drawArc({'borderWidth': '3', 'borderAlign': 'inner'}).draw(ctx);
+      _drawArc({'borderWidth': '3', 'borderAlign': ArcBorderAlign.inner})
+          .draw(ctx);
       expect(_named(ctx, 'setLineWidth').single['args'], [6.0]);
     });
 

@@ -3,7 +3,9 @@ ActiveDataPoint
 ActiveElement
 Animation
 Animations
+ArcBorderAlign
 ArcElement
+ArcSpacingMode
 AverageTooltipPositioner
 BackdropOptions
 BarController
@@ -130,8 +132,10 @@ undefined
 ActiveDataPoint
 ActiveElement
 Animations
+ArcBorderAlign
 ArcElement
 ArcElementStyle
+ArcSpacingMode
 AverageTooltipPositioner
 AxisGrid
 AxisTickInfo

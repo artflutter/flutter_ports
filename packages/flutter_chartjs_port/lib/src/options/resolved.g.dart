@@ -18,6 +18,9 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
+
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show DrawPointOptions;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
@@ -1902,10 +1905,10 @@ final class ArcOptions extends ElementOptions {
     }
   }
 
-  String? _borderAlign = null;
+  ArcBorderAlign? _borderAlign = null;
 
   /// `borderAlign`: the JS conversion of the value of the key.
-  String? get borderAlign => _borderAlign;
+  ArcBorderAlign? get borderAlign => _borderAlign;
 
   /// `borderAlign`: the raw value, or [undefined] for an absent key.
   Object? get borderAlignValue => _present & 1 == 0 ? undefined : _raw0();
@@ -1924,7 +1927,7 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 1;
-    if (raw is String) {
+    if (raw is ArcBorderAlign) {
       _borderAlign = raw;
       _clearForeign(0, 1);
     } else {
@@ -2201,10 +2204,10 @@ final class ArcOptions extends ElementOptions {
     }
   }
 
-  String? _spacingMode = null;
+  ArcSpacingMode? _spacingMode = null;
 
   /// `spacingMode`: the JS conversion of the value of the key.
-  String? get spacingMode => _spacingMode;
+  ArcSpacingMode? get spacingMode => _spacingMode;
 
   /// `spacingMode`: the raw value, or [undefined] for an absent key.
   Object? get spacingModeValue => _present & 512 == 0 ? undefined : _raw9();
@@ -2223,7 +2226,7 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 512;
-    if (raw is String) {
+    if (raw is ArcSpacingMode) {
       _spacingMode = raw;
       _clearForeign(9, 512);
     } else {

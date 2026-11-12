@@ -86,6 +86,8 @@ import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
     show ArcOptions, BarOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/options/static_font.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
@@ -251,12 +253,15 @@ final _nativeIndexedLists = <Type>{
   const <bool?>[].runtimeType,
 };
 
+// An enum value (a `StrokeJoin`, an `ArcBorderAlign`) is a constant of its
+// type: its identity is its equality, and a read of it runs no user code.
 bool _indexedScalar(Object? value) =>
     value == null ||
     value is Undefined ||
     value is num ||
     value is bool ||
     value is String ||
+    value is Enum ||
     (value is Color && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list
@@ -591,7 +596,9 @@ bool _nativeIndexedValue(OptionKey key, Object? value) =>
       // DIVERGES(chartjs): adapt-arc-native-options, the slots of the other
       // arc keys. The `undefined` of the two arc defaults is a foreign value:
       // its debug audit runs at the template build, not at each copy.
-      OptionKey.borderAlign || OptionKey.spacingMode => value is String,
+      // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
+      OptionKey.borderAlign => value is ArcBorderAlign,
+      OptionKey.spacingMode => value is ArcSpacingMode,
       OptionKey.circular || OptionKey.selfJoin => value is bool,
       OptionKey.borderJoinStyle => value is StrokeJoin || value is Undefined,
       OptionKey.angle => value is num || value is Undefined,

@@ -42,6 +42,8 @@ import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 
@@ -232,6 +234,12 @@ abstract final class ShapeBits {
   /// tooltip.
   static const int tooltipYAlign = 1048576;
 
+  /// `arcBorderAlign`: an [ArcBorderAlign], the value of `borderAlign`.
+  static const int arcBorderAlign = 2097152;
+
+  /// `arcSpacingMode`: an [ArcSpacingMode], the value of `spacingMode`.
+  static const int arcSpacingMode = 4194304;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -248,7 +256,9 @@ abstract final class ShapeBits {
       tickCrossAlign |
       chartAlign |
       tooltipXAlign |
-      tooltipYAlign;
+      tooltipYAlign |
+      arcBorderAlign |
+      arcSpacingMode;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -338,6 +348,8 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.chartAlign => classifyTyped<ChartAlign>(raw),
   ShapeBits.tooltipXAlign => classifyTyped<TooltipXAlign>(raw),
   ShapeBits.tooltipYAlign => classifyTyped<TooltipYAlign>(raw),
+  ShapeBits.arcBorderAlign => classifyTyped<ArcBorderAlign>(raw),
+  ShapeBits.arcSpacingMode => classifyTyped<ArcSpacingMode>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -162,8 +163,8 @@ void main() {
       });
 
       final meta = chart.getDatasetMeta(0);
-      expect(_option(meta.data[0], 'spacingMode'), 'angular');
-      expect(_option(meta.data[1], 'spacingMode'), 'angular');
+      expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.angular);
+      expect(_option(meta.data[1], 'spacingMode'), ArcSpacingMode.angular);
     });
 
     testWidgets('should reset and update elements', (tester) async {

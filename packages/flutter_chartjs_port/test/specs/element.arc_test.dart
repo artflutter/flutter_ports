@@ -8,6 +8,7 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsAtan2, jsCos, jsMin, jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:test/test.dart';
 
 // The spec constructs Chart.elements.ArcElement. Here it is the ArcElement
@@ -353,7 +354,7 @@ void main() {
     test(
       'should use angular spacing mode independently from proportional mode',
       () {
-        ArcElement createArc(String spacingMode) {
+        ArcElement createArc(ArcSpacingMode spacingMode) {
           return ArcElement({
             'startAngle': 0,
             'endAngle': math.pi / 2,
@@ -401,9 +402,11 @@ void main() {
         }
 
         final proportionalStart = firstOuterArcStartAngle(
-          createArc('proportional'),
+          createArc(ArcSpacingMode.proportional),
         );
-        final angularStart = firstOuterArcStartAngle(createArc('angular'));
+        final angularStart = firstOuterArcStartAngle(
+          createArc(ArcSpacingMode.angular),
+        );
         const alpha = math.pi / 2;
         const spacing = 10.0; // draw() passes spacing / 2 to pathArc
         const avgNoSpacingRadius = 50.0;
@@ -432,7 +435,7 @@ void main() {
         'outerRadius': 100,
         'options': <String, Object?>{
           'circular': true,
-          'spacingMode': 'parallel',
+          'spacingMode': ArcSpacingMode.parallel,
           'spacing': 40,
           'offset': 0,
           'borderWidth': 0,
@@ -466,7 +469,7 @@ void main() {
           'outerRadius': 100,
           'options': <String, Object?>{
             'circular': true,
-            'spacingMode': 'parallel',
+            'spacingMode': ArcSpacingMode.parallel,
             'spacing': 20,
             'offset': 0,
             'borderWidth': 0,
@@ -511,7 +514,7 @@ void main() {
           'outerRadius': 100,
           'options': <String, Object?>{
             'circular': true,
-            'spacingMode': 'parallel',
+            'spacingMode': ArcSpacingMode.parallel,
             'spacing': 20,
             'offset': 0,
             'borderWidth': 0,
@@ -591,7 +594,7 @@ void main() {
         'options': <String, Object?>{
           'circular': true,
           'selfJoin': false,
-          'spacingMode': 'angular',
+          'spacingMode': ArcSpacingMode.angular,
           'spacing': 20,
           'offset': 0,
           'borderWidth': 0,
