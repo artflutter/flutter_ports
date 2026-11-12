@@ -18,7 +18,6 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -728,35 +727,21 @@ void main() {
   group('B3: the token allowlist', () {
     // Chart.js ADR 0050, "No public `raw` in 0.1.0": the token emission is
     // the allowlist. Each public token alone emits exactly its paths of
-    // theming.md §4, and each emitted path passes the emission guard.
+    // theming.md §4 (Chart.js ADR 0118: the compiler has no guard).
     for (final MapEntry(key: name, value: paths) in _tokenPaths.entries) {
       test('the token $name alone emits its paths of theming.md §4', () {
         final compiled = compileThemeData(_only(name, _full));
         final slots = _slots(compiled);
         expect(slots.keys.toSet(), paths);
         if (paths.isEmpty) expect(compiled, isNull);
-        for (final MapEntry(key: path, :value) in slots.entries) {
-          expect(
-            themeNeverEmittedReason(path.split('.'), value),
-            isNull,
-            reason: path,
-          );
-        }
       });
     }
 
-    test('all tokens emit the union of the paths and pass the guard', () {
+    test('all tokens emit the union of the paths', () {
       final slots = _slots(compileThemeData(_full));
       expect(slots.keys.toSet(), {
         for (final paths in _tokenPaths.values) ...paths,
       });
-      for (final MapEntry(key: path, :value) in slots.entries) {
-        expect(
-          themeNeverEmittedReason(path.split('.'), value),
-          isNull,
-          reason: path,
-        );
-      }
     });
 
     test('the presets emit only the paths of the tokens', () {

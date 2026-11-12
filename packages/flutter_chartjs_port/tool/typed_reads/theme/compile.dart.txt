@@ -1,8 +1,0 @@
-# The output is a frozen typed ChartOptionsScope tree (Chart.js ADR 0054 §3,
-# §18). The input is typed tokens (Chart.js ADR 0117). The by-name forms
-# that stay build the Map of the emitted keys:
-# - stringIndex 1: keys['transitions'] of the build Map of the emitted keys.
-# - jsObjectKeys 1: the Object.keys order of a Map under a key that no scope
-#   kind declares (_freeze, a JsFrozenMap of the JS runtime).
-stringIndex 1
-jsObjectKeys 1

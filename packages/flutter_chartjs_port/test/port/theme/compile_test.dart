@@ -9,8 +9,6 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
@@ -25,7 +23,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
@@ -38,8 +35,8 @@ import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
-// tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
-// the emission guard, the deep freeze and no memo), §3.4 and §4 (the token
+// tests cover theming.md §3.3 (the emitted keys, only the token paths, the
+// deep freeze and no memo, Chart.js ADR 0118), §3.4 and §4 (the token
 // keys, the point-label font, the title, subtitle, legend and tooltip keys
 // and the palette of Chart.js ADR 0050, from typed tokens, Chart.js ADR
 // 0117), §8 test 1 (no token equals upstream, no extra scope, the
@@ -124,8 +121,45 @@ Iterable<(String, Object)> _nodes(Object? value, [String path = '']) sync* {
   }
 }
 
-/// The dot path of a node or a leaf as the key list of the guard.
-List<String> _path(String dotPath) => dotPath.split('.');
+/// The paths of the token table of theming.md §4: each key that a token
+/// emits. The compiler emits no other key, except the `transitions`.
+const Set<String> _tokenPaths = {
+  'color',
+  'scale.ticks.color',
+  'scale.title.color',
+  'scales.radialLinear.pointLabels.color',
+  'plugins.title.color',
+  'plugins.subtitle.color',
+  'scale.grid.color',
+  'scale.border.color',
+  'scales.radialLinear.angleLines.color',
+  'elements.point.borderColor',
+  'elements.line.borderColor',
+  'elements.bar.borderColor',
+  'elements.point.backgroundColor',
+  'elements.line.backgroundColor',
+  'elements.bar.backgroundColor',
+  'elements.arc.backgroundColor',
+  'elements.arc.borderColor',
+  'scale.ticks.backdropColor',
+  'scale.ticks.font',
+  'scale.title.font',
+  'scales.radialLinear.pointLabels.font',
+  'plugins.title.font',
+  'plugins.subtitle.font',
+  'plugins.legend.labels.font',
+  'plugins.legend.title.font',
+  'plugins.tooltip.backgroundColor',
+  'plugins.tooltip.titleColor',
+  'plugins.tooltip.bodyColor',
+  'plugins.tooltip.footerColor',
+  'plugins.tooltip.multiKeyBackground',
+  'plugins.tooltip.titleFont',
+  'plugins.tooltip.bodyFont',
+  'plugins.tooltip.footerFont',
+  r'plugins.colors.$borderColors',
+  r'plugins.colors.$backgroundColors',
+};
 
 /// The three `transitions` leaves that the compiler adds (theming.md §3.8).
 const Map<String, Object?> _transitionLeaves = {
@@ -911,20 +945,6 @@ void main() {
         'subtitle',
       ]);
     });
-
-    test('a title text fails the guard, a title color and position pass', () {
-      // Rule 2b (plugin.title.js:43, 97).
-      expect(
-        themeNeverEmittedReason(_path('plugins.title.text'), 'Title'),
-        'plugins.title.text is a behavior key',
-      );
-      for (final (path, value) in [
-        ('plugins.title.color', const ui.Color.fromRGBO(0, 0, 255, 1)),
-        ('plugins.title.position', ChartPosition.bottom),
-      ]) {
-        expect(themeNeverEmittedReason(_path(path), value), isNull);
-      }
-    });
   });
 
   group('the subtitle and legend keys', () {
@@ -1037,37 +1057,6 @@ void main() {
         'color',
         'font',
       ]);
-    });
-
-    test('a raw subtitle text fails the guard, the token keys pass', () {
-      // Rule 2b (plugin.title.js:43, 97 for the Title of the subtitle).
-      expect(
-        themeNeverEmittedReason(_path('plugins.subtitle.text'), 'Subtitle'),
-        'plugins.subtitle.text is a behavior key',
-      );
-      for (final path in [
-        'plugins.subtitle.color',
-        'plugins.subtitle.font',
-        'plugins.legend.labels.font',
-        'plugins.legend.title.font',
-      ]) {
-        expect(
-          themeNeverEmittedReason(_path(path), <String, Object?>{}),
-          isNull,
-          reason: path,
-        );
-      }
-      // Each emitted key of the light preset passes the guard.
-      final light = compileLightTheme();
-      for (final MapEntry(key: path, :value) in _leaves(
-        _at(light, 'plugins'),
-      ).entries) {
-        expect(
-          themeNeverEmittedReason(_path('plugins.$path'), value),
-          isNull,
-          reason: path,
-        );
-      }
     });
   });
 
@@ -1253,252 +1242,6 @@ void main() {
         _keys(_at(tooltipOnly, 'plugins.tooltip')),
         [...tooltipColors.skip(1), 'titleFont', 'bodyFont', 'footerFont'],
       );
-    });
-
-    test('the tooltip token keys pass the guard, the position fails', () {
-      for (final key in [...tooltipColors, 'titleFont', 'bodyFont']) {
-        expect(
-          themeNeverEmittedReason(_path('plugins.tooltip.$key'), 'x'),
-          isNull,
-          reason: key,
-        );
-      }
-      expect(
-        themeNeverEmittedReason(_path('plugins.tooltip.footerFont.size'), 9.0),
-        isNull,
-      );
-      // Rule 2b (plugin.tooltip.js:651, 1012, 1218) and rule 2.
-      expect(
-        themeNeverEmittedReason(_path('plugins.tooltip.position'), 'nearest'),
-        'plugins.tooltip.position is a behavior key',
-      );
-      expect(
-        themeNeverEmittedReason(_path('plugins.tooltip.mode'), 'index'),
-        'plugins.tooltip.mode is a behavior key',
-      );
-    });
-  });
-
-  group('the emission guard', () {
-    test('each rule of the never-emitted list of theming.md §3.3', () {
-      final rejected = <(String, Object?, String)>[
-        ('backgroundColor', 'red', 'a root backgroundColor'),
-        ('borderColor', 'red', 'a root borderColor'),
-        ('font', <String, Object?>{}, 'a root font'),
-        ('elements.bar.hoverBackgroundColor', 'red', 'static hover color'),
-        ('elements.point.hoverBorderColor', 'red', 'static hover color'),
-        ('hoverColor', 'red', 'static hover color'),
-        ('elements.line.pointHoverBackgroundColor', 'red', 'hover color'),
-        ('barHoverBorderColor', 'red', 'static hover color'),
-        for (final key in themeBehaviorKeys) (key, 1.0, 'behavior key'),
-        // The hover scopes resolve before every interaction scope.
-        ('hover', <String, Object?>{}, 'hover is a behavior key'),
-        ('hover.mode', 'dataset', 'hover is a behavior key'),
-        ('hover.intersect', false, 'hover is a behavior key'),
-        // The tooltip resolves the interaction keys from plugins.tooltip
-        // first.
-        ('plugins.tooltip.mode', 'dataset', 'tooltip.mode is a behavior key'),
-        for (final key in themeTooltipInteractionKeys)
-          ('plugins.tooltip.$key', 1.0, 'tooltip.$key is a behavior key'),
-        ('plugins.tooltip.interaction', <String, Object?>{}, 'behavior'),
-        ('plugins.tooltip.enabled', false, 'enabled is a behavior key'),
-        ('plugins.colors.forceOverride', true, 'behavior key'),
-        ('scale.grid.display', false, 'display is a behavior key'),
-        ('transitions.theme.animation.duration', 1.0, 'behavior key'),
-        ('datasets.bar.backgroundColor', 'red', 'behavior key'),
-        ('layout.padding', 4.0, 'layout is a behavior key'),
-        ('plugins.legend', false, 'plugins.legend: bool'),
-        ('plugins.legend', true, 'plugins.legend: bool'),
-        ('scales.x', <String, Object?>{}, 'scales.x is not a scale type'),
-        ('scales.y.grid.color', 'red', 'scales.y is not a scale type'),
-        ('scales.myScale', <String, Object?>{}, 'not a scale type'),
-        // A scale id, not a scale type: the radial scale of a radar chart.
-        ('scales.r.pointLabels.color', 'red', 'scales.r is not a scale type'),
-        ('scales.radial.angleLines.color', 'red', 'not a scale type'),
-        // The fill, line, bar and scale keys change the fill target, the
-        // segments, the dataset element, the bar geometry, the data range or
-        // the ticks (Chart.js ADR 0050).
-        ('elements.line.fill', 'origin', 'fill is a behavior key'),
-        ('fill', 'origin', 'fill is a behavior key'),
-        ('spanGaps', true, 'spanGaps is a behavior key'),
-        ('elements.line.spanGaps', true, 'spanGaps'),
-        ('showLine', true, 'showLine is a behavior key'),
-        ('scale.stacked', true, 'stacked is a behavior key'),
-        ('scales.linear.reverse', true, 'reverse is a behavior key'),
-        ('scale.min', 0.0, 'min is a behavior key'),
-        ('scale.beginAtZero', true, 'beginAtZero is a behavior key'),
-        ('scale.grace', '50%', 'grace is a behavior key'),
-        ('scale.bounds', ScaleBounds.data, 'bounds'),
-        ('base', 2.0, 'base'),
-        ('skipNull', true, 'skipNull'),
-        ('grouped', false, 'grouped'),
-        // The behavior paths of the tooltip, the legend and the scales.
-        (
-          'plugins.tooltip.xAlign',
-          'right',
-          'plugins.tooltip.xAlign is a behavior key',
-        ),
-        (
-          'plugins.tooltip.yAlign',
-          'top',
-          'plugins.tooltip.yAlign is a behavior key',
-        ),
-        ('plugins.legend.rtl', true, 'plugins.legend.rtl is a behavior key'),
-        ('scale.title.text', 'x', 'scale.title.text is a behavior key'),
-        (
-          'scales.category.title.text',
-          'x',
-          'scale.title.text is a behavior key',
-        ),
-        (
-          'scales.category.labels',
-          <Object?>['p'],
-          'scale.labels is a behavior key',
-        ),
-        ('scale.ticks.stepSize', 0.25, 'scale.ticks.stepSize'),
-        (
-          'scales.linear.ticks.maxTicksLimit',
-          3.0,
-          'scale.ticks.maxTicksLimit',
-        ),
-        ('scales.radialLinear.pointLabels.hoverColor', 'red', 'hover color'),
-        ('scales.radialLinear.angleLines._fallback', 'grid', 'descriptor'),
-        ('elements.bar._fallback', 'x', 'read as a descriptor'),
-        ('_scriptable', false, 'read as a descriptor'),
-        (r'$theme', <String, Object?>{}, r'a $ key other than the palette'),
-        (r'plugins.colors.$palette', <Object?>[], r'a $ key'),
-        (r'plugins.legend.$borderColors', <Object?>[], r'a $ key'),
-        (r'elements.bar.$shared', true, r'a $ key'),
-        ('elements.bar.backgroundColor', null, 'null is a JS value'),
-        ('color', undefined, 'undefined is no value'),
-        ('scale.ticks.callback', (Object? v) => v, 'a function'),
-        // Rule 2b: the plugin behavior paths and the paths below them
-        // (Chart.js ADR 0050).
-        for (final path in themePluginBehaviorPaths)
-          (path, 1.0, '$path is a behavior key'),
-        ('plugins.title.text.0', 'a line', 'title.text is a behavior key'),
-        (
-          'plugins.legend.title.text',
-          'x',
-          'plugins.legend.title.text is a behavior key',
-        ),
-        // Rule 9: a palette is a List with at least one item.
-        (r'plugins.colors.$borderColors', <Object?>[], 'a palette is a List'),
-        (r'plugins.colors.$backgroundColors', <Object?>[], 'a palette'),
-        (r'plugins.colors.$borderColors', 'red', 'a palette is a List'),
-        (
-          r'plugins.colors.$backgroundColors',
-          <String, Object?>{'0': 'red'},
-          'a palette is a List with at least one item',
-        ),
-        (r'plugins.colors.$borderColors', 1.0, 'a palette is a List'),
-      ];
-      for (final (path, value, reason) in rejected) {
-        expect(
-          themeNeverEmittedReason(_path(path), value),
-          contains(reason),
-          reason: path,
-        );
-      }
-    });
-
-    test('the keys that the guard accepts', () {
-      final accepted = <(String, Object?)>[
-        ('color', 'red'),
-        ('elements.arc.borderColor', 'red'),
-        ('elements.bar.borderWidth', 2.0),
-        ('elements.bar', <String, Object?>{}),
-        ('scale.ticks.backdropColor', 'red'),
-        ('scale.ticks.textStrokeColor', 'red'),
-        ('plugins.tooltip.borderColor', 'red'),
-        ('plugins.tooltip', <String, Object?>{}),
-        // Only a key `hover` is a behavior key, not a key with a hover
-        // prefix. Only plugins.tooltip resolves the interaction scopes.
-        ('elements.point.hoverRadius', 4.0),
-        ('elements.bar.hoverBorderWidth', 2.0),
-        ('plugins.legend.labels.mode', 'x'),
-        ('plugins.legend.labels.font', <String, Object?>{}),
-        (r'plugins.colors.$borderColors', <Object?>['red']),
-        (r'plugins.colors.$backgroundColors', <Object?>['red']),
-        (r'plugins.colors.$backgroundColors.0', 'red'),
-        // Rule 2b holds paths, not flat names. The layout keys of a plugin
-        // box, its colors and the fonts move only the layout, and the draw
-        // order of the filler pass changes only the draw. The guard passes
-        // them, and no public input reaches the box layout keys or the draw
-        // order (Chart.js ADR 0050, "No public `raw` in 0.1.0"). The labels
-        // key of the legend holds its colors and fonts: `labels` is not a
-        // flat behavior key.
-        ('plugins.title', <String, Object?>{}),
-        ('plugins.title.color', 'red'),
-        ('plugins.title.font', <String, Object?>{}),
-        ('plugins.title.position', ChartPosition.bottom),
-        ('plugins.title.align', 'start'),
-        ('plugins.legend.position', ChartPosition.left),
-        ('plugins.legend.title', <String, Object?>{}),
-        ('plugins.legend.title.color', 'red'),
-        ('plugins.legend.labels.color', 'red'),
-        ('plugins.decimation', <String, Object?>{}),
-        ('plugins.filler.drawTime', 'beforeDraw'),
-        ('plugins.tooltip.backgroundColor', 'red'),
-        // The text direction of the tooltip changes only the draw
-        // (plugin.tooltip.js:762-776, Chart.js ADR 0034).
-        ('plugins.tooltip.rtl', true),
-        // A scale font moves only the layout: the data range and the ticks
-        // stay.
-        ('scale.ticks.font', <String, Object?>{}),
-        ('position', 'x'),
-        ('elements.text', 'x'),
-        for (final type in themeScaleTypes) ('scales.$type.grid.color', 'red'),
-        ('scales.radialLinear.pointLabels.color', 'red'),
-        ('scales.radialLinear.angleLines.color', 'red'),
-        ('scales.radialLinear.pointLabels.font', <String, Object?>{}),
-        ('scales.radialLinear.pointLabels.font.size', 10.0),
-        ('scales', <String, Object?>{}),
-        ('elements.line.borderDash', <Object?>[4.0, 2.0]),
-        ('elements.line.borderDash.0', 4.0),
-        ('transitions.theme.note', 'x'),
-      ];
-      for (final (path, value) in accepted) {
-        expect(
-          themeNeverEmittedReason(_path(path), value),
-          isNull,
-          reason: path,
-        );
-      }
-    });
-
-    test('the scale types are those of v4.5.1', () {
-      expect(themeScaleTypes, {
-        'category',
-        'linear',
-        'logarithmic',
-        'radialLinear',
-        'time',
-        'timeseries',
-      });
-    });
-
-    test('the plugin behavior paths of Chart.js ADR 0050', () {
-      expect(themePluginBehaviorPaths, {
-        'plugins.decimation.algorithm',
-        'plugins.decimation.samples',
-        'plugins.decimation.threshold',
-        'plugins.filler.propagate',
-        'plugins.legend.reverse',
-        'plugins.tooltip.position',
-        'plugins.title.text',
-        'plugins.subtitle.text',
-        'plugins.legend.title.text',
-        'plugins.tooltip.xAlign',
-        'plugins.tooltip.yAlign',
-        'plugins.legend.rtl',
-        'scale.title.text',
-        'scale.labels',
-        'scale.ticks.stepSize',
-        'scale.ticks.count',
-        'scale.ticks.precision',
-        'scale.ticks.maxTicksLimit',
-      });
     });
   });
 
@@ -1733,43 +1476,27 @@ void main() {
   });
 
   group('theming.md §8 test 5, without a chart', () {
-    test('the presets and the test themes compile only to allowed paths', () {
-      for (final name in _testThemes.keys) {
-        final compiled = _testThemes[name]!()!;
-        final leaves = _leaves(compiled);
-        for (final MapEntry(key: path, :value) in leaves.entries) {
-          if (_transitionLeaves.containsKey(path)) {
-            expect(value, _transitionLeaves[path], reason: '$name: $path');
-            continue;
+    test(
+      'the light tokens and the test themes compile only to token paths',
+      () {
+        for (final name in _testThemes.keys) {
+          final compiled = _testThemes[name]!()!;
+          final leaves = _leaves(compiled);
+          for (final MapEntry(key: path, :value) in leaves.entries) {
+            if (_transitionLeaves.containsKey(path)) {
+              expect(value, _transitionLeaves[path], reason: '$name: $path');
+              continue;
+            }
+            expect(_tokenPaths, contains(path), reason: '$name: $path');
           }
           expect(
-            themeNeverEmittedReason(_path(path), value),
-            isNull,
-            reason: '$name: $path',
+            leaves.keys.where((path) => path.startsWith('transitions')),
+            _transitionLeaves.keys,
+            reason: name,
           );
         }
-        for (final (path, node) in _nodes(compiled)) {
-          if (path.isEmpty || path.startsWith('transitions')) continue;
-          expect(
-            themeNeverEmittedReason(_path(path), node),
-            isNull,
-            reason: '$name: $path',
-          );
-        }
-        expect(
-          leaves.keys.where((path) => path.startsWith('transitions')),
-          _transitionLeaves.keys,
-          reason: name,
-        );
-      }
-    });
-
-    test('a themed scales.<id> fails the emission guard', () {
-      expect(
-        themeNeverEmittedReason(['scales', 'x'], <String, Object?>{}),
-        'scales.x is not a scale type',
-      );
-    });
+      },
+    );
 
     test('a themed scales.radialLinear creates no axis', () {
       // On a chart type with an index and a value scale, as a bar chart,

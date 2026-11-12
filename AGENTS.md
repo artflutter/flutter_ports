@@ -333,8 +333,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `undefined` for an absent key, `jsKeys` gives the `Object.keys` order, `jsHas` and `jsDelete`
     are `hasOwnProperty` and `delete`. `JsObjectFace` is public (`chartjs.dart` and the app
     library): raw-API code reads a context, the hook arguments or the options by name through
-    it. A `Map` of the port is an object of the user or a plain object of the JS runtime
-    (`JsFrozenMap`, the frozen object of the compiled theme). The JS runtime (`jsGet`,
+    it. A `Map` of the port is an object of the user. The JS runtime (`jsGet`,
     `jsObjectKeys`, `jsAssign`, `jsSet`, `jsHasOwn`, `jsDeleteKey`, `jsObjectOrNull`) and
     `isObject`, `clone`, `merge`, `mergeIf` and `each` take Maps and faces.
     The walk reads a typed scope with `OptionScope.lookup`. `Config.resolveElementNamedOptions` of
@@ -1109,12 +1108,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `style.touchAction`, `style.userSelect` and `removeProperty`. See
     `test/port/platform/chart_host_test.dart` (groups `canvas event target`, `document target`,
     `getBoundingClientRect`, `touch sequence`) and `native_event_test.dart`.
-  - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme`, the
-    emission guard and the deep freeze. `compileChartTheme` takes the typed tokens as named
+  - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` and
+    the deep freeze. `compileChartTheme` takes the typed tokens as named
     parameters (Chart.js ADR 0117): 6 `Color?` tokens, 2 `TextStyle?` fonts, `palette` and
     `paletteBackgroundAlpha`. It gives a deep-frozen typed `ChartOptionsScope` tree (Chart.js ADR
     0054 §3) that holds each color token as the app gives it: no 8-bit rounding, no clamp, no
-    change of the color space. No token name is a string, and no Map theme exists. `presets.dart`
+    change of the color space. No token name is a string, and no Map theme exists. It writes each
+    key of the token table of theming.md §4 with the typed setter of its scope, so it has no
+    emission guard (Chart.js ADR 0118). `presets.dart`
     has `LightThemeTokens`, the internal constants of the light tokens. Both files are pure
     layers. The pure tests compile the light tokens through `compileLightTheme()` of
     `test/support/light_theme.dart`. `theme_data.dart` has the public `ChartThemeData` (Chart.js
@@ -1298,7 +1299,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0117. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0118. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1372,7 +1373,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       tests. It supersedes parts of Chart.js ADRs 0061, 0015, 0050 and 0052. Chart.js ADR 0117
       (the theme compiles from typed tokens) is accepted (2026-11-12): its code passes the tests.
       It supersedes parts of Chart.js ADR 0050 (the raw Map theme, its presets and its color
-      conversion). The other ADRs are accepted. Docs
+      conversion). Chart.js ADR 0118 (the theme compile writes typed setters and has no guard) is
+      accepted (2026-11-12): its code passes the tests. It supersedes item 6 of Chart.js ADR 0117
+      and parts of Chart.js ADRs 0050 and 0054. The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

@@ -7,8 +7,6 @@
 /// operator (Chart.js ADR 0019, section 1).
 library;
 
-import 'dart:collection' show MapBase;
-
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
@@ -239,67 +237,6 @@ abstract interface class JsFreezable {
   /// `Object.freeze(this)`. A later write throws a [TypeError]. No member
   /// clears the frozen state.
   void freeze();
-}
-
-/// A plain object with the frozen state of `Object.freeze` (Chart.js ADR
-/// 0021, section 5): a `Map<String, Object?>`, the plain object of the
-/// runtime.
-///
-/// The compiled theme keeps an object under a key with no option kind in
-/// it (Chart.js ADR 0054 §18). In the frozen state, a write throws a
-/// [TypeError], as a write into a frozen object in strict mode does. The
-/// reads do not change.
-final class JsFrozenMap extends MapBase<String, Object?>
-    implements JsFreezable {
-  /// A plain object with the entries of [map], in its key order. The object
-  /// keeps [map] and is not frozen yet.
-  JsFrozenMap(this._map);
-
-  /// The entries, in insertion order.
-  final Map<String, Object?> _map;
-
-  bool _frozen = false;
-
-  @override
-  bool get isFrozen => _frozen;
-
-  @override
-  void freeze() {
-    _frozen = true;
-  }
-
-  @override
-  Object? operator [](Object? key) => _map[key];
-
-  @override
-  void operator []=(String key, Object? value) {
-    // A JavaScript TypeError: a write into a frozen object.
-    if (_frozen) throw TypeError();
-    _map[key] = value;
-  }
-
-  @override
-  bool containsKey(Object? key) => _map.containsKey(key);
-
-  @override
-  Object? remove(Object? key) {
-    // A JavaScript TypeError: a delete of a property of a frozen object.
-    if (_frozen && _map.containsKey(key)) throw TypeError();
-    return _map.remove(key);
-  }
-
-  @override
-  Iterable<String> get keys => _map.keys;
-
-  @override
-  int get length => _map.length;
-
-  @override
-  void clear() {
-    // A JavaScript TypeError: a delete of a property of a frozen object.
-    if (_frozen && _map.isNotEmpty) throw TypeError();
-    _map.clear();
-  }
 }
 
 /// `Object.freeze(value)`: freezes a [JsFreezable], then returns [value].

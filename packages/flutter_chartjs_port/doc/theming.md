@@ -188,7 +188,10 @@ the tooltip keys: the tokens `inverseSurface` and `onInverseSurface` give
 `multiKeyBackground`. The font token gives `plugins.tooltip.bodyFont` (the whole font token) and
 `titleFont` and `footerFont` (without `weight`). The tooltip keys come after the legend keys.
 
-Never emitted. A debug assert and the emission test enforce this list.
+Never emitted. The token table of section 4 has none of these keys. The compiler writes only
+the keys of that table with typed setters, so it has no guard (Chart.js ADR 0118). The emission
+test compares each emitted path with the table. A later `raw` field needs this list as its guard
+(Chart.js ADR 0050).
 
 - Root `backgroundColor`, `borderColor` and `font`. The `''` scope key resolves to the theme root
   (`helpers.core.ts:338`), ahead of `defaults.elements.<type>`. These keys then beat the arc's
@@ -226,7 +229,7 @@ Never emitted. A debug assert and the emission test enforce this list.
   `scale.ticks.stepSize`, `.count`, `.precision` and `.maxTicksLimit`
   (`scale.linearbase.js:32-104, 216-260`), and the content keys `plugins.title.text` and
   `plugins.subtitle.text` (`plugin.title.js:43, 97`), `plugins.legend.title.text`
-  (`plugin.legend.js:487`) and `scale.title.text` (`core.scale.js:102, 613`). The guard
+  (`plugin.legend.js:487`) and `scale.title.text` (`core.scale.js:102, 613`). The list
   compares paths, not names: `position` is also a layout key of a box, and it passes. It
   compares each prefix of 2 or more keys of the normalized path, in which a leading
   `scales.<type>` becomes `scale`: thus `scales.linear.ticks.stepSize` fails as
@@ -236,10 +239,10 @@ Never emitted. A debug assert and the emission test enforce this list.
 - `scales.<id>` other than a scale type. These keys are dead. H1 reads only
   `scales[<scale type>]`. Chart-level lookups find every defaulted key in the scale copy-in first.
   Scale ids belong to one chart. Key enumeration reads only `scopes[0]` (`helpers.config.ts:73-75`).
-  No axis thus appears, also for the allowed `scales.radialLinear` key. The guard knows the six
-  scale ids of v4.5.1: `scale.category.js:36`, `scale.linear.js:8`, `scale.logarithmic.js:76`,
+  No axis thus appears, also for the allowed `scales.radialLinear` key. The scale ids of v4.5.1
+  are `scale.category.js:36`, `scale.linear.js:8`, `scale.logarithmic.js:76`,
   `scale.radialLinear.js:340`, `scale.time.js:201` and `scale.timeseries.js:36`. A third-party
-  scale type fails the guard.
+  scale type is not on the list.
 - `_`-prefixed keys, read as descriptors (`helpers.config.ts:200-212`), and `$` keys other than
   the palette.
 - A palette key with a value that is not a List with at least one item. An empty List gives
@@ -272,7 +275,7 @@ runs under a theme. It writes into the datasets, above the theme.
 Chart.js ADR 0042 decides the palette form (form B). H4a adds the two palette keys of a theme map,
 two library variables and their reader after `BACKGROUND_COLORS` (`plugin.colors.ts:25`). The
 reader gives the List under `plugins.colors` of the theme map, or `null` for a missing key, a value
-that is not a List and an empty List (the guard of §3.3 rule 9 also rejects these values). H4b and
+that is not a List and an empty List (the never-emitted list of §3.3 also has these values). H4b and
 H4c add a theme branch before the unchanged upstream line:
 
 ```dart
@@ -652,8 +655,8 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    - STALE: a `notThemed` key that upstream removed, that the preset emits, or whose upstream
      value differs from the value that its reason uses (the local font weights of title,
      subtitle and tooltip)
-5. **Emission rules.** Presets and test themes compile only to allowed paths. A themed
-   `scales.<id>` fails the emission guard and creates no axis on a doughnut. A themed
+5. **Emission rules.** The presets and the test themes compile only to the paths of the token
+   table of section 4 (Chart.js ADR 0118). A themed `scales.<id>` creates no axis on a doughnut. A themed
    `scales.radialLinear` creates no axis on a bar chart.
 6. **Blue screen.** A test-support theme sets every token and the palette (alpha 1) to one blue,
    on a blue background. In all 8 chart types, with titles, legend title and a visible tooltip,
@@ -780,7 +783,8 @@ theming work in each phase.
   components from 0 to 1. In phase 9, `themeDataToRaw` of `theme_data.dart` converts the public
   `ChartThemeData` to a raw Map theme (section 5.1). Only the tests give a raw Map theme with
   `raw`. Chart.js ADR 0117 removed the raw Map theme, `RawThemeColor` and `raw`:
-  `compileChartTheme` takes typed tokens.
+  `compileChartTheme` takes typed tokens. Chart.js ADR 0118 removed the emission guard: the
+  compiler writes the keys with typed setters.
 - `lib/src/theme/presets.dart`: the internal `ChartThemes.light` and `ChartThemes.none`. The light
   preset holds `colors.color`, `colors.borderColor`, `colors.backgroundColor`, `colors.surface`
   and `typography.font`. Chart.js ADR 0117 replaced both presets with the constants of
