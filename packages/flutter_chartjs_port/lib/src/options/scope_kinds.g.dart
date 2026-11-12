@@ -1655,7 +1655,7 @@ enum ScopeKind {
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
-            return 6;
+            return 536870914;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
@@ -1733,7 +1733,7 @@ enum ScopeKind {
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 6;
+            return 268435458;
           case OptionKey.segment:
             return 32;
           case OptionKey.hoverBorderCapStyle:
@@ -2043,7 +2043,7 @@ enum ScopeKind {
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 6;
+            return 268435458;
           case OptionKey.fill:
             return 39;
           case OptionKey.spanGaps:
@@ -2080,7 +2080,7 @@ enum ScopeKind {
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
-            return 6;
+            return 536870914;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
@@ -2233,7 +2233,7 @@ enum ScopeKind {
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
-            return 6;
+            return 536870914;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
@@ -2354,7 +2354,7 @@ enum ScopeKind {
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 6;
+            return 268435458;
           case OptionKey.fill:
             return 39;
           case OptionKey.spanGaps:
@@ -2772,7 +2772,7 @@ enum ScopeKind {
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 6;
+            return 268435458;
           case OptionKey.fill:
             return 39;
           case OptionKey.spanGaps:

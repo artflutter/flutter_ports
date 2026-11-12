@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -60395,7 +60396,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60405,7 +60406,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60415,7 +60416,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60425,7 +60426,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60437,7 +60438,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60447,7 +60448,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60457,7 +60458,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60467,7 +60468,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60572,7 +60573,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60582,7 +60583,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60592,7 +60593,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60602,7 +60603,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60614,7 +60615,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60624,7 +60625,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60634,7 +60635,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60644,7 +60645,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60749,7 +60750,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60759,7 +60760,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60769,7 +60770,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60779,7 +60780,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60791,7 +60792,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60801,7 +60802,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60811,7 +60812,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -60821,7 +60822,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -61070,7 +61071,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61080,7 +61081,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61090,7 +61091,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61100,7 +61101,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61112,7 +61113,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61122,7 +61123,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61132,7 +61133,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61142,7 +61143,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61247,7 +61248,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61257,7 +61258,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61267,7 +61268,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61277,7 +61278,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61289,7 +61290,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61299,7 +61300,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61309,7 +61310,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61319,7 +61320,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61424,7 +61425,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61434,7 +61435,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61444,7 +61445,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61454,7 +61455,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61466,7 +61467,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61476,7 +61477,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61486,7 +61487,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -61496,7 +61497,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',

@@ -34,8 +34,12 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
@@ -2564,7 +2568,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.base:
         _base = fitCell(cell, classifyNumber);
       case OptionKey.borderSkipped:
-        _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 536870914));
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.inflateAmount:
@@ -2645,7 +2649,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
-        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 268435458));
       case OptionKey.segment:
         _segment = fitCell(cell, classifyScope<SegmentOptionsScope>);
       case OptionKey.hoverBorderCapStyle:
@@ -2893,7 +2897,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.base:
         return classifyNumber(raw);
       case OptionKey.borderSkipped:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 536870914);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.inflateAmount:
@@ -2971,7 +2975,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 268435458);
       case OptionKey.segment:
         return classifyScope<SegmentOptionsScope>(raw);
       case OptionKey.hoverBorderCapStyle:
@@ -6451,7 +6455,7 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
-        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 268435458));
       case OptionKey.fill:
         _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
       case OptionKey.spanGaps:
@@ -6537,7 +6541,7 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 268435458);
       case OptionKey.fill:
         return classifyUnion(raw, 39);
       case OptionKey.spanGaps:
@@ -6884,7 +6888,7 @@ base class BarOptionsScope extends OptionScope {
       case OptionKey.base:
         _base = fitCell(cell, classifyNumber);
       case OptionKey.borderSkipped:
-        _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 536870914));
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.inflateAmount:
@@ -6943,7 +6947,7 @@ base class BarOptionsScope extends OptionScope {
       case OptionKey.base:
         return classifyNumber(raw);
       case OptionKey.borderSkipped:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 536870914);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.inflateAmount:
@@ -9107,7 +9111,7 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.base:
         _base = fitCell(cell, classifyNumber);
       case OptionKey.borderSkipped:
-        _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 536870914));
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.inflateAmount:
@@ -9257,7 +9261,7 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.base:
         return classifyNumber(raw);
       case OptionKey.borderSkipped:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 536870914);
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.inflateAmount:
@@ -10540,7 +10544,7 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
-        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 268435458));
       case OptionKey.fill:
         _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
       case OptionKey.spanGaps:
@@ -10729,7 +10733,7 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 268435458);
       case OptionKey.fill:
         return classifyUnion(raw, 39);
       case OptionKey.spanGaps:
@@ -15562,7 +15566,7 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.tension:
         _tension = fitCell(cell, classifyNumber);
       case OptionKey.stepped:
-        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _stepped = fitCell(cell, (raw) => classifyUnion(raw, 268435458));
       case OptionKey.fill:
         _fill = fitCell(cell, (raw) => classifyUnion(raw, 39));
       case OptionKey.spanGaps:
@@ -15763,7 +15767,7 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.tension:
         return classifyNumber(raw);
       case OptionKey.stepped:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 268435458);
       case OptionKey.fill:
         return classifyUnion(raw, 39);
       case OptionKey.spanGaps:

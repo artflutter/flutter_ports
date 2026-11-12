@@ -476,19 +476,18 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// controller.bar.js:202 `setBorderSkipped` for a vertical bar without a
   /// stack: the skipped edges of the `borderSkipped` option [edge].
   ///
-  /// Each demo value is positive. Thus no bar is reversed: `'start'` is the
-  /// bottom edge and `'end'` the top edge.
+  /// Each demo value is positive. Thus no bar is reversed:
+  /// [BorderSkippedEdge.start] is the bottom edge and [BorderSkippedEdge.end]
+  /// the top edge.
   static Map<String, Object?> _borderSkipped(Object? edge) {
     if (edge == false || edge == null) return {};
     if (edge == true) {
       return {'top': true, 'right': true, 'bottom': true, 'left': true};
     }
-    // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
-    // value that is neither null nor a String. Such a value switches as null
-    // and takes the default branch, as before.
-    final name = switch (edge is String ? edge : null) {
-      'start' => 'bottom',
-      'end' => 'top',
+    final name = switch (edge) {
+      BorderSkippedEdge.start => 'bottom',
+      BorderSkippedEdge.end => 'top',
+      BorderSkippedEdge(:final name) => name,
       _ => '$edge',
     };
     return {name: true};

@@ -24,6 +24,7 @@
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -337,7 +338,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -347,7 +348,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -357,7 +358,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -367,7 +368,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -379,7 +380,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -389,7 +390,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -399,7 +400,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -409,7 +410,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -511,7 +512,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -521,7 +522,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -531,7 +532,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -541,7 +542,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -553,7 +554,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -563,7 +564,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -573,7 +574,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -583,7 +584,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -982,7 +983,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -992,7 +993,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1002,7 +1003,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1012,7 +1013,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1024,7 +1025,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1034,7 +1035,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1044,7 +1045,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1054,7 +1055,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1159,7 +1160,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1169,7 +1170,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1179,7 +1180,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1189,7 +1190,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1201,7 +1202,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1211,7 +1212,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1221,7 +1222,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1231,7 +1232,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1715,7 +1716,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1725,7 +1726,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1735,7 +1736,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1745,7 +1746,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1757,7 +1758,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1767,7 +1768,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1777,7 +1778,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1787,7 +1788,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1892,7 +1893,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1902,7 +1903,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1912,7 +1913,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1922,7 +1923,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1934,7 +1935,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1944,7 +1945,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1954,7 +1955,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -1964,7 +1965,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2443,7 +2444,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2453,7 +2454,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2463,7 +2464,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2473,7 +2474,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2485,7 +2486,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2495,7 +2496,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2505,7 +2506,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2515,7 +2516,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2620,7 +2621,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2630,7 +2631,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2640,7 +2641,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2650,7 +2651,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2662,7 +2663,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2672,7 +2673,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2682,7 +2683,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -2692,7 +2693,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3187,7 +3188,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3197,7 +3198,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3207,7 +3208,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3217,7 +3218,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3227,7 +3228,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3239,7 +3240,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3249,7 +3250,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3259,7 +3260,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3269,7 +3270,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3279,7 +3280,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3385,7 +3386,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3395,7 +3396,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3405,7 +3406,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3415,7 +3416,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3427,7 +3428,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3437,7 +3438,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3447,7 +3448,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3457,7 +3458,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3951,7 +3952,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3961,7 +3962,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3971,7 +3972,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3981,7 +3982,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -3991,7 +3992,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4003,7 +4004,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4013,7 +4014,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4023,7 +4024,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4033,7 +4034,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4043,7 +4044,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4162,7 +4163,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4172,7 +4173,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4182,7 +4183,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4192,7 +4193,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4202,7 +4203,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4214,7 +4215,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4224,7 +4225,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4234,7 +4235,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4244,7 +4245,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4254,7 +4255,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4759,7 +4760,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4769,7 +4770,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4779,7 +4780,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4789,7 +4790,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4799,7 +4800,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4811,7 +4812,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4821,7 +4822,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4831,7 +4832,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4841,7 +4842,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4851,7 +4852,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4979,7 +4980,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4989,7 +4990,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -4999,7 +5000,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5009,7 +5010,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5019,7 +5020,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5031,7 +5032,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5041,7 +5042,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5051,7 +5052,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5061,7 +5062,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5071,7 +5072,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5570,7 +5571,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5580,7 +5581,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5590,7 +5591,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5600,7 +5601,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5610,7 +5611,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5622,7 +5623,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5632,7 +5633,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5642,7 +5643,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5652,7 +5653,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5662,7 +5663,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5781,7 +5782,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5791,7 +5792,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5801,7 +5802,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5811,7 +5812,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5821,7 +5822,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5833,7 +5834,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5843,7 +5844,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5853,7 +5854,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5863,7 +5864,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -5873,7 +5874,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 2.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -6793,7 +6794,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6803,7 +6804,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6813,7 +6814,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6825,7 +6826,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6835,7 +6836,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6845,7 +6846,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6930,7 +6931,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6940,7 +6941,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6950,7 +6951,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6962,7 +6963,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6972,7 +6973,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -6982,7 +6983,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -7666,17 +7667,17 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[10.0, -5.0, 2.0],
-            'borderSkipped': 'middle',
+            'borderSkipped': BorderSkippedEdge.middle,
             'borderWidth': 2.0,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 4.0, -6.0],
-            'borderSkipped': 'middle',
+            'borderSkipped': BorderSkippedEdge.middle,
             'borderWidth': 2.0,
           },
           <String, Object?>{
             'data': <Object?>[1.0, -2.0, 2.0],
-            'borderSkipped': 'middle',
+            'borderSkipped': BorderSkippedEdge.middle,
             'borderWidth': 2.0,
           },
         ],
@@ -7861,7 +7862,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -7871,7 +7872,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -7881,7 +7882,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -7893,7 +7894,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -7903,7 +7904,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -7913,7 +7914,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8010,7 +8011,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8020,7 +8021,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8030,7 +8031,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8042,7 +8043,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8052,7 +8053,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8062,7 +8063,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8159,7 +8160,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8169,7 +8170,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8179,7 +8180,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8191,7 +8192,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8201,7 +8202,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -8211,7 +8212,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'middle',
+                'borderSkipped': BorderSkippedEdge.middle,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9071,7 +9072,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9081,7 +9082,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9091,7 +9092,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9103,7 +9104,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9113,7 +9114,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9123,7 +9124,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9220,7 +9221,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9230,7 +9231,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9240,7 +9241,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9252,7 +9253,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9262,7 +9263,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9272,7 +9273,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9369,7 +9370,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9379,7 +9380,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9389,7 +9390,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9401,7 +9402,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9411,7 +9412,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -9421,7 +9422,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10336,7 +10337,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10346,7 +10347,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10356,7 +10357,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10368,7 +10369,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10378,7 +10379,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10388,7 +10389,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10485,7 +10486,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10495,7 +10496,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10505,7 +10506,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10517,7 +10518,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10527,7 +10528,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10537,7 +10538,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10637,7 +10638,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10647,7 +10648,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10657,7 +10658,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10669,7 +10670,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10679,7 +10680,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10689,7 +10690,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10786,7 +10787,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10796,7 +10797,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10806,7 +10807,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10818,7 +10819,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10828,7 +10829,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -10838,7 +10839,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11769,7 +11770,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11779,7 +11780,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11789,7 +11790,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11799,7 +11800,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11811,7 +11812,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11821,7 +11822,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11831,7 +11832,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11841,7 +11842,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11976,7 +11977,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11986,7 +11987,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -11996,7 +11997,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -12006,7 +12007,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -12018,7 +12019,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -12028,7 +12029,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -12038,7 +12039,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -12048,7 +12049,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13019,7 +13020,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13029,7 +13030,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13039,7 +13040,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13051,7 +13052,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13061,7 +13062,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13071,7 +13072,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13184,7 +13185,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13194,7 +13195,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13204,7 +13205,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13216,7 +13217,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13226,7 +13227,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -13236,7 +13237,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14095,7 +14096,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14105,7 +14106,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14115,7 +14116,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14127,7 +14128,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14137,7 +14138,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14147,7 +14148,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14235,7 +14236,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14245,7 +14246,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14255,7 +14256,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14267,7 +14268,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14277,7 +14278,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14287,7 +14288,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14375,7 +14376,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14385,7 +14386,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14395,7 +14396,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14407,7 +14408,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14417,7 +14418,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14427,7 +14428,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -14769,7 +14770,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14779,7 +14780,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14789,7 +14790,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14801,7 +14802,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14811,7 +14812,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14821,7 +14822,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14912,7 +14913,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14922,7 +14923,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14932,7 +14933,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14944,7 +14945,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14954,7 +14955,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -14964,7 +14965,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15052,7 +15053,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15062,7 +15063,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15072,7 +15073,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15084,7 +15085,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15094,7 +15095,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15104,7 +15105,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15472,7 +15473,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15482,7 +15483,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15492,7 +15493,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15504,7 +15505,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15514,7 +15515,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15524,7 +15525,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15615,7 +15616,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15625,7 +15626,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15635,7 +15636,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15647,7 +15648,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15657,7 +15658,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15667,7 +15668,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15761,7 +15762,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'options': <Object?>[
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15771,7 +15772,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15781,7 +15782,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': true,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15793,7 +15794,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 'active': <Object?>[
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15803,7 +15804,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -15813,7 +15814,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   },
                   <String, Object?>{
                     r'$shared': false,
-                    'borderSkipped': 'start',
+                    'borderSkipped': BorderSkippedEdge.start,
                     'borderWidth': 0.0,
                     'borderRadius': 0.0,
                     'inflateAmount': 'auto',
@@ -16850,7 +16851,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -16860,7 +16861,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -16870,7 +16871,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -16880,7 +16881,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -16892,7 +16893,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -16902,7 +16903,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -16912,7 +16913,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -16922,7 +16923,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17031,7 +17032,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17041,7 +17042,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17051,7 +17052,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17061,7 +17062,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17073,7 +17074,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17083,7 +17084,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17093,7 +17094,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17103,7 +17104,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17209,7 +17210,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17219,7 +17220,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17229,7 +17230,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17239,7 +17240,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17251,7 +17252,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17261,7 +17262,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17271,7 +17272,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -17281,7 +17282,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18240,7 +18241,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18250,7 +18251,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18260,7 +18261,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18272,7 +18273,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18282,7 +18283,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18292,7 +18293,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18380,7 +18381,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18390,7 +18391,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18400,7 +18401,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18412,7 +18413,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18422,7 +18423,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -18432,7 +18433,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19194,7 +19195,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19204,7 +19205,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19214,7 +19215,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19224,7 +19225,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19236,7 +19237,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19246,7 +19247,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19256,7 +19257,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19266,7 +19267,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19366,7 +19367,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19376,7 +19377,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19386,7 +19387,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19396,7 +19397,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19408,7 +19409,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19418,7 +19419,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19428,7 +19429,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19438,7 +19439,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19547,7 +19548,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19557,7 +19558,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19567,7 +19568,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19577,7 +19578,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19589,7 +19590,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19599,7 +19600,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19609,7 +19610,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -19619,7 +19620,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20585,7 +20586,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20595,7 +20596,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20605,7 +20606,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20615,7 +20616,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20625,7 +20626,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20637,7 +20638,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20647,7 +20648,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20657,7 +20658,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20667,7 +20668,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20677,7 +20678,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20794,7 +20795,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20804,7 +20805,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20814,7 +20815,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20824,7 +20825,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20834,7 +20835,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20846,7 +20847,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20856,7 +20857,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20866,7 +20867,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20876,7 +20877,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -20886,7 +20887,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21801,7 +21802,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21811,7 +21812,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21821,7 +21822,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21831,7 +21832,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21843,7 +21844,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21853,7 +21854,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21863,7 +21864,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21873,7 +21874,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21981,7 +21982,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -21991,7 +21992,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22001,7 +22002,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22011,7 +22012,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22023,7 +22024,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22033,7 +22034,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22043,7 +22044,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22053,7 +22054,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22768,17 +22769,17 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[4.0, -3.0],
-            'borderSkipped': 'start',
+            'borderSkipped': BorderSkippedEdge.start,
             'borderWidth': 3.0,
           },
           <String, Object?>{
             'data': <Object?>[4.0, -3.0],
-            'borderSkipped': 'end',
+            'borderSkipped': BorderSkippedEdge.end,
             'borderWidth': 3.0,
           },
           <String, Object?>{
             'data': <Object?>[4.0, -3.0],
-            'borderSkipped': 'left',
+            'borderSkipped': BorderSkippedEdge.left,
             'borderWidth': 3.0,
           },
           <String, Object?>{
@@ -22918,7 +22919,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22928,7 +22929,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22940,7 +22941,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -22950,7 +22951,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23021,7 +23022,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'end',
+                'borderSkipped': BorderSkippedEdge.end,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23031,7 +23032,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'end',
+                'borderSkipped': BorderSkippedEdge.end,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23043,7 +23044,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'end',
+                'borderSkipped': BorderSkippedEdge.end,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23053,7 +23054,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'end',
+                'borderSkipped': BorderSkippedEdge.end,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23124,7 +23125,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'left',
+                'borderSkipped': BorderSkippedEdge.left,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23134,7 +23135,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'left',
+                'borderSkipped': BorderSkippedEdge.left,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23146,7 +23147,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'left',
+                'borderSkipped': BorderSkippedEdge.left,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -23156,7 +23157,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'left',
+                'borderSkipped': BorderSkippedEdge.left,
                 'borderWidth': 3.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -24331,7 +24332,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 6.0,
                 'inflateAmount': 'auto',
@@ -24341,7 +24342,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 6.0,
                 'inflateAmount': 'auto',
@@ -24351,7 +24352,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 6.0,
                 'inflateAmount': 'auto',
@@ -24363,7 +24364,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 6.0,
                 'inflateAmount': 'auto',
@@ -24373,7 +24374,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 6.0,
                 'inflateAmount': 'auto',
@@ -24383,7 +24384,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 6.0,
                 'inflateAmount': 'auto',
@@ -24474,7 +24475,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 3.0,
@@ -24484,7 +24485,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 3.0,
@@ -24494,7 +24495,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 3.0,
@@ -24506,7 +24507,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 3.0,
@@ -24516,7 +24517,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 3.0,
@@ -24526,7 +24527,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 3.0,
@@ -25755,7 +25756,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25765,7 +25766,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25775,7 +25776,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25787,7 +25788,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25797,7 +25798,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25807,7 +25808,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25882,7 +25883,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25892,7 +25893,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25904,7 +25905,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -25914,7 +25915,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26894,7 +26895,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26904,7 +26905,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26914,7 +26915,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26924,7 +26925,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26936,7 +26937,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26946,7 +26947,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26956,7 +26957,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -26966,7 +26967,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -27057,7 +27058,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -27067,7 +27068,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -27079,7 +27080,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -27089,7 +27090,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -27970,7 +27971,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -27980,7 +27981,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -27990,7 +27991,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28000,7 +28001,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28012,7 +28013,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28022,7 +28023,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28032,7 +28033,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28042,7 +28043,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28150,7 +28151,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28160,7 +28161,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28170,7 +28171,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28180,7 +28181,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28192,7 +28193,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28202,7 +28203,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28212,7 +28213,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -28222,7 +28223,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29416,7 +29417,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29426,7 +29427,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29436,7 +29437,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29448,7 +29449,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29458,7 +29459,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29468,7 +29469,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29553,7 +29554,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29563,7 +29564,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29573,7 +29574,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29585,7 +29586,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29595,7 +29596,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -29605,7 +29606,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 2.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30412,7 +30413,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30422,7 +30423,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30432,7 +30433,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30444,7 +30445,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30454,7 +30455,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30464,7 +30465,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30549,7 +30550,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30559,7 +30560,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30569,7 +30570,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30581,7 +30582,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30591,7 +30592,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -30601,7 +30602,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31440,7 +31441,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31450,7 +31451,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31462,7 +31463,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31472,7 +31473,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31543,7 +31544,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31553,7 +31554,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31565,7 +31566,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -31575,7 +31576,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32301,7 +32302,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32311,7 +32312,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32321,7 +32322,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32333,7 +32334,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32343,7 +32344,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32353,7 +32354,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32439,7 +32440,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32449,7 +32450,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32461,7 +32462,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -32471,7 +32472,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33242,7 +33243,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33252,7 +33253,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33262,7 +33263,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33272,7 +33273,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33284,7 +33285,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33294,7 +33295,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33304,7 +33305,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33314,7 +33315,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33416,7 +33417,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33426,7 +33427,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33436,7 +33437,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33446,7 +33447,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33458,7 +33459,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33468,7 +33469,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33478,7 +33479,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -33488,7 +33489,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -34302,7 +34303,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -34312,7 +34313,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -34324,7 +34325,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -34334,7 +34335,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -35078,7 +35079,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': '2',
@@ -35088,7 +35089,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': '2',
@@ -35098,7 +35099,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': '2',
@@ -35110,7 +35111,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': '2',
@@ -35120,7 +35121,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': '2',
@@ -35130,7 +35131,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': '2',
@@ -35873,7 +35874,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': null,
@@ -35883,7 +35884,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': null,
@@ -35893,7 +35894,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': null,
@@ -35905,7 +35906,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': null,
@@ -35915,7 +35916,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': null,
@@ -35925,7 +35926,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': null,
@@ -36668,7 +36669,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': true,
@@ -36678,7 +36679,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': true,
@@ -36688,7 +36689,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': true,
@@ -36700,7 +36701,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': true,
@@ -36710,7 +36711,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': true,
@@ -36720,7 +36721,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': true,
@@ -37463,7 +37464,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'abc',
@@ -37473,7 +37474,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'abc',
@@ -37483,7 +37484,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'abc',
@@ -37495,7 +37496,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'abc',
@@ -37505,7 +37506,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'abc',
@@ -37515,7 +37516,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 1.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'abc',
@@ -38257,7 +38258,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -38267,7 +38268,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -38277,7 +38278,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -38289,7 +38290,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -38299,7 +38300,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -38309,7 +38310,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39011,7 +39012,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39021,7 +39022,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39031,7 +39032,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39043,7 +39044,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39053,7 +39054,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39063,7 +39064,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39768,7 +39769,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39778,7 +39779,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39788,7 +39789,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39800,7 +39801,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39810,7 +39811,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -39820,7 +39821,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -40496,7 +40497,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -40506,7 +40507,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -40516,7 +40517,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -40528,7 +40529,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -40538,7 +40539,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -40548,7 +40549,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41221,7 +41222,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41231,7 +41232,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41241,7 +41242,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41253,7 +41254,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41263,7 +41264,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41273,7 +41274,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41946,7 +41947,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41956,7 +41957,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41966,7 +41967,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41978,7 +41979,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41988,7 +41989,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -41998,7 +41999,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -42671,7 +42672,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -42681,7 +42682,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -42691,7 +42692,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -42703,7 +42704,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -42713,7 +42714,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -42723,7 +42724,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -43434,7 +43435,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -43444,7 +43445,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -43454,7 +43455,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -43466,7 +43467,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -43476,7 +43477,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -43486,7 +43487,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44196,7 +44197,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44206,7 +44207,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44216,7 +44217,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44228,7 +44229,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44238,7 +44239,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44248,7 +44249,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44957,7 +44958,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44967,7 +44968,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44977,7 +44978,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44989,7 +44990,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -44999,7 +45000,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -45009,7 +45010,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -45799,7 +45800,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -45809,7 +45810,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -45819,7 +45820,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -45831,7 +45832,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -45841,7 +45842,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -45851,7 +45852,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -46555,7 +46556,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -46565,7 +46566,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -46575,7 +46576,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -46587,7 +46588,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -46597,7 +46598,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -46607,7 +46608,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -47328,7 +47329,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -47338,7 +47339,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -47348,7 +47349,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -47360,7 +47361,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -47370,7 +47371,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -47380,7 +47381,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48083,7 +48084,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48093,7 +48094,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48103,7 +48104,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48115,7 +48116,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48125,7 +48126,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48135,7 +48136,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48831,7 +48832,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48841,7 +48842,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48851,7 +48852,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48863,7 +48864,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48873,7 +48874,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -48883,7 +48884,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -49521,7 +49522,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -49531,7 +49532,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -49543,7 +49544,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -49553,7 +49554,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50416,7 +50417,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50426,7 +50427,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50436,7 +50437,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50446,7 +50447,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50456,7 +50457,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50466,7 +50467,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50478,7 +50479,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50488,7 +50489,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50498,7 +50499,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50508,7 +50509,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50518,7 +50519,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -50528,7 +50529,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51331,7 +51332,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'options': <Object?>[
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51341,7 +51342,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51351,7 +51352,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51361,7 +51362,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51371,7 +51372,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51381,7 +51382,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': true,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51393,7 +51394,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'active': <Object?>[
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51403,7 +51404,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51413,7 +51414,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51423,7 +51424,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51433,7 +51434,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',
@@ -51443,7 +51444,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 r'$shared': false,
-                'borderSkipped': 'start',
+                'borderSkipped': BorderSkippedEdge.start,
                 'borderWidth': 0.0,
                 'borderRadius': 0.0,
                 'inflateAmount': 'auto',

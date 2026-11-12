@@ -205,7 +205,7 @@ void main() {
       showLine: true,
       spanGaps: true,
       stack: '',
-      stepped: true,
+      stepped: SteppedLine.before,
       tension: 0,
       xAxisID: '',
       yAxisID: '',

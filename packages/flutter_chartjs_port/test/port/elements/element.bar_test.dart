@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/props.dart' show BorderSkipped;
 import 'package:flutter_chartjs_port/src/types/animation.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -646,7 +648,7 @@ void main() {
         'inflateAmount',
         'pointStyle',
       ]);
-      expect(BarElement.defaults['borderSkipped'], 'start');
+      expect(BarElement.defaults['borderSkipped'], BorderSkippedEdge.start);
       expect(BarElement.defaults['borderWidth'], isA<double>());
       expect(BarElement.defaults['borderWidth'], 0);
       expect(BarElement.defaults['borderRadius'], 0);

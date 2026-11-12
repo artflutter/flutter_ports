@@ -2,6 +2,8 @@
 import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.interpolation.tests.js does not
@@ -108,7 +110,12 @@ void main() {
               reason: reason,
             );
             expect(
-              steppedInterpolation(_Point(a, b), _Point(b, a), t, 'middle').x,
+              steppedInterpolation(
+                _Point(a, b),
+                _Point(b, a),
+                t,
+                SteppedLine.middle,
+              ).x,
               _isSame(before(a, b, t)),
               reason: reason,
             );
@@ -132,7 +139,7 @@ void main() {
           const _Point(10, null),
           const _Point(20, 20),
           0.4,
-          'middle',
+          SteppedLine.middle,
         ),
         _isPoint(14, null),
       );
@@ -166,7 +173,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           double.nan,
-          'middle',
+          SteppedLine.middle,
         ),
         _isPoint(double.nan, 20),
       );
@@ -175,7 +182,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           double.nan,
-          'before',
+          SteppedLine.before,
         ),
         _isPoint(double.nan, 10),
       );

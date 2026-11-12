@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_se
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../scales/scale_chart_harness.dart' show drawCalls;
@@ -101,7 +103,7 @@ void main() {
                       },
                       'pointRadius': 0,
                       if (k == 1) 'tension': 0.4,
-                      if (k == 2) 'stepped': 'middle',
+                      if (k == 2) 'stepped': SteppedLine.middle,
                       'borderColor': const Color(0xff123456),
                     },
                 ],

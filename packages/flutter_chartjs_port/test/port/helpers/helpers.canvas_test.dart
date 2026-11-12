@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 import 'package:test/test.dart';
 
 import 'draw_point_reference.dart';
@@ -949,7 +951,10 @@ void main() {
 
     test("steps in the middle for 'middle'", () {
       expect(
-        lines((ctx) => steppedLineTo(ctx, previous, target, null, 'middle')),
+        lines(
+          (ctx) =>
+              steppedLineTo(ctx, previous, target, null, SteppedLine.middle),
+        ),
         [
           [20, 20],
           [20, 60],
@@ -969,7 +974,10 @@ void main() {
         );
       }
       expect(
-        lines((ctx) => steppedLineTo(ctx, previous, target, false, 'after')),
+        lines(
+          (ctx) =>
+              steppedLineTo(ctx, previous, target, false, SteppedLine.after),
+        ),
         [
           [10, 60],
           [30, 60],
@@ -979,14 +987,20 @@ void main() {
 
     test('flip swaps before and after', () {
       expect(
-        lines((ctx) => steppedLineTo(ctx, previous, target, true, 'before')),
+        lines(
+          (ctx) =>
+              steppedLineTo(ctx, previous, target, true, SteppedLine.before),
+        ),
         [
           [10, 60],
           [30, 60],
         ],
       );
       expect(
-        lines((ctx) => steppedLineTo(ctx, previous, target, true, 'after')),
+        lines(
+          (ctx) =>
+              steppedLineTo(ctx, previous, target, true, SteppedLine.after),
+        ),
         [
           [30, 20],
           [30, 60],
@@ -996,7 +1010,7 @@ void main() {
 
     test('draws on a Path2D', () {
       final path = Path2D();
-      steppedLineTo(path, previous, target, null, 'middle');
+      steppedLineTo(path, previous, target, null, SteppedLine.middle);
       expect(path.commands.length, 3);
     });
   });

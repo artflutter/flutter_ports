@@ -845,6 +845,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `adapt-arc-option-enums`), also in a raw config; the typed API has
       `ArcElementStyle.borderAlign` and `spacingMode`. The native option plans count an enum
       value as a scalar (`_indexedScalar` of `helpers.config.dart`).
+    - The line option `stepped` holds a boolean or the enum `SteppedLine` (`before`, `after`,
+      `middle`) of the pure `lib/src/types/line_option_enums.dart` (row
+      `adapt-stepped-line-enum`), and the bar option `borderSkipped` holds a boolean or the enum
+      `BorderSkippedEdge` of the pure `lib/src/types/bar_option_enums.dart` (row
+      `adapt-border-skipped-enum`), also in a raw config. A keyword stops a debug build. The
+      typed API has `stepped` on the line, scatter and radar datasets and on `LineElementStyle`;
+      `stepped: true` and `borderSkipped` go through `extra`.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
       is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream

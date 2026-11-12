@@ -11,6 +11,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = 'v24.22.1';
@@ -297,7 +298,7 @@ const List<ThemeLightElementCase> themeLightElements = [
     prefixes: <String>['bar', ''],
     options: <String, Object?>{
       r'$shared': true,
-      'borderSkipped': 'start',
+      'borderSkipped': BorderSkippedEdge.start,
       'borderWidth': 0.0,
       'borderRadius': 0.0,
       'inflateAmount': 'auto',
@@ -321,7 +322,7 @@ const List<ThemeLightElementCase> themeLightElements = [
     prefixes: <String>['barHover', 'hover', 'bar', ''],
     options: <String, Object?>{
       r'$shared': false,
-      'borderSkipped': 'start',
+      'borderSkipped': BorderSkippedEdge.start,
       'borderWidth': 0.0,
       'borderRadius': 0.0,
       'inflateAmount': 'auto',

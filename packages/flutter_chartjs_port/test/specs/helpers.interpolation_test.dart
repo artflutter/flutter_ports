@@ -3,6 +3,8 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 import 'package:test/test.dart';
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
@@ -92,7 +94,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0,
-          'before',
+          SteppedLine.before,
         ),
         _toEqual(10, 10),
       );
@@ -101,7 +103,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0.4,
-          'before',
+          SteppedLine.before,
         ),
         _toEqual(14, 20),
       );
@@ -110,7 +112,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0.5,
-          'before',
+          SteppedLine.before,
         ),
         _toEqual(15, 20),
       );
@@ -119,7 +121,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           1,
-          'before',
+          SteppedLine.before,
         ),
         _toEqual(20, 20),
       );
@@ -129,7 +131,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0,
-          'middle',
+          SteppedLine.middle,
         ),
         _toEqual(10, 10),
       );
@@ -138,7 +140,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0.4,
-          'middle',
+          SteppedLine.middle,
         ),
         _toEqual(14, 10),
       );
@@ -147,7 +149,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0.5,
-          'middle',
+          SteppedLine.middle,
         ),
         _toEqual(15, 20),
       );
@@ -156,7 +158,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           1,
-          'middle',
+          SteppedLine.middle,
         ),
         _toEqual(20, 20),
       );
@@ -166,7 +168,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0,
-          'after',
+          SteppedLine.after,
         ),
         _toEqual(10, 10),
       );
@@ -175,7 +177,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0.4,
-          'after',
+          SteppedLine.after,
         ),
         _toEqual(14, 10),
       );
@@ -184,7 +186,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           0.5,
-          'after',
+          SteppedLine.after,
         ),
         _toEqual(15, 10),
       );
@@ -193,7 +195,7 @@ void main() {
           const _Point(10, 10),
           const _Point(20, 20),
           1,
-          'after',
+          SteppedLine.after,
         ),
         _toEqual(20, 20),
       );

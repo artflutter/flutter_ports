@@ -4,6 +4,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -15,6 +16,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           // option in dataset
           'data': <Object?>[0, 5, 10, null, -10, -5],
+          // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
           'borderSkipped': (Object? ctx) {
             final value = jsOrZero(
               jsGet(
@@ -23,12 +25,12 @@ Map<String, Object?> fixture() => <String, Object?>{
               ),
             );
             return value > 8
-                ? 'left'
+                ? BorderSkippedEdge.left
                 : value > 0
-                ? 'right'
+                ? BorderSkippedEdge.right
                 : value > -8
-                ? 'top'
-                : 'bottom';
+                ? BorderSkippedEdge.top
+                : BorderSkippedEdge.bottom;
           },
         },
         <String, Object?>{
@@ -42,15 +44,16 @@ Map<String, Object?> fixture() => <String, Object?>{
         'bar': <String, Object?>{
           'backgroundColor': 'transparent',
           'borderColor': '#888',
+          // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
           'borderSkipped': (Object? ctx) {
             final index = jsToNumber(jsGet(ctx, 'dataIndex'));
             return index > 4
-                ? 'left'
+                ? BorderSkippedEdge.left
                 : index > 3
-                ? 'right'
+                ? BorderSkippedEdge.right
                 : index > 1
-                ? 'top'
-                : 'bottom';
+                ? BorderSkippedEdge.top
+                : BorderSkippedEdge.bottom;
           },
           'borderWidth': 8,
         },

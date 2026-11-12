@@ -44,6 +44,8 @@ import 'package:flutter_chartjs_port/src/typed/values.dart'
     show ChartFill, ChartLength, ChartPointStyle;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 import 'package:meta/meta.dart' show internal;
 
 /// A dataset of a chart: an item of `data.datasets` of a Chart.js config.
@@ -561,7 +563,7 @@ base mixin _LineStyle on Dataset {
   StrokeJoin? get borderJoinStyle;
   bool? get spanGaps;
   bool? get showLine;
-  bool? get stepped;
+  SteppedLine? get stepped;
   double? get pointRadius;
   double? get pointHoverRadius;
   ChartPointStyle? get pointStyle;
@@ -737,11 +739,11 @@ final class LineDataset extends Dataset with _LineStyle {
   final bool? showLine;
 
   /// {@template flutter_chartjs_port.typed.stepped}
-  /// Whether the line is a stepped line: `stepped` as a boolean. The other
-  /// forms (`'before'`, `'after'`, `'middle'`) go through `extra`.
+  /// The form of a stepped line: `stepped`, a [SteppedLine] (row
+  /// `adapt-stepped-line-enum`). Dart `null`, the default, draws no steps.
   /// {@endtemplate}
   @override
-  final bool? stepped;
+  final SteppedLine? stepped;
 
   /// {@template flutter_chartjs_port.typed.pointRadius}
   /// The radius of the points in pixels: `pointRadius`. 0 draws no points.
@@ -819,7 +821,7 @@ final class LineDataset extends Dataset with _LineStyle {
     StrokeJoin? borderJoinStyle,
     bool? spanGaps,
     bool? showLine,
-    bool? stepped,
+    SteppedLine? stepped,
     double? pointRadius,
     double? pointHoverRadius,
     ChartPointStyle? pointStyle,
@@ -988,7 +990,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.stepped}
   @override
-  final bool? stepped;
+  final SteppedLine? stepped;
 
   /// {@macro flutter_chartjs_port.typed.pointRadius}
   @override
@@ -1047,7 +1049,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     StrokeJoin? borderJoinStyle,
     bool? spanGaps,
     bool? showLine,
-    bool? stepped,
+    SteppedLine? stepped,
     double? pointRadius,
     double? pointHoverRadius,
     ChartPointStyle? pointStyle,
@@ -1752,7 +1754,7 @@ final class RadarDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.stepped}
   @override
-  final bool? stepped;
+  final SteppedLine? stepped;
 
   /// {@macro flutter_chartjs_port.typed.pointRadius}
   @override
@@ -1807,7 +1809,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     StrokeJoin? borderJoinStyle,
     bool? spanGaps,
     bool? showLine,
-    bool? stepped,
+    SteppedLine? stepped,
     double? pointRadius,
     double? pointHoverRadius,
     ChartPointStyle? pointStyle,

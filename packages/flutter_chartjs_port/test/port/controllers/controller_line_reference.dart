@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 
 /// The Node.js version that generated the data.
 const String controllerLineReferenceNode = 'v24.22.1';
@@ -8882,15 +8883,15 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'stepped': 'before',
+            'stepped': SteppedLine.before,
           },
           <String, Object?>{
             'data': <Object?>[2.0, 4.0, 3.0, 6.0, 5.0],
-            'stepped': 'after',
+            'stepped': SteppedLine.after,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 5.0, 4.0, 7.0, 6.0],
-            'stepped': 'middle',
+            'stepped': SteppedLine.middle,
           },
         ],
       },
@@ -9015,7 +9016,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                 'cubicInterpolationMode': 'default',
                 'fill': false,
                 'spanGaps': false,
-                'stepped': 'before',
+                'stepped': SteppedLine.before,
                 'tension': 0.0,
                 'backgroundColor': 'rgba(0,0,0,0.1)',
                 'borderColor': 'rgba(0,0,0,0.1)',
@@ -9265,7 +9266,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                 'cubicInterpolationMode': 'default',
                 'fill': false,
                 'spanGaps': false,
-                'stepped': 'after',
+                'stepped': SteppedLine.after,
                 'tension': 0.0,
                 'backgroundColor': 'rgba(0,0,0,0.1)',
                 'borderColor': 'rgba(0,0,0,0.1)',
@@ -9515,7 +9516,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                 'cubicInterpolationMode': 'default',
                 'fill': false,
                 'spanGaps': false,
-                'stepped': 'middle',
+                'stepped': SteppedLine.middle,
                 'tension': 0.0,
                 'backgroundColor': 'rgba(0,0,0,0.1)',
                 'borderColor': 'rgba(0,0,0,0.1)',
