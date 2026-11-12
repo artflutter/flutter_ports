@@ -1,0 +1,49 @@
+// Ported from Chart.js v4.6.1 test/fixtures/controller.radar/borderCapStyle/value.js (MIT, Chart.js Contributors).
+/// A hand-ported fixture config (Chart.js ADR 0029, section 4).
+library;
+
+import 'dart:ui' show StrokeCap;
+
+import 'package:flutter/painting.dart' show EdgeInsets;
+
+/// The upstream config, with native padding values.
+// DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.
+Map<String, Object?> fixture() => <String, Object?>{
+  'config': <String, Object?>{
+    'type': 'radar',
+    'data': <String, Object?>{
+      'labels': <Object?>[0.0, 1.0, 2.0],
+      'datasets': <Object?>[
+        <String, Object?>{
+          'data': <Object?>[null, 3.0, 3.0],
+          'borderCapStyle': StrokeCap.round,
+        },
+        <String, Object?>{
+          'data': <Object?>[null, 2.0, 2.0],
+          'borderCapStyle': StrokeCap.square,
+        },
+        <String, Object?>{
+          'data': <Object?>[null, 1.0, 1.0],
+        },
+      ],
+    },
+    'options': <String, Object?>{
+      'elements': <String, Object?>{
+        'line': <String, Object?>{
+          'borderCapStyle': StrokeCap.butt,
+          'borderColor': '#00ff00',
+          'borderWidth': 32.0,
+          'fill': false,
+        },
+        'point': <String, Object?>{'radius': 10.0},
+      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
+      'scales': <String, Object?>{
+        'r': <String, Object?>{'display': false, 'beginAtZero': true},
+      },
+    },
+  },
+  'options': <String, Object?>{
+    'canvas': <String, Object?>{'height': 512.0, 'width': 512.0},
+  },
+};

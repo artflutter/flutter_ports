@@ -1205,7 +1205,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final opts = LegendOptions(options);
     final titleOpts = opts.title;
     final titleFont = toFont(titleOpts.font);
-    final titlePadding = toPadding(titleOpts.padding);
+    final titlePadding = titleOpts.padding;
 
     if (!titleOpts.display) {
       return;
@@ -1269,8 +1269,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   double _computeTitleHeight() {
     final titleOpts = LegendOptions(options).title;
     final titleFont = toFont(titleOpts.font);
-    final titlePadding = toPadding(titleOpts.padding);
-    return titleOpts.display ? titleFont.lineHeight! + titlePadding.height : 0;
+    final titlePadding = titleOpts.padding;
+    return titleOpts.display
+        ? titleFont.lineHeight! + titlePadding.vertical
+        : 0;
   }
 
   /// plugin.legend.js:503 `_getLegendItemAt(x, y)`.

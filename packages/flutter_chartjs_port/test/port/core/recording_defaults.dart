@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
@@ -60,6 +61,12 @@ final class RecordingDefaults implements Defaults {
 /// A number must be a `double` (Chart.js ADR 0045). An `int` gives
 /// `"<int>"`, so the comparison with the probe fails.
 String probeJson(Object? value) => switch (value) {
+  final EdgeInsets p => probeJson({
+    'top': p.top,
+    'right': p.right,
+    'bottom': p.bottom,
+    'left': p.left,
+  }),
   null => 'null',
   _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
   Undefined() => '"<undefined>"',

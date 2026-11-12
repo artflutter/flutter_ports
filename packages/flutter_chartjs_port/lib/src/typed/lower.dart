@@ -19,8 +19,8 @@
 ///    `CategoryAxis.labels` and `plugins`. A small style List
 ///    (`ChartValue.indexed` or `borderDash`) lowers to a new List.
 /// 3. A `Color` lowers through [colorValue], a `Duration` through
-///    [millisecondsOf] and an `EdgeInsets` through [paddingScope] (a
-///    `PaddingScope`). A name type lowers to its name or its `optionValue`.
+///    [millisecondsOf] and keeps an `EdgeInsets` as a native value.
+///    A name type lowers to its name or its `optionValue`.
 ///    An axis class (`XAxis`, `YAxis`) and a font (`TextStyle`, Chart.js ADR
 ///    0116) stay themselves. An object option value
 ///    of a name type (the
@@ -43,7 +43,6 @@ library;
 import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart' show Key, ValueChanged, listEquals;
-import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
@@ -54,7 +53,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ChartDataScope,
         ChartOptionsScope,
         LayoutOptionsScope,
-        PaddingScope,
         PluginOptionsByTypeScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
@@ -321,7 +319,7 @@ final class ChartConfigLowering {
     put(options, OptionKey.responsive, config.responsive);
     put(options, OptionKey.maintainAspectRatio, config.maintainAspectRatio);
     put(options, OptionKey.aspectRatio, config.aspectRatio);
-    if (paddingScope(config.padding) case final padding?) {
+    if (config.padding case final padding?) {
       options.layout = LayoutOptionsScope()..padding = padding;
     }
     if (plugins.ownKeyCount != 0) options.plugins = plugins;
@@ -537,17 +535,6 @@ Object? Function(Object?) animationTrampoline(
 
 /// Keeps the native [color] unchanged, including null for an unset option.
 Color? colorValue(Color? color) => color;
-
-/// The option value of [padding]: a new `PaddingScope` with the keys
-/// `top`, `right`, `bottom` and `left` (`index.d.ts`, `Padding`). Dart
-/// `null` for `null`.
-PaddingScope? paddingScope(EdgeInsets? padding) => padding == null
-    ? null
-    : (PaddingScope()
-        ..top = padding.top
-        ..right = padding.right
-        ..bottom = padding.bottom
-        ..left = padding.left);
 
 /// The option value of [duration]: the milliseconds, with the fraction of
 /// the microseconds. Dart `null` for `null`.

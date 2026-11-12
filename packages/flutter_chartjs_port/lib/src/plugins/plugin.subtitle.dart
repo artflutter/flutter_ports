@@ -24,6 +24,7 @@ library;
 
 import 'dart:ui' show FontWeight;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, TitleOptionsScope;
@@ -88,7 +89,7 @@ final Plugin subTitle = Plugin(supportsDataUpdates: true)
     // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
     ..font = const ChartTextStyle(fontWeight: FontWeight.normal)
     ..fullSize = true
-    ..padding = 0.0
+    ..padding = EdgeInsets.zero
     ..position = ChartPosition.top
     ..text = ''
     // by default greater than legend (1000) and smaller than title (2000)

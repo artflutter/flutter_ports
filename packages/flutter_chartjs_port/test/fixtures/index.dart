@@ -44,6 +44,8 @@ import 'hand/controller.bar/borderWidth/scriptable-object.dart'
     as controller_bar_borderwidth_scriptable_object;
 import 'hand/controller.bar/borderWidth/scriptable.dart'
     as controller_bar_borderwidth_scriptable;
+import 'hand/controller.bar/chart-area-clip.dart'
+    as controller_bar_chart_area_clip;
 import 'hand/controller.bar/data/object-index-axis-y.dart'
     as controller_bar_data_object_index_axis_y;
 import 'hand/controller.bar/floatBar/data-as-objects-horizontal.dart'
@@ -110,6 +112,8 @@ import 'hand/controller.doughnut/doughnut-hidden-single.dart'
     as controller_doughnut_doughnut_hidden_single;
 import 'hand/controller.doughnut/doughnut-hidden.dart'
     as controller_doughnut_doughnut_hidden;
+import 'hand/controller.doughnut/doughnut-offset.dart'
+    as controller_doughnut_doughnut_offset;
 import 'hand/controller.doughnut/doughnut-outer-radius-percent.dart'
     as controller_doughnut_doughnut_outer_radius_percent;
 import 'hand/controller.doughnut/doughnut-outer-radius-pixels.dart'
@@ -120,29 +124,65 @@ import 'hand/controller.doughnut/doughnut-set-active-elements.dart'
     as controller_doughnut_doughnut_set_active_elements;
 import 'hand/controller.doughnut/event-replay.dart'
     as controller_doughnut_event_replay;
+import 'hand/controller.doughnut/pie-offset.dart'
+    as controller_doughnut_pie_offset;
 import 'hand/controller.line/backgroundColor/scriptable.dart'
     as controller_line_backgroundcolor_scriptable;
+import 'hand/controller.line/backgroundColor/value.dart'
+    as controller_line_backgroundcolor_value;
 import 'hand/controller.line/borderCapStyle/scriptable.dart'
     as controller_line_bordercapstyle_scriptable;
+import 'hand/controller.line/borderCapStyle/value.dart'
+    as controller_line_bordercapstyle_value;
 import 'hand/controller.line/borderColor/scriptable.dart'
     as controller_line_bordercolor_scriptable;
+import 'hand/controller.line/borderColor/value.dart'
+    as controller_line_bordercolor_value;
 import 'hand/controller.line/borderDash/scriptable.dart'
     as controller_line_borderdash_scriptable;
+import 'hand/controller.line/borderDash/value.dart'
+    as controller_line_borderdash_value;
 import 'hand/controller.line/borderDashOffset/scriptable.dart'
     as controller_line_borderdashoffset_scriptable;
+import 'hand/controller.line/borderDashOffset/value.dart'
+    as controller_line_borderdashoffset_value;
 import 'hand/controller.line/borderJoinStyle/scriptable.dart'
     as controller_line_borderjoinstyle_scriptable;
+import 'hand/controller.line/borderJoinStyle/value.dart'
+    as controller_line_borderjoinstyle_value;
 import 'hand/controller.line/borderWidth/scriptable.dart'
     as controller_line_borderwidth_scriptable;
+import 'hand/controller.line/borderWidth/value.dart'
+    as controller_line_borderwidth_value;
+import 'hand/controller.line/borderWidth/zero.dart'
+    as controller_line_borderwidth_zero;
+import 'hand/controller.line/clip/default-x-max.dart'
+    as controller_line_clip_default_x_max;
+import 'hand/controller.line/clip/default-x-min.dart'
+    as controller_line_clip_default_x_min;
+import 'hand/controller.line/clip/default-x.dart'
+    as controller_line_clip_default_x;
+import 'hand/controller.line/clip/default-y-max.dart'
+    as controller_line_clip_default_y_max;
+import 'hand/controller.line/clip/default-y-min.dart'
+    as controller_line_clip_default_y_min;
+import 'hand/controller.line/clip/default-y.dart'
+    as controller_line_clip_default_y;
 import 'hand/controller.line/clip/false.dart' as controller_line_clip_false;
+import 'hand/controller.line/clip/specified.dart'
+    as controller_line_clip_specified;
 import 'hand/controller.line/cubicInterpolationMode/scriptable.dart'
     as controller_line_cubicinterpolationmode_scriptable;
 import 'hand/controller.line/cubicInterpolationMode/value.dart'
     as controller_line_cubicinterpolationmode_value;
 import 'hand/controller.line/fill/no-border.dart'
     as controller_line_fill_no_border;
+import 'hand/controller.line/fill/order-default.dart'
+    as controller_line_fill_order_default;
+import 'hand/controller.line/fill/order.dart' as controller_line_fill_order;
 import 'hand/controller.line/fill/scriptable.dart'
     as controller_line_fill_scriptable;
+import 'hand/controller.line/fill/value.dart' as controller_line_fill_value;
 import 'hand/controller.line/issue-8902.dart' as controller_line_issue_8902;
 import 'hand/controller.line/point-style-offscreen-canvas.dart'
     as controller_line_point_style_offscreen_canvas;
@@ -178,6 +218,10 @@ import 'hand/controller.line/segments/slope.dart'
     as controller_line_segments_slope;
 import 'hand/controller.line/segments/spanGaps.dart'
     as controller_line_segments_spangaps;
+import 'hand/controller.line/stacking/order-default.dart'
+    as controller_line_stacking_order_default;
+import 'hand/controller.line/stacking/order-specified.dart'
+    as controller_line_stacking_order_specified;
 import 'hand/controller.line/stacking/single.dart'
     as controller_line_stacking_single;
 import 'hand/controller.line/stacking/stack-cache.dart'
@@ -214,14 +258,20 @@ import 'hand/controller.radar/backgroundColor/scriptable.dart'
     as controller_radar_backgroundcolor_scriptable;
 import 'hand/controller.radar/borderCapStyle/scriptable.dart'
     as controller_radar_bordercapstyle_scriptable;
+import 'hand/controller.radar/borderCapStyle/value.dart'
+    as controller_radar_bordercapstyle_value;
 import 'hand/controller.radar/borderColor/scriptable.dart'
     as controller_radar_bordercolor_scriptable;
 import 'hand/controller.radar/borderDash/scriptable.dart'
     as controller_radar_borderdash_scriptable;
 import 'hand/controller.radar/borderDashOffset/scriptable.dart'
     as controller_radar_borderdashoffset_scriptable;
+import 'hand/controller.radar/borderDashOffset/value.dart'
+    as controller_radar_borderdashoffset_value;
 import 'hand/controller.radar/borderJoinStyle/scriptable.dart'
     as controller_radar_borderjoinstyle_scriptable;
+import 'hand/controller.radar/borderJoinStyle/value.dart'
+    as controller_radar_borderjoinstyle_value;
 import 'hand/controller.radar/borderWidth/scriptable.dart'
     as controller_radar_borderwidth_scriptable;
 import 'hand/controller.radar/fill/scriptable.dart'
@@ -257,6 +307,8 @@ import 'hand/core.interaction/nearest-point-behind-scale.dart'
     as core_interaction_nearest_point_behind_scale;
 import 'hand/core.layouts/hidden-vertical-boxes.dart'
     as core_layouts_hidden_vertical_boxes;
+import 'hand/core.layouts/no-boxes-all-padding.dart'
+    as core_layouts_no_boxes_all_padding;
 import 'hand/core.layouts/scriptable.dart' as core_layouts_scriptable;
 import 'hand/core.scale/cartesian-axis-border-settings.dart'
     as core_scale_cartesian_axis_border_settings;
@@ -292,6 +344,9 @@ import 'hand/core.scale/grid/scriptable-borderDash.dart'
     as core_scale_grid_scriptable_borderdash;
 import 'hand/core.scale/label-offset-vertical-axes.dart'
     as core_scale_label_offset_vertical_axes;
+import 'hand/core.scale/tick-backdrop-rotation.dart'
+    as core_scale_tick_backdrop_rotation;
+import 'hand/core.scale/tick-backdrop.dart' as core_scale_tick_backdrop;
 import 'hand/core.scale/tick-drawing.dart' as core_scale_tick_drawing;
 import 'hand/core.scale/tick-override-styles.dart'
     as core_scale_tick_override_styles;
@@ -407,6 +462,8 @@ import 'hand/plugin.filler/line/segments/gap.dart'
 import 'hand/plugin.filler/line/segments/slope.dart'
     as plugin_filler_line_segments_slope;
 import 'hand/plugin.filler/line/vertical.dart' as plugin_filler_line_vertical;
+import 'hand/plugin.filler/radar/beforeDraw.dart'
+    as plugin_filler_radar_beforedraw;
 import 'hand/plugin.filler/radar/dataset/border.dart'
     as plugin_filler_radar_dataset_border;
 import 'hand/plugin.filler/radar/dataset/default.dart'
@@ -423,6 +480,8 @@ import 'hand/plugin.legend/legend-doughnut-point-style.dart'
     as plugin_legend_legend_doughnut_point_style;
 import 'hand/plugin.legend/maxWidth/infinity.dart'
     as plugin_legend_maxwidth_infinity;
+import 'hand/plugin.legend/padding/2cols-with-padding.dart'
+    as plugin_legend_padding_2cols_with_padding;
 import 'hand/plugin.legend/padding/add-column.dart'
     as plugin_legend_padding_add_column;
 import 'hand/plugin.legend/pointStyle-width/legend-pointStyle-width-default.dart'
@@ -443,6 +502,12 @@ import 'hand/plugin.tooltip/opacity.dart' as plugin_tooltip_opacity;
 import 'hand/plugin.tooltip/point-style.dart' as plugin_tooltip_point_style;
 import 'hand/plugin.tooltip/positioning.dart' as plugin_tooltip_positioning;
 import 'hand/scale.category/invalid-data.dart' as scale_category_invalid_data;
+import 'hand/scale.category/max-ticks-limit-a.dart'
+    as scale_category_max_ticks_limit_a;
+import 'hand/scale.category/max-ticks-limit-b.dart'
+    as scale_category_max_ticks_limit_b;
+import 'hand/scale.category/max-ticks-limit-norotation.dart'
+    as scale_category_max_ticks_limit_norotation;
 import 'hand/scale.category/ticks-from-data.dart'
     as scale_category_ticks_from_data;
 import 'hand/scale.linear/grace/grace-10%25.dart'
@@ -460,6 +525,10 @@ import 'hand/scale.radialLinear/anglelines-scriptable.dart'
     as scale_radiallinear_anglelines_scriptable;
 import 'hand/scale.radialLinear/gridlines-scriptable.dart'
     as scale_radiallinear_gridlines_scriptable;
+import 'hand/scale.radialLinear/pointLabels/background.dart'
+    as scale_radiallinear_pointlabels_background;
+import 'hand/scale.radialLinear/pointLabels/border-radius.dart'
+    as scale_radiallinear_pointlabels_border_radius;
 import 'hand/scale.radialLinear/pointLabels/scriptable-color-small.dart'
     as scale_radiallinear_pointlabels_scriptable_color_small;
 import 'hand/scale.radialLinear/ticks-below-zero.dart'
@@ -490,6 +559,150 @@ void Function() specs(String path) =>
 /// function of `hand/<path>.dart` and the first 12 hex digits of the
 /// `sha256` of the upstream file in `doc/upstream/manifest.json`.
 final Map<String, HandFixture> handFixtures = {
+  'scale.radialLinear/pointLabels/border-radius.js': (
+    load: scale_radiallinear_pointlabels_border_radius.fixture,
+    sha256: 'b05b82ebab93',
+  ),
+  'scale.radialLinear/pointLabels/background.js': (
+    load: scale_radiallinear_pointlabels_background.fixture,
+    sha256: '1a660eaebfd1',
+  ),
+  'scale.category/max-ticks-limit-norotation.js': (
+    load: scale_category_max_ticks_limit_norotation.fixture,
+    sha256: '3878d06f86cf',
+  ),
+  'scale.category/max-ticks-limit-b.js': (
+    load: scale_category_max_ticks_limit_b.fixture,
+    sha256: '37b4891b511e',
+  ),
+  'scale.category/max-ticks-limit-a.js': (
+    load: scale_category_max_ticks_limit_a.fixture,
+    sha256: '09cf84f34777',
+  ),
+  'plugin.legend/padding/2cols-with-padding.js': (
+    load: plugin_legend_padding_2cols_with_padding.fixture,
+    sha256: 'ea51cab97ce5',
+  ),
+  'plugin.filler/radar/beforeDraw.js': (
+    load: plugin_filler_radar_beforedraw.fixture,
+    sha256: '7e340f017db3',
+  ),
+  'core.scale/tick-backdrop.js': (
+    load: core_scale_tick_backdrop.fixture,
+    sha256: '89d425983ffd',
+  ),
+  'core.scale/tick-backdrop-rotation.js': (
+    load: core_scale_tick_backdrop_rotation.fixture,
+    sha256: '2244f2079be2',
+  ),
+  'core.layouts/no-boxes-all-padding.js': (
+    load: core_layouts_no_boxes_all_padding.fixture,
+    sha256: 'a96320f7bf65',
+  ),
+  'controller.radar/borderJoinStyle/value.js': (
+    load: controller_radar_borderjoinstyle_value.fixture,
+    sha256: '89e13072caed',
+  ),
+  'controller.radar/borderDashOffset/value.js': (
+    load: controller_radar_borderdashoffset_value.fixture,
+    sha256: '96d39068cbc3',
+  ),
+  'controller.radar/borderCapStyle/value.js': (
+    load: controller_radar_bordercapstyle_value.fixture,
+    sha256: '681c1ef30ff1',
+  ),
+  'controller.line/stacking/order-specified.js': (
+    load: controller_line_stacking_order_specified.fixture,
+    sha256: '024ef20c876d',
+  ),
+  'controller.line/stacking/order-default.js': (
+    load: controller_line_stacking_order_default.fixture,
+    sha256: 'c244c7024756',
+  ),
+  'controller.line/fill/value.js': (
+    load: controller_line_fill_value.fixture,
+    sha256: 'd7169e78d375',
+  ),
+  'controller.line/fill/order.js': (
+    load: controller_line_fill_order.fixture,
+    sha256: '0e9b577b1cdd',
+  ),
+  'controller.line/fill/order-default.js': (
+    load: controller_line_fill_order_default.fixture,
+    sha256: '80f197d5f920',
+  ),
+  'controller.line/clip/specified.json': (
+    load: controller_line_clip_specified.fixture,
+    sha256: '343d3d39e643',
+  ),
+  'controller.line/clip/default-y.json': (
+    load: controller_line_clip_default_y.fixture,
+    sha256: 'ffe6d9f64bef',
+  ),
+  'controller.line/clip/default-y-min.json': (
+    load: controller_line_clip_default_y_min.fixture,
+    sha256: 'fd1f2d662266',
+  ),
+  'controller.line/clip/default-y-max.json': (
+    load: controller_line_clip_default_y_max.fixture,
+    sha256: '473da4a46f1f',
+  ),
+  'controller.line/clip/default-x.json': (
+    load: controller_line_clip_default_x.fixture,
+    sha256: '7e49d010b700',
+  ),
+  'controller.line/clip/default-x-min.json': (
+    load: controller_line_clip_default_x_min.fixture,
+    sha256: '7807f219cc9b',
+  ),
+  'controller.line/clip/default-x-max.json': (
+    load: controller_line_clip_default_x_max.fixture,
+    sha256: '73cc805e9739',
+  ),
+  'controller.line/borderWidth/zero.js': (
+    load: controller_line_borderwidth_zero.fixture,
+    sha256: 'b4e97a0f35c7',
+  ),
+  'controller.line/borderWidth/value.js': (
+    load: controller_line_borderwidth_value.fixture,
+    sha256: 'd68efe1a3394',
+  ),
+  'controller.line/borderJoinStyle/value.js': (
+    load: controller_line_borderjoinstyle_value.fixture,
+    sha256: '72a31c1febf4',
+  ),
+  'controller.line/borderDashOffset/value.js': (
+    load: controller_line_borderdashoffset_value.fixture,
+    sha256: 'd1ed7ceb00c9',
+  ),
+  'controller.line/borderDash/value.js': (
+    load: controller_line_borderdash_value.fixture,
+    sha256: '1a34431b0f91',
+  ),
+  'controller.line/borderColor/value.js': (
+    load: controller_line_bordercolor_value.fixture,
+    sha256: '164e97fb2070',
+  ),
+  'controller.line/borderCapStyle/value.js': (
+    load: controller_line_bordercapstyle_value.fixture,
+    sha256: '6d92a06c46c9',
+  ),
+  'controller.line/backgroundColor/value.js': (
+    load: controller_line_backgroundcolor_value.fixture,
+    sha256: 'ef8a36037f5c',
+  ),
+  'controller.doughnut/pie-offset.js': (
+    load: controller_doughnut_pie_offset.fixture,
+    sha256: '7068af66954b',
+  ),
+  'controller.doughnut/doughnut-offset.js': (
+    load: controller_doughnut_doughnut_offset.fixture,
+    sha256: '57720a497a90',
+  ),
+  'controller.bar/chart-area-clip.js': (
+    load: controller_bar_chart_area_clip.fixture,
+    sha256: '2f9db5b62975',
+  ),
   'controller.bar/aligned-pixels.js': (
     load: controller_bar_aligned_pixels.fixture,
     sha256: 'ead0a91b2318',

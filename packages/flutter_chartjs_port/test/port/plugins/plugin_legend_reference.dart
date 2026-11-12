@@ -8,6 +8,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
@@ -36879,7 +36880,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'display': true,
               'text': 'Title',
               'position': ChartAlign.end,
-              'padding': 6.0,
+              'padding': EdgeInsets.all(6),
             },
           },
           'subtitle': false,

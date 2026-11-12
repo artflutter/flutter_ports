@@ -11,6 +11,7 @@
 library;
 
 import 'package:flutter/animation.dart' show Curves;
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -123,7 +124,7 @@ AnyObject barChartOptions() => <String, Object?>{
     'tooltip': <String, Object?>{
       'mode': 'index',
       'intersect': false,
-      'padding': <String, Object?>{'top': 6.0, 'bottom': 6.0},
+      'padding': const EdgeInsets.symmetric(vertical: 6),
     },
   },
   'animation': <String, Object?>{

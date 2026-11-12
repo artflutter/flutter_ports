@@ -7,6 +7,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show ImagePointStyle;
@@ -64,7 +65,7 @@ Map<String, Object?> fixture() {
           },
         },
         'layout': <String, Object?>{
-          'padding': 20,
+          'padding': const EdgeInsets.all(20),
         },
         'scales': <String, Object?>{
           'x': <String, Object?>{'display': false},

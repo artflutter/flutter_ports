@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui' show FontWeight;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -262,7 +263,7 @@ void main() {
         const ChartTextStyle(fontWeight: FontWeight.normal),
       );
       expect(defaults['fullSize'], isTrue);
-      expect(defaults['padding'], 0);
+      expect(defaults['padding'], EdgeInsets.zero);
       expect(defaults['position'], ChartPosition.top);
       expect(defaults['text'], '');
       expect(defaults['weight'], 1500);

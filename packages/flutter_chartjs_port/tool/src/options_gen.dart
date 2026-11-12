@@ -63,6 +63,7 @@ const Map<String, int> shapeAtoms = {
   'textStyle': 4096,
   'locale': 4224,
   'numberFormat': 4352,
+  'edgeInsets': 4480,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -214,6 +215,11 @@ const Map<String, TypedAtom> typedAtoms = {
   'radialAxis': (
     type: 'RAxis',
     uri: 'package:flutter_chartjs_port/src/types/chart_axis.dart',
+    field: null,
+  ),
+  'edgeInsets': (
+    type: 'EdgeInsets',
+    uri: 'package:flutter/painting.dart',
     field: null,
   ),
   'textStyle': (

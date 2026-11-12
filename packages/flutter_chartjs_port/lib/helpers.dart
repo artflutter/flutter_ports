@@ -89,6 +89,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         nativeSegmentType,
         normalizeAngle,
         numberFormatOf,
+        paddingOption,
         parseObjectDataRadialScale,
         parseObjectDataRadialScaleOf,
         pointInLine,

@@ -45,7 +45,7 @@ import 'dart:ui' as ui;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/animation.dart' show Curves;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -64,7 +64,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show distanceBetweenPoints, limitValue;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, createContext, toFont, toPadding, toTRBLCorners;
+    show ContextObject, createContext, toFont, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show RTLAdapter, getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
@@ -359,8 +359,8 @@ double _lengthOf(Object? list) =>
   final footerLineCount = footer!.length;
   final bodyLineItemCount = body!.length;
 
-  final padding = toPadding(options.padding);
-  var height = padding.height;
+  final padding = options.padding;
+  var height = padding.vertical;
   var width = 0.0;
 
   // Count of all lines in the body
@@ -435,7 +435,7 @@ double _lengthOf(Object? list) =>
   ctx.restore();
 
   // Add padding
-  width += padding.width;
+  width += padding.horizontal;
 
   return (width: width, height: height);
 }
@@ -659,7 +659,7 @@ double _getAlignedX(
   TextAlign? align,
   TooltipOptions options,
 ) {
-  final padding = toPadding(options.padding);
+  final padding = options.padding;
 
   return align == TextAlign.center
       ? tooltip.x + tooltip.width / 2
@@ -2137,7 +2137,7 @@ class Tooltip extends Element implements types.TooltipModel {
     // IE11/Edge does not like very small opacities, so snap to 0
     opacity = opacity.abs() < 1e-3 ? 0 : opacity;
 
-    final padding = toPadding(options.padding);
+    final padding = options.padding;
 
     // Truthy/falsey value for empty tooltip
     final hasTooltipContent =
@@ -2618,7 +2618,7 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
     ..footerFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
     ..footerAlign = TextAlign.left
-    ..padding = 6.0
+    ..padding = const EdgeInsets.all(6)
     ..caretPadding = 2.0
     ..caretSize = 5.0
     ..cornerRadius = 6.0

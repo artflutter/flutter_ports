@@ -5,6 +5,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, PanAmount, ZoomChart;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
@@ -59,7 +60,7 @@ Map<String, Object?> fixture() {
             'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
           },
         },
-        'layout': <String, Object?>{'padding': 2},
+        'layout': <String, Object?>{'padding': const EdgeInsets.all(2)},
       },
     },
     'options': <String, Object?>{

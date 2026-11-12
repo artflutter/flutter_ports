@@ -24,10 +24,12 @@
 /// This library is a pure layer.
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
+
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show boolOption, readOption;
+    show boolOption, paddingOption, readOption;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
@@ -65,7 +67,7 @@ extension type const TitleOptions(Object? object) {
   Object? get font => optionOf(object, OptionKey.font);
 
   /// `padding`.
-  Object? get padding => optionOf(object, OptionKey.padding);
+  EdgeInsets get padding => paddingOption(optionOf(object, OptionKey.padding));
 
   /// `position`.
   Object? get position => optionOf(object, OptionKey.position);
@@ -191,7 +193,7 @@ extension type const LegendTitleOptions(Object? object) {
   Object? get font => optionOf(object, OptionKey.font);
 
   /// `padding`.
-  Object? get padding => optionOf(object, OptionKey.padding);
+  EdgeInsets get padding => paddingOption(optionOf(object, OptionKey.padding));
 
   /// `position`, a [ChartAlign] (row `adapt-chart-align-enum`).
   ChartAlign? get position =>
@@ -294,7 +296,7 @@ extension type const TooltipOptions(Object? object) {
       optionOf(object, OptionKey.multiKeyBackground);
 
   /// `padding`.
-  Object? get padding => optionOf(object, OptionKey.padding);
+  EdgeInsets get padding => paddingOption(optionOf(object, OptionKey.padding));
 
   /// `position`: the positioner itself, or Dart `null` for a value that is
   /// not a positioner (row `adapt-tooltip-positioner-objects`).

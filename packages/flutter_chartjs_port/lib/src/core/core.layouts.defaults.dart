@@ -8,8 +8,10 @@
 /// of `core.defaults.js`.
 library;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
+
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show LayoutOptionsScope, PaddingScope;
+    show LayoutOptionsScope;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// core.layouts.defaults.js:1 `applyLayoutsDefaults`.
@@ -18,10 +20,6 @@ void applyLayoutsDefaults(Defaults defaults) {
     'layout',
     LayoutOptionsScope()
       ..autoPadding = true
-      ..padding = (PaddingScope()
-        ..top = 0.0
-        ..right = 0.0
-        ..bottom = 0.0
-        ..left = 0.0),
+      ..padding = EdgeInsets.zero,
   );
 }

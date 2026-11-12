@@ -14,6 +14,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
@@ -41832,12 +41833,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'mode': IndexInteractionMode(),
             'intersect': false,
             'boxPadding': 4.0,
-            'padding': <String, Object?>{
-              'left': 10.0,
-              'top': 4.0,
-              'right': 8.0,
-              'bottom': 6.0,
-            },
+            'padding': EdgeInsets.fromLTRB(10, 4, 8, 6),
           },
         },
       },

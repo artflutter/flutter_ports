@@ -5,6 +5,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show DrawTime;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
@@ -50,7 +51,7 @@ Map<String, Object?> fixture() {
             },
           },
         },
-        'layout': <String, Object?>{'padding': 2},
+        'layout': <String, Object?>{'padding': const EdgeInsets.all(2)},
       },
     },
     'options': <String, Object?>{

@@ -3,6 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
@@ -39,7 +40,7 @@ Scale createCategoryScale({
         'datasets': <Object?>[],
       },
       'options': <String, Object?>{
-        'layout': <String, Object?>{'padding': 0},
+        'layout': <String, Object?>{'padding': EdgeInsets.zero},
         'plugins': <String, Object?>{
           'legend': <String, Object?>{'display': false},
         },

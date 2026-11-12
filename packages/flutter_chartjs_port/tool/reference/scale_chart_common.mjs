@@ -972,7 +972,7 @@ export function jsonValue(v, ids = new Map()) {
     };
   }
   // A value of the Dart writer stays (row adapt-chart-position-enum).
-  if (v instanceof DartEnum || v instanceof DartScalePosition) return v;
+  if (v instanceof DartPadding || v instanceof DartEnum || v instanceof DartScalePosition) return v;
   if (v && typeof v === 'object') {
     return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, jsonValue(x, ids)]));
   }
@@ -1208,6 +1208,19 @@ export class DartNumberFormat {
   }
 }
 
+/** Native padding literal (row adapt-edge-insets-padding). */
+export class DartPadding {
+  constructor(value) { this.value = value; }
+}
+
+export function dartPadding(value) {
+  if (value == null) return 'EdgeInsets.zero';
+  if (typeof value === 'number') return value === 0 ? 'EdgeInsets.zero' : `EdgeInsets.all(${value})`;
+  const side = (name, axis) => Number(value[name] ?? value[axis]) || 0;
+  if (['left','right','top','bottom','x','y'].every(k => !Number(value[k]))) return 'EdgeInsets.zero';
+  return `EdgeInsets.fromLTRB(${side('left', 'x')}, ${side('top', 'y')}, ${side('right', 'x')}, ${side('bottom', 'y')})`;
+}
+
 /** The option keys whose object is a font (row adapt-text-style-fonts). */
 const FONT_KEYS = new Set(['font', 'titleFont', 'bodyFont', 'footerFont']);
 
@@ -1433,6 +1446,9 @@ const POSITIONER_CLASSES = {
  * its row. Another value stays.
  */
 function keyedValue(k, value, owner) {
+  if (k === 'backdropPadding' || (k === 'padding' && ['layout', 'title', 'subtitle', 'tooltip'].includes(owner))) {
+    if (typeof value === 'number' || (value && value.constructor === Object)) return new DartPadding(value);
+  }
   // The object form of a position (row adapt-chart-position-enum): the
   // value of the scale of the one key of the object.
   if (
@@ -1646,6 +1662,10 @@ function dart(v, state, owner) {
     state.modes = true;
     return `InteractionAxis.${v.name}`;
   }
+  if (v instanceof DartPadding) {
+    state.edgeInsets = true;
+    return dartPadding(v.value);
+  }
   if (v instanceof DartFont) {
     const literal = dartFont(v.font);
     state.textStyles = true;
@@ -1829,7 +1849,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats ? '\n' : ''}${state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

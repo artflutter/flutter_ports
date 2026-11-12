@@ -290,7 +290,7 @@ kinds:
     doc: Port-only name for index.d.ts:1735 CoreChartOptions `layout`, the scope `layout`.
     keys:
       autoPadding: bool
-      padding: number | scope Padding
+      padding: edgeInsets
   InteractionOptions:
     doc: index.d.ts:751 InteractionOptions and index.d.ts:1605 CoreInteractionOptions, the scopes `interaction` and `hover`.
     keys:
@@ -895,7 +895,7 @@ kinds:
     doc: The union of index.d.ts:3115 TickOptions, :3179 CartesianTickOptions, the linear ticks of :3376, the logarithmic ticks of :3415, :3466 TimeScaleTickOptions and :3535 RadialTickOptions, the scope `ticks` of a scale.
     keys:
       backdropColor: any
-      backdropPadding: number | scope Padding
+      backdropPadding: edgeInsets
       callback: fn | bool
       display: bool
       color: any
@@ -965,7 +965,7 @@ kinds:
       strokeColor: any
       strokeWidth: number
       font: textStyle
-      padding: number | scope Padding
+      padding: edgeInsets
   TimeScaleTimeOptions:
     doc: index.d.ts:3429 TimeScaleTimeOptions, the scope `time` of a time scale.
     keys:
@@ -1002,7 +1002,7 @@ kinds:
     doc: Port-only name for index.d.ts:3613 RadialLinearScaleOptions `pointLabels`, the point labels of a radial scale.
     keys:
       backdropColor: any
-      backdropPadding: number | scope Padding
+      backdropPadding: edgeInsets
       borderRadius: number | scope BorderRadius
       display: bool | string
       color: any
@@ -1056,7 +1056,7 @@ kinds:
       color: any
       font: textStyle
       position: chartAlign
-      padding: number | scope Padding
+      padding: edgeInsets
       text: string
   TitleOptions:
     doc: index.d.ts:2579 TitleOptions, the scopes `plugins.title` and `plugins.subtitle`.
@@ -1067,7 +1067,7 @@ kinds:
       color: any
       font: textStyle
       fullSize: bool
-      padding: number | scope Padding
+      padding: edgeInsets
       text: string | list
       weight: number  # plugin.title.js:155 and plugin.subtitle.js:42 defaults, read at core.layouts.js:334
       events: list  # read at core.controller.js:1170
@@ -1101,7 +1101,7 @@ kinds:
       footerColor: any
       footerFont: textStyle
       footerAlign: textAlign
-      padding: number | scope Padding
+      padding: edgeInsets
       caretPadding: number
       caretSize: number
       cornerRadius: number | scope BorderRadius

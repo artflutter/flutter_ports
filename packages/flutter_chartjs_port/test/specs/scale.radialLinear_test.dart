@@ -8,6 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show EdgeInsets;
 // The spec reads the registry, the defaults and the charts of
 // flutter_chartjs_port, which does not export lib/src yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -140,7 +141,7 @@ void main() {
 
           'pointLabels': <String, Object?>{
             'backdropColor': undefined,
-            'backdropPadding': 2,
+            'backdropPadding': const EdgeInsets.all(2),
             'color': jsGet(Chart.defaults, 'color'),
             'display': true,
             'font': const ChartTextStyle(fontSize: 10),

@@ -1,6 +1,7 @@
 # Chart.js ADR 0054: The typed internal model
 
 - Status: accepted (2026-10-31). The base step, the five lanes and the close step are on `main`,
+- Superseded in part by [ADR 0123](0123-edge-insets-padding.md): padding stays an `EdgeInsets` through lowering and option storage.
   and their full gates and CI passed. The lead accepted it by the maintainer's rule of 2026-10-31: a
   record is accepted when its code passes the tests, and no record waits for a measurement night.
 - Date: 2026-10-30

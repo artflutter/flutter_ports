@@ -5,6 +5,7 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
@@ -82,7 +83,7 @@ Map<String, Object?> fixture() {
           },
         },
         'layout': <String, Object?>{
-          'padding': 20,
+          'padding': const EdgeInsets.all(20),
         },
         'scales': <String, Object?>{
           'x': <String, Object?>{'display': false},

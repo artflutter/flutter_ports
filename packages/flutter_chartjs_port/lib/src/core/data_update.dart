@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 import 'dart:ui' show Color, Locale;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
@@ -155,6 +156,7 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         node is ScaleAxis ||
         // The chart locale is a value (row adapt-intl-number-format).
         node is Locale ||
+        node.runtimeType == EdgeInsets ||
         node.runtimeType == Color) {
       return true;
     }

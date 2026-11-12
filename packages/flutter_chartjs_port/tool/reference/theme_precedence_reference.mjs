@@ -466,15 +466,21 @@ const pluginExports = await import(PLUGINS.href);
  * a font as a TextStyle (Chart.js ADR 0116).
  */
 function json(value) {
-  return JSON.stringify(value, (key, v) =>
-    v === undefined
+  const owners = new WeakMap();
+  return JSON.stringify(value, function(key, v) {
+    if (v && typeof v === 'object') owners.set(v, key);
+    if (key === 'backdropPadding' || key === 'padding' && ['layout', 'title', 'subtitle', 'tooltip'].includes(owners.get(this))) {
+      const side = (name, axis) => typeof v === 'number' ? v : Number(v?.[name] ?? v?.[axis]) || 0;
+      return {top: side('top', 'y'), right: side('right', 'x'), bottom: side('bottom', 'y'), left: side('left', 'x')};
+    }
+    return v === undefined
       ? '<undefined>'
       : typeof v === 'function'
         ? '<fn>'
         : FONT_OPTION_KEYS.has(key) && v !== null && typeof v === 'object' && !Array.isArray(v)
           ? fontObjectRecord(v)
-          : v,
-  );
+          : v;
+  });
 }
 
 /** The text of the observed [value]. */

@@ -40,13 +40,16 @@ void main() {
           '"tickColor":"<fn>","offset":false},'
           '"border":{"display":true,"dash":[],"dashOffset":0,"width":1},'
           '"title":{"display":false,"text":"",'
-          '"padding":{"top":4,"bottom":4}},'
+          '"padding":{"top":4,"right":0,"bottom":4,"left":0}},'
           '"ticks":{"minRotation":0,"maxRotation":50,"mirror":false,'
           '"textStrokeWidth":0,"textStrokeColor":"","padding":3,'
           '"display":true,"autoSkip":true,"autoSkipPadding":3,'
           '"labelOffset":0,"callback":"<values>","minor":{},"major":{},'
           '"align":"center","crossAlign":"near","showLabelBackdrop":false,'
-          '"backdropColor":"rgba(255, 255, 255, 0.75)","backdropPadding":2}}]';
+          // The JSON fragments are one literal.
+          // ignore: missing_whitespace_between_adjacent_strings
+          '"backdropColor":"rgba(255, 255, 255, 0.75)",'
+          '"backdropPadding":{"top":2,"right":2,"bottom":2,"left":2}}}]';
       const describeScale =
           '["describe","scale",{"_fallback":false,"_scriptable":"<fn>",'
           '"_indexable":"<fn>"}]';

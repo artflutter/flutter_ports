@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
@@ -50,6 +50,12 @@ String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
 
 String _jsonRaw(Object? value) => switch (value) {
   _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
+  final EdgeInsets p => _jsonRaw({
+    'top': p.top,
+    'right': p.right,
+    'bottom': p.bottom,
+    'left': p.left,
+  }),
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
@@ -192,14 +198,15 @@ void main() {
           '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
           '"color":"rgba(0,0,0,0.1)"},"border":{"display":true,"dash":[],'
           '"dashOffset":0,"width":1,"color":"rgba(0,0,0,0.1)"},'
-          '"title":{"display":false,"text":"","padding":{"top":4,"bottom":4},'
+          '"title":{"display":false,"text":"",'
+          '"padding":{"top":4,"right":0,"bottom":4,"left":0},'
           '"color":"#666"},"ticks":{"minRotation":0,"maxRotation":50,'
           '"mirror":false,"textStrokeWidth":0,"textStrokeColor":"",'
           '"padding":3,"display":true,"autoSkip":true,"autoSkipPadding":3,'
           '"labelOffset":0,"callback":"<fn>","minor":{},"major":{},'
           '"align":"center","crossAlign":"near","showLabelBackdrop":false,'
           '"backdropColor":"rgba(255, 255, 255, '
-          '0.75)","backdropPadding":2,'
+          '0.75)","backdropPadding":{"top":2,"right":2,"bottom":2,"left":2},'
           '"color":"#666"}},"scales":{},"showLine":true,'
           '"drawActiveElementsOnTop":true,"animations":{"colors":'
           '{"type":"color","properties":["color","borderColor",'

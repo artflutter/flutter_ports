@@ -8,7 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -117,7 +117,7 @@ void main() {
           'fullSize': true,
           'weight': 2000,
           'font': const ChartTextStyle(fontWeight: native_ui.FontWeight.bold),
-          'padding': 10,
+          'padding': const EdgeInsets.all(10),
           'text': '',
         }),
       );

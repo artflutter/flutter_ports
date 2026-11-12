@@ -64,7 +64,7 @@ import 'dart:core';
 import 'dart:typed_data' show Uint16List;
 import 'dart:ui' show Color, Locale, StrokeJoin;
 
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show nativeOptionScope;
@@ -1602,6 +1602,17 @@ Object? readOption(Object? options, OptionKey key) => switch (options) {
   final OptionScope scope => scope.readKey(key),
   _ => jsGet(options, key.jsName),
 };
+
+/// A complete native padding value, or zero for an absent option.
+// DIVERGES(chartjs): adapt-edge-insets-padding, no scalar/object coercion.
+EdgeInsets paddingOption(Object? value) {
+  if (value is EdgeInsets) return value;
+  assert(
+    value == null || value is Undefined,
+    'A padding option holds an EdgeInsets, not $value.',
+  );
+  return EdgeInsets.zero;
+}
 
 /// The value [value] of the on/off option [key] (Chart.js ADR 0121): the
 /// bool itself, or [absent] when the option is absent (Dart `null` or

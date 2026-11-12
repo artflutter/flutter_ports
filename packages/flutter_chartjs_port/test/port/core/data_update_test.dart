@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -1785,7 +1786,7 @@ void main() {
               'layout': <String, Object?>{
                 'padding': (Object? _) {
                   calls++;
-                  return 1.0;
+                  return const EdgeInsets.all(1);
                 },
               },
             });

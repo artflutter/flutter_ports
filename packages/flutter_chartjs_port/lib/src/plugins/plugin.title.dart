@@ -26,6 +26,7 @@ library;
 
 import 'dart:ui' show FontWeight, TextAlign;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
@@ -37,7 +38,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, toLeftRightCenter;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toFont, toPadding;
+    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsObjectOrNull;
@@ -90,7 +91,7 @@ class Title extends Element implements LayoutItem {
   /// plugin.title.js:16 `ctx`. Dart `null` stands for JS `undefined`.
   CanvasRenderingContext2D? ctx;
 
-  /// plugin.title.js:17 `_padding`, the result of `toPadding` of the last
+  /// plugin.title.js:17 `_padding`, the native padding of the last
   /// [update] that displays the title. Dart `null` stands for JS
   /// `undefined`, the start value. [draw] reads it.
   ///
@@ -98,7 +99,7 @@ class Title extends Element implements LayoutItem {
   /// before the first write. Upstream throws a `TypeError` there, as the
   /// null check of Dart `null` does.
   // ignore: use_late_for_private_fields_and_variables
-  ChartArea? _padding;
+  EdgeInsets? _padding;
 
   /// plugin.title.js:18 `top`. NaN stands for JS `undefined`, the start
   /// value.
@@ -174,8 +175,9 @@ class Title extends Element implements LayoutItem {
 
     final text = opts.text;
     final lineCount = isArray(text) ? (text! as List<Object?>).length : 1;
-    final padding = _padding = toPadding(opts.padding);
-    final textSize = lineCount * toFont(opts.font).lineHeight! + padding.height;
+    final padding = _padding = opts.padding;
+    final textSize =
+        lineCount * toFont(opts.font).lineHeight! + padding.vertical;
 
     if (isHorizontal()) {
       height = textSize;
@@ -405,7 +407,7 @@ final Plugin title = Plugin(supportsDataUpdates: true)
     // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
     ..font = const ChartTextStyle(fontWeight: FontWeight.bold)
     ..fullSize = true
-    ..padding = 10.0
+    ..padding = const EdgeInsets.all(10)
     ..position = ChartPosition.top
     ..text = ''
     // by default greater than legend (1000) to be above

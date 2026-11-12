@@ -628,7 +628,7 @@ const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
   'padding': (
     AxisTitle(padding: EdgeInsets.symmetric(vertical: 4)),
     {
-      'padding': {'top': 4, 'right': 0, 'bottom': 4, 'left': 0},
+      'padding': EdgeInsets.only(left: 0, top: 4, right: 0, bottom: 4),
     },
   ),
   'extra': (AxisTitle(extra: {'strokeWidth': 1}), {'strokeWidth': 1}),
@@ -923,7 +923,7 @@ const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   'padding': (
     ChartTitle(padding: EdgeInsets.only(top: 10, bottom: 30)),
     {
-      'padding': {'top': 10, 'right': 0, 'bottom': 30, 'left': 0},
+      'padding': EdgeInsets.only(left: 0, top: 10, right: 0, bottom: 30),
     },
   ),
   'fullSize': (ChartTitle(fullSize: false), {'fullSize': false}),
@@ -963,7 +963,12 @@ const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
   'padding': (
     ChartTooltip(padding: EdgeInsets.all(10)),
     {
-      'padding': {'top': 10, 'right': 10, 'bottom': 10, 'left': 10},
+      'padding': EdgeInsets.only(
+        left: 10,
+        top: 10,
+        right: 10,
+        bottom: 10,
+      ),
     },
   ),
   'cornerRadius': (ChartTooltip(cornerRadius: 0), {'cornerRadius': 0}),
@@ -1086,7 +1091,12 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(type: .bar, datasets: [], padding: EdgeInsets.all(20)),
     {
       'layout': {
-        'padding': {'top': 20, 'right': 20, 'bottom': 20, 'left': 20},
+        'padding': EdgeInsets.only(
+          left: 20,
+          top: 20,
+          right: 20,
+          bottom: 20,
+        ),
       },
     },
   ),
@@ -1177,7 +1187,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       'maintainAspectRatio': true,
       'aspectRatio': 2,
       'layout': {
-        'padding': {'top': 1, 'right': 1, 'bottom': 1, 'left': 1},
+        'padding': EdgeInsets.only(left: 1, top: 1, right: 1, bottom: 1),
       },
       'plugins': {
         'legend': {'display': true},
@@ -2322,7 +2332,12 @@ void main() {
             'font': _fontValue,
             'align': ChartAlign.end,
             'position': ChartPosition.left,
-            'padding': {'top': 2, 'right': 3, 'bottom': 4, 'left': 1},
+            'padding': const EdgeInsets.only(
+              left: 1,
+              top: 2,
+              right: 3,
+              bottom: 4,
+            ),
             'fullSize': false,
             'weight': 1,
           },
@@ -2338,7 +2353,12 @@ void main() {
             'bodyFont': _fontValue,
             'footerColor': _blueValue,
             'footerFont': _fontValue,
-            'padding': {'top': 8, 'right': 8, 'bottom': 8, 'left': 8},
+            'padding': const EdgeInsets.only(
+              left: 8,
+              top: 8,
+              right: 8,
+              bottom: 8,
+            ),
             'cornerRadius': 3,
             'displayColors': false,
             'callbacks': {

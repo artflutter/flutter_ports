@@ -14,6 +14,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
@@ -175,12 +176,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                 'align': TickAlign.center,
                 'crossAlign': TickCrossAlign.near,
                 'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                'backdropPadding': 2.0,
+                'backdropPadding': EdgeInsets.all(2),
               },
               'title': <String, Object?>{
                 'display': false,
                 'text': '',
-                'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                 'color': '#666',
               },
               'angleLines': <String, Object?>{
@@ -192,7 +193,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               },
               'pointLabels': <String, Object?>{
                 'backdropColor': undefined,
-                'backdropPadding': 2.0,
+                'backdropPadding': EdgeInsets.all(2),
                 'display': true,
                 'font': ChartTextStyle(fontSize: 10),
                 'callback': '<fn>',
@@ -895,12 +896,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -912,7 +913,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -1730,12 +1731,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -1747,7 +1748,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -2560,12 +2561,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -2577,7 +2578,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -3390,12 +3391,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -3407,7 +3408,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -4220,12 +4221,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -4237,7 +4238,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -5093,12 +5094,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -5110,7 +5111,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -6006,12 +6007,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -6023,7 +6024,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -6857,12 +6858,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'align': TickAlign.center,
                     'crossAlign': TickCrossAlign.near,
                     'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                   },
                   'title': <String, Object?>{
                     'display': false,
                     'text': '',
-                    'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                    'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
                   'angleLines': <String, Object?>{
@@ -6874,7 +6875,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   },
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
-                    'backdropPadding': 2.0,
+                    'backdropPadding': EdgeInsets.all(2),
                     'display': true,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
@@ -17224,12 +17225,12 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                 'align': TickAlign.center,
                 'crossAlign': TickCrossAlign.near,
                 'backdropColor': 'rgba(255, 255, 255, 0.75)',
-                'backdropPadding': 2.0,
+                'backdropPadding': EdgeInsets.all(2),
               },
               'title': <String, Object?>{
                 'display': false,
                 'text': '',
-                'padding': <String, Object?>{'top': 4.0, 'bottom': 4.0},
+                'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                 'color': '#666',
               },
               'angleLines': <String, Object?>{
@@ -17243,7 +17244,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                 'display': true,
                 'padding': 8.0,
                 'backdropColor': undefined,
-                'backdropPadding': 2.0,
+                'backdropPadding': EdgeInsets.all(2),
                 'font': ChartTextStyle(fontSize: 10),
                 'callback': '<fn>',
                 'centerPointLabels': false,
