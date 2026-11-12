@@ -3,6 +3,7 @@
 - Status: proposed
 - Date: 2026-10-30
 - Revised: 2026-11-10, items 4 and 5: the helpers of the set-up and the comparison of the fixtures.
+- Revised: 2026-11-12, item 8: the port has no UMD entry (Chart.js ADR 0120).
 - Gate: zoom phase 1, the first ported file. Phase 0 writes the targets of
   `tool/port_sources.yaml` from this ADR.
 - Related: [ADR 0009](../../../../docs/adr/0009-add-on-ports.md) (add-on ports),
@@ -95,10 +96,11 @@ has no default export and no import side effect.
    - the Dart form of the `Chart` methods and of the option types, by
      [Zoom ADR 0003](0003-host-connection.md)
    - `chartjsPluginZoomVersion` and `chartjsPluginZoomPackageVersion`
-8. **The UMD entry.** `src/index.umd.ts` becomes `lib/src/index.umd.dart` with a lazy value: its
-   first read calls `Chart.register` with the plugin and gives the plugin, as `chartUmd` of the
-   Chart.js port (Chart.js ADR 0048 §1). The public library does not export it. An app calls
-   `Chart.register([zoomPlugin])`, as the upstream docs do.
+8. **The UMD entry.** `src/index.umd.ts` has no Dart file. A UMD bundle is a form of JS
+   distribution: Dart has no global object and no import side effects, and the host port has no
+   UMD entry either (Chart.js ADR 0120). An app calls `Chart.register([zoomPlugin])`, as the
+   upstream docs do. The spec `module` reads `zoomPlugin` of the public library, and
+   `test/flutter_test_config.dart` registers it.
 9. **The version import.** `src/plugin.ts:18` imports `version` from `package.json`. The Dart
    plugin reads `chartjsPluginZoomPackageVersion` of `lib/src/upstream.dart`.
 10. **Headers.** Each ported file starts with

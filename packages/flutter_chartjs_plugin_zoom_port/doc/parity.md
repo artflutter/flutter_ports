@@ -29,7 +29,7 @@ seams is `connects` or `zoom-side`. The column "Phase" gives the roadmap phase o
 | `src/gestures.ts` | 395 | `lib/src/gestures.dart` | H1, H3, H4, H6, H7, H8 | 3 | ported |
 | `src/plugin.ts` | 152 | `lib/src/plugin.dart` | H9, H12, H16, H17, H19 | 3 | ported |
 | `src/index.ts` | 38 | `lib/src/index.dart` | H9, H18 | 3 | ported |
-| `src/index.umd.ts` | 6 | `lib/src/index.umd.dart` | H16 | 3 | ported |
+| `src/index.umd.ts` | 6 | — | H16 | 3 | n/a: the UMD bundle (Chart.js ADR 0120, Zoom ADR 0002 item 8); the test set-up registers `zoomPlugin` |
 
 `src/utils.ts` uses H6 only for the types of its event parameters: `keyPressed` and
 `keyNotPressed` read the modifier flags of an event. `src/state.ts` uses H3 and H6 for the types

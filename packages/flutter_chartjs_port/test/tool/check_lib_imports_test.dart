@@ -693,7 +693,6 @@ void main() {
     tree
       ..write('lib/src/core/core.controller.dart', [_ported])
       ..write('lib/src/index.dart', [_ported])
-      ..write('lib/src/index.umd.dart', [_ported])
       ..write('lib/src/controllers/controller.line.dart', [_ported])
       ..write('lib/src/scales/scale.linear.dart', [_ported])
       ..write('lib/src/elements/element.point.dart', [_ported])
@@ -707,7 +706,6 @@ void main() {
         "import '../elements/element.point.dart';",
         "import '../plugins/plugin.legend.dart';",
         "import '../index.dart';",
-        "export 'package:flutter_chartjs_port/src/index.umd.dart';",
       ]);
     String finding(int line, String target) =>
         'error: lib/src/widgets/chart_view.dart:$line: imports $target, but '
@@ -718,7 +716,6 @@ void main() {
       equals(finding(6, 'lib/src/elements/element.point.dart')),
       equals(finding(7, 'lib/src/plugins/plugin.legend.dart')),
       equals(finding(8, 'lib/src/index.dart')),
-      equals(finding(9, 'lib/src/index.umd.dart')),
     ]);
   });
 
