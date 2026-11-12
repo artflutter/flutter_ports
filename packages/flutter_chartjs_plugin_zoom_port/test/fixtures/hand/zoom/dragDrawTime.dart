@@ -5,6 +5,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show DrawTime;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 
 import '../../../flutter_test_config.dart' show triggerMouseEvent;
@@ -43,7 +45,8 @@ Map<String, Object?> fixture() {
                 'backgroundColor': 'yellow',
                 'borderColor': 'black',
                 'borderWidth': 1,
-                'drawTime': 'afterDraw',
+                // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
+                'drawTime': DrawTime.afterDraw,
               },
             },
           },

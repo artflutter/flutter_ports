@@ -63,7 +63,7 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show PanAmount, ScaleRange, ZoomAmount, ZoomChart, zoomPlugin;
+    show Mode, PanAmount, ScaleRange, ZoomAmount, ZoomChart, zoomPlugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: UiCanvasElement, the canvas of a chart with no host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -2007,7 +2007,7 @@ List<ChartBenchCase> chartBenchZoomCasesWith({required bool rangeUpdates}) => [
       scale,
       rangeUpdates: rangeUpdates,
       zoom: () => <String, Object?>{
-        'pan': <String, Object?>{'enabled': true, 'mode': 'x'},
+        'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
       },
       input: _panInput,
     ),

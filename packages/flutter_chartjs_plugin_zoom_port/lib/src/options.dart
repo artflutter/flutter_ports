@@ -3,9 +3,10 @@
 /// The option types of the plugin: the string unions, the callback types and
 /// the option facades (Zoom ADR 0003, item 9).
 ///
-/// - A union of string literals is an extension type over its `String`, with
-///   a constant for each member ([Mode], [ModifierKey], [DrawTime]). A raw
-///   `'xy'` in a Map config is the same value.
+/// - A union of string literals is an enum ([Mode], [ModifierKey],
+///   [DrawTime], row `adapt-zoom-option-enums`): the name of each value is
+///   the upstream string. A raw config holds the enum value too; a name is
+///   a foreign value, and a debug build stops on it.
 /// - [ZoomTrigger] is a value that only the plugin makes: an enum. Its
 ///   `name` is the upstream string.
 /// - The callback contexts are records: they compare by value in a spec. A
@@ -26,20 +27,51 @@ library;
 
 import 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
+import 'package:flutter_chartjs_port/chartjs.dart' show Chart, NativeEvent;
 import 'package:flutter_chartjs_port/helpers.dart' show isNullOrUndef;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsTruthy;
 
 /// options.ts:5 `Mode = 'x' | 'y' | 'xy'`: the zoom or pan directions.
-extension type const Mode(String name) implements String {
+///
+/// Upstream tests a direction with `mode.indexOf(dir)`. Each value here has
+/// the two directions as fields.
+// DIVERGES(zoom): adapt-zoom-option-enums, an enum of the modes.
+enum Mode {
   /// `'x'`: the horizontal scales.
-  static const Mode x = Mode('x');
+  x(usesX: true, usesY: false),
 
   /// `'y'`: the vertical scales.
-  static const Mode y = Mode('y');
+  y(usesX: false, usesY: true),
 
   /// `'xy'`: both directions.
-  static const Mode xy = Mode('xy');
+  xy(usesX: true, usesY: true);
+
+  const Mode({required this.usesX, required this.usesY});
+
+  /// Whether the mode has the direction `x`.
+  final bool usesX;
+
+  /// Whether the mode has the direction `y`.
+  final bool usesY;
+
+  /// Whether the mode has the direction of the scale axis [axis]: `'x'` or
+  /// `'y'` (the `axis` of a scale of the host). Another axis has none.
+  bool hasAxis(String axis) => switch (axis) {
+    'x' => usesX,
+    'y' => usesY,
+    _ => false,
+  };
+
+  /// The value of [value], a `mode`, `scaleMode` or `overScaleMode` option
+  /// or the result of a [ModeFn], or Dart `null` for a value that is not a
+  /// [Mode]. An upstream name is not a value: a debug build stops on it.
+  static Mode? of(Object? value) {
+    assert(
+      value is! String,
+      'A zoom mode takes a Mode, not the name "$value".',
+    );
+    return value is Mode ? value : null;
+  }
 }
 
 /// options.ts:6 `ModeFn`: a function that gives the [Mode] when the user
@@ -47,37 +79,72 @@ extension type const Mode(String name) implements String {
 ///
 /// options.ts:7 `ModeOption = Mode | ModeFn` has no Dart type: the option is
 /// the raw value of the getter.
-typedef ModeFn = String Function(ZoomChartContext context);
+typedef ModeFn = Mode Function(ZoomChartContext context);
 
 /// options.ts:8 `ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'`: a
 /// modifier key of an event.
-extension type const ModifierKey(String name) implements String {
+///
+/// Upstream reads `event[key + 'Key']`. Each value here reads its own field
+/// of the event.
+// DIVERGES(zoom): adapt-zoom-option-enums, an enum of the keys.
+enum ModifierKey {
   /// `'ctrl'`: `ctrlKey`.
-  static const ModifierKey ctrl = ModifierKey('ctrl');
+  ctrl,
 
   /// `'alt'`: `altKey`.
-  static const ModifierKey alt = ModifierKey('alt');
+  alt,
 
   /// `'shift'`: `shiftKey`.
-  static const ModifierKey shift = ModifierKey('shift');
+  shift,
 
   /// `'meta'`: `metaKey`.
-  static const ModifierKey meta = ModifierKey('meta');
+  meta;
+
+  /// Whether this key is down in [event].
+  bool pressedIn(NativeEvent event) => switch (this) {
+    ctrl => event.ctrlKey,
+    alt => event.altKey,
+    shift => event.shiftKey,
+    meta => event.metaKey,
+  };
+
+  /// The value of [value], a `modifierKey` option, or Dart `null` for a
+  /// value that is not a [ModifierKey]. An upstream name is not a value: a
+  /// debug build stops on it.
+  static ModifierKey? of(Object? value) {
+    assert(
+      value is! String,
+      'A modifier key takes a ModifierKey, not the name "$value".',
+    );
+    return value is ModifierKey ? value : null;
+  }
 }
 
 /// options.ts:9 `DrawTime`: the plugin hook that draws the drag rectangle.
-extension type const DrawTime(String name) implements String {
+// DIVERGES(zoom): adapt-zoom-option-enums, an enum of the hooks.
+enum DrawTime {
   /// `'afterDraw'`.
-  static const DrawTime afterDraw = DrawTime('afterDraw');
+  afterDraw,
 
   /// `'afterDatasetsDraw'`.
-  static const DrawTime afterDatasetsDraw = DrawTime('afterDatasetsDraw');
+  afterDatasetsDraw,
 
   /// `'beforeDraw'`.
-  static const DrawTime beforeDraw = DrawTime('beforeDraw');
+  beforeDraw,
 
   /// `'beforeDatasetsDraw'`.
-  static const DrawTime beforeDatasetsDraw = DrawTime('beforeDatasetsDraw');
+  beforeDatasetsDraw;
+
+  /// The value of [value], a `drawTime` option, or Dart `null` for a value
+  /// that is not a [DrawTime]: the plugin then draws in no hook. An upstream
+  /// name is not a value: a debug build stops on it.
+  static DrawTime? of(Object? value) {
+    assert(
+      value is! String,
+      'The drag drawTime takes a DrawTime, not the name "$value".',
+    );
+    return value is DrawTime ? value : null;
+  }
 }
 
 /// options.ts:10 `ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'`: what

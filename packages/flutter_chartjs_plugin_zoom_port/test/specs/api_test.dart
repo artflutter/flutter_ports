@@ -185,7 +185,7 @@ void main() {
       testWidgets('should no-op whan laready at limit', (tester) async {
         final chart = acquireChart(
           _scatter0to100(<String, Object?>{
-            'mode': 'x',
+            'mode': Mode.x,
             'limits': <String, Object?>{
               'x': <String, Object?>{
                 'min': 0,
@@ -478,7 +478,7 @@ void main() {
                   'wheel': <String, Object?>{
                     'enabled': true,
                   },
-                  'mode': 'y',
+                  'mode': Mode.y,
                 },
               },
             },

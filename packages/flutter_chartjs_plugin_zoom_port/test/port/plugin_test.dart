@@ -203,7 +203,7 @@ void main() {
   group('range-only updates (Chart.js ADR 0111)', () {
     /// The zoom options of the flows: each input on.
     Map<String, Object?> zoomOptions({
-      Object? mode = 'xy',
+      Object? mode = Mode.xy,
       Object? onZoomComplete,
     }) => <String, Object?>{
       'zoom': <String, Object?>{
@@ -215,7 +215,7 @@ void main() {
       },
       'pan': <String, Object?>{
         'enabled': true,
-        'mode': 'xy',
+        'mode': Mode.xy,
         'threshold': 0.0,
       },
     };
@@ -317,7 +317,7 @@ void main() {
       final options = zoomOptions(
         mode: (ZoomChartContext context) {
           modes.add(context.chart);
-          return 'x';
+          return Mode.x;
         },
         onZoomComplete: (ZoomChartContext context) =>
             completed.add(context.chart),
@@ -614,7 +614,7 @@ void main() {
       final lines = printed(
         () => acquireChart(
           config(<String, Object?>{
-            'pan': <String, Object?>{'overScaleMode': 'y'},
+            'pan': <String, Object?>{'overScaleMode': Mode.y},
           }),
         ),
       );

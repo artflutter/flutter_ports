@@ -53,7 +53,7 @@ const Color _defaultBorderColor = Color.fromRGBO(225, 225, 225, 1);
 /// The colors pass to the canvas as they are: a CSS string or a `Color`.
 /// `lineWidth` takes the number of the border width (`jsToNumber`): the
 /// value reaches only the pixels (Chart.js ADR 0034).
-void draw(Chart chart, String caller, ZoomPluginOptions options) {
+void draw(Chart chart, DrawTime caller, ZoomPluginOptions options) {
   // options.zoom?.drag
   final zoomOptions = options.zoom;
   final dragOptions = zoomOptions.isNullish
@@ -64,7 +64,10 @@ void draw(Chart chart, String caller, ZoomPluginOptions options) {
   final dragEnd = state.dragEnd;
 
   // dragOptions?.drawTime !== caller
-  final drawTime = dragOptions.isNullish ? undefined : dragOptions.drawTime;
+  // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
+  final drawTime = dragOptions.isNullish
+      ? null
+      : DrawTime.of(dragOptions.drawTime);
   if (drawTime != caller || dragStart == null || dragEnd == null) {
     return;
   }
@@ -187,22 +190,22 @@ void _beforeUpdate(Object chart, UpdateHookArgs _, Object options) {
 
 /// plugin.ts:126 `beforeDatasetsDraw(chart, _args, options)`.
 void _beforeDatasetsDraw(Object chart, CancelableHookArgs _, Object options) {
-  draw(chart as Chart, 'beforeDatasetsDraw', ZoomPluginOptions(options));
+  draw(chart as Chart, DrawTime.beforeDatasetsDraw, ZoomPluginOptions(options));
 }
 
 /// plugin.ts:130 `afterDatasetsDraw(chart, _args, options)`.
 void _afterDatasetsDraw(Object chart, PluginHookArgs _, Object options) {
-  draw(chart as Chart, 'afterDatasetsDraw', ZoomPluginOptions(options));
+  draw(chart as Chart, DrawTime.afterDatasetsDraw, ZoomPluginOptions(options));
 }
 
 /// plugin.ts:134 `beforeDraw(chart, _args, options)`.
 void _beforeDraw(Object chart, CancelableHookArgs _, Object options) {
-  draw(chart as Chart, 'beforeDraw', ZoomPluginOptions(options));
+  draw(chart as Chart, DrawTime.beforeDraw, ZoomPluginOptions(options));
 }
 
 /// plugin.ts:138 `afterDraw(chart, _args, options)`.
 void _afterDraw(Object chart, PluginHookArgs _, Object options) {
-  draw(chart as Chart, 'afterDraw', ZoomPluginOptions(options));
+  draw(chart as Chart, DrawTime.afterDraw, ZoomPluginOptions(options));
 }
 
 /// plugin.ts:142 `stop(chart)`: removes the listeners, the gestures and the

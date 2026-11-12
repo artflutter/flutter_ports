@@ -78,7 +78,7 @@ void main() {
     chart.canvas!.dispatchEvent(start);
     chart.canvas!.dispatchEvent(end);
 
-    final xy = computeDragRect(chart, 'xy', (
+    final xy = computeDragRect(chart, Mode.xy, (
       dragStart: start,
       dragEnd: end,
     ), false);
@@ -91,7 +91,7 @@ void main() {
     expect(xy.zoomX, 1 + (area.width - 50) / area.width);
     expect(xy.zoomY, 1 + (area.height - 30) / area.height);
 
-    final x = computeDragRect(chart, 'x', (
+    final x = computeDragRect(chart, Mode.x, (
       dragStart: start,
       dragEnd: end,
     ), false);
@@ -169,7 +169,10 @@ void main() {
     final rejected = <ZoomEventContext<NativeEvent>>[];
     final chart = _acquireChart(<String, Object?>{
       'zoom': <String, Object?>{
-        'drag': <String, Object?>{'enabled': true, 'modifierKey': 'shift'},
+        'drag': <String, Object?>{
+          'enabled': true,
+          'modifierKey': ModifierKey.shift,
+        },
         'onZoomRejected': rejected.add,
       },
     });

@@ -4,7 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart, ZoomChartContext;
+    show Mode, ModifierKey, ZoomChart, ZoomChartContext;
 import 'package:flutter_chartjs_port/chartjs.dart' show CanvasEventTarget;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -46,7 +46,7 @@ void main() {
               'zoom': <String, Object?>{
                 'pan': <String, Object?>{
                   'enabled': true,
-                  'mode': 'x',
+                  'mode': Mode.x,
                 },
               },
             },
@@ -86,7 +86,7 @@ void main() {
                 },
                 'pan': <String, Object?>{
                   'enabled': true,
-                  'mode': 'x',
+                  'mode': Mode.x,
                 },
               },
             },
@@ -121,7 +121,7 @@ void main() {
               'zoom': <String, Object?>{
                 'pan': <String, Object?>{
                   'enabled': true,
-                  'mode': 'y',
+                  'mode': Mode.y,
                 },
               },
             },
@@ -153,7 +153,7 @@ void main() {
               'zoom': <String, Object?>{
                 'pan': <String, Object?>{
                   'enabled': true,
-                  'mode': 'x',
+                  'mode': Mode.x,
                 },
                 'limits': <String, Object?>{
                   'x': <String, Object?>{
@@ -190,7 +190,7 @@ void main() {
               'zoom': <String, Object?>{
                 'pan': <String, Object?>{
                   'enabled': true,
-                  'mode': 'x',
+                  'mode': Mode.x,
                 },
                 'limits': <String, Object?>{
                   'x': <String, Object?>{
@@ -230,7 +230,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'pan': <String, Object?>{
                     'enabled': true,
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                     'onPanStart': startSpy.call,
                   },
                 },
@@ -263,7 +263,7 @@ void main() {
                   'zoom': <String, Object?>{
                     'pan': <String, Object?>{
                       'enabled': true,
-                      'mode': 'xy',
+                      'mode': Mode.xy,
                       'onPanStart': () => false,
                       'onPanRejected': rejectSpy.call,
                     },
@@ -300,8 +300,8 @@ void main() {
                   'zoom': <String, Object?>{
                     'pan': <String, Object?>{
                       'enabled': true,
-                      'mode': 'xy',
-                      'modifierKey': 'ctrl',
+                      'mode': Mode.xy,
+                      'modifierKey': ModifierKey.ctrl,
                       'onPanRejected': rejectSpy.call,
                     },
                   },
@@ -344,7 +344,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'pan': <String, Object?>{
                     'enabled': true,
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                   },
                 },
               },
@@ -373,7 +373,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'pan': <String, Object?>{
                     'enabled': true,
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                     'onPanComplete': (ZoomChartContext ctx) {
                       expect(ctx.chart.scales['x']!.min, isNot(toBe(1)));
                       done();
@@ -399,7 +399,7 @@ void main() {
               'zoom': <String, Object?>{
                 'pan': <String, Object?>{
                   'enabled': true,
-                  'mode': 'xy',
+                  'mode': Mode.xy,
                   'onPanComplete': completeSpy.call,
                 },
               },
@@ -444,7 +444,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'pan': <String, Object?>{
                     'enabled': true,
-                    'mode': 'xy',
+                    'mode': Mode.xy,
                     'onPanComplete': completeSpy.call,
                   },
                 },

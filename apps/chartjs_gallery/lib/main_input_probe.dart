@@ -10,6 +10,8 @@ import 'dart:math' as math;
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show Mode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -391,11 +393,11 @@ Map<String, Object?> inputProbeConfig(
     },
     'plugins': <String, Object?>{
       'zoom': <String, Object?>{
-        'pan': <String, Object?>{'enabled': true, 'mode': 'xy'},
+        'pan': <String, Object?>{'enabled': true, 'mode': Mode.xy},
         'zoom': <String, Object?>{
           'wheel': <String, Object?>{'enabled': true},
           'pinch': <String, Object?>{'enabled': true},
-          'mode': 'xy',
+          'mode': Mode.xy,
         },
       },
     },
