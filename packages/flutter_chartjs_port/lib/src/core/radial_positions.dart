@@ -1,10 +1,11 @@
 // Original code, not ported from Chart.js: scalar radial loop positions.
 
+import 'dart:math' as math;
+
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, normalizeAngle;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsCos, jsSin;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:meta/meta.dart';
 
@@ -74,8 +75,7 @@ final class RadialPositions {
       (reverse ? max - value : value - min) * scalingFactor;
 
   /// `getPointPosition(index, distance, additionalAngle)`. `Math.cos` and
-  /// `Math.sin` stay [jsCos] and [jsSin] (Chart.js ADR 0045): the position
-  /// reaches an element property and a hit test.
+  /// `Math.sin` are `dart:math` (Chart.js ADR 0122).
   @pragma('vm:prefer-inline')
   ({double x, double y, double angle}) positionAt(
     int index,
@@ -84,8 +84,8 @@ final class RadialPositions {
   ]) {
     final angle = indexAngleAt(index) - halfPi + additionalAngle;
     return (
-      x: jsCos(angle) * distance + xCenter,
-      y: jsSin(angle) * distance + yCenter,
+      x: math.cos(angle) * distance + xCenter,
+      y: math.sin(angle) * distance + yCenter,
       angle: angle,
     );
   }

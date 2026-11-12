@@ -625,6 +625,7 @@ void expectControllerObservations(
   bool parseColors = false,
   bool hits = true,
   Map<String, Object?> Function(Chart chart)? observeExtra,
+  Set<String> hitBorders = const {},
 }) {
   var expectedMap = expected! as Map<String, Object?>;
   final scaleOptions = (expectedMap['scales']! as Map<String, Object?>).values
@@ -716,12 +717,37 @@ void expectControllerObservations(
     reason: '$label: the keys of hits',
   );
   expect(
-    observedHits['items'],
-    equals(hitItems(expectedHits['items'])),
+    _withoutBorders(observedHits['items'], hitBorders, label),
+    equals(
+      _withoutBorders(hitItems(expectedHits['items']), hitBorders, label),
+    ),
     reason:
         '$label: hits (items[point][query], see hits.points and '
         'hits.queries)',
   );
+}
+
+/// [items] (`items[point][query]`) with each border point of [hitBorders]
+/// for [label] (`'<label>:<point>'`) as `'border'`, for all its queries.
+///
+/// A border point lies exactly on the border of two arcs. Upstream finds it
+/// in both with the V8 `Math.atan2`; `dart:math` `atan2` can put it on one
+/// side (Chart.js ADR 0122, row `adapt-dart-math-transcendentals`).
+Object? _withoutBorders(
+  Object? items,
+  Set<String> hitBorders,
+  String label,
+) {
+  if (hitBorders.isEmpty) return items;
+  final rows = [
+    for (final row in items! as List<Object?>) [...row! as List<Object?>],
+  ];
+  for (final key in hitBorders) {
+    final parts = key.split(':');
+    if (parts[0] != label) continue;
+    rows[int.parse(parts[1])] = ['border'];
+  }
+  return rows;
 }
 
 /// Expects the keys of each Map in [observed] to have the order of the keys
@@ -925,6 +951,7 @@ void testControllerChartCases(
   Map<String, Matcher> errorTypes = const {},
   bool hits = true,
   Map<String, Object?> Function(Chart chart)? observeExtra,
+  Map<String, Set<String>> hitBorders = const {},
 }) {
   for (final c in cases) {
     if (theme != null &&
@@ -941,6 +968,7 @@ void testControllerChartCases(
         errorTypes: errorTypes,
         hits: hits,
         observeExtra: observeExtra,
+        hitBorders: hitBorders[c.name] ?? const {},
       );
       if (now == null) {
         await body();
@@ -964,6 +992,7 @@ Future<void> _runControllerCase(
   required Map<String, Matcher> errorTypes,
   required bool hits,
   required Map<String, Object?> Function(Chart chart)? observeExtra,
+  required Set<String> hitBorders,
 }) async {
   final defaultsBefore = theme == null ? null : _snapshot(defaults);
   await _runCaseSteps(
@@ -975,6 +1004,7 @@ Future<void> _runControllerCase(
     errorTypes: errorTypes,
     hits: hits,
     observeExtra: observeExtra,
+    hitBorders: hitBorders,
   );
   if (defaultsBefore != null) {
     expect(
@@ -997,6 +1027,7 @@ Future<void> _runCaseSteps(
   required Map<String, Matcher> errorTypes,
   required bool hits,
   required Map<String, Object?> Function(Chart chart)? observeExtra,
+  required Set<String> hitBorders,
 }) async {
   final expected = c.expected;
   expect(
@@ -1030,6 +1061,7 @@ Future<void> _runCaseSteps(
     parseColors: parseColors,
     hits: hits,
     observeExtra: observeExtra,
+    hitBorders: hitBorders,
   );
 
   final steps = expected['steps']! as List<Object?>;
@@ -1063,6 +1095,7 @@ Future<void> _runCaseSteps(
       parseColors: parseColors,
       hits: hits,
       observeExtra: observeExtra,
+      hitBorders: hitBorders,
     );
   }
 

@@ -780,7 +780,6 @@ and
 The package ports Chart.js **4.6.1** (`chartJsVersion`). The upstream sources are a git
 submodule of the [repository](https://github.com/artflutter/flutter_ports), for reference only.
 Chart.js is MIT-licensed by the Chart.js Contributors. The color parser is a port of
-[@kurkle/color](https://github.com/kurkle/color) 0.3.2 (MIT, Jukka Kurkela). The functions that
-match JavaScript `Math.log10`, `Math.atan2`, `Math.sin` and `Math.cos` are ported from fdlibm 5.3
-(Sun Microsystems, Inc.). All notices are in [LICENSE](LICENSE). This project is not affiliated
+[@kurkle/color](https://github.com/kurkle/color) 0.3.2 (MIT, Jukka Kurkela). All notices are in
+[LICENSE](LICENSE). This project is not affiliated
 with the Chart.js project.

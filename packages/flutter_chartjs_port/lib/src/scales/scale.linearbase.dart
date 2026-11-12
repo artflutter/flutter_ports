@@ -299,7 +299,7 @@ double _relativeLabelSize(
   final horizontal = generationOptions.horizontal;
   final minRotation = generationOptions.minRotation;
   final rad = toRadians(minRotation);
-  final sinOrCos = horizontal ? jsSin(rad) : jsCos(rad);
+  final sinOrCos = horizontal ? math.sin(rad) : math.cos(rad);
   final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
   final length = 0.75 * minSpacing * jsToString(value).length;
   return jsMin(minSpacing / ratio, length);

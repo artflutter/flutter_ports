@@ -46,9 +46,9 @@ const Map<String, String> observationDigests = {
   'bench chart.polarArea (trace)':
       '38fdc14c47bcefe5cdb4c249fd359956fe346e1afdd937f0cfbd6117380f08fb',
   'bench chart.radar (plain)':
-      '65eb5ec77df7ba8e48afe38dab813afb1b54394e538e5f20f6ce93c3421b8a4d',
+      '77c373a1da6fde19aa64b3c1db763511fe0e13cb974101c92f67ae08f55448a9',
   'bench chart.radar (trace)':
-      '969167f9091521bea4861eea4f9f064cbdbbf8022d82ea9428fefa9c89047710',
+      'a798fe9720a2bfa0dde84c3026cb3eb7a57289a5e0802cbad8338666d416e4ab',
   'bench motion.bar (plain)':
       '9ed17de0e133d65b5c30962d8f78e7030ccd882d190c60f06981e15bb75e281f',
   'bench motion.bar (trace)':
@@ -382,13 +382,13 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/stacking/issue-9105.js (trace)':
       '75e29d10d6ad8c8b31b13be3d5e560677703b4a0e5081b4551bb6a230e158811',
   'fixture controller.bar/stacking/logarithmic-strings.js (plain)':
-      'ae9799520709e4939ad026d57daa8d7092a33b8372e9028ddb5b3cdceb88dfe0',
+      'eb81cf75abbf7b663b9d408f829998d1d7dbd9a786687215810219cb7f13100e',
   'fixture controller.bar/stacking/logarithmic-strings.js (trace)':
-      '5f8b318511cdbed378edf2cdd16814a58d9ba5e230ed200a74811d795a3f20a7',
+      'a420a7847c8fada703f55c0b82346157cdc29b732a15cdc1401ab7dbb5d6b5c7',
   'fixture controller.bar/stacking/logarithmic.js (plain)':
-      'ae9799520709e4939ad026d57daa8d7092a33b8372e9028ddb5b3cdceb88dfe0',
+      'eb81cf75abbf7b663b9d408f829998d1d7dbd9a786687215810219cb7f13100e',
   'fixture controller.bar/stacking/logarithmic.js (trace)':
-      '5f8b318511cdbed378edf2cdd16814a58d9ba5e230ed200a74811d795a3f20a7',
+      'a420a7847c8fada703f55c0b82346157cdc29b732a15cdc1401ab7dbb5d6b5c7',
   'fixture controller.bar/stacking/order-default.json (plain)':
       'c5eb8bee37620ae100b1d97ed6291bcdb6ccb5a290c9cee2b102cc9ae341a84f',
   'fixture controller.bar/stacking/order-default.json (trace)':
@@ -1098,17 +1098,17 @@ const Map<String, String> observationDigests = {
   'fixture controller.polarArea/pointLabels/default.js (trace)':
       '230d90dbbabc597f4811d6608bf645684a6143f076f1c5e4934390258af46185',
   'fixture controller.polarArea/pointLabels/displayAuto-180.js (plain)':
-      'c323be58ddbe20f8129e9e17a5c6e1f9905fed009fce43fae1cce7d68eaacd7c',
+      '246ed2d761e1d3865c8a8134639fffb725417f250a0668cc3071ca1e307b6701',
   'fixture controller.polarArea/pointLabels/displayAuto-180.js (trace)':
-      '2283b6b287ae26c2766f60775bedb710c7571ceebbdf63046bbd62a7b89b616a',
+      '90b8f2cc1b33d6fce6ddc9cfef930dbe549635e9f3d99350f945b312d413b5f8',
   'fixture controller.polarArea/pointLabels/displayAuto.js (plain)':
-      '8a7bc08a0abaf302e4680b9ba48d2a59d122a7d084557677d69dc1e11ce66f46',
+      'c108de2d551fac68573b54afb316082501f5acd0c9680f38bd89a4dc67e1bae8',
   'fixture controller.polarArea/pointLabels/displayAuto.js (trace)':
-      '6ab3e7b6d66866a6000145ba1b4587ef8ec55c0fd4d065216cbdc9fea44a5e7b',
+      '810262f4558573d5c8badbd92adc9b85201785102278b9abd20b806f3cb59b09',
   'fixture controller.polarArea/pointLabels/overlapping.js (plain)':
-      'a29941ab19809976869e1180306d4831f914c83622387785b92eb2e0df73485a',
+      '4a7bdd897ef34ca35b9cbc176c3c3e9065b8311ef118733246ac4f759193b3a6',
   'fixture controller.polarArea/pointLabels/overlapping.js (trace)':
-      '5bd785c0b482b65b3799e23eba705c89b0bd234a301b4c46d1b842d55127ff77',
+      'd87d62d7cb810974b48de4a3421ffe442a02f4b30236bf147689e3aab9697393',
   'fixture controller.polarArea/pointLabels/withTitle/bottom-centered-45.js (plain)':
       '6b9a40585745ca850092f3703a87c686081b101b4fc29033fab37e9c39e43e7d',
   'fixture controller.polarArea/pointLabels/withTitle/bottom-centered-45.js (trace)':
@@ -2018,73 +2018,73 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/radar/beforeDraw.js (trace)':
       '44753e26561e0882f88dc81530a9a7ccf9027e3c8ed4fe1c25d2205fb734b6dc',
   'fixture plugin.filler/radar/boundary/end-circular.json (plain)':
-      'a6e085f71fb010d77f6f42261bbdff9b1e989b13c1b9a3d8a9b89c265d48f20c',
+      '25c2512d266bc03ee06d2c8ec6165e8d78d358eec5242897ebe274b55639860f',
   'fixture plugin.filler/radar/boundary/end-circular.json (trace)':
-      '3ff2caa257faabf571fc68630c79798ce7f154a77f8e067644e27145e65bf976',
+      'dc29c7cae527eed930a0b432ec7022e6e3baf628cd03a2273a005bae1cc8e4a0',
   'fixture plugin.filler/radar/boundary/end-span.json (plain)':
-      '2385da7aad66fd48e154ee477db7e4314da113c617b54fceac68a33fe5f87cf3',
+      'f1d2b2f73c530c79abeaa5f4099c84c62682e40838530851e97c3eca855296ae',
   'fixture plugin.filler/radar/boundary/end-span.json (trace)':
-      '19b8ec7b351b3e3fedd1529fce5fa66c540b4abf7519278349aa0dbed0cb51f2',
+      '7e09c9a2fc8a211a987f004834c8622e3511294c7ce8ae5ecf43524061a6dabf',
   'fixture plugin.filler/radar/boundary/end.json (plain)':
-      '2167b51c21619746795b7e2cdc89e1146b801d325a2351b4bc45bb7b248f7222',
+      '3b0745c7eabea229ac66b33ad436e4ec3fffcaa200c942f52aa2c4c4c979d4bc',
   'fixture plugin.filler/radar/boundary/end.json (trace)':
-      'e1b74bc608f5cdb53683493e2bb6c0f897c68d45f637ebdab91d81467a1c5bd1',
+      '1f04fe4e1f370b91f39149e9d225af6c22223390a4e908d7b3452402659c8030',
   'fixture plugin.filler/radar/boundary/origin-circular.json (plain)':
-      'c160c3f72a2c7ac1250d15dd9ee17ceb877e45fc5f29ae6d0d036fdb005595a8',
+      '06acec62693f464ae174cc444858902051c97d5f0b3d1a86afd0c9f2537b03a5',
   'fixture plugin.filler/radar/boundary/origin-circular.json (trace)':
-      '5e2bf435b2e98dfd86da634e1e8254f0767d9ed3e08d5005b3e18988932ed192',
+      '8facb0740d8f66de0fc3259c3d29ea50c15e6b17e3cf756caa99f32648987c9f',
   'fixture plugin.filler/radar/boundary/origin-span.json (plain)':
-      '3ec6fcbe63b0c2b228ed18273f108bc83979b56e231b33fb0c433ed10842a4d9',
+      '14a78f7109c38e9ab386b353fd0f487b2626089fe76c7836f9e2333b90e7add5',
   'fixture plugin.filler/radar/boundary/origin-span.json (trace)':
-      'fa1ba22d463d3e20fd38cc602ff320acd20525a510c139447b9676b949b2ac2f',
+      '7a92127d2a1a1c9ba283e6d9f264bb2187f5d71ed98c7284bbf6055a70848fd0',
   'fixture plugin.filler/radar/boundary/origin-spline-span.json (plain)':
-      '15cd58ad8e012a38b9234e66b74f066fb22b65325aca3c3b4509888db8c966bb',
+      '90cf9bac97ad241c1b0e0ba8c3e94f9fdd0f4066617908085a96688283dc17fa',
   'fixture plugin.filler/radar/boundary/origin-spline-span.json (trace)':
-      '1498cb1589f44ea6ccc26be3d047d1a6e1762bf42bf85a4e592f4800760058f9',
+      'c3fdc9e2cab92686397f86de8da6180e29899c8cd0b6f09299e261d15de62633',
   'fixture plugin.filler/radar/boundary/origin-spline.json (plain)':
-      '8829fb757dc9993a6d952080fae701cf476ff3ec627c0934605489a6d8a59670',
+      '997e61edeaaa5ce92e440733ae8df7c1dd5e4176f381e153d4061904357436f9',
   'fixture plugin.filler/radar/boundary/origin-spline.json (trace)':
-      'f1e54f035a1fab273a6bd3fe5ae17ae45cce6220895334b4a6204237fe92e50e',
+      '0c5340189f383a81f8f4b7435cee7b8c65a5307f2bdc65383138215dbb755764',
   'fixture plugin.filler/radar/boundary/origin.json (plain)':
-      '5562d4f82ba2b4dfc81be978b4d21f591119bfc4d0e7deda23787f9120788ec6',
+      'e5c561a8f2bebca7b8d7dbdf7ca4e9399b071e52a55add7a9f5ef731584185df',
   'fixture plugin.filler/radar/boundary/origin.json (trace)':
-      '46fe8d652924ca224248aa26c37a36ad27dacdd3d498e3690bc1d431898466f8',
+      '77d4d1be1ff73dd935f28a158bf961ec5ff0ac65d904c769cb3fddb69bb4d60a',
   'fixture plugin.filler/radar/boundary/start-circular.json (plain)':
-      'eb4821ad9c58434007ceea9b9757a606cdc3501442ef610e015db0e785ea9787',
+      'd7a20b2bf09cfc3907312ce2364a850db1ce7d7ab5af9eb823695289c0985bfa',
   'fixture plugin.filler/radar/boundary/start-circular.json (trace)':
-      '98f20c5e64ca5db7717a0e1667c6d8111460dae7f97f0988878fb051bc7bbbba',
+      '890ca977595fbd3cf3d38df0d556fee338a4cedb0562c14e2bc328787b01e559',
   'fixture plugin.filler/radar/boundary/start-span.json (plain)':
-      '174b75eeade6f3b8e41ab98c73f23083ce354455e3f28f5337861ce480a253a2',
+      'd2be5fd45fc61a632806e2d581eb22cc0b694065c88be974fa398c64450b76ff',
   'fixture plugin.filler/radar/boundary/start-span.json (trace)':
-      '2c36eb4c31660f25482d9ab314e53726f0c5715a7547860f5e3c0b24bfb8839e',
+      '51974628cf0f9decaf2b8c2ff9a4c1debfc62003b3f82c442ee887af29897969',
   'fixture plugin.filler/radar/boundary/start.json (plain)':
-      '5e28aed05fab2f1a7fbc76223160f28cc999b658bb75f7b9cb48a143f7382c82',
+      '9cfea2ae21b072d790121921af90251c99d9369c50d27e287c91a4bd8f4f5011',
   'fixture plugin.filler/radar/boundary/start.json (trace)':
-      '83a1fe63dc6c98c2a6270c4bd34a091d53b7746ef034138c0c94e1cdd5585afe',
+      '546a28931452410cf146137df5c3a96601618e45d4209c921b318816b2a9b9a4',
   'fixture plugin.filler/radar/dataset/border.json (plain)':
-      '9358faa35689555481aee095123757ba09912edfc7b6811f7955cd73bc558562',
+      '09bbff4085c9c6953b4f9c20571101ec7696b717686a504a5a2f1caaaeec4c86',
   'fixture plugin.filler/radar/dataset/border.json (trace)':
-      '7c37d0ab7a62c004974656478dd09ee5e8486bcce546872cac925b4569dd33b3',
+      '2811d8fcb0e917e82f8922d9db954825e2234386b6567099416643e3e4f94a93',
   'fixture plugin.filler/radar/dataset/default.json (plain)':
-      '0e1595f14b15463f6aa3045090a682a353275fcc86644688bfbfbb0bf81cb329',
+      '738d7e25e35013f3827396bc59a968e7912def2c9cd2bff1f8d026ea4a35650e',
   'fixture plugin.filler/radar/dataset/default.json (trace)':
-      '7b75691cff4cefebab4b542e014c66fb41b99383efe9ac9afaa7e4e1fabda03f',
+      '136b14a0082c28490c68fdae13babdbd010c5fcb2ab1a31bbd25b4f67cf10eb3',
   'fixture plugin.filler/radar/dataset/order.js (plain)':
       '3cdbab5016943608190a958c4f35349e4d20805915a8231346b121a46e2faa64',
   'fixture plugin.filler/radar/dataset/order.js (trace)':
       '7b494badad3e6401083e3a1d9c0563029e32cfad745492b12fae62ac2b4d75b8',
   'fixture plugin.filler/radar/dataset/span.json (plain)':
-      'b28f06ef2afce4a59308e5861efa38f96f0bef7fc62c25595ead61e94f8ee0ed',
+      '5f0808d2addb45b33353ccb154d0a3ef86ed51e611f8bf666eb01cd78f202371',
   'fixture plugin.filler/radar/dataset/span.json (trace)':
-      '63bc013e99dfeb5c4d7b9b4cfe48efdd770b22160d917b0810557458d65dd4bd',
+      'a91066c5c3783d22e3bf15b8c76ccc854fd81048a0662bca9fc580d9fe31eddf',
   'fixture plugin.filler/radar/dataset/spline.json (plain)':
-      '38d193f38bccb58cc8b640f8c5a68dd9c35673b5bf98e4772a8865493d8e327a',
+      '106f1789264ea6465259c3a799ba1a139c338c5d3d2259312c3ce76f96234dd3',
   'fixture plugin.filler/radar/dataset/spline.json (trace)':
-      '8cc7c81b772d495e0cc148ce1839ba50eb8aca53b389626b6b0edaa539d688de',
+      'a338bcc5bd0636e07582c9bd2db205a1362193caa994999bf3a5e918a93bfbba',
   'fixture plugin.filler/radar/value.json (plain)':
-      '2896450ef2a07b6f6e3391d600cd0c8d4a516bed59129ae7c7ac743423394472',
+      '4296d650ee284987f3913ed6db1a79c7e40c13fe359a25d558f0b5b40e7f63e3',
   'fixture plugin.filler/radar/value.json (trace)':
-      '8ed3de6d22acb9d7115c40e6abfc913c4b376cce05d49136da40e49aec531b2e',
+      'c22c4bb064d8a960c4ac4c5253261793b12b23e19d3904dd5b4dc23e66943f8d',
   'fixture plugin.legend/borderRadius/legend-border-radius.js (plain)':
       'd7ce3aa4ac06d6f8b6e08114329379e80955ffc88d15d6d286b60b3793ed2d1a',
   'fixture plugin.legend/borderRadius/legend-border-radius.js (trace)':
@@ -2466,29 +2466,29 @@ const Map<String, String> observationDigests = {
   'fixture scale.linear/tiny-numbers.js (trace)':
       '69b41075ac0df7650e7b2049b18f863464b40b3ed9921948a824deabcc384711',
   'fixture scale.logarithmic/large-range.js (plain)':
-      '09c51330b802e06933197cd132988c8b72fc4f7790ee07d37488b3a44761b24b',
+      '89f546508e0359021cfcefccda713acdc9fd0cdb0c72e659158ffea479ed001a',
   'fixture scale.logarithmic/large-range.js (trace)':
-      '46efb59633e98e593c40b2c7e5635f55f96ad59e26cb38f2159c677e6e5b5971',
+      'bbeb722d37f0d45c8e5e73ab09bf84484c11d43941a35280577bab26e173dc31',
   'fixture scale.logarithmic/large-values-small-range.js (plain)':
-      '2fe581f6fc580e312b85730aeef2dd2bc8edee84c6897f24a9b36041065da8cd',
+      '65e2f73a5bbcdafe666e8c8e6bba85c590f7643f69fdc2f42b14cdb00d617cb7',
   'fixture scale.logarithmic/large-values-small-range.js (trace)':
-      '53589203bb1c8814fcf603e9e88f0a01587976129e8e8fe81f20df70a2760382',
+      '09615aac48e508a9ba9336c3353d2a2f6e80290f2788804dfe838c04ab4bbd58',
   'fixture scale.logarithmic/med-range.js (plain)':
-      'f06acca6217b885b87e079ec775112e054f14d760865bb6156aa0e119f36d34d',
+      '42538203a905362b70eca8ab96886cb97f9321f47ff535c6f153743115bcb647',
   'fixture scale.logarithmic/med-range.js (trace)':
-      '8d2541680a02b1597a38686277c3886810f59d3addb0d53d906e7efbf8d2b1c9',
+      '19e60def739779fd23a2041aff887186e663a9d41cb01d573d69ddcb5a06a100',
   'fixture scale.logarithmic/min-max.js (plain)':
-      '12b7b6fc384471ff5f6cd8289c31fb7ff4d37111b84fe13753e4ad5305713158',
+      '5f194179858d9edad6ed6306443511cc28571acedf37fbc06636bbaa5ed5f136',
   'fixture scale.logarithmic/min-max.js (trace)':
-      '38c66cbd1fcff3c5fb9d55f3a0f519bd80565b6a1805c3f04045aa426f0dfef9',
+      'c265acb5f2c1cc1ec08bf2ad51808e99455c67e94a3c75a7e57f965746b0f99d',
   'fixture scale.logarithmic/null-values.js (plain)':
-      'db66c932fb9688c809df2c92e54ca52f743810e409bd98b6a8287cb41c75b3d0',
+      '1ba7631848a3556c26a6a5976e0322234f2665f8bef31ef73eeda97a150c4224',
   'fixture scale.logarithmic/null-values.js (trace)':
-      '0056454b1e978592cf88525b2f003dbf22641d3116a005ca3baf7ebc214f0e5e',
+      '31795050291ff1b78164aa523ab69d0bf016a2513682f18b25a137dea207c8c6',
   'fixture scale.logarithmic/small-range.js (plain)':
-      'c443dd95bab154b8d118e36841479394cd8d433ee8ba8c1cbeed9eb2f7737a36',
+      '3ef5a2494077104c641cf486171e04a6253435cfa0cf5eec2087fa57fabef373',
   'fixture scale.logarithmic/small-range.js (trace)':
-      'e25216b5c935b1d4bde31752558b31e28c6a2109a613763d54ea7d63401d863d',
+      'befece015116fd55de112fd7c1238d0612de9cad4af7ad60a71e073ab3667220',
   'fixture scale.radialLinear/anglelines-disable.json (plain)':
       'ac63347fb49624e184e2919d347da0b709667e866bd574ce74a6e625221a6a7c',
   'fixture scale.radialLinear/anglelines-disable.json (trace)':

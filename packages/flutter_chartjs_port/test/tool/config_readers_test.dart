@@ -78,11 +78,10 @@ list:
       );
       expect(sources.map((s) => s.header), [
         'Chart.js',
-        'fdlibm',
         '@kurkle/color',
         'chartjs-test-utils',
       ]);
-      expect(sources.map((s) => s.language), ['js', 'c', 'js', 'js']);
+      expect(sources.map((s) => s.language), ['js', 'js', 'js']);
       final chartJs = sources.first;
       expect(
         chartJs.dartPathOf('src/helpers/helpers.math.ts'),
@@ -97,15 +96,7 @@ list:
         'packages/flutter_chartjs_port/test/flutter_test_config.dart',
       );
       expect(
-        sources[1].dartPathOf('e_atan2.c'),
-        'packages/flutter_chartjs_port/lib/src/js/fdlibm_atan.dart',
-      );
-      expect(
-        sources[1].dartPathOf('s_sin.c'),
-        'packages/flutter_chartjs_port/lib/src/js/fdlibm_trig.dart',
-      );
-      expect(
-        sources[3].dartPathOf('src/utils.js'),
+        sources[2].dartPathOf('src/utils.js'),
         'packages/chartjs_test_utils/lib/src/utils.dart',
       );
       // A commit pin links its full commit, a tag pin its tag.
@@ -261,7 +252,7 @@ list:
         host.sources.map(
           (s) => s.versionConstantIn('packages/flutter_chartjs_port'),
         ),
-        ['chartJsVersion', null, null, null],
+        ['chartJsVersion', null, null],
       );
       expect(host.sources.first.repository, 'chartjs/Chart.js');
 
@@ -494,11 +485,6 @@ SPDX-License-Identifier = "SunPro AND (MIT OR ISC)"
         'packages/flutter_chartjs_port/lib/src/helpers/helpers.math.dart',
       );
       expect(ported?.copyrights, contains(contains('Chart.js Contributors')));
-      final fdlibm = annotationFor(
-        annotations,
-        'packages/flutter_chartjs_port/lib/src/js/fdlibm_log.dart',
-      );
-      expect(fdlibm?.licenseIds, containsAll(['SunPro', 'MIT']));
       final harness = annotationFor(
         annotations,
         'packages/chartjs_test_utils/lib/pure.dart',

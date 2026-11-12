@@ -54,8 +54,7 @@ final class JsSemanticsRule {
   final String message;
 }
 
-/// The lexical rules of the check. [mathFunctionSites] and [resolvedSites]
-/// add four more rules.
+/// The lexical rules of the check. [resolvedSites] adds more rules.
 const List<JsSemanticsRule> jsSemanticsRules = [
   JsSemanticsRule(
     '.round()',
@@ -193,29 +192,6 @@ const String _quickSortCollectionSort =
     'this package:collection sort calls quickSortBy, which is not stable; '
     'Array.prototype.sort is (Chart.js ADR 0045, Sort). Use jsSort.';
 
-/// The `dart:math` functions whose results differ from the JS `Math`
-/// builtins of the reference engine. `pow` has its own rule.
-///
-/// `sin` and `cos` are in the list: at a site whose result reaches a
-/// layout, a scale, an element property or a hit test, ported code calls
-/// `jsSin` and `jsCos`. A display-only site keeps `dart:math` with js-ok
-/// (Chart.js ADR 0045).
-const List<String> transcendentalFunctions = [
-  'sin',
-  'cos',
-  'tan',
-  'asin',
-  'acos',
-  'atan',
-  'atan2',
-  'exp',
-  'log',
-];
-
-/// The [transcendentalFunctions] with a display-only exception (Chart.js ADR
-/// 0045).
-const Set<String> _trigFunctions = {'sin', 'cos'};
-
 final RegExp _jsOk = RegExp(r'^//\s*js-ok:(.*)$');
 final RegExp _jsOkCandidate = RegExp(r'^///?\s*js-ok\b');
 
@@ -253,54 +229,7 @@ List<JsSite> lexicalSites(DartSource source) => [
   for (final rule in jsSemanticsRules)
     for (final match in RegExp(rule.pattern).allMatches(source.code))
       JsSite(source.lineOf(match.start), rule.name, rule.message),
-  ...mathFunctionSites(source),
 ];
-
-/// The calls of the [transcendentalFunctions] of `dart:math` in [source].
-///
-/// The rule reads the prefix of each `dart:math` import. Without a prefix,
-/// it flags the bare function names. [resolvedSites] flags the tear-offs.
-List<JsSite> mathFunctionSites(DartSource source) {
-  final names = transcendentalFunctions.join('|');
-  final sites = <JsSite>[];
-  for (final directive in source.directives) {
-    if (directive.keyword != 'import' || directive.uris.first != 'dart:math') {
-      continue;
-    }
-    final prefix = directive.prefix;
-    final qualifier = prefix == null
-        ? ''
-        : '${RegExp.escape(prefix)}\\s*\\.\\s*';
-    final pattern = RegExp('(?<![\\w\$.])$qualifier($names)\\s*\\(');
-    for (final match in pattern.allMatches(source.code)) {
-      final function = match.group(1)!;
-      sites.add(
-        JsSite(
-          source.lineOf(match.start),
-          '${prefix == null ? '' : '$prefix.'}$function(',
-          _mathFunctionMessage(function),
-        ),
-      );
-    }
-  }
-  return sites;
-}
-
-/// The message of a site of the `dart:math` [function], one of the
-/// [transcendentalFunctions].
-String _mathFunctionMessage(String function) =>
-    _trigFunctions.contains(
-      function,
-    )
-    ? 'dart:math $function calls the host C library on the VM and the '
-          'browser on the web. JS Math.$function gives the fdlibm bits of the '
-          'reference engine (Chart.js ADR 0045). Call '
-          'js${function[0].toUpperCase()}${function.substring(1)}, or add '
-          'js-ok when the result reaches only the canvas or an easing value.'
-    : 'dart:math $function calls the host C library on the VM and the '
-          'browser on the web. JS Math.$function gives the fdlibm bits of the '
-          'reference engine (Chart.js ADR 0045). Call the port of the '
-          'function in $jsRuntime, or add js-ok with the reason.';
 
 /// Adds a finding for each site in [sites] of the file [path] that has no
 /// js-ok comment in [source], and a warning for each unused js-ok comment.
@@ -411,10 +340,6 @@ String _normalized(String path) {
 /// template literals give `"12"`. An `int` value is not flagged: ported code
 /// uses an `int` only as a list index, and its text is the JS text.
 ///
-/// The tear-off rule flags each tear-off of the [transcendentalFunctions] of
-/// `dart:math`, with or without the import prefix, for example `math.sin` or
-/// `list.map(cos)`. [mathFunctionSites] flags the calls.
-///
 /// The `max`/`min` rule flags the calls and tear-offs of `dart:math` `max`
 /// and `min` whose type argument is `double` or `num`. Ported code calls
 /// `jsMax` and `jsMin` for them (Chart.js ADR 0045): on dart2wasm, the
@@ -477,7 +402,6 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
   @override
   void visitSimpleIdentifier(SimpleIdentifier node) {
     final element = node.element;
-    _addMathTearOff(node, element);
     if (element is TopLevelFunctionElement &&
         element.library.uri.toString() == 'dart:math' &&
         (element.name == 'max' || element.name == 'min')) {
@@ -513,34 +437,6 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
       }
     }
     super.visitSimpleIdentifier(node);
-  }
-
-  /// Adds a site when [node] tears off one of the [transcendentalFunctions]
-  /// of `dart:math`. A call is a site of [mathFunctionSites]. The name in a
-  /// `show` or `hide` combinator and a doc comment reference are no sites.
-  void _addMathTearOff(SimpleIdentifier node, Element? element) {
-    if (element is! TopLevelFunctionElement ||
-        element.library.uri.toString() != 'dart:math' ||
-        !transcendentalFunctions.contains(element.name)) {
-      return;
-    }
-    final parent = node.parent;
-    if ((parent is MethodInvocation && parent.methodName == node) ||
-        parent is Combinator ||
-        node.thisOrAncestorOfType<CommentReference>() != null) {
-      return;
-    }
-    final prefix = parent is PrefixedIdentifier && parent.identifier == node
-        ? '${parent.prefix.name}.'
-        : '';
-    final function = element.name!;
-    sites.add(
-      JsSite(
-        unit.lineInfo.getLocation(node.offset).lineNumber,
-        '$prefix$function',
-        'The tear-off of ${_mathFunctionMessage(function)}',
-      ),
-    );
   }
 }
 

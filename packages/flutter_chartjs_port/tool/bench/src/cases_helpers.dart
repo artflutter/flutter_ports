@@ -17,7 +17,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
@@ -436,7 +435,7 @@ List<BenchCase> helperCases() => [
   ),
   BenchCase(
     'math',
-    'jsAtan2/10k',
+    'atan2/10k',
     () {
       final ys = <double>[for (var i = 0; i < 10000; i++) math.sin(i * 0.013)];
       final xs = <double>[for (var i = 0; i < 10000; i++) math.cos(i * 0.011)];
@@ -444,7 +443,7 @@ List<BenchCase> helperCases() => [
         var acc = 0.0;
         for (var i = 0; i < n; i++) {
           for (var k = 0; k < 10000; k++) {
-            acc += jsAtan2(ys[k], xs[k]);
+            acc += math.atan2(ys[k], xs[k]);
           }
         }
         return acc.toInt();

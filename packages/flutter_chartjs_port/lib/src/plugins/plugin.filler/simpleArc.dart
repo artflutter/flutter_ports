@@ -70,9 +70,7 @@ final class SimpleArc implements types.SimpleArc {
         ? (point.angle ?? double.nan)
         : double.nan;
     return InterpolatedPoint(
-      // js-ok: display only, the value reaches ctx.lineTo (Chart.js ADR 0034).
       x + math.cos(angle) * radius,
-      // js-ok: display only, the value reaches ctx.lineTo (Chart.js ADR 0034).
       y + math.sin(angle) * radius,
     );
   }

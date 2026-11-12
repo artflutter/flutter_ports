@@ -39,6 +39,8 @@
 /// Thus this library is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -57,8 +59,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show jsCall, jsIsFunction;
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsCos, jsMax, jsMin, jsSin;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -977,8 +978,8 @@ class TimeScale extends Scale {
         isHorizontal() ? ticksOpts.maxRotation : ticksOpts.minRotation,
       ),
     );
-    final cosRotation = jsCos(angle);
-    final sinRotation = jsSin(angle);
+    final cosRotation = math.cos(angle);
+    final sinRotation = math.sin(angle);
     final tickFontSize = resolveTickFontOptions(0).fontSize!;
 
     return (

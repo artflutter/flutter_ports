@@ -43,7 +43,19 @@ const double quarterPi = pi / 4;
 const double twoThirdsPi = pi * 2 / 3;
 
 /// helpers.math.ts:18 `log10 = Math.log10`.
-const double Function(double) log10 = jsLog10;
+///
+/// Dart has no `log10`. `log(x) / ln10` gives `2.9999999999999996` for 1000,
+/// and the floor of a logarithm decides the tick spacing and the decimals of
+/// the labels. Thus an exact power of ten gives its exponent (Chart.js ADR
+/// 0122), as the fallback of earlier Chart.js versions did.
+// DIVERGES(chartjs): adapt-log10-powers, the exponent of a power of ten.
+double log10(double x) {
+  final exponent = math.log(x) * math.log10e;
+  // js-ok: a half is no exponent of a power of ten; the result is the same.
+  final powerOf10 = exponent.roundToDouble();
+  // js-ok: double operands; a power of ten up to 1e22 is exact.
+  return x == math.pow(10.0, powerOf10) ? powerOf10 : exponent;
+}
 
 /// helpers.math.ts:19 `sign = Math.sign`. `double.sign` is `Math.sign`.
 double sign(double x) => x.sign;
@@ -191,8 +203,8 @@ double? decimalPlaces(Object? x) {
   return p;
 }
 
-/// helpers.math.ts:124 `getAngleFromPoint`. `Math.atan2` is [jsAtan2], so
-/// the angle has the bits of V8 on every target.
+/// helpers.math.ts:124 `getAngleFromPoint`. `Math.atan2` is `dart:math`
+/// (Chart.js ADR 0122).
 ///
 /// Gets the angle from vertical upright to the point about a centre.
 ({double angle, double distance}) getAngleFromPoint(
@@ -206,7 +218,7 @@ double? decimalPlaces(Object? x) {
         distanceFromYCenter * distanceFromYCenter,
   );
 
-  var angle = jsAtan2(distanceFromYCenter, distanceFromXCenter);
+  var angle = math.atan2(distanceFromYCenter, distanceFromXCenter);
 
   if (angle < (-0.5 * pi)) {
     // make sure the returned angle is in the range of (-PI/2, 3PI/2]

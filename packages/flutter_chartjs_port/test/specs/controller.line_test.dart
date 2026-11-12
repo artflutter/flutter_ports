@@ -3,6 +3,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:math' as math;
+
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -18,7 +20,6 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show MonotoneCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -1133,7 +1134,7 @@ void main() {
     testWidgets('should render a million points', (tester) async {
       final data = <Object?>[];
       for (var x = 0; x < 1e6; x++) {
-        data.add(<String, Object?>{'x': x, 'y': jsSin(x / 10000)});
+        data.add(<String, Object?>{'x': x, 'y': math.sin(x / 10000)});
       }
       void createChart() {
         acquireChart(<String, Object?>{

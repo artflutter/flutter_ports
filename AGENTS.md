@@ -260,8 +260,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     registers the line set and pumps a `ChartView`.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color`
-    0.3.2 port), and `js/`, the JS runtime: port-only `js_*.dart` files and the fdlibm ports
-    `fdlibm_log.dart`, `fdlibm_atan.dart` and `fdlibm_trig.dart`. `js_webidl.dart` has the WebIDL
+    0.3.2 port), and `js/`, the JS runtime: port-only `js_*.dart` files. `js_webidl.dart` has the WebIDL
     conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
     0020). `js_date.dart`, `js_map.dart` and `js_promise.dart` have `Date.now()`, the `Map`
     iteration and the promise jobs (Chart.js ADRs 0019 and 0045).
@@ -636,7 +635,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       (`cachedStaticValue`, `TickFontCache`). Other cases stay ordinary. The limits stay per index, and each spoke stroke too unless the native context takes the fan
       (Chart.js ADR 0103). `RadarController` takes typed writes in direct modes, and in mode `none`
       a loop over the cached point-none entry with `RadialPositions`
-      (`core/radial_positions.dart`, `jsCos` and `jsSin`). `LineElement.points` keeps its copy for
+      (`core/radial_positions.dart`, `dart:math` `cos` and `sin`). `LineElement.points` keeps its copy for
       the same elements. See `scale.radialLinear_plans_test.dart`.
     - Chart.js ADR 0096 makes the per-item plumbing direct. `readOption` reads a typed scope through
       `OptionScope.readKey`: its own cell without routes, else `lookup`. `Config.data`, `getDataset`
@@ -1306,7 +1305,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0121. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0122. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1387,7 +1386,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       0026. Chart.js ADR 0120 (the port has no UMD entry) is accepted (2026-11-12): its code passes
       the tests. It supersedes Chart.js ADR 0048 §1 and §7. Chart.js ADR 0121 (an on/off option
       holds a bool) is accepted (2026-11-12): its code passes the tests. It supersedes a part of
-      Chart.js ADR 0054 §4. The other ADRs are accepted. Docs
+      Chart.js ADR 0054 §4. Chart.js ADR 0122 (`dart:math` without fdlibm) is accepted
+      (2026-11-12): its code passes the tests. It supersedes parts of Chart.js ADRs 0045 and 0035.
+      The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
@@ -1784,10 +1785,6 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `chartjs-plugin-zoom`, also shallow, at the commit `fb81d331` of `master`, 34 commits after the
     tag `v2.2.0` (Zoom ADR 0001). `packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml`
     gives the commit.
-  - `fdlibm/`: unchanged netlib fdlibm 5.3 files (`e_log.c`, `e_log10.c`, `e_atan2.c`, `s_atan.c`,
-    `s_sin.c`, `s_cos.c`, `k_sin.c`, `k_cos.c`, `e_rem_pio2.c`, `k_rem_pio2.c`, `s_scalbn.c`) for
-    `fdlibm_log.dart`, `fdlibm_atan.dart` and `fdlibm_trig.dart`. fdlibm has no git repository.
-    Thus these files are a committed copy. `REUSE.toml` annotates them.
 - `tool/`: repository scripts (`check_upstream_pin.sh`). `tool/pages/index.html` is the root page of
   the GitHub Pages site, a template that the workflow `pages` fills in.
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
@@ -1870,10 +1867,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   number index: a List gives the item at a whole index in range, else `undefined`), `jsSetIndex`
   (the write `list[index] = value`: a write at the length appends, a write past it or at a negative
   index throws a `RangeError`), `jsLessThan` (the operator `a < b` on raw values: two strings
-  compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036), `jsSin` and
-  `jsCos` (`Math.sin` and `Math.cos` at a protected site: a site that reaches a layout, a scale, an
-  element property, a hit test, a public return value or a discrete decision; a display-only site
-  keeps `dart:math` with `js-ok`, Chart.js ADR 0045), `jsHypot` (`Math.hypot` of two doubles in the
+  compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036), `jsHypot` (`Math.hypot` of two doubles in the
   V8 form: the infinities first, then NaN, then the operands scaled by the larger magnitude;
   `math.sqrt(a * a + b * b)` differs in the last bit for about one pair in three, Chart.js ADR
   0108) and the `undefined` sentinel (Chart.js ADR 0043). `lib/js_semantics.dart` exports 11 of
@@ -1942,8 +1936,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `package:chartjs_test_utils/pure.dart` first in `main()`. Tests of behavior without an upstream
   spec go in `test/port/`. `check:headers` already compares each spec path with the mapped path.
 - The source list `packages/flutter_chartjs_port/tool/port_sources.yaml`: Chart.js ADR 0035. It has
-  one entry for each project that the package ports code from: Chart.js, fdlibm, `@kurkle/color`
-  and chartjs-test-utils. Code from another project also needs an entry, with the license and
+  one entry for each project that the package ports code from: Chart.js, `@kurkle/color` and
+  chartjs-test-utils. Code from another project also needs an entry, with the license and
   holder of the header. A Chart.js bump (rule 6) also updates the Chart.js `version`, `ref` and
   `commit` in the entry. `check:headers` already fails on a
   mismatch.
@@ -1952,10 +1946,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   Chart.js ADR 0035. `check:headers` reads the `LICENSE` of the package that contains
   the file.
 - The reference engine: Chart.js ADR 0045. Take JavaScript reference values only from the
-  darwin-arm64 build of Node.js v24.22.1 (V8 13.6.233.17-node.58, ICU 78.3). The fdlibm data
-  (`log10_reference.dart`, `atan2_reference.dart` and `trig_reference.dart`) are frozen: only
-  the x64 build of Node.js v24.12.0 writes them again. Each test of a data file pins the Node.js
-  version and the architecture of its data. Never take reference values from a browser.
+  darwin-arm64 build of Node.js v24.22.1 (V8 13.6.233.17-node.58, ICU 78.3). Each test of a data
+  file pins the Node.js version and the architecture of its data. Never take reference values
+  from a browser. `sin`, `cos`, `atan2` and `log` are `dart:math` as it is, and `log10` gives the
+  exponent of an exact power of ten (Chart.js ADR 0122): the last bit can differ from V8, and a
+  reference test gives a tolerance there or lists a hit point on an arc border (`hitBorders`).
 - The four theming invariants (specs run unthemed, no forui or Material in `lib/`, no
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
   0050. `check:lib-imports` already fails on the two import invariants.
@@ -2246,10 +2241,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   tooltip, Chart.js ADR 0037 §17). The other generators run on the reference engine of Chart.js
   ADR 0045. `hypot_reference.mjs` (`test/port/js/hypot_reference.dart`, the 3,000 inputs of
   `jsHypot`, Chart.js ADR 0108) is one of them: it does not stop on another engine, and
-  `js_math_hypot_test.dart` pins Node.js v24.22.1 on arm64. `log10_reference.mjs`,
-  `atan2_reference.mjs` and `trig_reference.mjs` stop unless Node.js is the x64 build v24.12.0
-  (Chart.js ADR 0045 §2): on arm64, the log10 and trig data differ in the last bits and in the NaN
-  signs.
+  `js_math_hypot_test.dart` pins Node.js v24.22.1 on arm64.
   `theme_precedence_reference.mjs` also registers the 8 pinned controllers, and adds a JavaScript
   prototype of the hunks H4a-H5 to `plugin.colors.ts` in its prototype run. It and
   `controller_reference.mjs` register the seven plugins of `src/plugins/index.js` by name (a module
@@ -2353,7 +2345,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   (`third_party/kurkle-color/LICENSE.md` at `v0.3.2`). For an Apache-2.0 source, include the full
   license text as a separate component of the package LICENSE, along with its `NOTICE` content,
   and add `LICENSES/Apache-2.0.txt`. For another license, add its notice as a separate component
-  of the package LICENSE. Also add `LICENSES/<SPDX-ID>.txt`. The fdlibm ports did this for SunPro.
+  of the package LICENSE. Also add `LICENSES/<SPDX-ID>.txt`.
   The test font did this for SIL OFL 1.1: the OFL notice is a separate component of
   `packages/chartjs_test_utils/LICENSE`, `LICENSES/OFL-1.1.txt` has the license text, and the last
   table of `REUSE.toml` annotates `packages/chartjs_test_utils/lib/fonts/**`. The font files and

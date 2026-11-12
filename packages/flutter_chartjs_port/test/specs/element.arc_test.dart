@@ -5,8 +5,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsAtan2, jsCos, jsMin, jsSin;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:test/test.dart';
@@ -81,8 +80,8 @@ void main() {
       for (final radius in [5.0, 7.5, 10.0]) {
         for (var angle = 0.0; angle <= 360; angle += 22.5) {
           final rad = angle / 180 * math.pi;
-          final x = jsSin(rad) * radius;
-          final y = jsCos(rad) * radius;
+          final x = math.sin(rad) * radius;
+          final y = math.cos(rad) * radius;
           expect(
             arc.inRange(x, y),
             isTrue,
@@ -95,8 +94,8 @@ void main() {
       for (final radius in [4.0, 11.0]) {
         for (var angle = 0.0; angle <= 360; angle += 22.5) {
           final rad = angle / 180 * math.pi;
-          final x = jsSin(rad) * radius;
-          final y = jsCos(rad) * radius;
+          final x = math.sin(rad) * radius;
+          final y = math.cos(rad) * radius;
           expect(
             arc.inRange(x, y),
             isFalse,
@@ -398,7 +397,7 @@ void main() {
               .first;
           final dx = _arg(lineToCall, 0) - arc.x;
           final dy = _arg(lineToCall, 1) - arc.y;
-          return jsAtan2(dy, dx);
+          return math.atan2(dy, dx);
         }
 
         final proportionalStart = firstOuterArcStartAngle(
@@ -413,7 +412,6 @@ void main() {
         const adjustedAngle =
             (alpha * avgNoSpacingRadius) / (avgNoSpacingRadius + spacing);
         const proportionalSpacingOffset = (alpha - adjustedAngle) / 2;
-        // js-ok: the test compares to 6 decimal places.
         final angularSpacingOffset = math.asin(
           jsMin(1, spacing / avgNoSpacingRadius),
         );
@@ -492,7 +490,7 @@ void main() {
             .toList();
 
         final outerEndAngle = _arg(arcCalls[1], 4);
-        final innerEndAngle = jsAtan2(
+        final innerEndAngle = math.atan2(
           _arg(lineToCalls[0], 1) - arc.y,
           _arg(lineToCalls[0], 0) - arc.x,
         );

@@ -281,6 +281,13 @@ void main() {
           copyReference(c.options)! as AnyObject,
         );
         _actions[c.name]?.call(chart);
+        // A small log range scales the last bit of dart:math log (Chart.js
+        // ADR 0122) to 6e-8 px.
+        if (c.name == 'fixture large values in a small range') {
+          final saved = referenceAbsoluteTolerance;
+          referenceAbsoluteTolerance = 1e-6;
+          addTearDown(() => referenceAbsoluteTolerance = saved);
+        }
         expectScaleChart(chart, c.expected, extra: _logObservations);
       });
     }

@@ -72,15 +72,12 @@ final Map<String, double Function(double t)> effects = {
       : 0.5 * ((t -= 2) * t * t * t * t + 2),
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math cos.
-  // js-ok: display only (Chart.js ADR 0045)
   'easeInSine': (t) => -math.cos(t * halfPi) + 1,
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math sin.
-  // js-ok: display only (Chart.js ADR 0045)
   'easeOutSine': (t) => math.sin(t * halfPi),
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math cos.
-  // js-ok: display only (Chart.js ADR 0045)
   'easeInOutSine': (t) => -0.5 * (math.cos(pi * t) - 1),
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.

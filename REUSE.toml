@@ -9,8 +9,7 @@ SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 # this tree. The 34 D3 directories are git submodules too: third_party/d3, the
 # 30 third_party/d3-* modules, third_party/internmap, third_party/delaunator and
 # third_party/robust-predicates. third_party/echarts, third_party/zrender and
-# third_party/chartjs-plugin-zoom are git submodules too. third_party/fdlibm
-# is a committed copy and has its own table below.
+# third_party/chartjs-plugin-zoom are git submodules too.
 
 [[annotations]]
 path = "**"
@@ -82,27 +81,6 @@ path = [
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2014 The Flutter Authors"
 SPDX-License-Identifier = "BSD-3-Clause"
-
-# fdlibm 5.3 e_log.c, e_log10.c, s_atan.c, e_atan2.c, s_sin.c, s_cos.c, k_sin.c, k_cos.c,
-# e_rem_pio2.c, k_rem_pio2.c and s_scalbn.c from netlib, kept unchanged as the reference for
-# the lib/src/js/fdlibm_*.dart ports (Chart.js ADRs 0035 and 0045). They carry a 1993 notice.
-[[annotations]]
-path = "third_party/fdlibm/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "1993 Sun Microsystems, Inc."
-SPDX-License-Identifier = "SunPro"
-
-# The Dart ports of fdlibm. They are not derived from Chart.js, so this table
-# replaces the package table above for these files.
-[[annotations]]
-path = [
-  "packages/flutter_chartjs_port/lib/src/js/fdlibm_log.dart",
-  "packages/flutter_chartjs_port/lib/src/js/fdlibm_atan.dart",
-  "packages/flutter_chartjs_port/lib/src/js/fdlibm_trig.dart",
-]
-precedence = "aggregate"
-SPDX-FileCopyrightText = ["1993 Sun Microsystems, Inc.", "2026 Vasiliy Ditsyak"]
-SPDX-License-Identifier = "SunPro AND MIT"
 
 # The Dart port of @kurkle/color 0.3.2 (MIT) and of its test/index.js. They
 # are not derived from Chart.js, so this table replaces the package table

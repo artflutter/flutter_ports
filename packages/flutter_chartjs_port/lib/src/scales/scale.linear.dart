@@ -24,6 +24,8 @@
 /// Thus this library is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
@@ -33,8 +35,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show toRadians;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsCos, jsMin, jsSin;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope, TickOptionsScope;
@@ -139,7 +140,7 @@ class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
     final horizontal = isHorizontal();
     final length = horizontal ? width : height;
     final minRotation = toRadians(jsToNumber(options.ticks.minRotation));
-    final sinOrCos = horizontal ? jsSin(minRotation) : jsCos(minRotation);
+    final sinOrCos = horizontal ? math.sin(minRotation) : math.cos(minRotation);
     final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
     final tickFont = resolveTickFontOptions(0);
     return (length / jsMin(40, jsToNumber(tickFont.lineHeight) / ratio))
