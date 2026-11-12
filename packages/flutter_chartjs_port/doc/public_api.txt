@@ -43,6 +43,7 @@ Defaults
 DoughnutController
 Element
 EventHookArgs
+FillerDrawTime
 FlutterPlatform
 FontSpec
 HTMLCanvasElement
@@ -221,6 +222,7 @@ DoughnutController
 DoughnutDataset
 EndAngleAnimation
 EventHookArgs
+FillerDrawTime
 FlutterPlatform
 FontSpec
 HTMLCanvasElement

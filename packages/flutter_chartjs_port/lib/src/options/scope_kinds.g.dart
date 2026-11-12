@@ -3460,7 +3460,7 @@ enum ScopeKind {
       case ScopeKind.fillerOptions:
         switch (key) {
           case OptionKey.drawTime:
-            return 4;
+            return 8388608;
           case OptionKey.propagate:
             return 2;
           case OptionKey.events:

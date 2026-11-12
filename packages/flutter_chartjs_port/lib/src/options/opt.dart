@@ -38,6 +38,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/align.dart'
@@ -240,6 +242,10 @@ abstract final class ShapeBits {
   /// `arcSpacingMode`: an [ArcSpacingMode], the value of `spacingMode`.
   static const int arcSpacingMode = 4194304;
 
+  /// `fillerDrawTime`: a [FillerDrawTime], the value of `drawTime` of the
+  /// filler.
+  static const int fillerDrawTime = 8388608;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -258,7 +264,8 @@ abstract final class ShapeBits {
       tooltipXAlign |
       tooltipYAlign |
       arcBorderAlign |
-      arcSpacingMode;
+      arcSpacingMode |
+      fillerDrawTime;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -350,6 +357,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.tooltipYAlign => classifyTyped<TooltipYAlign>(raw),
   ShapeBits.arcBorderAlign => classifyTyped<ArcBorderAlign>(raw),
   ShapeBits.arcSpacingMode => classifyTyped<ArcSpacingMode>(raw),
+  ShapeBits.fillerDrawTime => classifyTyped<FillerDrawTime>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

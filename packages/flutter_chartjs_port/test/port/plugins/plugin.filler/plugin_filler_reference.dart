@@ -16,6 +16,7 @@
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 
 /// The Node.js version that generated the data.
@@ -25160,7 +25161,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
-          'filler': <String, Object?>{'drawTime': 'beforeDraw'},
+          'filler': <String, Object?>{'drawTime': FillerDrawTime.beforeDraw},
           'legend': false,
           'subtitle': false,
           'title': false,
@@ -26459,7 +26460,9 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
-          'filler': <String, Object?>{'drawTime': 'beforeDatasetsDraw'},
+          'filler': <String, Object?>{
+            'drawTime': FillerDrawTime.beforeDatasetsDraw,
+          },
           'legend': false,
           'subtitle': false,
           'title': false,

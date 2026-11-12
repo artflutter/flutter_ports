@@ -34,7 +34,8 @@
 # `ticks.crossAlign`; a keyword is a foreign value), `chartAlign` (a `ChartAlign`, the `align` of a
 # box; a keyword is a foreign value), `tooltipXAlign` and `tooltipYAlign` (the `xAlign` and
 # `yAlign` of the tooltip; a keyword is a foreign value), `arcBorderAlign` and `arcSpacingMode` (the `borderAlign`
-# and `spacingMode` of an arc; a keyword is a foreign value), `any` (any JS value: a color, a point
+# and `spacingMode` of an arc; a keyword is a foreign value), `fillerDrawTime` (a `FillerDrawTime`, the
+# `drawTime` of the filler; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -1134,7 +1135,7 @@ kinds:
   FillerOptions:
     doc: index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
     keys:
-      drawTime: string
+      drawTime: fillerDrawTime
       propagate: bool
       events: list  # read at core.controller.js:1170
   DecimationOptions:

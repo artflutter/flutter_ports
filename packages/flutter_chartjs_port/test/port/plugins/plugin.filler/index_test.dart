@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsLessThan;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
@@ -230,7 +232,7 @@ void main() {
       final defaults = filler['defaults']! as JsObjectFace;
       expect(jsObjectKeys(defaults), ['propagate', 'drawTime']);
       expect(defaults['propagate'], isTrue);
-      expect(defaults['drawTime'], 'beforeDatasetDraw');
+      expect(defaults['drawTime'], FillerDrawTime.beforeDatasetDraw);
     });
   });
 }

@@ -33,6 +33,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show FillerOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart'
     show drawfill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
@@ -147,7 +149,10 @@ void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
 /// type test: the port writes only Dart `null` and a [FillerSource], and an
 /// absent property reads `undefined` (Chart.js ADR 0040, section 6).
 void _beforeDraw(types.Chart chart, Object _, Object options) {
-  final draw = FillerOptions(options).drawTime == 'beforeDraw';
+  // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
+  final draw =
+      FillerDrawTime.of(FillerOptions(options).drawTime) ==
+      FillerDrawTime.beforeDraw;
   final metasets = chart.getSortedVisibleDatasetMetas();
   final area = chart.chartArea;
   for (var i = metasets.length - 1; i >= 0; --i) {
@@ -165,7 +170,9 @@ void _beforeDraw(types.Chart chart, Object _, Object options) {
 
 /// index.js:68 `beforeDatasetsDraw(chart, _args, options)`.
 void _beforeDatasetsDraw(types.Chart chart, Object _, Object options) {
-  if (FillerOptions(options).drawTime != 'beforeDatasetsDraw') {
+  // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
+  if (FillerDrawTime.of(FillerOptions(options).drawTime) !=
+      FillerDrawTime.beforeDatasetsDraw) {
     return;
   }
 
@@ -190,8 +197,10 @@ void _beforeDatasetDraw(
 ) {
   final source = (args.meta! as types.ChartMetaFiller).$filler;
 
+  // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
   if (!shouldApplyFill(source) ||
-      FillerOptions(options).drawTime != 'beforeDatasetDraw') {
+      FillerDrawTime.of(FillerOptions(options).drawTime) !=
+          FillerDrawTime.beforeDatasetDraw) {
     return;
   }
 
@@ -213,4 +222,5 @@ final Plugin filler = Plugin(supportsDataUpdates: true)
   // 0054 §3).
   ..defaults = (FillerOptionsScope()
     ..propagate = true
-    ..drawTime = 'beforeDatasetDraw');
+    // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
+    ..drawTime = FillerDrawTime.beforeDatasetDraw);

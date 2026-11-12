@@ -15,6 +15,8 @@ import 'package:chartjs_test_utils/src/native_easing.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
@@ -136,6 +138,10 @@ void nativeFixtureColors(Object? config) {
         value[key] = _enumValue(ArcBorderAlign.values, value[key]);
       } else if (key == 'spacingMode') {
         value[key] = _enumValue(ArcSpacingMode.values, value[key]);
+      } else if (key == 'drawTime' && owner == 'filler') {
+        // The filler draw time takes its enum (row
+        // adapt-filler-draw-time-enum).
+        value[key] = _enumValue(FillerDrawTime.values, value[key]);
       } else if (_scaleEnumValues(key, owner) case final values?) {
         // A scale option takes its enum, not the upstream keyword (row
         // adapt-scale-option-enums).

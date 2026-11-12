@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         TooltipOptionsScope,
         TransitionOptionsScope,
         TransitionsSpecScope;
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/theme/css.dart' show fontScopeOf;
@@ -691,27 +693,36 @@ InteractionOptionsScope lowerInteraction(ChartInteraction interaction) {
 @immutable
 final class ChartFiller with Diagnosticable {
   /// The filler options.
-  const ChartFiller({this.propagate, this.extra});
+  const ChartFiller({this.propagate, this.drawTime, this.extra});
 
   /// Whether the fill of a dataset whose target dataset is hidden goes on
   /// to the next visible target: `propagate`. The default is `true`. With
   /// `false`, the dataset has no fill when its target is hidden.
   final bool? propagate;
 
+  /// The hook in which the filler fills the areas: `drawTime`. The default
+  /// is [FillerDrawTime.beforeDatasetDraw], just before each dataset draws.
+  final FillerDrawTime? drawTime;
+
   /// The Chart.js filler options that have no parameter, for example
-  /// `{'drawTime': 'beforeDraw'}`. The rules of [ChartLegend.extra] apply.
+  /// `{'events': ['click']}`. The rules of [ChartLegend.extra] apply.
   final Map<String, Object?>? extra;
 
   /// A copy of these filler options with the given parameters. A parameter
   /// that is `null` keeps its value.
-  ChartFiller copyWith({bool? propagate, Map<String, Object?>? extra}) =>
-      ChartFiller(
-        propagate: propagate ?? this.propagate,
-        extra: extra ?? this.extra,
-      );
+  ChartFiller copyWith({
+    bool? propagate,
+    FillerDrawTime? drawTime,
+    Map<String, Object?>? extra,
+  }) => ChartFiller(
+    propagate: propagate ?? this.propagate,
+    drawTime: drawTime ?? this.drawTime,
+    extra: extra ?? this.extra,
+  );
 
   List<TypedProperty> get _props => [
     ('propagate', propagate),
+    ('drawTime', drawTime),
     ('extra', byEntries(extra)),
   ];
 
@@ -735,6 +746,7 @@ final class ChartFiller with Diagnosticable {
 FillerOptionsScope lowerFiller(ChartFiller filler) {
   final scope = FillerOptionsScope();
   put(scope, OptionKey.propagate, filler.propagate);
+  put(scope, OptionKey.drawTime, filler.drawTime);
   return mergeExtra(scope, filler.extra);
 }
 
