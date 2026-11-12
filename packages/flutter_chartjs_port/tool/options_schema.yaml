@@ -32,7 +32,8 @@
 # the decimation `algorithm`; a name is a foreign value), `scaleBounds`, `tickSource`, `tickAlign` and `tickCrossAlign`
 # (the enums of `scale_option_enums.dart`, the values of `bounds`, `ticks.source`, `ticks.align` and
 # `ticks.crossAlign`; a keyword is a foreign value), `chartAlign` (a `ChartAlign`, the `align` of a
-# box; a keyword is a foreign value), `any` (any JS value: a color, a point
+# box; a keyword is a foreign value), `tooltipXAlign` and `tooltipYAlign` (the `xAlign` and
+# `yAlign` of the tooltip; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -1070,8 +1071,8 @@ kinds:
       enabled: bool
       external: fn
       position: tooltipPositioner
-      xAlign: string
-      yAlign: string
+      xAlign: tooltipXAlign
+      yAlign: tooltipYAlign
       itemSort: fn
       filter: fn
       backgroundColor: any

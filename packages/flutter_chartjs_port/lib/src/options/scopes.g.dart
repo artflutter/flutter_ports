@@ -27,7 +27,8 @@ import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show ChartAlign, TooltipXAlign, TooltipYAlign;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
@@ -21803,13 +21804,13 @@ base class TooltipOptionsScope extends OptionScope {
   set position(TooltipPositioner value) =>
       store(OptionKey.position, OptValue<TooltipPositioner>(value));
 
-  Opt<String>? _xAlign;
+  Opt<TooltipXAlign>? _xAlign;
 
   /// The cell of `xAlign`, or Dart `null` when absent.
-  Opt<String>? get xAlignCell => _xAlign;
+  Opt<TooltipXAlign>? get xAlignCell => _xAlign;
 
   /// Stores the cell of `xAlign`. Dart `null` deletes the key.
-  set xAlignCell(Opt<String>? cell) {
+  set xAlignCell(Opt<TooltipXAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.xAlign);
     } else {
@@ -21818,15 +21819,16 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `xAlign`.
-  set xAlign(String value) => store(OptionKey.xAlign, OptValue<String>(value));
+  set xAlign(TooltipXAlign value) =>
+      store(OptionKey.xAlign, OptValue<TooltipXAlign>(value));
 
-  Opt<String>? _yAlign;
+  Opt<TooltipYAlign>? _yAlign;
 
   /// The cell of `yAlign`, or Dart `null` when absent.
-  Opt<String>? get yAlignCell => _yAlign;
+  Opt<TooltipYAlign>? get yAlignCell => _yAlign;
 
   /// Stores the cell of `yAlign`. Dart `null` deletes the key.
-  set yAlignCell(Opt<String>? cell) {
+  set yAlignCell(Opt<TooltipYAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.yAlign);
     } else {
@@ -21835,7 +21837,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `yAlign`.
-  set yAlign(String value) => store(OptionKey.yAlign, OptValue<String>(value));
+  set yAlign(TooltipYAlign value) =>
+      store(OptionKey.yAlign, OptValue<TooltipYAlign>(value));
 
   Opt<Object>? _itemSort;
 
@@ -22603,9 +22606,9 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.position:
         _position = fitCell(cell, classifyTyped<TooltipPositioner>);
       case OptionKey.xAlign:
-        _xAlign = fitCell(cell, classifyString);
+        _xAlign = fitCell(cell, classifyTyped<TooltipXAlign>);
       case OptionKey.yAlign:
-        _yAlign = fitCell(cell, classifyString);
+        _yAlign = fitCell(cell, classifyTyped<TooltipYAlign>);
       case OptionKey.itemSort:
         _itemSort = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.filter:
@@ -22755,9 +22758,9 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.position:
         return classifyTyped<TooltipPositioner>(raw);
       case OptionKey.xAlign:
-        return classifyString(raw);
+        return classifyTyped<TooltipXAlign>(raw);
       case OptionKey.yAlign:
-        return classifyString(raw);
+        return classifyTyped<TooltipYAlign>(raw);
       case OptionKey.itemSort:
         return classifyUnion(raw, 8);
       case OptionKey.filter:

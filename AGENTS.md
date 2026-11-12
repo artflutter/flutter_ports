@@ -823,6 +823,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       helpers `alignStartEnd` and `toLeftRightCenter` take a `ChartAlign?`. The typed API takes
       the same enum; `values.dart` has no `ChartAlign`. The text align of the legend labels stays
       text.
+    - The `xAlign` and `yAlign` of the tooltip (the options, the model and `TooltipPosition`) hold
+      the enums `TooltipXAlign` and `TooltipYAlign` of `lib/src/types/align.dart` (row
+      `adapt-tooltip-align-enums`); the typed API has `ChartTooltip.xAlign` and `yAlign`. The
+      text aligns of the tooltip (`titleAlign`, `bodyAlign`, `footerAlign`) stay text.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
       is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream

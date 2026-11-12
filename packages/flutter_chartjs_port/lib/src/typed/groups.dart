@@ -45,7 +45,8 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:meta/meta.dart' show internal;
 
 /// The legend: the options of the legend plugin, `options.plugins.legend`
@@ -364,6 +365,8 @@ final class ChartTooltip with Diagnosticable {
     this.intersect,
     this.axis,
     this.position,
+    this.xAlign,
+    this.yAlign,
     this.backgroundColor,
     this.titleColor,
     this.titleFont,
@@ -401,6 +404,14 @@ final class ChartTooltip with Diagnosticable {
   /// puts the tooltip at the item nearest to the pointer. An app gives its
   /// own positioner as a subclass of [TooltipPositioner].
   final TooltipPositioner? position;
+
+  /// The place of the tooltip box beside its caret along x: `xAlign`. The
+  /// default is the place that the tooltip finds for its size.
+  final TooltipXAlign? xAlign;
+
+  /// The place of the tooltip box beside its caret along y: `yAlign`. The
+  /// default is the place that the tooltip finds for its size.
+  final TooltipYAlign? yAlign;
 
   /// The color of the tooltip box: `backgroundColor`.
   final Color? backgroundColor;
@@ -462,6 +473,8 @@ final class ChartTooltip with Diagnosticable {
     bool? intersect,
     InteractionAxis? axis,
     TooltipPositioner? position,
+    TooltipXAlign? xAlign,
+    TooltipYAlign? yAlign,
     Color? backgroundColor,
     Color? titleColor,
     TextStyle? titleFont,
@@ -482,6 +495,8 @@ final class ChartTooltip with Diagnosticable {
     intersect: intersect ?? this.intersect,
     axis: axis ?? this.axis,
     position: position ?? this.position,
+    xAlign: xAlign ?? this.xAlign,
+    yAlign: yAlign ?? this.yAlign,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     titleColor: titleColor ?? this.titleColor,
     titleFont: titleFont ?? this.titleFont,
@@ -504,6 +519,8 @@ final class ChartTooltip with Diagnosticable {
     ('intersect', intersect),
     ('axis', axis),
     ('position', position),
+    ('xAlign', xAlign),
+    ('yAlign', yAlign),
     ('backgroundColor', backgroundColor),
     ('titleColor', titleColor),
     ('titleFont', titleFont),
@@ -564,6 +581,8 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.intersect, tooltip.intersect);
   put(scope, OptionKey.axis, tooltip.axis);
   put(scope, OptionKey.position, tooltip.position);
+  put(scope, OptionKey.xAlign, tooltip.xAlign);
+  put(scope, OptionKey.yAlign, tooltip.yAlign);
   put(scope, OptionKey.backgroundColor, colorValue(tooltip.backgroundColor));
   put(scope, OptionKey.titleColor, colorValue(tooltip.titleColor));
   put(scope, OptionKey.titleFont, fontScopeOf(tooltip.titleFont));

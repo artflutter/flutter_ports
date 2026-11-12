@@ -191,8 +191,8 @@ final class FollowYPositioner extends TooltipPositioner {
     return TooltipPosition()
       ..x = element.x - 20 - _radius
       ..y = (_pointer(eventPosition)?.dy ?? element.y) - 20
-      ..xAlign = 'right'
-      ..yAlign = 'bottom';
+      ..xAlign = TooltipXAlign.right
+      ..yAlign = TooltipYAlign.bottom;
   }
 }
 
@@ -213,8 +213,8 @@ final class AtPointerPositioner extends TooltipPositioner {
     return TooltipPosition()
       ..x = pointer.dx - _radius
       ..y = pointer.dy
-      ..xAlign = 'right'
-      ..yAlign = 'bottom';
+      ..xAlign = TooltipXAlign.right
+      ..yAlign = TooltipYAlign.bottom;
   }
 }
 
@@ -234,8 +234,8 @@ final class TopLeftPositioner extends TooltipPositioner {
     return TooltipPosition()
       ..x = 0
       ..y = 0
-      ..xAlign = 'left'
-      ..yAlign = 'top';
+      ..xAlign = TooltipXAlign.left
+      ..yAlign = TooltipYAlign.top;
   }
 }
 

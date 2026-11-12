@@ -23,6 +23,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPosition, TooltipPositioner;
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -341,8 +343,8 @@ void main() {
             'bottom': 6,
           }),
         );
-        expect(tooltip.xAlign, 'left');
-        expect(tooltip.yAlign, 'center');
+        expect(tooltip.xAlign, TooltipXAlign.left);
+        expect(tooltip.yAlign, TooltipYAlign.center);
         expect(
           jsGet(options, 'bodyColor'),
           const native_ui.Color.fromRGBO(255, 255, 255, 1),
@@ -498,8 +500,8 @@ void main() {
       final options = tooltip.options!;
 
       expect(jsGet(options, 'padding'), 6);
-      expect(tooltip.xAlign, 'left');
-      expect(tooltip.yAlign, 'center');
+      expect(tooltip.xAlign, TooltipXAlign.left);
+      expect(tooltip.yAlign, TooltipYAlign.center);
 
       expect(
         JasmineOptions(jsGet(options, 'bodyFont')! as JsObjectFace),
@@ -637,8 +639,8 @@ void main() {
       final options = tooltip.options!;
 
       expect(jsGet(options, 'padding'), 6);
-      expect(tooltip.xAlign, 'left');
-      expect(tooltip.yAlign, 'center');
+      expect(tooltip.xAlign, TooltipXAlign.left);
+      expect(tooltip.yAlign, TooltipYAlign.center);
 
       expect(
         JasmineOptions(jsGet(options, 'bodyFont')! as JsObjectFace),
@@ -818,8 +820,8 @@ void main() {
         tooltip,
         objectContaining(<String, Object?>{
           // Positioning
-          'xAlign': 'left',
-          'yAlign': 'center',
+          'xAlign': TooltipXAlign.left,
+          'yAlign': TooltipYAlign.center,
 
           // Text
           'title': <Object?>['Point 2'],
@@ -861,8 +863,8 @@ void main() {
         tooltip,
         objectContaining(<String, Object?>{
           // Positioning
-          'xAlign': 'left',
-          'yAlign': 'center',
+          'xAlign': TooltipXAlign.left,
+          'yAlign': TooltipYAlign.center,
 
           // Text
           'title': <Object?>['Point 2'],
@@ -906,8 +908,8 @@ void main() {
         tooltip,
         objectContaining(<String, Object?>{
           // Positioning
-          'xAlign': 'left',
-          'yAlign': 'center',
+          'xAlign': TooltipXAlign.left,
+          'yAlign': TooltipYAlign.center,
 
           // Text
           'title': <Object?>['Point 2'],
@@ -969,8 +971,8 @@ void main() {
         tooltip,
         objectContaining(<String, Object?>{
           // Positioning
-          'xAlign': 'left',
-          'yAlign': 'center',
+          'xAlign': TooltipXAlign.left,
+          'yAlign': TooltipYAlign.center,
 
           // Text
           'title': <Object?>['Point 2'],
@@ -1434,8 +1436,8 @@ void main() {
       final options = tooltip.options!;
 
       expect(jsGet(options, 'padding'), 6);
-      expect(tooltip.xAlign, 'center');
-      expect(tooltip.yAlign, 'top');
+      expect(tooltip.xAlign, TooltipXAlign.center);
+      expect(tooltip.yAlign, TooltipYAlign.top);
 
       expect(
         jsGet(options, 'bodyFont')! as JsObjectFace,
@@ -1559,8 +1561,8 @@ void main() {
           'y': 100,
           'width': 100,
           'height': 100,
-          'xAlign': 'left',
-          'yAlign': 'top',
+          'xAlign': TooltipXAlign.left,
+          'yAlign': TooltipYAlign.top,
 
           'options': <String, Object?>{
             'setContext': () => model['options'],

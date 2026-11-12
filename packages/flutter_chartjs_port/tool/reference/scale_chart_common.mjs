@@ -1265,6 +1265,14 @@ function keyedValue(k, value, owner) {
   ) {
     return new DartEnum('ChartAlign', value);
   }
+  // The tooltip aligns (row adapt-tooltip-align-enums): the keys are of the
+  // tooltip only.
+  if (k === 'xAlign' && ['left', 'center', 'right'].includes(value)) {
+    return new DartEnum('TooltipXAlign', value);
+  }
+  if (k === 'yAlign' && ['top', 'center', 'bottom'].includes(value)) {
+    return new DartEnum('TooltipYAlign', value);
+  }
   const scaleEnum = SCALE_ENUMS[k];
   if (
     scaleEnum &&
@@ -1343,7 +1351,7 @@ function dart(v, state, owner) {
   if (v instanceof DartEnum) {
     if (v.type in STROKE_VALUES) {
       (state.strokes ??= new Set()).add(v.type);
-    } else if (v.type === 'ChartAlign') {
+    } else if (['ChartAlign', 'TooltipXAlign', 'TooltipYAlign'].includes(v.type)) {
       state.aligns = true;
     } else {
       state.scaleEnums = true;

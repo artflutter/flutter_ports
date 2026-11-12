@@ -95,8 +95,8 @@ final ChartConfig _config = ChartConfig(
   tooltip: const ChartTooltip(
     backgroundColor: _tooltip,
     labelText: _tooltipLabel,
+    yAlign: .bottom,
     extra: {
-      'yAlign': 'bottom',
       'usePointStyle': true,
       'boxPadding': 4,
       'callbacks': {'title': _noTitle, 'labelColor': _tooltipMarker},

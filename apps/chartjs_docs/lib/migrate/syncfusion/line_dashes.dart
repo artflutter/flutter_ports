@@ -82,8 +82,8 @@ final ChartConfig _config = ChartConfig(
     backgroundColor: _tooltip,
     titleText: _tooltipTitle,
     labelText: _tooltipLabel,
+    yAlign: .bottom,
     extra: {
-      'yAlign': 'bottom',
       'titleAlign': 'center',
       'usePointStyle': true,
       'boxPadding': 4,
